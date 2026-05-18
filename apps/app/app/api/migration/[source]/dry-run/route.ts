@@ -6,7 +6,7 @@ import { parseMigrationCSV } from "@/lib/migration/csv-parser";
 import { fetchJiraItems } from "@/lib/migration/jira-client";
 import { fetchAzureWorkItems } from "@/lib/migration/azure-client";
 import { fetchTrelloCards } from "@/lib/migration/trello-client";
-import type { DryRunResult, MappingRule } from "@/lib/migration/types";
+import type { DryRunResult, MappingRule, MigrationItem } from "@/lib/migration/types";
 
 export async function POST(
   req: NextRequest,
@@ -31,7 +31,7 @@ export async function POST(
     }
 
     const config = conn.config as Record<string, unknown>;
-    const allItems = [];
+    const allItems: MigrationItem[] = [];
 
     if (source === "csv") {
       allItems.push(...parseMigrationCSV((config.content as string) ?? ""));
@@ -98,11 +98,10 @@ export async function POST(
 
     return NextResponse.json(result);
   } catch (err) {
-    return NextResponse.json(
-      {
-        error: err instanceof Error ? err.message : "Dry-run failed",
-      },
-      { status: 500 },
-    );
+    const message = err instanceof Error ? err.message : "Dry-run failed";
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+      ? "Operation failed. Check your credentials and try again."
+      : message;
+    return NextResponse.json({ error: safeMessage }, { status: 500 });
   }
 }

@@ -23,6 +23,7 @@ async function createMigrationEntities(
   // Map from source title to created Feature id (used as parent for stories)
   const featureTitleToId = new Map<string, string>();
 
+  // Items created individually; partial success is reported in errors[] rather than rolled back
   for (const item of items) {
     report.totalProcessed++;
     try {
@@ -37,18 +38,7 @@ async function createMigrationEntities(
         });
         report.created.epics++;
       } else if (item.type === "feature") {
-        // Features link to an ART via piPlanId — find target ART from mappingData
-        const mapping =
-          mappingData.find((m) => m.targetType === "art") ?? mappingData[0];
-        const art = mapping
-          ? await database.aRT.findFirst({
-              where: { tenantId: ctx.tenantId, name: mapping.targetName },
-            })
-          : null;
-
         // Feature has no description field — omit it
-        // art lookup is informational; piPlanId links ART indirectly via PIPlan
-        void art;
         const feature = await database.feature.create({
           data: {
             tenantId: ctx.tenantId,
@@ -157,11 +147,10 @@ export async function POST(
 
     return NextResponse.json(report);
   } catch (err) {
-    return NextResponse.json(
-      {
-        error: err instanceof Error ? err.message : "Import failed",
-      },
-      { status: 500 },
-    );
+    const message = err instanceof Error ? err.message : "Import failed";
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+      ? "Operation failed. Check your credentials and try again."
+      : message;
+    return NextResponse.json({ error: safeMessage }, { status: 500 });
   }
 }

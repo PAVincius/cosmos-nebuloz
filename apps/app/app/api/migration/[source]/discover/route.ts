@@ -80,12 +80,10 @@ export async function POST(
       itemSample: items.slice(0, 20),
     });
   } catch (err) {
-    return NextResponse.json(
-      {
-        error:
-          err instanceof Error ? err.message : "Discovery failed",
-      },
-      { status: 500 },
-    );
+    const message = err instanceof Error ? err.message : "Discovery failed";
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+      ? "Operation failed. Check your credentials and try again."
+      : message;
+    return NextResponse.json({ error: safeMessage }, { status: 500 });
   }
 }

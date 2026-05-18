@@ -14,6 +14,12 @@ export async function POST(
   try {
     const ctx = await requireTenantSession(await headers());
     const { source } = await params;
+
+    const VALID_SOURCES = ["csv", "jira", "azure", "trello"] as const;
+    if (!VALID_SOURCES.includes(source as typeof VALID_SOURCES[number])) {
+      return NextResponse.json({ error: "Unknown source" }, { status: 400 });
+    }
+
     const body = (await req.json()) as Record<string, unknown>;
 
     if (source === "jira") {
@@ -30,8 +36,6 @@ export async function POST(
       );
     } else if (source === "csv") {
       if (!body.content) throw new Error("CSV content is required.");
-    } else {
-      return NextResponse.json({ error: "Unknown source" }, { status: 400 });
     }
 
     const existing = await database.migrationConnection.findFirst({
