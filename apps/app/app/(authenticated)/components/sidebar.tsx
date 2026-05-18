@@ -107,6 +107,7 @@ const buildNavData = (
       icon: BarChart3Icon,
       items: [
         { title: "Métricas SAFe", url: "/analytics" },
+        { title: "Flow Metrics", url: "/analytics/flow" },
         { title: "Riscos ROAM", url: "/risks" },
         { title: "Velocity", url: "/teams" },
       ],
