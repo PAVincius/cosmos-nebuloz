@@ -194,7 +194,7 @@ export function RebalanceDialog({
     return () => {
       cancelled = true;
     };
-  }, [phase]);
+  }, [phase, onSuggestions]);
 
   function handleStart() {
     setPhase("running");

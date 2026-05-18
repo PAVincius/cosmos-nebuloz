@@ -52,17 +52,10 @@ export function ScenarioSimulator({ features, epicTitles }: ScenarioSimulatorPro
   );
 
   const simulatedRanking = useMemo(() => {
-    // Build a quick lookup: feature id → epic id
-    const epicForFeature = new Map<string, string>();
-    for (const f of features) {
-      // features carry epicTitle string; we match via epicTitles list
-      const matched = epicTitles.find((e) => e.title === f.epicTitle);
-      if (matched) epicForFeature.set(f.id, matched.id);
-    }
-
+    const epicByTitle = new Map(epicTitles.map((e) => [e.title, e.id]));
     return features
       .map((f) => {
-        const epicId = epicForFeature.get(f.id);
+        const epicId = epicByTitle.get(f.epicTitle);
         const pct = epicId ? (capacities[epicId] ?? 100) : 100;
         const mult = pct / 100;
         const simWSJF = simulateWSJF(f.bv, f.tc, f.rr, f.js, mult);
