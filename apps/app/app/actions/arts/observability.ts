@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 
 export type ARTEvent = {
   id: string;
-  type: "pi_planning" | "pi_end" | "system_demo" | "inspect_adapt";
+  type: "pi_planning" | "system_demo" | "inspect_adapt";
   label: string;
   date: Date;
   piName: string;

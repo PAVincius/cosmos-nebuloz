@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { appDesign } from "@/lib/app-design";
 import {

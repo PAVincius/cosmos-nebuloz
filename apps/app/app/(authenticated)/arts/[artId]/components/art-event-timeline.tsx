@@ -2,7 +2,6 @@
 
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
-  CalendarIcon,
   MonitorIcon,
   RefreshCwIcon,
   PlayCircleIcon,
@@ -21,10 +20,6 @@ const EVENT_CONFIG = {
   inspect_adapt: {
     icon: RefreshCwIcon,
     label: "Inspect & Adapt",
-  },
-  pi_end: {
-    icon: CalendarIcon,
-    label: "PI End",
   },
 } as const;
 
@@ -49,9 +44,8 @@ export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
     );
   }
 
-  const ordered = [...events].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  );
+  // Server action returns events sorted — defensive copy for slice safety
+  const ordered = events;
   const currentIdx = ordered.findIndex((e) => e.status !== "past");
   const startIdx = Math.max(
     0,
@@ -67,7 +61,7 @@ export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
       />
       <div className="flex flex-col gap-4">
         {visible.map((event) => {
-          const config = EVENT_CONFIG[event.type];
+          const config = EVENT_CONFIG[event.type as keyof typeof EVENT_CONFIG] ?? EVENT_CONFIG.pi_planning;
           const Icon = config.icon;
           const isPast = event.status === "past";
           const isCurrent = event.status === "current";
