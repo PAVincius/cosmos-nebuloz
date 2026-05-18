@@ -91,12 +91,17 @@ export const UsersTeamsSchema = z.object({
 });
 export type UsersTeamsData = z.infer<typeof UsersTeamsSchema>;
 
-export const PISprintsSchema = z.object({
-  piName: z.string().min(1).max(200).trim(),
-  startDate: z.coerce.date(),
-  endDate: z.coerce.date().optional(),
-  iterationCount: z.number().int().min(2).max(8).default(5),
-  sprintLengthDays: z.number().int().min(7).max(21).default(14),
-  artName: z.string().min(1),
-});
+export const PISprintsSchema = z
+  .object({
+    piName: z.string().min(1).max(200).trim(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
+    iterationCount: z.number().int().min(2).max(8).default(5),
+    sprintLengthDays: z.number().int().min(7).max(21).default(14),
+    artName: z.string().min(1),
+  })
+  .refine(
+    (d) => !d.endDate || d.endDate > d.startDate,
+    { message: "endDate must be after startDate", path: ["endDate"] }
+  );
 export type PISprintsData = z.infer<typeof PISprintsSchema>;

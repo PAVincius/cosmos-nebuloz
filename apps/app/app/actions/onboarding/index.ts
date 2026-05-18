@@ -54,7 +54,9 @@ export async function saveStep(raw: unknown) {
     data: {
       currentStep: Math.max(progress.currentStep, stepIndex + 1),
       completedSteps,
-      data: { ...existingData, [stepKey]: data } as unknown as Record<string, string>,
+      // Prisma Json field requires InputJsonValue; cast through unknown is safe here
+      // because the shape is validated upstream via Zod (SaveStepSchema).
+      data: { ...existingData, [stepKey]: data } as unknown as object,
     },
   });
 
@@ -80,7 +82,12 @@ export async function completeFlow(flowType: FlowType) {
   return updated;
 }
 
+/**
+ * Called only from server-side layout/middleware where tenantId comes from
+ * the authenticated session. Never expose this to client-side callers.
+ */
 export async function isOnboardingComplete(tenantId: string): Promise<boolean> {
+  if (!tenantId) return false;
   const progress = await database.onboardingProgress.findFirst({
     where: { tenantId, flowType: "company_setup" },
   });
