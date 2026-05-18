@@ -20,6 +20,7 @@
     "prepare": "simple-git-hooks",
     "generate:tests": "tsx scripts/generate-tests.ts",
     "fix:ci": "tsx scripts/fix-ci.ts",
+    "risk:score": "tsx scripts/risk-score.ts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
     "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma db push",
