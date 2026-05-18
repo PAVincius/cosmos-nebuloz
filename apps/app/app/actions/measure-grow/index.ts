@@ -9,10 +9,12 @@ import {
   CreateAssessmentSchema,
   CreateImprovementActionSchema,
   UpdateImprovementActionSchema,
+  ActionStatus,
   SAFE_COMPETENCIES,
   type CreateAssessmentInput,
   type CreateImprovementActionInput,
   type UpdateImprovementActionInput,
+  type ActionStatusValue,
 } from "./schema";
 
 // ─── Re-exports for convenience ───────────────────────────────────────────────
@@ -281,12 +283,13 @@ export async function createImprovementActionLegacy(input: {
   revalidatePath("/analytics/flow");
 }
 
-export async function updateActionStatus(id: string, status: string) {
+export async function updateActionStatus(id: string, status: ActionStatusValue) {
   const ctx = await requireTenantSession(await headers());
+  const validated = ActionStatus.parse(status);
 
   await database.improvementAction.updateMany({
     where: { id, tenantId: ctx.tenantId },
-    data: { status },
+    data: { status: validated },
   });
 
   revalidatePath("/analytics/flow");

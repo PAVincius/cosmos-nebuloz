@@ -142,10 +142,10 @@ export function ImprovementActionsTab({
 
   function handleStatusChange(id: string, status: string) {
     startTransition(async () => {
-      await updateImprovementActionResult(id, { status });
-      setActions((prev) =>
-        prev.map((a) => (a.id === id ? { ...a, status } : a))
-      );
+      const result = await updateImprovementActionResult(id, { status });
+      if (result.ok) {
+        setActions((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));
+      }
     });
   }
 
