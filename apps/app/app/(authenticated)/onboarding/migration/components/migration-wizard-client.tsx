@@ -81,7 +81,8 @@ export function MigrationWizardClient({
   const nextDisabled =
     (stepKey === "connect" && !connectData?.connectionId) ||
     (stepKey === "discovery" && !discoveryData?.connectionId) ||
-    (stepKey === "import" && !importReport);
+    (stepKey === "import" && !importReport) ||
+    (stepKey === "post_migration" && !importReport);
 
   function getStepData(): unknown {
     switch (stepKey) {
@@ -106,16 +107,7 @@ export function MigrationWizardClient({
     setError(null);
     startTransition(async () => {
       try {
-        await saveStep({
-          flowType: "migration_setup",
-          stepKey,
-          stepIndex: currentStep,
-          data: getStepData() as Record<string, unknown>,
-        });
-        setCompletedSteps((prev) =>
-          prev.includes(stepKey) ? prev : [...prev, stepKey]
-        );
-
+        // approve mapping first — if this fails, saveStep is not called
         if (
           stepKey === "discovery" &&
           connectData?.connectionId &&
@@ -127,6 +119,15 @@ export function MigrationWizardClient({
           );
         }
 
+        await saveStep({
+          flowType: "migration_setup",
+          stepKey,
+          stepIndex: currentStep,
+          data: getStepData() as Record<string, unknown>,
+        });
+        setCompletedSteps((prev) =>
+          prev.includes(stepKey) ? prev : [...prev, stepKey]
+        );
         setCurrentStep((s) => s + 1);
       } catch (err) {
         setError(
@@ -213,8 +214,10 @@ export function MigrationWizardClient({
           onComplete={setImportReport}
         />
       )}
-      {stepKey === "post_migration" && importReport && (
-        <StepPostMigration report={importReport} />
+      {stepKey === "post_migration" && (
+        importReport
+          ? <StepPostMigration report={importReport} />
+          : <p className="text-sm text-muted-foreground">Nenhum relatório de importação disponível. Volte para a etapa de importação.</p>
       )}
     </OnboardingWizardShell>
   );

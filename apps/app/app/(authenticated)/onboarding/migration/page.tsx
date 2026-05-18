@@ -13,11 +13,14 @@ export default async function MigrationSetupPage() {
   const arts = await getARTs();
   const artNames = arts.map((a) => a.name);
   const savedData = (progress.data as Record<string, unknown>) ?? {};
+  const completedSteps = Array.isArray(progress.completedSteps)
+    ? (progress.completedSteps as string[])
+    : [];
 
   return (
     <MigrationWizardClient
       initialStep={progress.currentStep}
-      completedSteps={progress.completedSteps as string[]}
+      completedSteps={completedSteps}
       savedData={savedData}
       artNames={artNames}
     />
