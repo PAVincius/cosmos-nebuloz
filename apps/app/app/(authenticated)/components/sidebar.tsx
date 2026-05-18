@@ -111,6 +111,7 @@ const buildNavData = (
       items: [
         { title: "Métricas SAFe", url: "/analytics" },
         { title: "Flow Metrics", url: "/analytics/flow" },
+        { title: "Measure & Grow", url: "/analytics/measure-grow" },
         { title: "Riscos ROAM", url: "/risks" },
         { title: "Velocity", url: "/teams" },
       ],
