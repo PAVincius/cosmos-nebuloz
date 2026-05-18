@@ -77,6 +77,11 @@ model Tenant {
   // Onboarding
   onboardingProgress   OnboardingProgress[]
   migrationConnections MigrationConnection[]
+  // Flow Metrics & Measure-and-Grow
+  stateTransitions      StateTransitionHistory[]
+  flowMetricSnapshots   FlowMetricSnapshot[]
+  competencyAssessments CompetencyAssessment[]
+  improvementActions    ImprovementAction[]
 }
 
 model User {

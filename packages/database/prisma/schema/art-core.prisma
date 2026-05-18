@@ -150,6 +150,7 @@ model Feature {
 
   storyPoints    Int       @default(1) // SP estimate for this feature
   assigneeUserId String?              // User responsible (links to User.id logically; no FK to keep it simple)
+  startedAt      DateTime?            // When statusId first moved to IN_PROGRESS
   completedAt    DateTime?            // When statusId was set to DONE
 
   createdAt DateTime @default(now())
