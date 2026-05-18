@@ -68,6 +68,11 @@ model Tenant {
   keyResultSnapshots   KeyResultSnapshot[]
   leanBudgets          LeanBudget[]
   roadmapItems         RoadmapItem[]
+  governedEpics        GovernedEpic[]
+  approvalWorkflows    ApprovalWorkflow[]
+  approvalRequests     ApprovalRequest[]
+  approvalSteps        ApprovalStepInstance[]
+  decisionLogEntries   DecisionLogEntry[]
   // Wave 5 — Large Solution
   solutionTrains       SolutionTrain[]
   capabilities         Capability[]

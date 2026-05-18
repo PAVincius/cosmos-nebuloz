@@ -128,6 +128,7 @@ model Epic {
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   features       Feature[]
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
+  governedEpic   GovernedEpic?
 
   @@index([tenantId])
   @@index([strategicThemeId])

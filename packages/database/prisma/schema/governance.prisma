@@ -1,0 +1,101 @@
+// Wave 4 — Portfolio Governance (LPM)
+
+model GovernedEpic {
+  id                       String   @id @default(cuid())
+  tenantId                 String
+  epicId                   String   @unique
+  valueStreamId            String?  // artId of the ART/value stream
+  themeId                  String?  // strategicThemeId
+  investmentEstimate        Float?
+  governanceStatus         String   @default("draft") // draft/review/approved/rejected/on_hold/deferred
+  guardrailFlags           Json     @default("[]")    // string[]
+  currentApprovalRequestId String?
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epic             Epic              @relation(fields: [epicId], references: [id], onDelete: Cascade)
+  approvalRequests ApprovalRequest[]
+
+  @@index([tenantId])
+  @@index([tenantId, governanceStatus])
+}
+
+model ApprovalWorkflow {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tipo      String   // epic_investment / budget_guardrail_change / theme_creation
+  nome      String
+  etapas    Json     // [{order: number, roleRequired: string, criteria?: string}]
+  ativo     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requests ApprovalRequest[]
+
+  @@unique([tenantId, tipo])
+  @@index([tenantId])
+}
+
+model ApprovalRequest {
+  id             String   @id @default(cuid())
+  tenantId       String
+  workflowId     String
+  targetType     String   // epic / guardrail / theme
+  targetId       String
+  estado         String   @default("open") // open / in_review / approved / rejected / cancelled
+  initiatorId    String
+  governedEpicId String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  workflow     ApprovalWorkflow       @relation(fields: [workflowId], references: [id])
+  governedEpic GovernedEpic?          @relation(fields: [governedEpicId], references: [id], onDelete: SetNull)
+  steps        ApprovalStepInstance[]
+
+  @@index([tenantId])
+  @@index([tenantId, estado])
+  @@index([governedEpicId])
+}
+
+model ApprovalStepInstance {
+  id                String    @id @default(cuid())
+  tenantId          String
+  approvalRequestId String
+  etapaOrdem        Int
+  roleRequired      String    // lpm / enterprise_architect / cfo / finance
+  approverId        String?
+  estado            String    @default("pending") // pending / approved / rejected / skipped
+  comentario        String?   @db.Text
+  timestamp         DateTime?
+  createdAt         DateTime  @default(now())
+
+  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalRequest ApprovalRequest @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([approvalRequestId])
+}
+
+model DecisionLogEntry {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tipo          String   // epic_decision / budget_decision / theme_decision
+  targetType    String   // epic / guardrail / theme
+  targetId      String
+  valueStreamId String?
+  decisao       String   // approved / rejected / deferred / changed
+  justificativa String   @db.Text
+  dadosSuporte  Json     @default("{}")  // { flowMetrics?, okrs?, budgetInfo? }
+  decisorId     String
+  dataDecisao   DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, tipo])
+  @@index([tenantId, dataDecisao])
+}
