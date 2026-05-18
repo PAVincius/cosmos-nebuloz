@@ -1,0 +1,35 @@
+// Onboarding progress tracking
+model OnboardingProgress {
+  id             String   @id @default(cuid())
+  tenantId       String
+  flowType       String   // "company_setup" | "migration_setup"
+  currentStep    Int      @default(0)
+  completedSteps String[]
+  data           Json     @default("{}")
+  status         String   @default("in_progress") // "in_progress" | "completed"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, flowType])
+  @@index([tenantId])
+}
+
+model MigrationConnection {
+  id            String   @id @default(cuid())
+  tenantId      String
+  source        String   // "csv" | "jira" | "azure" | "trello"
+  config        Json     // { baseUrl?, apiToken?, pat?, projectKeys? }
+  status        String   @default("pending")
+  errorMessage  String?
+  discoveryData Json?
+  mappingData   Json?
+  importReport  Json?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}

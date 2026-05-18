@@ -1,0 +1,179 @@
+enum SubscriptionPlan {
+  ORBIT
+  GALAXY
+  NEBULA
+  UNIVERSE
+}
+
+enum MemberRole {
+  ADMIN
+  STE
+  RTE
+  SM
+  PO
+  DEV
+  MEMBER
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELED
+}
+
+model Tenant {
+  id        String           @id @default(cuid())
+  name      String
+  slug      String           @unique
+  logo      String?
+  plan      SubscriptionPlan @default(ORBIT)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  metadata  Json?
+
+  members              TenantMember[]
+  invitations          TenantInvitation[]
+  arts                 ART[]
+  piPlans              PIPlan[]
+  epics                Epic[]
+  features             Feature[]
+  workflowNodes        TeamWorkflowNode[]
+  workflowEdges        TeamWorkflowEdge[]
+  dependencyLinks      DependencyLink[]
+  risks                Risk[]
+  piObjectives         PIObjective[]
+  bpmnDefinitions      BpmnDefinition[]
+  piSessions           PISession[]
+  confidenceSessions   ConfidenceVoteSession[]
+  knowledgeVectors     PIKnowledgeVector[]
+  teams                Team[]
+  // Wave 1 — Team delivery
+  sprints              Sprint[]
+  stories              Story[]
+  tasks                Task[]
+  defects              Defect[]
+  impediments          Impediment[]
+  standupEntries       StandupEntry[]
+  sprintReviews        SprintReview[]
+  retrospectives       Retrospective[]
+  // Wave 3 — System
+  notifications        Notification[]
+  auditLogs            AuditLog[]
+  integrations         Integration[]
+  // Wave 4 — Portfolio
+  strategicThemes      StrategicTheme[]
+  okrs                 OKR[]
+  keyResults           KeyResult[]
+  keyResultSnapshots   KeyResultSnapshot[]
+  leanBudgets          LeanBudget[]
+  roadmapItems         RoadmapItem[]
+  // Wave 5 — Large Solution
+  solutionTrains       SolutionTrain[]
+  capabilities         Capability[]
+  solutionEpics        SolutionEpic[]
+  lace                 LACE?
+  suppliers            Supplier[]
+  // Onboarding
+  onboardingProgress   OnboardingProgress[]
+  migrationConnections MigrationConnection[]
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  name               String?
+  emailVerified      Boolean   @default(false)
+  image              String?
+  twoFactorEnabled   Boolean   @default(false)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  sessions      Session[]
+  accounts      Account[]
+  memberships   TenantMember[]
+  twoFactor     TwoFactor?
+}
+
+model TwoFactor {
+  id          String @id @default(cuid())
+  secret      String
+  backupCodes String
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  activeTenantId String? // Better Auth Organization plugin field
+
+  @@unique([token])
+  @@index([userId])
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model TenantMember {
+  id        String     @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      MemberRole @default(MEMBER)
+  createdAt DateTime   @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+}
+
+model TenantInvitation {
+  id        String           @id @default(cuid())
+  tenantId  String
+  email     String
+  role      MemberRole       @default(MEMBER)
+  status    InvitationStatus @default(PENDING)
+  expiresAt DateTime
+  inviterId String
+  createdAt DateTime         @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
