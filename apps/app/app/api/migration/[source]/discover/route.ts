@@ -68,6 +68,7 @@ export async function POST(
       data: {
         discoveryData: {
           projects,
+          itemCount: items.length,
           itemSample: items.slice(0, 20),
         } as unknown as Prisma.InputJsonValue,
       },

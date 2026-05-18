@@ -52,10 +52,13 @@ export async function POST(
           },
         });
 
-    return NextResponse.json({ connectionId: conn.id, status: "connected" });
+    return NextResponse.json({ connectionId: conn.id, status: conn.status });
   } catch (err) {
     const message =
       err instanceof Error ? err.message : "Connection failed";
-    return NextResponse.json({ error: message }, { status: 400 });
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+      ? "Connection test failed. Check your credentials."
+      : message;
+    return NextResponse.json({ error: safeMessage }, { status: 400 });
   }
 }
