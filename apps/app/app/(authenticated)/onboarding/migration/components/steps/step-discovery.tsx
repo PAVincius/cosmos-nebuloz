@@ -36,11 +36,15 @@ export function StepDiscovery({
   connectionId,
   source,
   artNames,
+  defaultValues,
   onChange,
 }: Props) {
   const [projects, setProjects] = useState<DiscoveryProject[]>([]);
-  const [mapping, setMapping] = useState<Record<string, string>>({});
-  const [itemCount, setItemCount] = useState(0);
+  const initialMapping = defaultValues?.mappingData
+    ? Object.fromEntries(defaultValues.mappingData.map((r) => [r.sourceKey, r.targetName]))
+    : {};
+  const [mapping, setMapping] = useState<Record<string, string>>(initialMapping);
+  const [itemCount, setItemCount] = useState(defaultValues?.itemCount ?? 0);
   const [loading, setLoading] = useState(true);
   const [, startTransition] = useTransition();
 

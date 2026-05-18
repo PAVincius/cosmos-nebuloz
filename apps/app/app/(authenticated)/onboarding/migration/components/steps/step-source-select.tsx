@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DatabaseIcon } from "lucide-react";
 import { cn } from "@repo/design-system/lib/utils";
 import { WizardStepHeader } from "../../../../components/wizard-ui";
@@ -27,6 +27,11 @@ export function StepSourceSelect({ defaultValues, onChange }: Props) {
   const [selected, setSelected] = useState<MigrationSource>(
     defaultValues?.source ?? "csv"
   );
+
+  useEffect(() => {
+    onChange({ source: selected });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function select(src: MigrationSource) {
     setSelected(src);

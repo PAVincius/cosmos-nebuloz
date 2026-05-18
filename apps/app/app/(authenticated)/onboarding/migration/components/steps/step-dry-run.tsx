@@ -15,21 +15,39 @@ interface Props {
 export function StepDryRun({ connectionId, source, mappingData, onResult }: Props) {
   const [result, setResult] = useState<DryRunResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    setLoading(true);
-    fetch(`/api/migration/${source}/dry-run`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ connectionId, mappingData }),
-    }).then(async (res) => {
-      if (res.ok) {
-        const data = (await res.json()) as DryRunResult;
-        setResult(data);
-        onResult(data);
+    let cancelled = false;
+    async function run() {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`/api/migration/${source}/dry-run`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ connectionId, mappingData }),
+        });
+        if (!cancelled) {
+          if (res.ok) {
+            const data = (await res.json()) as DryRunResult;
+            setResult(data);
+            onResult(data);
+          } else {
+            const err = (await res.json()) as { error?: string };
+            setError(err.error ?? "Dry-run failed");
+          }
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setError("Falha ao simular importação. Verifique a conexão.");
+          setLoading(false);
+        }
       }
-      setLoading(false);
-    });
+    }
+    void run();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -42,6 +60,8 @@ export function StepDryRun({ connectionId, source, mappingData, onResult }: Prop
       />
       {loading ? (
         <p className="text-sm text-muted-foreground">Simulando...</p>
+      ) : !loading && error ? (
+        <p className="text-sm text-destructive">{error}</p>
       ) : (
         result && (
           <div className="flex flex-col gap-4">

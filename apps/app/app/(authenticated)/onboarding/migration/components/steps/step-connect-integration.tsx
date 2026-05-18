@@ -47,6 +47,7 @@ export function StepConnectIntegration({ source, defaultValues, onConnected }: P
         });
         const data = (await res.json()) as { connectionId?: string; error?: string };
         if (!res.ok || data.error) throw new Error(data.error ?? "Connection failed");
+        if (!data.connectionId) throw new Error("No connection ID returned from server.");
         setStatus("ok");
         onConnected({ source, config, connectionId: data.connectionId });
       } catch (err) {
