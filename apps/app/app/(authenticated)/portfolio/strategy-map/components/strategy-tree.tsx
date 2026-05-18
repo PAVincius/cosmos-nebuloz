@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   ChevronDownIcon,
@@ -82,15 +83,11 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
   return (
     <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
       {/* Header */}
-      <div
-        className="flex cursor-pointer items-center gap-3 px-4 py-3 transition-colors hover:bg-muted/20"
+      <button
+        type="button"
+        className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/20"
         onClick={() => setOpen((prev) => !prev)}
-        role="button"
-        tabIndex={0}
         aria-expanded={open}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") setOpen((prev) => !prev);
-        }}
       >
         <span
           className="h-3 w-3 shrink-0 rounded-full"
@@ -131,7 +128,7 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
             <ChevronRightIcon className="h-4 w-4 text-muted-foreground" />
           )}
         </div>
-      </div>
+      </button>
 
       {/* Body */}
       {open && (
@@ -186,12 +183,12 @@ export function StrategyTree({ data }: StrategyTreeProps) {
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
         <LayersIcon className="mb-2 h-6 w-6" />
         <span>Nenhum Tema Estratégico configurado.</span>
-        <a
+        <Link
           href="/portfolio/themes"
           className="mt-1 text-[#5e6ad2] hover:underline"
         >
           Criar temas
-        </a>
+        </Link>
       </div>
     );
   }

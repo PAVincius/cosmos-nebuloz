@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { TargetIcon } from "lucide-react";
 import type { OKRNode as OKRNodeType } from "@/app/actions/strategy-map";
