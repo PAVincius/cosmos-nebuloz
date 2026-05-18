@@ -1,0 +1,170 @@
+model ART {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  cadence   Int      @default(10) // PI iteration length in weeks
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant  Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlans PIPlan[]
+  teams   Team[]
+  themes  ThemeART[]
+
+  @@index([tenantId])
+}
+
+model Team {
+  id               String   @id @default(cuid())
+  tenantId         String
+  artId            String?
+  name             String
+  velocity         Int?     // story points por sprint (referência histórica)
+  sprintLengthDays Int      @default(14)
+  members          Json?    // [{name, role, skills: string[], hoursPerWeek}]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art     ART?     @relation(fields: [artId], references: [id], onDelete: SetNull)
+  sprints Sprint[]
+
+  @@index([tenantId])
+  @@index([artId])
+}
+
+model PIPlan {
+  id        String    @id @default(cuid())
+  tenantId  String
+  artId     String
+  name      String
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  tenant             Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art                ART                     @relation(fields: [artId], references: [id], onDelete: Cascade)
+  piSessions         PISession[]
+  risks              Risk[]
+  piObjectives       PIObjective[]
+  features           Feature[]
+
+  @@index([tenantId])
+  @@index([artId])
+}
+
+// PI Objectives — committed ou stretch, com business value 1-10 (SAFe 6.0)
+model PIObjective {
+  id            String   @id @default(cuid())
+  tenantId      String
+  piPlanId      String
+  teamId        String?
+  title         String
+  description   String?
+  businessValue Int      @default(5)   // 1-10
+  isStretch     Boolean  @default(false)
+  status        String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlan PIPlan  @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, piPlanId])
+}
+
+// ROAM Risk tracking (Resolved/Owned/Accepted/Mitigated)
+model Risk {
+  id          String   @id @default(cuid())
+  tenantId    String
+  piPlanId    String?
+  title       String
+  description String?
+  status      String   @default("IDENTIFIED") // ROAM: RESOLVED/OWNED/ACCEPTED/MITIGATED + IDENTIFIED
+  category    String?  // technical/business/organizational/external
+  impact      String   @default("medium")     // low/medium/high/critical
+  probability String   @default("medium")     // low/medium/high
+  ownerUserId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlan    PIPlan?   @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  linkedOkrs RiskOKR[]
+
+  @@index([tenantId])
+  @@index([tenantId, piPlanId])
+}
+
+// M:N junction Risk <-> OKR (ROAM impact on OKRs)
+model RiskOKR {
+  riskId    String
+  okrId     String
+  // How much this risk threatens the OKR
+  impact    String   @default("medium") // low/medium/high/critical
+  notes     String?
+  createdAt DateTime @default(now())
+
+  risk Risk @relation(fields: [riskId], references: [id], onDelete: Cascade)
+  okr  OKR  @relation(fields: [okrId], references: [id], onDelete: Cascade)
+
+  @@id([riskId, okrId])
+  @@index([okrId])
+}
+
+model Epic {
+  id               String   @id @default(cuid())
+  tenantId         String
+  title            String
+  statusId         String   @default("BACKLOG")
+  order            Int      @default(0)
+  yjsDocumentState String?  // CRDT document state para sync Yjs
+  strategicThemeId String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  features       Feature[]
+  strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([strategicThemeId])
+}
+
+model Feature {
+  id        String   @id @default(cuid())
+  tenantId  String
+  epicId    String?
+  piPlanId  String?  // PI Planning this feature is committed to
+  title     String
+  statusId  String   @default("BACKLOG")
+  
+  // WSJF Parameters
+  bv        Float    @default(0) // Business Value
+  tc        Float    @default(0) // Time Criticality
+  rr        Float    @default(0) // Risk Reduction / Opportunity Enablement
+  js        Float    @default(1) // Job Size
+  wsjfScore Float    @default(0) // (bv + tc + rr) / js
+
+  storyPoints    Int       @default(1) // SP estimate for this feature
+  assigneeUserId String?              // User responsible (links to User.id logically; no FK to keep it simple)
+  completedAt    DateTime?            // When statusId was set to DONE
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epic            Epic?            @relation(fields: [epicId], references: [id], onDelete: SetNull)
+  piPlan          PIPlan?          @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  blocks          DependencyLink[] @relation("BlockingFeature")
+  blockedBy       DependencyLink[] @relation("BlockedFeature")
+  stories         Story[]
+
+  @@index([tenantId])
+  @@index([epicId])
+  @@index([piPlanId])
+  @@index([assigneeUserId])
+  @@index([tenantId, assigneeUserId])
+}

@@ -1,0 +1,102 @@
+[
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "POST /api/auth/switch-tenant returns expected status 401",
+    "id": "sm-1778697955934-1",
+    "persona": "sm",
+    "timestamp": 1778697955934
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/tenants",
+    "description": "GET /api/tenants returns expected status 401",
+    "id": "sm-1778697956671-1",
+    "persona": "sm",
+    "timestamp": 1778697956671
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "FullScreenLoader not visible on sign-in (expected — only shown during tenant switch)",
+    "id": "sm-1778697957338-2",
+    "persona": "sm",
+    "timestamp": 1778697957338
+  },
+  {
+    "severity": "low",
+    "category": "design-violation",
+    "route": "/sign-in",
+    "description": "Page title does not include 'COSMOS'",
+    "expected": "Title should include 'COSMOS' per branding",
+    "actual": "Title: \"Welcome back | next-forge\"",
+    "suggestion": "Add proper metadata.title to sign-in page layout or page.tsx",
+    "codeRef": "apps/app/app/(unauthenticated)/sign-in/[[...sign-in]]/page.tsx",
+    "id": "sm-1778697959421-1",
+    "persona": "sm",
+    "timestamp": 1778697959421
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/workflows/team-demo/bpmn",
+    "story": "Como SM, quero desenhar fluxos BPMN no Workflow Canvas.",
+    "description": "BPMN canvas route reachable at /workflows/team-demo/bpmn",
+    "id": "sm-1778697966352-1",
+    "persona": "sm",
+    "timestamp": 1778697966352
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/tenants",
+    "description": "GET /api/tenants returns expected status 401",
+    "id": "sm-1778714166169-1",
+    "persona": "sm",
+    "timestamp": 1778714166169
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "POST /api/auth/switch-tenant returns expected status 401",
+    "id": "sm-1778714167480-2",
+    "persona": "sm",
+    "timestamp": 1778714167480
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/workflows/team-demo/bpmn",
+    "story": "Como SM, quero desenhar fluxos BPMN no Workflow Canvas.",
+    "description": "BPMN canvas route reachable at /workflows/team-demo/bpmn",
+    "id": "sm-1778714173662-3",
+    "persona": "sm",
+    "timestamp": 1778714173662
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "FullScreenLoader not visible on sign-in (expected — only shown during tenant switch)",
+    "id": "sm-1778714174870-4",
+    "persona": "sm",
+    "timestamp": 1778714174870
+  },
+  {
+    "severity": "low",
+    "category": "design-violation",
+    "route": "/sign-in",
+    "description": "Page title does not include 'COSMOS'",
+    "expected": "Title should include 'COSMOS' per branding",
+    "actual": "Title: \"Welcome back | next-forge\"",
+    "suggestion": "Add proper metadata.title to sign-in page layout or page.tsx",
+    "codeRef": "apps/app/app/(unauthenticated)/sign-in/[[...sign-in]]/page.tsx",
+    "id": "sm-1778714175502-5",
+    "persona": "sm",
+    "timestamp": 1778714175505
+  }
+]

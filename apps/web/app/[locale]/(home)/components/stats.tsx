@@ -1,54 +1,90 @@
+"use client";
+
+import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
+import { AnimatedCounter } from "@/components/cosmos/animated-counter";
+import { ConicBorderCard } from "@/components/cosmos/conic-border";
 import type { Dictionary } from "@repo/internationalization";
-import { MoveDownLeft, MoveUpRight } from "lucide-react";
 
-type StatsProps = {
-  dictionary: Dictionary;
-};
+type StatsProps = { dictionary: Dictionary };
 
-export const Stats = ({ dictionary }: StatsProps) => (
-  <div className="w-full py-20 lg:py-40">
-    <div className="container mx-auto">
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-        <div className="flex flex-col items-start gap-4">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-left font-regular text-xl tracking-tighter md:text-5xl lg:max-w-xl">
-              {dictionary.web.home.stats.title}
-            </h2>
-            <p className="text-left text-lg text-muted-foreground leading-relaxed tracking-tight lg:max-w-sm">
-              {dictionary.web.home.stats.description}
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center justify-center">
-          <div className="grid w-full grid-cols-1 gap-2 text-left sm:grid-cols-2 lg:grid-cols-2">
-            {dictionary.web.home.stats.items.map((item, index) => (
+const STATS = [
+  { value: 80, prefix: "", suffix: "%", label: "dos PIs chegam atrasados no primeiro ano de SAFe", color: "var(--accent)" },
+  { value: 800, prefix: "R$", suffix: "K+", label: "custo médio em horas de executivo por ciclo de PI", color: "var(--violet)" },
+  { value: 30, prefix: "", suffix: "+", label: "dependências críticas descobertas na reunião, não antes", color: "var(--warning)" },
+] as const;
+
+export const Stats = ({ dictionary: _ }: StatsProps) => (
+  <section className="w-full py-24" style={{ background: "var(--bg)" }}>
+    <div className="mx-auto max-w-7xl px-5 md:px-20">
+      <FadeIn className="mb-14 max-w-2xl">
+        <p
+          className="mb-3"
+          style={{
+            fontFamily: "monospace",
+            fontSize: 11,
+            color: "var(--accent)",
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          O Problema
+        </p>
+        <h2
+          style={{
+            fontWeight: 600,
+            fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+            lineHeight: 1.2,
+            letterSpacing: "-0.02em",
+            color: "var(--text)",
+          }}
+        >
+          Seu PI Planning consome 3 semanas.{" "}
+          <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>
+            E ninguém vê as dependências até ser tarde demais.
+          </span>
+        </h2>
+      </FadeIn>
+
+      <FadeInGroup className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {STATS.map((stat) => (
+          <FadeInChild key={stat.label}>
+            <ConicBorderCard radius="var(--radius-xl)">
               <div
-                className="flex flex-col justify-between gap-0 rounded-md border p-6"
-                key={index}
+                className="flex h-full flex-col gap-3 rounded-[20px] p-8"
+                style={{
+                  background: "var(--surface)",
+                  border: "1px solid var(--border)",
+                  boxShadow: "0 1px 0 rgba(255,255,255,0.05) inset",
+                }}
               >
-                {Number.parseFloat(item.delta) > 0 ? (
-                  <MoveUpRight className="mb-10 h-4 w-4 text-primary" />
-                ) : (
-                  <MoveDownLeft className="mb-10 h-4 w-4 text-destructive" />
-                )}
-                <h2 className="flex max-w-xl flex-row items-end gap-4 text-left font-regular text-4xl tracking-tighter">
-                  {item.type === "currency" && "$"}
-                  {new Intl.NumberFormat().format(
-                    Number.parseFloat(item.metric)
-                  )}
-                  <span className="text-muted-foreground text-sm tracking-normal">
-                    {Number.parseFloat(item.delta) > 0 ? "+" : ""}
-                    {item.delta}%
-                  </span>
-                </h2>
-                <p className="max-w-xl text-left text-base text-muted-foreground leading-relaxed tracking-tight">
-                  {item.title}
+                <AnimatedCounter
+                  value={stat.value}
+                  prefix={stat.prefix}
+                  suffix={stat.suffix}
+                  style={{
+                    fontFamily: "monospace",
+                    fontWeight: 700,
+                    fontSize: "clamp(2.5rem, 4vw, 4rem)",
+                    lineHeight: 1.1,
+                    letterSpacing: "-0.02em",
+                    color: stat.color,
+                    display: "block",
+                  }}
+                />
+                <p
+                  style={{
+                    fontSize: 14,
+                    color: "var(--text-faint)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {stat.label}
                 </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
+            </ConicBorderCard>
+          </FadeInChild>
+        ))}
+      </FadeInGroup>
     </div>
-  </div>
+  </section>
 );

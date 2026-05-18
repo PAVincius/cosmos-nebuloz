@@ -1,0 +1,52 @@
+// Wave 3 — System horizontal features
+
+model Notification {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  type      String   // mention/assignment/risk/deadline/system
+  title     String
+  body      String?
+  read      Boolean  @default(false)
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+  @@index([userId, read])
+  @@index([tenantId])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  tenantId   String
+  userId     String?
+  action     String   // created/updated/deleted
+  entityType String   // Epic/Feature/Risk/Story/etc
+  entityId   String
+  diff       Json?
+  createdAt  DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, entityType, entityId])
+  @@index([tenantId, createdAt])
+}
+
+model Integration {
+  id        String   @id @default(cuid())
+  tenantId  String
+  type      String   // jira/azure-devops/github/slack
+  name      String
+  config    Json
+  status    String   @default("ACTIVE") // ACTIVE/INACTIVE/ERROR
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, type])
+  @@index([tenantId])
+}

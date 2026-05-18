@@ -93,7 +93,7 @@ export const Cursors = () => {
 
     return (
       <Cursor
-        color={info.color}
+        color={info?.color ?? "var(--color-primary)"}
         // connectionId is an integer that is incremented at every new connections
         // Assigning a color with a modulo makes sure that a specific user has the same colors on every clients
         key={`cursor-${connectionId}`}

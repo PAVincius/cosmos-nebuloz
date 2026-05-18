@@ -6,11 +6,25 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
+    include: ["__tests__/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["e2e/**", "node_modules/**"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary", "html"],
+      reportsDirectory: "./coverage",
+      include: [
+        "app/actions/**/*.ts",
+        "lib/**/*.ts",
+        "!app/actions/**/index.ts",
+      ],
+      exclude: ["**/*.d.ts", "**/schema.ts"],
+    },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./"),
       "@repo": path.resolve(__dirname, "../../packages"),
+      "server-only": path.resolve(__dirname, "./vitest-mocks/server-only.ts"),
     },
   },
 });

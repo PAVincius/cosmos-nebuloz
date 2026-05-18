@@ -1,0 +1,157 @@
+// Wave 4 — Portfolio Level entities
+
+model StrategicTheme {
+  id          String   @id @default(cuid())
+  tenantId    String
+  code        String? // e.g. THEME-001 (unique per tenant)
+  title       String
+  description String?
+  color       String   @default("#6366f1")
+  order       Int      @default(0)
+
+  // SAFe 6.0 metadata
+  horizon     String? // e.g. "2026", "H1 2026"
+  status      String   @default("DRAFT") // DRAFT/ANALYSIS/APPROVED/ACTIVE/CLOSING/ARCHIVED
+  themeType   String? // GROWTH/EFFICIENCY/INNOVATION/COMPLIANCE/CUSTOMER_EXPERIENCE
+  ownerUserId String?
+  budgetTotal Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epics  Epic[]
+  okrs   OKR[]
+  arts   ThemeART[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+// M:N junction StrategicTheme <-> ART
+model ThemeART {
+  themeId String
+  artId   String
+
+  theme StrategicTheme @relation(fields: [themeId], references: [id], onDelete: Cascade)
+  art   ART            @relation(fields: [artId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@id([themeId, artId])
+  @@index([artId])
+}
+
+model OKR {
+  id               String   @id @default(cuid())
+  tenantId         String
+  // SAFe OKR typing — drives template + required links
+  type             String   @default("portfolio_theme") // portfolio_theme/portfolio_epic/pi_art/team_pi/improvement
+  // Contextual links (one of these is required depending on type)
+  piPlanId         String?
+  strategicThemeId String?
+  epicId           String?
+  artId            String?
+  teamId           String?
+  // OKR metadata
+  title            String
+  description      String?
+  ownerId          String?
+  horizon          String? // e.g. "2026", "PI-2026-Q1"
+  scope            String? // for improvement type: portfolio/art/team
+  status           String   @default("ON_TRACK") // ON_TRACK/AT_RISK/BEHIND/ACHIEVED
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
+  keyResults     KeyResult[]
+  linkedRisks    RiskOKR[]
+
+  @@index([tenantId])
+  @@index([tenantId, piPlanId])
+  @@index([strategicThemeId])
+  @@index([tenantId, type])
+}
+
+model KeyResult {
+  id              String    @id @default(cuid())
+  tenantId        String
+  okrId           String
+  title           String
+  metric          String? // name of metric (e.g. lead time, NPS, MRR)
+  baseline        Float? // starting value when KR was set
+  current         Float     @default(0)
+  target          Float
+  unit            String    @default("%")
+  measurementType String? // absolute/percentage/index/rate
+  dueDate         DateTime?
+  ownerId         String?
+  dataSource      String? // where measurement comes from
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant    Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  okr       OKR                   @relation(fields: [okrId], references: [id], onDelete: Cascade)
+  snapshots KeyResultSnapshot[]
+
+  @@index([tenantId])
+  @@index([okrId])
+}
+
+// Check-in history — snapshots periódicos do valor de cada KR
+model KeyResultSnapshot {
+  id            String   @id @default(cuid())
+  tenantId      String
+  keyResultId   String
+  value         Float
+  note          String?
+  recordedById  String?
+  recordedAt    DateTime @default(now())
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  keyResult KeyResult @relation(fields: [keyResultId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([keyResultId])
+  @@index([keyResultId, recordedAt])
+}
+
+model LeanBudget {
+  id         String   @id @default(cuid())
+  tenantId   String
+  artId      String?
+  name       String
+  amount     Float
+  spent      Float    @default(0)
+  period     String   // e.g. "PI-2025-Q2"
+  guardrails Json?    // {capex: number, opex: number}
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, artId])
+}
+
+model RoadmapItem {
+  id          String    @id @default(cuid())
+  tenantId    String
+  epicId      String?
+  title       String
+  description String?
+  startDate   DateTime
+  endDate     DateTime
+  color       String    @default("#6366f1")
+  artId       String?
+  status      String    @default("PLANNED") // PLANNED/IN_PROGRESS/DONE
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, startDate, endDate])
+}

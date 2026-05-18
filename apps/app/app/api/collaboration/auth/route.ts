@@ -1,4 +1,4 @@
-import { auth, currentUser } from "@repo/auth/server";
+import { currentUser, getOrgId } from "@repo/auth/server";
 import { authenticate } from "@repo/collaboration/auth";
 
 const COLORS = [
@@ -22,8 +22,7 @@ const COLORS = [
 ];
 
 export const POST = async () => {
-  const user = await currentUser();
-  const { orgId } = await auth();
+  const [user, orgId] = await Promise.all([currentUser(), getOrgId()]);
 
   if (!(user && orgId)) {
     return new Response("Unauthorized", { status: 401 });
@@ -33,9 +32,8 @@ export const POST = async () => {
     userId: user.id,
     orgId,
     userInfo: {
-      name:
-        user.fullName ?? user.emailAddresses.at(0)?.emailAddress ?? undefined,
-      avatar: user.imageUrl ?? undefined,
+      name: user.name ?? user.email,
+      avatar: user.image ?? undefined,
       color: COLORS[Math.floor(Math.random() * COLORS.length)],
     },
   });

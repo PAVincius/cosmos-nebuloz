@@ -1,0 +1,11 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../../generated"
+  engineType      = "library"
+  previewFeatures = ["postgresqlExtensions", "prismaSchemaFolder"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  extensions = [vector]
+}

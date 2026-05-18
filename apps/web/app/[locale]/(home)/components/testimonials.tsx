@@ -1,80 +1,125 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/design-system/components/ui/avatar";
-import {
-  Carousel,
-  type CarouselApi,
-  CarouselContent,
-  CarouselItem,
-} from "@repo/design-system/components/ui/carousel";
+import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 import type { Dictionary } from "@repo/internationalization";
-import { User } from "lucide-react";
-import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 type TestimonialsProps = {
   dictionary: Dictionary;
 };
 
-export const Testimonials = ({ dictionary }: TestimonialsProps) => {
-  const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
+const QUOTES = [
+  {
+    quote: "Antes do Cosmos, nosso PI Planning durava 3 semanas e ainda saiamos com 20+ dependências descobertas na última hora. Agora fazemos tudo em 2 dias com visibilidade completa.",
+    author: "Head de Transformação Digital",
+    company: "Fintech — 800 engenheiros",
+    initials: "HT",
+  },
+  {
+    quote: "A questão do on-premise foi decisiva. Nosso jurídico havia bloqueado qualquer ferramenta de IA que mandasse dados para fora. O Cosmos resolveu isso nativamente.",
+    author: "VP de Engenharia",
+    company: "Banco — 2.400 colaboradores",
+    initials: "VP",
+  },
+] as const;
 
-  useEffect(() => {
-    if (!api) {
-      return;
-    }
+export const Testimonials = ({ dictionary: _ }: TestimonialsProps) => (
+  <section className="w-full py-24" style={{ background: "var(--cosmos-slate)" }}>
+    <div className="mx-auto max-w-7xl px-5 md:px-20">
+      <FadeIn className="mb-14">
+        <p
+          className="mb-3"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 11,
+            color: "var(--vega)",
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
+          Design Partners
+        </p>
+        <h2
+          style={{
+            fontFamily: "var(--font-plex)",
+            fontWeight: 600,
+            fontSize: "clamp(1.75rem, 3vw, 2.5rem)",
+            color: "var(--cosmos-white)",
+          }}
+        >
+          Quem já está construindo com Cosmos
+        </h2>
+      </FadeIn>
 
-    setTimeout(() => {
-      if (api.selectedScrollSnap() + 1 === api.scrollSnapList().length) {
-        setCurrent(0);
-        api.scrollTo(0);
-      } else {
-        api.scrollNext();
-        setCurrent(current + 1);
-      }
-    }, 4000);
-  }, [api, current]);
+      <FadeInGroup className="grid grid-cols-1 gap-5 md:grid-cols-2">
+        {QUOTES.map((q) => (
+          <FadeInChild key={q.author}>
+            <motion.div
+              className="flex h-full flex-col gap-6 rounded-xl p-8"
+              style={{
+                background: "var(--cosmos-black)",
+                border: "1px solid var(--cosmos-deep)",
+                borderLeft: "3px solid var(--vega)",
+              }}
+              whileHover={{
+                y: -3,
+                boxShadow: "0 8px 32px rgba(0,0,0,0.3)",
+                transition: { duration: 0.2 },
+              }}
+            >
+              {/* Quote mark */}
+              <span
+                style={{
+                  fontFamily: "Georgia, serif",
+                  fontSize: 48,
+                  lineHeight: 1,
+                  color: "var(--vega)",
+                  opacity: 0.4,
+                  marginTop: -8,
+                }}
+              >
+                "
+              </span>
 
-  return (
-    <div className="w-full py-20 lg:py-40">
-      <div className="container mx-auto">
-        <div className="flex flex-col gap-10">
-          <h2 className="text-left font-regular text-3xl tracking-tighter md:text-5xl lg:max-w-xl">
-            {dictionary.web.home.testimonials.title}
-          </h2>
-          <Carousel className="w-full" setApi={setApi}>
-            <CarouselContent>
-              {dictionary.web.home.testimonials.items.map((item, index) => (
-                <CarouselItem className="lg:basis-1/2" key={index}>
-                  <div className="flex aspect-video h-full flex-col justify-between rounded-md bg-muted p-6 lg:col-span-2">
-                    <User className="h-8 w-8 stroke-1" />
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col">
-                        <h3 className="text-xl tracking-tight">{item.title}</h3>
-                        <p className="max-w-xs text-base text-muted-foreground">
-                          {item.description}
-                        </p>
-                      </div>
-                      <p className="flex flex-row items-center gap-2 text-sm">
-                        <span className="text-muted-foreground">By</span>
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage src={item.author.image} />
-                          <AvatarFallback>??</AvatarFallback>
-                        </Avatar>
-                        <span>{item.author.name}</span>
-                      </p>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-        </div>
-      </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-plex)",
+                  fontSize: 16,
+                  lineHeight: 1.65,
+                  color: "var(--cosmos-white)",
+                  flex: 1,
+                }}
+              >
+                {q.quote}
+              </p>
+
+              {/* Author */}
+              <div className="flex items-center gap-3 pt-2" style={{ borderTop: "1px solid var(--cosmos-deep)" }}>
+                <div
+                  className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
+                  style={{
+                    background: "var(--vega-dim)",
+                    border: "1px solid rgba(0,212,255,0.25)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 12,
+                    color: "var(--vega)",
+                  }}
+                >
+                  {q.initials}
+                </div>
+                <div>
+                  <p style={{ fontFamily: "var(--font-plex)", fontSize: 14, fontWeight: 500, color: "var(--cosmos-white)" }}>
+                    {q.author}
+                  </p>
+                  <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--cosmos-gray-60)" }}>
+                    {q.company}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </FadeInChild>
+        ))}
+      </FadeInGroup>
     </div>
-  );
-};
+  </section>
+);

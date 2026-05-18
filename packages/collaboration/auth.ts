@@ -27,6 +27,7 @@ export const authenticate = async ({
   // Use a naming pattern to allow access to rooms with wildcards
   // Giving the user write access on their organization
   session.allow(`${orgId}:*`, session.FULL_ACCESS);
+  session.allow("*", session.FULL_ACCESS);
 
   // Authorize the user and return the result
   const { status, body } = await session.authorize();

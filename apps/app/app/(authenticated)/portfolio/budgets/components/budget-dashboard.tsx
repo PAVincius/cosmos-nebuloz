@@ -1,0 +1,509 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import {
+  AlertTriangleIcon,
+  PlusIcon,
+  Trash2Icon,
+  TrendingUpIcon,
+  WalletIcon,
+} from "lucide-react";
+import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
+import { Progress } from "@repo/design-system/components/ui/progress";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/design-system/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/design-system/components/ui/table";
+import {
+  createLeanBudget,
+  deleteLeanBudget,
+  updateLeanBudget,
+  type LeanBudgetWithUsage,
+} from "@/app/actions/lean-budget";
+
+// ─── Types ───────────────────────────────────────────────────────────────────
+
+type ARTOption = { id: string; name: string };
+
+type Props = {
+  initialBudgets: LeanBudgetWithUsage[];
+  arts: ARTOption[];
+};
+
+type CreateForm = {
+  name: string;
+  amount: string;
+  period: string;
+  artId: string;
+  capex: string;
+  opex: string;
+};
+
+const DEFAULT_FORM: CreateForm = {
+  name: "",
+  amount: "",
+  period: "",
+  artId: "",
+  capex: "",
+  opex: "",
+};
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function progressColor(pct: number): string {
+  if (pct >= 90) return "[&>div]:bg-red-500";
+  if (pct >= 80) return "[&>div]:bg-orange-500";
+  if (pct >= 60) return "[&>div]:bg-yellow-500";
+  return "[&>div]:bg-green-500";
+}
+
+// ─── Budget Card ─────────────────────────────────────────────────────────────
+
+function BudgetCard({
+  budget,
+  artName,
+  onDelete,
+  onUpdateSpent,
+}: {
+  budget: LeanBudgetWithUsage;
+  artName: string | undefined;
+  onDelete: (id: string) => void;
+  onUpdateSpent: (id: string, spent: number) => void;
+}) {
+  const [editingSpent, setEditingSpent] = useState(false);
+  const [localSpent, setLocalSpent] = useState(String(budget.spent));
+  const [isPending, startTransition] = useTransition();
+
+  function handleSaveSpent() {
+    const val = parseFloat(localSpent);
+    if (!Number.isNaN(val) && val >= 0) {
+      onUpdateSpent(budget.id, val);
+      startTransition(() => { void updateLeanBudget(budget.id, { spent: val }); });
+    }
+    setEditingSpent(false);
+  }
+
+  return (
+    <Card className={budget.isOverGuardrail ? "border-orange-300 dark:border-orange-700" : ""}>
+      <CardHeader className="pb-3 pt-4 px-4">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <CardTitle className="text-sm font-semibold truncate">{budget.name}</CardTitle>
+            <div className="flex items-center gap-2 mt-1">
+              {artName && (
+                <Badge variant="secondary" className="text-xs">{artName}</Badge>
+              )}
+              <span className="text-xs text-muted-foreground">{budget.period}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-1 shrink-0">
+            {budget.isOverGuardrail && (
+              <AlertTriangleIcon className="h-4 w-4 text-orange-500" aria-label="Guardrail atingido" />
+            )}
+            <button
+              type="button"
+              onClick={() => onDelete(budget.id)}
+              className="text-muted-foreground hover:text-destructive transition-colors"
+              aria-label="Excluir budget"
+            >
+              <Trash2Icon className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="px-4 pb-4 space-y-3">
+        {/* Progress */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs text-muted-foreground">Utilização</span>
+            <span className={`text-xs font-mono font-semibold ${budget.percentUsed >= 80 ? "text-orange-600" : "text-foreground"}`}>
+              {budget.percentUsed}%
+            </span>
+          </div>
+          <Progress value={budget.percentUsed} className={`h-2 ${progressColor(budget.percentUsed)}`} />
+        </div>
+
+        {/* Spent / Total */}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <p className="text-muted-foreground">Gasto</p>
+            {editingSpent ? (
+              <div className="flex items-center gap-1 mt-0.5">
+                <Input
+                  type="number"
+                  value={localSpent}
+                  onChange={(e) => setLocalSpent(e.target.value)}
+                  className="h-6 text-xs w-24"
+                  onKeyDown={(e) => e.key === "Enter" && handleSaveSpent()}
+                  autoFocus
+                />
+                <Button size="sm" className="h-6 text-xs px-2" onClick={handleSaveSpent}>OK</Button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setEditingSpent(true)}
+                className="font-semibold hover:text-primary transition-colors"
+              >
+                {formatCurrency(budget.spent)}
+              </button>
+            )}
+          </div>
+          <div>
+            <p className="text-muted-foreground">Total</p>
+            <p className="font-semibold">{formatCurrency(budget.amount)}</p>
+          </div>
+        </div>
+
+        {/* Guardrails */}
+        {budget.guardrails && (
+          <div className="rounded-md bg-muted/40 px-3 py-2 grid grid-cols-2 gap-2 text-xs">
+            <div>
+              <p className="text-muted-foreground">CapEx</p>
+              <p className="font-mono">{budget.guardrails.capex}%</p>
+            </div>
+            <div>
+              <p className="text-muted-foreground">OpEx</p>
+              <p className="font-mono">{budget.guardrails.opex}%</p>
+            </div>
+          </div>
+        )}
+
+        {budget.isOverGuardrail && (
+          <div className="flex items-center gap-1.5 rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 px-2.5 py-1.5">
+            <AlertTriangleIcon className="h-3.5 w-3.5 text-orange-600 shrink-0" />
+            <p className="text-xs text-orange-700 dark:text-orange-300">
+              Orçamento acima de 80% — verifique guardrails.
+            </p>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+// ─── Main Dashboard ───────────────────────────────────────────────────────────
+
+export function BudgetDashboard({ initialBudgets, arts }: Props) {
+  const [budgets, setBudgets] = useState(initialBudgets);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [form, setForm] = useState<CreateForm>(DEFAULT_FORM);
+  const [isPending, startTransition] = useTransition();
+
+  const artMap = new Map(arts.map((a) => [a.id, a.name]));
+
+  // Consolidated totals per period
+  const periodTotals = Array.from(
+    budgets.reduce((map, b) => {
+      const existing = map.get(b.period) ?? { amount: 0, spent: 0 };
+      return map.set(b.period, {
+        amount: existing.amount + b.amount,
+        spent: existing.spent + b.spent,
+      });
+    }, new Map<string, { amount: number; spent: number }>())
+  ).sort(([a], [b]) => b.localeCompare(a));
+
+  const overGuardrailCount = budgets.filter((b) => b.isOverGuardrail).length;
+
+  function handleDelete(id: string) {
+    setBudgets((prev) => prev.filter((b) => b.id !== id));
+    startTransition(() => { void deleteLeanBudget(id); });
+  }
+
+  function handleUpdateSpent(id: string, spent: number) {
+    setBudgets((prev) =>
+      prev.map((b) => {
+        if (b.id !== id) return b;
+        const percentUsed = b.amount > 0 ? Math.min(100, Math.round((spent / b.amount) * 100)) : 0;
+        return { ...b, spent, percentUsed, isOverGuardrail: percentUsed > 80 };
+      })
+    );
+  }
+
+  async function handleCreate() {
+    if (!form.name.trim() || !form.amount || !form.period.trim()) return;
+    const amount = parseFloat(form.amount);
+    if (Number.isNaN(amount) || amount <= 0) return;
+
+    const capex = parseFloat(form.capex) || 0;
+    const opex = parseFloat(form.opex) || 0;
+    const guardrails = (capex > 0 || opex > 0) ? { capex, opex } : undefined;
+
+    const optimistic: LeanBudgetWithUsage = {
+      id: `tmp-${Date.now()}`,
+      name: form.name,
+      amount,
+      spent: 0,
+      period: form.period,
+      artId: form.artId || null,
+      guardrails: guardrails ?? null,
+      percentUsed: 0,
+      isOverGuardrail: false,
+      isOverBudget: false,
+      isNearLimit: false,
+      tenantId: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    setBudgets((prev) => [optimistic, ...prev]);
+    setForm(DEFAULT_FORM);
+    setDialogOpen(false);
+
+    startTransition(() => {
+      void createLeanBudget({
+        name: form.name,
+        amount,
+        period: form.period,
+        artId: form.artId || undefined,
+        guardrails,
+      });
+    });
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Summary stats */}
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Total Budgets</p>
+            <p className="text-2xl font-bold">{budgets.length}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Total Alocado</p>
+            <p className="text-2xl font-bold">
+              {formatCurrency(budgets.reduce((s, b) => s + b.amount, 0))}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Total Gasto</p>
+            <p className="text-2xl font-bold">
+              {formatCurrency(budgets.reduce((s, b) => s + b.spent, 0))}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground">Alertas Guardrail</p>
+            <p className={`text-2xl font-bold ${overGuardrailCount > 0 ? "text-orange-600" : "text-green-600"}`}>
+              {overGuardrailCount}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Toolbar */}
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-muted-foreground">
+          {budgets.length} budget{budgets.length !== 1 && "s"}
+        </p>
+        <Button size="sm" onClick={() => setDialogOpen(true)}>
+          <PlusIcon className="h-4 w-4 mr-1.5" /> Novo Budget
+        </Button>
+      </div>
+
+      {/* Budget cards */}
+      {budgets.length === 0 ? (
+        <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
+          <WalletIcon className="h-10 w-10 text-muted-foreground/40" />
+          <div>
+            <p className="font-medium text-sm">Nenhum budget configurado</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Configure budgets por ART e período para acompanhar gastos com guardrails Lean.
+            </p>
+          </div>
+          <Button size="sm" onClick={() => setDialogOpen(true)}>
+            <PlusIcon className="h-4 w-4 mr-1.5" /> Criar Budget
+          </Button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {budgets.map((budget) => (
+            <BudgetCard
+              key={budget.id}
+              budget={budget}
+              artName={budget.artId ? artMap.get(budget.artId) : undefined}
+              onDelete={handleDelete}
+              onUpdateSpent={handleUpdateSpent}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Consolidated table by period */}
+      {periodTotals.length > 0 && (
+        <div className="rounded-lg border border-border bg-card overflow-hidden">
+          <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
+            <TrendingUpIcon className="h-4 w-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium">Consolidado por Período</h3>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Período</TableHead>
+                <TableHead className="text-right">Total Alocado</TableHead>
+                <TableHead className="text-right">Total Gasto</TableHead>
+                <TableHead className="text-right">Utilização</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {periodTotals.map(([period, totals]) => {
+                const pct = totals.amount > 0
+                  ? Math.min(100, Math.round((totals.spent / totals.amount) * 100))
+                  : 0;
+                return (
+                  <TableRow key={period}>
+                    <TableCell className="font-medium">{period}</TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatCurrency(totals.amount)}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {formatCurrency(totals.spent)}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className={`text-xs font-mono font-semibold ${pct >= 80 ? "text-orange-600" : "text-green-600"}`}>
+                        {pct}%
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
+      {/* Create Dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Novo Lean Budget</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="grid gap-1">
+              <Label>Nome</Label>
+              <Input
+                placeholder="Ex: Q1 2026 - ART Platform"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-1">
+                <Label>Valor Total (R$)</Label>
+                <Input
+                  type="number"
+                  placeholder="1000000"
+                  value={form.amount}
+                  onChange={(e) => setForm({ ...form, amount: e.target.value })}
+                />
+              </div>
+              <div className="grid gap-1">
+                <Label>Período</Label>
+                <Input
+                  placeholder="Ex: 2026-Q1"
+                  value={form.period}
+                  onChange={(e) => setForm({ ...form, period: e.target.value })}
+                />
+              </div>
+            </div>
+            {arts.length > 0 && (
+              <div className="grid gap-1">
+                <Label>ART (opcional)</Label>
+                <Select
+                  value={form.artId || "none"}
+                  onValueChange={(v) => setForm({ ...form, artId: v === "none" ? "" : v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecionar ART" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Nenhuma</SelectItem>
+                    {arts.map((art) => (
+                      <SelectItem key={art.id} value={art.id}>
+                        {art.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+            {/* Guardrails */}
+            <div className="rounded-md border border-border p-3 space-y-2">
+              <p className="text-xs font-medium text-muted-foreground">Guardrails (opcional)</p>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-1">
+                  <Label className="text-xs">CapEx (%)</Label>
+                  <Input
+                    type="number"
+                    placeholder="40"
+                    value={form.capex}
+                    onChange={(e) => setForm({ ...form, capex: e.target.value })}
+                    className="h-8 text-xs"
+                  />
+                </div>
+                <div className="grid gap-1">
+                  <Label className="text-xs">OpEx (%)</Label>
+                  <Input
+                    type="number"
+                    placeholder="60"
+                    value={form.opex}
+                    onChange={(e) => setForm({ ...form, opex: e.target.value })}
+                    className="h-8 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              onClick={handleCreate}
+              disabled={isPending || !form.name.trim() || !form.amount || !form.period.trim()}
+            >
+              Criar Budget
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}

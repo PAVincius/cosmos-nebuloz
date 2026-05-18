@@ -7,6 +7,9 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.0",
+    "langfuse": "^3.0.0",
+    "@ai-sdk/google": "^1.0.0",
     "@ai-sdk/openai": "^2.0.77",
     "@t3-oss/env-nextjs": "^0.13.8",
     "ai": "^5.0.107",

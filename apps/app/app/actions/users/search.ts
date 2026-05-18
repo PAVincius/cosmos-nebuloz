@@ -1,52 +1,28 @@
 "use server";
 
-import {
-  auth,
-  clerkClient,
-  type OrganizationMembership,
-} from "@repo/auth/server";
+import { requireTenantSession } from "@repo/auth/server";
+import { database } from "@repo/database";
 import Fuse from "fuse.js";
-
-const getName = (user: OrganizationMembership): string | undefined => {
-  let name = user.publicUserData?.firstName;
-
-  if (name && user.publicUserData?.lastName) {
-    name = `${name} ${user.publicUserData.lastName}`;
-  } else if (!name) {
-    name = user.publicUserData?.identifier;
-  }
-
-  return name;
-};
+import { headers } from "next/headers";
 
 export const searchUsers = async (
   query: string
-): Promise<
-  | {
-      data: string[];
-    }
-  | {
-      error: unknown;
-    }
-> => {
+): Promise<{ data: string[] } | { error: unknown }> => {
   try {
-    const { orgId } = await auth();
+    const ctx = await requireTenantSession(await headers());
 
-    if (!orgId) {
-      throw new Error("Not logged in");
-    }
-
-    const clerk = await clerkClient();
-
-    const members = await clerk.organizations.getOrganizationMembershipList({
-      organizationId: orgId,
-      limit: 100,
+    const memberships = await database.tenantMember.findMany({
+      where: { tenantId: ctx.tenantId },
+      include: {
+        user: { select: { id: true, name: true, email: true, image: true } },
+      },
+      take: 100,
     });
 
-    const users = members.data.map((user) => ({
-      id: user.id,
-      name: getName(user) ?? user.publicUserData?.identifier,
-      imageUrl: user.publicUserData?.imageUrl,
+    const users = memberships.map((m) => ({
+      id: m.userId,
+      name: m.user.name ?? m.user.email,
+      imageUrl: m.user.image,
     }));
 
     const fuse = new Fuse(users, {
@@ -56,9 +32,7 @@ export const searchUsers = async (
     });
 
     const results = fuse.search(query);
-    const data = results.map((result) => result.item.id);
-
-    return { data };
+    return { data: results.map((r) => r.item.id) };
   } catch (error) {
     return { error };
   }

@@ -1,6 +1,7 @@
 "use client";
 
-import { OrganizationSwitcher, UserButton } from "@repo/auth/client";
+import { UserButton } from "./user-button";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 import { ModeToggle } from "@repo/design-system/components/mode-toggle";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -8,13 +9,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@repo/design-system/components/ui/collapsible";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/design-system/components/ui/dropdown-menu";
 import {
   Sidebar,
   SidebarContent,
@@ -31,184 +25,154 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  useSidebar,
 } from "@repo/design-system/components/ui/sidebar";
-import { cn } from "@repo/design-system/lib/utils";
 import { NotificationsTrigger } from "@repo/notifications/components/trigger";
 import {
   AnchorIcon,
-  BookOpenIcon,
-  BotIcon,
+  BarChart3Icon,
+  BellIcon,
   ChevronRightIcon,
-  FolderIcon,
-  FrameIcon,
+  LayoutDashboardIcon,
   LifeBuoyIcon,
-  MapIcon,
-  MoreHorizontalIcon,
-  PieChartIcon,
   SendIcon,
   Settings2Icon,
-  ShareIcon,
-  SquareTerminalIcon,
-  Trash2Icon,
+  TrainFrontIcon,
+  UsersIcon,
+  VoteIcon,
+  WorkflowIcon,
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Search } from "./search";
 
+type SidebarTeam = { id: string; name: string };
+
+type SidebarTenant = { id: string; name: string; slug: string; logo: string | null; role: string };
+
 type GlobalSidebarProperties = {
   readonly children: ReactNode;
+  readonly user?: { name: string; email: string; avatar: string };
+  readonly teams?: SidebarTeam[];
+  readonly initialTenants?: SidebarTenant[];
+  readonly initialActiveTenantId?: string | null;
 };
 
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+type NavItem = { title: string; url: string; isNested?: boolean };
+
+const buildNavData = (
+  user: { name: string; email: string; avatar: string },
+  teams: SidebarTeam[] = []
+) => ({
+  user,
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminalIcon,
+      title: "Portfolio",
+      url: "/portfolio",
+      icon: LayoutDashboardIcon,
       isActive: true,
       items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
+        { title: "Kanban de Épicos", url: "/portfolio" },
+        { title: "WSJF Rankings", url: "/portfolio/wsjf" },
+        { title: "Temas Estratégicos", url: "/portfolio/themes" },
+        { title: "OKRs", url: "/portfolio/okrs" },
+        { title: "Lean Budget", url: "/portfolio/budgets" },
+        { title: "Roadmap", url: "/portfolio/roadmap" },
+      ] as NavItem[],
+    },
+    {
+      title: "ART Board",
+      url: "/arts",
+      icon: TrainFrontIcon,
+      items: [
+        { title: "Todos os ARTs", url: "/arts" },
+        { title: "Votação de confiança", url: "/pi-planning" },
       ],
     },
     {
-      title: "Models",
-      url: "#",
-      icon: BotIcon,
+      title: "Times",
+      url: "/teams",
+      icon: UsersIcon,
       items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
+        { title: "Todos os Times", url: "/teams" },
+        ...teams.slice(0, 8).map((t) => ({
+          title: t.name,
+          url: `/teams/${t.id}`,
+          isNested: true,
+        })),
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpenIcon,
+      title: "Analytics",
+      url: "/analytics",
+      icon: BarChart3Icon,
       items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
+        { title: "Métricas SAFe", url: "/analytics" },
+        { title: "Riscos ROAM", url: "/risks" },
+        { title: "Velocity", url: "/teams" },
+      ],
+    },
+    {
+      title: "Workflows",
+      url: "/workflows",
+      icon: WorkflowIcon,
+      items: [
+        { title: "BPMN Canvas", url: "/workflows/team-demo/bpmn" },
+        { title: "Dependências", url: "/dependencies" },
+      ],
+    },
+    {
+      title: "Large Solution",
+      url: "/solution-trains",
+      icon: AnchorIcon,
+      items: [
+        { title: "Solution Trains", url: "/solution-trains" },
+        { title: "LACE", url: "/lace" },
+        { title: "Fornecedores", url: "/suppliers" },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings/workspace",
       icon: Settings2Icon,
       items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
+        { title: "Workspace", url: "/settings/workspace" },
+        { title: "Membros", url: "/settings/members" },
+        { title: "Integrações", url: "/settings/integrations" },
+        { title: "Audit Log", url: "/settings/audit" },
       ],
     },
   ],
   navSecondary: [
-    {
-      title: "Webhooks",
-      url: "/webhooks",
-      icon: AnchorIcon,
-    },
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoyIcon,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: SendIcon,
-    },
+    { title: "Webhooks",     url: "/webhooks",              icon: AnchorIcon },
+    { title: "Notificações", url: "/notifications",         icon: BellIcon },
+    { title: "Perfil",       url: "/profile",               icon: UsersIcon },
+    { title: "Suporte",      url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
+    { title: "Feedback",     url: "/feedback",              icon: SendIcon },
   ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: FrameIcon,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChartIcon,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: MapIcon,
-    },
-  ],
-};
+  projects: [] as { name: string; url: string; icon: typeof VoteIcon }[],
+});
 
-export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
-  const sidebar = useSidebar();
-
+export const GlobalSidebar = ({
+  children,
+  user: userProp,
+  teams = [],
+  initialTenants = [],
+  initialActiveTenantId = null,
+}: GlobalSidebarProperties) => {
+  const data = buildNavData(
+    userProp ?? { name: "Usuário", email: "", avatar: "" },
+    teams
+  );
   return (
     <>
       <Sidebar variant="inset">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <div
-                className={cn(
-                  "h-[36px] overflow-hidden transition-all [&>div]:w-full",
-                  sidebar.open ? "" : "-mx-1"
-                )}
-              >
-                <OrganizationSwitcher
-                  afterSelectOrganizationUrl="/"
-                  hidePersonal
-                />
-              </div>
+              <WorkspaceSwitcher
+                initialTenants={initialTenants}
+                initialActiveTenantId={initialActiveTenantId}
+              />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -240,8 +204,8 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <SidebarMenuSub>
-                            {item.items?.map((subItem) => (
-                              <SidebarMenuSubItem key={subItem.title}>
+                            {(item.items as NavItem[])?.filter((s) => !s.isNested).map((subItem) => (
+                              <SidebarMenuSubItem key={subItem.url}>
                                 <SidebarMenuSubButton asChild>
                                   <Link href={subItem.url}>
                                     <span>{subItem.title}</span>
@@ -249,6 +213,21 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
                                 </SidebarMenuSubButton>
                               </SidebarMenuSubItem>
                             ))}
+                            {(item.items as NavItem[])?.some((s) => s.isNested) && (
+                              <SidebarMenuSubItem>
+                                <SidebarMenuSub>
+                                  {(item.items as NavItem[]).filter((s) => s.isNested).map((subItem) => (
+                                    <SidebarMenuSubItem key={subItem.url}>
+                                      <SidebarMenuSubButton asChild>
+                                        <Link href={subItem.url}>
+                                          <span>{subItem.title}</span>
+                                        </Link>
+                                      </SidebarMenuSubButton>
+                                    </SidebarMenuSubItem>
+                                  ))}
+                                </SidebarMenuSub>
+                              </SidebarMenuSubItem>
+                            )}
                           </SidebarMenuSub>
                         </CollapsibleContent>
                       </>
@@ -256,54 +235,6 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
                   </SidebarMenuItem>
                 </Collapsible>
               ))}
-            </SidebarMenu>
-          </SidebarGroup>
-          <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-            <SidebarGroupLabel>Projects</SidebarGroupLabel>
-            <SidebarMenu>
-              {data.projects.map((item) => (
-                <SidebarMenuItem key={item.name}>
-                  <SidebarMenuButton asChild>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.name}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <SidebarMenuAction showOnHover>
-                        <MoreHorizontalIcon />
-                        <span className="sr-only">More</span>
-                      </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-48"
-                      side="bottom"
-                    >
-                      <DropdownMenuItem>
-                        <FolderIcon className="text-muted-foreground" />
-                        <span>View Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <ShareIcon className="text-muted-foreground" />
-                        <span>Share Project</span>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>
-                        <Trash2Icon className="text-muted-foreground" />
-                        <span>Delete Project</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </SidebarMenuItem>
-              ))}
-              <SidebarMenuItem>
-                <SidebarMenuButton>
-                  <MoreHorizontalIcon />
-                  <span>More</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>
           <SidebarGroup className="mt-auto">
@@ -327,14 +258,9 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
           <SidebarMenu>
             <SidebarMenuItem className="flex items-center gap-2">
               <UserButton
-                appearance={{
-                  elements: {
-                    rootBox: "flex overflow-hidden w-full",
-                    userButtonBox: "flex-row-reverse",
-                    userButtonOuterIdentifier: "truncate pl-0",
-                  },
-                }}
-                showName
+                name={data.user.name}
+                email={data.user.email}
+                avatar={data.user.avatar}
               />
               <div className="flex shrink-0 items-center gap-px">
                 <ModeToggle />
@@ -353,7 +279,7 @@ export const GlobalSidebar = ({ children }: GlobalSidebarProperties) => {
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="min-h-0 overflow-x-hidden">{children}</SidebarInset>
     </>
   );
 };

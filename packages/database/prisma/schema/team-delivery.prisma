@@ -1,0 +1,163 @@
+// Wave 1 — Team Level delivery entities
+
+model Sprint {
+  id          String    @id @default(cuid())
+  tenantId    String
+  teamId      String
+  name        String
+  goal        String?
+  startDate   DateTime
+  endDate     DateTime
+  status      String    @default("PLANNING") // PLANNING/ACTIVE/COMPLETED
+  capacity    Int?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  team   Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  stories Story[]
+  review  SprintReview?
+  retro   Retrospective?
+
+  @@index([tenantId])
+  @@index([teamId])
+  @@index([tenantId, status])
+}
+
+model Story {
+  id                 String    @id @default(cuid())
+  tenantId           String
+  sprintId           String?
+  featureId          String?
+  title              String
+  description        String?   @db.Text
+  acceptanceCriteria String?   @db.Text
+  storyPoints        Int       @default(1)
+  status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE
+  priority           String    @default("medium")  // critical/high/medium/low
+  assigneeUserId     String?
+  order              Int       @default(0)
+  completedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint  Sprint?  @relation(fields: [sprintId], references: [id], onDelete: SetNull)
+  feature Feature? @relation(fields: [featureId], references: [id], onDelete: SetNull)
+  tasks   Task[]
+
+  @@index([tenantId])
+  @@index([sprintId])
+  @@index([featureId])
+  @@index([tenantId, status])
+}
+
+model Task {
+  id             String    @id @default(cuid())
+  tenantId       String
+  storyId        String
+  title          String
+  description    String?
+  status         String    @default("TODO") // TODO/IN_PROGRESS/DONE
+  assigneeUserId String?
+  estimateHours  Float?
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  story  Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([storyId])
+}
+
+model Defect {
+  id             String    @id @default(cuid())
+  tenantId       String
+  teamId         String?
+  storyId        String?
+  title          String
+  description    String?   @db.Text
+  severity       String    @default("medium") // critical/high/medium/low
+  status         String    @default("OPEN")   // OPEN/IN_PROGRESS/RESOLVED/CLOSED
+  reporterUserId String?
+  assigneeUserId String?
+  resolvedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([teamId])
+  @@index([tenantId, status])
+}
+
+model Impediment {
+  id          String    @id @default(cuid())
+  tenantId    String
+  teamId      String?
+  title       String
+  description String?   @db.Text
+  status      String    @default("OPEN") // OPEN/IN_PROGRESS/RESOLVED
+  ownerUserId String?
+  resolvedAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([teamId])
+}
+
+model StandupEntry {
+  id        String   @id @default(cuid())
+  tenantId  String
+  teamId    String
+  userId    String
+  date      DateTime @db.Date
+  yesterday String?  @db.Text
+  today     String?  @db.Text
+  blockers  String?  @db.Text
+  createdAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId, date])
+  @@index([tenantId])
+  @@index([teamId, date])
+}
+
+model SprintReview {
+  id        String   @id @default(cuid())
+  tenantId  String
+  sprintId  String   @unique
+  velocity  Int?
+  demoNotes String?  @db.Text
+  goalMet   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+model Retrospective {
+  id        String   @id @default(cuid())
+  tenantId  String
+  sprintId  String   @unique
+  wentWell  Json     @default("[]")
+  toImprove Json     @default("[]")
+  actions   Json     @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}

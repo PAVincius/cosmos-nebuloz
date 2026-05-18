@@ -51,17 +51,12 @@ const composedMiddleware = createNEMO(
   }
 );
 
-// Clerk middleware wraps other middleware in its callback
-export default authMiddleware(async (_auth, request, event) => {
-  // Run security headers first
+export default authMiddleware(async (request) => {
   const headersResponse = securityHeaders();
-
-  // Then run composed middleware (i18n + arcjet)
-  const middlewareResponse = await composedMiddleware(
-    request as unknown as NextRequest,
-    event
-  );
-
-  // Return middleware response if it exists, otherwise headers response
-  return middlewareResponse || headersResponse;
+  try {
+    const i18nResponse = await internationalizationMiddleware(request);
+    return i18nResponse || headersResponse;
+  } catch {
+    return headersResponse;
+  }
 }) as unknown as NextProxy;

@@ -1,10 +1,15 @@
-import type { Message as MessageType } from "ai";
 import type { ComponentProps } from "react";
 import { Streamdown } from "streamdown";
 import { twMerge } from "tailwind-merge";
 
+/** Payload simples (texto + papel) usado por este componente legado. */
+export type LegacyChatMessage = {
+  role: "user" | "assistant" | string;
+  content: string;
+};
+
 type MessageProps = {
-  data: MessageType;
+  data: LegacyChatMessage;
   markdown?: ComponentProps<typeof Streamdown>;
 };
 

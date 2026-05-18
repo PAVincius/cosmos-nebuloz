@@ -1,0 +1,110 @@
+[
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1778697955052-1",
+    "persona": "po",
+    "timestamp": 1778697955052
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/api/features",
+    "story": "Como PO, quero visualizar WSJF de Features e reordenar backlog.",
+    "description": "No GET /api/features endpoint — WSJF only accessible via server actions",
+    "expected": "REST API or tRPC router for Feature CRUD",
+    "actual": "HTTP 404 — features only via server actions",
+    "suggestion": "Consider adding GET /api/features for client-side pagination in backlog view",
+    "codeRef": "apps/app/app/actions/features/update-wsjf.ts",
+    "id": "po-1778697955057-1",
+    "persona": "po",
+    "timestamp": 1778697955057
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1778697955911-1",
+    "persona": "po",
+    "timestamp": 1778697955911
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1778697956258-1",
+    "persona": "po",
+    "timestamp": 1778697956258
+  },
+  {
+    "severity": "low",
+    "category": "design-violation",
+    "route": "/sign-in",
+    "description": "Submit button may not use primary lavender-blue token",
+    "expected": "Button bg = var(--color-primary) ≈ lavender-blue",
+    "actual": "Computed bg: lab(41.9251 20.0026 -70.4365)",
+    "suggestion": "Verify button uses bg-primary Tailwind class mapped to CSS var(--color-primary)",
+    "codeRef": "packages/auth/components/sign-in.tsx",
+    "id": "po-1778697956594-1",
+    "persona": "po",
+    "timestamp": 1778697956594
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1778714168602-1",
+    "persona": "po",
+    "timestamp": 1778714168602
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/api/features",
+    "story": "Como PO, quero visualizar WSJF de Features e reordenar backlog.",
+    "description": "No GET /api/features endpoint — WSJF only accessible via server actions",
+    "expected": "REST API or tRPC router for Feature CRUD",
+    "actual": "HTTP 404 — features only via server actions",
+    "suggestion": "Consider adding GET /api/features for client-side pagination in backlog view",
+    "codeRef": "apps/app/app/actions/features/update-wsjf.ts",
+    "id": "po-1778714168933-2",
+    "persona": "po",
+    "timestamp": 1778714168933
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1778714169037-3",
+    "persona": "po",
+    "timestamp": 1778714169037
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1778714169770-4",
+    "persona": "po",
+    "timestamp": 1778714169770
+  },
+  {
+    "severity": "low",
+    "category": "design-violation",
+    "route": "/sign-in",
+    "description": "Submit button may not use primary lavender-blue token",
+    "expected": "Button bg = var(--color-primary) ≈ lavender-blue",
+    "actual": "Computed bg: lab(41.9251 20.0026 -70.4365)",
+    "suggestion": "Verify button uses bg-primary Tailwind class mapped to CSS var(--color-primary)",
+    "codeRef": "packages/auth/components/sign-in.tsx",
+    "id": "po-1778714170930-5",
+    "persona": "po",
+    "timestamp": 1778714170930
+  }
+]

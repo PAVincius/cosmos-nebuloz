@@ -10,8 +10,20 @@ declare global {
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
     Storage: {
-      // Example, a conflict-free list
-      // animals: LiveList<string>;
+      // Portfolio Kanban — epic cards indexed by epicId
+      kanbanEpics?: import("@liveblocks/client").LiveList<
+        import("@liveblocks/client").LiveObject<{
+          id: string;
+          title: string;
+          statusId: string;
+          order: number;
+          wsjfScore: number;
+        }>
+      >;
+      
+      // PI Planning Confidence Vote
+      piState?: string; // 'NOT_STARTED' | 'OPEN' | 'TALLYING' | 'REWORK' | 'APPROVED'
+      piVotes?: import("@liveblocks/client").LiveMap<string, number>; // userId -> vote value (1-5)
     };
 
     // Custom user info set when authenticating with a secret key

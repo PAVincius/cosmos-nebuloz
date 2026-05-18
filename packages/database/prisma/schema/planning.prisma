@@ -1,0 +1,66 @@
+// Dependency tracking between features
+model DependencyLink {
+  id                String   @id @default(cuid())
+  tenantId          String
+  blockingFeatureId String
+  blockedFeatureId  String
+  description       String?
+  status            String   @default("not-started") // not-started/on-track/at-risk/blocked/completed
+  type              String   @default("technical")   // technical/business/organizational/external
+  severity          String   @default("medium")      // critical/high/medium/low
+  ownerUserId       String?
+  notes             String?
+  dueDate           DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant          Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  blockingFeature Feature @relation("BlockingFeature", fields: [blockingFeatureId], references: [id], onDelete: Cascade)
+  blockedFeature  Feature @relation("BlockedFeature", fields: [blockedFeatureId], references: [id], onDelete: Cascade)
+
+  @@unique([blockingFeatureId, blockedFeatureId])
+  @@index([tenantId])
+  @@index([blockingFeatureId])
+  @@index([blockedFeatureId])
+}
+
+// React Flow visual nodes for team workflows
+model TeamWorkflowNode {
+  id       String @id @default(cuid())
+  tenantId String
+  teamId   String
+  type     String // e.g. "customNode", "station"
+  position Json   // { x, y }
+  data     Json   // { label, status, etc }
+  
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, teamId])
+}
+
+// React Flow visual edges for team workflows
+model TeamWorkflowEdge {
+  id           String  @id @default(cuid())
+  tenantId     String
+  teamId       String
+  sourceNodeId String
+  targetNodeId String
+  animated     Boolean @default(true)
+  
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, teamId])
+}
+
+// Enterprise Workflows (BPMN Compliance)
+model BpmnDefinition {
+  id          String @id @default(cuid())
+  tenantId    String
+  teamId      String
+  xmlContent  String @db.Text // Conteúdo nativo para o bpmn-js processar
+  version     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId, teamId])
+}

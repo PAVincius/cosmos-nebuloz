@@ -1,200 +1,187 @@
 "use client";
 
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@repo/design-system/components/ui/navigation-menu";
 import type { Dictionary } from "@repo/internationalization";
-import { CommandIcon, Menu, MoveRight, X } from "lucide-react";
-import Image from "next/image";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { env } from "@/env";
-import { LanguageSwitcher } from "./language-switcher";
 
 type HeaderProps = {
   dictionary: Dictionary;
 };
 
-export const Header = ({ dictionary }: HeaderProps) => {
-  const navigationItems = [
-    {
-      title: dictionary.web.header.home,
-      href: "/",
-      description: "",
-    },
-    {
-      title: dictionary.web.header.product.title,
-      description: dictionary.web.header.product.description,
-      items: [
-        {
-          title: dictionary.web.header.product.pricing,
-          href: "/pricing",
-        },
-      ],
-    },
-    {
-      title: dictionary.web.header.blog,
-      href: "/blog",
-      description: "",
-    },
-  ];
+const NAV_ITEMS = [
+  { label: "Produto", href: "/#produto" },
+  { label: "Comparação", href: "/#comparacao" },
+  { label: "Preços", href: "/#precos" },
+  { label: "Blog", href: "/blog" },
+] as const;
 
-  if (env.NEXT_PUBLIC_DOCS_URL) {
-    navigationItems.push({
-      title: dictionary.web.header.docs,
-      href: env.NEXT_PUBLIC_DOCS_URL,
-      description: "",
-    });
-  }
+export const Header = ({ dictionary: _ }: HeaderProps) => {
+  const [open, setOpen] = useState(false);
 
-  const [isOpen, setOpen] = useState(false);
   return (
-    <header className="sticky top-0 left-0 z-40 w-full border-b bg-background">
-      <div className="container relative mx-auto flex min-h-20 flex-row items-center gap-4 lg:grid lg:grid-cols-3">
-        <div className="hidden flex-row items-center justify-start gap-4 lg:flex">
-          <NavigationMenu className="flex items-start justify-start">
-            <NavigationMenuList className="flex flex-row justify-start gap-4">
-              {navigationItems.map((item) => (
-                <NavigationMenuItem key={item.title}>
-                  {item.href ? (
-                    <NavigationMenuLink asChild>
-                      <Button asChild variant="ghost">
-                        <Link href={item.href}>{item.title}</Link>
-                      </Button>
-                    </NavigationMenuLink>
-                  ) : (
-                    <>
-                      <NavigationMenuTrigger className="font-medium text-sm">
-                        {item.title}
-                      </NavigationMenuTrigger>
-                      <NavigationMenuContent className="!w-[450px] p-4">
-                        <div className="flex grid-cols-2 flex-col gap-4 lg:grid">
-                          <div className="flex h-full flex-col justify-between">
-                            <div className="flex flex-col">
-                              <p className="text-base">{item.title}</p>
-                              <p className="text-muted-foreground text-sm">
-                                {item.description}
-                              </p>
-                            </div>
-                            <Button asChild className="mt-10" size="sm">
-                              <Link href="/contact">
-                                {dictionary.web.global.primaryCta}
-                              </Link>
-                            </Button>
-                          </div>
-                          <div className="flex h-full flex-col justify-end text-sm">
-                            {item.items?.map((subItem, idx) => (
-                              <NavigationMenuLink
-                                className="flex flex-row items-center justify-between rounded px-4 py-2 hover:bg-muted"
-                                href={subItem.href}
-                                key={idx}
-                              >
-                                <span>{subItem.title}</span>
-                                <MoveRight className="h-4 w-4 text-muted-foreground" />
-                              </NavigationMenuLink>
-                            ))}
-                          </div>
-                        </div>
-                      </NavigationMenuContent>
-                    </>
-                  )}
-                </NavigationMenuItem>
-              ))}
-            </NavigationMenuList>
-          </NavigationMenu>
-        </div>
-        <div className="flex items-center gap-2 lg:justify-center">
-          <svg
-            className="-translate-y-[0.5px] h-[18px] w-[18px] fill-current"
-            fill="none"
-            height="22"
-            viewBox="0 0 235 203"
-            xmlns="http://www.w3.org/2000/svg"
+    <header
+      className="sticky top-0 z-50 w-full"
+      style={{
+        background: "rgba(10,14,39,0.92)",
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        borderBottom: "1px solid var(--cosmos-deep)",
+      }}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-20">
+        {/* Logo */}
+        <Link href="/" className="flex items-center gap-2">
+          <div
+            className="flex h-7 w-7 items-center justify-center rounded"
+            style={{
+              background: "var(--vega-dim)",
+              border: "1px solid rgba(0,212,255,0.3)",
+            }}
           >
-            <title>Vercel</title>
-            <path
-              d="M117.082 0L234.164 202.794H0L117.082 0Z"
-              fill="currentColor"
-            />
-          </svg>
-          <p className="whitespace-nowrap font-semibold">next-forge</p>
-        </div>
-        <div className="flex w-full justify-end gap-4">
-          <Button asChild className="hidden md:inline" variant="ghost">
-            <Link href="/contact">{dictionary.web.header.contact}</Link>
-          </Button>
-          <div className="hidden border-r md:inline" />
-          <div className="hidden md:inline">
-            <LanguageSwitcher />
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontWeight: 600,
+                fontSize: 13,
+                color: "var(--vega)",
+              }}
+            >
+              C
+            </span>
           </div>
-          <div className="hidden md:inline">
-            <ModeToggle />
-          </div>
-          <Button asChild className="hidden md:inline" variant="outline">
-            <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}>
-              {dictionary.web.header.signIn}
+          <span
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontWeight: 600,
+              fontSize: 16,
+              color: "var(--cosmos-white)",
+              letterSpacing: "-0.01em",
+            }}
+          >
+            Cosmos
+          </span>
+        </Link>
+
+        {/* Desktop nav */}
+        <nav className="hidden items-center gap-1 md:flex">
+          {NAV_ITEMS.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="rounded-md px-3 py-2 transition-colors"
+              style={{
+                fontFamily: "var(--font-plex)",
+                fontSize: 14,
+                color: "var(--cosmos-gray-60)",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color =
+                  "var(--cosmos-white)";
+                (e.currentTarget as HTMLAnchorElement).style.background =
+                  "var(--cosmos-slate)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLAnchorElement).style.color =
+                  "var(--cosmos-gray-60)";
+                (e.currentTarget as HTMLAnchorElement).style.background =
+                  "transparent";
+              }}
+            >
+              {item.label}
             </Link>
-          </Button>
-          <Button asChild>
-            <Link href={`${env.NEXT_PUBLIC_APP_URL}/sign-up`}>
-              {dictionary.web.header.signUp}
-            </Link>
+          ))}
+        </nav>
+
+        {/* Desktop CTAs */}
+        <div className="hidden items-center gap-3 md:flex">
+          <Link
+            href={`${env.NEXT_PUBLIC_APP_URL}/sign-in`}
+            style={{
+              fontFamily: "var(--font-plex)",
+              fontSize: 14,
+              color: "var(--cosmos-gray-60)",
+              padding: "8px 16px",
+            }}
+          >
+            Entrar
+          </Link>
+          <Button
+            asChild
+            style={{
+              background: "var(--vega)",
+              color: "var(--cosmos-black)",
+              fontFamily: "var(--font-plex)",
+              fontWeight: 600,
+              fontSize: 14,
+              padding: "8px 20px",
+              borderRadius: 6,
+              border: "none",
+            }}
+          >
+            <Link href="/contact">Agendar demo</Link>
           </Button>
         </div>
-        <div className="flex w-12 shrink items-end justify-end lg:hidden">
-          <Button onClick={() => setOpen(!isOpen)} variant="ghost">
-            {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </Button>
-          {isOpen && (
-            <div className="container absolute top-20 right-0 flex w-full flex-col gap-8 border-t bg-background py-4 shadow-lg">
-              {navigationItems.map((item) => (
-                <div key={item.title}>
-                  <div className="flex flex-col gap-2">
-                    {item.href ? (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={item.href}
-                        rel={
-                          item.href.startsWith("http")
-                            ? "noopener noreferrer"
-                            : undefined
-                        }
-                        target={
-                          item.href.startsWith("http") ? "_blank" : undefined
-                        }
-                      >
-                        <span className="text-lg">{item.title}</span>
-                        <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
-                      </Link>
-                    ) : (
-                      <p className="text-lg">{item.title}</p>
-                    )}
-                    {item.items?.map((subItem) => (
-                      <Link
-                        className="flex items-center justify-between"
-                        href={subItem.href}
-                        key={subItem.title}
-                      >
-                        <span className="text-muted-foreground">
-                          {subItem.title}
-                        </span>
-                        <MoveRight className="h-4 w-4 stroke-1" />
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+
+        {/* Mobile menu button */}
+        <button
+          type="button"
+          className="flex items-center justify-center rounded md:hidden"
+          style={{
+            color: "var(--cosmos-gray-60)",
+            padding: 8,
+            background: "transparent",
+            border: "none",
+          }}
+          onClick={() => setOpen(!open)}
+          aria-label="Toggle menu"
+        >
+          {open ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div
+          className="px-5 pb-5 pt-2 md:hidden"
+          style={{ borderTop: "1px solid var(--cosmos-deep)" }}
+        >
+          <nav className="flex flex-col gap-2">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="rounded-md px-3 py-3"
+                style={{
+                  fontFamily: "var(--font-plex)",
+                  fontSize: 16,
+                  color: "var(--cosmos-white)",
+                  borderBottom: "1px solid var(--cosmos-deep)",
+                }}
+                onClick={() => setOpen(false)}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="mt-3 flex flex-col gap-2">
+              <Button
+                asChild
+                style={{
+                  background: "var(--vega)",
+                  color: "var(--cosmos-black)",
+                  fontFamily: "var(--font-plex)",
+                  fontWeight: 600,
+                  width: "100%",
+                }}
+              >
+                <Link href="/contact">Agendar demo</Link>
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };

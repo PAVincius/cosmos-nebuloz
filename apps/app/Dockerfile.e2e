@@ -1,0 +1,51 @@
+# Dockerfile.e2e — Cosmos Enterprise App (E2E Testing)
+#
+# Otimizado para testes E2E: usa pnpm dev (não build de produção)
+# para ter hot reload e variáveis de ambiente flexíveis.
+#
+# Build da raiz do monorepo:
+#   docker build -f apps/app/Dockerfile.e2e -t cosmos-e2e-app .
+
+FROM node:22-slim AS base
+
+# Install pnpm
+RUN corepack enable && corepack prepare pnpm@10.24.0 --activate
+
+WORKDIR /app
+
+# ────────────────────────────────────────────
+# Instalar dependências
+# ────────────────────────────────────────────
+FROM base AS deps
+
+# Copiar arquivos de dependências
+COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
+COPY apps/app/package.json ./apps/app/
+COPY apps/api/package.json ./apps/api/
+COPY apps/web/package.json ./apps/web/
+
+# Copiar todos os packages
+COPY packages/ ./packages/
+
+# Instalar dependências (frozen para reprodutibilidade)
+RUN pnpm install --frozen-lockfile --ignore-scripts
+
+# ────────────────────────────────────────────
+# App runner
+# ────────────────────────────────────────────
+FROM base AS runner
+
+WORKDIR /app
+
+COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/app/node_modules ./apps/app/node_modules
+COPY . .
+
+WORKDIR /app/apps/app
+
+EXPOSE 3000
+
+# Gera o Prisma client antes de rodar
+RUN cd ../../packages/database && npx prisma generate || true
+
+CMD ["pnpm", "dev"]

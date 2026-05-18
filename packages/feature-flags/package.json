@@ -9,6 +9,7 @@
   "dependencies": {
     "@repo/analytics": "workspace:*",
     "@repo/auth": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@vercel/toolbar": "^0.1.41",

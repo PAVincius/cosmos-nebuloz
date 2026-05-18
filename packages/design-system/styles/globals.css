@@ -6,79 +6,114 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ─── COSMOS Light Mode (Linear-inspired) ─────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.14 0.005 280);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.14 0.005 280);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.14 0.005 280);
+  --primary: oklch(0.52 0.20 264);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --success: oklch(50.8% 0.118 165.612);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
+  --secondary: oklch(0.94 0.003 280);
+  --secondary-foreground: oklch(0.20 0.005 280);
+  --muted: oklch(0.94 0.003 280);
+  --muted-foreground: oklch(0.50 0.005 280);
+  --accent: oklch(0.94 0.003 280);
+  --accent-foreground: oklch(0.20 0.005 280);
+  --destructive: oklch(0.55 0.22 27);
+  --destructive-foreground: oklch(0.985 0 0);
+  --success: oklch(0.55 0.15 155);
+  --border: oklch(0.88 0.004 280);
+  --input: oklch(0.88 0.004 280);
+  --ring: oklch(0.50 0.16 264);
+  /* COSMOS chart palette — SAFe entity colors */
+  --chart-1: oklch(0.52 0.20 264);   /* epic — lavender */
+  --chart-2: oklch(0.55 0.18 240);   /* feature — blue */
+  --chart-3: oklch(0.55 0.15 155);   /* story — green */
+  --chart-4: oklch(0.65 0.18 50);    /* risk — orange */
+  --chart-5: oklch(0.55 0.22 290);   /* pi — purple */
+  --radius: 0.5rem;
+  --sidebar: oklch(0.96 0.003 280);
+  --sidebar-foreground: oklch(0.14 0.005 280);
+  --sidebar-primary: oklch(0.52 0.20 264);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-
+  --sidebar-accent: oklch(0.91 0.004 280);
+  --sidebar-accent-foreground: oklch(0.20 0.005 280);
+  --sidebar-border: oklch(0.88 0.004 280);
+  --sidebar-ring: oklch(0.50 0.16 264);
   --font-weight-bold: 700;
+
+  /* COSMOS semantic — SAFe entity types */
+  --safe-epic: oklch(0.52 0.20 264);
+  --safe-feature: oklch(0.55 0.18 240);
+  --safe-story: oklch(0.55 0.15 155);
+  /* COSMOS semantic — ROAM risk levels */
+  --roam-r: oklch(0.55 0.22 27);
+  --roam-o: oklch(0.65 0.18 50);
+  --roam-a: oklch(0.75 0.18 95);
+  --roam-m: oklch(0.55 0.006 280);
+  /* COSMOS semantic — PI states */
+  --pi-active: oklch(0.55 0.18 240);
+  --pi-planning: oklch(0.52 0.20 290);
+  /* COSMOS semantic — WSJF urgency */
+  --wsjf-high: oklch(0.55 0.22 27);
+  --wsjf-medium: oklch(0.65 0.18 50);
+  --wsjf-low: oklch(0.55 0.006 280);
 }
 
+/* ─── COSMOS Dark Mode (Linear canvas) — primary UI mode ──────────── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.145 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.145 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --success: oklch(50.8% 0.118 165.612);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.439 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  /* Surface ladder: canvas → surface-1 → surface-2 → surface-3 */
+  --background: oklch(0.09 0.003 280);     /* Linear canvas ~#0f0f10 */
+  --foreground: oklch(0.91 0.002 280);     /* ink ~#e2e2e4 */
+  --card: oklch(0.14 0.005 280);           /* surface-1 ~#1a1a1e */
+  --card-foreground: oklch(0.91 0.002 280);
+  --popover: oklch(0.18 0.007 280);        /* surface-2 ~#222228 */
+  --popover-foreground: oklch(0.91 0.002 280);
+  --primary: oklch(0.58 0.22 264);         /* lavender-blue accent */
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.18 0.007 280);      /* surface-2 */
+  --secondary-foreground: oklch(0.91 0.002 280);
+  --muted: oklch(0.18 0.007 280);          /* surface-2 */
+  --muted-foreground: oklch(0.60 0.005 280); /* ink-subtle ~#8b8b94 */
+  --accent: oklch(0.23 0.009 280);         /* surface-3 ~#2a2a32 */
+  --accent-foreground: oklch(0.91 0.002 280);
+  --destructive: oklch(0.50 0.22 27);
+  --destructive-foreground: oklch(0.91 0.002 280);
+  --success: oklch(0.55 0.15 155);
+  --border: oklch(0.21 0.009 280);         /* hairline ~#2a2a32 */
+  --input: oklch(0.21 0.009 280);
+  --ring: oklch(0.50 0.16 264);            /* primary-focus ~#5e69d1 */
+  /* COSMOS chart palette — dark mode */
+  --chart-1: oklch(0.63 0.17 264);         /* epic — lavender-hover */
+  --chart-2: oklch(0.60 0.18 240);         /* feature — blue */
+  --chart-3: oklch(0.60 0.15 155);         /* story — green */
+  --chart-4: oklch(0.68 0.18 50);          /* risk — orange */
+  --chart-5: oklch(0.60 0.20 290);         /* pi — purple */
+  --sidebar: oklch(0.14 0.005 280);        /* surface-1 */
+  --sidebar-foreground: oklch(0.91 0.002 280);
+  --sidebar-primary: oklch(0.58 0.22 264); /* lavender-blue */
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  --sidebar-accent: oklch(0.18 0.007 280); /* surface-2 */
+  --sidebar-accent-foreground: oklch(0.91 0.002 280);
+  --sidebar-border: oklch(0.21 0.009 280); /* hairline */
+  --sidebar-ring: oklch(0.50 0.16 264);
+
+  /* COSMOS semantic — dark mode (same hue, adjusted lightness) */
+  --safe-epic: oklch(0.63 0.17 264);
+  --safe-feature: oklch(0.60 0.18 240);
+  --safe-story: oklch(0.60 0.15 155);
+  --roam-r: oklch(0.60 0.22 27);
+  --roam-o: oklch(0.68 0.18 50);
+  --roam-a: oklch(0.75 0.18 95);
+  --roam-m: oklch(0.50 0.006 280);
+  --pi-active: oklch(0.60 0.18 240);
+  --pi-planning: oklch(0.60 0.20 290);
+  --wsjf-high: oklch(0.60 0.22 27);
+  --wsjf-medium: oklch(0.68 0.18 50);
+  --wsjf-low: oklch(0.50 0.006 280);
 }
 
 @theme inline {
@@ -116,10 +151,30 @@
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
   --color-success: var(--success);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  /* COSMOS semantic tokens — available as Tailwind color utilities */
+  --color-safe-epic: var(--safe-epic);
+  --color-safe-feature: var(--safe-feature);
+  --color-safe-story: var(--safe-story);
+  --color-roam-r: var(--roam-r);
+  --color-roam-o: var(--roam-o);
+  --color-roam-a: var(--roam-a);
+  --color-roam-m: var(--roam-m);
+  --color-pi-active: var(--pi-active);
+  --color-pi-planning: var(--pi-planning);
+  --color-wsjf-high: var(--wsjf-high);
+  --color-wsjf-medium: var(--wsjf-medium);
+  --color-wsjf-low: var(--wsjf-low);
+  /* Linear surface ladder — direct access */
+  --color-surface-1: var(--card);
+  --color-surface-2: var(--popover);
+  --color-surface-3: var(--accent);
+  --color-canvas: var(--background);
+  --color-ink: var(--foreground);
+  --color-ink-subtle: var(--muted-foreground);
+  --radius-sm: calc(var(--radius) - 4px);   /* 4px — chips, badges */
+  --radius-md: calc(var(--radius) + 2px);   /* 8px — buttons, inputs */
+  --radius-lg: calc(var(--radius) + 4px);   /* 12px — cards, panels */
+  --radius-xl: calc(var(--radius) + 8px);   /* 16px — screenshot panels */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 

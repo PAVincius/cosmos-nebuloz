@@ -1,0 +1,38 @@
+[
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/portfolio",
+    "description": "Portfolio route returns non-500 status",
+    "id": "lpm-1778714166989-1",
+    "persona": "lpm",
+    "timestamp": 1778714166989
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/portfolio",
+    "description": "No critical JS errors on portfolio page load",
+    "id": "lpm-1778714170266-2",
+    "persona": "lpm",
+    "timestamp": 1778714170266
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/portfolio",
+    "description": "Portfolio redirects unauthenticated users to sign-in (auth required — rerun with AUTH_TEST=true)",
+    "id": "lpm-1778714172648-3",
+    "persona": "lpm",
+    "timestamp": 1778714172648
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/portfolio",
+    "description": "Page background uses non-white color (dark mode active)",
+    "id": "lpm-1778714176455-1",
+    "persona": "lpm",
+    "timestamp": 1778714176455
+  }
+]

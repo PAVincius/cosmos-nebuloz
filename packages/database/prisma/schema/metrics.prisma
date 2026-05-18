@@ -1,0 +1,49 @@
+// PI Planning Session — cerimônia de planejamento (Planning original ou Replan)
+model PISession {
+  id          String    @id @default(cuid())
+  tenantId    String
+  piPlanId    String
+  type        String    @default("PLANNING") // PLANNING / REPLAN
+  scheduledAt DateTime?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant             Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlan             PIPlan                  @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
+  confidenceSessions ConfidenceVoteSession[]
+
+  @@index([tenantId])
+  @@index([piPlanId])
+}
+
+// Rodada de Confidence Vote dentro de uma PISession SAFe
+model ConfidenceVoteSession {
+  id           String @id @default(cuid())
+  tenantId     String
+  piSessionId  String
+  roundNumber  Int    @default(1)
+  xStateStatus String @default("NOT_STARTED")
+  votes        Json   @default("[]") // number[] — raw vote values
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piSession PISession @relation(fields: [piSessionId], references: [id], onDelete: Cascade)
+
+  @@unique([piSessionId, roundNumber])
+  @@index([tenantId])
+  @@index([piSessionId])
+}
+
+// Inteligência Assistiva (AI Copilot via pgvector)
+model PIKnowledgeVector {
+  id          String   @id @default(cuid())
+  tenantId    String
+  textContent String   @db.Text
+  
+  // Requer Unsupported no Prisma para a extensão pgvector
+  embedding   Unsupported("vector(1536)")? 
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@index([tenantId])
+}

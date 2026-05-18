@@ -30,7 +30,11 @@ export const Room = ({
   ...props
 }: RoomProps) => (
   <LiveblocksProvider authEndpoint={authEndpoint} {...props}>
-    <RoomProvider id={id} initialPresence={{ cursor: null }}>
+    <RoomProvider
+        id={id}
+        initialPresence={{ cursor: null }}
+        initialStorage={{} as Liveblocks["Storage"]}
+      >
       <ClientSideSuspense fallback={fallback}>{children}</ClientSideSuspense>
     </RoomProvider>
   </LiveblocksProvider>

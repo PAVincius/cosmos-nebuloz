@@ -1,5 +1,5 @@
 import { analytics } from "@repo/analytics/server";
-import { auth } from "@repo/auth/server";
+import { currentUser } from "@repo/auth/server";
 import { flag } from "flags/next";
 
 export const createFlag = (key: string) =>
@@ -7,7 +7,8 @@ export const createFlag = (key: string) =>
     key,
     defaultValue: false,
     async decide() {
-      const { userId } = await auth();
+      const user = await currentUser();
+      const userId = user?.id;
 
       if (!userId) {
         return this.defaultValue as boolean;

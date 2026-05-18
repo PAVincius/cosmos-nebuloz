@@ -13,6 +13,7 @@
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
     "test": "turbo test",
+    "test:coverage": "turbo test:coverage",
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",

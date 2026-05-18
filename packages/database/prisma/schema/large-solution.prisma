@@ -1,0 +1,81 @@
+// Wave 5 — Large Solution Level entities
+
+model SolutionTrain {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  capabilities  Capability[]
+  solutionEpics SolutionEpic[]
+
+  @@index([tenantId])
+}
+
+model Capability {
+  id              String   @id @default(cuid())
+  tenantId        String
+  solutionTrainId String?
+  title           String
+  description     String?
+  status          String   @default("BACKLOG") // BACKLOG/ANALYZING/IMPLEMENTING/DONE
+  order           Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  solutionTrain SolutionTrain? @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([solutionTrainId])
+}
+
+model SolutionEpic {
+  id              String   @id @default(cuid())
+  tenantId        String
+  solutionTrainId String?
+  title           String
+  description     String?
+  status          String   @default("BACKLOG")
+  wsjfScore       Float    @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant        Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  solutionTrain SolutionTrain? @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([solutionTrainId])
+}
+
+model LACE {
+  id          String   @id @default(cuid())
+  tenantId    String   @unique
+  name        String
+  description String?
+  principles  Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  tenantId    String
+  artId       String?
+  name        String
+  contact     String?
+  description String?
+  status      String   @default("ACTIVE") // ACTIVE/INACTIVE
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([artId])
+}

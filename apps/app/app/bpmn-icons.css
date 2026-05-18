@@ -1,0 +1,22 @@
+/* bpmn icon font — served from public/bpmn-font/ as static assets */
+@font-face {
+  font-family: 'bpmn';
+  src: url('/bpmn-font/bpmn.woff2') format('woff2'),
+       url('/bpmn-font/bpmn.woff')  format('woff'),
+       url('/bpmn-font/bpmn.ttf')   format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^='bpmn-icon-']:before,
+[class*=' bpmn-icon-']:before {
+  font-family: 'bpmn' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  speak: none;
+}

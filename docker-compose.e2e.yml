@@ -1,0 +1,103 @@
+# Docker Compose — Cosmos Enterprise E2E Testing
+#
+# Sobe a infraestrutura necessária para rodar os testes E2E do Playwright
+# contra o app Next.js em container.
+#
+# Uso:
+#   docker compose -f docker-compose.e2e.yml up -d
+#   PLAYWRIGHT_BASE_URL=http://localhost:3000 pnpm test:e2e
+#   docker compose -f docker-compose.e2e.yml down
+#
+# Para rodar os testes DENTRO do container (CI):
+#   docker compose -f docker-compose.e2e.yml run --rm playwright
+
+services:
+  # ────────────────────────────────────────────
+  # PostgreSQL 16 com pgvector para E2E
+  # ────────────────────────────────────────────
+  cosmos-e2e-db:
+    image: pgvector/pgvector:pg16
+    container_name: cosmos-e2e-db
+    environment:
+      POSTGRES_DB: cosmos_dev
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+      - "5434:5432"
+    volumes:
+      - cosmos_e2e_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cosmos_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ────────────────────────────────────────────
+  # Next.js App (cosmos apps/app)
+  # ────────────────────────────────────────────
+  cosmos-e2e-app:
+    build:
+      context: .
+      dockerfile: apps/app/Dockerfile.e2e
+    container_name: cosmos-e2e-app
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://cosmos:cosmos_e2e_secret@cosmos-e2e-db:5432/cosmos_e2e
+      BETTER_AUTH_SECRET: cosmos-e2e-test-secret-minimum-32-chars
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_WEB_URL: http://localhost:3001
+      NEXT_PUBLIC_DOCS_URL: http://localhost:3004
+      VERCEL_PROJECT_PRODUCTION_URL: http://localhost:3000
+      NEXT_PUBLIC_POSTHOG_KEY: phc_e2e_placeholder
+      NEXT_PUBLIC_POSTHOG_HOST: https://app.posthog.com
+      RESEND_TOKEN: re_e2e_placeholder
+      RESEND_FROM: e2e@cosmos.local
+      ARCJET_KEY: ajkey_e2e_placeholder
+      BETTERSTACK_API_KEY: ""
+      BETTERSTACK_URL: https://uptime.betterstack.com
+      FLAGS_SECRET: ""
+      KNOCK_API_KEY: ""
+      KNOCK_FEED_CHANNEL_ID: ""
+      NEXT_PUBLIC_KNOCK_API_KEY: ""
+      NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID: ""
+      LIVEBLOCKS_SECRET: "sk_dev_placeholder_cosmos_e2e_fake_key_for_local_testing_only"
+      STRIPE_SECRET_KEY: "sk_test_dev_placeholder_cosmos_e2e"
+      STRIPE_WEBHOOK_SECRET: "whsec_dev_placeholder_cosmos_e2e_testing"
+      SVIX_TOKEN: "testsk_dev_placeholder_cosmos_e2e_testing"
+    depends_on:
+      cosmos-e2e-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 15
+      start_period: 60s
+
+  # ────────────────────────────────────────────
+  # Playwright Test Runner (para CI em Docker)
+  # ────────────────────────────────────────────
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.52.0-jammy
+    container_name: cosmos-e2e-playwright
+    working_dir: /app
+    volumes:
+      - ./apps/app:/app
+      - ./apps/app/node_modules:/app/node_modules
+    environment:
+      PLAYWRIGHT_BASE_URL: http://cosmos-e2e-app:3000
+      CI: "true"
+    command: ["npx", "playwright", "test", "--reporter=list"]
+    depends_on:
+      cosmos-e2e-app:
+        condition: service_healthy
+    profiles:
+      - ci  # Só sobe com: docker compose --profile ci up
+
+volumes:
+  cosmos_e2e_pgdata:
+    driver: local
