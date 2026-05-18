@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 export type OKRNode = {
   id: string;
   title: string;
-  type: string;
+  okrType: string;
   status: string;
   progress: number;
   horizon: string | null;
@@ -60,7 +60,7 @@ function toOKRNode(okr: {
   return {
     id: okr.id,
     title: okr.title,
-    type: okr.type,
+    okrType: okr.type,
     status: okr.status,
     progress: calcProgress(okr.keyResults),
     horizon: okr.horizon,

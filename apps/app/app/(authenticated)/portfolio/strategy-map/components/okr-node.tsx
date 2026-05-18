@@ -51,7 +51,7 @@ export function OKRNode({ okr, compact = false }: OKRNodeProps) {
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm font-medium">{okr.title}</span>
           <Badge variant="secondary" className="text-xs">
-            {TYPE_LABELS[okr.type] ?? okr.type}
+            {TYPE_LABELS[okr.okrType] ?? okr.okrType}
           </Badge>
         </div>
         {okr.horizon && (
