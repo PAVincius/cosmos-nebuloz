@@ -6,6 +6,9 @@ import { headers } from "next/headers";
 import { database } from "@repo/database";
 import { getARTById } from "../../../actions/arts/get-arts";
 import { getBacklogFeatures, getTeamsForART } from "../../../actions/arts/pi-plans";
+import { getARTObservability } from "../../../actions/arts/observability";
+import { ARTEventTimeline } from "./components/art-event-timeline";
+import { ARTHealthIndicatorsPanel } from "./components/art-health-indicators";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -65,10 +68,11 @@ export async function generateMetadata({ params }: ARTPageProps) {
 export default async function ARTDetailPage({ params }: ARTPageProps) {
   const { artId } = await params;
 
-  const [art, teams, features] = await Promise.all([
+  const [art, teams, features, observability] = await Promise.all([
     getARTById(artId),
     getTeamsForART(artId),
     getBacklogFeatures(),
+    getARTObservability(artId),
   ]);
 
   if (!art) notFound();
@@ -138,6 +142,32 @@ export default async function ARTDetailPage({ params }: ARTPageProps) {
           })}
         </div>
       )}
+
+        {/* Observability: Event Timeline */}
+        <div className={appDesign.section}>
+          <div className={appDesign.sectionHeader}>
+            <h3 className={appDesign.sectionTitle}>Timeline de Eventos</h3>
+            <p className={appDesign.sectionDesc}>
+              PI Planning, System Demo e Inspect &amp; Adapt por PI
+            </p>
+          </div>
+          <div className="p-5">
+            <ARTEventTimeline events={observability.events} />
+          </div>
+        </div>
+
+        {/* Observability: Health Indicators */}
+        <div className={appDesign.section}>
+          <div className={appDesign.sectionHeader}>
+            <h3 className={appDesign.sectionTitle}>Saúde do ART</h3>
+            <p className={appDesign.sectionDesc}>
+              Riscos ativos, predictability e objetivos por PI
+            </p>
+          </div>
+          <div className="p-5">
+            <ARTHealthIndicatorsPanel health={observability.health} />
+          </div>
+        </div>
       </div>
       </div>
     </div>
