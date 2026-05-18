@@ -27,18 +27,21 @@ export async function createSAFeStructureFromOnboarding(
 
   const artIds: string[] = [];
 
-  for (const vs of input.valueStreams) {
-    for (const art of vs.arts) {
-      const artRecord = await database.aRT.create({
-        data: {
-          tenantId: ctx.tenantId,
-          name: art.name,
-          cadence: art.cadence,
-        },
-      });
-      artIds.push(artRecord.id);
+  await database.$transaction(async (tx) => {
+    for (const vs of input.valueStreams) {
+      for (const art of vs.arts) {
+        if (!art.name.trim()) continue;
+        const artRecord = await tx.aRT.create({
+          data: {
+            tenantId: ctx.tenantId,
+            name: art.name.trim(),
+            cadence: art.cadence,
+          },
+        });
+        artIds.push(artRecord.id);
+      }
     }
-  }
+  });
 
   revalidatePath("/arts");
 

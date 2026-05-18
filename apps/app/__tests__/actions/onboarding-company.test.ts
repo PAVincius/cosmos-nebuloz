@@ -23,7 +23,17 @@ vi.mock("@repo/auth/server", () => ({
 
 vi.mock("@repo/database", () => ({
   database: {
-    $transaction: vi.fn((fn: (tx: unknown) => unknown) => fn({})),
+    $transaction: vi.fn((fn: (tx: unknown) => unknown) =>
+      fn({
+        aRT: {
+          create: mocks.artCreate,
+          findFirst: mocks.artFindFirst,
+        },
+        pIPlan: {
+          create: mocks.piPlanCreate,
+        },
+      })
+    ),
     aRT: {
       create: mocks.artCreate,
       findFirst: mocks.artFindFirst,

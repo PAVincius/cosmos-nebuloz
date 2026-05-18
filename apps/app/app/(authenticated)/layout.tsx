@@ -54,9 +54,15 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
     (p) => pathname.startsWith(p)
   );
 
-  if (!skipOnboarding && initialActiveTenantId) {
-    const complete = await isOnboardingComplete(initialActiveTenantId);
-    if (!complete) {
+  if (!skipOnboarding) {
+    if (initialActiveTenantId) {
+      const complete = await isOnboardingComplete(initialActiveTenantId);
+      if (!complete) {
+        redirect("/onboarding");
+      }
+    } else if (initialTenants.length > 0) {
+      // User has a tenant but no active tenant selected — redirect to onboarding
+      // to let them set up the first tenant
       redirect("/onboarding");
     }
   }
