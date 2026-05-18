@@ -1,0 +1,184 @@
+"use client";
+
+import { useState, useMemo } from "react";
+import { Button } from "@repo/design-system/components/ui/button";
+import { Badge } from "@repo/design-system/components/ui/badge";
+import { Slider } from "@repo/design-system/components/ui/slider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@repo/design-system/components/ui/dialog";
+import { FlaskConicalIcon, TrendingUpIcon, TrendingDownIcon, MinusIcon } from "lucide-react";
+
+export type FeatureForScenario = {
+  id: string;
+  title: string;
+  epicTitle: string;
+  bv: number;
+  tc: number;
+  rr: number;
+  js: number;
+  wsjfScore: number;
+};
+
+interface ScenarioSimulatorProps {
+  features: FeatureForScenario[];
+  epicTitles: { id: string; title: string }[];
+}
+
+/** Recomputes WSJF with a capacity multiplier applied to job size.
+ *  Lower capacity → effective JS grows → WSJF drops (harder to fit the work). */
+function simulateWSJF(
+  bv: number,
+  tc: number,
+  rr: number,
+  js: number,
+  capacityMultiplier: number,
+): number {
+  const effectiveJs = js / Math.max(0.1, capacityMultiplier);
+  if (effectiveJs <= 0) return 0;
+  return Math.round(((bv + tc + rr) / effectiveJs) * 10) / 10;
+}
+
+export function ScenarioSimulator({ features, epicTitles }: ScenarioSimulatorProps) {
+  const [open, setOpen] = useState(false);
+
+  // Capacity sliders are keyed by epic id (best proxy for "team" given the data model)
+  const [capacities, setCapacities] = useState<Record<string, number>>(
+    () => Object.fromEntries(epicTitles.map((e) => [e.id, 100])),
+  );
+
+  const simulatedRanking = useMemo(() => {
+    // Build a quick lookup: feature id → epic id
+    const epicForFeature = new Map<string, string>();
+    for (const f of features) {
+      // features carry epicTitle string; we match via epicTitles list
+      const matched = epicTitles.find((e) => e.title === f.epicTitle);
+      if (matched) epicForFeature.set(f.id, matched.id);
+    }
+
+    return features
+      .map((f) => {
+        const epicId = epicForFeature.get(f.id);
+        const pct = epicId ? (capacities[epicId] ?? 100) : 100;
+        const mult = pct / 100;
+        const simWSJF = simulateWSJF(f.bv, f.tc, f.rr, f.js, mult);
+        return { ...f, simWSJF, delta: simWSJF - f.wsjfScore };
+      })
+      .sort((a, b) => b.simWSJF - a.simWSJF);
+  }, [features, capacities, epicTitles]);
+
+  const changed = Object.values(capacities).some((v) => v !== 100);
+
+  function resetCapacities() {
+    setCapacities(Object.fromEntries(epicTitles.map((e) => [e.id, 100])));
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2">
+          <FlaskConicalIcon className="h-4 w-4" />
+          Simulador de Cenários
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-3xl">
+        <DialogHeader>
+          <DialogTitle>Simulador de Cenários WSJF</DialogTitle>
+        </DialogHeader>
+        <div className="grid grid-cols-[240px_1fr] gap-6">
+          {/* Capacity sliders — one per epic */}
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">Capacidade por Épico</h3>
+              {changed && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={resetCapacities}
+                  className="h-6 text-xs"
+                >
+                  Resetar
+                </Button>
+              )}
+            </div>
+            {epicTitles.length === 0 && (
+              <p className="text-xs text-muted-foreground">
+                Nenhum épico com features e dados WSJF.
+              </p>
+            )}
+            {epicTitles.map((epic) => {
+              const pct = capacities[epic.id] ?? 100;
+              return (
+                <div key={epic.id} className="flex flex-col gap-1.5">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="truncate font-medium" title={epic.title}>
+                      {epic.title}
+                    </span>
+                    <Badge
+                      variant={
+                        pct < 100 ? "destructive" : pct > 100 ? "default" : "secondary"
+                      }
+                      className="ml-2 shrink-0 tabular-nums text-xs"
+                    >
+                      {pct}%
+                    </Badge>
+                  </div>
+                  <Slider
+                    min={30}
+                    max={150}
+                    step={10}
+                    value={[pct]}
+                    onValueChange={([v]: [number]) =>
+                      setCapacities((prev) => ({ ...prev, [epic.id]: v }))
+                    }
+                    className="w-full"
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Simulated ranking */}
+          <div className="flex max-h-[60vh] flex-col gap-2 overflow-y-auto">
+            <h3 className="text-sm font-semibold">
+              Ranking Simulado
+              {changed && (
+                <span className="ml-2 text-xs font-normal text-muted-foreground">
+                  (vs. ranking atual)
+                </span>
+              )}
+            </h3>
+            {simulatedRanking.map((f, i) => (
+              <div
+                key={f.id}
+                className="flex items-center gap-2 rounded border border-border/80 bg-card px-3 py-2 text-xs"
+              >
+                <span className="w-5 shrink-0 text-right font-medium tabular-nums text-muted-foreground">
+                  {i + 1}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate font-medium">{f.title}</div>
+                  <div className="truncate text-muted-foreground">{f.epicTitle}</div>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <span className="font-semibold tabular-nums">{f.simWSJF.toFixed(1)}</span>
+                  {f.delta > 0.05 ? (
+                    <TrendingUpIcon className="h-3 w-3 text-emerald-500" />
+                  ) : f.delta < -0.05 ? (
+                    <TrendingDownIcon className="h-3 w-3 text-rose-500" />
+                  ) : (
+                    <MinusIcon className="h-3 w-3 text-muted-foreground" />
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -24,6 +24,7 @@ import { rebalanceWSJFWithAI } from "@/app/actions/wsjf/rebalance";
 import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
 import type { RebalancingResult, FeatureSuggestion, AIAccessStatus } from "@/app/actions/wsjf/rebalance";
 import type { EpicWithFeatures } from "@/app/actions/wsjf";
+import type { ExplainabilitySuggestion } from "./explainability-panel";
 
 type Phase = "idle" | "running" | "result" | "confirming" | "done" | "error";
 
@@ -99,9 +100,11 @@ function DeltaBadge({ delta }: { delta: number }) {
 export function RebalanceDialog({
   epics,
   access,
+  onSuggestions,
 }: {
   epics: EpicWithFeatures[];
   access: AIAccessStatus;
+  onSuggestions?: (suggestions: ExplainabilitySuggestion[]) => void;
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -166,6 +169,19 @@ export function RebalanceDialog({
         if (cancelled) return;
 
         setResult(res);
+        onSuggestions?.(
+          res.suggestions.map((s: FeatureSuggestion): ExplainabilitySuggestion => ({
+            featureId: s.featureId,
+            featureTitle: s.featureTitle,
+            epicTitle: s.epicTitle,
+            currentWSJF: s.currentWSJF,
+            suggestedWSJF: s.suggestedWSJF,
+            delta: s.delta,
+            impactFactor: s.impactFactor,
+            confidence: s.confidence,
+            justification: s.justification,
+          }))
+        );
         setPhase("result");
       } catch (err) {
         if (cancelled) return;

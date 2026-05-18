@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useOptimistic, useTransition, useState } from "react";
+import { useCallback, useEffect, useMemo, useOptimistic, useTransition, useState } from "react";
 import { ChevronDown, ChevronRight, Settings2Icon, Sparkles } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Badge } from "@repo/design-system/components/ui/badge";
@@ -17,6 +17,8 @@ import { saveWSJFConfig } from "@/app/actions/wsjf";
 import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
 import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance";
 import { appDesign } from "@/lib/app-design";
+import { ScenarioSimulator, type FeatureForScenario } from "./scenario-simulator";
+import { ExplainabilityPanel, type ExplainabilitySuggestion } from "./explainability-panel";
 
 const RebalanceDialog = dynamic(
   () => import("./rebalance-dialog").then((m) => m.RebalanceDialog),
@@ -325,6 +327,7 @@ export function WSJFDashboard({ epics: initialEpics, config: initialConfig, acce
   const [isPending, startTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
   const [configOpen, setConfigOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<ExplainabilitySuggestion[]>([]);
 
   const [optimisticEpics, dispatchEpicUpdate] = useOptimistic<
     OptimisticEpic[],
@@ -350,6 +353,32 @@ export function WSJFDashboard({ epics: initialEpics, config: initialConfig, acce
 
       return { ...epic, features, totalWSJF };
     })
+  );
+
+  // Derive epic-level entries for the scenario simulator (epics act as team proxies)
+  const epicTitles = useMemo(
+    () =>
+      optimisticEpics
+        .filter((e) => e.features.length > 0)
+        .map((e) => ({ id: e.id, title: e.title })),
+    [optimisticEpics]
+  );
+
+  const featuresForSimulator = useMemo<FeatureForScenario[]>(
+    () =>
+      optimisticEpics.flatMap((e) =>
+        e.features.map((f) => ({
+          id: f.id,
+          title: f.title,
+          epicTitle: e.title,
+          bv: f.bv,
+          tc: f.tc,
+          rr: f.rr,
+          js: f.js,
+          wsjfScore: f.wsjfScore,
+        }))
+      ),
+    [optimisticEpics]
   );
 
   const handleUpdateFeature = useCallback(
@@ -405,7 +434,11 @@ export function WSJFDashboard({ epics: initialEpics, config: initialConfig, acce
       </Sheet>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end gap-2">
+        <ScenarioSimulator
+          features={featuresForSimulator}
+          epicTitles={epicTitles}
+        />
         <Button
           variant="outline"
           size="sm"
@@ -471,8 +504,17 @@ export function WSJFDashboard({ epics: initialEpics, config: initialConfig, acce
           </p>
         </div>
         <div className="shrink-0 sm:pl-4">
-          <RebalanceDialog epics={optimisticEpics} access={access} />
+          <RebalanceDialog
+            epics={optimisticEpics}
+            access={access}
+            onSuggestions={setSuggestions}
+          />
         </div>
+      </div>
+
+      {/* Section 4: Explainability Panel */}
+      <div className="w-full min-w-0">
+        <ExplainabilityPanel suggestions={suggestions} />
       </div>
     </div>
   );
