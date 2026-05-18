@@ -177,3 +177,41 @@ jobs:
 
       - name: Generate tests with AI
         run: pnpm generate:tests
+
+  fix-ci:
+    name: AI Fix CI Failure
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, build]
+    if: |
+      always() &&
+      github.ref == 'refs/heads/main' &&
+      (needs.lint.result == 'failure' || needs.typecheck.result == 'failure' || needs.build.result == 'failure')
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    env:
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      CI_FAILURE_LINT: ${{ needs.lint.result }}
+      CI_FAILURE_TYPECHECK: ${{ needs.typecheck.result }}
+      CI_FAILURE_BUILD: ${{ needs.build.result }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: AI Fix CI failure
+        run: pnpm fix:ci
