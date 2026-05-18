@@ -14,6 +14,9 @@
         ".react-email/**"
       ]
     },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
     "test": {
       "dependsOn": ["^test"]
     },
@@ -23,7 +26,13 @@
     },
     "test:e2e": {
       "cache": false,
-      "env": ["PLAYWRIGHT_BASE_URL", "AUTH_TEST", "E2E_EMAIL", "E2E_PASSWORD", "CI"]
+      "env": [
+        "PLAYWRIGHT_BASE_URL",
+        "AUTH_TEST",
+        "E2E_EMAIL",
+        "E2E_PASSWORD",
+        "CI"
+      ]
     },
     "analyze": {
       "dependsOn": ["^analyze"]
