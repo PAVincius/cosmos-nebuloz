@@ -213,9 +213,17 @@ export async function updateImprovementActionResult(
   });
 }
 
+// ─── Spec-required aliases ────────────────────────────────────────────────────
+
+export const listAssessments        = listAllAssessments;
+export const listImprovementActions = listAllImprovementActions;
+export const createAssessment       = createAssessmentAction;
+export const createImprovementAction = createImprovementActionResult;
+export const updateImprovementAction = updateImprovementActionResult;
+
 // ─── Legacy mutations (kept for backward compatibility) ───────────────────────
 
-export async function createAssessment(input: {
+export async function createAssessmentLegacy(input: {
   scope: string;
   scopeId: string;
   competency: CompetencyId;
@@ -243,7 +251,7 @@ export async function createAssessment(input: {
   revalidatePath("/analytics/flow");
 }
 
-export async function createImprovementAction(input: {
+export async function createImprovementActionLegacy(input: {
   title: string;
   description?: string;
   scope: string;
