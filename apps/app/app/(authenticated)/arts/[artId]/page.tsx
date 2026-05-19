@@ -19,8 +19,13 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
+  ActivityIcon,
+  AlertTriangleIcon,
   CalendarIcon,
   ChevronRightIcon,
+  LayoutGridIcon,
+  TargetIcon,
+  TrendingUpIcon,
   VoteIcon,
   UsersIcon,
   ClockIcon,
@@ -101,6 +106,52 @@ export default async function ARTDetailPage({ params }: ARTPageProps) {
 
       <div className={appDesign.bodyScroll}>
       <div className="flex flex-col gap-6">
+
+        {/* Quick navigation */}
+        {art.piPlans.length > 0 && (() => {
+          const latestPi = art.piPlans[0];
+          return (
+            <div className="flex flex-wrap gap-2">
+              <Link href={`/arts/${artId}/pi-planning?piId=${latestPi.id}`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  PI Workspace
+                </Button>
+              </Link>
+              <Link href={`/arts/${artId}/program-board?piPlanId=${latestPi.id}`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <LayoutGridIcon className="h-3.5 w-3.5" />
+                  Program Board
+                </Button>
+              </Link>
+              <Link href={`/analytics/flow?artId=${artId}`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <TrendingUpIcon className="h-3.5 w-3.5" />
+                  Flow Metrics
+                </Button>
+              </Link>
+              <Link href={`/portfolio/okrs?artId=${artId}`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <TargetIcon className="h-3.5 w-3.5" />
+                  OKRs do ART
+                </Button>
+              </Link>
+              <Link href={`/arts/${artId}/post-pi?piPlanId=${latestPi.id}`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <ActivityIcon className="h-3.5 w-3.5" />
+                  Inspect &amp; Adapt
+                </Button>
+              </Link>
+              <Link href={`/arts/${artId}/impediments`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
+                  <AlertTriangleIcon className="h-3.5 w-3.5" />
+                  Impedimentos
+                </Button>
+              </Link>
+            </div>
+          );
+        })()}
+
       {art.piPlans.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
           <CalendarIcon className="text-muted-foreground mb-4 h-10 w-10" />

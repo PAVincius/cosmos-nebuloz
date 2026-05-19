@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { getRisks, getPIPlans } from "@/app/actions/risks";
+import { ROAMMetricsStrip } from "./components/roam-metrics-strip";
 
 const ROAMBoard = dynamic(
   () => import("./components/roam-board").then((m) => m.ROAMBoard),
@@ -29,6 +30,7 @@ export default async function RisksPage() {
           Rastreie e classifique riscos do PI Planning: Resolved · Owned · Accepted · Mitigated.
         </p>
       </div>
+      <ROAMMetricsStrip risks={risks} />
       <ROAMBoard initialRisks={risks} piPlans={piPlans} />
     </div>
   );

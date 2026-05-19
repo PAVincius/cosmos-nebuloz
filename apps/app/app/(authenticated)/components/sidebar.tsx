@@ -2,6 +2,7 @@
 
 import { UserButton } from "./user-button";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+import { CopilotTriggerButton } from "./copilot/copilot-trigger-button";
 import { ModeToggle } from "@repo/design-system/components/mode-toggle";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -111,9 +112,9 @@ const buildNavData = (
       items: [
         { title: "Métricas SAFe", url: "/analytics" },
         { title: "Flow Metrics", url: "/analytics/flow" },
+        { title: "Velocity", url: "/analytics/velocity" },
         { title: "Measure & Grow", url: "/analytics/measure-grow" },
         { title: "Riscos ROAM", url: "/risks" },
-        { title: "Velocity", url: "/teams" },
       ],
     },
     {
@@ -261,6 +262,15 @@ export const GlobalSidebar = ({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
+            <SidebarMenuItem className="pb-1">
+              <CopilotTriggerButton
+                mode="global"
+                surface="global"
+                label="Copilot  ⌘K"
+                variant="ghost"
+                size="sm"
+              />
+            </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2">
               <UserButton
                 name={data.user.name}

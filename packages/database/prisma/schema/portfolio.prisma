@@ -19,10 +19,11 @@ model StrategicTheme {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  epics  Epic[]
-  okrs   OKR[]
-  arts   ThemeART[]
+  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epics       Epic[]
+  okrs        OKR[]
+  arts        ThemeART[]
+  leanBudgets LeanBudget[]
 
   @@unique([tenantId, code])
   @@index([tenantId])
@@ -119,21 +120,24 @@ model KeyResultSnapshot {
 }
 
 model LeanBudget {
-  id         String   @id @default(cuid())
-  tenantId   String
-  artId      String?
-  name       String
-  amount     Float
-  spent      Float    @default(0)
-  period     String   // e.g. "PI-2025-Q2"
-  guardrails Json?    // {capex: number, opex: number}
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id              String   @id @default(cuid())
+  tenantId        String
+  artId           String?
+  themeId         String?  // optional link to a Strategic Theme
+  name            String
+  amount          Float
+  spent           Float    @default(0)
+  period          String   // e.g. "PI-2025-Q2"
+  guardrails      Json?    // {capex: number, opex: number}
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  strategicTheme  StrategicTheme? @relation(fields: [themeId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([tenantId, artId])
+  @@index([tenantId, themeId])
 }
 
 model RoadmapItem {

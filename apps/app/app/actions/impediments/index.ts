@@ -63,6 +63,63 @@ export async function getImpedimentById(id: string): Promise<Result<any>> {
   });
 }
 
+export type ImpedimentWithTeam = {
+  id: string;
+  tenantId: string;
+  teamId: string | null;
+  teamName: string | null;
+  title: string;
+  description: string | null;
+  status: string;
+  ownerUserId: string | null;
+  resolvedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  ageDays: number;
+  isEscalated: boolean;
+};
+
+export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWithTeam[]> {
+  const ctx = await requireTenantSession(await headers());
+
+  const teams = await database.team.findMany({
+    where: { tenantId: ctx.tenantId, artId },
+    select: { id: true, name: true },
+  });
+
+  const teamIds = teams.map((t) => t.id);
+  const teamNameMap = new Map(teams.map((t) => [t.id, t.name]));
+
+  const now = new Date();
+
+  const impediments = await database.impediment.findMany({
+    where: {
+      tenantId: ctx.tenantId,
+      ...(teamIds.length > 0 ? { teamId: { in: teamIds } } : {}),
+    },
+    orderBy: [{ status: "asc" }, { createdAt: "asc" }],
+  });
+
+  return impediments.map((imp) => {
+    const ageDays = Math.floor((now.getTime() - imp.createdAt.getTime()) / 86_400_000);
+    return {
+      id: imp.id,
+      tenantId: imp.tenantId,
+      teamId: imp.teamId,
+      teamName: imp.teamId ? (teamNameMap.get(imp.teamId) ?? null) : null,
+      title: imp.title,
+      description: imp.description,
+      status: imp.status,
+      ownerUserId: imp.ownerUserId,
+      resolvedAt: imp.resolvedAt,
+      createdAt: imp.createdAt,
+      updatedAt: imp.updatedAt,
+      ageDays,
+      isEscalated: ageDays > 14 && imp.status !== "RESOLVED",
+    };
+  });
+}
+
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
 export async function createImpediment(raw: unknown): Promise<Result<any>> {

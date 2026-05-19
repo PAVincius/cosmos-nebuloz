@@ -27,4 +27,7 @@ export type EpicWithFeatures = {
   statusId: string;
   features: FeatureWSJF[];
   totalWSJF: number;
+  dependencyCount: number;
+  themeTitle: string | null;
+  themeColor: string | null;
 };

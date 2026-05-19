@@ -1,9 +1,10 @@
-import { getOKRsWithContext } from "@/app/actions/okrs";
+import { getOKRsWithContext, getOKRTraceability } from "@/app/actions/okrs";
 import { getPIPlans } from "@/app/actions/risks";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { appDesign } from "@/lib/app-design";
 import { TargetIcon, TrendingUpIcon, CheckCircle2Icon } from "lucide-react";
 import { OKRsDashboard } from "./components/okrs-dashboard";
+import { OKRTraceabilityView } from "./components/okr-traceability-view";
 
 export const metadata = {
   title: "OKRs - COSMOS",
@@ -11,7 +12,7 @@ export const metadata = {
 };
 
 export default async function OKRsPage() {
-  const [okrs, piPlans] = await Promise.all([getOKRsWithContext(), getPIPlans()]);
+  const [okrs, piPlans, traceability] = await Promise.all([getOKRsWithContext(), getPIPlans(), getOKRTraceability()]);
 
   const onTrack    = okrs.filter((o) => o.status === "ON_TRACK" || o.status === "ACHIEVED").length;
   const totalKRs   = okrs.reduce((s, o) => s + o.keyResults.length, 0);
@@ -31,6 +32,11 @@ export default async function OKRsPage() {
       />
       <div className={appDesign.bodyScroll}>
         <OKRsDashboard initialOKRs={okrs} piPlans={piPlans} />
+        {traceability.length > 0 && (
+          <div className="mt-8">
+            <OKRTraceabilityView nodes={traceability} />
+          </div>
+        )}
       </div>
     </div>
   );

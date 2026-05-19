@@ -14,6 +14,7 @@ export const GuardrailsSchema = z
 
 export const CreateBudgetSchema = z.object({
   artId:      optCuid,
+  themeId:    optCuid,
   name:       nnStr,
   amount:     z.number().positive().finite(),
   spent:      z.number().nonnegative().finite().default(0),
@@ -21,7 +22,7 @@ export const CreateBudgetSchema = z.object({
   guardrails: GuardrailsSchema,
 });
 
-export const UpdateBudgetSchema = CreateBudgetSchema.partial().omit({ artId: true });
+export const UpdateBudgetSchema = CreateBudgetSchema.partial().omit({ artId: true, themeId: true });
 
 export const UpdateSpentSchema = z.object({
   spent: z.number().nonnegative().finite(),

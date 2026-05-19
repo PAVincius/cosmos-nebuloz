@@ -5,6 +5,7 @@ import {
   listTenantRisks,
 } from "@/app/actions/strategic-themes";
 import { getARTs } from "@/app/actions/arts/get-arts";
+import { listBudgetsByTheme, listLeanBudgets } from "@/app/actions/lean-budget";
 import { ThemeDetail } from "./components/theme-detail";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 
@@ -19,18 +20,22 @@ export default async function ThemePage({
 }) {
   const { id } = await params;
 
-  const [themeResult, history, arts, risksResult] = await Promise.all([
+  const [themeResult, history, arts, risksResult, linkedBudgetsResult, allBudgetsResult] = await Promise.all([
     getStrategicThemeById(id),
     listThemeAuditHistory(id),
     getARTs(),
     listTenantRisks(),
+    listBudgetsByTheme(id),
+    listLeanBudgets(),
   ]);
 
   if (!themeResult.ok) notFound();
 
-  const auditLogs = history.ok ? history.data : [];
-  const allArts   = arts.map((a) => ({ id: a.id, name: a.name }));
-  const allRisks  = risksResult.ok ? risksResult.data : [];
+  const auditLogs     = history.ok            ? history.data            : [];
+  const allArts       = arts.map((a) => ({ id: a.id, name: a.name }));
+  const allRisks      = risksResult.ok        ? risksResult.data        : [];
+  const linkedBudgets = linkedBudgetsResult.ok ? linkedBudgetsResult.data : [];
+  const allBudgets    = allBudgetsResult.ok   ? allBudgetsResult.data   : [];
 
   return (
     <div className="flex h-full min-w-0 flex-col">
@@ -49,6 +54,8 @@ export default async function ThemePage({
           auditLogs={auditLogs}
           allArts={allArts}
           allRisks={allRisks}
+          linkedBudgets={linkedBudgets}
+          allBudgets={allBudgets}
         />
       </div>
     </div>

@@ -238,6 +238,7 @@ export type ThemeListItem = {
   horizon:     string | null;
   themeType:   string | null;
   ownerUserId: string | null;
+  budgetTotal: number | null;
   epicCount:   number;
   okrCount:    number;
 };

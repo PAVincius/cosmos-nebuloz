@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import type { ART } from "@repo/database";
 import type { AuditLogWithUser } from "@/app/actions/strategic-themes";
+import { ThemeBudgetPanel } from "./theme-budget-panel";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/design-system/components/ui/avatar";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -122,15 +123,17 @@ function userInitials(name: string | null): string {
 type TenantRisk = { id: string; title: string; status: string; impact: string; piPlanId: string | null };
 
 type Props = {
-  theme:     StrategicThemeDetail;
-  auditLogs: AuditLogWithUser[];
-  allArts:   { id: string; name: string }[];
-  allRisks:  TenantRisk[];
+  theme:          StrategicThemeDetail;
+  auditLogs:      AuditLogWithUser[];
+  allArts:        { id: string; name: string }[];
+  allRisks:       TenantRisk[];
+  linkedBudgets:  import("@/app/actions/lean-budget").LeanBudgetWithStats[];
+  allBudgets:     import("@/app/actions/lean-budget").LeanBudgetWithStats[];
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export function ThemeDetail({ theme: initialTheme, auditLogs, allArts, allRisks }: Props) {
+export function ThemeDetail({ theme: initialTheme, auditLogs, allArts, allRisks, linkedBudgets, allBudgets }: Props) {
   const [theme, setTheme] = useState(initialTheme);
   const [isPending, startTransition] = useTransition();
 
@@ -449,6 +452,24 @@ export function ThemeDetail({ theme: initialTheme, auditLogs, allArts, allRisks 
                 <Button size="sm" onClick={handleAddArt} disabled={!artToAdd}>+</Button>
               </div>
             )}
+          </CardContent>
+        </Card>
+
+        {/* Lean Budgets */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-base flex items-center gap-2">
+              <span>💰</span> Lean Budgets
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ThemeBudgetPanel
+              themeId={theme.id}
+              themeTitle={theme.title}
+              budgetTotal={theme.budgetTotal ?? null}
+              linkedBudgets={linkedBudgets}
+              allBudgets={allBudgets}
+            />
           </CardContent>
         </Card>
 

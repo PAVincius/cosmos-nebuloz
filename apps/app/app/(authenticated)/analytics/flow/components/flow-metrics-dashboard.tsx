@@ -8,7 +8,7 @@ import {
 } from "recharts";
 import type { FlowMetricsResult, FlowScopeOption } from "@/app/actions/flow-metrics";
 import type { AssessmentWithActions } from "@/app/actions/measure-grow";
-import { COMPETENCIES } from "@/app/actions/measure-grow";
+import { COMPETENCIES } from "@/app/actions/measure-grow/constants";
 import {
   createAssessment, createImprovementAction, updateActionStatus,
 } from "@/app/actions/measure-grow";
@@ -183,6 +183,49 @@ export function FlowMetricsDashboard({ scopeOptions, selectedScope, metrics, ass
       {/* ── FLOW METRICS TAB ─────────────────────────────────────────────── */}
       {activeTab === "metrics" && (
         <div className="space-y-8">
+          {/* Decision-making alerts */}
+          {(() => {
+            const alerts: { level: "red" | "amber" | "green"; title: string; action: string }[] = [];
+            if (metrics.flowLoad > 20)
+              alerts.push({ level: "red",   title: `Flow Load alto (${metrics.flowLoad} itens em WIP)`, action: "Reduza WIP: finalize itens em andamento antes de puxar novos." });
+            if (metrics.flowPredictability < 0.7)
+              alerts.push({ level: "red",   title: `Predictability baixa (${Math.round(metrics.flowPredictability * 100)}%)`, action: "Revise capacidade vs. comprometimento e reduza o escopo do próximo PI." });
+            else if (metrics.flowPredictability < 0.8)
+              alerts.push({ level: "amber", title: `Predictability em risco (${Math.round(metrics.flowPredictability * 100)}%)`, action: "Identifique impedimentos e dependências não resolvidas." });
+            if (metrics.flowEfficiency < 0.3)
+              alerts.push({ level: "amber", title: `Eficiência de fluxo baixa (${Math.round(metrics.flowEfficiency * 100)}%)`, action: "Investigue filas de espera e handoffs entre times." });
+            const lastVel = metrics.flowVelocity.at(-1)?.total ?? 0;
+            const prevVel = metrics.flowVelocity.at(-2)?.total ?? 0;
+            if (prevVel > 0 && lastVel < prevVel * 0.7)
+              alerts.push({ level: "amber", title: `Queda de velocity (${prevVel} → ${lastVel})`, action: "Verifique impedimentos, ausências ou mudanças de escopo." });
+            if (alerts.length === 0 && metrics.flowPredictability >= 0.8)
+              alerts.push({ level: "green", title: "Fluxo saudável", action: "Predictability ≥80% e WIP dentro do limite. Continue monitorando tendências." });
+            return alerts.length > 0 ? (
+              <div className="space-y-2">
+                {alerts.map((a, i) => (
+                  <div
+                    key={i}
+                    className={`rounded-lg border px-4 py-3 text-sm flex items-start gap-3 ${
+                      a.level === "red"   ? "border-red-300/50 bg-red-500/5" :
+                      a.level === "amber" ? "border-amber-300/50 bg-amber-500/5" :
+                                           "border-green-300/50 bg-green-500/5"
+                    }`}
+                  >
+                    <span className={`text-base leading-none mt-0.5 ${a.level === "red" ? "text-red-500" : a.level === "amber" ? "text-amber-500" : "text-green-500"}`}>
+                      {a.level === "green" ? "✓" : "⚠"}
+                    </span>
+                    <div>
+                      <p className="font-medium">{a.title}</p>
+                      <p className={`text-xs mt-0.5 ${a.level === "red" ? "text-red-700 dark:text-red-400" : a.level === "amber" ? "text-amber-700 dark:text-amber-400" : "text-green-700 dark:text-green-400"}`}>
+                        → {a.action}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null;
+          })()}
+
           {/* KPI summary cards */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             <MetricCard

@@ -39,11 +39,26 @@ function isWSJFConfig(value: unknown): value is WSJFConfig {
 export async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
   const ctx = await requireTenantSession(await headers());
 
-  const epics = await database.epic.findMany({
-    where: { tenantId: ctx.tenantId },
-    include: { features: true },
-    orderBy: [{ statusId: "asc" }, { order: "asc" }],
-  });
+  const [epics, deps] = await Promise.all([
+    database.epic.findMany({
+      where: { tenantId: ctx.tenantId },
+      include: {
+        features: true,
+        strategicTheme: { select: { title: true, color: true } },
+      },
+      orderBy: [{ statusId: "asc" }, { order: "asc" }],
+    }),
+    database.dependencyLink.findMany({
+      where: { tenantId: ctx.tenantId },
+      select: { blockingFeature: { select: { epicId: true } } },
+    }),
+  ]);
+
+  const depCountByEpic = new Map<string, number>();
+  for (const dep of deps) {
+    const epicId = dep.blockingFeature.epicId;
+    if (epicId) depCountByEpic.set(epicId, (depCountByEpic.get(epicId) ?? 0) + 1);
+  }
 
   const result: EpicWithFeatures[] = epics.map((epic) => {
     const features: FeatureWSJF[] = epic.features.map((f) => ({
@@ -72,6 +87,9 @@ export async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
       statusId: epic.statusId,
       features,
       totalWSJF,
+      dependencyCount: depCountByEpic.get(epic.id) ?? 0,
+      themeTitle: epic.strategicTheme?.title ?? null,
+      themeColor: epic.strategicTheme?.color ?? null,
     };
   });
 

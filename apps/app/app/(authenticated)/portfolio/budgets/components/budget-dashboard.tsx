@@ -3,7 +3,9 @@
 import { useState, useTransition } from "react";
 import {
   AlertTriangleIcon,
+  BellIcon,
   PlusIcon,
+  ShieldAlertIcon,
   Trash2Icon,
   TrendingUpIcon,
   WalletIcon,
@@ -113,8 +115,16 @@ function BudgetCard({
     setEditingSpent(false);
   }
 
+  const isApproaching = !budget.isOverGuardrail && budget.percentUsed >= 75;
+
   return (
-    <Card className={budget.isOverGuardrail ? "border-orange-300 dark:border-orange-700" : ""}>
+    <Card className={
+      budget.isOverGuardrail
+        ? "border-red-300 dark:border-red-700"
+        : isApproaching
+          ? "border-amber-300 dark:border-amber-700"
+          : ""
+    }>
       <CardHeader className="pb-3 pt-4 px-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">
@@ -128,7 +138,10 @@ function BudgetCard({
           </div>
           <div className="flex items-center gap-1 shrink-0">
             {budget.isOverGuardrail && (
-              <AlertTriangleIcon className="h-4 w-4 text-orange-500" aria-label="Guardrail atingido" />
+              <ShieldAlertIcon className="h-4 w-4 text-red-500" aria-label="Guardrail violado" />
+            )}
+            {isApproaching && (
+              <BellIcon className="h-4 w-4 text-amber-500" aria-label="Aproximando guardrail" />
             )}
             <button
               type="button"
@@ -201,10 +214,18 @@ function BudgetCard({
         )}
 
         {budget.isOverGuardrail && (
-          <div className="flex items-center gap-1.5 rounded-md bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 px-2.5 py-1.5">
-            <AlertTriangleIcon className="h-3.5 w-3.5 text-orange-600 shrink-0" />
-            <p className="text-xs text-orange-700 dark:text-orange-300">
-              Orçamento acima de 80% — verifique guardrails.
+          <div className="flex items-center gap-1.5 rounded-md bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 px-2.5 py-1.5">
+            <ShieldAlertIcon className="h-3.5 w-3.5 text-red-600 shrink-0" />
+            <p className="text-xs text-red-700 dark:text-red-300">
+              Guardrail violado — requer aprovação LPM.
+            </p>
+          </div>
+        )}
+        {isApproaching && (
+          <div className="flex items-center gap-1.5 rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 px-2.5 py-1.5">
+            <BellIcon className="h-3.5 w-3.5 text-amber-600 shrink-0" />
+            <p className="text-xs text-amber-700 dark:text-amber-300">
+              {budget.percentUsed}% utilizado — monitorar consumo.
             </p>
           </div>
         )}
@@ -235,6 +256,9 @@ export function BudgetDashboard({ initialBudgets, arts }: Props) {
   ).sort(([a], [b]) => b.localeCompare(a));
 
   const overGuardrailCount = budgets.filter((b) => b.isOverGuardrail).length;
+  const approachingGuardrailBudgets = budgets.filter(
+    (b) => !b.isOverGuardrail && b.percentUsed >= 75
+  );
 
   function handleDelete(id: string) {
     setBudgets((prev) => prev.filter((b) => b.id !== id));
@@ -273,6 +297,7 @@ export function BudgetDashboard({ initialBudgets, arts }: Props) {
       isOverBudget: false,
       isNearLimit: false,
       tenantId: "",
+      themeId: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -294,6 +319,39 @@ export function BudgetDashboard({ initialBudgets, arts }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* Guardrail alert banners */}
+      {overGuardrailCount > 0 && (
+        <div className="flex items-start gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 dark:border-red-800 dark:bg-red-950/30">
+          <ShieldAlertIcon className="mt-0.5 h-4 w-4 shrink-0 text-red-600 dark:text-red-400" aria-hidden />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-red-800 dark:text-red-300">
+              {overGuardrailCount} budget{overGuardrailCount > 1 ? "s" : ""} com guardrail violado
+            </p>
+            <p className="mt-0.5 text-xs text-red-700 dark:text-red-400">
+              {budgets
+                .filter((b) => b.isOverGuardrail)
+                .map((b) => b.name)
+                .join(", ")} — revise alocações e obtenha aprovação do LPM.
+            </p>
+          </div>
+        </div>
+      )}
+      {approachingGuardrailBudgets.length > 0 && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 dark:border-amber-800 dark:bg-amber-950/30">
+          <BellIcon className="mt-0.5 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" aria-hidden />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
+              {approachingGuardrailBudgets.length} budget{approachingGuardrailBudgets.length > 1 ? "s" : ""} se aproximando do guardrail (≥75%)
+            </p>
+            <p className="mt-0.5 text-xs text-amber-700 dark:text-amber-400">
+              {approachingGuardrailBudgets
+                .map((b) => `${b.name} (${b.percentUsed}%)`)
+                .join(", ")}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Summary stats */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Card>

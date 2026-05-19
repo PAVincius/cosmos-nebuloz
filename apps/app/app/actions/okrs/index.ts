@@ -400,6 +400,72 @@ export async function createKeyResultCheckIn(raw: unknown): Promise<Result<KeyRe
   });
 }
 
+// ─── OKR Traceability Tree ────────────────────────────────────────────────────
+
+export type OKRTraceabilityNode = {
+  okrId:       string;
+  okrTitle:    string;
+  okrStatus:   string;
+  themeTitle:  string | null;
+  themeColor:  string | null;
+  epicId:      string | null;
+  epicTitle:   string | null;
+  epicStatus:  string | null;
+  featureCount: number;
+  featureDone:  number;
+  progress:    number;
+};
+
+export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
+  const ctx = await requireTenantSession(await headers());
+
+  const okrs = await database.oKR.findMany({
+    where: { tenantId: ctx.tenantId },
+    include: {
+      strategicTheme: { select: { title: true, color: true } },
+      keyResults: true,
+    },
+    orderBy: { createdAt: "asc" },
+  });
+
+  const epicIds = okrs.map((o) => o.epicId).filter(Boolean) as string[];
+  const epics = epicIds.length > 0
+    ? await database.epic.findMany({
+        where: { id: { in: epicIds }, tenantId: ctx.tenantId },
+        include: {
+          features: { select: { id: true, statusId: true } },
+        },
+      })
+    : [];
+
+  const epicMap = new Map(epics.map((e) => [e.id, e]));
+
+  return okrs.map((okr) => {
+    const krs  = okr.keyResults;
+    const prog = krs.length > 0
+      ? Math.round(krs.reduce((s, kr) => s + (kr.target > 0 ? Math.min(100, (kr.current / kr.target) * 100) : 0), 0) / krs.length)
+      : 0;
+
+    const epic = okr.epicId ? epicMap.get(okr.epicId) : null;
+    const features = epic?.features ?? [];
+    const done = features.filter((f) => f.statusId === "done" || f.statusId === "DONE" || f.statusId === "completed").length;
+
+    return {
+      okrId:        okr.id,
+      okrTitle:     okr.title,
+      okrStatus:    okr.status,
+      themeTitle:   okr.strategicTheme?.title ?? null,
+      themeColor:   okr.strategicTheme?.color ?? null,
+      epicId:       okr.epicId,
+      epicTitle:    epic?.title ?? null,
+      epicStatus:   epic?.statusId ?? null,
+      featureCount: features.length,
+      featureDone:  done,
+      progress:     prog,
+    };
+  });
+}
+
 // ─── Backward-compatible helpers (for existing UI components) ─────────────────
 
 /** @deprecated use listOKRs */

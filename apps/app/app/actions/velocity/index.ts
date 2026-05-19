@@ -352,3 +352,82 @@ export async function getSprintBurndownData(
 
   return points;
 }
+
+// ---------------------------------------------------------------------------
+// Function 4: getVelocityOverview — ART/tenant-level summary
+// ---------------------------------------------------------------------------
+
+export type TeamVelocitySummary = {
+  teamId: string;
+  teamName: string;
+  artId: string | null;
+  artName: string | null;
+  avgSPPerSprint: number;
+  lastSprintSP: number;
+  trend: "up" | "down" | "neutral";
+  sprints: { label: string; sp: number }[];
+};
+
+export async function getVelocityOverview(artId?: string): Promise<TeamVelocitySummary[]> {
+  const ctx = await requireTenantSession(await headers());
+
+  const teams = await database.team.findMany({
+    where: {
+      tenantId: ctx.tenantId,
+      ...(artId ? { artId } : {}),
+    },
+    include: { art: { select: { id: true, name: true } } },
+    orderBy: { name: "asc" },
+  });
+
+  const now = new Date();
+  const numSprints = 6;
+
+  const result: TeamVelocitySummary[] = await Promise.all(
+    teams.map(async (team) => {
+      const rawMembers = (team.members ?? []) as { id: string }[];
+      const memberIds = Array.isArray(rawMembers) ? rawMembers.map((m) => m.id).filter(Boolean) : [];
+
+      const sprints: { label: string; sp: number }[] = [];
+      for (let i = numSprints; i >= 1; i--) {
+        const end   = new Date(now.getTime() - (i - 1) * SPRINT_LENGTH_DAYS * 86_400_000);
+        const start = new Date(end.getTime() - SPRINT_LENGTH_DAYS * 86_400_000);
+
+        const completed = memberIds.length > 0
+          ? await database.feature.count({
+              where: {
+                tenantId: ctx.tenantId,
+                assigneeUserId: { in: memberIds },
+                statusId: { in: ["DONE", "COMPLETED", "done", "completed"] },
+                updatedAt: { gte: start, lt: end },
+              },
+            })
+          : 0;
+
+        sprints.push({ label: `S-${i}`, sp: completed });
+      }
+
+      const nonZero = sprints.filter((s) => s.sp > 0);
+      const avgSPPerSprint = nonZero.length > 0
+        ? Math.round(nonZero.reduce((s, x) => s + x.sp, 0) / nonZero.length)
+        : 0;
+      const lastSprintSP = sprints[sprints.length - 1]?.sp ?? 0;
+      const prevSprintSP = sprints[sprints.length - 2]?.sp ?? 0;
+      const trend: "up" | "down" | "neutral" =
+        lastSprintSP > prevSprintSP ? "up" : lastSprintSP < prevSprintSP ? "down" : "neutral";
+
+      return {
+        teamId:       team.id,
+        teamName:     team.name,
+        artId:        team.artId,
+        artName:      team.art?.name ?? null,
+        avgSPPerSprint,
+        lastSprintSP,
+        trend,
+        sprints,
+      };
+    })
+  );
+
+  return result.sort((a, b) => b.avgSPPerSprint - a.avgSPPerSprint);
+}

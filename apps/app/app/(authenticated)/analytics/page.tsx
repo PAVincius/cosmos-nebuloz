@@ -1,15 +1,19 @@
+import Link from "next/link";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Separator } from "@repo/design-system/components/ui/separator";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   BarChart2Icon,
   TargetIcon,
   TrendingUpIcon,
   ShieldAlertIcon,
   ZapIcon,
+  StarIcon,
+  GitBranchIcon,
 } from "lucide-react";
 import { appDesign } from "@/lib/app-design";
 
@@ -179,6 +183,29 @@ export default async function AnalyticsPage() {
       </div>
       <div className={appDesign.bodyScroll}>
       <div className="flex flex-col gap-6">
+
+      {/* Quick links to detailed dashboards */}
+      <div className="flex flex-wrap gap-2">
+        <Link href="/analytics/flow">
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <GitBranchIcon className="h-3.5 w-3.5" />
+            Flow Metrics
+          </Button>
+        </Link>
+        <Link href="/analytics/velocity">
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <ZapIcon className="h-3.5 w-3.5" />
+            Velocity Dashboard
+          </Button>
+        </Link>
+        <Link href="/analytics/measure-grow">
+          <Button variant="outline" size="sm" className="gap-1.5">
+            <StarIcon className="h-3.5 w-3.5" />
+            Measure &amp; Grow
+          </Button>
+        </Link>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPICard

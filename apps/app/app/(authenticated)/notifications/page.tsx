@@ -5,6 +5,7 @@ import { Separator } from "@repo/design-system/components/ui/separator";
 import { BellIcon, BellOffIcon } from "lucide-react";
 import { MarkAllReadButton } from "./components/mark-all-read-button";
 import { NotificationItem } from "./components/notification-item";
+import { NotificationPreferences } from "./components/notification-preferences";
 
 export const metadata = {
   title: "Notificações | COSMOS",
@@ -62,6 +63,8 @@ export default async function NotificationsPage() {
         </div>
         {unreadCount > 0 && <MarkAllReadButton />}
       </div>
+
+      <NotificationPreferences />
 
       {!hasNotifications ? (
         <Card>

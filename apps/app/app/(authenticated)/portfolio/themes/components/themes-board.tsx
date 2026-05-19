@@ -104,11 +104,12 @@ type ThemeForm = {
   horizon:     string;
   themeType:   string;
   code:        string;
+  budgetTotal: string;
 };
 
 const EMPTY_FORM: ThemeForm = {
   title: "", description: "", color: "#6366f1",
-  horizon: "", themeType: "", code: "",
+  horizon: "", themeType: "", code: "", budgetTotal: "",
 };
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -367,12 +368,17 @@ export function ThemesBoard({ initialThemes, initialEpics }: Props) {
       horizon:     t.horizon ?? "",
       themeType:   t.themeType ?? "",
       code:        "",
+      budgetTotal: t.budgetTotal != null ? String(t.budgetTotal) : "",
     });
     setDialogOpen(true);
   }
 
   async function handleSave() {
     if (!form.title.trim()) return;
+
+    const budgetTotal = form.budgetTotal.trim()
+      ? parseFloat(form.budgetTotal)
+      : undefined;
 
     const payload = {
       title:       form.title,
@@ -381,6 +387,7 @@ export function ThemesBoard({ initialThemes, initialEpics }: Props) {
       horizon:     form.horizon || undefined,
       themeType:   form.themeType || undefined,
       code:        form.code || undefined,
+      budgetTotal: !Number.isNaN(budgetTotal) ? budgetTotal : undefined,
     };
 
     if (editingId) {
@@ -412,6 +419,7 @@ export function ThemesBoard({ initialThemes, initialEpics }: Props) {
         horizon:     form.horizon || null,
         themeType:   form.themeType || null,
         ownerUserId: null,
+        budgetTotal: form.budgetTotal ? parseFloat(form.budgetTotal) : null,
         epicCount:   0,
         okrCount:    0,
       };
@@ -607,6 +615,21 @@ export function ThemesBoard({ initialThemes, initialEpics }: Props) {
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="grid gap-1">
+              <Label>Budget Total (R$)</Label>
+              <Input
+                type="number"
+                min={0}
+                step={1000}
+                placeholder="Ex: 1500000"
+                value={form.budgetTotal}
+                onChange={(e) => setForm({ ...form, budgetTotal: e.target.value })}
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Orçamento estratégico alocado a este tema. Você pode associar Lean Budgets detalhados na página do tema.
+              </p>
             </div>
 
             <div className="grid gap-1.5">

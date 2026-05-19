@@ -695,6 +695,7 @@ export async function getStrategicThemes(): Promise<ThemeListItem[]> {
     horizon:     t.horizon,
     themeType:   t.themeType,
     ownerUserId: t.ownerUserId,
+    budgetTotal: t.budgetTotal ?? null,
     epicCount:   t._count.epics,
     okrCount:    t._count.okrs,
   }));

@@ -42,6 +42,34 @@ function withStats(b: LeanBudget): LeanBudgetWithStats {
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
+export async function listBudgetsByTheme(themeId: string): Promise<Result<LeanBudgetWithStats[]>> {
+  return safeAction(async () => {
+    const ctx     = await requireTenantSession(await headers());
+    const budgets = await database.leanBudget.findMany({
+      where:   { tenantId: ctx.tenantId, themeId },
+      orderBy: [{ period: "desc" }, { name: "asc" }],
+    });
+    return budgets.map(withStats);
+  });
+}
+
+export async function linkBudgetToTheme(budgetId: string, themeId: string | null): Promise<Result<LeanBudget>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const { count } = await database.leanBudget.updateMany({
+      where: { id: budgetId, tenantId: ctx.tenantId },
+      data:  { themeId: themeId ?? null },
+    });
+    if (count === 0) throw new Error("Budget não encontrado ou sem permissão.");
+    const updated = await database.leanBudget.findFirstOrThrow({
+      where: { id: budgetId, tenantId: ctx.tenantId },
+    });
+    revalidatePath("/portfolio/budgets");
+    if (themeId) revalidatePath(`/portfolio/themes/${themeId}`);
+    return updated;
+  });
+}
+
 export async function listLeanBudgets(): Promise<Result<LeanBudgetWithStats[]>> {
   return safeAction(async () => {
     const ctx     = await requireTenantSession(await headers());
@@ -111,13 +139,15 @@ export async function createLeanBudget(raw: unknown): Promise<Result<LeanBudget>
         amount:     input.amount,
         spent:      input.spent,
         period:     input.period,
-        artId:      input.artId    ?? null,
+        artId:      input.artId   ?? null,
+        themeId:    input.themeId ?? null,
         guardrails: input.guardrails ?? undefined,
       },
     });
 
     revalidatePath("/portfolio/budgets");
     revalidatePath("/portfolio");
+    if (input.themeId) revalidatePath(`/portfolio/themes/${input.themeId}`);
     return budget;
   });
 }

@@ -189,7 +189,7 @@ function EpicRow({ epic, scale, labels, onUpdateFeature, isPending }: EpicRowPro
         onClick={() => setExpanded((prev) => !prev)}
       >
         <td className="py-3 pl-4 pr-2">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             {expanded ? (
               <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
             ) : (
@@ -199,6 +199,24 @@ function EpicRow({ epic, scale, labels, onUpdateFeature, isPending }: EpicRowPro
             <Badge variant="outline" className="text-xs uppercase tracking-wide">
               {epic.statusId}
             </Badge>
+            {epic.themeTitle && (
+              <span
+                className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-medium border"
+                style={epic.themeColor ? {
+                  background: `${epic.themeColor}18`,
+                  borderColor: `${epic.themeColor}55`,
+                  color: epic.themeColor,
+                } : undefined}
+              >
+                {epic.themeTitle}
+              </span>
+            )}
+            {epic.dependencyCount > 0 && (
+              <span className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-medium bg-amber-500/10 text-amber-600 border border-amber-400/40">
+                <svg viewBox="0 0 16 16" className="h-2.5 w-2.5" fill="currentColor"><path d="M7 1a1 1 0 0 0 0 2h1.586L5.293 6.293a1 1 0 1 0 1.414 1.414L10 4.414V6a1 1 0 0 0 2 0V2a1 1 0 0 0-1-1H7zm-4 7a1 1 0 0 1 1 1v1.586l3.293-3.293a1 1 0 1 1 1.414 1.414L5.414 11H7a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/></svg>
+                {epic.dependencyCount} dep
+              </span>
+            )}
             <span className="text-xs text-muted-foreground">
               {epic.features.length} feature{epic.features.length !== 1 && "s"}
             </span>
