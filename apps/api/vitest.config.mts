@@ -14,13 +14,11 @@ export default defineConfig({
       reportsDirectory: "./coverage",
       include: ["app/**/*.ts", "app/**/*.tsx", "lib/**/*.ts"],
       exclude: ["**/*.d.ts", "**/schema.ts", "node_modules/**"],
-      // API app is primarily webhook/cron route handlers — covered by E2E.
-      // Unit threshold is a floor to prevent total regression, not a target.
       thresholds: {
-        lines: 2,
-        functions: 5,
-        branches: 0,
-        statements: 2,
+        lines: 60,
+        functions: 60,
+        branches: 50,
+        statements: 60,
       },
     },
   },
