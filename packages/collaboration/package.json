@@ -9,7 +9,7 @@
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.8",
     "@liveblocks/client": "^3.11.0",
-    "@liveblocks/node": "^3.11.0",
+    "@liveblocks/node": "^3.19.1",
     "@liveblocks/react": "^3.11.0",
     "react": "19.2.1",
     "server-only": "^0.0.1",
