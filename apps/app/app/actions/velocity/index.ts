@@ -383,29 +383,41 @@ export async function getVelocityOverview(artId?: string): Promise<TeamVelocityS
   const now = new Date();
   const numSprints = 6;
 
-  const result: TeamVelocitySummary[] = await Promise.all(
-    teams.map(async (team) => {
-      const rawMembers = (team.members ?? []) as { id: string }[];
-      const memberIds = Array.isArray(rawMembers) ? rawMembers.map((m) => m.id).filter(Boolean) : [];
+  const DONE_STATUSES = ["done", "DONE", "completed", "COMPLETED"];
+  const windowStart = new Date(now.getTime() - numSprints * SPRINT_LENGTH_DAYS * 86_400_000);
 
-      const sprints: { label: string; sp: number }[] = [];
-      for (let i = numSprints; i >= 1; i--) {
-        const end   = new Date(now.getTime() - (i - 1) * SPRINT_LENGTH_DAYS * 86_400_000);
-        const start = new Date(end.getTime() - SPRINT_LENGTH_DAYS * 86_400_000);
+  const allMemberIds = teams.flatMap((t) => {
+    const raw = (t.members ?? []) as { id: string }[];
+    return Array.isArray(raw) ? raw.map((m) => m.id).filter(Boolean) : [];
+  });
 
-        const completed = memberIds.length > 0
-          ? await database.feature.count({
-              where: {
-                tenantId: ctx.tenantId,
-                assigneeUserId: { in: memberIds },
-                statusId: { in: ["DONE", "COMPLETED", "done", "completed"] },
-                updatedAt: { gte: start, lt: end },
-              },
-            })
-          : 0;
+  const completedFeatures = allMemberIds.length > 0
+    ? await database.feature.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          assigneeUserId: { in: allMemberIds },
+          statusId: { in: DONE_STATUSES },
+          completedAt: { gte: windowStart, not: null },
+        },
+        select: { assigneeUserId: true, completedAt: true },
+      })
+    : [];
 
-        sprints.push({ label: `S-${i}`, sp: completed });
-      }
+  const result: TeamVelocitySummary[] = teams.map((team) => {
+    const rawMembers = (team.members ?? []) as { id: string }[];
+    const memberIds = new Set(Array.isArray(rawMembers) ? rawMembers.map((m) => m.id).filter(Boolean) : []);
+
+    const teamFeatures = completedFeatures.filter((f) => f.assigneeUserId && memberIds.has(f.assigneeUserId));
+
+    const sprints: { label: string; sp: number }[] = [];
+    for (let i = numSprints; i >= 1; i--) {
+      const end   = new Date(now.getTime() - (i - 1) * SPRINT_LENGTH_DAYS * 86_400_000);
+      const start = new Date(end.getTime() - SPRINT_LENGTH_DAYS * 86_400_000);
+      const completed = teamFeatures.filter(
+        (f) => f.completedAt && f.completedAt >= start && f.completedAt < end
+      ).length;
+      sprints.push({ label: `S-${i}`, sp: completed });
+    }
 
       const nonZero = sprints.filter((s) => s.sp > 0);
       const avgSPPerSprint = nonZero.length > 0
@@ -426,8 +438,7 @@ export async function getVelocityOverview(artId?: string): Promise<TeamVelocityS
         trend,
         sprints,
       };
-    })
-  );
+    });
 
   return result.sort((a, b) => b.avgSPPerSprint - a.avgSPPerSprint);
 }

@@ -448,7 +448,8 @@ export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
 
     const epic = okr.epicId ? epicMap.get(okr.epicId) : null;
     const features = epic?.features ?? [];
-    const done = features.filter((f) => f.statusId === "done" || f.statusId === "DONE" || f.statusId === "completed").length;
+    const DONE_STATUSES = new Set(["done", "DONE", "completed", "COMPLETED"]);
+    const done = features.filter((f) => DONE_STATUSES.has(f.statusId)).length;
 
     return {
       okrId:        okr.id,

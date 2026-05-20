@@ -55,7 +55,7 @@ export function NotificationPreferences() {
       {open && (
         <div className="border-t">
           <div className="px-4 py-2">
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-xs text-muted-foreground">
               Controle quais categorias de notificação você deseja receber. Canais adicionais (email, Slack) em breve.
             </p>
           </div>
@@ -67,7 +67,7 @@ export function NotificationPreferences() {
                   <Label htmlFor={`pref-${cat.id}`} className="text-sm font-medium cursor-pointer">
                     {cat.label}
                   </Label>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">{cat.description}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{cat.description}</p>
                 </div>
                 <Switch
                   id={`pref-${cat.id}`}
@@ -78,11 +78,11 @@ export function NotificationPreferences() {
             ))}
           </div>
           <div className="border-t px-4 py-3 flex items-center justify-between gap-3">
-            <p className="text-[11px] text-muted-foreground">
-              As preferências serão salvas no seu perfil.
+            <p className="text-xs text-muted-foreground">
+              Persistência de preferências em breve — configurações aplicadas nesta sessão.
             </p>
             <Button size="sm" className="h-7 text-xs" onClick={() => setOpen(false)}>
-              Salvar preferências
+              Fechar
             </Button>
           </div>
         </div>

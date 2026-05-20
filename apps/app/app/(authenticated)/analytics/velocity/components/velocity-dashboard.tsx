@@ -39,7 +39,7 @@ export function VelocityDashboard({ teams, arts }: Props) {
     : teams.filter((t) => t.artId === filterArt);
 
   // Multi-team sprint series for line chart
-  const sprintLabels = teams[0]?.sprints.map((s) => s.label) ?? [];
+  const sprintLabels = filtered[0]?.sprints.map((s) => s.label) ?? [];
   const lineData = sprintLabels.map((label, idx) => {
     const entry: Record<string, string | number> = { sprint: label };
     for (const t of filtered.slice(0, 6)) {
@@ -83,7 +83,7 @@ export function VelocityDashboard({ teams, arts }: Props) {
                   <div className="min-w-0">
                     <p className="text-sm font-semibold truncate">{team.teamName}</p>
                     {team.artName && (
-                      <p className="text-[11px] text-muted-foreground">{team.artName}</p>
+                      <p className="text-xs text-muted-foreground">{team.artName}</p>
                     )}
                   </div>
                   <TrendIcon trend={team.trend} />
@@ -91,13 +91,13 @@ export function VelocityDashboard({ teams, arts }: Props) {
 
                 <div className="flex items-baseline gap-3">
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Últ. Sprint</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Últ. Sprint</p>
                     <p className="text-xl font-bold tabular-nums" style={{ color: sparkColor(team.trend) }}>
                       {team.lastSprintSP}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-wide">Média</p>
+                    <p className="text-xs text-muted-foreground uppercase tracking-wide">Média</p>
                     <p className="text-xl font-bold tabular-nums text-foreground">
                       {team.avgSPPerSprint}
                     </p>
@@ -119,7 +119,7 @@ export function VelocityDashboard({ teams, arts }: Props) {
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="flex justify-between text-[9px] text-muted-foreground">
+                <div className="flex justify-between text-xs text-muted-foreground">
                   {team.sprints.map((s) => <span key={s.label}>{s.label}</span>)}
                 </div>
               </div>

@@ -25,7 +25,7 @@ function ProgressBar({ value }: { value: number }) {
           style={{ width: `${value}%` }}
         />
       </div>
-      <span className="text-[10px] font-mono text-muted-foreground w-7 text-right">{value}%</span>
+      <span className="text-xs font-mono text-muted-foreground w-7 text-right">{value}%</span>
     </div>
   );
 }
@@ -57,9 +57,9 @@ export function OKRTraceabilityView({ nodes }: Props) {
         <div className="flex items-center gap-2">
           <GitBranchIcon className="h-4 w-4 text-muted-foreground" />
           <span className="text-sm font-semibold">Rastreabilidade OKR → Epic → Features</span>
-          <Badge variant="outline" className="text-[10px]">{nodes.length} OKRs</Badge>
+          <Badge variant="outline" className="text-xs">{nodes.length} OKRs</Badge>
           {withoutEpic > 0 && (
-            <span className="text-[10px] text-amber-600 font-medium">{withoutEpic} sem Epic vinculado</span>
+            <span className="text-xs text-amber-600 font-medium">{withoutEpic} sem Epic vinculado</span>
           )}
         </div>
         {expanded ? <ChevronDownIcon className="h-4 w-4 text-muted-foreground" /> : <ChevronRightIcon className="h-4 w-4 text-muted-foreground" />}
@@ -92,12 +92,12 @@ export function OKRTraceabilityView({ nodes }: Props) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-sm font-medium">{node.okrTitle}</span>
-                      <span className={`inline-flex items-center rounded-full border px-1.5 py-0.5 text-[10px] font-medium ${STATUS_COLOR[node.okrStatus] ?? ""}`}>
+                      <span className={`inline-flex items-center rounded-full border px-1.5 py-0.5 text-xs font-medium ${STATUS_COLOR[node.okrStatus] ?? ""}`}>
                         {STATUS_LABEL[node.okrStatus] ?? node.okrStatus}
                       </span>
                       {node.themeTitle && (
                         <span
-                          className="inline-flex rounded-full border px-1.5 py-0.5 text-[10px] font-medium"
+                          className="inline-flex rounded-full border px-1.5 py-0.5 text-xs font-medium"
                           style={node.themeColor ? {
                             background: `${node.themeColor}15`,
                             borderColor: `${node.themeColor}50`,
@@ -108,7 +108,7 @@ export function OKRTraceabilityView({ nodes }: Props) {
                         </span>
                       )}
                       {!hasEpic && (
-                        <span className="text-[10px] text-amber-600">⚠ Sem Epic</span>
+                        <span className="text-xs text-amber-600">⚠ Sem Epic</span>
                       )}
                     </div>
                     <div className="mt-1.5 max-w-xs">
@@ -126,10 +126,10 @@ export function OKRTraceabilityView({ nodes }: Props) {
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-medium">{node.epicTitle}</span>
                           {node.epicStatus && (
-                            <Badge variant="outline" className="text-[10px] uppercase">{node.epicStatus}</Badge>
+                            <Badge variant="outline" className="text-xs uppercase">{node.epicStatus}</Badge>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 mt-1.5 text-[11px] text-muted-foreground">
+                        <div className="flex items-center gap-3 mt-1.5 text-xs text-muted-foreground">
                           <span>{node.featureCount} feature{node.featureCount !== 1 ? "s" : ""}</span>
                           <span className="text-green-600 font-medium">{node.featureDone} concluídas</span>
                           {node.featureCount > 0 && (

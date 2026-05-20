@@ -21,7 +21,7 @@ export function ROAMMetricsStrip({ risks }: Props) {
   if (risks.length === 0) return null;
 
   const total = risks.length;
-  const resolved = risks.filter((r) => r.status === "RESOLVED" || r.status === "MITIGATED").length;
+  const resolved = risks.filter((r) => r.status === "RESOLVED").length;
   const resolvedPct = Math.round((resolved / total) * 100);
   const critical = risks.filter((r) => r.impact === "critical" && r.status !== "RESOLVED").length;
 
@@ -33,7 +33,7 @@ export function ROAMMetricsStrip({ risks }: Props) {
           const count = risks.filter((r) => r.status === cfg.status).length;
           return (
             <div key={cfg.status} className={`rounded-lg border p-3 ${cfg.bg}`}>
-              <p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {cfg.label}
               </p>
               <p className={`text-xl font-bold tabular-nums ${cfg.color}`}>{count}</p>
@@ -73,13 +73,13 @@ export function ROAMMetricsStrip({ risks }: Props) {
           {IMPACT_CONFIG.map((cfg) => {
             const count = risks.filter((r) => r.impact === cfg.impact).length;
             return (
-              <div key={cfg.impact} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+              <div key={cfg.impact} className="flex items-center gap-1.5 text-xs text-muted-foreground">
                 <div className={`h-2 w-2 rounded-full ${cfg.color}`} />
                 {cfg.label}: <span className="font-semibold text-foreground">{count}</span>
               </div>
             );
           })}
-          <div className="ml-auto flex items-center gap-1.5 text-[11px]">
+          <div className="ml-auto flex items-center gap-1.5 text-xs">
             <span className="text-muted-foreground">Resolução:</span>
             <span className={`font-semibold ${resolvedPct >= 50 ? "text-green-600" : "text-amber-600"}`}>
               {resolvedPct}%

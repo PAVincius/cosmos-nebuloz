@@ -202,9 +202,9 @@ export function FlowMetricsDashboard({ scopeOptions, selectedScope, metrics, ass
               alerts.push({ level: "green", title: "Fluxo saudável", action: "Predictability ≥80% e WIP dentro do limite. Continue monitorando tendências." });
             return alerts.length > 0 ? (
               <div className="space-y-2">
-                {alerts.map((a, i) => (
+                {alerts.map((a) => (
                   <div
-                    key={i}
+                    key={a.title}
                     className={`rounded-lg border px-4 py-3 text-sm flex items-start gap-3 ${
                       a.level === "red"   ? "border-red-300/50 bg-red-500/5" :
                       a.level === "amber" ? "border-amber-300/50 bg-amber-500/5" :

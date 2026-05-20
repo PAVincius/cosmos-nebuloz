@@ -88,20 +88,20 @@ export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWit
   });
 
   const teamIds = teams.map((t) => t.id);
-  const teamNameMap = new Map(teams.map((t) => [t.id, t.name]));
+  if (teamIds.length === 0) return [];
 
+  const teamNameMap = new Map(teams.map((t) => [t.id, t.name]));
   const now = new Date();
 
   const impediments = await database.impediment.findMany({
-    where: {
-      tenantId: ctx.tenantId,
-      ...(teamIds.length > 0 ? { teamId: { in: teamIds } } : {}),
-    },
+    where: { tenantId: ctx.tenantId, teamId: { in: teamIds } },
     orderBy: [{ status: "asc" }, { createdAt: "asc" }],
   });
 
   return impediments.map((imp) => {
-    const ageDays = Math.floor((now.getTime() - imp.createdAt.getTime()) / 86_400_000);
+    const endTime = imp.resolvedAt ? imp.resolvedAt.getTime() : now.getTime();
+    const ageDays = Math.floor((endTime - imp.createdAt.getTime()) / 86_400_000);
+    const isOpen = imp.status !== "RESOLVED";
     return {
       id: imp.id,
       tenantId: imp.tenantId,
@@ -115,7 +115,7 @@ export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWit
       createdAt: imp.createdAt,
       updatedAt: imp.updatedAt,
       ageDays,
-      isEscalated: ageDays > 14 && imp.status !== "RESOLVED",
+      isEscalated: isOpen && ageDays > 14,
     };
   });
 }

@@ -48,7 +48,7 @@ export default async function ARTImpedimentsPage({ params }: { params: Promise<{
         ]}
       />
       <div className={appDesign.bodyScroll}>
-        <ImpedimentARTDashboard artId={artId} impediments={impediments} />
+        <ImpedimentARTDashboard impediments={impediments} />
       </div>
     </div>
   );

@@ -26,27 +26,26 @@ const STATUS_BADGE: Record<string, "destructive" | "default" | "outline"> = {
 function AgePill({ days, escalated }: { days: number; escalated: boolean }) {
   if (escalated) {
     return (
-      <span className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold bg-red-500/10 text-red-600 border border-red-400/30">
+      <span className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold bg-red-500/10 text-red-600 border border-red-400/30">
         <FlameIcon className="h-2.5 w-2.5" /> {days}d
       </span>
     );
   }
   if (days > 7) {
     return (
-      <span className="inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-medium bg-amber-500/10 text-amber-600 border border-amber-400/30">
+      <span className="inline-flex items-center rounded-full px-1.5 py-0.5 text-xs font-medium bg-amber-500/10 text-amber-600 border border-amber-400/30">
         {days}d
       </span>
     );
   }
   return (
-    <span className="text-[10px] text-muted-foreground">{days}d</span>
+    <span className="text-xs text-muted-foreground">{days}d</span>
   );
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
 type Props = {
-  artId: string;
   impediments: ImpedimentWithTeam[];
 };
 
@@ -56,7 +55,7 @@ export function ImpedimentARTDashboard({ impediments }: Props) {
   const [filterStatus, setFilterStatus]   = useState("ALL");
   const [filterTeam,   setFilterTeam]     = useState("ALL");
 
-  const teams = Array.from(new Set(impediments.map((i) => i.teamName).filter(Boolean))).sort() as string[];
+  const teams = Array.from(new Set(impediments.map((i) => i.teamName).filter((n): n is string => n !== null))).sort();
 
   const filtered = impediments.filter((i) => {
     if (filterStatus !== "ALL" && i.status !== filterStatus) return false;
@@ -77,8 +76,8 @@ export function ImpedimentARTDashboard({ impediments }: Props) {
 
   function handleResolve(id: string) {
     startTransition(async () => {
-      await resolveImpediment(id);
-      router.refresh();
+      const result = await resolveImpediment(id);
+      if (result.ok) router.refresh();
     });
   }
 
@@ -97,7 +96,7 @@ export function ImpedimentARTDashboard({ impediments }: Props) {
                   <UsersIcon className="h-3.5 w-3.5 text-muted-foreground" />
                   <p className="text-xs font-medium truncate">{t.team}</p>
                 </div>
-                <div className="flex items-center gap-2 text-[11px]">
+                <div className="flex items-center gap-2 text-xs">
                   <span className="text-red-500 font-semibold">{t.open} abertos</span>
                   {t.escalated > 0 && (
                     <span className="flex items-center gap-0.5 text-red-600 font-bold">
@@ -155,17 +154,17 @@ export function ImpedimentARTDashboard({ impediments }: Props) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className={`text-sm font-medium ${imp.isEscalated ? "text-red-600" : ""}`}>{imp.title}</span>
                     {imp.isEscalated && (
-                      <span className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[10px] font-semibold bg-red-500/10 text-red-600 border border-red-400/30">
+                      <span className="inline-flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-xs font-semibold bg-red-500/10 text-red-600 border border-red-400/30">
                         <FlameIcon className="h-2.5 w-2.5" /> Escalado
                       </span>
                     )}
                   </div>
                   <div className="flex items-center gap-2 mt-0.5">
                     {imp.teamName && (
-                      <span className="text-[11px] text-muted-foreground">{imp.teamName}</span>
+                      <span className="text-xs text-muted-foreground">{imp.teamName}</span>
                     )}
                     <AgePill days={imp.ageDays} escalated={imp.isEscalated} />
-                    <Badge variant={STATUS_BADGE[imp.status] ?? "outline"} className="text-[10px] h-4">
+                    <Badge variant={STATUS_BADGE[imp.status] ?? "outline"} className="text-xs h-4">
                       {cfg.label}
                     </Badge>
                   </div>
