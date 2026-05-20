@@ -29,7 +29,7 @@ vi.mock("@repo/database", () => ({
 
 import { createRisk, updateRiskStatus } from "../../app/actions/arts/risks";
 
-const NOT_FOUND_RX = NOT_FOUND_RX;
+const NOT_FOUND_RX = /not found|não encontrado/i;
 const ART_ID = "art-1";
 const PI_ID = "pi-1";
 const RISK_ID = "risk-1";
