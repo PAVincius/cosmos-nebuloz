@@ -19,6 +19,8 @@ export type FeatureWSJF = {
   js: number;
   wsjfScore: number;
   statusId: string;
+  externalSource: string | null;
+  externalUrl: string | null;
 };
 
 export type EpicWithFeatures = {

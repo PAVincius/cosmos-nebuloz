@@ -1,12 +1,16 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import type { WSJFLabels, WSJFConfig, FeatureWSJF, EpicWithFeatures } from "./schema";
+import { headers } from "next/headers";
 
-export type { WSJFLabels, WSJFConfig, FeatureWSJF, EpicWithFeatures };
+export type {
+  EpicWithFeatures,
+  FeatureWSJF,
+  WSJFConfig,
+  WSJFLabels,
+} from "./schema";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 
@@ -21,16 +25,22 @@ const DEFAULT_CONFIG: WSJFConfig = {
 };
 
 function isWSJFConfig(value: unknown): value is WSJFConfig {
-  if (!value || typeof value !== "object") return false;
+  if (!value || typeof value !== "object") {
+    return false;
+  }
   const obj = value as Record<string, unknown>;
-  if (!Array.isArray(obj["scale"])) return false;
-  if (typeof obj["labels"] !== "object" || !obj["labels"]) return false;
-  const labels = obj["labels"] as Record<string, unknown>;
+  if (!Array.isArray(obj.scale)) {
+    return false;
+  }
+  if (typeof obj.labels !== "object" || !obj.labels) {
+    return false;
+  }
+  const labels = obj.labels as Record<string, unknown>;
   return (
-    typeof labels["bv"] === "string" &&
-    typeof labels["tc"] === "string" &&
-    typeof labels["rr"] === "string" &&
-    typeof labels["js"] === "string"
+    typeof labels.bv === "string" &&
+    typeof labels.tc === "string" &&
+    typeof labels.rr === "string" &&
+    typeof labels.js === "string"
   );
 }
 
@@ -57,7 +67,9 @@ export async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
   const depCountByEpic = new Map<string, number>();
   for (const dep of deps) {
     const epicId = dep.blockingFeature.epicId;
-    if (epicId) depCountByEpic.set(epicId, (depCountByEpic.get(epicId) ?? 0) + 1);
+    if (epicId) {
+      depCountByEpic.set(epicId, (depCountByEpic.get(epicId) ?? 0) + 1);
+    }
   }
 
   const result: EpicWithFeatures[] = epics.map((epic) => {
@@ -70,6 +82,8 @@ export async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
       js: f.js,
       wsjfScore: f.wsjfScore,
       statusId: f.statusId,
+      externalSource: f.externalSource ?? null,
+      externalUrl: f.externalUrl ?? null,
     }));
 
     const totalWSJF =
@@ -104,13 +118,19 @@ export async function getWSJFConfig(): Promise<WSJFConfig> {
     select: { metadata: true },
   });
 
-  if (!tenant) return DEFAULT_CONFIG;
+  if (!tenant) {
+    return DEFAULT_CONFIG;
+  }
 
   const meta = tenant.metadata;
-  if (!meta || typeof meta !== "object") return DEFAULT_CONFIG;
+  if (!meta || typeof meta !== "object") {
+    return DEFAULT_CONFIG;
+  }
 
-  const raw = (meta as Record<string, unknown>)["wsjfConfig"];
-  if (isWSJFConfig(raw)) return raw;
+  const raw = (meta as Record<string, unknown>).wsjfConfig;
+  if (isWSJFConfig(raw)) {
+    return raw;
+  }
 
   return DEFAULT_CONFIG;
 }

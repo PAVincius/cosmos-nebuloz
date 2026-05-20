@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent, CardHeader } from "@repo/design-system/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@repo/design-system/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -21,11 +24,13 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { PlusIcon, Trash2Icon, ZapIcon } from "lucide-react";
+import { useState, useTransition } from "react";
+import { ExternalSourceBadge } from "@/app/(authenticated)/components/external-source-badge";
 import {
   createFeature,
   deleteFeature,
-  updateFeatureStatus,
   type FeatureRow,
+  updateFeatureStatus,
 } from "@/app/actions/features";
 
 type Status = "BACKLOG" | "ANALYSIS" | "REVIEW" | "IMPLEMENTING" | "DONE";
@@ -33,17 +38,28 @@ type Status = "BACKLOG" | "ANALYSIS" | "REVIEW" | "IMPLEMENTING" | "DONE";
 const COLUMNS: { status: Status; label: string; color: string }[] = [
   { status: "BACKLOG", label: "Backlog", color: "border-gray-200 bg-gray-50" },
   { status: "ANALYSIS", label: "Análise", color: "border-blue-200 bg-blue-50" },
-  { status: "REVIEW", label: "Review", color: "border-yellow-200 bg-yellow-50" },
-  { status: "IMPLEMENTING", label: "Implementando", color: "border-orange-200 bg-orange-50" },
+  {
+    status: "REVIEW",
+    label: "Review",
+    color: "border-yellow-200 bg-yellow-50",
+  },
+  {
+    status: "IMPLEMENTING",
+    label: "Implementando",
+    color: "border-orange-200 bg-orange-50",
+  },
   { status: "DONE", label: "Concluído", color: "border-green-200 bg-green-50" },
 ];
 
-const WSJF_COLOR = (score: number) =>
-  score >= 10
-    ? "text-green-600"
-    : score >= 5
-      ? "text-yellow-600"
-      : "text-muted-foreground";
+function WSJF_COLOR(score: number): string {
+  if (score >= 10) {
+    return "text-green-600";
+  }
+  if (score >= 5) {
+    return "text-yellow-600";
+  }
+  return "text-muted-foreground";
+}
 
 type Props = {
   epicId: string;
@@ -77,14 +93,15 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [isPending, startTransition] = useTransition();
 
-  const byStatus = (status: Status) => features.filter((f) => f.statusId === status);
+  const byStatus = (status: Status) =>
+    features.filter((f) => f.statusId === status);
 
   const totalSP = features.reduce((s, f) => s + f.storyPoints, 0);
   const done = byStatus("DONE").length;
 
   function handleStatusChange(id: string, statusId: string) {
     setFeatures((prev) =>
-      prev.map((f) => f.id === id ? { ...f, statusId } : f)
+      prev.map((f) => (f.id === id ? { ...f, statusId } : f))
     );
     startTransition(() => updateFeatureStatus(id, statusId, epicId));
   }
@@ -94,11 +111,14 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
     startTransition(() => deleteFeature(id, epicId));
   }
 
-  async function handleCreate() {
-    if (!form.title.trim()) return;
-    const wsjfScore = form.bv + form.tc + form.rr > 0 && form.js > 0
-      ? Math.round(((form.bv + form.tc + form.rr) / form.js) * 10) / 10
-      : 0;
+  function handleCreate() {
+    if (!form.title.trim()) {
+      return;
+    }
+    const wsjfScore =
+      form.bv + form.tc + form.rr > 0 && form.js > 0
+        ? Math.round(((form.bv + form.tc + form.rr) / form.js) * 10) / 10
+        : 0;
 
     const optimistic: FeatureRow = {
       id: `tmp-${Date.now()}`,
@@ -114,6 +134,8 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
       assigneeUserId: null,
       completedAt: null,
       createdAt: new Date(),
+      externalSource: null,
+      externalUrl: null,
     };
     setFeatures((prev) => [optimistic, ...prev]);
     setForm(DEFAULT_FORM);
@@ -138,42 +160,49 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
       {/* Header stats */}
       <div className="flex items-center gap-6 rounded-lg border px-4 py-3">
         <div>
-          <p className="text-xs text-muted-foreground">Features</p>
-          <p className="text-lg font-semibold">{features.length}</p>
+          <p className="text-muted-foreground text-xs">Features</p>
+          <p className="font-semibold text-lg">{features.length}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Story Points</p>
-          <p className="text-lg font-semibold">{totalSP}</p>
+          <p className="text-muted-foreground text-xs">Story Points</p>
+          <p className="font-semibold text-lg">{totalSP}</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Concluídas</p>
-          <p className="text-lg font-semibold text-green-600">{done}</p>
+          <p className="text-muted-foreground text-xs">Concluídas</p>
+          <p className="font-semibold text-green-600 text-lg">{done}</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="ml-auto">
-          <PlusIcon className="h-4 w-4 mr-1" /> Nova Feature
+        <Button className="ml-auto" onClick={() => setDialogOpen(true)}>
+          <PlusIcon className="mr-1 h-4 w-4" /> Nova Feature
         </Button>
       </div>
 
       {/* Kanban */}
-      <div className="grid grid-cols-5 gap-3 min-h-[480px]">
+      <div className="grid min-h-[480px] grid-cols-5 gap-3">
         {COLUMNS.map((col) => {
           const colFeatures = byStatus(col.status);
           return (
-            <div key={col.status} className={`rounded-lg border p-3 flex flex-col gap-2 ${col.color}`}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-semibold">{col.label}</span>
-                <Badge variant="secondary" className="text-xs">{colFeatures.length}</Badge>
+            <div
+              className={`flex flex-col gap-2 rounded-lg border p-3 ${col.color}`}
+              key={col.status}
+            >
+              <div className="mb-1 flex items-center justify-between">
+                <span className="font-semibold text-xs">{col.label}</span>
+                <Badge className="text-xs" variant="secondary">
+                  {colFeatures.length}
+                </Badge>
               </div>
               {colFeatures.map((f) => (
                 <FeatureCard
-                  key={f.id}
                   feature={f}
-                  onStatusChange={handleStatusChange}
+                  key={f.id}
                   onDelete={handleDelete}
+                  onStatusChange={handleStatusChange}
                 />
               ))}
               {colFeatures.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">Vazio</p>
+                <p className="py-4 text-center text-muted-foreground text-xs">
+                  Vazio
+                </p>
               )}
             </div>
           );
@@ -181,7 +210,7 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
       </div>
 
       {/* Create Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Nova Feature — {epicTitle}</DialogTitle>
@@ -190,48 +219,61 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
             <div className="grid gap-1">
               <Label>Título</Label>
               <Input
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="Nome da feature..."
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1">
                 <Label>Story Points</Label>
                 <Input
-                  type="number"
-                  min={1}
                   max={999}
+                  min={1}
+                  onChange={(e) =>
+                    setForm({ ...form, storyPoints: Number(e.target.value) })
+                  }
+                  type="number"
                   value={form.storyPoints}
-                  onChange={(e) => setForm({ ...form, storyPoints: Number(e.target.value) })}
                 />
               </div>
               <div className="grid gap-1">
                 <Label>Status inicial</Label>
-                <Select value={form.statusId} onValueChange={(v) => setForm({ ...form, statusId: v as Status })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  onValueChange={(v) =>
+                    setForm({ ...form, statusId: v as Status })
+                  }
+                  value={form.statusId}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {COLUMNS.map((c) => (
-                      <SelectItem key={c.status} value={c.status}>{c.label}</SelectItem>
+                      <SelectItem key={c.status} value={c.status}>
+                        {c.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
             <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1">
+              <p className="mb-2 flex items-center gap-1 font-medium text-muted-foreground text-xs">
                 <ZapIcon className="h-3 w-3" /> Critérios WSJF (1-10)
               </p>
               <div className="grid grid-cols-4 gap-2">
                 {(["bv", "tc", "rr", "js"] as const).map((k) => (
-                  <div key={k} className="grid gap-1">
+                  <div className="grid gap-1" key={k}>
                     <Label className="text-xs uppercase">{k}</Label>
                     <Input
-                      type="number"
-                      min={1}
                       max={10}
+                      min={1}
+                      onChange={(e) =>
+                        setForm({ ...form, [k]: Number(e.target.value) })
+                      }
+                      type="number"
                       value={form[k]}
-                      onChange={(e) => setForm({ ...form, [k]: Number(e.target.value) })}
                     />
                   </div>
                 ))}
@@ -239,8 +281,13 @@ export function FeatureBoard({ epicId, epicTitle, initialFeatures }: Props) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreate} disabled={isPending || !form.title.trim()}>
+            <Button onClick={() => setDialogOpen(false)} variant="outline">
+              Cancelar
+            </Button>
+            <Button
+              disabled={isPending || !form.title.trim()}
+              onClick={handleCreate}
+            >
               Criar Feature
             </Button>
           </DialogFooter>
@@ -264,23 +311,33 @@ function FeatureCard({
   return (
     <>
       <Card
-        className="cursor-pointer hover:shadow-sm transition-shadow bg-background"
+        className="cursor-pointer bg-background transition-shadow hover:shadow-sm"
         onClick={() => setOpen(true)}
       >
         <CardHeader className="p-3 pb-1">
-          <p className="text-xs font-medium leading-tight">{feature.title}</p>
+          <div className="flex items-start justify-between gap-1.5">
+            <p className="font-medium text-xs leading-tight">{feature.title}</p>
+            <ExternalSourceBadge
+              source={feature.externalSource}
+              url={feature.externalUrl}
+            />
+          </div>
         </CardHeader>
-        <CardContent className="p-3 pt-0 flex items-center justify-between">
-          <span className="text-xs text-muted-foreground">{feature.storyPoints} SP</span>
+        <CardContent className="flex items-center justify-between p-3 pt-0">
+          <span className="text-muted-foreground text-xs">
+            {feature.storyPoints} SP
+          </span>
           {feature.wsjfScore > 0 && (
-            <span className={`text-xs font-mono font-semibold ${WSJF_COLOR(feature.wsjfScore)}`}>
+            <span
+              className={`font-mono font-semibold text-xs ${WSJF_COLOR(feature.wsjfScore)}`}
+            >
               {feature.wsjfScore.toFixed(1)}
             </span>
           )}
         </CardContent>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="text-base">{feature.title}</DialogTitle>
@@ -289,12 +346,14 @@ function FeatureCard({
             <div className="flex gap-3 text-sm">
               <span className="text-muted-foreground">SP:</span>
               <span className="font-medium">{feature.storyPoints}</span>
-              <span className="text-muted-foreground ml-2">WSJF:</span>
-              <span className={`font-mono font-semibold ${WSJF_COLOR(feature.wsjfScore)}`}>
+              <span className="ml-2 text-muted-foreground">WSJF:</span>
+              <span
+                className={`font-mono font-semibold ${WSJF_COLOR(feature.wsjfScore)}`}
+              >
                 {feature.wsjfScore.toFixed(1)}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 text-muted-foreground text-xs">
               <span>BV:{feature.bv}</span>
               <span>TC:{feature.tc}</span>
               <span>RR:{feature.rr}</span>
@@ -306,12 +365,14 @@ function FeatureCard({
                 {COLUMNS.map((col) => (
                   <Button
                     key={col.status}
-                    variant={feature.statusId === col.status ? "default" : "outline"}
-                    size="sm"
                     onClick={() => {
                       onStatusChange(feature.id, col.status);
                       setOpen(false);
                     }}
+                    size="sm"
+                    variant={
+                      feature.statusId === col.status ? "default" : "outline"
+                    }
                   >
                     {col.label}
                   </Button>
@@ -321,17 +382,19 @@ function FeatureCard({
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
-              size="sm"
               className="text-destructive hover:text-destructive"
               onClick={() => {
                 onDelete(feature.id);
                 setOpen(false);
               }}
+              size="sm"
+              variant="outline"
             >
-              <Trash2Icon className="h-4 w-4 mr-1" /> Excluir
+              <Trash2Icon className="mr-1 h-4 w-4" /> Excluir
             </Button>
-            <Button variant="outline" onClick={() => setOpen(false)}>Fechar</Button>
+            <Button onClick={() => setOpen(false)} variant="outline">
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

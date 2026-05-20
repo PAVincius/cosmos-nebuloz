@@ -7,6 +7,8 @@ export type ProgramBoardFeature = {
   assigneeUserId: string | null;
   epicId: string | null;
   epicTitle: string | null;
+  externalSource: string | null;
+  externalUrl: string | null;
 };
 
 export type ProgramBoardCell = {
@@ -15,9 +17,27 @@ export type ProgramBoardCell = {
   features: ProgramBoardFeature[];
 };
 
+export type ProgramBoardDependency = {
+  id: string;
+  blockingFeatureId: string;
+  blockedFeatureId: string;
+  blockingFeatureTitle: string;
+  blockedFeatureTitle: string;
+  status: string;
+  severity: string;
+  /** True when blocking feature's sprint index >= blocked feature's sprint index (provider delivers too late) */
+  isConflict: boolean;
+};
+
 export type ProgramBoardData = {
   teams: { id: string; name: string; velocity: number | null }[];
   sprints: string[];
   matrix: ProgramBoardCell[];
-  piPlan: { id: string; name: string; startDate: Date | null; endDate: Date | null } | null;
+  piPlan: {
+    id: string;
+    name: string;
+    startDate: Date | null;
+    endDate: Date | null;
+  } | null;
+  dependencies: ProgramBoardDependency[];
 };

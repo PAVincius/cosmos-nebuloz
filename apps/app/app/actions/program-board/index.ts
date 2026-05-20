@@ -3,9 +3,137 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
-import type { ProgramBoardFeature, ProgramBoardCell, ProgramBoardData } from "./schema";
 
-export type { ProgramBoardFeature, ProgramBoardCell, ProgramBoardData };
+export type {
+  ProgramBoardCell,
+  ProgramBoardData,
+  ProgramBoardDependency,
+  ProgramBoardFeature,
+} from "./schema";
+
+import type { ProgramBoardCell, ProgramBoardDependency } from "./schema";
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function buildSprints(cadence: number | null): string[] {
+  const count = Math.min(Math.max(Math.floor((cadence ?? 10) / 2), 4), 5);
+  const list = Array.from({ length: count }, (_, i) => `Sprint ${i + 1}`);
+  list.push("IP Sprint");
+  return list;
+}
+
+function buildUserToTeamIndex(
+  features: { assigneeUserId: string | null }[],
+  teamList: { id: string }[]
+): Map<string, number> {
+  const map = new Map<string, number>();
+  let counter = 0;
+  for (const f of features) {
+    if (f.assigneeUserId && !map.has(f.assigneeUserId)) {
+      map.set(f.assigneeUserId, counter % teamList.length);
+      counter += 1;
+    }
+  }
+  return map;
+}
+
+function initMatrix(
+  teamList: { id: string }[],
+  sprints: string[]
+): ProgramBoardCell[] {
+  const matrix: ProgramBoardCell[] = [];
+  for (const team of teamList) {
+    for (let si = 0; si < sprints.length; si++) {
+      matrix.push({ teamId: team.id, sprintIndex: si, features: [] });
+    }
+  }
+  return matrix;
+}
+
+type FeatureRecord = {
+  id: string;
+  title: string;
+  statusId: string;
+  storyPoints: number;
+  wsjfScore: number;
+  assigneeUserId: string | null;
+  epicId: string | null;
+  externalSource: string | null;
+  externalUrl: string | null;
+  epic: { title: string } | null;
+};
+
+type PlacementContext = {
+  matrix: ProgramBoardCell[];
+  userToTeamIndex: Map<string, number>;
+  teamList: { id: string }[];
+  sprints: string[];
+};
+
+function placeFeatures(features: FeatureRecord[], ctx: PlacementContext): void {
+  const { matrix, userToTeamIndex, teamList, sprints } = ctx;
+  const teamSprintCounter = new Map<string, number>();
+  for (const team of teamList) {
+    teamSprintCounter.set(team.id, 0);
+  }
+
+  for (const feature of features) {
+    let teamId = teamList[0].id;
+    if (feature.assigneeUserId) {
+      const idx = userToTeamIndex.get(feature.assigneeUserId) ?? 0;
+      teamId = teamList[idx]?.id ?? teamList[0].id;
+    }
+    const currentSprint =
+      (teamSprintCounter.get(teamId) ?? 0) % (sprints.length - 1);
+    teamSprintCounter.set(teamId, currentSprint + 1);
+
+    const cell = matrix.find(
+      (c) => c.teamId === teamId && c.sprintIndex === currentSprint
+    );
+    if (cell) {
+      cell.features.push({
+        id: feature.id,
+        title: feature.title,
+        statusId: feature.statusId,
+        storyPoints: feature.storyPoints,
+        wsjfScore: feature.wsjfScore,
+        assigneeUserId: feature.assigneeUserId,
+        epicId: feature.epicId,
+        epicTitle: feature.epic?.title ?? null,
+        externalSource: feature.externalSource ?? null,
+        externalUrl: feature.externalUrl ?? null,
+      });
+    }
+  }
+}
+
+function buildDependencies(
+  rawDeps: {
+    id: string;
+    blockingFeatureId: string;
+    blockedFeatureId: string;
+    status: string;
+    severity: string;
+    blockingFeature: { title: string };
+    blockedFeature: { title: string };
+  }[],
+  featurePlacement: Map<string, { teamId: string; sprintIndex: number }>
+): ProgramBoardDependency[] {
+  return rawDeps.map((dep) => {
+    const bp = featurePlacement.get(dep.blockingFeatureId);
+    const blp = featurePlacement.get(dep.blockedFeatureId);
+    return {
+      id: dep.id,
+      blockingFeatureId: dep.blockingFeatureId,
+      blockedFeatureId: dep.blockedFeatureId,
+      blockingFeatureTitle: dep.blockingFeature.title,
+      blockedFeatureTitle: dep.blockedFeature.title,
+      status: dep.status,
+      severity: dep.severity,
+      isConflict: !!bp && !!blp && bp.sprintIndex >= blp.sprintIndex,
+    };
+  });
+}
 
 /**
  * Build the Program Board matrix.
@@ -27,7 +155,7 @@ export async function getProgramBoardData(
 ): Promise<ProgramBoardData> {
   const ctx = await requireTenantSession(await headers());
 
-  const [art, piPlan, teams, features] = await Promise.all([
+  const [art, piPlan, teams, features, rawDeps] = await Promise.all([
     database.aRT.findFirst({
       where: { id: artId, tenantId: ctx.tenantId },
       select: { id: true, name: true, cadence: true },
@@ -46,74 +174,51 @@ export async function getProgramBoardData(
       orderBy: { wsjfScore: "desc" },
       include: { epic: { select: { id: true, title: true } } },
     }),
+    database.dependencyLink.findMany({
+      where: {
+        tenantId: ctx.tenantId,
+        blockingFeature: { piPlanId },
+      },
+      select: {
+        id: true,
+        blockingFeatureId: true,
+        blockedFeatureId: true,
+        status: true,
+        severity: true,
+        blockingFeature: { select: { title: true } },
+        blockedFeature: { select: { title: true } },
+      },
+    }),
   ]);
 
-  if (!art || !piPlan) {
-    return { teams: [], sprints: [], matrix: [], piPlan: null };
+  if (!(art && piPlan)) {
+    return {
+      teams: [],
+      sprints: [],
+      matrix: [],
+      piPlan: null,
+      dependencies: [],
+    };
   }
 
-  // Derive sprint count: cadence in weeks / 2 rounds gives iteration count,
-  // capped at 5 planning sprints + 1 IP sprint = 6 total.
-  const iterationCount = Math.min(Math.max(Math.floor((art.cadence ?? 10) / 2), 4), 5);
-  const sprints: string[] = Array.from({ length: iterationCount }, (_, i) => `Sprint ${i + 1}`);
-  sprints.push("IP Sprint");
-
-  // Map each team to a row. If no teams exist, create a virtual "Sem time" row.
+  const sprints = buildSprints(art.cadence ?? null);
   const teamList =
-    teams.length > 0 ? teams : [{ id: "unassigned", name: "Sem time", velocity: null }];
+    teams.length > 0
+      ? teams
+      : [{ id: "unassigned", name: "Sem time", velocity: null }];
+  const userToTeamIndex = buildUserToTeamIndex(features, teamList);
+  const matrix = initMatrix(teamList, sprints);
+  placeFeatures(features, { matrix, userToTeamIndex, teamList, sprints });
 
-  // Build assigneeUserId → teamIndex mapping (round-robin by user).
-  const userToTeamIndex = new Map<string, number>();
-  let userCounter = 0;
-
-  for (const feature of features) {
-    if (feature.assigneeUserId && !userToTeamIndex.has(feature.assigneeUserId)) {
-      userToTeamIndex.set(feature.assigneeUserId, userCounter % teamList.length);
-      userCounter++;
-    }
-  }
-
-  // Build sprint counter per team to distribute features across sprints.
-  const teamSprintCounter = new Map<string, number>();
-
-  const matrix: ProgramBoardCell[] = [];
-
-  // Pre-populate all cells.
-  for (const team of teamList) {
-    for (let si = 0; si < sprints.length; si++) {
-      matrix.push({ teamId: team.id, sprintIndex: si, features: [] });
-    }
-    teamSprintCounter.set(team.id, 0);
-  }
-
-  function getCell(teamId: string, sprintIndex: number): ProgramBoardCell | undefined {
-    return matrix.find((c) => c.teamId === teamId && c.sprintIndex === sprintIndex);
-  }
-
-  for (const feature of features) {
-    // Determine which team this feature belongs to.
-    let teamId = teamList[0].id;
-    if (feature.assigneeUserId) {
-      const idx = userToTeamIndex.get(feature.assigneeUserId) ?? 0;
-      teamId = teamList[idx]?.id ?? teamList[0].id;
-    }
-
-    // Allocate to next available sprint for this team (excluding IP Sprint for
-    // now; IP Sprint only gets features explicitly designated via statusId in future).
-    const currentSprint = (teamSprintCounter.get(teamId) ?? 0) % (sprints.length - 1);
-    teamSprintCounter.set(teamId, currentSprint + 1);
-
-    const cell = getCell(teamId, currentSprint);
-    if (cell) {
-      cell.features.push({
-        id: feature.id,
-        title: feature.title,
-        statusId: feature.statusId,
-        storyPoints: feature.storyPoints,
-        wsjfScore: feature.wsjfScore,
-        assigneeUserId: feature.assigneeUserId,
-        epicId: feature.epicId,
-        epicTitle: feature.epic?.title ?? null,
+  const featurePlacement = new Map<
+    string,
+    { teamId: string; sprintIndex: number }
+  >();
+  for (const cell of matrix) {
+    for (const f of cell.features) {
+      featurePlacement.set(f.id, {
+        teamId: cell.teamId,
+        sprintIndex: cell.sprintIndex,
       });
     }
   }
@@ -123,6 +228,7 @@ export async function getProgramBoardData(
     sprints,
     matrix,
     piPlan,
+    dependencies: buildDependencies(rawDeps, featurePlacement),
   };
 }
 

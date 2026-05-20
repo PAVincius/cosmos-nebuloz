@@ -12,6 +12,8 @@ export type FeatureRow = {
   assigneeUserId: string | null;
   completedAt: Date | null;
   createdAt: Date;
+  externalSource: string | null;
+  externalUrl: string | null;
 };
 
 export type FeatureDetail = {
@@ -32,4 +34,6 @@ export type FeatureDetail = {
   updatedAt: Date;
   epic: { id: string; title: string } | null;
   piPlan: { id: string; name: string } | null;
+  externalSource: string | null;
+  externalUrl: string | null;
 };
