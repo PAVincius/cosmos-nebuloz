@@ -39,6 +39,12 @@ model Story {
   order              Int       @default(0)
   startedAt          DateTime? // set when status transitions to IN_PROGRESS
   completedAt        DateTime?
+
+  // External integration fields
+  externalId     String?
+  externalSource String?  // linear | github | asana | gitlab
+  externalUrl    String?
+
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
 
@@ -51,6 +57,7 @@ model Story {
   @@index([sprintId])
   @@index([featureId])
   @@index([tenantId, status])
+  @@index([externalSource, externalId])
 }
 
 model Task {

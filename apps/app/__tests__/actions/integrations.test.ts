@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   integrationFindMany: vi.fn(),
   integrationFindUnique: vi.fn(),
   integrationFindFirst: vi.fn(),
+  integrationCreate: vi.fn(),
   integrationUpsert: vi.fn(),
   integrationUpdate: vi.fn(),
   integrationDelete: vi.fn(),
@@ -24,12 +25,13 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     integration: {
-      findMany: mocks.integrationFindMany,
+      findMany:   mocks.integrationFindMany,
       findUnique: mocks.integrationFindUnique,
-      findFirst: mocks.integrationFindFirst,
-      upsert: mocks.integrationUpsert,
-      update: mocks.integrationUpdate,
-      delete: mocks.integrationDelete,
+      findFirst:  mocks.integrationFindFirst,
+      create:     mocks.integrationCreate,
+      upsert:     mocks.integrationUpsert,
+      update:     mocks.integrationUpdate,
+      delete:     mocks.integrationDelete,
     },
   },
 }));
@@ -47,10 +49,12 @@ const adminCtx = { ...tenantCtx, role: "ADMIN" as const };
 const ROW = {
   id: "int-1",
   tenantId: adminCtx.tenantId,
-  type: "jira",
+  source: "jira",   // renamed from type → source
   name: "Jira",
   status: "ACTIVE",
   config: { baseUrl: "https://acme.atlassian.net", apiToken: "tok" },
+  mapping: null,
+  lastSyncAt: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -104,7 +108,7 @@ describe("listIntegrations", () => {
 
 describe("getIntegrationByType", () => {
   it("returns full integration with config", async () => {
-    mocks.integrationFindUnique.mockResolvedValue(ROW);
+    mocks.integrationFindFirst.mockResolvedValue(ROW);
     const result = await getIntegrationByType("jira");
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -113,7 +117,7 @@ describe("getIntegrationByType", () => {
   });
 
   it("returns ok:false when not found", async () => {
-    mocks.integrationFindUnique.mockResolvedValue(null);
+    mocks.integrationFindFirst.mockResolvedValue(null);
     const result = await getIntegrationByType("jira");
     expect(result.ok).toBe(false);
   });
@@ -127,8 +131,9 @@ describe("getIntegrationByType", () => {
 // ─── upsertIntegration ───────────────────────────────────────────────────────
 
 describe("upsertIntegration", () => {
-  it("upserts integration and returns public view", async () => {
-    mocks.integrationUpsert.mockResolvedValue(ROW);
+  it("creates integration when none exists", async () => {
+    mocks.integrationFindFirst.mockResolvedValue(null);
+    mocks.integrationCreate.mockResolvedValue(ROW);
     const result = await upsertIntegration({
       type: "jira",
       name: "Jira",
@@ -145,6 +150,18 @@ describe("upsertIntegration", () => {
     expect(mocks.revalidatePath).toHaveBeenCalled();
   });
 
+  it("updates integration when already exists", async () => {
+    mocks.integrationFindFirst.mockResolvedValue(ROW);
+    mocks.integrationUpdate.mockResolvedValue(ROW);
+    const result = await upsertIntegration({
+      type: "jira",
+      name: "Jira Updated",
+      config: { baseUrl: "https://acme.atlassian.net", apiToken: "tok2", projectKey: "COSMOS" },
+    });
+    expect(result.ok).toBe(true);
+    expect(mocks.integrationUpdate).toHaveBeenCalled();
+  });
+
   it("returns ok:false on invalid schema", async () => {
     const result = await upsertIntegration({ type: "jira" }); // missing name
     expect(result.ok).toBe(false);
@@ -155,12 +172,12 @@ describe("upsertIntegration", () => {
 
 describe("testIntegration", () => {
   beforeEach(() => {
-    mocks.integrationFindUnique.mockResolvedValue(ROW);
+    mocks.integrationFindFirst.mockResolvedValue(ROW);
     mocks.integrationUpdate.mockResolvedValue({});
   });
 
   it("returns ok:false when integration not found", async () => {
-    mocks.integrationFindUnique.mockResolvedValue(null);
+    mocks.integrationFindFirst.mockResolvedValue(null);
     const result = await testIntegration("jira");
     expect(result.ok).toBe(false);
   });
@@ -174,10 +191,10 @@ describe("testIntegration", () => {
     expect(result.ok).toBe(true);
     if (result.ok) {
       expect(result.data.ok).toBe(true);
-      expect(result.data.message).toMatch(/sucesso/i);
+      expect(result.data.message).toMatch(/sucesso|estabelecida/i);
     }
     expect(mocks.integrationUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { status: "ACTIVE" } })
+      expect.objectContaining({ where: { id: ROW.id }, data: { status: "ACTIVE" } })
     );
     vi.unstubAllGlobals();
   });
@@ -192,15 +209,15 @@ describe("testIntegration", () => {
       expect(result.data.ok).toBe(false);
     }
     expect(mocks.integrationUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ data: { status: "ERROR" } })
+      expect.objectContaining({ where: { id: ROW.id }, data: { status: "ERROR" } })
     );
     vi.unstubAllGlobals();
   });
 
   it("tests slack — sends test message", async () => {
-    mocks.integrationFindUnique.mockResolvedValue({
+    mocks.integrationFindFirst.mockResolvedValue({
       ...ROW,
-      type: "slack",
+      source: "slack",
       config: { webhookUrl: "https://hooks.slack.com/T1" },
     });
     vi.stubGlobal(
@@ -228,9 +245,9 @@ describe("testIntegration", () => {
   });
 
   it("unknown type returns default message", async () => {
-    mocks.integrationFindUnique.mockResolvedValue({
+    mocks.integrationFindFirst.mockResolvedValue({
       ...ROW,
-      type: "github",
+      source: "github",
       config: { token: "tok", owner: "org", repo: "repo" },
     });
     vi.stubGlobal(

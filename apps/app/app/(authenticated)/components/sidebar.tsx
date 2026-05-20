@@ -35,6 +35,7 @@ import {
   ChevronRightIcon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
+  PlugZapIcon,
   SendIcon,
   Settings2Icon,
   TrainFrontIcon,
@@ -134,6 +135,14 @@ const buildNavData = (
         { title: "Solution Trains", url: "/solution-trains" },
         { title: "LACE", url: "/lace" },
         { title: "Fornecedores", url: "/suppliers" },
+      ],
+    },
+    {
+      title: "Integrações",
+      url: "/integrations",
+      icon: PlugZapIcon,
+      items: [
+        { title: "Integration Hub", url: "/integrations" },
       ],
     },
     {

@@ -154,6 +154,11 @@ model Feature {
   startedAt      DateTime?            // When statusId first moved to IN_PROGRESS
   completedAt    DateTime?            // When statusId was set to DONE
 
+  // External integration fields
+  externalId     String?  // ID in external tool (Linear issue ID, GitHub issue #, etc.)
+  externalSource String?  // linear | github | asana | gitlab
+  externalUrl    String?  // Direct URL to item in external tool
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -169,4 +174,5 @@ model Feature {
   @@index([piPlanId])
   @@index([assigneeUserId])
   @@index([tenantId, assigneeUserId])
+  @@index([externalSource, externalId])
 }

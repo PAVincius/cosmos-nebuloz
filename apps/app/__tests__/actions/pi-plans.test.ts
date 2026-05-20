@@ -49,6 +49,8 @@ vi.mock("@repo/database", () => ({
 			update: mocks.pIObjectiveUpdate,
 		},
 		risk: { findMany: mocks.riskFindMany },
+		oKR: { findMany: vi.fn().mockResolvedValue([]) },
+		themeART: { findMany: vi.fn().mockResolvedValue([]) },
 	},
 }));
 
