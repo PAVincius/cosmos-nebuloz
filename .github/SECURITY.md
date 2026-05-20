@@ -1,9 +1,14 @@
 # Security Policy
 
-## Supported Versions
+See [SECURITY.md](../SECURITY.md) at the project root for the full security policy, including:
 
-Currently, only the latest on `main` branch is supported with security updates.
+- Vulnerability reporting (do not open public issues — email **security@nebuloz.com**)
+- Supported versions
+- Security architecture and controls
+- Incident response process
 
-## Reporting a Vulnerability
+## Quick Reference
 
-To report a vulnerability, open a new issue.
+**Report vulnerabilities:** security@nebuloz.com
+**Response SLA:** 24h acknowledgment, 72h initial assessment
+**Disclosure:** Coordinated — we fix before publication

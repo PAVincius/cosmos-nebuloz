@@ -5,6 +5,7 @@ import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { ok, err, type Result } from "../_base";
+import { logAudit } from "../audit";
 import {
   CreateIntegrationSchema,
   ImportMappingSchema,
@@ -142,6 +143,14 @@ export async function createIntegration(raw: unknown): Promise<Result<{ id: stri
       },
     });
 
+    void logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "INTEGRATION",
+      entityId: created.id,
+      diff: { source: input.source, name: input.name },
+    });
+
     revalidatePath("/integrations");
     return ok({ id: created.id });
   } catch (e) {
@@ -161,6 +170,14 @@ export async function deleteIntegration(id: string): Promise<Result<void>> {
     });
 
     await (database as any).integration.delete({ where: { id } });
+
+    void logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "deleted",
+      entityType: "INTEGRATION",
+      entityId: id,
+    });
+
     revalidatePath("/integrations");
     return ok(undefined);
   } catch (e) {

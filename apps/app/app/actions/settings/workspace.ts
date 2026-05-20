@@ -6,6 +6,7 @@ import { renderInviteEmail, resend } from "@repo/email";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import type { MemberRole } from "@repo/database";
+import { logAudit } from "../audit";
 
 export async function getWorkspaceSettings() {
   const ctx = await requireTenantSession(await headers());
@@ -134,6 +135,14 @@ export async function inviteMember(email: string, role: MemberRole) {
     });
   }
 
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "created",
+    entityType: "MEMBER_INVITATION",
+    entityId: invitation.id,
+    diff: { email: email.trim().toLowerCase(), role },
+  });
+
   revalidatePath("/settings/workspace");
 }
 
@@ -158,6 +167,14 @@ export async function removeMember(memberId: string) {
   }
 
   await database.tenantMember.delete({ where: { id: memberId } });
+
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "deleted",
+    entityType: "TENANT_MEMBER",
+    entityId: memberId,
+    diff: { removedUserId: member.userId, removedRole: member.role },
+  });
 
   revalidatePath("/settings/workspace");
   revalidatePath("/settings/members");
@@ -185,6 +202,14 @@ export async function updateMemberRole(memberId: string, role: MemberRole) {
   await database.tenantMember.update({
     where: { id: memberId },
     data: { role },
+  });
+
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "TENANT_MEMBER",
+    entityId: memberId,
+    diff: { previousRole: member.role, newRole: role },
   });
 
   revalidatePath("/settings/workspace");

@@ -30,6 +30,7 @@
     "@liveblocks/client": "^3.11.0",
     "@liveblocks/react": "^3.11.0",
     "@repo/analytics": "workspace:*",
+    "@repo/audit": "workspace:*",
     "@repo/auth": "workspace:*",
     "@repo/collaboration": "workspace:*",
     "@repo/database": "workspace:*",

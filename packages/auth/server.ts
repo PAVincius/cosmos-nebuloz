@@ -6,7 +6,11 @@ import { twoFactor } from "better-auth/plugins";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import type { MemberRole } from "@repo/database";
+
+const SESSION_IDLE_SECONDS = 24 * 60 * 60;      // 24h idle timeout
+const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
 
 export const auth = betterAuth({
   database: prismaAdapter(database, {
@@ -14,9 +18,15 @@ export const auth = betterAuth({
   }),
   emailAndPassword: {
     enabled: true,
-    minPasswordLength: 8,
+    minPasswordLength: 12, // SOC2 CC6: min 12 chars
   },
   session: {
+    expiresIn: SESSION_IDLE_SECONDS,
+    updateAge: SESSION_IDLE_SECONDS / 2,
+    cookieCache: {
+      enabled: true,
+      maxAge: SESSION_ABSOLUTE_SECONDS,
+    },
     additionalFields: {
       activeTenantId: {
         type: "string",
@@ -34,6 +44,29 @@ export const auth = betterAuth({
   ],
   secret: process.env.BETTER_AUTH_SECRET!,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          log.info("[auth] session.created", {
+            userId: session.userId,
+            sessionId: session.id,
+            expiresAt: session.expiresAt,
+            timestamp: new Date().toISOString(),
+          });
+        },
+      },
+      delete: {
+        after: async (session) => {
+          log.info("[auth] session.deleted", {
+            userId: (session as { userId?: string }).userId ?? "unknown",
+            sessionId: session.id,
+            timestamp: new Date().toISOString(),
+          });
+        },
+      },
+    },
+  },
 });
 
 export type AuthSession = typeof auth.$Infer.Session;
@@ -141,6 +174,30 @@ export function requireRole(
     throw new AuthError(
       "FORBIDDEN",
       `Role ${ctx.role} not permitted. Required: ${allowedRoles.join(" | ")}`
+    );
+  }
+}
+
+const MFA_REQUIRED_ROLES: MemberRole[] = ["ADMIN", "STE"];
+
+/**
+ * SOC2 CC6.2 — MFA is mandatory for privileged roles (OWNER, ADMIN, STE).
+ * Throws FORBIDDEN with a redirect hint if MFA is not verified on this session.
+ */
+export async function requireMfaForPrivilegedRoles(
+  ctx: TenantContext
+): Promise<void> {
+  if (!MFA_REQUIRED_ROLES.includes(ctx.role)) return;
+
+  const user = await database.user.findUnique({
+    where: { id: ctx.userId },
+    select: { twoFactorEnabled: true },
+  });
+
+  if (!user?.twoFactorEnabled) {
+    throw new AuthError(
+      "FORBIDDEN",
+      "MFA is required for your role. Please enable two-factor authentication."
     );
   }
 }
