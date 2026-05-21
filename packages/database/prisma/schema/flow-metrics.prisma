@@ -107,6 +107,11 @@ model ImprovementAction {
   dueDate       DateTime?
   assigneeId    String?
   assessmentId  String?
+
+  // S1: AI Copilot source tracking
+  source        String?   // "manual" | "ai_copilot"
+  sourceRunId   String?   // FK → AnomalyDetectionRun.id (set when source = "ai_copilot")
+
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -116,4 +121,23 @@ model ImprovementAction {
   @@index([tenantId])
   @@index([tenantId, scope, scopeId])
   @@index([tenantId, status])
+  @@index([tenantId, source])
+}
+
+// S4: Audit trail for staleness state transitions
+model StalenessAuditLog {
+  id             String   @id @default(cuid())
+  tenantId       String
+  snapshotId     String   // FlowMetricSnapshot.id
+  oldState       String   // FRESH / AGING / STALE / CRITICAL
+  newState       String
+  triggeredRules Json     // string[] — which staleness rules fired
+  triggeredBy    String   // "system" | userId
+  checkedAt      DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([snapshotId])
+  @@index([tenantId, checkedAt])
 }
