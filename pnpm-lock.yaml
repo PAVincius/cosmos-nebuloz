@@ -578,9 +578,6 @@ importers:
       next:
         specifier: 16.0.10
         version: 16.0.10(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      postprocessing:
-        specifier: ^6.39.1
-        version: 6.39.1(three@0.184.0)
       react:
         specifier: 19.2.1
         version: 19.2.1
