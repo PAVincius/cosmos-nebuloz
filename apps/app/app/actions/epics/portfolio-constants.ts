@@ -1,0 +1,1 @@
+export const PORTFOLIO_EPICS_PAGE_SIZE = 20;

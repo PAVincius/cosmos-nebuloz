@@ -1,13 +1,19 @@
-import { auth, currentUser, redirectToSignIn } from "@repo/auth/server";
+import {
+  AuthError,
+  auth,
+  currentUser,
+  redirectToSignIn,
+} from "@repo/auth/server";
 import { database } from "@repo/database";
 import { SidebarProvider } from "@repo/design-system/components/ui/sidebar";
 import { showBetaFeature } from "@repo/feature-flags";
 import { secure } from "@repo/security";
-import type { ReactNode } from "react";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { env } from "@/env";
+import type { ReactNode } from "react";
 import { isOnboardingComplete } from "@/app/actions/onboarding/index";
+import { env } from "@/env";
+import { CopilotProvider } from "./components/copilot/copilot-provider";
 import { NotificationsProvider } from "./components/notifications-provider";
 import { GlobalSidebar } from "./components/sidebar";
 import { getTeams } from "./teams/actions";
@@ -29,11 +35,20 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
   }
 
   const [teams, session, memberships] = await Promise.all([
-    getTeams().then((list) => list.map((t) => ({ id: t.id, name: t.name }))),
+    getTeams()
+      .then((list) => list.map((t) => ({ id: t.id, name: t.name })))
+      .catch((err) => {
+        if (err instanceof AuthError && err.code === "NO_ACTIVE_ORGANIZATION") {
+          return [];
+        }
+        throw err;
+      }),
     auth.api.getSession({ headers: await headers() }),
     database.tenantMember.findMany({
       where: { userId: user.id },
-      include: { tenant: { select: { id: true, name: true, slug: true, logo: true } } },
+      include: {
+        tenant: { select: { id: true, name: true, slug: true, logo: true } },
+      },
     }),
   ]);
 
@@ -46,13 +61,18 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
   }));
 
   const initialActiveTenantId =
-    (session?.session as unknown as { activeTenantId?: string })?.activeTenantId ?? null;
+    (session?.session as unknown as { activeTenantId?: string })
+      ?.activeTenantId ?? null;
 
   // Auto-redirect new tenants to onboarding if company_setup is not complete
   const pathname = (await headers()).get("x-pathname") ?? "";
-  const skipOnboarding = ["/onboarding", "/settings", "/api", "/auth", "/profile"].some(
-    (p) => pathname.startsWith(p)
-  );
+  const skipOnboarding = [
+    "/onboarding",
+    "/settings",
+    "/api",
+    "/auth",
+    "/profile",
+  ].some((p) => pathname.startsWith(p));
 
   if (!skipOnboarding) {
     if (initialActiveTenantId) {
@@ -60,33 +80,38 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
       if (!complete) {
         redirect("/onboarding");
       }
-    } else if (initialTenants.length > 0) {
-      // User has a tenant but no active tenant selected — redirect to onboarding
-      // to let them set up the first tenant
+    } else {
+      // No active tenant: either no tenant at all (new account) or tenant not selected yet
       redirect("/onboarding");
     }
   }
 
+  const cookieStore = await cookies();
+  const defaultSidebarOpen =
+    cookieStore.get("sidebar_state")?.value !== "false";
+
   return (
     <NotificationsProvider userId={user.id}>
-      <SidebarProvider>
-        <GlobalSidebar
-          user={{
-            name: user.name ?? user.email,
-            email: user.email,
-            avatar: user.image ?? "",
-          }}
-          teams={teams}
-          initialTenants={initialTenants}
-          initialActiveTenantId={initialActiveTenantId}
-        >
-          {betaFeature && (
-            <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
-              Beta feature now available
-            </div>
-          )}
-          {children}
-        </GlobalSidebar>
+      <SidebarProvider defaultOpen={defaultSidebarOpen}>
+        <CopilotProvider>
+          <GlobalSidebar
+            initialActiveTenantId={initialActiveTenantId}
+            initialTenants={initialTenants}
+            teams={teams}
+            user={{
+              name: user.name ?? user.email,
+              email: user.email,
+              avatar: user.image ?? "",
+            }}
+          >
+            {!!betaFeature && (
+              <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
+                Beta feature now available
+              </div>
+            )}
+            {children}
+          </GlobalSidebar>
+        </CopilotProvider>
       </SidebarProvider>
     </NotificationsProvider>
   );
