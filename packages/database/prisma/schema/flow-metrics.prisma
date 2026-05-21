@@ -50,11 +50,23 @@ model FlowMetricSnapshot {
   plannedItems       Int   @default(0)
   deliveredItems     Int   @default(0)
 
+  // S4: Staleness tracking
+  staleness            String    @default("FRESH")  // FRESH / AGING / STALE / CRITICAL
+  stalenessReasons     Json      @default("[]")      // string[] of rule names that fired
+  lastStalenessCheck   DateTime?
+  versionOf            String?   // self-referential FK to predecessor snapshot id
+  isArchived           Boolean   @default(false)
+  archivedAt           DateTime?
+  reevaluatedBy        String?   // userId who triggered re-evaluation
+  reevaluatedAt        DateTime?
+  teamCompositionHash  String?   // SHA-256 of sorted member userId array at snapshot time
+
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([tenantId, scope, scopeId])
   @@index([tenantId, periodRef])
+  @@index([tenantId, staleness, lastStalenessCheck])
 }
 
 model CompetencyAssessment {
