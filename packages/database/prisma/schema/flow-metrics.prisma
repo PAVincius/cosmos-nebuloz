@@ -141,3 +141,28 @@ model StalenessAuditLog {
   @@index([snapshotId])
   @@index([tenantId, checkedAt])
 }
+
+// S5: Individual competency profile (person-level grain)
+// Distinct from CompetencyAssessment which is team/ART-scoped.
+// Created by SM; member may do self-assessment (isDraft=true until SM sets isVerified=true)
+model PersonSkillProfile {
+  id          String   @id @default(cuid())
+  tenantId    String
+  userId      String
+  competency  String   // same values as CompetencyAssessment.competency enum
+  skillLevel  Int      // 1–5 (SAFe maturity scale)
+  proficiency Float    @default(0)
+  assessedAt  DateTime @default(now())
+  assessedBy  String?
+  notes       String?  @db.Text
+  confidence  Int?
+  isDraft     Boolean  @default(true)
+  isVerified  Boolean  @default(false)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, competency])
+  @@index([tenantId])
+  @@index([tenantId, userId])
+  @@index([tenantId, competency])
+}

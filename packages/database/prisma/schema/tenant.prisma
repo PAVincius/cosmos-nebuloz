@@ -84,11 +84,12 @@ model Tenant {
   onboardingProgress   OnboardingProgress[]
   migrationConnections MigrationConnection[]
   // Flow Metrics & Measure-and-Grow
-  stateTransitions      StateTransitionHistory[]
-  flowMetricSnapshots   FlowMetricSnapshot[]
-  competencyAssessments CompetencyAssessment[]
-  improvementActions    ImprovementAction[]
-  stalenessAuditLogs    StalenessAuditLog[]
+  stateTransitions       StateTransitionHistory[]
+  flowMetricSnapshots    FlowMetricSnapshot[]
+  competencyAssessments  CompetencyAssessment[]
+  improvementActions     ImprovementAction[]
+  stalenessAuditLogs     StalenessAuditLog[]
+  personSkillProfiles    PersonSkillProfile[]
   // S2: Team capacity
   memberAssignments     TeamMemberAssignment[]
   memberMetrics         MemberSprintMetrics[]
