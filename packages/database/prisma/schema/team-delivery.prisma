@@ -70,11 +70,19 @@ model Task {
   assigneeUserId String?
   estimateHours  Float?
   completedAt    DateTime?
+
+  // S3: Synergy detection — task classification
+  taskType    String?  // backend | frontend | ml | infra | qa | data | design
+  complexity  String?  // low | medium | high
+  estimatedSp Int?
+  actualSp    Int?
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  story  Story  @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  story     Story          @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  assignees TaskAssignee[]
 
   @@index([tenantId])
   @@index([storyId])
@@ -168,4 +176,19 @@ model Retrospective {
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+}
+
+// S3: Multi-assignee support for synergy detection
+// Task.assigneeUserId kept for backward compatibility (primary assignee).
+model TaskAssignee {
+  taskId   String
+  userId   String
+  role     String?  // primary | reviewer | pair
+  joinedAt DateTime @default(now())
+
+  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, userId])
+  @@index([userId])
+  @@index([taskId])
 }
