@@ -18,6 +18,9 @@ model Sprint {
   stories Story[]
   review  SprintReview?
   retro   Retrospective?
+  memberAssignments TeamMemberAssignment[]
+  memberMetrics     MemberSprintMetrics[]
+  capacitySnapshots TeamCapacitySnapshot[]
 
   @@index([tenantId])
   @@index([teamId])

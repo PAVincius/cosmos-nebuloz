@@ -1,0 +1,141 @@
+// S2: Individual Throughput & Team Capacity Model
+// S3: Team Composition Synergy Detection
+
+// S2: Per-sprint member capacity commitment
+// INVARIANT: capacityFactor must be in [0, 1]
+// NOTE: Team.members JSON is @deprecated — use this model for all capacity-sensitive code
+model TeamMemberAssignment {
+  id             String   @id @default(cuid())
+  tenantId       String
+  sprintId       String
+  teamId         String
+  userId         String
+  capacityFactor Float    @default(1.0)
+  hoursPerWeek   Float?
+  role           String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, userId])
+  @@index([tenantId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+// S2: Actual story points delivered per member per sprint (write-once at sprint close)
+model MemberSprintMetrics {
+  id                   String   @id @default(cuid())
+  tenantId             String
+  sprintId             String
+  teamId               String
+  userId               String
+  storyPointsDelivered Int      @default(0)
+  storiesCompleted     Int      @default(0)
+  defectsResolved      Int      @default(0)
+  avgFlowTimeHours     Float    @default(0)
+  createdAt            DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, userId])
+  @@index([tenantId])
+  @@index([teamId, userId])
+}
+
+// S2: Rolling baseline computed from last 6 completed sprints
+// Recomputed at sprint close. p10/p50/p90 = percentile estimates.
+model MemberThroughputBaseline {
+  id             String   @id @default(cuid())
+  tenantId       String
+  teamId         String
+  userId         String
+  avgSpPerSprint Float    @default(0)
+  p10Estimate    Float    @default(0)
+  p50Estimate    Float    @default(0)
+  p90Estimate    Float    @default(0)
+  trend          String   @default("NEUTRAL")
+  volatility     Float    @default(0)
+  sprintCount    Int      @default(0)
+  lastComputedAt DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, teamId, userId])
+  @@index([tenantId])
+  @@index([teamId])
+}
+
+// S2: Team-level capacity aggregate computed at sprint close
+model TeamCapacitySnapshot {
+  id                    String   @id @default(cuid())
+  tenantId              String
+  sprintId              String
+  teamId                String
+  totalMembersCommitted Int      @default(0)
+  totalCapacityFactor   Float    @default(0)
+  expectedSpNextSprint  Int      @default(0)
+  minCapacityEstimate   Int      @default(0)
+  maxCapacityEstimate   Int      @default(0)
+  actualSpDelivered     Int      @default(0)
+  actualCapacityUtil    Float    @default(0)
+  teamTrend             String   @default("NEUTRAL")
+  recordedAt            DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([sprintId, teamId])
+  @@index([tenantId])
+  @@index([teamId])
+}
+
+// S3: Pair synergy score between two team members
+// INVARIANT: userId1 < userId2 (lexicographic) — enforced at application layer before every write
+model PairSynergy {
+  id          String    @id @default(cuid())
+  tenantId    String
+  userId1     String
+  userId2     String
+  taskType    String    @default("any")
+  score       Float     @default(0)
+  samples     Int       @default(0)
+  totalSp     Int       @default(0)
+  variance    Float     @default(0)
+  confidence  Float     @default(0)
+  firstTaskAt DateTime?
+  lastTaskAt  DateTime?
+  updatedAt   DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId1, userId2, taskType])
+  @@index([tenantId])
+  @@index([tenantId, userId1])
+  @@index([tenantId, userId2])
+}
+
+// S3: Group synergy (3+ members)
+// memberHash = SHA-256(JSON.stringify(sorted memberIds array))
+model GroupSynergy {
+  id         String   @id @default(cuid())
+  tenantId   String
+  memberIds  Json
+  memberHash String
+  taskType   String   @default("any")
+  score      Float    @default(0)
+  samples    Int      @default(0)
+  totalSp    Int      @default(0)
+  variance   Float    @default(0)
+  confidence Float    @default(0)
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, memberHash, taskType])
+  @@index([tenantId])
+}

@@ -28,6 +28,7 @@ model Team {
   tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   art     ART?     @relation(fields: [artId], references: [id], onDelete: SetNull)
   sprints Sprint[]
+  memberAssignments TeamMemberAssignment[]
 
   @@index([tenantId])
   @@index([artId])
@@ -49,9 +50,28 @@ model PIPlan {
   risks              Risk[]
   piObjectives       PIObjective[]
   features           Feature[]
+  participants       PIParticipant[]
 
   @@index([tenantId])
   @@index([artId])
+}
+
+// PI Planning participants — selected members + guests invited by the RTE
+model PIParticipant {
+  id        String   @id @default(cuid())
+  tenantId  String
+  piPlanId  String
+  userId    String   // must be a TenantMember userId
+  role      String   @default("INVITED") // RTE | PO | SM | BUSINESS_OWNER | OBSERVER | INVITED
+  confirmed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  piPlan PIPlan @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([piPlanId, userId])
+  @@index([tenantId])
+  @@index([piPlanId])
 }
 
 // PI Objectives — committed ou stretch, com business value 1-10 (SAFe 6.0)

@@ -36,6 +36,7 @@ model Tenant {
   invitations          TenantInvitation[]
   arts                 ART[]
   piPlans              PIPlan[]
+  piParticipants       PIParticipant[]
   epics                Epic[]
   features             Feature[]
   workflowNodes        TeamWorkflowNode[]
@@ -87,6 +88,16 @@ model Tenant {
   flowMetricSnapshots   FlowMetricSnapshot[]
   competencyAssessments CompetencyAssessment[]
   improvementActions    ImprovementAction[]
+  stalenessAuditLogs    StalenessAuditLog[]
+  // S2: Team capacity
+  memberAssignments     TeamMemberAssignment[]
+  memberMetrics         MemberSprintMetrics[]
+  memberBaselines       MemberThroughputBaseline[]
+  capacitySnapshots     TeamCapacitySnapshot[]
+  pairSynergies         PairSynergy[]
+  groupSynergies        GroupSynergy[]
+  // S1: AI Copilot
+  copilotSessions       CopilotSession[]
 }
 
 model User {
