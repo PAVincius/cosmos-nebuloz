@@ -1,0 +1,45 @@
+// S1: AI Copilot — Anomaly Detection & Improvement Suggestion Engine
+// Architecture: heuristic rules detect → LLM enriches with narrative
+
+model AnomalyDetectionRun {
+  id          String    @id @default(cuid())
+  tenantId    String
+  scope       String    // "team" | "art"
+  scopeId     String
+  snapshotId  String    // FlowMetricSnapshot.id that triggered this run
+  trigger     String    // "snapshot_created" | "scheduled" | "manual"
+  status      String    @default("PENDING")
+  summary     Json?
+  ranAt       DateTime  @default(now())
+  completedAt DateTime?
+
+  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  anomalies Anomaly[]
+
+  @@index([tenantId])
+  @@index([tenantId, scope, scopeId])
+  @@index([snapshotId])
+  @@index([tenantId, status])
+}
+
+model Anomaly {
+  id        String   @id @default(cuid())
+  tenantId  String
+  runId     String
+  rule      String   // VelocityCliff | WIPOverload | PredictabilityCollapse |
+                     // CycleTimeDegradation | EfficiencyNosedive |
+                     // WorkTypeImbalance | StaleCompetencyAssessment | ImprovementActionOverdue
+  severity  String   // CRITICAL | HIGH | MEDIUM | LOW
+  metric    String
+  delta     Float
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  tenant Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  run    AnomalyDetectionRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([runId])
+  @@index([tenantId, severity])
+  @@index([tenantId, rule])
+}

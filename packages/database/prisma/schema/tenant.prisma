@@ -98,6 +98,8 @@ model Tenant {
   groupSynergies        GroupSynergy[]
   // S1: AI Copilot
   copilotSessions       CopilotSession[]
+  anomalyDetectionRuns  AnomalyDetectionRun[]
+  anomalies             Anomaly[]
 }
 
 model User {
