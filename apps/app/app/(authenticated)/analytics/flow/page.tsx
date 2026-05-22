@@ -11,6 +11,7 @@ import {
   getImprovementActions,
 } from "@/app/actions/measure-grow";
 import { appDesign } from "@/lib/app-design";
+import { TeamCapacityTab } from "./components/capacity/team-capacity-tab";
 import { FlowMetricsDashboard } from "./components/flow-metrics-dashboard";
 
 export const metadata = {
@@ -19,7 +20,7 @@ export const metadata = {
 };
 
 type Props = {
-  searchParams: Promise<{ scope?: string; scopeId?: string }>;
+  searchParams: Promise<{ scope?: string; scopeId?: string; tab?: string }>;
 };
 
 export default async function FlowMetricsPage({ searchParams }: Props) {
@@ -53,6 +54,9 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
       ])
     : [null, [], []];
 
+  const activeTab = sp.tab ?? "metrics";
+  const isTeamScope = selectedScope?.type === "team";
+
   return (
     <div className={`${appDesign.shell} h-full overflow-auto`}>
       <PageHeader
@@ -74,16 +78,58 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
       />
 
       <div className="min-w-0 flex-1 p-6">
-        <FlowMetricsDashboard
-          actions={actions}
-          assessments={assessments}
-          metrics={metrics}
-          scopeOptions={scopeOptions}
-          selectedScope={selectedScope}
-          snapshotId={metrics?.id ?? undefined}
-          staleness={metrics?.staleness ?? undefined}
-        />
+        {isTeamScope ? (
+          <div className="mb-6 flex gap-2 border-border border-b">
+            <TabButton
+              active={activeTab === "metrics"}
+              href={`?scope=team&scopeId=${selectedScope?.id}`}
+              label="Flow Metrics"
+            />
+            <TabButton
+              active={activeTab === "capacity"}
+              href={`?scope=team&scopeId=${selectedScope?.id}&tab=capacity`}
+              label="Team Capacity"
+            />
+          </div>
+        ) : null}
+
+        {activeTab === "capacity" && isTeamScope && selectedScope ? (
+          <TeamCapacityTab teamId={selectedScope.id} />
+        ) : (
+          <FlowMetricsDashboard
+            actions={actions}
+            assessments={assessments}
+            metrics={metrics}
+            scopeOptions={scopeOptions}
+            selectedScope={selectedScope}
+            snapshotId={metrics?.id ?? undefined}
+            staleness={metrics?.staleness ?? undefined}
+          />
+        )}
       </div>
     </div>
+  );
+}
+
+function TabButton({
+  label,
+  active,
+  href,
+}: {
+  label: string;
+  active: boolean;
+  href: string;
+}) {
+  return (
+    <a
+      className={`border-b-2 px-4 py-2 font-medium text-sm transition-colors ${
+        active
+          ? "border-foreground text-foreground"
+          : "border-transparent text-muted-foreground hover:text-foreground"
+      }`}
+      href={href}
+    >
+      {label}
+    </a>
   );
 }

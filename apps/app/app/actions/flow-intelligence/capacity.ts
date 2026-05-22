@@ -206,3 +206,115 @@ export async function upsertMemberAssignment(
 
   return ok({ id: result.id });
 }
+
+type Member = {
+  userId: string;
+  role: string | null;
+  capacityFactor: number;
+  avgSpPerSprint: number;
+  p50: number;
+  trend: string;
+  volatility: number;
+  sprintCount: number;
+  expectedSp: number;
+  minSp: number;
+  maxSp: number;
+};
+
+export async function getTeamCapacityDashboard(teamId: string): Promise<
+  | Ok<{
+      members: Member[];
+      totalExpected: number;
+      totalMin: number;
+      totalMax: number;
+      teamId: string;
+    }>
+  | Err
+> {
+  const { tenantId } = await requireTenantSession(await headers());
+
+  // Get active sprint for this team
+  const activeSprint = await database.sprint.findFirst({
+    where: {
+      tenantId,
+      team: { id: teamId },
+      status: "ACTIVE",
+    },
+  });
+
+  if (!activeSprint) {
+    return err("Nenhum sprint ativo encontrado");
+  }
+
+  // Get all assignments for active sprint
+  const assignments = await database.teamMemberAssignment.findMany({
+    where: {
+      tenantId,
+      sprintId: activeSprint.id,
+      teamId,
+    },
+  });
+
+  if (assignments.length === 0) {
+    return ok({
+      members: [],
+      totalExpected: 0,
+      totalMin: 0,
+      totalMax: 0,
+      teamId,
+    });
+  }
+
+  // Fetch baselines for all members
+  const memberIds = assignments.map((a) => a.userId);
+  const baselines = await database.memberThroughputBaseline.findMany({
+    where: {
+      tenantId,
+      teamId,
+      userId: { in: memberIds },
+    },
+  });
+
+  const baselinesMap = new Map(baselines.map((b) => [b.userId, b]));
+
+  const members: Member[] = assignments.map((assignment) => {
+    const baseline = baselinesMap.get(assignment.userId);
+
+    const expectedSp = baseline
+      ? Math.round(baseline.avgSpPerSprint * assignment.capacityFactor)
+      : 0;
+    const minSp = baseline
+      ? Math.round(baseline.p10Estimate * assignment.capacityFactor)
+      : 0;
+    const maxSp = baseline
+      ? Math.round(baseline.p90Estimate * assignment.capacityFactor)
+      : 0;
+
+    return {
+      userId: assignment.userId,
+      role: assignment.role,
+      capacityFactor: assignment.capacityFactor,
+      avgSpPerSprint: baseline?.avgSpPerSprint ?? 0,
+      p50: baseline?.p50Estimate ?? 0,
+      trend: baseline?.trend ?? "NEUTRAL",
+      volatility: baseline?.volatility ?? 0,
+      sprintCount: baseline?.sprintCount ?? 0,
+      expectedSp,
+      minSp,
+      maxSp,
+    };
+  });
+
+  // Sum across team
+  const totalExpected = members.reduce((sum, m) => sum + m.expectedSp, 0);
+  const totalMin = members.reduce((sum, m) => sum + m.minSp, 0);
+  const totalMax = members.reduce((sum, m) => sum + m.maxSp, 0);
+
+  return ok({
+    members,
+    totalExpected,
+    totalMin,
+    totalMax,
+    teamId,
+  });
+}
