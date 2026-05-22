@@ -3,11 +3,20 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { z } from "zod";
 
-export type FlowScope = "team" | "art" | "value_stream";
+const FlowScopeSchema = z.enum(["team", "art", "value_stream"]);
+const ScopeIdSchema = z.string().uuid("scopeId deve ser um UUID válido");
+
+export type FlowScope = z.infer<typeof FlowScopeSchema>;
 export type FlowPeriod = "sprint" | "pi" | "quarter";
 
 export type FlowMetricsResult = {
+  /** ID of the most recent non-archived FlowMetricSnapshot for this scope (null when none exists yet). */
+  id: string | null;
+  /** Staleness state of the most recent snapshot, or null when no snapshot exists. */
+  staleness: "FRESH" | "AGING" | "STALE" | "CRITICAL" | null;
+
   scope: FlowScope;
   scopeId: string;
   scopeLabel: string;
@@ -17,7 +26,13 @@ export type FlowMetricsResult = {
   flowDistribution: { type: string; count: number; pct: number }[];
 
   // Velocity: items completed per period bucket
-  flowVelocity: { label: string; total: number; stories: number; features: number; defects: number }[];
+  flowVelocity: {
+    label: string;
+    total: number;
+    stories: number;
+    features: number;
+    defects: number;
+  }[];
 
   // Time: avg cycle time in days per type
   flowTime: { type: string; avgDays: number; count: number }[];
@@ -32,7 +47,11 @@ export type FlowMetricsResult = {
 
   // Predictability: delivered / planned (0-1)
   flowPredictability: number;
-  flowPredictabilityHistory: { label: string; planned: number; delivered: number }[];
+  flowPredictabilityHistory: {
+    label: string;
+    planned: number;
+    delivered: number;
+  }[];
 };
 
 export type FlowScopeOption = {
@@ -59,102 +78,170 @@ export async function getFlowScopeOptions(): Promise<FlowScopeOption[]> {
 
   return [
     ...arts.map((a) => ({ id: a.id, label: a.name, type: "art" as FlowScope })),
-    ...teams.map((t) => ({ id: t.id, label: t.name, type: "team" as FlowScope })),
+    ...teams.map((t) => ({
+      id: t.id,
+      label: t.name,
+      type: "team" as FlowScope,
+    })),
   ];
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: pre-existing — large data aggregation function, refactor tracked separately
 export async function getFlowMetrics(
   scope: FlowScope,
   scopeId: string
 ): Promise<FlowMetricsResult> {
+  FlowScopeSchema.parse(scope);
+  ScopeIdSchema.parse(scopeId);
+
   const ctx = await requireTenantSession(await headers());
   const tenantId = ctx.tenantId;
 
   const now = new Date();
   const ninetyDaysAgo = new Date(now.getTime() - 90 * 24 * 60 * 60 * 1000);
 
-  // Resolve scope label
+  // Resolve scope label — tenantId included to prevent IDOR cross-tenant reads
   let scopeLabel = scopeId;
   if (scope === "team") {
-    const team = await database.team.findUnique({ where: { id: scopeId }, select: { name: true } });
-    scopeLabel = team?.name ?? scopeId;
+    const team = await database.team.findUnique({
+      where: { id: scopeId, tenantId },
+      select: { name: true },
+    });
+    if (!team) {
+      throw new Error("Team not found");
+    }
+    scopeLabel = team.name;
   } else if (scope === "art") {
-    const art = await database.aRT.findUnique({ where: { id: scopeId }, select: { name: true } });
-    scopeLabel = art?.name ?? scopeId;
+    const art = await database.aRT.findUnique({
+      where: { id: scopeId, tenantId },
+      select: { name: true },
+    });
+    if (!art) {
+      throw new Error("ART not found");
+    }
+    scopeLabel = art.name;
   }
 
   // ── DATA FETCH ────────────────────────────────────────────────────────────
-  const [stories, features, defects, sprints, piPlans] = await Promise.all([
-    // Stories for team scope or all teams in ART
-    database.story.findMany({
-      where: scope === "team"
-        ? { tenantId, sprint: { teamId: scopeId } }
-        : { tenantId },
-      select: {
-        id: true,
-        status: true,
-        startedAt: true,
-        completedAt: true,
-        createdAt: true,
-        sprint: { select: { id: true, name: true, startDate: true, endDate: true, teamId: true } },
-      },
-    }),
-    // Features for ART scope
-    scope === "art"
-      ? database.feature.findMany({
-          where: { tenantId, piPlan: { artId: scopeId } },
-          select: {
-            id: true, statusId: true, startedAt: true,
-            completedAt: true, createdAt: true,
-            piPlan: { select: { id: true, name: true } },
+  const [stories, features, defects, sprints, piPlans, latestSnapshot] =
+    await Promise.all([
+      // Stories for team scope or all teams in ART
+      database.story.findMany({
+        where:
+          scope === "team"
+            ? { tenantId, sprint: { teamId: scopeId } }
+            : { tenantId },
+        select: {
+          id: true,
+          status: true,
+          startedAt: true,
+          completedAt: true,
+          createdAt: true,
+          sprint: {
+            select: {
+              id: true,
+              name: true,
+              startDate: true,
+              endDate: true,
+              teamId: true,
+            },
           },
-        })
-      : Promise.resolve([]),
-    // Defects
-    database.defect.findMany({
-      where: scope === "team"
-        ? { tenantId, teamId: scopeId }
-        : { tenantId },
-      select: { id: true, status: true, createdAt: true, updatedAt: true },
-    }),
-    // Sprints (last 10)
-    database.sprint.findMany({
-      where: scope === "team"
-        ? { tenantId, teamId: scopeId }
-        : { tenantId },
-      orderBy: { startDate: "desc" },
-      take: 10,
-      select: {
-        id: true, name: true, startDate: true, endDate: true,
-        review: { select: { velocity: true, goalMet: true } },
-        _count: { select: { stories: true } },
-      },
-    }),
-    // PI Plans (last 5)
-    scope === "art"
-      ? database.pIPlan.findMany({
-          where: { tenantId, artId: scopeId },
-          orderBy: { createdAt: "desc" },
-          take: 5,
-          select: {
-            id: true, name: true,
-            piObjectives: { select: { id: true, status: true, isStretch: true } },
-            features: { select: { id: true, statusId: true } },
-          },
-        })
-      : Promise.resolve([]),
-  ]);
+        },
+      }),
+      // Features for ART scope
+      scope === "art"
+        ? database.feature.findMany({
+            where: { tenantId, piPlan: { artId: scopeId } },
+            select: {
+              id: true,
+              statusId: true,
+              startedAt: true,
+              completedAt: true,
+              createdAt: true,
+              piPlan: { select: { id: true, name: true } },
+            },
+          })
+        : Promise.resolve([]),
+      // Defects
+      database.defect.findMany({
+        where: scope === "team" ? { tenantId, teamId: scopeId } : { tenantId },
+        select: { id: true, status: true, createdAt: true, updatedAt: true },
+      }),
+      // Sprints (last 10)
+      database.sprint.findMany({
+        where: scope === "team" ? { tenantId, teamId: scopeId } : { tenantId },
+        orderBy: { startDate: "desc" },
+        take: 10,
+        select: {
+          id: true,
+          name: true,
+          startDate: true,
+          endDate: true,
+          review: { select: { velocity: true, goalMet: true } },
+          _count: { select: { stories: true } },
+        },
+      }),
+      // PI Plans (last 5)
+      scope === "art"
+        ? database.pIPlan.findMany({
+            where: { tenantId, artId: scopeId },
+            orderBy: { createdAt: "desc" },
+            take: 5,
+            select: {
+              id: true,
+              name: true,
+              piObjectives: {
+                select: { id: true, status: true, isStretch: true },
+              },
+              features: { select: { id: true, statusId: true } },
+            },
+          })
+        : Promise.resolve([]),
+      // Latest non-archived snapshot for staleness display
+      database.flowMetricSnapshot.findFirst({
+        where: { tenantId, scope, scopeId, isArchived: false },
+        orderBy: { recordedAt: "desc" },
+        select: { id: true, staleness: true },
+      }),
+    ]);
 
   // ── FLOW DISTRIBUTION ────────────────────────────────────────────────────
-  const completedStories = stories.filter((s) => s.status === "DONE" && s.completedAt && new Date(s.completedAt) >= ninetyDaysAgo);
-  const completedFeatures = features.filter((f) => f.statusId === "DONE" && f.completedAt && new Date(f.completedAt) >= ninetyDaysAgo);
-  const completedDefects = defects.filter((d) => d.status === "RESOLVED" || d.status === "CLOSED");
+  const completedStories = stories.filter(
+    (s) =>
+      s.status === "DONE" &&
+      s.completedAt &&
+      new Date(s.completedAt) >= ninetyDaysAgo
+  );
+  const completedFeatures = features.filter(
+    (f) =>
+      f.statusId === "DONE" &&
+      f.completedAt &&
+      new Date(f.completedAt) >= ninetyDaysAgo
+  );
+  const completedDefects = defects.filter(
+    (d) => d.status === "RESOLVED" || d.status === "CLOSED"
+  );
 
-  const distTotal = completedStories.length + completedFeatures.length + completedDefects.length || 1;
+  const distTotal =
+    completedStories.length +
+      completedFeatures.length +
+      completedDefects.length || 1;
   const flowDistribution = [
-    { type: "História", count: completedStories.length, pct: Math.round((completedStories.length / distTotal) * 100) },
-    { type: "Feature", count: completedFeatures.length, pct: Math.round((completedFeatures.length / distTotal) * 100) },
-    { type: "Defect", count: completedDefects.length, pct: Math.round((completedDefects.length / distTotal) * 100) },
+    {
+      type: "História",
+      count: completedStories.length,
+      pct: Math.round((completedStories.length / distTotal) * 100),
+    },
+    {
+      type: "Feature",
+      count: completedFeatures.length,
+      pct: Math.round((completedFeatures.length / distTotal) * 100),
+    },
+    {
+      type: "Defect",
+      count: completedDefects.length,
+      pct: Math.round((completedDefects.length / distTotal) * 100),
+    },
   ].filter((d) => d.count > 0);
 
   // ── FLOW VELOCITY ────────────────────────────────────────────────────────
@@ -173,7 +260,11 @@ export async function getFlowMetrics(
   });
 
   // ── FLOW TIME ────────────────────────────────────────────────────────────
-  function cycleTimeDays(started: Date | null, completed: Date | null, created: Date): number {
+  function cycleTimeDays(
+    started: Date | null,
+    completed: Date | null,
+    created: Date
+  ): number {
     const from = started ?? created;
     const to = completed ?? new Date();
     return Math.max(0, (to.getTime() - from.getTime()) / (1000 * 60 * 60 * 24));
@@ -190,8 +281,16 @@ export async function getFlowMetrics(
     arr.length ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
 
   const flowTime = [
-    { type: "História", avgDays: Math.round(avg(storyTimes) * 10) / 10, count: storyTimes.length },
-    { type: "Feature", avgDays: Math.round(avg(featureTimes) * 10) / 10, count: featureTimes.length },
+    {
+      type: "História",
+      avgDays: Math.round(avg(storyTimes) * 10) / 10,
+      count: storyTimes.length,
+    },
+    {
+      type: "Feature",
+      avgDays: Math.round(avg(featureTimes) * 10) / 10,
+      count: featureTimes.length,
+    },
   ].filter((t) => t.count > 0);
 
   const allTimes = [...storyTimes, ...featureTimes];
@@ -208,19 +307,24 @@ export async function getFlowMetrics(
 
   const flowLoadHistory = recentSprints.map((sprint) => {
     const wip = stories.filter(
-      (s) => s.sprint?.id === sprint.id && ["IN_PROGRESS", "REVIEW"].includes(s.status)
+      (s) =>
+        s.sprint?.id === sprint.id &&
+        ["IN_PROGRESS", "REVIEW"].includes(s.status)
     ).length;
     return { label: sprint.name, wip };
   });
 
   // ── FLOW EFFICIENCY ──────────────────────────────────────────────────────
   // Proxy: stories with startedAt / total created-to-done time
-  const efficiencyItems = completedStories.filter((s) => s.startedAt && s.completedAt);
+  const efficiencyItems = completedStories.filter(
+    (s) => s.startedAt && s.completedAt
+  );
   let flowEfficiency = 0;
   if (efficiencyItems.length > 0) {
     const efficiencies = efficiencyItems.map((s) => {
-      const active = (s.completedAt!.getTime() - s.startedAt!.getTime());
-      const total = (s.completedAt!.getTime() - s.createdAt.getTime());
+      const active =
+        (s.completedAt?.getTime() ?? 0) - (s.startedAt?.getTime() ?? 0);
+      const total = (s.completedAt?.getTime() ?? 0) - s.createdAt.getTime();
       return total > 0 ? active / total : 0.5;
     });
     flowEfficiency = Math.round(avg(efficiencies) * 100) / 100;
@@ -231,7 +335,11 @@ export async function getFlowMetrics(
 
   // ── FLOW PREDICTABILITY ──────────────────────────────────────────────────
   let flowPredictability = 0;
-  const flowPredictabilityHistory: { label: string; planned: number; delivered: number }[] = [];
+  const flowPredictabilityHistory: {
+    label: string;
+    planned: number;
+    delivered: number;
+  }[] = [];
 
   if (scope === "art" && piPlans.length > 0) {
     for (const pi of [...piPlans].reverse()) {
@@ -246,7 +354,8 @@ export async function getFlowMetrics(
     const lastPI = piPlans[0];
     const committed = lastPI.piObjectives.filter((o) => !o.isStretch);
     const achieved = committed.filter((o) => o.status === "ACHIEVED");
-    flowPredictability = committed.length > 0 ? achieved.length / committed.length : 0;
+    flowPredictability =
+      committed.length > 0 ? achieved.length / committed.length : 0;
   } else if (scope === "team" && sprints.length > 0) {
     // Use sprint review goalMet as proxy
     const completed = sprints.filter((s) => s.review);
@@ -262,6 +371,13 @@ export async function getFlowMetrics(
   }
 
   return {
+    id: latestSnapshot?.id ?? null,
+    staleness: (latestSnapshot?.staleness ?? null) as
+      | "FRESH"
+      | "AGING"
+      | "STALE"
+      | "CRITICAL"
+      | null,
     scope,
     scopeId,
     scopeLabel,
