@@ -336,6 +336,37 @@ type Props = {
   staleness?: StalenessState;
 };
 
+function exportMetricsCSV(
+  metrics: FlowMetricsResult,
+  scope: { type: string; id: string } | null
+) {
+  const rows: string[][] = [
+    ["Metric", "Value", "Unit"],
+    [
+      "Velocity",
+      String(metrics.flowVelocity.at(-1)?.total ?? 0),
+      "items/sprint",
+    ],
+    ["Flow Time", String(metrics.flowTime[0]?.avgDays ?? 0), "days"],
+    ["Flow Load", String(metrics.flowLoad), "WIP items"],
+    ["Efficiency", String(Math.round(metrics.flowEfficiency * 100)), "%"],
+    [
+      "Predictability",
+      String(Math.round(metrics.flowPredictability * 100)),
+      "%",
+    ],
+    ["Distribution", String(metrics.flowDistribution.length), "types"],
+  ];
+  const csv = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `flow-metrics-${scope?.type ?? "all"}-${new Date().toISOString().split("T")[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: large dashboard component — refactor tracked separately
 export function FlowMetricsDashboard({
   scopeOptions,
@@ -669,6 +700,29 @@ export function FlowMetricsDashboard({
         <span style={{ fontSize: 12, color: MUTED }}>
           Nenhum escopo disponível
         </span>
+      )}
+      {!!metrics && (
+        <button
+          onClick={() => exportMetricsCSV(metrics, selectedScope)}
+          style={{
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "7px 14px",
+            background: "#F8FAFC",
+            border: `1px solid ${BORDER}`,
+            borderRadius: 8,
+            fontSize: 12,
+            fontWeight: 600,
+            color: TEXT,
+            cursor: "pointer",
+            fontFamily: "inherit",
+          }}
+          type="button"
+        >
+          ↓ Export CSV
+        </button>
       )}
     </div>
   );
