@@ -30,6 +30,7 @@ import {
   updateActionStatus,
 } from "@/app/actions/measure-grow";
 import { COMPETENCIES } from "@/app/actions/measure-grow/constants";
+import { AnomalySummaryPanel } from "./anomaly-summary-panel";
 import { ReEvaluateModal } from "./re-evaluate-modal";
 import { StalenessBadge, type StalenessState } from "./staleness-badge";
 
@@ -1709,6 +1710,14 @@ export function FlowMetricsDashboard({
                   );
                 })}
               </div>
+            </div>
+          )}
+
+          {/* ── Anomaly Summary Panel ─────────────────────────────────────── */}
+          {/* biome-ignore lint/nursery/noLeakedRender: snapshotId is string (explicitly truthy check) */}
+          {snapshotId && (
+            <div className="mt-6">
+              <AnomalySummaryPanel snapshotId={snapshotId} />
             </div>
           )}
         </div>
