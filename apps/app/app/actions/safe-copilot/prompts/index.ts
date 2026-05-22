@@ -1,4 +1,5 @@
 import type { CoreMessage } from "ai";
+import { sanitizeForPrompt } from "@/lib/prompt-sanitize";
 import type { CopilotContext } from "../context";
 
 // Static SAFe base rules — cached by Anthropic ephemeral cache after first call (90% cost reduction)
@@ -24,7 +25,17 @@ FORMATO DE SUGESTÕES DE AÇÃO:
 Quando sugerir ações que o usuário pode executar no COSMOS, use este formato:
 <suggestion type="create_risks|create_pi_objectives|flag_dependencies|create_improvement_action">
 { "items": [...] }
-</suggestion>`;
+</suggestion>
+
+FERRAMENTAS DISPONÍVEIS (use somente após confirmação explícita do usuário):
+- createFeature: Cria uma feature no backlog com parâmetros WSJF (bv, tc, rr, js)
+- moveFeature: Move uma feature para um novo status (BACKLOG, IN_PROGRESS, DONE, CANCELLED)
+- queryFlowMetrics, queryLeanBudget, queryProgramBoard, queryRiskVectors: Consultas de dados (sem efeito colateral)
+
+REGRAS PARA AÇÕES DE ESCRITA:
+- SEMPRE apresente o que será criado/alterado e aguarde confirmação antes de executar createFeature ou moveFeature
+- Informe o WSJF calculado antes de criar features: WSJF = (bv + tc + rr) / js
+- Confirme as alterações após execução bem-sucedida`;
 
 type ModePersona = {
   title: string;
@@ -94,10 +105,10 @@ function summarizeContext(ctx: CopilotContext): string {
   if (ctx.piWorkspace) {
     const pw = ctx.piWorkspace;
     parts.push(
-      `\nPI WORKSPACE — ${pw.artName} | ${pw.piName} (${pw.piDates.start ?? "?"} → ${pw.piDates.end ?? "?"})`,
+      `\nPI WORKSPACE — ${sanitizeForPrompt(pw.artName)} | ${sanitizeForPrompt(pw.piName)} (${pw.piDates.start ?? "?"} → ${pw.piDates.end ?? "?"})`,
       `Objetivos de PI: ${pw.objectives.length} | Risks: ${pw.risks.length} (${pw.risks.filter((r) => r.status === "IDENTIFIED").length} IDENTIFIED)`,
       `Features: ${pw.features.length} | Bloqueadas: ${pw.features.filter((f) => f.blockedByCount > 0).length}`,
-      `Times: ${pw.teams.map((t) => `${t.name}(vel:${t.velocity ?? "?"})`).join(", ")}`,
+      `Times: ${pw.teams.map((t) => `${sanitizeForPrompt(t.name)}(vel:${t.velocity ?? "?"})`).join(", ")}`,
       `Objetivos: ${JSON.stringify(pw.objectives.slice(0, 5))}`,
       `Riscos críticos: ${JSON.stringify(pw.risks.filter((r) => r.impact === "critical" || r.impact === "high").slice(0, 5))}`
     );
@@ -109,8 +120,8 @@ function summarizeContext(ctx: CopilotContext): string {
     if (latest) {
       parts.push(
         `\nFLOW METRICS (último período: ${latest.periodRef ?? "?"})`,
-        `Velocity: ${latest.flowVelocity ?? "?"} | Load: ${latest.flowLoadCurrent ?? "?"} | Efficiency: ${latest.flowEfficiency ?? "?"}`,
-        `Predictability: ${latest.flowPredictability ?? "?"} | LeadTime: ${latest.flowTimeLeadTime ?? "?"}d`,
+        `Velocity: ${latest.flowVelocityTotal} | Load: ${latest.flowLoadCurrent} | Efficiency: ${latest.flowEfficiency}`,
+        `Predictability: ${latest.flowPredictability} | LeadTimeAvg: ${latest.flowTimeAvgHours}h`,
         `Ações abertas: ${fm.openImprovementActions.length}`,
         `Snapshots: ${JSON.stringify(fm.snapshots.slice(0, 3))}`
       );
@@ -139,7 +150,33 @@ function summarizeContext(ctx: CopilotContext): string {
     );
   }
 
-  return parts.join("\n");
+  if (ctx.wsjf) {
+    const w = ctx.wsjf;
+    const topList = w.topFeatures
+      .map(
+        (f) =>
+          `[WSJF:${f.wsjfScore.toFixed(1)} bv=${f.bv} tc=${f.tc} rr=${f.rr} js=${f.js}] ${sanitizeForPrompt(f.title)} (${f.statusId})`
+      )
+      .join("\n");
+    const objList = w.recentObjectives
+      .map(
+        (o) =>
+          `[BV:${o.businessValue}${o.isStretch ? " STRETCH" : ""}] ${sanitizeForPrompt(o.title)} (${o.status})`
+      )
+      .join("\n");
+    parts.push(
+      `\nWSJF PRIORIZAÇÃO — Backlog total: ${w.backlogSize} features`,
+      w.topFeatures.length > 0
+        ? `Top ${w.topFeatures.length} features por WSJF:\n${topList}`
+        : "Sem features com WSJF calculado",
+      w.recentObjectives.length > 0
+        ? `Objetivos PI por Business Value:\n${objList}`
+        : "Sem objetivos de PI"
+    );
+  }
+
+  // Strip any <suggestion> tags that may appear in tenant data (prompt injection defense)
+  return parts.join("\n").replace(/<\/?suggestion\b[^>]*>/gi, "[blocked]");
 }
 
 export function getModeMessages(
@@ -151,15 +188,17 @@ export function getModeMessages(
 
   const staticBlock: CoreMessage = {
     role: "user",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     content: [
       {
         type: "text",
         text: COPILOT_BASE_RULES,
         // Anthropic ephemeral cache: TTL 5min, min 1024 tokens — 90% cost reduction after first call
-        providerMetadata: {
+        // Cast needed: experimental_providerMetadata is extra field not in TextPart type definition
+        experimental_providerMetadata: {
           anthropic: { cacheControl: { type: "ephemeral" } },
         },
-      },
+      } as unknown as import("ai").TextPart,
     ],
   };
 

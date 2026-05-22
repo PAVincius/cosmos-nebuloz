@@ -164,5 +164,109 @@ export function buildCopilotTools(tenantId: string) {
         }
       },
     }),
+
+    createFeature: tool({
+      description:
+        "Create a new feature in the backlog. Use after the user explicitly confirms they want to create it. Returns the new feature ID and title.",
+      inputSchema: z.object({
+        title: z.string().min(3).max(200).describe("Feature title"),
+        epicId: z
+          .string()
+          .optional()
+          .describe("Optional Epic ID to associate with"),
+        piPlanId: z
+          .string()
+          .optional()
+          .describe("Optional PI Plan ID to commit the feature to"),
+        bv: z
+          .number()
+          .min(0)
+          .max(20)
+          .default(5)
+          .describe("Business Value (0-20, WSJF parameter)"),
+        tc: z
+          .number()
+          .min(0)
+          .max(20)
+          .default(5)
+          .describe("Time Criticality (0-20, WSJF parameter)"),
+        rr: z
+          .number()
+          .min(0)
+          .max(20)
+          .default(5)
+          .describe(
+            "Risk Reduction / Opportunity Enablement (0-20, WSJF parameter)"
+          ),
+        js: z
+          .number()
+          .min(1)
+          .max(20)
+          .default(8)
+          .describe("Job Size (1-20, WSJF denominator)"),
+        storyPoints: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .default(8)
+          .describe("Story point estimate"),
+      }),
+      execute: async ({
+        title,
+        epicId,
+        piPlanId,
+        bv,
+        tc,
+        rr,
+        js,
+        storyPoints,
+      }) => {
+        const wsjfScore = js > 0 ? (bv + tc + rr) / js : 0;
+        const feature = await database.feature.create({
+          data: {
+            tenantId,
+            title,
+            statusId: "BACKLOG",
+            bv,
+            tc,
+            rr,
+            js,
+            wsjfScore,
+            storyPoints,
+            ...(epicId ? { epicId } : {}),
+            ...(piPlanId ? { piPlanId } : {}),
+          },
+          select: { id: true, title: true, wsjfScore: true, statusId: true },
+        });
+        return { ok: true, feature };
+      },
+    }),
+
+    moveFeature: tool({
+      description:
+        "Move a feature to a different status (BACKLOG, IN_PROGRESS, DONE, CANCELLED). Use after the user explicitly confirms.",
+      inputSchema: z.object({
+        featureId: z.string().describe("ID of the feature to move"),
+        toStatus: z
+          .enum(["BACKLOG", "IN_PROGRESS", "DONE", "CANCELLED"])
+          .describe("Target status"),
+      }),
+      execute: async ({ featureId, toStatus }) => {
+        let extra: Record<string, unknown> = {};
+        if (toStatus === "IN_PROGRESS") {
+          extra = { startedAt: new Date() };
+        } else if (toStatus === "DONE") {
+          extra = { completedAt: new Date() };
+        }
+
+        const updated = await database.feature.update({
+          where: { id: featureId, tenantId },
+          data: { statusId: toStatus, ...extra },
+          select: { id: true, title: true, statusId: true },
+        });
+        return { ok: true, feature: updated };
+      },
+    }),
   };
 }
