@@ -1,5 +1,6 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { headers } from "next/headers";
+import { Suspense } from "react";
 import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import {
@@ -13,6 +14,7 @@ import {
 import { appDesign } from "@/lib/app-design";
 import { TeamCapacityTab } from "./components/capacity/team-capacity-tab";
 import { FlowMetricsDashboard } from "./components/flow-metrics-dashboard";
+import { SynergyTab } from "./components/synergy-tab";
 
 export const metadata = {
   title: "Flow Metrics | COSMOS",
@@ -22,6 +24,29 @@ export const metadata = {
 type Props = {
   searchParams: Promise<{ scope?: string; scopeId?: string; tab?: string }>;
 };
+
+type SelectedScope = {
+  type: "team" | "art" | "value_stream";
+  id: string;
+};
+
+function resolveSelectedScope(
+  searchParams: { scope?: string; scopeId?: string },
+  defaultScope:
+    | { type: "team" | "art" | "value_stream"; id: string }
+    | undefined
+): SelectedScope | null {
+  if (searchParams.scope && searchParams.scopeId) {
+    return {
+      type: searchParams.scope as "team" | "art" | "value_stream",
+      id: searchParams.scopeId,
+    };
+  }
+  if (defaultScope) {
+    return { type: defaultScope.type, id: defaultScope.id };
+  }
+  return null;
+}
 
 export default async function FlowMetricsPage({ searchParams }: Props) {
   await requireTenantSession(await headers());
@@ -33,18 +58,7 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
   const defaultScope =
     scopeOptions.find((s) => s.type === "art") ?? scopeOptions[0];
 
-  let selectedScope: {
-    type: "team" | "art" | "value_stream";
-    id: string;
-  } | null = null;
-  if (sp.scope && sp.scopeId) {
-    selectedScope = {
-      type: sp.scope as "team" | "art" | "value_stream",
-      id: sp.scopeId,
-    };
-  } else if (defaultScope) {
-    selectedScope = { type: defaultScope.type, id: defaultScope.id };
-  }
+  const selectedScope = resolveSelectedScope(sp, defaultScope);
 
   const [metrics, assessments, actions] = selectedScope
     ? await Promise.all([
@@ -90,12 +104,29 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
               href={`?scope=team&scopeId=${selectedScope?.id}&tab=capacity`}
               label="Team Capacity"
             />
+            <TabButton
+              active={activeTab === "synergy"}
+              href={`?scope=team&scopeId=${selectedScope?.id}&tab=synergy`}
+              label="Sinergia"
+            />
           </div>
         ) : null}
 
         {activeTab === "capacity" && isTeamScope && selectedScope ? (
           <TeamCapacityTab teamId={selectedScope.id} />
-        ) : (
+        ) : null}
+        {activeTab === "synergy" && isTeamScope && selectedScope ? (
+          <Suspense
+            fallback={
+              <div className="p-4 text-muted-foreground text-sm">
+                Carregando sinergia...
+              </div>
+            }
+          >
+            <SynergyTab teamId={selectedScope.id} />
+          </Suspense>
+        ) : null}
+        {activeTab !== "capacity" && activeTab !== "synergy" ? (
           <FlowMetricsDashboard
             actions={actions}
             assessments={assessments}
@@ -105,7 +136,7 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
             snapshotId={metrics?.id ?? undefined}
             staleness={metrics?.staleness ?? undefined}
           />
-        )}
+        ) : null}
       </div>
     </div>
   );
