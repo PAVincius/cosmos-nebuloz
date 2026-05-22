@@ -1,7 +1,10 @@
 "use server";
 
 import { database } from "@repo/database";
-import { linearImportTeamIssues, linearStateToStatus } from "./connectors/linear";
+import {
+  linearImportTeamIssues,
+  linearStateToStatus,
+} from "./connectors/linear";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -97,7 +100,7 @@ export async function linearExecuteImport(
 
   for (const item of input.previewItems) {
     if (item.alreadySynced) {
-      skipped++;
+      skipped += 1;
       continue;
     }
 
@@ -125,7 +128,7 @@ export async function linearExecuteImport(
         },
       });
 
-      imported++;
+      imported += 1;
     } catch (err) {
       const message = err instanceof Error ? err.message : "Unknown error";
       errors.push(`[${item.linearId}] ${item.title}: ${message}`);

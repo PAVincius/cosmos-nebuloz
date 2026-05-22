@@ -2,19 +2,29 @@
 
 import { useState } from "react";
 import {
+  type LinearTeam,
+  linearDiscoverTeams,
+} from "@/app/actions/integrations/connectors/linear";
+import {
+  type DryRunResult,
+  type ExecuteResult,
   linearDryRun,
   linearExecuteImport,
   type PreviewItem,
-  type DryRunResult,
-  type ExecuteResult,
 } from "@/app/actions/integrations/linear-import";
-import { linearDiscoverTeams, type LinearTeam } from "@/app/actions/integrations/connectors/linear";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type Step = "connect" | "select" | "map" | "dry-run" | "execute" | "complete";
 
-const STEPS: Step[] = ["connect", "select", "map", "dry-run", "execute", "complete"];
+const STEPS: Step[] = [
+  "connect",
+  "select",
+  "map",
+  "dry-run",
+  "execute",
+  "complete",
+];
 
 const STEP_LABELS: Record<Step, string> = {
   connect: "1. Connect",
@@ -25,9 +35,73 @@ const STEP_LABELS: Record<Step, string> = {
   complete: "6. Done",
 };
 
-// ─── Styles (inline, no new deps) ────────────────────────────────────────────
+// ─── Style helpers ────────────────────────────────────────────────────────────
 
-const s = {
+function pillStyle(active: boolean, done: boolean): React.CSSProperties {
+  let background: string;
+  let color: string;
+  if (active) {
+    background = "var(--primary, #6366f1)";
+    color = "#fff";
+  } else if (done) {
+    background = "var(--primary, #6366f1)22";
+    color = "var(--primary, #6366f1)";
+  } else {
+    background = "var(--muted, #f1f5f9)";
+    color = "var(--muted-foreground, #64748b)";
+  }
+  return {
+    padding: "4px 12px",
+    borderRadius: 9999,
+    fontSize: 12,
+    fontWeight: 500,
+    background,
+    color,
+  };
+}
+
+function btnStyle(
+  variant: "primary" | "secondary" | "danger" = "primary"
+): React.CSSProperties {
+  let background: string;
+  let color: string;
+  if (variant === "primary") {
+    background = "var(--primary, #6366f1)";
+    color = "#fff";
+  } else if (variant === "danger") {
+    background = "#ef4444";
+    color = "#fff";
+  } else {
+    background = "var(--muted, #f1f5f9)";
+    color = "var(--foreground, #0f172a)";
+  }
+  return {
+    padding: "8px 20px",
+    borderRadius: 8,
+    border: "none",
+    cursor: "pointer",
+    fontSize: 14,
+    fontWeight: 600,
+    background,
+    color,
+  };
+}
+
+function badgeStyle(color: string): React.CSSProperties {
+  return {
+    display: "inline-block",
+    padding: "2px 8px",
+    borderRadius: 9999,
+    fontSize: 11,
+    fontWeight: 600,
+    background: `${color}22`,
+    color,
+  };
+}
+
+// ─── Shared static styles ─────────────────────────────────────────────────────
+
+const ss = {
   container: {
     maxWidth: 720,
     margin: "0 auto",
@@ -51,23 +125,6 @@ const s = {
     marginBottom: 32,
     flexWrap: "wrap" as const,
   } as React.CSSProperties,
-  stepPill: (active: boolean, done: boolean) =>
-    ({
-      padding: "4px 12px",
-      borderRadius: 9999,
-      fontSize: 12,
-      fontWeight: 500,
-      background: active
-        ? "var(--primary, #6366f1)"
-        : done
-          ? "var(--primary, #6366f1)22"
-          : "var(--muted, #f1f5f9)",
-      color: active
-        ? "#fff"
-        : done
-          ? "var(--primary, #6366f1)"
-          : "var(--muted-foreground, #64748b)",
-    }) as React.CSSProperties,
   card: {
     background: "var(--card, #fff)",
     border: "1px solid var(--border, #e2e8f0)",
@@ -91,22 +148,6 @@ const s = {
     color: "var(--foreground, #0f172a)",
     boxSizing: "border-box" as const,
   } as React.CSSProperties,
-  btn: (variant: "primary" | "secondary" | "danger" = "primary") =>
-    ({
-      padding: "8px 20px",
-      borderRadius: 8,
-      border: "none",
-      cursor: "pointer",
-      fontSize: 14,
-      fontWeight: 600,
-      background:
-        variant === "primary"
-          ? "var(--primary, #6366f1)"
-          : variant === "danger"
-            ? "#ef4444"
-            : "var(--muted, #f1f5f9)",
-      color: variant === "secondary" ? "var(--foreground, #0f172a)" : "#fff",
-    }) as React.CSSProperties,
   row: {
     display: "flex",
     gap: 12,
@@ -135,16 +176,6 @@ const s = {
     borderBottom: "1px solid var(--border, #e2e8f0)",
     verticalAlign: "middle" as const,
   } as React.CSSProperties,
-  badge: (color: string) =>
-    ({
-      display: "inline-block",
-      padding: "2px 8px",
-      borderRadius: 9999,
-      fontSize: 11,
-      fontWeight: 600,
-      background: `${color}22`,
-      color,
-    }) as React.CSSProperties,
   checkLabel: {
     display: "flex",
     alignItems: "center",
@@ -184,9 +215,9 @@ const s = {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-interface ImportWizardProps {
+type ImportWizardProps = {
   tenantId: string;
-}
+};
 
 export function ImportWizard({ tenantId }: ImportWizardProps) {
   const [step, setStep] = useState<Step>("connect");
@@ -204,7 +235,9 @@ export function ImportWizard({ tenantId }: ImportWizardProps) {
   const [dryRunLoading, setDryRunLoading] = useState(false);
   const [dryRunError, setDryRunError] = useState("");
 
-  const [executeResult, setExecuteResult] = useState<ExecuteResult | null>(null);
+  const [executeResult, setExecuteResult] = useState<ExecuteResult | null>(
+    null
+  );
   const [executeLoading, setExecuteLoading] = useState(false);
   const [executeError, setExecuteError] = useState("");
 
@@ -212,8 +245,8 @@ export function ImportWizard({ tenantId }: ImportWizardProps) {
 
   // ── Helpers ──────────────────────────────────────────────────────────────
 
-  function goTo(s: Step) {
-    setStep(s);
+  function goTo(target: Step) {
+    setStep(target);
   }
 
   function toggleTeam(id: string) {
@@ -237,7 +270,9 @@ export function ImportWizard({ tenantId }: ImportWizardProps) {
       setTeams(fetched);
       goTo("select");
     } catch (err) {
-      setTeamsError(err instanceof Error ? err.message : "Failed to fetch teams");
+      setTeamsError(
+        err instanceof Error ? err.message : "Failed to fetch teams"
+      );
     } finally {
       setTeamsLoading(false);
     }
@@ -264,7 +299,9 @@ export function ImportWizard({ tenantId }: ImportWizardProps) {
   }
 
   async function handleExecute() {
-    if (!dryRunResult) return;
+    if (!dryRunResult) {
+      return;
+    }
     setExecuteLoading(true);
     setExecuteError("");
     setExecuteResult(null);
@@ -289,82 +326,76 @@ export function ImportWizard({ tenantId }: ImportWizardProps) {
   // ── Render ───────────────────────────────────────────────────────────────
 
   return (
-    <div style={s.container}>
-      <h1 style={s.heading}>Import from Linear</h1>
-      <p style={s.subheading}>
+    <div style={ss.container}>
+      <h1 style={ss.heading}>Import from Linear</h1>
+      <p style={ss.subheading}>
         Bring your Linear issues into COSMOS as Features in a few steps.
       </p>
 
       {/* Step bar */}
-      <div style={s.stepBar}>
+      <div style={ss.stepBar}>
         {STEPS.map((st, idx) => (
-          <span key={st} style={s.stepPill(st === step, idx < currentStepIdx)}>
+          <span key={st} style={pillStyle(st === step, idx < currentStepIdx)}>
             {STEP_LABELS[st]}
           </span>
         ))}
       </div>
 
-      <div style={s.card}>
-        {/* ── Step 1: Connect ── */}
+      <div style={ss.card}>
         {step === "connect" && (
           <StepConnect
             apiKey={apiKey}
-            setApiKey={setApiKey}
             apiKeyError={apiKeyError}
-            teamsError={teamsError}
             loading={teamsLoading}
             onNext={handleConnect}
+            setApiKey={setApiKey}
+            teamsError={teamsError}
           />
         )}
 
-        {/* ── Step 2: Select teams ── */}
         {step === "select" && (
           <StepSelect
-            teams={teams}
-            selectedTeamIds={selectedTeamIds}
-            toggleTeam={toggleTeam}
             onBack={() => goTo("connect")}
             onNext={() => goTo("map")}
+            selectedTeamIds={selectedTeamIds}
+            teams={teams}
+            toggleTeam={toggleTeam}
           />
         )}
 
-        {/* ── Step 3: Map ── */}
         {step === "map" && (
           <StepMap
-            teams={teams.filter((t) => selectedTeamIds.includes(t.id))}
-            piPlanId={piPlanId}
-            setPiPlanId={setPiPlanId}
-            loading={dryRunLoading}
             error={dryRunError}
+            loading={dryRunLoading}
             onBack={() => goTo("select")}
             onNext={handleDryRun}
+            piPlanId={piPlanId}
+            setPiPlanId={setPiPlanId}
+            teams={teams.filter((t) => selectedTeamIds.includes(t.id))}
           />
         )}
 
-        {/* ── Step 4: Dry-run preview ── */}
-        {step === "dry-run" && dryRunResult && (
+        {step === "dry-run" && dryRunResult ? (
           <StepDryRun
-            result={dryRunResult}
             onBack={() => goTo("map")}
             onNext={() => goTo("execute")}
+            result={dryRunResult}
           />
-        )}
+        ) : null}
 
-        {/* ── Step 5: Execute ── */}
-        {step === "execute" && dryRunResult && (
+        {step === "execute" && dryRunResult ? (
           <StepExecute
-            preview={dryRunResult.preview}
-            loading={executeLoading}
             error={executeError}
+            loading={executeLoading}
             onBack={() => goTo("dry-run")}
             onExecute={handleExecute}
+            preview={dryRunResult.preview}
           />
-        )}
+        ) : null}
 
-        {/* ── Step 6: Complete ── */}
-        {step === "complete" && executeResult && (
+        {step === "complete" && executeResult ? (
           <StepComplete result={executeResult} />
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -392,29 +423,44 @@ function StepConnect({
       <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 16 }}>
         Connect your Linear workspace
       </h2>
-      <label style={s.label} htmlFor="apiKey">
+      <label htmlFor="apiKey" style={ss.label}>
         Linear API Key
       </label>
       <input
-        id="apiKey"
-        style={s.input}
-        type="password"
-        placeholder="lin_api_xxxxxxxxxxxxxxxxxxxx"
-        value={apiKey}
-        onChange={(e) => setApiKey(e.target.value)}
         autoComplete="off"
+        id="apiKey"
+        onChange={(e) => setApiKey(e.target.value)}
+        placeholder="lin_api_xxxxxxxxxxxxxxxxxxxx"
+        style={ss.input}
+        type="password"
+        value={apiKey}
       />
-      <p style={{ fontSize: 12, color: "var(--muted-foreground, #64748b)", marginTop: 6 }}>
+      <p
+        style={{
+          fontSize: 12,
+          color: "var(--muted-foreground, #64748b)",
+          marginTop: 6,
+        }}
+      >
         Generate a Personal API key at{" "}
-        <a href="https://linear.app/settings/api" target="_blank" rel="noreferrer">
+        <a
+          href="https://linear.app/settings/api"
+          rel="noreferrer"
+          target="_blank"
+        >
           linear.app/settings/api
         </a>
         .
       </p>
-      {apiKeyError && <p style={s.error}>{apiKeyError}</p>}
-      {teamsError && <p style={s.error}>{teamsError}</p>}
-      <div style={s.row}>
-        <button style={s.btn()} disabled={loading} onClick={onNext}>
+      {apiKeyError ? <p style={ss.error}>{apiKeyError}</p> : null}
+      {teamsError ? <p style={ss.error}>{teamsError}</p> : null}
+      <div style={ss.row}>
+        <button
+          disabled={loading}
+          onClick={onNext}
+          style={btnStyle()}
+          type="button"
+        >
           {loading ? "Connecting…" : "Connect & fetch teams →"}
         </button>
       </div>
@@ -440,37 +486,50 @@ function StepSelect({
       <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
         Select teams to import
       </h2>
-      <p style={{ fontSize: 13, color: "var(--muted-foreground, #64748b)", marginBottom: 16 }}>
-        All non-cancelled issues from selected teams will be imported as Features.
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--muted-foreground, #64748b)",
+          marginBottom: 16,
+        }}
+      >
+        All non-cancelled issues from selected teams will be imported as
+        Features.
       </p>
       {teams.map((team) => (
-        <label key={team.id} style={s.checkLabel}>
+        <label key={team.id} style={ss.checkLabel}>
           <input
-            type="checkbox"
             checked={selectedTeamIds.includes(team.id)}
             onChange={() => toggleTeam(team.id)}
+            type="checkbox"
           />
           <span>
             <strong>{team.name}</strong>{" "}
-            <span style={{ color: "var(--muted-foreground, #64748b)", fontSize: 12 }}>
+            <span
+              style={{
+                color: "var(--muted-foreground, #64748b)",
+                fontSize: 12,
+              }}
+            >
               ({team.key})
             </span>
           </span>
         </label>
       ))}
-      {teams.length === 0 && (
+      {teams.length === 0 ? (
         <p style={{ color: "var(--muted-foreground, #64748b)", fontSize: 13 }}>
           No teams found in this workspace.
         </p>
-      )}
-      <div style={s.row}>
-        <button style={s.btn("secondary")} onClick={onBack}>
+      ) : null}
+      <div style={ss.row}>
+        <button onClick={onBack} style={btnStyle("secondary")} type="button">
           ← Back
         </button>
         <button
-          style={s.btn()}
           disabled={selectedTeamIds.length === 0}
           onClick={onNext}
+          style={btnStyle()}
+          type="button"
         >
           Next: Review mapping →
         </button>
@@ -501,93 +560,114 @@ function StepMap({
       <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
         Review mapping
       </h2>
-      <p style={{ fontSize: 13, color: "var(--muted-foreground, #64748b)", marginBottom: 20 }}>
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--muted-foreground, #64748b)",
+          marginBottom: 20,
+        }}
+      >
         Linear issues will be mapped to COSMOS entities as shown below.
       </p>
 
-      <table style={s.table}>
+      <table style={ss.table}>
         <thead>
           <tr>
-            <th style={s.th}>Linear</th>
-            <th style={s.th}>→</th>
-            <th style={s.th}>COSMOS</th>
+            <th style={ss.th}>Linear</th>
+            <th style={ss.th}>→</th>
+            <th style={ss.th}>COSMOS</th>
           </tr>
         </thead>
         <tbody>
           {teams.map((t) => (
             <tr key={t.id}>
-              <td style={s.td}>
+              <td style={ss.td}>
                 Team: <strong>{t.name}</strong>
               </td>
-              <td style={{ ...s.td, textAlign: "center" }}>→</td>
-              <td style={s.td}>Issues imported as Features</td>
+              <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+              <td style={ss.td}>Issues imported as Features</td>
             </tr>
           ))}
           <tr>
-            <td style={s.td}>Issue (no parent)</td>
-            <td style={{ ...s.td, textAlign: "center" }}>→</td>
-            <td style={s.td}>
-              <span style={s.badge("#6366f1")}>Feature</span>
+            <td style={ss.td}>Issue (no parent)</td>
+            <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+            <td style={ss.td}>
+              <span style={badgeStyle("#6366f1")}>Feature</span>
             </td>
           </tr>
           <tr>
-            <td style={s.td}>Issue (has parent)</td>
-            <td style={{ ...s.td, textAlign: "center" }}>→</td>
-            <td style={s.td}>
-              <span style={s.badge("#6366f1")}>Feature</span>{" "}
-              <span style={{ fontSize: 12, color: "var(--muted-foreground, #64748b)" }}>
+            <td style={ss.td}>Issue (has parent)</td>
+            <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+            <td style={ss.td}>
+              <span style={badgeStyle("#6366f1")}>Feature</span>{" "}
+              <span
+                style={{
+                  fontSize: 12,
+                  color: "var(--muted-foreground, #64748b)",
+                }}
+              >
                 (child issues imported as Features too)
               </span>
             </td>
           </tr>
           <tr>
-            <td style={s.td}>State: backlog / unstarted</td>
-            <td style={{ ...s.td, textAlign: "center" }}>→</td>
-            <td style={s.td}>
-              <span style={s.badge("#94a3b8")}>BACKLOG / TODO</span>
+            <td style={ss.td}>State: backlog / unstarted</td>
+            <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+            <td style={ss.td}>
+              <span style={badgeStyle("#94a3b8")}>BACKLOG / TODO</span>
             </td>
           </tr>
           <tr>
-            <td style={s.td}>State: started</td>
-            <td style={{ ...s.td, textAlign: "center" }}>→</td>
-            <td style={s.td}>
-              <span style={s.badge("#3b82f6")}>IN_PROGRESS</span>
+            <td style={ss.td}>State: started</td>
+            <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+            <td style={ss.td}>
+              <span style={badgeStyle("#3b82f6")}>IN_PROGRESS</span>
             </td>
           </tr>
           <tr>
-            <td style={s.td}>State: completed</td>
-            <td style={{ ...s.td, textAlign: "center" }}>→</td>
-            <td style={s.td}>
-              <span style={s.badge("#22c55e")}>DONE</span>
+            <td style={ss.td}>State: completed</td>
+            <td style={{ ...ss.td, textAlign: "center" }}>→</td>
+            <td style={ss.td}>
+              <span style={badgeStyle("#22c55e")}>DONE</span>
             </td>
           </tr>
         </tbody>
       </table>
 
       <div style={{ marginTop: 20 }}>
-        <label style={s.label} htmlFor="piPlanId">
+        <label htmlFor="piPlanId" style={ss.label}>
           PI Plan ID{" "}
-          <span style={{ fontWeight: 400, color: "var(--muted-foreground, #64748b)" }}>
+          <span
+            style={{
+              fontWeight: 400,
+              color: "var(--muted-foreground, #64748b)",
+            }}
+          >
             (optional — attach imported features to a PI)
           </span>
         </label>
         <input
           id="piPlanId"
-          style={s.input}
-          type="text"
-          placeholder="e.g. cm1abc123..."
-          value={piPlanId}
           onChange={(e) => setPiPlanId(e.target.value)}
+          placeholder="e.g. cm1abc123..."
+          style={ss.input}
+          type="text"
+          value={piPlanId}
         />
       </div>
 
-      {error && <p style={s.error}>{error}</p>}
+      {error ? <p style={ss.error}>{error}</p> : null}
 
-      <div style={s.row}>
-        <button style={s.btn("secondary")} onClick={onBack}>
+      <div style={ss.row}>
+        <button onClick={onBack} style={btnStyle("secondary")} type="button">
           ← Back
         </button>
-        <button style={s.btn()} disabled={loading} onClick={onNext}>
+        <button
+          disabled={loading}
+          onClick={onNext}
+          style={btnStyle()}
+          type="button"
+        >
           {loading ? "Running preview…" : "Preview import →"}
         </button>
       </div>
@@ -611,43 +691,57 @@ function StepDryRun({
       <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
         Import preview
       </h2>
-      <p style={{ fontSize: 13, color: "var(--muted-foreground, #64748b)", marginBottom: 16 }}>
-        Review what will be imported. Already-synced issues are skipped automatically.
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--muted-foreground, #64748b)",
+          marginBottom: 16,
+        }}
+      >
+        Review what will be imported. Already-synced issues are skipped
+        automatically.
       </p>
 
-      <div style={s.statBox}>
-        <div style={s.stat}>
-          <div style={s.statNum}>{result.totalIssues}</div>
-          <div style={s.statLabel}>Total issues</div>
+      <div style={ss.statBox}>
+        <div style={ss.stat}>
+          <div style={ss.statNum}>{result.totalIssues}</div>
+          <div style={ss.statLabel}>Total issues</div>
         </div>
-        <div style={s.stat}>
-          <div style={{ ...s.statNum, color: "#22c55e" }}>{newCount}</div>
-          <div style={s.statLabel}>Will be imported</div>
+        <div style={ss.stat}>
+          <div style={{ ...ss.statNum, color: "#22c55e" }}>{newCount}</div>
+          <div style={ss.statLabel}>Will be imported</div>
         </div>
-        <div style={s.stat}>
-          <div style={{ ...s.statNum, color: "#94a3b8" }}>{result.alreadySyncedCount}</div>
-          <div style={s.statLabel}>Already synced</div>
+        <div style={ss.stat}>
+          <div style={{ ...ss.statNum, color: "#94a3b8" }}>
+            {result.alreadySyncedCount}
+          </div>
+          <div style={ss.statLabel}>Already synced</div>
         </div>
       </div>
 
       <div style={{ maxHeight: 340, overflowY: "auto", marginTop: 20 }}>
-        <table style={s.table}>
+        <table style={ss.table}>
           <thead>
             <tr>
-              <th style={s.th}>Title</th>
-              <th style={s.th}>Team</th>
-              <th style={s.th}>Status</th>
-              <th style={s.th}>Action</th>
+              <th style={ss.th}>Title</th>
+              <th style={ss.th}>Team</th>
+              <th style={ss.th}>Status</th>
+              <th style={ss.th}>Action</th>
             </tr>
           </thead>
           <tbody>
             {result.preview.map((item) => (
               <tr key={item.linearId}>
-                <td style={s.td}>
-                  <a href={item.url} target="_blank" rel="noreferrer" style={{ color: "inherit" }}>
+                <td style={ss.td}>
+                  <a
+                    href={item.url}
+                    rel="noreferrer"
+                    style={{ color: "inherit" }}
+                    target="_blank"
+                  >
                     {item.title}
                   </a>
-                  {item.isChild && (
+                  {item.isChild ? (
                     <span
                       style={{
                         marginLeft: 6,
@@ -657,17 +751,17 @@ function StepDryRun({
                     >
                       (sub-issue)
                     </span>
-                  )}
+                  ) : null}
                 </td>
-                <td style={s.td}>{item.teamName}</td>
-                <td style={s.td}>
+                <td style={ss.td}>{item.teamName}</td>
+                <td style={ss.td}>
                   <StatusBadge statusId={item.statusId} />
                 </td>
-                <td style={s.td}>
+                <td style={ss.td}>
                   {item.alreadySynced ? (
-                    <span style={s.badge("#94a3b8")}>skip</span>
+                    <span style={badgeStyle("#94a3b8")}>skip</span>
                   ) : (
-                    <span style={s.badge("#22c55e")}>import</span>
+                    <span style={badgeStyle("#22c55e")}>import</span>
                   )}
                 </td>
               </tr>
@@ -676,12 +770,19 @@ function StepDryRun({
         </table>
       </div>
 
-      <div style={s.row}>
-        <button style={s.btn("secondary")} onClick={onBack}>
+      <div style={ss.row}>
+        <button onClick={onBack} style={btnStyle("secondary")} type="button">
           ← Back
         </button>
-        <button style={s.btn()} disabled={newCount === 0} onClick={onNext}>
-          {newCount === 0 ? "Nothing new to import" : `Import ${newCount} issues →`}
+        <button
+          disabled={newCount === 0}
+          onClick={onNext}
+          style={btnStyle()}
+          type="button"
+        >
+          {newCount === 0
+            ? "Nothing new to import"
+            : `Import ${newCount} issues →`}
         </button>
       </div>
     </div>
@@ -708,12 +809,18 @@ function StepExecute({
       <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 4 }}>
         Ready to import
       </h2>
-      <p style={{ fontSize: 13, color: "var(--muted-foreground, #64748b)", marginBottom: 20 }}>
-        {newCount} issue{newCount !== 1 ? "s" : ""} will be created as Features in COSMOS. This
-        action cannot be undone.
+      <p
+        style={{
+          fontSize: 13,
+          color: "var(--muted-foreground, #64748b)",
+          marginBottom: 20,
+        }}
+      >
+        {newCount} issue{newCount !== 1 ? "s" : ""} will be created as Features
+        in COSMOS. This action cannot be undone.
       </p>
 
-      {error && (
+      {error ? (
         <div
           style={{
             padding: "12px 16px",
@@ -727,13 +834,23 @@ function StepExecute({
         >
           {error}
         </div>
-      )}
+      ) : null}
 
-      <div style={s.row}>
-        <button style={s.btn("secondary")} disabled={loading} onClick={onBack}>
+      <div style={ss.row}>
+        <button
+          disabled={loading}
+          onClick={onBack}
+          style={btnStyle("secondary")}
+          type="button"
+        >
           ← Back
         </button>
-        <button style={s.btn()} disabled={loading || newCount === 0} onClick={onExecute}>
+        <button
+          disabled={loading || newCount === 0}
+          onClick={onExecute}
+          style={btnStyle()}
+          type="button"
+        >
           {loading ? "Importing…" : `Confirm import (${newCount} issues)`}
         </button>
       </div>
@@ -745,37 +862,64 @@ function StepComplete({ result }: { result: ExecuteResult }) {
   return (
     <div style={{ textAlign: "center", padding: "16px 0" }}>
       <div style={{ fontSize: 48, marginBottom: 12 }}>✓</div>
-      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Import complete!</h2>
-      <p style={{ fontSize: 14, color: "var(--muted-foreground, #64748b)", marginBottom: 24 }}>
+      <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>
+        Import complete!
+      </h2>
+      <p
+        style={{
+          fontSize: 14,
+          color: "var(--muted-foreground, #64748b)",
+          marginBottom: 24,
+        }}
+      >
         Your Linear issues have been imported into COSMOS.
       </p>
 
-      <div style={s.statBox}>
-        <div style={s.stat}>
-          <div style={{ ...s.statNum, color: "#22c55e" }}>{result.imported}</div>
-          <div style={s.statLabel}>Imported</div>
+      <div style={ss.statBox}>
+        <div style={ss.stat}>
+          <div style={{ ...ss.statNum, color: "#22c55e" }}>
+            {result.imported}
+          </div>
+          <div style={ss.statLabel}>Imported</div>
         </div>
-        <div style={s.stat}>
-          <div style={{ ...s.statNum, color: "#94a3b8" }}>{result.skipped}</div>
-          <div style={s.statLabel}>Skipped (already synced)</div>
+        <div style={ss.stat}>
+          <div style={{ ...ss.statNum, color: "#94a3b8" }}>
+            {result.skipped}
+          </div>
+          <div style={ss.statLabel}>Skipped (already synced)</div>
         </div>
       </div>
 
-      {result.errors.length > 0 && (
+      {result.errors.length > 0 ? (
         <div style={{ marginTop: 20, textAlign: "left" }}>
-          <p style={{ fontWeight: 600, fontSize: 13, color: "#ef4444", marginBottom: 8 }}>
+          <p
+            style={{
+              fontWeight: 600,
+              fontSize: 13,
+              color: "#ef4444",
+              marginBottom: 8,
+            }}
+          >
             {result.errors.length} error{result.errors.length !== 1 ? "s" : ""}:
           </p>
           <ul style={{ fontSize: 12, color: "#ef4444", paddingLeft: 20 }}>
-            {result.errors.map((e, i) => (
-              <li key={i}>{e}</li>
+            {result.errors.map((errMsg, i) => (
+              // biome-ignore lint/suspicious/noArrayIndexKey: errors list is static after render
+              <li key={i}>{errMsg}</li>
             ))}
           </ul>
         </div>
-      )}
+      ) : null}
 
       <div style={{ marginTop: 24 }}>
-        <a href="/portfolio" style={{ ...s.btn(), textDecoration: "none", display: "inline-block" }}>
+        <a
+          href="/portfolio"
+          style={{
+            ...btnStyle(),
+            textDecoration: "none",
+            display: "inline-block",
+          }}
+        >
           Go to Portfolio →
         </a>
       </div>
@@ -792,5 +936,5 @@ function StatusBadge({ statusId }: { statusId: string }) {
     CANCELLED: "#ef4444",
   };
   const color = colorMap[statusId] ?? "#94a3b8";
-  return <span style={s.badge(color)}>{statusId}</span>;
+  return <span style={badgeStyle(color)}>{statusId}</span>;
 }
