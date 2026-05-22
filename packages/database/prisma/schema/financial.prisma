@@ -1,0 +1,34 @@
+// M8 — LPM Financial Loop
+
+model LeanBusinessCase {
+  id                   String  @id @default(cuid())
+  tenantId             String
+  epicId               String  @unique
+
+  // Problem framing
+  problemStatement     String?
+  solutionHypothesis   String?
+  nonFinancialBenefits String?
+  riskSummary          String?
+
+  // Financial model
+  investmentCost       Float?
+  expectedAnnualBenefit Float?
+  discountRate         Float   @default(0.1)
+  timeHorizonYears     Int     @default(3)
+  npvEstimate          Float?  // computed + stored
+
+  // Leading indicators (JSON array)
+  leadingIndicators    Json?   // string[]
+
+  status               String  @default("DRAFT") // DRAFT | SUBMITTED | APPROVED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epic   Epic   @relation(fields: [epicId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@map("lean_business_cases")
+}

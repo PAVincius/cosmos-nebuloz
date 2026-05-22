@@ -145,10 +145,11 @@ model Epic {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  features       Feature[]
-  strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
-  governedEpic   GovernedEpic?
+  tenant           Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  features         Feature[]
+  strategicTheme   StrategicTheme?    @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
+  governedEpic     GovernedEpic?
+  leanBusinessCase LeanBusinessCase?
 
   @@index([tenantId])
   @@index([strategicThemeId])

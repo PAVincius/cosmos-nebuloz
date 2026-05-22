@@ -101,6 +101,8 @@ model Tenant {
   copilotSessions       CopilotSession[]
   anomalyDetectionRuns  AnomalyDetectionRun[]
   anomalies             Anomaly[]
+  // M8: LPM Financial Loop
+  leanBusinessCases     LeanBusinessCase[]
 }
 
 model User {
