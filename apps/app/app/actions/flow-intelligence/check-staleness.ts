@@ -44,7 +44,7 @@ export async function checkSnapshotStaleness(
     database.teamMemberAssignment.findMany({
       where: { tenantId, teamId: snapshot.scopeId },
       orderBy: { createdAt: "desc" },
-      take: 50,
+      take: 500, // support large ARTs; composition hash needs all members
       select: { userId: true },
     }),
   ]);

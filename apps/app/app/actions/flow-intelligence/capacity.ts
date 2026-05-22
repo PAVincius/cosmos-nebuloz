@@ -182,11 +182,11 @@ export async function upsertMemberAssignment(
 ): Promise<Ok<{ id: string }> | Err> {
   const { capacityFactor, role } = options;
 
+  const { tenantId } = await requireTenantSession(await headers());
+
   if (capacityFactor < 0 || capacityFactor > 1) {
     return err("capacityFactor must be in [0, 1]");
   }
-
-  const { tenantId } = await requireTenantSession(await headers());
 
   const result = await database.teamMemberAssignment.upsert({
     where: { sprintId_userId: { sprintId, userId } },

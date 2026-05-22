@@ -1,9 +1,17 @@
+import crypto from "node:crypto";
 import { database } from "@repo/database";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const cronSecret = process.env.CRON_SECRET ?? "";
+  const authHeader = request.headers.get("authorization") ?? "";
+  const expected = Buffer.from(`Bearer ${cronSecret}`, "utf8");
+  const actual = Buffer.from(authHeader, "utf8");
+
+  if (
+    expected.length !== actual.length ||
+    !crypto.timingSafeEqual(expected, actual)
+  ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -26,7 +34,7 @@ export async function POST(request: Request) {
   const results = await Promise.allSettled(
     snapshots.map((s) =>
       database.flowMetricSnapshot.update({
-        where: { id: s.id },
+        where: { id: s.id, tenantId: s.tenantId },
         data: { lastStalenessCheck: new Date() },
       })
     )

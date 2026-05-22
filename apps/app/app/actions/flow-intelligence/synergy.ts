@@ -34,7 +34,7 @@ export async function updatePairSynergiesForTask(
 
   const [assignees, story] = await Promise.all([
     database.taskAssignee.findMany({
-      where: { taskId },
+      where: { taskId, task: { story: { tenantId } } },
       select: { userId: true },
     }),
     database.story.findFirst({

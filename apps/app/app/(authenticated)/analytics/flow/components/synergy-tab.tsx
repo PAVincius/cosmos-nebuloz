@@ -5,7 +5,8 @@ import { getSynergyMatrix } from "@/app/actions/flow-intelligence/synergy";
 import { SynergyMatrix } from "./synergy-matrix";
 
 export async function SynergyTab({ teamId }: { teamId: string }) {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, role } = await requireTenantSession(await headers());
+  const isSM = role === "SM" || role === "RTE" || role === "ADMIN";
 
   const [matrixResult, baselines] = await Promise.all([
     getSynergyMatrix(teamId),
@@ -43,7 +44,7 @@ export async function SynergyTab({ teamId }: { teamId: string }) {
           </div>
         ) : (
           <SynergyMatrix
-            isSM={true}
+            isSM={isSM}
             pairs={matrixResult.data.pairs}
             userIds={userIds}
           />

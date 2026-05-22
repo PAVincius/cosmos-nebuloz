@@ -6,227 +6,288 @@ Fechar o gap entre infraestrutura já construída (staleness R1-R5, anomaly dete
 
 ## Architecture
 
-Três subsistemas independentes com ponto de integração no evento de fechamento de sprint:
-
 ```
 Sprint Close Event
        │
-       ├─→ FlowMetricSnapshot (created)
+       ├─→ snapshotSprintFlowMetrics() → FlowMetricSnapshot (FRESH)
        │         │
-       │         └─→ AnomalyDetectionRun (triggered)
+       │         └─→ AnomalyDetectionRun (trigger=snapshot_created)
        │
-Vercel Cron (hourly)
-       │
-       ├─→ /api/cron/staleness-check   → StalenessService (session-free)
-       └─→ /api/cron/anomaly-detection → analyzeFlowAnomalies (service layer)
+Vercel Cron 0 * * * *
+       └─→ /api/cron/staleness-check → scoreSnapshotStaleness() (session-free)
 
-Dashboard
-       │
-       ├─→ Flow Metrics tab (existing)
-       ├─→ Anomaly tab (AnomalySummaryPanel, existing but only snapshotId passed)
-       ├─→ Capacity tab (TeamCapacityTab — NEW wire-up)
-       └─→ Synergy tab (SynergyTab — NEW wire-up)
+Vercel Cron 30 * * * *
+       └─→ /api/cron/anomaly-detection → runAllRules() (session-free)
+
+Dashboard (team scope)
+       ├─→ Tab Flow: KPIs + C Híbrido + StalenessBadge (existente)
+       ├─→ Tab Anomaly: AnomalySummaryPanel (existente, já wired)
+       ├─→ Tab Capacity: TeamCapacityTab (componente existe, NÃO wired)
+       └─→ Tab Synergy: SynergyTab + SynergyMatrix (componentes existem, NÃO wired)
 ```
 
 **Tech stack:** Next.js 15 App Router, Vercel Cron, Prisma, `@repo/database`
 
 ---
 
-## Subsistema A — Cron Layer (session-free staleness + anomaly)
+## Subsistema A — Cron Layer (session-free)
 
-### Problema atual
+### Problema
 
-`/api/cron/staleness-check` só escreve `lastStalenessCheck = now()`. O re-scoring real de staleness (R1-R5) está em `checkSnapshotStaleness`, que chama `requireTenantSession` — impossível rodar em cron sem sessão de usuário.
+`/api/cron/staleness-check` só escreve `lastStalenessCheck = now()`. Re-scoring real (R1-R5) está em `checkSnapshotStaleness` que requer `requireTenantSession` — impossível em cron. Não existe cron de anomaly detection.
 
-### Solução
-
-**A1 — Extrair lógica pura para `StalenessService`**
+### A1 — `staleness-service.ts` (função pura, sem session)
 
 Novo arquivo: `apps/app/app/actions/flow-intelligence/staleness-service.ts`
 
-Função: `scoreSnapshotStaleness(snapshotId: string, tenantId: string): Promise<void>`
+```typescript
+// Não é "use server" — é utilitário puro chamado pelo cron (sem sessão)
+export async function scoreSnapshotStaleness(
+  snapshotId: string,
+  tenantId: string
+): Promise<void>
+```
 
-- Recebe `tenantId` direto (sem session)
-- Chama `computeStaleness` com dados do banco
-- Atualiza `FlowMetricSnapshot.staleness`, `stalenessReasons`, `lastStalenessCheck`
-- Grava `StalenessAuditLog` quando muda estado
-- Não precisa de sessão — usa `tenantId` do cron payload
+- Busca snapshot + dados necessários (sprint, team composition, assessments) usando `tenantId` diretamente
+- Chama `computeStaleness(input)` de `staleness-rules.ts` (já é pura)
+- Atualiza `FlowMetricSnapshot.{ staleness, stalenessReasons, lastStalenessCheck }`
+- Grava `StalenessAuditLog` quando `oldState !== newState`
 
-**A2 — Refatorar `/api/cron/staleness-check`**
+### A2 — Refatorar `/api/cron/staleness-check`
 
-- Remove código que só tocava timestamp
-- Para cada snapshot com `lastStalenessCheck` < 20h:
-  - Chama `scoreSnapshotStaleness(snapshot.id, snapshot.tenantId)`
-- Limit: 100 snapshots por execução (evitar timeout)
+Substitui lógica de "só toca timestamp" por chamadas reais a `scoreSnapshotStaleness`:
 
-**A3 — Novo `/api/cron/anomaly-detection`**
+```typescript
+// Busca snapshots não checados há >20h, limit 100
+// Para cada: await scoreSnapshotStaleness(s.id, s.tenantId)
+// Retorna { checked, succeeded, failed }
+```
+
+### A3 — Novo `/api/cron/anomaly-detection`
 
 Novo arquivo: `apps/app/app/api/cron/anomaly-detection/route.ts`
 
-- Busca snapshots FRESH/AGING sem `AnomalyDetectionRun` nas últimas 24h
-- Para cada um: cria `AnomalyDetectionRun` + chama `runAllRules` diretamente (sem session)
-- Auto-cria `ImprovementAction` para anomalias CRITICAL
-- Limit: 50 snapshots por execução
+```typescript
+// Busca snapshots sem AnomalyDetectionRun nas últimas 24h (staleness FRESH|AGING), limit 50
+// Para cada snapshot:
+//   1. Busca history (últimos 4 snapshots do mesmo scope)
+//   2. Busca openActions + latestAssessment
+//   3. Cria AnomalyDetectionRun(status=RUNNING, trigger="scheduled")
+//   4. Chama runAllRules({ current, history, openActions, latestAssessment })
+//   5. Persiste Anomaly[] e atualiza Run(status=COMPLETED, summary)
+//   6. Para CRITICAL: cria ImprovementAction automático
+// Retorna { processed, succeeded, failed }
+```
 
-**A4 — Configurar Vercel Cron em `vercel.json`**
+Obs: não usa `analyzeFlowAnomalies` server action (que requer session) — chama `runAllRules` diretamente.
+
+### A4 — `vercel.json`
 
 ```json
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "node scripts/skip-ci.js",
   "crons": [
-    { "path": "/api/cron/staleness-check",   "schedule": "0 * * * *" },
-    { "path": "/api/cron/anomaly-detection",  "schedule": "30 * * * *" }
+    { "path": "/api/cron/staleness-check",  "schedule": "0 * * * *" },
+    { "path": "/api/cron/anomaly-detection", "schedule": "30 * * * *" }
   ]
 }
 ```
 
-Staleness a cada hora (XX:00), anomaly detection meia hora depois (XX:30) — garante que snapshots já foram re-scored antes da detecção.
-
-**Auth:** ambos os endpoints validam `Authorization: Bearer $CRON_SECRET`.
+Auth: ambos validam `Authorization: Bearer $CRON_SECRET`.
 
 ---
 
 ## Subsistema B — Sprint Close Event
 
-### Problema atual
+### Problema
 
-`FlowMetricSnapshot` só é criado por `re-evaluate-snapshot.ts` (ação manual). Não existe trigger automático no fechamento de sprint, então anomaly detection nunca tem dados iniciais frescos.
+`FlowMetricSnapshot` só é criado por `re-evaluate-snapshot.ts` (manual). Sem snapshot inicial, anomaly detection não tem dados.
 
-### Solução
+### B1 — `snapshotSprintFlowMetrics` (nova função de escrita)
 
-**B1 — Server action `closeSprintAndSnapshot`**
+Novo arquivo: `apps/app/app/actions/flow-intelligence/snapshot-sprint.ts`
+
+```typescript
+// Não é "use server" — utilitário chamado por closeSprintAndSnapshot
+export async function snapshotSprintFlowMetrics(
+  sprintId: string,
+  teamId: string,
+  tenantId: string
+): Promise<{ snapshotId: string }>
+```
+
+Computa as 6 métricas a partir das Stories do sprint fechado:
+- `flowVelocityTotal` = stories com status DONE
+- `flowTimeAvgHours` = média de `(completedAt - startedAt)` por story DONE
+- `flowLoadCurrent` = stories IN_PROGRESS no `endDate` do sprint
+- `flowEfficiency` = tempo ativo / tempo total (stories com startedAt + completedAt)
+- `flowPredictability` = `SprintReview.velocity / Sprint.capacity` (se existir review)
+- `flowDistribution` = contagem por tipo de story
+
+Persiste como `FlowMetricSnapshot { scope="team", period="sprint", periodRef=sprintId, staleness="FRESH" }`.
+
+NÃO é a mesma coisa que `computeSprintMetrics` em `capacity.ts` (que computa métricas por membro → `MemberSprintMetrics`). São funções distintas com propósitos distintos.
+
+### B2 — Server action `closeSprintAndSnapshot`
 
 Novo arquivo: `apps/app/app/actions/sprints/close-sprint.ts`
 
 ```
+"use server"
 closeSprintAndSnapshot(sprintId: string):
-  1. Verifica sprint pertence ao tenant + está IN_PROGRESS
-  2. Marca sprint como CLOSED + closedAt = now()
-  3. Computa métricas do sprint (velocity, flowTime, efficiency, predictability, load, distribution)
-     usando dados já existentes em Task/TaskAssignee
-  4. Cria FlowMetricSnapshot com scope="team", period="sprint", periodRef=sprintId
-  5. Dispara AnomalyDetectionRun com trigger="snapshot_created"
-  6. Retorna { ok: true, snapshotId, runId }
+  1. requireTenantSession()
+  2. Busca sprint — verifica tenantId + status === "ACTIVE" (schema: PLANNING/ACTIVE/COMPLETED)
+  3. Transação atômica:
+     a. sprint.status = "COMPLETED"
+     b. await computeSprintMetrics(sprintId, teamId)  ← já existe em capacity.ts
+     c. const { snapshotId } = await snapshotSprintFlowMetrics(sprintId, teamId, tenantId)
+  4. (fora da transação) cria AnomalyDetectionRun com trigger="snapshot_created"
+     + chama runAllRules e persiste anomalias
+  5. Retorna { ok: true, snapshotId, runId }
 ```
 
-**B2 — Botão "Fechar Sprint" no Program Board**
+### B3 — Botão "Fechar Sprint"
 
-`apps/app/app/(authenticated)/arts/[artId]/program-board/page.tsx` — adiciona botão para RTEs/SMs fecharem sprint ativa. Confirmação modal antes de executar.
+Localização: página do time — onde sprint ACTIVE aparece. Program board é ART-level (cross-team), não é o lugar certo.
 
-O botão só aparece se:
-- Usuário tem role RTE ou SM
-- Sprint está IN_PROGRESS
-- Data de fim ≤ today + 1 dia
+Candidato: `apps/app/app/(authenticated)/arts/[artId]/program-board/components/program-board-client.tsx` tem lista de sprints por time — adicionar botão por sprint ACTIVE.
 
-**B3 — Cálculo de métricas no closeSprintAndSnapshot**
+Condições de exibição:
+- Role do usuário: RTE ou SM
+- `sprint.status === "ACTIVE"`
+- `sprint.endDate <= today + 1 dia`
 
-Reutiliza a mesma lógica já em `getFlowMetrics` (flow-metrics/index.ts), mas para o sprint específico que está sendo fechado. Extrai a lógica de cálculo para uma função pura `computeSprintMetrics(sprintId, tenantId)` que pode ser chamada tanto pelo close action quanto pelo getFlowMetrics existente.
+Confirmação modal antes de executar. Após fechar, invalidar router (`router.refresh()`).
 
 ---
 
 ## Subsistema C — Dashboard Tabs Wire-up
 
-### Problema atual
+### Problema
 
-`TeamCapacityTab`, `SynergyMatrix`, `SynergyTab` existem como componentes mas não são importados em `FlowMetricsDashboard`. Usuário não tem como ver capacity ou synergy.
+`TeamCapacityTab`, `SynergyMatrix`, `SynergyTab` existem mas não importados em `FlowMetricsDashboard`.
 
-### Solução
+### C1 — `flow/page.tsx` — adicionar fetches de capacity e synergy
 
-**C1 — Buscar dados de capacity e synergy em `flow/page.tsx`**
+Funções reais (verificadas no código):
+- `getTeamCapacityDashboard(teamId)` — em `capacity.ts`
+- `getSynergyMatrix(teamId)` — em `synergy.ts`
 
-Adicionar ao Promise.all existente:
+Staleness já vem de `getFlowMetrics().staleness` — NÃO adicionar `checkSnapshotStaleness` ao page load.
 
 ```typescript
-import { getTeamCapacity } from "@/app/actions/flow-intelligence/capacity";
+import { getTeamCapacityDashboard } from "@/app/actions/flow-intelligence/capacity";
 import { getSynergyMatrix } from "@/app/actions/flow-intelligence/synergy";
 
-// No Promise.all do selectedScope:
-const [metrics, assessments, actions, stalenessInfo, capacityData, synergyData] =
-  selectedScope?.type === "team"
-    ? await Promise.all([
-        getFlowMetrics(...),
-        getAssessments(...),
-        getImprovementActions(...),
-        checkSnapshotStaleness(...),
-        getTeamCapacity(selectedScope.id),
-        getSynergyMatrix(selectedScope.id),
-      ])
-    : [null, [], [], null, null, null];
+const [metrics, assessments, actions, capacityData, synergyData] = selectedScope
+  ? await Promise.all([
+      getFlowMetrics(selectedScope.type, selectedScope.id),
+      getAssessments(selectedScope.type, selectedScope.id),
+      getImprovementActions(selectedScope.type, selectedScope.id),
+      selectedScope.type === "team"
+        ? getTeamCapacityDashboard(selectedScope.id)
+        : Promise.resolve(null),
+      selectedScope.type === "team"
+        ? getSynergyMatrix(selectedScope.id)
+        : Promise.resolve(null),
+    ])
+  : [null, [], [], null, null];
 ```
 
-**C2 — Adicionar tabs no `FlowMetricsDashboard`**
+### C2 — Adicionar tabs no `FlowMetricsDashboard`
 
-Tabs existentes: "flow" | "measure". Adicionar: "capacity" | "synergy".
+Tabs existentes: `"flow" | "measure"`. Adicionar: `"capacity" | "synergy"`.
 
-Tab "Capacity" — renderiza `<TeamCapacityTab />` com dados de capacidade
-Tab "Synergy" — renderiza `<SynergyTab />` + `<SynergyMatrix />`
+```tsx
+// Tab bar adiciona dois botões (só renderizados quando selectedScope.type === "team"):
+{ key: "capacity", label: "Capacity" }
+{ key: "synergy",  label: "Synergy" }
 
-Tabs de capacity/synergy só aparecem quando `selectedScope.type === "team"` (dados por time).
+// Render por tab:
+{activeTab === "capacity" && capacityData && (
+  <TeamCapacityTab data={capacityData} />
+)}
+{activeTab === "synergy" && synergyData && (
+  <>
+    <SynergyTab data={synergyData} />
+    <SynergyMatrix pairs={synergyData.data?.pairs ?? []} teamId={selectedScope.id} />
+  </>
+)}
+```
 
-**C3 — Sem novas dependências** — todos os componentes já existem.
+Props de `capacityData` e `synergyData` adicionadas ao tipo `Props` do componente.
+
+### C3 — Sem novas dependências
+
+Todos os componentes já existem. Só wire-up de imports e props.
 
 ---
 
 ## Data flow completo (estado final)
 
 ```
-RTE fecha sprint
+SM fecha sprint (ACTIVE → COMPLETED)
   → closeSprintAndSnapshot(sprintId)
-      → Sprint.status = CLOSED
-      → computeSprintMetrics() → FlowMetricSnapshot (FRESH)
-      → AnomalyDetectionRun (trigger=snapshot_created)
-          → runAllRules() → Anomaly[] (CRITICAL auto-cria ImprovementAction)
+      → computeSprintMetrics()         → MemberSprintMetrics[]
+      → snapshotSprintFlowMetrics()    → FlowMetricSnapshot (staleness=FRESH)
+      → AnomalyDetectionRun           → Anomaly[] (CRITICAL → ImprovementAction auto)
 
-Vercel Cron 0 * * * *
+Vercel Cron 0 * * * * (a cada hora)
   → /api/cron/staleness-check
       → scoreSnapshotStaleness() para snapshots não checados há >20h
-          → computeStaleness(R1-R5) → atualiza staleness + StalenessAuditLog
+          → computeStaleness(R1-R5) → FlowMetricSnapshot.staleness + StalenessAuditLog
 
-Vercel Cron 30 * * * *
+Vercel Cron 30 * * * * (meia hora depois)
   → /api/cron/anomaly-detection
       → runAllRules() para snapshots sem run nas últimas 24h
-          → Anomaly[] → auto-cria ImprovementAction para CRITICAL
+          → Anomaly[] → ImprovementAction para CRITICAL
 
-Usuário abre /analytics/flow
-  → getFlowMetrics() retorna snapshot com staleness já calculado
-  → FlowMetricsDashboard mostra:
-      - Tab Flow: KPIs + C Híbrido + StalenessBadge
-      - Tab Anomaly: AnomalySummaryPanel
-      - Tab Capacity: TeamCapacityTab (só para team scope)
-      - Tab Synergy: SynergyTab + SynergyMatrix (só para team scope)
-      - Tab Measure: Competency assessments (existente)
+Usuário abre /analytics/flow (team scope)
+  → getFlowMetrics() → snapshot com staleness já calculado pelo cron
+  → getTeamCapacityDashboard() + getSynergyMatrix() em paralelo
+  → FlowMetricsDashboard:
+      Tab Flow     → KPIs + C Híbrido + StalenessBadge + sub-sections
+      Tab Anomaly  → AnomalySummaryPanel (já wired)
+      Tab Capacity → TeamCapacityTab
+      Tab Synergy  → SynergyTab + SynergyMatrix
+      Tab Measure  → Competency assessments (existente)
 ```
 
 ---
 
 ## Error handling
 
-- Crons: erros por snapshot individual são logados mas não param o batch. Retornam `{ succeeded, failed }`.
-- `closeSprintAndSnapshot`: transação atômica — se snapshot creation falha, sprint não é fechada.
-- Tabs capacity/synergy: se `getTeamCapacity` ou `getSynergyMatrix` retornar erro, renderiza empty state com mensagem.
+- Crons: erro por snapshot individual não para o batch — log + continua. Retorna `{ succeeded, failed }`.
+- `closeSprintAndSnapshot`: transação atômica nos steps 3a-3c — se `snapshotSprintFlowMetrics` falha, sprint não é marcada COMPLETED.
+- Capacity/synergy tabs: se fetch retorna `null` ou erro, renderiza empty state com mensagem.
 
 ---
 
 ## Testing
 
-- `closeSprintAndSnapshot`: teste de integração verificando sprint CLOSED + snapshot FRESH criado
-- `scoreSnapshotStaleness`: teste unitário puro (sem session) — input/output de staleness state
-- `anomaly-detection` cron route: teste com mock de banco — verifica que só processa snapshots sem run recente
-- Dashboard tabs: verificar que props são passadas e componentes renderizam sem erro
+| Teste | Tipo | O que verifica |
+|-------|------|----------------|
+| `staleness-service.test.ts` | unitário puro | `scoreSnapshotStaleness` atualiza staleness sem session |
+| `close-sprint.test.ts` | integração (mock db) | sprint → COMPLETED + snapshot FRESH criado na mesma transação |
+| `cron-anomaly-detection.test.ts` | mock db | só processa snapshots sem run recente; CRITICAL cria ImprovementAction |
+| `flow-dashboard-tabs.test.ts` | render | tabs Capacity/Synergy renderizam quando scope=team, ocultos quando scope=art |
 
 ---
 
-## Arquivos criados/modificados
+## Arquivos
 
 | Ação | Arquivo |
 |------|---------|
 | CREATE | `apps/app/app/actions/flow-intelligence/staleness-service.ts` |
+| CREATE | `apps/app/app/actions/flow-intelligence/snapshot-sprint.ts` |
 | CREATE | `apps/app/app/actions/sprints/close-sprint.ts` |
 | CREATE | `apps/app/app/api/cron/anomaly-detection/route.ts` |
 | MODIFY | `apps/app/app/api/cron/staleness-check/route.ts` |
-| MODIFY | `apps/app/app/vercel.json` |
+| MODIFY | `apps/app/vercel.json` |
 | MODIFY | `apps/app/app/(authenticated)/analytics/flow/page.tsx` |
 | MODIFY | `apps/app/app/(authenticated)/analytics/flow/components/flow-metrics-dashboard.tsx` |
-| MODIFY | `apps/app/app/(authenticated)/arts/[artId]/program-board/page.tsx` |
+| MODIFY | `apps/app/app/(authenticated)/arts/[artId]/program-board/components/program-board-client.tsx` |
 | CREATE | `apps/app/__tests__/actions/flow-intelligence/staleness-service.test.ts` |
 | CREATE | `apps/app/__tests__/actions/sprints/close-sprint.test.ts` |
 | CREATE | `apps/app/__tests__/api/cron-anomaly-detection.test.ts` |
@@ -235,7 +296,7 @@ Usuário abre /analytics/flow
 
 ## Fora de escopo
 
-- OAuth para Linear (M7 seguinte)
-- Group synergy (GroupSynergy model existe, cálculo é futuro)
-- PersonSkillProfile computation (S5 — schema existe, lógica não)
+- OAuth para Linear
+- Group synergy (`GroupSynergy` model existe — cálculo futuro)
+- `PersonSkillProfile` computation (S5 — schema existe, sem lógica)
 - Notificações push de anomalias (Slack/email)

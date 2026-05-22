@@ -1,7 +1,17 @@
 export type AnomalySeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
+export type AnomalyRuleName =
+  | "VelocityCliff"
+  | "WIPOverload"
+  | "PredictabilityCollapse"
+  | "CycleTimeDegradation"
+  | "EfficiencyNosedive"
+  | "WorkTypeImbalance"
+  | "StaleCompetencyAssessment"
+  | "ImprovementActionOverdue";
+
 export type DetectedAnomaly = {
-  rule: string;
+  rule: AnomalyRuleName;
   severity: AnomalySeverity;
   metric: string;
   delta: number;

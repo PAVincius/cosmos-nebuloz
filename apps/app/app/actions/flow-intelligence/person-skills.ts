@@ -45,6 +45,10 @@ export async function upsertPersonSkillProfile(
     isDraft = false,
   } = input;
 
+  const { tenantId, userId: assessedBy } = await requireTenantSession(
+    await headers()
+  );
+
   // Validate skillLevel
   if (skillLevel < 1 || skillLevel > 5) {
     return err("skillLevel must be between 1 and 5");
@@ -54,10 +58,6 @@ export async function upsertPersonSkillProfile(
   if (proficiency < 0 || proficiency > 100) {
     return err("proficiency must be between 0 and 100");
   }
-
-  const { tenantId, userId: assessedBy } = await requireTenantSession(
-    await headers()
-  );
 
   try {
     const result = await database.personSkillProfile.upsert({
