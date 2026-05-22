@@ -1,22 +1,25 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
-import Modeler from "bpmn-js/lib/Modeler";
-import { BpmnPropertiesPanelModule, BpmnPropertiesProviderModule } from "bpmn-js-properties-panel";
-import TokenSimulationModule from "bpmn-js-token-simulation";
-import BpmnColorPickerModule from "bpmn-js-color-picker";
-import minimapModule from "diagram-js-minimap";
-import BpmnNativeCopyPasteModule from "bpmn-js-native-copy-paste";
-import BpmnEmbeddedCommentsModule from "bpmn-js-embedded-comments";
-import BpmnLintModule from "bpmn-js-bpmnlint";
-import TransactionBoundariesModule from "bpmn-js-transaction-boundaries";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
+import Modeler from "bpmn-js/lib/Modeler";
+import BpmnLintModule from "bpmn-js-bpmnlint";
+import BpmnColorPickerModule from "bpmn-js-color-picker";
+import BpmnEmbeddedCommentsModule from "bpmn-js-embedded-comments";
+import BpmnNativeCopyPasteModule from "bpmn-js-native-copy-paste";
+import {
+  BpmnPropertiesPanelModule,
+  BpmnPropertiesProviderModule,
+} from "bpmn-js-properties-panel";
+import TokenSimulationModule from "bpmn-js-token-simulation";
+import TransactionBoundariesModule from "bpmn-js-transaction-boundaries";
+import minimapModule from "diagram-js-minimap";
 import {
   AlertTriangleIcon,
   ChevronDownIcon,
   ChevronUpIcon,
   DownloadIcon,
+  FolderOpenIcon,
   ImageIcon,
   MessageSquareIcon,
   PlayIcon,
@@ -26,7 +29,9 @@ import {
   SquareIcon,
   XCircleIcon,
 } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { LINT_CONFIG, type LintIssue } from "../lib/bpmn-lint";
+import { BPMN_TEMPLATES, type BpmnTemplate } from "../lib/bpmn-templates";
 
 // ─── PT-BR translations ───────────────────────────────────────────────────────
 const PT: Record<string, string> = {
@@ -70,9 +75,11 @@ function customTranslateModule() {
   return {
     translate: [
       "value",
-      function (tmpl: string, rep?: Record<string, string>) {
+      (tmpl: string, rep?: Record<string, string>) => {
         const t = PT[tmpl] ?? tmpl;
-        if (!rep) return t;
+        if (!rep) {
+          return t;
+        }
         return Object.entries(rep).reduce(
           (s, [k, v]) => s.replace(new RegExp(`\\{${k}\\}`, "g"), v),
           t
@@ -106,14 +113,25 @@ const DEFAULT_BPMN_XML = `<?xml version="1.0" encoding="UTF-8"?>
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-interface BpmnWrapperProps {
+function templateBadgeClass(category: string): string {
+  if (category === "safe") {
+    return "bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-300";
+  }
+  if (category === "scrum") {
+    return "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-300";
+  }
+  return "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400";
+}
+
+type BpmnWrapperProps = {
   teamId: string;
   initialXml?: string;
   onSave?: (xmlContent: string) => Promise<void>;
-}
+};
 
 type IssueMap = Record<string, LintIssue[]>;
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bpmn-js modeler orchestration requires unified state management
 export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
@@ -125,14 +143,22 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   const [lintActive, setLintActive] = useState(true);
   const [lintPanelOpen, setLintPanelOpen] = useState(true);
   const [lintIssues, setLintIssues] = useState<IssueMap>({});
-  const [showTransactionBoundaries, setShowTransactionBoundaries] = useState(false);
+  const [showTransactionBoundaries, setShowTransactionBoundaries] =
+    useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
-  const errorCount = Object.values(lintIssues).flat().filter((i) => i.category === "error").length;
-  const warnCount  = Object.values(lintIssues).flat().filter((i) => i.category === "warn").length;
+  const errorCount = Object.values(lintIssues)
+    .flat()
+    .filter((i) => i.category === "error").length;
+  const warnCount = Object.values(lintIssues)
+    .flat()
+    .filter((i) => i.category === "warn").length;
   const totalCount = errorCount + warnCount;
 
   useEffect(() => {
-    if (!containerRef.current || !propertiesPanelRef.current) return;
+    if (!(containerRef.current && propertiesPanelRef.current)) {
+      return;
+    }
 
     const modeler = new Modeler({
       container: containerRef.current,
@@ -158,29 +184,43 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
       console.error("Erro ao importar BPMN XML:", err);
     });
 
-    modeler.on("tokenSimulation.toggleMode", (e: any) => setSimulating(!!e.active));
+    modeler.on("tokenSimulation.toggleMode", (e: Record<string, unknown>) =>
+      setSimulating(!!e.active)
+    );
 
     // Collect lint results from the bpmnlint module overlay events
-    modeler.on("linting.completed", (e: any) => {
-      const raw: Record<string, any[]> = e.issues ?? {};
-      const mapped: IssueMap = {};
-      for (const [elementId, issues] of Object.entries(raw)) {
-        mapped[elementId] = issues.map((iss: any) => ({
-          id:        `${elementId}:${iss.rule}`,
-          message:   iss.message,
-          category:  iss.category as "error" | "warn",
-          rule:      iss.rule,
-          elementId,
-        }));
+    modeler.on(
+      "linting.completed",
+      (e: {
+        issues?: Record<
+          string,
+          { rule: string; message: string; category: string }[]
+        >;
+      }) => {
+        const raw = e.issues ?? {};
+        const mapped: IssueMap = {};
+        for (const [elementId, issues] of Object.entries(raw)) {
+          mapped[elementId] = issues.map((iss) => ({
+            id: `${elementId}:${iss.rule}`,
+            message: iss.message,
+            category: iss.category as "error" | "warn",
+            rule: iss.rule,
+            elementId,
+          }));
+        }
+        setLintIssues(mapped);
       }
-      setLintIssues(mapped);
-    });
+    );
 
-    return () => { modeler.destroy(); };
-  }, []);
+    return () => {
+      modeler.destroy();
+    };
+  }, [initialXml, lintActive]);
 
   const handleSave = useCallback(async () => {
-    if (!modelerRef.current || !onSave) return;
+    if (!(modelerRef.current && onSave)) {
+      return;
+    }
     setSaving(true);
     try {
       const { xml } = await modelerRef.current.saveXML({ format: true });
@@ -195,7 +235,9 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   }, [onSave]);
 
   const handleExportSvg = useCallback(async () => {
-    if (!modelerRef.current) return;
+    if (!modelerRef.current) {
+      return;
+    }
     const { svg } = await modelerRef.current.saveSVG({});
     const a = document.createElement("a");
     a.href = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml" }));
@@ -204,15 +246,20 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   }, [teamId]);
 
   const handleExportPng = useCallback(async () => {
-    if (!modelerRef.current) return;
+    if (!modelerRef.current) {
+      return;
+    }
     const { svg } = await modelerRef.current.saveSVG({});
-    const url = URL.createObjectURL(new Blob([svg], { type: "image/svg+xml;charset=utf-8" }));
+    const url = URL.createObjectURL(
+      new Blob([svg], { type: "image/svg+xml;charset=utf-8" })
+    );
     const img = new Image();
     img.onload = () => {
       const scale = 2;
       const canvas = document.createElement("canvas");
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
+      // biome-ignore lint/style/noNonNullAssertion: canvas 2d context always available
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -228,22 +275,46 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   }, [teamId]);
 
   const handleToggleSimulation = useCallback(() => {
-    try { modelerRef.current?.get("toggleMode").toggleMode(); } catch {}
+    try {
+      modelerRef.current?.get("toggleMode").toggleMode();
+    } catch (_) {
+      /* bpmn-js module may not be available */
+    }
   }, []);
 
   const handleToggleLint = useCallback(() => {
     try {
       modelerRef.current?.get("linting").toggle();
       setLintActive((v) => !v);
-    } catch {}
+    } catch (_) {
+      /* bpmn-js module may not be available */
+    }
+  }, []);
+
+  const handleLoadTemplate = useCallback(async (template: BpmnTemplate) => {
+    if (!modelerRef.current) {
+      return;
+    }
+    try {
+      await modelerRef.current.importXML(template.xml);
+      setShowTemplates(false);
+    } catch (err) {
+      console.error("Erro ao carregar template:", err);
+    }
   }, []);
 
   const handleToggleTransactionBoundaries = useCallback(() => {
     try {
       const tb = modelerRef.current?.get("transactionBoundaries");
-      showTransactionBoundaries ? tb?.hide() : tb?.show();
+      if (showTransactionBoundaries) {
+        tb?.hide();
+      } else {
+        tb?.show();
+      }
       setShowTransactionBoundaries((v) => !v);
-    } catch {}
+    } catch (_) {
+      /* bpmn-js module may not be available */
+    }
   }, [showTransactionBoundaries]);
 
   const handleNavigateToElement = useCallback((elementId: string) => {
@@ -256,43 +327,89 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
         modelerRef.current?.get("selection")?.select(el);
         canvas?.scrollToElement(el);
       }
-    } catch {}
+    } catch (_) {
+      /* bpmn-js module may not be available */
+    }
   }, []);
 
   const allIssues = Object.values(lintIssues).flat();
+
+  let lintBtnClass = "";
+  if (lintActive) {
+    if (errorCount > 0) {
+      lintBtnClass = "border-red-600 bg-red-600 hover:bg-red-700";
+    } else if (warnCount > 0) {
+      lintBtnClass = "border-yellow-500 bg-yellow-500 hover:bg-yellow-600";
+    } else {
+      lintBtnClass = "border-green-600 bg-green-600 hover:bg-green-700";
+    }
+  }
+
+  let saveBtnLabel = "Salvar";
+  if (saved) {
+    saveBtnLabel = "Salvo!";
+  } else if (saving) {
+    saveBtnLabel = "Salvando...";
+  }
 
   return (
     <div className="flex h-[calc(100vh-4rem)] w-full flex-col overflow-hidden rounded-xl border bg-background shadow-xl">
       {/* Toolbar */}
       <div className="flex shrink-0 items-center justify-between border-b bg-muted/30 px-6 py-3">
         <div>
-          <h2 className="text-sm font-semibold tracking-tight">Modelador BPMN</h2>
-          <p className="text-xs text-muted-foreground">Equipe: {teamId}</p>
+          <h2 className="font-semibold text-sm tracking-tight">
+            Modelador BPMN
+          </h2>
+          <p className="text-muted-foreground text-xs">Equipe: {teamId}</p>
         </div>
 
         <div className="flex items-center gap-2">
-          {simulating && (
+          {simulating ? (
             <Badge className="animate-pulse bg-orange-500 text-white text-xs">
               Simulação ativa
             </Badge>
-          )}
+          ) : null}
+
+          {/* Templates */}
+          <Button
+            onClick={() => setShowTemplates((v) => !v)}
+            size="sm"
+            variant={showTemplates ? "default" : "outline"}
+          >
+            <FolderOpenIcon className="mr-1.5 h-3.5 w-3.5" />
+            Templates
+          </Button>
 
           {/* Simulate */}
           <Button
-            variant={simulating ? "default" : "outline"} size="sm"
+            className={
+              simulating
+                ? "border-orange-500 bg-orange-500 hover:bg-orange-600"
+                : ""
+            }
             onClick={handleToggleSimulation}
-            className={simulating ? "bg-orange-500 hover:bg-orange-600 border-orange-500" : ""}
+            size="sm"
+            variant={simulating ? "default" : "outline"}
           >
-            {simulating
-              ? <><SquareIcon className="mr-1.5 h-3.5 w-3.5" />Parar</>
-              : <><PlayIcon className="mr-1.5 h-3.5 w-3.5" />Simular</>}
+            {simulating ? (
+              <>
+                <SquareIcon className="mr-1.5 h-3.5 w-3.5" />
+                Parar
+              </>
+            ) : (
+              <>
+                <PlayIcon className="mr-1.5 h-3.5 w-3.5" />
+                Simular
+              </>
+            )}
           </Button>
 
           {/* Transaction Boundaries */}
           <Button
-            variant={showTransactionBoundaries ? "default" : "outline"} size="sm"
             onClick={handleToggleTransactionBoundaries}
+            size="sm"
             title="Limites de transação — mostra onde transações do BD começam e terminam"
+            variant={showTransactionBoundaries ? "default" : "outline"}
           >
             <ShieldCheckIcon className="mr-1.5 h-3.5 w-3.5" />
             Transações
@@ -300,116 +417,152 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
 
           {/* Lint toggle */}
           <Button
-            variant={lintActive ? "default" : "outline"} size="sm"
+            className={lintBtnClass}
             onClick={handleToggleLint}
-            className={
-              !lintActive ? "" :
-              errorCount > 0 ? "bg-red-600 hover:bg-red-700 border-red-600" :
-              warnCount  > 0 ? "bg-yellow-500 hover:bg-yellow-600 border-yellow-500" :
-              "bg-green-600 hover:bg-green-700 border-green-600"
-            }
+            size="sm"
+            variant={lintActive ? "default" : "outline"}
           >
             <AlertTriangleIcon className="mr-1.5 h-3.5 w-3.5" />
             Lint
+            {/* biome-ignore lint/nursery/noLeakedRender: both are boolean/number checks */}
             {lintActive && totalCount > 0 && (
-              <span className="ml-1.5 rounded-full bg-white/20 px-1.5 text-xs font-bold">
+              <span className="ml-1.5 rounded-full bg-white/20 px-1.5 font-bold text-xs">
                 {totalCount}
               </span>
             )}
           </Button>
 
           {/* Comments */}
-          <Button variant="outline" size="sm">
+          <Button size="sm" variant="outline">
             <MessageSquareIcon className="mr-1.5 h-3.5 w-3.5" />
             Comentários
           </Button>
 
           {/* Export */}
-          <Button variant="outline" size="sm" onClick={handleExportSvg}>
-            <DownloadIcon className="mr-1.5 h-3.5 w-3.5" />SVG
+          <Button onClick={handleExportSvg} size="sm" variant="outline">
+            <DownloadIcon className="mr-1.5 h-3.5 w-3.5" />
+            SVG
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPng}>
-            <ImageIcon className="mr-1.5 h-3.5 w-3.5" />PNG
+          <Button onClick={handleExportPng} size="sm" variant="outline">
+            <ImageIcon className="mr-1.5 h-3.5 w-3.5" />
+            PNG
           </Button>
 
           {/* Save */}
-          <Button size="sm" onClick={handleSave} disabled={saving || !onSave}>
-            {saving
-              ? <RefreshCwIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-              : <SaveIcon className="mr-1.5 h-3.5 w-3.5" />}
-            {saved ? "Salvo!" : saving ? "Salvando..." : "Salvar"}
+          <Button disabled={saving || !onSave} onClick={handleSave} size="sm">
+            {saving ? (
+              <RefreshCwIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <SaveIcon className="mr-1.5 h-3.5 w-3.5" />
+            )}
+            {saveBtnLabel}
           </Button>
         </div>
       </div>
+
+      {/* Templates Panel */}
+      {/* biome-ignore lint/nursery/noLeakedRender: boolean state, never numeric/string */}
+      {showTemplates && (
+        <div className="shrink-0 border-b bg-muted/20 px-6 py-4">
+          <p className="mb-3 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+            Carregar template
+          </p>
+          <div className="flex flex-wrap gap-3">
+            {BPMN_TEMPLATES.map((tpl) => (
+              <button
+                className="flex flex-col items-start rounded-lg border bg-background px-4 py-3 text-left shadow-sm transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
+                key={tpl.id}
+                onClick={() => handleLoadTemplate(tpl)}
+                type="button"
+              >
+                <span className="font-medium text-sm">{tpl.label}</span>
+                <span className="mt-0.5 text-muted-foreground text-xs">
+                  {tpl.description}
+                </span>
+                <span
+                  className={`mt-2 rounded-full px-2 py-0.5 font-semibold text-[10px] uppercase tracking-wider ${templateBadgeClass(tpl.category)}`}
+                >
+                  {tpl.category}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Canvas + Properties Panel */}
       <div className="relative flex flex-1 overflow-hidden">
         <div className="relative flex-1 bg-white dark:bg-slate-950">
           <div
+            className="[&_.bjs-powered-by]:!hidden absolute inset-0 h-full w-full [&_.djs-minimap]:overflow-hidden [&_.djs-minimap]:rounded-lg [&_.djs-minimap]:border [&_.djs-minimap]:shadow-md [&_.djs-palette]:rounded-r-lg [&_.djs-palette]:border [&_.djs-palette]:border-l-0 [&_.djs-palette]:bg-background/95 [&_.djs-palette]:shadow-md"
             ref={containerRef}
-            className="absolute inset-0 h-full w-full
-              [&_.djs-palette]:rounded-r-lg [&_.djs-palette]:border [&_.djs-palette]:border-l-0 [&_.djs-palette]:shadow-md [&_.djs-palette]:bg-background/95
-              [&_.djs-minimap]:rounded-lg [&_.djs-minimap]:border [&_.djs-minimap]:shadow-md [&_.djs-minimap]:overflow-hidden
-            "
           />
         </div>
 
         {/* Properties Panel */}
         <div
+          className="w-72 shrink-0 overflow-y-auto border-l bg-background [&_.bio-properties-panel-group-header]:border-b [&_.bio-properties-panel-group-header]:bg-muted/20 [&_.bio-properties-panel-group-header]:px-4 [&_.bio-properties-panel-group-header]:py-2 [&_.bio-properties-panel-header]:border-b [&_.bio-properties-panel-header]:bg-muted/40 [&_.bio-properties-panel-header]:px-4 [&_.bio-properties-panel-header]:py-3 [&_.bio-properties-panel-input]:rounded-md [&_.bio-properties-panel-input]:border [&_.bio-properties-panel-input]:px-2 [&_.bio-properties-panel-input]:py-1 [&_.bio-properties-panel]:h-full"
           ref={propertiesPanelRef}
-          className="w-72 shrink-0 overflow-y-auto border-l bg-background
-            [&_.bio-properties-panel]:h-full
-            [&_.bio-properties-panel-header]:border-b [&_.bio-properties-panel-header]:bg-muted/40 [&_.bio-properties-panel-header]:px-4 [&_.bio-properties-panel-header]:py-3
-            [&_.bio-properties-panel-group-header]:border-b [&_.bio-properties-panel-group-header]:bg-muted/20 [&_.bio-properties-panel-group-header]:px-4 [&_.bio-properties-panel-group-header]:py-2
-            [&_.bio-properties-panel-input]:rounded-md [&_.bio-properties-panel-input]:border [&_.bio-properties-panel-input]:px-2 [&_.bio-properties-panel-input]:py-1
-          "
         />
       </div>
 
       {/* Lint Panel */}
+      {/* biome-ignore lint/nursery/noLeakedRender: boolean state, never numeric/string */}
       {lintActive && (
         <div className="shrink-0 border-t bg-background">
           <button
-            className="flex w-full items-center justify-between px-4 py-2 text-xs font-medium hover:bg-muted/40 transition-colors"
+            className="flex w-full items-center justify-between px-4 py-2 font-medium text-xs transition-colors hover:bg-muted/40"
             onClick={() => setLintPanelOpen((v) => !v)}
+            type="button"
           >
             <div className="flex items-center gap-3">
-              <span className="text-muted-foreground uppercase tracking-wide">Problemas</span>
+              <span className="text-muted-foreground uppercase tracking-wide">
+                Problemas
+              </span>
+              {/* biome-ignore lint/nursery/noLeakedRender: number > 0 check, not plain number */}
               {errorCount > 0 && (
                 <span className="flex items-center gap-1 text-red-600">
                   <XCircleIcon className="h-3.5 w-3.5" />
                   {errorCount} {errorCount === 1 ? "erro" : "erros"}
                 </span>
               )}
+              {/* biome-ignore lint/nursery/noLeakedRender: number > 0 check, not plain number */}
               {warnCount > 0 && (
                 <span className="flex items-center gap-1 text-yellow-600">
                   <AlertTriangleIcon className="h-3.5 w-3.5" />
                   {warnCount} {warnCount === 1 ? "aviso" : "avisos"}
                 </span>
               )}
+              {/* biome-ignore lint/nursery/noLeakedRender: number === 0 check, boolean result */}
               {totalCount === 0 && (
                 <span className="text-green-600">Sem problemas detectados</span>
               )}
             </div>
-            {lintPanelOpen
-              ? <ChevronDownIcon className="h-3.5 w-3.5 text-muted-foreground" />
-              : <ChevronUpIcon   className="h-3.5 w-3.5 text-muted-foreground" />}
+            {lintPanelOpen ? (
+              <ChevronDownIcon className="h-3.5 w-3.5 text-muted-foreground" />
+            ) : (
+              <ChevronUpIcon className="h-3.5 w-3.5 text-muted-foreground" />
+            )}
           </button>
 
+          {/* biome-ignore lint/nursery/noLeakedRender: both boolean/length>0 checks */}
           {lintPanelOpen && allIssues.length > 0 && (
-            <div className="max-h-40 overflow-y-auto border-t divide-y">
+            <div className="max-h-40 divide-y overflow-y-auto border-t">
               {allIssues.map((issue) => (
                 <button
+                  className="flex w-full items-start gap-3 px-4 py-2 text-left text-xs transition-colors hover:bg-muted/40"
                   key={issue.id}
-                  className="flex w-full items-start gap-3 px-4 py-2 text-left text-xs hover:bg-muted/40 transition-colors"
                   onClick={() => handleNavigateToElement(issue.elementId)}
+                  type="button"
                 >
-                  {issue.category === "error"
-                    ? <XCircleIcon       className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
-                    : <AlertTriangleIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-yellow-500" />}
+                  {issue.category === "error" ? (
+                    <XCircleIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-500" />
+                  ) : (
+                    <AlertTriangleIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-yellow-500" />
+                  )}
                   <div className="min-w-0 flex-1">
                     <p className="truncate">{issue.message}</p>
-                    <p className="text-muted-foreground text-[10px]">
+                    <p className="text-[10px] text-muted-foreground">
                       {issue.elementId} · {issue.rule}
                     </p>
                   </div>
