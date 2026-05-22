@@ -1,0 +1,14 @@
+model LinearSync {
+  id           String   @id @default(cuid())
+  tenantId     String
+  linearId     String
+  linearType   String   // team | project | issue | milestone | cycle
+  cosmosId     String
+  cosmosType   String   // Art | Epic | Feature | PIPlan | Sprint
+  lastSyncedAt DateTime @default(now()) @updatedAt
+  metadata     Json?
+
+  @@unique([tenantId, linearId, linearType])
+  @@index([tenantId])
+  @@map("linear_syncs")
+}
