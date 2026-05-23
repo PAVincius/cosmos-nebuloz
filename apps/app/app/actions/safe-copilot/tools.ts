@@ -268,5 +268,170 @@ export function buildCopilotTools(tenantId: string) {
         return { ok: true, feature: updated };
       },
     }),
+
+    queryARTs: tool({
+      description:
+        "List all ARTs in the tenant with their latest flow metrics. Use when comparing ART performance or when you need ART IDs for further queries.",
+      inputSchema: z.object({
+        includeMetrics: z
+          .boolean()
+          .default(true)
+          .describe("Include latest flow metrics per ART"),
+      }),
+      execute: async ({ includeMetrics }) => {
+        const arts = await database.aRT.findMany({
+          where: { tenantId },
+          select: { id: true, name: true, cadence: true },
+        });
+
+        if (!includeMetrics) {
+          return { arts };
+        }
+
+        const snapshots = await database.flowMetricSnapshot.findMany({
+          where: {
+            tenantId,
+            scope: "art",
+            scopeId: { in: arts.map((a) => a.id) },
+          },
+          orderBy: { periodRef: "desc" },
+          select: {
+            scopeId: true,
+            periodRef: true,
+            flowVelocityTotal: true,
+            flowEfficiency: true,
+            flowPredictability: true,
+          },
+        });
+
+        const latestByArt = new Map<string, (typeof snapshots)[0]>();
+        for (const s of snapshots) {
+          if (!latestByArt.has(s.scopeId)) {
+            latestByArt.set(s.scopeId, s);
+          }
+        }
+
+        return {
+          arts: arts.map((a) => ({
+            ...a,
+            latestMetrics: latestByArt.get(a.id) ?? null,
+          })),
+        };
+      },
+    }),
+
+    queryTeams: tool({
+      description:
+        "List teams, optionally filtered by ART ID. Returns name, velocity, and sprint length. Use to answer questions about team capacity.",
+      inputSchema: z.object({
+        artId: z
+          .string()
+          .optional()
+          .describe("Filter teams belonging to this ART"),
+      }),
+      execute: async ({ artId }) => {
+        const teams = await database.team.findMany({
+          where: { tenantId, ...(artId ? { artId } : {}) },
+          select: {
+            id: true,
+            name: true,
+            velocity: true,
+            sprintLengthDays: true,
+            artId: true,
+          },
+          take: 30,
+        });
+        return { teams };
+      },
+    }),
+
+    queryEpics: tool({
+      description:
+        "List epics with status and feature count. Use to answer questions about portfolio delivery or epic progress.",
+      inputSchema: z.object({
+        status: z
+          .string()
+          .optional()
+          .describe("Filter by statusId: BACKLOG, IN_PROGRESS, DONE"),
+        take: z
+          .number()
+          .int()
+          .min(1)
+          .max(30)
+          .default(15)
+          .describe("Number of epics to retrieve"),
+      }),
+      execute: async ({ status, take }) => {
+        const epics = await database.epic.findMany({
+          where: { tenantId, ...(status ? { statusId: status } : {}) },
+          select: {
+            id: true,
+            title: true,
+            statusId: true,
+            strategicThemeId: true,
+            _count: { select: { features: true } },
+          },
+          orderBy: { createdAt: "desc" },
+          take,
+        });
+        return {
+          epics: epics.map((e) => ({
+            id: e.id,
+            title: e.title,
+            statusId: e.statusId,
+            strategicThemeId: e.strategicThemeId,
+            featuresCount: e._count.features,
+          })),
+        };
+      },
+    }),
+
+    queryOKRs: tool({
+      description:
+        "Query OKRs and their key results with progress (current vs target). Use to answer questions about strategic alignment or which objectives are at risk.",
+      inputSchema: z.object({
+        status: z
+          .enum(["ON_TRACK", "AT_RISK", "BEHIND", "ACHIEVED"])
+          .optional()
+          .describe("Filter by OKR status"),
+        type: z
+          .string()
+          .optional()
+          .describe(
+            "Filter by type: portfolio_theme, portfolio_epic, pi_art, team_pi, improvement"
+          ),
+      }),
+      execute: async ({ status, type }) => {
+        const okrs = await database.oKR.findMany({
+          where: {
+            tenantId,
+            ...(status ? { status } : {}),
+            ...(type ? { type } : {}),
+          },
+          select: {
+            id: true,
+            title: true,
+            type: true,
+            status: true,
+            artId: true,
+            teamId: true,
+            horizon: true,
+            keyResults: {
+              select: {
+                id: true,
+                title: true,
+                current: true,
+                target: true,
+                unit: true,
+                metric: true,
+              },
+              take: 5,
+            },
+          },
+          take: 20,
+        });
+        return { okrs };
+      },
+    }),
   };
 }
