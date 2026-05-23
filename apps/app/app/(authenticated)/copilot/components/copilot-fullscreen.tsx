@@ -10,8 +10,9 @@ import {
 } from "@repo/design-system/components/ui/select";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import { Bot, SendHorizonal, Sparkles } from "lucide-react";
+import { Bot, RefreshCw, SendHorizonal, Sparkles } from "lucide-react";
 import { useCallback, useRef, useState, useTransition } from "react";
+import { syncTenantKnowledge } from "@/app/actions/safe-copilot/indexer";
 import type { SessionPreview } from "@/app/actions/safe-copilot/sessions";
 import {
   createCopilotSession,
@@ -45,6 +46,10 @@ export function CopilotFullscreen({
   const [activeSessionId, setActiveSessionId] = useState(initialSessionId);
   const [mode, setMode] = useState<CopilotMode>("global");
   const [isCreating, startCreating] = useTransition();
+  const [syncState, setSyncState] = useState<
+    "idle" | "syncing" | "done" | "error"
+  >("idle");
+  const [syncResult, setSyncResult] = useState<string | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const {
@@ -78,6 +83,27 @@ export function CopilotFullscreen({
     setInput(prompt);
     textareaRef.current?.focus();
   };
+
+  const handleSync = useCallback(async () => {
+    setSyncState("syncing");
+    setSyncResult(null);
+    try {
+      const result = await syncTenantKnowledge();
+      setSyncState("done");
+      setSyncResult(`${result.total} itens indexados`);
+      setTimeout(() => {
+        setSyncState("idle");
+        setSyncResult(null);
+      }, 4000);
+    } catch {
+      setSyncState("error");
+      setSyncResult("Erro ao sincronizar");
+      setTimeout(() => {
+        setSyncState("idle");
+        setSyncResult(null);
+      }, 3000);
+    }
+  }, []);
 
   const handleNewSession = useCallback(() => {
     startCreating(async () => {
@@ -144,20 +170,40 @@ export function CopilotFullscreen({
             </div>
           </div>
 
-          <Select onValueChange={(v) => setMode(v as CopilotMode)} value={mode}>
-            <SelectTrigger className="h-8 w-44 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {(Object.entries(MODE_LABELS) as [CopilotMode, string][]).map(
-                ([key, label]) => (
-                  <SelectItem className="text-xs" key={key} value={key}>
-                    {label}
-                  </SelectItem>
-                )
-              )}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Button
+              className="h-8 gap-1.5 px-3 text-xs"
+              disabled={syncState === "syncing"}
+              onClick={handleSync}
+              size="sm"
+              title="Sincronizar base de conhecimento para busca semântica"
+              variant="outline"
+            >
+              <RefreshCw
+                className={`h-3.5 w-3.5 ${syncState === "syncing" ? "animate-spin" : ""}`}
+              />
+              {syncResult ??
+                (syncState === "syncing" ? "Sincronizando..." : "Sync KB")}
+            </Button>
+
+            <Select
+              onValueChange={(v) => setMode(v as CopilotMode)}
+              value={mode}
+            >
+              <SelectTrigger className="h-8 w-44 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {(Object.entries(MODE_LABELS) as [CopilotMode, string][]).map(
+                  ([key, label]) => (
+                    <SelectItem className="text-xs" key={key} value={key}>
+                      {label}
+                    </SelectItem>
+                  )
+                )}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {/* Chat area */}

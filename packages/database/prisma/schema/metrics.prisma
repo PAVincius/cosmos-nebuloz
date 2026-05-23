@@ -38,12 +38,23 @@ model ConfidenceVoteSession {
 model PIKnowledgeVector {
   id          String   @id @default(cuid())
   tenantId    String
+  // Source classification: "risk" | "pi_objective" | "feature" | "epic" | "okr" | "document"
+  sourceType  String   @default("document")
+  sourceId    String?  // ID of source entity; null for uploaded documents
+  sessionId   String?  // Non-null for session-scoped uploads
+  chunkIndex  Int      @default(0)
+  title       String?  @db.Text
   textContent String   @db.Text
-  
+  metadata    Json?    // artId, piId, fileName, etc.
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
   // Requer Unsupported no Prisma para a extensão pgvector
-  embedding   Unsupported("vector(1536)")? 
+  embedding   Unsupported("vector(1536)")?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
+
+  @@unique([tenantId, sourceType, sourceId, chunkIndex], map: "PIKnowledgeVector_source_unique")
   @@index([tenantId])
+  @@index([tenantId, sourceType])
 }

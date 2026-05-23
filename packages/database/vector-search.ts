@@ -1,45 +1,166 @@
 import { database } from "./index";
 
-/**
- * Interface representing a similar PI Risk from the vector database
- */
-export interface SimilarRisk {
+export type KnowledgeHit = {
+  id: string;
+  sourceType: string;
+  sourceId: string | null;
+  title: string | null;
+  textContent: string;
+  similarity: number;
+};
+
+export type SimilarRisk = {
   id: string;
   textContent: string;
   similarity: number;
-}
+};
 
 /**
- * Performs a vector cosine similarity search on the PIKnowledgeVector table.
- * 
- * @param tenantId The current tenant ID to ensure strict data isolation
- * @param embedding The generated OpenAI embedding vector (number array of length 1536)
- * @param limit Maximum number of results to return
- * @param threshold Minimum cosine similarity threshold (0 to 1, where 1 is exact match)
- * @returns Array of similar risks sorted by highest similarity
+ * Hybrid semantic + keyword search over PIKnowledgeVector.
+ * Combines cosine similarity (pgvector <=> operator) with PostgreSQL
+ * full-text search via plainto_tsquery, fused with Reciprocal Rank Fusion.
  */
+export async function searchKnowledge(
+  tenantId: string,
+  embedding: number[],
+  query: string,
+  options: {
+    sourceTypes?: string[];
+    limit?: number;
+    threshold?: number;
+  } = {}
+): Promise<KnowledgeHit[]> {
+  const { sourceTypes, limit = 8, threshold = 0.65 } = options;
+  const embeddingLiteral = `[${embedding.join(",")}]`;
+
+  const sourceFilter =
+    sourceTypes && sourceTypes.length > 0
+      ? `AND "sourceType" = ANY(ARRAY[${sourceTypes.map((t) => `'${t.replace(/'/g, "''")}'`).join(",")}])`
+      : "";
+
+  // Vector-only search (pgvector cosine similarity)
+  // We do two ranked lists then merge with RRF at application level.
+  // The SQL below returns cosine similarity hits + FTS rank in one pass.
+  const hits = await database.$queryRawUnsafe<
+    Array<{
+      id: string;
+      sourceType: string;
+      sourceId: string | null;
+      title: string | null;
+      textContent: string;
+      sim: number;
+      tsRank: number;
+    }>
+  >(
+    `
+    SELECT
+      id,
+      "sourceType",
+      "sourceId",
+      title,
+      "textContent",
+      1 - (embedding <=> '${embeddingLiteral}'::vector) AS sim,
+      COALESCE(
+        ts_rank(
+          to_tsvector('portuguese', COALESCE(title, '') || ' ' || "textContent"),
+          plainto_tsquery('portuguese', $1)
+        ),
+        0
+      ) AS "tsRank"
+    FROM "PIKnowledgeVector"
+    WHERE "tenantId" = $2
+      AND 1 - (embedding <=> '${embeddingLiteral}'::vector) > $3
+      ${sourceFilter}
+    ORDER BY sim DESC
+    LIMIT ${limit * 2}
+    `,
+    query,
+    tenantId,
+    threshold
+  );
+
+  // RRF: score = 1/(k + rank_vector) + 1/(k + rank_fts)
+  // rank by sim descending, rank by tsRank descending separately, then fuse
+  const k = 60;
+  const sorted = [...hits]
+    .map((h, i) => {
+      const vectorRank = i + 1;
+      const ftsRank =
+        hits
+          .slice()
+          .sort((a, b) => b.tsRank - a.tsRank)
+          .findIndex((x) => x.id === h.id) + 1;
+      const rrfScore = 1 / (k + vectorRank) + 1 / (k + ftsRank);
+      return { ...h, rrfScore };
+    })
+    .sort((a, b) => b.rrfScore - a.rrfScore)
+    .slice(0, limit);
+
+  return sorted.map((h) => ({
+    id: h.id,
+    sourceType: h.sourceType,
+    sourceId: h.sourceId,
+    title: h.title,
+    textContent: h.textContent,
+    similarity: h.sim,
+  }));
+}
+
+/** Legacy shim — kept for backward compat; delegates to searchKnowledge */
 export async function findSimilarRisks(
   tenantId: string,
   embedding: number[],
-  limit: number = 3,
-  threshold: number = 0.75
+  limit = 5,
+  threshold = 0.75
 ): Promise<SimilarRisk[]> {
-  // pgvector expects vector literal as a string: '[0.1, 0.2, ...]'
-  const embeddingLiteral = `[${embedding.join(",")}]`;
+  const hits = await searchKnowledge(tenantId, embedding, "", {
+    sourceTypes: ["risk"],
+    limit,
+    threshold,
+  });
+  return hits.map((h) => ({
+    id: h.id,
+    textContent: h.textContent,
+    similarity: h.similarity,
+  }));
+}
 
-  // `<=>` is the cosine distance operator in pgvector.
-  // 1 - (embedding <=> target) gives the cosine similarity.
-  const results = await database.$queryRaw<SimilarRisk[]>`
-    SELECT 
-      id,
-      "textContent",
-      1 - (embedding <=> ${embeddingLiteral}::vector) AS similarity
-    FROM "PIKnowledgeVector"
-    WHERE "tenantId" = ${tenantId}
-      AND 1 - (embedding <=> ${embeddingLiteral}::vector) > ${threshold}
-    ORDER BY embedding <=> ${embeddingLiteral}::vector
-    LIMIT ${limit};
+/** Delete all knowledge vectors for a session (called when session is cleared). */
+export async function deleteSessionVectors(
+  tenantId: string,
+  sessionId: string
+): Promise<void> {
+  await database.$executeRaw`
+    DELETE FROM "PIKnowledgeVector"
+    WHERE "tenantId" = ${tenantId} AND "sessionId" = ${sessionId}
   `;
+}
 
-  return results;
+/** Upsert a single knowledge chunk — idempotent on (tenantId, sourceType, sourceId, chunkIndex). */
+export async function upsertKnowledgeChunk(chunk: {
+  tenantId: string;
+  sourceType: string;
+  sourceId: string;
+  chunkIndex: number;
+  title: string;
+  textContent: string;
+  metadata?: Record<string, unknown>;
+  embedding: number[];
+}): Promise<void> {
+  const embeddingLiteral = `[${chunk.embedding.join(",")}]`;
+  const metadataJson = chunk.metadata ? JSON.stringify(chunk.metadata) : null;
+  await database.$executeRaw`
+    INSERT INTO "PIKnowledgeVector"
+      ("id", "tenantId", "sourceType", "sourceId", "chunkIndex", "title", "textContent", "metadata", "embedding")
+    VALUES
+      (gen_random_uuid()::text, ${chunk.tenantId}, ${chunk.sourceType}, ${chunk.sourceId}, ${chunk.chunkIndex},
+       ${chunk.title}, ${chunk.textContent}, ${metadataJson}::jsonb, ${embeddingLiteral}::vector)
+    ON CONFLICT ON CONSTRAINT "PIKnowledgeVector_source_unique"
+    DO UPDATE SET
+      "title"       = EXCLUDED."title",
+      "textContent" = EXCLUDED."textContent",
+      "metadata"    = EXCLUDED."metadata",
+      "embedding"   = EXCLUDED."embedding",
+      "updatedAt"   = CURRENT_TIMESTAMP
+  `;
 }

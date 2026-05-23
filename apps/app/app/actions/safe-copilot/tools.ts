@@ -1,6 +1,6 @@
 import { models } from "@repo/ai/lib/models";
 import { database } from "@repo/database";
-import { findSimilarRisks } from "@repo/database/vector-search";
+import { searchKnowledge } from "@repo/database/vector-search";
 import { embed, tool } from "ai";
 import { z } from "zod";
 
@@ -141,23 +141,43 @@ export function buildCopilotTools(tenantId: string) {
       },
     }),
 
-    queryRiskVectors: tool({
+    queryKnowledge: tool({
       description:
-        "Semantic search for similar risks or PI knowledge using vector embeddings",
+        "Hybrid semantic + keyword search over indexed tenant knowledge: risks, PI objectives, features, epics, and OKRs. Use for free-form questions about specific entities, dependencies, or themes not covered by structured tools.",
       inputSchema: z.object({
-        query: z
-          .string()
-          .describe(
-            "Natural language query to search for similar risks or PI knowledge"
-          ),
+        query: z.string().min(3).describe("Natural language search query"),
+        sourceTypes: z
+          .array(
+            z.enum([
+              "risk",
+              "pi_objective",
+              "feature",
+              "epic",
+              "okr",
+              "document",
+            ])
+          )
+          .optional()
+          .describe("Restrict to specific source types; omit for all"),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(20)
+          .default(8)
+          .describe("Max results to return"),
       }),
-      execute: async ({ query }) => {
+      execute: async ({ query, sourceTypes, limit }) => {
         try {
           const { embedding } = await embed({
             model: models.embeddings,
             value: query,
           });
-          const results = await findSimilarRisks(tenantId, embedding, 5, 0.7);
+          const results = await searchKnowledge(tenantId, embedding, query, {
+            sourceTypes,
+            limit,
+            threshold: 0.62,
+          });
           return { query, results };
         } catch {
           return { query, results: [], error: "Vector search unavailable" };

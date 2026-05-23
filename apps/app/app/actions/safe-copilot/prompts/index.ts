@@ -30,7 +30,7 @@ FERRAMENTAS DE CONSULTA (use livremente, sem efeito colateral):
 - queryFlowMetrics: Métricas de flow por scope/scopeId com N períodos.
 - queryLeanBudget: Budget alocado vs gasto por entidade.
 - queryProgramBoard: Features, riscos e objetivos de um PI.
-- queryRiskVectors: Busca semântica vetorial em riscos.
+- queryKnowledge: Busca híbrida semântica + keyword sobre riscos, objetivos de PI, features, épicos e OKRs indexados. Use para perguntas abertas sobre entidades específicas. Parâmetros: query (texto livre), sourceTypes (array: "risk"|"pi_objective"|"feature"|"epic"|"okr"|"document"), limit.
 
 FERRAMENTAS DE ESCRITA (solicitar confirmação explícita antes de executar):
 - createFeature: Cria feature no backlog com WSJF. Calcule e apresente WSJF = (bv+tc+rr)/js antes de criar.

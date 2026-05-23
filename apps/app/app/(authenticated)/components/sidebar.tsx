@@ -1,8 +1,5 @@
 "use client";
 
-import { UserButton } from "./user-button";
-import { WorkspaceSwitcher } from "./workspace-switcher";
-import { CopilotTriggerButton } from "./copilot/copilot-trigger-button";
 import { ModeToggle } from "@repo/design-system/components/mode-toggle";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -33,6 +30,7 @@ import {
   BarChart3Icon,
   BellIcon,
   ChevronRightIcon,
+  ExternalLinkIcon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
   PlugZapIcon,
@@ -40,16 +38,25 @@ import {
   Settings2Icon,
   TrainFrontIcon,
   UsersIcon,
-  VoteIcon,
+  type VoteIcon,
   WorkflowIcon,
 } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { CopilotTriggerButton } from "./copilot/copilot-trigger-button";
 import { Search } from "./search";
+import { UserButton } from "./user-button";
+import { WorkspaceSwitcher } from "./workspace-switcher";
 
 type SidebarTeam = { id: string; name: string };
 
-type SidebarTenant = { id: string; name: string; slug: string; logo: string | null; role: string };
+type SidebarTenant = {
+  id: string;
+  name: string;
+  slug: string;
+  logo: string | null;
+  role: string;
+};
 
 type GlobalSidebarProperties = {
   readonly children: ReactNode;
@@ -141,9 +148,7 @@ const buildNavData = (
       title: "Integrações",
       url: "/integrations",
       icon: PlugZapIcon,
-      items: [
-        { title: "Integration Hub", url: "/integrations" },
-      ],
+      items: [{ title: "Integration Hub", url: "/integrations" }],
     },
     {
       title: "Settings",
@@ -158,11 +163,11 @@ const buildNavData = (
     },
   ],
   navSecondary: [
-    { title: "Webhooks",     url: "/webhooks",              icon: AnchorIcon },
-    { title: "Notificações", url: "/notifications",         icon: BellIcon },
-    { title: "Perfil",       url: "/profile",               icon: UsersIcon },
-    { title: "Suporte",      url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
-    { title: "Feedback",     url: "/feedback",              icon: SendIcon },
+    { title: "Webhooks", url: "/webhooks", icon: AnchorIcon },
+    { title: "Notificações", url: "/notifications", icon: BellIcon },
+    { title: "Perfil", url: "/profile", icon: UsersIcon },
+    { title: "Suporte", url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
+    { title: "Feedback", url: "/feedback", icon: SendIcon },
   ],
   projects: [] as { name: string; url: string; icon: typeof VoteIcon }[],
 });
@@ -185,8 +190,8 @@ export const GlobalSidebar = ({
           <SidebarMenu>
             <SidebarMenuItem>
               <WorkspaceSwitcher
-                initialTenants={initialTenants}
                 initialActiveTenantId={initialActiveTenantId}
+                initialTenants={initialTenants}
               />
             </SidebarMenuItem>
           </SidebarMenu>
@@ -219,27 +224,33 @@ export const GlobalSidebar = ({
                         </CollapsibleTrigger>
                         <CollapsibleContent>
                           <SidebarMenuSub>
-                            {(item.items as NavItem[])?.filter((s) => !s.isNested).map((subItem) => (
-                              <SidebarMenuSubItem key={subItem.url}>
-                                <SidebarMenuSubButton asChild>
-                                  <Link href={subItem.url}>
-                                    <span>{subItem.title}</span>
-                                  </Link>
-                                </SidebarMenuSubButton>
-                              </SidebarMenuSubItem>
-                            ))}
-                            {(item.items as NavItem[])?.some((s) => s.isNested) && (
+                            {(item.items as NavItem[])
+                              ?.filter((s) => !s.isNested)
+                              .map((subItem) => (
+                                <SidebarMenuSubItem key={subItem.url}>
+                                  <SidebarMenuSubButton asChild>
+                                    <Link href={subItem.url}>
+                                      <span>{subItem.title}</span>
+                                    </Link>
+                                  </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                              ))}
+                            {(item.items as NavItem[])?.some(
+                              (s) => s.isNested
+                            ) && (
                               <SidebarMenuSubItem>
                                 <SidebarMenuSub>
-                                  {(item.items as NavItem[]).filter((s) => s.isNested).map((subItem) => (
-                                    <SidebarMenuSubItem key={subItem.url}>
-                                      <SidebarMenuSubButton asChild>
-                                        <Link href={subItem.url}>
-                                          <span>{subItem.title}</span>
-                                        </Link>
-                                      </SidebarMenuSubButton>
-                                    </SidebarMenuSubItem>
-                                  ))}
+                                  {(item.items as NavItem[])
+                                    .filter((s) => s.isNested)
+                                    .map((subItem) => (
+                                      <SidebarMenuSubItem key={subItem.url}>
+                                        <SidebarMenuSubButton asChild>
+                                          <Link href={subItem.url}>
+                                            <span>{subItem.title}</span>
+                                          </Link>
+                                        </SidebarMenuSubButton>
+                                      </SidebarMenuSubItem>
+                                    ))}
                                 </SidebarMenuSub>
                               </SidebarMenuSubItem>
                             )}
@@ -271,20 +282,30 @@ export const GlobalSidebar = ({
         </SidebarContent>
         <SidebarFooter>
           <SidebarMenu>
-            <SidebarMenuItem className="pb-1">
+            <SidebarMenuItem className="flex items-center gap-1 pb-1">
               <CopilotTriggerButton
-                mode="global"
-                surface="global"
                 label="Copilot  ⌘K"
-                variant="ghost"
+                mode="global"
                 size="sm"
+                surface="global"
+                variant="ghost"
               />
+              <Button
+                asChild
+                className="h-8 w-8 shrink-0 text-muted-foreground hover:text-foreground"
+                size="icon"
+                variant="ghost"
+              >
+                <Link href="/copilot" title="Copilot fullscreen">
+                  <ExternalLinkIcon className="h-3.5 w-3.5" />
+                </Link>
+              </Button>
             </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2">
               <UserButton
-                name={data.user.name}
-                email={data.user.email}
                 avatar={data.user.avatar}
+                email={data.user.email}
+                name={data.user.name}
               />
               <div className="flex shrink-0 items-center gap-px">
                 <ModeToggle />
@@ -303,7 +324,9 @@ export const GlobalSidebar = ({
           </SidebarMenu>
         </SidebarFooter>
       </Sidebar>
-      <SidebarInset className="min-h-0 overflow-x-hidden">{children}</SidebarInset>
+      <SidebarInset className="min-h-0 overflow-x-hidden">
+        {children}
+      </SidebarInset>
     </>
   );
 };
