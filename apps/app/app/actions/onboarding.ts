@@ -3,7 +3,6 @@
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
 function slugify(name: string): string {
   return name
@@ -71,8 +70,4 @@ export async function createOnboardingWorkspace(name: string) {
   });
 
   return { tenantId: tenant.id, slug: tenant.slug };
-}
-
-export function completeOnboarding() {
-  redirect("/portfolio");
 }
