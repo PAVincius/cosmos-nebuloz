@@ -2,11 +2,13 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { SaveStepSchema, FlowTypeSchema, type FlowType } from "./schema";
+import { headers } from "next/headers";
+import { SaveStepSchema } from "./schema";
 
-export type { FlowType };
+export type { FlowType } from "./schema";
+
+import type { FlowType } from "./schema";
 
 export async function getOrCreateProgress(flowType: FlowType) {
   const ctx = await requireTenantSession(await headers());
@@ -14,7 +16,9 @@ export async function getOrCreateProgress(flowType: FlowType) {
   const existing = await database.onboardingProgress.findFirst({
     where: { tenantId: ctx.tenantId, flowType },
   });
-  if (existing) return existing;
+  if (existing) {
+    return existing;
+  }
 
   return database.onboardingProgress.create({
     data: {
@@ -42,7 +46,9 @@ export async function saveStep(raw: unknown) {
   const progress = await database.onboardingProgress.findFirst({
     where: { tenantId: ctx.tenantId, flowType },
   });
-  if (!progress) throw new Error("OnboardingProgress not found.");
+  if (!progress) {
+    throw new Error("OnboardingProgress not found.");
+  }
 
   const existingData = (progress.data as Record<string, unknown>) ?? {};
   const completedSteps = progress.completedSteps.includes(stepKey)
@@ -70,7 +76,9 @@ export async function completeFlow(flowType: FlowType) {
   const progress = await database.onboardingProgress.findFirst({
     where: { tenantId: ctx.tenantId, flowType },
   });
-  if (!progress) throw new Error("OnboardingProgress not found.");
+  if (!progress) {
+    throw new Error("OnboardingProgress not found.");
+  }
 
   const updated = await database.onboardingProgress.update({
     where: { id: progress.id },
@@ -87,9 +95,13 @@ export async function completeFlow(flowType: FlowType) {
  * the authenticated session. Never expose this to client-side callers.
  */
 export async function isOnboardingComplete(tenantId: string): Promise<boolean> {
-  if (!tenantId) return false;
+  if (!tenantId) {
+    return false;
+  }
   const progress = await database.onboardingProgress.findFirst({
     where: { tenantId, flowType: "company_setup" },
   });
-  return progress?.status === "completed";
+  // No record = pre-existing/seeded tenant, treat as complete.
+  // Only block if a record explicitly exists with non-completed status.
+  return !progress || progress.status === "completed";
 }
