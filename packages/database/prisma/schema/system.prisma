@@ -1,4 +1,45 @@
-// Wave 3 — System horizontal features
+// ── AI Copilot ───────────────────────────────────────────────────────────────
+
+model CopilotSession {
+  id            String    @id @default(cuid())
+  tenantId      String
+  userId        String?
+  mode          String    @default("global") // global | rte | lpm | pm | team | spc
+  surface       String?   // page/view where session was started
+  title         String?   @db.Text  // first user message, cached for sidebar display
+  messages      Json?     // [{role, content, ts}] — full conversation cache for quick load
+  messageCount  Int       @default(0)
+  lastMessageAt DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tenant       Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  chatMessages CopilotMessage[]
+
+  @@index([tenantId])
+  @@index([tenantId, userId])
+  @@index([tenantId, updatedAt(sort: Desc)])
+  @@map("copilot_sessions")
+}
+
+model CopilotMessage {
+  id        String   @id @default(cuid())
+  tenantId  String
+  sessionId String
+  role      String   // user | assistant
+  content   String   @db.Text
+  tokens    Int?
+  createdAt DateTime @default(now())
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  session CopilotSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([tenantId, sessionId])
+  @@map("copilot_messages")
+}
+
+// ── System horizontal features ────────────────────────────────────────────────
 
 model Notification {
   id        String   @id @default(cuid())

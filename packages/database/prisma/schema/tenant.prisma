@@ -99,6 +99,7 @@ model Tenant {
   groupSynergies        GroupSynergy[]
   // S1: AI Copilot
   copilotSessions       CopilotSession[]
+  copilotMessages       CopilotMessage[]
   anomalyDetectionRuns  AnomalyDetectionRun[]
   anomalies             Anomaly[]
 }
