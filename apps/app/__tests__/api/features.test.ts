@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { tenantCtx } from "../helpers/action-mocks";
 
 const mocks = vi.hoisted(() => ({
+  headers: vi.fn(),
   requireTenantSession: vi.fn(),
   featureFindMany: vi.fn(),
   featureCount: vi.fn(),
@@ -9,16 +10,17 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@repo/auth/server", () => ({
   AuthError: class AuthError extends Error {
-    constructor(
-      public readonly code: string,
-      message?: string
-    ) {
+    readonly code: string;
+    constructor(code: string, message?: string) {
       super(message ?? code);
       this.name = "AuthError";
+      this.code = code;
     }
   },
   requireTenantSession: mocks.requireTenantSession,
 }));
+
+vi.mock("next/headers", () => ({ headers: mocks.headers }));
 
 vi.mock("@repo/database", () => ({
   database: {
@@ -41,6 +43,7 @@ function makeRequest(search = "") {
 describe("GET /api/features", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.headers.mockResolvedValue(new Headers());
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx });
     mocks.featureFindMany.mockResolvedValue([
       {
@@ -64,16 +67,16 @@ describe("GET /api/features", () => {
 
   it("returns 401 when session is missing", async () => {
     const { AuthError } = await import("@repo/auth/server");
-    mocks.requireTenantSession.mockRejectedValue(
-      new AuthError("UNAUTHORIZED")
-    );
+    mocks.requireTenantSession.mockRejectedValue(new AuthError("UNAUTHORIZED"));
 
     const res = await GET(makeRequest() as never);
     expect(res.status).toBe(401);
   });
 
   it("returns paginated features scoped to tenant", async () => {
-    const res = await GET(makeRequest("?epicId=epic-1&page=1&limit=50") as never);
+    const res = await GET(
+      makeRequest("?epicId=epic-1&page=1&limit=50") as never
+    );
     const body = await res.json();
 
     expect(res.status).toBe(200);
