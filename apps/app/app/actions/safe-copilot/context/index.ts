@@ -1,9 +1,11 @@
+import { buildARTsContext } from "./arts";
 import { buildFlowMetricsContext } from "./flow-metrics";
 import { buildLeanBudgetContext } from "./lean-budget";
 import { buildPIWorkspaceContext } from "./pi-workspace";
 import { buildPortfolioContext } from "./portfolio";
 import { buildWsjfContext } from "./wsjf";
 
+export type { ARTsContext } from "./arts";
 export type { FlowMetricsContext } from "./flow-metrics";
 export type { LeanBudgetContext } from "./lean-budget";
 export type { PIWorkspaceContext } from "./pi-workspace";
@@ -18,6 +20,7 @@ export type CopilotContext = {
   leanBudget?: Awaited<ReturnType<typeof buildLeanBudgetContext>>;
   portfolio?: Awaited<ReturnType<typeof buildPortfolioContext>>;
   wsjf?: Awaited<ReturnType<typeof buildWsjfContext>>;
+  arts?: Awaited<ReturnType<typeof buildARTsContext>>;
 };
 
 export async function buildCopilotContext(
@@ -91,6 +94,15 @@ export async function buildCopilotContext(
         piId: contextRef.piId,
       }).then((data) => {
         ctx.wsjf = data;
+      })
+    );
+  }
+
+  // ARTs context: load for global and rte — enables ART comparison ("which ART is underperforming?")
+  if (mode === "global" || mode === "rte") {
+    loaders.push(
+      buildARTsContext(tenantId).then((data) => {
+        ctx.arts = data;
       })
     );
   }
