@@ -124,13 +124,51 @@ export async function saveCopilotMessages(
   assistantText: string
 ): Promise<void> {
   const { tenantId } = await requireTenantSession(await headers());
-  await database.copilotSession.update({
-    where: { id: sessionId, tenantId },
-    data: {
-      messages: [
-        ...messages,
-        { role: "assistant", content: assistantText, ts: Date.now() },
-      ],
-    },
-  });
+
+  // Find the last user message to persist as a normalized row
+  const lastUser = [...messages].reverse().find((m) => m.role === "user");
+
+  const fullHistory = [
+    ...messages,
+    { role: "assistant", content: assistantText, ts: Date.now() },
+  ];
+
+  // Derive title from first user message if session has no title yet
+  const firstUser = messages.find((m) => m.role === "user");
+  const titleSlice = firstUser?.content.slice(0, 120) ?? null;
+
+  await database.$transaction([
+    // Update JSON blob cache + metadata
+    database.copilotSession.update({
+      where: { id: sessionId, tenantId },
+      data: {
+        messages: fullHistory,
+        messageCount: { increment: 2 },
+        lastMessageAt: new Date(),
+        ...(titleSlice ? { title: titleSlice } : {}),
+      },
+    }),
+    // Persist user turn as normalized row (idempotent on content)
+    ...(lastUser
+      ? [
+          database.copilotMessage.create({
+            data: {
+              tenantId,
+              sessionId,
+              role: "user",
+              content: lastUser.content,
+            },
+          }),
+        ]
+      : []),
+    // Persist assistant turn as normalized row
+    database.copilotMessage.create({
+      data: {
+        tenantId,
+        sessionId,
+        role: "assistant",
+        content: assistantText,
+      },
+    }),
+  ]);
 }

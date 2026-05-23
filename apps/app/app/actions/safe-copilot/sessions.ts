@@ -33,6 +33,23 @@ export async function loadCopilotSession(
   sessionId: string
 ): Promise<StoredMessage[]> {
   const { tenantId } = await requireTenantSession(await headers());
+
+  // Prefer normalized rows; fall back to JSON blob for pre-normalization sessions
+  const rows = await database.copilotMessage.findMany({
+    where: { sessionId, tenantId },
+    orderBy: { createdAt: "asc" },
+    select: { id: true, role: true, content: true },
+  });
+
+  if (rows.length > 0) {
+    return rows.map((r) => ({
+      id: r.id,
+      role: r.role as "user" | "assistant",
+      content: r.content,
+    }));
+  }
+
+  // Fallback: JSON blob from copilot_sessions.messages
   const session = await database.copilotSession.findFirst({
     where: { id: sessionId, tenantId },
     select: { messages: true },
@@ -44,7 +61,7 @@ export async function loadCopilotSession(
   return (raw as { role?: string; content?: string }[])
     .filter((m) => m.role === "user" || m.role === "assistant")
     .map((m, i) => ({
-      id: `loaded-${i}`,
+      id: `blob-${i}`,
       role: m.role as "user" | "assistant",
       content: m.content ?? "",
     }));
@@ -56,18 +73,33 @@ export async function listCopilotSessions(): Promise<SessionPreview[]> {
     where: { tenantId },
     orderBy: { updatedAt: "desc" },
     take: 30,
-    select: { id: true, surface: true, messages: true, createdAt: true },
+    select: {
+      id: true,
+      surface: true,
+      title: true,
+      messages: true,
+      createdAt: true,
+    },
   });
 
   return sessions.map((s) => {
-    const msgs = Array.isArray(s.messages) ? s.messages : [];
-    const firstUser = (msgs as { role: string; content: string }[]).find(
-      (m) => m.role === "user"
-    );
-    const preview = firstUser?.content
-      ? firstUser.content.slice(0, 60) +
-        (firstUser.content.length > 60 ? "…" : "")
+    let preview = s.title ?? null;
+    if (!preview) {
+      // Fallback: parse JSON blob for pre-normalization sessions
+      const msgs = Array.isArray(s.messages) ? s.messages : [];
+      const firstUser = (msgs as { role: string; content: string }[]).find(
+        (m) => m.role === "user"
+      );
+      preview = firstUser?.content ?? null;
+    }
+    const truncated = preview
+      ? preview.slice(0, 60) + (preview.length > 60 ? "…" : "")
       : "Nova conversa";
-    return { id: s.id, surface: s.surface, preview, createdAt: s.createdAt };
+    return {
+      id: s.id,
+      surface: s.surface,
+      preview: truncated,
+      createdAt: s.createdAt,
+    };
   });
 }
