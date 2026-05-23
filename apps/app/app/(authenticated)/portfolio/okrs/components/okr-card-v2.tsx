@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Progress } from "@repo/design-system/components/ui/progress";
+import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
+import { Progress } from "@repo/design-system/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -14,14 +12,15 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import {
+  ArrowUpRightIcon,
+  CheckIcon,
   ChevronDownIcon,
   ChevronRightIcon,
-  ArrowUpRightIcon,
-  Trash2Icon,
-  PlusIcon,
-  CheckIcon,
   ClipboardCheckIcon,
+  PlusIcon,
+  Trash2Icon,
 } from "lucide-react";
+import { useState, useTransition } from "react";
 import {
   createKeyResult,
   deleteKeyResult,
@@ -104,38 +103,49 @@ const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
 };
 
 function progressBarColor(pct: number): string {
-  if (pct >= 80) return "[&>div]:bg-emerald-500";
-  if (pct >= 50) return "[&>div]:bg-amber-400";
+  if (pct >= 80) {
+    return "[&>div]:bg-emerald-500";
+  }
+  if (pct >= 50) {
+    return "[&>div]:bg-amber-400";
+  }
   return "[&>div]:bg-red-400";
 }
 
-interface KeyResultRowProps {
+type KeyResultRowProps = {
   okrId: string;
   kr: KeyResultWithProgress;
   onDeleteKeyResult: (okrId: string, krId: string) => void;
   onUpdateKRCurrent: (okrId: string, krId: string, current: number) => void;
-}
+};
 
-function KeyResultRow({ okrId, kr, onDeleteKeyResult, onUpdateKRCurrent }: KeyResultRowProps) {
+function KeyResultRow({
+  okrId,
+  kr,
+  onDeleteKeyResult,
+  onUpdateKRCurrent,
+}: KeyResultRowProps) {
   const [editing, setEditing] = useState(false);
   const [inputVal, setInputVal] = useState(String(kr.current));
   const [isPending, startTransition] = useTransition();
 
   function handleSave() {
-    const newVal = parseFloat(inputVal);
-    if (isNaN(newVal) || newVal === kr.current) {
+    const newVal = Number.parseFloat(inputVal);
+    if (Number.isNaN(newVal) || newVal === kr.current) {
       setEditing(false);
       return;
     }
     startTransition(async () => {
-      await updateKeyResult({ id: kr.id, current: newVal });
+      await updateKeyResult(kr.id, { current: newVal });
       onUpdateKRCurrent(okrId, kr.id, newVal);
       setEditing(false);
     });
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") handleSave();
+    if (e.key === "Enter") {
+      handleSave();
+    }
     if (e.key === "Escape") {
       setInputVal(String(kr.current));
       setEditing(false);
@@ -150,57 +160,62 @@ function KeyResultRow({ okrId, kr, onDeleteKeyResult, onUpdateKRCurrent }: KeyRe
   }
 
   return (
-    <div className="flex items-center gap-2 py-1.5 px-2 rounded-md hover:bg-muted/50 group">
-      <div className="flex-1 min-w-0 space-y-1">
-        <p className="text-xs font-medium truncate">{kr.title}</p>
+    <div className="group flex items-center gap-2 rounded-md px-2 py-1.5 hover:bg-muted/50">
+      <div className="min-w-0 flex-1 space-y-1">
+        <p className="truncate font-medium text-xs">{kr.title}</p>
         <div className="flex items-center gap-2">
           <Progress
-            value={kr.progress}
             className={`h-1 flex-1 ${progressBarColor(kr.progress)}`}
+            value={kr.progress}
           />
-          <span className="text-xs tabular-nums text-muted-foreground shrink-0">{kr.progress}%</span>
+          <span className="shrink-0 text-muted-foreground text-xs tabular-nums">
+            {kr.progress}%
+          </span>
         </div>
       </div>
 
-      <div className="flex items-center gap-1 shrink-0">
+      <div className="flex shrink-0 items-center gap-1">
         {editing ? (
           <>
             <Input
               autoFocus
-              type="number"
-              value={inputVal}
+              className="h-6 w-20 text-xs"
+              disabled={isPending}
               onChange={(e) => setInputVal(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={isPending}
-              className="h-6 w-20 text-xs"
               step="any"
+              type="number"
+              value={inputVal}
             />
             <Button
+              className="h-6 w-6 p-0"
+              disabled={isPending}
+              onClick={handleSave}
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0"
-              onClick={handleSave}
-              disabled={isPending}
             >
               <CheckIcon className="h-3 w-3" />
             </Button>
           </>
         ) : (
           <button
+            className="cursor-pointer text-muted-foreground text-xs underline-offset-2 hover:text-foreground hover:underline"
+            onClick={() => {
+              setInputVal(String(kr.current));
+              setEditing(true);
+            }}
             type="button"
-            className="text-xs text-muted-foreground hover:text-foreground cursor-pointer hover:underline underline-offset-2"
-            onClick={() => { setInputVal(String(kr.current)); setEditing(true); }}
           >
             {kr.current} / {kr.target} {kr.unit}
           </button>
         )}
 
         <Button
+          className="h-6 w-6 p-0 text-muted-foreground opacity-0 transition-opacity hover:text-destructive group-hover:opacity-100"
+          disabled={isPending}
+          onClick={handleDelete}
           size="sm"
           variant="ghost"
-          className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
-          onClick={handleDelete}
-          disabled={isPending}
         >
           <Trash2Icon className="h-3 w-3" />
         </Button>
@@ -209,10 +224,10 @@ function KeyResultRow({ okrId, kr, onDeleteKeyResult, onUpdateKRCurrent }: KeyRe
   );
 }
 
-interface AddKeyResultRowProps {
+type AddKeyResultRowProps = {
   okrId: string;
   onAddKeyResult: (okrId: string, kr: KeyResultWithProgress) => void;
-}
+};
 
 function AddKeyResultRow({ okrId, onAddKeyResult }: AddKeyResultRowProps) {
   const [open, setOpen] = useState(false);
@@ -222,17 +237,19 @@ function AddKeyResultRow({ okrId, onAddKeyResult }: AddKeyResultRowProps) {
   const [isPending, startTransition] = useTransition();
 
   function handleAdd() {
-    if (!title.trim()) return;
+    if (!title.trim()) {
+      return;
+    }
     startTransition(async () => {
       const newKR = await createKeyResult({
         okrId,
         title: title.trim(),
-        target: parseFloat(target) || 100,
+        target: Number.parseFloat(target) || 100,
         unit: unit.trim() || "%",
         current: 0,
       });
-      if (newKR) {
-        onAddKeyResult(okrId, newKR as KeyResultWithProgress);
+      if (newKR && "data" in newKR && newKR.data) {
+        onAddKeyResult(okrId, newKR.data);
       }
       setTitle("");
       setTarget("");
@@ -244,9 +261,9 @@ function AddKeyResultRow({ okrId, onAddKeyResult }: AddKeyResultRowProps) {
   if (!open) {
     return (
       <button
-        type="button"
-        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors py-1 px-2 rounded-md hover:bg-muted/50 w-full"
+        className="flex w-full items-center gap-1 rounded-md px-2 py-1 text-muted-foreground text-xs transition-colors hover:bg-muted/50 hover:text-foreground"
         onClick={() => setOpen(true)}
+        type="button"
       >
         <PlusIcon className="h-3 w-3" />
         Key Result
@@ -255,42 +272,61 @@ function AddKeyResultRow({ okrId, onAddKeyResult }: AddKeyResultRowProps) {
   }
 
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1.5 bg-muted/30 rounded-md">
+    <div className="flex items-center gap-1.5 rounded-md bg-muted/30 px-2 py-1.5">
       <Input
         autoFocus
+        className="h-7 flex-1 text-xs"
+        disabled={isPending}
+        onChange={(e) => setTitle(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            handleAdd();
+          }
+          if (e.key === "Escape") {
+            setOpen(false);
+          }
+        }}
         placeholder="Título do KR"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter") handleAdd(); if (e.key === "Escape") setOpen(false); }}
-        disabled={isPending}
-        className="h-7 text-xs flex-1"
       />
       <Input
+        className="h-7 w-16 text-xs"
+        disabled={isPending}
+        onChange={(e) => setTarget(e.target.value)}
         placeholder="Meta"
         type="number"
         value={target}
-        onChange={(e) => setTarget(e.target.value)}
-        disabled={isPending}
-        className="h-7 text-xs w-16"
       />
       <Input
+        className="h-7 w-16 text-xs"
+        disabled={isPending}
+        onChange={(e) => setUnit(e.target.value)}
         placeholder="Unidade"
         value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-        disabled={isPending}
-        className="h-7 text-xs w-16"
       />
-      <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={handleAdd} disabled={isPending || !title.trim()}>
+      <Button
+        className="h-7 px-2 text-xs"
+        disabled={isPending || !title.trim()}
+        onClick={handleAdd}
+        size="sm"
+        variant="ghost"
+      >
         <CheckIcon className="h-3 w-3" />
       </Button>
-      <Button size="sm" variant="ghost" className="h-7 px-2 text-xs" onClick={() => setOpen(false)} disabled={isPending}>
+      <Button
+        className="h-7 px-2 text-xs"
+        disabled={isPending}
+        onClick={() => setOpen(false)}
+        size="sm"
+        variant="ghost"
+      >
         <Trash2Icon className="h-3 w-3" />
       </Button>
     </div>
   );
 }
 
-interface OKRCardV2Props {
+type OKRCardV2Props = {
   okr: OKRWithContext;
   compact?: boolean;
   onDelete: (id: string) => void;
@@ -300,7 +336,7 @@ interface OKRCardV2Props {
   onUpdateKRCurrent: (okrId: string, krId: string, current: number) => void;
   onOpenDetail: (okr: OKRWithContext) => void;
   onCheckIn: (okr: OKRWithContext) => void;
-}
+};
 
 export function OKRCardV2({
   okr,
@@ -329,37 +365,38 @@ export function OKRCardV2({
   }
 
   function handleDelete() {
-    startTransition(async () => {
+    startTransition(() => {
       onDelete(okr.id);
     });
   }
 
   return (
-    <Card className="border border-border/80 bg-card hover:border-border transition-colors">
-      <CardContent className="p-3 space-y-2">
+    <Card className="border border-border/80 bg-card transition-colors hover:border-border">
+      <CardContent className="space-y-2 p-3">
         {/* Header row */}
         {!compact && (
           <div className="flex items-center justify-between">
             <button
-              type="button"
-              className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setExpanded((p) => !p)}
               aria-label={expanded ? "Recolher KRs" : "Expandir KRs"}
+              className="flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => setExpanded((p) => !p)}
+              type="button"
             >
               {expanded ? (
                 <ChevronDownIcon className="h-4 w-4" />
               ) : (
                 <ChevronRightIcon className="h-4 w-4" />
               )}
-              <span className="text-xs text-muted-foreground">
-                {okr.keyResults.length} KR{okr.keyResults.length !== 1 ? "s" : ""}
+              <span className="text-muted-foreground text-xs">
+                {okr.keyResults.length} KR
+                {okr.keyResults.length !== 1 ? "s" : ""}
               </span>
             </button>
             <button
-              type="button"
-              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => onOpenDetail(okr)}
               aria-label="Ver detalhes"
+              className="flex items-center gap-1 text-muted-foreground text-xs transition-colors hover:text-foreground"
+              onClick={() => onOpenDetail(okr)}
+              type="button"
             >
               <ArrowUpRightIcon className="h-3.5 w-3.5" />
             </button>
@@ -367,57 +404,71 @@ export function OKRCardV2({
         )}
 
         {/* SAFe chips row */}
-        <div className="flex items-center gap-1.5 flex-wrap">
-          {typeCfg && (
-            <span className="inline-flex items-center text-xs bg-muted rounded-full px-2 py-0.5 font-medium leading-none">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {typeCfg ? (
+            <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 font-medium text-xs leading-none">
               {typeCfg.label}
             </span>
-          )}
-          {okr.themeTitle && (
+          ) : null}
+          {okr.themeTitle ? (
             <span
-              className="inline-flex items-center gap-1.5 text-xs rounded-full px-2 py-0.5 font-medium bg-muted leading-none"
-              style={okr.themeColor ? { borderLeft: `3px solid ${okr.themeColor}` } : undefined}
+              className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 font-medium text-xs leading-none"
+              style={
+                okr.themeColor
+                  ? { borderLeft: `3px solid ${okr.themeColor}` }
+                  : null
+              }
             >
               {okr.themeTitle}
             </span>
-          )}
-          {okr.horizon && (
-            <span className="text-xs bg-muted rounded-full px-2 py-0.5 text-muted-foreground leading-none">
+          ) : null}
+          {okr.horizon ? (
+            <span className="rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs leading-none">
               {okr.horizon}
             </span>
-          )}
-          {compact && (
+          ) : null}
+          {compact ? (
             <button
-              type="button"
-              className="ml-auto text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => onOpenDetail(okr)}
               aria-label="Ver detalhes"
+              className="ml-auto text-muted-foreground transition-colors hover:text-foreground"
+              onClick={() => onOpenDetail(okr)}
+              type="button"
             >
               <ArrowUpRightIcon className="h-3.5 w-3.5" />
             </button>
-          )}
+          ) : null}
         </div>
 
         {/* Title row */}
         <div className="flex items-start gap-2">
-          <p className={`text-sm font-medium flex-1 leading-snug ${compact ? "truncate" : ""}`}>
+          <p
+            className={`flex-1 font-medium text-sm leading-snug ${compact ? "truncate" : ""}`}
+          >
             {okr.title}
           </p>
-          <div className="flex items-center gap-1 shrink-0">
-            <Select value={okr.status} onValueChange={handleStatusChange} disabled={isPending}>
-              <SelectTrigger className="h-6 text-xs border-0 bg-transparent px-1 w-auto gap-1 focus:ring-0">
+          <div className="flex shrink-0 items-center gap-1">
+            <Select
+              disabled={isPending}
+              onValueChange={handleStatusChange}
+              value={okr.status}
+            >
+              <SelectTrigger className="h-6 w-auto gap-1 border-0 bg-transparent px-1 text-xs focus:ring-0">
                 <SelectValue>
-                  {statusCfg && (
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${statusCfg.cls}`}>
+                  {statusCfg ? (
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium text-xs ${statusCfg.cls}`}
+                    >
                       {statusCfg.label}
                     </span>
-                  )}
+                  ) : null}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {(Object.keys(STATUS_CONFIG) as OKRStatus[]).map((key) => (
-                  <SelectItem key={key} value={key} className="text-xs">
-                    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_CONFIG[key].cls}`}>
+                  <SelectItem className="text-xs" key={key} value={key}>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 font-medium text-xs ${STATUS_CONFIG[key].cls}`}
+                    >
                       {STATUS_CONFIG[key].label}
                     </span>
                   </SelectItem>
@@ -426,12 +477,12 @@ export function OKRCardV2({
             </Select>
 
             <Button
+              aria-label="Excluir OKR"
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+              disabled={isPending}
+              onClick={handleDelete}
               size="sm"
               variant="ghost"
-              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-              onClick={handleDelete}
-              disabled={isPending}
-              aria-label="Excluir OKR"
             >
               <Trash2Icon className="h-3.5 w-3.5" />
             </Button>
@@ -441,15 +492,17 @@ export function OKRCardV2({
         {/* Progress row */}
         <div className="flex items-center gap-2">
           <Progress
-            value={okr.progress}
             className={`h-1.5 flex-1 ${progressBarColor(okr.progress)}`}
+            value={okr.progress}
           />
-          <span className="text-xs font-semibold tabular-nums shrink-0">{okr.progress}%</span>
+          <span className="shrink-0 font-semibold text-xs tabular-nums">
+            {okr.progress}%
+          </span>
           <Button
+            className="h-6 shrink-0 gap-1 px-2 text-xs"
+            onClick={() => onCheckIn(okr)}
             size="sm"
             variant="outline"
-            className="h-6 px-2 text-xs gap-1 shrink-0"
-            onClick={() => onCheckIn(okr)}
           >
             <ClipboardCheckIcon className="h-3 w-3" />
             Check-in
@@ -458,12 +511,12 @@ export function OKRCardV2({
 
         {/* Expanded KR section */}
         {!compact && expanded && (
-          <div className="pt-1 border-t border-border/40 space-y-0.5">
+          <div className="space-y-0.5 border-border/40 border-t pt-1">
             {okr.keyResults.map((kr) => (
               <KeyResultRow
                 key={kr.id}
-                okrId={okr.id}
                 kr={kr}
+                okrId={okr.id}
                 onDeleteKeyResult={onDeleteKeyResult}
                 onUpdateKRCurrent={onUpdateKRCurrent}
               />

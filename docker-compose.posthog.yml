@@ -90,16 +90,20 @@ services:
   posthog-migrate:
     image: posthog/posthog:latest
     container_name: cosmos-posthog-migrate
-    command: ./bin/docker-migrate
+    command: >
+      sh -c "./bin/docker-migrate && python manage.py migrate_clickhouse"
     environment: &posthog-env
       SECRET_KEY: "local-posthog-dev-secret-minimum-32-chars-ok"
       DATABASE_URL: "postgres://posthog:posthog@posthog-db:5432/posthog"
       REDIS_URL: "redis://posthog-redis:6379/"
       CLICKHOUSE_HOST: posthog-clickhouse
       CLICKHOUSE_DATABASE: posthog
+      CLICKHOUSE_SECURE: "false"
+      CLICKHOUSE_VERIFY: "false"
+      CLICKHOUSE_REPLICATION: "false"
       KAFKA_URL: "kafka://posthog-kafka:9092"
       KAFKA_HOSTS: "posthog-kafka:9092"
-      SITE_URL: "http://localhost:8000"
+      SITE_URL: "http://localhost:8010"
       DISABLE_SECURE_SSL_REDIRECT: "true"
       IS_BEHIND_PROXY: "true"
       TRUST_ALL_PROXIES: "true"
@@ -122,7 +126,7 @@ services:
     command: ./bin/docker-server
     environment: *posthog-env
     ports:
-      - "8000:8000"
+      - "8010:8000"
     depends_on:
       posthog-migrate:
         condition: service_completed_successfully
