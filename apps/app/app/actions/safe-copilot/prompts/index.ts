@@ -16,26 +16,54 @@ PRINCÍPIOS OBRIGATÓRIOS:
 8. Riscos ROAM: Resolved, Owned, Accepted, Mitigated
 
 CONTEXTO DISPONÍVEL (injetado dinamicamente por mensagem):
+- ARTs do tenant: lista de ARTs com métricas de flow mais recentes (modes global/rte)
 - PI Workspace: objetivos de PI, riscos, features, dependências, times
 - Flow Dashboard: Flow Metrics (velocity, efficiency, predictability, load), ações de melhoria
 - Lean Budget: temas estratégicos, orçamentos, épicos governados
 - Portfolio: temas, épicos, OKRs ativos, resumo de fluxo
 
-FORMATO DE SUGESTÕES DE AÇÃO:
-Quando sugerir ações que o usuário pode executar no COSMOS, use este formato:
+FERRAMENTAS DE CONSULTA (use livremente, sem efeito colateral):
+- queryARTs: Lista todos os ARTs com métricas de flow (velocity/efficiency/predictability). Use para comparar ARTs ou obter IDs.
+- queryTeams: Lista times filtrado por artId. Retorna name, velocity, sprintLengthDays.
+- queryEpics: Lista épicos com status e contagem de features. Filtros: status (BACKLOG/IN_PROGRESS/DONE).
+- queryOKRs: Lista OKRs com KeyResults (current/target/unit/metric). Filtros: status, type.
+- queryFlowMetrics: Métricas de flow por scope/scopeId com N períodos.
+- queryLeanBudget: Budget alocado vs gasto por entidade.
+- queryProgramBoard: Features, riscos e objetivos de um PI.
+- queryRiskVectors: Busca semântica vetorial em riscos.
+
+FERRAMENTAS DE ESCRITA (solicitar confirmação explícita antes de executar):
+- createFeature: Cria feature no backlog com WSJF. Calcule e apresente WSJF = (bv+tc+rr)/js antes de criar.
+- moveFeature: Move feature para status (BACKLOG, IN_PROGRESS, DONE, CANCELLED).
+
+SUGESTÕES DE AÇÃO NO COSMOS:
+Para criar registros no sistema:
 <suggestion type="create_risks|create_pi_objectives|flag_dependencies|create_improvement_action">
 { "items": [...] }
 </suggestion>
 
-FERRAMENTAS DISPONÍVEIS (use somente após confirmação explícita do usuário):
-- createFeature: Cria uma feature no backlog com parâmetros WSJF (bv, tc, rr, js)
-- moveFeature: Move uma feature para um novo status (BACKLOG, IN_PROGRESS, DONE, CANCELLED)
-- queryFlowMetrics, queryLeanBudget, queryProgramBoard, queryRiskVectors: Consultas de dados (sem efeito colateral)
+Para navegar para uma view específica com filtros:
+<suggestion type="navigate_to">{ "route": "/rota/da/pagina", "params": { "chave": "valor" }, "label": "Texto do botão" }</suggestion>
 
-REGRAS PARA AÇÕES DE ESCRITA:
-- SEMPRE apresente o que será criado/alterado e aguarde confirmação antes de executar createFeature ou moveFeature
-- Informe o WSJF calculado antes de criar features: WSJF = (bv + tc + rr) / js
-- Confirme as alterações após execução bem-sucedida`;
+Rotas disponíveis para navigate_to (params vão como query string):
+- /arts → lista ARTs | /arts/[artId] → detalhe do ART
+- /arts/[artId]/program-board → program board
+- /analytics/flow → flow metrics (params: scope, scopeId)
+- /analytics/velocity → velocity por time
+- /teams → lista times | /teams/[teamId] → detalhe do time
+- /portfolio/okrs → OKRs | /portfolio/wsjf → priorização WSJF
+- /portfolio/budgets → lean budgets | /risks → riscos
+- /epics/[epicId] → detalhe do épico | /dependencies → dependências
+
+EXEMPLO DE USO NAVIGATE_TO:
+Pergunta: "Qual ART está com menor flow efficiency este semestre?"
+Resposta: Chame queryARTs → identifique ART com menor flowEfficiency → responda com análise → inclua:
+<suggestion type="navigate_to">{ "route": "/analytics/flow", "params": { "scope": "art", "scopeId": "id-do-art" }, "label": "Ver Flow Metrics do ART X" }</suggestion>
+
+REGRAS:
+- SEMPRE apresente o que será criado/alterado e aguarde confirmação antes de createFeature ou moveFeature
+- Nunca invente IDs — use queryARTs/queryTeams/queryEpics para obter IDs reais antes de navegar
+- Confirme alterações após execução bem-sucedida`;
 
 type ModePersona = {
   title: string;
@@ -172,6 +200,20 @@ function summarizeContext(ctx: CopilotContext): string {
       w.recentObjectives.length > 0
         ? `Objetivos PI por Business Value:\n${objList}`
         : "Sem objetivos de PI"
+    );
+  }
+
+  if (ctx.arts && ctx.arts.arts.length > 0) {
+    const artLines = ctx.arts.arts.map((a) => {
+      const m = a.latestMetrics;
+      const metrics = m
+        ? `vel=${m.flowVelocityTotal ?? "?"} eff=${m.flowEfficiency ?? "?"} pred=${m.flowPredictability ?? "?"}`
+        : "sem métricas";
+      return `[${a.id}] ${sanitizeForPrompt(a.name)} (${a.teamsCount} times, cadence:${a.cadence}w) — ${metrics}`;
+    });
+    parts.push(
+      `\nARTs DO TENANT — ${ctx.arts.arts.length} ARTs:`,
+      artLines.join("\n")
     );
   }
 
