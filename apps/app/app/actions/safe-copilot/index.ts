@@ -93,3 +93,20 @@ export async function discardSuggestion(id: string): Promise<void> {
     },
   });
 }
+
+export async function saveCopilotMessages(
+  sessionId: string,
+  messages: { role: string; content: string }[],
+  assistantText: string
+): Promise<void> {
+  await requireTenantSession(await headers());
+  await database.copilotSession.update({
+    where: { id: sessionId },
+    data: {
+      messages: [
+        ...messages,
+        { role: "assistant", content: assistantText, ts: Date.now() },
+      ],
+    },
+  });
+}

@@ -5,5 +5,7 @@ export const initializeAnalytics = () => {
   posthog.init(keys().NEXT_PUBLIC_POSTHOG_KEY, {
     api_host: keys().NEXT_PUBLIC_POSTHOG_HOST,
     defaults: "2025-05-24",
+    enable_heatmaps: true,
+    autocapture: true,
   });
 };

@@ -1,0 +1,154 @@
+# Docker Compose — PostHog Self-Hosted (local dev)
+#
+# Sobe PostHog completo localmente para análise de heatmaps.
+#
+# Uso:
+#   docker compose -f docker-compose.posthog.yml up -d
+#   Acesse http://localhost:8000, crie conta + projeto
+#   Copie o Project API Key para .env.local:
+#     NEXT_PUBLIC_POSTHOG_KEY="phc_<sua-chave>"
+#     NEXT_PUBLIC_POSTHOG_HOST="http://localhost:8000"
+#
+# Parar:
+#   docker compose -f docker-compose.posthog.yml down
+
+services:
+  # ────────────────────────────────────────────
+  # PostgreSQL — metadata do PostHog
+  # ────────────────────────────────────────────
+  posthog-db:
+    image: postgres:14-alpine
+    container_name: cosmos-posthog-db
+    environment:
+      POSTGRES_DB: posthog
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: posthog
+    volumes:
+      - posthog_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U posthog"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ────────────────────────────────────────────
+  # Redis — filas e cache
+  # ────────────────────────────────────────────
+  posthog-redis:
+    image: redis:6.2-alpine
+    container_name: cosmos-posthog-redis
+    volumes:
+      - posthog_redis:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ────────────────────────────────────────────
+  # Kafka — ingestão de eventos (KRaft, sem ZooKeeper)
+  # ────────────────────────────────────────────
+  posthog-kafka:
+    image: apache/kafka:3.7.0
+    container_name: cosmos-posthog-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@posthog-kafka:9093"
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://posthog-kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qg
+    volumes:
+      - posthog_kafka:/var/lib/kafka/data
+
+  # ────────────────────────────────────────────
+  # ClickHouse — analytics OLAP (heatmaps, funnels)
+  # ────────────────────────────────────────────
+  posthog-clickhouse:
+    image: clickhouse/clickhouse-server:23.6.2.18-alpine
+    container_name: cosmos-posthog-clickhouse
+    environment:
+      CLICKHOUSE_DB: posthog
+    volumes:
+      - posthog_clickhouse:/var/lib/clickhouse
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    depends_on:
+      - posthog-kafka
+
+  # ────────────────────────────────────────────
+  # PostHog Migrate — roda apenas uma vez
+  # ────────────────────────────────────────────
+  posthog-migrate:
+    image: posthog/posthog:latest
+    container_name: cosmos-posthog-migrate
+    command: ./bin/docker-migrate
+    environment: &posthog-env
+      SECRET_KEY: "local-posthog-dev-secret-minimum-32-chars-ok"
+      DATABASE_URL: "postgres://posthog:posthog@posthog-db:5432/posthog"
+      REDIS_URL: "redis://posthog-redis:6379/"
+      CLICKHOUSE_HOST: posthog-clickhouse
+      CLICKHOUSE_DATABASE: posthog
+      KAFKA_URL: "kafka://posthog-kafka:9092"
+      KAFKA_HOSTS: "posthog-kafka:9092"
+      SITE_URL: "http://localhost:8000"
+      DISABLE_SECURE_SSL_REDIRECT: "true"
+      IS_BEHIND_PROXY: "true"
+      TRUST_ALL_PROXIES: "true"
+      OBJECT_STORAGE_ENABLED: "false"
+      CAPTURE_INTERNAL_METRICS: "false"
+      MULTI_TENANCY: "false"
+    restart: "no"
+    depends_on:
+      posthog-db:
+        condition: service_healthy
+      posthog-clickhouse:
+        condition: service_started
+
+  # ────────────────────────────────────────────
+  # PostHog Web — dashboard + API
+  # ────────────────────────────────────────────
+  posthog-web:
+    image: posthog/posthog:latest
+    container_name: cosmos-posthog-web
+    command: ./bin/docker-server
+    environment: *posthog-env
+    ports:
+      - "8000:8000"
+    depends_on:
+      posthog-migrate:
+        condition: service_completed_successfully
+      posthog-redis:
+        condition: service_healthy
+      posthog-kafka:
+        condition: service_started
+
+  # ────────────────────────────────────────────
+  # PostHog Worker — celery + plugin server
+  # ────────────────────────────────────────────
+  posthog-worker:
+    image: posthog/posthog:latest
+    container_name: cosmos-posthog-worker
+    command: ./bin/docker-worker
+    environment: *posthog-env
+    depends_on:
+      posthog-migrate:
+        condition: service_completed_successfully
+      posthog-redis:
+        condition: service_healthy
+      posthog-kafka:
+        condition: service_started
+
+volumes:
+  posthog_pgdata:
+  posthog_redis:
+  posthog_kafka:
+  posthog_clickhouse:

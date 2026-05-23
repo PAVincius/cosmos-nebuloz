@@ -3,28 +3,11 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { canonicalPair, computeSynergyScore } from "./synergy-utils";
 
 type Ok<T> = { ok: true; data: T };
 type Err = { ok: false; error: string };
 const ok = <T>(data: T): Ok<T> => ({ ok: true, data });
-
-// INVARIANT: userId1 < userId2 always — enforced here before every write
-export function canonicalPair(a: string, b: string): [string, string] {
-  return a < b ? [a, b] : [b, a];
-}
-
-export function computeSynergyScore({
-  actualSp,
-  predictedSp,
-}: {
-  actualSp: number;
-  predictedSp: number;
-}): number {
-  if (predictedSp === 0) {
-    return 0;
-  }
-  return ((actualSp - predictedSp) / predictedSp) * 100;
-}
 
 export async function updatePairSynergiesForTask(
   taskId: string,

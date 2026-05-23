@@ -2,38 +2,25 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { safeAction, type Result } from "@/app/actions/_base";
+import { headers } from "next/headers";
+import { type Result, safeAction } from "@/app/actions/_base";
+import type { CompetencyId } from "./constants";
 import {
+  ActionStatus,
   CreateAssessmentSchema,
   CreateImprovementActionSchema,
-  UpdateImprovementActionSchema,
-  ActionStatus,
   SAFE_COMPETENCIES,
-  type CreateAssessmentInput,
-  type CreateImprovementActionInput,
-  type UpdateImprovementActionInput,
-  type ActionStatusValue,
+  UpdateImprovementActionSchema,
 } from "./schema";
 
-// ─── Re-exports for convenience ───────────────────────────────────────────────
-
-export { SAFE_COMPETENCIES };
 export type {
+  ActionStatusValue,
+  CompetencyKey,
   CreateAssessmentInput,
   CreateImprovementActionInput,
   UpdateImprovementActionInput,
-};
-
-// ─── Legacy compat (used by other pages) ─────────────────────────────────────
-
-export const COMPETENCIES = SAFE_COMPETENCIES.map((c) => ({
-  id: c.key,
-  label: c.label,
-}));
-
-export type CompetencyId = (typeof COMPETENCIES)[number]["id"];
+} from "./schema";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -68,8 +55,11 @@ export async function listAllAssessments(): Promise<AssessmentWithActions[]> {
     include: {
       actions: {
         select: {
-          id: true, title: true, status: true,
-          relatedMetric: true, dueDate: true,
+          id: true,
+          title: true,
+          status: true,
+          relatedMetric: true,
+          dueDate: true,
         },
         orderBy: { createdAt: "desc" },
       },
@@ -81,7 +71,8 @@ export async function listAllAssessments(): Promise<AssessmentWithActions[]> {
     ...a,
     score: Number(a.score),
     competencyLabel:
-      SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ?? a.competency,
+      SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ??
+      a.competency,
   }));
 }
 
@@ -97,8 +88,11 @@ export async function getAssessments(
     include: {
       actions: {
         select: {
-          id: true, title: true, status: true,
-          relatedMetric: true, dueDate: true,
+          id: true,
+          title: true,
+          status: true,
+          relatedMetric: true,
+          dueDate: true,
         },
         orderBy: { createdAt: "desc" },
       },
@@ -110,7 +104,8 @@ export async function getAssessments(
     ...a,
     score: Number(a.score),
     competencyLabel:
-      SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ?? a.competency,
+      SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ??
+      a.competency,
   }));
 }
 
@@ -136,23 +131,23 @@ export async function getImprovementActions(scope: string, scopeId: string) {
 
 // ─── Mutations (Result-wrapped for client components) ─────────────────────────
 
-export async function createAssessmentAction(
+export function createAssessmentAction(
   raw: unknown
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
-    const ctx   = await requireTenantSession(await headers());
+    const ctx = await requireTenantSession(await headers());
     const input = CreateAssessmentSchema.parse(raw);
 
     const rec = await database.competencyAssessment.create({
       data: {
-        tenantId:    ctx.tenantId,
-        scope:       input.scope,
-        scopeId:     input.scopeId,
-        competency:  input.competency,
-        score:       input.score,
-        notes:       input.notes ?? null,
+        tenantId: ctx.tenantId,
+        scope: input.scope,
+        scopeId: input.scopeId,
+        competency: input.competency,
+        score: input.score,
+        notes: input.notes ?? null,
         assessedById: ctx.userId,
-        piPlanId:    input.piPlanId ?? null,
+        piPlanId: input.piPlanId ?? null,
       },
       select: { id: true },
     });
@@ -162,25 +157,25 @@ export async function createAssessmentAction(
   });
 }
 
-export async function createImprovementActionResult(
+export function createImprovementActionResult(
   raw: unknown
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
-    const ctx   = await requireTenantSession(await headers());
+    const ctx = await requireTenantSession(await headers());
     const input = CreateImprovementActionSchema.parse(raw);
 
     const rec = await database.improvementAction.create({
       data: {
-        tenantId:      ctx.tenantId,
-        title:         input.title,
-        description:   input.description ?? null,
-        scope:         input.scope,
-        scopeId:       input.scopeId,
+        tenantId: ctx.tenantId,
+        title: input.title,
+        description: input.description ?? null,
+        scope: input.scope,
+        scopeId: input.scopeId,
         relatedMetric: input.relatedMetric ?? null,
-        dueDate:       input.dueDate ? new Date(input.dueDate) : null,
-        assigneeId:    ctx.userId,
-        assessmentId:  input.assessmentId ?? null,
-        status:        input.status,
+        dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        assigneeId: ctx.userId,
+        assessmentId: input.assessmentId ?? null,
+        status: input.status,
       },
       select: { id: true },
     });
@@ -190,24 +185,30 @@ export async function createImprovementActionResult(
   });
 }
 
-export async function updateImprovementActionResult(
+export function updateImprovementActionResult(
   id: string,
   raw: unknown
 ): Promise<Result<void>> {
   return safeAction(async () => {
-    const ctx   = await requireTenantSession(await headers());
+    const ctx = await requireTenantSession(await headers());
     const input = UpdateImprovementActionSchema.parse(raw);
 
     await database.improvementAction.updateMany({
       where: { id, tenantId: ctx.tenantId },
       data: {
-        ...(input.title       !== undefined && { title: input.title }),
-        ...(input.description !== undefined && { description: input.description }),
-        ...(input.status      !== undefined && { status: input.status }),
-        ...(input.relatedMetric !== undefined && { relatedMetric: input.relatedMetric }),
-        ...(input.dueDate     !== undefined && { dueDate: input.dueDate ? new Date(input.dueDate) : null }),
-        ...(input.scope       !== undefined && { scope: input.scope }),
-        ...(input.scopeId     !== undefined && { scopeId: input.scopeId }),
+        ...(input.title !== undefined && { title: input.title }),
+        ...(input.description !== undefined && {
+          description: input.description,
+        }),
+        ...(input.status !== undefined && { status: input.status }),
+        ...(input.relatedMetric !== undefined && {
+          relatedMetric: input.relatedMetric,
+        }),
+        ...(input.dueDate !== undefined && {
+          dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        }),
+        ...(input.scope !== undefined && { scope: input.scope }),
+        ...(input.scopeId !== undefined && { scopeId: input.scopeId }),
       },
     });
 
@@ -217,9 +218,9 @@ export async function updateImprovementActionResult(
 
 // ─── Spec-required aliases ────────────────────────────────────────────────────
 
-export const listAssessments        = listAllAssessments;
+export const listAssessments = listAllAssessments;
 export const listImprovementActions = listAllImprovementActions;
-export const createAssessment       = createAssessmentAction;
+export const createAssessment = createAssessmentAction;
 export const createImprovementAction = createImprovementActionResult;
 export const updateImprovementAction = updateImprovementActionResult;
 
@@ -235,18 +236,20 @@ export async function createAssessmentLegacy(input: {
 }) {
   const ctx = await requireTenantSession(await headers());
 
-  if (input.score < 1 || input.score > 5) throw new Error("Score deve ser entre 1 e 5.");
+  if (input.score < 1 || input.score > 5) {
+    throw new Error("Score deve ser entre 1 e 5.");
+  }
 
   await database.competencyAssessment.create({
     data: {
-      tenantId:    ctx.tenantId,
-      scope:       input.scope,
-      scopeId:     input.scopeId,
-      competency:  input.competency,
-      score:       input.score,
-      notes:       input.notes ?? null,
+      tenantId: ctx.tenantId,
+      scope: input.scope,
+      scopeId: input.scopeId,
+      competency: input.competency,
+      score: input.score,
+      notes: input.notes ?? null,
       assessedById: ctx.userId,
-      piPlanId:    input.piPlanId ?? null,
+      piPlanId: input.piPlanId ?? null,
     },
   });
 
@@ -264,26 +267,31 @@ export async function createImprovementActionLegacy(input: {
 }) {
   const ctx = await requireTenantSession(await headers());
 
-  if (!input.title.trim()) throw new Error("Título obrigatório.");
+  if (!input.title.trim()) {
+    throw new Error("Título obrigatório.");
+  }
 
   await database.improvementAction.create({
     data: {
-      tenantId:      ctx.tenantId,
-      title:         input.title.trim(),
-      description:   input.description ?? null,
-      scope:         input.scope,
-      scopeId:       input.scopeId,
+      tenantId: ctx.tenantId,
+      title: input.title.trim(),
+      description: input.description ?? null,
+      scope: input.scope,
+      scopeId: input.scopeId,
       relatedMetric: input.relatedMetric ?? null,
-      dueDate:       input.dueDate ? new Date(input.dueDate) : null,
-      assigneeId:    ctx.userId,
-      assessmentId:  input.assessmentId ?? null,
+      dueDate: input.dueDate ? new Date(input.dueDate) : null,
+      assigneeId: ctx.userId,
+      assessmentId: input.assessmentId ?? null,
     },
   });
 
   revalidatePath("/analytics/flow");
 }
 
-export async function updateActionStatus(id: string, status: ActionStatusValue) {
+export async function updateActionStatus(
+  id: string,
+  status: ActionStatusValue
+) {
   const ctx = await requireTenantSession(await headers());
   const validated = ActionStatus.parse(status);
 

@@ -33,11 +33,13 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
-  canonicalPair,
-  computeSynergyScore,
   getSynergyMatrix,
   updatePairSynergiesForTask,
 } from "@/app/actions/flow-intelligence/synergy";
+import {
+  canonicalPair,
+  computeSynergyScore,
+} from "@/app/actions/flow-intelligence/synergy-utils";
 
 const tenantId = "t1";
 
