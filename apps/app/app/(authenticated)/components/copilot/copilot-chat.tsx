@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Components } from "react-markdown";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { CopilotReport, parseReports, stripReportTags } from "./copilot-report";
 import { CopilotSuggestions } from "./copilot-suggestions";
 import type { ChatMessage } from "./use-copilot-chat";
 
@@ -18,7 +19,9 @@ const THINKING_PHRASES = [
 ];
 
 function stripSuggestionTags(content: string): string {
-  return content.replace(/<suggestion[\s\S]*?<\/suggestion>/g, "").trim();
+  return stripReportTags(
+    content.replace(/<suggestion[\s\S]*?<\/suggestion>/g, "")
+  ).trim();
 }
 
 function ThinkingIndicator() {
@@ -38,12 +41,12 @@ function ThinkingIndicator() {
 
   return (
     <div className="flex gap-2">
-      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-cyan-400">
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-200 text-cyan-500 dark:bg-zinc-800 dark:text-cyan-400">
         <Bot className="h-4 w-4" />
       </div>
-      <div className="flex items-center rounded-2xl bg-zinc-800 px-3 py-2">
+      <div className="flex items-center rounded-2xl bg-gray-100 px-3 py-2 dark:bg-zinc-800">
         <span
-          className="text-sm text-zinc-400 transition-opacity duration-300"
+          className="text-gray-500 text-sm transition-opacity duration-300 dark:text-zinc-400"
           style={{ opacity: fading ? 0 : 1 }}
         >
           {THINKING_PHRASES[phraseIndex]}
@@ -58,19 +61,25 @@ const markdownComponents: Components = {
     <p className="mb-1.5 text-sm leading-relaxed last:mb-0">{children}</p>
   ),
   strong: ({ children }) => (
-    <strong className="font-semibold text-white">{children}</strong>
+    <strong className="font-semibold text-gray-900 dark:text-white">
+      {children}
+    </strong>
   ),
-  em: ({ children }) => <em className="text-zinc-300 italic">{children}</em>,
+  em: ({ children }) => (
+    <em className="text-gray-600 italic dark:text-zinc-300">{children}</em>
+  ),
   pre: ({ children }) => (
-    <pre className="mt-2 overflow-x-auto rounded-lg bg-zinc-900/80 p-3 [scrollbar-width:thin]">
+    <pre className="mt-2 overflow-x-auto rounded-lg bg-gray-100/80 p-3 [scrollbar-width:thin] dark:bg-zinc-900/80">
       {children}
     </pre>
   ),
   code: ({ children, className }) =>
     className ? (
-      <code className="font-mono text-xs text-zinc-200">{children}</code>
+      <code className="font-mono text-gray-700 text-xs dark:text-zinc-200">
+        {children}
+      </code>
     ) : (
-      <code className="rounded bg-zinc-900/80 px-1.5 py-0.5 font-mono text-cyan-400 text-xs">
+      <code className="rounded bg-gray-100/80 px-1.5 py-0.5 font-mono text-cyan-500 text-xs dark:bg-zinc-900/80 dark:text-cyan-400">
         {children}
       </code>
     ),
@@ -80,21 +89,27 @@ const markdownComponents: Components = {
   ol: ({ children }) => (
     <ol className="mb-2 ml-4 list-decimal space-y-1 text-sm">{children}</ol>
   ),
-  li: ({ children }) => <li className="text-sm text-zinc-200">{children}</li>,
+  li: ({ children }) => (
+    <li className="text-gray-700 text-sm dark:text-zinc-200">{children}</li>
+  ),
   h1: ({ children }) => (
-    <h1 className="mt-2 mb-1.5 font-bold text-sm text-white">{children}</h1>
+    <h1 className="mt-2 mb-1.5 font-bold text-gray-900 text-sm dark:text-white">
+      {children}
+    </h1>
   ),
   h2: ({ children }) => (
-    <h2 className="mt-2 mb-1.5 font-semibold text-sm text-white">{children}</h2>
+    <h2 className="mt-2 mb-1.5 font-semibold text-gray-900 text-sm dark:text-white">
+      {children}
+    </h2>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-2 mb-1 font-semibold text-sm text-zinc-100">
+    <h3 className="mt-2 mb-1 font-semibold text-gray-800 text-sm dark:text-zinc-100">
       {children}
     </h3>
   ),
-  hr: () => <hr className="my-2 border-white/10" />,
+  hr: () => <hr className="my-2 border-black/10 dark:border-white/10" />,
   blockquote: ({ children }) => (
-    <blockquote className="border-cyan-400/50 border-l-2 pl-3 text-sm text-zinc-400 italic">
+    <blockquote className="border-cyan-400/50 border-l-2 pl-3 text-gray-500 text-sm italic dark:text-zinc-400">
       {children}
     </blockquote>
   ),
@@ -118,7 +133,9 @@ function MessageBubble({
     <div className={`flex gap-2 ${isUser ? "flex-row-reverse" : "flex-row"}`}>
       <div
         className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${
-          isUser ? "bg-violet-600 text-white" : "bg-zinc-800 text-cyan-400"
+          isUser
+            ? "bg-violet-600 text-white"
+            : "bg-gray-200 text-cyan-500 dark:bg-zinc-800 dark:text-cyan-400"
         }`}
       >
         {isUser ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
@@ -129,7 +146,9 @@ function MessageBubble({
       >
         <div
           className={`rounded-2xl px-3 py-2 ${
-            isUser ? "bg-violet-600 text-white" : "bg-zinc-800 text-zinc-200"
+            isUser
+              ? "bg-violet-600 text-white"
+              : "bg-gray-100 text-gray-800 dark:bg-zinc-800 dark:text-zinc-200"
           }`}
         >
           {isUser ? (
@@ -151,8 +170,18 @@ function MessageBubble({
           )}
         </div>
 
-        {!isUser && sessionId && message.content && !isCurrentStreaming ? (
-          <CopilotSuggestions content={message.content} sessionId={sessionId} />
+        {!isUser && message.content && !isCurrentStreaming ? (
+          <>
+            {parseReports(message.content).map((report) => (
+              <CopilotReport key={report.title} report={report} />
+            ))}
+            {sessionId ? (
+              <CopilotSuggestions
+                content={message.content}
+                sessionId={sessionId}
+              />
+            ) : null}
+          </>
         ) : null}
       </div>
     </div>
@@ -201,8 +230,10 @@ export function CopilotChat({
           <Bot className="h-5 w-5 text-white" />
         </div>
         <div className="space-y-1">
-          <p className="font-semibold text-sm text-white">SAFe AI Copilot</p>
-          <p className="max-w-[220px] text-xs text-zinc-500 leading-relaxed">
+          <p className="font-semibold text-gray-900 text-sm dark:text-white">
+            SAFe AI Copilot
+          </p>
+          <p className="max-w-[220px] text-gray-500 text-xs leading-relaxed dark:text-zinc-500">
             Faça uma pergunta ou use os atalhos abaixo para começar.
           </p>
         </div>
@@ -211,7 +242,7 @@ export function CopilotChat({
   }
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 py-3 [scrollbar-color:rgba(255,255,255,0.08)_transparent] [scrollbar-width:thin]">
+    <div className="flex-1 overflow-y-auto px-4 py-3 [scrollbar-color:rgba(0,0,0,0.08)_transparent] [scrollbar-width:thin] dark:[scrollbar-color:rgba(255,255,255,0.08)_transparent]">
       <div className="space-y-4">
         {messages.map((message) => (
           <MessageBubble

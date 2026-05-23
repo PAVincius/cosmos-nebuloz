@@ -73,7 +73,7 @@ export function CopilotPanel() {
       {isOpen ? (
         <motion.div
           animate="visible"
-          className="fixed right-6 bottom-6 z-50 flex w-[380px] flex-col overflow-hidden rounded-[24px] border border-white/[0.08] bg-zinc-950 shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,_0_24px_80px_rgba(0,0,0,0.50)]"
+          className="fixed right-6 bottom-6 z-50 flex w-[380px] flex-col overflow-hidden rounded-[24px] border border-black/[0.08] bg-white shadow-[0_1px_0_rgba(0,0,0,0.04)_inset,_0_24px_80px_rgba(0,0,0,0.15)] dark:border-white/[0.08] dark:bg-zinc-950 dark:shadow-[0_1px_0_rgba(255,255,255,0.06)_inset,_0_24px_80px_rgba(0,0,0,0.50)]"
           exit="exit"
           initial="hidden"
           key="copilot-panel"
@@ -104,11 +104,11 @@ export function CopilotPanel() {
           ) : null}
 
           <form
-            className="flex items-end gap-2 border-white/[0.06] border-t bg-zinc-950 p-3"
+            className="flex items-end gap-2 border-black/[0.06] border-t bg-white p-3 dark:border-white/[0.06] dark:bg-zinc-950"
             onSubmit={handleSubmit}
           >
             <Textarea
-              className="max-h-32 min-h-[44px] resize-none border-white/[0.08] bg-zinc-900/50 text-sm placeholder:text-zinc-500 focus-visible:ring-violet-500/30"
+              className="max-h-32 min-h-[44px] resize-none border-black/[0.08] bg-gray-50/80 text-sm placeholder:text-gray-400 focus-visible:ring-violet-500/30 dark:border-white/[0.08] dark:bg-zinc-900/50 dark:placeholder:text-zinc-500"
               disabled={isLoading}
               onChange={handleInputChange}
               onKeyDown={onKeyDown}

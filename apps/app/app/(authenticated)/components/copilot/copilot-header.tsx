@@ -31,7 +31,7 @@ type CopilotHeaderProps = {
 export function CopilotHeader({ mode, surface, onClose }: CopilotHeaderProps) {
   return (
     <div
-      className="flex shrink-0 items-center justify-between border-white/[0.08] border-b px-4 py-3"
+      className="flex shrink-0 items-center justify-between border-black/[0.08] border-b px-4 py-3 dark:border-white/[0.08]"
       style={{
         background:
           "linear-gradient(135deg, rgba(124,108,255,0.10) 0%, rgba(0,212,255,0.05) 100%)",
@@ -47,11 +47,11 @@ export function CopilotHeader({ mode, surface, onClose }: CopilotHeaderProps) {
           <Bot className="h-4 w-4 text-white" />
         </div>
         <div className="flex flex-col">
-          <span className="font-semibold text-sm text-white leading-tight">
+          <span className="font-semibold text-gray-900 text-sm leading-tight dark:text-white">
             {MODE_LABELS[mode]}
           </span>
           {surface !== "global" && (
-            <span className="text-[11px] text-zinc-500">
+            <span className="text-[11px] text-gray-500 dark:text-zinc-500">
               {SURFACE_LABELS[surface]}
             </span>
           )}
@@ -64,7 +64,7 @@ export function CopilotHeader({ mode, surface, onClose }: CopilotHeaderProps) {
           AI
         </span>
         <Button
-          className="h-7 w-7 text-zinc-500 hover:text-white"
+          className="h-7 w-7 text-gray-400 hover:text-gray-900 dark:text-zinc-500 dark:hover:text-white"
           onClick={onClose}
           size="icon"
           variant="ghost"

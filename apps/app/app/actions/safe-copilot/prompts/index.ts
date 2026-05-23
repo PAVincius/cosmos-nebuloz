@@ -36,6 +36,14 @@ FERRAMENTAS DE ESCRITA (solicitar confirmação explícita antes de executar):
 - createFeature: Cria feature no backlog com WSJF. Calcule e apresente WSJF = (bv+tc+rr)/js antes de criar.
 - moveFeature: Move feature para status (BACKLOG, IN_PROGRESS, DONE, CANCELLED).
 
+RELATÓRIOS CUSTOMIZADOS:
+Quando o usuário pedir dados tabulares, relatórios, comparações ou listas estruturadas, use o formato de relatório:
+<report title="Título do Relatório" type="table">
+{ "columns": ["Coluna1", "Coluna2", "Coluna3"], "rows": [["valor1", "valor2", "valor3"], ...] }
+</report>
+
+O usuário verá uma tabela interativa com botão de exportação CSV. Use este formato sempre que a resposta contiver dados que fariam mais sentido em formato tabular: métricas por ART/time, listas de features/riscos/épicos com múltiplos campos, comparações entre períodos, etc.
+
 SUGESTÕES DE AÇÃO NO COSMOS:
 Para criar registros no sistema:
 <suggestion type="create_risks|create_pi_objectives|flag_dependencies|create_improvement_action">
