@@ -5,12 +5,13 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "@/app/actions/_base";
-import type { CompetencyId } from "./constants";
 import {
   ActionStatus,
+  type ActionStatusValue,
   CreateAssessmentSchema,
   CreateImprovementActionSchema,
   SAFE_COMPETENCIES,
+  ScopeType,
   UpdateImprovementActionSchema,
 } from "./schema";
 
@@ -27,7 +28,7 @@ export type {
 export type AssessmentAction = {
   id: string;
   title: string;
-  status: string;
+  status: ActionStatusValue;
   relatedMetric: string | null;
   dueDate: Date | null;
 };
@@ -73,6 +74,10 @@ export async function listAllAssessments(): Promise<AssessmentWithActions[]> {
     competencyLabel:
       SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ??
       a.competency,
+    actions: a.actions.map((action) => ({
+      ...action,
+      status: action.status as ActionStatusValue,
+    })),
   }));
 }
 
@@ -82,9 +87,10 @@ export async function getAssessments(
   scopeId: string
 ): Promise<AssessmentWithActions[]> {
   const ctx = await requireTenantSession(await headers());
+  const validScope = ScopeType.parse(scope);
 
   const rows = await database.competencyAssessment.findMany({
-    where: { tenantId: ctx.tenantId, scope, scopeId },
+    where: { tenantId: ctx.tenantId, scope: validScope, scopeId },
     include: {
       actions: {
         select: {
@@ -106,6 +112,10 @@ export async function getAssessments(
     competencyLabel:
       SAFE_COMPETENCIES.find((c) => c.key === a.competency)?.label ??
       a.competency,
+    actions: a.actions.map((action) => ({
+      ...action,
+      status: action.status as ActionStatusValue,
+    })),
   }));
 }
 
@@ -122,19 +132,20 @@ export async function listAllImprovementActions() {
 /** List improvement actions filtered by scope + scopeId. */
 export async function getImprovementActions(scope: string, scopeId: string) {
   const ctx = await requireTenantSession(await headers());
+  const validScope = ScopeType.parse(scope);
 
   return database.improvementAction.findMany({
-    where: { tenantId: ctx.tenantId, scope, scopeId },
+    where: { tenantId: ctx.tenantId, scope: validScope, scopeId },
     orderBy: { createdAt: "desc" },
   });
 }
 
 // ─── Mutations (Result-wrapped for client components) ─────────────────────────
 
-export function createAssessmentAction(
+export async function createAssessmentAction(
   raw: unknown
 ): Promise<Result<{ id: string }>> {
-  return safeAction(async () => {
+  return await safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = CreateAssessmentSchema.parse(raw);
 
@@ -157,10 +168,10 @@ export function createAssessmentAction(
   });
 }
 
-export function createImprovementActionResult(
+export async function createImprovementActionResult(
   raw: unknown
 ): Promise<Result<{ id: string }>> {
-  return safeAction(async () => {
+  return await safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = CreateImprovementActionSchema.parse(raw);
 
@@ -185,11 +196,11 @@ export function createImprovementActionResult(
   });
 }
 
-export function updateImprovementActionResult(
+export async function updateImprovementActionResult(
   id: string,
   raw: unknown
 ): Promise<Result<void>> {
-  return safeAction(async () => {
+  return await safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = UpdateImprovementActionSchema.parse(raw);
 
@@ -223,70 +234,6 @@ export const listImprovementActions = listAllImprovementActions;
 export const createAssessment = createAssessmentAction;
 export const createImprovementAction = createImprovementActionResult;
 export const updateImprovementAction = updateImprovementActionResult;
-
-// ─── Legacy mutations (kept for backward compatibility) ───────────────────────
-
-export async function createAssessmentLegacy(input: {
-  scope: string;
-  scopeId: string;
-  competency: CompetencyId;
-  score: number;
-  notes?: string;
-  piPlanId?: string;
-}) {
-  const ctx = await requireTenantSession(await headers());
-
-  if (input.score < 1 || input.score > 5) {
-    throw new Error("Score deve ser entre 1 e 5.");
-  }
-
-  await database.competencyAssessment.create({
-    data: {
-      tenantId: ctx.tenantId,
-      scope: input.scope,
-      scopeId: input.scopeId,
-      competency: input.competency,
-      score: input.score,
-      notes: input.notes ?? null,
-      assessedById: ctx.userId,
-      piPlanId: input.piPlanId ?? null,
-    },
-  });
-
-  revalidatePath("/analytics/flow");
-}
-
-export async function createImprovementActionLegacy(input: {
-  title: string;
-  description?: string;
-  scope: string;
-  scopeId: string;
-  relatedMetric?: string;
-  dueDate?: string;
-  assessmentId?: string;
-}) {
-  const ctx = await requireTenantSession(await headers());
-
-  if (!input.title.trim()) {
-    throw new Error("Título obrigatório.");
-  }
-
-  await database.improvementAction.create({
-    data: {
-      tenantId: ctx.tenantId,
-      title: input.title.trim(),
-      description: input.description ?? null,
-      scope: input.scope,
-      scopeId: input.scopeId,
-      relatedMetric: input.relatedMetric ?? null,
-      dueDate: input.dueDate ? new Date(input.dueDate) : null,
-      assigneeId: ctx.userId,
-      assessmentId: input.assessmentId ?? null,
-    },
-  });
-
-  revalidatePath("/analytics/flow");
-}
 
 export async function updateActionStatus(
   id: string,
