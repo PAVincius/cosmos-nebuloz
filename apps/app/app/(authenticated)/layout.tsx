@@ -75,13 +75,18 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
   ].some((p) => pathname.startsWith(p));
 
   if (!skipOnboarding) {
-    if (initialActiveTenantId) {
-      const complete = await isOnboardingComplete(initialActiveTenantId);
+    // cookieCache (Better Auth) may be stale: DB-only session updates
+    // (e.g. createOnboardingWorkspace) don't invalidate the cookie.
+    // Fall back to the first membership fetched above — zero extra DB query.
+    const effectiveTenantId =
+      initialActiveTenantId ?? memberships[0]?.tenant.id ?? null;
+
+    if (effectiveTenantId) {
+      const complete = await isOnboardingComplete(effectiveTenantId);
       if (!complete) {
         redirect("/onboarding");
       }
     } else {
-      // No active tenant: either no tenant at all (new account) or tenant not selected yet
       redirect("/onboarding");
     }
   }
