@@ -23,6 +23,33 @@ export async function createCopilotSession(
   return session;
 }
 
+export type StoredMessage = {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+};
+
+export async function loadCopilotSession(
+  sessionId: string
+): Promise<StoredMessage[]> {
+  const { tenantId } = await requireTenantSession(await headers());
+  const session = await database.copilotSession.findFirst({
+    where: { id: sessionId, tenantId },
+    select: { messages: true },
+  });
+  if (!session) {
+    return [];
+  }
+  const raw = Array.isArray(session.messages) ? session.messages : [];
+  return (raw as { role?: string; content?: string }[])
+    .filter((m) => m.role === "user" || m.role === "assistant")
+    .map((m, i) => ({
+      id: `loaded-${i}`,
+      role: m.role as "user" | "assistant",
+      content: m.content ?? "",
+    }));
+}
+
 export async function listCopilotSessions(): Promise<SessionPreview[]> {
   const { tenantId } = await requireTenantSession(await headers());
   const sessions = await database.copilotSession.findMany({

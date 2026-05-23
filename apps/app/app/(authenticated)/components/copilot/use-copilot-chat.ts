@@ -11,6 +11,7 @@ export type ChatMessage = {
 type UseCopilotChatOptions = {
   api: string;
   body: Record<string, unknown>;
+  initialMessages?: ChatMessage[];
 };
 
 function nanoid(): string {
@@ -74,8 +75,14 @@ async function fetchStream(opts: FetchStreamOptions): Promise<void> {
   await readStream(reader, onChunk);
 }
 
-export function useCopilotChat({ api, body }: UseCopilotChatOptions) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+export function useCopilotChat({
+  api,
+  body,
+  initialMessages,
+}: UseCopilotChatOptions) {
+  const [messages, setMessages] = useState<ChatMessage[]>(
+    initialMessages ?? []
+  );
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
@@ -153,6 +160,7 @@ export function useCopilotChat({ api, body }: UseCopilotChatOptions) {
 
   return {
     messages,
+    setMessages,
     input,
     setInput,
     handleInputChange,
