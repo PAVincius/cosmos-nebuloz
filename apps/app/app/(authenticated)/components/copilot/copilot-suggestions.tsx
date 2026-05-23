@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { CheckCircle, Loader2, XCircle } from "lucide-react";
+import { CheckCircle, ExternalLink, Loader2, XCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   applySuggestion,
@@ -34,6 +35,39 @@ export function parseSuggestions(content: string): ParsedSuggestion[] {
     match = regex.exec(content);
   }
   return results;
+}
+
+type NavigatePayload = {
+  route: string;
+  params?: Record<string, string>;
+  label?: string;
+};
+
+function NavigateSuggestionCard({
+  suggestion,
+}: {
+  suggestion: ParsedSuggestion;
+}) {
+  const router = useRouter();
+  const payload = suggestion.payload as NavigatePayload;
+  const label = payload.label ?? "Navegar para view";
+  const href = payload.params
+    ? `${payload.route}?${new URLSearchParams(payload.params).toString()}`
+    : payload.route;
+
+  return (
+    <div className="mt-2 flex items-center gap-2 rounded-md border bg-muted/20 px-3 py-2">
+      <ExternalLink className="h-3.5 w-3.5 shrink-0 text-violet-500" />
+      <span className="flex-1 text-foreground text-xs">{label}</span>
+      <Button
+        className="h-7 text-xs"
+        onClick={() => router.push(href)}
+        size="sm"
+      >
+        Ir
+      </Button>
+    </div>
+  );
 }
 
 type SuggestionCardProps = {
@@ -163,13 +197,20 @@ export function CopilotSuggestions({
 
   return (
     <div className="mt-2 space-y-2">
-      {suggestions.map((s) => (
-        <SuggestionCard
-          key={`${s.type}-${String(JSON.stringify(s.payload)).slice(0, 30)}`}
-          sessionId={sessionId}
-          suggestion={s}
-        />
-      ))}
+      {suggestions.map((s) =>
+        s.type === "navigate_to" ? (
+          <NavigateSuggestionCard
+            key={`navigate-${String(JSON.stringify(s.payload)).slice(0, 30)}`}
+            suggestion={s}
+          />
+        ) : (
+          <SuggestionCard
+            key={`${s.type}-${String(JSON.stringify(s.payload)).slice(0, 30)}`}
+            sessionId={sessionId}
+            suggestion={s}
+          />
+        )
+      )}
     </div>
   );
 }
