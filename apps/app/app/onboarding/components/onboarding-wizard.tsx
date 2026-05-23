@@ -58,7 +58,10 @@ export function OnboardingWizard({
     setWsError(null);
     startTransition(async () => {
       try {
-        await createOnboardingWorkspace(wsName);
+        const result = await createOnboardingWorkspace(wsName);
+        if (!result?.tenantId) {
+          throw new Error("Falha ao criar workspace.");
+        }
         setStep("security");
       } catch (err: unknown) {
         setWsError(
@@ -109,7 +112,7 @@ export function OnboardingWizard({
   }
 
   const totpSecret = totpUri ? extractTotpSecret(totpUri) : null;
-  const showWorkspaceBadge = fromInvite && workspaceName !== null;
+  const showWorkspaceBadge = fromInvite;
   const showManualKeySection = showManualKey && totpSecret !== null;
 
   return (
@@ -214,9 +217,11 @@ export function OnboardingWizard({
             {showWorkspaceBadge ? (
               <div className="rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-center">
                 <p className="font-semibold text-primary text-xs uppercase tracking-widest">
-                  Você entrou em
+                  Você foi convidado para
                 </p>
-                <p className="mt-0.5 font-bold text-base">{workspaceName}</p>
+                <p className="mt-0.5 font-bold text-base">
+                  {workspaceName ?? "um workspace"}
+                </p>
               </div>
             ) : null}
 
