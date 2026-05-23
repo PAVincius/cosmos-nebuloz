@@ -17,10 +17,14 @@ function slugify(name: string): string {
 
 export async function createOnboardingWorkspace(name: string) {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user) throw new Error("UNAUTHORIZED");
+  if (!session?.user) {
+    throw new Error("UNAUTHORIZED");
+  }
 
   const trimmed = name.trim();
-  if (trimmed.length < 2) throw new Error("Nome muito curto.");
+  if (trimmed.length < 2) {
+    throw new Error("Nome muito curto.");
+  }
 
   const baseSlug = slugify(trimmed);
   let slug = baseSlug;
@@ -28,8 +32,10 @@ export async function createOnboardingWorkspace(name: string) {
 
   while (attempt < 10) {
     const exists = await database.tenant.findUnique({ where: { slug } });
-    if (!exists) break;
-    attempt++;
+    if (!exists) {
+      break;
+    }
+    attempt += 1;
     slug = `${baseSlug}-${attempt}`;
   }
 
@@ -51,9 +57,22 @@ export async function createOnboardingWorkspace(name: string) {
     data: { activeTenantId: tenant.id },
   });
 
+  await database.onboardingProgress.upsert({
+    where: {
+      tenantId_flowType: { tenantId: tenant.id, flowType: "company_setup" },
+    },
+    create: {
+      tenantId: tenant.id,
+      flowType: "company_setup",
+      status: "completed",
+      completedSteps: [],
+    },
+    update: { status: "completed" },
+  });
+
   return { tenantId: tenant.id, slug: tenant.slug };
 }
 
-export async function completeOnboarding() {
+export function completeOnboarding() {
   redirect("/portfolio");
 }
