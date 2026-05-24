@@ -1,35 +1,87 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { MessageSquare, Plus } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@repo/design-system/components/ui/sheet";
+import { cn } from "@repo/design-system/lib/utils";
+import { differenceInCalendarDays, format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { Menu, PanelLeftClose, Plus } from "lucide-react";
+import { useState } from "react";
 import type { SessionPreview } from "@/app/actions/safe-copilot/sessions";
+import { SessionGroup } from "./session-group";
 
-type SessionSidebarProps = {
+type Props = {
   sessions: SessionPreview[];
   activeSessionId: string | null;
   onSelect: (id: string) => void;
   onNew: () => void;
   isCreating: boolean;
+  onSessionsChange?: (sessions: SessionPreview[]) => void;
 };
 
-const SURFACE_LABELS: Record<string, string> = {
-  pi_workspace: "PI Workspace",
-  portfolio_dashboard: "Portfolio",
-  flow_dashboard: "Flow",
-  lean_budget: "Budget",
-  risk_board: "Riscos",
-  global: "Global",
+function groupSessions(
+  sessions: SessionPreview[]
+): { label: string; items: SessionPreview[] }[] {
+  const pinned = sessions.filter((s) => !!s.pinnedAt);
+  const unpinned = sessions.filter((s) => !s.pinnedAt);
+  const now = new Date();
+
+  const buckets: Record<string, SessionPreview[]> = {};
+  for (const s of unpinned) {
+    const diff = differenceInCalendarDays(now, s.createdAt);
+    let label: string;
+    if (diff === 0) {
+      label = "Hoje";
+    } else if (diff === 1) {
+      label = "Ontem";
+    } else if (diff <= 7) {
+      label = "Últimos 7 dias";
+    } else if (diff <= 30) {
+      label = "Últimos 30 dias";
+    } else {
+      label = format(s.createdAt, "MMMM yyyy", { locale: ptBR });
+    }
+    if (!buckets[label]) {
+      buckets[label] = [];
+    }
+    buckets[label].push(s);
+  }
+
+  const result: { label: string; items: SessionPreview[] }[] = [];
+  if (pinned.length > 0) {
+    result.push({ label: "Fixadas", items: pinned });
+  }
+  for (const [label, items] of Object.entries(buckets)) {
+    result.push({ label, items });
+  }
+  return result;
+}
+
+type SidebarContentProps = {
+  sessions: SessionPreview[];
+  activeSessionId: string | null;
+  isCreating: boolean;
+  onNew: () => void;
+  onSelect: (id: string) => void;
+  onPinToggle: (id: string, pinned: boolean) => void;
 };
 
-export function SessionSidebar({
+function SidebarContent({
   sessions,
   activeSessionId,
-  onSelect,
-  onNew,
   isCreating,
-}: SessionSidebarProps) {
+  onNew,
+  onSelect,
+  onPinToggle,
+}: SidebarContentProps) {
+  const groups = groupSessions(sessions);
+
   return (
-    <div className="flex h-full w-64 shrink-0 flex-col border-black/[0.06] border-r bg-gray-50/80 dark:border-white/[0.06] dark:bg-zinc-900/60">
+    <>
       <div className="flex items-center justify-between px-3 py-3">
         <span className="font-semibold text-gray-700 text-sm dark:text-zinc-300">
           Conversas
@@ -47,35 +99,156 @@ export function SessionSidebar({
       </div>
 
       <div className="flex-1 overflow-y-auto px-2 pb-4 [scrollbar-width:thin]">
-        {sessions.length === 0 ? (
+        {groups.length === 0 ? (
           <p className="px-2 py-4 text-center text-gray-400 text-xs dark:text-zinc-600">
             Nenhuma conversa ainda
           </p>
         ) : (
-          <div className="space-y-0.5">
-            {sessions.map((s) => (
-              <button
-                className={`flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition-colors ${
-                  s.id === activeSessionId
-                    ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
-                    : "text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
-                }`}
-                key={s.id}
-                onClick={() => onSelect(s.id)}
-                type="button"
-              >
-                <MessageSquare className="mt-0.5 h-3.5 w-3.5 shrink-0 opacity-60" />
-                <div className="min-w-0">
-                  <p className="truncate text-xs leading-snug">{s.preview}</p>
-                  <p className="mt-0.5 text-[10px] opacity-50">
-                    {SURFACE_LABELS[s.surface ?? "global"] ?? s.surface}
-                  </p>
-                </div>
-              </button>
-            ))}
-          </div>
+          groups.map((g) => (
+            <SessionGroup
+              activeSessionId={activeSessionId}
+              key={g.label}
+              label={g.label}
+              onPinToggle={onPinToggle}
+              onSelect={onSelect}
+              sessions={g.items}
+            />
+          ))
         )}
       </div>
-    </div>
+    </>
+  );
+}
+
+export function SessionSidebar({
+  sessions: initialSessions,
+  activeSessionId,
+  onSelect,
+  onNew,
+  isCreating,
+  onSessionsChange,
+}: Props) {
+  const [isOpen, setIsOpen] = useState(true);
+  const [sessions, setSessions] = useState(initialSessions);
+
+  const handlePinToggle = (id: string, pinned: boolean) => {
+    const now = new Date();
+    const updated = sessions.map((s) => {
+      if (s.id !== id) {
+        return s;
+      }
+      return { ...s, pinnedAt: pinned ? now : null };
+    });
+    setSessions(updated);
+    onSessionsChange?.(updated);
+  };
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          "hidden h-full flex-col border-black/[0.06] border-r bg-gray-50/80 transition-all duration-200 lg:flex dark:border-white/[0.06] dark:bg-zinc-900/60",
+          isOpen ? "w-64" : "w-12"
+        )}
+      >
+        {isOpen ? (
+          <>
+            <div className="flex items-center justify-between px-3 py-3">
+              <span className="font-semibold text-gray-700 text-sm dark:text-zinc-300">
+                Conversas
+              </span>
+              <div className="flex items-center gap-1">
+                <Button
+                  className="h-7 w-7"
+                  disabled={isCreating}
+                  onClick={onNew}
+                  size="icon"
+                  title="Nova conversa"
+                  variant="ghost"
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+                <Button
+                  className="h-7 w-7"
+                  onClick={() => setIsOpen(false)}
+                  size="icon"
+                  title="Recolher sidebar"
+                  variant="ghost"
+                >
+                  <PanelLeftClose className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-2 pb-4 [scrollbar-width:thin]">
+              {groupSessions(sessions).length === 0 ? (
+                <p className="px-2 py-4 text-center text-gray-400 text-xs dark:text-zinc-600">
+                  Nenhuma conversa ainda
+                </p>
+              ) : (
+                groupSessions(sessions).map((g) => (
+                  <SessionGroup
+                    activeSessionId={activeSessionId}
+                    key={g.label}
+                    label={g.label}
+                    onPinToggle={handlePinToggle}
+                    onSelect={onSelect}
+                    sessions={g.items}
+                  />
+                ))
+              )}
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-2 py-3">
+            <Button
+              className="h-8 w-8"
+              onClick={() => setIsOpen(true)}
+              size="icon"
+              title="Expandir sidebar"
+              variant="ghost"
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+            <Button
+              className="h-8 w-8"
+              disabled={isCreating}
+              onClick={onNew}
+              size="icon"
+              title="Nova conversa"
+              variant="ghost"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+      </aside>
+
+      {/* Mobile Sheet trigger */}
+      <div className="lg:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              className="absolute top-3 left-3 z-10 h-8 w-8"
+              size="icon"
+              variant="ghost"
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent className="flex w-72 flex-col p-0" side="left">
+            <SidebarContent
+              activeSessionId={activeSessionId}
+              isCreating={isCreating}
+              onNew={onNew}
+              onPinToggle={handlePinToggle}
+              onSelect={onSelect}
+              sessions={sessions}
+            />
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
   );
 }

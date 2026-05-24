@@ -1,0 +1,1 @@
+ALTER TABLE "copilot_sessions" ADD COLUMN IF NOT EXISTS "pinnedAt" TIMESTAMP(3);

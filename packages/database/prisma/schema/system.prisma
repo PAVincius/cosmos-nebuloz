@@ -10,6 +10,7 @@ model CopilotSession {
   messages      Json?     // [{role, content, ts}] — full conversation cache for quick load
   messageCount  Int       @default(0)
   lastMessageAt DateTime?
+  pinnedAt      DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

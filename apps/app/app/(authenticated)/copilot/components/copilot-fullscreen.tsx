@@ -111,6 +111,7 @@ export function CopilotFullscreen({
         isCreating={isCreating}
         onNew={handleNewSession}
         onSelect={handleSelectSession}
+        onSessionsChange={setSessions}
         sessions={sessions}
       />
 

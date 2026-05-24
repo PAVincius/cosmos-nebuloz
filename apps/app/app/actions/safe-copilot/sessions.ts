@@ -9,6 +9,7 @@ export type SessionPreview = {
   surface: string | null;
   preview: string;
   createdAt: Date;
+  pinnedAt: Date | null;
 };
 
 export async function createCopilotSession(
@@ -67,25 +68,41 @@ export async function loadCopilotSession(
     }));
 }
 
+export async function pinCopilotSession(sessionId: string): Promise<void> {
+  const { tenantId } = await requireTenantSession(await headers());
+  await database.copilotSession.updateMany({
+    where: { id: sessionId, tenantId },
+    data: { pinnedAt: new Date() },
+  });
+}
+
+export async function unpinCopilotSession(sessionId: string): Promise<void> {
+  const { tenantId } = await requireTenantSession(await headers());
+  await database.copilotSession.updateMany({
+    where: { id: sessionId, tenantId },
+    data: { pinnedAt: null },
+  });
+}
+
 export async function listCopilotSessions(): Promise<SessionPreview[]> {
   const { tenantId } = await requireTenantSession(await headers());
   const sessions = await database.copilotSession.findMany({
     where: { tenantId },
-    orderBy: { updatedAt: "desc" },
-    take: 30,
+    orderBy: [{ pinnedAt: "desc" }, { updatedAt: "desc" }],
+    take: 50,
     select: {
       id: true,
       surface: true,
       title: true,
       messages: true,
       createdAt: true,
+      pinnedAt: true,
     },
   });
 
   return sessions.map((s) => {
     let preview = s.title ?? null;
     if (!preview) {
-      // Fallback: parse JSON blob for pre-normalization sessions
       const msgs = Array.isArray(s.messages) ? s.messages : [];
       const firstUser = (msgs as { role: string; content: string }[]).find(
         (m) => m.role === "user"
@@ -100,6 +117,7 @@ export async function listCopilotSessions(): Promise<SessionPreview[]> {
       surface: s.surface,
       preview: truncated,
       createdAt: s.createdAt,
+      pinnedAt: s.pinnedAt,
     };
   });
 }
