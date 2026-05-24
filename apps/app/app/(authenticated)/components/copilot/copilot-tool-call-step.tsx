@@ -1,9 +1,10 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import type { ToolInvocation } from "./copilot-types";
+import { useCopilotDrawer } from "./use-copilot-drawer";
 
 type Props = { invocation: ToolInvocation };
 
@@ -23,11 +24,41 @@ const TOOL_LABELS: Record<string, string> = {
 
 export function CopilotToolCallStep({ invocation }: Props) {
   const [open, setOpen] = useState(false);
+  const { openDrawer } = useCopilotDrawer();
 
   const dotClass =
     invocation.state === "result"
       ? "bg-green-400"
       : "bg-blue-400 animate-pulse";
+
+  const handleOpenDrawer = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    openDrawer({
+      title: TOOL_LABELS[invocation.toolName] ?? invocation.toolName,
+      renderContent: () => (
+        <div className="space-y-3">
+          <div>
+            <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+              Parâmetros
+            </p>
+            <pre className="overflow-x-auto rounded-lg bg-muted/50 p-3 font-mono text-[11px]">
+              {JSON.stringify(invocation.args, null, 2)}
+            </pre>
+          </div>
+          {invocation.state === "result" ? (
+            <div>
+              <p className="mb-1 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+                Resultado
+              </p>
+              <pre className="overflow-x-auto rounded-lg bg-muted/50 p-3 font-mono text-[11px]">
+                {JSON.stringify(invocation.result, null, 2)}
+              </pre>
+            </div>
+          ) : null}
+        </div>
+      ),
+    });
+  };
 
   return (
     <div>
@@ -40,11 +71,21 @@ export function CopilotToolCallStep({ invocation }: Props) {
         <span className="font-medium text-muted-foreground text-xs">
           {TOOL_LABELS[invocation.toolName] ?? invocation.toolName}
         </span>
-        {invocation.state === "result" && (
-          <span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] text-green-700 dark:bg-green-900/30 dark:text-green-400">
-            concluído
-          </span>
-        )}
+        {invocation.state === "result" ? (
+          <>
+            <span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] text-green-700 dark:bg-green-900/30 dark:text-green-400">
+              concluído
+            </span>
+            <button
+              className="ml-auto rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+              onClick={handleOpenDrawer}
+              title="Ver detalhes"
+              type="button"
+            >
+              <ExternalLink className="h-3 w-3" />
+            </button>
+          </>
+        ) : null}
         <ChevronDown
           className="h-3 w-3 text-muted-foreground transition-transform"
           style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
@@ -61,14 +102,14 @@ export function CopilotToolCallStep({ invocation }: Props) {
             <pre className="overflow-x-auto font-mono text-[11px] text-muted-foreground">
               {JSON.stringify(invocation.args, null, 2)}
             </pre>
-            {invocation.state === "result" && (
+            {invocation.state === "result" ? (
               <>
                 <hr className="my-1 border-border/30" />
                 <pre className="overflow-x-auto font-mono text-[11px] text-foreground">
                   {JSON.stringify(invocation.result, null, 2)}
                 </pre>
               </>
-            )}
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>
