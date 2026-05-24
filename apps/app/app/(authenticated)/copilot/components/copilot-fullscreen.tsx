@@ -16,6 +16,7 @@ import {
   RefreshCw,
   SendHorizonal,
   Sparkles,
+  Square,
 } from "lucide-react";
 import { useCallback, useRef, useState, useTransition } from "react";
 import { syncTenantKnowledge } from "@/app/actions/safe-copilot/indexer";
@@ -87,14 +88,14 @@ function runSync(): Promise<{ total: number }> {
 
 function makeKeyDownHandler(
   isLoading: boolean,
-  handleSubmit: (e: React.FormEvent) => void,
+  handleSubmitText: (text: string) => void,
   input: string
 ) {
   return (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       if (input.trim() && !isLoading) {
-        handleSubmit(e as unknown as React.FormEvent);
+        handleSubmitText(input);
       }
     }
   };
@@ -146,7 +147,9 @@ export function CopilotFullscreen({
     setInput,
     handleInputChange,
     handleSubmit,
+    handleSubmitText,
     isLoading,
+    stop,
     reset,
   } = useCopilotChat({
     api: "/api/copilot/chat",
@@ -158,7 +161,7 @@ export function CopilotFullscreen({
     },
   });
 
-  const onKeyDown = makeKeyDownHandler(isLoading, handleSubmit, input);
+  const onKeyDown = makeKeyDownHandler(isLoading, handleSubmitText, input);
 
   const handleChipSelect = (prompt: string) => {
     setInput(prompt);
@@ -376,14 +379,25 @@ export function CopilotFullscreen({
             >
               <Paperclip className="h-4 w-4" />
             </Button>
-            <Button
-              className="h-9 w-9 bg-violet-600 hover:bg-violet-500"
-              disabled={isLoading || !input.trim()}
-              size="icon"
-              type="submit"
-            >
-              <SendHorizonal className="h-4 w-4" />
-            </Button>
+            {isLoading ? (
+              <Button
+                className="h-9 w-9 bg-red-500 hover:bg-red-400"
+                onClick={stop}
+                size="icon"
+                type="button"
+              >
+                <Square className="h-4 w-4" fill="currentColor" />
+              </Button>
+            ) : (
+              <Button
+                className="h-9 w-9 bg-violet-600 hover:bg-violet-500"
+                disabled={!input.trim()}
+                size="icon"
+                type="submit"
+              >
+                <SendHorizonal className="h-4 w-4" />
+              </Button>
+            )}
           </div>
         </form>
       </div>

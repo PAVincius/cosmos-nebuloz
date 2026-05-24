@@ -75,10 +75,10 @@ export async function POST(req: Request) {
       },
     });
 
-    // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat — body.messages uses a looser type than CoreMessage
     const modeMessages = getModeMessages(
       mode,
       copilotContext,
+      // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
       body.messages as any
     );
 
@@ -129,7 +129,7 @@ export async function POST(req: Request) {
       },
     });
 
-    return result.toTextStreamResponse();
+    return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
     const msg = error instanceof Error ? error.message : "Erro interno";
     return Response.json({ error: msg }, { status: 500 });
