@@ -9,3 +9,21 @@
 @import "diagram-js-minimap/assets/diagram-js-minimap.css";
 @import "bpmn-js-embedded-comments/assets/comments.css";
 @import "bpmn-js-bpmnlint/dist/assets/css/bpmn-js-bpmnlint.css";
+
+/* TipTap editor */
+.copilot-tiptap .ProseMirror {
+  outline: none;
+  min-height: 44px;
+  max-height: 9rem;
+  overflow-y: auto;
+  font-size: 0.875rem;
+  line-height: 1.625;
+}
+
+.copilot-tiptap .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: hsl(var(--muted-foreground) / 0.5);
+  pointer-events: none;
+  height: 0;
+}
