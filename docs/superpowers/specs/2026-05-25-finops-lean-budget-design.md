@@ -447,6 +447,21 @@ model CurrencyRate {
   @@unique([from, to, date])
 }
 
+// Staging table for in-flight sync pages (avoids memory buffering in Inngest step)
+// Rows promoted to BillingEntry then deleted at end of each BillingSyncRun
+model BillingEntryStaging {
+  id            String   @id @default(cuid())
+  tenantId      String
+  integrationId String
+  syncRunId     String
+  payload       Json     // raw provider row, pre-normalization
+  page          Int
+  createdAt     DateTime @default(now())
+
+  tenant Tenant @relation(fields:[tenantId], references:[id], onDelete:Cascade)
+  @@index([tenantId, integrationId, syncRunId])
+}
+
 // Resumable wizard state for billing connector setup
 model IntegrationDraft {
   id          String   @id @default(cuid())
@@ -500,8 +515,9 @@ app/api/cron/billing-sync-dispatch/route.ts:
   - Verify CRON_SECRET header
   - Query: all Integration where source IN (billing_aws, billing_gcp, billing_azure) AND status = ACTIVE
   - For each: inngest.send({ name: "billing/sync.requested", data: { tenantId, integrationId } })
-  - Must complete in <60s. Paginate with LIMIT 100 OFFSET X; if total > 1000, dispatch is itself an Inngest job
-    (cron triggers `billing/dispatch.requested`, Inngest paginates without 60s timeout constraint)
+  - v1: simple inline fan-out — paginate LIMIT 100 OFFSET X, enqueue all active billing integrations synchronously
+    Must complete in <60s (Vercel Pro function timeout). v1 supports up to ~500 integrations within this budget.
+  - v2 (>500 integrations): cron route emits `billing/dispatch.requested`; Inngest handles pagination without timeout
 ```
 
 ### 4.2 Inngest Job: `billing/sync.run`
@@ -863,15 +879,26 @@ After first rules created:
 
 ## 9. Phased Delivery
 
-### v1 — Foundation
-- Schema: `finops.prisma` with all models
-- `LeanBudget.spent` migration (Float → Decimal + spentSource)
-- AWS adapter + Inngest job + Vercel cron dispatch
-- TagRule engine (EXACT + ACCOUNT)
-- CostSnapshot aggregation (DAILY + MONTHLY)
-- UnmappedCostBucket
-- Budget dashboard upgrade (planned vs actual by theme, unmapped banner)
-- Integration wizard for AWS (5 steps)
+### v1 — Foundation (3 sprints)
+
+**Sprint 1 — Schema + Migration:**
+- `finops.prisma` (all models, full FOCUS-shaped schema — pays forward, avoids later re-migration)
+- Add inverse back-refs to `tenant.prisma`, `system.prisma`, `portfolio.prisma`
+- `LeanBudget.spent` migration phases 1–3: ADD columns, backfill, dual-write in actions
+
+**Sprint 2 — AWS Sync Pipeline:**
+- AWS Cost Explorer adapter
+- Inngest sync job (EXACT + ACCOUNT TagRule engine only, no re2)
+- Vercel Cron dispatch (inline fan-out, v1 simple path)
+- CostSnapshot DAILY + MONTHLY aggregation
+- UnmappedCostBucket population
+- `BillingSyncRun` progress tracking
+
+**Sprint 3 — v1 UI + Migration Complete:**
+- Budget dashboard upgrade (KPI cards, planned vs actual by theme, unmapped banner)
+- Budget detail page (cost breakdown, trend chart — no epic table yet)
+- AWS integration wizard (5 steps)
+- `LeanBudget.spent` migration phases 4–5: swap reads, drop Float column
 
 ### v2 — Full Cloud + Differentiator
 - GCP + Azure adapters
@@ -894,51 +921,75 @@ After first rules created:
 
 ## 10. Files to create/modify
 
-### New files
+### v1 — New files (Sprint 1-3 only)
 ```
-packages/database/prisma/schema/finops.prisma
-apps/app/app/actions/billing/index.ts
-apps/app/app/actions/billing/tag-rules.ts
-apps/app/app/actions/billing/snapshots.ts
-apps/app/app/actions/finops/get-budget-overview.ts
-apps/app/app/actions/finops/get-budget-detail.ts
-apps/app/app/actions/finops/anomalies.ts
-apps/app/lib/billing-adapters/aws.ts
+packages/database/prisma/schema/finops.prisma         — all models (full schema, future-safe)
+apps/app/app/actions/billing/index.ts                  — connector CRUD, sync trigger
+apps/app/app/actions/billing/tag-rules.ts              — EXACT + ACCOUNT rule CRUD
+apps/app/app/actions/billing/snapshots.ts              — snapshot query actions
+apps/app/app/actions/finops/get-budget-overview.ts     — dashboard data
+apps/app/lib/billing-adapters/aws.ts                   — AWS Cost Explorer adapter
+apps/app/lib/billing-adapters/tag-rule-engine.ts       — EXACT + ACCOUNT matching only (no re2 in v1)
+apps/app/lib/inngest/billing-sync.ts                   — Inngest job + downstream events
+apps/app/app/api/cron/billing-sync-dispatch/route.ts   — Vercel Cron endpoint
+apps/app/app/(authenticated)/portfolio/budgets/[id]/page.tsx
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/budget-detail.tsx
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/cost-breakdown-card.tsx
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/cost-trend-chart.tsx
+apps/app/app/(authenticated)/settings/integrations/components/billing-connect-wizard.tsx
+```
+
+### v1 — Modified files
+```
+packages/database/prisma/schema/tenant.prisma      — REQUIRED: add back-refs for all new finops models
+                                                     (billingEntries, costSnapshots, tagRules, etc.)
+packages/database/prisma/schema/system.prisma      — Integration: add billing_aws source type + back-refs
+                                                     (billingEntries, billingSyncCursor)
+packages/database/prisma/schema/portfolio.prisma   — LeanBudget: spentSource + spentManualOverride + Decimal migration
+                                                     StrategicTheme: add billingEntries back-ref
+apps/app/app/(authenticated)/components/sidebar.tsx — add Lean Budget sub-routes (stubs for v2 pages)
+apps/app/app/(authenticated)/portfolio/budgets/page.tsx
+apps/app/app/(authenticated)/portfolio/budgets/components/budget-dashboard.tsx
+apps/app/app/(authenticated)/settings/integrations/components/integrations-board.tsx
+vercel.json   — add cron entry
+```
+
+### v2 — Deferred files (NOT in v1)
+```
 apps/app/lib/billing-adapters/gcp.ts
 apps/app/lib/billing-adapters/azure.ts
-apps/app/lib/billing-adapters/tag-rule-engine.ts
-apps/app/lib/billing-adapters/anomaly-detector.ts
-apps/app/lib/inngest/billing-sync.ts
-apps/app/app/api/cron/billing-sync-dispatch/route.ts
-apps/app/app/(authenticated)/portfolio/budgets/[id]/page.tsx
-apps/app/app/(authenticated)/portfolio/budgets/[id]/components/{budget-detail,cost-breakdown-card,cost-trend-chart,service-treemap,okr-roi-panel,epic-cost-table}.tsx
-apps/app/app/(authenticated)/portfolio/budgets/explorer/page.tsx
+apps/app/lib/billing-adapters/anomaly-detector.ts       — MAD detection
+apps/app/app/actions/finops/get-budget-detail.ts        — epic ROI queries
+apps/app/app/actions/finops/anomalies.ts
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/okr-roi-panel.tsx
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/epic-cost-table.tsx
+apps/app/app/(authenticated)/portfolio/budgets/[id]/components/service-treemap.tsx
 apps/app/app/(authenticated)/portfolio/budgets/anomalies/page.tsx
 apps/app/app/(authenticated)/portfolio/budgets/anomalies/components/anomaly-feed.tsx
 apps/app/app/(authenticated)/portfolio/budgets/tag-rules/page.tsx
 apps/app/app/(authenticated)/portfolio/budgets/tag-rules/components/{tag-rules-table,rule-edit-sheet,unmapped-suggestions}.tsx
-apps/app/app/(authenticated)/settings/integrations/components/billing-connect-wizard.tsx
-apps/app/app/(authenticated)/portfolio/wsjf/components/art-cost-efficiency-card.tsx
+apps/app/app/(authenticated)/portfolio/themes/[id]/components/theme-budget-panel.tsx  — FinOps sub-panel
+apps/app/app/(authenticated)/portfolio/okrs/components/okr-detail-panel.tsx           — ROI block
+apps/app/app/(authenticated)/portfolio/components/portfolio-board.tsx                 — epic cost indicator
+apps/app/app/(authenticated)/components/notifications-provider.tsx                   — anomaly channel
+apps/app/app/(authenticated)/portfolio/budgets/explorer/page.tsx
 ```
 
-### Modified files
+### v3 — Deferred files
 ```
-packages/database/prisma/schema/portfolio.prisma   — LeanBudget migration
-packages/database/prisma/schema/system.prisma      — Integration new source types
-apps/app/app/(authenticated)/components/sidebar.tsx — new sub-routes
-apps/app/app/(authenticated)/portfolio/budgets/page.tsx
-apps/app/app/(authenticated)/portfolio/budgets/components/budget-dashboard.tsx
-apps/app/app/(authenticated)/portfolio/themes/[id]/components/theme-budget-panel.tsx
-apps/app/app/(authenticated)/portfolio/okrs/components/okr-detail-panel.tsx
-apps/app/app/(authenticated)/portfolio/components/portfolio-board.tsx
-apps/app/app/(authenticated)/settings/integrations/components/integrations-board.tsx
-apps/app/app/(authenticated)/components/notifications-provider.tsx
-vercel.json   — add cron entry
+apps/app/app/(authenticated)/portfolio/wsjf/components/art-cost-efficiency-card.tsx
 ```
 
 ---
 
-## 11. No new dependencies required for v1
-All needed: `recharts`, `shadcn/ui`, `@aws-sdk/client-cost-explorer`, `@aws-sdk/credential-providers`, `@google-cloud/bigquery`, `@azure/arm-costmanagement`, `@azure/identity`, `inngest`, `re2` (WASM for Vercel).
+## 11. Dependencies
 
-Only `inngest` and `re2` are potentially new — verify in `apps/app/package.json`.
+### v1 new dependencies (verify against `apps/app/package.json`)
+- `inngest` — Inngest SDK (likely not yet installed)
+- `@aws-sdk/client-cost-explorer` — AWS CE client
+- `@aws-sdk/credential-providers` — STS AssumeRole
+
+### v1 NOT required (defer to v2/v3)
+- `re2` — only needed for REGEX TagRule match type (v2)
+- `@google-cloud/bigquery` — v2
+- `@azure/arm-costmanagement`, `@azure/identity` — v2
