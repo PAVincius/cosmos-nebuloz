@@ -5,7 +5,7 @@ model BillingEntry {
   id            String  @id @default(cuid())
   tenantId      String
   integrationId String
-  syncLogId     String?
+  syncLogId     String?  // optional reference to SyncLog.id — not a formal FK relation
 
   provider      String
   accountId     String
@@ -60,7 +60,7 @@ model BillingEntry {
   theme       StrategicTheme? @relation(fields: [themeId],       references: [id], onDelete: SetNull)
   allocations BillingEntryAllocation[]
 
-  @@unique([integrationId, externalId])
+  @@unique([tenantId, integrationId, externalId])
   @@index([tenantId, usageStartDate])
   @@index([tenantId, provider, usageStartDate])
   @@index([tenantId, accountId, usageStartDate])
@@ -269,7 +269,7 @@ model CommitmentDiscount {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([integrationId, externalId])
+  @@unique([tenantId, integrationId, externalId])
   @@index([tenantId, endDate])
 }
 
@@ -290,6 +290,8 @@ model PersonCost {
   @@index([tenantId, userId, effectiveFrom])
 }
 
+// CurrencyRate is shared across all tenants — FX rates are provider-neutral.
+// If per-tenant rate source is needed in future, add tenantId here.
 model CurrencyRate {
   id   String   @id @default(cuid())
   from String
@@ -312,6 +314,7 @@ model BillingEntryStaging {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId, integrationId, syncRunId])
+  @@index([createdAt])
 }
 
 model IntegrationDraft {
