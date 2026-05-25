@@ -94,7 +94,7 @@
     "@vitest/coverage-v8": "4.0.15",
     "better-auth": "^1.6.10",
     "dotenv": "^17.4.2",
-    "jsdom": "^27.2.0",
+    "jsdom": "^29.1.1",
     "pg": "^8.20.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.19.4",
