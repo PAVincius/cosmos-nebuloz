@@ -102,6 +102,18 @@ model Tenant {
   copilotMessages       CopilotMessage[]
   anomalyDetectionRuns  AnomalyDetectionRun[]
   anomalies             Anomaly[]
+  // FinOps
+  billingEntries          BillingEntry[]
+  billingEntryAllocations BillingEntryAllocation[]
+  costSnapshots           CostSnapshot[]
+  tagRules                TagRule[]
+  unmappedCostBuckets     UnmappedCostBucket[]
+  billingSyncRuns         BillingSyncRun[]
+  costAnomalies           CostAnomaly[]
+  budgetPlans             BudgetPlan[]
+  commitmentDiscounts     CommitmentDiscount[]
+  personCosts             PersonCost[]
+  billingEntryStaging     BillingEntryStaging[]
 }
 
 model User {

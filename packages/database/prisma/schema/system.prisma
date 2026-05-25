@@ -80,7 +80,7 @@ model AuditLog {
 model Integration {
   id         String    @id @default(cuid())
   tenantId   String
-  source     String    // linear | github | asana | gitlab | jira | azure-devops
+  source     String    // linear | github | asana | gitlab | jira | azure-devops | billing_aws | billing_gcp | billing_azure
   name       String
   config     Json      // { apiKey, org, token, ... } — sensitive, store encrypted at app layer
   mapping    Json?     // { statusMap, typeMap, teamId, artId, piId }
@@ -89,8 +89,11 @@ model Integration {
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
 
-  tenant   Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  syncLogs SyncLog[]
+  tenant            Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  syncLogs          SyncLog[]
+  // FinOps back-refs
+  billingEntries    BillingEntry[]
+  billingSyncCursor BillingSyncCursor?
 
   @@index([tenantId])
   @@index([tenantId, source])
