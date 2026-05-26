@@ -3,6 +3,7 @@ import { database } from "@repo/database";
 import { searchKnowledge } from "@repo/database/vector-search";
 import { embed, tool } from "ai";
 import { z } from "zod";
+import { awsPricingTool, gcpPricingTool } from "./tools/pricing-tools";
 
 export function buildCopilotTools(tenantId: string) {
   return {
@@ -453,5 +454,8 @@ export function buildCopilotTools(tenantId: string) {
         return { okrs };
       },
     }),
+
+    estimateAwsCost: awsPricingTool,
+    estimateGcpCost: gcpPricingTool,
   };
 }
