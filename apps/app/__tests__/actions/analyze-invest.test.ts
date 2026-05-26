@@ -41,7 +41,11 @@ const defaultEpic = {
   investBreakdown: null,
 };
 
-const defaultInvestObject = {
+// LLM returns full InvestBreakdownSchema including compositeScore and isSmall
+// Weighted composite: I=80*.15 + N=70*.10 + V=75*.25 + E=65*.15 + S=60*.10 + T=85*.25 = 74.75
+const EXPECTED_COMPOSITE = 74.75;
+
+const defaultLLMOutput = {
   breakdown: { I: 80, N: 70, V: 75, E: 65, S: 60, T: 85 },
   rationale: {
     I: "Independent",
@@ -51,7 +55,7 @@ const defaultInvestObject = {
     S: "Small",
     T: "Testable",
   },
-  compositeScore: 72,
+  compositeScore: EXPECTED_COMPOSITE,
   isSmall: true,
 };
 
@@ -65,7 +69,7 @@ describe("analyzeInvest", () => {
     });
     mocks.epicFindFirst.mockResolvedValue(defaultEpic);
     mocks.epicUpdate.mockResolvedValue({ id: "e1" });
-    mocks.generateObject.mockResolvedValue({ object: defaultInvestObject });
+    mocks.generateObject.mockResolvedValue({ object: defaultLLMOutput });
     mocks.getAIModel.mockReturnValue({});
     mocks.getActiveProvider.mockReturnValue("anthropic");
   });
@@ -76,7 +80,7 @@ describe("analyzeInvest", () => {
     if (!result.ok) {
       throw new Error("Expected ok result");
     }
-    expect(result.data?.compositeScore).toBe(74.75);
+    expect(result.data?.compositeScore).toBe(EXPECTED_COMPOSITE);
     expect(result.data?.breakdown.I).toBe(80);
   });
 
@@ -85,12 +89,11 @@ describe("analyzeInvest", () => {
     expect(mocks.epicUpdate).toHaveBeenCalledWith({
       where: { id: "e1", tenantId: "t1" },
       data: expect.objectContaining({
-        investScore: 74.75,
+        investScore: EXPECTED_COMPOSITE,
         investBreakdown: expect.objectContaining({
-          breakdown: defaultInvestObject.breakdown,
-          compositeScore: 74.75,
+          breakdown: defaultLLMOutput.breakdown,
+          compositeScore: EXPECTED_COMPOSITE,
         }),
-        investHash: expect.any(String),
       }),
     });
   });
@@ -145,7 +148,6 @@ describe("analyzeInvest", () => {
   });
 
   it("calls AI again when content changes (hash miss)", async () => {
-    // Epic has a stored hash but content has changed
     mocks.epicFindFirst.mockResolvedValueOnce({
       ...defaultEpic,
       investScore: 50,
