@@ -35,6 +35,14 @@ function markdownToHtml(md: string): string {
     .join("");
 }
 
+function loadContent(md: string | null): string {
+  if (!md) return "";
+  // Already HTML (saved by a prior edit) — use directly to avoid roundtrip corruption
+  if (md.trimStart().startsWith("<")) return md;
+  // Legacy plain markdown — convert to HTML for TipTap
+  return markdownToHtml(md);
+}
+
 export function EpicDrawerDescription({ epic }: Props) {
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -49,7 +57,7 @@ export function EpicDrawerDescription({ epic }: Props) {
       StarterKit,
       Placeholder.configure({ placeholder: "Descreva este épico…" }),
     ],
-    content: epic.descriptionMd ? markdownToHtml(epic.descriptionMd) : "",
+    content: loadContent(epic.descriptionMd),
     editorProps: {
       attributes: {
         // Fix #5 [LOW]: remove unnecessary cn() wrapper
