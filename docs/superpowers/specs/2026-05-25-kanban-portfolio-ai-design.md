@@ -323,48 +323,51 @@ Task: {title} | Tipo: {type} | Score INVEST: {score}
 Docs RAG incluídos: {rag_docs}
 ```
 
-#### Fase 4 — Delivery: copia + abre o target
+#### Fase 4 — Delivery: backend endpoints (mesmo módulo WSJF rebalancer)
 
-**Targets suportados:**
+O delivery usa **Server Actions** do Next.js — mesma arquitetura do WSJF rebalancer. Sem companion CLI, sem extensão browser. O browser executa URI schemes nativos que os IDEs registram na instalação.
 
-| Target | Como abre | Comando |
+**Server Action: `generateAndDeliverPrompt`**
+```typescript
+// app/actions/ai-prompt/generate-prompt.ts
+export async function generateAndDeliverPrompt(input: {
+  epicId: string;
+  target: PromptTarget;
+  ragDocIds: string[];
+}) {
+  // 1. Busca epic + RAG docs
+  // 2. Chama Haiku com técnica correta por target
+  // 3. Retorna { prompt, deepLink, clipboardContent }
+}
+```
+
+**Targets e URI schemes (browser abre nativamente):**
+
+| Target | URI Scheme | Fallback |
 |--------|-----------|---------|
-| Claude Code (CLI) | Terminal com prompt pré-carregado | `claude "{prompt_file_path}"` |
-| Cursor | Abre Cursor + paste no chat | AppleScript / PowerShell + deep link |
-| Windsurf | Abre Windsurf + paste no chat | Deep link `windsurf://chat?prompt={encoded}` |
-| Cline / Roo | VS Code extension command | `vscode://Cline/chat?prompt={encoded}` |
-| Claude.ai | Abre browser com prompt | `https://claude.ai/new?prompt={encoded}` |
-| ChatGPT | Abre browser com prompt | `https://chatgpt.com/?prompt={encoded}` |
+| Cursor | `cursor://chat?prompt={base64}` | Clipboard |
+| Windsurf | `windsurf://chat?prompt={base64}` | Clipboard |
+| VS Code / Cline / Roo | `vscode://Cline/newTask?prompt={base64}` | Clipboard |
+| Claude Code | `claude-code://new?prompt={base64}` | Clipboard |
+| Claude.ai | `https://claude.ai/new?q={encoded}` | Direct link |
+| ChatGPT | `https://chatgpt.com/?prompt={encoded}` | Direct link |
+| Groq | `https://groq.com/` + clipboard | Clipboard |
+| Gemini | `https://gemini.google.com/` + clipboard | Clipboard |
+| Perplexity | `https://perplexity.ai/search?q={encoded}` | Direct link |
 
-**macOS — AppleScript para IDEs:**
-```applescript
--- Abrir Cursor e colar prompt
-tell application "Cursor" to activate
-delay 0.5
-tell application "System Events"
-  keystroke "k" using command down  -- abre chat
-  delay 0.3
-  keystroke "v" using command down  -- cola prompt
-end tell
-```
+**Fluxo no frontend:**
+```typescript
+// 1. Server Action gera prompt
+const { prompt, deepLink } = await generateAndDeliverPrompt({ epicId, target, ragDocIds });
 
-**Windows — PowerShell:**
-```powershell
-# Abrir Cursor e colar prompt
-Add-Type -AssemblyName System.Windows.Forms
-Start-Process "cursor" -ArgumentList "--new-window"
-Start-Sleep -Milliseconds 800
-[System.Windows.Forms.SendKeys]::SendWait("^k")  # Ctrl+K = chat
-Start-Sleep -Milliseconds 300
-[System.Windows.Forms.SendKeys]::SendWait("^v")  # Ctrl+V = paste
-```
+// 2. Browser copia para clipboard
+await navigator.clipboard.writeText(prompt);
 
-**Claude Code — via CLI diretamente:**
-```bash
-# Escreve prompt em arquivo temp + invoca claude
-echo "$PROMPT_CONTENT" > /tmp/cosmos-prompt-{taskId}.md
-claude --print /tmp/cosmos-prompt-{taskId}.md | pbcopy  # macOS
-claude --print /tmp/cosmos-prompt-{taskId}.md | clip    # Windows
+// 3. Browser abre URI scheme (IDE) ou URL (browser AI)
+window.open(deepLink, '_blank');
+
+// 4. Toast
+toast("Prompt copiado e Cursor aberto — cole com Ctrl+V");
 ```
 
 **Toast final:**
