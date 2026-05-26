@@ -251,6 +251,135 @@ INVEST Score: {score}% (pontos fracos: {weakCriteria})
 
 ---
 
+### US-010b · Geração de Prompt com RAG + Delivery Multi-IDE
+
+**Fluxo completo ao clicar em um AI Action Button:**
+
+#### Fase 1 — UX de geração (blur + spinner)
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  [card ou drawer inteiro em blur: filter: blur(4px)]     │
+│                                                          │
+│              ◐  Analisando contexto da task...           │
+│         → Buscando documentos relevantes no workspace    │
+│         → Aplicando técnicas de prompt engineering       │
+│         → Montando contexto para Claude Code             │
+│                                                          │
+└──────────────────────────────────────────────────────────┘
+```
+
+Mensagens de loading rotacionam (não genéricas):
+- "Lendo o épico e seus critérios INVEST..."
+- "Buscando docs similares no seu workspace..."
+- "Formatando Few-Shot examples para Claude Code..."
+- "Quase lá — otimizando para máxima performance..."
+
+#### Fase 2 — RAG: busca vetorial de documentos relevantes
+
+**Vector DB**: pgvector (Supabase) ou Pinecone (se escalar).
+- Índice gerado de: PRDs, specs, design system docs, arquitetura, playbooks do AI Playground
+- Query: embedding do título + descrição + tipo da task
+- Threshold de relevância: cosine similarity > 0.75
+
+**Ao encontrar docs relevantes → pergunta ao usuário:**
+```
+┌─────────────────────────────────────────────────────┐
+│  ✦ Encontrei 3 documentos que podem enriquecer      │
+│    o contexto deste prompt:                         │
+│                                                     │
+│  ☑  Design System Guidelines v2.3                  │
+│  ☑  Arquitetura de Microserviços (C4 Model)        │
+│  ☐  WSJF Scoring Playbook (menos relevante)        │
+│                                                     │
+│  [Adicionar selecionados]  [Pular]                  │
+└─────────────────────────────────────────────────────┘
+```
+
+#### Fase 3 — Geração do Prompt (Claude Haiku)
+
+**Model**: Claude Haiku (leve, rápido, < 1.5s)
+**Técnicas aplicadas por provider:**
+
+| Provider / Target | Técnica principal | Estrutura |
+|-------------------|------------------|-----------|
+| Claude / Claude Code | Chain-of-Thought + XML tags | `<task>`, `<context>`, `<instructions>` |
+| ChatGPT / Cursor | Few-Shot + role definition | System + User prompt |
+| Gemini | Zero-Shot CoT | "Think step by step..." |
+| Groq (LLaMA) | System Prompt separado + instruction tuning | `[INST]...[/INST]` format |
+| Windsurf / Cline / Roo | Markdown estruturado + código de referência | Headers + code blocks |
+| Perplexity | Query direta otimizada + fontes solicitadas | Question format |
+
+**Prompt de geração (Haiku instrução interna):**
+```
+Você é um especialista em prompt engineering para [TARGET_PROVIDER].
+Use técnicas de [TECHNIQUE] para criar um prompt especializado que:
+1. Contextualize a task SAFe completamente
+2. Instrua a IA a gerar [output_type] para este tipo de épico
+3. Inclua os documentos RAG relevantes como referência
+4. Siga o formato de prompt que performa melhor em [TARGET_PROVIDER]
+
+Task: {title} | Tipo: {type} | Score INVEST: {score}
+Docs RAG incluídos: {rag_docs}
+```
+
+#### Fase 4 — Delivery: copia + abre o target
+
+**Targets suportados:**
+
+| Target | Como abre | Comando |
+|--------|-----------|---------|
+| Claude Code (CLI) | Terminal com prompt pré-carregado | `claude "{prompt_file_path}"` |
+| Cursor | Abre Cursor + paste no chat | AppleScript / PowerShell + deep link |
+| Windsurf | Abre Windsurf + paste no chat | Deep link `windsurf://chat?prompt={encoded}` |
+| Cline / Roo | VS Code extension command | `vscode://Cline/chat?prompt={encoded}` |
+| Claude.ai | Abre browser com prompt | `https://claude.ai/new?prompt={encoded}` |
+| ChatGPT | Abre browser com prompt | `https://chatgpt.com/?prompt={encoded}` |
+
+**macOS — AppleScript para IDEs:**
+```applescript
+-- Abrir Cursor e colar prompt
+tell application "Cursor" to activate
+delay 0.5
+tell application "System Events"
+  keystroke "k" using command down  -- abre chat
+  delay 0.3
+  keystroke "v" using command down  -- cola prompt
+end tell
+```
+
+**Windows — PowerShell:**
+```powershell
+# Abrir Cursor e colar prompt
+Add-Type -AssemblyName System.Windows.Forms
+Start-Process "cursor" -ArgumentList "--new-window"
+Start-Sleep -Milliseconds 800
+[System.Windows.Forms.SendKeys]::SendWait("^k")  # Ctrl+K = chat
+Start-Sleep -Milliseconds 300
+[System.Windows.Forms.SendKeys]::SendWait("^v")  # Ctrl+V = paste
+```
+
+**Claude Code — via CLI diretamente:**
+```bash
+# Escreve prompt em arquivo temp + invoca claude
+echo "$PROMPT_CONTENT" > /tmp/cosmos-prompt-{taskId}.md
+claude --print /tmp/cosmos-prompt-{taskId}.md | pbcopy  # macOS
+claude --print /tmp/cosmos-prompt-{taskId}.md | clip    # Windows
+```
+
+**Toast final:**
+```
+✦ Prompt gerado e enviado para Cursor
+  [Ver prompt completo]  [Salvar no Playground]
+```
+
+#### Armazenamento
+- Prompt gerado → salvo no AI Playground vinculado à task
+- Hash do prompt → evita regerar se task não mudou
+- Histórico: usuário vê todos os prompts gerados para aquela task
+
+---
+
 #### F5 — Editor Notion-like · P1 — Should Have
 
 **US-011 · Editar descrição com blocos estruturados**
