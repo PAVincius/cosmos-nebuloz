@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use capability-planning/compute-gaps instead.
+ * PairSynergy/GroupSynergy data is preserved internally but UI no longer surfaces
+ * individual-level data. Removed for GDPR/LGPD compliance (no individual-level monitoring).
+ * See: apps/app/app/actions/flow-intelligence/capability-planning/
+ */
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
