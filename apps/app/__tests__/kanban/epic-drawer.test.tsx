@@ -1,6 +1,37 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+// Mock @repo/auth/server to prevent better-auth (which uses zod v4 z.xor)
+// from loading in the jsdom test environment.
+vi.mock("@repo/auth/server", () => ({
+  requireTenantSession: vi.fn(),
+  currentUser: vi.fn(),
+  redirectToSignIn: vi.fn(),
+  getOrgId: vi.fn(),
+  requireRole: vi.fn(),
+  requireMfaForPrivilegedRoles: vi.fn(),
+  AuthError: class AuthError extends Error {},
+}));
+
+// Mock server actions that import @repo/auth/server
+vi.mock("@/app/actions/epics/update-epic", () => ({
+  updateEpic: vi.fn().mockResolvedValue({ ok: true, data: { id: "e1" } }),
+}));
+
+vi.mock("@/app/actions/epics/analyze-invest", () => ({
+  analyzeInvest: vi.fn().mockResolvedValue({ ok: true, data: {} }),
+}));
+
+vi.mock("@/app/actions/ai-prompt/generate-prompt", () => ({
+  generateAndDeliverPrompt: vi.fn().mockResolvedValue({ ok: true }),
+}));
+
+// Mock tiptap (used by EpicDrawerDescription) to avoid jsdom editor issues
+vi.mock("@tiptap/react", () => ({
+  useEditor: vi.fn(() => null),
+  EditorContent: () => <div data-testid="editor" />,
+}));
+
 // Mock Sheet to avoid radix/portal issues in jsdom
 vi.mock("@repo/design-system/components/ui/sheet", () => ({
   Sheet: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
