@@ -45,6 +45,7 @@
     "@repo/observability": "workspace:*",
     "@repo/safe-engine": "workspace:*",
     "@repo/security": "workspace:*",
+    "@repo/storage": "workspace:*",
     "@repo/seo": "workspace:*",
     "@repo/webhooks": "workspace:*",
     "@sentry/nextjs": "^10.29.0",
