@@ -1,8 +1,25 @@
 # ✦ Cosmos / Portfolio Kanban
 ## PRD, SRD & Guia de Implementação
-**v0.2 · Maio 2026 · Status: Prototyping**
+**v0.3 · Maio 2026 · Status: Prototyping**
 
 > "O kanban que analisa seus épicos enquanto você os move." — Única ferramenta SAFe que combina UX Linear com análise IA passiva visível diretamente nos cards.
+
+---
+
+## Decisões de Design (Open Questions → Fechadas)
+
+| # | Questão | Decisão |
+|---|---------|---------|
+| 1 | INVEST+STAR+Granularidade: tabs ou só INVEST? | **Tabs no Side Panel** (INVEST, STAR, Granularidade) |
+| 2 | Side panel layout? | **Full Width Drawer** — conteúdo rico (descrição, resultados) tem prioridade sobre compacteza |
+| 3 | Quick-add: inline ou modal? | **Modal Linear-style** |
+| 4 | WIP limits: hard block ou soft warning? | **Soft warning** — permite drop mas destaca visualmente |
+| 5 | Backlink graph: Sprint 1 ou v2? | **Sprint 1** — dependências visíveis são críticas no SAFe |
+| 6 | Editor: TipTap ou custom? | **TipTap** com markdown shortcuts nativos |
+| 7 | AI buttons: link externo ou prompt customizável? | **Prompt especializado** por provider + contexto completo da task |
+
+### Nova Feature: AI Playground (Artifacts Library)
+Seção dedicada dentro do Cosmos onde ficam todos os artefatos gerados com IA (PRDs, specs, diagramas, playbooks). Ver F8 abaixo.
 
 ---
 
@@ -97,13 +114,62 @@ Card com progressive disclosure: compacto → hover expande → click abre paine
 - 6 critérios individuais: Independent, Negotiable, Valuable, Estimable, Small, Testable
 - Score composto exibido no card como barra de progresso
 
-**US-007 · Painel de análise detalhada**
-> Como PM, quero clicar no card e ver breakdown completo INVEST com sugestões concretas de melhoria.
-- Side panel slide-in (380px) com backdrop blur
-- Breakdown: 6 barras individuais com scores percentuais
-- Seção "Sugestões IA" com texto acionável em português
-- Botão "✦ Melhorar com IA" gera draft de nova descrição
-- Grid de métricas SAFe: WSJF, Features, OKRs, BV, TC, RR
+**US-007 · Full Width Drawer — visão completa da task**
+> Como PM, quero clicar no card e ver a task completa em um drawer largo, com foco em conteúdo (descrição, resultados, contexto) e análise IA em abas separadas.
+
+**Layout do Drawer:**
+```
+┌────────────────────────────────────────────────────────────────┐
+│  [◈ Epic]  Migração para microserviços          [Edit] [✕]    │
+│  ● Platform · In Analysis · WSJF 8.2 · 4 feats · 2 OKRs      │
+├──────────────────────────────────────────────────────────────  │
+│  [📄 Descrição]  [✦ Análise IA]  [🔗 Dependências]  [📎 Mais] │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  ABA DESCRIÇÃO (default):                                      │
+│  ┌──────────────────────────────────────────────────────────┐ │
+│  │ [editor TipTap — blocos ricos]                           │ │
+│  │ ## Hipótese de Negócio                                   │ │
+│  │ Migrar o monolito usando Strangler Fig Pattern...        │ │
+│  │                                                          │ │
+│  │ ## Resultados Esperados                                  │ │
+│  │ ☑ Redução 40% latência P99                               │ │
+│  │ ☑ Deploy independente por domínio                        │ │
+│  │                                                          │ │
+│  │ ## Acceptance Criteria                                   │ │
+│  │ > Given auth service isolated...                         │ │
+│  └──────────────────────────────────────────────────────────┘ │
+│                                                                │
+│  ⚠  "Esta task parece grande demais para um único épico."     │
+│     Verifique a aba Análise IA → critério Small (38%).        │
+└────────────────────────────────────────────────────────────────┘
+```
+
+**Regras do drawer:**
+- Abre em full width (100vw) com overlay escurecido, não empurra o board
+- Aba default: **Descrição** (não análise — conteúdo é o que importa)
+- Warning "task grande demais" aparece fixo no rodapé da aba Descrição quando Small < 50%, com link direto para aba Análise IA
+- Drawer preserva scroll position do board ao abrir/fechar
+
+**Aba Análise IA — 3 sub-tabs:**
+```
+[INVEST ✦] [STAR] [Granularidade]
+```
+- **INVEST**: 6 barras individuais, score por critério, sugestões em PT-BR, "✦ Melhorar com IA"
+- **STAR**: Situation/Task/Action/Result scoring do acceptance criteria
+- **Granularidade**: épico grande? features bem divididas? recomendação de split
+
+**Aba Dependências:**
+- Lista de épicos bloqueados / que bloqueiam esta task
+- Mini-grafo visual de dependências (D3 ou React Flow, collapsible)
+- Botão "+ Add dependency" com busca por título
+- Badge no card do board quando há dependências bloqueantes
+
+**Aba Mais:**
+- Assignees + co-autores (edit inline)
+- Histórico de mudanças (timeline compacta)
+- Transcrição original (se importada)
+- Artefatos IA gerados para esta task (link para AI Playground)
 
 **US-008 · Análise em batch**
 > Como RTE, quero analisar todos os épicos de uma vez para preparar o PI Planning.
@@ -126,12 +192,62 @@ Card com progressive disclosure: compacto → hover expande → click abre paine
 - Meta grid 2 colunas: Assignee, WSJF, Team, OKRs, Co-authors, Type
 - Footer: Cancel + Create [Type] com gradient button
 
-**US-010 · AI Action Buttons (Open with AI)**
-> Como PM, quero enviar o contexto do épico para diferentes IAs para obter perspectivas variadas.
-- 5 botões circulares (36×36px) com cores de marca
-- Hover: expande para direita mostrando frase única
-- Claude (orange): "Let's rock!", Claude Code (navy): "No mistakes!", ChatGPT (green): "Let's do it faster!", Gemini (blue): "Think deeper!", Perplexity (gray): "Search the world!"
-- Click copia contexto do épico + abre IA selecionada
+**US-010 · AI Action Buttons — Prompt Especializado por Provider**
+> Como PM, quero enviar um prompt especializado e contextualizado para diferentes IAs, não apenas o texto da task copiado.
+
+**Conceito:** Cada botão IA não abre um chat genérico. Ele **monta um prompt especializado** baseado em:
+1. Tipo da task (Epic / Feature / Story)
+2. Contexto completo da task (título, descrição, AC, WSJF, OKRs, tema)
+3. Referências do projeto (design system, arquitetura, stack técnica)
+4. Template de prompt específico por provider
+
+**Prompt por provider:**
+
+| Provider | Especialização do Prompt | Exemplo de instrução |
+|----------|------------------------|---------------------|
+| Claude | Análise holística + plano de implementação SAFe | "Analise este épico SAFe considerando o contexto do portfolio..." |
+| Claude Code | Prompt de engenharia: implementação técnica, código, arquitetura | "Você é um senior engineer. Implemente as tasks técnicas deste épico..." |
+| ChatGPT | Criatividade + alternativas de abordagem | "Explore 3 abordagens alternativas para este épico considerando..." |
+| Gemini | Research + benchmarks + mercado | "Pesquise benchmarks e melhores práticas para este tipo de épico..." |
+| Perplexity | Busca de referências, documentação, cases | "Encontre documentação, cases e referências para implementar..." |
+
+**Contexto injetado automaticamente no prompt:**
+```
+--- CONTEXTO DO PROJETO ---
+Workspace: {workspaceName}
+Stack: {techStack from settings}
+Design System: {designSystemRef if type=UI}
+Arquitetura: {archRef if type=technical}
+
+--- CONTEXTO DA TASK ---
+Tipo: Epic · Status: In Analysis
+Título: {title}
+Descrição: {description_md}
+Acceptance Criteria: {ac}
+WSJF: {score} (BV:{bv} TC:{tc} RR:{rr})
+OKRs vinculados: {okrList}
+Tema Estratégico: {theme}
+INVEST Score: {score}% (pontos fracos: {weakCriteria})
+
+--- REFERÊNCIAS ---
+{design_system_doc if applicable}
+{architecture_doc if applicable}
+```
+
+**Comportamento do click:**
+1. Monta o prompt completo
+2. Copia para clipboard
+3. Abre a IA na URL correta (claude.ai, chatgpt.com, etc.)
+4. Toast: "Prompt copiado — cole na IA. Salvei uma cópia no AI Playground."
+5. Salva artefato no AI Playground da task (histórico de prompts)
+
+**Visual:** Mantém design circular expand-on-hover conforme mockup anterior.
+
+**Configuração de contexto** (workspace settings):
+- Tech stack declarada
+- Link para design system (Figma, Storybook)
+- Link para docs de arquitetura
+- Prompt base customizável por tipo de task (Epic/Feature/Story)
 
 ---
 
@@ -172,6 +288,61 @@ Card com progressive disclosure: compacto → hover expande → click abre paine
 - Botão "✦ Extrair estrutura" usa LLM para parse → blocos estruturados na descrição
 - Botão "✦ Resumir" condensa transcrição
 - Contador de caracteres visível
+
+---
+
+#### F8 — AI Playground (Artifacts Library) · P1 — Should Have
+
+**US-016 · Biblioteca de artefatos gerados com IA**
+> Como PM/RTE, quero ter um lugar centralizado dentro do Cosmos onde ficam todos os artefatos gerados com IA, organizados por categoria, para consulta e reuso.
+
+**Conceito:**
+O AI Playground é uma seção `/playground` no Cosmos — uma pasta inteligente de outputs de IA vinculados ao workspace. Toda vez que a IA gera algo relevante (PRD, spec, diagrama, plano, código de referência), o artefato vai para cá automaticamente ou por ação do usuário.
+
+**Estrutura de pastas (exemplo):**
+```
+AI Playground/
+├── PRDs/
+│   ├── 2026-05-25 · Kanban Portfolio AI (gerado via Claude)
+│   ├── 2026-05-20 · FinOps Lean Budget (gerado via Claude Code)
+│   └── ...
+├── Specs/
+│   ├── Arquitetura de Microserviços · Epic-047
+│   └── ...
+├── Playbooks/
+│   ├── WSJF Scoring Guide (gerado via GPT)
+│   ├── SAFe PI Planning Checklist
+│   └── ...
+├── Diagramas/
+│   ├── C4 Model · Platform Domain (Gemini)
+│   └── ...
+└── Por Epic/
+    ├── Epic-047 · Microserviços/
+    │   ├── Prompt usado (Claude Code, 2026-05-25)
+    │   ├── Plano de implementação gerado
+    │   └── Diagrama de dependências
+    └── ...
+```
+
+**Fluxos de entrada no Playground:**
+1. **AI Action Button** → "Salvar no Playground" automático após enviar prompt
+2. **"✦ Melhorar com IA"** no drawer → output salvo como artefato da task
+3. **Import manual** → upload de qualquer arquivo gerado externamente
+4. **Transcrição processada** → salva transcrição + estrutura extraída como artefato
+
+**Features do Playground:**
+- Visualização em lista ou grid com thumbnails
+- Filtro por: categoria, epic vinculada, provider de IA, data, autor
+- Busca full-text no conteúdo dos artefatos
+- Preview inline (markdown renderizado, imagem, código)
+- Download / Copy / Compartilhar link
+- Vinculação bidirecional: artefato → epic, epic → artefatos
+- Versioning: novo output não sobrescreve, cria nova versão
+
+**Acesso:**
+- Menu lateral principal: `✦ AI Playground`
+- No drawer da task: aba "Mais" mostra artefatos vinculados àquele épico
+- Badge no card do board quando épico tem artefatos no Playground
 
 ---
 
@@ -537,12 +708,23 @@ function useDragEpic() {
 
 ---
 
+## ✅ Decisões Fechadas
+
+| Questão | Decisão |
+|---------|---------|
+| Scoring tabs | Tabs: INVEST / STAR / Granularidade no Full Width Drawer |
+| Side panel layout | Full Width Drawer (conteúdo > compacteza) |
+| Quick-add | Modal Linear-style |
+| WIP limits | Soft warning (permite drop, destaca visualmente) |
+| Backlink graph | Sprint 1 — dependências são críticas no SAFe |
+| Editor | TipTap com markdown shortcuts nativos |
+| AI buttons | Prompt especializado por provider + contexto completo |
+
 ## ⚠ Questões em Aberto
 
-- [ ] **INVEST scoring**: mostrar INVEST+STAR+Granularidade como tabs no side panel, ou só INVEST?
-- [ ] **Side panel**: full-width drawer ou split 60/40 com kanban visível?
-- [ ] **Quick-add**: inline (Trello-style) ou sempre modal (Linear-style)?
-- [ ] **WIP limits**: hard block (impedir drop) ou soft warning (permitir com destaque)?
-- [ ] **Backlink graph** (Obsidian-style): Sprint 1 ou backlog para v2?
-- [ ] **Editor**: TipTap customizado ou implementação própria com contentEditable?
-- [ ] **Multi-AI buttons**: integração real com cada IA via API, ou link externo com contexto copiado?
+- [ ] **AI Playground storage**: banco de dados (blobs PostgreSQL) ou S3/R2 para arquivos?
+- [ ] **Prompt templates**: editáveis por workspace admin ou fixos por tipo?
+- [ ] **Dependências**: só entre épicos do mesmo board, ou cross-board também?
+- [ ] **Grafo de dependências**: D3 custom ou React Flow (mais rico, mais pesado)?
+- [ ] **Versioning de artefatos**: Git-like (full history) ou apenas "último + anterior"?
+- [ ] **AI Playground**: rota `/playground` separada ou modal/drawer dentro do board?
