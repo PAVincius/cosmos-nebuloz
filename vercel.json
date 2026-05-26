@@ -1,0 +1,13 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/billing-sync-dispatch",
+      "schedule": "0 2 * * *"
+    }
+  ],
+  "functions": {
+    "app/api/inngest/route.ts": {
+      "maxDuration": 300
+    }
+  }
+}
