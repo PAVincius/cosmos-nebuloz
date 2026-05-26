@@ -78,7 +78,7 @@ describe("analyzeInvest", () => {
   it("persists result to database after AI call", async () => {
     await analyzeInvest({ epicId: "e1" });
     expect(mocks.epicUpdate).toHaveBeenCalledWith({
-      where: { id: "e1" },
+      where: { id: "e1", tenantId: "t1" },
       data: expect.objectContaining({
         investScore: 72,
         investBreakdown: defaultInvestObject,

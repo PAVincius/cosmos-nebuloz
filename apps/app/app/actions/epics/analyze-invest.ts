@@ -97,10 +97,10 @@ Avalie este épico SAFe usando INVEST e retorne o JSON de score.`,
 
     // Persist result
     await database.epic.update({
-      where: { id: epic.id },
+      where: { id: epic.id, tenantId: ctx.tenantId },
       data: {
         investScore: object.compositeScore,
-        investBreakdown: object as object,
+        investBreakdown: object,
         investHash: currentHash,
       },
     });
