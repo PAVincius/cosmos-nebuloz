@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { updateEpicStatus } from "@/app/actions/epics/update-status";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
+import { EpicCreateModal } from "./epic-create-modal";
 import { EpicDrawer } from "./epic-drawer";
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumn } from "./kanban-column";
@@ -41,6 +42,7 @@ export const KanbanBoard = ({
   const [themeFilter, setThemeFilter] = useState<string>("ALL");
   const [activeEpic, setActiveEpic] = useState<PortfolioEpic | null>(null);
   const [openEpicId, setOpenEpicId] = useState<string | null>(null);
+  const [quickAddColumnId, setQuickAddColumnId] = useState<string | null>(null);
   const [, updatePresence] = useMyPresence();
   const others = useOthers();
 
@@ -317,6 +319,8 @@ export const KanbanBoard = ({
               key={col.id}
               label={col.label}
               onOpenDrawer={setOpenEpicId}
+              onQuickAdd={() => setQuickAddColumnId(col.id)}
+              wipLimit={col.wipLimit}
             />
           ))}
         </div>
@@ -336,6 +340,15 @@ export const KanbanBoard = ({
           epic={epics.find((e) => e.id === openEpicId) ?? null}
           epicId={openEpicId}
           onClose={() => setOpenEpicId(null)}
+        />
+      )}
+
+      {quickAddColumnId !== null && (
+        <EpicCreateModal
+          statusId={quickAddColumnId}
+          themes={themes}
+          onClose={() => setQuickAddColumnId(null)}
+          onCreated={() => setQuickAddColumnId(null)}
         />
       )}
     </div>

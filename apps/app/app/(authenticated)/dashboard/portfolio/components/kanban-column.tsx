@@ -6,6 +6,7 @@ import { memo } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { ColumnSettings } from "./column-settings";
 import { KanbanCard } from "./kanban-card";
+import { WipLimitWarning } from "./wip-limit-warning";
 
 type KanbanColumnProps = {
   id: string;
@@ -14,6 +15,8 @@ type KanbanColumnProps = {
   epics: PortfolioEpic[];
   canConfigure: boolean;
   onOpenDrawer?: (epicId: string) => void;
+  onQuickAdd?: () => void;
+  wipLimit?: number;
 };
 
 function columnEpicsSignature(epics: PortfolioEpic[]): string {
@@ -29,6 +32,8 @@ function KanbanColumnInner({
   epics,
   canConfigure,
   onOpenDrawer,
+  onQuickAdd,
+  wipLimit,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
@@ -57,6 +62,19 @@ function KanbanColumnInner({
           <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1.5 font-mono text-[10px] text-muted-foreground">
             {epics.length}
           </span>
+          {wipLimit !== undefined && (
+            <WipLimitWarning count={epics.length} limit={wipLimit} />
+          )}
+          {onQuickAdd !== undefined && (
+            <button
+              aria-label={`Adicionar épico em ${label}`}
+              className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              onClick={onQuickAdd}
+              type="button"
+            >
+              <span aria-hidden className="text-[14px] leading-none">+</span>
+            </button>
+          )}
           {canConfigure === true && (
             <ColumnSettings color={color} columnId={id} label={label} />
           )}
@@ -87,5 +105,7 @@ export const KanbanColumn = memo(
     prev.label === next.label &&
     prev.color === next.color &&
     prev.canConfigure === next.canConfigure &&
+    prev.wipLimit === next.wipLimit &&
+    prev.onQuickAdd === next.onQuickAdd &&
     columnEpicsSignature(prev.epics) === columnEpicsSignature(next.epics)
 );
