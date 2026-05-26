@@ -1,19 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import {
-  CheckCircleIcon,
-  GitBranchIcon,
-  LinkIcon,
-  MessageSquareIcon,
-  SettingsIcon,
-  Trash2Icon,
-  TriangleAlertIcon,
-  XCircleIcon,
-} from "lucide-react";
-import { Button } from "@repo/design-system/components/ui/button";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
   CardContent,
@@ -33,10 +21,23 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
-  upsertIntegration,
+  CheckCircleIcon,
+  GitBranchIcon,
+  LinkIcon,
+  MessageSquareIcon,
+  SettingsIcon,
+  Trash2Icon,
+  TriangleAlertIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import {
   deleteIntegration,
   type Integration,
+  upsertIntegration,
 } from "../../../../actions/settings/integrations";
+import { BillingConnectWizard } from "./billing-connect-wizard";
 
 // ─── Integration Catalog ──────────────────────────────────────────────────────
 
@@ -55,9 +56,18 @@ const INTEGRATION_CATALOG: IntegrationDef[] = [
     description: "Sincronize issues, sprints e projetos com o Jira Cloud.",
     icon: LinkIcon,
     fields: [
-      { key: "url", label: "URL do Workspace", placeholder: "https://yourorg.atlassian.net" },
+      {
+        key: "url",
+        label: "URL do Workspace",
+        placeholder: "https://yourorg.atlassian.net",
+      },
       { key: "email", label: "Email", placeholder: "user@example.com" },
-      { key: "token", label: "API Token", placeholder: "••••••••••", type: "password" },
+      {
+        key: "token",
+        label: "API Token",
+        placeholder: "••••••••••",
+        type: "password",
+      },
     ],
   },
   {
@@ -68,7 +78,12 @@ const INTEGRATION_CATALOG: IntegrationDef[] = [
     fields: [
       { key: "organization", label: "Organização", placeholder: "myorg" },
       { key: "project", label: "Projeto", placeholder: "my-project" },
-      { key: "token", label: "Personal Access Token", placeholder: "••••••••••", type: "password" },
+      {
+        key: "token",
+        label: "Personal Access Token",
+        placeholder: "••••••••••",
+        type: "password",
+      },
     ],
   },
   {
@@ -78,7 +93,12 @@ const INTEGRATION_CATALOG: IntegrationDef[] = [
     icon: GitBranchIcon,
     fields: [
       { key: "org", label: "Organização / Usuário", placeholder: "myorg" },
-      { key: "token", label: "Personal Access Token", placeholder: "ghp_••••••••", type: "password" },
+      {
+        key: "token",
+        label: "Personal Access Token",
+        placeholder: "ghp_••••••••",
+        type: "password",
+      },
     ],
   },
   {
@@ -87,7 +107,11 @@ const INTEGRATION_CATALOG: IntegrationDef[] = [
     description: "Receba notificações e atualizações diretamente no Slack.",
     icon: MessageSquareIcon,
     fields: [
-      { key: "webhookUrl", label: "Webhook URL", placeholder: "https://hooks.slack.com/services/..." },
+      {
+        key: "webhookUrl",
+        label: "Webhook URL",
+        placeholder: "https://hooks.slack.com/services/...",
+      },
       { key: "channel", label: "Canal padrão", placeholder: "#cosmos-alerts" },
     ],
   },
@@ -98,7 +122,7 @@ const INTEGRATION_CATALOG: IntegrationDef[] = [
 function StatusBadge({ status }: { status: string }) {
   if (status === "ACTIVE") {
     return (
-      <Badge variant="default" className="gap-1">
+      <Badge className="gap-1" variant="default">
         <CheckCircleIcon className="h-3 w-3" />
         Conectado
       </Badge>
@@ -106,14 +130,14 @@ function StatusBadge({ status }: { status: string }) {
   }
   if (status === "ERROR") {
     return (
-      <Badge variant="destructive" className="gap-1">
+      <Badge className="gap-1" variant="destructive">
         <TriangleAlertIcon className="h-3 w-3" />
         Erro
       </Badge>
     );
   }
   return (
-    <Badge variant="secondary" className="gap-1">
+    <Badge className="gap-1" variant="secondary">
       <XCircleIcon className="h-3 w-3" />
       Inativo
     </Badge>
@@ -158,7 +182,7 @@ function ConnectDialog({
   const isValid = def.fields.every((f) => fields[f.key]?.trim());
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" variant={existing ? "outline" : "default"}>
           {existing ? (
@@ -182,30 +206,37 @@ function ConnectDialog({
 
         <div className="flex flex-col gap-4 py-1">
           {def.fields.map((field) => (
-            <div key={field.key} className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2" key={field.key}>
               <Label htmlFor={`int-${field.key}`}>
                 {field.label} <span className="text-destructive">*</span>
               </Label>
               <Input
                 id={`int-${field.key}`}
-                type={field.type ?? "text"}
-                placeholder={field.placeholder}
-                value={fields[field.key] ?? ""}
                 onChange={(e) =>
-                  setFields((prev) => ({ ...prev, [field.key]: e.target.value }))
+                  setFields((prev) => ({
+                    ...prev,
+                    [field.key]: e.target.value,
+                  }))
                 }
+                placeholder={field.placeholder}
+                type={field.type ?? "text"}
+                value={fields[field.key] ?? ""}
               />
             </div>
           ))}
 
-          {error && <p className="text-destructive text-sm">{error}</p>}
+          {!!error && <p className="text-destructive text-sm">{error}</p>}
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+          <Button
+            disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !isValid}>
+          <Button disabled={isPending || !isValid} onClick={handleSubmit}>
             {isPending ? "Conectando..." : "Salvar conexão"}
           </Button>
         </DialogFooter>
@@ -223,6 +254,9 @@ export function IntegrationsBoard({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [wizardProvider, setWizardProvider] = useState<
+    "billing_aws" | "billing_gcp" | "billing_azure" | null
+  >(null);
 
   function refresh() {
     router.refresh();
@@ -240,46 +274,96 @@ export function IntegrationsBoard({
   );
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2">
-      {INTEGRATION_CATALOG.map((def) => {
-        const existing = integrationMap[def.type];
-        const IconComp = def.icon;
+    <div>
+      <section className="mb-8">
+        <h2 className="mb-3 font-semibold text-base">Billing & Cloud Cost</h2>
+        <div className="grid grid-cols-3 gap-4">
+          {(
+            [
+              {
+                provider: "billing_aws" as const,
+                label: "AWS Cost Explorer",
+                logo: "☁️",
+              },
+              {
+                provider: "billing_gcp" as const,
+                label: "GCP BigQuery Billing",
+                logo: "🟡",
+              },
+              {
+                provider: "billing_azure" as const,
+                label: "Azure Cost Management",
+                logo: "🔵",
+              },
+            ] as const
+          ).map(({ provider, label, logo }) => (
+            <button
+              className="flex flex-col items-center gap-2 rounded-lg border p-4 text-sm transition-colors hover:bg-muted"
+              key={provider}
+              onClick={() => setWizardProvider(provider)}
+              type="button"
+            >
+              <span className="text-2xl">{logo}</span>
+              <span className="font-medium">{label}</span>
+              <span className="text-muted-foreground text-xs">Conectar</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
-        return (
-          <Card key={def.type} className="flex flex-col">
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-lg border bg-muted">
-                    <IconComp className="h-5 w-5" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        {INTEGRATION_CATALOG.map((def) => {
+          const existing = integrationMap[def.type];
+          const IconComp = def.icon;
+
+          return (
+            <Card className="flex flex-col" key={def.type}>
+              <CardHeader className="pb-3">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg border bg-muted">
+                      <IconComp className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-sm">{def.name}</CardTitle>
+                    </div>
                   </div>
-                  <div>
-                    <CardTitle className="text-sm">{def.name}</CardTitle>
-                  </div>
+                  {!!existing && <StatusBadge status={existing.status} />}
                 </div>
-                {existing && <StatusBadge status={existing.status} />}
-              </div>
-              <CardDescription className="text-xs leading-relaxed">
-                {def.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="flex items-center gap-2 pt-0 mt-auto">
-              <ConnectDialog def={def} existing={existing} onSuccess={refresh} />
-              {existing && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 text-destructive hover:text-destructive"
-                  onClick={() => handleDisconnect(def.type)}
-                  disabled={isPending}
-                >
-                  <Trash2Icon className="h-4 w-4" />
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        );
-      })}
+                <CardDescription className="text-xs leading-relaxed">
+                  {def.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="mt-auto flex items-center gap-2 pt-0">
+                <ConnectDialog
+                  def={def}
+                  existing={existing}
+                  onSuccess={refresh}
+                />
+                {!!existing && (
+                  <Button
+                    className="h-9 w-9 text-destructive hover:text-destructive"
+                    disabled={isPending}
+                    onClick={() => handleDisconnect(def.type)}
+                    size="icon"
+                    variant="ghost"
+                  >
+                    <Trash2Icon className="h-4 w-4" />
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+
+      {wizardProvider !== null && (
+        <BillingConnectWizard
+          onClose={() => setWizardProvider(null)}
+          open={wizardProvider !== null}
+          provider={wizardProvider}
+        />
+      )}
     </div>
   );
 }
