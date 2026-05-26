@@ -1,9 +1,105 @@
-import { inngest } from "./client";
 import { database } from "@repo/database";
-import { fetchAwsPage, type AwsAdapterConfig } from "@/lib/billing-adapters/aws";
-import { resolveMapping, type TagRuleInput } from "@/lib/billing-adapters/tag-rule-engine";
+import {
+  type AwsAdapterConfig,
+  fetchAwsPage,
+} from "@/lib/billing-adapters/aws";
+import {
+  resolveMapping,
+  type TagRuleInput,
+} from "@/lib/billing-adapters/tag-rule-engine";
+import { inngest } from "./client";
 
 const BATCH_SIZE = 500;
+
+type StagedRow = {
+  payload: unknown;
+};
+
+type BillingEntryInsert = {
+  tenantId: string;
+  integrationId: string;
+  provider: string;
+  accountId: string;
+  externalId: string;
+  usageStartDate: Date;
+  usageEndDate: Date;
+  service: string;
+  chargeCategory: string;
+  billedCost: string;
+  effectiveCost: string;
+  listCost: string;
+  unblendedAmount: string;
+  amortizedAmount: string;
+  usageQuantity: string | null;
+  usageUnit: string | null;
+  currency: string;
+  fxRate: string;
+  tenantCurrency: string;
+  tenantAmount: string;
+  tags: Record<string, string>;
+  themeId: string | null;
+  mappingRuleId: string | null;
+  mappingConf: string;
+};
+
+type CostFields = Pick<
+  BillingEntryInsert,
+  | "billedCost"
+  | "effectiveCost"
+  | "listCost"
+  | "unblendedAmount"
+  | "amortizedAmount"
+  | "usageQuantity"
+  | "usageUnit"
+  | "currency"
+  | "tenantCurrency"
+  | "tenantAmount"
+>;
+
+function extractCostFields(e: Record<string, unknown>): CostFields {
+  return {
+    billedCost: String(e.billedCost ?? "0"),
+    effectiveCost: String(e.effectiveCost ?? "0"),
+    listCost: String(e.listCost ?? "0"),
+    unblendedAmount: String(e.unblendedAmount ?? "0"),
+    amortizedAmount: String(e.amortizedAmount ?? "0"),
+    usageQuantity: e.usageQuantity ? String(e.usageQuantity) : null,
+    usageUnit: e.usageUnit ? String(e.usageUnit) : null,
+    currency: String(e.currency ?? "USD"),
+    tenantCurrency: String(e.tenantCurrency ?? "USD"),
+    tenantAmount: String(e.tenantAmount ?? e.amortizedAmount ?? "0"),
+  };
+}
+
+function mapStagedRowToEntry(
+  row: StagedRow,
+  tenantId: string,
+  integrationId: string,
+  tagRules: TagRuleInput[]
+): BillingEntryInsert {
+  const e = row.payload as Record<string, unknown>;
+  const tags = (e.tags ?? {}) as Record<string, string>;
+  const accountId = String(e.accountId ?? "");
+  const mapping = resolveMapping(tagRules, tags, accountId);
+
+  return {
+    tenantId,
+    integrationId,
+    provider: String(e.provider ?? "AWS"),
+    accountId,
+    externalId: String(e.externalId ?? ""),
+    usageStartDate: new Date(String(e.usageStartDate)),
+    usageEndDate: new Date(String(e.usageEndDate)),
+    service: String(e.service ?? ""),
+    chargeCategory: String(e.chargeCategory ?? "Usage"),
+    ...extractCostFields(e),
+    fxRate: "1",
+    tags,
+    themeId: mapping.themeId,
+    mappingRuleId: mapping.mappingRuleId,
+    mappingConf: mapping.mappingConf,
+  };
+}
 
 export const billingSyncFunction = inngest.createFunction(
   {
@@ -11,7 +107,7 @@ export const billingSyncFunction = inngest.createFunction(
     triggers: [{ event: "billing/sync.requested" }],
     concurrency: [
       { key: "event.data.integrationId", limit: 1 },
-      { scope: "fn" as const,            limit: 50 },
+      { scope: "fn" as const, limit: 50 },
     ],
     retries: 3,
   },
@@ -34,18 +130,25 @@ export const billingSyncFunction = inngest.createFunction(
       const now = new Date();
       const lookbackDays = cursor?.lookbackDays ?? 7;
       const startDate = cursor
-        ? new Date(cursor.lastIngestedThrough.getTime() - lookbackDays * 86400000)
-        : new Date(now.getTime() - 90 * 86400000);
+        ? new Date(
+            cursor.lastIngestedThrough.getTime() - lookbackDays * 86_400_000
+          )
+        : new Date(now.getTime() - 90 * 86_400_000);
 
       const syncRun = await database.billingSyncRun.create({
-        data: { tenantId, integrationId, status: "RUNNING", currentStep: "load-cursor" },
+        data: {
+          tenantId,
+          integrationId,
+          status: "RUNNING",
+          currentStep: "load-cursor",
+        },
       });
 
       return {
-        config:    integration.config as AwsAdapterConfig,
+        config: integration.config as AwsAdapterConfig,
         syncRunId: syncRun.id,
         startDate: startDate.toISOString().split("T")[0] as string,
-        endDate:   now.toISOString().split("T")[0] as string,
+        endDate: now.toISOString().split("T")[0] as string,
       };
     });
 
@@ -56,10 +159,10 @@ export const billingSyncFunction = inngest.createFunction(
     do {
       const pageResult = await step.run(`fetch-page-${page}`, async () => {
         const result = await fetchAwsPage({
-          config:        context.config,
+          config: context.config,
           tenantId,
-          startDate:     context.startDate,
-          endDate:       context.endDate,
+          startDate: context.startDate,
+          endDate: context.endDate,
           nextPageToken: nextToken,
         });
 
@@ -69,31 +172,34 @@ export const billingSyncFunction = inngest.createFunction(
               tenantId,
               integrationId,
               syncRunId: context.syncRunId,
-              payload:   e as object,
+              payload: e as object,
               page,
             })),
           });
         }
 
-        return { nextToken: result.nextPageToken, count: result.entries.length };
+        return {
+          nextToken: result.nextPageToken,
+          count: result.entries.length,
+        };
       });
 
       nextToken = pageResult.nextToken;
-      page++;
+      page += 1;
     } while (nextToken);
 
     // ── Step 3: Load tag rules ────────────────────────────────────────────
-    const tagRules = await step.run("load-tag-rules", async () => {
-      return database.tagRule.findMany({
-        where:   { tenantId, enabled: true },
+    const tagRules = await step.run("load-tag-rules", async () =>
+      database.tagRule.findMany({
+        where: { tenantId, enabled: true },
         orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
-      });
-    });
+      })
+    );
 
     // ── Step 4: Promote staged → BillingEntry ────────────────────────────
     const promotedCount = await step.run("promote-entries", async () => {
       const staged = await database.billingEntryStaging.findMany({
-        where:   { tenantId, integrationId, syncRunId: context.syncRunId },
+        where: { tenantId, integrationId, syncRunId: context.syncRunId },
         orderBy: { page: "asc" },
       });
 
@@ -102,55 +208,24 @@ export const billingSyncFunction = inngest.createFunction(
       for (let i = 0; i < staged.length; i += BATCH_SIZE) {
         const batch = staged.slice(i, i + BATCH_SIZE);
 
-        const entries = batch.map((row) => {
-          const e         = row.payload as Record<string, unknown>;
-          const tags      = (e.tags ?? {}) as Record<string, string>;
-          const accountId = String(e.accountId ?? "");
+        const ruleInputs: TagRuleInput[] = tagRules.map((r) => ({
+          id: r.id,
+          matchType: r.matchType,
+          tagKey: r.tagKey,
+          tagValue: r.tagValue,
+          themeId: r.themeId,
+          artId: r.artId,
+          epicId: r.epicId,
+          priority: r.priority,
+          enabled: r.enabled,
+        }));
 
-          const ruleInputs: TagRuleInput[] = tagRules.map((r) => ({
-            id:        r.id,
-            matchType: r.matchType,
-            tagKey:    r.tagKey,
-            tagValue:  r.tagValue,
-            themeId:   r.themeId,
-            artId:     r.artId,
-            epicId:    r.epicId,
-            priority:  r.priority,
-            enabled:   r.enabled,
-          }));
-
-          const mapping = resolveMapping(ruleInputs, tags, accountId);
-
-          return {
-            tenantId,
-            integrationId,
-            provider:        String(e.provider ?? "AWS"),
-            accountId,
-            externalId:      String(e.externalId ?? ""),
-            usageStartDate:  new Date(String(e.usageStartDate)),
-            usageEndDate:    new Date(String(e.usageEndDate)),
-            service:         String(e.service ?? ""),
-            chargeCategory:  String(e.chargeCategory ?? "Usage"),
-            billedCost:      String(e.billedCost ?? "0"),
-            effectiveCost:   String(e.effectiveCost ?? "0"),
-            listCost:        String(e.listCost ?? "0"),
-            unblendedAmount: String(e.unblendedAmount ?? "0"),
-            amortizedAmount: String(e.amortizedAmount ?? "0"),
-            usageQuantity:   e.usageQuantity ? String(e.usageQuantity) : null,
-            usageUnit:       e.usageUnit     ? String(e.usageUnit)     : null,
-            currency:        String(e.currency ?? "USD"),
-            fxRate:          "1",
-            tenantCurrency:  String(e.tenantCurrency ?? "USD"),
-            tenantAmount:    String(e.tenantAmount ?? e.amortizedAmount ?? "0"),
-            tags,
-            themeId:         mapping.themeId,
-            mappingRuleId:   mapping.mappingRuleId,
-            mappingConf:     mapping.mappingConf,
-          };
-        });
+        const entries = batch.map((row) =>
+          mapStagedRowToEntry(row, tenantId, integrationId, ruleInputs)
+        );
 
         await database.billingEntry.createMany({
-          data:           entries,
+          data: entries,
           skipDuplicates: true,
         });
 
@@ -238,13 +313,13 @@ export const billingSyncFunction = inngest.createFunction(
     // ── Step 7: Advance cursor ────────────────────────────────────────────
     await step.run("advance-cursor", async () => {
       await database.billingSyncCursor.upsert({
-        where:  { integrationId },
+        where: { integrationId },
         create: {
           integrationId,
           lastIngestedThrough: new Date(),
-          lookbackDays:        7,
-          backfillDays:        90,
-          backfillComplete:    true,
+          lookbackDays: 7,
+          backfillDays: 90,
+          backfillComplete: true,
         },
         update: {
           lastIngestedThrough: new Date(),
@@ -255,25 +330,27 @@ export const billingSyncFunction = inngest.createFunction(
       await database.billingSyncRun.update({
         where: { id: context.syncRunId },
         data: {
-          status:           "SUCCESS",
-          currentStep:      "done",
+          status: "SUCCESS",
+          currentStep: "done",
           entriesProcessed: promotedCount,
-          finishedAt:       new Date(),
+          finishedAt: new Date(),
         },
       });
 
       await database.integration.update({
         where: { id: integrationId },
-        data:  { lastSyncAt: new Date() },
+        data: { lastSyncAt: new Date() },
       });
     });
 
     // ── Step 8: Emit downstream events ───────────────────────────────────
-    await inngest.send([{
-      name: "billing/snapshot.updated" as const,
-      data: { tenantId, integrationId, period: new Date().toISOString() },
-    }]);
+    await inngest.send([
+      {
+        name: "billing/snapshot.updated" as const,
+        data: { tenantId, integrationId, period: new Date().toISOString() },
+      },
+    ]);
 
     return { success: true, entriesProcessed: promotedCount };
-  },
+  }
 );
