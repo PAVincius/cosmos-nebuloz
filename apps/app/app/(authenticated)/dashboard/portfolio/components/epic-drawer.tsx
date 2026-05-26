@@ -46,18 +46,21 @@ export function EpicDrawer({ epicId, epic, onClose }: EpicDrawerProps) {
           <SheetTitle className="font-semibold text-xl">
             {epic.title}
           </SheetTitle>
-          {!!epic.themeTitle && (
-            <span
-              className="w-fit rounded-full px-2 py-0.5 font-medium text-xs"
-              style={{
-                backgroundColor: `${epic.themeColor}22`,
-                color: epic.themeColor ?? undefined,
-                border: `1px solid ${epic.themeColor}44`,
-              }}
-            >
-              {epic.themeTitle}
-            </span>
-          )}
+          {!!epic.themeTitle && (() => {
+            const tc = epic.themeColor ?? "#888";
+            return (
+              <span
+                className="w-fit rounded-full px-2 py-0.5 font-medium text-xs"
+                style={{
+                  backgroundColor: `${tc}22`,
+                  color: tc,
+                  border: `1px solid ${tc}44`,
+                }}
+              >
+                {epic.themeTitle}
+              </span>
+            );
+          })()}
         </SheetHeader>
 
         <Tabs
