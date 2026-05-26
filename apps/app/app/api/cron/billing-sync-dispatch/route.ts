@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { database } from "@repo/database";
 import { NextResponse } from "next/server";
 import { inngest } from "@/lib/inngest/client";
@@ -5,20 +6,30 @@ import { inngest } from "@/lib/inngest/client";
 const PAGE_SIZE = 100;
 
 export async function GET(req: Request): Promise<NextResponse> {
-  const cronSecret = process.env.CRON_SECRET;
-  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET ?? "";
+  const authHeader = req.headers.get("authorization") ?? "";
+  const expected = Buffer.from(`Bearer ${cronSecret}`, "utf8");
+  const actual = Buffer.from(authHeader, "utf8");
 
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (
+    !cronSecret ||
+    expected.length !== actual.length ||
+    !crypto.timingSafeEqual(expected, actual)
+  ) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const BILLING_SOURCES = ["billing_aws", "billing_gcp", "billing_azure"];
+  const BILLING_SOURCES = [
+    "billing_aws",
+    "billing_gcp",
+    "billing_azure",
+  ] as const;
   let offset = 0;
   let dispatched = 0;
 
   while (true) {
     const integrations = await database.integration.findMany({
-      where: { source: { in: BILLING_SOURCES }, status: "ACTIVE" },
+      where: { source: { in: [...BILLING_SOURCES] }, status: "ACTIVE" },
       select: { id: true, tenantId: true },
       orderBy: { id: "asc" },
       take: PAGE_SIZE,
@@ -34,8 +45,18 @@ export async function GET(req: Request): Promise<NextResponse> {
       data: { tenantId: i.tenantId, integrationId: i.id },
     }));
 
-    await inngest.send(events);
-    dispatched += integrations.length;
+    try {
+      await inngest.send(events);
+      dispatched += integrations.length;
+    } catch (err) {
+      // Log and continue — do not abort remaining pages
+      // biome-ignore lint/suspicious/noConsole: temporary until project logger is available
+      console.error(
+        "[billing-sync-dispatch] inngest.send failed at offset",
+        offset,
+        err
+      );
+    }
     offset += PAGE_SIZE;
 
     if (integrations.length < PAGE_SIZE) {
