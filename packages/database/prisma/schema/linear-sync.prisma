@@ -12,3 +12,19 @@ model LinearSync {
   @@index([tenantId])
   @@map("linear_syncs")
 }
+
+model GitHubSync {
+  id           String   @id @default(cuid())
+  tenantId     String
+  githubRepo   String   // "owner/repo"
+  githubNumber Int
+  githubType   String   // issue | pull_request | milestone
+  cosmosId     String
+  cosmosType   String   // Epic | Feature | Story | PIPlan
+  lastSyncedAt DateTime @default(now()) @updatedAt
+  metadata     Json?
+
+  @@unique([tenantId, githubRepo, githubNumber, githubType])
+  @@index([tenantId])
+  @@map("github_syncs")
+}
