@@ -49,9 +49,29 @@ import {
 
 type ARTOption = { id: string; name: string };
 
+type OverviewItem = {
+  themeId: string | null;
+  themeName: string | null;
+  plannedCost: number;
+  actualCost: number;
+  cloudCost: number;
+  unmappedAmount: number;
+  period: string;
+};
+
+type BillingIntegration = {
+  id: string;
+  name: string;
+  source: string;
+  status: string;
+  lastSyncAt: Date | null;
+};
+
 type Props = {
   initialBudgets: LeanBudgetWithUsage[];
   arts: ARTOption[];
+  overviewData: OverviewItem[];
+  billingIntegrations: BillingIntegration[];
 };
 
 type CreateForm = {
@@ -234,9 +254,75 @@ function BudgetCard({
   );
 }
 
+// ─── KPI Card ────────────────────────────────────────────────────────────────
+
+function KpiCard({ label, value, isPercent, className }: {
+  label: string;
+  value: number;
+  isPercent?: boolean;
+  className?: string;
+}) {
+  const formatted = isPercent
+    ? `${value.toFixed(1)}%`
+    : new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" }).format(value);
+  return (
+    <div className={`rounded-lg border p-4 ${className ?? ""}`}>
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums">{formatted}</p>
+    </div>
+  );
+}
+
+// ─── FinOps Overview Section ─────────────────────────────────────────────────
+
+function computeFinOps(overviewData: OverviewItem[], billingIntegrations: BillingIntegration[]) {
+  const totalPlanned  = overviewData.reduce((s, r) => s + r.plannedCost, 0);
+  const totalActual   = overviewData.reduce((s, r) => s + r.actualCost, 0);
+  const totalUnmapped = overviewData.reduce((s, r) => s + r.unmappedAmount, 0);
+  const hasConnectors = billingIntegrations.length > 0;
+  const unmappedPct   = totalActual > 0 ? (totalUnmapped / totalActual) * 100 : 0;
+  return { totalPlanned, totalActual, totalUnmapped, hasConnectors, unmappedPct };
+}
+
+function FinOpsSection({ overviewData, billingIntegrations }: Pick<Props, "overviewData" | "billingIntegrations">) {
+  const { totalPlanned, totalActual, totalUnmapped, hasConnectors, unmappedPct } =
+    computeFinOps(overviewData, billingIntegrations);
+
+  return (
+    <>
+      {totalUnmapped > 0 && unmappedPct > 5 && (
+        <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-amber-800 dark:bg-amber-950">
+          <span className="font-medium text-amber-800 dark:text-amber-200">
+            {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "USD" }).format(totalUnmapped)} não mapeado para temas SAFe
+          </span>
+          <a href="/portfolio/budgets/tag-rules" className="ml-auto text-amber-700 underline dark:text-amber-300">
+            Revisar regras →
+          </a>
+        </div>
+      )}
+      {!hasConnectors && (
+        <div className="mb-6 rounded-xl border-2 border-dashed p-8 text-center">
+          <p className="mb-4 text-muted-foreground">Conecte um provedor de billing para ver custos reais</p>
+          <div className="flex justify-center gap-3">
+            <a href="/settings/integrations?provider=billing_aws" className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground">Conectar AWS</a>
+            <a href="/settings/integrations?provider=billing_gcp" className="rounded-md border px-4 py-2 text-sm">Conectar GCP</a>
+            <a href="/settings/integrations?provider=billing_azure" className="rounded-md border px-4 py-2 text-sm">Conectar Azure</a>
+          </div>
+        </div>
+      )}
+      <div className="mb-6 grid grid-cols-4 gap-4">
+        <KpiCard label="Planejado MTD" value={totalPlanned} />
+        <KpiCard label="Real MTD"      value={totalActual} />
+        <KpiCard label="% Utilizado"   value={(totalActual / (totalPlanned || 1)) * 100} isPercent />
+        <KpiCard label="Não mapeado"   value={totalUnmapped} className={unmappedPct > 5 ? "border-amber-300" : ""} />
+      </div>
+    </>
+  );
+}
+
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
-export function BudgetDashboard({ initialBudgets, arts }: Props) {
+export function BudgetDashboard({ initialBudgets, arts, overviewData, billingIntegrations }: Props) {
   const [budgets, setBudgets] = useState(initialBudgets);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<CreateForm>(DEFAULT_FORM);
@@ -319,6 +405,9 @@ export function BudgetDashboard({ initialBudgets, arts }: Props) {
 
   return (
     <div className="space-y-6">
+      {/* FinOps overview: KPI cards, unmapped banner, empty state */}
+      <FinOpsSection overviewData={overviewData} billingIntegrations={billingIntegrations} />
+
       {/* Guardrail alert banners */}
       {overGuardrailCount > 0 && (
         <div className="flex items-start gap-3 rounded-lg border border-red-300 bg-red-50 px-4 py-3 dark:border-red-800 dark:bg-red-950/30">
