@@ -720,9 +720,76 @@ function useDragEpic() {
 | Editor | TipTap com markdown shortcuts nativos |
 | AI buttons | Prompt especializado por provider + contexto completo |
 
+## ✅ Decisão: AI Playground Storage
+
+### Estratégia de Storage em Camadas
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   STORAGE TIERS                         │
+├──────────────┬──────────────┬───────────────────────────┤
+│  Tier 0      │  Tier 1      │  Tier 2                   │
+│  Supabase    │  AWS S3      │  AWS S3 (pago)            │
+│  Free        │  Startup     │  conforme escala           │
+│  1GB         │  Credits     │                           │
+│  Grátis      │  $0 (crédito)│  ~$0.023/GB/mês           │
+└──────────────┴──────────────┴───────────────────────────┘
+```
+
+**Tier 0 — Supabase Storage (agora, grátis)**
+- Supabase free tier: 1GB storage + 2GB bandwidth/mês grátis
+- Armazena: markdown (.md), JSON (prompts, outputs estruturados), texto
+- Formato comprimido: gzip antes de upload (~60-80% menor)
+- Ideal para: PRDs, specs, playbooks, transcrições, prompts salvos
+- Já integrado no projeto (mesmo Supabase do banco)
+
+**Tier 1 — AWS S3 via Startup Credits (próximo passo)**
+- **AWS Activate**: até $100K em créditos para startups
+  - Apply: https://aws.amazon.com/activate/
+  - Requisito: empresa constituída, early-stage
+  - S3 free tier: 5GB + 20K GETs + 2K PUTs/mês (12 meses)
+- Usado para: arquivos maiores (diagramas, imagens, exports PDF)
+- Bucket: `cosmos-ai-playground-{workspaceId}` por tenant
+
+**Tier 2 — Escala paga (quando necessário)**
+- S3 Standard: $0.023/GB/mês — muito barato para artefatos de texto
+- 10.000 workspaces × 50MB médio = 500GB = ~$11.50/mês
+
+### Arquitetura de Storage
+
+```typescript
+// Routing por tipo de arquivo
+function getStorageProvider(artifact: ArtifactType): 'supabase' | 's3' {
+  const textTypes = ['markdown', 'json', 'prompt', 'transcription'];
+  return textTypes.includes(artifact.contentType) ? 'supabase' : 's3';
+}
+
+// Compressão antes de upload
+async function uploadArtifact(content: string, meta: ArtifactMeta) {
+  const compressed = await gzip(Buffer.from(content, 'utf-8'));
+  const savings = 1 - (compressed.length / Buffer.byteLength(content));
+  // savings típico: 65-80% para markdown/JSON
+}
+```
+
+### Referências de Créditos para Aplicar
+
+| Programa | Valor | Requisito | Link |
+|----------|-------|-----------|------|
+| AWS Activate (Founders) | $1K–$100K | Early-stage startup | aws.amazon.com/activate |
+| AWS Activate (Portfolio) | até $100K | Via aceleradoras parceiras | Idem |
+| NVIDIA Inception | GPU credits + suporte | AI startup | nvidia.com/en-us/startups |
+| Google for Startups | $200K GCP credits | Early-stage | cloud.google.com/startup |
+| Anthropic Startup Program | API credits | AI-native product | anthropic.com/startups |
+| Vercel Startup Program | Pro grátis | Startup validado | vercel.com/contact/startup |
+| Supabase Startup | Pro $0/6 meses | Aplicar via YC/aceleradora | supabase.com/blog/supabase-for-startups |
+
+> **Prioridade de aplicação**: AWS Activate → Anthropic → NVIDIA Inception → Supabase Startup
+
+---
+
 ## ⚠ Questões em Aberto
 
-- [ ] **AI Playground storage**: banco de dados (blobs PostgreSQL) ou S3/R2 para arquivos?
 - [ ] **Prompt templates**: editáveis por workspace admin ou fixos por tipo?
 - [ ] **Dependências**: só entre épicos do mesmo board, ou cross-board também?
 - [ ] **Grafo de dependências**: D3 custom ou React Flow (mais rico, mais pesado)?
