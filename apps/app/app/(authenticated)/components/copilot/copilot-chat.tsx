@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence } from "framer-motion";
-import { Bot } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { BotIcon } from "./copilot-icons";
 import { CopilotThreadItem } from "./copilot-thread-item";
 import type { ChatMessage } from "./copilot-types";
 
@@ -15,7 +15,7 @@ function EmptyState() {
           background: "linear-gradient(135deg, #7c6cff 0%, #00D4FF 100%)",
         }}
       >
-        <Bot className="h-5 w-5 text-white" />
+        <BotIcon className="h-5 w-5 text-white" />
       </div>
       <div className="space-y-1">
         <p className="font-semibold text-foreground text-sm">SAFe AI Copilot</p>

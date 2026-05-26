@@ -37,6 +37,7 @@ export function KanbanCard({
   onOpenDrawer,
 }: KanbanCardProps) {
   const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
   const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
     useDraggable({ id: epic.id });
 
@@ -64,6 +65,8 @@ export function KanbanCard({
         className="cursor-grab touch-none active:cursor-grabbing"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
       >
         {/* Theme color bar */}
         {!!epic.themeColor && (
@@ -76,6 +79,7 @@ export function KanbanCard({
         <div className="px-3 pt-2.5 pb-2">
           {/* Title — click opens drawer, drag handle wraps the rest */}
           <button
+            aria-label={`Abrir ${epic.title} no drawer`}
             className="w-full text-left font-medium text-[13px] leading-snug tracking-[-0.01em] transition-colors hover:text-primary"
             onClick={(e) => {
               e.stopPropagation();
@@ -118,8 +122,8 @@ export function KanbanCard({
             )}
           </div>
 
-          {/* WSJF breakdown on hover */}
-          {hovered === true && epic.wsjfScore > 0 ? (
+          {/* WSJF breakdown on hover or focus */}
+          {Boolean(hovered || focused) && epic.wsjfScore > 0 ? (
             <div className="mt-2 grid grid-cols-4 gap-1 border-border border-t pt-2">
               {[
                 { label: "BV", value: epic.bv },

@@ -2,7 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { Bot, RefreshCw, Sparkles } from "lucide-react";
+import { RefreshCw } from "lucide-react";
+import { BotIcon, SparkleIcon } from "../../components/copilot/copilot-icons";
 import { useCallback, useState, useTransition } from "react";
 import { syncTenantKnowledge } from "@/app/actions/safe-copilot/indexer";
 import type { SessionPreview } from "@/app/actions/safe-copilot/sessions";
@@ -145,7 +146,7 @@ export function CopilotFullscreen({
                     "linear-gradient(135deg, #7c6cff 0%, #00D4FF 100%)",
                 }}
               >
-                <Bot className="h-4 w-4 text-white" />
+                <BotIcon className="h-4 w-4 text-white" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -153,7 +154,7 @@ export function CopilotFullscreen({
                     Cosmos Copilot
                   </span>
                   <span className="flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 font-semibold text-[10px] text-cyan-500 uppercase tracking-wider dark:text-cyan-400">
-                    <Sparkles className="h-2.5 w-2.5" />
+                    <SparkleIcon className="h-2.5 w-2.5" />
                     AI
                   </span>
                 </div>

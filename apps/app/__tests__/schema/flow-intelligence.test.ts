@@ -1,20 +1,16 @@
 /**
  * Schema constraint tests for Flow Intelligence P0 models.
  *
- * Imports PrismaClient from the generated package (via the @repo alias) and
- * @prisma/adapter-pg (available in apps/app devDependencies) to avoid the
- * `server-only` + `keys()` guard in @repo/database/index.ts.
+ * Uses raw pg.Pool queries throughout — bypassing the PrismaPg driver adapter
+ * which keeps beforeAll fixture data in an implicit open transaction, causing
+ * FK-check waits to hang when constraint tests use a separate pool connection.
  *
- * Requires a running Postgres instance.  DATABASE_URL falls back to the dev
- * default when not set.  All created records are removed in afterAll.
+ * Requires a running Postgres instance. DATABASE_URL falls back to the dev
+ * default when not set. All created records are removed in afterAll.
  */
 
 // @vitest-environment node
 
-import { PrismaPg } from "@prisma/adapter-pg";
-// PrismaClient lives in the generated package — accessible via the @repo alias
-// without pulling in server-only / keys().
-import { PrismaClient } from "@repo/database/generated";
 import { Pool } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
@@ -25,7 +21,6 @@ const DATABASE_URL =
   "postgresql://postgres:postgres@localhost:5432/cosmos_dev";
 
 let pool: Pool;
-let prisma: InstanceType<typeof PrismaClient>;
 
 // ── Stable IDs (created once per test run) ────────────────────────────────
 
@@ -43,81 +38,66 @@ const USER_2 = `user-zzz-${TS}`;
 
 beforeAll(async () => {
   pool = new Pool({ connectionString: DATABASE_URL });
-  const adapter = new PrismaPg(pool);
-  // The Prisma v7 adapter constructor signature differs from PrismaClient's
-  // default — cast to satisfy TypeScript without touching generated types.
-  prisma = new PrismaClient({ adapter } as Parameters<typeof PrismaClient>[0]);
-  const db = prisma as any;
 
-  // Tenant
-  await db.tenant.create({
-    data: {
-      id: TEST_TENANT_ID,
-      name: "FI Constraint Test Tenant",
-      slug: `fi-test-${TS}`,
-    },
-  });
+  const now = new Date().toISOString();
+  const twoWeeks = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
 
-  // Teams (artId optional — omit to keep fixture minimal)
-  await db.team.createMany({
-    data: [
-      { id: TEAM_A, tenantId: TEST_TENANT_ID, name: "Team Alpha" },
-      { id: TEAM_B, tenantId: TEST_TENANT_ID, name: "Team Beta" },
-    ],
-  });
+  // Each pool.query() is autocommit — immediately visible to all connections.
+  await pool.query(
+    `INSERT INTO "Tenant" (id, name, slug, "updatedAt")
+     VALUES ($1, $2, $3, now())`,
+    [TEST_TENANT_ID, "FI Constraint Test Tenant", `fi-test-${TS}`]
+  );
 
-  // Sprints (two separate sprints, both belonging to TEAM_A for simplicity)
-  const now = new Date();
-  const twoWeeks = new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000);
-  await db.sprint.createMany({
-    data: [
-      {
-        id: SPRINT_A,
-        tenantId: TEST_TENANT_ID,
-        teamId: TEAM_A,
-        name: "Sprint A",
-        startDate: now,
-        endDate: twoWeeks,
-      },
-      {
-        id: SPRINT_B,
-        tenantId: TEST_TENANT_ID,
-        teamId: TEAM_A,
-        name: "Sprint B",
-        startDate: now,
-        endDate: twoWeeks,
-      },
-    ],
-  });
+  await pool.query(
+    `INSERT INTO "Team" (id, "tenantId", name, "updatedAt")
+     VALUES ($1, $2, $3, now()), ($4, $2, $5, now())`,
+    [TEAM_A, TEST_TENANT_ID, "Team Alpha", TEAM_B, "Team Beta"]
+  );
+
+  await pool.query(
+    `INSERT INTO "Sprint" (id, "tenantId", "teamId", name, "startDate", "endDate", "updatedAt")
+     VALUES ($1, $2, $3, $4, $5, $6, now()),
+            ($7, $2, $3, $8, $5, $6, now())`,
+    [SPRINT_A, TEST_TENANT_ID, TEAM_A, "Sprint A", now, twoWeeks,
+     SPRINT_B, "Sprint B"]
+  );
 });
 
 afterAll(async () => {
-  const db = prisma as any;
   // Delete in FK-safe order (children before parents).
-  await db.personSkillProfile.deleteMany({
-    where: { tenantId: TEST_TENANT_ID },
-  });
-  await db.pairSynergy.deleteMany({ where: { tenantId: TEST_TENANT_ID } });
-  await db.groupSynergy.deleteMany({ where: { tenantId: TEST_TENANT_ID } });
-  await db.memberThroughputBaseline.deleteMany({
-    where: { tenantId: TEST_TENANT_ID },
-  });
-  await db.teamCapacitySnapshot.deleteMany({
-    where: { tenantId: TEST_TENANT_ID },
-  });
-  await db.stalenessAuditLog.deleteMany({
-    where: { tenantId: TEST_TENANT_ID },
-  });
-  await db.flowMetricSnapshot.deleteMany({
-    where: { tenantId: TEST_TENANT_ID },
-  });
-  // Sprints and teams cascade from tenant, but delete explicitly to be safe.
-  await db.sprint.deleteMany({ where: { tenantId: TEST_TENANT_ID } });
-  await db.team.deleteMany({ where: { tenantId: TEST_TENANT_ID } });
-  // Tenant cascade cleans up any remaining children.
-  await db.tenant.deleteMany({ where: { id: TEST_TENANT_ID } });
+  // Tenant has ON DELETE CASCADE on most children — delete tenant last.
+  await pool.query(
+    `DELETE FROM "PersonSkillProfile"        WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "PairSynergy"               WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "GroupSynergy"              WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "MemberThroughputBaseline"  WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "TeamCapacitySnapshot"      WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "StalenessAuditLog"         WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "FlowMetricSnapshot"        WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "Sprint"  WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "Team"    WHERE "tenantId" = $1`, [TEST_TENANT_ID]
+  );
+  await pool.query(
+    `DELETE FROM "Tenant"  WHERE id = $1`, [TEST_TENANT_ID]
+  );
 
-  await prisma.$disconnect();
   await pool.end();
 });
 
@@ -125,91 +105,103 @@ afterAll(async () => {
 
 describe("FlowMetricSnapshot", () => {
   it("staleness defaults to FRESH when not supplied", async () => {
-    const db = prisma as any;
-    const snap = await db.flowMetricSnapshot.create({
-      data: {
-        tenantId: TEST_TENANT_ID,
-        scope: "team",
-        scopeId: TEAM_A,
-        period: "sprint",
-        periodRef: SPRINT_A,
-      },
-    });
-    expect(snap.staleness).toBe("FRESH");
+    const { rows } = await pool.query(
+      `INSERT INTO "FlowMetricSnapshot"
+         (id, "tenantId", scope, "scopeId", period, "periodRef")
+       VALUES (gen_random_uuid()::text, $1, $2, $3, $4, $5)
+       RETURNING staleness`,
+      [TEST_TENANT_ID, "team", TEAM_A, "sprint", SPRINT_A]
+    );
+    expect(rows[0].staleness).toBe("FRESH");
   });
 });
 
 describe("MemberThroughputBaseline", () => {
   it("rejects duplicate [tenantId, teamId, userId]", async () => {
-    const db = prisma as any;
-    const base = { tenantId: TEST_TENANT_ID, teamId: TEAM_A, userId: USER_1 };
-    await db.memberThroughputBaseline.create({ data: base });
+    await pool.query(
+      `INSERT INTO "MemberThroughputBaseline" (id, "tenantId", "teamId", "userId")
+       VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+      [TEST_TENANT_ID, TEAM_A, USER_1]
+    );
     await expect(
-      db.memberThroughputBaseline.create({ data: base })
-    ).rejects.toThrow();
+      pool.query(
+        `INSERT INTO "MemberThroughputBaseline" (id, "tenantId", "teamId", "userId")
+         VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+        [TEST_TENANT_ID, TEAM_A, USER_1]
+      )
+    ).rejects.toThrow(/unique/i);
   });
 });
 
 describe("TeamCapacitySnapshot", () => {
   it("allows two different teams in the same sprint", async () => {
-    const db = prisma as any;
-    const [a, b] = await Promise.all([
-      db.teamCapacitySnapshot.create({
-        data: { tenantId: TEST_TENANT_ID, sprintId: SPRINT_A, teamId: TEAM_A },
-      }),
-      db.teamCapacitySnapshot.create({
-        data: { tenantId: TEST_TENANT_ID, sprintId: SPRINT_A, teamId: TEAM_B },
-      }),
-    ]);
-    expect(a.teamId).toBe(TEAM_A);
-    expect(b.teamId).toBe(TEAM_B);
+    const { rows } = await pool.query(
+      `INSERT INTO "TeamCapacitySnapshot" (id, "tenantId", "sprintId", "teamId")
+       VALUES (gen_random_uuid()::text, $1, $2, $3),
+              (gen_random_uuid()::text, $1, $2, $4)
+       RETURNING "teamId"`,
+      [TEST_TENANT_ID, SPRINT_A, TEAM_A, TEAM_B]
+    );
+    const teamIds = rows.map((r: { teamId: string }) => r.teamId).sort();
+    expect(teamIds).toEqual([TEAM_A, TEAM_B].sort());
   });
 
   it("rejects duplicate [sprintId, teamId]", async () => {
-    const db = prisma as any;
-    await db.teamCapacitySnapshot.create({
-      data: { tenantId: TEST_TENANT_ID, sprintId: SPRINT_B, teamId: TEAM_A },
-    });
+    await pool.query(
+      `INSERT INTO "TeamCapacitySnapshot" (id, "tenantId", "sprintId", "teamId")
+       VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+      [TEST_TENANT_ID, SPRINT_B, TEAM_A]
+    );
     await expect(
-      db.teamCapacitySnapshot.create({
-        data: { tenantId: TEST_TENANT_ID, sprintId: SPRINT_B, teamId: TEAM_A },
-      })
-    ).rejects.toThrow();
+      pool.query(
+        `INSERT INTO "TeamCapacitySnapshot" (id, "tenantId", "sprintId", "teamId")
+         VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+        [TEST_TENANT_ID, SPRINT_B, TEAM_A]
+      )
+    ).rejects.toThrow(/unique/i);
   });
 });
 
 describe("PairSynergy canonical ordering", () => {
   it("inserts a sorted pair and rejects a duplicate", async () => {
-    const db = prisma as any;
     // USER_1 ("user-aaa-…") < USER_2 ("user-zzz-…") by construction.
     const [u1, u2] = [USER_1, USER_2].sort();
-    const row = await db.pairSynergy.create({
-      data: { tenantId: TEST_TENANT_ID, userId1: u1, userId2: u2 },
-    });
-    expect(row.userId1).toBe(u1);
-    expect(row.userId2).toBe(u2);
 
-    // Same pair again must violate the unique constraint.
+    const { rows } = await pool.query(
+      `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2")
+       VALUES (gen_random_uuid()::text, $1, $2, $3)
+       RETURNING "userId1", "userId2"`,
+      [TEST_TENANT_ID, u1, u2]
+    );
+    expect(rows[0].userId1).toBe(u1);
+    expect(rows[0].userId2).toBe(u2);
+
+    // Same pair + same default taskType ("any") → unique constraint fires.
     await expect(
-      db.pairSynergy.create({
-        data: { tenantId: TEST_TENANT_ID, userId1: u1, userId2: u2 },
-      })
-    ).rejects.toThrow();
+      pool.query(
+        `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2")
+         VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+        [TEST_TENANT_ID, u1, u2]
+      )
+    ).rejects.toThrow(/unique/i);
   });
 });
 
 describe("PersonSkillProfile", () => {
   it("rejects duplicate [tenantId, userId, competency]", async () => {
-    const db = prisma as any;
-    const base = {
-      tenantId: TEST_TENANT_ID,
-      userId: USER_1,
-      competency: "TEAM_TECHNICAL_AGILITY",
-      skillLevel: 3,
-    };
-    await db.personSkillProfile.create({ data: base });
+    await pool.query(
+      `INSERT INTO "PersonSkillProfile"
+         (id, "tenantId", "userId", competency, "skillLevel")
+       VALUES (gen_random_uuid()::text, $1, $2, $3, $4)`,
+      [TEST_TENANT_ID, USER_1, "TEAM_TECHNICAL_AGILITY", 3]
+    );
     await expect(
-      db.personSkillProfile.create({ data: base })
-    ).rejects.toThrow();
+      pool.query(
+        `INSERT INTO "PersonSkillProfile"
+           (id, "tenantId", "userId", competency, "skillLevel")
+         VALUES (gen_random_uuid()::text, $1, $2, $3, $4)`,
+        [TEST_TENANT_ID, USER_1, "TEAM_TECHNICAL_AGILITY", 3]
+      )
+    ).rejects.toThrow(/unique/i);
   });
 });

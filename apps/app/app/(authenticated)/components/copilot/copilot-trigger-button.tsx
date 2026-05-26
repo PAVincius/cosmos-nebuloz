@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Bot } from "lucide-react";
+import { BotIcon } from "./copilot-icons";
 import {
   type CopilotMode,
   type CopilotSurface,
@@ -36,7 +36,7 @@ export function CopilotTriggerButton({
       size={size}
       variant={variant}
     >
-      <Bot className="h-4 w-4" />
+      <BotIcon className="h-4 w-4" />
       {label}
     </Button>
   );

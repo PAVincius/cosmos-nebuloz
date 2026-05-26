@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Bot } from "lucide-react";
+import { BotIcon } from "./copilot-icons";
 import { useCopilot } from "./copilot-provider";
 
 export function CopilotFab() {
@@ -38,7 +38,7 @@ export function CopilotFab() {
             }}
             type="button"
           >
-            <Bot className="h-5 w-5" />
+            <BotIcon className="h-5 w-5" />
           </button>
         </motion.div>
       )}

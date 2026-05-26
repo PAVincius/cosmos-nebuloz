@@ -15,7 +15,7 @@ export type BudgetOverviewItem = {
   period: string;
 };
 
-export function getBudgetOverview(params: {
+export async function getBudgetOverview(params: {
   granularity: "DAILY" | "MONTHLY";
   periodStart: Date;
   periodEnd: Date;
