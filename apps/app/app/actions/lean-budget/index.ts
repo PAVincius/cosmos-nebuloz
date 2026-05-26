@@ -134,14 +134,15 @@ export async function createLeanBudget(raw: unknown): Promise<Result<LeanBudget>
 
     const budget = await database.leanBudget.create({
       data: {
-        tenantId:   ctx.tenantId,
-        name:       input.name,
-        amount:     input.amount,
-        spent:      input.spent,
-        period:     input.period,
-        artId:      input.artId   ?? null,
-        themeId:    input.themeId ?? null,
-        guardrails: input.guardrails ?? undefined,
+        tenantId:     ctx.tenantId,
+        name:         input.name,
+        amount:       input.amount,
+        spent:        input.spent,
+        spentDecimal: String(input.spent),
+        period:       input.period,
+        artId:        input.artId   ?? null,
+        themeId:      input.themeId ?? null,
+        guardrails:   input.guardrails ?? undefined,
       },
     });
 
@@ -162,7 +163,7 @@ export async function updateLeanBudget(id: string, raw: unknown): Promise<Result
       data: {
         ...(input.name       !== undefined && { name: input.name }),
         ...(input.amount     !== undefined && { amount: input.amount }),
-        ...(input.spent      !== undefined && { spent: input.spent }),
+        ...(input.spent      !== undefined && { spent: input.spent, spentDecimal: String(input.spent) }),
         ...(input.period     !== undefined && { period: input.period }),
         ...(input.guardrails !== undefined && { guardrails: input.guardrails ?? undefined }),
       },
@@ -187,7 +188,7 @@ export async function updateSpent(id: string, raw: unknown): Promise<Result<Lean
 
     const { count } = await database.leanBudget.updateMany({
       where: { id, tenantId: ctx.tenantId },
-      data:  { spent: input.spent },
+      data:  { spent: input.spent, spentDecimal: String(input.spent) },
     });
 
     if (count === 0) throw new Error("Orçamento não encontrado ou sem permissão.");
@@ -215,6 +216,16 @@ export async function deleteLeanBudget(id: string): Promise<Result<{ id: string 
     revalidatePath("/portfolio/budgets");
     revalidatePath("/portfolio");
     return { id };
+  });
+}
+
+export async function getBudgetById(id: string): Promise<Result<LeanBudgetWithStats | null>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const b = await database.leanBudget.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+    });
+    return b ? withStats(b) : null;
   });
 }
 

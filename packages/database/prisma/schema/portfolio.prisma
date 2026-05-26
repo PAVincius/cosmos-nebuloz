@@ -128,6 +128,7 @@ model LeanBudget {
   name            String
   amount          Float
   spent           Float    @default(0)
+  spentDecimal         Decimal? @db.Decimal(18,6)
   period          String   // e.g. "PI-2025-Q2"
   guardrails           Json?    // {capex: number, opex: number}
   spentSource          String   @default("MANUAL")  // MANUAL | BILLING_AGGREGATE | FORECAST
