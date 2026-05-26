@@ -296,10 +296,17 @@ export const awsPricingTool = tool({
         summary: `${quantity}x ${instanceType ?? serviceCode} in ${region}: ~$${prices[0]?.estimatedMonthlyCost ?? 0}/month`,
       };
     } catch (err) {
+      const errMsg =
+        err instanceof Error ? err.message : "AWS Pricing API unavailable";
+      const isAuthErr =
+        errMsg.includes("credentials") ||
+        errMsg.includes("UnauthorizedException") ||
+        errMsg.includes("AccessDenied");
       return {
         found: false,
-        error:
-          err instanceof Error ? err.message : "AWS Pricing API unavailable",
+        error: isAuthErr
+          ? "AWS Pricing API: missing credentials. Ensure AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are set in deployment env vars."
+          : errMsg,
       };
     }
   },
@@ -420,11 +427,19 @@ async function fetchGcpSku(params: {
   quantity: number;
 }): Promise<GcpSkuResult[]> {
   const { serviceId, skuFilter, region, quantity } = params;
-  const url = `${GCP_BILLING_API}/services/${serviceId}/skus?currencyCode=USD&pageSize=20`;
+  const apiKey = process.env.GCP_PRICING_API_KEY;
+  const url = apiKey
+    ? `${GCP_BILLING_API}/services/${serviceId}/skus?currencyCode=USD&pageSize=20&key=${apiKey}`
+    : `${GCP_BILLING_API}/services/${serviceId}/skus?currencyCode=USD&pageSize=20`;
 
   const resp = await fetch(url);
+  if (resp.status === 401 || resp.status === 403) {
+    throw new Error(
+      "GCP Billing API requires authentication. Set GCP_PRICING_API_KEY env var."
+    );
+  }
   if (!resp.ok) {
-    throw new Error(`GCP Billing API error: ${resp.status}`);
+    throw new Error(`GCP Billing API error: ${resp.status} ${resp.statusText}`);
   }
 
   const data = (await resp.json()) as GcpBillingResponse;
@@ -509,11 +524,9 @@ export const gcpPricingTool = tool({
         summary: `${quantity}x "${results[0]?.description}" in ${region}: ~$${results[0]?.estimatedMonthlyCost}/month`,
       };
     } catch (err) {
-      return {
-        found: false,
-        error:
-          err instanceof Error ? err.message : "GCP Billing API unavailable",
-      };
+      const errMsg =
+        err instanceof Error ? err.message : "GCP Pricing API unavailable";
+      return { found: false, error: errMsg };
     }
   },
 });
