@@ -59,7 +59,10 @@ describe("analyzeInvest", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mocks.headers.mockResolvedValue({});
-    mocks.requireTenantSession.mockResolvedValue({ tenantId: "t1", userId: "u1" });
+    mocks.requireTenantSession.mockResolvedValue({
+      tenantId: "t1",
+      userId: "u1",
+    });
     mocks.epicFindFirst.mockResolvedValue(defaultEpic);
     mocks.epicUpdate.mockResolvedValue({ id: "e1" });
     mocks.generateObject.mockResolvedValue({ object: defaultInvestObject });
@@ -70,8 +73,10 @@ describe("analyzeInvest", () => {
   it("returns invest breakdown on valid epic", async () => {
     const result = await analyzeInvest({ epicId: "e1" });
     expect(result.ok).toBe(true);
-    if (!result.ok) throw new Error("Expected ok result");
-    expect(result.data?.compositeScore).toBe(72);
+    if (!result.ok) {
+      throw new Error("Expected ok result");
+    }
+    expect(result.data?.compositeScore).toBe(74.75);
     expect(result.data?.breakdown.I).toBe(80);
   });
 
@@ -80,8 +85,12 @@ describe("analyzeInvest", () => {
     expect(mocks.epicUpdate).toHaveBeenCalledWith({
       where: { id: "e1", tenantId: "t1" },
       data: expect.objectContaining({
-        investScore: 72,
-        investBreakdown: defaultInvestObject,
+        investScore: 74.75,
+        investBreakdown: expect.objectContaining({
+          breakdown: defaultInvestObject.breakdown,
+          compositeScore: 74.75,
+        }),
+        investHash: expect.any(String),
       }),
     });
   });
@@ -91,7 +100,9 @@ describe("analyzeInvest", () => {
 
     const result = await analyzeInvest({ epicId: "nonexistent" });
     expect(result.ok).toBe(false);
-    if (result.ok) throw new Error("Expected error result");
+    if (result.ok) {
+      throw new Error("Expected error result");
+    }
     expect(result.error).toContain("não encontrado");
   });
 
@@ -123,7 +134,9 @@ describe("analyzeInvest", () => {
 
     const result = await analyzeInvest({ epicId: "e1" });
     expect(result.ok).toBe(true);
-    if (!result.ok) throw new Error("Expected ok result");
+    if (!result.ok) {
+      throw new Error("Expected ok result");
+    }
     expect(result.data?.compositeScore).toBe(81);
 
     // Should NOT call AI or update when cache hits
