@@ -263,7 +263,7 @@ function BudgetCard({
         </div>
 
         {/* Guardrails */}
-        {Boolean(budget.guardrails) && (
+        {budget.guardrails !== null && budget.guardrails !== undefined && (
           <div className="grid grid-cols-2 gap-2 rounded-md bg-muted/40 px-3 py-2 text-xs">
             <div>
               <p className="text-muted-foreground">CapEx</p>
