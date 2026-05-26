@@ -1,9 +1,9 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { headers } from "next/headers";
-import { Suspense } from "react";
 import { z } from "zod";
 import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { computeTeamCapability } from "@/app/actions/flow-intelligence/capability-planning/team-capability-profile";
 import {
   getFlowMetrics,
   getFlowScopeOptions,
@@ -13,9 +13,9 @@ import {
   getImprovementActions,
 } from "@/app/actions/measure-grow";
 import { appDesign } from "@/lib/app-design";
+import { CapabilityTab } from "./components/capability-tab";
 import { TeamCapacityTab } from "./components/capacity/team-capacity-tab";
 import { FlowMetricsDashboard } from "./components/flow-metrics-dashboard";
-import { SynergyTab } from "./components/synergy-tab";
 
 export const metadata = {
   title: "Flow Metrics | COSMOS",
@@ -58,8 +58,9 @@ function resolveSelectedScope(
   return null;
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: page orchestrates scope resolution, multi-tab data fetch and conditional rendering
 export default async function FlowMetricsPage({ searchParams }: Props) {
-  await requireTenantSession(await headers());
+  const ctx = await requireTenantSession(await headers());
 
   const sp = await searchParams;
   const scopeOptions = await getFlowScopeOptions();
@@ -80,6 +81,15 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
 
   const activeTab = sp.tab ?? "metrics";
   const isTeamScope = selectedScope?.type === "team";
+
+  const capabilityProfile =
+    activeTab === "synergy" && isTeamScope && selectedScope
+      ? await computeTeamCapability({
+          tenantId: ctx.tenantId,
+          teamId: selectedScope.id,
+          windowSprints: 5,
+        }).catch(() => null)
+      : null;
 
   return (
     <div className={`${appDesign.shell} h-full overflow-auto`}>
@@ -126,15 +136,18 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
           <TeamCapacityTab teamId={selectedScope.id} />
         ) : null}
         {activeTab === "synergy" && isTeamScope && selectedScope ? (
-          <Suspense
-            fallback={
-              <div className="p-4 text-muted-foreground text-sm">
-                Carregando sinergia...
-              </div>
-            }
-          >
-            <SynergyTab teamId={selectedScope.id} />
-          </Suspense>
+          <CapabilityTab
+            gaps={[]}
+            teams={[
+              {
+                id: selectedScope.id,
+                name:
+                  scopeOptions.find((o) => o.id === selectedScope.id)?.label ??
+                  selectedScope.id,
+                capabilities: capabilityProfile?.capabilities ?? {},
+              },
+            ]}
+          />
         ) : null}
         {activeTab !== "capacity" && activeTab !== "synergy" ? (
           <FlowMetricsDashboard
