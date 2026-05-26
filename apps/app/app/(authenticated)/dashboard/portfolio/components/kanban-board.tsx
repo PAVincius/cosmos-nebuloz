@@ -21,6 +21,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { updateEpicStatus } from "@/app/actions/epics/update-status";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
+import { EpicDrawer } from "./epic-drawer";
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumn } from "./kanban-column";
 
@@ -39,7 +40,6 @@ export const KanbanBoard = ({
 }: KanbanBoardProps) => {
   const [themeFilter, setThemeFilter] = useState<string>("ALL");
   const [activeEpic, setActiveEpic] = useState<PortfolioEpic | null>(null);
-  // biome-ignore lint/correctness/noUnusedVariables: openEpicId will be consumed by EpicDrawer in Task 5
   const [openEpicId, setOpenEpicId] = useState<string | null>(null);
   const [, updatePresence] = useMyPresence();
   const others = useOthers();
@@ -331,8 +331,13 @@ export const KanbanBoard = ({
         </DragOverlay>
       </DndContext>
 
-      {/* EpicDrawer will be added in Task 5 */}
-      {/* openEpicId={openEpicId} onClose={() => setOpenEpicId(null)} */}
+      {!!openEpicId && (
+        <EpicDrawer
+          epic={epics.find((e) => e.id === openEpicId) ?? null}
+          epicId={openEpicId}
+          onClose={() => setOpenEpicId(null)}
+        />
+      )}
     </div>
   );
 };
