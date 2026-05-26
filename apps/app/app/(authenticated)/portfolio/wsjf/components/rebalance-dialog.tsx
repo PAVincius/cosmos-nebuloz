@@ -253,7 +253,7 @@ export function RebalanceDialog({
       </div>
 
       <Dialog open={open || phase === "running" || ["result","confirming","done","error"].includes(phase)} onOpenChange={handleOpenChange}>
-        <DialogContent className="max-w-2xl gap-0 p-0 overflow-hidden">
+        <DialogContent className="max-w-3xl gap-0 p-0 overflow-hidden">
           <DialogHeader className="flex flex-row items-center gap-3 border-b px-6 py-4">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <SparklesIcon className="h-4 w-4 text-primary" />
@@ -402,7 +402,7 @@ export function RebalanceDialog({
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto max-h-52 rounded-lg border divide-y">
+                <div className="flex-1 overflow-y-auto max-h-[420px] rounded-lg border divide-y">
                   {changedSuggestions.map((s) => (
                     <div key={s.featureId} className="px-4 py-3">
                       <div className="flex items-start justify-between gap-2">
@@ -417,7 +417,7 @@ export function RebalanceDialog({
                           <DeltaBadge delta={s.delta} />
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">{s.justification}</p>
+                      <p className="text-xs text-muted-foreground mt-1.5">{s.justification}</p>
                     </div>
                   ))}
                 </div>

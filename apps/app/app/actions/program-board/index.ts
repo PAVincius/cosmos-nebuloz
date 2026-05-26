@@ -4,14 +4,13 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 
-export type {
+import type {
   ProgramBoardCell,
   ProgramBoardData,
   ProgramBoardDependency,
   ProgramBoardFeature,
 } from "./schema";
-
-import type { ProgramBoardCell, ProgramBoardDependency } from "./schema";
+export type { ProgramBoardCell, ProgramBoardData, ProgramBoardDependency, ProgramBoardFeature };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

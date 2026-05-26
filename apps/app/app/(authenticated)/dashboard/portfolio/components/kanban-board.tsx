@@ -138,6 +138,8 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
         strategicThemeId: initial?.strategicThemeId ?? null,
         themeTitle:       initial?.themeTitle ?? null,
         themeColor:       initial?.themeColor ?? null,
+        linkedOKRCount:   initial?.linkedOKRCount ?? 0,
+        governanceStatus: initial?.governanceStatus ?? null,
       };
     }) ?? initialEpics;
 

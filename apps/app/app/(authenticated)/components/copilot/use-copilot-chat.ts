@@ -1,9 +1,9 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import type { ToolInvocation } from "./copilot-types";
+import type { ChatMessage, ToolInvocation } from "./copilot-types";
 
-export type { ChatMessage } from "./copilot-types";
+export type { ChatMessage };
 
 type UseCopilotChatOptions = {
   api: string;
@@ -111,13 +111,17 @@ function processLines(
   emit: () => void
 ): void {
   for (const line of lines) {
-    if (!line.trim()) {
+    if (!line.trim() || line.startsWith(":")) {
+      continue;
+    }
+    const raw = line.startsWith("data: ") ? line.slice(6) : line;
+    if (raw === "[DONE]") {
       continue;
     }
     try {
-      applyChunk(JSON.parse(line) as UIMessageChunk, state, emit);
+      applyChunk(JSON.parse(raw) as UIMessageChunk, state, emit);
     } catch (e) {
-      if (e instanceof Error && e.message !== "Unexpected token") {
+      if (e instanceof Error && !e.message.startsWith("Unexpected token")) {
         throw e;
       }
     }

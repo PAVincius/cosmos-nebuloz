@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import {
   createContext,
   type ReactNode,
@@ -62,8 +63,13 @@ export function useCopilot() {
 }
 
 export function CopilotProvider({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<CopilotConfig>(DEFAULT_CONFIG);
+  // mounted gates CopilotPanel + CopilotFab so SSR and initial client render
+  // are identical — prevents Radix useId mismatch caused by dynamic ssr:false
+  // creating a different fiber tree depth on server vs client.
+  const [mounted, setMounted] = useState(false);
 
   const openCopilot = (partial: Partial<CopilotConfig>) => {
     setConfig((prev) => ({ ...DEFAULT_CONFIG, ...prev, ...partial }));
@@ -75,6 +81,10 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
   const setSessionId = (id: string) => {
     setConfig((prev) => ({ ...prev, sessionId: id }));
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Cmd+K / Ctrl+K global shortcut
   useEffect(() => {
@@ -103,8 +113,8 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
       value={{ isOpen, config, openCopilot, closeCopilot, setSessionId }}
     >
       {children}
-      <CopilotPanel />
-      <CopilotFab />
+      {mounted && <CopilotPanel />}
+      {mounted && !pathname.startsWith("/copilot") && <CopilotFab />}
     </CopilotCtx.Provider>
   );
 }

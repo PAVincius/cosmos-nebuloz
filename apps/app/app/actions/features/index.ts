@@ -11,7 +11,8 @@ import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 
-export type { FeatureDetail, FeatureRow } from "./schema";
+import type { FeatureDetail, FeatureRow } from "./schema";
+export type { FeatureDetail, FeatureRow };
 
 const CreateFeatureSchema = z.object({
   epicId: z.string().min(1),

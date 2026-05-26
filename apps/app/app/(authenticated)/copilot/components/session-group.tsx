@@ -9,6 +9,7 @@ type Props = {
   activeSessionId: string | null;
   onSelect: (id: string) => void;
   onPinToggle: (id: string, pinned: boolean) => void;
+  onDelete: (id: string) => void;
 };
 
 export function SessionGroup({
@@ -17,6 +18,7 @@ export function SessionGroup({
   activeSessionId,
   onSelect,
   onPinToggle,
+  onDelete,
 }: Props) {
   return (
     <div className="mb-3">
@@ -28,6 +30,7 @@ export function SessionGroup({
           <SessionItem
             isActive={s.id === activeSessionId}
             key={s.id}
+            onDelete={onDelete}
             onPinToggle={onPinToggle}
             onSelect={onSelect}
             session={s}

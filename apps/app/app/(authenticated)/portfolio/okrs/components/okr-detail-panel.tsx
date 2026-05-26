@@ -20,7 +20,7 @@ import {
   TrendingUpIcon,
   TargetIcon,
 } from "lucide-react";
-import { updateKeyResult } from "@/app/actions/okrs";
+import { updateKeyResult, type OKRWithContext } from "@/app/actions/okrs";
 
 type KeyResultSnapshotItem = {
   id: string;
@@ -43,28 +43,6 @@ type KeyResultWithProgress = {
   dueDate?: Date | null;
   progress: number;
   snapshots?: KeyResultSnapshotItem[];
-};
-
-type OKRWithContext = {
-  id: string;
-  type: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  piPlanId?: string | null;
-  strategicThemeId?: string | null;
-  epicId?: string | null;
-  artId?: string | null;
-  teamId?: string | null;
-  horizon?: string | null;
-  ownerId?: string | null;
-  themeTitle: string | null;
-  themeColor: string | null;
-  keyResults: KeyResultWithProgress[];
-  progress: number;
-  tenantId: string;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
@@ -126,7 +104,7 @@ function InlineEditKR({ okrId, kr, onUpdateKRCurrent }: InlineEditKRProps) {
       return;
     }
     startTransition(async () => {
-      await updateKeyResult({ id: kr.id, current: newVal });
+      await updateKeyResult(kr.id, { current: newVal });
       onUpdateKRCurrent(okrId, kr.id, newVal);
       setEditing(false);
     });

@@ -556,9 +556,12 @@ export function WSJFDashboard({
     [optimisticEpics, dispatchEpicUpdate]
   );
 
-  const handleSaveConfig = useCallback((config: WSJFConfig) => {
-    startSavingTransition(async () => {
-      await saveWSJFConfig(config);
+  const handleSaveConfig = useCallback(async (config: WSJFConfig) => {
+    await new Promise<void>((resolve) => {
+      startSavingTransition(async () => {
+        await saveWSJFConfig(config);
+        resolve();
+      });
     });
   }, []);
 

@@ -77,6 +77,8 @@ services:
       CLICKHOUSE_DB: posthog
     volumes:
       - posthog_clickhouse:/var/lib/clickhouse
+      - ./posthog/clickhouse/cluster.xml:/etc/clickhouse-server/config.d/cluster.xml:ro
+      - ./posthog/clickhouse/keeper.xml:/etc/clickhouse-server/config.d/keeper.xml:ro
     ulimits:
       nofile:
         soft: 262144

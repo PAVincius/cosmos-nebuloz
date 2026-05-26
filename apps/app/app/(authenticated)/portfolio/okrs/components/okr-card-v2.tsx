@@ -26,6 +26,7 @@ import {
   deleteKeyResult,
   updateKeyResult,
   updateOKRStatus,
+  type OKRWithContext,
 } from "@/app/actions/okrs";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
@@ -53,27 +54,6 @@ type KeyResultWithProgress = {
   snapshots?: KeyResultSnapshotItem[];
 };
 
-type OKRWithContext = {
-  id: string;
-  type: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  piPlanId?: string | null;
-  strategicThemeId?: string | null;
-  epicId?: string | null;
-  artId?: string | null;
-  teamId?: string | null;
-  horizon?: string | null;
-  ownerId?: string | null;
-  themeTitle: string | null;
-  themeColor: string | null;
-  keyResults: KeyResultWithProgress[];
-  progress: number;
-  tenantId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 const STATUS_CONFIG: Record<OKRStatus, { label: string; cls: string }> = {
   ON_TRACK: {
@@ -359,7 +339,7 @@ export function OKRCardV2({
   function handleStatusChange(value: string) {
     const newStatus = value as OKRStatus;
     startTransition(async () => {
-      await updateOKRStatus({ id: okr.id, status: newStatus });
+      await updateOKRStatus(okr.id, newStatus);
       onStatusChange(okr.id, newStatus);
     });
   }
@@ -416,7 +396,7 @@ export function OKRCardV2({
               style={
                 okr.themeColor
                   ? { borderLeft: `3px solid ${okr.themeColor}` }
-                  : null
+                  : undefined
               }
             >
               {okr.themeTitle}

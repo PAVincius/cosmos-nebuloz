@@ -84,6 +84,24 @@ export async function unpinCopilotSession(sessionId: string): Promise<void> {
   });
 }
 
+export async function deleteCopilotSession(sessionId: string): Promise<void> {
+  const { tenantId } = await requireTenantSession(await headers());
+  await database.copilotSession.deleteMany({
+    where: { id: sessionId, tenantId },
+  });
+}
+
+export async function renameCopilotSession(
+  sessionId: string,
+  title: string
+): Promise<void> {
+  const { tenantId } = await requireTenantSession(await headers());
+  await database.copilotSession.updateMany({
+    where: { id: sessionId, tenantId },
+    data: { title: title.slice(0, 120) },
+  });
+}
+
 export async function listCopilotSessions(): Promise<SessionPreview[]> {
   const { tenantId } = await requireTenantSession(await headers());
   const sessions = await database.copilotSession.findMany({

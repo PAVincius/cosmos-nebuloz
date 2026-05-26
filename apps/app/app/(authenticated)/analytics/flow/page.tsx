@@ -1,6 +1,7 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { headers } from "next/headers";
 import { Suspense } from "react";
+import { z } from "zod";
 import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import {
@@ -30,16 +31,25 @@ type SelectedScope = {
   id: string;
 };
 
+const UUID_SCHEMA = z.string().uuid();
+const FLOW_SCOPE_VALUES = ["team", "art", "value_stream"] as const;
+
 function resolveSelectedScope(
   searchParams: { scope?: string; scopeId?: string },
   defaultScope:
     | { type: "team" | "art" | "value_stream"; id: string }
     | undefined
 ): SelectedScope | null {
-  if (searchParams.scope && searchParams.scopeId) {
+  const isValidScope = (s?: string): s is "team" | "art" | "value_stream" =>
+    FLOW_SCOPE_VALUES.includes(s as "team" | "art" | "value_stream");
+
+  if (
+    isValidScope(searchParams.scope) &&
+    UUID_SCHEMA.safeParse(searchParams.scopeId).success
+  ) {
     return {
-      type: searchParams.scope as "team" | "art" | "value_stream",
-      id: searchParams.scopeId,
+      type: searchParams.scope,
+      id: searchParams.scopeId as string,
     };
   }
   if (defaultScope) {

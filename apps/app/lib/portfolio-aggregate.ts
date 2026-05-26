@@ -22,6 +22,8 @@ export type AggregatedPortfolioEpic = {
   strategicThemeId: string | null;
   themeTitle: string | null;
   themeColor: string | null;
+  linkedOKRCount: number;
+  governanceStatus: string | null;
 };
 
 /** WSJF efetivo: score persistido ou recalculado a partir dos parâmetros. */
@@ -42,6 +44,8 @@ export function aggregateEpicRow(
     strategicThemeId?: string | null;
     themeTitle?: string | null;
     themeColor?: string | null;
+    linkedOKRCount?: number;
+    governanceStatus?: string | null;
   }
 ): AggregatedPortfolioEpic {
   const { features } = epic;
@@ -68,5 +72,7 @@ export function aggregateEpicRow(
     strategicThemeId: epic.strategicThemeId ?? null,
     themeTitle:       epic.themeTitle ?? null,
     themeColor:       epic.themeColor ?? null,
+    linkedOKRCount:   epic.linkedOKRCount ?? 0,
+    governanceStatus: epic.governanceStatus ?? null,
   };
 }

@@ -104,10 +104,12 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 function getActionLabel(log: AuditLogWithUser): string {
-  if (log.action === "okr_updated" && log.diff && "status" in log.diff) {
+  const diff = log.diff;
+  const isObj = diff !== null && typeof diff === "object" && !Array.isArray(diff);
+  if (log.action === "okr_updated" && isObj && "status" in diff) {
     return "Status de OKR atualizado";
   }
-  if (log.action === "kr_updated" && log.diff && "current" in log.diff) {
+  if (log.action === "kr_updated" && isObj && "current" in diff) {
     return "Progresso de Key Result atualizado";
   }
   return ACTION_LABELS[log.action] ?? log.action;

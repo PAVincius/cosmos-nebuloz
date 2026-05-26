@@ -22,7 +22,7 @@ export async function updatePairSynergiesForTask(
     }),
     database.story.findFirst({
       where: { tenantId, tasks: { some: { id: taskId } } },
-      select: { storyPoints: true, taskType: true },
+      select: { storyPoints: true },
     }),
   ]);
 
@@ -32,7 +32,7 @@ export async function updatePairSynergiesForTask(
 
   const userIds = assignees.map((a) => a.userId);
   const actualSp = story?.storyPoints ?? 1;
-  const taskType = (story as { taskType?: string | null })?.taskType ?? "any";
+  const taskType = "any";
 
   const pairs: [string, string][] = [];
   for (let i = 0; i < userIds.length; i++) {

@@ -21,6 +21,7 @@ type Props = {
   onNew: () => void;
   isCreating: boolean;
   onSessionsChange?: (sessions: SessionPreview[]) => void;
+  onSessionDeleted?: (id: string) => void;
 };
 
 function groupSessions(
@@ -68,6 +69,7 @@ type SidebarContentProps = {
   onNew: () => void;
   onSelect: (id: string) => void;
   onPinToggle: (id: string, pinned: boolean) => void;
+  onDelete: (id: string) => void;
 };
 
 function SidebarContent({
@@ -77,6 +79,7 @@ function SidebarContent({
   onNew,
   onSelect,
   onPinToggle,
+  onDelete,
 }: SidebarContentProps) {
   const groups = groupSessions(sessions);
 
@@ -109,6 +112,7 @@ function SidebarContent({
               activeSessionId={activeSessionId}
               key={g.label}
               label={g.label}
+              onDelete={onDelete}
               onPinToggle={onPinToggle}
               onSelect={onSelect}
               sessions={g.items}
@@ -141,6 +145,13 @@ export function SessionSidebar({
     });
     setSessions(updated);
     onSessionsChange?.(updated);
+  };
+
+  const handleDelete = (id: string) => {
+    const updated = sessions.filter((s) => s.id !== id);
+    setSessions(updated);
+    onSessionsChange?.(updated);
+    onSessionDeleted?.(id);
   };
 
   return (
@@ -192,6 +203,7 @@ export function SessionSidebar({
                     activeSessionId={activeSessionId}
                     key={g.label}
                     label={g.label}
+                    onDelete={handleDelete}
                     onPinToggle={handlePinToggle}
                     onSelect={onSelect}
                     sessions={g.items}
@@ -241,6 +253,7 @@ export function SessionSidebar({
             <SidebarContent
               activeSessionId={activeSessionId}
               isCreating={isCreating}
+              onDelete={handleDelete}
               onNew={onNew}
               onPinToggle={handlePinToggle}
               onSelect={onSelect}

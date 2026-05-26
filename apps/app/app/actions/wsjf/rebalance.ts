@@ -39,10 +39,13 @@ export async function getAIAccessStatus(): Promise<AIAccessStatus> {
 
   const plan = tenant.plan as string;
   const limit = AI_REBALANCE_LIMITS[plan] ?? 0;
-  const meta = ((tenant.metadata as Record<string, unknown>)?.aiUsage as AIUsageMeta | undefined) ?? {
-    currentPiId: null,
-    usedThisPi: 0,
-    usedTotal: 0,
+  // Use dedicated namespace `wsjfAiUsage` to avoid collision with copilot chat quota
+  // which writes to `aiUsage` with different field names (copilotUsedTotal etc.)
+  const rawUsage = (tenant.metadata as Record<string, unknown>)?.wsjfAiUsage as Partial<AIUsageMeta> | undefined;
+  const meta: AIUsageMeta = {
+    currentPiId: rawUsage?.currentPiId ?? null,
+    usedThisPi: rawUsage?.usedThisPi ?? 0,
+    usedTotal: rawUsage?.usedTotal ?? 0,
   };
 
   // Detect PI rotation
@@ -98,8 +101,11 @@ async function incrementAIUsage(tenantId: string): Promise<void> {
   });
 
   const currentMeta = (tenant?.metadata as Record<string, unknown>) ?? {};
-  const currentUsage = (currentMeta.aiUsage as AIUsageMeta | undefined) ?? {
-    currentPiId: null, usedThisPi: 0, usedTotal: 0,
+  const rawUsage = currentMeta.wsjfAiUsage as Partial<AIUsageMeta> | undefined;
+  const currentUsage: AIUsageMeta = {
+    currentPiId: rawUsage?.currentPiId ?? null,
+    usedThisPi: rawUsage?.usedThisPi ?? 0,
+    usedTotal: rawUsage?.usedTotal ?? 0,
   };
   const piChanged = latestPi?.id && latestPi.id !== currentUsage.currentPiId;
 
@@ -108,7 +114,7 @@ async function incrementAIUsage(tenantId: string): Promise<void> {
     data: {
       metadata: {
         ...currentMeta,
-        aiUsage: {
+        wsjfAiUsage: {
           currentPiId: latestPi?.id ?? currentUsage.currentPiId,
           usedThisPi: piChanged ? 1 : currentUsage.usedThisPi + 1,
           usedTotal: currentUsage.usedTotal + 1,
@@ -438,16 +444,9 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
     messages,
     maxRetries: 3,
     maxOutputTokens: 3000,
-    // Extended thinking: Haiku 4.5+ raciocina antes de responder.
-    // Reduz erros de cálculo WSJF e scale violations.
-    // Só ativo para Anthropic — outros providers ignoram.
-    ...(provider === "anthropic" && {
-      providerOptions: {
-        anthropic: {
-          thinking: { type: "enabled", budgetTokens: 1500 },
-        },
-      },
-    }),
+    // NOTE: extended thinking is incompatible with generateObject because
+    // the Vercel AI SDK sets tool_choice="required" for schema enforcement,
+    // and Anthropic rejects thinking when tool_choice forces a tool.
   });
 
   gen?.end({

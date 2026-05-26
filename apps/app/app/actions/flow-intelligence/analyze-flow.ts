@@ -84,7 +84,7 @@ export async function analyzeFlowAnomalies(
       select: {
         flowVelocityTotal: true,
         flowPredictability: true,
-        flowTimeOverall: true,
+        flowTimeAvgHours: true,
       },
     }),
     database.improvementAction.findMany({
@@ -105,8 +105,7 @@ export async function analyzeFlowAnomalies(
   const anomalies = runAllRules({
     current: {
       flowVelocityTotal: snapshot.flowVelocityTotal,
-      flowTimeAvgDays:
-        (snapshot as { flowTimeOverall?: number }).flowTimeOverall ?? 0,
+      flowTimeAvgDays: (snapshot.flowTimeAvgHours ?? 0) / 24,
       flowEfficiency: snapshot.flowEfficiency,
       flowPredictability: snapshot.flowPredictability,
       flowLoadCurrent: snapshot.flowLoadCurrent,
@@ -116,7 +115,7 @@ export async function analyzeFlowAnomalies(
     history: history.map((h) => ({
       flowVelocityTotal: h.flowVelocityTotal,
       flowPredictability: h.flowPredictability,
-      flowTimeAvgDays: h.flowTimeOverall ?? undefined,
+      flowTimeAvgDays: h.flowTimeAvgHours != null ? h.flowTimeAvgHours / 24 : undefined,
     })),
     openActions: openActions.map((a) => ({
       id: a.id,
@@ -136,7 +135,7 @@ export async function analyzeFlowAnomalies(
         severity: a.severity,
         metric: a.metric,
         delta: a.delta,
-        metadata: a.metadata,
+        metadata: JSON.parse(JSON.stringify(a.metadata)),
       })),
     });
   }

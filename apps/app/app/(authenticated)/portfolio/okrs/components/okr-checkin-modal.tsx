@@ -12,7 +12,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import { createKeyResultCheckIn } from "@/app/actions/okrs";
+import { createKeyResultCheckIn, type OKRWithContext } from "@/app/actions/okrs";
 
 type KeyResultSnapshotItem = {
   id: string;
@@ -37,27 +37,6 @@ type KeyResultWithProgress = {
   snapshots?: KeyResultSnapshotItem[];
 };
 
-type OKRWithContext = {
-  id: string;
-  type: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  piPlanId?: string | null;
-  strategicThemeId?: string | null;
-  epicId?: string | null;
-  artId?: string | null;
-  teamId?: string | null;
-  horizon?: string | null;
-  ownerId?: string | null;
-  themeTitle: string | null;
-  themeColor: string | null;
-  keyResults: KeyResultWithProgress[];
-  progress: number;
-  tenantId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 interface OKRCheckInModalProps {
   open: boolean;

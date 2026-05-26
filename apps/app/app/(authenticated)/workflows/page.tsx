@@ -23,7 +23,7 @@ async function getTeamsWithWorkflows(tenantId: string) {
 
   const definitions = await database.bpmnDefinition.findMany({
     where: { tenantId },
-    select: { teamId: true, version: true, updatedAt: true },
+    select: { teamId: true, version: true },
     orderBy: { version: "desc" },
     distinct: ["teamId"],
   });
@@ -90,10 +90,7 @@ export default async function WorkflowsPage() {
 
               {team.definition ? (
                 <p className="mt-3 text-muted-foreground text-xs">
-                  Atualizado{" "}
-                  {new Date(team.definition.updatedAt).toLocaleDateString(
-                    "pt-BR"
-                  )}
+                  Versão {team.definition.version} disponível
                 </p>
               ) : (
                 <p className="mt-3 text-muted-foreground text-xs">

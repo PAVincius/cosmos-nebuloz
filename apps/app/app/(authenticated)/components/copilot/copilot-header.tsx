@@ -1,7 +1,8 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Bot, Sparkles, X } from "lucide-react";
+import { Bot, Maximize2, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import type { CopilotMode, CopilotSurface } from "./copilot-provider";
 
 const MODE_LABELS: Record<CopilotMode, string> = {
@@ -29,6 +30,8 @@ type CopilotHeaderProps = {
 };
 
 export function CopilotHeader({ mode, surface, onClose }: CopilotHeaderProps) {
+  const router = useRouter();
+
   return (
     <div
       className="flex shrink-0 items-center justify-between border-black/[0.08] border-b px-4 py-3 dark:border-white/[0.08]"
@@ -58,11 +61,16 @@ export function CopilotHeader({ mode, surface, onClose }: CopilotHeaderProps) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="flex items-center gap-1 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-2 py-0.5 font-semibold text-[10px] text-cyan-400 uppercase tracking-wider">
-          <Sparkles className="h-2.5 w-2.5" />
-          AI
-        </span>
+      <div className="flex items-center gap-1">
+        <Button
+          className="h-7 w-7 text-gray-400 hover:text-gray-900 dark:text-zinc-500 dark:hover:text-white"
+          onClick={() => router.push("/copilot")}
+          size="icon"
+          title="Abrir em tela cheia"
+          variant="ghost"
+        >
+          <Maximize2 className="h-4 w-4" />
+        </Button>
         <Button
           className="h-7 w-7 text-gray-400 hover:text-gray-900 dark:text-zinc-500 dark:hover:text-white"
           onClick={onClose}

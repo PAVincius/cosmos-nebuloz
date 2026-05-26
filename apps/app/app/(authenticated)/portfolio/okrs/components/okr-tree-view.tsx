@@ -6,6 +6,7 @@ import { Progress } from "@repo/design-system/components/ui/progress";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { OKRCardV2 } from "./okr-card-v2";
+import type { OKRWithContext } from "@/app/actions/okrs";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
 
@@ -32,27 +33,6 @@ type KeyResultWithProgress = {
   snapshots?: KeyResultSnapshotItem[];
 };
 
-type OKRWithContext = {
-  id: string;
-  type: string;
-  title: string;
-  description?: string | null;
-  status: string;
-  piPlanId?: string | null;
-  strategicThemeId?: string | null;
-  epicId?: string | null;
-  artId?: string | null;
-  teamId?: string | null;
-  horizon?: string | null;
-  ownerId?: string | null;
-  themeTitle: string | null;
-  themeColor: string | null;
-  keyResults: KeyResultWithProgress[];
-  progress: number;
-  tenantId: string;
-  createdAt: Date;
-  updatedAt: Date;
-};
 
 const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
   portfolio_theme: { label: "Tema", icon: "🎯" },

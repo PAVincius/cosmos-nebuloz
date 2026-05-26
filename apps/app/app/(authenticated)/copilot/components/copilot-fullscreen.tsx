@@ -105,6 +105,15 @@ export function CopilotFullscreen({
     [activeSessionId, reset, setMessages]
   );
 
+  const handleSessionDeleted = useCallback(
+    (id: string) => {
+      if (id === activeSessionId) {
+        handleNewSession();
+      }
+    },
+    [activeSessionId, handleNewSession]
+  );
+
   return (
     <div className="flex h-full overflow-hidden">
       <SessionSidebar
@@ -112,6 +121,7 @@ export function CopilotFullscreen({
         isCreating={isCreating}
         onNew={handleNewSession}
         onSelect={handleSelectSession}
+        onSessionDeleted={handleSessionDeleted}
         onSessionsChange={setSessions}
         sessions={sessions}
       />
