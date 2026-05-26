@@ -1,130 +1,152 @@
 "use client";
 
-import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@repo/design-system/lib/utils";
-import { ExternalLink, GripVertical, LayoutGrid } from "lucide-react";
-import Link from "next/link";
-import { memo } from "react";
+import { useState } from "react";
+import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 
 type KanbanCardProps = {
   epic: PortfolioEpic;
   isDragging?: boolean;
+  onOpenDrawer?: (epicId: string) => void;
 };
 
-function epicVisualEqual(a: PortfolioEpic, b: PortfolioEpic): boolean {
-  return (
-    a.id === b.id &&
-    a.title === b.title &&
-    a.statusId === b.statusId &&
-    a.order === b.order &&
-    a.wsjfScore === b.wsjfScore &&
-    a.featureCount === b.featureCount &&
-    a.strategicThemeId === b.strategicThemeId &&
-    a.themeTitle === b.themeTitle &&
-    a.themeColor === b.themeColor
-  );
+export function investColor(score: number | null): string {
+  if (score === null) {
+    return "text-muted-foreground bg-muted";
+  }
+  if (score >= 70) {
+    return "text-green-700 bg-green-50 dark:text-green-400 dark:bg-green-950";
+  }
+  if (score >= 50) {
+    return "text-yellow-700 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950";
+  }
+  return "text-red-700 bg-red-50 dark:text-red-400 dark:bg-red-950";
 }
 
-export const KanbanCard = memo(
-  function KanbanCard({ epic, isDragging }: KanbanCardProps) {
-    const {
-      attributes,
-      listeners,
-      setNodeRef,
-      setActivatorNodeRef,
-      transform,
-      isDragging: localDrag,
-    } = useDraggable({ id: epic.id });
+export function investLabel(score: number | null): string {
+  if (score === null) {
+    return "INVEST?";
+  }
+  return `INVEST ${Math.round(score)}`;
+}
 
-    const style = transform
-      ? { transform: `translate3d(${transform.x}px,${transform.y}px,0)` }
-      : undefined;
+export function KanbanCard({
+  epic,
+  isDragging,
+  onOpenDrawer,
+}: KanbanCardProps) {
+  const [hovered, setHovered] = useState(false);
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
+    useDraggable({ id: epic.id });
 
-    return (
+  const style = transform
+    ? { transform: `translate3d(${transform.x}px,${transform.y}px,0)` }
+    : undefined;
+
+  return (
+    <div
+      className={cn(
+        "group select-none rounded-lg border border-border bg-card shadow-sm",
+        "transition-all duration-150 hover:border-primary/30 hover:shadow-md",
+        isDragging === true && "opacity-40"
+      )}
+      ref={setNodeRef}
+      style={style}
+    >
+      {/* Drag handle — dnd-kit spreads role="button" + tabIndex via {...attributes} */}
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive */}
+      {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: dnd-kit attributes make this interactive */}
       <div
-        ref={setNodeRef}
-        style={style}
-        className={cn(
-          "group flex flex-col rounded-md border border-border bg-card transition-colors duration-150",
-          "hover:border-border/80",
-          (localDrag || isDragging) && "opacity-50 ring-1 ring-primary/40"
-        )}
+        ref={setActivatorNodeRef}
+        {...listeners}
+        {...attributes}
+        className="cursor-grab touch-none active:cursor-grabbing"
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
-        <div
-          ref={setActivatorNodeRef}
-          {...listeners}
-          {...attributes}
-          className="flex items-center justify-center py-1 cursor-grab active:cursor-grabbing touch-none border-b border-border/40"
-          aria-label="Arrastar para mudar de coluna"
-        >
-          <GripVertical className="h-3 w-3 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors" />
-        </div>
+        {/* Theme color bar */}
+        {!!epic.themeColor && (
+          <div
+            className="h-0.5 w-full rounded-t-lg"
+            style={{ backgroundColor: epic.themeColor }}
+          />
+        )}
 
-        <div className="flex min-h-0 flex-1 flex-col">
-          <Link
-            href={`/epics/${epic.id}`}
-            className="flex flex-col gap-2 px-3 py-2.5 text-left outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-            aria-label={`Abrir épico: ${epic.title}`}
-            prefetch={false}
+        <div className="px-3 pt-2.5 pb-2">
+          {/* Title — click opens drawer, drag handle wraps the rest */}
+          <button
+            className="w-full text-left font-medium text-[13px] leading-snug tracking-[-0.01em] transition-colors hover:text-primary"
+            onClick={(e) => {
+              e.stopPropagation();
+              onOpenDrawer?.(epic.id);
+            }}
+            onPointerDown={(e) => e.stopPropagation()}
+            // Prevent the drag listeners from firing on click
+            type="button"
           >
-            <p className="line-clamp-2 text-[13px] font-medium leading-snug tracking-[-0.01em] text-foreground">
-              {epic.title}
-            </p>
+            {epic.title}
+          </button>
 
-            {epic.themeTitle && (
-              <span
-                className="inline-flex items-center gap-1 self-start rounded-sm px-1.5 py-0.5 text-[10px] font-medium"
-                style={{
-                  backgroundColor: `${epic.themeColor ?? "#6366f1"}22`,
-                  color:           epic.themeColor ?? "#6366f1",
-                }}
-                title={`Tema: ${epic.themeTitle}`}
-              >
-                <span
-                  className="h-1.5 w-1.5 rounded-full"
-                  style={{ backgroundColor: epic.themeColor ?? "#6366f1" }}
-                  aria-hidden
-                />
-                {epic.themeTitle}
+          {/* Metadata row */}
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="font-mono text-[10px] text-muted-foreground">
+              {epic.featureCount}{" "}
+              {epic.featureCount === 1 ? "feature" : "features"}
+            </span>
+
+            {epic.wsjfScore > 0 && (
+              <span className="font-mono text-[10px] text-muted-foreground">
+                WSJF {epic.wsjfScore.toFixed(1)}
               </span>
             )}
 
-            <div className="flex items-center justify-between gap-2">
-              <span className="font-mono text-[11px] text-muted-foreground">
-                {epic.featureCount} feat{epic.featureCount !== 1 ? "s" : ""}
-              </span>
-
-              {epic.wsjfScore > 0 && (
-                <span className="inline-flex items-center rounded-sm bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
-                  {epic.wsjfScore.toFixed(1)}
-                </span>
+            <span
+              className={cn(
+                "rounded-full px-1.5 py-0.5 font-semibold text-[9px]",
+                investColor(epic.investScore)
               )}
-            </div>
-          </Link>
+              data-invest-badge
+            >
+              {investLabel(epic.investScore)}
+            </span>
 
-          <div className="flex items-center justify-between gap-2 border-t border-border/40 px-3 py-1.5">
-            <Link
-              href={`/epics/${epic.id}`}
-              className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-              prefetch={false}
-            >
-              <ExternalLink className="h-3 w-3 shrink-0" aria-hidden />
-              Épico
-            </Link>
-            <Link
-              href={`/epics/${epic.id}/features`}
-              className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-              prefetch={false}
-            >
-              <LayoutGrid className="h-3 w-3 shrink-0" aria-hidden />
-              Features
-            </Link>
+            {epic.governanceStatus === "BLOCKED" && (
+              <span className="font-semibold text-[9px] text-red-600">
+                ⚠ BLOCKED
+              </span>
+            )}
           </div>
+
+          {/* WSJF breakdown on hover */}
+          {hovered === true && epic.wsjfScore > 0 ? (
+            <div className="mt-2 grid grid-cols-4 gap-1 border-border border-t pt-2">
+              {[
+                { label: "BV", value: epic.bv },
+                { label: "TC", value: epic.tc },
+                { label: "RR", value: epic.rr },
+                { label: "JS", value: epic.js },
+              ].map(({ label, value }) => (
+                <div className="text-center" key={label}>
+                  <div className="text-[9px] text-muted-foreground">
+                    {label}
+                  </div>
+                  <div className="font-medium font-mono text-[11px]">
+                    {value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {/* OKR indicator */}
+          {epic.linkedOKRCount > 0 && (
+            <div className="mt-1 text-[9px] text-indigo-500">
+              ◆ {epic.linkedOKRCount} OKR{epic.linkedOKRCount > 1 ? "s" : ""}
+            </div>
+          )}
         </div>
       </div>
-    );
-  },
-  (prev, next) =>
-    prev.isDragging === next.isDragging && epicVisualEqual(prev.epic, next.epic)
-);
+    </div>
+  );
+}

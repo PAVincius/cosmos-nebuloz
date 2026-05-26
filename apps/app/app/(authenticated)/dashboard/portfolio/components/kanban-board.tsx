@@ -1,26 +1,26 @@
 "use client";
 
-import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
-import { updateEpicStatus } from "@/app/actions/epics/update-status";
-import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import {
-  DndContext,
-  DragOverlay,
-  PointerSensor,
   closestCorners,
+  DndContext,
+  type DragEndEvent,
+  DragOverlay,
+  type DragStartEvent,
+  PointerSensor,
   useSensor,
   useSensors,
-  type DragEndEvent,
-  type DragStartEvent,
 } from "@dnd-kit/core";
 import { LiveList, LiveObject } from "@liveblocks/client";
 import {
-  useMyPresence,
   useMutation,
+  useMyPresence,
   useOthers,
   useStorage,
 } from "@repo/collaboration/hooks";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+import { updateEpicStatus } from "@/app/actions/epics/update-status";
+import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumn } from "./kanban-column";
 
@@ -31,9 +31,16 @@ type KanbanBoardProps = {
   themes?: { id: string; title: string; color: string }[];
 };
 
-export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }: KanbanBoardProps) => {
+export const KanbanBoard = ({
+  initialEpics,
+  columns,
+  canConfigure,
+  themes = [],
+}: KanbanBoardProps) => {
   const [themeFilter, setThemeFilter] = useState<string>("ALL");
   const [activeEpic, setActiveEpic] = useState<PortfolioEpic | null>(null);
+  // biome-ignore lint/correctness/noUnusedVariables: openEpicId will be consumed by EpicDrawer in Task 5
+  const [openEpicId, setOpenEpicId] = useState<string | null>(null);
   const [, updatePresence] = useMyPresence();
   const others = useOthers();
 
@@ -74,7 +81,9 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
     // Remove épicos que não existem mais no DB
     const staleIndices: number[] = [];
     liveList.forEach((e, i) => {
-      if (!dbIds.has(e.get("id"))) staleIndices.push(i);
+      if (!dbIds.has(e.get("id"))) {
+        staleIndices.push(i);
+      }
     });
     for (let i = staleIndices.length - 1; i >= 0; i--) {
       liveList.delete(staleIndices[i] as number);
@@ -82,7 +91,9 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
 
     // Adiciona épicos novos que ainda não estão no Liveblocks
     const liveIds = new Set<string>();
-    liveList.forEach((e) => liveIds.add(e.get("id")));
+    for (const e of liveList) {
+      liveIds.add(e.get("id"));
+    }
     for (const e of dbEpics) {
       if (!liveIds.has(e.id)) {
         liveList.push(
@@ -105,9 +116,13 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
   const moveEpic = useMutation(
     ({ storage }, epicId: string, newStatusId: string) => {
       const epics = storage.get("kanbanEpics");
-      if (!epics) return;
+      if (!epics) {
+        return;
+      }
       const epic = epics.find((e) => e.get("id") === epicId);
-      if (!epic) return;
+      if (!epic) {
+        return;
+      }
       const order = epics.filter(
         (e) => e.get("statusId") === newStatusId
       ).length;
@@ -134,21 +149,24 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
         tc: initial?.tc ?? 0,
         rr: initial?.rr ?? 0,
         js: initial?.js ?? 1,
-        featureCount:     initial?.featureCount ?? 0,
+        featureCount: initial?.featureCount ?? 0,
         strategicThemeId: initial?.strategicThemeId ?? null,
-        themeTitle:       initial?.themeTitle ?? null,
-        themeColor:       initial?.themeColor ?? null,
-        linkedOKRCount:   initial?.linkedOKRCount ?? 0,
+        themeTitle: initial?.themeTitle ?? null,
+        themeColor: initial?.themeColor ?? null,
+        linkedOKRCount: initial?.linkedOKRCount ?? 0,
         governanceStatus: initial?.governanceStatus ?? null,
-        investScore:      initial?.investScore ?? null,
-        investBreakdown:  initial?.investBreakdown ?? null,
-        descriptionMd:    initial?.descriptionMd ?? null,
+        investScore: initial?.investScore ?? null,
+        investBreakdown: initial?.investBreakdown ?? null,
+        descriptionMd: initial?.descriptionMd ?? null,
       };
     }) ?? initialEpics;
 
   const filteredEpics = useMemo(
-    () => (themeFilter === "ALL" ? epics : epics.filter((e) => e.strategicThemeId === themeFilter)),
-    [epics, themeFilter],
+    () =>
+      themeFilter === "ALL"
+        ? epics
+        : epics.filter((e) => e.strategicThemeId === themeFilter),
+    [epics, themeFilter]
   );
 
   const epicsByColumn = useMemo(() => {
@@ -156,7 +174,9 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
     for (const col of columns) {
       map.set(
         col.id,
-        filteredEpics.filter((e) => e.statusId === col.id).sort((a, b) => a.order - b.order)
+        filteredEpics
+          .filter((e) => e.statusId === col.id)
+          .sort((a, b) => a.order - b.order)
       );
     }
     return map;
@@ -165,7 +185,9 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
   const onDragStart = useCallback(
     ({ active }: DragStartEvent) => {
       const epic = epics.find((e) => e.id === active.id);
-      if (epic) setActiveEpic(epic);
+      if (epic) {
+        setActiveEpic(epic);
+      }
     },
     [epics]
   );
@@ -173,9 +195,13 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
   const onDragEnd = useCallback(
     async ({ over }: DragEndEvent) => {
       setActiveEpic(null);
-      if (!over || !activeEpic) return;
+      if (!(over && activeEpic)) {
+        return;
+      }
       const newStatusId = String(over.id);
-      if (newStatusId === activeEpic.statusId) return;
+      if (newStatusId === activeEpic.statusId) {
+        return;
+      }
       moveEpic(activeEpic.id, newStatusId);
       const order = epics.filter((e) => e.statusId === newStatusId).length;
       await updateEpicStatus(activeEpic.id, newStatusId, order);
@@ -195,31 +221,41 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
   }, [updatePresence]);
 
   return (
+    /* biome-ignore lint/a11y/noStaticElementInteractions: tracks cursor for Liveblocks multiplayer presence */
+    /* biome-ignore lint/a11y/noNoninteractiveElementInteractions: tracks cursor for Liveblocks multiplayer presence */
     <div
       className="relative h-full"
-      onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
     >
       {/* Multiplayer cursors */}
       {others.map(({ connectionId, presence, info }) =>
         presence.cursor ? (
           <div
-            key={connectionId}
             className="pointer-events-none fixed z-50 flex items-center gap-1"
+            key={connectionId}
             style={{
               transform: `translate(${presence.cursor.x}px, ${presence.cursor.y}px)`,
             }}
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <svg
+              aria-hidden="true"
+              fill="none"
+              height="14"
+              viewBox="0 0 14 14"
+              width="14"
+            >
               <path
                 d="M0 0L9 5.5L5.5 6.5L3.5 11L0 0Z"
                 fill={info?.color ?? "var(--color-primary)"}
               />
             </svg>
-            {info?.name && (
+            {!!info?.name && (
               <span
-                className="rounded-sm px-1.5 py-0.5 text-[10px] font-medium text-white"
-                style={{ backgroundColor: info?.color ?? "var(--color-primary)" }}
+                className="rounded-sm px-1.5 py-0.5 font-medium text-[10px] text-white"
+                style={{
+                  backgroundColor: info?.color ?? "var(--color-primary)",
+                }}
               >
                 {info.name}
               </span>
@@ -229,47 +265,58 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
       )}
 
       {/* Theme filter toolbar */}
-      {themes.length > 0 && (
+      {themes.length > 0 ? (
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-muted-foreground">Filtrar por tema:</span>
+          <span className="text-muted-foreground text-xs">
+            Filtrar por tema:
+          </span>
           <button
-            type="button"
+            className={`rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === "ALL" ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"}`}
             onClick={() => setThemeFilter("ALL")}
-            className={`text-[11px] px-2 py-0.5 rounded-full border transition-colors ${themeFilter === "ALL" ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted"}`}
+            type="button"
           >
             Todos
           </button>
           {themes.map((t) => (
             <button
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === t.id ? "border-foreground" : "border-border hover:bg-muted"}`}
               key={t.id}
-              type="button"
               onClick={() => setThemeFilter(t.id)}
-              className={`text-[11px] px-2 py-0.5 rounded-full border transition-colors inline-flex items-center gap-1 ${themeFilter === t.id ? "border-foreground" : "border-border hover:bg-muted"}`}
-              style={themeFilter === t.id ? { backgroundColor: `${t.color}22`, borderColor: t.color } : undefined}
+              style={
+                themeFilter === t.id
+                  ? { backgroundColor: `${t.color}22`, borderColor: t.color }
+                  : {}
+              }
+              type="button"
             >
-              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: t.color }} aria-hidden />
+              <span
+                aria-hidden
+                className="h-1.5 w-1.5 rounded-full"
+                style={{ backgroundColor: t.color }}
+              />
               {t.title}
             </button>
           ))}
         </div>
-      )}
+      ) : null}
 
       {/* Kanban board */}
       <DndContext
-        sensors={sensors}
         collisionDetection={closestCorners}
-        onDragStart={onDragStart}
         onDragEnd={onDragEnd}
+        onDragStart={onDragStart}
+        sensors={sensors}
       >
         <div className="flex gap-3 overflow-x-auto pb-4">
           {columns.map((col) => (
             <KanbanColumn
-              key={col.id}
-              id={col.id}
-              label={col.label}
-              color={col.color}
               canConfigure={canConfigure}
+              color={col.color}
               epics={epicsByColumn.get(col.id) ?? []}
+              id={col.id}
+              key={col.id}
+              label={col.label}
+              onOpenDrawer={setOpenEpicId}
             />
           ))}
         </div>
@@ -283,6 +330,9 @@ export const KanbanBoard = ({ initialEpics, columns, canConfigure, themes = [] }
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* EpicDrawer will be added in Task 5 */}
+      {/* openEpicId={openEpicId} onClose={() => setOpenEpicId(null)} */}
     </div>
   );
 };

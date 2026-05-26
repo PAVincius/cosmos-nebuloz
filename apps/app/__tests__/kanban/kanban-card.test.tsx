@@ -1,0 +1,167 @@
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+
+// Mock dnd-kit to avoid needing a DndContext provider
+vi.mock("@dnd-kit/core", () => ({
+  useDraggable: () => ({
+    attributes: {},
+    listeners: {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: mock stub for dnd-kit ref
+    setNodeRef: (_el: unknown) => {},
+    // biome-ignore lint/suspicious/noEmptyBlockStatements: mock stub for dnd-kit ref
+    setActivatorNodeRef: (_el: unknown) => {},
+    transform: null,
+    isDragging: false,
+  }),
+}));
+
+// Mock cn utility
+vi.mock("@repo/design-system/lib/utils", () => ({
+  cn: (...args: unknown[]) =>
+    args
+      .flat()
+      .filter((x) => typeof x === "string" && x)
+      .join(" "),
+}));
+
+import {
+  investColor,
+  investLabel,
+  KanbanCard,
+} from "@/app/(authenticated)/dashboard/portfolio/components/kanban-card";
+import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+
+// Top-level regex constants (Biome: useTopLevelRegex)
+const RE_BLOCKED = /BLOCKED/;
+const RE_OKR_2 = /2 OKRs/;
+const RE_5_FEATURES = /5 features/;
+const RE_1_FEATURE = /1 feature/;
+
+// ── Pure unit tests ───────────────────────────────────────────────────────────
+
+describe("investColor", () => {
+  it("returns muted classes for null score", () => {
+    expect(investColor(null)).toContain("bg-muted");
+  });
+
+  it("returns green classes for score >= 70", () => {
+    expect(investColor(70)).toContain("bg-green-50");
+    expect(investColor(100)).toContain("bg-green-50");
+  });
+
+  it("returns yellow classes for score >= 50 and < 70", () => {
+    expect(investColor(50)).toContain("bg-yellow-50");
+    expect(investColor(69)).toContain("bg-yellow-50");
+  });
+
+  it("returns red classes for score < 50", () => {
+    expect(investColor(0)).toContain("bg-red-50");
+    expect(investColor(49)).toContain("bg-red-50");
+  });
+});
+
+describe("investLabel", () => {
+  it("returns INVEST? for null", () => {
+    expect(investLabel(null)).toBe("INVEST?");
+  });
+
+  it("returns rounded score label", () => {
+    expect(investLabel(72.6)).toBe("INVEST 73");
+    expect(investLabel(50)).toBe("INVEST 50");
+  });
+});
+
+// ── Component tests ───────────────────────────────────────────────────────────
+
+afterEach(() => cleanup());
+
+function makeEpic(overrides: Partial<PortfolioEpic> = {}): PortfolioEpic {
+  return {
+    id: "epic-1",
+    title: "My Epic Title",
+    statusId: "status-1",
+    order: 0,
+    wsjfScore: 4.5,
+    bv: 8,
+    tc: 5,
+    rr: 3,
+    js: 2,
+    featureCount: 3,
+    strategicThemeId: null,
+    themeTitle: null,
+    themeColor: null,
+    linkedOKRCount: 0,
+    governanceStatus: null,
+    investScore: null,
+    investBreakdown: null,
+    descriptionMd: null,
+    ...overrides,
+  };
+}
+
+describe("KanbanCard component", () => {
+  it("renders the epic title", () => {
+    render(<KanbanCard epic={makeEpic()} />);
+    expect(screen.getByText("My Epic Title")).toBeDefined();
+  });
+
+  it("shows the INVEST badge with null score as INVEST?", () => {
+    render(<KanbanCard epic={makeEpic({ investScore: null })} />);
+    expect(screen.getByText("INVEST?")).toBeDefined();
+  });
+
+  it("shows green-class INVEST badge for score >= 70", () => {
+    render(<KanbanCard epic={makeEpic({ investScore: 75 })} />);
+    const badge = screen.getByText("INVEST 75");
+    expect(badge).toBeDefined();
+    expect(badge.className).toContain("bg-green-50");
+  });
+
+  it("shows yellow-class INVEST badge for score between 50 and 69", () => {
+    render(<KanbanCard epic={makeEpic({ investScore: 55 })} />);
+    const badge = screen.getByText("INVEST 55");
+    expect(badge.className).toContain("bg-yellow-50");
+  });
+
+  it("shows red-class INVEST badge for score < 50", () => {
+    render(<KanbanCard epic={makeEpic({ investScore: 30 })} />);
+    const badge = screen.getByText("INVEST 30");
+    expect(badge.className).toContain("bg-red-50");
+  });
+
+  it("calls onOpenDrawer with epic id when title is clicked", () => {
+    const onOpenDrawer = vi.fn();
+    render(<KanbanCard epic={makeEpic()} onOpenDrawer={onOpenDrawer} />);
+    fireEvent.click(screen.getByText("My Epic Title"));
+    expect(onOpenDrawer).toHaveBeenCalledWith("epic-1");
+  });
+
+  it("shows BLOCKED warning when governanceStatus is BLOCKED", () => {
+    render(<KanbanCard epic={makeEpic({ governanceStatus: "BLOCKED" })} />);
+    expect(screen.getByText(RE_BLOCKED)).toBeDefined();
+  });
+
+  it("shows OKR indicator when linkedOKRCount > 0", () => {
+    render(<KanbanCard epic={makeEpic({ linkedOKRCount: 2 })} />);
+    expect(screen.getByText(RE_OKR_2)).toBeDefined();
+  });
+
+  it("renders theme color bar when themeColor is set", () => {
+    const { container } = render(
+      <KanbanCard epic={makeEpic({ themeColor: "#FF5733" })} />
+    );
+    // The color bar div has inline style with backgroundColor
+    const colorBar = container.querySelector("[style]");
+    expect(colorBar).toBeDefined();
+  });
+
+  it("shows feature count", () => {
+    render(<KanbanCard epic={makeEpic({ featureCount: 5 })} />);
+    expect(screen.getByText(RE_5_FEATURES)).toBeDefined();
+  });
+
+  it("shows singular feature label for count of 1", () => {
+    render(<KanbanCard epic={makeEpic({ featureCount: 1 })} />);
+    expect(screen.getByText(RE_1_FEATURE)).toBeDefined();
+  });
+});
