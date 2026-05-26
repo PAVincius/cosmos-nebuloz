@@ -10,7 +10,6 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     epic: {
-      findFirst: vi.fn(),
       update: vi.fn(),
     },
   },
@@ -33,7 +32,6 @@ import { updateEpic } from "@/app/actions/epics/update-epic";
 
 const mockDb = database as {
   epic: {
-    findFirst: ReturnType<typeof vi.fn>;
     update: ReturnType<typeof vi.fn>;
   };
 };
@@ -45,12 +43,11 @@ const mockRevalidatePath = revalidatePath as ReturnType<typeof vi.fn>;
 
 const TENANT_ID = "tenant-abc";
 const EPIC_ID = "epic-xyz";
-const RE_NOT_FOUND = /épico não encontrado/i;
+const RE_NOT_FOUND = /record to update not found/i;
 
 beforeEach(() => {
   vi.clearAllMocks();
   mockRequireTenantSession.mockResolvedValue({ tenantId: TENANT_ID });
-  mockDb.epic.findFirst.mockResolvedValue({ id: EPIC_ID });
   mockDb.epic.update.mockResolvedValue({ id: EPIC_ID });
 });
 
@@ -66,13 +63,8 @@ describe("updateEpic", () => {
     }
     expect(result.data).toEqual({ id: EPIC_ID });
 
-    expect(mockDb.epic.findFirst).toHaveBeenCalledWith({
-      where: { id: EPIC_ID, tenantId: TENANT_ID },
-      select: { id: true },
-    });
-
     expect(mockDb.epic.update).toHaveBeenCalledWith({
-      where: { id: EPIC_ID },
+      where: { id: EPIC_ID, tenantId: TENANT_ID },
       data: { title: "New Title" },
       select: { id: true },
     });
@@ -88,7 +80,7 @@ describe("updateEpic", () => {
     });
 
     expect(mockDb.epic.update).toHaveBeenCalledWith({
-      where: { id: EPIC_ID },
+      where: { id: EPIC_ID, tenantId: TENANT_ID },
       data: { statusId: "IN_PROGRESS", order: 3 },
       select: { id: true },
     });
@@ -105,7 +97,7 @@ describe("updateEpic", () => {
     });
 
     expect(mockDb.epic.update).toHaveBeenCalledWith({
-      where: { id: EPIC_ID },
+      where: { id: EPIC_ID, tenantId: TENANT_ID },
       data: {
         title: "Updated",
         statusId: "DONE",
@@ -121,14 +113,17 @@ describe("updateEpic", () => {
     await updateEpic({ epicId: EPIC_ID, strategicThemeId: null });
 
     expect(mockDb.epic.update).toHaveBeenCalledWith({
-      where: { id: EPIC_ID },
+      where: { id: EPIC_ID, tenantId: TENANT_ID },
       data: { strategicThemeId: null },
       select: { id: true },
     });
   });
 
-  it("returns err when epic is not found for the tenant", async () => {
-    mockDb.epic.findFirst.mockResolvedValue(null);
+  it("returns err when epic is not found for the tenant (Prisma throws)", async () => {
+    // Prisma throws RecordNotFound when the compound where clause matches nothing
+    mockDb.epic.update.mockRejectedValue(
+      new Error("Record to update not found.")
+    );
 
     const result = await updateEpic({ epicId: "nonexistent", title: "Test" });
     expect(result.ok).toBe(false);

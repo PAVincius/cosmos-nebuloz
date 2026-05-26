@@ -16,20 +16,21 @@ export function createEpic(
     const ctx = await requireTenantSession(await headers());
     const input = CreateEpicSchema.parse(raw);
 
-    const count = await database.epic.count({
-      where: { tenantId: ctx.tenantId, statusId: input.statusId },
-    });
-
-    const epic = await database.epic.create({
-      data: {
-        tenantId: ctx.tenantId,
-        title: input.title,
-        statusId: input.statusId,
-        strategicThemeId: input.strategicThemeId ?? null,
-        descriptionMd: input.descriptionMd ?? null,
-        order: count,
-      },
-      select: { id: true, title: true, statusId: true, order: true },
+    const epic = await database.$transaction(async (tx) => {
+      const count = await tx.epic.count({
+        where: { tenantId: ctx.tenantId, statusId: input.statusId },
+      });
+      return tx.epic.create({
+        data: {
+          tenantId: ctx.tenantId,
+          title: input.title,
+          statusId: input.statusId,
+          strategicThemeId: input.strategicThemeId ?? null,
+          descriptionMd: input.descriptionMd ?? null,
+          order: count,
+        },
+        select: { id: true, title: true, statusId: true, order: true },
+      });
     });
 
     revalidatePath("/dashboard/portfolio");

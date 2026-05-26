@@ -14,16 +14,8 @@ export function updateEpic(
     const ctx = await requireTenantSession(await headers());
     const input = UpdateEpicSchema.parse(raw);
 
-    const existing = await database.epic.findFirst({
-      where: { id: input.epicId, tenantId: ctx.tenantId },
-      select: { id: true },
-    });
-    if (!existing) {
-      throw new Error("Épico não encontrado");
-    }
-
     const updated = await database.epic.update({
-      where: { id: input.epicId },
+      where: { id: input.epicId, tenantId: ctx.tenantId },
       data: {
         ...(input.title !== undefined && { title: input.title }),
         ...(input.statusId !== undefined && { statusId: input.statusId }),

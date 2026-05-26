@@ -7,14 +7,19 @@ vi.mock("@repo/auth/server", () => ({
   requireTenantSession: vi.fn(),
 }));
 
-vi.mock("@repo/database", () => ({
-  database: {
-    epic: {
-      count: vi.fn(),
-      create: vi.fn(),
+vi.mock("@repo/database", () => {
+  const epicCount = vi.fn();
+  const epicCreate = vi.fn();
+
+  return {
+    database: {
+      epic: { count: epicCount, create: epicCreate },
+      $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) =>
+        fn({ epic: { count: epicCount, create: epicCreate } })
+      ),
     },
-  },
-}));
+  };
+});
 
 vi.mock("next/headers", () => ({
   headers: vi.fn().mockResolvedValue(new Headers()),
@@ -36,6 +41,7 @@ const mockDb = database as {
     count: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
   };
+  $transaction: ReturnType<typeof vi.fn>;
 };
 
 const mockRequireTenantSession = requireTenantSession as ReturnType<
@@ -49,6 +55,11 @@ const RE_TITULO = /título/i;
 beforeEach(() => {
   vi.clearAllMocks();
   mockRequireTenantSession.mockResolvedValue({ tenantId: TENANT_ID });
+  // Re-wire $transaction after clearAllMocks so it still delegates to epic fns
+  mockDb.$transaction.mockImplementation(
+    async (fn: (tx: unknown) => Promise<unknown>) =>
+      fn({ epic: { count: mockDb.epic.count, create: mockDb.epic.create } })
+  );
 });
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
