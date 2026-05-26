@@ -13,7 +13,6 @@ type Props = {
   cloudCost: number;
   peopleCost: number;
   saasCost: number;
-  planned: number;
 };
 
 const COLORS = ["#6366f1", "#22c55e", "#f59e0b"];
@@ -57,7 +56,9 @@ export function CostBreakdownCard({ cloudCost, peopleCost, saasCost }: Props) {
               <Cell fill={COLORS[i % COLORS.length]} key={i} />
             ))}
           </Pie>
-          <Tooltip formatter={(v: unknown) => fmt(v as number)} />
+          <Tooltip
+            formatter={(v) => (typeof v === "number" ? fmt(v) : String(v))}
+          />
           <Legend />
         </PieChart>
       </ResponsiveContainer>

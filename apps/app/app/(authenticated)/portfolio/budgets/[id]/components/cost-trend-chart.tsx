@@ -35,7 +35,7 @@ export function CostTrendChart({ snapshots, planned }: Props) {
       maximumFractionDigits: 0,
     }).format(v);
 
-  const dailyBudget = data.length > 0 ? planned / data.length : 0;
+  const dailyBudget = planned / 90;
 
   return (
     <div className="rounded-lg border p-6">
@@ -45,7 +45,9 @@ export function CostTrendChart({ snapshots, planned }: Props) {
           <CartesianGrid className="stroke-muted" strokeDasharray="3 3" />
           <XAxis dataKey="date" tick={{ fontSize: 11 }} />
           <YAxis tick={{ fontSize: 11 }} tickFormatter={fmt} width={80} />
-          <Tooltip formatter={(v: unknown) => fmt(v as number)} />
+          <Tooltip
+            formatter={(v) => (typeof v === "number" ? fmt(v) : String(v))}
+          />
           <ReferenceLine
             label={{ value: "Budget/dia", fontSize: 11, fill: "#f59e0b" }}
             stroke="#f59e0b"

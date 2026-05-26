@@ -21,7 +21,9 @@ function getProgressColor(isOverBudget: boolean, isNearLimit: boolean): string {
 }
 
 export function BudgetDetail({ budget, snapshots }: Props) {
-  const themeSnapshots = snapshots.filter((s) => s.themeId === budget.themeId);
+  const themeSnapshots = budget.themeId
+    ? snapshots.filter((s) => s.themeId === budget.themeId)
+    : [];
   const totalCloud = themeSnapshots.reduce((s, r) => s + r.cloudCost, 0);
   const totalActual = themeSnapshots.reduce((s, r) => s + r.actualCost, 0);
 
@@ -40,12 +42,7 @@ export function BudgetDetail({ budget, snapshots }: Props) {
     <div className="grid grid-cols-12 gap-6">
       {/* Main — 8 cols */}
       <div className="col-span-8 space-y-6">
-        <CostBreakdownCard
-          cloudCost={totalCloud}
-          peopleCost={0}
-          planned={budget.amount}
-          saasCost={0}
-        />
+        <CostBreakdownCard cloudCost={totalCloud} peopleCost={0} saasCost={0} />
         <CostTrendChart planned={budget.amount} snapshots={themeSnapshots} />
       </div>
 
