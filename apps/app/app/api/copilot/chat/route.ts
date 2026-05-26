@@ -11,6 +11,8 @@ import {
   checkCopilotQuota,
   incrementCopilotUsage,
 } from "@/app/actions/safe-copilot/quota";
+import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
+import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-prompts";
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
 
 export async function POST(req: Request) {
@@ -75,11 +77,13 @@ export async function POST(req: Request) {
       },
     });
 
+    const rolePrompt = buildRoleSystemPrompt(detectPrimaryRole([ctx.role]));
     const modeMessages = getModeMessages(
       mode,
       copilotContext,
       // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
-      body.messages as any
+      body.messages as any,
+      rolePrompt
     );
 
     const modelName = resolveModelName(provider);

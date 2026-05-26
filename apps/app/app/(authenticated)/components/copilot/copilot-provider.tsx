@@ -9,6 +9,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import type { SAFeRole } from "@/app/actions/safe-copilot/roles/detect-role";
+import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
 import { CopilotFab } from "./copilot-fab";
 
 // ssr: false prevents CopilotPanel → CopilotSuggestions → server actions import chain
@@ -39,6 +41,7 @@ export type CopilotConfig = {
 type CopilotContextType = {
   isOpen: boolean;
   config: CopilotConfig;
+  role: SAFeRole;
   openCopilot: (config: Partial<CopilotConfig>) => void;
   closeCopilot: () => void;
   setSessionId: (id: string) => void;
@@ -53,6 +56,7 @@ const DEFAULT_CONFIG: CopilotConfig = {
 const CopilotCtx = createContext<CopilotContextType>({
   isOpen: false,
   config: DEFAULT_CONFIG,
+  role: "DEV",
   openCopilot: () => null,
   closeCopilot: () => null,
   setSessionId: () => null,
@@ -62,10 +66,17 @@ export function useCopilot() {
   return useContext(CopilotCtx);
 }
 
-export function CopilotProvider({ children }: { children: ReactNode }) {
+export function CopilotProvider({
+  children,
+  role: memberRole,
+}: {
+  children: ReactNode;
+  role?: string;
+}) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [config, setConfig] = useState<CopilotConfig>(DEFAULT_CONFIG);
+  const role = detectPrimaryRole(memberRole ? [memberRole] : []);
   // mounted gates CopilotPanel + CopilotFab so SSR and initial client render
   // are identical — prevents Radix useId mismatch caused by dynamic ssr:false
   // creating a different fiber tree depth on server vs client.
@@ -110,10 +121,12 @@ export function CopilotProvider({ children }: { children: ReactNode }) {
 
   return (
     <CopilotCtx.Provider
-      value={{ isOpen, config, openCopilot, closeCopilot, setSessionId }}
+      value={{ isOpen, config, role, openCopilot, closeCopilot, setSessionId }}
     >
       {children}
+      {/* biome-ignore lint/nursery/noLeakedRender: mounted is boolean state */}
       {mounted && <CopilotPanel />}
+      {/* biome-ignore lint/nursery/noLeakedRender: mounted is boolean state */}
       {mounted && !pathname.startsWith("/copilot") && <CopilotFab />}
     </CopilotCtx.Provider>
   );

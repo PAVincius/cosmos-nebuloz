@@ -22,6 +22,7 @@ type AppLayoutProperties = {
   readonly children: ReactNode;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: layout orchestrates auth + onboarding + tenant resolution
 const AppLayout = async ({ children }: AppLayoutProperties) => {
   if (env.ARCJET_KEY) {
     await secure(["CATEGORY:PREVIEW"]);
@@ -64,6 +65,11 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
     (session?.session as unknown as { activeTenantId?: string })
       ?.activeTenantId ?? null;
 
+  const activeMembership =
+    memberships.find((m) => m.tenant.id === initialActiveTenantId) ??
+    memberships[0];
+  const memberRole = activeMembership?.role ?? "MEMBER";
+
   // Auto-redirect new tenants to onboarding if company_setup is not complete
   const pathname = (await headers()).get("x-pathname") ?? "";
   const skipOnboarding = [
@@ -98,7 +104,7 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
   return (
     <NotificationsProvider userId={user.id}>
       <SidebarProvider defaultOpen={defaultSidebarOpen}>
-        <CopilotProvider>
+        <CopilotProvider role={memberRole}>
           <GlobalSidebar
             initialActiveTenantId={initialActiveTenantId}
             initialTenants={initialTenants}

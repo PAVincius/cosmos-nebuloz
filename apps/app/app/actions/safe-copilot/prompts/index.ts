@@ -232,7 +232,8 @@ function summarizeContext(ctx: CopilotContext): string {
 export function getModeMessages(
   mode: string,
   context: CopilotContext,
-  userMessages: CoreMessage[]
+  userMessages: CoreMessage[],
+  rolePrompt?: string
 ): CoreMessage[] {
   const persona = MODE_PERSONAS[mode] ?? MODE_PERSONAS.global;
 
@@ -252,9 +253,17 @@ export function getModeMessages(
     ],
   };
 
+  const contextText = [
+    rolePrompt,
+    `PAPEL: ${persona.role} — ${persona.title}\nFOCO: ${persona.focus}\nESTILO: ${persona.style}\nAUDIÊNCIA: ${persona.audience}`,
+    summarizeContext(context),
+  ]
+    .filter(Boolean)
+    .join("\n\n");
+
   const contextBlock: CoreMessage = {
     role: "user",
-    content: `PAPEL: ${persona.role} — ${persona.title}\nFOCO: ${persona.focus}\nESTILO: ${persona.style}\nAUDIÊNCIA: ${persona.audience}\n\n${summarizeContext(context)}`,
+    content: contextText,
   };
 
   // Insert static + context blocks before the actual conversation

@@ -10,6 +10,7 @@ import { CopilotChat } from "./copilot-chat";
 import { CopilotHeader } from "./copilot-header";
 import { CopilotPromptChips } from "./copilot-prompt-chips";
 import { useCopilot } from "./copilot-provider";
+import { CopilotRoleChips } from "./copilot-role-chips";
 import { useCopilotChat } from "./use-copilot-chat";
 
 const panelVariants = {
@@ -19,7 +20,7 @@ const panelVariants = {
 };
 
 export function CopilotPanel() {
-  const { isOpen, config, closeCopilot } = useCopilot();
+  const { isOpen, config, role, closeCopilot } = useCopilot();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const shouldReduce = useReducedMotion();
 
@@ -96,11 +97,14 @@ export function CopilotPanel() {
           <Separator className="opacity-30" />
 
           {messages.length === 0 ? (
-            <CopilotPromptChips
-              disabled={isLoading}
-              mode={config.mode}
-              onSelect={handleChipSelect}
-            />
+            <>
+              <CopilotPromptChips
+                disabled={isLoading}
+                mode={config.mode}
+                onSelect={handleChipSelect}
+              />
+              <CopilotRoleChips onSelect={handleChipSelect} role={role} />
+            </>
           ) : null}
 
           <form
