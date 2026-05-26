@@ -4,6 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { indexEntity } from "@/app/actions/safe-copilot/indexer";
 import { type Result, safeAction } from "../_base";
 import { type UpdateEpicInput, UpdateEpicSchema } from "./schema";
 
@@ -13,6 +14,9 @@ export function updateEpic(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = UpdateEpicSchema.parse(raw);
+
+    const titleChanged = input.title !== undefined;
+    const descChanged = input.descriptionMd !== undefined;
 
     const updated = await database.epic.update({
       where: { id: input.epicId, tenantId: ctx.tenantId },
@@ -31,6 +35,17 @@ export function updateEpic(
     });
 
     revalidatePath("/dashboard/portfolio");
+
+    if (titleChanged || descChanged) {
+      const { tenantId } = ctx;
+      const { epicId } = input;
+      queueMicrotask(() => {
+        indexEntity("epic", epicId, tenantId).catch((err) => {
+          console.error("[copilot] reindex epic failed", { epicId, err });
+        });
+      });
+    }
+
     return updated;
   });
 }
