@@ -1,8 +1,13 @@
 "use client";
+import { useState } from "react";
 import type { AggregatedPortfolioEpic } from "@/lib/portfolio-aggregate";
+import { PromptDeliveryDialog } from "./prompt-delivery-dialog";
+import { Button } from "@repo/design-system/components/ui/button";
 
 type Props = { epic: AggregatedPortfolioEpic };
 export function EpicDrawerMore({ epic }: Props) {
+  const [showPromptDialog, setShowPromptDialog] = useState(false);
+
   return (
     <div className="space-y-3 p-6 text-sm">
       <div>
@@ -17,6 +22,24 @@ export function EpicDrawerMore({ epic }: Props) {
         <span className="text-muted-foreground">OKRs: </span>
         {epic.linkedOKRCount}
       </div>
+
+      <div className="pt-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowPromptDialog(true)}
+        >
+          Gerar Prompt de Implementação
+        </Button>
+      </div>
+
+      {showPromptDialog && (
+        <PromptDeliveryDialog
+          epicId={epic.id}
+          epicTitle={epic.title}
+          onClose={() => setShowPromptDialog(false)}
+        />
+      )}
     </div>
   );
 }
