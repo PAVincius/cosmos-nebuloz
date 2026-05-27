@@ -36,8 +36,8 @@ OUT_FILE = ROOT / "data" / "raw" / "safe_10k.jsonl"
 CHECKPOINT_FILE = ROOT / "data" / "raw" / ".gen_checkpoint.json"
 OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
 
-MODEL = "claude-sonnet-4-6"
-PAIRS_PER_BATCH = 50
+MODEL = "claude-haiku-4-5-20251001"
+PAIRS_PER_BATCH = 50  # Haiku: rápido e barato, mantém 50 para JSON parse estável
 TARGET_TOTAL = 10_000
 MAX_RETRIES = 5
 BASE_BACKOFF = 2.0
