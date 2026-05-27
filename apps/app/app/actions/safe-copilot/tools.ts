@@ -144,7 +144,7 @@ export function buildCopilotTools(tenantId: string) {
 
     queryKnowledge: tool({
       description:
-        "Hybrid semantic + keyword search over indexed tenant knowledge: risks, PI objectives, features, epics, and OKRs. Use for free-form questions about specific entities, dependencies, or themes not covered by structured tools.",
+        "Hybrid semantic + keyword search over indexed tenant knowledge: risks, PI objectives, features, epics, OKRs, documents, and SAFe 6.0 framework knowledge. Use for free-form questions about specific entities, dependencies, themes, or SAFe methodology questions.",
       inputSchema: z.object({
         query: z.string().min(3).describe("Natural language search query"),
         sourceTypes: z
@@ -156,6 +156,7 @@ export function buildCopilotTools(tenantId: string) {
               "epic",
               "okr",
               "document",
+              "safe_framework",
             ])
           )
           .optional()
