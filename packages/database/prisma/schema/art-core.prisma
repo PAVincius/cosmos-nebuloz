@@ -141,6 +141,9 @@ model Epic {
   statusId         String   @default("BACKLOG")
   order            Int      @default(0)
   yjsDocumentState String?  // CRDT document state para sync Yjs
+  epicType         String   @default("EPIC") // EPIC | FEATURE | STORY
+  dueDate          DateTime?
+  transcription    String?  // Raw meeting notes pasted by user
   strategicThemeId String?
 
   // AI INVEST scoring (cached — recomputed when title/description changes)
