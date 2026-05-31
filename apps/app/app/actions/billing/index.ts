@@ -20,7 +20,7 @@ const CreateBillingIntegrationSchema = z.object({
   config: z.record(z.string(), z.unknown()),
 });
 
-export function createBillingIntegration(
+export async function createBillingIntegration(
   input: z.infer<typeof CreateBillingIntegrationSchema>
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
@@ -43,7 +43,7 @@ export function createBillingIntegration(
   });
 }
 
-export function listBillingIntegrations(): Promise<
+export async function listBillingIntegrations(): Promise<
   Result<
     Array<{
       id: string;
@@ -70,7 +70,7 @@ export function listBillingIntegrations(): Promise<
   });
 }
 
-export function triggerManualSync(
+export async function triggerManualSync(
   integrationId: string
 ): Promise<Result<{ eventId: string }>> {
   return safeAction(async () => {

@@ -17,6 +17,7 @@ import {
   useOthers,
   useStorage,
 } from "@repo/collaboration/hooks";
+import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { updateEpicStatus } from "@/app/actions/epics/update-status";
@@ -234,7 +235,7 @@ export const KanbanBoard = ({
       {others.map(({ connectionId, presence, info }) =>
         presence.cursor ? (
           <div
-            className="pointer-events-none fixed z-50 flex items-center gap-1"
+            className="pointer-events-none fixed z-50 flex items-center gap-1 transition-[transform] duration-75 ease-linear"
             key={connectionId}
             style={{
               transform: `translate(${presence.cursor.x}px, ${presence.cursor.y}px)`,
@@ -326,11 +327,21 @@ export const KanbanBoard = ({
         </div>
 
         {/* Drag overlay — ghost card while dragging */}
-        <DragOverlay>
+        <DragOverlay
+          dropAnimation={{
+            duration: 250,
+            easing: "cubic-bezier(0.25,0.46,0.45,0.94)",
+          }}
+        >
           {activeEpic ? (
-            <div className="rotate-2 opacity-90">
+            <motion.div
+              animate={{ rotate: 2, scale: 1.04, opacity: 0.95 }}
+              initial={{ rotate: 0, scale: 1, opacity: 1 }}
+              style={{ boxShadow: "0 20px 48px rgba(0,0,0,0.18)" }}
+              transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
+            >
               <KanbanCard epic={activeEpic} isDragging />
-            </div>
+            </motion.div>
           ) : null}
         </DragOverlay>
       </DndContext>
@@ -345,10 +356,10 @@ export const KanbanBoard = ({
 
       {quickAddColumnId !== null && (
         <EpicCreateModal
-          statusId={quickAddColumnId}
-          themes={themes}
           onClose={() => setQuickAddColumnId(null)}
           onCreated={() => setQuickAddColumnId(null)}
+          statusId={quickAddColumnId}
+          themes={themes}
         />
       )}
     </div>

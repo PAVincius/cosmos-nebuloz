@@ -28,15 +28,16 @@ export type {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function withStats(b: LeanBudget): LeanBudgetWithStats {
-  // Use spentDecimal (Decimal) with fallback to spent (Float) during migration
-  const spentValue =
-    b.spentDecimal !== null && b.spentDecimal !== undefined
-      ? Number(b.spentDecimal)
-      : b.spent;
+  const spentDecimal = b.spentDecimal !== null ? Number(b.spentDecimal) : null;
+  const spentManualOverride =
+    b.spentManualOverride !== null ? Number(b.spentManualOverride) : null;
+  const spentValue = spentDecimal ?? b.spent;
   const pct = b.amount > 0 ? (spentValue / b.amount) * 100 : 0;
   const g = b.guardrails as { capex?: number; opex?: number } | null;
   return {
     ...b,
+    spentDecimal,
+    spentManualOverride,
     percentUsed: Math.round(pct * 10) / 10,
     isOverBudget: spentValue > b.amount,
     isNearLimit: pct > 80,
@@ -72,12 +73,16 @@ export async function linkBudgetToTheme(
       where: { id: budgetId, tenantId: ctx.tenantId },
       data: { themeId: themeId ?? null },
     });
-    if (count === 0) throw new Error("Budget não encontrado ou sem permissão.");
+    if (count === 0) {
+      throw new Error("Budget não encontrado ou sem permissão.");
+    }
     const updated = await database.leanBudget.findFirstOrThrow({
       where: { id: budgetId, tenantId: ctx.tenantId },
     });
     revalidatePath("/portfolio/budgets");
-    if (themeId) revalidatePath(`/portfolio/themes/${themeId}`);
+    if (themeId) {
+      revalidatePath(`/portfolio/themes/${themeId}`);
+    }
     return updated;
   });
 }
@@ -103,7 +108,9 @@ export async function getLeanBudgetById(
     const budget = await database.leanBudget.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!budget) throw new Error("Orçamento não encontrado.");
+    if (!budget) {
+      throw new Error("Orçamento não encontrado.");
+    }
     return withStats(budget);
   });
 }
@@ -166,7 +173,9 @@ export async function createLeanBudget(
 
     revalidatePath("/portfolio/budgets");
     revalidatePath("/portfolio");
-    if (input.themeId) revalidatePath(`/portfolio/themes/${input.themeId}`);
+    if (input.themeId) {
+      revalidatePath(`/portfolio/themes/${input.themeId}`);
+    }
     return budget;
   });
 }
@@ -195,8 +204,9 @@ export async function updateLeanBudget(
       },
     });
 
-    if (count === 0)
+    if (count === 0) {
       throw new Error("Orçamento não encontrado ou sem permissão.");
+    }
 
     const updated = await database.leanBudget.findFirstOrThrow({
       where: { id, tenantId: ctx.tenantId },
@@ -221,8 +231,9 @@ export async function updateSpent(
       data: { spent: input.spent, spentDecimal: String(input.spent) },
     });
 
-    if (count === 0)
+    if (count === 0) {
       throw new Error("Orçamento não encontrado ou sem permissão.");
+    }
 
     const updated = await database.leanBudget.findFirstOrThrow({
       where: { id, tenantId: ctx.tenantId },
@@ -244,8 +255,9 @@ export async function deleteLeanBudget(
       where: { id, tenantId: ctx.tenantId },
     });
 
-    if (count === 0)
+    if (count === 0) {
       throw new Error("Orçamento não encontrado ou sem permissão.");
+    }
 
     revalidatePath("/portfolio/budgets");
     revalidatePath("/portfolio");
@@ -270,7 +282,9 @@ export async function getBudgetById(
 /** @deprecated use listLeanBudgets */
 export async function getLeanBudgets(): Promise<LeanBudgetWithUsage[]> {
   const result = await listLeanBudgets();
-  if (!result.ok) throw new Error(result.error);
+  if (!result.ok) {
+    throw new Error(result.error);
+  }
   return result.data.map((b) => {
     const g = b.guardrails as { capex?: number; opex?: number } | null;
     return {

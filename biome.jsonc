@@ -4,6 +4,35 @@
   "javascript": {
     "globals": ["Liveblocks"]
   },
+  "overrides": [
+    {
+      "includes": ["apps/app/app/actions/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "useAwait": "off" },
+          "style": { "noExportedImports": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ai/lib/rag/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noExplicitAny": "off" }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/(authenticated)/components/copilot/copilot-markdown.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": { "noMisleadingCharacterClass": "off" }
+        }
+      }
+    }
+  ],
   "files": {
     "includes": [
       "**/*",
@@ -17,7 +46,8 @@
       "!apps/docs/**/*.json",
       "!apps/email/.react-email",
       "!packages/cms/basehub-types.d.ts",
-      "!.claude/worktrees/**"
+      "!.claude/worktrees/**",
+      "!experiments/**/.venv/**"
     ]
   }
 }

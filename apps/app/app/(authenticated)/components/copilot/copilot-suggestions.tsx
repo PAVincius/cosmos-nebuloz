@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { AnimatePresence, motion } from "framer-motion";
 import { CheckCircle, ExternalLink, Loader2, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -86,14 +87,19 @@ function SuggestionCard({ sessionId, suggestion }: SuggestionCardProps) {
 
   if (status !== "idle") {
     return (
-      <div className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-muted-foreground text-xs">
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-2 text-muted-foreground text-xs"
+        initial={{ opacity: 0, y: -4 }}
+        transition={{ duration: 0.2, ease: "easeOut" }}
+      >
         {status === "applied" ? (
           <CheckCircle className="h-3.5 w-3.5 text-green-500" />
         ) : (
           <XCircle className="h-3.5 w-3.5" />
         )}
         <span>{status === "applied" ? `${label} aplicado` : "Descartado"}</span>
-      </div>
+      </motion.div>
     );
   }
 
@@ -183,34 +189,42 @@ function SuggestionCard({ sessionId, suggestion }: SuggestionCardProps) {
 
 type CopilotSuggestionsProps = {
   sessionId: string;
-  content: string;
+  suggestions: ParsedSuggestion[];
 };
 
 export function CopilotSuggestions({
   sessionId,
-  content,
+  suggestions,
 }: CopilotSuggestionsProps) {
-  const suggestions = parseSuggestions(content);
   if (suggestions.length === 0) {
     return null;
   }
 
   return (
     <div className="mt-2 space-y-2">
-      {suggestions.map((s) =>
-        s.type === "navigate_to" ? (
-          <NavigateSuggestionCard
-            key={`navigate-${String(JSON.stringify(s.payload)).slice(0, 30)}`}
-            suggestion={s}
-          />
-        ) : (
-          <SuggestionCard
-            key={`${s.type}-${String(JSON.stringify(s.payload)).slice(0, 30)}`}
-            sessionId={sessionId}
-            suggestion={s}
-          />
-        )
-      )}
+      <AnimatePresence>
+        {suggestions.map((s, i) => {
+          const key =
+            s.type === "navigate_to"
+              ? `navigate-${String(JSON.stringify(s.payload)).slice(0, 30)}`
+              : `${s.type}-${String(JSON.stringify(s.payload)).slice(0, 30)}`;
+          return (
+            <motion.div
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              initial={{ opacity: 0, y: 8 }}
+              key={key}
+              transition={{ duration: 0.22, delay: i * 0.07, ease: "easeOut" }}
+            >
+              {s.type === "navigate_to" ? (
+                <NavigateSuggestionCard suggestion={s} />
+              ) : (
+                <SuggestionCard sessionId={sessionId} suggestion={s} />
+              )}
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
     </div>
   );
 }

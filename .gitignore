@@ -276,4 +276,4 @@ packages/database/generated
 # Documentation
 .contentlayer
 .content-collections
-.source
+.source.venv/

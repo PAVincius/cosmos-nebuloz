@@ -2,6 +2,7 @@
 
 import { useDroppable } from "@dnd-kit/core";
 import { cn } from "@repo/design-system/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { memo } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { ColumnSettings } from "./column-settings";
@@ -40,9 +41,9 @@ function KanbanColumnInner({
   return (
     <div
       className={cn(
-        "flex min-h-[480px] w-64 shrink-0 flex-col rounded-lg border border-border/70 bg-muted/20 transition-colors duration-150",
+        "flex min-h-[480px] w-64 shrink-0 flex-col rounded-lg border border-border/70 bg-muted/20 transition-all duration-300 ease-out",
         "border-l-2",
-        isOver === true && "bg-primary/[0.03]"
+        isOver === true && "border-primary/20 bg-primary/[0.06]"
       )}
       ref={setNodeRef}
       style={{ borderLeftColor: color }}
@@ -72,7 +73,9 @@ function KanbanColumnInner({
               onClick={onQuickAdd}
               type="button"
             >
-              <span aria-hidden className="text-[14px] leading-none">+</span>
+              <span aria-hidden className="text-[14px] leading-none">
+                +
+              </span>
             </button>
           )}
           {canConfigure === true && (
@@ -86,13 +89,21 @@ function KanbanColumnInner({
           <KanbanCard epic={epic} key={epic.id} onOpenDrawer={onOpenDrawer} />
         ))}
 
-        {isOver === true && epics.length === 0 ? (
-          <div className="flex h-20 items-center justify-center rounded-md border border-primary/30 border-dashed">
-            <span className="font-mono text-[11px] text-muted-foreground">
-              drop here
-            </span>
-          </div>
-        ) : null}
+        <AnimatePresence>
+          {isOver === true && epics.length === 0 ? (
+            <motion.div
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex h-20 items-center justify-center rounded-md border border-primary/30 border-dashed"
+              exit={{ opacity: 0, scale: 0.96 }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+            >
+              <span className="font-mono text-[11px] text-muted-foreground">
+                drop here
+              </span>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
       </div>
     </div>
   );

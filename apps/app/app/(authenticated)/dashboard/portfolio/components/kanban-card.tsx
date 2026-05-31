@@ -2,6 +2,7 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@repo/design-system/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 
@@ -49,8 +50,8 @@ export function KanbanCard({
     <div
       className={cn(
         "group select-none rounded-lg border border-border bg-card shadow-sm",
-        "transition-all duration-150 hover:border-primary/30 hover:shadow-md",
-        isDragging === true && "opacity-40"
+        "transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-md",
+        isDragging === true && "scale-[0.97] opacity-25"
       )}
       ref={setNodeRef}
       style={style}
@@ -63,10 +64,10 @@ export function KanbanCard({
         {...listeners}
         {...attributes}
         className="cursor-grab touch-none active:cursor-grabbing"
+        onBlur={() => setFocused(false)}
+        onFocus={() => setFocused(true)}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        onFocus={() => setFocused(true)}
-        onBlur={() => setFocused(false)}
       >
         {/* Theme color bar */}
         {!!epic.themeColor && (
@@ -123,25 +124,35 @@ export function KanbanCard({
           </div>
 
           {/* WSJF breakdown on hover or focus */}
-          {Boolean(hovered || focused) && epic.wsjfScore > 0 ? (
-            <div className="mt-2 grid grid-cols-4 gap-1 border-border border-t pt-2">
-              {[
-                { label: "BV", value: epic.bv },
-                { label: "TC", value: epic.tc },
-                { label: "RR", value: epic.rr },
-                { label: "JS", value: epic.js },
-              ].map(({ label, value }) => (
-                <div className="text-center" key={label}>
-                  <div className="text-[9px] text-muted-foreground">
-                    {label}
-                  </div>
-                  <div className="font-medium font-mono text-[11px]">
-                    {value}
-                  </div>
+          <AnimatePresence>
+            {Boolean(hovered || focused) && epic.wsjfScore > 0 ? (
+              <motion.div
+                animate={{ opacity: 1, height: "auto" }}
+                className="overflow-hidden"
+                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.22, ease: "easeOut" }}
+              >
+                <div className="mt-2 grid grid-cols-4 gap-1 border-border border-t pt-2">
+                  {[
+                    { label: "BV", value: epic.bv },
+                    { label: "TC", value: epic.tc },
+                    { label: "RR", value: epic.rr },
+                    { label: "JS", value: epic.js },
+                  ].map(({ label, value }) => (
+                    <div className="text-center" key={label}>
+                      <div className="text-[9px] text-muted-foreground">
+                        {label}
+                      </div>
+                      <div className="font-medium font-mono text-[11px]">
+                        {value}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          ) : null}
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
 
           {/* OKR indicator */}
           {epic.linkedOKRCount > 0 && (

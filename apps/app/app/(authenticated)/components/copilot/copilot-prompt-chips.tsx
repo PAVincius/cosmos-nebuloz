@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "framer-motion";
 import type { CopilotMode } from "./copilot-provider";
 
 const MODE_PROMPTS: Record<CopilotMode, string[]> = {
@@ -50,16 +51,20 @@ export function CopilotPromptChips({
 
   return (
     <div className="flex flex-wrap gap-1.5 px-4 py-2">
-      {prompts.map((prompt) => (
-        <button
+      {prompts.map((prompt, i) => (
+        <motion.button
+          animate={{ opacity: 1, y: 0 }}
           className="rounded-full border bg-muted/50 px-3 py-1 text-muted-foreground text-xs transition-colors hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled}
+          initial={{ opacity: 0, y: 6 }}
           key={prompt}
           onClick={() => onSelect(prompt)}
+          transition={{ duration: 0.2, delay: i * 0.06, ease: "easeOut" }}
           type="button"
+          whileTap={{ scale: 0.95 }}
         >
           {prompt}
-        </button>
+        </motion.button>
       ))}
     </div>
   );

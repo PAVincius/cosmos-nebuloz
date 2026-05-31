@@ -12,13 +12,17 @@ function normalizeKey(query: string): string {
   return CACHE_PREFIX + query.toLowerCase().trim().replace(/\s+/g, " ");
 }
 
-async function getRedisClient() {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type RedisClient = any;
+
+async function getRedisClient(): Promise<RedisClient | null> {
   const url = process.env.UPSTASH_REDIS_REST_URL;
   const token = process.env.UPSTASH_REDIS_REST_TOKEN;
   if (!(url && token)) {
     return null;
   }
   try {
+    // @ts-expect-error — @upstash/redis is an optional peer dep; no-ops if absent
     const { Redis } = await import("@upstash/redis");
     return new Redis({ url, token });
   } catch {
@@ -43,8 +47,8 @@ export class UpstashRagCache {
       return null;
     }
     try {
-      const result = await redis.get<CachedEntry>(normalizeKey(query));
-      return result ?? null;
+      const result = await redis.get(normalizeKey(query));
+      return (result as CachedEntry | null) ?? null;
     } catch {
       return null;
     }
