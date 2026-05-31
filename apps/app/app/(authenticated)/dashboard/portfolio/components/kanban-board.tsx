@@ -28,6 +28,7 @@ import { EpicCreateModal } from "./epic-create-modal";
 import { EpicDrawer } from "./epic-drawer";
 import { KanbanCard } from "./kanban-card";
 import { KanbanColumn } from "./kanban-column";
+import { MultiplayerCursors } from "./multiplayer-cursors";
 
 type KanbanBoardProps = {
   initialEpics: PortfolioEpic[];
@@ -245,45 +246,17 @@ export const KanbanBoard = ({
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
     >
-      {/* Multiplayer cursors */}
-      {others.map(({ connectionId, presence, info }) =>
-        presence.cursor ? (
-          <div
-            className="pointer-events-none fixed z-50 flex items-center gap-1 transition-[transform] duration-75 ease-linear"
-            key={connectionId}
-            style={{
-              transform: `translate(${presence.cursor.x}px, ${presence.cursor.y}px)`,
-            }}
-          >
-            <svg
-              aria-hidden="true"
-              fill="none"
-              height="14"
-              viewBox="0 0 14 14"
-              width="14"
-            >
-              <path
-                d="M0 0L9 5.5L5.5 6.5L3.5 11L0 0Z"
-                fill={info?.color ?? "var(--color-primary)"}
-              />
-            </svg>
-            {!!info?.name && (
-              <span
-                className="rounded-sm px-1.5 py-0.5 font-medium text-[10px] text-white"
-                style={{
-                  backgroundColor: info?.color ?? "var(--color-primary)",
-                }}
-              >
-                {info.name}
-              </span>
-            )}
-          </div>
-        ) : null
-      )}
+      <MultiplayerCursors />
 
       {/* Theme filter toolbar */}
       {themes.length > 0 ? (
         <div className="mb-3 flex flex-wrap items-center gap-2">
+          {others.length > 0 && (
+            <div className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-[10px]">
+              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+              {others.length} online
+            </div>
+          )}
           <button
             className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-[11px] transition-colors hover:bg-muted disabled:opacity-50"
             disabled={isAnalyzingAll}
