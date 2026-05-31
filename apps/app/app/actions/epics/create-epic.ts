@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { type Result, safeAction } from "../_base";
 import { type CreateEpicInput, CreateEpicSchema } from "./schema";
 
-export function createEpic(
+export async function createEpic(
   raw: CreateEpicInput
 ): Promise<
   Result<{ id: string; title: string; statusId: string; order: number }>
@@ -27,6 +27,9 @@ export function createEpic(
           statusId: input.statusId,
           strategicThemeId: input.strategicThemeId ?? null,
           descriptionMd: input.descriptionMd ?? null,
+          epicType: input.epicType,
+          dueDate: input.dueDate ? new Date(input.dueDate) : null,
+          transcription: input.transcription ?? null,
           order: count,
         },
         select: { id: true, title: true, statusId: true, order: true },

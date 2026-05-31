@@ -4,7 +4,10 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
-import { aggregateEpicRow, type InvestBreakdown } from "@/lib/portfolio-aggregate";
+import {
+  aggregateEpicRow,
+  type InvestBreakdown,
+} from "@/lib/portfolio-aggregate";
 import { portfolioEpicsCacheTag } from "./portfolio-cache";
 import { PORTFOLIO_EPICS_PAGE_SIZE } from "./portfolio-constants";
 
@@ -71,6 +74,8 @@ function mapEpicRow(
     investScore: e.investScore ?? null,
     investBreakdown: e.investBreakdown ?? null,
     descriptionMd: e.descriptionMd ?? null,
+    epicType: e.epicType,
+    dueDate: e.dueDate,
   });
 }
 

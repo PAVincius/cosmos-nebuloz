@@ -20,6 +20,9 @@ export const CreateEpicSchema = z.object({
   statusId: z.string().default("BACKLOG"),
   strategicThemeId: z.string().optional().nullable(),
   descriptionMd: z.string().optional().nullable(),
+  epicType: z.enum(["EPIC", "FEATURE", "STORY"]).default("EPIC"),
+  dueDate: z.string().datetime({ offset: true }).optional().nullable(),
+  transcription: z.string().optional().nullable(),
 });
 
 export const UpdateEpicSchema = z.object({
@@ -29,6 +32,9 @@ export const UpdateEpicSchema = z.object({
   strategicThemeId: z.string().optional().nullable(),
   descriptionMd: z.string().optional().nullable(),
   order: z.number().int().min(0).optional(),
+  epicType: z.enum(["EPIC", "FEATURE", "STORY"]).optional(),
+  dueDate: z.string().datetime({ offset: true }).optional().nullable(),
+  transcription: z.string().optional().nullable(),
 });
 
 export type CreateEpicInput = z.infer<typeof CreateEpicSchema>;

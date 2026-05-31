@@ -36,6 +36,8 @@ export type AggregatedPortfolioEpic = {
   investScore: number | null;
   investBreakdown: InvestBreakdown | null;
   descriptionMd: string | null;
+  epicType: string;
+  dueDate: string | null;
 };
 
 /** WSJF efetivo: score persistido ou recalculado a partir dos parâmetros. */
@@ -45,24 +47,24 @@ export function effectiveFeatureWsjf(f: FeatureWsjfFields): number {
     : calculateWSJF({ bv: f.bv, tc: f.tc, rr: f.rr, js: f.js });
 }
 
-export function aggregateEpicRow(
-  epic: {
-    id: string;
-    title: string;
-    statusId: string;
-    order: number;
-    features: FeatureWsjfFields[];
-    featureCount: number;
-    strategicThemeId?: string | null;
-    themeTitle?: string | null;
-    themeColor?: string | null;
-    linkedOKRCount?: number;
-    governanceStatus?: string | null;
-    investScore?: number | null;
-    investBreakdown?: InvestBreakdown | null;
-    descriptionMd?: string | null;
-  }
-): AggregatedPortfolioEpic {
+export function aggregateEpicRow(epic: {
+  id: string;
+  title: string;
+  statusId: string;
+  order: number;
+  features: FeatureWsjfFields[];
+  featureCount: number;
+  strategicThemeId?: string | null;
+  themeTitle?: string | null;
+  themeColor?: string | null;
+  linkedOKRCount?: number;
+  governanceStatus?: string | null;
+  investScore?: number | null;
+  investBreakdown?: InvestBreakdown | null;
+  descriptionMd?: string | null;
+  epicType?: string | null;
+  dueDate?: Date | null;
+}): AggregatedPortfolioEpic {
   const { features } = epic;
   const n = features.length;
   const sumBv = features.reduce((s, f) => s + f.bv, 0);
@@ -85,12 +87,14 @@ export function aggregateEpicRow(
     js: sumJs > 0 ? sumJs : 1,
     featureCount: epic.featureCount,
     strategicThemeId: epic.strategicThemeId ?? null,
-    themeTitle:       epic.themeTitle ?? null,
-    themeColor:       epic.themeColor ?? null,
-    linkedOKRCount:   epic.linkedOKRCount ?? 0,
+    themeTitle: epic.themeTitle ?? null,
+    themeColor: epic.themeColor ?? null,
+    linkedOKRCount: epic.linkedOKRCount ?? 0,
     governanceStatus: epic.governanceStatus ?? null,
-    investScore:      epic.investScore ?? null,
-    investBreakdown:  epic.investBreakdown ?? null,
-    descriptionMd:    epic.descriptionMd ?? null,
+    investScore: epic.investScore ?? null,
+    investBreakdown: epic.investBreakdown ?? null,
+    descriptionMd: epic.descriptionMd ?? null,
+    epicType: epic.epicType ?? "EPIC",
+    dueDate: epic.dueDate ? (epic.dueDate as Date).toISOString() : null,
   };
 }

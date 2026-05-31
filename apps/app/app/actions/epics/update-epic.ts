@@ -8,7 +8,7 @@ import { indexEntity } from "@/app/actions/safe-copilot/indexer";
 import { type Result, safeAction } from "../_base";
 import { type UpdateEpicInput, UpdateEpicSchema } from "./schema";
 
-export function updateEpic(
+export async function updateEpic(
   raw: UpdateEpicInput
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
@@ -30,6 +30,13 @@ export function updateEpic(
           descriptionMd: input.descriptionMd,
         }),
         ...(input.order !== undefined && { order: input.order }),
+        ...(input.epicType !== undefined && { epicType: input.epicType }),
+        ...(input.dueDate !== undefined && {
+          dueDate: input.dueDate ? new Date(input.dueDate) : null,
+        }),
+        ...(input.transcription !== undefined && {
+          transcription: input.transcription,
+        }),
       },
       select: { id: true },
     });
