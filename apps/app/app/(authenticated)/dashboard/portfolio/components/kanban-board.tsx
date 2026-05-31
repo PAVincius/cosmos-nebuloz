@@ -19,6 +19,8 @@ import {
 } from "@repo/collaboration/hooks";
 import { motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
+import { analyzeAllEpics } from "@/app/actions/epics/analyze-all-epics";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { updateEpicStatus } from "@/app/actions/epics/update-status";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
@@ -42,6 +44,7 @@ export const KanbanBoard = ({
 }: KanbanBoardProps) => {
   const [themeFilter, setThemeFilter] = useState<string>("ALL");
   const [activeEpic, setActiveEpic] = useState<PortfolioEpic | null>(null);
+  const [isAnalyzingAll, setIsAnalyzingAll] = useState(false);
   const [openEpicId, setOpenEpicId] = useState<string | null>(null);
   const [quickAddColumnId, setQuickAddColumnId] = useState<string | null>(null);
   const [, updatePresence] = useMyPresence();
@@ -223,6 +226,17 @@ export const KanbanBoard = ({
     updatePresence({ cursor: null });
   }, [updatePresence]);
 
+  const handleAnalyzeAll = useCallback(async () => {
+    setIsAnalyzingAll(true);
+    const result = await analyzeAllEpics();
+    setIsAnalyzingAll(false);
+    if (result.ok) {
+      toast.success(`INVEST calculado para ${result.data.length} épicos`);
+    } else {
+      toast.error("Erro ao analisar épicos");
+    }
+  }, []);
+
   return (
     /* biome-ignore lint/a11y/noStaticElementInteractions: tracks cursor for Liveblocks multiplayer presence */
     /* biome-ignore lint/a11y/noNoninteractiveElementInteractions: tracks cursor for Liveblocks multiplayer presence */
@@ -270,6 +284,15 @@ export const KanbanBoard = ({
       {/* Theme filter toolbar */}
       {themes.length > 0 ? (
         <div className="mb-3 flex flex-wrap items-center gap-2">
+          <button
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-[11px] transition-colors hover:bg-muted disabled:opacity-50"
+            disabled={isAnalyzingAll}
+            onClick={handleAnalyzeAll}
+            type="button"
+          >
+            <span className="text-indigo-500">✦</span>
+            {isAnalyzingAll ? "Analisando…" : "Analyze All"}
+          </button>
           <span className="text-muted-foreground text-xs">
             Filtrar por tema:
           </span>
