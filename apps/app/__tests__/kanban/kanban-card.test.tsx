@@ -95,6 +95,8 @@ function makeEpic(overrides: Partial<PortfolioEpic> = {}): PortfolioEpic {
     investScore: null,
     investBreakdown: null,
     descriptionMd: null,
+    epicType: "EPIC",
+    dueDate: null,
     ...overrides,
   };
 }

@@ -5,6 +5,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+import { InvestScoreBar } from "./invest-score-bar";
 
 type KanbanCardProps = {
   epic: PortfolioEpic;
@@ -49,9 +50,12 @@ export function KanbanCard({
   return (
     <div
       className={cn(
-        "group select-none rounded-lg border border-border bg-card shadow-sm",
-        "transition-all duration-300 ease-out hover:border-primary/30 hover:shadow-md",
-        isDragging === true && "scale-[0.97] opacity-25"
+        "group select-none rounded-lg border bg-card shadow-sm",
+        "hover:-translate-y-px transition-all duration-300 ease-out hover:shadow-md",
+        isDragging === true && "rotate-1 opacity-50 shadow-lg",
+        epic.investScore !== null && epic.investScore < 50
+          ? "border-yellow-400/60 dark:border-yellow-600/60"
+          : "border-border"
       )}
       ref={setNodeRef}
       style={style}
@@ -77,6 +81,8 @@ export function KanbanCard({
           />
         )}
 
+        <InvestScoreBar className="rounded-none" score={epic.investScore} />
+
         <div className="px-3 pt-2.5 pb-2">
           {/* Title — click opens drawer, drag handle wraps the rest */}
           <button
@@ -100,21 +106,17 @@ export function KanbanCard({
               {epic.featureCount === 1 ? "feature" : "features"}
             </span>
 
+            {!!epic.epicType && epic.epicType !== "EPIC" && (
+              <span className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-[9px] text-indigo-600 uppercase tracking-wide dark:bg-indigo-950 dark:text-indigo-400">
+                {epic.epicType === "FEATURE" ? "Feature" : "Story"}
+              </span>
+            )}
+
             {epic.wsjfScore > 0 && (
               <span className="font-mono text-[10px] text-muted-foreground">
                 WSJF {epic.wsjfScore.toFixed(1)}
               </span>
             )}
-
-            <span
-              className={cn(
-                "rounded-full px-1.5 py-0.5 font-semibold text-[9px]",
-                investColor(epic.investScore)
-              )}
-              data-invest-badge
-            >
-              {investLabel(epic.investScore)}
-            </span>
 
             {epic.governanceStatus === "BLOCKED" && (
               <span className="font-semibold text-[9px] text-red-600">
