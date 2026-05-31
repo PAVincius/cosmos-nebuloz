@@ -1,5 +1,7 @@
 import { calculateWSJF } from "@repo/safe-engine";
 
+export type EpicType = "EPIC" | "FEATURE" | "STORY";
+
 export type FeatureWsjfFields = {
   bv: number;
   tc: number;
@@ -36,7 +38,7 @@ export type AggregatedPortfolioEpic = {
   investScore: number | null;
   investBreakdown: InvestBreakdown | null;
   descriptionMd: string | null;
-  epicType: string;
+  epicType: EpicType;
   dueDate: string | null;
 };
 
@@ -62,7 +64,7 @@ export function aggregateEpicRow(epic: {
   investScore?: number | null;
   investBreakdown?: InvestBreakdown | null;
   descriptionMd?: string | null;
-  epicType?: string | null;
+  epicType?: EpicType | null;
   dueDate?: Date | null;
 }): AggregatedPortfolioEpic {
   const { features } = epic;
