@@ -46,52 +46,45 @@ export function EpicDrawer({ epicId, epic, onClose }: EpicDrawerProps) {
           <SheetTitle className="font-semibold text-xl">
             {epic.title}
           </SheetTitle>
-          {!!epic.themeTitle && (() => {
-            const tc = epic.themeColor ?? "#888";
-            return (
-              <span
-                className="w-fit rounded-full px-2 py-0.5 font-medium text-xs"
-                style={{
-                  backgroundColor: `${tc}22`,
-                  color: tc,
-                  border: `1px solid ${tc}44`,
-                }}
-              >
-                {epic.themeTitle}
-              </span>
-            );
-          })()}
+          {!!epic.themeTitle &&
+            (() => {
+              const tc = epic.themeColor ?? "#888";
+              return (
+                <span
+                  className="w-fit rounded-full px-2 py-0.5 font-medium text-xs"
+                  style={{
+                    backgroundColor: `${tc}22`,
+                    color: tc,
+                    border: `1px solid ${tc}44`,
+                  }}
+                >
+                  {epic.themeTitle}
+                </span>
+              );
+            })()}
         </SheetHeader>
 
         <Tabs
           className="flex flex-1 flex-col overflow-hidden"
           defaultValue="description"
         >
-          <TabsList className="h-auto w-full justify-start rounded-none border-b bg-transparent px-6 py-0">
-            <TabsTrigger
-              className="rounded-none border-transparent border-b-2 pt-3 pb-3 data-[state=active]:border-primary"
-              value="description"
-            >
-              Descrição
-            </TabsTrigger>
-            <TabsTrigger
-              className="rounded-none border-transparent border-b-2 pt-3 pb-3 data-[state=active]:border-primary"
-              value="invest"
-            >
-              Análise IA
-            </TabsTrigger>
-            <TabsTrigger
-              className="rounded-none border-transparent border-b-2 pt-3 pb-3 data-[state=active]:border-primary"
-              value="dependencies"
-            >
-              Dependências
-            </TabsTrigger>
-            <TabsTrigger
-              className="rounded-none border-transparent border-b-2 pt-3 pb-3 data-[state=active]:border-primary"
-              value="more"
-            >
-              Mais
-            </TabsTrigger>
+          <TabsList className="!bg-transparent h-auto w-full justify-start gap-1 rounded-none border-b px-6 py-0">
+            {(
+              [
+                { value: "description", label: "Descrição" },
+                { value: "invest", label: "Análise IA" },
+                { value: "dependencies", label: "Dependências" },
+                { value: "more", label: "Mais" },
+              ] as const
+            ).map(({ value, label }) => (
+              <TabsTrigger
+                className="!rounded-none !border-x-0 !border-t-0 !border-b-transparent !text-muted-foreground !shadow-none hover:!text-foreground data-[state=active]:!border-b-primary data-[state=active]:!bg-transparent data-[state=active]:!text-foreground data-[state=active]:!shadow-none border-b-2 px-3 pt-3 pb-3 font-medium text-sm transition-colors"
+                key={value}
+                value={value}
+              >
+                {label}
+              </TabsTrigger>
+            ))}
           </TabsList>
 
           <div className="flex-1 overflow-y-auto">
