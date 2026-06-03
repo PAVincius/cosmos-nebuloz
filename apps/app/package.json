@@ -41,6 +41,7 @@
     "@repo/email": "workspace:*",
     "@repo/feature-flags": "workspace:*",
     "@repo/next-config": "workspace:*",
+    "@repo/rate-limit": "workspace:*",
     "@repo/notifications": "workspace:*",
     "@repo/observability": "workspace:*",
     "@repo/safe-engine": "workspace:*",

@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
     if (getErrorCode(error) === "UNAUTHORIZED") {
       return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
     }
-    const message = error instanceof Error ? error.message : "Erro interno";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[api/features]", error);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }
