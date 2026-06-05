@@ -41,26 +41,28 @@ function KanbanColumnInner({
   return (
     <div
       className={cn(
-        "flex min-h-[480px] w-64 shrink-0 flex-col rounded-lg border border-border/70 bg-muted/20 transition-all duration-300 ease-out",
+        "flex min-h-[480px] min-w-[220px] flex-1 flex-col rounded-lg border border-border/70 bg-muted/20 transition-all duration-300 ease-out",
         "border-l-2",
-        isOver === true && "border-primary/20 bg-primary/[0.06]"
+        "dark:border-[var(--hairline)] dark:bg-[var(--surface-2)]",
+        isOver === true &&
+          "border-primary/20 bg-primary/[0.06] dark:border-[var(--hairline-strong)]"
       )}
       ref={setNodeRef}
       style={{ borderLeftColor: color }}
     >
-      <div className="flex items-center justify-between border-border/60 border-b px-3 py-2.5">
+      <div className="flex items-center justify-between border-border/60 border-b px-3 py-2.5 dark:border-[var(--hairline)] dark:bg-[rgba(255,255,255,.02)]">
         <div className="flex min-w-0 items-center gap-2">
           <span
             aria-hidden
-            className="inline-block h-1.5 w-1.5 shrink-0 rounded-full"
+            className="inline-block h-2 w-2 shrink-0 rounded-full"
             style={{ backgroundColor: color }}
           />
-          <span className="truncate font-medium text-[11px] text-muted-foreground uppercase tracking-[0.08em]">
+          <span className="truncate font-semibold text-[11px] text-muted-foreground uppercase tracking-[0.07em] dark:text-[var(--ink-muted)]">
             {label}
           </span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1.5 font-mono text-[10px] text-muted-foreground">
+          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1.5 font-mono text-[10px] text-muted-foreground dark:border dark:border-[var(--hairline)] dark:bg-[var(--chip-bg)] dark:text-[var(--ink-subtle)]">
             {epics.length}
           </span>
           {wipLimit !== undefined && (
@@ -84,7 +86,7 @@ function KanbanColumnInner({
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-2">
+      <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-2 dark:bg-transparent">
         {epics.map((epic) => (
           <KanbanCard epic={epic} key={epic.id} onOpenDrawer={onOpenDrawer} />
         ))}

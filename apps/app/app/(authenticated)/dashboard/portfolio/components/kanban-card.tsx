@@ -51,10 +51,12 @@ export function KanbanCard({
     <div
       className={cn(
         "group select-none rounded-lg border bg-card shadow-sm",
-        "hover:-translate-y-px transition-all duration-300 ease-out hover:shadow-md",
+        "hover:-translate-y-[2px] transition-all duration-200 ease-out hover:shadow-md",
+        "dark:border-[var(--hairline)] dark:bg-[var(--surface-3)] dark:shadow-none",
+        "dark:hover:border-[var(--hairline-strong)] dark:hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,.5)]",
         isDragging === true && "rotate-1 opacity-50 shadow-lg",
         epic.investScore !== null && epic.investScore < 50
-          ? "border-yellow-400/60 dark:border-yellow-600/60"
+          ? "border-yellow-400/60 dark:border-yellow-600/40"
           : "border-border"
       )}
       ref={setNodeRef}
@@ -113,8 +115,8 @@ export function KanbanCard({
             )}
 
             {epic.wsjfScore > 0 && (
-              <span className="font-mono text-[10px] text-muted-foreground">
-                WSJF {epic.wsjfScore.toFixed(1)}
+              <span className="rounded border border-border/60 bg-muted/40 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground dark:border-[rgba(251,191,36,.2)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]">
+                {epic.wsjfScore.toFixed(1)}
               </span>
             )}
 
