@@ -1,4 +1,5 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
+import { Badge } from "@repo/design-system/components/cosmos/badge";
+import { SectionCard } from "@repo/design-system/components/cosmos/section-card";
 import {
   Card,
   CardContent,
@@ -33,15 +34,15 @@ const STATUS_LABELS: Record<string, string> = {
   DONE: "Concluído",
 };
 
-const STATUS_VARIANTS: Record<
+const STATUS_TONES: Record<
   string,
-  "default" | "secondary" | "outline" | "destructive"
+  "neutral" | "blue" | "amber" | "accent" | "green"
 > = {
-  BACKLOG: "outline",
-  ANALYSIS: "secondary",
-  REVIEW: "secondary",
-  IMPLEMENTING: "default",
-  DONE: "default",
+  BACKLOG: "neutral",
+  ANALYSIS: "blue",
+  REVIEW: "amber",
+  IMPLEMENTING: "accent",
+  DONE: "green",
 };
 
 export async function generateMetadata({
@@ -69,7 +70,7 @@ export default async function FeaturePage({ params }: FeaturePageProps) {
         actions={<EditFeatureDialog feature={feature} />}
         badge={
           <div className="flex items-center gap-2">
-            <Badge variant={STATUS_VARIANTS[feature.statusId] ?? "outline"}>
+            <Badge tone={STATUS_TONES[feature.statusId] ?? "neutral"}>
               {STATUS_LABELS[feature.statusId] ?? feature.statusId}
             </Badge>
             <ExternalSourceBadge
@@ -166,79 +167,75 @@ export default async function FeaturePage({ params }: FeaturePageProps) {
           </div>
 
           {/* WSJF breakdown */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Detalhes WSJF</CardTitle>
-              <CardDescription>Parâmetros de priorização SAFe</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <div className="flex flex-col gap-1 rounded-lg border p-3">
-                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                    <TargetIcon className="h-3.5 w-3.5" />
-                    Business Value
-                  </div>
-                  <p className="font-semibold text-2xl tabular-nums">
-                    {feature.bv}
-                  </p>
+          <SectionCard
+            description="Parâmetros de priorização SAFe"
+            icon={<BrainIcon className="h-4 w-4" />}
+            title="Detalhes WSJF"
+          >
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="flex flex-col gap-1 rounded-lg border border-hairline p-3">
+                <div className="flex items-center gap-1.5 text-ink-muted text-xs">
+                  <TargetIcon className="h-3.5 w-3.5" />
+                  Business Value
                 </div>
-                <div className="flex flex-col gap-1 rounded-lg border p-3">
-                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                    <ClockIcon className="h-3.5 w-3.5" />
-                    Time Criticality
-                  </div>
-                  <p className="font-semibold text-2xl tabular-nums">
-                    {feature.tc}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1 rounded-lg border p-3">
-                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                    <ShieldIcon className="h-3.5 w-3.5" />
-                    Risk Reduction
-                  </div>
-                  <p className="font-semibold text-2xl tabular-nums">
-                    {feature.rr}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-1 rounded-lg border p-3">
-                  <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                    <TrendingUpIcon className="h-3.5 w-3.5" />
-                    Job Size
-                  </div>
-                  <p className="font-semibold text-2xl tabular-nums">
-                    {feature.js}
-                  </p>
-                </div>
+                <p className="font-semibold text-2xl tabular-nums">
+                  {feature.bv}
+                </p>
               </div>
-            </CardContent>
-          </Card>
+              <div className="flex flex-col gap-1 rounded-lg border border-hairline p-3">
+                <div className="flex items-center gap-1.5 text-ink-muted text-xs">
+                  <ClockIcon className="h-3.5 w-3.5" />
+                  Time Criticality
+                </div>
+                <p className="font-semibold text-2xl tabular-nums">
+                  {feature.tc}
+                </p>
+              </div>
+              <div className="flex flex-col gap-1 rounded-lg border border-hairline p-3">
+                <div className="flex items-center gap-1.5 text-ink-muted text-xs">
+                  <ShieldIcon className="h-3.5 w-3.5" />
+                  Risk Reduction
+                </div>
+                <p className="font-semibold text-2xl tabular-nums">
+                  {feature.rr}
+                </p>
+              </div>
+              <div className="flex flex-col gap-1 rounded-lg border border-hairline p-3">
+                <div className="flex items-center gap-1.5 text-ink-muted text-xs">
+                  <TrendingUpIcon className="h-3.5 w-3.5" />
+                  Job Size
+                </div>
+                <p className="font-semibold text-2xl tabular-nums">
+                  {feature.js}
+                </p>
+              </div>
+            </div>
+          </SectionCard>
 
           {/* Metadata */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base">Informações</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-2 text-sm">
+          <SectionCard
+            bodyClassName="flex flex-col gap-2 text-sm"
+            title="Informações"
+          >
+            <div className="flex justify-between">
+              <span className="text-ink-muted">Criado em</span>
+              <span>
+                {new Date(feature.createdAt).toLocaleDateString("pt-BR")}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-ink-muted">Atualizado em</span>
+              <span>
+                {new Date(feature.updatedAt).toLocaleDateString("pt-BR")}
+              </span>
+            </div>
+            {feature.piPlan ? (
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Criado em</span>
-                <span>
-                  {new Date(feature.createdAt).toLocaleDateString("pt-BR")}
-                </span>
+                <span className="text-ink-muted">PI Plan</span>
+                <span>{feature.piPlan.name}</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Atualizado em</span>
-                <span>
-                  {new Date(feature.updatedAt).toLocaleDateString("pt-BR")}
-                </span>
-              </div>
-              {feature.piPlan ? (
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">PI Plan</span>
-                  <span>{feature.piPlan.name}</span>
-                </div>
-              ) : null}
-            </CardContent>
-          </Card>
+            ) : null}
+          </SectionCard>
         </div>
       </div>
     </div>

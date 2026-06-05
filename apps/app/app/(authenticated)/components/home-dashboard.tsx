@@ -1,8 +1,12 @@
+import { Badge } from "@repo/design-system/components/cosmos/badge";
+import { KpiCard } from "@repo/design-system/components/cosmos/kpi-card";
+import { SectionCard } from "@repo/design-system/components/cosmos/section-card";
 import {
   ArrowRightIcon,
   BarChart3Icon,
   CheckCircle2Icon,
   CircleDashedIcon,
+  ClockIcon,
   LayoutDashboardIcon,
   ListOrderedIcon,
   PlugZapIcon,
@@ -13,8 +17,28 @@ import {
 import Link from "next/link";
 import { getARTs } from "@/app/actions/arts/get-arts";
 import { getPortfolioEpics } from "@/app/actions/epics/get-portfolio";
+import { getMyActiveStories } from "@/app/actions/stories/get-my-active-stories";
 import { appDesign } from "@/lib/app-design";
 import { getTeams } from "../teams/actions";
+
+const STATUS_LABELS: Record<string, string> = {
+  BACKLOG: "Backlog",
+  TODO: "A fazer",
+  IN_PROGRESS: "Em progresso",
+  IN_REVIEW: "Em revisão",
+  BLOCKED: "Bloqueado",
+};
+
+const STATUS_TONES: Record<
+  string,
+  "neutral" | "blue" | "accent" | "amber" | "red"
+> = {
+  BACKLOG: "neutral",
+  TODO: "blue",
+  IN_PROGRESS: "accent",
+  IN_REVIEW: "amber",
+  BLOCKED: "red",
+};
 
 const QUICK_LINKS = [
   { href: "/portfolio", label: "Kanban de épicos", icon: LayoutDashboardIcon },
@@ -25,15 +49,33 @@ const QUICK_LINKS = [
 ] as const;
 
 export async function HomeDashboard() {
-  const [epics, arts, teams] = await Promise.all([
+  const [epics, arts, teams, myStories] = await Promise.all([
     getPortfolioEpics(),
     getARTs(),
     getTeams(),
+    getMyActiveStories().catch(() => []),
   ]);
 
   const implementing = epics.filter(
     (e) => e.statusId === "IMPLEMENTING"
   ).length;
+
+  const epicsDelta =
+    implementing > 0
+      ? { positive: true, value: `${implementing} em impl.` }
+      : undefined;
+
+  const avgWsjf =
+    epics.length > 0
+      ? epics.reduce((s, e) => s + e.wsjfScore, 0) / epics.length
+      : null;
+  const wsjfDelta =
+    avgWsjf !== null
+      ? {
+          positive: avgWsjf >= 5,
+          value: avgWsjf >= 5 ? "alta prioridade" : "média prioridade",
+        }
+      : undefined;
 
   return (
     <div className={`${appDesign.shell} gap-6 p-6`}>
@@ -45,44 +87,40 @@ export async function HomeDashboard() {
         <div aria-hidden className={appDesign.accentBar} />
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Link className={appDesign.statCard} href="/portfolio">
-          <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-            Épicos
-          </p>
-          <p className={`${appDesign.statValue} mt-1`}>{epics.length}</p>
-          <p className="mt-1 text-muted-foreground text-xs">
-            {implementing} em implementação
-          </p>
+      <div className="grid gap-[var(--cosmos-gap,16px)] sm:grid-cols-2 lg:grid-cols-4">
+        <Link className="block" href="/portfolio">
+          <KpiCard
+            delta={epicsDelta}
+            hint="no portfólio"
+            label="Épicos"
+            tone="accent"
+            value={epics.length}
+          />
         </Link>
-        <Link className={appDesign.statCard} href="/arts">
-          <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-            ARTs
-          </p>
-          <p className={`${appDesign.statValue} mt-1`}>{arts.length}</p>
-          <p className="mt-1 text-muted-foreground text-xs">Release trains</p>
+        <Link className="block" href="/arts">
+          <KpiCard
+            hint="release trains"
+            label="ARTs"
+            tone="blue"
+            value={arts.length}
+          />
         </Link>
-        <Link className={appDesign.statCard} href="/teams">
-          <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-            Times
-          </p>
-          <p className={`${appDesign.statValue} mt-1`}>{teams.length}</p>
-          <p className="mt-1 text-muted-foreground text-xs">Equipes ágeis</p>
+        <Link className="block" href="/teams">
+          <KpiCard
+            hint="equipes ágeis"
+            label="Times"
+            tone="green"
+            value={teams.length}
+          />
         </Link>
-        <Link className={appDesign.statCard} href="/portfolio/wsjf">
-          <p className="font-medium text-muted-foreground text-xs uppercase tracking-wide">
-            WSJF
-          </p>
-          <p className={`${appDesign.statValue} mt-1`}>
-            {epics.length > 0
-              ? (
-                  epics.reduce((s, e) => s + e.wsjfScore, 0) / epics.length
-                ).toFixed(1)
-              : "—"}
-          </p>
-          <p className="mt-1 text-muted-foreground text-xs">
-            Média do portfólio
-          </p>
+        <Link className="block" href="/portfolio/wsjf">
+          <KpiCard
+            delta={wsjfDelta}
+            hint="média do portfólio"
+            label="WSJF"
+            tone="amber"
+            value={avgWsjf !== null ? avgWsjf.toFixed(1) : "—"}
+          />
         </Link>
       </div>
 
@@ -164,26 +202,58 @@ export async function HomeDashboard() {
         </section>
       )}
 
-      <section className={appDesign.section}>
-        <div className={appDesign.sectionHeader}>
-          <h2 className={appDesign.sectionTitle}>Atalhos</h2>
-          <p className={appDesign.sectionDesc}>
-            Fluxos mais usados no dia a dia
-          </p>
-        </div>
-        <div className="grid gap-2 p-4 sm:grid-cols-2 lg:grid-cols-3">
-          {QUICK_LINKS.map(({ href, label, icon: Icon }) => (
-            <Link className={appDesign.quickLink} href={href} key={href}>
-              <Icon aria-hidden className="h-4 w-4 shrink-0 text-[#5e6ad2]" />
-              <span className="flex-1">{label}</span>
-              <ArrowRightIcon
-                aria-hidden
-                className="h-3.5 w-3.5 text-muted-foreground"
-              />
-            </Link>
-          ))}
-        </div>
-      </section>
+      {myStories.length > 0 && (
+        <SectionCard
+          bodyClassName="p-0"
+          description="Tasks atribuídas a você no sprint ativo"
+          icon={<ClockIcon className="h-4 w-4" />}
+          title="Meu Trabalho"
+        >
+          <div className="divide-y divide-hairline">
+            {myStories.map((story) => (
+              <Link
+                className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-surface-2"
+                href={story.teamId ? `/teams/${story.teamId}/kanban` : "/teams"}
+                key={story.id}
+              >
+                <ClockIcon className="h-3.5 w-3.5 shrink-0 text-ink-faint" />
+                <span className="min-w-0 flex-1 truncate text-sm">
+                  {story.title}
+                </span>
+                <Badge dot tone={STATUS_TONES[story.status] ?? "neutral"}>
+                  {STATUS_LABELS[story.status] ?? story.status}
+                </Badge>
+                {!!story.teamName && (
+                  <span className="hidden shrink-0 text-[11px] text-ink-muted sm:block">
+                    {story.teamName}
+                  </span>
+                )}
+              </Link>
+            ))}
+          </div>
+        </SectionCard>
+      )}
+
+      <SectionCard
+        bodyClassName="grid gap-2 p-4 sm:grid-cols-2 lg:grid-cols-3"
+        description="Fluxos mais usados no dia a dia"
+        icon={<LayoutDashboardIcon className="h-4 w-4" />}
+        title="Atalhos"
+      >
+        {QUICK_LINKS.map(({ href, label, icon: Icon }) => (
+          <Link className={appDesign.quickLink} href={href} key={href}>
+            <Icon
+              aria-hidden
+              className="h-4 w-4 shrink-0 text-[var(--accent-c)]"
+            />
+            <span className="flex-1">{label}</span>
+            <ArrowRightIcon
+              aria-hidden
+              className="h-3.5 w-3.5 text-ink-muted"
+            />
+          </Link>
+        ))}
+      </SectionCard>
     </div>
   );
 }
