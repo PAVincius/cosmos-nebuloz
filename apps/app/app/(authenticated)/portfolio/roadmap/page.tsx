@@ -1,6 +1,8 @@
-import { getRoadmapItems } from "@/app/actions/roadmap";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { getARTs } from "@/app/actions/arts/get-arts";
+import { getRoadmapItems } from "@/app/actions/roadmap";
 import { getAllEpics } from "@/app/actions/strategic-themes";
+import { appDesign } from "@/lib/app-design";
 import { RoadmapTimeline } from "./components/roadmap-timeline";
 
 export const metadata = {
@@ -19,18 +21,17 @@ export default async function RoadmapPage() {
   const epics = rawEpics.map((e) => ({ id: e.id, title: e.title }));
 
   return (
-    <div className="flex h-full min-w-0 flex-col">
-      <div className="flex items-center justify-between border-b px-6 py-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Roadmap</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">
-            Linha do tempo do portfolio — visualize épicos e iniciativas por mês e ART.
-          </p>
-        </div>
-      </div>
-
-      <div className="min-w-0 flex-1 overflow-auto p-6">
-        <RoadmapTimeline initialItems={items} arts={arts} epics={epics} />
+    <div className={appDesign.shell}>
+      <PageHeader
+        breadcrumb={[
+          { label: "Portfolio", href: "/portfolio" },
+          { label: "Roadmap" },
+        ]}
+        subtitle="Linha do tempo do portfolio — visualize épicos e iniciativas por mês e ART."
+        title="Roadmap"
+      />
+      <div className={appDesign.bodyScroll}>
+        <RoadmapTimeline arts={arts} epics={epics} initialItems={items} />
       </div>
     </div>
   );

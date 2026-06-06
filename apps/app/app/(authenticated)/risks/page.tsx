@@ -1,5 +1,7 @@
 import dynamic from "next/dynamic";
-import { getRisks, getPIPlans } from "@/app/actions/risks";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getPIPlans, getRisks } from "@/app/actions/risks";
+import { appDesign } from "@/lib/app-design";
 import { ROAMMetricsStrip } from "./components/roam-metrics-strip";
 
 const ROAMBoard = dynamic(
@@ -7,7 +9,10 @@ const ROAMBoard = dynamic(
   {
     loading: () => (
       <div className="flex min-h-[320px] items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar quadro ROAM…</span>
       </div>
     ),
@@ -23,15 +28,17 @@ export default async function RisksPage() {
   const [risks, piPlans] = await Promise.all([getRisks(), getPIPlans()]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Riscos ROAM</h1>
-        <p className="text-muted-foreground text-sm">
-          Rastreie e classifique riscos do PI Planning: Resolved · Owned · Accepted · Mitigated.
-        </p>
+    <div className={appDesign.shell}>
+      <PageHeader
+        subtitle="Rastreie e classifique riscos do PI Planning: Resolved · Owned · Accepted · Mitigated."
+        title="Riscos ROAM"
+      />
+      <div className={appDesign.bodyScroll}>
+        <div className="flex flex-col gap-6">
+          <ROAMMetricsStrip risks={risks} />
+          <ROAMBoard initialRisks={risks} piPlans={piPlans} />
+        </div>
       </div>
-      <ROAMMetricsStrip risks={risks} />
-      <ROAMBoard initialRisks={risks} piPlans={piPlans} />
     </div>
   );
 }
