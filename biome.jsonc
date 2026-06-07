@@ -15,6 +15,14 @@
       }
     },
     {
+      "includes": ["apps/app/app/api/migration/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" }
+        }
+      }
+    },
+    {
       "includes": ["packages/ai/lib/rag/**"],
       "linter": {
         "rules": {
@@ -36,6 +44,7 @@
   "files": {
     "includes": [
       "**/*",
+      "!design/**",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",
@@ -46,8 +55,8 @@
       "!apps/docs/**/*.json",
       "!apps/email/.react-email",
       "!packages/cms/basehub-types.d.ts",
-      "!.claude/worktrees/**",
-      "!experiments/**/.venv/**"
+      "!.claude/worktrees",
+      "!experiments/**/.venv"
     ]
   }
 }
