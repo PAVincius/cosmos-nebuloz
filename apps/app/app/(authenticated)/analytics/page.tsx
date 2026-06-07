@@ -3,15 +3,6 @@ import { database } from "@repo/database";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import {
-  BarChart2Icon,
   GitBranchIcon,
   ShieldAlertIcon,
   StarIcon,
@@ -23,6 +14,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { buildTeamVelocityRows } from "@/lib/analytics-team-velocity";
 import { appDesign } from "@/lib/app-design";
+import { PageHeader } from "../components/page-header";
 import { AnalyticsEmptyBanners } from "./components/analytics-empty";
 import { ExecutiveROISummary } from "./components/executive-roi-summary";
 
@@ -174,23 +166,19 @@ function KPICard({
   colorClass: string;
 }) {
   return (
-    <Card>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 font-medium text-muted-foreground text-sm">
-          <Icon className={`size-4 ${colorClass}`} />
-          {title}
-        </CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-baseline gap-1">
-          <span className={`font-bold text-3xl ${colorClass}`}>{value}</span>
-          {suffix ? (
-            <span className="text-muted-foreground text-sm">{suffix}</span>
-          ) : null}
-        </div>
-        <p className="mt-1 text-muted-foreground text-xs">{description}</p>
-      </CardContent>
-    </Card>
+    <div className="hover:-translate-y-0.5 rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)] transition-all duration-200 hover:border-primary/40 hover:shadow-[var(--hover-shadow)]">
+      <p className="flex items-center gap-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
+        <Icon className={`size-4 ${colorClass}`} />
+        {title}
+      </p>
+      <div className="mt-2 flex items-baseline gap-1">
+        <span className={`font-bold text-3xl ${colorClass}`}>{value}</span>
+        {suffix ? (
+          <span className="text-muted-foreground text-sm">{suffix}</span>
+        ) : null}
+      </div>
+      <p className="mt-1 text-muted-foreground text-xs">{description}</p>
+    </div>
   );
 }
 
@@ -227,15 +215,32 @@ export default async function AnalyticsPage() {
 
   return (
     <div className={appDesign.shell}>
-      <div className={appDesign.pageHeader}>
-        <h1 className="flex items-center gap-2 font-semibold text-2xl tracking-tight">
-          <BarChart2Icon className="size-5" />
-          Analytics SAFe
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Métricas de desempenho baseadas em SAFe 6.0
-        </p>
-      </div>
+      <PageHeader
+        stats={[
+          {
+            label: "PI Predictability",
+            value: `${data.piPredictability}%`,
+            icon: TargetIcon,
+          },
+          {
+            label: "Avg Velocity",
+            value: `${data.avgVelocity} SP/sprint`,
+            icon: TrendingUpIcon,
+          },
+          {
+            label: "Risk Resolution",
+            value: `${data.riskResolutionRate}%`,
+            icon: ShieldAlertIcon,
+          },
+          {
+            label: "Feature Throughput",
+            value: String(data.featureThroughput),
+            icon: ZapIcon,
+          },
+        ]}
+        subtitle="Métricas de desempenho baseadas em SAFe 6.0"
+        title="Analytics SAFe"
+      />
       <div className={appDesign.bodyScroll}>
         <div className="flex flex-col gap-6">
           <AnalyticsEmptyBanners
@@ -319,28 +324,26 @@ export default async function AnalyticsPage() {
             />
           </div>
 
-          <Separator />
-
           {/* PI Predictability History */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <TargetIcon className="size-4" />
+          <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+            <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+              <h2 className="flex items-center gap-2 font-semibold text-sm">
+                <TargetIcon className="size-4 text-primary" />
                 Histórico de PI Predictability
-              </CardTitle>
-              <CardDescription>
+              </h2>
+              <p className="mt-0.5 text-muted-foreground text-xs">
                 Predictability por PI (objetivos committed)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </p>
+            </div>
+            <div className="px-5">
               {data.piHistory.length === 0 ? (
-                <p className="py-4 text-center text-muted-foreground text-sm">
+                <p className="py-8 text-center text-muted-foreground text-sm">
                   Nenhum PI encontrado. Crie PIs e objetivos para ver o
                   histórico.
                 </p>
               ) : (
-                <div className="divide-y text-sm">
-                  <div className="flex items-center gap-3 py-2 font-medium text-muted-foreground text-xs">
+                <div className="divide-y divide-hairline text-sm">
+                  <div className="flex items-center gap-3 py-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
                     <span className="flex-1">PI</span>
                     <span className="w-20 text-right">Objectives</span>
                     <span className="w-20 text-right">Achieved</span>
@@ -375,22 +378,22 @@ export default async function AnalyticsPage() {
                   ))}
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Team Velocity Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <TrendingUpIcon className="size-4" />
+          <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+            <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+              <h2 className="flex items-center gap-2 font-semibold text-sm">
+                <TrendingUpIcon className="size-4 text-primary" />
                 Velocity por Time — Últimos 6 Sprints
-              </CardTitle>
-              <CardDescription>
-                Story points concluídos nos últimos 6 sprints completos por time
-                (dados reais do banco).
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+              </h2>
+              <p className="mt-0.5 text-muted-foreground text-xs">
+                Story points concluídos nos últimos 6 sprints completos por
+                time.
+              </p>
+            </div>
+            <div className="px-5 py-4">
               {showNoTeams ? (
                 <p className="py-4 text-center text-muted-foreground text-sm">
                   Nenhum time cadastrado.{" "}
@@ -411,7 +414,7 @@ export default async function AnalyticsPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b text-muted-foreground text-xs">
+                      <tr className="border-hairline border-b text-muted-foreground text-xs">
                         <th className="py-2 pr-4 text-left font-medium">
                           Time
                         </th>
@@ -432,7 +435,10 @@ export default async function AnalyticsPage() {
                     </thead>
                     <tbody>
                       {data.teamVelocityData.map((team) => (
-                        <tr className="border-b last:border-0" key={team.id}>
+                        <tr
+                          className="border-hairline border-b last:border-0"
+                          key={team.id}
+                        >
                           <td className="max-w-32 truncate py-2.5 pr-4 font-medium">
                             {team.name}
                           </td>
@@ -461,8 +467,8 @@ export default async function AnalyticsPage() {
                   </table>
                 </div>
               ) : null}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

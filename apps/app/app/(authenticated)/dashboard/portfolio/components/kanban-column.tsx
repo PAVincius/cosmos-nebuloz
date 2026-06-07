@@ -41,52 +41,82 @@ function KanbanColumnInner({
   return (
     <div
       className={cn(
-        "flex min-h-[480px] min-w-[220px] flex-1 flex-col rounded-lg border border-border/70 bg-muted/20 transition-all duration-300 ease-out",
-        "border-l-2",
-        "dark:border-[var(--hairline)] dark:bg-[var(--surface-2)]",
-        isOver === true &&
-          "border-primary/20 bg-primary/[0.06] dark:border-[var(--hairline-strong)]"
+        "flex w-[272px] flex-shrink-0 flex-col overflow-hidden rounded-[10px] border transition-all duration-150 ease-out",
+        "border-hairline bg-surface shadow-[var(--card-shadow)]",
+        isOver === true ? "border-primary/30 bg-primary/[0.03]" : ""
       )}
       ref={setNodeRef}
-      style={{ borderLeftColor: color }}
     >
-      <div className="flex items-center justify-between border-border/60 border-b px-3 py-2.5 dark:border-[var(--hairline)] dark:bg-[rgba(255,255,255,.02)]">
-        <div className="flex min-w-0 items-center gap-2">
+      <div
+        className="flex-shrink-0 border-hairline border-b bg-surface-2 px-[14px] pt-[11px] pb-[10px]"
+        style={{ borderTop: `3px solid ${color}` }}
+      >
+        <div className="flex items-center gap-1.5">
           <span
             aria-hidden
-            className="inline-block h-2 w-2 shrink-0 rounded-full"
+            className="h-2 w-2 flex-shrink-0 rounded-full"
             style={{ backgroundColor: color }}
           />
-          <span className="truncate font-semibold text-[11px] text-muted-foreground uppercase tracking-[0.07em] dark:text-[var(--ink-muted)]">
+          <span className="flex-1 truncate font-semibold text-[12.5px] text-foreground tracking-[-0.01em]">
             {label}
           </span>
-        </div>
-        <div className="flex items-center gap-1">
-          <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-background px-1.5 font-mono text-[10px] text-muted-foreground dark:border dark:border-[var(--hairline)] dark:bg-[var(--chip-bg)] dark:text-[var(--ink-subtle)]">
+          <span
+            className="inline-flex h-[18px] min-w-[18px] items-center justify-center rounded-full px-1.5 font-mono font-semibold text-[10px]"
+            style={{
+              background: "var(--surface-3)",
+              color: "var(--ink-muted)",
+            }}
+          >
             {epics.length}
           </span>
           {wipLimit !== undefined && (
             <WipLimitWarning count={epics.length} limit={wipLimit} />
           )}
-          {onQuickAdd !== undefined && (
-            <button
-              aria-label={`Adicionar épico em ${label}`}
-              className="inline-flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              onClick={onQuickAdd}
-              type="button"
-            >
-              <span aria-hidden className="text-[14px] leading-none">
-                +
-              </span>
-            </button>
-          )}
-          {canConfigure === true && (
-            <ColumnSettings color={color} columnId={id} label={label} />
-          )}
+          <div className="flex items-center gap-0.5">
+            {onQuickAdd !== undefined && (
+              <button
+                aria-label={`Adicionar épico em ${label}`}
+                className="inline-flex h-5 w-5 items-center justify-center rounded text-muted-foreground/40 transition-colors hover:bg-muted hover:text-foreground"
+                onClick={onQuickAdd}
+                type="button"
+              >
+                <span aria-hidden className="text-[14px] leading-none">
+                  +
+                </span>
+              </button>
+            )}
+            {canConfigure === true && (
+              <ColumnSettings color={color} columnId={id} label={label} />
+            )}
+          </div>
         </div>
+        {wipLimit !== undefined && wipLimit > 0 && (
+          <div className="mt-2 flex items-center gap-1.5">
+            <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-surface-3">
+              <div
+                className="h-full rounded-full transition-[width] duration-500 ease-out"
+                style={{
+                  width: `${Math.min(100, (epics.length / wipLimit) * 100)}%`,
+                  backgroundColor: color,
+                }}
+              />
+            </div>
+            <span
+              className="flex-shrink-0 font-mono text-[10px]"
+              style={{ color: "var(--ink-muted)" }}
+            >
+              {epics.length}/{wipLimit}
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 overflow-y-auto p-2 dark:bg-transparent">
+      <div
+        className={cn(
+          "flex flex-1 flex-col gap-2 overflow-y-auto p-[10px]",
+          isOver === true ? "rounded-md" : ""
+        )}
+      >
         {epics.map((epic) => (
           <KanbanCard epic={epic} key={epic.id} onOpenDrawer={onOpenDrawer} />
         ))}
