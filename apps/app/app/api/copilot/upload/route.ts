@@ -79,7 +79,7 @@ export async function POST(req: Request) {
       chunks: chunks.length,
     });
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Erro interno";
-    return Response.json({ error: msg }, { status: 500 });
+    console.error("[copilot/upload]", error);
+    return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

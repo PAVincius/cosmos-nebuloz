@@ -1,16 +1,17 @@
+import { database } from "@repo/database";
 import { type NextRequest, NextResponse } from "next/server";
-import { verifyLinearSignature } from "@/app/actions/integrations/webhooks/verify-signature";
 import {
   handleLinearWebhook,
   type LinearWebhookPayload,
 } from "@/app/actions/integrations/sync/linear-pull";
+import { verifyLinearSignature } from "@/app/actions/integrations/webhooks/verify-signature";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const secret = process.env.LINEAR_WEBHOOK_SECRET;
   if (!secret) {
     return NextResponse.json(
       { error: "Webhook secret not configured" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 
@@ -37,8 +38,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!tenantId) {
     return NextResponse.json(
       { error: "Cannot resolve tenant" },
-      { status: 400 },
+      { status: 400 }
     );
+  }
+
+  // Prevent tenant spoofing: verify tenantId has an active Linear integration.
+  const integration = await database.integration.findFirst({
+    where: { tenantId, source: "linear", status: "ACTIVE" },
+    select: { id: true },
+  });
+  if (!integration) {
+    return NextResponse.json({ error: "Tenant not found" }, { status: 400 });
   }
 
   try {

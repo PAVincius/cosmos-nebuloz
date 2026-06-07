@@ -1,16 +1,17 @@
+import { database } from "@repo/database";
 import { type NextRequest, NextResponse } from "next/server";
-import { verifyGitHubSignature } from "@/app/actions/integrations/webhooks/verify-signature";
 import {
-  handleGitHubWebhook,
   type GitHubWebhookPayload,
+  handleGitHubWebhook,
 } from "@/app/actions/integrations/sync/github-pull";
+import { verifyGitHubSignature } from "@/app/actions/integrations/webhooks/verify-signature";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
   if (!secret) {
     return NextResponse.json(
       { error: "Webhook secret not configured" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 
@@ -39,8 +40,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   if (!tenantId) {
     return NextResponse.json(
       { error: "Cannot resolve tenant" },
-      { status: 400 },
+      { status: 400 }
     );
+  }
+
+  // Prevent tenant spoofing: verify tenantId has an active GitHub integration.
+  const integration = await database.integration.findFirst({
+    where: { tenantId, source: "github", status: "ACTIVE" },
+    select: { id: true },
+  });
+  if (!integration) {
+    return NextResponse.json({ error: "Tenant not found" }, { status: 400 });
   }
 
   try {
