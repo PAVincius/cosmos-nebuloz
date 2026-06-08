@@ -58,7 +58,7 @@ model MemberThroughputBaseline {
   p10Estimate    Float    @default(0)
   p50Estimate    Float    @default(0)
   p90Estimate    Float    @default(0)
-  trend          String   @default("NEUTRAL")
+  trend          TrendDirection   @default(NEUTRAL)
   volatility     Float    @default(0)
   sprintCount    Int      @default(0)
   lastComputedAt DateTime @default(now())
@@ -83,7 +83,7 @@ model TeamCapacitySnapshot {
   maxCapacityEstimate   Int      @default(0)
   actualSpDelivered     Int      @default(0)
   actualCapacityUtil    Float    @default(0)
-  teamTrend             String   @default("NEUTRAL")
+  teamTrend             TrendDirection   @default(NEUTRAL)
   recordedAt            DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -138,4 +138,10 @@ model GroupSynergy {
 
   @@unique([tenantId, memberHash, taskType])
   @@index([tenantId])
+}
+
+enum TrendDirection {
+  UP
+  DOWN
+  NEUTRAL
 }

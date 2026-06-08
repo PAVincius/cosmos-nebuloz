@@ -5,12 +5,12 @@ model BillingEntry {
   id            String  @id @default(cuid())
   tenantId      String
   integrationId String
-  syncLogId     String?  // optional reference to SyncLog.id — not a formal FK relation
+  syncLogId     String? // optional reference to SyncLog.id — not a formal FK relation
 
-  provider      String
-  accountId     String
-  subAccountId  String?
-  externalId    String
+  provider     String
+  accountId    String
+  subAccountId String?
+  externalId   String
 
   usageStartDate     DateTime
   usageEndDate       DateTime
@@ -24,28 +24,28 @@ model BillingEntry {
   region          String?
   skuId           String?
 
-  chargeCategory  String  @default("Usage")
+  chargeCategory  ChargeCategory  @default(Usage)
   chargeClass     String?
   chargeFrequency String?
   pricingCategory String?
 
-  billedCost      Decimal  @db.Decimal(18,6)
-  effectiveCost   Decimal  @db.Decimal(18,6)
-  listCost        Decimal? @db.Decimal(18,6)
-  contractedCost  Decimal? @db.Decimal(18,6)
-  unblendedAmount Decimal  @db.Decimal(18,6)
-  amortizedAmount Decimal  @db.Decimal(18,6)
+  billedCost      Decimal  @db.Decimal(18, 6)
+  effectiveCost   Decimal  @db.Decimal(18, 6)
+  listCost        Decimal? @db.Decimal(18, 6)
+  contractedCost  Decimal? @db.Decimal(18, 6)
+  unblendedAmount Decimal  @db.Decimal(18, 6)
+  amortizedAmount Decimal  @db.Decimal(18, 6)
 
-  usageQuantity Decimal? @db.Decimal(18,6)
+  usageQuantity Decimal? @db.Decimal(18, 6)
   usageUnit     String?
 
   commitmentDiscountId   String?
   commitmentDiscountType String?
 
   currency       String  @default("USD")
-  fxRate         Decimal @db.Decimal(18,8) @default(1)
+  fxRate         Decimal @default(1) @db.Decimal(18, 8)
   tenantCurrency String  @default("USD")
-  tenantAmount   Decimal @db.Decimal(18,6)
+  tenantAmount   Decimal @db.Decimal(18, 6)
 
   tags Json @default("{}")
 
@@ -55,9 +55,9 @@ model BillingEntry {
 
   createdAt DateTime @default(now())
 
-  tenant      Tenant          @relation(fields: [tenantId],      references: [id], onDelete: Cascade)
-  integration Integration     @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  theme       StrategicTheme? @relation(fields: [themeId],       references: [id], onDelete: SetNull)
+  tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  integration Integration              @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  theme       StrategicTheme?          @relation(fields: [themeId], references: [id], onDelete: SetNull)
   allocations BillingEntryAllocation[]
 
   @@unique([tenantId, integrationId, externalId])
@@ -71,18 +71,18 @@ model BillingEntry {
 }
 
 model BillingEntryAllocation {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   tenantId       String
   billingEntryId String
   themeId        String?
   epicId         String?
   artId          String?
-  percentage     Decimal  @db.Decimal(5,2)
+  percentage     Decimal   @db.Decimal(5, 2)
   allocationType String
-  effectiveFrom  DateTime @default(now())
+  effectiveFrom  DateTime  @default(now())
   effectiveTo    DateTime?
 
-  tenant       Tenant       @relation(fields: [tenantId],       references: [id], onDelete: Cascade)
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   billingEntry BillingEntry @relation(fields: [billingEntryId], references: [id], onDelete: Cascade)
 
   @@unique([billingEntryId, themeId, epicId, artId, effectiveFrom])
@@ -101,20 +101,20 @@ model CostSnapshot {
   period      DateTime
   granularity String
 
-  cloudCost   Decimal  @db.Decimal(18,6) @default(0)
-  peopleCost  Decimal  @db.Decimal(18,6) @default(0)
-  saasCost    Decimal  @db.Decimal(18,6) @default(0)
-  actualCost  Decimal  @db.Decimal(18,6)
-  plannedCost Decimal? @db.Decimal(18,6)
+  cloudCost   Decimal  @default(0) @db.Decimal(18, 6)
+  peopleCost  Decimal  @default(0) @db.Decimal(18, 6)
+  saasCost    Decimal  @default(0) @db.Decimal(18, 6)
+  actualCost  Decimal  @db.Decimal(18, 6)
+  plannedCost Decimal? @db.Decimal(18, 6)
 
-  unmappedAmount   Decimal  @db.Decimal(18,6) @default(0)
-  breakdown        Json     @default("{}")
-  sourceCurrencies Json     @default("{}")
+  unmappedAmount   Decimal @default(0) @db.Decimal(18, 6)
+  breakdown        Json    @default("{}")
+  sourceCurrencies Json    @default("{}")
 
-  currency       String   @default("USD")
-  fxStrategy     String   @default("MONTH_AVG")
-  fxConvertedAt  DateTime @default(now())
-  syncedAt       DateTime @updatedAt
+  currency      String   @default("USD")
+  fxStrategy    String   @default("MONTH_AVG")
+  fxConvertedAt DateTime @default(now())
+  syncedAt      DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -126,14 +126,14 @@ model CostSnapshot {
 }
 
 model TagRule {
-  id            String   @id @default(cuid())
+  id            String  @id @default(cuid())
   tenantId      String
   integrationId String?
   name          String?
 
-  tagKey    String?
-  tagValue  String?
-  matchType String  @default("EXACT")
+  tagKey       String?
+  tagValue     String?
+  matchType    String  @default("EXACT")
   conditions   Json?
   excludeConds Json?
 
@@ -141,9 +141,9 @@ model TagRule {
   artId   String?
   epicId  String?
 
-  priority        Int      @default(0)
-  enabled         Boolean  @default(true)
-  matchCount      Int      @default(0)
+  priority        Int       @default(0)
+  enabled         Boolean   @default(true)
+  matchCount      Int       @default(0)
   lastMatchedAt   DateTime?
   appliedFromDate DateTime?
 
@@ -161,7 +161,7 @@ model UnmappedCostBucket {
   tenantId      String
   integrationId String
   period        DateTime
-  amount        Decimal  @db.Decimal(18,6)
+  amount        Decimal  @db.Decimal(18, 6)
   currency      String
   topTags       Json     @default("[]")
   entryCount    Int
@@ -172,29 +172,29 @@ model UnmappedCostBucket {
 }
 
 model BillingSyncCursor {
-  id                  String   @id @default(cuid())
-  integrationId       String   @unique
+  id                  String    @id @default(cuid())
+  integrationId       String    @unique
   lastIngestedThrough DateTime
-  lookbackDays        Int      @default(7)
-  backfillDays        Int      @default(90)
-  backfillComplete    Boolean  @default(false)
+  lookbackDays        Int       @default(7)
+  backfillDays        Int       @default(90)
+  backfillComplete    Boolean   @default(false)
   lastSyncLogId       String?
-  consecutiveFailures Int      @default(0)
+  consecutiveFailures Int       @default(0)
   nextRunAt           DateTime?
 
   integration Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
 }
 
 model BillingSyncRun {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   tenantId         String
   integrationId    String
   inngestRunId     String?
-  status           String   @default("PENDING")
+  status           String    @default("PENDING")
   currentStep      String?
-  entriesProcessed Int      @default(0)
+  entriesProcessed Int       @default(0)
   errorMessage     String?
-  startedAt        DateTime @default(now())
+  startedAt        DateTime  @default(now())
   finishedAt       DateTime?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -213,15 +213,15 @@ model CostAnomaly {
   service       String?
   accountId     String?
 
-  baselineMedian Decimal @db.Decimal(18,6)
-  baselineMAD    Decimal @db.Decimal(18,6)
-  actualAmount   Decimal @db.Decimal(18,6)
-  modifiedZScore Decimal @db.Decimal(8,4)
-  deltaAbs       Decimal @db.Decimal(18,6)
-  deltaPct       Decimal @db.Decimal(8,2)
+  baselineMedian Decimal @db.Decimal(18, 6)
+  baselineMAD    Decimal @db.Decimal(18, 6)
+  actualAmount   Decimal @db.Decimal(18, 6)
+  modifiedZScore Decimal @db.Decimal(8, 4)
+  deltaAbs       Decimal @db.Decimal(18, 6)
+  deltaPct       Decimal @db.Decimal(8, 2)
 
   severity       String
-  status         String  @default("OPEN")
+  status         CostAnomalyStatus    @default(OPEN)
   acknowledgedBy String?
   acknowledgedAt DateTime?
   rootCauseHints Json?
@@ -240,7 +240,7 @@ model BudgetPlan {
   scopeId       String?
   period        DateTime
   granularity   String
-  plannedAmount Decimal  @db.Decimal(18,6)
+  plannedAmount Decimal  @db.Decimal(18, 6)
   currency      String   @default("USD")
   category      String?
   source        String
@@ -262,10 +262,10 @@ model CommitmentDiscount {
   region        String?
   startDate     DateTime
   endDate       DateTime
-  upfrontCost   Decimal  @db.Decimal(18,6)
-  hourlyRate    Decimal? @db.Decimal(18,8)
-  utilization   Decimal? @db.Decimal(5,2)
-  coverage      Decimal? @db.Decimal(5,2)
+  upfrontCost   Decimal  @db.Decimal(18, 6)
+  hourlyRate    Decimal? @db.Decimal(18, 8)
+  utilization   Decimal? @db.Decimal(5, 2)
+  coverage      Decimal? @db.Decimal(5, 2)
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -274,14 +274,14 @@ model CommitmentDiscount {
 }
 
 model PersonCost {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   tenantId      String
   userId        String
   effectiveFrom DateTime
   effectiveTo   DateTime?
-  annualCost    Decimal  @db.Decimal(18,6)
+  annualCost    Decimal   @db.Decimal(18, 6)
   currency      String
-  allocationPct Decimal  @db.Decimal(5,2) @default(100)
+  allocationPct Decimal   @default(100) @db.Decimal(5, 2)
   teamId        String?
   artId         String?
 
@@ -296,7 +296,7 @@ model CurrencyRate {
   id   String   @id @default(cuid())
   from String
   to   String
-  rate Decimal  @db.Decimal(18,8)
+  rate Decimal  @db.Decimal(18, 8)
   date DateTime
 
   @@unique([from, to, date])
@@ -318,14 +318,38 @@ model BillingEntryStaging {
 }
 
 model IntegrationDraft {
-  id          String   @id @default(cuid())
+  id          String                 @id @default(cuid())
   userId      String
   tenantId    String
   provider    String
-  currentStep Int      @default(1)
-  payload     Json     @default("{}")
-  updatedAt   DateTime @updatedAt
+  currentStep Int                    @default(1)
+  status      IntegrationDraftStatus @default(PENDING)
+  payload     Json                   @default("{}")
+  updatedAt   DateTime               @updatedAt
   expiresAt   DateTime
 
   @@unique([userId, tenantId, provider])
+}
+
+enum ChargeCategory {
+  Usage
+  Purchase
+  Tax
+  Credit
+  Adjustment
+  Refund
+}
+
+enum CostAnomalyStatus {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+  FALSE_POSITIVE
+}
+
+enum IntegrationDraftStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
 }
