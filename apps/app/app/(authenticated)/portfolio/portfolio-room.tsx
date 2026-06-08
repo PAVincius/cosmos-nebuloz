@@ -1,8 +1,8 @@
 "use client";
 
 import { Room } from "@repo/collaboration/room";
-import { getUsers } from "@/app/actions/users/get";
 import type { ReactNode } from "react";
+import { getUsers } from "@/app/actions/users/get";
 
 export function PortfolioRoom({
   orgId,
@@ -13,13 +13,13 @@ export function PortfolioRoom({
 }) {
   return (
     <Room
-      id={`portfolio-kanban-${orgId}`}
       authEndpoint="/api/collaboration/auth"
       fallback={
-        <div className="flex h-64 items-center justify-center text-sm text-muted-foreground">
+        <div className="flex h-64 items-center justify-center text-muted-foreground text-sm">
           A ligar à sala colaborativa…
         </div>
       }
+      id={`${orgId}:portfolio-kanban`}
       resolveUsers={async ({ userIds }) => {
         const result = await getUsers(userIds);
         return "data" in result ? result.data : [];
