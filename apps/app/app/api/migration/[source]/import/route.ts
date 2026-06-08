@@ -166,6 +166,10 @@ export async function POST(
       );
     }
 
+    if (conn.importReport) {
+      return NextResponse.json(conn.importReport);
+    }
+
     const allItems = await fetchItems(source, conn);
     const report = await createMigrationEntities(
       { tenantId: ctx.tenantId },
