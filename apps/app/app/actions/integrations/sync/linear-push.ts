@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 
 const LINEAR_GQL = "https://api.linear.app/graphql";
 
@@ -51,7 +52,7 @@ export async function pushEpicToLinear(args: {
   });
 
   if (!response.ok) {
-    console.error("[linear-push] API error", {
+    log.error("[linear-push] API error", {
       status: response.status,
       epicId: args.epicId,
     });

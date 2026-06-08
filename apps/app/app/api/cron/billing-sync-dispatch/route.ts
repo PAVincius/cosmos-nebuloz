@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { NextResponse } from "next/server";
 import { inngest } from "@/lib/inngest/client";
 import { validateCronSecret } from "../_utils/validate-cron-secret";
@@ -48,8 +49,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       dispatched += integrations.length;
     } catch (err) {
       // Log and continue — do not abort remaining pages
-      // biome-ignore lint: temporary until project logger is available
-      console.error(
+      log.error(
         "[billing-sync-dispatch] inngest.send failed at offset",
         offset,
         err

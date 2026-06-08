@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { type NextRequest, NextResponse } from "next/server";
 import {
   type GitHubWebhookPayload,
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await handleGitHubWebhook(tenantId, payload);
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[webhook/github] handler error", err);
+    log.error("[webhook/github] handler error", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 
 export async function pushEpicToGitHub(args: {
   tenantId: string;
@@ -42,7 +43,7 @@ export async function pushEpicToGitHub(args: {
   });
 
   if (!response.ok) {
-    console.error("[github-push] API error", {
+    log.error("[github-push] API error", {
       status: response.status,
       epicId: args.epicId,
     });

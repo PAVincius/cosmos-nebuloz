@@ -3,6 +3,7 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { renderInviteEmail, resend } from "@repo/email";
+import { log } from "@repo/observability/log";
 import Fuse from "fuse.js";
 import { headers } from "next/headers";
 
@@ -38,7 +39,9 @@ type SearchMembersResult = {
 // Function 1: getTenantMembersForSearch
 // ---------------------------------------------------------------------------
 
-export async function getTenantMembersForSearch(): Promise<TenantMemberResult[]> {
+export async function getTenantMembersForSearch(): Promise<
+  TenantMemberResult[]
+> {
   const ctx = await requireTenantSession(await headers());
 
   const memberships = await database.tenantMember.findMany({
@@ -96,9 +99,7 @@ export async function searchMembersWithCrossTenant(
     keys: ["name", "email"],
     threshold: 0.4,
   });
-  const currentTenant = fuse
-    .search(query)
-    .map((result) => result.item);
+  const currentTenant = fuse.search(query).map((result) => result.item);
 
   // Build set of user IDs already in current tenant for exclusion
   const currentTenantUserIds = new Set(allCurrentMembers.map((m) => m.userId));
@@ -225,7 +226,7 @@ export async function sendMemberInvite(
       html,
     });
   } catch (emailError: unknown) {
-    console.error("sendMemberInvite: falha ao enviar email de convite", {
+    log.error("sendMemberInvite: falha ao enviar email de convite", {
       tenant_id: ctx.tenantId,
       inviter_id: ctx.userId,
       recipient: input.email,

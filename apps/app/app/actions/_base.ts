@@ -2,6 +2,7 @@
  * Shared foundation for all server actions.
  * Import from here — never duplicate these primitives.
  */
+import { log } from "@repo/observability/log";
 import { z } from "zod";
 
 // ─── Result type ──────────────────────────────────────────────────────────────
@@ -78,7 +79,7 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
     return ok(await fn());
   } catch (e) {
     if (!(e instanceof z.ZodError)) {
-      console.error("[safeAction]", e);
+      log.error("[safeAction]", e);
     }
     return err(toActionError(e));
   }

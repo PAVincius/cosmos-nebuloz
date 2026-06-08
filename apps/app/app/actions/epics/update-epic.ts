@@ -2,6 +2,7 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { indexEntity } from "@/app/actions/safe-copilot/indexer";
@@ -48,7 +49,7 @@ export async function updateEpic(
       const { epicId } = input;
       queueMicrotask(() => {
         indexEntity("epic", epicId, tenantId).catch((err) => {
-          console.error("[copilot] reindex epic failed", { epicId, err });
+          log.error("[copilot] reindex epic failed", { epicId, err });
         });
       });
     }

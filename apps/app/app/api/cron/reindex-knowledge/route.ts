@@ -1,9 +1,11 @@
+import { log } from "@repo/observability/log";
 import { type NextRequest, NextResponse } from "next/server";
+import { validateCronSecret } from "../_utils/validate-cron-secret";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   // Vercel Cron auth check
   const authHeader = req.headers.get("authorization");
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!validateCronSecret(authHeader)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -18,7 +20,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Endpoint exists for future wiring with a service token approach.
     return NextResponse.json({ ok: true, message: "Reindex scheduled" });
   } catch (err) {
-    console.error("[cron/reindex] error", err);
+    log.error("[cron/reindex] error", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

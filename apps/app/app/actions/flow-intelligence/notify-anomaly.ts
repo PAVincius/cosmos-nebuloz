@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 
 export async function notifyAnomaly(args: {
   tenantId: string;
@@ -18,7 +19,7 @@ export async function notifyAnomaly(args: {
   });
 
   if (admins.length === 0) {
-    console.error(
+    log.error(
       "[notify-anomaly] No ADMIN members found for tenant",
       args.tenantId,
       "— skipping notifications. severity:",
@@ -26,7 +27,7 @@ export async function notifyAnomaly(args: {
       "rule:",
       args.rule,
       "anomaly:",
-      args.anomalyId,
+      args.anomalyId
     );
     return;
   }

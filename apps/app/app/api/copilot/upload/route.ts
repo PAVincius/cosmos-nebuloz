@@ -1,4 +1,5 @@
 import { requireTenantSession } from "@repo/auth/server";
+import { log } from "@repo/observability/log";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { indexDocumentChunk } from "@/app/actions/safe-copilot/indexer";
@@ -112,7 +113,7 @@ export async function POST(req: Request) {
       chunks: chunks.length,
     });
   } catch (error: unknown) {
-    console.error("[copilot/upload]", error);
+    log.error("[copilot/upload]", error);
     return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

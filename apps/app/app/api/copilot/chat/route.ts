@@ -2,6 +2,7 @@ import { createCopilotTrace } from "@repo/ai/lib/copilot-trace";
 import { flushLangfuse, resolveModelName } from "@repo/ai/lib/langfuse";
 import { getActiveProvider, getAIModel } from "@repo/ai/lib/router";
 import { requireTenantSession } from "@repo/auth/server";
+import { log } from "@repo/observability/log";
 import { stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -165,7 +166,7 @@ export async function POST(req: Request) {
 
     return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
-    console.error("[copilot/chat]", error);
+    log.error("[copilot/chat]", error);
     return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

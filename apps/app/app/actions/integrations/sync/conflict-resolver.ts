@@ -1,3 +1,4 @@
+import { log } from "@repo/observability/log";
 export type SyncConflict = {
   cosmosId: string;
   cosmosType: string;
@@ -22,10 +23,10 @@ export function resolveConflict(conflict: SyncConflict): ConflictResolution {
 
 export function logSyncConflict(
   conflict: SyncConflict,
-  resolution: ConflictResolution,
+  resolution: ConflictResolution
 ): void {
   // Audit log — SyncLog model exists in schema; use console for now to avoid circular dep
-  console.error("[sync] conflict", {
+  log.error("[sync] conflict", {
     ...conflict,
     resolution,
     resolvedAt: new Date().toISOString(),

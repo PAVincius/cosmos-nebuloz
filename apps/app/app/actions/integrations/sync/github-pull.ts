@@ -16,7 +16,7 @@ export type GitHubWebhookPayload = {
 
 export async function handleGitHubWebhook(
   tenantId: string,
-  payload: GitHubWebhookPayload,
+  payload: GitHubWebhookPayload
 ): Promise<void> {
   if (!(payload.issue && payload.repository)) {
     return;

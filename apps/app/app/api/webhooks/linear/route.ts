@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { type NextRequest, NextResponse } from "next/server";
 import {
   handleLinearWebhook,
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     await handleLinearWebhook(tenantId, payload);
     return NextResponse.json({ ok: true });
   } catch (err) {
-    console.error("[webhook/linear] handler error", err);
+    log.error("[webhook/linear] handler error", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
