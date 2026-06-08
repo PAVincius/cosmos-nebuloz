@@ -42,6 +42,7 @@ import {
   WorkflowIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { CopilotTriggerButton } from "./copilot/copilot-trigger-button";
 import { Search } from "./search";
@@ -70,7 +71,8 @@ type NavItem = { title: string; url: string; isNested?: boolean };
 
 const buildNavData = (
   user: { name: string; email: string; avatar: string },
-  teams: SidebarTeam[] = []
+  teams: SidebarTeam[] = [],
+  pathname = ""
 ) => ({
   user,
   navMain: [
@@ -78,14 +80,14 @@ const buildNavData = (
       title: "Portfolio",
       url: "/portfolio",
       icon: LayoutDashboardIcon,
-      isActive: true,
+      isActive: pathname.startsWith("/portfolio") || pathname === "/",
       items: [
         { title: "Kanban de Épicos", url: "/portfolio" },
         { title: "WSJF Rankings", url: "/portfolio/wsjf" },
         { title: "Temas Estratégicos", url: "/portfolio/themes" },
         { title: "Strategy Map", url: "/portfolio/strategy-map" },
         { title: "OKRs", url: "/portfolio/okrs" },
-        { title: "Visão Geral", url: "/portfolio/budgets" },
+        { title: "Lean Budgets", url: "/portfolio/budgets" },
         { title: "Tag Rules", url: "/portfolio/budgets/tag-rules" },
         { title: "Anomalias", url: "/portfolio/budgets/anomalies" },
         { title: "Roadmap", url: "/portfolio/roadmap" },
@@ -97,15 +99,19 @@ const buildNavData = (
       title: "ART Board",
       url: "/arts",
       icon: TrainFrontIcon,
+      isActive:
+        pathname.startsWith("/arts") || pathname.startsWith("/pi-planning"),
       items: [
         { title: "Todos os ARTs", url: "/arts" },
         { title: "Votação de confiança", url: "/pi-planning" },
+        { title: "Dependências", url: "/dependencies" },
       ],
     },
     {
       title: "Times",
       url: "/teams",
       icon: UsersIcon,
+      isActive: pathname.startsWith("/teams"),
       items: [
         { title: "Todos os Times", url: "/teams" },
         ...teams.slice(0, 8).map((t) => ({
@@ -119,6 +125,8 @@ const buildNavData = (
       title: "Analytics",
       url: "/analytics",
       icon: BarChart3Icon,
+      isActive:
+        pathname.startsWith("/analytics") || pathname.startsWith("/risks"),
       items: [
         { title: "Métricas SAFe", url: "/analytics" },
         { title: "Flow Metrics", url: "/analytics/flow" },
@@ -131,15 +139,17 @@ const buildNavData = (
       title: "Workflows",
       url: "/workflows",
       icon: WorkflowIcon,
-      items: [
-        { title: "BPMN Canvas", url: "/workflows/team-demo/bpmn" },
-        { title: "Dependências", url: "/dependencies" },
-      ],
+      isActive: pathname.startsWith("/workflows"),
+      items: [{ title: "BPMN Canvas", url: "/workflows/team-demo/bpmn" }],
     },
     {
       title: "Large Solution",
       url: "/solution-trains",
       icon: AnchorIcon,
+      isActive:
+        pathname.startsWith("/solution-trains") ||
+        pathname.startsWith("/lace") ||
+        pathname.startsWith("/suppliers"),
       items: [
         { title: "Solution Trains", url: "/solution-trains" },
         { title: "LACE", url: "/lace" },
@@ -150,12 +160,14 @@ const buildNavData = (
       title: "Integrações",
       url: "/integrations",
       icon: PlugZapIcon,
+      isActive: pathname.startsWith("/integrations"),
       items: [{ title: "Integration Hub", url: "/integrations" }],
     },
     {
       title: "Settings",
       url: "/settings/workspace",
       icon: Settings2Icon,
+      isActive: pathname.startsWith("/settings"),
       items: [
         { title: "Workspace", url: "/settings/workspace" },
         { title: "Membros", url: "/settings/members" },
@@ -181,13 +193,15 @@ export const GlobalSidebar = ({
   initialTenants = [],
   initialActiveTenantId = null,
 }: GlobalSidebarProperties) => {
+  const pathname = usePathname();
   const data = buildNavData(
     userProp ?? { name: "Usuário", email: "", avatar: "" },
-    teams
+    teams,
+    pathname
   );
   return (
     <>
-      <Sidebar variant="inset">
+      <Sidebar collapsible="icon" variant="inset">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -201,7 +215,7 @@ export const GlobalSidebar = ({
         <Search />
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            <SidebarGroupLabel>SAFe Workspace</SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
