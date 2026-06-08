@@ -26,9 +26,30 @@ function chunkText(text: string): string[] {
   return chunks.filter((c) => c.length > 50);
 }
 
+async function checkUploadRateLimit(tenantId: string): Promise<boolean> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return true;
+  }
+  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const limiter = createRateLimiter({
+    limiter: slidingWindow(10, "1 h"),
+    prefix: "copilot:upload",
+  });
+  const { success } = await limiter.limit(tenantId);
+  return success;
+}
+
 export async function POST(req: Request) {
   try {
-    await requireTenantSession(await headers());
+    const headerStore = await headers();
+    const ctx = await requireTenantSession(headerStore);
+
+    if (!(await checkUploadRateLimit(ctx.tenantId))) {
+      return Response.json(
+        { error: "Upload rate limit exceeded (10/hour per tenant)" },
+        { status: 429 }
+      );
+    }
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -55,9 +76,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Read text content — for PDF we extract text via toString (binary PDFs not parsed here;
-    // real PDF text extraction would need a library like pdf-parse or pdfjs-dist)
-    const text = await file.text();
+    let text: string;
+    if (file.type === "application/pdf") {
+      const pdfParse = (await import("pdf-parse")).default;
+      const data = await pdfParse(Buffer.from(await file.arrayBuffer()));
+      text = data.text;
+    } else {
+      text = await file.text();
+    }
 
     if (text.length < 50) {
       return Response.json(
