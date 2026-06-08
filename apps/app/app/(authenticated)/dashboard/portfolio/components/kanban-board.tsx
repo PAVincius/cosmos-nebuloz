@@ -139,34 +139,70 @@ export const KanbanBoard = ({
     []
   );
 
+  const addEpicToStorage = useMutation(
+    (
+      { storage },
+      epic: { id: string; title: string; statusId: string; order: number }
+    ) => {
+      const liveList = storage.get("kanbanEpics");
+      if (!liveList) {
+        return;
+      }
+      const alreadyExists = liveList.some((e) => e.get("id") === epic.id);
+      if (!alreadyExists) {
+        liveList.push(
+          new LiveObject({
+            id: epic.id,
+            title: epic.title,
+            statusId: epic.statusId,
+            order: epic.order,
+            wsjfScore: 0,
+            bv: 0,
+            tc: 0,
+            rr: 0,
+            js: 1,
+          })
+        );
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     syncStorage(initialEpics);
   }, [syncStorage, initialEpics]);
 
   const epics: PortfolioEpic[] =
-    liveEpics?.map((e) => {
-      const initial = initialEpics.find((ie) => ie.id === e.id);
-      return {
-        id: e.id,
-        title: e.title,
-        statusId: e.statusId,
-        order: e.order,
-        wsjfScore: e.wsjfScore,
-        bv: initial?.bv ?? 0,
-        tc: initial?.tc ?? 0,
-        rr: initial?.rr ?? 0,
-        js: initial?.js ?? 1,
-        featureCount: initial?.featureCount ?? 0,
-        strategicThemeId: initial?.strategicThemeId ?? null,
-        themeTitle: initial?.themeTitle ?? null,
-        themeColor: initial?.themeColor ?? null,
-        linkedOKRCount: initial?.linkedOKRCount ?? 0,
-        governanceStatus: initial?.governanceStatus ?? null,
-        investScore: initial?.investScore ?? null,
-        investBreakdown: initial?.investBreakdown ?? null,
-        descriptionMd: initial?.descriptionMd ?? null,
-      };
-    }) ?? initialEpics;
+    liveEpics?.map(
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: pre-existing live-to-portfolio-epic mapping with many optional fields
+      (e) => {
+        const initial = initialEpics.find((ie) => ie.id === e.id);
+        return {
+          id: e.id,
+          title: e.title,
+          statusId: e.statusId,
+          order: e.order,
+          wsjfScore: e.wsjfScore,
+          bv: initial?.bv ?? 0,
+          tc: initial?.tc ?? 0,
+          rr: initial?.rr ?? 0,
+          js: initial?.js ?? 1,
+          featureCount: initial?.featureCount ?? 0,
+          strategicThemeId: initial?.strategicThemeId ?? null,
+          themeTitle: initial?.themeTitle ?? null,
+          themeColor: initial?.themeColor ?? null,
+          linkedOKRCount: initial?.linkedOKRCount ?? 0,
+          governanceStatus: initial?.governanceStatus ?? null,
+          investScore: initial?.investScore ?? null,
+          investBreakdown: initial?.investBreakdown ?? null,
+          descriptionMd: initial?.descriptionMd ?? null,
+          epicType: initial?.epicType ?? "EPIC",
+          dueDate: initial?.dueDate ?? null,
+          completedFeatureCount: initial?.completedFeatureCount ?? 0,
+          topFeatures: initial?.topFeatures ?? [],
+        };
+      }
+    ) ?? initialEpics;
 
   const filteredEpics = useMemo(
     () =>
@@ -306,7 +342,7 @@ export const KanbanBoard = ({
         onDragStart={onDragStart}
         sensors={sensors}
       >
-        <div className="flex gap-3 overflow-x-auto pb-4">
+        <div className="flex items-start gap-3 overflow-x-auto pb-4">
           {columns.map((col) => (
             <KanbanColumn
               canConfigure={canConfigure}
@@ -352,8 +388,14 @@ export const KanbanBoard = ({
 
       {quickAddColumnId !== null && (
         <EpicCreateModal
+          epics={epics
+            .filter((e) => e.epicType === "EPIC")
+            .map((e) => ({ id: e.id, title: e.title }))}
           onClose={() => setQuickAddColumnId(null)}
-          onCreated={() => setQuickAddColumnId(null)}
+          onCreated={(epic) => {
+            addEpicToStorage(epic);
+            setQuickAddColumnId(null);
+          }}
           statusId={quickAddColumnId}
           themes={themes}
         />
