@@ -20,13 +20,13 @@ const BodySchema = z.object({
   messages: z.array(z.object({ role: z.string(), content: z.string() })).min(1),
   mode: z.string().optional(),
   surface: z.string().optional(),
-  contextRef: z.record(z.string()).optional(),
+  contextRef: z.record(z.string(), z.string()).optional(),
   sessionId: z.string().optional(),
 });
 
 async function checkIpRateLimit(ip: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return true;
+    return false;
   }
   const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
