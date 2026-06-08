@@ -28,10 +28,10 @@ export type {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function withStats(b: LeanBudget): LeanBudgetWithStats {
-  const spentDecimal = b.spentDecimal !== null ? Number(b.spentDecimal) : null;
+  const spentDecimal = b.spent !== null ? Number(b.spent) : null;
   const spentManualOverride =
     b.spentManualOverride !== null ? Number(b.spentManualOverride) : null;
-  const spentValue = spentDecimal ?? b.spent;
+  const spentValue = spentDecimal ?? 0;
   const pct = b.amount > 0 ? (spentValue / b.amount) * 100 : 0;
   const g = b.guardrails as { capex?: number; opex?: number } | null;
   return {
@@ -162,8 +162,7 @@ export async function createLeanBudget(
         tenantId: ctx.tenantId,
         name: input.name,
         amount: input.amount,
-        spent: input.spent,
-        spentDecimal: String(input.spent),
+        spent: String(input.spent),
         period: input.period,
         artId: input.artId ?? null,
         themeId: input.themeId ?? null,
@@ -194,8 +193,7 @@ export async function updateLeanBudget(
         ...(input.name !== undefined && { name: input.name }),
         ...(input.amount !== undefined && { amount: input.amount }),
         ...(input.spent !== undefined && {
-          spent: input.spent,
-          spentDecimal: String(input.spent),
+          spent: String(input.spent),
         }),
         ...(input.period !== undefined && { period: input.period }),
         ...(input.guardrails !== undefined && {
@@ -228,7 +226,7 @@ export async function updateSpent(
 
     const { count } = await database.leanBudget.updateMany({
       where: { id, tenantId: ctx.tenantId },
-      data: { spent: input.spent, spentDecimal: String(input.spent) },
+      data: { spent: String(input.spent) },
     });
 
     if (count === 0) {

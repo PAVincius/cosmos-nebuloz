@@ -34,7 +34,7 @@ export type GuardrailsInput = z.infer<typeof GuardrailsSchema>;
 
 export type LeanBudgetWithStats = Omit<
   LeanBudget,
-  "spentDecimal" | "spentManualOverride"
+  "spent" | "spentManualOverride"
 > & {
   spentDecimal: number | null;
   spentManualOverride: number | null;

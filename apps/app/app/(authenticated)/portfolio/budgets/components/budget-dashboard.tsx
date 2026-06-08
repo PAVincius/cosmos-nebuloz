@@ -368,7 +368,7 @@ export function BudgetDashboard({
       id: `tmp-${Date.now()}`,
       name: form.name,
       amount,
-      spent: 0,
+      spentDecimal: null,
       period: form.period,
       artId: form.artId || null,
       guardrails: guardrails ?? null,
@@ -378,6 +378,8 @@ export function BudgetDashboard({
       isNearLimit: false,
       tenantId: "",
       themeId: null,
+      spentSource: "manual",
+      spentManualOverride: null,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
