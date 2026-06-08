@@ -196,7 +196,8 @@ const MFA_REQUIRED_ROLES: MemberRole[] = ["ADMIN", "STE"];
  * Throws FORBIDDEN with a redirect hint if MFA is not verified on this session.
  */
 export async function requireMfaForPrivilegedRoles(
-  ctx: TenantContext
+  ctx: TenantContext,
+  reqHeaders: Headers
 ): Promise<void> {
   if (!MFA_REQUIRED_ROLES.includes(ctx.role)) {
     return;
@@ -211,6 +212,17 @@ export async function requireMfaForPrivilegedRoles(
     throw new AuthError(
       "FORBIDDEN",
       "MFA is required for your role. Please enable two-factor authentication."
+    );
+  }
+
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  const sessionData = session?.session as
+    | { twoFactorVerified?: boolean }
+    | undefined;
+  if (!sessionData?.twoFactorVerified) {
+    throw new AuthError(
+      "FORBIDDEN",
+      "MFA verification required. Please complete two-factor authentication."
     );
   }
 }
