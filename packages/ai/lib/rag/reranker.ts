@@ -35,8 +35,8 @@ export async function rerankChunks(
           prompt: `Avalie a relevância deste trecho para responder à pergunta.
 Retorne score de 0.0 (irrelevante) a 1.0 (diretamente responde à pergunta).
 
-Pergunta: "${query}"
-Trecho: "${chunk.content.slice(0, 500)}"`,
+Pergunta: "${query.slice(0, 500).replace(/[<>]/g, "")}"
+Trecho: "${chunk.content.slice(0, 500).replace(/[<>]/g, "")}"`,
         });
         return { ...chunk, score: object.score };
       } catch {

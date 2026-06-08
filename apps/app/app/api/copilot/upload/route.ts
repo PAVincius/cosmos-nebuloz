@@ -1,6 +1,9 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { indexDocumentChunk } from "@/app/actions/safe-copilot/indexer";
+
+const SESSION_ID_SCHEMA = z.string().uuid();
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const CHUNK_SIZE = 1500; // ~1500 chars per chunk (~375 tokens)
@@ -60,6 +63,10 @@ export async function POST(req: Request) {
         { error: "file and sessionId required" },
         { status: 400 }
       );
+    }
+
+    if (!SESSION_ID_SCHEMA.safeParse(sessionId).success) {
+      return Response.json({ error: "Invalid sessionId" }, { status: 400 });
     }
 
     if (file.size > MAX_FILE_SIZE) {

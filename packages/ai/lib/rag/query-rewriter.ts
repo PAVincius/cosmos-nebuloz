@@ -13,6 +13,7 @@ const RewriteSchema = z.object({
  */
 export async function rewriteQuery(original: string): Promise<string[]> {
   try {
+    const safeQuery = original.slice(0, 500).replace(/[<>]/g, "");
     const { object } = await generateObject({
       model: getAIModel(getActiveProvider()),
       schema: RewriteSchema,
@@ -22,7 +23,7 @@ Varie: terminologia (PT/EN), nível de abstração, perspectiva (RTE, LPM, equip
 Inclua sempre a pergunta original como primeira variante.
 Retorne APENAS o JSON, sem explicações.
 
-Pergunta: "${original}"`,
+Pergunta: "${safeQuery}"`,
     });
     return object.queries;
   } catch {

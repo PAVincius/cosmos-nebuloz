@@ -17,7 +17,9 @@ import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-pro
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
 
 const BodySchema = z.object({
-  messages: z.array(z.object({ role: z.string(), content: z.string() })).min(1),
+  messages: z
+    .array(z.object({ role: z.string(), content: z.string().max(10_000) }))
+    .min(1),
   mode: z.string().optional(),
   surface: z.string().optional(),
   contextRef: z.record(z.string(), z.string()).optional(),
