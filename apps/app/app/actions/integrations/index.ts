@@ -6,7 +6,10 @@ import {
   requireTenantSession,
 } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { decryptConfigSecrets } from "@repo/security/encrypt";
+import {
+  decryptConfigSecrets,
+  encryptConfigSecrets,
+} from "@repo/security/encrypt";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { err, ok, type Result } from "../_base";
@@ -171,7 +174,9 @@ export async function createIntegration(
         tenantId: ctx.tenantId,
         source: input.source,
         name: input.name,
-        config: input.config,
+        config: encryptConfigSecrets(
+          input.config as Record<string, unknown>
+        ) as Record<string, string>,
         status: "ACTIVE",
       },
     });
