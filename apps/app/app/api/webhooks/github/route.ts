@@ -6,7 +6,26 @@ import {
 } from "@/app/actions/integrations/sync/github-pull";
 import { verifyGitHubSignature } from "@/app/actions/integrations/webhooks/verify-signature";
 
+async function checkWebhookRateLimit(ip: string): Promise<boolean> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return false;
+  }
+  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const limiter = createRateLimiter({
+    limiter: slidingWindow(100, "1 m"),
+    prefix: "webhook:github",
+  });
+  const { success } = await limiter.limit(ip);
+  return success;
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
+  const ip =
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (!(await checkWebhookRateLimit(ip))) {
+    return NextResponse.json({ error: "Too many requests" }, { status: 429 });
+  }
+
   const secret = process.env.GITHUB_WEBHOOK_SECRET;
   if (!secret) {
     return NextResponse.json(
