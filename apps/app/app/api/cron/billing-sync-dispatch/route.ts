@@ -1,21 +1,19 @@
-import crypto from "node:crypto";
 import { database } from "@repo/database";
 import { NextResponse } from "next/server";
 import { inngest } from "@/lib/inngest/client";
+import { validateCronSecret } from "../_utils/validate-cron-secret";
 
 const PAGE_SIZE = 100;
 
-export async function GET(req: Request): Promise<NextResponse> {
-  const cronSecret = process.env.CRON_SECRET ?? "";
-  const authHeader = req.headers.get("authorization") ?? "";
-  const expected = Buffer.from(`Bearer ${cronSecret}`, "utf8");
-  const actual = Buffer.from(authHeader, "utf8");
+// Vercel Cron sends GET; forward to POST so external triggers use the correct method.
+export function GET(req: Request): Promise<NextResponse> {
+  return POST(req);
+}
 
-  if (
-    !cronSecret ||
-    expected.length !== actual.length ||
-    !crypto.timingSafeEqual(expected, actual)
-  ) {
+export async function POST(req: Request): Promise<NextResponse> {
+  const authHeader = req.headers.get("authorization");
+
+  if (!validateCronSecret(authHeader)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -50,7 +48,7 @@ export async function GET(req: Request): Promise<NextResponse> {
       dispatched += integrations.length;
     } catch (err) {
       // Log and continue — do not abort remaining pages
-      // biome-ignore lint/suspicious/noConsole: temporary until project logger is available
+      // biome-ignore lint: temporary until project logger is available
       console.error(
         "[billing-sync-dispatch] inngest.send failed at offset",
         offset,
