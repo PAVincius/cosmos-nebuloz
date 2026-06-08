@@ -32,76 +32,76 @@ model Tenant {
   updatedAt DateTime         @updatedAt
   metadata  Json?
 
-  members              TenantMember[]
-  invitations          TenantInvitation[]
-  arts                 ART[]
-  piPlans              PIPlan[]
-  piParticipants       PIParticipant[]
-  epics                Epic[]
-  features             Feature[]
-  workflowNodes        TeamWorkflowNode[]
-  workflowEdges        TeamWorkflowEdge[]
-  dependencyLinks      DependencyLink[]
-  risks                Risk[]
-  piObjectives         PIObjective[]
-  bpmnDefinitions      BpmnDefinition[]
-  piSessions           PISession[]
-  confidenceSessions   ConfidenceVoteSession[]
-  knowledgeVectors     PIKnowledgeVector[]
-  teams                Team[]
+  members                 TenantMember[]
+  invitations             TenantInvitation[]
+  arts                    ART[]
+  piPlans                 PIPlan[]
+  piParticipants          PIParticipant[]
+  epics                   Epic[]
+  features                Feature[]
+  workflowNodes           TeamWorkflowNode[]
+  workflowEdges           TeamWorkflowEdge[]
+  dependencyLinks         DependencyLink[]
+  risks                   Risk[]
+  piObjectives            PIObjective[]
+  bpmnDefinitions         BpmnDefinition[]
+  piSessions              PISession[]
+  confidenceSessions      ConfidenceVoteSession[]
+  knowledgeVectors        PIKnowledgeVector[]
+  teams                   Team[]
   // Wave 1 — Team delivery
-  sprints              Sprint[]
-  stories              Story[]
-  tasks                Task[]
-  defects              Defect[]
-  impediments          Impediment[]
-  standupEntries       StandupEntry[]
-  sprintReviews        SprintReview[]
-  retrospectives       Retrospective[]
+  sprints                 Sprint[]
+  stories                 Story[]
+  tasks                   Task[]
+  defects                 Defect[]
+  impediments             Impediment[]
+  standupEntries          StandupEntry[]
+  sprintReviews           SprintReview[]
+  retrospectives          Retrospective[]
   // Wave 3 — System
-  notifications        Notification[]
-  auditLogs            AuditLog[]
-  integrations         Integration[]
+  notifications           Notification[]
+  auditLogs               AuditLog[]
+  integrations            Integration[]
   // Wave 4 — Portfolio
-  strategicThemes      StrategicTheme[]
-  okrs                 OKR[]
-  keyResults           KeyResult[]
-  keyResultSnapshots   KeyResultSnapshot[]
-  leanBudgets          LeanBudget[]
-  roadmapItems         RoadmapItem[]
-  governedEpics        GovernedEpic[]
-  approvalWorkflows    ApprovalWorkflow[]
-  approvalRequests     ApprovalRequest[]
-  approvalSteps        ApprovalStepInstance[]
-  decisionLogEntries   DecisionLogEntry[]
+  strategicThemes         StrategicTheme[]
+  okrs                    OKR[]
+  keyResults              KeyResult[]
+  keyResultSnapshots      KeyResultSnapshot[]
+  leanBudgets             LeanBudget[]
+  roadmapItems            RoadmapItem[]
+  governedEpics           GovernedEpic[]
+  approvalWorkflows       ApprovalWorkflow[]
+  approvalRequests        ApprovalRequest[]
+  approvalSteps           ApprovalStepInstance[]
+  decisionLogEntries      DecisionLogEntry[]
   // Wave 5 — Large Solution
-  solutionTrains       SolutionTrain[]
-  capabilities         Capability[]
-  solutionEpics        SolutionEpic[]
-  lace                 LACE?
-  suppliers            Supplier[]
+  solutionTrains          SolutionTrain[]
+  capabilities            Capability[]
+  solutionEpics           SolutionEpic[]
+  lace                    LACE?
+  suppliers               Supplier[]
   // Onboarding
-  onboardingProgress   OnboardingProgress[]
-  migrationConnections MigrationConnection[]
+  onboardingProgress      OnboardingProgress[]
+  migrationConnections    MigrationConnection[]
   // Flow Metrics & Measure-and-Grow
-  stateTransitions       StateTransitionHistory[]
-  flowMetricSnapshots    FlowMetricSnapshot[]
-  competencyAssessments  CompetencyAssessment[]
-  improvementActions     ImprovementAction[]
-  stalenessAuditLogs     StalenessAuditLog[]
-  personSkillProfiles    PersonSkillProfile[]
+  stateTransitions        StateTransitionHistory[]
+  flowMetricSnapshots     FlowMetricSnapshot[]
+  competencyAssessments   CompetencyAssessment[]
+  improvementActions      ImprovementAction[]
+  stalenessAuditLogs      StalenessAuditLog[]
+  personSkillProfiles     PersonSkillProfile[]
   // S2: Team capacity
-  memberAssignments     TeamMemberAssignment[]
-  memberMetrics         MemberSprintMetrics[]
-  memberBaselines       MemberThroughputBaseline[]
-  capacitySnapshots     TeamCapacitySnapshot[]
-  pairSynergies         PairSynergy[]
-  groupSynergies        GroupSynergy[]
+  memberAssignments       TeamMemberAssignment[]
+  memberMetrics           MemberSprintMetrics[]
+  memberBaselines         MemberThroughputBaseline[]
+  capacitySnapshots       TeamCapacitySnapshot[]
+  pairSynergies           PairSynergy[]
+  groupSynergies          GroupSynergy[]
   // S1: AI Copilot
-  copilotSessions       CopilotSession[]
-  copilotMessages       CopilotMessage[]
-  anomalyDetectionRuns  AnomalyDetectionRun[]
-  anomalies             Anomaly[]
+  copilotSessions         CopilotSession[]
+  copilotMessages         CopilotMessage[]
+  anomalyDetectionRuns    AnomalyDetectionRun[]
+  anomalies               Anomaly[]
   // FinOps
   billingEntries          BillingEntry[]
   billingEntryAllocations BillingEntryAllocation[]
@@ -114,22 +114,23 @@ model Tenant {
   commitmentDiscounts     CommitmentDiscount[]
   personCosts             PersonCost[]
   billingEntryStaging     BillingEntryStaging[]
+  activeSessions          Session[]               @relation("SessionActiveTenant")
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
-  name               String?
-  emailVerified      Boolean   @default(false)
-  image              String?
-  twoFactorEnabled   Boolean   @default(false)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id               String   @id @default(cuid())
+  email            String   @unique
+  name             String?
+  emailVerified    Boolean  @default(false)
+  image            String?
+  twoFactorEnabled Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  sessions      Session[]
-  accounts      Account[]
-  memberships   TenantMember[]
-  twoFactor     TwoFactor?
+  sessions    Session[]
+  accounts    Account[]
+  memberships TenantMember[]
+  twoFactor   TwoFactor?
 }
 
 model TwoFactor {
@@ -150,11 +151,13 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  activeTenantId String? // Better Auth Organization plugin field
+
+  activeTenantId String?
+  activeTenant   Tenant? @relation("SessionActiveTenant", fields: [activeTenantId], references: [id], onDelete: SetNull)
 
   @@unique([token])
   @@index([userId])
+  @@index([activeTenantId])
 }
 
 model Account {
@@ -177,12 +180,12 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model TenantMember {
