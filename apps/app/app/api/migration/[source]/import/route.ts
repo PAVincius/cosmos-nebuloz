@@ -143,13 +143,13 @@ export async function POST(
   { params }: { params: Promise<{ source: string }> }
 ) {
   try {
+    const ctx = await requireTenantSession(await headers());
+
     const ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     if (!(await checkImportRateLimit(ip))) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
-
-    const ctx = await requireTenantSession(await headers());
     const { source } = await params;
     const { connectionId, mappingData } = (await req.json()) as {
       connectionId: string;
