@@ -1,11 +1,16 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { logAudit } from "../audit/index";
 import { CreatePIPlanSchema } from "../schemas";
-import type { PIObjectiveInput, PIRiskInput, CreatePIPlanDetailsInput } from "./schema";
+import type {
+  CreatePIPlanDetailsInput,
+  PIObjectiveInput,
+  PIRiskInput,
+} from "./schema";
 
 export type { PIObjectiveInput, PIRiskInput, CreatePIPlanDetailsInput };
 
@@ -25,7 +30,9 @@ export async function createPIPlan(input: {
   const art = await database.aRT.findFirst({
     where: { id: validated.artId, tenantId: ctx.tenantId },
   });
-  if (!art) throw new Error("ART not found or access denied");
+  if (!art) {
+    throw new Error("ART not found or access denied");
+  }
 
   const plan = await database.pIPlan.create({
     data: {
@@ -52,7 +59,9 @@ export async function createPIPlanWithDetails(raw: CreatePIPlanDetailsInput) {
   const art = await database.aRT.findFirst({
     where: { id: validated.artId, tenantId: ctx.tenantId },
   });
-  if (!art) throw new Error("ART not found or access denied");
+  if (!art) {
+    throw new Error("ART not found or access denied");
+  }
 
   const plan = await database.$transaction(async (tx) => {
     const pi = await tx.pIPlan.create({
@@ -117,7 +126,12 @@ export async function getPIPlanById(piId: string) {
 
   return database.pIPlan.findFirst({
     where: { id: piId, tenantId: ctx.tenantId },
-    include: { art: true, piSessions: { include: { confidenceSessions: { orderBy: { roundNumber: "asc" } } } } },
+    include: {
+      art: true,
+      piSessions: {
+        include: { confidenceSessions: { orderBy: { roundNumber: "asc" } } },
+      },
+    },
   });
 }
 
@@ -157,7 +171,12 @@ export async function getPIPlanWithDetails(artId: string) {
           type: true,
           confidenceSessions: {
             orderBy: { roundNumber: "asc" },
-            select: { id: true, roundNumber: true, xStateStatus: true, votes: true },
+            select: {
+              id: true,
+              roundNumber: true,
+              xStateStatus: true,
+              votes: true,
+            },
           },
         },
         orderBy: { createdAt: "asc" },
@@ -165,7 +184,9 @@ export async function getPIPlanWithDetails(artId: string) {
     },
   });
 
-  if (!latestPlan) return null;
+  if (!latestPlan) {
+    return null;
+  }
 
   const [objectives, risks, features, teams] = await Promise.all([
     database.pIObjective.findMany({
@@ -191,7 +212,9 @@ export async function getPIPlanWithDetails(artId: string) {
   return { ...latestPlan, objectives, risks, features, teams };
 }
 
-export type PIPlanDetails = NonNullable<Awaited<ReturnType<typeof getPIPlanWithDetails>>>;
+export type PIPlanDetails = NonNullable<
+  Awaited<ReturnType<typeof getPIPlanWithDetails>>
+>;
 
 export async function getPIPlanFullDetails(piPlanId: string) {
   const ctx = await requireTenantSession(await headers());
@@ -200,7 +223,9 @@ export async function getPIPlanFullDetails(piPlanId: string) {
     where: { id: piPlanId, tenantId: ctx.tenantId },
     include: { art: true },
   });
-  if (!piPlan) return null;
+  if (!piPlan) {
+    return null;
+  }
 
   const [objectives, risks, features, teams] = await Promise.all([
     database.pIObjective.findMany({
@@ -226,11 +251,19 @@ export async function getPIPlanFullDetails(piPlanId: string) {
   return { ...piPlan, objectives, risks, features, teams };
 }
 
-export type PIPlanFullDetails = NonNullable<Awaited<ReturnType<typeof getPIPlanFullDetails>>>;
+export type PIPlanFullDetails = NonNullable<
+  Awaited<ReturnType<typeof getPIPlanFullDetails>>
+>;
 
 export async function updatePIObjective(
   id: string,
-  data: { title?: string; description?: string; isStretch?: boolean; status?: string; businessValue?: number }
+  data: {
+    title?: string;
+    description?: string;
+    isStretch?: boolean;
+    status?: string;
+    businessValue?: number;
+  }
 ) {
   const ctx = await requireTenantSession(await headers());
 
@@ -238,11 +271,21 @@ export async function updatePIObjective(
     where: { id, tenantId: ctx.tenantId },
     include: { piPlan: { include: { art: true } } },
   });
-  if (!objective) throw new Error("Objetivo não encontrado.");
+  if (!objective) {
+    throw new Error("Objetivo não encontrado.");
+  }
 
   const updated = await database.pIObjective.update({
     where: { id },
     data,
+  });
+
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "PIObjective",
+    entityId: id,
+    diff: data as Record<string, string>,
   });
 
   revalidatePath(`/arts/${objective.piPlan.art.id}/pi-planning`);
@@ -263,7 +306,9 @@ export async function createPIObjective(data: {
     where: { id: data.piPlanId, tenantId: ctx.tenantId },
     include: { art: true },
   });
-  if (!piPlan) throw new Error("PI Plan não encontrado.");
+  if (!piPlan) {
+    throw new Error("PI Plan não encontrado.");
+  }
 
   const objective = await database.pIObjective.create({
     data: {
@@ -276,6 +321,14 @@ export async function createPIObjective(data: {
       businessValue: data.businessValue ?? 0,
       status: "NOT_STARTED",
     },
+  });
+
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "created",
+    entityType: "PIObjective",
+    entityId: objective.id,
+    diff: { piPlanId: data.piPlanId, title: data.title },
   });
 
   revalidatePath(`/arts/${piPlan.art.id}/pi-planning`);

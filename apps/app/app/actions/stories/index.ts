@@ -2,25 +2,29 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
-import { enforce } from "../permissions";
-import { dispatchEvent } from "../events";
-import { logAudit } from "../audit/index";
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
-  optCuid,
   nnStr,
+  optCuid,
   optStr,
-  StoryStatus,
+  type Page,
   Priority,
+  paginationArgs,
+  type Result,
+  StoryStatus,
+  safeAction,
 } from "../_base";
-import type { CreateStoryInput, UpdateStoryInput, StoryFiltersInput } from "./schema";
+import { logAudit } from "../audit/index";
+import { dispatchEvent } from "../events";
+import { enforce } from "../permissions";
+import type {
+  CreateStoryInput,
+  StoryFiltersInput,
+  UpdateStoryInput,
+} from "./schema";
 
 export type { CreateStoryInput, UpdateStoryInput, StoryFiltersInput };
 
@@ -55,9 +59,11 @@ const StoryFiltersSchema = z.object({
 
 async function resolveTeamId(
   ctx: { tenantId: string },
-  sprintId: string | null | undefined,
+  sprintId: string | null | undefined
 ): Promise<string | null> {
-  if (!sprintId) return null;
+  if (!sprintId) {
+    return null;
+  }
   const sprint = await database.sprint.findFirst({
     where: { id: sprintId, tenantId: ctx.tenantId },
     select: { teamId: true },
@@ -67,9 +73,7 @@ async function resolveTeamId(
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listStories(
-  raw: unknown,
-): Promise<Result<Page<any>>> {
+export async function listStories(raw: unknown): Promise<Result<Page<any>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const { page, limit, sprintId, featureId, status, assigneeUserId, search } =
@@ -81,7 +85,9 @@ export async function listStories(
       ...(featureId && { featureId }),
       ...(status && { status }),
       ...(assigneeUserId && { assigneeUserId }),
-      ...(search && { title: { contains: search, mode: "insensitive" as const } }),
+      ...(search && {
+        title: { contains: search, mode: "insensitive" as const },
+      }),
     };
 
     const [items, total] = await Promise.all([
@@ -113,7 +119,9 @@ export async function getStoryById(id: string): Promise<Result<any>> {
       },
     });
 
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
     return story;
   });
 }
@@ -131,9 +139,21 @@ export async function createStory(raw: unknown): Promise<Result<any>> {
     });
 
     if (data.assigneeUserId) {
-      void dispatchEvent({ type: "story.assigned", storyId: story.id, storyTitle: story.title, assigneeUserId: data.assigneeUserId, tenantId: ctx.tenantId, userId: ctx.userId });
+      void dispatchEvent({
+        type: "story.assigned",
+        storyId: story.id,
+        storyTitle: story.title,
+        assigneeUserId: data.assigneeUserId,
+        tenantId: ctx.tenantId,
+        userId: ctx.userId,
+      });
     }
-    logAudit(ctx.tenantId, { userId: ctx.userId, action: "created", entityType: "Story", entityId: story.id });
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "Story",
+      entityId: story.id,
+    });
 
     const teamId = await resolveTeamId(ctx, data.sprintId ?? null);
     if (teamId) {
@@ -150,7 +170,7 @@ export async function createStory(raw: unknown): Promise<Result<any>> {
 
 export async function updateStory(
   id: string,
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -161,7 +181,9 @@ export async function updateStory(
       where: { id, tenantId: ctx.tenantId },
       include: { sprint: { select: { teamId: true } } },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     const completedAt =
       data.status === "DONE" && story.status !== "DONE"
@@ -175,11 +197,38 @@ export async function updateStory(
       data: { ...data, ...(completedAt !== undefined && { completedAt }) },
     });
 
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "Story",
+      entityId: id,
+      diff: data as Record<string, string>,
+    });
+
     if (data.status !== undefined && data.status !== story.status) {
-      void dispatchEvent({ type: "story.status_changed", storyId: id, storyTitle: story.title, from: story.status, to: data.status, assigneeUserId: story.assigneeUserId ?? undefined, tenantId: ctx.tenantId, userId: ctx.userId });
+      void dispatchEvent({
+        type: "story.status_changed",
+        storyId: id,
+        storyTitle: story.title,
+        from: story.status,
+        to: data.status,
+        assigneeUserId: story.assigneeUserId ?? undefined,
+        tenantId: ctx.tenantId,
+        userId: ctx.userId,
+      });
     }
-    if (data.assigneeUserId !== undefined && data.assigneeUserId !== story.assigneeUserId) {
-      void dispatchEvent({ type: "story.assigned", storyId: id, storyTitle: story.title, assigneeUserId: data.assigneeUserId, tenantId: ctx.tenantId, userId: ctx.userId });
+    if (
+      data.assigneeUserId !== undefined &&
+      data.assigneeUserId !== story.assigneeUserId
+    ) {
+      void dispatchEvent({
+        type: "story.assigned",
+        storyId: id,
+        storyTitle: story.title,
+        assigneeUserId: data.assigneeUserId,
+        tenantId: ctx.tenantId,
+        userId: ctx.userId,
+      });
     }
 
     const teamId = story.sprint?.teamId;
@@ -200,7 +249,7 @@ export async function updateStory(
 
 export async function updateStoryStatus(
   id: string,
-  status: string,
+  status: string
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -211,7 +260,9 @@ export async function updateStoryStatus(
       where: { id, tenantId: ctx.tenantId },
       include: { sprint: { select: { teamId: true } } },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     const completedAt = validStatus === "DONE" ? new Date() : null;
 
@@ -220,7 +271,24 @@ export async function updateStoryStatus(
       data: { status: validStatus, completedAt },
     });
 
-    void dispatchEvent({ type: "story.status_changed", storyId: id, storyTitle: story.title, from: story.status, to: validStatus, assigneeUserId: story.assigneeUserId ?? undefined, tenantId: ctx.tenantId, userId: ctx.userId });
+    void dispatchEvent({
+      type: "story.status_changed",
+      storyId: id,
+      storyTitle: story.title,
+      from: story.status,
+      to: validStatus,
+      assigneeUserId: story.assigneeUserId ?? undefined,
+      tenantId: ctx.tenantId,
+      userId: ctx.userId,
+    });
+
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "Story",
+      entityId: id,
+      diff: { status: validStatus },
+    });
 
     const teamId = story.sprint?.teamId;
     if (teamId) {
@@ -237,7 +305,7 @@ export async function updateStoryStatus(
 
 export async function moveStoryToSprint(
   id: string,
-  sprintId: string | null,
+  sprintId: string | null
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -247,7 +315,9 @@ export async function moveStoryToSprint(
       where: { id, tenantId: ctx.tenantId },
       include: { sprint: { select: { teamId: true } } },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     // Verify target sprint belongs to this tenant
     if (sprintId) {
@@ -255,7 +325,9 @@ export async function moveStoryToSprint(
         where: { id: sprintId, tenantId: ctx.tenantId },
         select: { id: true },
       });
-      if (!targetSprint) throw new Error("Sprint não encontrado");
+      if (!targetSprint) {
+        throw new Error("Sprint não encontrado");
+      }
     }
 
     const updated = await database.story.update({
@@ -283,9 +355,7 @@ export async function moveStoryToSprint(
   });
 }
 
-export async function deleteStory(
-  id: string,
-): Promise<Result<{ id: string }>> {
+export async function deleteStory(id: string): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Story", "delete");
@@ -297,11 +367,18 @@ export async function deleteStory(
         tasks: { select: { id: true, status: true } },
       },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     await database.story.delete({ where: { id } });
 
-    logAudit(ctx.tenantId, { userId: ctx.userId, action: "deleted", entityType: "Story", entityId: id });
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "deleted",
+      entityType: "Story",
+      entityId: id,
+    });
 
     const teamId = story.sprint?.teamId;
     if (teamId) {
@@ -316,9 +393,7 @@ export async function deleteStory(
   });
 }
 
-export async function reorderStories(
-  ids: string[],
-): Promise<Result<void>> {
+export async function reorderStories(ids: string[]): Promise<Result<void>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Story", "update");
@@ -328,16 +403,17 @@ export async function reorderStories(
       where: { id: { in: ids }, tenantId: ctx.tenantId },
       select: { id: true },
     });
-    if (stories.length !== ids.length)
+    if (stories.length !== ids.length) {
       throw new Error("Uma ou mais stories não encontradas");
+    }
 
     await database.$transaction(
       ids.map((storyId, index) =>
         database.story.update({
           where: { id: storyId },
           data: { order: index },
-        }),
-      ),
+        })
+      )
     );
 
     revalidatePath("/teams");

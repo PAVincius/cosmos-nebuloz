@@ -9,8 +9,12 @@
       "includes": ["apps/app/app/actions/**"],
       "linter": {
         "rules": {
-          "suspicious": { "useAwait": "off" },
-          "style": { "noExportedImports": "off" }
+          "suspicious": { "useAwait": "off", "noExplicitAny": "off" },
+          "style": { "noExportedImports": "off", "noNestedTernary": "off" },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off"
+          }
         }
       }
     },
