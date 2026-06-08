@@ -90,12 +90,35 @@ async function main() {
   const existingUser = await db.user.findUnique({
     where: { email: E2E_EMAIL },
   });
+  const ctx = await auth.$context;
+  const hashedPassword = await ctx.password.hash(E2E_PASSWORD);
+
   if (existingUser) {
     userId = existingUser.id;
-    console.log(`  ✓ user (já existe) ${E2E_EMAIL}`);
+    await db.user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
+    });
+    const credAccount = await db.account.findFirst({
+      where: { userId, providerId: "credential" },
+    });
+    if (credAccount) {
+      await db.account.update({
+        where: { id: credAccount.id },
+        data: { password: hashedPassword },
+      });
+    } else {
+      await db.account.create({
+        data: {
+          userId,
+          accountId: E2E_EMAIL,
+          providerId: "credential",
+          password: hashedPassword,
+        },
+      });
+    }
+    console.log(`  ✓ user (atualizado) ${E2E_EMAIL}`);
   } else {
-    const ctx = await auth.$context;
-    const hashedPassword = await ctx.password.hash(E2E_PASSWORD);
     const user = await db.user.create({
       data: {
         email: E2E_EMAIL,
@@ -144,6 +167,22 @@ async function main() {
     });
     console.log("  ✓ membership ADMIN criado");
   }
+
+  // Remove memberships in other tenants (E2E user = only cosmos-dev)
+  const removedMemberships = await db.tenantMember.deleteMany({
+    where: { userId, tenantId: { not: TENANT_ID } },
+  });
+  if (removedMemberships.count > 0) {
+    console.log(
+      `  ✓ ${removedMemberships.count} membership(s) de outros tenants removido(s)`
+    );
+  }
+
+  // Delete all sessions — forces fresh login, cookieCache bypass
+  const deletedSessions = await db.session.deleteMany({ where: { userId } });
+  console.log(
+    `  ✓ ${deletedSessions.count} sessão(ões) deletada(s) — relogin necessário`
+  );
 
   // ─── 3. Cleanup ────────────────────────────────────────────────────────────
   console.log("\n  Limpando dados existentes...");

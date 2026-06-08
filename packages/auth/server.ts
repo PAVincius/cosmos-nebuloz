@@ -1,16 +1,25 @@
 import "server-only";
 
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { database } from "@repo/database";
+
+export type { MemberRole } from "@repo/database";
+
+import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 import { twoFactor } from "better-auth/plugins";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
-import { database } from "@repo/database";
-import { log } from "@repo/observability/log";
-import type { MemberRole } from "@repo/database";
 
-const SESSION_IDLE_SECONDS = 24 * 60 * 60;      // 24h idle timeout
+const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
+
+const AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
+if (!AUTH_SECRET || AUTH_SECRET.length < 32) {
+  throw new Error(
+    "BETTER_AUTH_SECRET must be set and at least 32 characters long"
+  );
+}
 
 export const auth = betterAuth({
   database: prismaAdapter(database, {
@@ -42,12 +51,12 @@ export const auth = betterAuth({
       otpOptions: { digits: 6 },
     }),
   ],
-  secret: process.env.BETTER_AUTH_SECRET!,
+  secret: AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   databaseHooks: {
     session: {
       create: {
-        after: async (session) => {
+        after: (session) => {
           log.info("[auth] session.created", {
             userId: session.userId,
             sessionId: session.id,
@@ -57,7 +66,7 @@ export const auth = betterAuth({
         },
       },
       delete: {
-        after: async (session) => {
+        after: (session) => {
           log.info("[auth] session.deleted", {
             userId: (session as { userId?: string }).userId ?? "unknown",
             sessionId: session.id,
@@ -71,7 +80,6 @@ export const auth = betterAuth({
 
 export type AuthSession = typeof auth.$Infer.Session;
 export type AuthUser = typeof auth.$Infer.Session.user;
-export type { MemberRole };
 
 export type TenantContext = {
   userId: string;
@@ -81,12 +89,15 @@ export type TenantContext = {
 };
 
 export class AuthError extends Error {
+  readonly code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION";
+
   constructor(
-    public readonly code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION",
+    code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION",
     message?: string
   ) {
     super(message ?? code);
     this.name = "AuthError";
+    this.code = code;
   }
 }
 
@@ -187,7 +198,9 @@ const MFA_REQUIRED_ROLES: MemberRole[] = ["ADMIN", "STE"];
 export async function requireMfaForPrivilegedRoles(
   ctx: TenantContext
 ): Promise<void> {
-  if (!MFA_REQUIRED_ROLES.includes(ctx.role)) return;
+  if (!MFA_REQUIRED_ROLES.includes(ctx.role)) {
+    return;
+  }
 
   const user = await database.user.findUnique({
     where: { id: ctx.userId },
