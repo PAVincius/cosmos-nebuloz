@@ -19,12 +19,14 @@ export const authenticate = async ({
     throw new Error("LIVEBLOCKS_SECRET is not set");
   }
 
+  if (!orgId) {
+    throw new Error("orgId is required for room scoping");
+  }
+
   const liveblocks = new LiveblocksNode({ secret });
 
-  // Start an auth session inside your endpoint
   const session = liveblocks.prepareSession(userId, { userInfo });
 
-  // Scope access to rooms namespaced by the user's organization only
   session.allow(`${orgId}:*`, session.FULL_ACCESS);
 
   // Authorize the user and return the result
