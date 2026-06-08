@@ -1,5 +1,6 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { KpiCard } from "@repo/design-system/components/cosmos/kpi-card";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -150,38 +151,6 @@ async function getAnalyticsData(tenantId: string) {
   };
 }
 
-function KPICard({
-  title,
-  value,
-  suffix,
-  description,
-  icon: Icon,
-  colorClass,
-}: {
-  title: string;
-  value: number | string;
-  suffix?: string;
-  description: string;
-  icon: React.ElementType;
-  colorClass: string;
-}) {
-  return (
-    <div className="hover:-translate-y-0.5 rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)] transition-all duration-200 hover:border-primary/40 hover:shadow-[var(--hover-shadow)]">
-      <p className="flex items-center gap-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-        <Icon className={`size-4 ${colorClass}`} />
-        {title}
-      </p>
-      <div className="mt-2 flex items-baseline gap-1">
-        <span className={`font-bold text-3xl ${colorClass}`}>{value}</span>
-        {suffix ? (
-          <span className="text-muted-foreground text-sm">{suffix}</span>
-        ) : null}
-      </div>
-      <p className="mt-1 text-muted-foreground text-xs">{description}</p>
-    </div>
-  );
-}
-
 function getBadgeVariant(
   value: number
 ): "default" | "secondary" | "destructive" {
@@ -194,14 +163,14 @@ function getBadgeVariant(
   return "destructive";
 }
 
-function getPredictabilityColor(value: number) {
+function getPredictabilityTone(value: number): "green" | "amber" | "red" {
   if (value >= 80) {
-    return "text-green-600";
+    return "green";
   }
   if (value >= 60) {
-    return "text-amber-600";
+    return "amber";
   }
-  return "text-destructive";
+  return "red";
 }
 
 const SPRINT_COLS = ["S-5", "S-4", "S-3", "S-2", "S-1", "Atual"] as const;
@@ -282,44 +251,40 @@ export default async function AnalyticsPage() {
 
           {/* KPI Cards */}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <KPICard
-              colorClass={getPredictabilityColor(data.piPredictability)}
-              description={
+            <KpiCard
+              hint={
                 data.latestPIName
                   ? `Último PI: ${data.latestPIName}`
                   : "Nenhum PI com dados"
               }
-              icon={TargetIcon}
-              suffix="%"
-              title="PI Predictability"
+              icon={<TargetIcon className="size-4" />}
+              label="PI Predictability"
+              tone={getPredictabilityTone(data.piPredictability)}
+              unit="%"
               value={data.piPredictability}
             />
-            <KPICard
-              colorClass="text-blue-600"
-              description={`Média de ${data.teamVelocityData.filter((t) => t.velocity > 0).length} time(s)`}
-              icon={TrendingUpIcon}
-              suffix="SP/sprint"
-              title="Avg Velocity"
+            <KpiCard
+              hint={`Média de ${data.teamVelocityData.filter((t) => t.velocity > 0).length} time(s)`}
+              icon={<TrendingUpIcon className="size-4" />}
+              label="Avg Velocity"
+              tone="blue"
+              unit="SP/sprint"
               value={data.avgVelocity}
             />
-            <KPICard
-              colorClass={
-                data.riskResolutionRate >= 70
-                  ? "text-green-600"
-                  : "text-amber-600"
-              }
-              description={`${data.resolvedRisks} de ${data.totalRisks} riscos resolvidos`}
-              icon={ShieldAlertIcon}
-              suffix="%"
-              title="Risk Resolution"
+            <KpiCard
+              hint={`${data.resolvedRisks} de ${data.totalRisks} riscos resolvidos`}
+              icon={<ShieldAlertIcon className="size-4" />}
+              label="Risk Resolution"
+              tone={data.riskResolutionRate >= 70 ? "green" : "amber"}
+              unit="%"
               value={data.riskResolutionRate}
             />
-            <KPICard
-              colorClass="text-purple-600"
-              description="Concluídas nos últimos 90 dias"
-              icon={ZapIcon}
-              suffix="features"
-              title="Feature Throughput"
+            <KpiCard
+              hint="Concluídas nos últimos 90 dias"
+              icon={<ZapIcon className="size-4" />}
+              label="Feature Throughput"
+              tone="purple"
+              unit="features"
               value={data.featureThroughput}
             />
           </div>
