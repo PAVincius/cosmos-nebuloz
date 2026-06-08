@@ -14,12 +14,13 @@ import { redirect } from "next/navigation";
 const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
 
-const AUTH_SECRET = process.env.BETTER_AUTH_SECRET;
-if (!AUTH_SECRET || AUTH_SECRET.length < 32) {
+const _rawSecret = process.env.BETTER_AUTH_SECRET;
+if (!_rawSecret || _rawSecret.length < 32) {
   throw new Error(
     "BETTER_AUTH_SECRET must be set and at least 32 characters long"
   );
 }
+const AUTH_SECRET: string = _rawSecret;
 
 export const auth = betterAuth({
   database: prismaAdapter(database, {
