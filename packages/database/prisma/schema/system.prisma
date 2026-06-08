@@ -5,9 +5,9 @@ model CopilotSession {
   tenantId      String
   userId        String?
   mode          String    @default("global") // global | rte | lpm | pm | team | spc
-  surface       String?   // page/view where session was started
-  title         String?   @db.Text  // first user message, cached for sidebar display
-  messages      Json?     // [{role, content, ts}] — full conversation cache for quick load
+  surface       String? // page/view where session was started
+  title         String?   @db.Text // first user message, cached for sidebar display
+  messages      Json? // [{role, content, ts}] — full conversation cache for quick load
   messageCount  Int       @default(0)
   lastMessageAt DateTime?
   pinnedAt      DateTime?
@@ -27,7 +27,7 @@ model CopilotMessage {
   id        String   @id @default(cuid())
   tenantId  String
   sessionId String
-  role      String   // user | assistant
+  role      String // user | assistant
   content   String   @db.Text
   tokens    Int?
   createdAt DateTime @default(now())
@@ -46,7 +46,7 @@ model Notification {
   id        String   @id @default(cuid())
   tenantId  String
   userId    String
-  type      String   // mention/assignment/risk/deadline/system
+  type      String // mention/assignment/risk/deadline/system
   title     String
   body      String?
   read      Boolean  @default(false)
@@ -61,16 +61,20 @@ model Notification {
 }
 
 model AuditLog {
-  id         String   @id @default(cuid())
-  tenantId   String
-  userId     String?
-  action     String   // created/updated/deleted
-  entityType String   // Epic/Feature/Risk/Story/etc
-  entityId   String
-  diff       Json?
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  tenantId     String
+  userId       String?
+  action       String // created/updated/deleted
+  entityType   String // Epic/Feature/Risk/Story/etc
+  entityId     String
+  diff         Json?
+  ipAddress    String?
+  userAgent    String?
+  targetUserId String?
+  reason       String?
+  createdAt    DateTime @default(now())
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
   @@index([tenantId])
   @@index([tenantId, entityType, entityId])
@@ -80,10 +84,10 @@ model AuditLog {
 model Integration {
   id         String    @id @default(cuid())
   tenantId   String
-  source     String    // linear | github | asana | gitlab | jira | azure-devops | billing_aws | billing_gcp | billing_azure
+  source     String // linear | github | asana | gitlab | jira | azure-devops | billing_aws | billing_gcp | billing_azure
   name       String
-  config     Json      // { apiKey, org, token, ... } — sensitive, store encrypted at app layer
-  mapping    Json?     // { statusMap, typeMap, teamId, artId, piId }
+  config     Json // { apiKey, org, token, ... } — sensitive, store encrypted at app layer
+  mapping    Json? // { statusMap, typeMap, teamId, artId, piId }
   status     String    @default("ACTIVE") // ACTIVE | INACTIVE | ERROR
   lastSyncAt DateTime?
   createdAt  DateTime  @default(now())
@@ -102,8 +106,8 @@ model Integration {
 model SyncLog {
   id            String   @id @default(cuid())
   integrationId String
-  type          String   // snapshot | webhook | push
-  status        String   // success | partial | error
+  type          String // snapshot | webhook | push
+  status        String // success | partial | error
   itemsCreated  Int      @default(0)
   itemsUpdated  Int      @default(0)
   itemsSkipped  Int      @default(0)
