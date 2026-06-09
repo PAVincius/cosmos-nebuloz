@@ -1,10 +1,15 @@
 model ART {
-  id        String   @id @default(cuid())
-  tenantId  String
-  name      String
-  cadence   Int      @default(10) // PI iteration length in weeks
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  tenantId          String
+  name              String
+  cadence           Int      @default(10) // PI iteration length in weeks
+  // Story-017 lifecycle fields
+  status            String   @default("INACTIVE") // INACTIVE/ACTIVE/RETIRED
+  piCadenceWeeks    Int      @default(10)
+  sprintLengthWeeks Int      @default(2)
+  ipSprintEnabled   Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   tenant  Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   piPlans PIPlan[]
@@ -35,14 +40,21 @@ model Team {
 }
 
 model PIPlan {
-  id        String    @id @default(cuid())
-  tenantId  String
-  artId     String
-  name      String
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                       String    @id @default(cuid())
+  tenantId                 String
+  artId                    String
+  name                     String
+  startDate                DateTime?
+  endDate                  DateTime?
+  // Story-017 lifecycle fields
+  status                   String    @default("DRAFT") // DRAFT/PLANNING/COMMITTED/EXECUTING/CLOSED
+  velocity                 Int?
+  confidenceThreshold      Float     @default(3.0)
+  commitmentOverride       Boolean   @default(false)
+  commitmentOverrideReason String?   @db.Text
+  closedAt                 DateTime?
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   tenant       Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   art          ART             @relation(fields: [artId], references: [id], onDelete: Cascade)

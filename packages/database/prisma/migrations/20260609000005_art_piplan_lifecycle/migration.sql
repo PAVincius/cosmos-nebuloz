@@ -1,0 +1,15 @@
+-- Story-017: ART lifecycle + PI Plan full lifecycle
+
+ALTER TABLE "ART"
+  ADD COLUMN IF NOT EXISTS "status"            TEXT NOT NULL DEFAULT 'INACTIVE',
+  ADD COLUMN IF NOT EXISTS "piCadenceWeeks"    INTEGER NOT NULL DEFAULT 10,
+  ADD COLUMN IF NOT EXISTS "sprintLengthWeeks" INTEGER NOT NULL DEFAULT 2,
+  ADD COLUMN IF NOT EXISTS "ipSprintEnabled"   BOOLEAN NOT NULL DEFAULT true;
+
+ALTER TABLE "PIPlan"
+  ADD COLUMN IF NOT EXISTS "status"                    TEXT NOT NULL DEFAULT 'DRAFT',
+  ADD COLUMN IF NOT EXISTS "velocity"                  INTEGER,
+  ADD COLUMN IF NOT EXISTS "confidenceThreshold"       DOUBLE PRECISION NOT NULL DEFAULT 3.0,
+  ADD COLUMN IF NOT EXISTS "commitmentOverride"        BOOLEAN NOT NULL DEFAULT false,
+  ADD COLUMN IF NOT EXISTS "commitmentOverrideReason"  TEXT,
+  ADD COLUMN IF NOT EXISTS "closedAt"                  TIMESTAMP(3);
