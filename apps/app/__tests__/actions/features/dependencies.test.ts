@@ -10,6 +10,7 @@ const mocks = vi.hoisted(() => ({
   depLinkCreate: vi.fn(),
   depLinkUpdateMany: vi.fn(),
   featureFindMany: vi.fn(),
+  featureCount: vi.fn(),
   piPlanFindFirstOrThrow: vi.fn(),
   transaction: vi.fn(),
 }));
@@ -30,7 +31,7 @@ vi.mock("@repo/database", () => ({
       create: mocks.depLinkCreate,
       updateMany: mocks.depLinkUpdateMany,
     },
-    feature: { findMany: mocks.featureFindMany },
+    feature: { findMany: mocks.featureFindMany, count: mocks.featureCount },
     $transaction: mocks.transaction,
   },
 }));
@@ -75,6 +76,7 @@ describe("createDependencyLink — circular detection (AC-005)", () => {
     mocks.headers.mockResolvedValue(new Headers());
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "PO" });
     mocks.piPlanFindFirst.mockResolvedValue({ status: "PLANNING" });
+    mocks.featureCount.mockResolvedValue(2);
     mocks.depLinkCreate.mockResolvedValue({ id: "link-new" });
 
     // $transaction executes the callback synchronously with a tx proxy
@@ -166,7 +168,27 @@ describe("createDependencyLink — read-only enforcement (AC-004)", () => {
       }
     );
     mocks.depLinkFindMany.mockResolvedValue([]);
+    mocks.featureCount.mockResolvedValue(2);
     mocks.depLinkCreate.mockResolvedValue({ id: "link-new" });
+  });
+
+  it("rejects cross-tenant feature link (IDOR prevention)", async () => {
+    mocks.piPlanFindFirst.mockResolvedValue({ status: "PLANNING" });
+    // Only 1 feature found — the other belongs to a different tenant
+    mocks.featureCount.mockResolvedValue(1);
+
+    const result = await createDependencyLink({
+      piPlanId: "pi-1",
+      blockingFeatureId: "feat-other-tenant",
+      blockedFeatureId: "feat-B",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("FEATURE_NOT_FOUND");
+    expect(mocks.depLinkCreate).not.toHaveBeenCalled();
   });
 
   it("rejects link creation when PI Plan is COMMITTED", async () => {

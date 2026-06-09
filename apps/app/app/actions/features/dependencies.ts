@@ -64,13 +64,18 @@ async function detectCircular(
   return null;
 }
 
-const CreateLinkSchema = z.object({
-  piPlanId: z.string().min(1),
-  blockingFeatureId: z.string().min(1),
-  blockedFeatureId: z.string().min(1),
-  description: z.string().max(500).optional(),
-  criticalPath: z.boolean().default(false),
-});
+const CreateLinkSchema = z
+  .object({
+    piPlanId: z.string().min(1),
+    blockingFeatureId: z.string().min(1),
+    blockedFeatureId: z.string().min(1),
+    description: z.string().max(500).optional(),
+    criticalPath: z.boolean().default(false),
+  })
+  .refine((d) => d.blockingFeatureId !== d.blockedFeatureId, {
+    message: "SELF_LINK",
+    path: ["blockedFeatureId"],
+  });
 
 export async function createDependencyLink(
   raw: unknown
@@ -88,6 +93,18 @@ export async function createDependencyLink(
     }
     if (READ_ONLY_PI_STATES.has(piPlan.status)) {
       throw new Error(`PI_READ_ONLY:${piPlan.status}`);
+    }
+
+    // Validate both features belong to tenant + PI Plan (IDOR prevention)
+    const featureCount = await database.feature.count({
+      where: {
+        tenantId: ctx.tenantId,
+        piPlanId: input.piPlanId,
+        id: { in: [input.blockingFeatureId, input.blockedFeatureId] },
+      },
+    });
+    if (featureCount !== 2) {
+      throw new Error("FEATURE_NOT_FOUND");
     }
 
     const chain = await database.$transaction((tx) =>
