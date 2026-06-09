@@ -27,6 +27,7 @@ const mocks = vi.hoisted(() => ({
   artFindFirstOrThrow: vi.fn(),
   artCreate: vi.fn(),
   artUpdate: vi.fn(),
+  artUpdateMany: vi.fn(),
   piPlanFindFirst: vi.fn(),
   piPlanFindFirstOrThrow: vi.fn(),
   piPlanCreate: vi.fn(),
@@ -52,6 +53,7 @@ vi.mock("@repo/database", () => ({
       findFirstOrThrow: mocks.artFindFirstOrThrow,
       create: mocks.artCreate,
       update: mocks.artUpdate,
+      updateMany: mocks.artUpdateMany,
     },
     pIPlan: {
       findFirst: mocks.piPlanFindFirst,
@@ -132,6 +134,7 @@ describe("updateARTCadence", () => {
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "RTE" });
     mocks.piPlanFindFirst.mockResolvedValue(null); // no active PI
     mocks.artUpdate.mockResolvedValue({});
+    mocks.artUpdateMany.mockResolvedValue({ count: 1 });
   });
 
   it("allows cadence update when no active PI", async () => {

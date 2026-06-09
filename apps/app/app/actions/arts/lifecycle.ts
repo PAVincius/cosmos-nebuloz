@@ -87,8 +87,8 @@ export async function updateARTCadence(
       throw new Error("ACTIVE_PI_PLAN");
     }
 
-    await database.aRT.update({
-      where: { id: input.artId },
+    const updated = await database.aRT.updateMany({
+      where: { id: input.artId, tenantId: ctx.tenantId },
       data: {
         ...(input.piCadenceWeeks !== undefined && {
           piCadenceWeeks: input.piCadenceWeeks,
@@ -101,6 +101,9 @@ export async function updateARTCadence(
         }),
       },
     });
+    if (updated.count === 0) {
+      throw new Error("ART_NOT_FOUND");
+    }
 
     revalidatePath("/arts");
     return { updated: true };

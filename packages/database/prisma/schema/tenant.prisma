@@ -47,6 +47,7 @@ model Tenant {
   bpmnDefinitions         BpmnDefinition[]
   piSessions              PISession[]
   confidenceSessions      ConfidenceVoteSession[]
+  confidenceVoteTallies   ConfidenceVoteTally[]
   knowledgeVectors        PIKnowledgeVector[]
   teams                   Team[]
   // Wave 1 — Team delivery
