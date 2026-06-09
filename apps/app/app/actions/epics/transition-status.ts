@@ -11,6 +11,7 @@ import {
 import { headers } from "next/headers";
 import { createActor } from "xstate";
 import { z } from "zod";
+import { inngest } from "@/lib/inngest/client";
 import { type Result, safeAction } from "../_base";
 
 const LIFECYCLE_STATES = [
@@ -147,6 +148,19 @@ export async function transitionEpicStatus(
           externalRef: input.externalRef ?? null,
         },
       });
+    });
+
+    // Fire-and-forget: downstream handlers (INVEST recalc, notifications, etc.)
+    await inngest.send({
+      name: "epic/status.changed",
+      data: {
+        tenantId: ctx.tenantId,
+        epicId: input.epicId,
+        fromStatus,
+        toStatus,
+        userId: input.userId ?? ctx.userId,
+        reason: input.reason ?? null,
+      },
     });
 
     return { epicId: input.epicId, fromStatus, toStatus };
