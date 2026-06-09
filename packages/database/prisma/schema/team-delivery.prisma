@@ -40,12 +40,16 @@ model Story {
   description        String?   @db.Text
   acceptanceCriteria String?   @db.Text
   storyPoints        Int       @default(1)
-  status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE
+  status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE/SPLIT_INTO
   priority           String    @default("medium") // critical/high/medium/low
   assigneeUserId     String?
   order              Int       @default(0)
   startedAt          DateTime? // set when status transitions to IN_PROGRESS
   completedAt        DateTime?
+  // Story-021 split + decomposition fields
+  origin             String    @default("MANUAL") // MANUAL/COPILOT_SUGGESTION
+  originStoryId      String?
+  splitIntoStoryIds  Json      @default("[]")
 
   // External integration fields
   externalId     String?

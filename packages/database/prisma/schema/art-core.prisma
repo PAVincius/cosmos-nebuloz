@@ -11,10 +11,11 @@ model ART {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
-  tenant  Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  piPlans PIPlan[]
-  teams   Team[]
-  themes  ThemeART[]
+  tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlans          PIPlan[]
+  teams            Team[]
+  themes           ThemeART[]
+  sequenceCounters ArtSequenceCounter[]
 
   @@index([tenantId])
 }
@@ -212,13 +213,35 @@ model Epic {
   @@index([strategicThemeId])
 }
 
-model Feature {
-  id       String  @id @default(cuid())
+model ArtSequenceCounter {
+  id       String @id @default(cuid())
   tenantId String
-  epicId   String?
-  piPlanId String? // PI Planning this feature is committed to
-  title    String
-  statusId String  @default("BACKLOG")
+  artId    String
+  type     String @default("FEATURE") // FEATURE/ENABLER
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art    ART    @relation(fields: [artId], references: [id], onDelete: Cascade)
+
+  @@unique([artId, type])
+  @@index([tenantId])
+}
+
+model Feature {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  epicId                String?
+  piPlanId              String? // PI Planning this feature is committed to
+  title                 String
+  statusId              String    @default("BACKLOG")
+  // Story-021 readiness fields
+  artScopedId           String?
+  assignedTeamId        String?
+  acceptanceCriteria    Json      @default("[]") // array of AC strings
+  readinessOverridden   Boolean   @default(false)
+  readinessOverrideNote String?   @db.Text
+  readinessOverrideBy   String?
+  readinessOverrideAt   DateTime?
 
   // WSJF Parameters
   bv        Float @default(0) // Business Value

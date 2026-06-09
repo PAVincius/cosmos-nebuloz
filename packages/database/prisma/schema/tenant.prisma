@@ -48,6 +48,7 @@ model Tenant {
   piSessions              PISession[]
   confidenceSessions      ConfidenceVoteSession[]
   confidenceVoteTallies   ConfidenceVoteTally[]
+  artSequenceCounters     ArtSequenceCounter[]
   knowledgeVectors        PIKnowledgeVector[]
   teams                   Team[]
   // Wave 1 — Team delivery
