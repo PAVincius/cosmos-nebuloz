@@ -1,29 +1,33 @@
 // Wave 1 — Team Level delivery entities
 
 model Sprint {
-  id          String    @id @default(cuid())
-  tenantId    String
-  teamId      String
-  name        String
-  goal        String?
-  startDate   DateTime
-  endDate     DateTime
-  status      String    @default("PLANNING") // PLANNING/ACTIVE/COMPLETED
-  capacity    Int?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(cuid())
+  tenantId   String
+  teamId     String
+  piPlanId   String?
+  name       String
+  goal       String?
+  startDate  DateTime
+  endDate    DateTime
+  status     String   @default("PLANNING") // PLANNING/ACTIVE/COMPLETED
+  isIPSprint Boolean  @default(false)
+  capacity   Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  team   Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  stories Story[]
-  review  SprintReview?
-  retro   Retrospective?
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  team              Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  piPlan            PIPlan?                @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  stories           Story[]
+  review            SprintReview?
+  retro             Retrospective?
   memberAssignments TeamMemberAssignment[]
   memberMetrics     MemberSprintMetrics[]
   capacitySnapshots TeamCapacitySnapshot[]
 
   @@index([tenantId])
   @@index([teamId])
+  @@index([piPlanId])
   @@index([tenantId, status])
 }
 
@@ -37,7 +41,7 @@ model Story {
   acceptanceCriteria String?   @db.Text
   storyPoints        Int       @default(1)
   status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE
-  priority           String    @default("medium")  // critical/high/medium/low
+  priority           String    @default("medium") // critical/high/medium/low
   assigneeUserId     String?
   order              Int       @default(0)
   startedAt          DateTime? // set when status transitions to IN_PROGRESS
@@ -45,11 +49,11 @@ model Story {
 
   // External integration fields
   externalId     String?
-  externalSource String?  // linear | github | asana | gitlab
+  externalSource String? // linear | github | asana | gitlab
   externalUrl    String?
 
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sprint  Sprint?  @relation(fields: [sprintId], references: [id], onDelete: SetNull)
@@ -75,13 +79,13 @@ model Task {
   completedAt    DateTime?
 
   // S3: Synergy detection — task classification
-  taskType    String?  // backend | frontend | ml | infra | qa | data | design
-  complexity  String?  // low | medium | high
+  taskType    String? // backend | frontend | ml | infra | qa | data | design
+  complexity  String? // low | medium | high
   estimatedSp Int?
   actualSp    Int?
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   story     Story          @relation(fields: [storyId], references: [id], onDelete: Cascade)
@@ -99,7 +103,7 @@ model Defect {
   title          String
   description    String?   @db.Text
   severity       String    @default("medium") // critical/high/medium/low
-  status         String    @default("OPEN")   // OPEN/IN_PROGRESS/RESOLVED/CLOSED
+  status         String    @default("OPEN") // OPEN/IN_PROGRESS/RESOLVED/CLOSED
   reporterUserId String?
   assigneeUserId String?
   resolvedAt     DateTime?
@@ -186,7 +190,7 @@ model Retrospective {
 model TaskAssignee {
   taskId   String
   userId   String
-  role     String?  // primary | reviewer | pair
+  role     String? // primary | reviewer | pair
   joinedAt DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)

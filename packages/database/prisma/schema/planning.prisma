@@ -1,18 +1,21 @@
 // Dependency tracking between features
 model DependencyLink {
-  id                String   @id @default(cuid())
+  id                String    @id @default(cuid())
   tenantId          String
   blockingFeatureId String
   blockedFeatureId  String
   description       String?
-  status            String   @default("not-started") // not-started/on-track/at-risk/blocked/completed
-  type              String   @default("technical")   // technical/business/organizational/external
-  severity          String   @default("medium")      // critical/high/medium/low
+  status            String    @default("not-started") // not-started/on-track/at-risk/blocked/completed
+  // Story-020 Program Board fields
+  boardStatus       String    @default("IDENTIFIED") // IDENTIFIED/IN_PROGRESS/RESOLVED
+  criticalPath      Boolean   @default(false)
+  type              String    @default("technical") // technical/business/organizational/external
+  severity          String    @default("medium") // critical/high/medium/low
   ownerUserId       String?
   notes             String?
   dueDate           DateTime?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   tenant          Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   blockingFeature Feature @relation("BlockingFeature", fields: [blockingFeatureId], references: [id], onDelete: Cascade)
@@ -30,11 +33,11 @@ model TeamWorkflowNode {
   tenantId String
   teamId   String
   type     String // e.g. "customNode", "station"
-  position Json   // { x, y }
-  data     Json   // { label, status, etc }
-  
+  position Json // { x, y }
+  data     Json // { label, status, etc }
+
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
+
   @@index([tenantId, teamId])
 }
 
@@ -46,21 +49,21 @@ model TeamWorkflowEdge {
   sourceNodeId String
   targetNodeId String
   animated     Boolean @default(true)
-  
+
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
+
   @@index([tenantId, teamId])
 }
 
 // Enterprise Workflows (BPMN Compliance)
 model BpmnDefinition {
-  id          String @id @default(cuid())
-  tenantId    String
-  teamId      String
-  xmlContent  String @db.Text // Conteúdo nativo para o bpmn-js processar
-  version     Int    @default(1)
+  id         String @id @default(cuid())
+  tenantId   String
+  teamId     String
+  xmlContent String @db.Text // Conteúdo nativo para o bpmn-js processar
+  version    Int    @default(1)
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  
+
   @@index([tenantId, teamId])
 }

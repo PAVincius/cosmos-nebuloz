@@ -63,6 +63,7 @@ model PIPlan {
   piObjectives PIObjective[]
   features     Feature[]
   participants PIParticipant[]
+  sprints      Sprint[]
 
   @@index([tenantId])
   @@index([artId])
@@ -118,7 +119,7 @@ model Risk {
   // Story-019 ROAM fields
   roamStatus           String    @default("UNCLASSIFIED") // UNCLASSIFIED/RESOLVED/OWNED/ACCEPTED/MITIGATED
   severity             Int       @default(3) // 1-5
-  category             String?   // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY
+  category             String? // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY
   impact               String    @default("medium")
   probability          String    @default("medium")
   ownerUserId          String?
@@ -227,11 +228,11 @@ model Feature {
   wsjfScore Float @default(0) // (bv + tc + rr) / js
 
   // Extended WSJF metadata (story-015)
-  wsjfCostOfDelay    Float?   // bv + tc + rr (explicit stored value)
-  wsjfNormalizedScore Float?  // wsjfScore / maxInBacklog * 100
-  wsjfConfidence     String?  // LOW|MEDIUM|HIGH
-  wsjfScoredBy       String?
-  wsjfScoredAt       DateTime?
+  wsjfCostOfDelay     Float? // bv + tc + rr (explicit stored value)
+  wsjfNormalizedScore Float? // wsjfScore / maxInBacklog * 100
+  wsjfConfidence      String? // LOW|MEDIUM|HIGH
+  wsjfScoredBy        String?
+  wsjfScoredAt        DateTime?
   wsjfJobSizeLockedBy String?
   wsjfJobSizeLockedAt DateTime?
 
@@ -279,7 +280,7 @@ model ScoringEvent {
   js              Float?
   wsjfScore       Float?
   normalizedScore Float?
-  confidence      String?  // LOW|MEDIUM|HIGH
+  confidence      String? // LOW|MEDIUM|HIGH
   source          String   @default("MANUAL") // MANUAL|COPILOT
   userId          String?
   justification   String?  @db.Text
