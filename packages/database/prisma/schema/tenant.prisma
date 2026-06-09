@@ -114,7 +114,8 @@ model Tenant {
   commitmentDiscounts     CommitmentDiscount[]
   personCosts             PersonCost[]
   billingEntryStaging     BillingEntryStaging[]
-  activeSessions          Session[]               @relation("SessionActiveTenant")
+  activeSessions          Session[]                  @relation("SessionActiveTenant")
+  scoringEvents           ScoringEvent[]
 }
 
 model User {

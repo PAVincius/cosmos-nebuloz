@@ -200,6 +200,15 @@ model Feature {
   js        Float @default(1) // Job Size
   wsjfScore Float @default(0) // (bv + tc + rr) / js
 
+  // Extended WSJF metadata (story-015)
+  wsjfCostOfDelay    Float?   // bv + tc + rr (explicit stored value)
+  wsjfNormalizedScore Float?  // wsjfScore / maxInBacklog * 100
+  wsjfConfidence     String?  // LOW|MEDIUM|HIGH
+  wsjfScoredBy       String?
+  wsjfScoredAt       DateTime?
+  wsjfJobSizeLockedBy String?
+  wsjfJobSizeLockedAt DateTime?
+
   storyPoints    Int       @default(1) // SP estimate for this feature
   assigneeUserId String? // User responsible (links to User.id logically; no FK to keep it simple)
   startedAt      DateTime? // When statusId first moved to IN_PROGRESS
@@ -226,4 +235,33 @@ model Feature {
   @@index([assigneeUserId])
   @@index([tenantId, assigneeUserId])
   @@index([externalSource, externalId])
+}
+
+model ScoringEvent {
+  id              String   @id @default(cuid())
+  tenantId        String
+  epicId          String?
+  featureId       String?
+  prevBv          Float?
+  prevTc          Float?
+  prevRr          Float?
+  prevJs          Float?
+  prevScore       Float?
+  bv              Float?
+  tc              Float?
+  rr              Float?
+  js              Float?
+  wsjfScore       Float?
+  normalizedScore Float?
+  confidence      String?  // LOW|MEDIUM|HIGH
+  source          String   @default("MANUAL") // MANUAL|COPILOT
+  userId          String?
+  justification   String?  @db.Text
+  createdAt       DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([featureId])
+  @@index([epicId])
 }
