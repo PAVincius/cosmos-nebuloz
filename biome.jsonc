@@ -6,14 +6,164 @@
   },
   "overrides": [
     {
-      "includes": ["apps/app/app/actions/**"],
+      "includes": [
+        "**/__tests__/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts"
+      ],
       "linter": {
         "rules": {
-          "suspicious": { "useAwait": "off", "noExplicitAny": "off" },
-          "style": { "noExportedImports": "off", "noNestedTernary": "off" },
+          "performance": { "useTopLevelRegex": "off" },
+          "style": {
+            "useBlockStatements": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off"
+          },
+          "suspicious": {
+            "useAwait": "off",
+            "noEmptyBlockStatements": "off",
+            "noExplicitAny": "off"
+          },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/actions/**",
+        "apps/app/app/api/**",
+        "apps/app/app/hooks/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "useAwait": "off",
+            "noExplicitAny": "off",
+            "noEvolvingTypes": "off",
+            "noImplicitAnyLet": "off",
+            "noEmptyBlockStatements": "off",
+            "noRedeclare": "off",
+            "noAssignInExpressions": "off"
+          },
+          "style": {
+            "noExportedImports": "off",
+            "noNestedTernary": "off",
+            "useDefaultSwitchClause": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off"
+          },
+          "performance": { "useTopLevelRegex": "off", "noBarrelFile": "off" },
+          "nursery": {
+            "noShadow": "off",
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off"
+          },
           "complexity": {
             "noExcessiveCognitiveComplexity": "off",
             "noVoid": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/(authenticated)/**",
+        "apps/app/app/(unauthenticated)/**",
+        "apps/app/app/layout.tsx",
+        "apps/app/app/loading.tsx",
+        "apps/app/app/error.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noLeakedRender": "off",
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off",
+            "noUnusedExpressions": "off",
+            "noShadow": "off",
+            "useMaxParams": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noExplicitAny": "off",
+            "noAlert": "off",
+            "noGlobalIsNan": "off",
+            "useAwait": "off",
+            "noEvolvingTypes": "off",
+            "noEmptyBlockStatements": "off",
+            "noImplicitAnyLet": "off",
+            "noShadowRestrictedNames": "off"
+          },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off",
+            "useDefaultSwitchClause": "off",
+            "noExportedImports": "off"
+          },
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "useAltText": "off",
+            "noSvgWithoutTitle": "off",
+            "useAriaPropsSupportedByRole": "off",
+            "useSemanticElements": "off",
+            "useGenericFontNames": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off",
+            "useOptionalChain": "off"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "warn",
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off",
+            "useParseIntRadix": "off",
+            "useImageSize": "off"
+          },
+          "performance": {
+            "noImgElement": "off",
+            "useTopLevelRegex": "off",
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noExplicitAny": "off", "useAwait": "off" },
+          "style": { "noNestedTernary": "off", "noNonNullAssertion": "off" },
+          "nursery": {
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off",
+            "noLeakedRender": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off"
+          },
+          "performance": { "noBarrelFile": "off", "useTopLevelRegex": "off" },
+          "style": {
+            "useFilenamingConvention": "off",
+            "noNonNullAssertion": "off",
+            "noNestedTernary": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          },
+          "suspicious": {
+            "noShadowRestrictedNames": "off",
+            "noEvolvingTypes": "off",
+            "noEmptyBlockStatements": "off"
           }
         }
       }
@@ -48,7 +198,7 @@
   "files": {
     "includes": [
       "**/*",
-      "!design/**",
+      "!design",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",
