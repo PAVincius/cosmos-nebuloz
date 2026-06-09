@@ -146,7 +146,11 @@ export async function autosaveBusinessCase(
 
     const existing = await database.epic.findFirstOrThrow({
       where: { id: input.epicId, tenantId: ctx.tenantId },
-      select: { lifecycleStatus: true, descriptionVersions: true },
+      select: {
+        lifecycleStatus: true,
+        descriptionVersions: true,
+        investScoreOutdated: true,
+      },
     });
 
     const TERMINAL = new Set(["DONE", "REJECTED"]);
@@ -179,6 +183,10 @@ export async function autosaveBusinessCase(
           hypothesisResolution: input.hypothesisResolution,
         }),
         descriptionVersions: versions,
+        ...(input.hypothesis !== undefined &&
+          !existing.investScoreOutdated && {
+            investScoreOutdated: true,
+          }),
       },
     });
 
