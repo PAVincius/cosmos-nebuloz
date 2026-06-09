@@ -8,7 +8,12 @@ export async function POST(
   const { id } = await params;
   const body = (await request.json()) as Record<string, unknown>;
 
-  const result = await transitionEpicStatus({ ...body, epicId: id });
+  // Explicitly whitelist client-supplied fields — userId/tenantId must NEVER come from the client
+  const result = await transitionEpicStatus({
+    epicId: id,
+    event: body.event,
+    reason: body.reason,
+  });
 
   if (!result.ok) {
     // TransitionError sets message = code (e.g. "TERMINAL_STATE", "GUARD_FAILED")
