@@ -54,6 +54,8 @@ model PIPlan {
   commitmentOverride       Boolean   @default(false)
   commitmentOverrideReason String?   @db.Text
   closedAt                 DateTime?
+  // Story-023 PPM
+  ppm                      Float?
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 
@@ -99,6 +101,10 @@ model PIObjective {
   businessValue Int      @default(5) // 1-10
   isStretch     Boolean  @default(false)
   status        String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
+  // Story-023 PPM fields
+  plannedValue         Float @default(0)
+  achievedValue        Float @default(0)
+  sprintContributions  Json  @default("{}") // {sprintId: points} for idempotency
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 

@@ -60,6 +60,8 @@ model Tenant {
   standupEntries          StandupEntry[]
   sprintReviews           SprintReview[]
   retrospectives          Retrospective[]
+  retroItems              RetroItem[]
+  retroActionItems        RetroActionItem[]
   // Wave 3 — System
   notifications           Notification[]
   auditLogs               AuditLog[]

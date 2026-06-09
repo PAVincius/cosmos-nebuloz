@@ -165,14 +165,17 @@ model StandupEntry {
 }
 
 model SprintReview {
-  id        String   @id @default(cuid())
-  tenantId  String
-  sprintId  String   @unique
-  velocity  Int?
-  demoNotes String?  @db.Text
-  goalMet   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  tenantId        String
+  sprintId        String   @unique
+  velocity        Int?
+  // Story-023 accepted vs completed guard (AC-001)
+  completedPoints Int?
+  acceptedPoints  Int?
+  demoNotes       String?  @db.Text
+  goalMet         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -181,19 +184,80 @@ model SprintReview {
 }
 
 model Retrospective {
-  id        String   @id @default(cuid())
-  tenantId  String
-  sprintId  String   @unique
-  wentWell  Json     @default("[]")
-  toImprove Json     @default("[]")
-  actions   Json     @default("[]")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String    @id @default(cuid())
+  tenantId        String
+  sprintId        String    @unique
+  teamId          String?
+  wentWell        Json      @default("[]")
+  toImprove       Json      @default("[]")
+  actions         Json      @default("[]")
+  // Story-023 phase tracking
+  phase           String    @default("INPUT") // INPUT/VOTING/ACTION_PLANNING/CLOSED
+  status          String    @default("DRAFT") // DRAFT/ACTIVE/CLOSED
+  anonymousInput  Boolean   @default(true)
+  votesPerMember  Int       @default(3)
+  closedAt        DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint      Sprint            @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  items       RetroItem[]
+  actionItems RetroActionItem[]
 
   @@index([tenantId])
+  @@index([teamId])
+}
+
+// Story-023 retro item with anonymous author support
+model RetroItem {
+  id        String   @id @default(cuid())
+  tenantId  String
+  retroId   String
+  category  String   @default("WENT_WELL") // WENT_WELL/TO_IMPROVE
+  text      String   @db.Text
+  authorId  String?
+  voteCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  tenant     Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  retro      Retrospective @relation(fields: [retroId], references: [id], onDelete: Cascade)
+  votes      RetroVote[]
+
+  @@index([tenantId])
+  @@index([retroId])
+}
+
+// Story-023 per-member vote tracking for dot voting
+model RetroVote {
+  itemId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  item RetroItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, userId])
+  @@index([userId])
+}
+
+// Story-023 action items with carry-forward lineage
+model RetroActionItem {
+  id                 String    @id @default(cuid())
+  tenantId           String
+  retroId            String
+  title              String
+  ownerId            String
+  dueDate            DateTime
+  status             String    @default("OPEN") // OPEN/COMPLETE
+  carriedFromRetroId String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  retro  Retrospective @relation(fields: [retroId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([retroId])
 }
 
 // S3: Multi-assignee support for synergy detection
