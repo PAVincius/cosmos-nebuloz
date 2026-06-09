@@ -109,18 +109,32 @@ model PIObjective {
 
 // ROAM Risk tracking (Resolved/Owned/Accepted/Mitigated)
 model Risk {
-  id          String   @id @default(cuid())
-  tenantId    String
-  piPlanId    String?
-  title       String
-  description String?
-  status      String   @default("IDENTIFIED") // ROAM: RESOLVED/OWNED/ACCEPTED/MITIGATED + IDENTIFIED
-  category    String? // technical/business/organizational/external
-  impact      String   @default("medium") // low/medium/high/critical
-  probability String   @default("medium") // low/medium/high
-  ownerUserId String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  tenantId             String
+  piPlanId             String?
+  title                String
+  description          String?
+  status               String    @default("IDENTIFIED") // ROAM: RESOLVED/OWNED/ACCEPTED/MITIGATED + IDENTIFIED
+  // Story-019 ROAM fields
+  roamStatus           String    @default("UNCLASSIFIED") // UNCLASSIFIED/RESOLVED/OWNED/ACCEPTED/MITIGATED
+  severity             Int       @default(3) // 1-5
+  category             String?   // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY
+  impact               String    @default("medium")
+  probability          String    @default("medium")
+  ownerUserId          String?
+  ownerId              String?
+  ownedAt              DateTime?
+  mitigationPlan       String?   @db.Text
+  resolutionNote       String?   @db.Text
+  resolvedAt           DateTime?
+  source               String    @default("MANUAL") // MANUAL/AI_SUGGESTED
+  aiConfidence         Float?
+  aiJustification      String?   @db.Text
+  overdue              Boolean   @default(false)
+  escalatedToPortfolio Boolean   @default(false)
+  dueDate              DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
   tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   piPlan     PIPlan?   @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
