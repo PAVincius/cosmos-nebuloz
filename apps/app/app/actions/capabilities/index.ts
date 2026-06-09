@@ -1,35 +1,42 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
-import { type Capability } from "@repo/database";
-import { headers } from "next/headers";
+import { type Capability, database } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
-  CreateCapabilitySchema,
-  UpdateCapabilitySchema,
-  CapabilityFiltersSchema,
-  ReorderCapabilitiesSchema,
-  type CreateCapabilityInput,
-  type UpdateCapabilityInput,
   type CapabilityFilters,
-  type ReorderCapabilitiesInput,
+  CapabilityFiltersSchema,
   type CapabilityWithSolutionTrain,
+  type CreateCapabilityInput,
+  CreateCapabilitySchema,
+  type ReorderCapabilitiesInput,
+  ReorderCapabilitiesSchema,
+  type UpdateCapabilityInput,
+  UpdateCapabilitySchema,
 } from "./schema";
 
-export type { CreateCapabilityInput, UpdateCapabilityInput, CapabilityFilters, ReorderCapabilitiesInput, CapabilityWithSolutionTrain };
+export type {
+  CreateCapabilityInput,
+  UpdateCapabilityInput,
+  CapabilityFilters,
+  ReorderCapabilitiesInput,
+  CapabilityWithSolutionTrain,
+};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listCapabilities(raw?: unknown): Promise<Result<Page<Capability>>> {
+export async function listCapabilities(
+  raw?: unknown
+): Promise<Result<Page<Capability>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const filters = CapabilityFiltersSchema.parse(raw ?? {});
@@ -65,14 +72,18 @@ export async function getCapabilityById(
       include: { solutionTrain: true },
     });
 
-    if (!capability) throw new Error("Capability não encontrada.");
+    if (!capability) {
+      throw new Error("Capability não encontrada.");
+    }
     return capability;
   });
 }
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
-export async function createCapability(raw: unknown): Promise<Result<Capability>> {
+export async function createCapability(
+  raw: unknown
+): Promise<Result<Capability>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const data = CreateCapabilitySchema.parse(raw);
@@ -81,7 +92,11 @@ export async function createCapability(raw: unknown): Promise<Result<Capability>
       const train = await database.solutionTrain.findFirst({
         where: { id: data.solutionTrainId, tenantId: ctx.tenantId },
       });
-      if (!train) throw new Error("Solution Train não encontrado ou não pertence ao tenant.");
+      if (!train) {
+        throw new Error(
+          "Solution Train não encontrado ou não pertence ao tenant."
+        );
+      }
     }
 
     const capability = await database.capability.create({
@@ -112,13 +127,17 @@ export async function updateCapability(
     const existing = await database.capability.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Capability não encontrada.");
+    if (!existing) {
+      throw new Error("Capability não encontrada.");
+    }
 
     const updated = await database.capability.update({
       where: { id },
       data: {
         ...(data.title !== undefined ? { title: data.title } : {}),
-        ...(data.description !== undefined ? { description: data.description ?? null } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description ?? null }
+          : {}),
         ...(data.status !== undefined ? { status: data.status } : {}),
         ...(data.order !== undefined ? { order: data.order } : {}),
       },
@@ -130,14 +149,18 @@ export async function updateCapability(
   });
 }
 
-export async function deleteCapability(id: string): Promise<Result<{ id: string }>> {
+export async function deleteCapability(
+  id: string
+): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
     const existing = await database.capability.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Capability não encontrada.");
+    if (!existing) {
+      throw new Error("Capability não encontrada.");
+    }
 
     await database.capability.delete({ where: { id } });
 

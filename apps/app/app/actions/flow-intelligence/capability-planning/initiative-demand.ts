@@ -1,8 +1,8 @@
 "use server";
 
+import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { database } from "@repo/database";
 import { generateObject } from "ai";
-import { getAIModel, getActiveProvider } from "@repo/ai/lib/models";
 import { z } from "zod";
 import { TASK_TYPES } from "./capability-schema";
 
@@ -26,7 +26,9 @@ export async function estimateInitiativeDemand(args: {
           select: { title: true },
         });
 
-  if (!item) throw new Error("Initiative not found");
+  if (!item) {
+    throw new Error("Initiative not found");
+  }
 
   const content = [
     "title" in item ? item.title : "",
@@ -36,7 +38,9 @@ export async function estimateInitiativeDemand(args: {
     .join("\n");
 
   const provider = getActiveProvider();
-  if (provider === "none") throw new Error("No AI provider configured");
+  if (provider === "none") {
+    throw new Error("No AI provider configured");
+  }
 
   const model = getAIModel(provider);
   const { object } = await generateObject({

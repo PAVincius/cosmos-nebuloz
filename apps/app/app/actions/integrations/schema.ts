@@ -1,43 +1,48 @@
 import { z } from "zod";
 
-export const IntegrationSourceSchema = z.enum(["linear", "github", "asana", "gitlab"] as const);
+export const IntegrationSourceSchema = z.enum([
+  "linear",
+  "github",
+  "asana",
+  "gitlab",
+] as const);
 export type IntegrationSource = z.infer<typeof IntegrationSourceSchema>;
 
 export const CreateIntegrationSchema = z.object({
   source: IntegrationSourceSchema,
-  name:   z.string().min(1),
+  name: z.string().min(1),
   config: z.record(z.string(), z.string()), // { apiKey, token, org, workspace, ... }
 });
 
 export const ImportMappingSchema = z.object({
   integrationId: z.string().cuid(),
-  projectId:     z.string().min(1), // Linear teamId or GitHub project node ID
-  targetType:    z.enum(["feature", "story"]).default("feature"),
-  epicId:        z.string().cuid().optional(),
-  piPlanId:      z.string().cuid().optional(),
-  teamId:        z.string().cuid().optional(),
+  projectId: z.string().min(1), // Linear teamId or GitHub project node ID
+  targetType: z.enum(["feature", "story"]).default("feature"),
+  epicId: z.string().cuid().optional(),
+  piPlanId: z.string().cuid().optional(),
+  teamId: z.string().cuid().optional(),
 });
 
 export type CreateIntegrationInput = z.infer<typeof CreateIntegrationSchema>;
-export type ImportMappingInput     = z.infer<typeof ImportMappingSchema>;
+export type ImportMappingInput = z.infer<typeof ImportMappingSchema>;
 
 export type IntegrationRow = {
-  id:         string;
-  source:     IntegrationSource;
-  name:       string;
-  status:     string;
+  id: string;
+  source: IntegrationSource;
+  name: string;
+  status: string;
   lastSyncAt: Date | null;
-  createdAt:  Date;
-  syncLogs:   SyncLogRow[];
+  createdAt: Date;
+  syncLogs: SyncLogRow[];
 };
 
 export type SyncLogRow = {
-  id:           string;
-  type:         string;
-  status:       string;
+  id: string;
+  type: string;
+  status: string;
   itemsCreated: number;
   itemsUpdated: number;
   itemsSkipped: number;
-  errors:       unknown;
-  createdAt:    Date;
+  errors: unknown;
+  createdAt: Date;
 };

@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import type { MemberRole } from "@repo/database";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
-import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -13,9 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { inviteMember, cancelInvitation } from "../../../../actions/settings/workspace";
-import { MailPlusIcon, XIcon, LoaderIcon, ClockIcon } from "lucide-react";
-import type { MemberRole } from "@repo/database";
+import { ClockIcon, LoaderIcon, MailPlusIcon, XIcon } from "lucide-react";
+import { useState, useTransition } from "react";
+import {
+  cancelInvitation,
+  inviteMember,
+} from "../../../../actions/settings/workspace";
 
 const ROLES: { value: MemberRole; label: string }[] = [
   { value: "ADMIN", label: "Administrador" },
@@ -57,7 +59,9 @@ export function InviteForm({ pendingInvitations }: InviteFormProps) {
         setSuccess(`Convite enviado para ${email}`);
         setEmail("");
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro ao enviar convite.");
+        setError(
+          err instanceof Error ? err.message : "Erro ao enviar convite."
+        );
       }
     });
   };
@@ -73,29 +77,37 @@ export function InviteForm({ pendingInvitations }: InviteFormProps) {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <MailPlusIcon className="size-4" />
+    <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+      <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+        <h2 className="flex items-center gap-2 font-semibold text-sm tracking-tight">
+          <MailPlusIcon className="size-4 text-primary" />
           Convidar Membro
-        </CardTitle>
-        <CardDescription>Convide pessoas para o seu workspace.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <form onSubmit={handleInvite} className="flex gap-2 flex-wrap">
-          <div className="flex-1 min-w-48">
-            <Label htmlFor="invite-email" className="sr-only">Email</Label>
+        </h2>
+        <p className="mt-1 text-muted-foreground text-xs">
+          Convide pessoas para o seu workspace.
+        </p>
+      </div>
+      <div className="space-y-4 p-5">
+        <form className="flex flex-wrap gap-2" onSubmit={handleInvite}>
+          <div className="min-w-48 flex-1">
+            <Label className="sr-only" htmlFor="invite-email">
+              Email
+            </Label>
             <Input
+              disabled={isPending}
               id="invite-email"
-              type="email"
-              value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="email@empresa.com"
               required
-              disabled={isPending}
+              type="email"
+              value={email}
             />
           </div>
-          <Select value={role} onValueChange={(v) => setRole(v as MemberRole)} disabled={isPending}>
+          <Select
+            disabled={isPending}
+            onValueChange={(v) => setRole(v as MemberRole)}
+            value={role}
+          >
             <SelectTrigger className="w-40">
               <SelectValue />
             </SelectTrigger>
@@ -107,32 +119,38 @@ export function InviteForm({ pendingInvitations }: InviteFormProps) {
               ))}
             </SelectContent>
           </Select>
-          <Button type="submit" disabled={isPending} className="gap-2">
-            {isPending ? <LoaderIcon className="size-4 animate-spin" /> : <MailPlusIcon className="size-4" />}
+          <Button className="gap-2" disabled={isPending} type="submit">
+            {isPending ? (
+              <LoaderIcon className="size-4 animate-spin" />
+            ) : (
+              <MailPlusIcon className="size-4" />
+            )}
             Convidar
           </Button>
         </form>
-        {error && <p className="text-sm text-destructive">{error}</p>}
-        {success && <p className="text-sm text-green-600">{success}</p>}
+        {error && <p className="text-destructive text-sm">{error}</p>}
+        {success && <p className="text-green-600 text-sm">{success}</p>}
 
         {pendingInvitations.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium flex items-center gap-1 text-muted-foreground">
+            <p className="flex items-center gap-1 font-medium text-muted-foreground text-sm">
               <ClockIcon className="size-3" />
               Convites Pendentes ({pendingInvitations.length})
             </p>
             <div className="divide-y rounded-md border">
               {pendingInvitations.map((inv) => (
-                <div key={inv.id} className="flex items-center gap-2 px-3 py-2">
-                  <span className="flex-1 text-sm truncate">{inv.email}</span>
-                  <Badge variant="outline" className="text-xs">{inv.role}</Badge>
+                <div className="flex items-center gap-2 px-3 py-2" key={inv.id}>
+                  <span className="flex-1 truncate text-sm">{inv.email}</span>
+                  <Badge className="text-xs" variant="outline">
+                    {inv.role}
+                  </Badge>
                   <Button
-                    variant="ghost"
-                    size="sm"
                     className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
-                    onClick={() => handleCancel(inv.id)}
                     disabled={isPending}
+                    onClick={() => handleCancel(inv.id)}
+                    size="sm"
                     title="Cancelar convite"
+                    variant="ghost"
                   >
                     <XIcon className="size-3" />
                   </Button>
@@ -141,7 +159,7 @@ export function InviteForm({ pendingInvitations }: InviteFormProps) {
             </div>
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

@@ -1,12 +1,7 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { getARTById } from "@/app/actions/arts/get-arts";
-import { getTeamsForART, getBacklogFeatures } from "@/app/actions/arts/pi-plans";
-import { getRisks } from "@/app/actions/risks";
-import { database } from "@repo/database";
 import { requireTenantSession } from "@repo/auth/server";
-import { headers } from "next/headers";
+import { database } from "@repo/database";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
   CardContent,
@@ -14,27 +9,39 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { Button } from "@repo/design-system/components/ui/button";
 import {
+  AlertTriangleIcon,
   ArrowLeftIcon,
   CheckCircle2Icon,
   CircleIcon,
   ClipboardListIcon,
-  AlertTriangleIcon,
   UsersIcon,
   ZapIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getARTById } from "@/app/actions/arts/get-arts";
+import {
+  getBacklogFeatures,
+  getTeamsForART,
+} from "@/app/actions/arts/pi-plans";
+import { getRisks } from "@/app/actions/risks";
 
-interface PrePIPageProps {
+type PrePIPageProps = {
   params: Promise<{ artId: string }>;
-}
+};
 
-export async function generateMetadata({ params }: PrePIPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PrePIPageProps): Promise<Metadata> {
   const { artId } = await params;
   const art = await getARTById(artId);
   return {
-    title: art ? `Pre-PI Planning – ${art.name} | COSMOS` : "Pre-PI Planning | COSMOS",
+    title: art
+      ? `Pre-PI Planning – ${art.name} | COSMOS`
+      : "Pre-PI Planning | COSMOS",
     description: "Checklist de readiness para PI Planning SAFe 6.0",
   };
 }
@@ -48,7 +55,8 @@ const IMPACT_LABELS: Record<string, string> = {
 
 const IMPACT_VARIANTS: Record<string, string> = {
   low: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
-  medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  medium:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
   high: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
   critical: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
 };
@@ -65,7 +73,9 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
     getRisks(),
   ]);
 
-  if (!art) notFound();
+  if (!art) {
+    notFound();
+  }
 
   // Features ready for PI (statusId REVIEW or IMPLEMENTING means refined)
   const readyFeatures = backlogFeatures.filter((f) =>
@@ -85,16 +95,20 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
 
   // Risks identified before PI (no piPlan or in latest PI)
   const preRisks = allRisks.filter(
-    (r) => r.status === "IDENTIFIED" && (!r.piPlanId || r.piPlanId === latestPi?.id)
+    (r) =>
+      r.status === "IDENTIFIED" && (!r.piPlanId || r.piPlanId === latestPi?.id)
   );
 
-  const totalCapacity = teamsWithCapacity.reduce((sum, t) => sum + (t.velocity ?? 0), 0);
+  const totalCapacity = teamsWithCapacity.reduce(
+    (sum, t) => sum + (t.velocity ?? 0),
+    0
+  );
 
   // Readiness checklist items
   const checklist = [
     {
       id: "ready-features",
-      label: `Features prontas (status REVIEW/IMPLEMENTING)`,
+      label: "Features prontas (status REVIEW/IMPLEMENTING)",
       done: readyFeatures.length >= 5,
       detail: `${readyFeatures.length} features refinadas`,
     },
@@ -133,7 +147,7 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* Back */}
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
+      <Button asChild className="-ml-2 w-fit" size="sm" variant="ghost">
         <Link href={`/arts/${artId}`}>
           <ArrowLeftIcon className="mr-2 h-4 w-4" />
           {art.name}
@@ -142,11 +156,11 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
 
       {/* Header */}
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
+        <h1 className="flex items-center gap-2 font-semibold text-2xl tracking-tight">
           <ClipboardListIcon className="h-6 w-6 text-muted-foreground" />
           Pre-PI Planning
         </h1>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Checklist de readiness antes do PI Planning — {art.name}
         </p>
       </div>
@@ -159,10 +173,12 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
               <CheckCircle2Icon className="h-4 w-4" />
               Readiness
             </CardDescription>
-            <CardTitle className="text-3xl font-bold tabular-nums">{readinessPercent}%</CardTitle>
+            <CardTitle className="font-bold text-3xl tabular-nums">
+              {readinessPercent}%
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {doneCount}/{checklist.length} critérios atendidos
             </p>
           </CardContent>
@@ -174,10 +190,14 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
               <ZapIcon className="h-4 w-4" />
               Features Prontas
             </CardDescription>
-            <CardTitle className="text-3xl font-bold tabular-nums">{readyFeatures.length}</CardTitle>
+            <CardTitle className="font-bold text-3xl tabular-nums">
+              {readyFeatures.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Features refinadas no backlog</p>
+            <p className="text-muted-foreground text-xs">
+              Features refinadas no backlog
+            </p>
           </CardContent>
         </Card>
 
@@ -187,20 +207,28 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
               <UsersIcon className="h-4 w-4" />
               Times
             </CardDescription>
-            <CardTitle className="text-3xl font-bold tabular-nums">{teams.length}</CardTitle>
+            <CardTitle className="font-bold text-3xl tabular-nums">
+              {teams.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Times registrados no ART</p>
+            <p className="text-muted-foreground text-xs">
+              Times registrados no ART
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Capacity Total Estimada</CardDescription>
-            <CardTitle className="text-3xl font-bold tabular-nums">{totalCapacity}</CardTitle>
+            <CardTitle className="font-bold text-3xl tabular-nums">
+              {totalCapacity}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">Story points por sprint (soma)</p>
+            <p className="text-muted-foreground text-xs">
+              Story points por sprint (soma)
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -209,21 +237,30 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Checklist de Readiness</CardTitle>
-          <CardDescription>Critérios para iniciar o PI Planning com qualidade</CardDescription>
+          <CardDescription>
+            Critérios para iniciar o PI Planning com qualidade
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {checklist.map((item) => (
-            <div key={item.id} className="flex items-start gap-3 rounded-lg border p-3">
+            <div
+              className="flex items-start gap-3 rounded-lg border p-3"
+              key={item.id}
+            >
               {item.done ? (
                 <CheckCircle2Icon className="mt-0.5 h-5 w-5 shrink-0 text-green-500" />
               ) : (
                 <CircleIcon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
               )}
               <div className="flex flex-col gap-0.5">
-                <span className={`text-sm font-medium ${item.done ? "" : "text-muted-foreground"}`}>
+                <span
+                  className={`font-medium text-sm ${item.done ? "" : "text-muted-foreground"}`}
+                >
                   {item.label}
                 </span>
-                <span className="text-xs text-muted-foreground">{item.detail}</span>
+                <span className="text-muted-foreground text-xs">
+                  {item.detail}
+                </span>
               </div>
               <div className="ml-auto shrink-0">
                 <Badge variant={item.done ? "default" : "outline"}>
@@ -240,7 +277,9 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">Backlog Não Comprometido</CardTitle>
+              <CardTitle className="text-base">
+                Backlog Não Comprometido
+              </CardTitle>
               <CardDescription>
                 Features sem PI Plan — candidatas para o próximo PI
               </CardDescription>
@@ -250,31 +289,34 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
         </CardHeader>
         <CardContent>
           {backlogFeatures.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Nenhuma feature no backlog sem PI Plan.
             </p>
           ) : (
             <div className="flex flex-col gap-2">
               {backlogFeatures.slice(0, 10).map((f) => (
                 <div
-                  key={f.id}
                   className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+                  key={f.id}
                 >
-                  <Link href={`/features/${f.id}`} className="font-medium hover:underline">
+                  <Link
+                    className="font-medium hover:underline"
+                    href={`/features/${f.id}`}
+                  >
                     {f.title}
                   </Link>
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2 text-muted-foreground text-xs">
                     <span>WSJF {f.wsjfScore.toFixed(1)}</span>
                     <span>·</span>
                     <span>{f.storyPoints} SP</span>
-                    <Badge variant="outline" className="text-[10px]">
+                    <Badge className="text-[10px]" variant="outline">
                       {f.statusId}
                     </Badge>
                   </div>
                 </div>
               ))}
               {backlogFeatures.length > 10 && (
-                <p className="text-center text-xs text-muted-foreground">
+                <p className="text-center text-muted-foreground text-xs">
                   +{backlogFeatures.length - 10} features…
                 </p>
               )}
@@ -292,16 +334,18 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
                 <AlertTriangleIcon className="h-4 w-4 text-amber-500" />
                 Riscos Identificados
               </CardTitle>
-              <CardDescription>Riscos registrados antes do PI Planning</CardDescription>
+              <CardDescription>
+                Riscos registrados antes do PI Planning
+              </CardDescription>
             </div>
             <Badge variant="secondary">{preRisks.length}</Badge>
           </div>
         </CardHeader>
         <CardContent>
           {preRisks.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Nenhum risco identificado.{" "}
-              <Link href="/risks" className="underline">
+              <Link className="underline" href="/risks">
                 Registre riscos
               </Link>{" "}
               antes do PI Planning.
@@ -310,19 +354,19 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
             <div className="flex flex-col gap-2">
               {preRisks.map((risk) => (
                 <div
-                  key={risk.id}
                   className="flex items-start justify-between gap-2 rounded-lg border px-3 py-2 text-sm"
+                  key={risk.id}
                 >
                   <div className="flex flex-col gap-0.5">
                     <span className="font-medium">{risk.title}</span>
                     {risk.category && (
-                      <span className="text-xs capitalize text-muted-foreground">
+                      <span className="text-muted-foreground text-xs capitalize">
                         {risk.category}
                       </span>
                     )}
                   </div>
                   <span
-                    className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+                    className={`shrink-0 rounded px-2 py-0.5 font-medium text-xs ${
                       IMPACT_VARIANTS[risk.impact] ?? ""
                     }`}
                   >
@@ -340,26 +384,31 @@ export default async function PrePIPage({ params }: PrePIPageProps) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Capacity dos Times</CardTitle>
-            <CardDescription>Velocity histórica por time (story points/sprint)</CardDescription>
+            <CardDescription>
+              Velocity histórica por time (story points/sprint)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-col gap-2">
               {teams.map((team) => (
-                  <div
-                    key={team.id}
-                    className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
-                  >
-                    <span className="font-medium">{team.name}</span>
-                    <div className="flex items-center gap-2">
-                      {team.velocity != null ? (
-                        <Badge variant="default">{team.velocity} SP</Badge>
-                      ) : (
-                        <Badge variant="outline" className="text-muted-foreground">
-                          Não informado
-                        </Badge>
-                      )}
-                    </div>
+                <div
+                  className="flex items-center justify-between rounded-lg border px-3 py-2 text-sm"
+                  key={team.id}
+                >
+                  <span className="font-medium">{team.name}</span>
+                  <div className="flex items-center gap-2">
+                    {team.velocity != null ? (
+                      <Badge variant="default">{team.velocity} SP</Badge>
+                    ) : (
+                      <Badge
+                        className="text-muted-foreground"
+                        variant="outline"
+                      >
+                        Não informado
+                      </Badge>
+                    )}
                   </div>
+                </div>
               ))}
             </div>
           </CardContent>

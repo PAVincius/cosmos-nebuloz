@@ -13,6 +13,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { isOnboardingComplete } from "@/app/actions/onboarding/index";
 import { env } from "@/env";
+import { CommandPalette } from "./components/command-palette";
 import { CopilotProvider } from "./components/copilot/copilot-provider";
 import { NotificationsProvider } from "./components/notifications-provider";
 import { GlobalSidebar } from "./components/sidebar";
@@ -22,7 +23,6 @@ type AppLayoutProperties = {
   readonly children: ReactNode;
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: layout orchestrates auth + onboarding + tenant resolution
 const AppLayout = async ({ children }: AppLayoutProperties) => {
   if (env.ARCJET_KEY) {
     await secure(["CATEGORY:PREVIEW"]);
@@ -115,6 +115,7 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
               avatar: user.image ?? "",
             }}
           >
+            <CommandPalette />
             {!!betaFeature && (
               <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
                 Beta feature now available

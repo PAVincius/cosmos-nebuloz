@@ -1,10 +1,13 @@
-import { getMyProfile, getNotificationPreferences } from "../../actions/users/profile";
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import { ProfileForm } from "./components/profile-form";
+import { ShieldIcon, UserIcon } from "lucide-react";
+import { appDesign } from "@/lib/app-design";
+import {
+  getMyProfile,
+  getNotificationPreferences,
+} from "../../actions/users/profile";
+import { PageHeader } from "../components/page-header";
 import { NotificationPreferencesForm } from "./components/notification-preferences-form";
-import { UserIcon, ShieldIcon } from "lucide-react";
+import { ProfileForm } from "./components/profile-form";
 
 export const metadata = {
   title: "Meu Perfil | COSMOS",
@@ -49,71 +52,66 @@ export default async function ProfilePage() {
     .toUpperCase();
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Meu Perfil</h1>
-        <p className="text-muted-foreground text-sm">
-          Gerencie suas informações e preferências de notificação
-        </p>
-      </div>
-
-      {/* Avatar + Info Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <UserIcon className="size-4" />
-            Identificação
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="flex items-center gap-4">
-          <div className="flex size-16 items-center justify-center rounded-full bg-primary/20 text-primary text-xl font-semibold shrink-0 overflow-hidden">
-            {user.image ? (
-              // biome-ignore lint/a11y/useAltText: decorative avatar
-              <img src={user.image} className="size-full object-cover" />
-            ) : (
-              initials
-            )}
+    <div className={appDesign.shell}>
+      <PageHeader
+        subtitle="Gerencie suas informações e preferências de notificação"
+        title="Meu Perfil"
+      />
+      <div className={`${appDesign.bodyScroll} flex flex-col gap-6`}>
+        {/* Avatar + Info */}
+        <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+          <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+            <h2 className="flex items-center gap-2 font-semibold text-sm">
+              <UserIcon className="size-4 text-primary" />
+              Identificação
+            </h2>
           </div>
-          <div className="flex flex-col gap-1">
-            <p className="font-semibold text-lg">{user.name ?? "Sem nome"}</p>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
-            <div className="flex items-center gap-2 mt-1">
-              <Badge variant="secondary" className="gap-1">
-                <ShieldIcon className="size-3" />
-                {ROLE_LABELS[member.role] ?? member.role}
-              </Badge>
-              {tenant && (
-                <Badge variant={PLAN_VARIANTS[tenant.plan] ?? "outline"}>
-                  Plano {PLAN_LABELS[tenant.plan] ?? tenant.plan}
-                </Badge>
+          <div className="flex items-center gap-4 px-5 py-4">
+            <div className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 font-semibold text-primary text-xl">
+              {user.image ? (
+                <img className="size-full object-cover" src={user.image} />
+              ) : (
+                initials
               )}
             </div>
+            <div className="flex flex-col gap-1">
+              <p className="font-semibold text-lg">{user.name ?? "Sem nome"}</p>
+              <p className="text-muted-foreground text-sm">{user.email}</p>
+              <div className="mt-1 flex items-center gap-2">
+                <Badge className="gap-1" variant="secondary">
+                  <ShieldIcon className="size-3" />
+                  {ROLE_LABELS[member.role] ?? member.role}
+                </Badge>
+                {tenant && (
+                  <Badge variant={PLAN_VARIANTS[tenant.plan] ?? "outline"}>
+                    Plano {PLAN_LABELS[tenant.plan] ?? tenant.plan}
+                  </Badge>
+                )}
+              </div>
+            </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Profile Edit Form */}
-      <ProfileForm name={user.name} image={user.image} />
+        <ProfileForm image={user.image} name={user.name} />
 
-      <Separator />
+        {/* Email (readonly) */}
+        <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+          <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+            <h2 className="font-semibold text-sm">Email</h2>
+            <p className="mt-0.5 text-muted-foreground text-xs">
+              O email não pode ser alterado diretamente. Entre em contato com o
+              suporte se necessário.
+            </p>
+          </div>
+          <div className="px-5 py-4">
+            <p className="rounded-md bg-muted px-3 py-2 font-mono text-muted-foreground text-sm">
+              {user.email}
+            </p>
+          </div>
+        </div>
 
-      {/* Email (readonly) */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Email</CardTitle>
-          <CardDescription>
-            O email não pode ser alterado diretamente. Entre em contato com o suporte se necessário.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm bg-muted px-3 py-2 rounded-md text-muted-foreground font-mono">
-            {user.email}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Notification Preferences */}
-      <NotificationPreferencesForm initialPrefs={notifPrefs} />
+        <NotificationPreferencesForm initialPrefs={notifPrefs} />
+      </div>
     </div>
   );
 }

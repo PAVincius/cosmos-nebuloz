@@ -30,24 +30,24 @@ export function GovernanceKanban({ epics }: Props) {
     GOVERNANCE_STATES.map((s) => [
       s,
       epics.filter((e) => e.governanceStatus === s),
-    ]),
+    ])
   ) as Record<GovernanceState, EpicRow[]>;
 
   return (
     <div className="flex gap-3 overflow-x-auto pb-4">
       {GOVERNANCE_STATES.map((state) => (
-        <div key={state} className="min-w-[200px] shrink-0">
+        <div className="min-w-[200px] shrink-0" key={state}>
           <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            <h3 className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
               {COLUMN_LABELS[state]}
             </h3>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               {byState[state].length}
             </span>
           </div>
           <div className="space-y-2">
             {byState[state].map((epic) => (
-              <EpicGovernanceCard key={epic.id} epic={epic} />
+              <EpicGovernanceCard epic={epic} key={epic.id} />
             ))}
           </div>
         </div>

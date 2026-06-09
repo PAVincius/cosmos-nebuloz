@@ -1,5 +1,4 @@
 import { database } from "@repo/database";
-import { notFound } from "next/navigation";
 import { AcceptInviteForm } from "./components/accept-invite-form";
 
 type Props = {
@@ -18,13 +17,13 @@ export default async function InvitePage({ params }: Props) {
     return (
       <div className="space-y-4 text-center">
         <div className="text-4xl">🔗</div>
-        <h1 className="text-2xl font-bold tracking-tight">Convite inválido</h1>
-        <p className="text-sm text-muted-foreground">
+        <h1 className="font-bold text-2xl tracking-tight">Convite inválido</h1>
+        <p className="text-muted-foreground text-sm">
           Este convite não existe, já foi utilizado ou foi cancelado.
         </p>
         <a
+          className="inline-block font-medium text-primary text-sm underline-offset-4 hover:underline"
           href="/sign-in"
-          className="inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
           Ir para o login
         </a>
@@ -36,13 +35,14 @@ export default async function InvitePage({ params }: Props) {
     return (
       <div className="space-y-4 text-center">
         <div className="text-4xl">⏱️</div>
-        <h1 className="text-2xl font-bold tracking-tight">Convite expirado</h1>
-        <p className="text-sm text-muted-foreground">
-          Este convite expirou. Peça ao administrador do workspace um novo convite.
+        <h1 className="font-bold text-2xl tracking-tight">Convite expirado</h1>
+        <p className="text-muted-foreground text-sm">
+          Este convite expirou. Peça ao administrador do workspace um novo
+          convite.
         </p>
         <a
+          className="inline-block font-medium text-primary text-sm underline-offset-4 hover:underline"
           href="/sign-in"
-          className="inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
         >
           Ir para o login
         </a>
@@ -52,8 +52,8 @@ export default async function InvitePage({ params }: Props) {
 
   return (
     <AcceptInviteForm
-      invitationId={token}
       email={invitation.email}
+      invitationId={token}
       workspaceName={invitation.tenant.name}
     />
   );

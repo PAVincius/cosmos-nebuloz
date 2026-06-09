@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  POLICIES,
   can,
   type EntityType,
   type MemberRole,
+  POLICIES,
   type PolicyAction,
 } from "../app/actions/permissions-policy";
 
@@ -30,12 +30,14 @@ function policyEntries(): Array<{
     allowed: readonly MemberRole[];
   }> = [];
 
-  for (const [entity, policy] of Object.entries(POLICIES) as Array<
-    [EntityType, (typeof POLICIES)[EntityType]]
-  >) {
-    for (const [action, allowed] of Object.entries(policy) as Array<
-      [PolicyAction, readonly MemberRole[]]
-    >) {
+  for (const [entity, policy] of Object.entries(POLICIES) as [
+    EntityType,
+    (typeof POLICIES)[EntityType],
+  ][]) {
+    for (const [action, allowed] of Object.entries(policy) as [
+      PolicyAction,
+      readonly MemberRole[],
+    ][]) {
       rows.push({ entity, action, allowed });
     }
   }
@@ -44,14 +46,15 @@ function policyEntries(): Array<{
 }
 
 describe("RBAC matrix (POLICIES × roles)", () => {
-  it.each(policyEntries())(
-    "$entity.$action — only listed roles (non-ADMIN)",
-    ({ entity, action, allowed }) => {
-      for (const role of NON_ADMIN_ROLES) {
-        expect(can(role, entity, action)).toBe(allowed.includes(role));
-      }
+  it.each(policyEntries())("$entity.$action — only listed roles (non-ADMIN)", ({
+    entity,
+    action,
+    allowed,
+  }) => {
+    for (const role of NON_ADMIN_ROLES) {
+      expect(can(role, entity, action)).toBe(allowed.includes(role));
     }
-  );
+  });
 
   it("ADMIN bypasses every explicit policy entry", () => {
     for (const { entity, action } of policyEntries()) {

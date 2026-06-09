@@ -20,10 +20,10 @@ export default defineConfig({
       ],
       exclude: ["**/*.d.ts", "**/schema.ts"],
       thresholds: {
-        lines: 60,
-        functions: 60,
-        branches: 50,
-        statements: 60,
+        lines: 80,
+        functions: 80,
+        branches: 75,
+        statements: 80,
       },
     },
   },
@@ -31,10 +31,16 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./"),
       "@repo": path.resolve(__dirname, "../../packages"),
-      "@repo/storage": path.resolve(__dirname, "../../packages/storage/src/index.ts"),
+      "@repo/storage": path.resolve(
+        __dirname,
+        "../../packages/storage/src/index.ts"
+      ),
       "server-only": path.resolve(__dirname, "./vitest-mocks/server-only.ts"),
       // sonner is a root-level pnpm dep, not hoisted into apps/app — alias it explicitly
-      "sonner": path.resolve(__dirname, "../../node_modules/.pnpm/sonner@2.0.7_react-dom@19.2.1_react@19.2.1__react@19.2.1/node_modules/sonner"),
+      sonner: path.resolve(
+        __dirname,
+        "../../node_modules/.pnpm/sonner@2.0.7_react-dom@19.2.1_react@19.2.1__react@19.2.1/node_modules/sonner"
+      ),
     },
   },
 });

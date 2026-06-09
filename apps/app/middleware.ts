@@ -1,45 +1,63 @@
 import { type NextRequest, NextResponse } from "next/server";
 
-const PUBLIC_API_PREFIXES = [
-  "/api/auth/",
-  "/api/webhooks/",
-  "/api/health",
-  "/api/inngest",
-];
+function getClientIp(req: NextRequest): string {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "127.0.0.1"
+  );
+}
 
-export function middleware(req: NextRequest): NextResponse {
-  const { pathname } = req.nextUrl;
+export async function middleware(req: NextRequest): Promise<NextResponse> {
+  const ip = getClientIp(req);
 
-  const isProtectedApi =
-    pathname.startsWith("/api/") &&
-    !PUBLIC_API_PREFIXES.some((prefix) => pathname.startsWith(prefix));
-
-  const isAuthenticatedRoute = pathname.startsWith("/(authenticated)/");
-
-  if (!(isProtectedApi || isAuthenticatedRoute)) {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
     return NextResponse.next();
   }
 
-  const sessionCookie =
-    req.cookies.get("better-auth.session_token") ??
-    req.cookies.get("__Secure-better-auth.session_token");
+  const { checkIpBan, detectAndBanSpike } = await import(
+    "@repo/rate-limit/ip-ban"
+  );
+  const { rateLimits, buildRateLimitHeaders } = await import(
+    "@repo/rate-limit"
+  );
 
-  if (!sessionCookie) {
-    if (isProtectedApi) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-    const signIn = req.nextUrl.clone();
-    signIn.pathname = "/sign-in";
-    signIn.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(signIn);
+  // Check IP ban first (5-min abuse ban)
+  if (await checkIpBan(ip)) {
+    return new NextResponse("Too Many Requests", {
+      status: 429,
+      headers: {
+        "Retry-After": "300",
+        "X-RateLimit-Limit": "0",
+        "X-RateLimit-Remaining": "0",
+      },
+    });
   }
 
-  return NextResponse.next();
+  // Apply IP-level rate limit
+  const result = await rateLimits.ip.limit(ip);
+  const headers = buildRateLimitHeaders({
+    success: result.success,
+    limit: result.limit,
+    remaining: result.remaining,
+    reset: result.reset,
+  });
+
+  if (!result.success) {
+    // Detect spike: if we're over-limit, check for abuse
+    await detectAndBanSpike(ip);
+
+    return new NextResponse("Too Many Requests", {
+      status: 429,
+      headers: headers as Record<string, string>,
+    });
+  }
+
+  const res = NextResponse.next();
+  for (const [key, val] of Object.entries(headers as Record<string, string>)) {
+    res.headers.set(key, val);
+  }
+  return res;
 }
 
 export const config = {
-  matcher: [
-    "/(authenticated)/:path*",
-    "/api/((?!auth/|webhooks/|health|inngest).*)",
-  ],
+  matcher: "/api/:path*",
 };

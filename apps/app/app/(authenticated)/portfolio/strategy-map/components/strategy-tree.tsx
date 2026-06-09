@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   ChevronDownIcon,
@@ -10,21 +8,23 @@ import {
   TargetIcon,
   ZapIcon,
 } from "lucide-react";
-import { OKRNode } from "./okr-node";
+import Link from "next/link";
+import { useState } from "react";
 import type {
   EpicNode,
   StrategyMapData,
   ThemeNode,
 } from "@/app/actions/strategy-map";
+import { OKRNode } from "./okr-node";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const THEME_STATUS_LABELS: Record<string, string> = {
-  DRAFT:    "Rascunho",
+  DRAFT: "Rascunho",
   ANALYSIS: "Análise",
   APPROVED: "Aprovado",
-  ACTIVE:   "Ativo",
-  CLOSING:  "Encerrando",
+  ACTIVE: "Ativo",
+  CLOSING: "Encerrando",
   ARCHIVED: "Arquivado",
 };
 
@@ -35,14 +35,16 @@ function EpicRow({ epic }: { epic: EpicNode }) {
   const hasOKRs = epic.okrs.length > 0;
 
   return (
-    <div className="ml-6 border-l border-border/50 pl-4">
+    <div className="ml-6 border-border/50 border-l pl-4">
       <button
-        type="button"
+        aria-expanded={open}
         className="flex w-full items-center gap-2 rounded py-1.5 text-left text-sm transition-colors hover:bg-muted/40"
         onClick={() => {
-          if (hasOKRs) setOpen((prev) => !prev);
+          if (hasOKRs) {
+            setOpen((prev) => !prev);
+          }
         }}
-        aria-expanded={open}
+        type="button"
       >
         {hasOKRs ? (
           open ? (
@@ -58,16 +60,16 @@ function EpicRow({ epic }: { epic: EpicNode }) {
           {epic.title}
         </span>
         {epic.okrs.length > 0 && (
-          <Badge variant="outline" className="shrink-0 text-xs">
+          <Badge className="shrink-0 text-xs" variant="outline">
             {epic.okrs.length} OKR{epic.okrs.length > 1 ? "s" : ""}
           </Badge>
         )}
       </button>
 
       {open && (
-        <div className="ml-5 mt-1 flex flex-col gap-1.5 pb-2">
+        <div className="mt-1 ml-5 flex flex-col gap-1.5 pb-2">
           {epic.okrs.map((okr) => (
-            <OKRNode key={okr.id} okr={okr} compact />
+            <OKRNode compact key={okr.id} okr={okr} />
           ))}
         </div>
       )}
@@ -81,13 +83,13 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
   const [open, setOpen] = useState(true);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-sm">
+    <div className="overflow-hidden rounded-xl border border-border/80 bg-card shadow-[var(--card-shadow)]">
       {/* Header */}
       <button
-        type="button"
+        aria-expanded={open}
         className="flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/20"
         onClick={() => setOpen((prev) => !prev)}
-        aria-expanded={open}
+        type="button"
       >
         <span
           className="h-3 w-3 shrink-0 rounded-full"
@@ -96,16 +98,16 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             {theme.code && (
-              <span className="font-mono text-xs text-muted-foreground">
+              <span className="font-mono text-muted-foreground text-xs">
                 {theme.code}
               </span>
             )}
-            <span className="text-sm font-semibold">{theme.title}</span>
-            <Badge variant="secondary" className="text-xs">
+            <span className="font-semibold text-sm">{theme.title}</span>
+            <Badge className="text-xs" variant="secondary">
               {THEME_STATUS_LABELS[theme.status] ?? theme.status}
             </Badge>
             {theme.horizon && (
-              <span className="text-xs text-muted-foreground">
+              <span className="text-muted-foreground text-xs">
                 {theme.horizon}
               </span>
             )}
@@ -113,14 +115,14 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
         </div>
 
         <div className="flex shrink-0 items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
             <div className="h-1.5 w-16 overflow-hidden rounded-full bg-muted">
               <div
                 className="h-full rounded-full bg-[#5e6ad2] transition-all duration-500"
                 style={{ width: `${theme.progress}%` }}
               />
             </div>
-            <span className="tabular-nums font-medium">{theme.progress}%</span>
+            <span className="font-medium tabular-nums">{theme.progress}%</span>
           </div>
           {open ? (
             <ChevronDownIcon className="h-4 w-4 text-muted-foreground" />
@@ -132,11 +134,11 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
 
       {/* Body */}
       {open && (
-        <div className="flex flex-col gap-3 border-t border-border/50 px-4 py-3">
+        <div className="flex flex-col gap-3 border-border/50 border-t px-4 py-3">
           {/* Theme OKRs */}
           {theme.okrs.length > 0 && (
             <div className="flex flex-col gap-1.5">
-              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="flex items-center gap-1.5 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
                 <TargetIcon className="h-3 w-3" />
                 OKRs do Tema
               </div>
@@ -149,19 +151,19 @@ function ThemeCard({ theme }: { theme: ThemeNode }) {
           {/* Epics */}
           {theme.epics.length > 0 && (
             <div className="flex flex-col gap-0.5">
-              <div className="mb-1 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              <div className="mb-1 flex items-center gap-1.5 font-semibold text-muted-foreground text-xs uppercase tracking-wide">
                 <LayersIcon className="h-3 w-3" />
                 Épicos ({theme.epics.length})
               </div>
               {theme.epics.map((epic) => (
-                <EpicRow key={epic.id} epic={epic} />
+                <EpicRow epic={epic} key={epic.id} />
               ))}
             </div>
           )}
 
           {/* Empty state */}
           {theme.okrs.length === 0 && theme.epics.length === 0 && (
-            <p className="py-2 text-center text-xs italic text-muted-foreground">
+            <p className="py-2 text-center text-muted-foreground text-xs italic">
               Nenhum OKR ou épico ligado a este tema ainda.
             </p>
           )}
@@ -180,12 +182,12 @@ type StrategyTreeProps = {
 export function StrategyTree({ data }: StrategyTreeProps) {
   if (data.themes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center text-sm text-muted-foreground">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center text-muted-foreground text-sm">
         <LayersIcon className="mb-2 h-6 w-6" />
         <span>Nenhum Tema Estratégico configurado.</span>
         <Link
-          href="/portfolio/themes"
           className="mt-1 text-[#5e6ad2] hover:underline"
+          href="/portfolio/themes"
         >
           Criar temas
         </Link>
@@ -201,7 +203,7 @@ export function StrategyTree({ data }: StrategyTreeProps) {
 
       {data.unlinkedOKRs.length > 0 && (
         <div className="rounded-xl border border-border/60 bg-muted/20 p-4">
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+          <div className="mb-2 flex items-center gap-2 font-semibold text-muted-foreground text-sm">
             <TargetIcon className="h-4 w-4" />
             OKRs de PI/ART e Times ({data.unlinkedOKRs.length})
           </div>

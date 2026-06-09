@@ -1,11 +1,11 @@
 import { z } from "zod";
 import {
-  PaginationSchema,
   cuid,
-  nnStr,
-  optStr,
-  optCuid,
   isoDate,
+  nnStr,
+  optCuid,
+  optStr,
+  PaginationSchema,
   SprintStatus,
 } from "../_base";
 
@@ -18,7 +18,9 @@ const SprintBaseSchema = z.object({
   capacity: z.number().int().positive().optional(),
 });
 
-export const UpdateSprintSchema = SprintBaseSchema.partial().omit({ teamId: true });
+export const UpdateSprintSchema = SprintBaseSchema.partial().omit({
+  teamId: true,
+});
 
 export const SprintFiltersSchema = PaginationSchema.extend({
   teamId: optCuid,

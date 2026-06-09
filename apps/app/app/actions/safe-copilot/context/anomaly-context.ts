@@ -2,7 +2,7 @@ import { database } from "@repo/database";
 
 export async function buildAnomalyContext(
   tenantId: string,
-  scopeId?: string,
+  scopeId?: string
 ): Promise<string> {
   const recent = await database.anomaly.findMany({
     where: {

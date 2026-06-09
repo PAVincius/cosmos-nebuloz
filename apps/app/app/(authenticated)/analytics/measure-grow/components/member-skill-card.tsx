@@ -1,9 +1,11 @@
+import { AlertTriangle } from "lucide-react";
+
 const SKILL_COLOR = [
   "",
-  "#ef4444",
+  "hsl(var(--destructive))",
   "#f97316",
   "#eab308",
-  "#22c55e",
+  "hsl(var(--success))",
   "#06b6d4",
 ] as const;
 const COMPETENCY_KEYS = [
@@ -85,8 +87,12 @@ export function MemberSkillCard({ userId, profiles }: Props) {
       </div>
 
       {hasPendingVerification ? (
-        <p className="text-[10px] text-amber-600 dark:text-amber-400">
-          ⚠ Auto-avaliação pendente de verificação
+        <p
+          className="flex items-center gap-1 text-[10px]"
+          style={{ color: "oklch(0.68 0.18 50)" }}
+        >
+          <AlertTriangle className="h-3 w-3" />
+          Auto-avaliação pendente de verificação
         </p>
       ) : null}
     </div>

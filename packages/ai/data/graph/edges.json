@@ -1,0 +1,4940 @@
+[
+  {
+    "source": "safe:art",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 23
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:pi_planning",
+    "relation": "relacionado_a",
+    "weight": 191
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 415
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 377
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:portfolio",
+    "relation": "relacionado_a",
+    "weight": 56
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 53
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:pi_planning",
+    "relation": "relacionado_a",
+    "weight": 39
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 86
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 53
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 75
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 111
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 78
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 163
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:lean_agile_mindset",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:pi_planning",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 24
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 72
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 43
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 73
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:bar",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 112
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 105
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 193
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 80
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 24
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 135
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 31
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 193
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 65
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 41
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 28
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 39
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 57
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 21
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:tdd",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 27
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 27
+  },
+  {
+    "source": "safe:tdd",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:art_sync",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:adr",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:adr",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:adr",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 95
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:bdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:bdd",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:feature",
+    "relation": "precede",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 23
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 102
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:built_in_quality",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:devsecops",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:built_in_quality",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:built_in_quality",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:built_in_quality",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 29
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 38
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 34
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 24
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 33
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:solution_train",
+    "relation": "relacionado_a",
+    "weight": 36
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:pi_planning",
+    "relation": "relacionado_a",
+    "weight": 25
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:pre_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 40
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:pre_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 34
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:post_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:post_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:post_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:post_pi_planning",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:post_pi_planning",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 34
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 38
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:product_owner",
+    "relation": "contém",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:pi_objectives",
+    "relation": "produz",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 51
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 49
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 25
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 39
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:solution_demo",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:solution_demo",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:solution_demo",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:solution_demo",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:pre_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:solution_demo",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:solution_demo",
+    "target": "safe:pre_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_demo",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 84
+  },
+  {
+    "source": "safe:solution_demo",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 31
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 24
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 30
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:portfolio_sync",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:art_sync",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:portfolio_sync",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:portfolio_sync",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:portfolio_sync",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:portfolio_sync",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_sync",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_sync",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_sync",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 16
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 40
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 25
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 52
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:portfolio",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 56
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 21
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 25
+  },
+  {
+    "source": "safe:lpm",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:solution_train",
+    "relation": "responsável_por",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:ste",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:ste",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:pi_planning",
+    "relation": "participa_de",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:lean_business_case",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:lean_business_case",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:lean_business_case",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:lean_business_case",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:lean_business_case",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:lean_business_case",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:lean_business_case",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:lean_business_case",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:lean_business_case",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:lean_business_case",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio_sync",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 29
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:portfolio_sync",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 23
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 39
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:value_stream",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:value_stream",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:cop",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:cop",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:system_demo",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:system_demo",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:system_demo",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:system_demo",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 16
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 39
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:strategic_theme",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 54
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:portfolio_kanban",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:ip_iteration",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:ip_iteration",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:ip_iteration",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:ip_iteration",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:ip_iteration",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:ip_iteration",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:ip_iteration",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 16
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:cop",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:strategic_theme",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:cop",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 25
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 43
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:iteration_planning",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:iteration_planning",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:iteration_planning",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:iteration_planning",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:iteration_planning",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_velocity",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:art_sync",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:art_sync",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:adr",
+    "target": "safe:flow_velocity",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:pi_planning",
+    "relation": "responsável_por",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 23
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 26
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 23
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 15
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:flow_distribution",
+    "relation": "depende_de",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:ci_cd_pipeline",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:flow_distribution",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_distribution",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "define",
+    "weight": 1
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 19
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 47
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 27
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 48
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 33
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 16
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 16
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 34
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:devsecops",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:flow_time",
+    "relation": "produz",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 14
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 9
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:lei_de_little",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:wip",
+    "relation": "define",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:flow_time",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:flow_load",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_time",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_load",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wip",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_efficiency",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:flow_efficiency",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:dod",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:bar",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:bar",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:daily_standup",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:bar",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:bar",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:bar",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:bar",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:bar",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:bar",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:bar",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 17
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 10
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:pre_pi_planning",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 18
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 20
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 11
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:feature",
+    "relation": "calcula",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:pi",
+    "relation": "precede",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio_kanban",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:art_backlog",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:art_backlog",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:art_backlog",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art_backlog",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art_backlog",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:art_backlog",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:team_coach",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:art_backlog",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:enabler",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:custo_do_atraso",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 8
+  },
+  {
+    "source": "safe:lpm",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:custo_do_atraso",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:mvp",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:agile_team",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:pi_planning",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:enabler",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:d_vida_t_cnica",
+    "target": "safe:mvp",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:adr",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pre_pi_planning",
+    "target": "safe:product_owner",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:post_pi_planning",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:post_pi_planning",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:spc",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:spc",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:team_backlog",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:team_backlog",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:team_backlog",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:team_backlog",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_backlog",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_backlog",
+    "target": "safe:pi",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_backlog",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:system_architect",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 13
+  },
+  {
+    "source": "safe:pi_planning",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 12
+  },
+  {
+    "source": "safe:pi",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 21
+  },
+  {
+    "source": "safe:devsecops",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:story",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:epic",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_architect",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 5
+  },
+  {
+    "source": "safe:epic",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:ci_cd_pipeline",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 4
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:pi",
+    "relation": "pertence_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:story",
+    "relation": "relacionado_a",
+    "weight": 6
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_sync",
+    "target": "safe:product_manager",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:pi_objectives",
+    "target": "safe:strategic_theme",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:wip",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:business_owners",
+    "target": "safe:pi_objectives",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:retrospectiva",
+    "target": "safe:business_owners",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:art_planning_board",
+    "target": "safe:feature_flag",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:solution_train",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:devsecops",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:agile_team",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:inspect___adapt",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:rte",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:devsecops",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:agile_team",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:inspect___adapt",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 7
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:flow_predictability",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:flow_predictability",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:daily_standup",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:roam_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:roam_board",
+    "target": "safe:wsjf",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:wsjf",
+    "target": "safe:roam",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:feature",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 3
+  },
+  {
+    "source": "safe:mvp",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_manager",
+    "target": "safe:confidence_vote",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:dod",
+    "target": "safe:d_vida_t_cnica",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:retrospectiva",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:value_stream",
+    "target": "safe:tdd",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:wsjf",
+    "relation": "calcula",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:lpm",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:product_owner",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:team_coach",
+    "target": "safe:adr",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:rte",
+    "target": "safe:art_planning_board",
+    "relation": "relacionado_a",
+    "weight": 1
+  },
+  {
+    "source": "safe:system_demo",
+    "target": "safe:feature",
+    "relation": "relacionado_a",
+    "weight": 2
+  },
+  {
+    "source": "safe:portfolio",
+    "target": "safe:system_demo",
+    "relation": "relacionado_a",
+    "weight": 1
+  }
+]

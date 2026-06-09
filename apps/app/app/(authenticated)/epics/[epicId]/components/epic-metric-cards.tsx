@@ -1,6 +1,5 @@
-import { appDesign } from "@/lib/app-design";
-import { cn } from "@repo/design-system/lib/utils";
 import { Progress } from "@repo/design-system/components/ui/progress";
+import { cn } from "@repo/design-system/lib/utils";
 import type { LucideIcon } from "lucide-react";
 import {
   BookOpenIcon,
@@ -9,6 +8,7 @@ import {
   TargetIcon,
   ZapIcon,
 } from "lucide-react";
+import { appDesign } from "@/lib/app-design";
 
 export type EpicMetricCardsProps = {
   featuresCount: number;
@@ -62,8 +62,8 @@ function MetricCard({
       )}
     >
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5e6ad2]/[0.06] via-transparent to-transparent"
         aria-hidden
+        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#5e6ad2]/[0.06] via-transparent to-transparent"
       />
       <div className="relative flex items-start justify-between gap-2">
         <div
@@ -72,39 +72,39 @@ function MetricCard({
             iconClassName ?? "bg-muted/80 text-muted-foreground"
           )}
         >
-          <Icon className="h-4 w-4" aria-hidden />
+          <Icon aria-hidden className="h-4 w-4" />
         </div>
         {progress !== undefined && (
-          <span className="text-[11px] font-semibold tabular-nums text-muted-foreground">
+          <span className="font-semibold text-[11px] text-muted-foreground tabular-nums">
             {progress}%
           </span>
         )}
       </div>
       <div className="relative min-w-0">
-        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+        <p className="font-medium text-[11px] text-muted-foreground uppercase tracking-wide">
           {label}
         </p>
         <p
           className={cn(
-            "mt-0.5 text-2xl font-bold tracking-tight tabular-nums sm:text-3xl",
+            "mt-0.5 font-bold text-2xl tabular-nums tracking-tight sm:text-3xl",
             valueClassName
           )}
         >
           {value}
         </p>
         {subValue ? (
-          <p className="mt-0.5 text-sm text-muted-foreground tabular-nums">
+          <p className="mt-0.5 text-muted-foreground text-sm tabular-nums">
             {subValue}
           </p>
         ) : null}
         {hint ? (
-          <p className="mt-1.5 text-xs leading-snug text-muted-foreground line-clamp-2">
+          <p className="mt-1.5 line-clamp-2 text-muted-foreground text-xs leading-snug">
             {hint}
           </p>
         ) : null}
       </div>
       {progress !== undefined ? (
-        <Progress value={progress} className="relative h-1.5" />
+        <Progress className="relative h-1.5" value={progress} />
       ) : null}
     </div>
   );
@@ -131,7 +131,9 @@ export function EpicMetricCards({
     featuresCount === 0
       ? "Adicione features no kanban"
       : [
-          featuresDone > 0 ? `${featuresDone} concluída${featuresDone > 1 ? "s" : ""}` : null,
+          featuresDone > 0
+            ? `${featuresDone} concluída${featuresDone > 1 ? "s" : ""}`
+            : null,
           featuresInFlight > 0
             ? `${featuresInFlight} em fluxo`
             : featuresDone < featuresCount
@@ -162,57 +164,62 @@ export function EpicMetricCards({
     <div
       className={cn(
         "grid gap-3",
-        okrSummary ? "sm:grid-cols-2 lg:grid-cols-5" : "grid-cols-2 lg:grid-cols-4"
+        okrSummary
+          ? "sm:grid-cols-2 lg:grid-cols-5"
+          : "grid-cols-2 lg:grid-cols-4"
       )}
     >
       <MetricCard
+        hint={featureHint}
         icon={LayersIcon}
+        iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400"
         label="Features"
         value={featuresCount}
-        hint={featureHint}
-        iconClassName="bg-violet-500/10 text-violet-600 dark:text-violet-400"
       />
 
       <MetricCard
-        icon={BookOpenIcon}
-        label="Stories"
-        value={totalStories}
         hint={storyHint}
-        progress={totalStories > 0 ? storyProgress : undefined}
+        icon={BookOpenIcon}
         iconClassName="bg-sky-500/10 text-sky-600 dark:text-sky-400"
+        label="Stories"
+        progress={totalStories > 0 ? storyProgress : undefined}
+        value={totalStories}
       />
 
       <MetricCard
-        icon={CheckCircle2Icon}
-        label="Story points"
-        value={doneSP}
-        subValue={totalSP > 0 ? `/ ${totalSP} SP` : undefined}
         hint={spHint}
-        progress={totalSP > 0 ? spProgress : undefined}
+        icon={CheckCircle2Icon}
         iconClassName="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+        label="Story points"
+        progress={totalSP > 0 ? spProgress : undefined}
+        subValue={totalSP > 0 ? `/ ${totalSP} SP` : undefined}
+        value={doneSP}
       />
 
       <MetricCard
+        hint={wsjfHint}
         icon={ZapIcon}
+        iconClassName="bg-amber-500/10 text-amber-600 dark:text-amber-400"
         label="WSJF médio"
         value={avgWSJF > 0 ? avgWSJF.toFixed(1) : "—"}
-        hint={wsjfHint}
-        valueClassName={cn("font-mono", avgWSJF > 0 && WSJF_VALUE_CLASS(avgWSJF))}
-        iconClassName="bg-amber-500/10 text-amber-600 dark:text-amber-400"
+        valueClassName={cn(
+          "font-mono",
+          avgWSJF > 0 && WSJF_VALUE_CLASS(avgWSJF)
+        )}
       />
 
       {okrSummary ? (
         <MetricCard
-          icon={TargetIcon}
-          label="OKRs do tema"
-          value={`${okrSummary.onTrack}/${okrSummary.total}`}
           hint={`${okrSummary.themeTitle} — no prazo`}
+          icon={TargetIcon}
+          iconClassName="bg-[#5e6ad2]/10 text-[#5e6ad2]"
+          label="OKRs do tema"
           progress={
             okrSummary.total > 0
               ? Math.round((okrSummary.onTrack / okrSummary.total) * 100)
               : undefined
           }
-          iconClassName="bg-[#5e6ad2]/10 text-[#5e6ad2]"
+          value={`${okrSummary.onTrack}/${okrSummary.total}`}
         />
       ) : null}
     </div>

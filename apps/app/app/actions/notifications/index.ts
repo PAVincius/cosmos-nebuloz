@@ -2,27 +2,32 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import {
-  type Result,
-  type Page,
-  safeAction,
   buildPage,
+  type Page,
   paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
-  NotificationTypeSchema,
-  CreateNotificationSchema,
-  NotificationFiltersSchema,
-  type NotificationType,
   type CreateNotificationInput,
-  type NotificationFilters,
+  CreateNotificationSchema,
   type Notification,
+  type NotificationFilters,
+  NotificationFiltersSchema,
   type NotificationRecord,
+  type NotificationType,
 } from "./schema";
 
-export type { NotificationType, CreateNotificationInput, NotificationFilters, Notification, NotificationRecord };
+export type {
+  NotificationType,
+  CreateNotificationInput,
+  NotificationFilters,
+  Notification,
+  NotificationRecord,
+};
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -51,7 +56,12 @@ export async function listNotifications(
       database.notification.count({ where }),
     ]);
 
-    return buildPage(items as Notification[], total, filters.page, filters.limit);
+    return buildPage(
+      items as Notification[],
+      total,
+      filters.page,
+      filters.limit
+    );
   });
 }
 
@@ -77,7 +87,9 @@ export async function markAsRead(id: string): Promise<Result<Notification>> {
     const notification = await database.notification.findFirst({
       where: { id, tenantId: ctx.tenantId, userId: ctx.userId },
     });
-    if (!notification) throw new Error("Notificação não encontrada.");
+    if (!notification) {
+      throw new Error("Notificação não encontrada.");
+    }
 
     const updated = await database.notification.update({
       where: { id },
@@ -121,7 +133,9 @@ export async function createNotification(
         type: data.type,
         title: data.title,
         body: data.body ?? null,
-        metadata: data.metadata ? (data.metadata as Record<string, string>) : undefined,
+        metadata: data.metadata
+          ? (data.metadata as Record<string, string>)
+          : undefined,
         read: false,
       },
     });
@@ -153,7 +167,9 @@ export async function pushNotification(
         type: payload.type,
         title: payload.title,
         body: payload.body ?? null,
-        metadata: payload.metadata ? (payload.metadata as Record<string, string>) : undefined,
+        metadata: payload.metadata
+          ? (payload.metadata as Record<string, string>)
+          : undefined,
         read: false,
       },
     })
@@ -169,7 +185,9 @@ export async function deleteNotification(
     const notification = await database.notification.findFirst({
       where: { id, tenantId: ctx.tenantId, userId: ctx.userId },
     });
-    if (!notification) throw new Error("Notificação não encontrada.");
+    if (!notification) {
+      throw new Error("Notificação não encontrada.");
+    }
 
     await database.notification.delete({ where: { id } });
 

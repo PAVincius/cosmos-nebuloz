@@ -7,10 +7,11 @@
  */
 
 import dotenv from "dotenv";
+
 dotenv.config({ path: ".env.local" });
 
-import { PrismaClient } from "@repo/database/generated/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaClient } from "@repo/database/generated/client";
 import { Pool } from "pg";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
@@ -38,7 +39,9 @@ async function main() {
   // Find tenant memberships for this user
   const memberships = await db.tenantMember.findMany({
     where: { userId: user.id },
-    include: { tenant: { select: { id: true, name: true, slug: true, plan: true } } },
+    include: {
+      tenant: { select: { id: true, name: true, slug: true, plan: true } },
+    },
   });
 
   if (memberships.length === 0) {
@@ -51,19 +54,24 @@ async function main() {
 
   for (const m of memberships) {
     const { tenant } = m;
-    console.log(`\n  → Upgrading "${tenant.name}" (${tenant.slug}) from ${tenant.plan} → UNIVERSE`);
+    console.log(
+      `\n  → Upgrading "${tenant.name}" (${tenant.slug}) from ${tenant.plan} → UNIVERSE`
+    );
 
     await db.tenant.update({
       where: { id: tenant.id },
       data: { plan: "UNIVERSE" },
     });
 
-    console.log(`  ✓ Done`);
+    console.log("  ✓ Done");
   }
 
   console.log("\nAll tenants upgraded to UNIVERSE.");
 }
 
 main()
-  .catch((e) => { console.error(e); process.exit(1); })
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
   .finally(() => pool.end());

@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 const SourceSchema = z.enum(["csv", "jira", "azure", "trello"]);
@@ -56,7 +56,9 @@ export async function approveMigrationMapping(
   const conn = await database.migrationConnection.findFirst({
     where: { id: connectionId, tenantId: ctx.tenantId },
   });
-  if (!conn) throw new Error("Migration connection not found.");
+  if (!conn) {
+    throw new Error("Migration connection not found.");
+  }
 
   return database.migrationConnection.update({
     where: { id: connectionId },
@@ -73,7 +75,9 @@ export async function saveMigrationImportReport(
   const conn = await database.migrationConnection.findFirst({
     where: { id: connectionId, tenantId: ctx.tenantId },
   });
-  if (!conn) throw new Error("Migration connection not found.");
+  if (!conn) {
+    throw new Error("Migration connection not found.");
+  }
 
   const updated = await database.migrationConnection.update({
     where: { id: connectionId },

@@ -1,6 +1,12 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("@repo/ai/lib/models", () => ({
+  getActiveProvider: vi.fn().mockReturnValue("none"),
+  getAIModel: vi.fn(),
+  models: {},
+}));
+
 // Mock @repo/auth/server to prevent better-auth (which uses zod v4 z.xor)
 // from loading in the jsdom test environment.
 vi.mock("@repo/auth/server", () => ({
@@ -80,7 +86,6 @@ import type { AggregatedPortfolioEpic } from "@/lib/portfolio-aggregate";
 
 afterEach(() => cleanup());
 
-// biome-ignore lint/suspicious/noEmptyBlockStatements: no-op stub for onClose in tests
 const noop = () => {};
 
 function makeEpic(

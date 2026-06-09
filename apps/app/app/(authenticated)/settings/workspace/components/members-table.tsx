@@ -1,20 +1,30 @@
 "use client";
 
-import { useTransition } from "react";
-import { Button } from "@repo/design-system/components/ui/button";
+import type { MemberRole } from "@repo/database";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
-import { removeMember, updateMemberRole } from "../../../../actions/settings/workspace";
-import { UserXIcon, ChevronDownIcon, UsersIcon } from "lucide-react";
-import type { MemberRole } from "@repo/database";
+import { ChevronDownIcon, UsersIcon, UserXIcon } from "lucide-react";
+import { useTransition } from "react";
+import {
+  removeMember,
+  updateMemberRole,
+} from "../../../../actions/settings/workspace";
 
-const ROLES: MemberRole[] = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"];
+const ROLES: MemberRole[] = [
+  "ADMIN",
+  "STE",
+  "RTE",
+  "SM",
+  "PO",
+  "DEV",
+  "MEMBER",
+];
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: "Admin",
@@ -44,7 +54,11 @@ type MembersTableProps = {
   currentUserId: string;
 };
 
-export function MembersTable({ members, isAdmin, currentUserId }: MembersTableProps) {
+export function MembersTable({
+  members,
+  isAdmin,
+  currentUserId,
+}: MembersTableProps) {
   const [isPending, startTransition] = useTransition();
 
   const handleRemove = (memberId: string) => {
@@ -68,16 +82,18 @@ export function MembersTable({ members, isAdmin, currentUserId }: MembersTablePr
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <UsersIcon className="size-4" />
+    <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+      <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+        <h2 className="flex items-center gap-2 font-semibold text-sm tracking-tight">
+          <UsersIcon className="size-4 text-primary" />
           Membros ({members.length})
-        </CardTitle>
-        <CardDescription>Gerencie os membros do workspace e seus papéis.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="divide-y">
+        </h2>
+        <p className="mt-1 text-muted-foreground text-xs">
+          Gerencie os membros do workspace e seus papéis.
+        </p>
+      </div>
+      <div className="p-5">
+        <div className="divide-y divide-hairline">
           {members.map((m) => {
             const initials = (m.user.name ?? m.user.email)
               .split(" ")
@@ -88,26 +104,37 @@ export function MembersTable({ members, isAdmin, currentUserId }: MembersTablePr
             const isSelf = m.user.id === currentUserId;
 
             return (
-              <div key={m.id} className="flex items-center gap-3 py-3">
-                <div className="flex size-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0 overflow-hidden">
+              <div className="flex items-center gap-3 py-3" key={m.id}>
+                <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 font-semibold text-primary text-xs">
                   {m.user.image ? (
-                    // biome-ignore lint/a11y/useAltText: decorative
-                    <img src={m.user.image} className="size-full object-cover" />
+                    <img
+                      className="size-full object-cover"
+                      src={m.user.image}
+                    />
                   ) : (
                     initials
                   )}
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">
+                <div className="min-w-0 flex-1">
+                  <p className="truncate font-medium text-sm">
                     {m.user.name ?? m.user.email}
-                    {isSelf && <span className="text-muted-foreground ml-1">(você)</span>}
+                    {isSelf && (
+                      <span className="ml-1 text-muted-foreground">(você)</span>
+                    )}
                   </p>
-                  <p className="text-xs text-muted-foreground truncate">{m.user.email}</p>
+                  <p className="truncate text-muted-foreground text-xs">
+                    {m.user.email}
+                  </p>
                 </div>
                 {isAdmin && !isSelf ? (
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-1 h-7 text-xs" disabled={isPending}>
+                      <Button
+                        className="h-7 gap-1 text-xs"
+                        disabled={isPending}
+                        size="sm"
+                        variant="outline"
+                      >
                         {ROLE_LABELS[m.role] ?? m.role}
                         <ChevronDownIcon className="size-3" />
                       </Button>
@@ -115,9 +142,9 @@ export function MembersTable({ members, isAdmin, currentUserId }: MembersTablePr
                     <DropdownMenuContent align="end">
                       {ROLES.map((role) => (
                         <DropdownMenuItem
+                          className={m.role === role ? "font-semibold" : ""}
                           key={role}
                           onSelect={() => handleRoleChange(m.id, role)}
-                          className={m.role === role ? "font-semibold" : ""}
                         >
                           {ROLE_LABELS[role]}
                         </DropdownMenuItem>
@@ -125,18 +152,18 @@ export function MembersTable({ members, isAdmin, currentUserId }: MembersTablePr
                     </DropdownMenuContent>
                   </DropdownMenu>
                 ) : (
-                  <Badge variant="secondary" className="text-xs">
+                  <Badge className="text-xs" variant="secondary">
                     {ROLE_LABELS[m.role] ?? m.role}
                   </Badge>
                 )}
                 {isAdmin && !isSelf && (
                   <Button
-                    variant="ghost"
-                    size="sm"
                     className="h-7 w-7 p-0 text-destructive hover:text-destructive"
-                    onClick={() => handleRemove(m.id)}
                     disabled={isPending}
+                    onClick={() => handleRemove(m.id)}
+                    size="sm"
                     title="Remover membro"
+                    variant="ghost"
                   >
                     <UserXIcon className="size-4" />
                   </Button>
@@ -145,7 +172,7 @@ export function MembersTable({ members, isAdmin, currentUserId }: MembersTablePr
             );
           })}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

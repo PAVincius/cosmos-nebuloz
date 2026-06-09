@@ -1,14 +1,18 @@
 import dynamic from "next/dynamic";
-import { getSuppliers } from "../../actions/suppliers";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { appDesign } from "@/lib/app-design";
 import { getARTs } from "../../actions/arts/get-arts";
-import { PackageIcon } from "lucide-react";
+import { getSuppliers } from "../../actions/suppliers";
 
 const SuppliersBoard = dynamic(
   () => import("./components/suppliers-board").then((m) => m.SuppliersBoard),
   {
     loading: () => (
       <div className="flex min-h-[320px] items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar fornecedores…</span>
       </div>
     ),
@@ -24,21 +28,20 @@ export default async function SuppliersPage() {
   const [suppliers, arts] = await Promise.all([getSuppliers(), getARTs()]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Fornecedores</h1>
-        <p className="text-muted-foreground text-sm">
-          Gerencie fornecedores externos integrados à cadeia de valor SAFe
-        </p>
-      </div>
-
-      <SuppliersBoard
-        initialSuppliers={suppliers}
-        arts={arts.map((a: { id: string; name: string }) => ({
-          id: a.id,
-          name: a.name,
-        }))}
+    <div className={appDesign.shell}>
+      <PageHeader
+        subtitle="Gerencie fornecedores externos integrados à cadeia de valor SAFe"
+        title="Fornecedores"
       />
+      <div className={appDesign.bodyScroll}>
+        <SuppliersBoard
+          arts={arts.map((a: { id: string; name: string }) => ({
+            id: a.id,
+            name: a.name,
+          }))}
+          initialSuppliers={suppliers}
+        />
+      </div>
     </div>
   );
 }

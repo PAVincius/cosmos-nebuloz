@@ -1,6 +1,6 @@
-import { listDecisionLog } from "@/app/actions/governance";
-import type { DecisionLogEntryPublic } from "@/app/actions/governance";
 import type { PageMeta } from "@/app/actions/_base";
+import type { DecisionLogEntryPublic } from "@/app/actions/governance";
+import { listDecisionLog } from "@/app/actions/governance";
 import { DecisionLogTable } from "./components/decision-log-table";
 
 export const metadata = { title: "Decision Log — COSMOS" };
@@ -22,7 +22,7 @@ export default async function DecisionLogPage() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Decision Log</h1>
+        <h1 className="font-bold text-2xl tracking-tight">Decision Log</h1>
         <p className="text-muted-foreground text-sm">
           Histórico auditável de decisões de portfólio LPM
         </p>

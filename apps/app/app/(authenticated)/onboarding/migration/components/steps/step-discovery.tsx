@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
 import {
   Select,
   SelectContent,
@@ -9,28 +8,29 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { SearchIcon } from "lucide-react";
-import { WizardStepHeader } from "../../../../components/wizard-ui";
+import { useEffect, useState, useTransition } from "react";
 import type { MappingRule } from "@/lib/migration/types";
+import { WizardStepHeader } from "../../../../components/wizard-ui";
 
-interface DiscoveryProject {
+type DiscoveryProject = {
   id?: string;
   key?: string;
   name: string;
-}
+};
 
-export interface DiscoveryFormData {
+export type DiscoveryFormData = {
   connectionId: string;
   mappingData: MappingRule[];
   itemCount: number;
-}
+};
 
-interface Props {
+type Props = {
   connectionId: string;
   source: string;
   artNames: string[];
   defaultValues?: Partial<DiscoveryFormData>;
   onChange: (data: DiscoveryFormData) => void;
-}
+};
 
 export function StepDiscovery({
   connectionId,
@@ -41,15 +41,20 @@ export function StepDiscovery({
 }: Props) {
   const [projects, setProjects] = useState<DiscoveryProject[]>([]);
   const initialMapping = defaultValues?.mappingData
-    ? Object.fromEntries(defaultValues.mappingData.map((r) => [r.sourceKey, r.targetName]))
+    ? Object.fromEntries(
+        defaultValues.mappingData.map((r) => [r.sourceKey, r.targetName])
+      )
     : {};
-  const [mapping, setMapping] = useState<Record<string, string>>(initialMapping);
+  const [mapping, setMapping] =
+    useState<Record<string, string>>(initialMapping);
   const [itemCount, setItemCount] = useState(defaultValues?.itemCount ?? 0);
   const [loading, setLoading] = useState(true);
   const [, startTransition] = useTransition();
 
   useEffect(() => {
-    if (!connectionId) return;
+    if (!connectionId) {
+      return;
+    }
     startTransition(async () => {
       setLoading(true);
       const res = await fetch(`/api/migration/${source}/discover`, {
@@ -70,12 +75,16 @@ export function StepDiscovery({
         }
         setMapping(defaultMapping);
         const rules = toRules(defaultMapping);
-        onChange({ connectionId, mappingData: rules, itemCount: data.itemCount });
+        onChange({
+          connectionId,
+          mappingData: rules,
+          itemCount: data.itemCount,
+        });
       }
       setLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionId, source]);
+  }, [connectionId, source, artNames[0], onChange, toRules]);
 
   function toRules(m: Record<string, string>): MappingRule[] {
     return Object.entries(m).map(([sourceKey, targetName]) => ({
@@ -94,39 +103,39 @@ export function StepDiscovery({
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Mapeie cada projeto para o ART correspondente."
         icon={<SearchIcon className="h-5 w-5" />}
         title="Mapeamento de projetos"
-        description="Mapeie cada projeto para o ART correspondente."
       />
       {loading ? (
-        <p className="text-sm text-muted-foreground">Descobrindo projetos...</p>
+        <p className="text-muted-foreground text-sm">Descobrindo projetos...</p>
       ) : (
         <div className="flex flex-col gap-3">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             {projects.length} projeto(s) · {itemCount} itens encontrados
           </p>
           {projects.map((p) => (
             <div
-              key={p.name}
               className="flex items-center gap-3 rounded-lg border p-3"
+              key={p.name}
             >
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{p.name}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-sm">{p.name}</p>
                 {p.key && (
-                  <p className="text-xs text-muted-foreground">{p.key}</p>
+                  <p className="text-muted-foreground text-xs">{p.key}</p>
                 )}
               </div>
               <span className="text-muted-foreground text-xs">→</span>
               <Select
-                value={mapping[p.name] ?? ""}
                 onValueChange={(v) => updateMapping(p.name, v)}
+                value={mapping[p.name] ?? ""}
               >
                 <SelectTrigger className="w-44 text-xs">
                   <SelectValue placeholder="Selecionar ART" />
                 </SelectTrigger>
                 <SelectContent>
                   {artNames.map((a) => (
-                    <SelectItem key={a} value={a} className="text-xs">
+                    <SelectItem className="text-xs" key={a} value={a}>
                       {a}
                     </SelectItem>
                   ))}

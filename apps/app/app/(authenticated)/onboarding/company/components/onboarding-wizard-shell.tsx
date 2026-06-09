@@ -1,16 +1,16 @@
 "use client";
 
-import { CheckIcon } from "lucide-react";
-import { cn } from "@repo/design-system/lib/utils";
 import { Button } from "@repo/design-system/components/ui/button";
+import { cn } from "@repo/design-system/lib/utils";
+import { CheckIcon } from "lucide-react";
 
-export interface WizardStepMeta {
+export type WizardStepMeta = {
   key: string;
   label: string;
   optional?: boolean;
-}
+};
 
-interface OnboardingWizardShellProps {
+type OnboardingWizardShellProps = {
   steps: WizardStepMeta[];
   currentStep: number;
   completedSteps: string[];
@@ -21,7 +21,7 @@ interface OnboardingWizardShellProps {
   isSaving?: boolean;
   nextLabel?: string;
   children: React.ReactNode;
-}
+};
 
 export function OnboardingWizardShell({
   steps,
@@ -36,17 +36,21 @@ export function OnboardingWizardShell({
   children,
 }: OnboardingWizardShellProps) {
   const isLast = currentStep === steps.length - 1;
-  const pct = Math.round((completedSteps.length / Math.max(steps.length - 1, 1)) * 100);
+  const pct = Math.round(
+    (completedSteps.length / Math.max(steps.length - 1, 1)) * 100
+  );
 
   return (
-    <div className="flex flex-col flex-1 max-w-3xl mx-auto w-full px-4 py-8 gap-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-4 py-8">
       {/* Progress bar */}
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span>Passo {currentStep + 1} de {steps.length}</span>
+        <div className="flex items-center justify-between text-muted-foreground text-xs">
+          <span>
+            Passo {currentStep + 1} de {steps.length}
+          </span>
           <span>{pct}% completo</span>
         </div>
-        <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+        <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
           <div
             className="h-full rounded-full bg-primary transition-all duration-300"
             style={{ width: `${pct}%` }}
@@ -60,27 +64,30 @@ export function OnboardingWizardShell({
           const done = completedSteps.includes(step.key);
           const active = i === currentStep;
           return (
-            <div key={step.key} className="flex items-center gap-1 shrink-0">
+            <div className="flex shrink-0 items-center gap-1" key={step.key}>
               <div
                 className={cn(
-                  "flex h-6 w-6 items-center justify-center rounded-full border text-xs font-medium transition-colors",
+                  "flex h-6 w-6 items-center justify-center rounded-full border font-medium text-xs transition-colors",
                   done && "border-primary bg-primary text-primary-foreground",
                   active && !done && "border-primary text-primary",
-                  !active && !done && "border-muted-foreground/30 text-muted-foreground"
+                  !(active || done) &&
+                    "border-muted-foreground/30 text-muted-foreground"
                 )}
               >
                 {done ? <CheckIcon className="h-3 w-3" /> : i + 1}
               </div>
               <span
                 className={cn(
-                  "text-xs hidden sm:inline",
-                  active ? "font-medium text-foreground" : "text-muted-foreground"
+                  "hidden text-xs sm:inline",
+                  active
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground"
                 )}
               >
                 {step.label}
               </span>
               {i < steps.length - 1 && (
-                <div className="w-4 h-px bg-muted-foreground/20 mx-1" />
+                <div className="mx-1 h-px w-4 bg-muted-foreground/20" />
               )}
             </div>
           );
@@ -93,22 +100,23 @@ export function OnboardingWizardShell({
       {/* Navigation */}
       <div className="flex items-center justify-between border-t pt-4">
         <Button
-          variant="ghost"
-          onClick={onBack}
           disabled={currentStep === 0 || isSaving}
+          onClick={onBack}
+          variant="ghost"
         >
           ← Voltar
         </Button>
         <div className="flex gap-2">
           {onSkip && (
-            <Button variant="outline" onClick={onSkip} disabled={isSaving}>
+            <Button disabled={isSaving} onClick={onSkip} variant="outline">
               Pular
             </Button>
           )}
-          <Button onClick={onNext} disabled={isNextDisabled || isSaving}>
+          <Button disabled={isNextDisabled || isSaving} onClick={onNext}>
             {isSaving
               ? "Salvando..."
-              : (nextLabel ?? (isLast ? "Concluir setup" : "Salvar e avançar →"))}
+              : (nextLabel ??
+                (isLast ? "Concluir setup" : "Salvar e avançar →"))}
           </Button>
         </div>
       </div>

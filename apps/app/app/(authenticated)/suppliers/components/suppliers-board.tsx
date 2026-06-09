@@ -1,13 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { PackageIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { Button } from "@repo/design-system/components/ui/button";
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
-import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,6 +10,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@repo/design-system/components/ui/dialog";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -31,10 +27,14 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { PackageIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import {
   createSupplier,
-  updateSupplier,
   deleteSupplier,
+  updateSupplier,
 } from "../../../actions/suppliers";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ function SupplierDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -122,11 +122,11 @@ function SupplierDialog({
               Nome <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="sup-name"
+              onChange={(e) => setName(e.target.value)}
               placeholder="ex: Accenture, IBM..."
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
             />
           </div>
 
@@ -134,16 +134,16 @@ function SupplierDialog({
             <Label htmlFor="sup-contact">Contato</Label>
             <Input
               id="sup-contact"
+              onChange={(e) => setContact(e.target.value)}
               placeholder="ex: email, telefone..."
               value={contact}
-              onChange={(e) => setContact(e.target.value)}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <Label>ART Vinculada</Label>
-              <Select value={artId} onValueChange={setArtId}>
+              <Select onValueChange={setArtId} value={artId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Nenhuma" />
                 </SelectTrigger>
@@ -160,7 +160,7 @@ function SupplierDialog({
 
             <div className="flex flex-col gap-2">
               <Label>Status</Label>
-              <Select value={status} onValueChange={setStatus}>
+              <Select onValueChange={setStatus} value={status}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -176,10 +176,10 @@ function SupplierDialog({
             <Label htmlFor="sup-description">Descrição</Label>
             <Textarea
               id="sup-description"
-              placeholder="Descreva o escopo deste fornecedor..."
-              value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descreva o escopo deste fornecedor..."
               rows={2}
+              value={description}
             />
           </div>
 
@@ -187,10 +187,14 @@ function SupplierDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+          <Button
+            disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !name.trim()}>
+          <Button disabled={isPending || !name.trim()} onClick={handleSubmit}>
             {isPending ? "Salvando..." : supplier ? "Salvar" : "Criar"}
           </Button>
         </DialogFooter>
@@ -237,7 +241,7 @@ export function SuppliersBoard({
       {/* Toolbar */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex gap-2">
-          <Select value={filterArt} onValueChange={setFilterArt}>
+          <Select onValueChange={setFilterArt} value={filterArt}>
             <SelectTrigger className="w-44">
               <SelectValue placeholder="Filtrar por ART" />
             </SelectTrigger>
@@ -251,7 +255,7 @@ export function SuppliersBoard({
             </SelectContent>
           </Select>
 
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
+          <Select onValueChange={setFilterStatus} value={filterStatus}>
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Filtrar por status" />
             </SelectTrigger>
@@ -265,20 +269,20 @@ export function SuppliersBoard({
 
         <SupplierDialog
           arts={arts}
+          onSuccess={refresh}
           trigger={
             <Button size="sm">
               <PlusIcon className="mr-2 h-4 w-4" />
               Novo Fornecedor
             </Button>
           }
-          onSuccess={refresh}
         />
       </div>
 
       {/* Table */}
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-          <PackageIcon className="text-muted-foreground mb-4 h-10 w-10" />
+          <PackageIcon className="mb-4 h-10 w-10 text-muted-foreground" />
           <p className="text-muted-foreground text-sm">
             Nenhum fornecedor encontrado.
           </p>
@@ -301,7 +305,7 @@ export function SuppliersBoard({
                   <TableCell className="font-medium">
                     {supplier.name}
                     {supplier.description && (
-                      <p className="text-muted-foreground text-xs font-normal truncate max-w-xs">
+                      <p className="max-w-xs truncate font-normal text-muted-foreground text-xs">
                         {supplier.description}
                       </p>
                     )}
@@ -310,33 +314,41 @@ export function SuppliersBoard({
                     {supplier.contact ?? "—"}
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {supplier.artId ? (artMap[supplier.artId] ?? supplier.artId) : "—"}
+                    {supplier.artId
+                      ? (artMap[supplier.artId] ?? supplier.artId)
+                      : "—"}
                   </TableCell>
                   <TableCell>
                     <Badge
-                      variant={supplier.status === "ACTIVE" ? "default" : "secondary"}
+                      variant={
+                        supplier.status === "ACTIVE" ? "default" : "secondary"
+                      }
                     >
                       {supplier.status === "ACTIVE" ? "Ativo" : "Inativo"}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <div className="flex gap-1 justify-end">
+                    <div className="flex justify-end gap-1">
                       <SupplierDialog
-                        supplier={supplier}
                         arts={arts}
+                        onSuccess={refresh}
+                        supplier={supplier}
                         trigger={
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
+                          <Button
+                            className="h-8 w-8"
+                            size="icon"
+                            variant="ghost"
+                          >
                             <PencilIcon className="h-3.5 w-3.5" />
                           </Button>
                         }
-                        onSuccess={refresh}
                       />
                       <Button
-                        variant="ghost"
-                        size="icon"
                         className="h-8 w-8 text-destructive hover:text-destructive"
-                        onClick={() => handleDelete(supplier.id)}
                         disabled={isPending}
+                        onClick={() => handleDelete(supplier.id)}
+                        size="icon"
+                        variant="ghost"
                       >
                         <Trash2Icon className="h-3.5 w-3.5" />
                       </Button>

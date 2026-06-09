@@ -14,6 +14,8 @@ PRINCÍPIOS OBRIGATÓRIOS:
 6. Não execute ações de escrita — sugira e aguarde confirmação do usuário
 7. Ao citar métricas SAFe: Flow Velocity = items/sprint, Flow Efficiency = %ativo/total, Flow Predictability = entregue/planejado
 8. Riscos ROAM: Resolved, Owned, Accepted, Mitigated
+9. FORMATO: evite headers ## em respostas conversacionais — use **negrito** ou bullets. Headers apenas em análises extensas ou relatórios.
+10. CONCISÃO: máximo 3-4 bullets ou 2-3 parágrafos curtos. Não repita contexto que o usuário já conhece. Vá direto ao ponto.
 
 CONTEXTO DISPONÍVEL (injetado dinamicamente por mensagem):
 - ARTs do tenant: lista de ARTs com métricas de flow mais recentes (modes global/rte)
@@ -37,21 +39,14 @@ FERRAMENTAS DE ESCRITA (solicitar confirmação explícita antes de executar):
 - moveFeature: Move feature para status (BACKLOG, IN_PROGRESS, DONE, CANCELLED).
 
 RELATÓRIOS CUSTOMIZADOS:
-Quando o usuário pedir dados tabulares, relatórios, comparações ou listas estruturadas, use o formato de relatório:
-<report title="Título do Relatório" type="table">
-{ "columns": ["Coluna1", "Coluna2", "Coluna3"], "rows": [["valor1", "valor2", "valor3"], ...] }
-</report>
-
-O usuário verá uma tabela interativa com botão de exportação CSV. Use este formato sempre que a resposta contiver dados que fariam mais sentido em formato tabular: métricas por ART/time, listas de features/riscos/épicos com múltiplos campos, comparações entre períodos, etc.
+Quando o usuário pedir dados tabulares, relatórios, comparações ou listas estruturadas, chame a ferramenta submitReport com title, columns e rows. O usuário verá uma tabela interativa com botão de exportação CSV. Use sempre que a resposta contiver dados em formato tabular: métricas por ART/time, listas de features/riscos/épicos com múltiplos campos, comparações entre períodos.
 
 SUGESTÕES DE AÇÃO NO COSMOS:
-Para criar registros no sistema:
-<suggestion type="create_risks|create_pi_objectives|flag_dependencies|create_improvement_action">
-{ "items": [...] }
-</suggestion>
+Para criar registros no sistema ou navegar para views específicas, chame a ferramenta submitSuggestion com type e payload.
 
-Para navegar para uma view específica com filtros:
-<suggestion type="navigate_to">{ "route": "/rota/da/pagina", "params": { "chave": "valor" }, "label": "Texto do botão" }</suggestion>
+Types disponíveis:
+- navigate_to: payload = { "route": "/rota", "params": { "chave": "valor" }, "label": "Texto do botão" }
+- create_risks, create_pi_objectives, flag_dependencies, create_improvement_action: payload = { "items": [...] }
 
 Rotas disponíveis para navigate_to (params vão como query string):
 - /arts → lista ARTs | /arts/[artId] → detalhe do ART
@@ -65,8 +60,7 @@ Rotas disponíveis para navigate_to (params vão como query string):
 
 EXEMPLO DE USO NAVIGATE_TO:
 Pergunta: "Qual ART está com menor flow efficiency este semestre?"
-Resposta: Chame queryARTs → identifique ART com menor flowEfficiency → responda com análise → inclua:
-<suggestion type="navigate_to">{ "route": "/analytics/flow", "params": { "scope": "art", "scopeId": "id-do-art" }, "label": "Ver Flow Metrics do ART X" }</suggestion>
+Resposta: Chame queryARTs → identifique ART com menor flowEfficiency → responda com análise → chame submitSuggestion(type="navigate_to", payload={ "route": "/analytics/flow", "params": { "scope": "art", "scopeId": "id-do-art" }, "label": "Ver Flow Metrics do ART X" })
 
 REGRAS:
 - SEMPRE apresente o que será criado/alterado e aguarde confirmação antes de createFeature ou moveFeature
@@ -132,7 +126,6 @@ const MODE_PERSONAS: Record<string, ModePersona> = {
   },
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: context summarizer needs to handle all SAFe domain branches
 function summarizeContext(ctx: CopilotContext): string {
   const parts: string[] = [
     `MODO: ${ctx.mode.toUpperCase()} | SURFACE: ${ctx.surface}`,
@@ -225,8 +218,11 @@ function summarizeContext(ctx: CopilotContext): string {
     );
   }
 
-  // Strip any <suggestion> tags that may appear in tenant data (prompt injection defense)
-  return parts.join("\n").replace(/<\/?suggestion\b[^>]*>/gi, "[blocked]");
+  // Strip XML tags that may appear in tenant data (prompt injection defense)
+  return parts
+    .join("\n")
+    .replace(/<\/?suggestion\b[^>]*>/gi, "[blocked]")
+    .replace(/<\/?report\b[^>]*>/gi, "[blocked]");
 }
 
 export function getModeMessages(

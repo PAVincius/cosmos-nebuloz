@@ -2,19 +2,15 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { type Result, safeAction, TaskStatus } from "../_base";
 import { enforce } from "../permissions";
 import {
-  type Result,
-  safeAction,
-  TaskStatus,
-} from "../_base";
-import {
-  CreateTaskSchema,
-  UpdateTaskSchema,
   type CreateTaskInput,
+  CreateTaskSchema,
   type UpdateTaskInput,
+  UpdateTaskSchema,
 } from "./schema";
 
 export type { CreateTaskInput, UpdateTaskInput };
@@ -23,14 +19,16 @@ export type { CreateTaskInput, UpdateTaskInput };
 
 async function resolveTaskTeamId(
   ctx: { tenantId: string },
-  task: { story: { sprint?: { teamId: string } | null } },
+  task: { story: { sprint?: { teamId: string } | null } }
 ): Promise<string | null> {
   return task.story.sprint?.teamId ?? null;
 }
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listTasksByStory(storyId: string): Promise<Result<any[]>> {
+export async function listTasksByStory(
+  storyId: string
+): Promise<Result<any[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -39,7 +37,9 @@ export async function listTasksByStory(storyId: string): Promise<Result<any[]>> 
       where: { id: storyId, tenantId: ctx.tenantId },
       select: { id: true },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     return database.task.findMany({
       where: { storyId, tenantId: ctx.tenantId },
@@ -61,7 +61,9 @@ export async function createTask(raw: unknown): Promise<Result<any>> {
       where: { id: data.storyId, tenantId: ctx.tenantId },
       include: { sprint: { select: { teamId: true } } },
     });
-    if (!story) throw new Error("Story não encontrada");
+    if (!story) {
+      throw new Error("Story não encontrada");
+    }
 
     const task = await database.task.create({
       data: { ...data, tenantId: ctx.tenantId },
@@ -82,7 +84,7 @@ export async function createTask(raw: unknown): Promise<Result<any>> {
 
 export async function updateTask(
   id: string,
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -95,7 +97,9 @@ export async function updateTask(
         story: { include: { sprint: { select: { teamId: true } } } },
       },
     });
-    if (!task) throw new Error("Task não encontrada");
+    if (!task) {
+      throw new Error("Task não encontrada");
+    }
 
     const completedAt =
       data.status === "DONE" && task.status !== "DONE"
@@ -121,7 +125,7 @@ export async function updateTask(
 
 export async function updateTaskStatus(
   id: string,
-  status: string,
+  status: string
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -134,7 +138,9 @@ export async function updateTaskStatus(
         story: { include: { sprint: { select: { teamId: true } } } },
       },
     });
-    if (!task) throw new Error("Task não encontrada");
+    if (!task) {
+      throw new Error("Task não encontrada");
+    }
 
     const completedAt = validStatus === "DONE" ? new Date() : null;
 
@@ -153,9 +159,7 @@ export async function updateTaskStatus(
   });
 }
 
-export async function deleteTask(
-  id: string,
-): Promise<Result<{ id: string }>> {
+export async function deleteTask(id: string): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Task", "delete");
@@ -166,7 +170,9 @@ export async function deleteTask(
         story: { include: { sprint: { select: { teamId: true } } } },
       },
     });
-    if (!task) throw new Error("Task não encontrada");
+    if (!task) {
+      throw new Error("Task não encontrada");
+    }
 
     await database.task.delete({ where: { id } });
 

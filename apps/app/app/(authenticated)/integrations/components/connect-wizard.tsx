@@ -1,37 +1,62 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
-} from "@repo/design-system/components/ui/dialog";
 import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { CheckCircle2Icon, XCircleIcon, LoaderIcon, ExternalLinkIcon } from "lucide-react";
 import {
-  testIntegrationConnection,
-  discoverIntegrationProjects,
+  CheckCircle2Icon,
+  ExternalLinkIcon,
+  LoaderIcon,
+  XCircleIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import {
   createIntegration,
+  discoverIntegrationProjects,
   runImportSnapshot,
+  testIntegrationConnection,
 } from "@/app/actions/integrations";
 import type { IntegrationRow } from "@/app/actions/integrations/schema";
 
-type WizardStep = "source" | "credentials" | "test" | "project" | "mapping" | "import" | "done";
+type WizardStep =
+  | "source"
+  | "credentials"
+  | "test"
+  | "project"
+  | "mapping"
+  | "import"
+  | "done";
 
 type Props = {
-  mode:                "connect" | "import";
+  mode: "connect" | "import";
   existingIntegration?: IntegrationRow;
-  arts:                { id: string; name: string }[];
-  epics:               { id: string; title: string }[];
-  onClose:             () => void;
+  arts: { id: string; name: string }[];
+  epics: { id: string; title: string }[];
+  onClose: () => void;
 };
 
-export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose }: Props) {
+export function ConnectWizard({
+  mode,
+  existingIntegration,
+  arts,
+  epics,
+  onClose,
+}: Props) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -41,32 +66,41 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
   );
 
   // Form state
-  const [source, setSource] = useState<string>(existingIntegration?.source ?? "linear");
-  const [name,   setName]   = useState(existingIntegration?.name ?? "");
+  const [source, setSource] = useState<string>(
+    existingIntegration?.source ?? "linear"
+  );
+  const [name, setName] = useState(existingIntegration?.name ?? "");
   const [apiKey, setApiKey] = useState("");
-  const [token,  setToken]  = useState("");
-  const [org,    setOrg]    = useState("");
+  const [token, setToken] = useState("");
+  const [org, setOrg] = useState("");
 
   // Discovery state
-  const [testStatus, setTestStatus]   = useState<"idle" | "ok" | "error">("idle");
-  const [testInfo,   setTestInfo]     = useState("");
-  const [projects,   setProjects]     = useState<{ id: string; name: string; key?: string }[]>([]);
-  const [projectId,  setProjectId]    = useState("");
+  const [testStatus, setTestStatus] = useState<"idle" | "ok" | "error">("idle");
+  const [testInfo, setTestInfo] = useState("");
+  const [projects, setProjects] = useState<
+    { id: string; name: string; key?: string }[]
+  >([]);
+  const [projectId, setProjectId] = useState("");
 
   // Mapping state
-  const [epicId,    setEpicId]    = useState("");
-  const [piPlanId,  setPiPlanId]  = useState("");
+  const [epicId, setEpicId] = useState("");
+  const [piPlanId, setPiPlanId] = useState("");
   const [targetType, setTargetType] = useState<"feature" | "story">("feature");
 
   // Result state
-  const [integrationId, setIntegrationId] = useState(existingIntegration?.id ?? "");
-  const [importResult,  setImportResult]  = useState<{ created: number; updated: number; skipped: number } | null>(null);
-  const [errorMsg,      setErrorMsg]      = useState("");
+  const [integrationId, setIntegrationId] = useState(
+    existingIntegration?.id ?? ""
+  );
+  const [importResult, setImportResult] = useState<{
+    created: number;
+    updated: number;
+    skipped: number;
+  } | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const config: Record<string, string> = source === "linear"
-    ? { apiKey }
-    : { token, org };
+  const config: Record<string, string> =
+    source === "linear" ? { apiKey } : { token, org };
 
   // ── Step: Test connection ──────────────────────────────────────────────────
 
@@ -80,9 +114,16 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
         setStep("project");
 
         // Discover projects
-        const disc = await discoverIntegrationProjects({ source, name, config });
-        if (disc.ok) setProjects(disc.data);
-        else setErrorMsg(disc.error);
+        const disc = await discoverIntegrationProjects({
+          source,
+          name,
+          config,
+        });
+        if (disc.ok) {
+          setProjects(disc.data);
+        } else {
+          setErrorMsg(disc.error);
+        }
       } else {
         setTestStatus("error");
         setErrorMsg(result.error);
@@ -93,11 +134,20 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
   // ── Step: Create integration + go to mapping ───────────────────────────────
 
   function handleSaveAndMap() {
-    if (!projectId) return;
+    if (!projectId) {
+      return;
+    }
     startTransition(async () => {
       if (!integrationId) {
-        const created = await createIntegration({ source, name: name || `${source} integration`, config });
-        if (!created.ok) { setErrorMsg(created.error); return; }
+        const created = await createIntegration({
+          source,
+          name: name || `${source} integration`,
+          config,
+        });
+        if (!created.ok) {
+          setErrorMsg(created.error);
+          return;
+        }
         setIntegrationId(created.data.id);
       }
       setStep("mapping");
@@ -108,13 +158,15 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
 
   function handleImport() {
     const id = integrationId || existingIntegration?.id;
-    if (!id || !projectId) return;
+    if (!(id && projectId)) {
+      return;
+    }
     startTransition(async () => {
       const result = await runImportSnapshot({
         integrationId: id,
         projectId,
         targetType,
-        ...(epicId   && { epicId }),
+        ...(epicId && { epicId }),
         ...(piPlanId && { piPlanId }),
       });
       if (result.ok) {
@@ -127,10 +179,11 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
     });
   }
 
-  const title = mode === "connect" ? "Conectar ferramenta" : "Importar snapshot";
+  const title =
+    mode === "connect" ? "Conectar ferramenta" : "Importar snapshot";
 
   return (
-    <Dialog open onOpenChange={(o) => !o && onClose()}>
+    <Dialog onOpenChange={(o) => !o && onClose()} open>
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -138,7 +191,7 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
 
         {/* Error message */}
         {errorMsg && (
-          <div className="rounded-lg border border-red-300/50 bg-red-500/5 px-4 py-2.5 text-sm text-red-700 flex items-center gap-2">
+          <div className="flex items-center gap-2 rounded-lg border border-red-300/50 bg-red-500/5 px-4 py-2.5 text-red-700 text-sm">
             <XCircleIcon className="h-4 w-4 shrink-0" />
             {errorMsg}
           </div>
@@ -149,29 +202,38 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
           <div className="space-y-4">
             <div className="space-y-1.5">
               <Label>Ferramenta *</Label>
-              <Select value={source} onValueChange={setSource}>
+              <Select onValueChange={setSource} value={source}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="linear">⬡ Linear</SelectItem>
                   <SelectItem value="github">⚙ GitHub Projects</SelectItem>
-                  <SelectItem value="asana" disabled>◈ Asana (em breve)</SelectItem>
-                  <SelectItem value="gitlab" disabled>◆ GitLab (em breve)</SelectItem>
+                  <SelectItem disabled value="asana">
+                    ◈ Asana (em breve)
+                  </SelectItem>
+                  <SelectItem disabled value="gitlab">
+                    ◆ GitLab (em breve)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Nome da integração *</Label>
               <Input
+                onChange={(e) => setName(e.target.value)}
                 placeholder={`Ex: ${source === "linear" ? "Linear — Time Produto" : "GitHub — cosmos-org"}`}
                 value={name}
-                onChange={(e) => setName(e.target.value)}
               />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={onClose}>Cancelar</Button>
-              <Button onClick={() => setStep("credentials")} disabled={!name.trim()}>
+              <Button onClick={onClose} variant="outline">
+                Cancelar
+              </Button>
+              <Button
+                disabled={!name.trim()}
+                onClick={() => setStep("credentials")}
+              >
                 Próximo
               </Button>
             </DialogFooter>
@@ -185,20 +247,21 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
               <div className="space-y-1.5">
                 <Label>API Key do Linear *</Label>
                 <Input
-                  type="password"
-                  placeholder="lin_api_..."
-                  value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
+                  placeholder="lin_api_..."
+                  type="password"
+                  value={apiKey}
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Obtenha em{" "}
                   <a
+                    className="inline-flex items-center gap-0.5 underline"
                     href="https://linear.app/settings/api"
-                    target="_blank"
                     rel="noopener noreferrer"
-                    className="underline inline-flex items-center gap-0.5"
+                    target="_blank"
                   >
-                    linear.app/settings/api <ExternalLinkIcon className="h-2.5 w-2.5" />
+                    linear.app/settings/api{" "}
+                    <ExternalLinkIcon className="h-2.5 w-2.5" />
                   </a>
                 </p>
               </div>
@@ -207,35 +270,44 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
                 <div className="space-y-1.5">
                   <Label>Personal Access Token (GitHub) *</Label>
                   <Input
-                    type="password"
-                    placeholder="ghp_..."
-                    value={token}
                     onChange={(e) => setToken(e.target.value)}
+                    placeholder="ghp_..."
+                    type="password"
+                    value={token}
                   />
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Precisa de escopo: <code>read:org, project, repo</code>
                   </p>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Organização ou usuário GitHub *</Label>
                   <Input
+                    onChange={(e) => setOrg(e.target.value)}
                     placeholder="minha-org"
                     value={org}
-                    onChange={(e) => setOrg(e.target.value)}
                   />
                 </div>
               </>
             )}
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep("source")}>Voltar</Button>
+              <Button onClick={() => setStep("source")} variant="outline">
+                Voltar
+              </Button>
               <Button
+                disabled={
+                  isPending || (source === "linear" ? !apiKey : !(token && org))
+                }
                 onClick={handleTest}
-                disabled={isPending || (source === "linear" ? !apiKey : !token || !org)}
               >
                 {isPending ? (
-                  <><LoaderIcon className="h-3.5 w-3.5 animate-spin mr-1.5" /> Testando...</>
-                ) : "Testar conexão"}
+                  <>
+                    <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
+                    Testando...
+                  </>
+                ) : (
+                  "Testar conexão"
+                )}
               </Button>
             </DialogFooter>
           </div>
@@ -245,7 +317,7 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
         {step === "project" && (
           <div className="space-y-4">
             {testStatus === "ok" && (
-              <div className="flex items-center gap-2 rounded-lg border border-green-300/50 bg-green-500/5 px-3 py-2 text-sm text-green-700">
+              <div className="flex items-center gap-2 rounded-lg border border-green-300/50 bg-green-500/5 px-3 py-2 text-green-700 text-sm">
                 <CheckCircle2Icon className="h-4 w-4 shrink-0" />
                 Conectado como <strong>{testInfo}</strong>
               </div>
@@ -256,18 +328,20 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
                 {source === "linear" ? "Time no Linear *" : "Projeto GitHub *"}
               </Label>
               {projects.length === 0 && isPending ? (
-                <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                  <LoaderIcon className="h-3.5 w-3.5 animate-spin" /> Carregando projetos...
+                <div className="flex items-center gap-2 py-2 text-muted-foreground text-sm">
+                  <LoaderIcon className="h-3.5 w-3.5 animate-spin" /> Carregando
+                  projetos...
                 </div>
               ) : (
-                <Select value={projectId} onValueChange={setProjectId}>
+                <Select onValueChange={setProjectId} value={projectId}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione..." />
                   </SelectTrigger>
                   <SelectContent>
                     {projects.map((p) => (
                       <SelectItem key={p.id} value={p.id}>
-                        {p.key ? `[${p.key}] ` : ""}{p.name}
+                        {p.key ? `[${p.key}] ` : ""}
+                        {p.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -276,9 +350,18 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep("credentials")}>Voltar</Button>
-              <Button onClick={handleSaveAndMap} disabled={isPending || !projectId}>
-                {isPending ? <LoaderIcon className="h-3.5 w-3.5 animate-spin" /> : "Próximo"}
+              <Button onClick={() => setStep("credentials")} variant="outline">
+                Voltar
+              </Button>
+              <Button
+                disabled={isPending || !projectId}
+                onClick={handleSaveAndMap}
+              >
+                {isPending ? (
+                  <LoaderIcon className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  "Próximo"
+                )}
               </Button>
             </DialogFooter>
           </div>
@@ -287,44 +370,68 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
         {/* ── MAPPING ── */}
         {step === "mapping" && (
           <div className="space-y-4">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Configure para onde os itens importados serão mapeados no COSMOS.
             </p>
 
             <div className="space-y-1.5">
               <Label>Tipo de item COSMOS</Label>
-              <Select value={targetType} onValueChange={(v) => setTargetType(v as "feature" | "story")}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+              <Select
+                onValueChange={(v) => setTargetType(v as "feature" | "story")}
+                value={targetType}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="feature">Feature (nível ART/PI)</SelectItem>
-                  <SelectItem value="story">Story (nível Time/Sprint)</SelectItem>
+                  <SelectItem value="feature">
+                    Feature (nível ART/PI)
+                  </SelectItem>
+                  <SelectItem value="story">
+                    Story (nível Time/Sprint)
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
 
             <div className="space-y-1.5">
               <Label>Epic de destino (opcional)</Label>
-              <Select value={epicId || "none"} onValueChange={(v) => setEpicId(v === "none" ? "" : v)}>
-                <SelectTrigger><SelectValue placeholder="Sem épico" /></SelectTrigger>
+              <Select
+                onValueChange={(v) => setEpicId(v === "none" ? "" : v)}
+                value={epicId || "none"}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Sem épico" />
+                </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">— Sem épico —</SelectItem>
                   {epics.map((e) => (
-                    <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
+                    <SelectItem key={e.id} value={e.id}>
+                      {e.title}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
 
-            <div className="rounded-md border border-amber-300/40 bg-amber-500/5 px-3 py-2 text-xs text-amber-700">
-              Items importados mantêm link para o item original (externalUrl) para navegação rápida.
+            <div className="rounded-md border border-amber-300/40 bg-amber-500/5 px-3 py-2 text-amber-700 text-xs">
+              Items importados mantêm link para o item original (externalUrl)
+              para navegação rápida.
             </div>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setStep("project")}>Voltar</Button>
-              <Button onClick={handleImport} disabled={isPending}>
+              <Button onClick={() => setStep("project")} variant="outline">
+                Voltar
+              </Button>
+              <Button disabled={isPending} onClick={handleImport}>
                 {isPending ? (
-                  <><LoaderIcon className="h-3.5 w-3.5 animate-spin mr-1.5" /> Importando...</>
-                ) : "Importar agora"}
+                  <>
+                    <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
+                    Importando...
+                  </>
+                ) : (
+                  "Importar agora"
+                )}
               </Button>
             </DialogFooter>
           </div>
@@ -335,14 +442,21 @@ export function ConnectWizard({ mode, existingIntegration, arts, epics, onClose 
           <div className="space-y-4">
             <div className="flex flex-col items-center gap-3 py-6 text-center">
               <CheckCircle2Icon className="h-10 w-10 text-green-500" />
-              <p className="text-base font-semibold">Import concluído!</p>
+              <p className="font-semibold text-base">Import concluído!</p>
               <div className="flex items-center gap-4 text-sm">
-                <span className="text-green-700 font-semibold">+{importResult.created} criados</span>
-                <span className="text-blue-700 font-semibold">↻{importResult.updated} atualizados</span>
-                <span className="text-muted-foreground">⊘{importResult.skipped} ignorados</span>
+                <span className="font-semibold text-green-700">
+                  +{importResult.created} criados
+                </span>
+                <span className="font-semibold text-blue-700">
+                  ↻{importResult.updated} atualizados
+                </span>
+                <span className="text-muted-foreground">
+                  ⊘{importResult.skipped} ignorados
+                </span>
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Os itens aparecem no WSJF, Program Board e Feature Boards com link para a ferramenta original.
+              <p className="mt-1 text-muted-foreground text-xs">
+                Os itens aparecem no WSJF, Program Board e Feature Boards com
+                link para a ferramenta original.
               </p>
             </div>
             <DialogFooter>

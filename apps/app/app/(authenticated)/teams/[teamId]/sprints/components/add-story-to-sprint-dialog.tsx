@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -19,14 +18,18 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { createStory } from "@/app/actions/stories";
 
-interface AddStoryToSprintDialogProps {
+type AddStoryToSprintDialogProps = {
   sprintId: string;
   teamId: string;
-}
+};
 
-export function AddStoryToSprintDialog({ sprintId, teamId }: AddStoryToSprintDialogProps) {
+export function AddStoryToSprintDialog({
+  sprintId,
+  teamId,
+}: AddStoryToSprintDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [priority, setPriority] = useState("medium");
@@ -39,7 +42,9 @@ export function AddStoryToSprintDialog({ sprintId, teamId }: AddStoryToSprintDia
       const result = await createStory({
         sprintId,
         title: String(form.get("title")),
-        storyPoints: form.get("storyPoints") ? Number(form.get("storyPoints")) : 1,
+        storyPoints: form.get("storyPoints")
+          ? Number(form.get("storyPoints"))
+          : 1,
         priority,
         status: "BACKLOG",
       });
@@ -53,7 +58,7 @@ export function AddStoryToSprintDialog({ sprintId, teamId }: AddStoryToSprintDia
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm" variant="outline">
           <PlusIcon className="mr-1.5 h-4 w-4" />
@@ -64,33 +69,33 @@ export function AddStoryToSprintDialog({ sprintId, teamId }: AddStoryToSprintDia
         <DialogHeader>
           <DialogTitle>Adicionar Story ao Sprint</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
+              maxLength={255}
               name="title"
               placeholder="Como usuário, quero..."
               required
-              maxLength={255}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="storyPoints">Story Points</Label>
               <Input
-                id="storyPoints"
-                name="storyPoints"
-                type="number"
-                min={0}
-                max={100}
                 defaultValue={1}
+                id="storyPoints"
+                max={100}
+                min={0}
+                name="storyPoints"
                 placeholder="1"
+                type="number"
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label>Prioridade</Label>
-              <Select value={priority} onValueChange={setPriority}>
+              <Select onValueChange={setPriority} value={priority}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -105,14 +110,14 @@ export function AddStoryToSprintDialog({ sprintId, teamId }: AddStoryToSprintDia
           </div>
           <div className="flex justify-end gap-2 pt-2">
             <Button
+              disabled={isPending}
+              onClick={() => setOpen(false)}
               type="button"
               variant="outline"
-              onClick={() => setOpen(false)}
-              disabled={isPending}
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "Criando..." : "Criar Story"}
             </Button>
           </div>

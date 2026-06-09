@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export async function getBpmnDefinition(teamId: string) {
   const ctx = await requireTenantSession(await headers());
@@ -19,7 +19,7 @@ export async function getBpmnDefinition(teamId: string) {
 export async function saveBpmnDefinition(teamId: string, xmlContent: string) {
   const ctx = await requireTenantSession(await headers());
 
-  if (!xmlContent || !xmlContent.includes("<bpmn:")) {
+  if (!(xmlContent && xmlContent.includes("<bpmn:"))) {
     throw new Error("Conteúdo XML inválido para notação BPMN.");
   }
 

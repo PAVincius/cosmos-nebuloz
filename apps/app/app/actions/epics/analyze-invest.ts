@@ -1,11 +1,11 @@
 "use server";
 
+import { createHash } from "node:crypto";
+import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { generateObject } from "ai";
-import { getAIModel, getActiveProvider } from "@repo/ai/lib/models";
-import { createHash } from "node:crypto";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../_base";
 
@@ -44,7 +44,9 @@ function computeHash(title: string, description: string | null): string {
 
 // ─── Server Action ────────────────────────────────────────────────────────────
 
-export async function analyzeInvest(input: { epicId: string }): Promise<Result<InvestResult>> {
+export async function analyzeInvest(input: {
+  epicId: string;
+}): Promise<Result<InvestResult>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -59,7 +61,9 @@ export async function analyzeInvest(input: { epicId: string }): Promise<Result<I
         investBreakdown: true,
       },
     });
-    if (!epic) throw new Error("Épico não encontrado");
+    if (!epic) {
+      throw new Error("Épico não encontrado");
+    }
 
     const currentHash = computeHash(epic.title, epic.descriptionMd);
 

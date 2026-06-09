@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Input } from "@repo/design-system/components/ui/input";
 import { PlusIcon, Trash2Icon, UsersIcon } from "lucide-react";
+import { useState } from "react";
 
-export interface OrgChartFormData {
+export type OrgChartFormData = {
   nodes: { name: string; role: string; parentName: string }[];
-}
+};
 
-interface Props {
+type Props = {
   defaultValues?: Partial<OrgChartFormData>;
   onChange: (data: OrgChartFormData) => void;
-}
+};
 
 export function StepOrgChart({ defaultValues, onChange }: Props) {
   const [data, setData] = useState<OrgChartFormData>({
@@ -26,10 +25,7 @@ export function StepOrgChart({ defaultValues, onChange }: Props) {
     onChange(next);
   }
 
-  function updateNode(
-    i: number,
-    patch: Partial<OrgChartFormData["nodes"][0]>
-  ) {
+  function updateNode(i: number, patch: Partial<OrgChartFormData["nodes"][0]>) {
     update(data.nodes.map((n, j) => (j === i ? { ...n, ...patch } : n)));
   }
 
@@ -38,46 +34,42 @@ export function StepOrgChart({ defaultValues, onChange }: Props) {
       <div className="flex items-center gap-2">
         <UsersIcon className="h-5 w-5 text-muted-foreground" />
         <div>
-          <h2 className="text-lg font-semibold">Organograma mínimo</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-lg">Organograma mínimo</h2>
+          <p className="text-muted-foreground text-sm">
             Opcional. Lideranças e hierarquia básica. Pode ser expandido depois.
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="grid grid-cols-3 gap-2 text-xs text-muted-foreground font-medium px-1">
+        <div className="grid grid-cols-3 gap-2 px-1 font-medium text-muted-foreground text-xs">
           <span>Nome</span>
           <span>Cargo</span>
           <span>Manager (nome)</span>
         </div>
         {data.nodes.map((node, i) => (
-          <div key={i} className="grid grid-cols-3 gap-2 items-center">
+          <div className="grid grid-cols-3 items-center gap-2" key={i}>
             <Input
-              value={node.name}
               onChange={(e) => updateNode(i, { name: e.target.value })}
               placeholder="Nome"
+              value={node.name}
             />
             <Input
-              value={node.role}
               onChange={(e) => updateNode(i, { role: e.target.value })}
               placeholder="ex: CTO"
+              value={node.role}
             />
             <div className="flex gap-1">
               <Input
-                value={node.parentName}
-                onChange={(e) =>
-                  updateNode(i, { parentName: e.target.value })
-                }
+                onChange={(e) => updateNode(i, { parentName: e.target.value })}
                 placeholder="Nome do manager"
+                value={node.parentName}
               />
               {data.nodes.length > 1 && (
                 <Button
+                  onClick={() => update(data.nodes.filter((_, j) => j !== i))}
                   size="sm"
                   variant="ghost"
-                  onClick={() =>
-                    update(data.nodes.filter((_, j) => j !== i))
-                  }
                 >
                   <Trash2Icon className="h-3.5 w-3.5" />
                 </Button>
@@ -86,15 +78,12 @@ export function StepOrgChart({ defaultValues, onChange }: Props) {
           </div>
         ))}
         <Button
-          size="sm"
-          variant="outline"
           className="w-fit"
           onClick={() =>
-            update([
-              ...data.nodes,
-              { name: "", role: "", parentName: "" },
-            ])
+            update([...data.nodes, { name: "", role: "", parentName: "" }])
           }
+          size="sm"
+          variant="outline"
         >
           <PlusIcon className="mr-1 h-3.5 w-3.5" /> Pessoa
         </Button>

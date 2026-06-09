@@ -1,19 +1,30 @@
 const GITHUB_GQL = "https://api.github.com/graphql";
 
-async function githubQuery<T>(token: string, query: string, variables?: Record<string, unknown>): Promise<T> {
+async function githubQuery<T>(
+  token: string,
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> {
   const res = await fetch(GITHUB_GQL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
-      "User-Agent":   "cosmos-nebuloz/1.0",
+      "User-Agent": "cosmos-nebuloz/1.0",
     },
     body: JSON.stringify({ query, variables }),
   });
 
-  if (!res.ok) throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
-  const json = await res.json() as { data?: T; errors?: { message: string }[] };
-  if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join("; "));
+  if (!res.ok) {
+    throw new Error(`GitHub API ${res.status}: ${await res.text()}`);
+  }
+  const json = (await res.json()) as {
+    data?: T;
+    errors?: { message: string }[];
+  };
+  if (json.errors?.length) {
+    throw new Error(json.errors.map((e) => e.message).join("; "));
+  }
   return json.data as T;
 }
 
@@ -22,33 +33,33 @@ async function githubQuery<T>(token: string, query: string, variables?: Record<s
 export type GitHubViewer = { login: string; name: string | null };
 
 export type GitHubProject = {
-  id:     string;
-  title:  string;
-  url:    string;
+  id: string;
+  title: string;
+  url: string;
   number: number;
 };
 
 export type GitHubProjectItem = {
-  id:      string;
-  type:    string; // ISSUE | PULL_REQUEST | DRAFT_ISSUE
+  id: string;
+  type: string; // ISSUE | PULL_REQUEST | DRAFT_ISSUE
   content: {
     __typename: string;
-    title:      string;
-    body:       string | null;
-    url:        string;
-    number:     number;
-    state:      string; // OPEN | CLOSED | MERGED
-    assignees:  { nodes: { login: string; name: string | null }[] };
-    labels:     { nodes: { name: string }[] };
-    createdAt:  string;
-    updatedAt:  string;
+    title: string;
+    body: string | null;
+    url: string;
+    number: number;
+    state: string; // OPEN | CLOSED | MERGED
+    assignees: { nodes: { login: string; name: string | null }[] };
+    labels: { nodes: { name: string }[] };
+    createdAt: string;
+    updatedAt: string;
   } | null;
   fieldValues: {
     nodes: {
-      __typename:  string;
-      name?:       string; // SingleSelectFieldValue
-      text?:       string; // TextFieldValue
-      number?:     number; // NumberFieldValue
+      __typename: string;
+      name?: string; // SingleSelectFieldValue
+      text?: string; // TextFieldValue
+      number?: number; // NumberFieldValue
       field: { name: string };
     }[];
   };
@@ -56,15 +67,20 @@ export type GitHubProjectItem = {
 
 // ─── testConnection ───────────────────────────────────────────────────────────
 
-export async function githubTestConnection(token: string): Promise<{ ok: boolean; login?: string; error?: string }> {
+export async function githubTestConnection(
+  token: string
+): Promise<{ ok: boolean; login?: string; error?: string }> {
   try {
     const data = await githubQuery<{ viewer: GitHubViewer }>(
       token,
-      `{ viewer { login name } }`
+      "{ viewer { login name } }"
     );
     return { ok: true, login: data.viewer.login };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Connection failed" };
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Connection failed",
+    };
   }
 }
 
@@ -72,11 +88,11 @@ export async function githubTestConnection(token: string): Promise<{ ok: boolean
 
 export async function githubDiscoverProjects(
   token: string,
-  org: string,
+  org: string
 ): Promise<GitHubProject[]> {
   const data = await githubQuery<{
     organization: { projectsV2: { nodes: GitHubProject[] } } | null;
-    user:         { projectsV2: { nodes: GitHubProject[] } } | null;
+    user: { projectsV2: { nodes: GitHubProject[] } } | null;
   }>(
     token,
     `query DiscoverProjects($login: String!) {
@@ -98,7 +114,9 @@ export async function githubDiscoverProjects(
   const userProjects = data.user?.projectsV2.nodes ?? [];
   const seen = new Set<string>();
   return [...orgProjects, ...userProjects].filter((p) => {
-    if (seen.has(p.id)) return false;
+    if (seen.has(p.id)) {
+      return false;
+    }
     seen.add(p.id);
     return true;
   });
@@ -109,12 +127,12 @@ export async function githubDiscoverProjects(
 export async function githubImportProjectItems(
   token: string,
   projectId: string,
-  after?: string,
+  after?: string
 ): Promise<{ items: GitHubProjectItem[]; nextCursor: string | null }> {
   const data = await githubQuery<{
     node: {
       items: {
-        nodes:    GitHubProjectItem[];
+        nodes: GitHubProjectItem[];
         pageInfo: { hasNextPage: boolean; endCursor: string | null };
       };
     };
@@ -160,7 +178,7 @@ export async function githubImportProjectItems(
 
   const { nodes, pageInfo } = data.node.items;
   return {
-    items:      nodes,
+    items: nodes,
     nextCursor: pageInfo.hasNextPage ? pageInfo.endCursor : null,
   };
 }
@@ -168,6 +186,8 @@ export async function githubImportProjectItems(
 // ─── Map GitHub state → Cosmos statusId ──────────────────────────────────────
 
 export function githubStateToStatus(state: string): string {
-  if (state === "CLOSED" || state === "MERGED") return "DONE";
+  if (state === "CLOSED" || state === "MERGED") {
+    return "DONE";
+  }
   return "IN_PROGRESS";
 }

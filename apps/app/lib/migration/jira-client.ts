@@ -1,11 +1,11 @@
 import type { MigrationItem } from "./types";
 
-export interface JiraConfig {
+export type JiraConfig = {
   baseUrl: string;
   email: string;
   apiToken: string;
   projectKeys?: string[];
-}
+};
 
 function authHeader(email: string, apiToken: string): string {
   return `Basic ${Buffer.from(`${email}:${apiToken}`).toString("base64")}`;
@@ -76,8 +76,8 @@ export async function fetchJiraItems(
         (fields.customfield_10016 as number) ??
         undefined,
       parentTitle:
-        (fields.parent as { fields?: { summary?: string } })?.fields
-          ?.summary ?? undefined,
+        (fields.parent as { fields?: { summary?: string } })?.fields?.summary ??
+        undefined,
       externalId: issue.id,
     };
   });

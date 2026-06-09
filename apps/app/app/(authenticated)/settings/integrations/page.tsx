@@ -1,15 +1,18 @@
 import dynamic from "next/dynamic";
+import { appDesign } from "@/lib/app-design";
 import { listIntegrations } from "../../../actions/settings/integrations";
+import { PageHeader } from "../../components/page-header";
 
 const IntegrationsBoard = dynamic(
   () =>
-    import("./components/integrations-board").then(
-      (m) => m.IntegrationsBoard
-    ),
+    import("./components/integrations-board").then((m) => m.IntegrationsBoard),
   {
     loading: () => (
       <div className="flex min-h-[320px] items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar integrações…</span>
       </div>
     ),
@@ -26,15 +29,18 @@ export default async function IntegrationsPage() {
   const integrations = result.ok ? result.data : [];
 
   return (
-    <div className="flex w-full min-w-0 flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Integrações</h1>
-        <p className="text-muted-foreground text-sm">
-          Conecte suas ferramentas externas ao COSMOS para sincronizar dados e
-          automatizar fluxos de trabalho.
-        </p>
+    <div className={appDesign.shell}>
+      <PageHeader
+        breadcrumb={[
+          { label: "Configurações", href: "/settings/workspace" },
+          { label: "Integrações" },
+        ]}
+        subtitle="Conecte suas ferramentas externas ao COSMOS para sincronizar dados e automatizar fluxos."
+        title="Integrações"
+      />
+      <div className={appDesign.bodyScroll}>
+        <IntegrationsBoard initialIntegrations={integrations} />
       </div>
-      <IntegrationsBoard initialIntegrations={integrations} />
     </div>
   );
 }

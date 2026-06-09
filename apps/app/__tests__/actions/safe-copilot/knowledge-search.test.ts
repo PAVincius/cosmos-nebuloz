@@ -11,16 +11,17 @@ describe("chunkText", () => {
   it("splits long text into multiple chunks", () => {
     const long = Array.from(
       { length: 20 },
-      (_, i) => `paragraph ${i} with some content here`,
+      (_, i) => `paragraph ${i} with some content here`
     ).join("\n\n");
     const chunks = chunkText(long, { targetChars: 100 });
     expect(chunks.length).toBeGreaterThan(1);
   });
 
   it("each chunk fits within 1.5x target", () => {
-    const long = Array.from({ length: 30 }, (_, i) => "word ".repeat(40) + i).join(
-      "\n\n",
-    );
+    const long = Array.from(
+      { length: 30 },
+      (_, i) => "word ".repeat(40) + i
+    ).join("\n\n");
     const chunks = chunkText(long, { targetChars: 500 });
     for (const c of chunks) {
       expect(c.length).toBeLessThanOrEqual(750);

@@ -46,12 +46,14 @@ model Notification {
   id        String   @id @default(cuid())
   tenantId  String
   userId    String
-  type      String // mention/assignment/risk/deadline/system
+  type      String // mention/assignment/risk/deadline/system/broadcast
   title     String
   body      String?
   read      Boolean  @default(false)
+  pinned    Boolean  @default(false)
   metadata  Json?
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -60,14 +62,33 @@ model Notification {
   @@index([tenantId])
 }
 
+model NotificationPreference {
+  id          String  @id @default(cuid())
+  tenantId    String
+  userId      String
+  type        String // anomaly | mention | deadline | system
+  digestMode  Boolean @default(false)
+  digestCron  String? // cron expression e.g. "0 8 * * *" for daily 08:00
+  channelIn   Boolean @default(true) // in-app
+  channelMail Boolean @default(false)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, type])
+  @@index([tenantId, userId])
+}
+
 model AuditLog {
   id           String   @id @default(cuid())
   tenantId     String
   userId       String?
-  action       String // created/updated/deleted
-  entityType   String // Epic/Feature/Risk/Story/etc
-  entityId     String
+  actorId      String?
+  actorType    String? // user | system
+  action       String
+  entityType   String?
+  entityId     String?
   diff         Json?
+  metadata     Json?
   ipAddress    String?
   userAgent    String?
   targetUserId String?
@@ -79,6 +100,37 @@ model AuditLog {
   @@index([tenantId])
   @@index([tenantId, entityType, entityId])
   @@index([tenantId, createdAt])
+}
+
+// ── LGPD Data Subject Requests ────────────────────────────────────────────────
+
+enum DsrType {
+  ERASURE
+  PORTABILITY
+}
+
+enum DsrStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+model DataSubjectRequest {
+  id          String    @id @default(cuid())
+  tenantId    String
+  subjectId   String
+  type        DsrType
+  status      DsrStatus @default(PENDING)
+  requestedAt DateTime  @default(now())
+  processedAt DateTime?
+  metadata    Json?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, subjectId])
+  @@index([tenantId, status])
 }
 
 model Integration {

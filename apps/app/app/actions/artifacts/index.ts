@@ -1,13 +1,17 @@
 "use server";
 
+import { gzipSync } from "node:zlib";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
-import { storageClient, AI_PLAYGROUND_BUCKET, ensureBucket } from "@repo/storage";
 import type { ArtifactMetadata } from "@repo/storage";
-import { safeAction, type Result } from "../_base";
-import { SaveArtifactSchema, type SaveArtifactInput } from "./schema";
-import { gzipSync } from "node:zlib";
+import {
+  AI_PLAYGROUND_BUCKET,
+  ensureBucket,
+  storageClient,
+} from "@repo/storage";
+import { headers } from "next/headers";
+import { type Result, safeAction } from "../_base";
+import { type SaveArtifactInput, SaveArtifactSchema } from "./schema";
 
 const META_KEY = "aiPlaygroundArtifacts";
 
@@ -16,7 +20,9 @@ type TenantMeta = {
   [k: string]: unknown;
 };
 
-export async function saveArtifact(raw: SaveArtifactInput): Promise<Result<ArtifactMetadata>> {
+export async function saveArtifact(
+  raw: SaveArtifactInput
+): Promise<Result<ArtifactMetadata>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = SaveArtifactSchema.parse(raw);
@@ -36,7 +42,9 @@ export async function saveArtifact(raw: SaveArtifactInput): Promise<Result<Artif
         upsert: false,
       });
 
-    if (error) throw new Error(`Storage upload failed: ${error.message}`);
+    if (error) {
+      throw new Error(`Storage upload failed: ${error.message}`);
+    }
 
     const metadata: ArtifactMetadata = {
       id,
@@ -53,14 +61,15 @@ export async function saveArtifact(raw: SaveArtifactInput): Promise<Result<Artif
       where: { id: ctx.tenantId },
       select: { metadata: true },
     });
-    const existing = ((tenant?.metadata as TenantMeta)?.[META_KEY] ?? []) as ArtifactMetadata[];
+    const existing = ((tenant?.metadata as TenantMeta)?.[META_KEY] ??
+      []) as ArtifactMetadata[];
     await database.tenant.update({
       where: { id: ctx.tenantId },
       data: {
         metadata: {
           ...(tenant?.metadata as object),
           [META_KEY]: [...existing, metadata],
-        },
+        } as object,
       },
     });
 
@@ -80,7 +89,9 @@ export async function listArtifacts(): Promise<Result<ArtifactMetadata[]>> {
   });
 }
 
-export async function deleteArtifact(artifactId: string): Promise<Result<void>> {
+export async function deleteArtifact(
+  artifactId: string
+): Promise<Result<void>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -91,9 +102,13 @@ export async function deleteArtifact(artifactId: string): Promise<Result<void>> 
     const meta = tenant?.metadata as TenantMeta | null;
     const existing = (meta?.[META_KEY] ?? []) as ArtifactMetadata[];
     const artifact = existing.find((a) => a.id === artifactId);
-    if (!artifact) throw new Error("Artifact not found");
+    if (!artifact) {
+      throw new Error("Artifact not found");
+    }
 
-    await storageClient.storage.from(AI_PLAYGROUND_BUCKET).remove([artifact.storagePath]);
+    await storageClient.storage
+      .from(AI_PLAYGROUND_BUCKET)
+      .remove([artifact.storagePath]);
 
     await database.tenant.update({
       where: { id: ctx.tenantId },
@@ -101,7 +116,7 @@ export async function deleteArtifact(artifactId: string): Promise<Result<void>> 
         metadata: {
           ...(tenant?.metadata as object),
           [META_KEY]: existing.filter((a) => a.id !== artifactId),
-        },
+        } as object,
       },
     });
   });

@@ -1,8 +1,8 @@
-import { getVelocityOverview } from "@/app/actions/velocity";
-import { getFlowScopeOptions } from "@/app/actions/flow-metrics";
+import { TrendingUpIcon, UsersIcon, ZapIcon } from "lucide-react";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getFlowScopeOptions } from "@/app/actions/flow-metrics";
+import { getVelocityOverview } from "@/app/actions/velocity";
 import { appDesign } from "@/lib/app-design";
-import { ZapIcon, TrendingUpIcon, UsersIcon } from "lucide-react";
 import { VelocityDashboard } from "./components/velocity-dashboard";
 
 export const metadata = {
@@ -24,25 +24,28 @@ export default async function VelocityPage() {
     ).entries()
   ).map(([id, name]) => ({ id, name }));
 
-  const avgVelocity = teams.length > 0
-    ? Math.round(teams.reduce((s, t) => s + t.avgSPPerSprint, 0) / teams.length)
-    : 0;
+  const avgVelocity =
+    teams.length > 0
+      ? Math.round(
+          teams.reduce((s, t) => s + t.avgSPPerSprint, 0) / teams.length
+        )
+      : 0;
   const trendUp = teams.filter((t) => t.trend === "up").length;
 
   return (
     <div className={appDesign.shell}>
       <PageHeader
         breadcrumb={[{ label: "Analytics", href: "/analytics" }]}
-        title="Velocity"
-        subtitle="Histórico de entrega por sprint, por time e por ART. Métrica de capacidade — não de valor entregue."
         stats={[
-          { label: "Times",           value: teams.length,  icon: UsersIcon },
-          { label: "Média SP/Sprint", value: avgVelocity,   icon: ZapIcon },
-          { label: "Trend ↑",        value: trendUp,        icon: TrendingUpIcon },
+          { label: "Times", value: teams.length, icon: UsersIcon },
+          { label: "Média SP/Sprint", value: avgVelocity, icon: ZapIcon },
+          { label: "Trend ↑", value: trendUp, icon: TrendingUpIcon },
         ]}
+        subtitle="Histórico de entrega por sprint, por time e por ART. Métrica de capacidade — não de valor entregue."
+        title="Velocity"
       />
       <div className={appDesign.bodyScroll}>
-        <VelocityDashboard teams={teams} arts={arts} />
+        <VelocityDashboard arts={arts} teams={teams} />
       </div>
     </div>
   );

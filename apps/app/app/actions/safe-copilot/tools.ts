@@ -458,5 +458,39 @@ export function buildCopilotTools(tenantId: string) {
 
     estimateAwsCost: awsPricingTool,
     estimateGcpCost: gcpPricingTool,
+
+    submitSuggestion: tool({
+      description:
+        "Submit a structured action suggestion for the user to review. Use INSTEAD of <suggestion> XML tags. For navigate_to: payload = { route, params?, label }. For create_* types: payload = { items: [{ title, ... }] }.",
+      inputSchema: z.object({
+        type: z.enum([
+          "navigate_to",
+          "create_pi_objectives",
+          "create_risks",
+          "flag_dependencies",
+          "create_improvement_action",
+        ]),
+        payload: z.record(z.string(), z.unknown()),
+      }),
+      execute: async ({ type, payload }) => ({ ok: true, type, payload }),
+    }),
+
+    submitReport: tool({
+      description:
+        "Submit a tabular data report with CSV export. Use INSTEAD of <report> XML tags. Call whenever the answer contains data better presented as a table: ART/team metrics, feature lists with multiple fields, period comparisons.",
+      inputSchema: z.object({
+        title: z.string().min(1).max(200),
+        columns: z.array(z.string().min(1)).min(1).max(20),
+        rows: z
+          .array(z.array(z.union([z.string(), z.number(), z.null()])))
+          .max(100),
+      }),
+      execute: async ({ title, columns, rows }) => ({
+        ok: true,
+        title,
+        columns,
+        rows,
+      }),
+    }),
   };
 }

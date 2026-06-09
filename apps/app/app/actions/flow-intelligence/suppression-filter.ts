@@ -33,7 +33,10 @@ export async function classifyRecurrence(args: {
   return { kind: "recurring", priorCount, lastSeenAt: withHit[0]?.ranAt };
 }
 
-export function shouldSuppress(kind: RecurrenceKind, lastSeenAt?: Date): boolean {
+export function shouldSuppress(
+  kind: RecurrenceKind,
+  lastSeenAt?: Date
+): boolean {
   if (kind === "new" || kind === "chronic") {
     return false;
   }

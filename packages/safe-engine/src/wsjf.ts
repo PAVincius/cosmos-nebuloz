@@ -1,7 +1,7 @@
 /**
  * Parameters for WSJF (Weighted Shortest Job First) calculation
  */
-export interface WSJFParameters {
+export type WSJFParameters = {
   /** Business Value (1, 2, 3, 5, 8, 13, 20) */
   bv: number;
   /** Time Criticality (1, 2, 3, 5, 8, 13, 20) */
@@ -10,12 +10,12 @@ export interface WSJFParameters {
   rr: number;
   /** Job Size (1, 2, 3, 5, 8, 13, 20) */
   js: number;
-}
+};
 
 /**
  * Calculates the Weighted Shortest Job First (WSJF) score.
  * Formula: (Business Value + Time Criticality + Risk Reduction) / Job Size
- * 
+ *
  * @param params The WSJF parameters
  * @returns The calculated WSJF score, rounded to 2 decimal places. Returns 0 if job size is invalid.
  */

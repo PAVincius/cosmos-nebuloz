@@ -9,15 +9,18 @@ export const GOVERNANCE_STATES = [
 export type GovernanceState = (typeof GOVERNANCE_STATES)[number];
 
 const TRANSITIONS: Record<GovernanceState, GovernanceState[]> = {
-  FUNNEL:            ["ANALYZING", "CANCELLED"],
-  ANALYZING:         ["FUNNEL", "PORTFOLIO_BACKLOG", "CANCELLED"],
+  FUNNEL: ["ANALYZING", "CANCELLED"],
+  ANALYZING: ["FUNNEL", "PORTFOLIO_BACKLOG", "CANCELLED"],
   PORTFOLIO_BACKLOG: ["ANALYZING", "IMPLEMENTING", "CANCELLED"],
-  IMPLEMENTING:      ["DONE", "CANCELLED"],
-  DONE:              [],
-  CANCELLED:         [],
+  IMPLEMENTING: ["DONE", "CANCELLED"],
+  DONE: [],
+  CANCELLED: [],
 };
 
-export function canTransition(from: GovernanceState, to: GovernanceState): boolean {
+export function canTransition(
+  from: GovernanceState,
+  to: GovernanceState
+): boolean {
   return TRANSITIONS[from]?.includes(to) ?? false;
 }
 

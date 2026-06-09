@@ -49,13 +49,13 @@ const METRIC_LABELS: Record<string, string> = {
 };
 
 const COLORS = [
-  "#5e6ad2",
-  "#22c55e",
-  "#f59e0b",
-  "#ef4444",
-  "#8b5cf6",
-  "#06b6d4",
-  "#f97316",
+  "hsl(var(--primary))",
+  "hsl(var(--success))",
+  "oklch(0.68 0.18 50)",
+  "hsl(var(--destructive))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "hsl(var(--chart-3))",
 ];
 
 function MetricImpactMatrix({ actions }: { actions: ActionItem[] }) {

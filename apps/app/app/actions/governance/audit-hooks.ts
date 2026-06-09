@@ -8,7 +8,7 @@ export async function logBudgetChange(
     newAmount: number;
     justificativa: string;
     valueStreamId?: string;
-  },
+  }
 ) {
   return logDecision(ctx, {
     tipo: "budget_decision",
@@ -35,7 +35,7 @@ export async function logThemeChange(
     oldValue: unknown;
     newValue: unknown;
     justificativa: string;
-  },
+  }
 ) {
   return logDecision(ctx, {
     tipo: "theme_decision",

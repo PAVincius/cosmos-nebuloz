@@ -1,10 +1,15 @@
-import { listGovernedEpics, listApprovalRequests } from "@/app/actions/governance";
-import { GovernanceBoard } from "./components/governance-board";
-import { GovernanceKanban } from "./components/governance-kanban";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import {
+  listApprovalRequests,
+  listGovernedEpics,
+} from "@/app/actions/governance";
 import {
   GOVERNANCE_STATES,
   type GovernanceState,
 } from "@/app/actions/governance/state-machine";
+import { appDesign } from "@/lib/app-design";
+import { GovernanceBoard } from "./components/governance-board";
+import { GovernanceKanban } from "./components/governance-kanban";
 
 export const metadata = { title: "Governance Board — COSMOS" };
 
@@ -41,26 +46,26 @@ export default async function GovernancePage() {
   }));
 
   return (
-    <div className="flex h-full min-w-0 flex-col">
-      <div className="flex items-center justify-between border-b px-6 py-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">
-            Portfolio Governance Board
-          </h1>
-          <p className="text-muted-foreground mt-0.5 text-sm">
-            Épicos em fluxo de aprovação LPM — SAFe 6.0
-          </p>
-        </div>
-      </div>
-
-      <div className="min-w-0 flex-1 overflow-y-auto p-6 space-y-10">
+    <div className={appDesign.shell}>
+      <PageHeader
+        breadcrumb={[
+          { label: "Portfolio", href: "/portfolio" },
+          { label: "Governance" },
+        ]}
+        subtitle="Épicos em fluxo de aprovação LPM — SAFe 6.0"
+        title="Portfolio Governance Board"
+      />
+      <div className={`${appDesign.bodyScroll} flex flex-col gap-10`}>
         <section>
-          <h2 className="mb-4 text-lg font-semibold">Fluxo de Aprovação</h2>
+          <h2 className="mb-4 font-semibold text-base tracking-tight">
+            Fluxo de Aprovação
+          </h2>
           <GovernanceBoard epics={epics} requests={requests} />
         </section>
-
         <section>
-          <h2 className="mb-4 text-lg font-semibold">Pipeline de Governança</h2>
+          <h2 className="mb-4 font-semibold text-base tracking-tight">
+            Pipeline de Governança
+          </h2>
           <GovernanceKanban epics={kanbanEpics} />
         </section>
       </div>

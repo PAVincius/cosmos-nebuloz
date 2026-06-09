@@ -7,14 +7,23 @@ export async function computeTeamCapability(args: {
   windowSprints: number;
 }) {
   const recentSprints = await database.sprint.findMany({
-    where: { tenantId: args.tenantId, teamId: args.teamId, status: "COMPLETED" },
+    where: {
+      tenantId: args.tenantId,
+      teamId: args.teamId,
+      status: "COMPLETED",
+    },
     orderBy: { endDate: "desc" },
     take: args.windowSprints,
     select: { id: true },
   });
   const sprintIds = recentSprints.map((s) => s.id);
   if (sprintIds.length === 0) {
-    return { teamId: args.teamId, artId: null, capabilities: {}, windowSprints: args.windowSprints };
+    return {
+      teamId: args.teamId,
+      artId: null,
+      capabilities: {},
+      windowSprints: args.windowSprints,
+    };
   }
 
   const tasks = await database.task.findMany({
@@ -33,16 +42,22 @@ export async function computeTeamCapability(args: {
     },
   });
 
-  const byType: Record<string, { count: number; sp: number; cycleHours: number[] }> = {};
+  const byType: Record<
+    string,
+    { count: number; sp: number; cycleHours: number[] }
+  > = {};
   for (const t of tasks) {
-    if (!t.taskType) continue;
+    if (!t.taskType) {
+      continue;
+    }
     if (!byType[t.taskType]) {
       byType[t.taskType] = { count: 0, sp: 0, cycleHours: [] };
     }
     byType[t.taskType].count++;
     byType[t.taskType].sp += t.actualSp ?? t.estimatedSp ?? 0;
     if (t.completedAt) {
-      const hours = (t.completedAt.getTime() - t.createdAt.getTime()) / (1000 * 60 * 60);
+      const hours =
+        (t.completedAt.getTime() - t.createdAt.getTime()) / (1000 * 60 * 60);
       byType[t.taskType].cycleHours.push(hours);
     }
   }
@@ -53,7 +68,9 @@ export async function computeTeamCapability(args: {
   > = {};
   for (const k of TASK_TYPES) {
     const stats = byType[k];
-    if (!stats || stats.count === 0) continue;
+    if (!stats || stats.count === 0) {
+      continue;
+    }
     const avgCycle =
       stats.cycleHours.length > 0
         ? stats.cycleHours.reduce((a, b) => a + b, 0) / stats.cycleHours.length

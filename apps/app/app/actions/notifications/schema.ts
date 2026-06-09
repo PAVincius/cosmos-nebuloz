@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  PaginationSchema,
-  cuid,
-  nnStr,
-  optStr,
-} from "../_base";
+import { cuid, nnStr, optStr, PaginationSchema } from "../_base";
 
 export const NotificationTypeSchema = z.enum([
   "mention",

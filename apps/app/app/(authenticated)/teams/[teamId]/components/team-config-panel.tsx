@@ -1,28 +1,49 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import {
-  PlusIcon,
-  TrashIcon,
-  SaveIcon,
-  UsersIcon,
-  ZapIcon,
-  SettingsIcon,
-  XIcon,
-} from "lucide-react";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { updateTeamConfig } from "../../actions";
+import {
+  PlusIcon,
+  SaveIcon,
+  SettingsIcon,
+  TrashIcon,
+  UsersIcon,
+  XIcon,
+  ZapIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import type { TeamMember } from "../../actions";
+import { updateTeamConfig } from "../../actions";
 
-const ROLES = ["SM", "PO", "DEV", "QA", "DevOps", "UX", "Arquiteto", "Analista"];
+const ROLES = [
+  "SM",
+  "PO",
+  "DEV",
+  "QA",
+  "DevOps",
+  "UX",
+  "Arquiteto",
+  "Analista",
+];
 
 const SKILL_SUGGESTIONS = [
-  "React", "Next.js", "TypeScript", "Node.js", "Python", "Java", "Go",
-  "PostgreSQL", "AWS", "Docker", "Kubernetes", "Figma", "GraphQL", "REST",
+  "React",
+  "Next.js",
+  "TypeScript",
+  "Node.js",
+  "Python",
+  "Java",
+  "Go",
+  "PostgreSQL",
+  "AWS",
+  "Docker",
+  "Kubernetes",
+  "Figma",
+  "GraphQL",
+  "REST",
 ];
 
 type TeamData = {
@@ -49,11 +70,17 @@ export function TeamConfigPanel({
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [activeTab, setActiveTab] = useState<"members" | "capacity" | "settings">("members");
+  const [activeTab, setActiveTab] = useState<
+    "members" | "capacity" | "settings"
+  >("members");
 
   const [members, setMembers] = useState<TeamMember[]>(team.members);
-  const [velocity, setVelocity] = useState<string>(team.velocity?.toString() ?? "");
-  const [sprintLength, setSprintLength] = useState<string>(team.sprintLengthDays.toString());
+  const [velocity, setVelocity] = useState<string>(
+    team.velocity?.toString() ?? ""
+  );
+  const [sprintLength, setSprintLength] = useState<string>(
+    team.sprintLengthDays.toString()
+  );
   const [teamName, setTeamName] = useState(team.name);
   const [artId, setArtId] = useState(team.artId ?? "none");
   const [saved, setSaved] = useState(false);
@@ -65,7 +92,9 @@ export function TeamConfigPanel({
   const [skillInput, setSkillInput] = useState("");
 
   function addMember() {
-    if (!newMemberName.trim()) return;
+    if (!newMemberName.trim()) {
+      return;
+    }
     setMembers((prev) => [
       ...prev,
       {
@@ -135,14 +164,14 @@ export function TeamConfigPanel({
       <div className="flex border-b">
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
-            key={key}
-            type="button"
-            onClick={() => setActiveTab(key)}
-            className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors ${
               activeTab === key
-                ? "border-b-2 border-primary text-primary"
+                ? "border-primary border-b-2 text-primary"
                 : "text-muted-foreground hover:text-foreground"
             }`}
+            key={key}
+            onClick={() => setActiveTab(key)}
+            type="button"
           >
             <Icon className="h-4 w-4" />
             {label}
@@ -150,9 +179,9 @@ export function TeamConfigPanel({
         ))}
         <div className="ml-auto flex items-center pr-3">
           <Button
-            size="sm"
-            onClick={handleSave}
             disabled={isPending}
+            onClick={handleSave}
+            size="sm"
             variant={saved ? "outline" : "default"}
           >
             <SaveIcon className="mr-1.5 h-3.5 w-3.5" />
@@ -165,23 +194,23 @@ export function TeamConfigPanel({
         {activeTab === "members" && (
           <div className="flex flex-col gap-5">
             <div className="rounded-lg border bg-muted/20 p-4">
-              <p className="text-sm font-medium mb-3">Adicionar membro</p>
+              <p className="mb-3 font-medium text-sm">Adicionar membro</p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <div className="flex flex-col gap-1.5">
                   <Label className="text-xs">Nome</Label>
                   <Input
-                    placeholder="Nome do membro"
-                    value={newMemberName}
                     onChange={(e) => setNewMemberName(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && addMember()}
+                    placeholder="Nome do membro"
+                    value={newMemberName}
                   />
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <Label className="text-xs">Papel</Label>
                   <select
-                    value={newMemberRole}
+                    className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-foreground text-sm shadow-sm"
                     onChange={(e) => setNewMemberRole(e.target.value)}
-                    className="border-input bg-background text-foreground flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm"
+                    value={newMemberRole}
                   >
                     {ROLES.map((r) => (
                       <option key={r} value={r}>
@@ -193,19 +222,19 @@ export function TeamConfigPanel({
                 <div className="flex flex-col gap-1.5">
                   <Label className="text-xs">Horas/semana</Label>
                   <Input
-                    type="number"
-                    min={1}
-                    max={60}
-                    value={newMemberHours}
-                    onChange={(e) => setNewMemberHours(e.target.value)}
                     className="text-center"
+                    max={60}
+                    min={1}
+                    onChange={(e) => setNewMemberHours(e.target.value)}
+                    type="number"
+                    value={newMemberHours}
                   />
                 </div>
                 <div className="flex items-end">
                   <Button
-                    onClick={addMember}
-                    disabled={!newMemberName.trim()}
                     className="w-full"
+                    disabled={!newMemberName.trim()}
+                    onClick={addMember}
                     size="sm"
                   >
                     <PlusIcon className="mr-1.5 h-3.5 w-3.5" />
@@ -215,22 +244,23 @@ export function TeamConfigPanel({
               </div>
 
               <div className="mt-3 flex flex-col gap-1.5">
-                <Label className="text-xs">Skills (pressione Enter para adicionar)</Label>
-                <div className="flex flex-wrap gap-1.5 min-h-8">
+                <Label className="text-xs">
+                  Skills (pressione Enter para adicionar)
+                </Label>
+                <div className="flex min-h-8 flex-wrap gap-1.5">
                   {newMemberSkills.map((s) => (
                     <Badge
-                      key={s}
-                      variant="secondary"
                       className="cursor-pointer gap-1"
+                      key={s}
                       onClick={() => removeSkill(s)}
+                      variant="secondary"
                     >
                       {s}
                       <XIcon className="h-2.5 w-2.5" />
                     </Badge>
                   ))}
                   <Input
-                    placeholder="ex: React, Node..."
-                    value={skillInput}
+                    className="h-7 w-32 text-xs"
                     onChange={(e) => setSkillInput(e.target.value)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === ",") {
@@ -238,47 +268,48 @@ export function TeamConfigPanel({
                         addSkill(skillInput);
                       }
                     }}
-                    className="h-7 w-32 text-xs"
+                    placeholder="ex: React, Node..."
+                    value={skillInput}
                   />
                 </div>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {SKILL_SUGGESTIONS.filter(
-                    (s) => !newMemberSkills.includes(s)
-                  ).slice(0, 8).map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => addSkill(s)}
-                      className="rounded border px-2 py-0.5 text-xs text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-                    >
-                      + {s}
-                    </button>
-                  ))}
+                <div className="mt-1 flex flex-wrap gap-1">
+                  {SKILL_SUGGESTIONS.filter((s) => !newMemberSkills.includes(s))
+                    .slice(0, 8)
+                    .map((s) => (
+                      <button
+                        className="rounded border px-2 py-0.5 text-muted-foreground text-xs transition-colors hover:border-primary hover:text-primary"
+                        key={s}
+                        onClick={() => addSkill(s)}
+                        type="button"
+                      >
+                        + {s}
+                      </button>
+                    ))}
                 </div>
               </div>
             </div>
 
             {members.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center">
-                <UsersIcon className="text-muted-foreground mb-2 h-8 w-8" />
+                <UsersIcon className="mb-2 h-8 w-8 text-muted-foreground" />
                 <p className="text-muted-foreground text-sm">
                   Nenhum membro adicionado ainda.
                 </p>
               </div>
             ) : (
               <div className="flex flex-col gap-2">
-                {members.map((m) => (
+                {members.map((m, i) => (
                   <div
-                    key={m.id}
                     className="flex items-center gap-3 rounded-lg border px-4 py-3"
+                    key={m.id ?? `member-${i}`}
                   >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold shrink-0">
+                    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary text-xs">
                       {m.name.slice(0, 2).toUpperCase()}
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-sm">{m.name}</span>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge className="text-xs" variant="outline">
                           {m.role}
                         </Badge>
                         <span className="text-muted-foreground text-xs">
@@ -286,12 +317,12 @@ export function TeamConfigPanel({
                         </span>
                       </div>
                       {m.skills.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-1">
+                        <div className="mt-1 flex flex-wrap gap-1">
                           {m.skills.map((s) => (
                             <Badge
+                              className="text-xs"
                               key={s}
                               variant="secondary"
-                              className="text-xs"
                             >
                               {s}
                             </Badge>
@@ -300,9 +331,9 @@ export function TeamConfigPanel({
                       )}
                     </div>
                     <button
-                      type="button"
+                      className="text-muted-foreground transition-colors hover:text-destructive"
                       onClick={() => removeMember(m.id)}
-                      className="text-muted-foreground hover:text-destructive transition-colors"
+                      type="button"
                     >
                       <TrashIcon className="h-4 w-4" />
                     </button>
@@ -319,11 +350,11 @@ export function TeamConfigPanel({
               <div className="flex flex-col gap-2">
                 <Label>Velocidade (story points / sprint)</Label>
                 <Input
-                  type="number"
                   min={0}
-                  placeholder="ex: 40"
-                  value={velocity}
                   onChange={(e) => setVelocity(e.target.value)}
+                  placeholder="ex: 40"
+                  type="number"
+                  value={velocity}
                 />
                 <p className="text-muted-foreground text-xs">
                   Média histórica de SPs entregues por sprint.
@@ -334,58 +365,66 @@ export function TeamConfigPanel({
                 <div className="grid grid-cols-3 gap-2">
                   {[7, 14, 21].map((d) => (
                     <button
-                      key={d}
-                      type="button"
-                      onClick={() => setSprintLength(d.toString())}
-                      className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+                      className={`rounded-lg border px-3 py-2 font-medium text-sm transition-colors ${
                         sprintLength === d.toString()
                           ? "border-primary bg-primary/10 text-primary"
                           : "border-border hover:border-primary/50"
                       }`}
+                      key={d}
+                      onClick={() => setSprintLength(d.toString())}
+                      type="button"
                     >
                       {d}d
                     </button>
                   ))}
                 </div>
                 <Input
-                  type="number"
-                  min={1}
-                  max={90}
-                  placeholder="Personalizado..."
-                  value={![7, 14, 21].includes(Number(sprintLength)) ? sprintLength : ""}
-                  onChange={(e) => setSprintLength(e.target.value)}
                   className="mt-1"
+                  max={90}
+                  min={1}
+                  onChange={(e) => setSprintLength(e.target.value)}
+                  placeholder="Personalizado..."
+                  type="number"
+                  value={
+                    [7, 14, 21].includes(Number(sprintLength))
+                      ? ""
+                      : sprintLength
+                  }
                 />
               </div>
             </div>
 
             {members.length > 0 && (
-              <div className="rounded-lg bg-muted/30 p-4 space-y-3">
-                <p className="text-sm font-medium">Resumo de capacidade</p>
+              <div className="space-y-3 rounded-lg bg-muted/30 p-4">
+                <p className="font-medium text-sm">Resumo de capacidade</p>
                 <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                   <div>
-                    <p className="text-xl font-semibold">{members.length}</p>
+                    <p className="font-semibold text-xl">{members.length}</p>
                     <p className="text-muted-foreground text-xs">membros</p>
                   </div>
                   <div>
-                    <p className="text-xl font-semibold">
+                    <p className="font-semibold text-xl">
                       {members.reduce((s, m) => s + m.hoursPerWeek, 0)}h
                     </p>
-                    <p className="text-muted-foreground text-xs">h/semana total</p>
-                  </div>
-                  <div>
-                    <p className="text-xl font-semibold">{totalCapacity}h</p>
-                    <p className="text-muted-foreground text-xs">cap. por sprint</p>
-                  </div>
-                  <div>
-                    <p className="text-xl font-semibold">
-                      {spPerHour ?? "—"}
+                    <p className="text-muted-foreground text-xs">
+                      h/semana total
                     </p>
-                    <p className="text-muted-foreground text-xs">SP/hora (throughput)</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-xl">{totalCapacity}h</p>
+                    <p className="text-muted-foreground text-xs">
+                      cap. por sprint
+                    </p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-xl">{spPerHour ?? "—"}</p>
+                    <p className="text-muted-foreground text-xs">
+                      SP/hora (throughput)
+                    </p>
                   </div>
                 </div>
                 {velocity && totalCapacity > 0 && (
-                  <div className="rounded bg-primary/5 border border-primary/20 px-3 py-2 text-xs text-muted-foreground">
+                  <div className="rounded border border-primary/20 bg-primary/5 px-3 py-2 text-muted-foreground text-xs">
                     Com velocidade de <strong>{velocity} SP</strong> e{" "}
                     <strong>{totalCapacity}h</strong> de capacidade, o time
                     entrega <strong>{spPerHour} SP/hora</strong>. Baseline para
@@ -408,16 +447,16 @@ export function TeamConfigPanel({
             <div className="flex flex-col gap-2">
               <Label>Nome do time</Label>
               <Input
-                value={teamName}
                 onChange={(e) => setTeamName(e.target.value)}
+                value={teamName}
               />
             </div>
             <div className="flex flex-col gap-2">
               <Label>ART vinculado</Label>
               <select
-                value={artId}
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-foreground text-sm shadow-sm"
                 onChange={(e) => setArtId(e.target.value)}
-                className="border-input bg-background text-foreground flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm"
+                value={artId}
               >
                 <option value="none">Sem ART (time independente)</option>
                 {arts.map((art) => (

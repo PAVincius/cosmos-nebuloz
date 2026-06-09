@@ -1,33 +1,39 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
-import { type SolutionEpic } from "@repo/database";
-import { headers } from "next/headers";
+import { database, type SolutionEpic } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
-  CreateSolutionEpicSchema,
-  UpdateSolutionEpicSchema,
-  SolutionEpicFiltersSchema,
   type CreateSolutionEpicInput,
-  type UpdateSolutionEpicInput,
+  CreateSolutionEpicSchema,
   type SolutionEpicFilters,
+  SolutionEpicFiltersSchema,
   type SolutionEpicWithSolutionTrain,
+  type UpdateSolutionEpicInput,
+  UpdateSolutionEpicSchema,
 } from "./schema";
 
-export type { CreateSolutionEpicInput, UpdateSolutionEpicInput, SolutionEpicFilters, SolutionEpicWithSolutionTrain };
+export type {
+  CreateSolutionEpicInput,
+  UpdateSolutionEpicInput,
+  SolutionEpicFilters,
+  SolutionEpicWithSolutionTrain,
+};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listSolutionEpics(raw?: unknown): Promise<Result<Page<SolutionEpic>>> {
+export async function listSolutionEpics(
+  raw?: unknown
+): Promise<Result<Page<SolutionEpic>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const filters = SolutionEpicFiltersSchema.parse(raw ?? {});
@@ -63,14 +69,18 @@ export async function getSolutionEpicById(
       include: { solutionTrain: true },
     });
 
-    if (!epic) throw new Error("Solution Epic não encontrado.");
+    if (!epic) {
+      throw new Error("Solution Epic não encontrado.");
+    }
     return epic;
   });
 }
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
-export async function createSolutionEpic(raw: unknown): Promise<Result<SolutionEpic>> {
+export async function createSolutionEpic(
+  raw: unknown
+): Promise<Result<SolutionEpic>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const data = CreateSolutionEpicSchema.parse(raw);
@@ -103,13 +113,17 @@ export async function updateSolutionEpic(
     const existing = await database.solutionEpic.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Solution Epic não encontrado.");
+    if (!existing) {
+      throw new Error("Solution Epic não encontrado.");
+    }
 
     const updated = await database.solutionEpic.update({
       where: { id },
       data: {
         ...(data.title !== undefined ? { title: data.title } : {}),
-        ...(data.description !== undefined ? { description: data.description ?? null } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description ?? null }
+          : {}),
         ...(data.status !== undefined ? { status: data.status } : {}),
         ...(data.wsjfScore !== undefined ? { wsjfScore: data.wsjfScore } : {}),
       },
@@ -121,14 +135,18 @@ export async function updateSolutionEpic(
   });
 }
 
-export async function deleteSolutionEpic(id: string): Promise<Result<{ id: string }>> {
+export async function deleteSolutionEpic(
+  id: string
+): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
     const existing = await database.solutionEpic.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Solution Epic não encontrado.");
+    if (!existing) {
+      throw new Error("Solution Epic não encontrado.");
+    }
 
     await database.solutionEpic.delete({ where: { id } });
 

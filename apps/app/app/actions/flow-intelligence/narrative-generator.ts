@@ -1,9 +1,10 @@
+import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { generateText } from "ai";
-import { getAIModel, getActiveProvider } from "@repo/ai/lib/models";
-import { RULE_PROMPTS, type AnomalyData } from "./anomaly-prompts";
+import { type AnomalyData, RULE_PROMPTS } from "./anomaly-prompts";
 import type { RecurrenceKind } from "./suppression-filter";
 
-const SYSTEM = `You are a SAFe Release Train Engineer assistant. Explain flow anomalies to RTEs and SMs in 2-3 plain-English sentences, then give 1-2 specific next-sprint actions. Never give generic advice. Return valid JSON only.`;
+const SYSTEM =
+  "You are a SAFe Release Train Engineer assistant. Explain flow anomalies to RTEs and SMs in 2-3 plain-English sentences, then give 1-2 specific next-sprint actions. Never give generic advice. Return valid JSON only.";
 
 export async function generateNarrative(args: {
   rule: string;
@@ -38,10 +39,15 @@ export async function generateNarrative(args: {
 
     const match = text.match(/\{[\s\S]*\}/);
     if (match) {
-      const parsed = JSON.parse(match[0]) as { narrative?: unknown; actions?: unknown };
+      const parsed = JSON.parse(match[0]) as {
+        narrative?: unknown;
+        actions?: unknown;
+      };
       return {
         narrative: String(parsed.narrative ?? ""),
-        actions: Array.isArray(parsed.actions) ? parsed.actions.map(String) : [],
+        actions: Array.isArray(parsed.actions)
+          ? parsed.actions.map(String)
+          : [],
       };
     }
     return { narrative: text.slice(0, 600), actions: [] };

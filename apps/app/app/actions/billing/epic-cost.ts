@@ -18,25 +18,31 @@ export async function getEpicCost(epicId: string): Promise<EpicCostResult> {
 
   const epic = await database.epic.findFirst({
     where: { id: epicId, tenantId },
-    select: { id: true, themeId: true },
+    select: { id: true, strategicThemeId: true },
   });
 
   if (!epic) {
     throw new Error("Epic não encontrada.");
   }
 
-  if (!epic.themeId) {
-    return { epicId, themeId: null, totalCost: 0, currency: "USD", hasMapping: false };
+  if (!epic.strategicThemeId) {
+    return {
+      epicId,
+      themeId: null,
+      totalCost: 0,
+      currency: "USD",
+      hasMapping: false,
+    };
   }
 
   const agg = await database.billingEntry.aggregate({
-    where: { tenantId, themeId: epic.themeId },
+    where: { tenantId, themeId: epic.strategicThemeId },
     _sum: { effectiveCost: true },
   });
 
   return {
     epicId,
-    themeId: epic.themeId,
+    themeId: epic.strategicThemeId,
     totalCost: agg._sum.effectiveCost ? Number(agg._sum.effectiveCost) : 0,
     currency: "USD",
     hasMapping: true,

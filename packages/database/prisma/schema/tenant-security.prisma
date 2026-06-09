@@ -1,0 +1,16 @@
+// Story-033: Tenant security policy — IP allowlist, 2FA enforcement, terminology
+
+model TenantSecurityPolicy {
+  id               String   @id @default(cuid())
+  tenantId         String   @unique
+  require2FA       Boolean  @default(false)
+  gracePeriodDays  Int      @default(7)
+  allowedIpRanges  String[] @default([])
+  terminologyMap   Json?
+  updatedAt        DateTime @updatedAt
+  updatedBy        String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}

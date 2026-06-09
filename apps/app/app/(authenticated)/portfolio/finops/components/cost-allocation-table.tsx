@@ -28,7 +28,7 @@ export function CostAllocationTable({ rows, totalCost }: Props) {
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r.themeId} className="border-b">
+            <tr className="border-b" key={r.themeId}>
               <td className="p-2 font-medium">{r.themeName}</td>
               <td className="p-2 text-right">{formatUSD(r.cost)}</td>
               <td className="p-2 text-right">
@@ -39,7 +39,7 @@ export function CostAllocationTable({ rows, totalCost }: Props) {
                       style={{ width: `${r.pct}%` }}
                     />
                   </div>
-                  <span className="w-8 text-right text-xs text-muted-foreground">
+                  <span className="w-8 text-right text-muted-foreground text-xs">
                     {r.pct}%
                   </span>
                 </div>

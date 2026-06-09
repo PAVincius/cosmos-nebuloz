@@ -1,27 +1,27 @@
 "use client";
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useTransition,
-  useCallback,
-  type KeyboardEvent,
-} from "react";
-import { SearchIcon, MailPlusIcon, ArrowRightIcon } from "lucide-react";
-import { Input } from "@repo/design-system/components/ui/input";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Label } from "@repo/design-system/components/ui/label";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
 import Fuse from "fuse.js";
+import { ArrowRightIcon, MailPlusIcon, SearchIcon } from "lucide-react";
+import {
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   searchMembersWithCrossTenant,
   sendMemberInvite,
@@ -65,8 +65,10 @@ export type MemberSearchInputProps = {
 
 function getInitials(name: string): string {
   const parts = name.trim().split(/\s+/);
-  if (parts.length === 1) return name.slice(0, 2).toUpperCase();
-  return ((parts[0]?.[0] ?? "") + (parts[parts.length - 1]?.[0] ?? "")).toUpperCase();
+  if (parts.length === 1) {
+    return name.slice(0, 2).toUpperCase();
+  }
+  return ((parts[0]?.[0] ?? "") + (parts.at(-1)?.[0] ?? "")).toUpperCase();
 }
 
 function looksLikeEmail(value: string): boolean {
@@ -79,8 +81,7 @@ function hasExactMatchInCurrent(
 ): boolean {
   const q = query.toLowerCase();
   return members.some(
-    (m) =>
-      m.name.toLowerCase() === q || m.email.toLowerCase() === q
+    (m) => m.name.toLowerCase() === q || m.email.toLowerCase() === q
   );
 }
 
@@ -88,24 +89,24 @@ function hasExactMatchInCurrent(
 // Avatar
 // ---------------------------------------------------------------------------
 
-interface AvatarProps {
+type AvatarProps = {
   name: string;
   image: string | null;
-}
+};
 
 function Avatar({ name, image }: AvatarProps) {
   if (image) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
-        src={image}
         alt={name}
         className="h-8 w-8 rounded-full object-cover"
+        src={image}
       />
     );
   }
   return (
-    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+    <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary text-xs">
       {getInitials(name)}
     </div>
   );
@@ -115,11 +116,11 @@ function Avatar({ name, image }: AvatarProps) {
 // Confirmation dialog (cross-tenant)
 // ---------------------------------------------------------------------------
 
-interface ConfirmDialogProps {
+type ConfirmDialogProps = {
   member: CrossTenantMemberResult | null;
   onConfirm: () => void;
   onCancel: () => void;
-}
+};
 
 function ConfirmCrossTenantDialog({
   member,
@@ -127,7 +128,7 @@ function ConfirmCrossTenantDialog({
   onCancel,
 }: ConfirmDialogProps) {
   return (
-    <Dialog open={member !== null} onOpenChange={(open) => !open && onCancel()}>
+    <Dialog onOpenChange={(open) => !open && onCancel()} open={member !== null}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Confirmar adição</DialogTitle>
@@ -142,7 +143,7 @@ function ConfirmCrossTenantDialog({
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={onCancel}>
+          <Button onClick={onCancel} variant="outline">
             Cancelar
           </Button>
           <Button onClick={onConfirm}>Confirmar</Button>
@@ -156,16 +157,16 @@ function ConfirmCrossTenantDialog({
 // Invite dialog
 // ---------------------------------------------------------------------------
 
-interface InviteDialogProps {
+type InviteDialogProps = {
   open: boolean;
   query: string;
   onClose: () => void;
-}
+};
 
 function InviteDialog({ open, query, onClose }: InviteDialogProps) {
   const isEmail = looksLikeEmail(query);
   const [email, setEmail] = useState(isEmail ? query : "");
-  const [name, setName] = useState(!isEmail ? query : "");
+  const [name, setName] = useState(isEmail ? "" : query);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -174,7 +175,7 @@ function InviteDialog({ open, query, onClose }: InviteDialogProps) {
   useEffect(() => {
     if (open) {
       setEmail(looksLikeEmail(query) ? query : "");
-      setName(!looksLikeEmail(query) ? query : "");
+      setName(looksLikeEmail(query) ? "" : query);
       setError(null);
       setSuccess(null);
     }
@@ -212,7 +213,7 @@ function InviteDialog({ open, query, onClose }: InviteDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
+    <Dialog onOpenChange={(isOpen) => !isOpen && handleClose()} open={open}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Convidar para o Cosmos</DialogTitle>
@@ -224,7 +225,7 @@ function InviteDialog({ open, query, onClose }: InviteDialogProps) {
         </DialogHeader>
 
         {success ? (
-          <p className="rounded-md bg-green-500/10 px-4 py-3 text-sm text-green-600 dark:text-green-400">
+          <p className="rounded-md bg-green-500/10 px-4 py-3 text-green-600 text-sm dark:text-green-400">
             {success}
           </p>
         ) : (
@@ -232,34 +233,32 @@ function InviteDialog({ open, query, onClose }: InviteDialogProps) {
             <div className="flex flex-col gap-2">
               <Label htmlFor="invite-email">
                 E-mail{" "}
-                <span className="text-destructive" aria-hidden>
+                <span aria-hidden className="text-destructive">
                   *
                 </span>
               </Label>
               <Input
-                id="invite-email"
-                type="email"
-                placeholder="nome@empresa.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 disabled={isPending}
+                id="invite-email"
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="nome@empresa.com"
+                type="email"
+                value={email}
               />
             </div>
 
             <div className="flex flex-col gap-2">
               <Label htmlFor="invite-name">Nome (opcional)</Label>
               <Input
+                disabled={isPending}
                 id="invite-name"
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Nome do convidado"
                 value={name}
-                onChange={(e) => setName(e.target.value)}
-                disabled={isPending}
               />
             </div>
 
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
-            )}
+            {error && <p className="text-destructive text-sm">{error}</p>}
           </div>
         )}
 
@@ -268,10 +267,14 @@ function InviteDialog({ open, query, onClose }: InviteDialogProps) {
             <Button onClick={handleClose}>Fechar</Button>
           ) : (
             <>
-              <Button variant="outline" onClick={handleClose} disabled={isPending}>
+              <Button
+                disabled={isPending}
+                onClick={handleClose}
+                variant="outline"
+              >
                 Cancelar
               </Button>
-              <Button onClick={handleSubmit} disabled={isPending}>
+              <Button disabled={isPending} onClick={handleSubmit}>
                 {isPending ? "Enviando..." : "Enviar convite"}
               </Button>
             </>
@@ -321,9 +324,13 @@ export function MemberSearchInput({
     const available = initialMembers.filter(
       (m) => !excludeUserIds.includes(m.userId)
     );
-    if (!query.trim()) return available;
+    if (!query.trim()) {
+      return available;
+    }
     const fuse = fuseRef.current;
-    if (!fuse) return available;
+    if (!fuse) {
+      return available;
+    }
     return fuse
       .search(query)
       .map((r) => r.item)
@@ -344,7 +351,9 @@ export function MemberSearchInput({
 
   // Cross-tenant search — debounced 300ms
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
 
     if (query.length < 2) {
       setCrossTenantResults([]);
@@ -372,7 +381,9 @@ export function MemberSearchInput({
     }, 300);
 
     return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
     };
   }, [query]);
 
@@ -418,7 +429,9 @@ export function MemberSearchInput({
   };
 
   const handleConfirmCrossTenant = () => {
-    if (!confirmMember) return;
+    if (!confirmMember) {
+      return;
+    }
     onMemberSelect({
       userId: confirmMember.userId,
       name: confirmMember.name,
@@ -436,38 +449,38 @@ export function MemberSearchInput({
 
   return (
     <>
-      <div ref={containerRef} className="relative w-full">
+      <div className="relative w-full" ref={containerRef}>
         {/* Search field */}
         <div className="relative">
-          <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <SearchIcon className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
           <Input
-            ref={inputRef}
-            type="text"
-            placeholder="Buscar membro por nome ou e-mail..."
-            value={query}
+            aria-expanded={isOpen}
+            aria-haspopup="listbox"
+            aria-label="Buscar membros"
+            autoComplete="off"
             className="pl-9"
-            onFocus={() => setIsOpen(true)}
             onChange={(e) => {
               setQuery(e.target.value);
               setIsOpen(true);
             }}
+            onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
-            autoComplete="off"
-            aria-label="Buscar membros"
-            aria-expanded={isOpen}
-            aria-haspopup="listbox"
+            placeholder="Buscar membro por nome ou e-mail..."
+            ref={inputRef}
             role="combobox"
+            type="text"
+            value={query}
           />
         </div>
 
         {/* Dropdown */}
         {isOpen && (
           <div
+            className="absolute top-full right-0 left-0 z-50 mt-1.5 max-h-64 overflow-y-auto rounded-lg border border-border bg-background shadow-lg"
             role="listbox"
-            className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-64 overflow-y-auto rounded-lg border border-border bg-background shadow-lg"
           >
             {!hasAnyResult && (
-              <p className="px-3 py-4 text-center text-sm text-muted-foreground">
+              <p className="px-3 py-4 text-center text-muted-foreground text-sm">
                 Nenhum resultado encontrado.
               </p>
             )}
@@ -475,28 +488,28 @@ export function MemberSearchInput({
             {/* Section A — current tenant */}
             {filteredCurrent.length > 0 && (
               <>
-                <div className="bg-muted/30 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="bg-muted/30 px-3 py-1.5 font-medium text-muted-foreground text-xs uppercase tracking-wider">
                   Neste workspace
                 </div>
                 {filteredCurrent.map((member) => (
                   <button
-                    key={member.userId}
-                    type="button"
-                    role="option"
                     aria-selected={false}
-                    onClick={() => handleSelectCurrent(member)}
                     className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+                    key={member.userId}
+                    onClick={() => handleSelectCurrent(member)}
+                    role="option"
+                    type="button"
                   >
-                    <Avatar name={member.name} image={member.image} />
+                    <Avatar image={member.image} name={member.name} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
+                      <p className="truncate font-medium text-sm">
                         {member.name}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-muted-foreground text-xs">
                         {member.email}
                       </p>
                     </div>
-                    <Badge variant="secondary" className="shrink-0 text-xs">
+                    <Badge className="shrink-0 text-xs" variant="secondary">
                       {member.role}
                     </Badge>
                   </button>
@@ -507,27 +520,27 @@ export function MemberSearchInput({
             {/* Section B — cross-tenant */}
             {filteredCrossTenant.length > 0 && (
               <>
-                <div className="bg-muted/30 px-3 py-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <div className="bg-muted/30 px-3 py-1.5 font-medium text-muted-foreground text-xs uppercase tracking-wider">
                   Outros workspaces
                 </div>
                 {filteredCrossTenant.map((member) => (
                   <button
-                    key={member.userId}
-                    type="button"
-                    role="option"
                     aria-selected={false}
-                    onClick={() => handleSelectCrossTenant(member)}
                     className="flex w-full items-center gap-3 px-3 py-2.5 text-left transition-colors hover:bg-muted/50 focus-visible:bg-muted/50 focus-visible:outline-none"
+                    key={member.userId}
+                    onClick={() => handleSelectCrossTenant(member)}
+                    role="option"
+                    type="button"
                   >
-                    <Avatar name={member.name} image={member.image} />
+                    <Avatar image={member.image} name={member.name} />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium">
+                      <p className="truncate font-medium text-sm">
                         {member.name}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-muted-foreground text-xs">
                         {member.email}
                       </p>
-                      <p className="truncate text-xs text-muted-foreground">
+                      <p className="truncate text-muted-foreground text-xs">
                         workspace:{" "}
                         <span className="font-medium">
                           {member.workspaceName}
@@ -542,9 +555,9 @@ export function MemberSearchInput({
             {/* Section C — invite */}
             {showInviteRow && (
               <button
-                type="button"
+                className="flex w-full items-center gap-2 px-3 py-2.5 text-primary text-sm transition-colors hover:bg-primary/5 focus-visible:bg-primary/5 focus-visible:outline-none"
                 onClick={handleInviteClick}
-                className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-primary transition-colors hover:bg-primary/5 focus-visible:bg-primary/5 focus-visible:outline-none"
+                type="button"
               >
                 <MailPlusIcon className="h-4 w-4 shrink-0" />
                 <span className="flex-1 truncate text-left">
@@ -562,15 +575,15 @@ export function MemberSearchInput({
       {/* Confirmation dialog */}
       <ConfirmCrossTenantDialog
         member={confirmMember}
-        onConfirm={handleConfirmCrossTenant}
         onCancel={() => setConfirmMember(null)}
+        onConfirm={handleConfirmCrossTenant}
       />
 
       {/* Invite dialog */}
       <InviteDialog
+        onClose={() => setInviteOpen(false)}
         open={inviteOpen}
         query={query}
-        onClose={() => setInviteOpen(false)}
       />
     </>
   );

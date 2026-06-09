@@ -1,6 +1,6 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Link from "next/link";
-import { ChevronRightIcon, ChevronLeftIcon } from "lucide-react";
-import type { ReactNode, ElementType } from "react";
+import type { ElementType, ReactNode } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -39,43 +39,40 @@ export function PageHeader({
   actions,
 }: PageHeaderProps) {
   const backHref =
-    breadcrumb && breadcrumb.length > 0
-      ? breadcrumb[breadcrumb.length - 1].href
-      : undefined;
+    breadcrumb && breadcrumb.length > 0 ? breadcrumb.at(-1).href : undefined;
 
   return (
-    <div className="border-b border-border/80 bg-background px-6 py-4 shrink-0">
-
+    <div className="shrink-0 border-border/80 border-b bg-background px-6 py-4">
       {/* ── Breadcrumb ───────────────────────────────────────────────────────── */}
       {breadcrumb && breadcrumb.length > 0 && (
         <nav
           aria-label="Navegação"
-          className="mb-2 flex items-center gap-0.5 text-xs text-muted-foreground"
+          className="mb-2 flex items-center gap-0.5 text-muted-foreground text-xs"
         >
           {backHref && (
             <Link
-              href={backHref}
-              className="mr-1 flex items-center rounded p-0.5 hover:bg-muted hover:text-foreground transition-colors"
               aria-label="Voltar"
+              className="mr-1 flex items-center rounded p-0.5 transition-colors hover:bg-muted hover:text-foreground"
+              href={backHref}
             >
               <ChevronLeftIcon className="h-3.5 w-3.5" />
             </Link>
           )}
 
           {breadcrumb.map((item, i) => (
-            <span key={i} className="flex items-center gap-0.5">
+            <span className="flex items-center gap-0.5" key={i}>
               {i > 0 && (
-                <ChevronRightIcon className="h-3 w-3 text-muted-foreground/40 mx-0.5" />
+                <ChevronRightIcon className="mx-0.5 h-3 w-3 text-muted-foreground/40" />
               )}
               {item.href ? (
                 <Link
+                  className="rounded px-1 py-0.5 transition-colors hover:bg-muted hover:text-foreground"
                   href={item.href}
-                  className="hover:text-foreground transition-colors rounded px-1 py-0.5 hover:bg-muted"
                 >
                   {item.label}
                 </Link>
               ) : (
-                <span className="px-1 py-0.5 text-foreground/80 font-medium">
+                <span className="px-1 py-0.5 font-medium text-foreground/80">
                   {item.label}
                 </span>
               )}
@@ -86,24 +83,24 @@ export function PageHeader({
 
       {/* ── Title + actions ──────────────────────────────────────────────────── */}
       <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {badge && (
-            <div className="flex flex-wrap items-center gap-2 mb-1.5">
+            <div className="mb-1.5 flex flex-wrap items-center gap-2">
               {badge}
             </div>
           )}
-          <h1 className="text-2xl font-bold tracking-tight text-foreground leading-tight">
+          <h1 className="font-bold text-2xl text-foreground leading-tight tracking-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm text-muted-foreground mt-0.5 leading-snug">
+            <p className="mt-0.5 text-muted-foreground text-sm leading-snug">
               {subtitle}
             </p>
           )}
         </div>
 
         {actions && (
-          <div className="flex items-center gap-2 shrink-0 mt-0.5">
+          <div className="mt-0.5 flex shrink-0 items-center gap-2">
             {actions}
           </div>
         )}
@@ -111,14 +108,18 @@ export function PageHeader({
 
       {/* ── Stats row ────────────────────────────────────────────────────────── */}
       {stats && stats.length > 0 && (
-        <div className="flex flex-wrap items-center gap-x-5 gap-y-1 mt-3 pt-3 border-t border-border/60">
+        <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 border-border/60 border-t pt-3">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
-              <div key={i} className="flex items-center gap-1.5">
-                {Icon && <Icon className="h-3.5 w-3.5 text-muted-foreground/70" />}
-                <span className="text-xs text-muted-foreground">{stat.label}</span>
-                <span className="text-xs font-semibold tabular-nums text-foreground">
+              <div className="flex items-center gap-1.5" key={i}>
+                {Icon && (
+                  <Icon className="h-3.5 w-3.5 text-muted-foreground/70" />
+                )}
+                <span className="text-muted-foreground text-xs">
+                  {stat.label}
+                </span>
+                <span className="font-semibold text-foreground text-xs tabular-nums">
                   {stat.value}
                 </span>
               </div>

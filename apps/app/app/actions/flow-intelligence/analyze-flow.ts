@@ -115,7 +115,8 @@ export async function analyzeFlowAnomalies(
     history: history.map((h) => ({
       flowVelocityTotal: h.flowVelocityTotal,
       flowPredictability: h.flowPredictability,
-      flowTimeAvgDays: h.flowTimeAvgHours != null ? h.flowTimeAvgHours / 24 : undefined,
+      flowTimeAvgDays:
+        h.flowTimeAvgHours != null ? h.flowTimeAvgHours / 24 : undefined,
     })),
     openActions: openActions.map((a) => ({
       id: a.id,

@@ -62,35 +62,37 @@ export function CopilotToolCallStep({ invocation }: Props) {
 
   return (
     <div>
-      <button
-        className="flex w-full cursor-pointer items-center gap-2 py-1 text-left hover:opacity-80"
-        onClick={() => setOpen((prev) => !prev)}
-        type="button"
-      >
-        <span className={`h-2 w-2 shrink-0 rounded-full ${dotClass}`} />
-        <span className="font-medium text-muted-foreground text-xs">
-          {TOOL_LABELS[invocation.toolName] ?? invocation.toolName}
-        </span>
-        {invocation.state === "result" ? (
-          <>
+      <div className="flex items-center gap-2 py-1">
+        <button
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-left hover:opacity-80"
+          onClick={() => setOpen((prev) => !prev)}
+          type="button"
+        >
+          <span className={`h-2 w-2 shrink-0 rounded-full ${dotClass}`} />
+          <span className="font-medium text-muted-foreground text-xs">
+            {TOOL_LABELS[invocation.toolName] ?? invocation.toolName}
+          </span>
+          {invocation.state === "result" ? (
             <span className="rounded bg-green-100 px-1.5 py-0.5 text-[10px] text-green-700 dark:bg-green-900/30 dark:text-green-400">
               concluído
             </span>
-            <button
-              className="ml-auto rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
-              onClick={handleOpenDrawer}
-              title="Ver detalhes"
-              type="button"
-            >
-              <ExternalLink className="h-3 w-3" />
-            </button>
-          </>
+          ) : null}
+          <ChevronDown
+            className="ml-auto h-3 w-3 text-muted-foreground transition-transform"
+            style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
+          />
+        </button>
+        {invocation.state === "result" ? (
+          <button
+            className="shrink-0 rounded p-0.5 text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+            onClick={handleOpenDrawer}
+            title="Ver detalhes"
+            type="button"
+          >
+            <ExternalLink className="h-3 w-3" />
+          </button>
         ) : null}
-        <ChevronDown
-          className="h-3 w-3 text-muted-foreground transition-transform"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)" }}
-        />
-      </button>
+      </div>
       <AnimatePresence initial={false}>
         {!!open && (
           <motion.div

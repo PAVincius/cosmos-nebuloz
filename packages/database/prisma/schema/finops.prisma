@@ -24,7 +24,7 @@ model BillingEntry {
   region          String?
   skuId           String?
 
-  chargeCategory  ChargeCategory  @default(Usage)
+  chargeCategory  ChargeCategory @default(Usage)
   chargeClass     String?
   chargeFrequency String?
   pricingCategory String?
@@ -221,7 +221,7 @@ model CostAnomaly {
   deltaPct       Decimal @db.Decimal(8, 2)
 
   severity       String
-  status         CostAnomalyStatus    @default(OPEN)
+  status         CostAnomalyStatus @default(OPEN)
   acknowledgedBy String?
   acknowledgedAt DateTime?
   rootCauseHints Json?

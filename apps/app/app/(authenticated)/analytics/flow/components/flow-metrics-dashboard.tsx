@@ -1,5 +1,6 @@
 "use client";
 
+import { Clock, LayoutGrid, Package, Shuffle, Target, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
@@ -17,6 +18,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import KpiCard from "@/app/(authenticated)/analytics/components/KpiCard";
 import type {
   FlowMetricsResult,
   FlowScopeOption,
@@ -37,60 +39,53 @@ import { StalenessBadge, type StalenessState } from "./staleness-badge";
 // ── Module-level constants ─────────────────────────────────────────────────────
 const DEBT_TYPE_RE = /debt|débito/i;
 
-// ── Design tokens ─────────────────────────────────────────────────────────────
-const ACCENT = "#4F46E5";
-const SURFACE = "#ffffff";
-const BORDER = "#E2E8F0";
-const TEXT = "#0F172A";
-const MUTED = "#94A3B8";
-
 const KPI_CONFIG = [
   {
     key: "velocity",
     label: "Velocity",
     unit: "itens/sprint",
-    color: "#6366F1",
-    icon: "⚡",
+    color: "hsl(var(--chart-1))",
+    icon: "Zap",
     inverse: false,
   },
   {
     key: "flow_time",
     label: "Flow Time",
     unit: "dias end-to-end",
-    color: "#0EA5E9",
-    icon: "⏱",
+    color: "hsl(var(--chart-2))",
+    icon: "Clock",
     inverse: true,
   },
   {
     key: "flow_load",
     label: "Flow Load",
     unit: "itens em WIP",
-    color: "#F59E0B",
-    icon: "📦",
+    color: "oklch(0.68 0.18 50)",
+    icon: "Package",
     inverse: true,
   },
   {
     key: "efficiency",
     label: "Efficiency",
     unit: "% tempo ativo",
-    color: "#10B981",
-    icon: "🎯",
+    color: "hsl(var(--success))",
+    icon: "Target",
     inverse: false,
   },
   {
     key: "predictability",
     label: "Predictability",
     unit: "% entregue/planejado",
-    color: "#4F46E5",
-    icon: "🎲",
+    color: "hsl(var(--primary))",
+    icon: "Shuffle",
     inverse: false,
   },
   {
     key: "distribution",
     label: "Distribution",
     unit: "tipos balanceados",
-    color: "#A855F7",
-    icon: "🧩",
+    color: "hsl(var(--chart-5))",
+    icon: "LayoutGrid",
     inverse: false,
   },
 ] as const;
@@ -98,20 +93,20 @@ const KPI_CONFIG = [
 type KpiKey = (typeof KPI_CONFIG)[number]["key"];
 
 const DIST_COLORS = [
-  "#6366F1",
-  "#F59E0B",
-  "#10B981",
-  "#EF4444",
-  "#A855F7",
-  "#0EA5E9",
-  "#F97316",
+  "hsl(var(--chart-1))",
+  "hsl(var(--chart-2))",
+  "hsl(var(--chart-3))",
+  "hsl(var(--chart-4))",
+  "hsl(var(--chart-5))",
+  "oklch(0.68 0.18 220)",
+  "oklch(0.72 0.18 30)",
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  OPEN: "#F59E0B",
-  IN_PROGRESS: "#6366F1",
-  DONE: "#10B981",
-  CANCELLED: "#6B7280",
+  OPEN: "oklch(0.68 0.18 50)",
+  IN_PROGRESS: "hsl(var(--primary))",
+  DONE: "hsl(var(--success))",
+  CANCELLED: "hsl(var(--muted-foreground))",
 };
 
 const METRIC_LABELS: Record<string, string> = {
@@ -124,6 +119,45 @@ const METRIC_LABELS: Record<string, string> = {
 };
 
 const DEBT_TYPE_RX = /debt|débito/i;
+
+// ── KPI tone helper ────────────────────────────────────────────────────────────
+
+function kpiTone(
+  value: number | undefined,
+  inverse: boolean,
+  threshold?: number
+): "green" | "red" | "amber" {
+  if (value === undefined || value === null) {
+    return "amber";
+  }
+  if (!threshold) {
+    return "amber";
+  }
+  const good = inverse ? value <= threshold : value >= threshold;
+  return good ? "green" : "red";
+}
+
+// ── KPI icon renderer ──────────────────────────────────────────────────────────
+
+function KpiIcon({ name, size = 14 }: { name: string; size?: number }) {
+  const props = { size, strokeWidth: 2 };
+  switch (name) {
+    case "Zap":
+      return <Zap {...props} />;
+    case "Clock":
+      return <Clock {...props} />;
+    case "Package":
+      return <Package {...props} />;
+    case "Target":
+      return <Target {...props} />;
+    case "Shuffle":
+      return <Shuffle {...props} />;
+    case "LayoutGrid":
+      return <LayoutGrid {...props} />;
+    default:
+      return null;
+  }
+}
 
 // ── Sparkline ─────────────────────────────────────────────────────────────────
 
@@ -177,18 +211,26 @@ function Delta({
 }) {
   if (value === 0) {
     return (
-      <span style={{ fontSize: 10, color: MUTED, fontWeight: 600 }}>—</span>
+      <span
+        style={{
+          fontSize: 10,
+          color: "hsl(var(--muted-foreground))",
+          fontWeight: 600,
+        }}
+      >
+        —
+      </span>
     );
   }
   const good = inverse ? value < 0 : value > 0;
-  const clr = good ? "#10B981" : "#EF4444";
+  const clr = good ? "hsl(var(--success))" : "hsl(var(--destructive))";
   return (
     <span
       style={{
         fontSize: 10,
         fontWeight: 700,
         color: clr,
-        background: `${clr}18`,
+        background: `color-mix(in srgb, ${clr} 12%, transparent)`,
         padding: "2px 5px",
         borderRadius: 4,
       }}
@@ -216,9 +258,9 @@ function ChartCard({
   return (
     <div
       style={{
-        background: SURFACE,
+        background: "hsl(var(--card))",
         borderRadius: 14,
-        border: `1px solid ${BORDER}`,
+        border: "1px solid hsl(var(--border))",
         padding: "18px 20px",
       }}
     >
@@ -235,7 +277,7 @@ function ChartCard({
             style={{
               fontSize: 11,
               fontWeight: 800,
-              color: TEXT,
+              color: "hsl(var(--foreground))",
               letterSpacing: ".04em",
               textTransform: "uppercase",
             }}
@@ -243,7 +285,13 @@ function ChartCard({
             {title}
           </div>
           {!!subtitle && (
-            <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>
+            <div
+              style={{
+                fontSize: 10,
+                color: "hsl(var(--muted-foreground))",
+                marginTop: 2,
+              }}
+            >
               {subtitle}
             </div>
           )}
@@ -255,9 +303,9 @@ function ChartCard({
         <div
           style={{
             fontSize: 10,
-            color: MUTED,
+            color: "hsl(var(--muted-foreground))",
             marginTop: 12,
-            borderTop: `1px solid ${BORDER}`,
+            borderTop: "1px solid hsl(var(--border))",
             paddingTop: 10,
           }}
         >
@@ -281,13 +329,18 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
       }}
     >
       <div
-        style={{ height: 4, width: 16, borderRadius: 4, background: ACCENT }}
+        style={{
+          height: 4,
+          width: 16,
+          borderRadius: 4,
+          background: "hsl(var(--primary))",
+        }}
       />
       <span
         style={{
           fontSize: 11,
           fontWeight: 800,
-          color: MUTED,
+          color: "hsl(var(--muted-foreground))",
           letterSpacing: ".06em",
           textTransform: "uppercase",
         }}
@@ -310,9 +363,13 @@ function chipStyle(
     borderRadius: 99,
     cursor: "pointer",
     fontFamily: "inherit",
-    border: `1.5px solid ${active ? ACCENT : BORDER}`,
-    background: active ? ACCENT : SURFACE,
-    color: active ? "#fff" : "#475569",
+    border: active
+      ? "1.5px solid hsl(var(--primary))"
+      : "1.5px solid hsl(var(--border))",
+    background: active ? "hsl(var(--primary))" : "hsl(var(--card))",
+    color: active
+      ? "hsl(var(--primary-foreground))"
+      : "hsl(var(--muted-foreground))",
     fontSize: 11,
     fontWeight: 600,
     transition: "background .12s, border-color .12s, color .12s",
@@ -368,7 +425,6 @@ function exportMetricsCSV(
   URL.revokeObjectURL(url);
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: large dashboard component — refactor tracked separately
 export function FlowMetricsDashboard({
   scopeOptions,
   selectedScope,
@@ -630,8 +686,8 @@ export function FlowMetricsDashboard({
         marginRight: -24,
         marginTop: -24,
         padding: "12px 24px",
-        background: SURFACE,
-        borderBottom: `1px solid ${BORDER}`,
+        background: "hsl(var(--card))",
+        borderBottom: "1px solid hsl(var(--border))",
         display: "flex",
         alignItems: "center",
         gap: 18,
@@ -644,7 +700,7 @@ export function FlowMetricsDashboard({
             style={{
               fontSize: 9,
               fontWeight: 800,
-              color: MUTED,
+              color: "hsl(var(--muted-foreground))",
               letterSpacing: ".09em",
               textTransform: "uppercase",
             }}
@@ -667,7 +723,13 @@ export function FlowMetricsDashboard({
         </div>
       )}
       {arts.length > 0 && teams.length > 0 && (
-        <div style={{ width: 1, height: 22, background: BORDER }} />
+        <div
+          style={{
+            width: 1,
+            height: 22,
+            background: "hsl(var(--border))",
+          }}
+        />
       )}
       {teams.length > 0 && (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -675,7 +737,7 @@ export function FlowMetricsDashboard({
             style={{
               fontSize: 9,
               fontWeight: 800,
-              color: MUTED,
+              color: "hsl(var(--muted-foreground))",
               letterSpacing: ".09em",
               textTransform: "uppercase",
             }}
@@ -698,7 +760,7 @@ export function FlowMetricsDashboard({
         </div>
       )}
       {scopeOptions.length === 0 && (
-        <span style={{ fontSize: 12, color: MUTED }}>
+        <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
           Nenhum escopo disponível
         </span>
       )}
@@ -711,12 +773,12 @@ export function FlowMetricsDashboard({
             alignItems: "center",
             gap: 6,
             padding: "7px 14px",
-            background: "#F8FAFC",
-            border: `1px solid ${BORDER}`,
+            background: "hsl(var(--muted))",
+            border: "1px solid hsl(var(--border))",
             borderRadius: 8,
             fontSize: 12,
             fontWeight: 600,
-            color: TEXT,
+            color: "hsl(var(--foreground))",
             cursor: "pointer",
             fontFamily: "inherit",
           }}
@@ -734,8 +796,8 @@ export function FlowMetricsDashboard({
         marginLeft: -24,
         marginRight: -24,
         padding: "0 24px",
-        background: SURFACE,
-        borderBottom: `1px solid ${BORDER}`,
+        background: "hsl(var(--card))",
+        borderBottom: "1px solid hsl(var(--border))",
         display: "flex",
         gap: 22,
       }}
@@ -749,9 +811,11 @@ export function FlowMetricsDashboard({
             border: "none",
             background: "transparent",
             cursor: "pointer",
-            borderBottom: `2.5px solid ${activeTab === tab ? ACCENT : "transparent"}`,
-            // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-            color: activeTab === tab ? TEXT : MUTED,
+            borderBottom: `2.5px solid ${activeTab === tab ? "hsl(var(--primary))" : "transparent"}`,
+            color:
+              activeTab === tab
+                ? "hsl(var(--foreground))"
+                : "hsl(var(--muted-foreground))",
             fontSize: 13,
             fontWeight: 700,
             fontFamily: "inherit",
@@ -776,7 +840,7 @@ export function FlowMetricsDashboard({
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            color: MUTED,
+            color: "hsl(var(--muted-foreground))",
             fontSize: 14,
             marginTop: 24,
           }}
@@ -811,16 +875,18 @@ export function FlowMetricsDashboard({
               const s =
                 a.tone === "warn"
                   ? {
-                      bg: "#FFFBEB",
-                      border: "#FDE68A",
-                      title: "#B45309",
-                      desc: "#78350F",
+                      bg: "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
+                      border:
+                        "color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
+                      title: "oklch(0.55 0.15 50)",
+                      desc: "oklch(0.45 0.12 50)",
                     }
                   : {
-                      bg: "#F0FDF4",
-                      border: "#BBF7D0",
-                      title: "#15803D",
-                      desc: "#14532D",
+                      bg: "color-mix(in srgb, hsl(var(--success)) 10%, hsl(var(--card)))",
+                      border:
+                        "color-mix(in srgb, hsl(var(--success)) 30%, transparent)",
+                      title: "hsl(var(--success))",
+                      desc: "color-mix(in srgb, hsl(var(--success)) 80%, hsl(var(--foreground)))",
                     };
               return (
                 <div
@@ -864,7 +930,6 @@ export function FlowMetricsDashboard({
           </div>
 
           {/* Staleness badge + re-evaluate modal */}
-          {/* biome-ignore lint/nursery/noLeakedRender: both staleness and snapshotId are strings, not numbers */}
           {staleness && snapshotId && (
             <>
               <div
@@ -876,7 +941,6 @@ export function FlowMetricsDashboard({
               >
                 <StalenessBadge
                   onReEvaluate={
-                    // biome-ignore lint/nursery/noLeakedRender: string ternary in prop, not a leaked number
                     staleness === "STALE" || staleness === "CRITICAL"
                       ? () => setReEvalOpen(true)
                       : undefined
@@ -893,112 +957,95 @@ export function FlowMetricsDashboard({
           )}
 
           {/* KPI grid */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(196px, 1fr))",
-              gap: 14,
-            }}
-          >
-            {KPI_CONFIG.map((cfg) => {
-              const kd = kpiData(cfg.key);
-              const active = activeKpi === cfg.key;
-              return (
-                <button
-                  key={cfg.key}
-                  onClick={() => setActiveKpi(cfg.key)}
-                  style={{
-                    background: SURFACE,
-                    borderRadius: 14,
-                    textAlign: "left",
-                    fontFamily: "inherit",
-                    border: active
-                      ? `1.5px solid ${cfg.color}`
-                      : `1px solid ${BORDER}`,
-                    padding: "14px 16px",
-                    cursor: "pointer",
-                    boxShadow: active ? `0 4px 16px ${cfg.color}22` : "none",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 10,
-                    transition: "border-color .15s, box-shadow .15s",
-                  }}
-                  type="button"
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "flex-start",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 8 }}
-                    >
-                      <div
-                        style={{
-                          width: 28,
-                          height: 28,
-                          borderRadius: 8,
-                          background: `${cfg.color}1A`,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <span style={{ fontSize: 14 }}>{cfg.icon}</span>
-                      </div>
-                      <span
-                        style={{
-                          fontSize: 11,
-                          fontWeight: 800,
-                          color: TEXT,
-                          letterSpacing: ".02em",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {cfg.label}
-                      </span>
-                    </div>
-                    <Delta inverse={cfg.inverse} value={kd.delta} />
-                  </div>
+          <div className="flex flex-wrap gap-4 rounded-[18px] bg-[#070b14] p-6">
+            {(() => {
+              const velocityLast = metrics.flowVelocity.at(-1)?.total;
+              const velocityPrev =
+                metrics.flowVelocity.at(-2)?.total ?? velocityLast;
+              const velocityDelta =
+                velocityLast !== undefined && velocityPrev !== undefined
+                  ? velocityLast - velocityPrev
+                  : 0;
 
-                  <div>
-                    <div
-                      style={{
-                        fontSize: 28,
-                        fontWeight: 800,
-                        lineHeight: 1,
-                        fontVariantNumeric: "tabular-nums",
-                        color: kd.warn ? "#F59E0B" : cfg.color,
-                      }}
-                    >
-                      {kd.value}
-                    </div>
-                    <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>
-                      {cfg.unit}
-                    </div>
-                  </div>
-
-                  <div
-                    style={{
-                      fontSize: 10,
-                      color: kd.warn ? "#B45309" : "#64748B",
-                    }}
-                  >
-                    {kd.sub}
-                  </div>
-
-                  {kd.spark.length >= 2 && (
-                    <div
-                      style={{ paddingTop: 4, borderTop: "1px solid #F1F5F9" }}
-                    >
-                      <Sparkline color={cfg.color} data={kd.spark} />
-                    </div>
-                  )}
-                </button>
+              const flowTimeDays = metrics.flowTimeOverall;
+              const flowLoad = metrics.flowLoad;
+              const effPct = Math.round(metrics.flowEfficiency * 100);
+              const predPct = Math.round(metrics.flowPredictability * 100);
+              const predSpark = metrics.flowPredictabilityHistory.map((d) =>
+                d.planned > 0 ? Math.round((d.delivered / d.planned) * 100) : 0
               );
-            })}
+              const predPrev = predSpark.at(-2) ?? predPct;
+              const predDelta = predPct - predPrev;
+
+              return (
+                <>
+                  <KpiCard
+                    badge={<Delta inverse={false} value={velocityDelta} />}
+                    icon="activity"
+                    label="Velocity"
+                    tone={kpiTone(velocityLast, false, 30)}
+                    unit="itens/sprint"
+                    value={String(velocityLast ?? "—")}
+                  />
+                  <KpiCard
+                    badge={<Delta inverse={true} value={0} />}
+                    icon="clock"
+                    label="Flow Time"
+                    tone={kpiTone(flowTimeDays, true, 14)}
+                    unit="dias end-to-end"
+                    value={String(flowTimeDays)}
+                  />
+                  <KpiCard
+                    badge={
+                      flowLoad > 15 ? (
+                        <span className="rounded bg-amber-500/20 px-1.5 py-0.5 font-bold text-[10px] text-amber-400">
+                          acima do limite
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">
+                          WIP
+                        </span>
+                      )
+                    }
+                    icon="activity"
+                    label="Flow Load"
+                    tone="amber"
+                    unit="itens em WIP"
+                    value={String(flowLoad)}
+                  />
+                  <KpiCard
+                    badge={<Delta inverse={false} value={0} />}
+                    icon="check"
+                    label="Efficiency"
+                    tone={kpiTone(effPct, false, 60)}
+                    unit="% tempo ativo"
+                    value={String(effPct)}
+                  />
+                  <KpiCard
+                    badge={<Delta inverse={false} value={predDelta} />}
+                    icon="check"
+                    label="Predictability"
+                    tone={kpiTone(predPct, false, 80)}
+                    unit="% entregue/planejado"
+                    value={String(predPct)}
+                  />
+                  <KpiCard
+                    badge={
+                      <span className="text-[10px] text-muted-foreground">
+                        {metrics.flowDistribution
+                          .map((d) => `${d.type} ${d.pct}%`)
+                          .join(" · ")}
+                      </span>
+                    }
+                    icon="activity"
+                    label="Distribution"
+                    tone="amber"
+                    unit="tipos balanceados"
+                    value={String(metrics.flowDistribution.length)}
+                  />
+                </>
+              );
+            })()}
           </div>
 
           {/* ── Staleness banner ─────────────────────────────────────── */}
@@ -1008,22 +1055,23 @@ export function FlowMetricsDashboard({
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
-                background: "#FFF7ED",
-                border: "1px solid #FED7AA",
+                background:
+                  "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
+                border:
+                  "1px solid color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
                 borderRadius: 10,
                 padding: "10px 16px",
               }}
             >
               <StalenessBadge
                 onReEvaluate={
-                  // biome-ignore lint/nursery/noLeakedRender: string ternary in prop, not a leaked number
                   staleness === "STALE" || staleness === "CRITICAL"
                     ? () => setReEvalOpen(true)
                     : undefined
                 }
                 state={staleness}
               />
-              <span style={{ fontSize: 11, color: "#92400E" }}>
+              <span style={{ fontSize: 11, color: "oklch(0.55 0.15 50)" }}>
                 Dados podem estar desatualizados — re-avalie para precisão.
               </span>
             </div>
@@ -1037,7 +1085,6 @@ export function FlowMetricsDashboard({
               gap: 12,
             }}
           >
-            {/* biome-ignore lint/a11y/useSemanticElements: contains nested <button>, cannot use <button> as outer element */}
             <div
               onClick={() => setActiveKpi("velocity")}
               onKeyDown={(e) => {
@@ -1047,10 +1094,9 @@ export function FlowMetricsDashboard({
               }}
               role="button"
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 10,
-                // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-                border: `1px solid ${activeKpi === "velocity" ? ACCENT : BORDER}`,
+                border: `1px solid ${activeKpi === "velocity" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
                 padding: "14px 16px",
                 cursor: "pointer",
               }}
@@ -1060,20 +1106,20 @@ export function FlowMetricsDashboard({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: TEXT,
+                  color: "hsl(var(--foreground))",
                   marginBottom: 8,
                 }}
               >
                 Velocity
               </div>
               <Sparkline
-                color="#6366F1"
+                color="hsl(var(--chart-1))"
                 data={metrics.flowVelocity.map((v) => v.total)}
               />
               <button
                 style={{
                   fontSize: 10,
-                  color: ACCENT,
+                  color: "hsl(var(--primary))",
                   marginTop: 8,
                   background: "none",
                   border: "none",
@@ -1087,7 +1133,6 @@ export function FlowMetricsDashboard({
               </button>
             </div>
 
-            {/* biome-ignore lint/a11y/useSemanticElements: contains nested <button>, cannot use <button> as outer element */}
             <div
               onClick={() => setActiveKpi("flow_time")}
               onKeyDown={(e) => {
@@ -1097,10 +1142,9 @@ export function FlowMetricsDashboard({
               }}
               role="button"
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 10,
-                // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-                border: `1px solid ${activeKpi === "flow_time" ? ACCENT : BORDER}`,
+                border: `1px solid ${activeKpi === "flow_time" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
                 padding: "14px 16px",
                 cursor: "pointer",
               }}
@@ -1110,20 +1154,20 @@ export function FlowMetricsDashboard({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: TEXT,
+                  color: "hsl(var(--foreground))",
                   marginBottom: 8,
                 }}
               >
                 Flow Time
               </div>
               <Sparkline
-                color="#0EA5E9"
+                color="hsl(var(--chart-2))"
                 data={metrics.flowTime.map((v) => v.avgDays)}
               />
               <button
                 style={{
                   fontSize: 10,
-                  color: ACCENT,
+                  color: "hsl(var(--primary))",
                   marginTop: 8,
                   background: "none",
                   border: "none",
@@ -1137,7 +1181,6 @@ export function FlowMetricsDashboard({
               </button>
             </div>
 
-            {/* biome-ignore lint/a11y/useSemanticElements: contains nested <button>, cannot use <button> as outer element */}
             <div
               onClick={() => setActiveKpi("efficiency")}
               onKeyDown={(e) => {
@@ -1147,10 +1190,9 @@ export function FlowMetricsDashboard({
               }}
               role="button"
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 10,
-                // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-                border: `1px solid ${activeKpi === "efficiency" ? ACCENT : BORDER}`,
+                border: `1px solid ${activeKpi === "efficiency" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
                 padding: "14px 16px",
                 cursor: "pointer",
               }}
@@ -1160,20 +1202,20 @@ export function FlowMetricsDashboard({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: TEXT,
+                  color: "hsl(var(--foreground))",
                   marginBottom: 8,
                 }}
               >
                 Efficiency
               </div>
               <Sparkline
-                color="#10B981"
+                color="hsl(var(--success))"
                 data={(metrics.flowLoadHistory ?? []).map((v) => v.wip)}
               />
               <button
                 style={{
                   fontSize: 10,
-                  color: ACCENT,
+                  color: "hsl(var(--primary))",
                   marginTop: 8,
                   background: "none",
                   border: "none",
@@ -1199,30 +1241,40 @@ export function FlowMetricsDashboard({
                 <ResponsiveContainer height={200} width="100%">
                   <BarChart barSize={28} data={metrics.flowVelocity}>
                     <CartesianGrid
-                      stroke="#F1F5F9"
+                      stroke="hsl(var(--border))"
                       strokeDasharray="3 3"
                       vertical={false}
                     />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: SURFACE,
-                        border: `1px solid ${BORDER}`,
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
                         borderRadius: 8,
                         fontSize: 12,
                       }}
                     />
-                    <Bar dataKey="total" fill="#6366F1" radius={[6, 6, 0, 0]} />
+                    <Bar
+                      dataKey="total"
+                      fill="hsl(var(--chart-1))"
+                      radius={[6, 6, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
@@ -1245,12 +1297,15 @@ export function FlowMetricsDashboard({
                   >
                     <CartesianGrid
                       horizontal={false}
-                      stroke="#F1F5F9"
+                      stroke="hsl(var(--border))"
                       strokeDasharray="3 3"
                     />
                     <XAxis
                       axisLine={false}
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                       type="number"
                       unit="d"
@@ -1258,15 +1313,18 @@ export function FlowMetricsDashboard({
                     <YAxis
                       axisLine={false}
                       dataKey="type"
-                      tick={{ fontSize: 11, fill: MUTED }}
+                      tick={{
+                        fontSize: 11,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                       type="category"
                       width={70}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: SURFACE,
-                        border: `1px solid ${BORDER}`,
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
                         borderRadius: 8,
                         fontSize: 12,
                       }}
@@ -1297,22 +1355,31 @@ export function FlowMetricsDashboard({
               {metrics.flowLoadHistory.length > 0 ? (
                 <ResponsiveContainer height={200} width="100%">
                   <LineChart data={metrics.flowLoadHistory}>
-                    <CartesianGrid stroke="#F1F5F9" strokeDasharray="3 3" />
+                    <CartesianGrid
+                      stroke="hsl(var(--border))"
+                      strokeDasharray="3 3"
+                    />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: SURFACE,
-                        border: `1px solid ${BORDER}`,
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
                         borderRadius: 8,
                         fontSize: 12,
                       }}
@@ -1320,8 +1387,8 @@ export function FlowMetricsDashboard({
                     <Line
                       activeDot={{ r: 6 }}
                       dataKey="wip"
-                      dot={{ r: 4, fill: "#F59E0B" }}
-                      stroke="#F59E0B"
+                      dot={{ r: 4, fill: "oklch(0.68 0.18 50)" }}
+                      stroke="oklch(0.68 0.18 50)"
                       strokeWidth={2.5}
                       type="monotone"
                     />
@@ -1332,7 +1399,7 @@ export function FlowMetricsDashboard({
                       }))}
                       dataKey="limit"
                       dot={false}
-                      stroke="#EF444460"
+                      stroke="color-mix(in srgb, hsl(var(--destructive)) 38%, transparent)"
                       strokeDasharray="4 2"
                       strokeWidth={1.5}
                       type="monotone"
@@ -1368,7 +1435,7 @@ export function FlowMetricsDashboard({
                     cy="60"
                     fill="none"
                     r="50"
-                    stroke="#F1F5F9"
+                    stroke="hsl(var(--border))"
                     strokeWidth="12"
                   />
                   <circle
@@ -1376,14 +1443,14 @@ export function FlowMetricsDashboard({
                     cy="60"
                     fill="none"
                     r="50"
-                    stroke="#10B981"
+                    stroke="hsl(var(--success))"
                     strokeDasharray={`${2 * Math.PI * 50 * metrics.flowEfficiency} ${2 * Math.PI * 50 * (1 - metrics.flowEfficiency)}`}
                     strokeLinecap="round"
                     strokeWidth="12"
                     transform="rotate(-90 60 60)"
                   />
                   <text
-                    fill={TEXT}
+                    fill="hsl(var(--foreground))"
                     fontSize="22"
                     fontWeight="800"
                     textAnchor="middle"
@@ -1393,7 +1460,7 @@ export function FlowMetricsDashboard({
                     {Math.round(metrics.flowEfficiency * 100)}
                   </text>
                   <text
-                    fill={MUTED}
+                    fill="hsl(var(--muted-foreground))"
                     fontSize="10"
                     textAnchor="middle"
                     x="60"
@@ -1407,13 +1474,18 @@ export function FlowMetricsDashboard({
                     style={{
                       fontSize: 13,
                       fontWeight: 600,
-                      color: TEXT,
+                      color: "hsl(var(--foreground))",
                       marginBottom: 4,
                     }}
                   >
                     Tempo ativo / tempo total
                   </div>
-                  <div style={{ fontSize: 11, color: MUTED }}>
+                  <div
+                    style={{
+                      fontSize: 11,
+                      color: "hsl(var(--muted-foreground))",
+                    }}
+                  >
                     Meta: &gt;60% de eficiência
                   </div>
                   <div style={{ marginTop: 14, display: "flex", gap: 16 }}>
@@ -1421,7 +1493,7 @@ export function FlowMetricsDashboard({
                       <div
                         style={{
                           fontSize: 10,
-                          color: MUTED,
+                          color: "hsl(var(--muted-foreground))",
                           textTransform: "uppercase",
                           letterSpacing: ".06em",
                           fontWeight: 700,
@@ -1433,7 +1505,7 @@ export function FlowMetricsDashboard({
                         style={{
                           fontSize: 18,
                           fontWeight: 800,
-                          color: "#10B981",
+                          color: "hsl(var(--success))",
                           marginTop: 2,
                         }}
                       >
@@ -1444,7 +1516,7 @@ export function FlowMetricsDashboard({
                       <div
                         style={{
                           fontSize: 10,
-                          color: MUTED,
+                          color: "hsl(var(--muted-foreground))",
                           textTransform: "uppercase",
                           letterSpacing: ".06em",
                           fontWeight: 700,
@@ -1456,7 +1528,7 @@ export function FlowMetricsDashboard({
                         style={{
                           fontSize: 18,
                           fontWeight: 800,
-                          color: "#64748B",
+                          color: "hsl(var(--muted-foreground))",
                           marginTop: 2,
                         }}
                       >
@@ -1482,39 +1554,50 @@ export function FlowMetricsDashboard({
                     data={metrics.flowPredictabilityHistory}
                   >
                     <CartesianGrid
-                      stroke="#F1F5F9"
+                      stroke="hsl(var(--border))"
                       strokeDasharray="3 3"
                       vertical={false}
                     />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{ fontSize: 10, fill: MUTED }}
+                      tick={{
+                        fontSize: 10,
+                        fill: "hsl(var(--muted-foreground))",
+                      }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: SURFACE,
-                        border: `1px solid ${BORDER}`,
+                        background: "hsl(var(--card))",
+                        border: "1px solid hsl(var(--border))",
                         borderRadius: 8,
                         fontSize: 12,
                       }}
                     />
-                    <Legend wrapperStyle={{ fontSize: 11, color: MUTED }} />
+                    <Legend
+                      wrapperStyle={{
+                        fontSize: 11,
+                        color: "hsl(var(--muted-foreground))",
+                      }}
+                    />
                     <Bar
                       dataKey="planned"
-                      fill="#C7D2FE"
+                      fill="color-mix(in srgb, hsl(var(--primary)) 35%, hsl(var(--card)))"
                       name="Planejado"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
                       dataKey="delivered"
-                      fill={ACCENT}
+                      fill="hsl(var(--primary))"
                       name="Entregue"
                       radius={[4, 4, 0, 0]}
                     />
@@ -1534,14 +1617,14 @@ export function FlowMetricsDashboard({
               return (
                 <ChartCard
                   badge={
-                    // biome-ignore lint/nursery/noLeakedRender: debt is an object (truthy/falsy), not a number
                     debt && debt.pct > 15 ? (
                       <span
                         style={{
                           padding: "2px 8px",
                           borderRadius: 5,
-                          background: "#FEF3C7",
-                          color: "#B45309",
+                          background:
+                            "color-mix(in srgb, oklch(0.68 0.18 50) 15%, hsl(var(--card)))",
+                          color: "oklch(0.55 0.15 50)",
                           fontWeight: 700,
                           fontSize: 10,
                         }}
@@ -1579,8 +1662,8 @@ export function FlowMetricsDashboard({
                           </Pie>
                           <Tooltip
                             contentStyle={{
-                              background: SURFACE,
-                              border: `1px solid ${BORDER}`,
+                              background: "hsl(var(--card))",
+                              border: "1px solid hsl(var(--border))",
                               borderRadius: 8,
                               fontSize: 12,
                             }}
@@ -1613,10 +1696,19 @@ export function FlowMetricsDashboard({
                                 flexShrink: 0,
                               }}
                             />
-                            <span style={{ fontWeight: 600, color: TEXT }}>
+                            <span
+                              style={{
+                                fontWeight: 600,
+                                color: "hsl(var(--foreground))",
+                              }}
+                            >
                               {d.type}
                             </span>
-                            <span style={{ color: MUTED }}>
+                            <span
+                              style={{
+                                color: "hsl(var(--muted-foreground))",
+                              }}
+                            >
                               {d.count} ({d.pct}%)
                             </span>
                           </div>
@@ -1643,24 +1735,27 @@ export function FlowMetricsDashboard({
               >
                 {insights.map((ins) => {
                   let s = {
-                    bg: "#EEF2FF",
-                    border: "#C7D2FE",
-                    title: "#4338CA",
-                    desc: "#3730A3",
+                    bg: "color-mix(in srgb, hsl(var(--primary)) 10%, hsl(var(--card)))",
+                    border:
+                      "color-mix(in srgb, hsl(var(--primary)) 30%, transparent)",
+                    title: "hsl(var(--primary))",
+                    desc: "color-mix(in srgb, hsl(var(--primary)) 80%, hsl(var(--foreground)))",
                   };
                   if (ins.tone === "good") {
                     s = {
-                      bg: "#F0FDF4",
-                      border: "#BBF7D0",
-                      title: "#15803D",
-                      desc: "#166534",
+                      bg: "color-mix(in srgb, hsl(var(--success)) 10%, hsl(var(--card)))",
+                      border:
+                        "color-mix(in srgb, hsl(var(--success)) 30%, transparent)",
+                      title: "hsl(var(--success))",
+                      desc: "color-mix(in srgb, hsl(var(--success)) 80%, hsl(var(--foreground)))",
                     };
                   } else if (ins.tone === "warn") {
                     s = {
-                      bg: "#FFFBEB",
-                      border: "#FDE68A",
-                      title: "#B45309",
-                      desc: "#92400E",
+                      bg: "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
+                      border:
+                        "color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
+                      title: "oklch(0.55 0.15 50)",
+                      desc: "oklch(0.45 0.12 50)",
                     };
                   }
                   return (
@@ -1714,7 +1809,6 @@ export function FlowMetricsDashboard({
           )}
 
           {/* ── Anomaly Summary Panel ─────────────────────────────────────── */}
-          {/* biome-ignore lint/nursery/noLeakedRender: snapshotId is string (explicitly truthy check) */}
           {snapshotId && (
             <div className="mt-6">
               <AnomalySummaryPanel snapshotId={snapshotId} />
@@ -1732,9 +1826,9 @@ export function FlowMetricsDashboard({
 
             <div
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 14,
-                border: `1px solid ${BORDER}`,
+                border: "1px solid hsl(var(--border))",
                 padding: "16px 18px",
                 display: "flex",
                 flexDirection: "column",
@@ -1750,14 +1844,14 @@ export function FlowMetricsDashboard({
                       new Date(a.assessedAt).getTime()
                   )[0];
                 const score = latest?.score ?? null;
-                let fillColor = ACCENT;
+                let fillColor = "hsl(var(--primary))";
                 if (score !== null) {
                   if (score >= 4) {
-                    fillColor = "#10B981";
+                    fillColor = "hsl(var(--success))";
                   } else if (score >= 3) {
-                    fillColor = ACCENT;
+                    fillColor = "hsl(var(--primary))";
                   } else {
-                    fillColor = "#F59E0B";
+                    fillColor = "oklch(0.68 0.18 50)";
                   }
                 }
                 return (
@@ -1770,7 +1864,11 @@ export function FlowMetricsDashboard({
                       }}
                     >
                       <span
-                        style={{ fontSize: 12, fontWeight: 600, color: TEXT }}
+                        style={{
+                          fontSize: 12,
+                          fontWeight: 600,
+                          color: "hsl(var(--foreground))",
+                        }}
                       >
                         {c.label}
                       </span>
@@ -1778,8 +1876,9 @@ export function FlowMetricsDashboard({
                         style={{
                           fontSize: 12,
                           fontWeight: 800,
-                          // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-                          color: score ? fillColor : MUTED,
+                          color: score
+                            ? fillColor
+                            : "hsl(var(--muted-foreground))",
                         }}
                       >
                         {score ? `${score}/5` : "—"}
@@ -1789,7 +1888,7 @@ export function FlowMetricsDashboard({
                       style={{
                         height: 6,
                         borderRadius: 99,
-                        background: "#F1F5F9",
+                        background: "hsl(var(--muted))",
                         overflow: "hidden",
                       }}
                     >
@@ -1811,9 +1910,9 @@ export function FlowMetricsDashboard({
             {/* Assessment form */}
             <div
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 14,
-                border: `1px solid ${BORDER}`,
+                border: "1px solid hsl(var(--border))",
                 padding: "16px 18px",
               }}
             >
@@ -1821,7 +1920,7 @@ export function FlowMetricsDashboard({
                 style={{
                   fontSize: 11,
                   fontWeight: 800,
-                  color: MUTED,
+                  color: "hsl(var(--muted-foreground))",
                   letterSpacing: ".06em",
                   textTransform: "uppercase",
                   marginBottom: 12,
@@ -1847,7 +1946,13 @@ export function FlowMetricsDashboard({
                   ))}
                 </select>
                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span style={{ fontSize: 11, color: MUTED, width: 40 }}>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      color: "hsl(var(--muted-foreground))",
+                      width: 40,
+                    }}
+                  >
                     Score:
                   </span>
                   <div style={{ display: "flex", gap: 4 }}>
@@ -1866,9 +1971,14 @@ export function FlowMetricsDashboard({
                           border: "none",
                           cursor: "pointer",
                           fontFamily: "inherit",
-                          background: assessScore >= n ? ACCENT : "#F1F5F9",
-                          // biome-ignore lint/nursery/noLeakedRender: ternary in style object, not JSX render
-                          color: assessScore >= n ? "#fff" : MUTED,
+                          background:
+                            assessScore >= n
+                              ? "hsl(var(--primary))"
+                              : "hsl(var(--muted))",
+                          color:
+                            assessScore >= n
+                              ? "hsl(var(--primary-foreground))"
+                              : "hsl(var(--muted-foreground))",
                           transition: "background .12s",
                         }}
                         type="button"
@@ -1888,8 +1998,8 @@ export function FlowMetricsDashboard({
                 <button
                   disabled={assessLoading}
                   style={{
-                    background: ACCENT,
-                    color: "#fff",
+                    background: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
                     border: "none",
                     borderRadius: 8,
                     padding: "9px 0",
@@ -1924,7 +2034,7 @@ export function FlowMetricsDashboard({
                 <div
                   style={{
                     textAlign: "center",
-                    color: MUTED,
+                    color: "hsl(var(--muted-foreground))",
                     fontSize: 13,
                     padding: "24px 0",
                   }}
@@ -1936,9 +2046,9 @@ export function FlowMetricsDashboard({
                 <div
                   key={action.id}
                   style={{
-                    background: SURFACE,
+                    background: "hsl(var(--card))",
                     borderRadius: 10,
-                    border: `1px solid ${BORDER}`,
+                    border: "1px solid hsl(var(--border))",
                     padding: "10px 14px",
                     display: "flex",
                     alignItems: "flex-start",
@@ -1952,16 +2062,29 @@ export function FlowMetricsDashboard({
                       height: 8,
                       borderRadius: 4,
                       flexShrink: 0,
-                      background: STATUS_COLOR[action.status] ?? "#6B7280",
+                      background:
+                        STATUS_COLOR[action.status] ??
+                        "hsl(var(--muted-foreground))",
                     }}
                   />
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontSize: 12, fontWeight: 600, color: TEXT }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: "hsl(var(--foreground))",
+                      }}
+                    >
                       {action.title}
                     </div>
-                    {/* biome-ignore lint/nursery/noLeakedRender: relatedMetric is a string, not a number */}
                     {action.relatedMetric && (
-                      <div style={{ fontSize: 10, color: MUTED, marginTop: 2 }}>
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: "hsl(var(--muted-foreground))",
+                          marginTop: 2,
+                        }}
+                      >
                         {METRIC_LABELS[action.relatedMetric] ??
                           action.relatedMetric}
                       </div>
@@ -1991,9 +2114,9 @@ export function FlowMetricsDashboard({
             {/* New action form */}
             <div
               style={{
-                background: SURFACE,
+                background: "hsl(var(--card))",
                 borderRadius: 14,
-                border: `1px solid ${BORDER}`,
+                border: "1px solid hsl(var(--border))",
                 padding: "16px 18px",
               }}
             >
@@ -2001,7 +2124,7 @@ export function FlowMetricsDashboard({
                 style={{
                   fontSize: 11,
                   fontWeight: 800,
-                  color: MUTED,
+                  color: "hsl(var(--muted-foreground))",
                   letterSpacing: ".06em",
                   textTransform: "uppercase",
                   marginBottom: 12,
@@ -2036,8 +2159,8 @@ export function FlowMetricsDashboard({
                 <button
                   disabled={actionLoading || !actionTitle.trim()}
                   style={{
-                    background: ACCENT,
-                    color: "#fff",
+                    background: "hsl(var(--primary))",
+                    color: "hsl(var(--primary-foreground))",
                     border: "none",
                     borderRadius: 8,
                     padding: "9px 0",
@@ -2070,7 +2193,7 @@ function EmptyChart({ text }: { text: string }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        color: MUTED,
+        color: "hsl(var(--muted-foreground))",
         fontSize: 13,
       }}
     >

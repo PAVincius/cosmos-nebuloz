@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { AnchorIcon, PlusIcon } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -16,6 +13,9 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { AnchorIcon, PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { createSolutionTrain } from "../../../actions/solution-trains";
 
 export function CreateSolutionTrainDialog() {
@@ -30,7 +30,10 @@ export function CreateSolutionTrainDialog() {
     setError(null);
     startTransition(async () => {
       try {
-        await createSolutionTrain({ name, description: description || undefined });
+        await createSolutionTrain({
+          name,
+          description: description || undefined,
+        });
         setOpen(false);
         setName("");
         setDescription("");
@@ -42,7 +45,7 @@ export function CreateSolutionTrainDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -52,7 +55,7 @@ export function CreateSolutionTrainDialog() {
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
               <AnchorIcon className="h-5 w-5 text-primary" />
             </div>
@@ -70,12 +73,12 @@ export function CreateSolutionTrainDialog() {
               Nome <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="st-name"
-              placeholder="ex: Plataforma de Pagamentos..."
-              value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              autoFocus
+              placeholder="ex: Plataforma de Pagamentos..."
+              value={name}
             />
           </div>
 
@@ -83,10 +86,10 @@ export function CreateSolutionTrainDialog() {
             <Label htmlFor="st-description">Descrição</Label>
             <Textarea
               id="st-description"
-              placeholder="Descreva o propósito deste Solution Train..."
-              value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descreva o propósito deste Solution Train..."
               rows={3}
+              value={description}
             />
           </div>
 
@@ -95,13 +98,13 @@ export function CreateSolutionTrainDialog() {
 
         <DialogFooter>
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !name.trim()}>
+          <Button disabled={isPending || !name.trim()} onClick={handleSubmit}>
             {isPending ? "Criando..." : "Criar Solution Train"}
           </Button>
         </DialogFooter>

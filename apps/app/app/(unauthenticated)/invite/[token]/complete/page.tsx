@@ -20,7 +20,11 @@ export default async function InviteCompletePage({ params }: Props) {
     include: { tenant: { select: { id: true, name: true } } },
   });
 
-  if (!invitation || invitation.status !== "PENDING" || new Date() > invitation.expiresAt) {
+  if (
+    !invitation ||
+    invitation.status !== "PENDING" ||
+    new Date() > invitation.expiresAt
+  ) {
     redirect("/onboarding?error=invite_invalid");
   }
 
@@ -53,5 +57,7 @@ export default async function InviteCompletePage({ params }: Props) {
     ]);
   }
 
-  redirect(`/onboarding?from=invite&workspace=${encodeURIComponent(invitation.tenant.name)}`);
+  redirect(
+    `/onboarding?from=invite&workspace=${encodeURIComponent(invitation.tenant.name)}`
+  );
 }

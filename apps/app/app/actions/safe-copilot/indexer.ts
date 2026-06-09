@@ -227,7 +227,7 @@ type EntityContent = { title: string; body: string };
 async function fetchEntityContent(
   sourceType: SourceType,
   sourceId: string,
-  tenantId: string,
+  tenantId: string
 ): Promise<EntityContent | null> {
   switch (sourceType) {
     case "epic": {
@@ -247,12 +247,12 @@ async function fetchEntityContent(
     case "risk": {
       const r = await database.risk.findFirst({
         where: { id: sourceId, tenantId },
-        select: { title: true, description: true, notes: true },
+        select: { title: true, description: true },
       });
       return r
         ? {
             title: r.title,
-            body: [r.description, r.notes].filter(Boolean).join("\n\n"),
+            body: r.description ?? "",
           }
         : null;
     }
@@ -275,7 +275,7 @@ async function fetchEntityContent(
 export async function indexEntity(
   sourceType: SourceType,
   sourceId: string,
-  tenantId: string,
+  tenantId: string
 ): Promise<void> {
   const content = await fetchEntityContent(sourceType, sourceId, tenantId);
   if (!content) {

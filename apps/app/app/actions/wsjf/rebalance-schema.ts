@@ -22,7 +22,13 @@ export type FeatureSuggestion = {
   suggestedWSJF: number;
   delta: number;
   justification: string;
-  impactFactor: "team_capacity" | "dependency" | "deadline" | "member_availability" | "velocity_trend" | "priority_drift";
+  impactFactor:
+    | "team_capacity"
+    | "dependency"
+    | "deadline"
+    | "member_availability"
+    | "velocity_trend"
+    | "priority_drift";
   confidence: number;
   featureTitle: string;
   epicTitle: string;

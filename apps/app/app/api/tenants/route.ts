@@ -11,7 +11,9 @@ export const GET = async (request: NextRequest) => {
 
   const memberships = await database.tenantMember.findMany({
     where: { userId: session.user.id },
-    include: { tenant: { select: { id: true, name: true, slug: true, logo: true } } },
+    include: {
+      tenant: { select: { id: true, name: true, slug: true, logo: true } },
+    },
   });
 
   return NextResponse.json({
@@ -22,7 +24,8 @@ export const GET = async (request: NextRequest) => {
       logo: m.tenant.logo,
       role: m.role,
     })),
-    activeTenantId: (session.session as unknown as { activeTenantId?: string })
-      .activeTenantId ?? null,
+    activeTenantId:
+      (session.session as unknown as { activeTenantId?: string })
+        .activeTenantId ?? null,
   });
 };

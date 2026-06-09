@@ -9,7 +9,6 @@ import {
 } from "@repo/design-system/components/ui/context-menu";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  Download,
   FileJson,
   FileText,
   MessageSquare,
@@ -18,7 +17,10 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import type { SessionPreview, StoredMessage } from "@/app/actions/safe-copilot/sessions";
+import type {
+  SessionPreview,
+  StoredMessage,
+} from "@/app/actions/safe-copilot/sessions";
 import {
   deleteCopilotSession,
   loadCopilotSession,
@@ -37,7 +39,10 @@ type Props = {
 function exportAsMarkdown(session: SessionPreview, messages: StoredMessage[]) {
   const lines: string[] = [`# ${session.preview}`, ""];
   for (const m of messages) {
-    lines.push(`**${m.role === "user" ? "Você" : "Copilot"}:** ${m.content}`, "");
+    lines.push(
+      `**${m.role === "user" ? "Você" : "Copilot"}:** ${m.content}`,
+      ""
+    );
   }
   const blob = new Blob([lines.join("\n")], { type: "text/markdown" });
   triggerDownload(blob, `${session.preview.slice(0, 40)}.md`);
@@ -154,7 +159,9 @@ export function SessionItem({
           Abrir conversa
         </ContextMenuItem>
 
-        <ContextMenuItem onClick={handlePinClick as unknown as React.MouseEventHandler}>
+        <ContextMenuItem
+          onClick={handlePinClick as unknown as React.MouseEventHandler}
+        >
           {isPinned ? (
             <>
               <PinOff className="mr-2 h-4 w-4" />

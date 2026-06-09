@@ -1,9 +1,11 @@
-import { vi, describe, it, expect } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn().mockResolvedValue({ tenantId: "t1" }),
   headersResult: vi.fn().mockResolvedValue({}),
-  storageUpload: vi.fn().mockResolvedValue({ data: { path: "t1/a1.md.gz" }, error: null }),
+  storageUpload: vi
+    .fn()
+    .mockResolvedValue({ data: { path: "t1/a1.md.gz" }, error: null }),
   storageList: vi.fn().mockResolvedValue({ data: [], error: null }),
   storageRemove: vi.fn().mockResolvedValue({ error: null }),
   storageFrom: vi.fn(),
@@ -12,7 +14,9 @@ const mocks = vi.hoisted(() => ({
   tenantUpdate: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock("@repo/auth/server", () => ({ requireTenantSession: mocks.requireTenantSession }));
+vi.mock("@repo/auth/server", () => ({
+  requireTenantSession: mocks.requireTenantSession,
+}));
 vi.mock("next/headers", () => ({ headers: mocks.headersResult }));
 vi.mock("@repo/storage", () => ({
   storageClient: {
@@ -37,7 +41,7 @@ vi.mock("@repo/database", () => ({
 }));
 vi.mock("@paralleldrive/cuid2", () => ({ createId: () => "test-id-123" }));
 
-import { saveArtifact, listArtifacts } from "@/app/actions/artifacts/index";
+import { listArtifacts, saveArtifact } from "@/app/actions/artifacts/index";
 
 describe("saveArtifact", () => {
   it("saves artifact and returns metadata", async () => {

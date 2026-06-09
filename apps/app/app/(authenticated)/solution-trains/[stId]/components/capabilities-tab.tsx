@@ -1,17 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  PencilIcon,
-  PlusIcon,
-  Trash2Icon,
-  ZapIcon,
-} from "lucide-react";
-import { Button } from "@repo/design-system/components/ui/button";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +12,6 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Textarea } from "@repo/design-system/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -30,11 +19,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  PencilIcon,
+  PlusIcon,
+  Trash2Icon,
+  ZapIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import {
   createCapability,
-  updateCapability,
   deleteCapability,
   reorderCapabilities,
+  updateCapability,
 } from "../../../../actions/capabilities";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -54,7 +54,10 @@ const STATUS_OPTIONS = [
   { value: "DONE", label: "Concluído" },
 ];
 
-const STATUS_COLORS: Record<string, "secondary" | "default" | "destructive" | "outline"> = {
+const STATUS_COLORS: Record<
+  string,
+  "secondary" | "default" | "destructive" | "outline"
+> = {
   BACKLOG: "secondary",
   ANALYZING: "outline",
   IMPLEMENTING: "default",
@@ -86,9 +89,18 @@ function CapabilityDialog({
     startTransition(async () => {
       try {
         if (capability) {
-          await updateCapability(capability.id, { title, description: description || undefined, status });
+          await updateCapability(capability.id, {
+            title,
+            description: description || undefined,
+            status,
+          });
         } else {
-          await createCapability({ solutionTrainId, title, description: description || undefined, status });
+          await createCapability({
+            solutionTrainId,
+            title,
+            description: description || undefined,
+            status,
+          });
         }
         setOpen(false);
         if (!capability) {
@@ -104,7 +116,7 @@ function CapabilityDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -119,11 +131,11 @@ function CapabilityDialog({
               Título <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="cap-title"
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="ex: Pagamentos em tempo real..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoFocus
             />
           </div>
 
@@ -131,16 +143,16 @@ function CapabilityDialog({
             <Label htmlFor="cap-description">Descrição</Label>
             <Textarea
               id="cap-description"
-              placeholder="Descreva a capability..."
-              value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descreva a capability..."
               rows={3}
+              value={description}
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label>Status</Label>
-            <Select value={status} onValueChange={setStatus}>
+            <Select onValueChange={setStatus} value={status}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -158,10 +170,14 @@ function CapabilityDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+          <Button
+            disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !title.trim()}>
+          <Button disabled={isPending || !title.trim()} onClick={handleSubmit}>
             {isPending ? "Salvando..." : capability ? "Salvar" : "Criar"}
           </Button>
         </DialogFooter>
@@ -188,7 +204,9 @@ export function CapabilitiesTab({
   }
 
   function moveUp(index: number) {
-    if (index === 0) return;
+    if (index === 0) {
+      return;
+    }
     const next = [...capabilities];
     [next[index - 1], next[index]] = [next[index], next[index - 1]];
     setCapabilities(next);
@@ -198,7 +216,9 @@ export function CapabilitiesTab({
   }
 
   function moveDown(index: number) {
-    if (index === capabilities.length - 1) return;
+    if (index === capabilities.length - 1) {
+      return;
+    }
     const next = [...capabilities];
     [next[index], next[index + 1]] = [next[index + 1], next[index]];
     setCapabilities(next);
@@ -219,6 +239,7 @@ export function CapabilitiesTab({
     <div className="flex flex-col gap-4">
       <div className="flex justify-end">
         <CapabilityDialog
+          onSuccess={refresh}
           solutionTrainId={solutionTrainId}
           trigger={
             <Button size="sm">
@@ -226,13 +247,12 @@ export function CapabilitiesTab({
               Nova Capability
             </Button>
           }
-          onSuccess={refresh}
         />
       </div>
 
       {capabilities.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-          <ZapIcon className="text-muted-foreground mb-3 h-8 w-8" />
+          <ZapIcon className="mb-3 h-8 w-8 text-muted-foreground" />
           <p className="text-muted-foreground text-sm">
             Nenhuma capability adicionada ainda.
           </p>
@@ -241,60 +261,61 @@ export function CapabilitiesTab({
         <div className="flex flex-col gap-2">
           {capabilities.map((cap, index) => (
             <div
-              key={cap.id}
               className="flex items-center gap-3 rounded-lg border bg-card px-4 py-3"
+              key={cap.id}
             >
               <div className="flex flex-col gap-0.5">
                 <Button
-                  variant="ghost"
-                  size="icon"
                   className="h-6 w-6"
-                  onClick={() => moveUp(index)}
                   disabled={index === 0 || isPending}
+                  onClick={() => moveUp(index)}
+                  size="icon"
+                  variant="ghost"
                 >
                   <ArrowUpIcon className="h-3.5 w-3.5" />
                 </Button>
                 <Button
-                  variant="ghost"
-                  size="icon"
                   className="h-6 w-6"
-                  onClick={() => moveDown(index)}
                   disabled={index === capabilities.length - 1 || isPending}
+                  onClick={() => moveDown(index)}
+                  size="icon"
+                  variant="ghost"
                 >
                   <ArrowDownIcon className="h-3.5 w-3.5" />
                 </Button>
               </div>
 
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{cap.title}</p>
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-medium text-sm">{cap.title}</p>
                 {cap.description && (
-                  <p className="text-muted-foreground text-xs truncate">
+                  <p className="truncate text-muted-foreground text-xs">
                     {cap.description}
                   </p>
                 )}
               </div>
 
               <Badge variant={STATUS_COLORS[cap.status] ?? "secondary"}>
-                {STATUS_OPTIONS.find((o) => o.value === cap.status)?.label ?? cap.status}
+                {STATUS_OPTIONS.find((o) => o.value === cap.status)?.label ??
+                  cap.status}
               </Badge>
 
               <div className="flex gap-1">
                 <CapabilityDialog
-                  solutionTrainId={solutionTrainId}
                   capability={cap}
+                  onSuccess={refresh}
+                  solutionTrainId={solutionTrainId}
                   trigger={
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                    <Button className="h-8 w-8" size="icon" variant="ghost">
                       <PencilIcon className="h-3.5 w-3.5" />
                     </Button>
                   }
-                  onSuccess={refresh}
                 />
                 <Button
-                  variant="ghost"
-                  size="icon"
                   className="h-8 w-8 text-destructive hover:text-destructive"
-                  onClick={() => handleDelete(cap.id)}
                   disabled={isPending}
+                  onClick={() => handleDelete(cap.id)}
+                  size="icon"
+                  variant="ghost"
                 >
                   <Trash2Icon className="h-3.5 w-3.5" />
                 </Button>

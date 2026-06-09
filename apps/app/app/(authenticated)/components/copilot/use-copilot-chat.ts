@@ -135,11 +135,25 @@ async function readDataStream(
   const decoder = new TextDecoder();
   let buffer = "";
   const state: StreamState = { text: "", toolInvocations: new Map() };
-  const emit = () =>
+
+  let rafId: ReturnType<typeof requestAnimationFrame> | null = null;
+  const flush = () =>
     onUpdate({
       text: state.text,
       toolInvocations: Array.from(state.toolInvocations.values()),
     });
+
+  // Batch updates to animation frame — many tokens can arrive per frame;
+  // this prevents React re-rendering on every single delta.
+  const scheduleEmit = () => {
+    if (rafId !== null) {
+      return;
+    }
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      flush();
+    });
+  };
 
   while (true) {
     const { done, value } = await reader.read();
@@ -149,8 +163,14 @@ async function readDataStream(
     buffer += decoder.decode(value, { stream: true });
     const lines = buffer.split("\n");
     buffer = lines.pop() ?? "";
-    processLines(lines, state, emit);
+    processLines(lines, state, scheduleEmit);
   }
+
+  // Final flush — ensure last partial buffer and any pending frame are committed
+  if (rafId !== null) {
+    cancelAnimationFrame(rafId);
+  }
+  flush();
 }
 
 type FetchStreamOptions = {

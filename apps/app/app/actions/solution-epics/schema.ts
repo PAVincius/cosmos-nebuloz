@@ -1,11 +1,6 @@
+import type { SolutionEpic, SolutionTrain } from "@repo/database";
 import { z } from "zod";
-import { type SolutionEpic, type SolutionTrain } from "@repo/database";
-import {
-  PaginationSchema,
-  nnStr,
-  optStr,
-  optCuid,
-} from "../_base";
+import { nnStr, optCuid, optStr, PaginationSchema } from "../_base";
 
 export const CreateSolutionEpicSchema = z.object({
   solutionTrainId: optCuid,
@@ -15,9 +10,11 @@ export const CreateSolutionEpicSchema = z.object({
   wsjfScore: z.number().finite().nonnegative().max(100).default(0),
 });
 
-export const UpdateSolutionEpicSchema = CreateSolutionEpicSchema.partial().omit({
-  solutionTrainId: true,
-});
+export const UpdateSolutionEpicSchema = CreateSolutionEpicSchema.partial().omit(
+  {
+    solutionTrainId: true,
+  }
+);
 
 export const SolutionEpicFiltersSchema = PaginationSchema.extend({
   solutionTrainId: optCuid,

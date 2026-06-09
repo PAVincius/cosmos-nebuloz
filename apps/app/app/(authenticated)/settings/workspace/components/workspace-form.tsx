@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
+import { BuildingIcon, LoaderIcon, SaveIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { updateWorkspace } from "../../../../actions/settings/workspace";
-import { SaveIcon, LoaderIcon, BuildingIcon } from "lucide-react";
 
 type WorkspaceFormProps = {
   name: string;
@@ -15,7 +14,12 @@ type WorkspaceFormProps = {
   isAdmin: boolean;
 };
 
-export function WorkspaceForm({ name, slug, logo, isAdmin }: WorkspaceFormProps) {
+export function WorkspaceForm({
+  name,
+  slug,
+  logo,
+  isAdmin,
+}: WorkspaceFormProps) {
   const [nameValue, setNameValue] = useState(name);
   const [slugValue, setSlugValue] = useState(slug);
   const [logoValue, setLogoValue] = useState(logo ?? "");
@@ -30,63 +34,81 @@ export function WorkspaceForm({ name, slug, logo, isAdmin }: WorkspaceFormProps)
 
     startTransition(async () => {
       try {
-        await updateWorkspace({ name: nameValue, slug: slugValue, logo: logoValue });
+        await updateWorkspace({
+          name: nameValue,
+          slug: slugValue,
+          logo: logoValue,
+        });
         setSuccess(true);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro ao salvar workspace.");
+        setError(
+          err instanceof Error ? err.message : "Erro ao salvar workspace."
+        );
       }
     });
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BuildingIcon className="size-4" />
+    <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]">
+      <div className="border-hairline border-b bg-surface-2 px-5 py-4">
+        <h2 className="flex items-center gap-2 font-semibold text-sm tracking-tight">
+          <BuildingIcon className="size-4 text-primary" />
           Configurações do Workspace
-        </CardTitle>
-        <CardDescription>Informações gerais do seu workspace.</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        </h2>
+        <p className="mt-1 text-muted-foreground text-xs">
+          Informações gerais do seu workspace.
+        </p>
+      </div>
+      <div className="p-5">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="ws-name">Nome do Workspace</Label>
             <Input
+              disabled={!isAdmin || isPending}
               id="ws-name"
-              value={nameValue}
               onChange={(e) => setNameValue(e.target.value)}
               placeholder="Minha Organização"
-              disabled={!isAdmin || isPending}
+              value={nameValue}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="ws-slug">Slug (URL)</Label>
             <Input
-              id="ws-slug"
-              value={slugValue}
-              onChange={(e) => setSlugValue(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-              placeholder="minha-org"
               disabled={!isAdmin || isPending}
+              id="ws-slug"
+              onChange={(e) =>
+                setSlugValue(
+                  e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-")
+                )
+              }
+              placeholder="minha-org"
+              value={slugValue}
             />
-            <p className="text-xs text-muted-foreground">Apenas letras minúsculas, números e hífens.</p>
+            <p className="text-muted-foreground text-xs">
+              Apenas letras minúsculas, números e hífens.
+            </p>
           </div>
           <div className="space-y-2">
             <Label htmlFor="ws-logo">URL do Logo</Label>
             <Input
+              disabled={!isAdmin || isPending}
               id="ws-logo"
-              value={logoValue}
               onChange={(e) => setLogoValue(e.target.value)}
               placeholder="https://..."
-              disabled={!isAdmin || isPending}
+              value={logoValue}
             />
           </div>
           {!isAdmin && (
-            <p className="text-xs text-muted-foreground">Apenas administradores podem editar as configurações do workspace.</p>
+            <p className="text-muted-foreground text-xs">
+              Apenas administradores podem editar as configurações do workspace.
+            </p>
           )}
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && <p className="text-sm text-green-600">Workspace atualizado!</p>}
+          {error && <p className="text-destructive text-sm">{error}</p>}
+          {success && (
+            <p className="text-green-600 text-sm">Workspace atualizado!</p>
+          )}
           {isAdmin && (
-            <Button type="submit" disabled={isPending} className="gap-2">
+            <Button className="gap-2" disabled={isPending} type="submit">
               {isPending ? (
                 <LoaderIcon className="size-4 animate-spin" />
               ) : (
@@ -96,7 +118,7 @@ export function WorkspaceForm({ name, slug, logo, isAdmin }: WorkspaceFormProps)
             </Button>
           )}
         </form>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

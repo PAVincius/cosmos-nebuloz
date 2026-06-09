@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import {
@@ -24,9 +23,9 @@ import { useState, useTransition } from "react";
 import {
   createKeyResult,
   deleteKeyResult,
+  type OKRWithContext,
   updateKeyResult,
   updateOKRStatus,
-  type OKRWithContext,
 } from "@/app/actions/okrs";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
@@ -53,7 +52,6 @@ type KeyResultWithProgress = {
   progress: number;
   snapshots?: KeyResultSnapshotItem[];
 };
-
 
 const STATUS_CONFIG: Record<OKRStatus, { label: string; cls: string }> = {
   ON_TRACK: {
@@ -351,8 +349,8 @@ export function OKRCardV2({
   }
 
   return (
-    <Card className="border border-border/80 bg-card transition-colors hover:border-border">
-      <CardContent className="space-y-2 p-3">
+    <div className="rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)] transition-all duration-200 hover:border-hairline-strong hover:shadow-[var(--hover-shadow)]">
+      <div className="space-y-2 p-3">
         {/* Header row */}
         {!compact && (
           <div className="flex items-center justify-between">
@@ -504,7 +502,7 @@ export function OKRCardV2({
             <AddKeyResultRow okrId={okr.id} onAddKeyResult={onAddKeyResult} />
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

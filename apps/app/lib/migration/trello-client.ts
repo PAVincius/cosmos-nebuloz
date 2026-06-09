@@ -1,10 +1,10 @@
 import type { MigrationItem } from "./types";
 
-export interface TrelloConfig {
+export type TrelloConfig = {
   apiKey: string;
   apiToken: string;
   boardIds?: string[];
-}
+};
 
 const BASE = "https://api.trello.com/1";
 
@@ -12,7 +12,9 @@ function auth(cfg: TrelloConfig): string {
   return `key=${cfg.apiKey}&token=${cfg.apiToken}`;
 }
 
-export async function testTrelloConnection(config: TrelloConfig): Promise<void> {
+export async function testTrelloConnection(
+  config: TrelloConfig
+): Promise<void> {
   const res = await fetch(`${BASE}/members/me?${auth(config)}`);
   if (!res.ok) {
     throw new Error(
@@ -27,10 +29,12 @@ export async function discoverTrelloBoards(
   const res = await fetch(
     `${BASE}/members/me/boards?${auth(config)}&fields=id,name`
   );
-  if (!res.ok) throw new Error("Failed to fetch Trello boards");
+  if (!res.ok) {
+    throw new Error("Failed to fetch Trello boards");
+  }
   const boards = (await res.json()) as { id: string; name: string }[];
   return config.boardIds?.length
-    ? boards.filter((b) => config.boardIds!.includes(b.id))
+    ? boards.filter((b) => config.boardIds?.includes(b.id))
     : boards;
 }
 
@@ -41,7 +45,9 @@ export async function fetchTrelloCards(
   const res = await fetch(
     `${BASE}/boards/${boardId}/cards?${auth(config)}&fields=id,name,desc,labels`
   );
-  if (!res.ok) throw new Error("Failed to fetch Trello cards");
+  if (!res.ok) {
+    throw new Error("Failed to fetch Trello cards");
+  }
   const cards = (await res.json()) as {
     id: string;
     name: string;

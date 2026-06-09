@@ -1,9 +1,9 @@
 "use client";
 
 import type { ArtifactMetadata } from "@repo/storage";
-import { deleteArtifact } from "@/app/actions/artifacts";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
+import { deleteArtifact } from "@/app/actions/artifacts";
 import { ArtifactViewer } from "./artifact-viewer";
 
 const TYPE_LABELS: Record<string, string> = {
@@ -26,7 +26,9 @@ export function ArtifactBrowser({ initialArtifacts }: Props) {
       const result = await deleteArtifact(id);
       if (result.ok) {
         setArtifacts((prev) => prev.filter((a) => a.id !== id));
-        if (selectedId === id) setSelectedId(null);
+        if (selectedId === id) {
+          setSelectedId(null);
+        }
         toast.success("Artefato removido");
       } else {
         toast.error("Erro ao remover artefato");
@@ -52,17 +54,19 @@ export function ArtifactBrowser({ initialArtifacts }: Props) {
       <div className="space-y-2">
         {artifacts.map((artifact) => (
           <button
-            key={artifact.id}
-            type="button"
-            onClick={() => setSelectedId(artifact.id)}
             className={`w-full rounded-lg border p-3 text-left transition-colors ${
               selectedId === artifact.id
                 ? "border-primary bg-primary/5"
                 : "border-border hover:bg-muted"
             }`}
+            key={artifact.id}
+            onClick={() => setSelectedId(artifact.id)}
+            type="button"
           >
             <div className="flex items-center justify-between">
-              <span className="font-medium text-sm truncate">{artifact.title}</span>
+              <span className="truncate font-medium text-sm">
+                {artifact.title}
+              </span>
               <span className="ml-2 shrink-0 rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground">
                 {TYPE_LABELS[artifact.type] ?? artifact.type}
               </span>
@@ -71,13 +75,13 @@ export function ArtifactBrowser({ initialArtifacts }: Props) {
               {new Date(artifact.createdAt).toLocaleDateString("pt-BR")}
             </p>
             <button
-              type="button"
+              className="mt-1 text-[10px] text-red-500 hover:text-red-700"
+              disabled={isPending}
               onClick={(e) => {
                 e.stopPropagation();
                 handleDelete(artifact.id);
               }}
-              disabled={isPending}
-              className="mt-1 text-[10px] text-red-500 hover:text-red-700"
+              type="button"
             >
               Remover
             </button>

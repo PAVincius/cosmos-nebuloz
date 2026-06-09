@@ -134,7 +134,14 @@ export function CopilotInputArea({
         </div>
       ) : null}
 
-      <div className="mx-4 my-3 rounded-xl border border-black/[0.08] bg-gray-50/80 dark:border-white/[0.08] dark:bg-zinc-900/50">
+      <div
+        className={cn(
+          "mx-4 my-3 rounded-xl border bg-gray-50/80 transition-all duration-300 dark:bg-zinc-900/50",
+          isLoading
+            ? "animate-pulse border-violet-500/50 shadow-[0_0_0_3px_rgba(124,58,237,0.12)] dark:border-violet-400/40"
+            : "border-black/[0.08] dark:border-white/[0.08]"
+        )}
+      >
         <CopilotTipTapEditor
           disabled={isLoading}
           onChange={setInputText}

@@ -20,7 +20,7 @@ function InvestScoreDisplay({ score }: { score: number | null }) {
         : "bg-red-100 text-red-800";
   return (
     <span
-      className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-medium ${color}`}
+      className={`inline-flex items-center rounded px-1.5 py-0.5 font-medium text-xs ${color}`}
     >
       {score}
     </span>
@@ -29,21 +29,21 @@ function InvestScoreDisplay({ score }: { score: number | null }) {
 
 export function EpicGovernanceCard({ epic, onTransition }: Props) {
   return (
-    <div className="rounded border bg-card p-3 shadow-sm hover:shadow cursor-grab">
+    <div className="cursor-grab rounded-xl border border-hairline bg-surface p-3 shadow-[var(--card-shadow)] hover:shadow-[var(--hover-shadow)]">
       <div className="flex items-start justify-between gap-2">
-        <h4 className="text-sm font-medium leading-tight">{epic.title}</h4>
+        <h4 className="font-medium text-sm leading-tight">{epic.title}</h4>
         <InvestScoreDisplay score={epic.investScore} />
       </div>
       {epic.valueStream && (
-        <div className="mt-2 text-xs text-muted-foreground">
+        <div className="mt-2 text-muted-foreground text-xs">
           VS: {epic.valueStream}
         </div>
       )}
       {onTransition && (
         <button
-          type="button"
+          className="mt-2 text-primary text-xs underline"
           onClick={() => onTransition(epic.id)}
-          className="mt-2 text-xs text-primary underline"
+          type="button"
         >
           Transicionar
         </button>

@@ -23,8 +23,14 @@ import {
 } from "@/app/actions/integrations/sync/sync-mapping";
 
 const mockDb = database as unknown as {
-  linearSync: { upsert: ReturnType<typeof vi.fn>; findUnique: ReturnType<typeof vi.fn> };
-  gitHubSync: { upsert: ReturnType<typeof vi.fn>; findUnique: ReturnType<typeof vi.fn> };
+  linearSync: {
+    upsert: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
+  };
+  gitHubSync: {
+    upsert: ReturnType<typeof vi.fn>;
+    findUnique: ReturnType<typeof vi.fn>;
+  };
 };
 
 beforeEach(() => {
@@ -54,7 +60,10 @@ describe("upsertLinearMapping", () => {
         linearType: "Issue",
       },
     });
-    expect(call[0].create).toMatchObject({ linearId: "lin-1", cosmosId: "epic-1" });
+    expect(call[0].create).toMatchObject({
+      linearId: "lin-1",
+      cosmosId: "epic-1",
+    });
     expect(call[0].update).toMatchObject({ cosmosId: "epic-1" });
   });
 });
@@ -63,7 +72,11 @@ describe("findLinearMapping", () => {
   it("calls database.linearSync.findUnique with correct where", async () => {
     mockDb.linearSync.findUnique.mockResolvedValue(null);
 
-    await findLinearMapping({ tenantId: "t", linearId: "lin-1", linearType: "Issue" });
+    await findLinearMapping({
+      tenantId: "t",
+      linearId: "lin-1",
+      linearType: "Issue",
+    });
 
     expect(mockDb.linearSync.findUnique).toHaveBeenCalledOnce();
     expect(mockDb.linearSync.findUnique.mock.calls[0][0]).toEqual({
@@ -103,7 +116,10 @@ describe("upsertGitHubMapping", () => {
         githubType: "issue",
       },
     });
-    expect(call[0].create).toMatchObject({ githubNumber: 42, cosmosId: "epic-1" });
+    expect(call[0].create).toMatchObject({
+      githubNumber: 42,
+      cosmosId: "epic-1",
+    });
     expect(call[0].update).toMatchObject({ cosmosId: "epic-1" });
   });
 });

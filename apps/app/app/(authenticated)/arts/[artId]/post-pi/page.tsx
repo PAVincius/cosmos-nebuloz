@@ -1,10 +1,7 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { getARTById } from "@/app/actions/arts/get-arts";
-import { database } from "@repo/database";
 import { requireTenantSession } from "@repo/auth/server";
-import { headers } from "next/headers";
+import { database } from "@repo/database";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,24 +9,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { Button } from "@repo/design-system/components/ui/button";
 import {
   ArrowLeftIcon,
-  TrendingUpIcon,
-  TargetIcon,
-  ShieldAlertIcon,
   BarChart3Icon,
+  ShieldAlertIcon,
+  TargetIcon,
+  TrendingUpIcon,
 } from "lucide-react";
-import { LessonsLearnedForm } from "./components/lessons-learned-form";
-import { ClosePIButton } from "./components/close-pi-button";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { getARTById } from "@/app/actions/arts/get-arts";
+import { ClosePIButton } from "./components/close-pi-button";
+import { LessonsLearnedForm } from "./components/lessons-learned-form";
 
-interface PostPIPageProps {
+type PostPIPageProps = {
   params: Promise<{ artId: string }>;
   searchParams: Promise<{ piPlanId?: string }>;
-}
+};
 
-export async function generateMetadata({ params }: PostPIPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PostPIPageProps): Promise<Metadata> {
   const { artId } = await params;
   const art = await getARTById(artId);
   return {
@@ -47,8 +49,10 @@ const OBJ_STATUS_LABELS: Record<string, string> = {
 
 const OBJ_STATUS_VARIANT: Record<string, string> = {
   NOT_STARTED: "bg-muted text-muted-foreground",
-  IN_PROGRESS: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  ACHIEVED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  IN_PROGRESS:
+    "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  ACHIEVED:
+    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
   MISSED: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
 };
 
@@ -61,20 +65,28 @@ const ROAM_LABELS: Record<string, string> = {
 };
 
 const ROAM_VARIANT: Record<string, string> = {
-  IDENTIFIED: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
-  RESOLVED: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  IDENTIFIED:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  RESOLVED:
+    "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
   OWNED: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
-  ACCEPTED: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  ACCEPTED:
+    "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
   MITIGATED: "bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300",
 };
 
-export default async function PostPIPage({ params, searchParams }: PostPIPageProps) {
+export default async function PostPIPage({
+  params,
+  searchParams,
+}: PostPIPageProps) {
   const { artId } = await params;
   const { piPlanId } = await searchParams;
 
   const ctx = await requireTenantSession(await headers());
   const art = await getARTById(artId);
-  if (!art) notFound();
+  if (!art) {
+    notFound();
+  }
 
   // Get PI Plans for this ART ordered by newest first.
   const piPlans = await database.pIPlan.findMany({
@@ -89,18 +101,21 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
   if (!selectedPi) {
     return (
       <div className="flex flex-col gap-6 p-6">
-        <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
+        <Button asChild className="-ml-2 w-fit" size="sm" variant="ghost">
           <Link href={`/arts/${artId}`}>
             <ArrowLeftIcon className="mr-2 h-4 w-4" />
             {art.name}
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Post-PI / Inspect & Adapt</h1>
+          <h1 className="font-semibold text-2xl tracking-tight">
+            Post-PI / Inspect & Adapt
+          </h1>
         </div>
         <Card>
-          <CardContent className="py-12 text-center text-sm text-muted-foreground">
-            Nenhum PI Plan encontrado. Crie um PI Plan para usar o Inspect & Adapt.
+          <CardContent className="py-12 text-center text-muted-foreground text-sm">
+            Nenhum PI Plan encontrado. Crie um PI Plan para usar o Inspect &
+            Adapt.
           </CardContent>
         </Card>
       </div>
@@ -127,7 +142,9 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
   const committed = objectives.filter((o) => !o.isStretch);
   const achieved = committed.filter((o) => o.status === "ACHIEVED");
   const predictability =
-    committed.length > 0 ? Math.round((achieved.length / committed.length) * 100) : null;
+    committed.length > 0
+      ? Math.round((achieved.length / committed.length) * 100)
+      : null;
 
   // Velocity average across sessions (mock: using storyPoints if available).
   // Since velocity per session isn't tracked, we show team velocity averages.
@@ -161,7 +178,7 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* Back */}
-      <Button variant="ghost" size="sm" asChild className="-ml-2 w-fit">
+      <Button asChild className="-ml-2 w-fit" size="sm" variant="ghost">
         <Link href={`/arts/${artId}`}>
           <ArrowLeftIcon className="mr-2 h-4 w-4" />
           {art.name}
@@ -171,11 +188,11 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
+          <h1 className="flex items-center gap-2 font-semibold text-2xl tracking-tight">
             <BarChart3Icon className="h-6 w-6 text-muted-foreground" />
             Post-PI / Inspect & Adapt
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Retrospectiva do PI — {art.name}
           </p>
         </div>
@@ -185,10 +202,13 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
           {piPlans.length > 1 && (
             <div className="flex flex-wrap gap-1.5">
               {piPlans.map((pi) => (
-                <Link key={pi.id} href={`/arts/${artId}/post-pi?piPlanId=${pi.id}`}>
+                <Link
+                  href={`/arts/${artId}/post-pi?piPlanId=${pi.id}`}
+                  key={pi.id}
+                >
                   <Badge
-                    variant={pi.id === selectedPi.id ? "default" : "outline"}
                     className="cursor-pointer"
+                    variant={pi.id === selectedPi.id ? "default" : "outline"}
                   >
                     {pi.name}
                   </Badge>
@@ -198,13 +218,13 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
           )}
           {!isPiClosed && (
             <ClosePIButton
-              piPlanId={selectedPi.id}
               artId={artId}
               piName={selectedPi.name}
+              piPlanId={selectedPi.id}
             />
           )}
           {isPiClosed && (
-            <Badge variant="secondary" className="text-xs">
+            <Badge className="text-xs" variant="secondary">
               PI Encerrado em{" "}
               {selectedPi.endDate
                 ? new Date(selectedPi.endDate).toLocaleDateString("pt-BR")
@@ -222,13 +242,14 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
               <TargetIcon className="h-4 w-4" />
               PI Predictability
             </CardDescription>
-            <CardTitle className="text-4xl font-bold tabular-nums">
+            <CardTitle className="font-bold text-4xl tabular-nums">
               {predictability !== null ? `${predictability}%` : "—"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {achieved.length}/{committed.length} objetivos commitados atingidos
+            <p className="text-muted-foreground text-xs">
+              {achieved.length}/{committed.length} objetivos commitados
+              atingidos
             </p>
           </CardContent>
         </Card>
@@ -239,12 +260,12 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
               <TrendingUpIcon className="h-4 w-4" />
               Velocity Média
             </CardDescription>
-            <CardTitle className="text-4xl font-bold tabular-nums">
+            <CardTitle className="font-bold text-4xl tabular-nums">
               {velocityAvg !== null ? `${velocityAvg} SP` : "—"}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Média dos times com velocity cadastrada
             </p>
           </CardContent>
@@ -256,12 +277,14 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
               <ShieldAlertIcon className="h-4 w-4" />
               Riscos ROAM
             </CardDescription>
-            <CardTitle className="text-4xl font-bold tabular-nums">{risks.length}</CardTitle>
+            <CardTitle className="font-bold text-4xl tabular-nums">
+              {risks.length}
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-muted-foreground">
-              {roamSummary.RESOLVED + roamSummary.MITIGATED} resolvidos/mitigados ·{" "}
-              {roamSummary.ACCEPTED} aceitos
+            <p className="text-muted-foreground text-xs">
+              {roamSummary.RESOLVED + roamSummary.MITIGATED}{" "}
+              resolvidos/mitigados · {roamSummary.ACCEPTED} aceitos
             </p>
           </CardContent>
         </Card>
@@ -272,7 +295,9 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-base">PI Objectives — Status Final</CardTitle>
+              <CardTitle className="text-base">
+                PI Objectives — Status Final
+              </CardTitle>
               <CardDescription>
                 Resultado dos objetivos comprometidos e stretch
               </CardDescription>
@@ -282,31 +307,31 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
         </CardHeader>
         <CardContent>
           {objectives.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Nenhum PI Objective registrado para este PI.
             </p>
           ) : (
             <div className="flex flex-col gap-2">
               {objectives.map((obj) => (
                 <div
-                  key={obj.id}
                   className="flex items-start justify-between gap-2 rounded-lg border px-3 py-2"
+                  key={obj.id}
                 >
                   <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm font-medium">{obj.title}</span>
+                      <span className="font-medium text-sm">{obj.title}</span>
                       {obj.isStretch && (
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge className="text-[10px]" variant="outline">
                           Stretch
                         </Badge>
                       )}
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className="text-muted-foreground text-xs">
                       BV: {obj.businessValue}
                     </span>
                   </div>
                   <span
-                    className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+                    className={`shrink-0 rounded px-2 py-0.5 font-medium text-xs ${
                       OBJ_STATUS_VARIANT[obj.status] ?? ""
                     }`}
                   >
@@ -323,19 +348,21 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Riscos ROAM — Resumo</CardTitle>
-          <CardDescription>Distribuição por status ao final do PI</CardDescription>
+          <CardDescription>
+            Distribuição por status ao final do PI
+          </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
           {/* ROAM summary boxes */}
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {Object.entries(roamSummary).map(([status, count]) => (
               <div
-                key={status}
                 className={`flex flex-col items-center rounded-lg p-2 text-center ${
                   ROAM_VARIANT[status] ?? "bg-muted text-muted-foreground"
                 }`}
+                key={status}
               >
-                <span className="text-xl font-bold tabular-nums">{count}</span>
+                <span className="font-bold text-xl tabular-nums">{count}</span>
                 <span className="text-xs">{ROAM_LABELS[status] ?? status}</span>
               </div>
             ))}
@@ -346,12 +373,12 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
             <div className="flex flex-col gap-1.5">
               {risks.map((risk) => (
                 <div
-                  key={risk.id}
                   className="flex items-start justify-between gap-2 rounded-lg border px-3 py-2 text-sm"
+                  key={risk.id}
                 >
                   <span className="font-medium">{risk.title}</span>
                   <span
-                    className={`shrink-0 rounded px-2 py-0.5 text-xs font-medium ${
+                    className={`shrink-0 rounded px-2 py-0.5 font-medium text-xs ${
                       ROAM_VARIANT[risk.status] ?? ""
                     }`}
                   >
@@ -363,9 +390,9 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
           )}
 
           {risks.length === 0 && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Nenhum risco registrado para este PI.{" "}
-              <Link href="/risks" className="underline">
+              <Link className="underline" href="/risks">
                 Registre riscos
               </Link>
               .
@@ -384,10 +411,10 @@ export default async function PostPIPage({ params, searchParams }: PostPIPagePro
         </CardHeader>
         <CardContent>
           <LessonsLearnedForm
-            piSessionId={latestSession?.id ?? null}
-            piPlanId={selectedPi.id}
             artId={artId}
             initialNotes={initialNotes}
+            piPlanId={selectedPi.id}
+            piSessionId={latestSession?.id ?? null}
           />
         </CardContent>
       </Card>

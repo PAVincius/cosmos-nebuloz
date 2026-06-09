@@ -1,12 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import { Button } from "@repo/design-system/components/ui/button";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
-import { OKRCardV2 } from "./okr-card-v2";
+import { useState } from "react";
 import type { OKRWithContext } from "@/app/actions/okrs";
+import { OKRCardV2 } from "./okr-card-v2";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
 
@@ -33,7 +32,6 @@ type KeyResultWithProgress = {
   snapshots?: KeyResultSnapshotItem[];
 };
 
-
 const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
   portfolio_theme: { label: "Tema", icon: "🎯" },
   portfolio_epic: { label: "Épico", icon: "🏔" },
@@ -51,30 +49,37 @@ const TYPE_ORDER = [
 ] as const;
 
 function averageProgress(okrs: OKRWithContext[]): number {
-  if (okrs.length === 0) return 0;
+  if (okrs.length === 0) {
+    return 0;
+  }
   const total = okrs.reduce((sum, o) => sum + o.progress, 0);
   return Math.round(total / okrs.length);
 }
 
-interface OKRGroupHeaderProps {
+type OKRGroupHeaderProps = {
   type: string;
   okrs: OKRWithContext[];
   expanded: boolean;
   onToggle: () => void;
-}
+};
 
-function OKRGroupHeader({ type, okrs, expanded, onToggle }: OKRGroupHeaderProps) {
+function OKRGroupHeader({
+  type,
+  okrs,
+  expanded,
+  onToggle,
+}: OKRGroupHeaderProps) {
   const cfg = TYPE_CONFIG[type];
   const avg = averageProgress(okrs);
   const count = okrs.length;
 
   return (
     <button
-      type="button"
+      className="group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-muted/60"
       onClick={onToggle}
-      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-muted/60 transition-colors group"
+      type="button"
     >
-      <span className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0">
+      <span className="shrink-0 text-muted-foreground transition-colors group-hover:text-foreground">
         {expanded ? (
           <ChevronDownIcon className="h-4 w-4" />
         ) : (
@@ -82,17 +87,17 @@ function OKRGroupHeader({ type, okrs, expanded, onToggle }: OKRGroupHeaderProps)
         )}
       </span>
 
-      <span className="text-sm font-semibold text-foreground">
+      <span className="font-semibold text-foreground text-sm">
         {cfg?.label ?? type}
       </span>
 
-      <Badge variant="secondary" className="text-xs shrink-0">
+      <Badge className="shrink-0 text-xs" variant="secondary">
         {count} objetivo{count !== 1 ? "s" : ""}
       </Badge>
 
-      <div className="flex items-center gap-2 ml-auto">
-        <Progress value={avg} className="h-1.5 w-24 shrink-0" />
-        <span className="text-xs font-semibold tabular-nums text-muted-foreground w-8 text-right shrink-0">
+      <div className="ml-auto flex items-center gap-2">
+        <Progress className="h-1.5 w-24 shrink-0" value={avg} />
+        <span className="w-8 shrink-0 text-right font-semibold text-muted-foreground text-xs tabular-nums">
           {avg}%
         </span>
       </div>
@@ -100,7 +105,7 @@ function OKRGroupHeader({ type, okrs, expanded, onToggle }: OKRGroupHeaderProps)
   );
 }
 
-interface OKRTreeViewProps {
+type OKRTreeViewProps = {
   okrs: OKRWithContext[];
   onDelete: (id: string) => void;
   onStatusChange: (id: string, status: OKRStatus) => void;
@@ -109,7 +114,7 @@ interface OKRTreeViewProps {
   onUpdateKRCurrent: (okrId: string, krId: string, current: number) => void;
   onOpenDetail: (okr: OKRWithContext) => void;
   onCheckIn: (okr: OKRWithContext) => void;
-}
+};
 
 export function OKRTreeView({
   okrs,
@@ -175,27 +180,30 @@ export function OKRTreeView({
         const isExpanded = expandedGroups.has(type);
 
         return (
-          <div key={type} className="rounded-xl border border-border/60 overflow-hidden">
+          <div
+            className="overflow-hidden rounded-xl border border-border/60"
+            key={type}
+          >
             <OKRGroupHeader
-              type={type}
-              okrs={group}
               expanded={isExpanded}
+              okrs={group}
               onToggle={() => toggleGroup(type)}
+              type={type}
             />
             {isExpanded && (
-              <div className="px-3 pb-3 space-y-2 border-t border-border/40 pt-2 bg-muted/10">
+              <div className="space-y-2 border-border/40 border-t bg-muted/10 px-3 pt-2 pb-3">
                 {group.map((okr) => (
                   <OKRCardV2
+                    compact
                     key={okr.id}
                     okr={okr}
-                    compact
-                    onDelete={onDelete}
-                    onStatusChange={onStatusChange}
                     onAddKeyResult={onAddKeyResult}
-                    onDeleteKeyResult={onDeleteKeyResult}
-                    onUpdateKRCurrent={onUpdateKRCurrent}
-                    onOpenDetail={onOpenDetail}
                     onCheckIn={onCheckIn}
+                    onDelete={onDelete}
+                    onDeleteKeyResult={onDeleteKeyResult}
+                    onOpenDetail={onOpenDetail}
+                    onStatusChange={onStatusChange}
+                    onUpdateKRCurrent={onUpdateKRCurrent}
                   />
                 ))}
               </div>
@@ -205,27 +213,27 @@ export function OKRTreeView({
       })}
 
       {unknownOkrs.length > 0 && (
-        <div className="rounded-xl border border-border/60 overflow-hidden">
+        <div className="overflow-hidden rounded-xl border border-border/60">
           <OKRGroupHeader
-            type="__other__"
-            okrs={unknownOkrs}
             expanded={expandedGroups.has("__other__")}
+            okrs={unknownOkrs}
             onToggle={() => toggleGroup("__other__")}
+            type="__other__"
           />
           {expandedGroups.has("__other__") && (
-            <div className="px-3 pb-3 space-y-2 border-t border-border/40 pt-2 bg-muted/10">
+            <div className="space-y-2 border-border/40 border-t bg-muted/10 px-3 pt-2 pb-3">
               {unknownOkrs.map((okr) => (
                 <OKRCardV2
+                  compact
                   key={okr.id}
                   okr={okr}
-                  compact
-                  onDelete={onDelete}
-                  onStatusChange={onStatusChange}
                   onAddKeyResult={onAddKeyResult}
-                  onDeleteKeyResult={onDeleteKeyResult}
-                  onUpdateKRCurrent={onUpdateKRCurrent}
-                  onOpenDetail={onOpenDetail}
                   onCheckIn={onCheckIn}
+                  onDelete={onDelete}
+                  onDeleteKeyResult={onDeleteKeyResult}
+                  onOpenDetail={onOpenDetail}
+                  onStatusChange={onStatusChange}
+                  onUpdateKRCurrent={onUpdateKRCurrent}
                 />
               ))}
             </div>

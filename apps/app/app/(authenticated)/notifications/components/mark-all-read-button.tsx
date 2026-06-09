@@ -1,9 +1,9 @@
 "use client";
 
-import { useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
-import { markAllAsRead } from "../../../actions/notifications/index";
 import { CheckCheckIcon, LoaderIcon } from "lucide-react";
+import { useTransition } from "react";
+import { markAllAsRead } from "../../../actions/notifications/index";
 
 export function MarkAllReadButton() {
   const [isPending, startTransition] = useTransition();
@@ -15,7 +15,13 @@ export function MarkAllReadButton() {
   };
 
   return (
-    <Button variant="outline" size="sm" onClick={handleClick} disabled={isPending} className="gap-2">
+    <Button
+      className="gap-2"
+      disabled={isPending}
+      onClick={handleClick}
+      size="sm"
+      variant="outline"
+    >
       {isPending ? (
         <LoaderIcon className="size-4 animate-spin" />
       ) : (

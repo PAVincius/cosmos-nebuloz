@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export async function saveSessionNotes({
   piSessionId,
@@ -22,7 +22,9 @@ export async function saveSessionNotes({
   const pi = await database.pIPlan.findFirst({
     where: { id: piPlanId, tenantId: ctx.tenantId },
   });
-  if (!pi) throw new Error("PI Plan não encontrado.");
+  if (!pi) {
+    throw new Error("PI Plan não encontrado.");
+  }
 
   if (piSessionId) {
     // Update existing session notes.
@@ -57,7 +59,9 @@ export async function closePIPlan({
   const pi = await database.pIPlan.findFirst({
     where: { id: piPlanId, tenantId: ctx.tenantId },
   });
-  if (!pi) throw new Error("PI Plan não encontrado.");
+  if (!pi) {
+    throw new Error("PI Plan não encontrado.");
+  }
 
   // Store the closed-at timestamp as endDate if not already set.
   await database.pIPlan.updateMany({

@@ -1,53 +1,72 @@
 "use client";
 
-import { useStorage, useMutation, useSelf } from "@repo/collaboration/hooks";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
-import { CheckCircleIcon, RefreshCwIcon, PlayIcon, StopCircleIcon, VoteIcon, AlertTriangleIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
 import { LiveMap } from "@liveblocks/client";
+import { useMutation, useSelf, useStorage } from "@repo/collaboration/hooks";
+import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@repo/design-system/components/ui/card";
+import {
+  AlertTriangleIcon,
+  CheckCircleIcon,
+  Loader2Icon,
+  PlayIcon,
+  RefreshCwIcon,
+  StopCircleIcon,
+  VoteIcon,
+} from "lucide-react";
+import { useState } from "react";
 
 export function ConfidenceVote() {
   const me = useSelf();
-  
+
   // Storage synced across all clients
-  const piState = useStorage((root) => root.piState) || 'NOT_STARTED';
+  const piState = useStorage((root) => root.piState) || "NOT_STARTED";
   const piVotes = useStorage((root) => root.piVotes);
-  
+
   const [selectedVote, setSelectedVote] = useState<number>(3);
 
   // Computed values
   const votesArray = piVotes ? Array.from(piVotes.values()) : [];
   const totalVotes = votesArray.length;
-  const averageVote = totalVotes > 0 
-    ? (votesArray.reduce((a, b) => a + b, 0) / totalVotes).toFixed(1)
-    : "0.0";
-    
+  const averageVote =
+    totalVotes > 0
+      ? (votesArray.reduce((a, b) => a + b, 0) / totalVotes).toFixed(1)
+      : "0.0";
+
   const hasVoted = piVotes && me ? piVotes.has(me.id) : false;
 
   const setPiState = useMutation(({ storage }, newState: string) => {
     storage.set("piState", newState);
     // If starting a new session, clear votes
-    if (newState === 'OPEN') {
+    if (newState === "OPEN") {
       storage.set("piVotes", new LiveMap<string, number>());
     }
   }, []);
 
-  const submitVote = useMutation(({ storage }, vote: number) => {
-    let votesMap = storage.get("piVotes");
-    if (!votesMap) {
-      votesMap = new LiveMap<string, number>();
-      storage.set("piVotes", votesMap);
-    }
-    if (me?.id) {
-      votesMap.set(me.id, vote);
-    }
-  }, [me?.id]);
+  const submitVote = useMutation(
+    ({ storage }, vote: number) => {
+      let votesMap = storage.get("piVotes");
+      if (!votesMap) {
+        votesMap = new LiveMap<string, number>();
+        storage.set("piVotes", votesMap);
+      }
+      if (me?.id) {
+        votesMap.set(me.id, vote);
+      }
+    },
+    [me?.id]
+  );
 
   if (!me) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <Loader2Icon className="w-8 h-8 animate-spin text-primary" />
+      <div className="flex items-center justify-center py-12">
+        <Loader2Icon className="h-8 w-8 animate-spin text-primary" />
         <span className="ml-2 text-muted-foreground">Conectando...</span>
       </div>
     );
@@ -58,140 +77,181 @@ export function ConfidenceVote() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <VoteIcon className="w-5 h-5 text-primary" />
-            Confidence Vote <span className="ml-auto text-xs font-normal text-muted-foreground bg-muted px-2 py-1 rounded">Live</span>
+            <VoteIcon className="h-5 w-5 text-primary" />
+            Confidence Vote{" "}
+            <span className="ml-auto rounded bg-muted px-2 py-1 font-normal text-muted-foreground text-xs">
+              Live
+            </span>
           </CardTitle>
           <CardDescription>
-            Fist of Five: Vote de 1 (Sem Confiança) a 5 (Alta Confiança) no Plano do PI.
+            Fist of Five: Vote de 1 (Sem Confiança) a 5 (Alta Confiança) no
+            Plano do PI.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col items-center p-6 space-y-4 rounded-lg bg-muted/30 min-h-[300px] justify-center">
-            <h3 className="text-lg font-medium text-muted-foreground uppercase tracking-wider mb-2">
-              Status Atual: <span className="text-primary font-bold">{piState}</span>
+          <div className="flex min-h-[300px] flex-col items-center justify-center space-y-4 rounded-lg bg-muted/30 p-6">
+            <h3 className="mb-2 font-medium text-lg text-muted-foreground uppercase tracking-wider">
+              Status Atual:{" "}
+              <span className="font-bold text-primary">{piState}</span>
             </h3>
-            
-            {piState === 'NOT_STARTED' && (
-              <p className="text-center text-sm text-muted-foreground">
-                A votação ainda não foi iniciada. Quando o plano estiver revisado, o RTE deve iniciar a cerimônia.
+
+            {piState === "NOT_STARTED" && (
+              <p className="text-center text-muted-foreground text-sm">
+                A votação ainda não foi iniciada. Quando o plano estiver
+                revisado, o RTE deve iniciar a cerimônia.
               </p>
             )}
 
-            {piState === 'OPEN' && (
-              <div className="flex flex-col items-center space-y-4 w-full">
+            {piState === "OPEN" && (
+              <div className="flex w-full flex-col items-center space-y-4">
                 {hasVoted ? (
-                  <div className="flex flex-col items-center space-y-2 text-green-600 dark:text-green-500 py-6">
-                    <CheckCircleIcon className="w-12 h-12" />
-                    <p className="font-semibold">Seu voto foi registrado com sucesso!</p>
-                    <p className="text-sm text-muted-foreground">Aguardando outros membros votarem...</p>
+                  <div className="flex flex-col items-center space-y-2 py-6 text-green-600 dark:text-green-500">
+                    <CheckCircleIcon className="h-12 w-12" />
+                    <p className="font-semibold">
+                      Seu voto foi registrado com sucesso!
+                    </p>
+                    <p className="text-muted-foreground text-sm">
+                      Aguardando outros membros votarem...
+                    </p>
                   </div>
                 ) : (
                   <>
-                    <p className="text-sm">Selecione seu nível de confiança (1-5):</p>
-                    <div className="flex gap-2 w-full justify-center">
+                    <p className="text-sm">
+                      Selecione seu nível de confiança (1-5):
+                    </p>
+                    <div className="flex w-full justify-center gap-2">
                       {[1, 2, 3, 4, 5].map((v) => (
                         <Button
+                          className="h-12 w-12 font-bold text-lg"
                           key={v}
-                          variant={selectedVote === v ? "default" : "outline"}
                           onClick={() => setSelectedVote(v)}
-                          className="w-12 h-12 text-lg font-bold"
+                          variant={selectedVote === v ? "default" : "outline"}
                         >
                           {v}
                         </Button>
                       ))}
                     </div>
-                    <Button 
+                    <Button
+                      className="mt-4 w-full max-w-xs"
                       onClick={() => submitVote(selectedVote)}
-                      className="w-full max-w-xs mt-4"
                     >
                       Confirmar Voto
                     </Button>
                   </>
                 )}
-                <div className="text-sm text-muted-foreground pt-4 border-t w-full text-center mt-4">
-                  Total de votos computados na sala: <strong>{totalVotes}</strong>
+                <div className="mt-4 w-full border-t pt-4 text-center text-muted-foreground text-sm">
+                  Total de votos computados na sala:{" "}
+                  <strong>{totalVotes}</strong>
                 </div>
               </div>
             )}
 
-            {piState === 'TALLYING' && (
+            {piState === "TALLYING" && (
               <div className="flex flex-col items-center space-y-4">
-                <div className="grid grid-cols-2 gap-8 text-center bg-background border p-6 rounded-xl shadow-sm">
+                <div className="grid grid-cols-2 gap-8 rounded-xl border bg-background p-6 text-center shadow-sm">
                   <div>
-                    <p className="text-sm text-muted-foreground">Total de Votos</p>
-                    <p className="text-4xl font-bold">{totalVotes}</p>
+                    <p className="text-muted-foreground text-sm">
+                      Total de Votos
+                    </p>
+                    <p className="font-bold text-4xl">{totalVotes}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Média (Fist of 5)</p>
-                    <p className="text-4xl font-bold text-primary">{averageVote}</p>
+                    <p className="text-muted-foreground text-sm">
+                      Média (Fist of 5)
+                    </p>
+                    <p className="font-bold text-4xl text-primary">
+                      {averageVote}
+                    </p>
                   </div>
                 </div>
-                <p className="text-sm text-center max-w-md mt-4">
-                  Se a média for aceitável e nenhum membro tiver restrições bloqueantes (voto 1 ou 2 sem resolução), o PI pode ser aprovado pelo RTE.
+                <p className="mt-4 max-w-md text-center text-sm">
+                  Se a média for aceitável e nenhum membro tiver restrições
+                  bloqueantes (voto 1 ou 2 sem resolução), o PI pode ser
+                  aprovado pelo RTE.
                 </p>
               </div>
             )}
 
-            {piState === 'REWORK' && (
-              <div className="flex flex-col items-center space-y-2 text-destructive py-4">
-                <AlertTriangleIcon className="w-12 h-12" />
-                <p className="font-semibold text-lg">Plano requer ajustes (Rework)</p>
-                <p className="text-sm text-center max-w-sm text-muted-foreground">
-                  A votação indicou baixa confiança. O ART deve resolver as dependências e impedimentos antes de uma nova votação.
+            {piState === "REWORK" && (
+              <div className="flex flex-col items-center space-y-2 py-4 text-destructive">
+                <AlertTriangleIcon className="h-12 w-12" />
+                <p className="font-semibold text-lg">
+                  Plano requer ajustes (Rework)
+                </p>
+                <p className="max-w-sm text-center text-muted-foreground text-sm">
+                  A votação indicou baixa confiança. O ART deve resolver as
+                  dependências e impedimentos antes de uma nova votação.
                 </p>
               </div>
             )}
 
-            {piState === 'APPROVED' && (
-              <div className="flex flex-col items-center space-y-2 text-green-600 dark:text-green-500 py-4">
-                <CheckCircleIcon className="w-16 h-16" />
-                <h2 className="text-2xl font-bold">PI Aprovado!</h2>
-                <p className="text-sm">A confiança do time foi atingida e o plano está comprometido.</p>
+            {piState === "APPROVED" && (
+              <div className="flex flex-col items-center space-y-2 py-4 text-green-600 dark:text-green-500">
+                <CheckCircleIcon className="h-16 w-16" />
+                <h2 className="font-bold text-2xl">PI Aprovado!</h2>
+                <p className="text-sm">
+                  A confiança do time foi atingida e o plano está comprometido.
+                </p>
               </div>
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between border-t p-6 bg-muted/10">
-          {piState === 'NOT_STARTED' && (
-            <Button onClick={() => setPiState('OPEN')} className="w-full">
-              <PlayIcon className="w-4 h-4 mr-2" />
+        <CardFooter className="flex justify-between border-t bg-muted/10 p-6">
+          {piState === "NOT_STARTED" && (
+            <Button className="w-full" onClick={() => setPiState("OPEN")}>
+              <PlayIcon className="mr-2 h-4 w-4" />
               Iniciar Cerimônia (Todos)
             </Button>
           )}
 
-          {piState === 'OPEN' && (
-            <Button variant="secondary" onClick={() => setPiState('TALLYING')} className="w-full">
-              <StopCircleIcon className="w-4 h-4 mr-2" />
+          {piState === "OPEN" && (
+            <Button
+              className="w-full"
+              onClick={() => setPiState("TALLYING")}
+              variant="secondary"
+            >
+              <StopCircleIcon className="mr-2 h-4 w-4" />
               Encerrar e Apurar
             </Button>
           )}
 
-          {piState === 'TALLYING' && (
-            <div className="flex gap-4 w-full">
-              <Button variant="destructive" onClick={() => setPiState('REWORK')} className="w-1/2">
-                <AlertTriangleIcon className="w-4 h-4 mr-2" />
+          {piState === "TALLYING" && (
+            <div className="flex w-full gap-4">
+              <Button
+                className="w-1/2"
+                onClick={() => setPiState("REWORK")}
+                variant="destructive"
+              >
+                <AlertTriangleIcon className="mr-2 h-4 w-4" />
                 Requer Retrabalho
               </Button>
-              <Button onClick={() => setPiState('APPROVED')} className="w-1/2 bg-green-600 hover:bg-green-700 text-white">
-                <CheckCircleIcon className="w-4 h-4 mr-2" />
+              <Button
+                className="w-1/2 bg-green-600 text-white hover:bg-green-700"
+                onClick={() => setPiState("APPROVED")}
+              >
+                <CheckCircleIcon className="mr-2 h-4 w-4" />
                 Aprovar Plano
               </Button>
             </div>
           )}
 
-          {piState === 'REWORK' && (
-            <Button variant="outline" onClick={() => setPiState('OPEN')} className="w-full">
-              <RefreshCwIcon className="w-4 h-4 mr-2" />
+          {piState === "REWORK" && (
+            <Button
+              className="w-full"
+              onClick={() => setPiState("OPEN")}
+              variant="outline"
+            >
+              <RefreshCwIcon className="mr-2 h-4 w-4" />
               Nova Votação
             </Button>
           )}
-          
-          {piState === 'APPROVED' && (
-             <div className="w-full text-center text-sm text-muted-foreground flex justify-center">
-               <span className="bg-background px-4 py-2 rounded-full border shadow-sm">
-                 O ciclo de planejamento foi encerrado com sucesso.
-               </span>
-             </div>
+
+          {piState === "APPROVED" && (
+            <div className="flex w-full justify-center text-center text-muted-foreground text-sm">
+              <span className="rounded-full border bg-background px-4 py-2 shadow-sm">
+                O ciclo de planejamento foi encerrado com sucesso.
+              </span>
+            </div>
           )}
         </CardFooter>
       </Card>

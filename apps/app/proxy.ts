@@ -4,8 +4,8 @@ import {
   noseconeOptionsWithToolbar,
   securityMiddleware,
 } from "@repo/security/proxy";
-import { NextResponse, type NextRequest } from "next/server";
 import type { NextProxy } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { env } from "./env";
 
 const securityHeaders = env.FLAGS_SECRET
@@ -14,9 +14,10 @@ const securityHeaders = env.FLAGS_SECRET
 
 export default authMiddleware((request: NextRequest) => {
   const res = securityHeaders();
-  const response = res instanceof Response
-    ? new NextResponse(res.body, { status: res.status, headers: res.headers })
-    : NextResponse.next();
+  const response =
+    res instanceof Response
+      ? new NextResponse(res.body, { status: res.status, headers: res.headers })
+      : NextResponse.next();
   response.headers.set("x-pathname", request.nextUrl.pathname);
   return response;
 }) as unknown as NextProxy;

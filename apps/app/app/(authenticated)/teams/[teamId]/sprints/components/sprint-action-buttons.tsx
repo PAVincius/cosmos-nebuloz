@@ -1,44 +1,54 @@
 "use client";
 
-import { useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
-import { PlayIcon, CheckIcon } from "lucide-react";
+import { CheckIcon, PlayIcon } from "lucide-react";
+import { useTransition } from "react";
 import { activateSprint, completeSprint } from "@/app/actions/sprints";
 
-interface SprintActionButtonsProps {
+type SprintActionButtonsProps = {
   sprintId: string;
   status: string;
   teamId: string;
-}
+};
 
-export function SprintActionButtons({ sprintId, status, teamId }: SprintActionButtonsProps) {
+export function SprintActionButtons({
+  sprintId,
+  status,
+  teamId,
+}: SprintActionButtonsProps) {
   const [isPending, startTransition] = useTransition();
 
   function handleActivate() {
     startTransition(async () => {
       const result = await activateSprint(sprintId);
-      if (!result.ok) alert(result.error);
+      if (!result.ok) {
+        alert(result.error);
+      }
     });
   }
 
   function handleComplete() {
-    if (!confirm("Concluir este sprint?")) return;
+    if (!confirm("Concluir este sprint?")) {
+      return;
+    }
     startTransition(async () => {
       const result = await completeSprint(sprintId);
-      if (!result.ok) alert(result.error);
+      if (!result.ok) {
+        alert(result.error);
+      }
     });
   }
 
   if (status === "PLANNING") {
     return (
       <Button
-        variant="outline"
-        size="sm"
+        className="h-7 px-2 text-xs"
         disabled={isPending}
         onClick={handleActivate}
-        className="h-7 px-2 text-xs"
+        size="sm"
+        variant="outline"
       >
-        <PlayIcon className="h-3 w-3 mr-1" />
+        <PlayIcon className="mr-1 h-3 w-3" />
         Ativar
       </Button>
     );
@@ -47,13 +57,13 @@ export function SprintActionButtons({ sprintId, status, teamId }: SprintActionBu
   if (status === "ACTIVE") {
     return (
       <Button
-        variant="outline"
-        size="sm"
+        className="h-7 px-2 text-xs"
         disabled={isPending}
         onClick={handleComplete}
-        className="h-7 px-2 text-xs"
+        size="sm"
+        variant="outline"
       >
-        <CheckIcon className="h-3 w-3 mr-1" />
+        <CheckIcon className="mr-1 h-3 w-3" />
         Concluir
       </Button>
     );

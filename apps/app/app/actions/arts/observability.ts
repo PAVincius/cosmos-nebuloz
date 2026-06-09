@@ -35,7 +35,7 @@ export type ARTObservabilityData = {
 };
 
 export async function getARTObservability(
-  artId: string,
+  artId: string
 ): Promise<ARTObservabilityData> {
   const ctx = await requireTenantSession(await headers());
   const tenantId = ctx.tenantId;
@@ -66,17 +66,21 @@ export async function getARTObservability(
   const events: ARTEvent[] = [];
 
   for (const pi of piPlans) {
-    if (!pi.startDate) continue;
+    if (!pi.startDate) {
+      continue;
+    }
 
     // Capture as non-null constants before closure to satisfy TypeScript narrowing
     const piStart: Date = pi.startDate;
     const piEnd: Date | null = pi.endDate;
 
-    const getEventStatus = (
-      date: Date,
-    ): "past" | "current" | "future" => {
-      if (piEnd && now >= piStart && now <= piEnd) return "current";
-      if (date < now) return "past";
+    const getEventStatus = (date: Date): "past" | "current" | "future" => {
+      if (piEnd && now >= piStart && now <= piEnd) {
+        return "current";
+      }
+      if (date < now) {
+        return "past";
+      }
       return "future";
     };
 
@@ -90,9 +94,7 @@ export async function getARTObservability(
     });
 
     if (piEnd) {
-      const demoDate = new Date(
-        piEnd.getTime() - 14 * 24 * 60 * 60 * 1000,
-      );
+      const demoDate = new Date(piEnd.getTime() - 14 * 24 * 60 * 60 * 1000);
       events.push({
         id: `${pi.id}-demo`,
         type: "system_demo",
@@ -116,37 +118,33 @@ export async function getARTObservability(
   events.sort((a, b) => a.date.getTime() - b.date.getTime());
 
   // Build PI health summaries (most recent PI first)
-  const piHealth: PIHealthSummary[] = [...piPlans]
-    .reverse()
-    .map((pi) => {
-      const committed = pi.piObjectives.filter((o) => !o.isStretch);
-      const achieved = committed.filter(
-        (o) => o.status === "ACHIEVED",
-      );
-      const stretch = pi.piObjectives.filter((o) => o.isStretch);
-      const predictability =
-        committed.length > 0
-          ? Math.round((achieved.length / committed.length) * 100)
-          : 0;
+  const piHealth: PIHealthSummary[] = [...piPlans].reverse().map((pi) => {
+    const committed = pi.piObjectives.filter((o) => !o.isStretch);
+    const achieved = committed.filter((o) => o.status === "ACHIEVED");
+    const stretch = pi.piObjectives.filter((o) => o.isStretch);
+    const predictability =
+      committed.length > 0
+        ? Math.round((achieved.length / committed.length) * 100)
+        : 0;
 
-      return {
-        piId: pi.id,
-        piName: pi.name,
-        totalObjectives: pi.piObjectives.length,
-        achievedObjectives: achieved.length,
-        stretchObjectives: stretch.length,
-        predictability,
-      };
-    });
+    return {
+      piId: pi.id,
+      piName: pi.name,
+      totalObjectives: pi.piObjectives.length,
+      achievedObjectives: achieved.length,
+      stretchObjectives: stretch.length,
+      predictability,
+    };
+  });
 
   // Aggregate risks across all PI plans for this ART
   // Risk.status values: IDENTIFIED / OWNED / ACCEPTED / MITIGATED / RESOLVED
   const allRisks = piPlans.flatMap((pi) => pi.risks);
   const activeRisks = allRisks.filter(
-    (r) => r.status !== "RESOLVED" && r.status !== "MITIGATED",
+    (r) => r.status !== "RESOLVED" && r.status !== "MITIGATED"
   ).length;
   const unresolvedRisks = allRisks.filter(
-    (r) => r.status === "OWNED" || r.status === "ACCEPTED",
+    (r) => r.status === "OWNED" || r.status === "ACCEPTED"
   ).length;
 
   const lastPI = piHealth[0];

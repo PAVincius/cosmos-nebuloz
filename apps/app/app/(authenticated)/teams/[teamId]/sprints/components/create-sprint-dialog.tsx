@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition, useState } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -12,11 +11,12 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { createSprint } from "@/app/actions/sprints";
 
-interface CreateSprintDialogProps {
+type CreateSprintDialogProps = {
   teamId: string;
-}
+};
 
 export function CreateSprintDialog({ teamId }: CreateSprintDialogProps) {
   const [open, setOpen] = useState(false);
@@ -33,7 +33,9 @@ export function CreateSprintDialog({ teamId }: CreateSprintDialogProps) {
         goal: String(form.get("goal") || ""),
         startDate: new Date(String(form.get("startDate"))),
         endDate: new Date(String(form.get("endDate"))),
-        capacity: form.get("capacity") ? Number(form.get("capacity")) : undefined,
+        capacity: form.get("capacity")
+          ? Number(form.get("capacity"))
+          : undefined,
       });
       if (!result.ok) {
         alert(result.error);
@@ -44,7 +46,7 @@ export function CreateSprintDialog({ teamId }: CreateSprintDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -55,41 +57,56 @@ export function CreateSprintDialog({ teamId }: CreateSprintDialogProps) {
         <DialogHeader>
           <DialogTitle>Criar Sprint</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="name">Nome do Sprint *</Label>
-            <Input id="name" name="name" placeholder="Sprint 1" required maxLength={200} />
+            <Input
+              id="name"
+              maxLength={200}
+              name="name"
+              placeholder="Sprint 1"
+              required
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="goal">Objetivo</Label>
-            <Input id="goal" name="goal" placeholder="Meta do sprint…" maxLength={500} />
+            <Input
+              id="goal"
+              maxLength={500}
+              name="goal"
+              placeholder="Meta do sprint…"
+            />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="startDate">Início *</Label>
-              <Input id="startDate" name="startDate" type="date" required />
+              <Input id="startDate" name="startDate" required type="date" />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="endDate">Fim *</Label>
-              <Input id="endDate" name="endDate" type="date" required />
+              <Input id="endDate" name="endDate" required type="date" />
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="capacity">Capacidade (SP)</Label>
             <Input
               id="capacity"
-              name="capacity"
-              type="number"
-              min={1}
               max={500}
+              min={1}
+              name="capacity"
               placeholder="Ex: 40"
+              type="number"
             />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              onClick={() => setOpen(false)}
+              type="button"
+              variant="outline"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "Criando…" : "Criar Sprint"}
             </Button>
           </div>

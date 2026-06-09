@@ -1,10 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { BookOpenIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { Button } from "@repo/design-system/components/ui/button";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
   CardContent,
@@ -22,7 +19,6 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Textarea } from "@repo/design-system/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -30,10 +26,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { BookOpenIcon, PencilIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import {
   createSolutionEpic,
-  updateSolutionEpic,
   deleteSolutionEpic,
+  updateSolutionEpic,
 } from "../../../../actions/solution-epics";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -53,7 +53,10 @@ const STATUS_OPTIONS = [
   { value: "DONE", label: "Concluído" },
 ];
 
-const STATUS_COLORS: Record<string, "secondary" | "default" | "destructive" | "outline"> = {
+const STATUS_COLORS: Record<
+  string,
+  "secondary" | "default" | "destructive" | "outline"
+> = {
   BACKLOG: "secondary",
   ANALYZING: "outline",
   IMPLEMENTING: "default",
@@ -117,7 +120,7 @@ function EpicDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
@@ -132,11 +135,11 @@ function EpicDialog({
               Título <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="epic-title"
+              onChange={(e) => setTitle(e.target.value)}
               placeholder="ex: Modernização da plataforma..."
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              autoFocus
             />
           </div>
 
@@ -144,17 +147,17 @@ function EpicDialog({
             <Label htmlFor="epic-description">Descrição</Label>
             <Textarea
               id="epic-description"
-              placeholder="Descreva o Solution Epic..."
-              value={description}
               onChange={(e) => setDescription(e.target.value)}
+              placeholder="Descreva o Solution Epic..."
               rows={3}
+              value={description}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-2">
               <Label>Status</Label>
-              <Select value={status} onValueChange={setStatus}>
+              <Select onValueChange={setStatus} value={status}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -172,12 +175,12 @@ function EpicDialog({
               <Label htmlFor="epic-wsjf">WSJF Score</Label>
               <Input
                 id="epic-wsjf"
-                type="number"
                 min={0}
-                step={0.1}
-                placeholder="0"
-                value={wsjfScore}
                 onChange={(e) => setWsjfScore(e.target.value)}
+                placeholder="0"
+                step={0.1}
+                type="number"
+                value={wsjfScore}
               />
             </div>
           </div>
@@ -186,10 +189,14 @@ function EpicDialog({
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={isPending}>
+          <Button
+            disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
+          >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !title.trim()}>
+          <Button disabled={isPending || !title.trim()} onClick={handleSubmit}>
             {isPending ? "Salvando..." : epic ? "Salvar" : "Criar"}
           </Button>
         </DialogFooter>
@@ -225,6 +232,7 @@ export function SolutionEpicsTab({
     <div className="flex flex-col gap-4">
       <div className="flex justify-end">
         <EpicDialog
+          onSuccess={refresh}
           solutionTrainId={solutionTrainId}
           trigger={
             <Button size="sm">
@@ -232,13 +240,12 @@ export function SolutionEpicsTab({
               Novo Solution Epic
             </Button>
           }
-          onSuccess={refresh}
         />
       </div>
 
       {initialEpics.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-          <BookOpenIcon className="text-muted-foreground mb-3 h-8 w-8" />
+          <BookOpenIcon className="mb-3 h-8 w-8 text-muted-foreground" />
           <p className="text-muted-foreground text-sm">
             Nenhum Solution Epic adicionado ainda.
           </p>
@@ -246,7 +253,7 @@ export function SolutionEpicsTab({
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {initialEpics.map((epic) => (
-            <Card key={epic.id} className="relative">
+            <Card className="relative" key={epic.id}>
               <CardHeader className="pb-2">
                 <div className="flex items-start justify-between gap-2">
                   <CardTitle className="text-sm leading-tight">
@@ -254,37 +261,38 @@ export function SolutionEpicsTab({
                   </CardTitle>
                   <div className="flex shrink-0 gap-1">
                     <EpicDialog
-                      solutionTrainId={solutionTrainId}
                       epic={epic}
+                      onSuccess={refresh}
+                      solutionTrainId={solutionTrainId}
                       trigger={
-                        <Button variant="ghost" size="icon" className="h-7 w-7">
+                        <Button className="h-7 w-7" size="icon" variant="ghost">
                           <PencilIcon className="h-3.5 w-3.5" />
                         </Button>
                       }
-                      onSuccess={refresh}
                     />
                     <Button
-                      variant="ghost"
-                      size="icon"
                       className="h-7 w-7 text-destructive hover:text-destructive"
-                      onClick={() => handleDelete(epic.id)}
                       disabled={isPending}
+                      onClick={() => handleDelete(epic.id)}
+                      size="icon"
+                      variant="ghost"
                     >
                       <Trash2Icon className="h-3.5 w-3.5" />
                     </Button>
                   </div>
                 </div>
                 {epic.description && (
-                  <CardDescription className="text-xs line-clamp-2">
+                  <CardDescription className="line-clamp-2 text-xs">
                     {epic.description}
                   </CardDescription>
                 )}
               </CardHeader>
               <CardContent className="flex items-center justify-between">
                 <Badge variant={STATUS_COLORS[epic.status] ?? "secondary"}>
-                  {STATUS_OPTIONS.find((o) => o.value === epic.status)?.label ?? epic.status}
+                  {STATUS_OPTIONS.find((o) => o.value === epic.status)?.label ??
+                    epic.status}
                 </Badge>
-                <span className="text-muted-foreground text-xs font-medium">
+                <span className="font-medium text-muted-foreground text-xs">
                   WSJF {epic.wsjfScore.toFixed(1)}
                 </span>
               </CardContent>

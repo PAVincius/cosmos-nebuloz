@@ -1,9 +1,9 @@
 "use server";
 
-import { z } from "zod";
-import { database } from "@repo/database";
 import { requireTenantSession } from "@repo/auth/server";
+import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { type Result, safeAction } from "../_base";
 import { canTransition, type GovernanceState } from "./state-machine";
 
@@ -20,13 +20,13 @@ const TransitionSchema = z.object({
   justificativa: z
     .string()
     .min(10, "Justificativa deve ter ao menos 10 caracteres"),
-  dadosSuporte: z.record(z.unknown()).optional(),
+  dadosSuporte: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type TransitionEpicInput = z.infer<typeof TransitionSchema>;
 
 export async function transitionEpic(
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<{ newState: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());

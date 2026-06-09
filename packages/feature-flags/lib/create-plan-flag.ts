@@ -1,8 +1,8 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { flag } from "flags/next";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { flag } from "flags/next";
 
 type SubscriptionPlan = "ORBIT" | "GALAXY" | "NEBULA" | "UNIVERSE";
 
@@ -15,7 +15,10 @@ const PLAN_RANK: Record<SubscriptionPlan, number> = {
 
 // Deduplicates DB reads across all flags evaluated in the same request
 const getTenantPlan = cache(async (tenantId: string) =>
-  database.tenant.findUnique({ where: { id: tenantId }, select: { plan: true } })
+  database.tenant.findUnique({
+    where: { id: tenantId },
+    select: { plan: true },
+  })
 );
 
 export const createPlanFlag = (key: string, minPlan: SubscriptionPlan) =>
@@ -27,7 +30,9 @@ export const createPlanFlag = (key: string, minPlan: SubscriptionPlan) =>
         const ctx = await requireTenantSession(await headers());
         const tenant = await getTenantPlan(ctx.tenantId);
 
-        if (!tenant) return false;
+        if (!tenant) {
+          return false;
+        }
 
         const rank = PLAN_RANK[tenant.plan as SubscriptionPlan] ?? 0;
         return rank >= PLAN_RANK[minPlan];

@@ -4,8 +4,8 @@ function formatCompact(n: number): string {
   if (n >= 1_000_000) {
     return `$${(n / 1_000_000).toFixed(1)}M`;
   }
-  if (n >= 1_000) {
-    return `$${(n / 1_000).toFixed(1)}k`;
+  if (n >= 1000) {
+    return `$${(n / 1000).toFixed(1)}k`;
   }
   return `$${n.toFixed(0)}`;
 }
@@ -17,14 +17,14 @@ export async function EpicCostBadge({ epicId }: Props) {
 
   if (!result?.hasMapping) {
     return (
-      <span className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">
+      <span className="inline-flex items-center rounded bg-muted px-1.5 py-0.5 text-muted-foreground text-xs">
         $ —
       </span>
     );
   }
 
   return (
-    <span className="inline-flex items-center rounded border border-emerald-500 bg-emerald-50 px-1.5 py-0.5 text-xs font-medium text-emerald-700">
+    <span className="inline-flex items-center rounded border border-emerald-500 bg-emerald-50 px-1.5 py-0.5 font-medium text-emerald-700 text-xs">
       {formatCompact(result.totalCost)}
     </span>
   );

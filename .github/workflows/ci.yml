@@ -39,7 +39,6 @@ jobs:
   typecheck:
     name: Type Check (informational)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
 
@@ -236,6 +235,24 @@ jobs:
 
       - name: AI Fix CI failure
         run: pnpm fix:ci
+
+  agent-governance:
+    name: Agent Governance Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: experiments/slm-pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r experiments/slm-pipeline/requirements.txt
+
+      - name: Run governance checks
+        run: python -m agent_governance_toolkit check --path experiments/slm-pipeline/
 
   risk-score:
     name: AI Risk Score

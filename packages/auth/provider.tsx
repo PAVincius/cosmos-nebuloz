@@ -8,6 +8,6 @@ type AuthProviderProperties = PropsWithChildren<{
   helpUrl?: string;
 }>;
 
-export const AuthProvider = ({ children }: AuthProviderProperties) => {
-  return <>{children}</>;
-};
+export const AuthProvider = ({ children }: AuthProviderProperties) => (
+  <>{children}</>
+);

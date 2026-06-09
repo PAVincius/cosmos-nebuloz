@@ -1,33 +1,29 @@
 "use client";
 
-import { useState, useTransition, useRef, useCallback, useEffect } from "react";
-import { useDraftState, formatDraftAge } from "../../../hooks/use-draft-state";
-import { useRouter } from "next/navigation";
-import {
-  PlusIcon,
-  UsersIcon,
-  ZapIcon,
-  ClipboardListIcon,
-  CheckIcon,
-  TrashIcon,
-  ChevronRightIcon,
-  ChevronLeftIcon,
-  LayersIcon,
-  TimerIcon,
-} from "lucide-react";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
-import { createTeam } from "../actions";
-import type { TeamMember } from "../actions";
-import { MemberSearchInput } from "./member-search-input";
-import type { TenantMemberResult } from "./member-search-input";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
+import {
+  CheckIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ClipboardListIcon,
+  LayersIcon,
+  PlusIcon,
+  TimerIcon,
+  TrashIcon,
+  UsersIcon,
+  ZapIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useRef, useState, useTransition } from "react";
+import { formatDraftAge, useDraftState } from "../../../hooks/use-draft-state";
 import {
   WizardBody,
   WizardChromeHeader,
@@ -36,6 +32,10 @@ import {
   wizardDialogContentClassName,
   wizardInputClassName,
 } from "../../components/wizard-ui";
+import type { TeamMember } from "../actions";
+import { createTeam } from "../actions";
+import type { TenantMemberResult } from "./member-search-input";
+import { MemberSearchInput } from "./member-search-input";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,14 +45,14 @@ type Art = { id: string; name: string; cadence: number };
 
 type SprintPreset = 7 | 14 | 21;
 
-interface WizardFormData {
+type WizardFormData = {
   name: string;
   artId: string | null;
   members: TeamMember[];
   velocity: number | null;
   sprintLengthDays: SprintPreset | number;
   sprintIsCustom: boolean;
-}
+};
 
 const MEMBER_ROLES = [
   "SM",
@@ -86,7 +86,7 @@ const PRESET_SKILLS = [
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+    <p className="font-medium text-muted-foreground text-xs uppercase tracking-wider">
       {children}
     </p>
   );
@@ -96,41 +96,41 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 // Step 1 — Team identity
 // ---------------------------------------------------------------------------
 
-interface Step1Props {
+type Step1Props = {
   formData: WizardFormData;
   arts: Art[];
   onUpdate: (patch: Partial<WizardFormData>) => void;
   nameError: string | null;
-}
+};
 
 function Step1Identity({ formData, arts, onUpdate, nameError }: Step1Props) {
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Dê um nome ao time e vincule ao ART correspondente."
         icon={<UsersIcon className="h-5 w-5" />}
         title="Identidade do Time"
-        description="Dê um nome ao time e vincule ao ART correspondente."
       />
 
       <div className="flex flex-col gap-2">
         <Label htmlFor="wizard-team-name">
           Nome do time{" "}
-          <span className="text-destructive" aria-hidden>
+          <span aria-hidden className="text-destructive">
             *
           </span>
         </Label>
         <Input
-          id="wizard-team-name"
+          aria-describedby={nameError ? "name-error" : undefined}
+          aria-invalid={nameError !== null}
+          autoFocus
           className={wizardInputClassName}
+          id="wizard-team-name"
+          onChange={(e) => onUpdate({ name: e.target.value })}
           placeholder="ex: Team Phoenix, Plataforma Core..."
           value={formData.name}
-          autoFocus
-          onChange={(e) => onUpdate({ name: e.target.value })}
-          aria-invalid={nameError !== null}
-          aria-describedby={nameError ? "name-error" : undefined}
         />
         {nameError && (
-          <p id="name-error" className="text-sm text-destructive">
+          <p className="text-destructive text-sm" id="name-error">
             {nameError}
           </p>
         )}
@@ -141,35 +141,33 @@ function Step1Identity({ formData, arts, onUpdate, nameError }: Step1Props) {
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {/* No ART card */}
           <button
-            type="button"
-            onClick={() => onUpdate({ artId: null })}
             className={[
               "rounded-lg border px-4 py-3 text-left transition-all duration-200",
               formData.artId === null
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border bg-muted/20 text-muted-foreground hover:border-muted-foreground/40 hover:bg-muted/40",
             ].join(" ")}
+            onClick={() => onUpdate({ artId: null })}
+            type="button"
           >
-            <p className="text-sm font-medium">Sem ART</p>
+            <p className="font-medium text-sm">Sem ART</p>
             <p className="mt-0.5 text-xs opacity-70">Time independente</p>
           </button>
 
           {arts.map((art) => (
             <button
-              key={art.id}
-              type="button"
-              onClick={() => onUpdate({ artId: art.id })}
               className={[
                 "rounded-lg border px-4 py-3 text-left transition-all duration-200",
                 formData.artId === art.id
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-border bg-muted/20 text-muted-foreground hover:border-muted-foreground/40 hover:bg-muted/40",
               ].join(" ")}
+              key={art.id}
+              onClick={() => onUpdate({ artId: art.id })}
+              type="button"
             >
-              <p className="text-sm font-medium">{art.name}</p>
-              <p className="mt-0.5 text-xs opacity-70">
-                {art.cadence}w por PI
-              </p>
+              <p className="font-medium text-sm">{art.name}</p>
+              <p className="mt-0.5 text-xs opacity-70">{art.cadence}w por PI</p>
             </button>
           ))}
         </div>
@@ -182,14 +180,19 @@ function Step1Identity({ formData, arts, onUpdate, nameError }: Step1Props) {
 // Step 2 — Members
 // ---------------------------------------------------------------------------
 
-interface Step2Props {
+type Step2Props = {
   formData: WizardFormData;
   initialMembers: TenantMemberResult[];
   onUpdate: (patch: Partial<WizardFormData>) => void;
   onSkip: () => void;
-}
+};
 
-function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props) {
+function Step2Members({
+  formData,
+  initialMembers,
+  onUpdate,
+  onSkip,
+}: Step2Props) {
   const [memberName, setMemberName] = useState("");
   const [memberRole, setMemberRole] = useState<MemberRole>("DEV");
   const [memberHours, setMemberHours] = useState<number>(40);
@@ -210,7 +213,11 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
     if (e.key === "Enter" || e.key === ",") {
       e.preventDefault();
       addSkillFromInput();
-    } else if (e.key === "Backspace" && skillInput === "" && pendingSkills.length > 0) {
+    } else if (
+      e.key === "Backspace" &&
+      skillInput === "" &&
+      pendingSkills.length > 0
+    ) {
       setPendingSkills((prev) => prev.slice(0, -1));
     }
   };
@@ -248,27 +255,29 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
 
   const getInitials = (name: string) => {
     const parts = name.trim().split(" ");
-    if (parts.length === 1) return name.slice(0, 2).toUpperCase();
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    if (parts.length === 1) {
+      return name.slice(0, 2).toUpperCase();
+    }
+    return (parts[0][0] + parts.at(-1)[0]).toUpperCase();
   };
 
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Adicione os integrantes, funções e skills. Pode configurar depois."
         icon={<UsersIcon className="h-5 w-5" />}
         title="Membros do Time"
-        description="Adicione os integrantes, funções e skills. Pode configurar depois."
       />
 
       {/* Add member form */}
-      <div className="rounded-lg border border-border bg-muted/10 p-4 flex flex-col gap-4">
+      <div className="flex flex-col gap-4 rounded-lg border border-border bg-muted/10 p-4">
         <SectionLabel>Adicionar membro</SectionLabel>
 
         <div className="flex flex-col gap-1.5">
           <Label className="text-xs">Buscar membro</Label>
           <MemberSearchInput
-            initialMembers={initialMembers}
             excludeUserIds={formData.members.map((m) => m.id)}
+            initialMembers={initialMembers}
             onMemberSelect={(selected) => {
               const newMember: TeamMember = {
                 id: selected.userId,
@@ -284,34 +293,36 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
 
         <div className="flex items-center gap-2">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground">ou preencha manualmente</span>
+          <span className="text-muted-foreground text-xs">
+            ou preencha manualmente
+          </span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="member-name" className="text-xs">
+            <Label className="text-xs" htmlFor="member-name">
               Nome
             </Label>
             <Input
-              id="member-name"
               className={`h-8 text-sm ${wizardInputClassName}`}
-              placeholder="ex: Ana Silva"
-              value={memberName}
+              id="member-name"
               onChange={(e) => setMemberName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddMember()}
+              placeholder="ex: Ana Silva"
+              value={memberName}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="member-role" className="text-xs">
+            <Label className="text-xs" htmlFor="member-role">
               Função
             </Label>
             <select
+              className="flex h-8 w-full rounded-md border border-input bg-background px-3 py-1 text-foreground text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
               id="member-role"
-              value={memberRole}
               onChange={(e) => setMemberRole(e.target.value as MemberRole)}
-              className="border-input bg-background text-foreground flex h-8 w-full rounded-md border px-3 py-1 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring"
+              value={memberRole}
             >
               {MEMBER_ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -323,17 +334,17 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="member-hours" className="text-xs">
+          <Label className="text-xs" htmlFor="member-hours">
             Horas/semana
           </Label>
           <Input
-            id="member-hours"
-            type="number"
-            min={1}
-            max={60}
-            value={memberHours}
-            onChange={(e) => setMemberHours(Number(e.target.value))}
             className={`h-8 w-28 text-sm ${wizardInputClassName}`}
+            id="member-hours"
+            max={60}
+            min={1}
+            onChange={(e) => setMemberHours(Number(e.target.value))}
+            type="number"
+            value={memberHours}
           />
         </div>
 
@@ -344,15 +355,15 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
           <div className="flex flex-wrap gap-1.5">
             {PRESET_SKILLS.map((skill) => (
               <button
-                key={skill}
-                type="button"
-                onClick={() => togglePresetSkill(skill)}
                 className={[
-                  "rounded-full border px-2.5 py-0.5 text-xs font-medium transition-all duration-150",
+                  "rounded-full border px-2.5 py-0.5 font-medium text-xs transition-all duration-150",
                   pendingSkills.includes(skill)
                     ? "border-primary bg-primary/10 text-primary"
                     : "border-border bg-muted/20 text-muted-foreground hover:border-muted-foreground/40",
                 ].join(" ")}
+                key={skill}
+                onClick={() => togglePresetSkill(skill)}
+                type="button"
               >
                 {skill}
               </button>
@@ -360,50 +371,55 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
           </div>
 
           {/* Custom skill input */}
-          <div className="flex flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5 min-h-[36px]">
+          <div className="flex min-h-[36px] flex-wrap items-center gap-1.5 rounded-md border border-input bg-background px-2.5 py-1.5">
             {pendingSkills
-              .filter((s) => !PRESET_SKILLS.includes(s as typeof PRESET_SKILLS[number]))
+              .filter(
+                (s) =>
+                  !PRESET_SKILLS.includes(s as (typeof PRESET_SKILLS)[number])
+              )
               .map((skill) => (
                 <span
+                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-primary text-xs"
                   key={skill}
-                  className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary"
                 >
                   {skill}
                   <button
-                    type="button"
-                    onClick={() =>
-                      setPendingSkills((prev) => prev.filter((s) => s !== skill))
-                    }
-                    className="hover:text-destructive transition-colors"
                     aria-label={`Remover ${skill}`}
+                    className="transition-colors hover:text-destructive"
+                    onClick={() =>
+                      setPendingSkills((prev) =>
+                        prev.filter((s) => s !== skill)
+                      )
+                    }
+                    type="button"
                   >
                     ×
                   </button>
                 </span>
               ))}
             <input
-              ref={skillInputRef}
-              type="text"
-              placeholder={pendingSkills.length === 0 ? "Outra skill... (Enter)" : ""}
-              value={skillInput}
+              className="min-w-[80px] flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              onBlur={addSkillFromInput}
               onChange={(e) => setSkillInput(e.target.value)}
               onKeyDown={handleSkillKeyDown}
-              onBlur={addSkillFromInput}
-              className="flex-1 min-w-[80px] bg-transparent text-xs outline-none placeholder:text-muted-foreground"
+              placeholder={
+                pendingSkills.length === 0 ? "Outra skill... (Enter)" : ""
+              }
+              ref={skillInputRef}
+              type="text"
+              value={skillInput}
             />
           </div>
         </div>
 
-        {addError && (
-          <p className="text-xs text-destructive">{addError}</p>
-        )}
+        {addError && <p className="text-destructive text-xs">{addError}</p>}
 
         <Button
-          type="button"
+          className="self-start"
           onClick={handleAddMember}
           size="sm"
+          type="button"
           variant="outline"
-          className="self-start"
         >
           <PlusIcon className="mr-1.5 h-3.5 w-3.5" />
           Adicionar membro
@@ -421,21 +437,21 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
           <div className="flex flex-col gap-2">
             {formData.members.map((member) => (
               <div
-                key={member.id}
                 className="flex items-start gap-3 rounded-lg border border-border bg-muted/10 px-3 py-2.5"
+                key={member.id}
               >
                 {/* Avatar */}
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-semibold text-primary text-xs">
                   {getInitials(member.name)}
                 </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-medium">{member.name}</span>
-                    <Badge variant="secondary" className="text-xs">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium text-sm">{member.name}</span>
+                    <Badge className="text-xs" variant="secondary">
                       {member.role}
                     </Badge>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge className="text-xs" variant="outline">
                       {member.hoursPerWeek}h/sem
                     </Badge>
                   </div>
@@ -443,8 +459,8 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
                     <div className="mt-1.5 flex flex-wrap gap-1">
                       {member.skills.map((skill) => (
                         <span
+                          className="inline-block rounded-full bg-muted px-2 py-0.5 text-muted-foreground text-xs"
                           key={skill}
-                          className="inline-block rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
                         >
                           {skill}
                         </span>
@@ -454,10 +470,10 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
                 </div>
 
                 <button
-                  type="button"
-                  onClick={() => handleRemoveMember(member.id)}
-                  className="shrink-0 text-muted-foreground/50 transition-colors hover:text-destructive"
                   aria-label={`Remover ${member.name}`}
+                  className="shrink-0 text-muted-foreground/50 transition-colors hover:text-destructive"
+                  onClick={() => handleRemoveMember(member.id)}
+                  type="button"
                 >
                   <TrashIcon className="h-4 w-4" />
                 </button>
@@ -470,9 +486,9 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
       {formData.members.length === 0 && (
         <div className="text-center">
           <button
-            type="button"
+            className="text-muted-foreground text-sm underline-offset-4 transition-colors hover:text-foreground hover:underline"
             onClick={onSkip}
-            className="text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-foreground transition-colors"
+            type="button"
           >
             Pular esta etapa
           </button>
@@ -486,15 +502,25 @@ function Step2Members({ formData, initialMembers, onUpdate, onSkip }: Step2Props
 // Step 3 — Capacity & rhythm
 // ---------------------------------------------------------------------------
 
-interface Step3Props {
+type Step3Props = {
   formData: WizardFormData;
   onUpdate: (patch: Partial<WizardFormData>) => void;
   onSkip: () => void;
-}
+};
 
-const SPRINT_PRESETS: { days: SprintPreset; label: string; sublabel: string; isDefault?: boolean }[] = [
+const SPRINT_PRESETS: {
+  days: SprintPreset;
+  label: string;
+  sublabel: string;
+  isDefault?: boolean;
+}[] = [
   { days: 7, label: "1 semana", sublabel: "7 dias" },
-  { days: 14, label: "2 semanas", sublabel: "14 dias — SAFe padrão", isDefault: true },
+  {
+    days: 14,
+    label: "2 semanas",
+    sublabel: "14 dias — SAFe padrão",
+    isDefault: true,
+  },
   { days: 21, label: "3 semanas", sublabel: "21 dias" },
 ];
 
@@ -517,7 +543,7 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
 
   const handleCustomDays = (val: string) => {
     setCustomDays(val);
-    const parsed = parseInt(val, 10);
+    const parsed = Number.parseInt(val, 10);
     if (!isNaN(parsed) && parsed > 0) {
       onUpdate({ sprintLengthDays: parsed, sprintIsCustom: true });
     }
@@ -526,9 +552,9 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Configure velocidade e duração do sprint. Pode ajustar depois."
         icon={<ZapIcon className="h-5 w-5" />}
         title="Capacidade & Ritmo"
-        description="Configure velocidade e duração do sprint. Pode ajustar depois."
       />
 
       {/* Velocity */}
@@ -537,17 +563,17 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
           <SectionLabel>Story Points por sprint</SectionLabel>
         </Label>
         <Input
+          className={`w-40 ${wizardInputClassName}`}
           id="velocity"
-          type="number"
           min={1}
-          placeholder="ex: 40"
-          value={formData.velocity ?? ""}
           onChange={(e) =>
             onUpdate({
               velocity: e.target.value === "" ? null : Number(e.target.value),
             })
           }
-          className={`w-40 ${wizardInputClassName}`}
+          placeholder="ex: 40"
+          type="number"
+          value={formData.velocity ?? ""}
         />
       </div>
 
@@ -561,30 +587,30 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
               formData.sprintLengthDays === preset.days;
             return (
               <button
-                key={preset.days}
-                type="button"
-                onClick={() => selectPreset(preset.days)}
                 className={[
                   "relative rounded-lg border px-3 py-3 text-left transition-all duration-200",
                   isSelected
                     ? "border-primary bg-primary/10"
                     : "border-border bg-muted/20 hover:border-muted-foreground/40 hover:bg-muted/40",
                 ].join(" ")}
+                key={preset.days}
+                onClick={() => selectPreset(preset.days)}
+                type="button"
               >
                 {preset.isDefault && (
-                  <span className="absolute -top-2 left-3 rounded-full bg-primary px-2 py-0.5 text-[10px] font-semibold text-primary-foreground">
+                  <span className="-top-2 absolute left-3 rounded-full bg-primary px-2 py-0.5 font-semibold text-[10px] text-primary-foreground">
                     SAFe padrão
                   </span>
                 )}
                 <p
                   className={[
-                    "text-sm font-medium",
+                    "font-medium text-sm",
                     isSelected ? "text-primary" : "text-foreground",
                   ].join(" ")}
                 >
                   {preset.label}
                 </p>
-                <p className="mt-0.5 text-xs text-muted-foreground">
+                <p className="mt-0.5 text-muted-foreground text-xs">
                   {preset.sublabel}
                 </p>
               </button>
@@ -595,37 +621,37 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
         {/* Custom input */}
         <div className="flex items-center gap-3">
           <button
-            type="button"
-            onClick={() => {
-              onUpdate({ sprintIsCustom: true });
-              if (customDays) {
-                const parsed = parseInt(customDays, 10);
-                if (!isNaN(parsed) && parsed > 0) {
-                  onUpdate({ sprintLengthDays: parsed });
-                }
-              }
-            }}
             className={[
               "rounded-lg border px-3 py-2 text-xs transition-all duration-200",
               formData.sprintIsCustom
                 ? "border-primary bg-primary/10 text-primary"
                 : "border-border bg-muted/20 text-muted-foreground hover:border-muted-foreground/40",
             ].join(" ")}
+            onClick={() => {
+              onUpdate({ sprintIsCustom: true });
+              if (customDays) {
+                const parsed = Number.parseInt(customDays, 10);
+                if (!isNaN(parsed) && parsed > 0) {
+                  onUpdate({ sprintLengthDays: parsed });
+                }
+              }
+            }}
+            type="button"
           >
             Personalizado
           </button>
           {formData.sprintIsCustom && (
             <div className="flex items-center gap-2">
               <Input
-                type="number"
-                min={1}
-                placeholder="dias"
-                value={customDays}
-                onChange={(e) => handleCustomDays(e.target.value)}
-                className={`h-8 w-20 text-sm ${wizardInputClassName}`}
                 autoFocus
+                className={`h-8 w-20 text-sm ${wizardInputClassName}`}
+                min={1}
+                onChange={(e) => handleCustomDays(e.target.value)}
+                placeholder="dias"
+                type="number"
+                value={customDays}
               />
-              <span className="text-sm text-muted-foreground">dias</span>
+              <span className="text-muted-foreground text-sm">dias</span>
             </div>
           )}
         </div>
@@ -637,19 +663,21 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
           <SectionLabel>Métricas calculadas</SectionLabel>
           <div className="mt-3 grid grid-cols-2 gap-4">
             <div>
-              <p className="font-mono text-xl font-semibold tabular-nums">
+              <p className="font-mono font-semibold text-xl tabular-nums">
                 {Math.round(totalHoursPerSprint)}h
               </p>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Capacidade total/sprint
               </p>
             </div>
             {throughput && (
               <div>
-                <p className="font-mono text-xl font-semibold tabular-nums">
+                <p className="font-mono font-semibold text-xl tabular-nums">
                   {throughput}
                 </p>
-                <p className="text-xs text-muted-foreground">SP/hora throughput</p>
+                <p className="text-muted-foreground text-xs">
+                  SP/hora throughput
+                </p>
               </div>
             )}
           </div>
@@ -658,9 +686,9 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
 
       <div className="text-center">
         <button
-          type="button"
+          className="text-muted-foreground text-sm underline-offset-4 transition-colors hover:text-foreground hover:underline"
           onClick={onSkip}
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline hover:text-foreground transition-colors"
+          type="button"
         >
           Configurar depois
         </button>
@@ -673,15 +701,21 @@ function Step3Capacity({ formData, onUpdate, onSkip }: Step3Props) {
 // Step 4 — Review
 // ---------------------------------------------------------------------------
 
-interface Step4Props {
+type Step4Props = {
   formData: WizardFormData;
   arts: Art[];
   isPending: boolean;
   error: string | null;
   onSubmit: () => void;
-}
+};
 
-function Step4Review({ formData, arts, isPending, error, onSubmit }: Step4Props) {
+function Step4Review({
+  formData,
+  arts,
+  isPending,
+  error,
+  onSubmit,
+}: Step4Props) {
   const artName =
     formData.artId === null
       ? "Independente"
@@ -691,49 +725,51 @@ function Step4Review({ formData, arts, isPending, error, onSubmit }: Step4Props)
 
   const sprintLabel = formData.sprintIsCustom
     ? `${formData.sprintLengthDays} dias (personalizado)`
-    : SPRINT_PRESETS.find((p) => p.days === formData.sprintLengthDays)?.label ??
-      `${formData.sprintLengthDays} dias`;
+    : (SPRINT_PRESETS.find((p) => p.days === formData.sprintLengthDays)
+        ?.label ?? `${formData.sprintLengthDays} dias`);
 
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Confira os dados antes de criar o time."
         icon={<ClipboardListIcon className="h-5 w-5" />}
         title="Revisão"
-        description="Confira os dados antes de criar o time."
       />
 
       {/* Summary card */}
-      <div className="rounded-xl border border-border bg-muted/10 divide-y divide-border">
+      <div className="divide-y divide-border rounded-xl border border-border bg-muted/10">
         <div className="px-5 py-4">
           <SectionLabel>Time</SectionLabel>
-          <p className="mt-1.5 text-base font-semibold">{formData.name}</p>
-          <p className="text-sm text-muted-foreground">{artName}</p>
+          <p className="mt-1.5 font-semibold text-base">{formData.name}</p>
+          <p className="text-muted-foreground text-sm">{artName}</p>
         </div>
 
         <div className="grid grid-cols-2 divide-x divide-border">
           <div className="px-5 py-4">
             <SectionLabel>Membros</SectionLabel>
-            <p className="mt-1.5 font-mono text-lg font-semibold tabular-nums">
+            <p className="mt-1.5 font-mono font-semibold text-lg tabular-nums">
               {formData.members.length}
             </p>
             {formData.members.length > 0 && (
-              <p className="text-xs text-muted-foreground">{totalHours}h/semana total</p>
+              <p className="text-muted-foreground text-xs">
+                {totalHours}h/semana total
+              </p>
             )}
           </div>
           <div className="px-5 py-4">
             <SectionLabel>Velocidade</SectionLabel>
-            <p className="mt-1.5 font-mono text-lg font-semibold tabular-nums">
+            <p className="mt-1.5 font-mono font-semibold text-lg tabular-nums">
               {formData.velocity ?? "—"}
             </p>
             {formData.velocity && (
-              <p className="text-xs text-muted-foreground">SP/sprint</p>
+              <p className="text-muted-foreground text-xs">SP/sprint</p>
             )}
           </div>
         </div>
 
         <div className="px-5 py-4">
           <SectionLabel>Sprint</SectionLabel>
-          <p className="mt-1.5 flex items-center gap-2 text-sm font-medium">
+          <p className="mt-1.5 flex items-center gap-2 font-medium text-sm">
             <TimerIcon className="h-4 w-4 text-muted-foreground" />
             {sprintLabel}
           </p>
@@ -742,16 +778,16 @@ function Step4Review({ formData, arts, isPending, error, onSubmit }: Step4Props)
 
       {error && (
         <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
-          <p className="text-sm text-destructive">{error}</p>
+          <p className="text-destructive text-sm">{error}</p>
         </div>
       )}
 
       <Button
-        type="button"
-        onClick={onSubmit}
-        disabled={isPending}
         className="w-full"
+        disabled={isPending}
+        onClick={onSubmit}
         size="lg"
+        type="button"
       >
         {isPending ? (
           <span className="flex items-center gap-2">
@@ -819,9 +855,12 @@ export function CreateTeamWizard({
     sprintIsCustom: draft.sprintIsCustom,
   };
 
-  const updateForm = useCallback((patch: Partial<WizardFormData>) => {
-    setDraft((prev) => ({ ...prev, ...patch }));
-  }, [setDraft]);
+  const updateForm = useCallback(
+    (patch: Partial<WizardFormData>) => {
+      setDraft((prev) => ({ ...prev, ...patch }));
+    },
+    [setDraft]
+  );
 
   const resetWizard = () => {
     clearDraft();
@@ -848,10 +887,14 @@ export function CreateTeamWizard({
       }
       setNameError(null);
     }
-    setDraft((prev) => ({ ...prev, step: Math.min(prev.step + 1, STEP_COUNT) }));
+    setDraft((prev) => ({
+      ...prev,
+      step: Math.min(prev.step + 1, STEP_COUNT),
+    }));
   };
 
-  const handleBack = () => setDraft((prev) => ({ ...prev, step: Math.max(prev.step - 1, 1) }));
+  const handleBack = () =>
+    setDraft((prev) => ({ ...prev, step: Math.max(prev.step - 1, 1) }));
 
   const handleSkipToReview = () => setDraft((prev) => ({ ...prev, step: 4 }));
 
@@ -883,70 +926,75 @@ export function CreateTeamWizard({
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog onOpenChange={handleOpenChange} open={open}>
       {/* Trigger */}
       <button
-        type="button"
+        className="relative inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 font-medium text-primary-foreground text-sm shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
         onClick={() => setOpen(true)}
-        className="relative inline-flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+        type="button"
       >
         <PlusIcon className="mr-1.5 h-4 w-4" />
         Novo Time
         {draftMeta.hasDraft && (
           <span
-            className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full border-2 border-background bg-amber-500"
-            title="Rascunho salvo"
             aria-label="Rascunho salvo"
+            className="-top-1 -right-1 absolute h-2.5 w-2.5 rounded-full border-2 border-background bg-amber-500"
+            title="Rascunho salvo"
           />
         )}
       </button>
 
       <DialogContent className={wizardDialogContentClassName}>
-        <DialogTitle className="sr-only">Criar Novo Time — Etapa {step} de {STEP_COUNT}: {stepLabels[step]}</DialogTitle>
+        <DialogTitle className="sr-only">
+          Criar Novo Time — Etapa {step} de {STEP_COUNT}: {stepLabels[step]}
+        </DialogTitle>
 
         <WizardChromeHeader
-          step={step}
-          total={STEP_COUNT}
-          stepLabel={stepLabels[step]}
-          summaryTitle="Novo Time"
-          summaryIcon={<LayersIcon className="h-4 w-4" />}
           draft={
             draftMeta.hasDraft
-              ? { savedAtRelative: formatDraftAge(draftMeta.savedAt), onDiscard: handleDiscardDraft }
+              ? {
+                  savedAtRelative: formatDraftAge(draftMeta.savedAt),
+                  onDiscard: handleDiscardDraft,
+                }
               : null
           }
+          step={step}
+          stepLabel={stepLabels[step]}
+          summaryIcon={<LayersIcon className="h-4 w-4" />}
+          summaryTitle="Novo Time"
+          total={STEP_COUNT}
         />
 
         <WizardBody>
           {step === 1 && (
             <Step1Identity
-              formData={formData}
               arts={arts}
-              onUpdate={updateForm}
+              formData={formData}
               nameError={nameError}
+              onUpdate={updateForm}
             />
           )}
           {step === 2 && (
             <Step2Members
               formData={formData}
               initialMembers={initialMembers}
-              onUpdate={updateForm}
               onSkip={handleSkipToReview}
+              onUpdate={updateForm}
             />
           )}
           {step === 3 && (
             <Step3Capacity
               formData={formData}
-              onUpdate={updateForm}
               onSkip={handleSkipToReview}
+              onUpdate={updateForm}
             />
           )}
           {step === 4 && (
             <Step4Review
-              formData={formData}
               arts={arts}
-              isPending={isPending}
               error={submitError}
+              formData={formData}
+              isPending={isPending}
               onSubmit={handleSubmit}
             />
           )}
@@ -955,11 +1003,11 @@ export function CreateTeamWizard({
         {step < 4 && (
           <WizardFooterNav>
             <Button
-              type="button"
-              variant="ghost"
-              size="sm"
               className="text-muted-foreground"
               onClick={step === 1 ? () => setOpen(false) : handleBack}
+              size="sm"
+              type="button"
+              variant="ghost"
             >
               {step === 1 ? (
                 "Cancelar"
@@ -971,7 +1019,12 @@ export function CreateTeamWizard({
               )}
             </Button>
 
-            <Button type="button" size="sm" className="shadow-sm" onClick={handleNext}>
+            <Button
+              className="shadow-sm"
+              onClick={handleNext}
+              size="sm"
+              type="button"
+            >
               Próximo
               <ChevronRightIcon className="ml-1 h-4 w-4" />
             </Button>
@@ -980,7 +1033,12 @@ export function CreateTeamWizard({
 
         {step === 4 && (
           <WizardFooterNav>
-            <Button type="button" variant="ghost" size="sm" onClick={handleBack}>
+            <Button
+              onClick={handleBack}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
               <ChevronLeftIcon className="mr-1 h-4 w-4" />
               Voltar
             </Button>

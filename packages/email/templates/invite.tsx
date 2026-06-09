@@ -4,9 +4,7 @@ import {
   Container,
   Head,
   Heading,
-  Hr,
   Html,
-  Img,
   Link,
   Preview,
   Section,
@@ -38,19 +36,19 @@ export const InviteTemplate = ({
           : `Você foi convidado para ${workspaceName} no Cosmos`}
       </Preview>
 
-      <Body className="bg-[#f4f4f5] font-sans m-0 p-0">
+      <Body className="m-0 bg-[#f4f4f5] p-0 font-sans">
         {/* Header */}
         <Section className="bg-[#0f1011] px-0 py-0">
           <Container className="mx-auto max-w-[560px] px-8 py-6">
-            <table width="100%" cellPadding="0" cellSpacing="0">
+            <table cellPadding="0" cellSpacing="0" width="100%">
               <tr>
                 <td>
-                  <Text className="m-0 text-[20px] font-bold tracking-tight text-white">
+                  <Text className="m-0 font-bold text-[20px] text-white tracking-tight">
                     <span style={{ color: "#5e6ad2" }}>◆</span> Cosmos
                   </Text>
                 </td>
                 <td align="right">
-                  <Text className="m-0 text-[11px] font-medium uppercase tracking-widest text-[#62666d]">
+                  <Text className="m-0 font-medium text-[#62666d] text-[11px] uppercase tracking-widest">
                     PI Planning · SAFe
                   </Text>
                 </td>
@@ -72,7 +70,7 @@ export const InviteTemplate = ({
 
         {/* Main card */}
         <Container className="mx-auto max-w-[560px] px-4 py-8">
-          <Section className="rounded-2xl bg-white px-10 py-10 shadow-sm border border-[#e4e4e7]">
+          <Section className="rounded-2xl border border-[#e4e4e7] bg-white px-10 py-10 shadow-sm">
             {/* Icon */}
             <Section className="mb-6 text-center">
               <div
@@ -91,11 +89,11 @@ export const InviteTemplate = ({
               </div>
             </Section>
 
-            <Heading className="mt-0 mb-2 text-center text-[24px] font-bold leading-tight text-[#0f1011]">
+            <Heading className="mt-0 mb-2 text-center font-bold text-[#0f1011] text-[24px] leading-tight">
               Você foi convidado
             </Heading>
 
-            <Text className="mt-0 mb-8 text-center text-[15px] text-[#62666d]">
+            <Text className="mt-0 mb-8 text-center text-[#62666d] text-[15px]">
               {inviterName ? (
                 <>
                   <strong style={{ color: "#0f1011" }}>{inviterName}</strong>{" "}
@@ -120,13 +118,13 @@ export const InviteTemplate = ({
                 marginBottom: 28,
               }}
             >
-              <table width="100%" cellPadding="0" cellSpacing="0">
+              <table cellPadding="0" cellSpacing="0" width="100%">
                 <tr>
                   <td>
-                    <Text className="m-0 text-[11px] font-semibold uppercase tracking-widest text-[#5e6ad2]">
+                    <Text className="m-0 font-semibold text-[#5e6ad2] text-[11px] uppercase tracking-widest">
                       Workspace
                     </Text>
-                    <Text className="m-0 mt-1 text-[17px] font-bold text-[#0f1011]">
+                    <Text className="m-0 mt-1 font-bold text-[#0f1011] text-[17px]">
                       {workspaceName}
                     </Text>
                   </td>
@@ -171,21 +169,19 @@ export const InviteTemplate = ({
               </Button>
             </Section>
 
-            <Text className="mt-6 mb-0 text-center text-[12px] text-[#8a8f98]">
+            <Text className="mt-6 mb-0 text-center text-[#8a8f98] text-[12px]">
               Este link expira em{" "}
-              <strong style={{ color: "#62666d" }}>
-                {expiresInDays} dias
-              </strong>
+              <strong style={{ color: "#62666d" }}>{expiresInDays} dias</strong>
               . Faça login com o email que recebeu este convite.
             </Text>
           </Section>
 
           {/* What is Cosmos */}
           <Section className="mt-6 rounded-xl bg-[#0f1011] px-8 py-7">
-            <Text className="mt-0 mb-3 text-[11px] font-semibold uppercase tracking-widest text-[#5e6ad2]">
+            <Text className="mt-0 mb-3 font-semibold text-[#5e6ad2] text-[11px] uppercase tracking-widest">
               O que é o Cosmos?
             </Text>
-            <Text className="m-0 text-[13px] leading-relaxed text-[#d0d6e0]">
+            <Text className="m-0 text-[#d0d6e0] text-[13px] leading-relaxed">
               Plataforma de{" "}
               <strong style={{ color: "#f7f8f8" }}>PI Planning SAFe</strong>{" "}
               para times enterprise — organize épicos, ARTs, OKRs e dependências
@@ -195,7 +191,7 @@ export const InviteTemplate = ({
 
           {/* Footer */}
           <Section className="mt-6 text-center">
-            <Text className="m-0 text-[12px] text-[#8a8f98]">
+            <Text className="m-0 text-[#8a8f98] text-[12px]">
               Não reconhece este convite?{" "}
               <Link
                 href="mailto:suporte@nebuloz.com"
@@ -205,7 +201,7 @@ export const InviteTemplate = ({
               </Link>
               .
             </Text>
-            <Text className="mt-2 mb-0 text-[11px] text-[#a1a1aa]">
+            <Text className="mt-2 mb-0 text-[#a1a1aa] text-[11px]">
               © {new Date().getFullYear()} Nebuloz · Cosmos Platform ·{" "}
               <Link
                 href="https://nebuloz.com"

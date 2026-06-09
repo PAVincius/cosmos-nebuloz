@@ -1,0 +1,59 @@
+// Story-045: Advanced Reporting & Export
+
+enum ReportExecutionStatus {
+  PENDING
+  RUNNING
+  DELIVERED
+  FAILED
+}
+
+model ScheduledReport {
+  id             String   @id @default(cuid())
+  tenantId       String
+  name           String
+  cronExpression String
+  timezone       String   @default("UTC")
+  recipients     String[]
+  slackChannelId String?
+  config         Json     @default("{}")
+  enabled        Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenant     Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  executions ScheduledReportExecution[]
+
+  @@index([tenantId])
+}
+
+model ScheduledReportExecution {
+  id         String                @id @default(cuid())
+  tenantId   String
+  reportId   String
+  status     ReportExecutionStatus @default(PENDING)
+  attempts   Int                   @default(0)
+  pdfUrl     String?
+  error      String?
+  executedAt DateTime?
+  createdAt  DateTime              @default(now())
+  updatedAt  DateTime              @updatedAt
+
+  report ScheduledReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId, status])
+  @@index([tenantId])
+}
+
+model UserDashboardLayout {
+  id         String   @id @default(cuid())
+  tenantId   String
+  userId     String
+  config     Json     @default("{\"tiles\":[]}")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+}

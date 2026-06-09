@@ -1,19 +1,19 @@
-import { NextRequest, NextResponse } from "next/server";
 import { requireTenantSession } from "@repo/auth/server";
+import { database, type Prisma } from "@repo/database";
 import { headers } from "next/headers";
-import { database, Prisma } from "@repo/database";
+import { type NextRequest, NextResponse } from "next/server";
+import { discoverAzureProjects } from "@/lib/migration/azure-client";
+import { parseMigrationCSV } from "@/lib/migration/csv-parser";
 import {
   discoverJiraProjects,
   fetchJiraItems,
 } from "@/lib/migration/jira-client";
-import { discoverAzureProjects } from "@/lib/migration/azure-client";
 import { discoverTrelloBoards } from "@/lib/migration/trello-client";
-import { parseMigrationCSV } from "@/lib/migration/csv-parser";
 import type { MigrationItem } from "@/lib/migration/types";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ source: string }> },
+  { params }: { params: Promise<{ source: string }> }
 ) {
   try {
     const ctx = await requireTenantSession(await headers());
@@ -26,7 +26,7 @@ export async function POST(
     if (!conn) {
       return NextResponse.json(
         { error: "Connection not found" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -41,22 +41,22 @@ export async function POST(
           email: string;
           apiToken: string;
           projectKeys?: string[];
-        },
+        }
       );
       for (const p of projects.slice(0, 5)) {
         const projectItems = await fetchJiraItems(
           config as { baseUrl: string; email: string; apiToken: string },
-          p.key ?? p.name,
+          p.key ?? p.name
         );
         items.push(...projectItems);
       }
     } else if (source === "azure") {
       projects = await discoverAzureProjects(
-        config as { organization: string; project: string; pat: string },
+        config as { organization: string; project: string; pat: string }
       );
     } else if (source === "trello") {
       projects = await discoverTrelloBoards(
-        config as { apiKey: string; apiToken: string; boardIds?: string[] },
+        config as { apiKey: string; apiToken: string; boardIds?: string[] }
       );
     } else if (source === "csv") {
       items = parseMigrationCSV((config.content as string) ?? "");
@@ -81,7 +81,9 @@ export async function POST(
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Discovery failed";
-    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(
+      message
+    )
       ? "Operation failed. Check your credentials and try again."
       : message;
     return NextResponse.json({ error: safeMessage }, { status: 500 });

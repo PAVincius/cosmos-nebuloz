@@ -1,14 +1,22 @@
 import { database } from "@repo/database";
+import {
+  DEFAULT_LINEAR_FIELD_POLICY,
+  mapLinearStatusToCosmos,
+  resolveField,
+} from "@/lib/integrations/merge-policy";
 import { upsertLinearMapping } from "./sync-mapping";
 
 export type LinearWebhookPayload = {
   action: "create" | "update" | "remove";
   type: "Issue" | "Project" | "Cycle";
+  webhookId?: string;
   data: {
     id: string;
     title?: string;
     description?: string;
     state?: { name: string };
+    assignee?: { id: string } | null;
+    cycle?: { id: string } | null;
     updatedAt?: string;
     team?: { id: string };
     project?: { id: string };
@@ -18,13 +26,14 @@ export type LinearWebhookPayload = {
 
 export async function handleLinearWebhook(
   tenantId: string,
+  integrationId: string,
   payload: LinearWebhookPayload
 ): Promise<void> {
   if (payload.action === "remove") {
     return;
   }
   if (payload.type !== "Issue") {
-    return; // Only sync Issues for now
+    return;
   }
 
   const { data } = payload;
@@ -32,51 +41,47 @@ export async function handleLinearWebhook(
     return;
   }
 
-  // Look up via mapping table first (most reliable)
+  const linearUpdatedAt = data.updatedAt
+    ? new Date(data.updatedAt)
+    : new Date();
+
+  // Find existing Cosmos Story via mapping or externalId
   const mapping = await database.linearSync.findFirst({
     where: { tenantId, linearId: data.id, linearType: "issue" },
   });
 
-  if (mapping) {
-    // Update the mapped Cosmos Story
-    await database.story.updateMany({
-      where: { id: mapping.cosmosId, tenantId },
-      data: {
-        title: data.title,
-        description: data.description ?? null,
-        updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
-      },
-    });
-    return;
-  }
+  const cosmosStoryId =
+    mapping?.cosmosId ??
+    (
+      await database.story.findFirst({
+        where: { tenantId, externalId: data.id, externalSource: "linear" },
+        select: { id: true },
+      })
+    )?.id;
 
-  // Fall back: check externalId on Story
-  const existing = await database.story.findFirst({
-    where: { tenantId, externalId: data.id, externalSource: "linear" },
-    select: { id: true },
-  });
-
-  if (existing) {
-    await database.story.update({
-      where: { id: existing.id },
-      data: {
-        title: data.title,
-        description: data.description ?? null,
-        updatedAt: data.updatedAt ? new Date(data.updatedAt) : new Date(),
-      },
-    });
-    // Backfill mapping so future updates go through mapping table
-    await upsertLinearMapping({
+  if (cosmosStoryId) {
+    await syncInboundUpdate({
       tenantId,
-      linearId: data.id,
-      linearType: "issue",
-      cosmosId: existing.id,
-      cosmosType: "Story",
+      integrationId,
+      cosmosStoryId,
+      data,
+      linearUpdatedAt,
     });
+
+    // Backfill mapping if not in mapping table
+    if (!mapping) {
+      await upsertLinearMapping({
+        tenantId,
+        linearId: data.id,
+        linearType: "issue",
+        cosmosId: cosmosStoryId,
+        cosmosType: "Story",
+      });
+    }
     return;
   }
 
-  // New issue — create a Story and mapping
+  // New issue — create Story and mapping (AC-005: unmapped lands in holding area)
   const created = await database.story.create({
     data: {
       tenantId,
@@ -84,7 +89,7 @@ export async function handleLinearWebhook(
       description: data.description ?? null,
       externalId: data.id,
       externalSource: "linear",
-      status: "BACKLOG",
+      status: mapLinearStatusToCosmos(data.state?.name ?? ""),
     },
     select: { id: true },
   });
@@ -95,5 +100,173 @@ export async function handleLinearWebhook(
     linearType: "issue",
     cosmosId: created.id,
     cosmosType: "Story",
+  });
+
+  await writeSyncEvent({
+    tenantId,
+    integrationId,
+    direction: "INBOUND",
+    source: "LINEAR",
+    action: "CREATED",
+    entityType: "Story",
+    entityId: created.id,
+    externalId: data.id,
+  });
+}
+
+// ─── helpers ──────────────────────────────────────────────────────────────────
+
+type InboundUpdateArgs = {
+  tenantId: string;
+  integrationId: string;
+  cosmosStoryId: string;
+  data: LinearWebhookPayload["data"];
+  linearUpdatedAt: Date;
+};
+
+async function syncInboundUpdate(args: InboundUpdateArgs): Promise<void> {
+  const story = await database.story.findFirst({
+    where: { id: args.cosmosStoryId, tenantId: args.tenantId },
+    select: {
+      status: true,
+      title: true,
+      description: true,
+      updatedAt: true,
+      wsjfScore: true,
+    },
+  });
+  if (!story) {
+    return;
+  }
+
+  const updates: Record<string, unknown> = {};
+  const fields: Array<{ field: string; linear: unknown; cosmos: unknown }> = [
+    {
+      field: "status",
+      linear: mapLinearStatusToCosmos(args.data.state?.name ?? ""),
+      cosmos: story.status,
+    },
+    { field: "title", linear: args.data.title, cosmos: story.title },
+    {
+      field: "description",
+      linear: args.data.description ?? null,
+      cosmos: story.description,
+    },
+  ];
+
+  const skipped: Array<{
+    field: string;
+    linearValue: unknown;
+    cosmosValue: unknown;
+  }> = [];
+
+  for (const f of fields) {
+    if (f.linear === undefined || f.linear === f.cosmos) {
+      continue;
+    }
+    const resolution = resolveField({
+      field: f.field,
+      linearValue: f.linear,
+      cosmosValue: f.cosmos,
+      linearUpdatedAt: args.linearUpdatedAt,
+      cosmosUpdatedAt: story.updatedAt,
+      policy: DEFAULT_LINEAR_FIELD_POLICY,
+    });
+    if (resolution.action === "APPLY") {
+      updates[f.field] = resolution.value;
+    } else {
+      skipped.push({
+        field: f.field,
+        linearValue: f.linear,
+        cosmosValue: f.cosmos,
+      });
+    }
+  }
+
+  const prevStatus = story.status;
+  const newStatus = updates.status as string | undefined;
+
+  if (Object.keys(updates).length > 0) {
+    await database.story.updateMany({
+      where: { id: args.cosmosStoryId, tenantId: args.tenantId },
+      data: updates,
+    });
+
+    // Write StateTransitionHistory if status changed (AC-001)
+    if (newStatus && newStatus !== prevStatus) {
+      await database.stateTransitionHistory.create({
+        data: {
+          tenantId: args.tenantId,
+          entityType: "Story",
+          entityId: args.cosmosStoryId,
+          fromStatus: prevStatus,
+          toStatus: newStatus,
+          userId: null,
+          externalRef: args.data.id,
+        },
+      });
+    }
+
+    await writeSyncEvent({
+      tenantId: args.tenantId,
+      integrationId: args.integrationId,
+      direction: "INBOUND",
+      source: "LINEAR",
+      action: "UPDATED",
+      entityType: "Story",
+      entityId: args.cosmosStoryId,
+      externalId: args.data.id,
+    });
+  }
+
+  // Log SKIPPED fields for conflict resolution UI (AC-008)
+  for (const s of skipped) {
+    await writeSyncEvent({
+      tenantId: args.tenantId,
+      integrationId: args.integrationId,
+      direction: "INBOUND",
+      source: "LINEAR",
+      action: "SKIPPED",
+      entityType: "Story",
+      entityId: args.cosmosStoryId,
+      externalId: args.data.id,
+      field: s.field,
+      linearValue: s.linearValue,
+      cosmosValue: s.cosmosValue,
+    });
+  }
+}
+
+type WriteSyncEventArgs = {
+  tenantId: string;
+  integrationId: string;
+  direction: string;
+  source: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  externalId?: string;
+  field?: string;
+  linearValue?: unknown;
+  cosmosValue?: unknown;
+};
+
+async function writeSyncEvent(args: WriteSyncEventArgs): Promise<void> {
+  await database.linearSyncEvent.create({
+    data: {
+      tenantId: args.tenantId,
+      integrationId: args.integrationId,
+      direction: args.direction,
+      source: args.source,
+      action: args.action,
+      entityType: args.entityType,
+      entityId: args.entityId,
+      externalId: args.externalId ?? null,
+      field: args.field ?? null,
+      linearValue:
+        args.linearValue !== undefined ? args.linearValue : undefined,
+      cosmosValue:
+        args.cosmosValue !== undefined ? args.cosmosValue : undefined,
+    },
   });
 }

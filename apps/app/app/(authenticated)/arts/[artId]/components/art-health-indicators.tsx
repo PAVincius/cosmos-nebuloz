@@ -1,17 +1,17 @@
 "use client";
 
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { appDesign } from "@/lib/app-design";
 import {
+  CheckCircle2Icon,
   ShieldAlertIcon,
   TargetIcon,
   TrendingUpIcon,
-  CheckCircle2Icon,
 } from "lucide-react";
 import type {
   ARTHealthIndicators,
   PIHealthSummary,
 } from "@/app/actions/arts/observability";
+import { appDesign } from "@/lib/app-design";
 
 function HealthCard({
   icon,
@@ -37,13 +37,13 @@ function HealthCard({
 
   return (
     <div className={appDesign.statCard}>
-      <div className="mb-1.5 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+      <div className="mb-1.5 flex items-center gap-2 font-medium text-muted-foreground text-xs">
         {icon}
         {label}
       </div>
       <div className={`${appDesign.statValue} ${statusColor}`}>{value}</div>
       {sublabel && (
-        <p className="mt-0.5 text-xs text-muted-foreground">{sublabel}</p>
+        <p className="mt-0.5 text-muted-foreground text-xs">{sublabel}</p>
       )}
     </div>
   );
@@ -68,14 +68,14 @@ function PIHealthRow({ pi }: { pi: PIHealthSummary }) {
     <div className="flex items-center gap-3 rounded border border-border/60 bg-background px-3 py-2">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="truncate text-sm font-medium">{pi.piName}</span>
+          <span className="truncate font-medium text-sm">{pi.piName}</span>
           {pi.stretchObjectives > 0 && (
-            <Badge variant="outline" className="text-xs">
+            <Badge className="text-xs" variant="outline">
               {pi.stretchObjectives} stretch
             </Badge>
           )}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {pi.achievedObjectives}/{pi.totalObjectives} objetivos alcançados
         </p>
       </div>
@@ -86,7 +86,7 @@ function PIHealthRow({ pi }: { pi: PIHealthSummary }) {
             style={{ width: `${pi.predictability}%` }}
           />
         </div>
-        <span className={`tabular-nums text-xs font-semibold ${color}`}>
+        <span className={`font-semibold text-xs tabular-nums ${color}`}>
           {pi.predictability}%
         </span>
       </div>
@@ -94,9 +94,9 @@ function PIHealthRow({ pi }: { pi: PIHealthSummary }) {
   );
 }
 
-interface ARTHealthIndicatorsPanelProps {
+type ARTHealthIndicatorsPanelProps = {
   health: ARTHealthIndicators;
-}
+};
 
 export function ARTHealthIndicatorsPanel({
   health,
@@ -109,17 +109,17 @@ export function ARTHealthIndicatorsPanel({
         : "danger";
 
   const lastPI = health.piHealth[0];
-  const predictStatus: "ok" | "warn" | "danger" = !lastPI
-    ? "ok"
-    : lastPI.predictability >= 80
+  const predictStatus: "ok" | "warn" | "danger" = lastPI
+    ? lastPI.predictability >= 80
       ? "ok"
       : lastPI.predictability >= 50
         ? "warn"
-        : "danger";
+        : "danger"
+    : "ok";
 
   const totalAchieved = health.piHealth.reduce(
     (sum, p) => sum + p.achievedObjectives,
-    0,
+    0
   );
 
   return (
@@ -128,35 +128,35 @@ export function ARTHealthIndicatorsPanel({
         <HealthCard
           icon={<ShieldAlertIcon className="h-3.5 w-3.5" />}
           label="Riscos Ativos"
-          value={health.activeRisks}
-          sublabel={`${health.unresolvedRisks} sem plano`}
           status={riskStatus}
+          sublabel={`${health.unresolvedRisks} sem plano`}
+          value={health.activeRisks}
         />
         <HealthCard
           icon={<TrendingUpIcon className="h-3.5 w-3.5" />}
           label="Predictability"
-          value={lastPI ? `${lastPI.predictability}%` : "—"}
-          sublabel={lastPI?.piName ?? "Nenhum PI"}
           status={predictStatus}
+          sublabel={lastPI?.piName ?? "Nenhum PI"}
+          value={lastPI ? `${lastPI.predictability}%` : "—"}
         />
         <HealthCard
           icon={<TargetIcon className="h-3.5 w-3.5" />}
           label="PIs Planejados"
-          value={health.piHealth.length}
           sublabel="histórico total"
+          value={health.piHealth.length}
         />
         <HealthCard
           icon={<CheckCircle2Icon className="h-3.5 w-3.5" />}
           label="Objetivos Alcançados"
-          value={totalAchieved}
-          sublabel="total acumulado"
           status="ok"
+          sublabel="total acumulado"
+          value={totalAchieved}
         />
       </div>
 
       {health.piHealth.length > 0 && (
         <div className="flex flex-col gap-2">
-          <h4 className="text-sm font-semibold">Predictability por PI</h4>
+          <h4 className="font-semibold text-sm">Predictability por PI</h4>
           <div className="flex flex-col gap-1.5">
             {health.piHealth.slice(0, 5).map((pi) => (
               <PIHealthRow key={pi.piId} pi={pi} />

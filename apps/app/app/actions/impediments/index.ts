@@ -2,30 +2,34 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
-  CreateImpedimentSchema,
-  UpdateImpedimentSchema,
-  ImpedimentFiltersSchema,
   type CreateImpedimentInput,
-  type UpdateImpedimentInput,
+  CreateImpedimentSchema,
   type ImpedimentFiltersInput,
+  ImpedimentFiltersSchema,
+  type UpdateImpedimentInput,
+  UpdateImpedimentSchema,
 } from "./schema";
 
-export type { CreateImpedimentInput, UpdateImpedimentInput, ImpedimentFiltersInput };
+export type {
+  CreateImpedimentInput,
+  UpdateImpedimentInput,
+  ImpedimentFiltersInput,
+};
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
 export async function listImpediments(
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<Page<any>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -58,7 +62,9 @@ export async function getImpedimentById(id: string): Promise<Result<any>> {
       where: { id, tenantId: ctx.tenantId },
     });
 
-    if (!impediment) throw new Error("Impedimento não encontrado");
+    if (!impediment) {
+      throw new Error("Impedimento não encontrado");
+    }
     return impediment;
   });
 }
@@ -79,7 +85,9 @@ export type ImpedimentWithTeam = {
   isEscalated: boolean;
 };
 
-export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWithTeam[]> {
+export async function listImpedimentsByArt(
+  artId: string
+): Promise<ImpedimentWithTeam[]> {
   const ctx = await requireTenantSession(await headers());
 
   const teams = await database.team.findMany({
@@ -88,7 +96,9 @@ export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWit
   });
 
   const teamIds = teams.map((t) => t.id);
-  if (teamIds.length === 0) return [];
+  if (teamIds.length === 0) {
+    return [];
+  }
 
   const teamNameMap = new Map(teams.map((t) => [t.id, t.name]));
   const now = new Date();
@@ -100,7 +110,9 @@ export async function listImpedimentsByArt(artId: string): Promise<ImpedimentWit
 
   return impediments.map((imp) => {
     const endTime = imp.resolvedAt ? imp.resolvedAt.getTime() : now.getTime();
-    const ageDays = Math.floor((endTime - imp.createdAt.getTime()) / 86_400_000);
+    const ageDays = Math.floor(
+      (endTime - imp.createdAt.getTime()) / 86_400_000
+    );
     const isOpen = imp.status !== "RESOLVED";
     return {
       id: imp.id,
@@ -142,7 +154,7 @@ export async function createImpediment(raw: unknown): Promise<Result<any>> {
 
 export async function updateImpediment(
   id: string,
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -151,7 +163,9 @@ export async function updateImpediment(
     const impediment = await database.impediment.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!impediment) throw new Error("Impedimento não encontrado");
+    if (!impediment) {
+      throw new Error("Impedimento não encontrado");
+    }
 
     const updated = await database.impediment.update({
       where: { id },
@@ -174,7 +188,9 @@ export async function resolveImpediment(id: string): Promise<Result<any>> {
     const impediment = await database.impediment.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!impediment) throw new Error("Impedimento não encontrado");
+    if (!impediment) {
+      throw new Error("Impedimento não encontrado");
+    }
 
     const updated = await database.impediment.update({
       where: { id },
@@ -191,7 +207,7 @@ export async function resolveImpediment(id: string): Promise<Result<any>> {
 }
 
 export async function deleteImpediment(
-  id: string,
+  id: string
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -199,7 +215,9 @@ export async function deleteImpediment(
     const impediment = await database.impediment.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!impediment) throw new Error("Impedimento não encontrado");
+    if (!impediment) {
+      throw new Error("Impedimento não encontrado");
+    }
 
     await database.impediment.delete({ where: { id } });
 

@@ -1,14 +1,13 @@
-import { getWorkspaceSettings } from "../../../actions/settings/workspace";
 import { requireTenantSession } from "@repo/auth/server";
-import { headers } from "next/headers";
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import { WorkspaceForm } from "./components/workspace-form";
-import { MembersTable } from "./components/members-table";
-import { InviteForm } from "./components/invite-form";
 import { AlertTriangleIcon, CrownIcon } from "lucide-react";
+import { headers } from "next/headers";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { appDesign } from "@/lib/app-design";
+import { getWorkspaceSettings } from "../../../actions/settings/workspace";
+import { InviteForm } from "./components/invite-form";
+import { MembersTable } from "./components/members-table";
+import { WorkspaceForm } from "./components/workspace-form";
 
 export const metadata = {
   title: "Workspace | Configurações | COSMOS",
@@ -37,71 +36,69 @@ export default async function WorkspaceSettingsPage() {
   const isAdmin = currentUserRole === "ADMIN";
 
   return (
-    <div className={`${appDesign.shell} gap-6 p-6`}>
-      <header>
-        <h1 className={appDesign.pageTitle}>Workspace</h1>
-        <p className={appDesign.pageSubtitle}>
-          Gerencie as configurações gerais, membros e convites
-        </p>
-        <div className={appDesign.accentBar} aria-hidden />
-      </header>
-
-      {/* Workspace Settings Form */}
-      <WorkspaceForm
-        name={tenant.name}
-        slug={tenant.slug}
-        logo={tenant.logo}
-        isAdmin={isAdmin}
+    <div className={appDesign.shell}>
+      <PageHeader
+        subtitle="Gerencie as configurações gerais, membros e convites"
+        title="Workspace"
       />
 
-      <Separator />
+      <div className={`${appDesign.bodyScroll} flex flex-col gap-6`}>
+        {/* Workspace Settings Form */}
+        <WorkspaceForm
+          isAdmin={isAdmin}
+          logo={tenant.logo}
+          name={tenant.name}
+          slug={tenant.slug}
+        />
 
-      {/* Members Table */}
-      <MembersTable
-        members={members}
-        isAdmin={isAdmin}
-        currentUserId={ctx.userId}
-      />
+        {/* Members Table */}
+        <MembersTable
+          currentUserId={ctx.userId}
+          isAdmin={isAdmin}
+          members={members}
+        />
 
-      {/* Invite Form (admin only) */}
-      {isAdmin && (
-        <InviteForm pendingInvitations={invitations} />
-      )}
+        {/* Invite Form (admin only) */}
+        {isAdmin && <InviteForm pendingInvitations={invitations} />}
 
-      <Separator />
-
-      {/* Danger Zone / Plan Info */}
-      <Card className="border-destructive/40">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-destructive">
-            <AlertTriangleIcon className="size-4" />
-            Informações do Plano
-          </CardTitle>
-          <CardDescription>
-            Seu plano atual e limites do workspace.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CrownIcon className="size-4 text-amber-500" />
-              <span className="font-medium">Plano {PLAN_LABELS[tenant.plan] ?? tenant.plan}</span>
-            </div>
-            <Badge>{tenant.plan}</Badge>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {PLAN_DESCRIPTIONS[tenant.plan] ?? ""}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Membros atuais: <span className="font-medium text-foreground">{membersCount}</span>
-          </p>
-          {!isAdmin && (
-            <p className="text-xs text-muted-foreground">
-              Apenas administradores podem alterar o plano.
+        {/* Plan Info */}
+        <div className="rounded-xl border border-amber-400/30 bg-surface shadow-[var(--card-shadow)]">
+          <div className="border-amber-400/20 border-b bg-surface-2 px-5 py-4">
+            <h2 className="flex items-center gap-2 font-semibold text-amber-500 text-sm tracking-tight dark:text-amber-400">
+              <AlertTriangleIcon className="size-4" />
+              Informações do Plano
+            </h2>
+            <p className="mt-1 text-muted-foreground text-xs">
+              Seu plano atual e limites do workspace.
             </p>
-          )}
-        </CardContent>
-      </Card>
+          </div>
+          <div className="space-y-3 p-5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <CrownIcon className="size-4 text-amber-500" />
+                <span className="font-medium">
+                  Plano {PLAN_LABELS[tenant.plan] ?? tenant.plan}
+                </span>
+              </div>
+              <Badge>{tenant.plan}</Badge>
+            </div>
+            <p className="text-muted-foreground text-sm">
+              {PLAN_DESCRIPTIONS[tenant.plan] ?? ""}
+            </p>
+            <p className="text-muted-foreground text-sm">
+              Membros atuais:{" "}
+              <span className="font-medium text-foreground">
+                {membersCount}
+              </span>
+            </p>
+            {!isAdmin && (
+              <p className="text-muted-foreground text-xs">
+                Apenas administradores podem alterar o plano.
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

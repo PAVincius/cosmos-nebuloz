@@ -38,7 +38,7 @@ export function MultiplayerCursors() {
             </svg>
             {!!info?.name && (
               <span
-                className="rounded-sm px-1.5 py-0.5 font-medium text-[10px] text-white"
+                className="rounded-sm px-1.5 py-0.5 font-medium text-[10px] text-primary-foreground"
                 style={{ backgroundColor: color }}
               >
                 {info.name}

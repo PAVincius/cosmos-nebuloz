@@ -13,11 +13,11 @@ const ExportSchema = z
   })
   .refine(
     (d) => d.to.getTime() - d.from.getTime() <= 365 * 24 * 60 * 60 * 1000,
-    { message: "Export period cannot exceed 1 year" },
+    { message: "Export period cannot exceed 1 year" }
   );
 
 export async function exportDecisionsCSV(
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<{ csv: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -35,8 +35,7 @@ export async function exportDecisionsCSV(
         (e as Record<string, unknown>).dataDecisao ??
         (e as Record<string, unknown>).createdAt;
       const date = ts ? new Date(ts as string).toISOString().slice(0, 10) : "";
-      const esc = (s: string) =>
-        `"${String(s ?? "").replace(/"/g, '""')}"`;
+      const esc = (s: string) => `"${String(s ?? "").replace(/"/g, '""')}"`;
       return [
         date,
         esc(e.tipo),

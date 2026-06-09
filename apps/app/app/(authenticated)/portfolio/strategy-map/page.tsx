@@ -1,7 +1,7 @@
-import { getStrategyMapData } from "@/app/actions/strategy-map";
-import { PageHeader } from "@/app/(authenticated)/components/page-header";
-import { appDesign } from "@/lib/app-design";
 import { LayersIcon, TargetIcon, ZapIcon } from "lucide-react";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getStrategyMapData } from "@/app/actions/strategy-map";
+import { appDesign } from "@/lib/app-design";
 import { StrategyTree } from "./components/strategy-tree";
 
 export const metadata = {
@@ -21,13 +21,13 @@ export default async function StrategyMapPage() {
     <div className={appDesign.shell}>
       <PageHeader
         breadcrumb={[{ label: "Portfolio", href: "/portfolio" }]}
-        title="Strategy Map"
-        subtitle="Conecte Temas Estratégicos, OKRs, Épicos e execução SAFe em uma visão hierárquica."
         stats={[
-          { label: "Temas",  value: data.themes.length, icon: LayersIcon },
-          { label: "OKRs",   value: totalOKRs,           icon: TargetIcon },
-          { label: "Épicos", value: totalEpics,           icon: ZapIcon },
+          { label: "Temas", value: data.themes.length, icon: LayersIcon },
+          { label: "OKRs", value: totalOKRs, icon: TargetIcon },
+          { label: "Épicos", value: totalEpics, icon: ZapIcon },
         ]}
+        subtitle="Conecte Temas Estratégicos, OKRs, Épicos e execução SAFe em uma visão hierárquica."
+        title="Strategy Map"
       />
       <div className={appDesign.bodyScroll}>
         <StrategyTree data={data} />

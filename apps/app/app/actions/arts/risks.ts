@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
 
@@ -14,7 +14,9 @@ export async function updateRiskStatus(riskId: string, status: string) {
     where: { id: riskId, tenantId: ctx.tenantId },
     include: { piPlan: { include: { art: true } } },
   });
-  if (!risk) throw new Error("Risco não encontrado.");
+  if (!risk) {
+    throw new Error("Risco não encontrado.");
+  }
 
   const updated = await database.risk.update({
     where: { id: riskId },
@@ -40,7 +42,9 @@ export async function createRisk(data: {
     where: { id: data.piPlanId, tenantId: ctx.tenantId },
     include: { art: true },
   });
-  if (!piPlan) throw new Error("PI Plan não encontrado.");
+  if (!piPlan) {
+    throw new Error("PI Plan não encontrado.");
+  }
 
   const risk = await database.risk.create({
     data: {

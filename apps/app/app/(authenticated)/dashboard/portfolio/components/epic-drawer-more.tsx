@@ -1,8 +1,8 @@
 "use client";
+import { Button } from "@repo/design-system/components/ui/button";
 import { useState } from "react";
 import type { AggregatedPortfolioEpic } from "@/lib/portfolio-aggregate";
 import { PromptDeliveryDialog } from "./prompt-delivery-dialog";
-import { Button } from "@repo/design-system/components/ui/button";
 
 type Props = { epic: AggregatedPortfolioEpic };
 export function EpicDrawerMore({ epic }: Props) {
@@ -25,9 +25,9 @@ export function EpicDrawerMore({ epic }: Props) {
 
       <div className="pt-2">
         <Button
-          variant="outline"
-          size="sm"
           onClick={() => setShowPromptDialog(true)}
+          size="sm"
+          variant="outline"
         >
           Gerar Prompt de Implementação
         </Button>

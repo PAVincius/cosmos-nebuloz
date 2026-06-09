@@ -1,5 +1,5 @@
-import { defineConfig, devices } from "@playwright/test";
 import path from "node:path";
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Cosmos Enterprise — Playwright E2E Configuration

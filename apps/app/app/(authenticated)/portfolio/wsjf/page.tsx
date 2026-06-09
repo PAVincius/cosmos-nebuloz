@@ -8,7 +8,10 @@ const WSJFDashboard = dynamic(
   {
     loading: () => (
       <div className="flex min-h-[320px] flex-1 flex-col items-center justify-center gap-3 rounded-lg border border-dashed p-12 text-center text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar priorização WSJF…</span>
       </div>
     ),
@@ -32,14 +35,14 @@ export default async function WSJFPage() {
       <header className={appDesign.pageHeader}>
         <h1 className={appDesign.pageTitle}>Priorização WSJF</h1>
         <p className={appDesign.pageSubtitle}>
-          Weighted Shortest Job First — ordene épicos e features por custo de atraso ÷
-          tamanho do job.
+          Weighted Shortest Job First — ordene épicos e features por custo de
+          atraso ÷ tamanho do job.
         </p>
-        <div className={appDesign.accentBar} aria-hidden />
+        <div aria-hidden className={appDesign.accentBar} />
       </header>
 
       <div className={appDesign.bodyScroll}>
-        <WSJFDashboard epics={epics} config={config} access={access} />
+        <WSJFDashboard access={access} config={config} epics={epics} />
       </div>
     </div>
   );

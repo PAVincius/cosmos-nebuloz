@@ -1,9 +1,9 @@
 "use server";
 
-import { database } from "@repo/database";
 import { requireTenantSession } from "@repo/auth/server";
-import { headers } from "next/headers";
+import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export type TeamMember = {
   id: string;
@@ -46,7 +46,9 @@ export async function createTeam(input: {
   members?: TeamMember[];
 }) {
   const ctx = await requireTenantSession(await headers());
-  if (!input.name?.trim()) throw new Error("O nome do time é obrigatório.");
+  if (!input.name?.trim()) {
+    throw new Error("O nome do time é obrigatório.");
+  }
 
   await database.team.create({
     data: {
@@ -75,7 +77,9 @@ export async function updateTeamConfig(input: {
   const team = await database.team.findFirst({
     where: { id: input.teamId, tenantId: ctx.tenantId },
   });
-  if (!team) throw new Error("Time não encontrado.");
+  if (!team) {
+    throw new Error("Time não encontrado.");
+  }
 
   await database.team.update({
     where: { id: input.teamId },

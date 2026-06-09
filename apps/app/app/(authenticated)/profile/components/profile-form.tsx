@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
+import { LoaderIcon, SaveIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { updateProfile } from "../../../actions/users/profile";
-import { SaveIcon, LoaderIcon } from "lucide-react";
 
 type ProfileFormProps = {
   name: string | null;
@@ -42,30 +48,34 @@ export function ProfileForm({ name, image }: ProfileFormProps) {
         <CardDescription>Atualize seu nome e foto de perfil.</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Label htmlFor="name">Nome</Label>
             <Input
+              disabled={isPending}
               id="name"
-              value={nameValue}
               onChange={(e) => setNameValue(e.target.value)}
               placeholder="Seu nome completo"
-              disabled={isPending}
+              value={nameValue}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="image">URL do Avatar</Label>
             <Input
+              disabled={isPending}
               id="image"
-              value={imageValue}
               onChange={(e) => setImageValue(e.target.value)}
               placeholder="https://..."
-              disabled={isPending}
+              value={imageValue}
             />
           </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {success && <p className="text-sm text-green-600">Perfil atualizado com sucesso!</p>}
-          <Button type="submit" disabled={isPending} className="gap-2">
+          {error && <p className="text-destructive text-sm">{error}</p>}
+          {success && (
+            <p className="text-green-600 text-sm">
+              Perfil atualizado com sucesso!
+            </p>
+          )}
+          <Button className="gap-2" disabled={isPending} type="submit">
             {isPending ? (
               <LoaderIcon className="size-4 animate-spin" />
             ) : (

@@ -30,7 +30,7 @@ export function CostTreemap({ data }: Props) {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={280}>
+    <ResponsiveContainer height={280} width="100%">
       <Treemap data={treemapData} dataKey="size" nameKey="name">
         <Tooltip formatter={(v: number) => formatUSD(v)} />
       </Treemap>

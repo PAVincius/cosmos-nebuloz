@@ -1,0 +1,83 @@
+// Story-037: API Keys, Webhook Endpoints, Credential Vault
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  tenantId   String
+  name       String
+  keyHash    String    @unique // SHA-256 of raw key — never store plaintext
+  prefix     String    @default("cmbk_live_")
+  lastFour   String
+  scope      String[]  @default([])
+  expiresAt  DateTime?
+  revokedAt  DateTime?
+  createdBy  String
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  usageLogs ApiKeyUsageLog[]
+
+  @@index([tenantId])
+  @@index([keyHash])
+}
+
+model ApiKeyUsageLog {
+  id         String   @id @default(cuid())
+  apiKeyId   String
+  tenantId   String
+  endpoint   String
+  method     String   @default("GET")
+  statusCode Int
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+
+  apiKey ApiKey @relation(fields: [apiKeyId], references: [id], onDelete: Cascade)
+
+  @@index([apiKeyId])
+  @@index([tenantId, createdAt])
+}
+
+model WebhookEndpoint {
+  id          String    @id @default(cuid())
+  tenantId    String
+  url         String
+  secretHash  String    // HMAC secret (hashed for lookup; actual secret AES-encrypted)
+  secretEnc   String    // AES-256-GCM encrypted secret
+  eventTypes  String[]  @default([])
+  active      Boolean   @default(true)
+  createdBy   String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant        Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliveryLogs  WebhookDeliveryLog[]
+
+  @@index([tenantId])
+}
+
+enum WebhookDeliveryStatus {
+  PENDING
+  DELIVERED
+  FAILED
+  FAILED_PERMANENTLY
+}
+
+model WebhookDeliveryLog {
+  id           String                @id @default(cuid())
+  endpointId   String
+  tenantId     String
+  eventType    String
+  requestBody  Json
+  responseCode Int?
+  responseBody String?               @db.Text
+  attemptCount Int                   @default(1)
+  status       WebhookDeliveryStatus @default(PENDING)
+  synthetic    Boolean               @default(false)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  endpoint WebhookEndpoint @relation(fields: [endpointId], references: [id], onDelete: Cascade)
+
+  @@index([endpointId])
+  @@index([tenantId, createdAt])
+}

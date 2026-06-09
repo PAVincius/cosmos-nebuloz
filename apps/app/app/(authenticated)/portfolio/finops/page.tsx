@@ -58,7 +58,10 @@ export default async function FinOpsPage() {
                 color: "text-amber-600",
               },
             ].map(({ label, value, color }) => (
-              <div className="rounded-lg border bg-card p-4" key={label}>
+              <div
+                className="rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)]"
+                key={label}
+              >
                 <p className="font-medium text-muted-foreground text-xs">
                   {label}
                 </p>
@@ -68,13 +71,13 @@ export default async function FinOpsPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="rounded-lg border bg-card p-4">
+            <div className="rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)]">
               <h2 className="mb-3 font-semibold text-sm">
                 Distribuição por Tema
               </h2>
               <CostTreemap data={summary.mapped} />
             </div>
-            <div className="rounded-lg border bg-card p-4">
+            <div className="rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)]">
               <h2 className="mb-3 font-semibold text-sm">Tendência Mensal</h2>
               <CostTrendChart data={trend} />
             </div>

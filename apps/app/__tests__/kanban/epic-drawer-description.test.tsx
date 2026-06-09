@@ -1,5 +1,17 @@
-import { render, screen, act } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { act, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("@repo/auth/server", () => ({
+  requireTenantSession: vi.fn(),
+  currentUser: vi.fn(),
+  redirectToSignIn: vi.fn(),
+}));
+
+vi.mock("@repo/ai/lib/models", () => ({
+  getActiveProvider: vi.fn().mockReturnValue("none"),
+  getAIModel: vi.fn(),
+  models: {},
+}));
 
 vi.mock("sonner", () => ({
   toast: { error: vi.fn(), success: vi.fn() },
@@ -9,7 +21,9 @@ vi.mock("@/app/actions/epics/update-epic", () => ({
   updateEpic: vi.fn().mockResolvedValue({ ok: true, data: { id: "e1" } }),
 }));
 
-let capturedOnUpdate: ((args: { editor: { getHTML: () => string } }) => void) | null = null;
+let capturedOnUpdate:
+  | ((args: { editor: { getHTML: () => string } }) => void)
+  | null = null;
 
 vi.mock("@tiptap/react", () => ({
   useEditor: vi.fn((options) => {
@@ -21,17 +35,32 @@ vi.mock("@tiptap/react", () => ({
       getHTML: () => "<h1>Hello</h1>",
     };
   }),
-  EditorContent: ({ editor }: { editor: unknown }) => <div data-testid="editor">Editor</div>,
+  EditorContent: ({ editor }: { editor: unknown }) => (
+    <div data-testid="editor">Editor</div>
+  ),
 }));
 
 import { EpicDrawerDescription } from "@/app/(authenticated)/dashboard/portfolio/components/epic-drawer-description";
 
 const epic = {
-  id: "e1", title: "My Epic", statusId: "BACKLOG", order: 0,
-  wsjfScore: 0, bv: 0, tc: 0, rr: 0, js: 1,
-  featureCount: 0, strategicThemeId: null, themeTitle: null, themeColor: null,
-  linkedOKRCount: 0, governanceStatus: null,
-  investScore: null, investBreakdown: null, descriptionMd: "# Hello",
+  id: "e1",
+  title: "My Epic",
+  statusId: "BACKLOG",
+  order: 0,
+  wsjfScore: 0,
+  bv: 0,
+  tc: 0,
+  rr: 0,
+  js: 1,
+  featureCount: 0,
+  strategicThemeId: null,
+  themeTitle: null,
+  themeColor: null,
+  linkedOKRCount: 0,
+  governanceStatus: null,
+  investScore: null,
+  investBreakdown: null,
+  descriptionMd: "# Hello",
 };
 
 describe("EpicDrawerDescription", () => {

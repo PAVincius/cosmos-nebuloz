@@ -12,7 +12,9 @@ export const storageClient =
 export const AI_PLAYGROUND_BUCKET = "cosmos-ai-playground";
 
 export async function ensureBucket(): Promise<void> {
-  if (!supabaseUrl || !supabaseServiceKey) return;
+  if (!(supabaseUrl && supabaseServiceKey)) {
+    return;
+  }
   const { data: buckets } = await storageClient.storage.listBuckets();
   const exists = buckets?.some((b) => b.name === AI_PLAYGROUND_BUCKET);
   if (!exists) {
@@ -23,9 +25,14 @@ export async function ensureBucket(): Promise<void> {
   }
 }
 
-export type ArtifactType = "prompt" | "prd" | "spec" | "playbook" | "transcript";
+export type ArtifactType =
+  | "prompt"
+  | "prd"
+  | "spec"
+  | "playbook"
+  | "transcript";
 
-export interface ArtifactMetadata {
+export type ArtifactMetadata = {
   id: string;
   tenantId: string;
   epicId?: string;
@@ -34,4 +41,4 @@ export interface ArtifactMetadata {
   storagePath: string;
   sizeBytes: number;
   createdAt: string;
-}
+};

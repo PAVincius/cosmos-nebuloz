@@ -13,25 +13,25 @@ type Props = { entries: Entry[] };
 export function DecisionLogTimeline({ entries }: Props) {
   if (entries.length === 0) {
     return (
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Nenhuma decisão registrada.
       </p>
     );
   }
 
   return (
-    <ol className="relative border-l border-muted pl-4 space-y-4">
+    <ol className="relative space-y-4 border-muted border-l pl-4">
       {entries.map((e) => {
         const ts = e.dataDecisao ?? e.createdAt;
         const date = ts
           ? new Date(ts as string).toLocaleDateString("pt-BR")
           : "—";
         return (
-          <li key={e.id} className="text-sm">
-            <span className="absolute -left-1.5 mt-1 h-3 w-3 rounded-full border border-muted bg-background" />
-            <time className="text-xs text-muted-foreground">{date}</time>
+          <li className="text-sm" key={e.id}>
+            <span className="-left-1.5 absolute mt-1 h-3 w-3 rounded-full border border-muted bg-background" />
+            <time className="text-muted-foreground text-xs">{date}</time>
             <p className="font-medium">{e.decisao}</p>
-            <p className="text-xs text-muted-foreground">{e.justificativa}</p>
+            <p className="text-muted-foreground text-xs">{e.justificativa}</p>
           </li>
         );
       })}

@@ -1,12 +1,23 @@
 import dynamic from "next/dynamic";
-import { getDependencies, getEpicsWithFeatures } from "@/app/actions/dependencies";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import {
+  getDependencies,
+  getEpicsWithFeatures,
+} from "@/app/actions/dependencies";
+import { appDesign } from "@/lib/app-design";
 
 const DependencyDashboard = dynamic(
-  () => import("./components/dependency-dashboard").then((m) => m.DependencyDashboard),
+  () =>
+    import("./components/dependency-dashboard").then(
+      (m) => m.DependencyDashboard
+    ),
   {
     loading: () => (
       <div className="flex min-h-[280px] items-center justify-center gap-3 rounded-lg border border-dashed p-12 text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar matriz de dependências…</span>
       </div>
     ),
@@ -25,14 +36,14 @@ export default async function DependenciesPage() {
   ]);
 
   return (
-    <div className="flex flex-col gap-6 p-6">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Dependências</h1>
-        <p className="text-muted-foreground text-sm">
-          Rastreie dependências entre features e épicos. Linhas = épico dependente, colunas = épico do qual depende.
-        </p>
+    <div className={appDesign.shell}>
+      <PageHeader
+        subtitle="Rastreie dependências entre features e épicos. Linhas = épico dependente, colunas = épico do qual depende."
+        title="Dependências"
+      />
+      <div className={appDesign.bodyScroll}>
+        <DependencyDashboard dependencies={dependencies} epics={epics} />
       </div>
-      <DependencyDashboard dependencies={dependencies} epics={epics} />
     </div>
   );
 }

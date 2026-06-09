@@ -14,13 +14,10 @@ type Props = { data: MonthlyTrendRow[] };
 
 export function CostTrendChart({ data }: Props) {
   return (
-    <ResponsiveContainer width="100%" height={160}>
-      <AreaChart
-        data={data}
-        margin={{ top: 4, right: 8, bottom: 0, left: -8 }}
-      >
+    <ResponsiveContainer height={160} width="100%">
+      <AreaChart data={data} margin={{ top: 4, right: 8, bottom: 0, left: -8 }}>
         <defs>
-          <linearGradient id="costGrad" x1="0" y1="0" x2="0" y2="1">
+          <linearGradient id="costGrad" x1="0" x2="0" y1="0" y2="1">
             <stop offset="5%" stopColor="#6366f1" stopOpacity={0.35} />
             <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
           </linearGradient>
@@ -30,16 +27,14 @@ export function CostTrendChart({ data }: Props) {
           tick={{ fontSize: 10 }}
           tickFormatter={(v: number) => `$${(v / 1000).toFixed(0)}k`}
         />
-        <Tooltip
-          formatter={(v: number) => [`$${v.toFixed(2)}`, "Custo"]}
-        />
+        <Tooltip formatter={(v: number) => [`$${v.toFixed(2)}`, "Custo"]} />
         <Area
-          type="monotone"
           dataKey="cost"
+          fill="url(#costGrad)"
           name="Custo"
           stroke="#6366f1"
-          fill="url(#costGrad)"
           strokeWidth={2}
+          type="monotone"
         />
       </AreaChart>
     </ResponsiveContainer>

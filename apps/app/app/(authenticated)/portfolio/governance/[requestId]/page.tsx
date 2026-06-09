@@ -12,13 +12,15 @@ export default async function ApprovalRequestPage({ params }: Props) {
     listLeanBudgets(),
   ]);
 
-  if (!reqResult.ok) notFound();
+  if (!reqResult.ok) {
+    notFound();
+  }
 
   const budgets = budgetsResult.ok ? budgetsResult.data : [];
 
   return (
     <div className="p-6">
-      <ApprovalDetail request={reqResult.data} budgets={budgets} />
+      <ApprovalDetail budgets={budgets} request={reqResult.data} />
     </div>
   );
 }

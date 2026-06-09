@@ -1,11 +1,9 @@
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { type NextRequest, NextResponse } from "next/server";
-import {
-  type GitHubWebhookPayload,
-  handleGitHubWebhook,
-} from "@/app/actions/integrations/sync/github-pull";
 import { verifyGitHubSignature } from "@/app/actions/integrations/webhooks/verify-signature";
+
+const DEDUP_TTL_SECONDS = 172_800; // 48h
 
 async function checkWebhookRateLimit(ip: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
@@ -20,9 +18,108 @@ async function checkWebhookRateLimit(ip: string): Promise<boolean> {
   return success;
 }
 
+// AC-007: write AuditLog on invalid signature (fire-and-forget)
+function logInvalidSignature(tenantId: string, ip: string): void {
+  database.auditLog
+    .create({
+      data: {
+        tenantId,
+        action: "webhook.signature_invalid",
+        actorId: null,
+        actorType: "system",
+        metadata: { actorIp: ip, source: "github" },
+      },
+    })
+    .catch((err) => {
+      log.error("[webhook/github] audit log write failed", err);
+    });
+}
+
+// AC-008: GitHub Delivery UUID idempotency (48h TTL)
+async function isAlreadyProcessed(deliveryId: string): Promise<boolean> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return false;
+  }
+  const { redis } = await import("@repo/rate-limit");
+  const result = await redis.set(`webhook:github:${deliveryId}`, "1", {
+    nx: true,
+    ex: DEDUP_TTL_SECONDS,
+  });
+  return result === null;
+}
+
+async function enqueueToInngest(
+  tenantId: string,
+  integrationId: string,
+  event: string,
+  payload: Record<string, unknown>
+): Promise<void> {
+  const { inngest } = await import("@/lib/inngest/client");
+  await inngest.send({
+    name: "integration/github.webhook",
+    data: { tenantId, integrationId, event, ...payload },
+  });
+}
+
+async function routeToPausedDlq(
+  tenantId: string,
+  integrationId: string,
+  deliveryId: string,
+  rawBody: Buffer
+): Promise<NextResponse> {
+  const payload = JSON.parse(rawBody.toString()) as Record<string, unknown>;
+  await database.webhookDlq.create({
+    data: {
+      tenantId,
+      integrationId,
+      source: "GITHUB",
+      webhookId: deliveryId || null,
+      payload,
+    },
+  });
+  return NextResponse.json({ ok: true, queued: true });
+}
+
+type DispatchArgs = {
+  tenantId: string;
+  integrationId: string;
+  event: string;
+  rawBody: Buffer;
+  deliveryId: string;
+};
+
+async function dispatchEvent(args: DispatchArgs): Promise<NextResponse> {
+  if (args.deliveryId && (await isAlreadyProcessed(args.deliveryId))) {
+    return NextResponse.json({ ok: true }); // already processed
+  }
+
+  if (!["pull_request", "deployment_status"].includes(args.event)) {
+    return NextResponse.json({ ok: true, skipped: true });
+  }
+
+  const payload = JSON.parse(args.rawBody.toString()) as Record<
+    string,
+    unknown
+  >;
+  try {
+    await enqueueToInngest(
+      args.tenantId,
+      args.integrationId,
+      args.event,
+      payload
+    );
+  } catch (err) {
+    log.error("[webhook/github] inngest enqueue error", err);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const ip =
     req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+
   if (!(await checkWebhookRateLimit(ip))) {
     return NextResponse.json({ error: "Too many requests" }, { status: 429 });
   }
@@ -39,19 +136,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const signature = req.headers.get("x-hub-signature-256") ?? "";
 
   if (!verifyGitHubSignature(rawBody, signature, secret)) {
+    logInvalidSignature(req.headers.get("x-cosmos-tenant-id") ?? "unknown", ip);
     return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
   }
 
+  const deliveryId = req.headers.get("x-github-delivery") ?? "";
   const event = req.headers.get("x-github-event") ?? "";
-  if (event !== "issues") {
-    // Only process issue events; ack everything else
-    return NextResponse.json({ ok: true, skipped: true });
-  }
-
-  const payload = JSON.parse(rawBody.toString()) as GitHubWebhookPayload;
-
-  // Resolve tenantId from a header set by the webhook proxy/ingress,
-  // or fall back to DEFAULT_TENANT_ID for single-tenant deployments.
   const tenantId =
     req.headers.get("x-cosmos-tenant-id") ??
     process.env.DEFAULT_TENANT_ID ??
@@ -64,20 +154,28 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
   }
 
-  // Prevent tenant spoofing: verify tenantId has an active GitHub integration.
   const integration = await database.integration.findFirst({
-    where: { tenantId, source: "github", status: "ACTIVE" },
-    select: { id: true },
+    where: { tenantId, source: "github" },
+    select: { id: true, status: true },
   });
+
   if (!integration) {
     return NextResponse.json({ error: "Tenant not found" }, { status: 400 });
   }
 
-  try {
-    await handleGitHubWebhook(tenantId, payload);
-    return NextResponse.json({ ok: true });
-  } catch (err) {
-    log.error("[webhook/github] handler error", err);
-    return NextResponse.json({ error: "Internal error" }, { status: 500 });
+  if (integration.status === "PAUSED") {
+    return routeToPausedDlq(tenantId, integration.id, deliveryId, rawBody);
   }
+
+  if (integration.status !== "ACTIVE") {
+    return NextResponse.json({ ok: true, skipped: true });
+  }
+
+  return dispatchEvent({
+    tenantId,
+    integrationId: integration.id,
+    event,
+    rawBody,
+    deliveryId,
+  });
 }

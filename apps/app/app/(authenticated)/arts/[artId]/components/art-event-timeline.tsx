@@ -1,11 +1,7 @@
 "use client";
 
 import { Badge } from "@repo/design-system/components/ui/badge";
-import {
-  MonitorIcon,
-  RefreshCwIcon,
-  PlayCircleIcon,
-} from "lucide-react";
+import { MonitorIcon, PlayCircleIcon, RefreshCwIcon } from "lucide-react";
 import type { ARTEvent } from "@/app/actions/arts/observability";
 
 const EVENT_CONFIG = {
@@ -31,14 +27,14 @@ function formatDate(date: Date): string {
   }).format(new Date(date));
 }
 
-interface ARTEventTimelineProps {
+type ARTEventTimelineProps = {
   events: ARTEvent[];
-}
+};
 
 export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
   if (events.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-lg border border-dashed py-8 text-sm text-muted-foreground">
+      <div className="flex items-center justify-center rounded-lg border border-dashed py-8 text-muted-foreground text-sm">
         Nenhum PI configurado — crie um PI para ver a timeline.
       </div>
     );
@@ -49,25 +45,27 @@ export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
   const currentIdx = ordered.findIndex((e) => e.status !== "past");
   const startIdx = Math.max(
     0,
-    currentIdx === -1 ? ordered.length - 3 : currentIdx - 3,
+    currentIdx === -1 ? ordered.length - 3 : currentIdx - 3
   );
   const visible = ordered.slice(startIdx, startIdx + 10);
 
   return (
     <div className="relative">
       <div
-        className="absolute bottom-0 left-[19px] top-0 w-px bg-border/60"
         aria-hidden
+        className="absolute top-0 bottom-0 left-[19px] w-px bg-border/60"
       />
       <div className="flex flex-col gap-4">
         {visible.map((event) => {
-          const config = EVENT_CONFIG[event.type as keyof typeof EVENT_CONFIG] ?? EVENT_CONFIG.pi_planning;
+          const config =
+            EVENT_CONFIG[event.type as keyof typeof EVENT_CONFIG] ??
+            EVENT_CONFIG.pi_planning;
           const Icon = config.icon;
           const isPast = event.status === "past";
           const isCurrent = event.status === "current";
 
           return (
-            <div key={event.id} className="flex items-start gap-3">
+            <div className="flex items-start gap-3" key={event.id}>
               <div
                 className={`relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
                   isCurrent
@@ -90,22 +88,19 @@ export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span
-                    className={`text-sm font-medium ${
+                    className={`font-medium text-sm ${
                       isPast ? "text-muted-foreground" : "text-foreground"
                     }`}
                   >
                     {event.label}
                   </span>
                   {isCurrent && (
-                    <Badge
-                      variant="default"
-                      className="bg-[#5e6ad2] text-xs"
-                    >
+                    <Badge className="bg-[#5e6ad2] text-xs" variant="default">
                       Atual
                     </Badge>
                   )}
                 </div>
-                <span className="mt-0.5 text-xs text-muted-foreground tabular-nums">
+                <span className="mt-0.5 text-muted-foreground text-xs tabular-nums">
                   {formatDate(event.date)}
                 </span>
               </div>
@@ -114,7 +109,7 @@ export function ARTEventTimeline({ events }: ARTEventTimelineProps) {
         })}
       </div>
       {ordered.length > 10 && (
-        <p className="mt-3 text-center text-xs text-muted-foreground">
+        <p className="mt-3 text-center text-muted-foreground text-xs">
           Mostrando 10 de {ordered.length} eventos
         </p>
       )}

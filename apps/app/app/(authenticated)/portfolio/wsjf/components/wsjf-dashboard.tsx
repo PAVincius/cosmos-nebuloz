@@ -3,6 +3,13 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/design-system/components/ui/select";
+import {
   Sheet,
   SheetContent,
   SheetDescription,
@@ -457,6 +464,7 @@ export function WSJFDashboard({
   const [isPending, startTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
   const [configOpen, setConfigOpen] = useState(false);
+  const [themeFilter, setThemeFilter] = useState<string>("ALL");
   const [suggestions, setSuggestions] = useState<ExplainabilitySuggestion[]>(
     []
   );
@@ -497,6 +505,27 @@ export function WSJFDashboard({
 
       return { ...epic, features, totalWSJF };
     })
+  );
+
+  const themeOptions = useMemo(() => {
+    const seen = new Map<string, { title: string; color: string }>();
+    for (const e of optimisticEpics) {
+      if (e.themeTitle && !seen.has(e.themeTitle)) {
+        seen.set(e.themeTitle, {
+          title: e.themeTitle,
+          color: e.themeColor ?? "#888",
+        });
+      }
+    }
+    return Array.from(seen.values());
+  }, [optimisticEpics]);
+
+  const filteredEpics = useMemo(
+    () =>
+      themeFilter === "ALL"
+        ? optimisticEpics
+        : optimisticEpics.filter((e) => e.themeTitle === themeFilter),
+    [optimisticEpics, themeFilter]
   );
 
   // Derive epic-level entries for the scenario simulator (epics act as team proxies)
@@ -589,29 +618,53 @@ export function WSJFDashboard({
       </Sheet>
 
       {/* Toolbar */}
-      <div className="flex items-center justify-end gap-2">
-        <ScenarioSimulator
-          epicTitles={epicTitles}
-          features={featuresForSimulator}
-        />
-        <Button
-          className="gap-1.5 text-xs"
-          onClick={() => setConfigOpen(true)}
-          size="sm"
-          variant="outline"
-        >
-          <Settings2Icon className="h-3.5 w-3.5" />
-          Configurações
-        </Button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {themeOptions.length > 0 && (
+          <Select onValueChange={setThemeFilter} value={themeFilter}>
+            <SelectTrigger className="h-8 w-48 text-xs">
+              <SelectValue placeholder="Todos os temas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">Todos os temas</SelectItem>
+              {themeOptions.map((t) => (
+                <SelectItem key={t.title} value={t.title}>
+                  <span className="flex items-center gap-1.5">
+                    <span
+                      className="inline-block h-2 w-2 rounded-full"
+                      style={{ backgroundColor: t.color }}
+                    />
+                    {t.title}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        <div className="ml-auto flex items-center gap-2">
+          <ScenarioSimulator
+            epicTitles={epicTitles}
+            features={featuresForSimulator}
+          />
+          <Button
+            className="gap-1.5 text-xs"
+            onClick={() => setConfigOpen(true)}
+            size="sm"
+            variant="outline"
+          >
+            <Settings2Icon className="h-3.5 w-3.5" />
+            Configurações
+          </Button>
+        </div>
       </div>
 
       {/* Section 2: Priority table */}
       <div className="w-full min-w-0 overflow-hidden rounded-lg border border-border bg-card">
-        {optimisticEpics.length === 0 ? (
+        {filteredEpics.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-muted-foreground text-sm">
-              Nenhum épico encontrado. Crie épicos no Portfolio Kanban para
-              começar a priorizar.
+              {optimisticEpics.length === 0
+                ? "Nenhum épico encontrado. Crie épicos no Portfolio Kanban para começar a priorizar."
+                : "Nenhum épico para o tema selecionado."}
             </p>
           </div>
         ) : (
@@ -631,7 +684,7 @@ export function WSJFDashboard({
                 </tr>
               </thead>
               <tbody>
-                {optimisticEpics.map((epic) => (
+                {filteredEpics.map((epic) => (
                   <EpicRow
                     epic={epic}
                     isPending={isPending}

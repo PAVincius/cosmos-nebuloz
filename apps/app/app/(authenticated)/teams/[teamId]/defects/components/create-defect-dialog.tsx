@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition, useState } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -19,11 +18,12 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { createDefect } from "@/app/actions/defects";
 
-interface CreateDefectDialogProps {
+type CreateDefectDialogProps = {
   teamId: string;
-}
+};
 
 export function CreateDefectDialog({ teamId }: CreateDefectDialogProps) {
   const [open, setOpen] = useState(false);
@@ -51,7 +51,7 @@ export function CreateDefectDialog({ teamId }: CreateDefectDialogProps) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -62,18 +62,29 @@ export function CreateDefectDialog({ teamId }: CreateDefectDialogProps) {
         <DialogHeader>
           <DialogTitle>Registrar Defect</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">Título *</Label>
-            <Input id="title" name="title" placeholder="Descreva o defeito…" required maxLength={200} />
+            <Input
+              id="title"
+              maxLength={200}
+              name="title"
+              placeholder="Descreva o defeito…"
+              required
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="description">Descrição</Label>
-            <Input id="description" name="description" placeholder="Passos para reproduzir, comportamento esperado…" maxLength={5000} />
+            <Input
+              id="description"
+              maxLength={5000}
+              name="description"
+              placeholder="Passos para reproduzir, comportamento esperado…"
+            />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label>Severidade</Label>
-            <Select value={severity} onValueChange={setSeverity}>
+            <Select onValueChange={setSeverity} value={severity}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -86,10 +97,14 @@ export function CreateDefectDialog({ teamId }: CreateDefectDialogProps) {
             </Select>
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              onClick={() => setOpen(false)}
+              type="button"
+              variant="outline"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "Registrando…" : "Registrar Defect"}
             </Button>
           </div>

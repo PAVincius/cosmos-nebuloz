@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -9,12 +8,13 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { CheckIcon, MoreHorizontalIcon, Trash2Icon } from "lucide-react";
-import { updateDefect, deleteDefect } from "@/app/actions/defects";
+import { useTransition } from "react";
+import { deleteDefect, updateDefect } from "@/app/actions/defects";
 
-interface DefectActionsProps {
+type DefectActionsProps = {
   defectId: string;
   currentStatus: string;
-}
+};
 
 const NEXT_STATUS: Record<string, string | undefined> = {
   OPEN: "IN_PROGRESS",
@@ -34,14 +34,20 @@ export function DefectActions({ defectId, currentStatus }: DefectActionsProps) {
   const nextStatus = NEXT_STATUS[currentStatus];
 
   function handleStatusUpdate() {
-    if (!nextStatus) return;
+    if (!nextStatus) {
+      return;
+    }
     startTransition(async () => {
-      await updateDefect(defectId, { status: nextStatus as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED" });
+      await updateDefect(defectId, {
+        status: nextStatus as "OPEN" | "IN_PROGRESS" | "RESOLVED" | "CLOSED",
+      });
     });
   }
 
   function handleDelete() {
-    if (!confirm("Confirmar exclusão do defect?")) return;
+    if (!confirm("Confirmar exclusão do defect?")) {
+      return;
+    }
     startTransition(async () => {
       await deleteDefect(defectId);
     });
@@ -50,7 +56,12 @@ export function DefectActions({ defectId, currentStatus }: DefectActionsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0" disabled={isPending}>
+        <Button
+          className="h-8 w-8 p-0"
+          disabled={isPending}
+          size="sm"
+          variant="ghost"
+        >
           <MoreHorizontalIcon className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
@@ -62,8 +73,8 @@ export function DefectActions({ defectId, currentStatus }: DefectActionsProps) {
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
-          onClick={handleDelete}
           className="text-destructive focus:text-destructive"
+          onClick={handleDelete}
         >
           <Trash2Icon className="mr-2 h-4 w-4" />
           Excluir

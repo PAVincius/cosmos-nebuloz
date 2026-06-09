@@ -1,7 +1,12 @@
 "use client";
 
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { InfoIcon, TrendingUpIcon, TrendingDownIcon, MinusIcon } from "lucide-react";
+import {
+  InfoIcon,
+  MinusIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 
 export type ExplainabilitySuggestion = {
   featureId: string;
@@ -16,22 +21,22 @@ export type ExplainabilitySuggestion = {
 };
 
 const IMPACT_LABELS: Record<string, string> = {
-  dependency:           "Dependência crítica",
-  team_capacity:        "Capacidade do time",
-  member_availability:  "Disponibilidade de membro",
-  velocity_trend:       "Tendência de velocity",
-  priority_drift:       "Desvio de prioridade",
-  deadline:             "Prazo identificado",
+  dependency: "Dependência crítica",
+  team_capacity: "Capacidade do time",
+  member_availability: "Disponibilidade de membro",
+  velocity_trend: "Tendência de velocity",
+  priority_drift: "Desvio de prioridade",
+  deadline: "Prazo identificado",
 };
 
-interface ExplainabilityPanelProps {
+type ExplainabilityPanelProps = {
   suggestions: ExplainabilitySuggestion[];
-}
+};
 
 export function ExplainabilityPanel({ suggestions }: ExplainabilityPanelProps) {
   if (suggestions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center text-sm text-muted-foreground">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center text-muted-foreground text-sm">
         <InfoIcon className="mb-2 h-5 w-5" />
         Execute o Rebalanceamento IA para ver explicações de prioridade.
       </div>
@@ -45,8 +50,8 @@ export function ExplainabilityPanel({ suggestions }: ExplainabilityPanelProps) {
         const declined = s.delta < -0.05;
         return (
           <div
+            className="flex items-start gap-3 rounded-xl border border-hairline bg-surface p-3 shadow-[var(--card-shadow)]"
             key={s.featureId}
-            className="flex items-start gap-3 rounded-lg border border-border/80 bg-card p-3 shadow-sm"
           >
             <div className="mt-0.5 shrink-0">
               {improved ? (
@@ -59,18 +64,27 @@ export function ExplainabilityPanel({ suggestions }: ExplainabilityPanelProps) {
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="truncate text-sm font-medium">{s.featureTitle}</span>
-                <span className="text-xs text-muted-foreground">({s.epicTitle})</span>
-                <Badge variant="outline" className="shrink-0 text-xs">
+                <span className="truncate font-medium text-sm">
+                  {s.featureTitle}
+                </span>
+                <span className="text-muted-foreground text-xs">
+                  ({s.epicTitle})
+                </span>
+                <Badge className="shrink-0 text-xs" variant="outline">
                   {IMPACT_LABELS[s.impactFactor] ?? s.impactFactor}
                 </Badge>
-                <Badge variant="secondary" className="shrink-0 text-xs tabular-nums">
+                <Badge
+                  className="shrink-0 text-xs tabular-nums"
+                  variant="secondary"
+                >
                   {Math.round(s.confidence * 100)}% confiança
                 </Badge>
               </div>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-muted-foreground text-xs">
                 WSJF:{" "}
-                <span className="font-medium tabular-nums">{s.currentWSJF.toFixed(1)}</span>
+                <span className="font-medium tabular-nums">
+                  {s.currentWSJF.toFixed(1)}
+                </span>
                 {" → "}
                 <span
                   className={[
@@ -86,7 +100,9 @@ export function ExplainabilityPanel({ suggestions }: ExplainabilityPanelProps) {
                 </span>
                 {Math.abs(s.delta) > 0.05 && (
                   <span
-                    className={improved ? "ml-1 text-emerald-500" : "ml-1 text-rose-500"}
+                    className={
+                      improved ? "ml-1 text-emerald-500" : "ml-1 text-rose-500"
+                    }
                   >
                     ({improved ? "+" : ""}
                     {s.delta.toFixed(1)})
@@ -94,7 +110,7 @@ export function ExplainabilityPanel({ suggestions }: ExplainabilityPanelProps) {
                 )}
               </p>
               {s.justification && (
-                <p className="mt-1 text-xs italic text-muted-foreground/80">
+                <p className="mt-1 text-muted-foreground/80 text-xs italic">
                   {s.justification}
                 </p>
               )}

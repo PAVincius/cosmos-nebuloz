@@ -28,8 +28,8 @@ export function ArtifactViewer({ artifact }: Props) {
         </div>
       </div>
       <p className="text-muted-foreground text-sm">
-        Conteúdo armazenado no Supabase Storage (caminho: {artifact.storagePath}).
-        Download direto em breve.
+        Conteúdo armazenado no Supabase Storage (caminho: {artifact.storagePath}
+        ). Download direto em breve.
       </p>
     </div>
   );

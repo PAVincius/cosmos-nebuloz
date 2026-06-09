@@ -84,6 +84,8 @@ model Tenant {
   solutionEpics           SolutionEpic[]
   lace                    LACE?
   suppliers               Supplier[]
+  solutionRisks           SolutionRisk[]
+  crossArtDependencies    CrossArtDependency[]
   // Onboarding
   onboardingProgress      OnboardingProgress[]
   migrationConnections    MigrationConnection[]
@@ -118,8 +120,44 @@ model Tenant {
   commitmentDiscounts     CommitmentDiscount[]
   personCosts             PersonCost[]
   billingEntryStaging     BillingEntryStaging[]
-  activeSessions          Session[]                  @relation("SessionActiveTenant")
-  scoringEvents           ScoringEvent[]
+  activeSessions              Session[]                  @relation("SessionActiveTenant")
+  scoringEvents               ScoringEvent[]
+  // Story-025 portfolio health
+  leanBudgetReallocations     LeanBudgetReallocation[]
+  portfolioAnalysisReports    PortfolioAnalysisReport[]
+  // Story-021 rule configs
+  anomalyRuleConfigs          AnomalyRuleConfig[]
+  // Story-024 Linear SAFe sync
+  linearSyncEvents            LinearSyncEvent[]
+  webhookDlqEntries           WebhookDlq[]
+  // Story-025 GitHub DORA sync
+  githubSyncEvents            GitHubSyncEvent[]
+  githubUnlinkedPRs           GitHubUnlinkedPR[]
+  githubDeploymentEvents      GitHubDeploymentEvent[]
+  // Story-031 Liveblocks CRDT board
+  piPlanFeatureAssignments    PIPlanFeatureAssignment[]
+  boardReconciliationLogs     BoardReconciliationLog[]
+  // Story-033 Tenant security policy
+  securityPolicy              TenantSecurityPolicy?
+  // Story-034 LGPD compliance
+  dataSubjectRequests         DataSubjectRequest[]
+  // Story-036 notifications
+  notificationPreferences     NotificationPreference[]
+  // Story-036 feature flags
+  featureFlagOverrides        FeatureFlagOverride[]
+  // Story-037 API keys & webhooks
+  apiKeys                     ApiKey[]
+  webhookEndpoints            WebhookEndpoint[]
+  // Story-038 RBAC
+  artMemberships              ARTMembership[]
+  customRoles                 CustomRole[]
+  customRoleAssignments       CustomRoleAssignment[]
+  // Story-040 governance escalations
+  governanceEscalations       GovernanceEscalation[]
+  // Story-045 reporting
+  scheduledReports            ScheduledReport[]
+  scheduledReportExecutions   ScheduledReportExecution[]
+  userDashboardLayouts        UserDashboardLayout[]
 }
 
 model User {

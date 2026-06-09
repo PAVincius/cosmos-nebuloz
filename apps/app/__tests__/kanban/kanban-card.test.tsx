@@ -6,9 +6,7 @@ vi.mock("@dnd-kit/core", () => ({
   useDraggable: () => ({
     attributes: {},
     listeners: {},
-    // biome-ignore lint/suspicious/noEmptyBlockStatements: mock stub for dnd-kit ref
     setNodeRef: (_el: unknown) => {},
-    // biome-ignore lint/suspicious/noEmptyBlockStatements: mock stub for dnd-kit ref
     setActivatorNodeRef: (_el: unknown) => {},
     transform: null,
     isDragging: false,
@@ -107,28 +105,36 @@ describe("KanbanCard component", () => {
     expect(screen.getByText("My Epic Title")).toBeDefined();
   });
 
-  it("shows the INVEST badge with null score as INVEST?", () => {
+  it("shows no progress bar when score is null", () => {
     render(<KanbanCard epic={makeEpic({ investScore: null })} />);
-    expect(screen.getByText("INVEST?")).toBeDefined();
+    expect(screen.queryByRole("progressbar")).toBeNull();
   });
 
-  it("shows green-class INVEST badge for score >= 70", () => {
+  it("shows green-fill INVEST bar for score >= 70", () => {
     render(<KanbanCard epic={makeEpic({ investScore: 75 })} />);
-    const badge = screen.getByText("INVEST 75");
-    expect(badge).toBeDefined();
-    expect(badge.className).toContain("bg-green-50");
+    const bar = screen.getByRole("progressbar", { name: "INVEST 75" });
+    const fill = bar.querySelector(
+      '[data-testid="invest-bar-fill"]'
+    ) as HTMLElement;
+    expect(fill.className).toContain("bg-green-500");
   });
 
-  it("shows yellow-class INVEST badge for score between 50 and 69", () => {
+  it("shows yellow-fill INVEST bar for score between 50 and 69", () => {
     render(<KanbanCard epic={makeEpic({ investScore: 55 })} />);
-    const badge = screen.getByText("INVEST 55");
-    expect(badge.className).toContain("bg-yellow-50");
+    const bar = screen.getByRole("progressbar", { name: "INVEST 55" });
+    const fill = bar.querySelector(
+      '[data-testid="invest-bar-fill"]'
+    ) as HTMLElement;
+    expect(fill.className).toContain("bg-yellow-500");
   });
 
-  it("shows red-class INVEST badge for score < 50", () => {
+  it("shows red-fill INVEST bar for score < 50", () => {
     render(<KanbanCard epic={makeEpic({ investScore: 30 })} />);
-    const badge = screen.getByText("INVEST 30");
-    expect(badge.className).toContain("bg-red-50");
+    const bar = screen.getByRole("progressbar", { name: "INVEST 30" });
+    const fill = bar.querySelector(
+      '[data-testid="invest-bar-fill"]'
+    ) as HTMLElement;
+    expect(fill.className).toContain("bg-red-500");
   });
 
   it("calls onOpenDrawer with epic id when title is clicked", () => {

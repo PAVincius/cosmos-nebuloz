@@ -58,8 +58,7 @@ export function KpiCard({
   const [hovered, setHovered] = useState(false);
   const deltaPos = delta?.positive ?? false;
 
-  const shadowRest =
-    "0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -20px rgba(0,0,0,.8)";
+  const shadowRest = "var(--card-shadow)";
   // rgba(var(--tone-rgb),...) works: --tone-rgb resolves to "r,g,b" string
   const shadowHover =
     "0 0 0 2px rgba(var(--tone-rgb),.55), 0 8px 40px -4px rgba(var(--tone-rgb),.65), 0 20px 60px -12px rgba(var(--tone-rgb),.35), 0 1px 0 rgba(255,255,255,.10) inset";
@@ -71,7 +70,7 @@ export function KpiCard({
       className={cn(
         "group relative flex min-h-[152px] w-full flex-col overflow-hidden",
         "rounded-[18px] border p-[20px_22px]",
-        "border-border/70 bg-card shadow-sm",
+        "border-hairline bg-card",
         "dark:bg-transparent",
         className
       )}
@@ -84,7 +83,6 @@ export function KpiCard({
           "--tone-text": `var(--${tone}-text)`,
           "--ink-corner": inkCorner[tone],
           borderColor: `rgba(var(--${tone}-rgb),.20)`,
-          // biome-ignore lint/nursery/noLeakedRender: ternary in style prop, not JSX render
           boxShadow: hovered ? shadowHover : shadowRest,
           transform: hovered ? "translateY(-4px)" : "translateY(0)",
           transition:

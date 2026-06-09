@@ -145,7 +145,12 @@ export function EpicDrawerInvest({ epic }: Props) {
               <p className="text-center text-muted-foreground text-sm">
                 Nenhum score INVEST calculado ainda.
               </p>
-              <Button disabled={isPending} onClick={handleAnalyze} size="sm">
+              <Button
+                disabled={isPending}
+                onClick={handleAnalyze}
+                size="sm"
+                variant="glow"
+              >
                 {isPending ? "Analisando…" : "Analisar com IA"}
               </Button>
             </div>

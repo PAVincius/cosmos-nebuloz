@@ -1,23 +1,25 @@
-import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
-import { getSolutionTrainById } from "../../../actions/solution-trains";
-import { getSuppliers } from "../../../actions/suppliers";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { AnchorIcon } from "lucide-react";
+import dynamic from "next/dynamic";
+import { notFound } from "next/navigation";
+import { getSolutionTrainById } from "../../../actions/solution-trains";
+import { getSuppliers } from "../../../actions/suppliers";
 
 const CapabilitiesTab = dynamic(
-  () =>
-    import("./components/capabilities-tab").then((m) => m.CapabilitiesTab),
+  () => import("./components/capabilities-tab").then((m) => m.CapabilitiesTab),
   {
     loading: () => (
       <div className="flex min-h-[240px] items-center justify-center rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" aria-hidden />
+        <div
+          aria-hidden
+          className="mr-2 h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         A carregar capabilities…
       </div>
     ),
@@ -30,7 +32,10 @@ const SolutionEpicsTab = dynamic(
   {
     loading: () => (
       <div className="flex min-h-[240px] items-center justify-center rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" aria-hidden />
+        <div
+          aria-hidden
+          className="mr-2 h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         A carregar épicos…
       </div>
     ),
@@ -42,16 +47,19 @@ const SuppliersTab = dynamic(
   {
     loading: () => (
       <div className="flex min-h-[240px] items-center justify-center rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent mr-2" aria-hidden />
+        <div
+          aria-hidden
+          className="mr-2 h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         A carregar fornecedores…
       </div>
     ),
   }
 );
 
-interface SolutionTrainDetailPageProps {
+type SolutionTrainDetailPageProps = {
   params: Promise<{ stId: string }>;
-}
+};
 
 export async function generateMetadata({
   params,
@@ -60,7 +68,9 @@ export async function generateMetadata({
   const result = await getSolutionTrainById(stId);
   const train = result.ok ? result.data : null;
   return {
-    title: train ? `${train.name} | Solution Trains | COSMOS` : "Solution Train | COSMOS",
+    title: train
+      ? `${train.name} | Solution Trains | COSMOS`
+      : "Solution Train | COSMOS",
   };
 }
 
@@ -76,7 +86,9 @@ export default async function SolutionTrainDetailPage({
 
   const train = trainResult.ok ? trainResult.data : null;
 
-  if (!train) notFound();
+  if (!train) {
+    notFound();
+  }
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -86,11 +98,11 @@ export default async function SolutionTrainDetailPage({
         </div>
         <div>
           <p className="text-muted-foreground text-xs">Solution Train</p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="font-semibold text-2xl tracking-tight">
             {train.name}
           </h1>
           {train.description && (
-            <p className="text-muted-foreground text-sm mt-0.5">
+            <p className="mt-0.5 text-muted-foreground text-sm">
               {train.description}
             </p>
           )}
@@ -99,9 +111,7 @@ export default async function SolutionTrainDetailPage({
           <Badge variant="secondary">
             {train.capabilities.length} capabilities
           </Badge>
-          <Badge variant="outline">
-            {train.solutionEpics.length} épicos
-          </Badge>
+          <Badge variant="outline">{train.solutionEpics.length} épicos</Badge>
         </div>
       </div>
 
@@ -118,21 +128,21 @@ export default async function SolutionTrainDetailPage({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="capabilities" className="mt-4">
+        <TabsContent className="mt-4" value="capabilities">
           <CapabilitiesTab
-            solutionTrainId={stId}
             initialCapabilities={train.capabilities}
-          />
-        </TabsContent>
-
-        <TabsContent value="epics" className="mt-4">
-          <SolutionEpicsTab
             solutionTrainId={stId}
-            initialEpics={train.solutionEpics}
           />
         </TabsContent>
 
-        <TabsContent value="suppliers" className="mt-4">
+        <TabsContent className="mt-4" value="epics">
+          <SolutionEpicsTab
+            initialEpics={train.solutionEpics}
+            solutionTrainId={stId}
+          />
+        </TabsContent>
+
+        <TabsContent className="mt-4" value="suppliers">
           <SuppliersTab initialSuppliers={suppliers} />
         </TabsContent>
       </Tabs>

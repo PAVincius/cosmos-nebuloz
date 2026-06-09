@@ -131,6 +131,7 @@ export function SessionSidebar({
   onNew,
   isCreating,
   onSessionsChange,
+  onSessionDeleted,
 }: Props) {
   const [isOpen, setIsOpen] = useState(true);
   const [sessions, setSessions] = useState(initialSessions);

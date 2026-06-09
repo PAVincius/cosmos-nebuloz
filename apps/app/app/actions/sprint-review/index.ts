@@ -2,15 +2,10 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
-import {
-  type Result,
-  safeAction,
-  cuid,
-  optStr,
-} from "../_base";
+import { cuid, optStr, type Result, safeAction } from "../_base";
 import type { UpsertSprintReviewInput } from "./schema";
 
 export type { UpsertSprintReviewInput };
@@ -26,9 +21,7 @@ const UpsertSprintReviewSchema = z.object({
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function getSprintReview(
-  sprintId: string,
-): Promise<Result<any>> {
+export async function getSprintReview(sprintId: string): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -37,7 +30,9 @@ export async function getSprintReview(
       where: { id: sprintId, tenantId: ctx.tenantId },
       select: { id: true },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     return database.sprintReview.findUnique({
       where: { sprintId },
@@ -57,7 +52,9 @@ export async function upsertSprintReview(raw: unknown): Promise<Result<any>> {
       where: { id: data.sprintId, tenantId: ctx.tenantId },
       select: { id: true, teamId: true },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     const result = await database.sprintReview.upsert({
       where: { sprintId: data.sprintId },

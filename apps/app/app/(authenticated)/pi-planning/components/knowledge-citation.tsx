@@ -13,8 +13,8 @@ export function KnowledgeCitation({ type, id }: Props) {
           : "#";
   return (
     <Link
+      className="inline-flex items-center gap-1 rounded bg-muted px-1 py-0.5 text-blue-600 text-xs underline hover:text-blue-800"
       href={href}
-      className="inline-flex items-center gap-1 rounded bg-muted px-1 py-0.5 text-xs text-blue-600 underline hover:text-blue-800"
     >
       {type}:{id.slice(0, 8)}
     </Link>

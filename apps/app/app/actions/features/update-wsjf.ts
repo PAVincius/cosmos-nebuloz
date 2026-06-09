@@ -1,22 +1,20 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { calculateWSJF } from "@repo/safe-engine";
-import { headers } from "next/headers";
 import { revalidateTag } from "next/cache";
-import { UpdateWSJFSchema, type UpdateWSJFInput } from "../schemas";
+import { headers } from "next/headers";
 import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
-import { enforce } from "../permissions";
 import { dispatchEvent } from "../events";
+import { enforce } from "../permissions";
+import { type UpdateWSJFInput, UpdateWSJFSchema } from "../schemas";
 
 export type { UpdateWSJFInput };
 
 export type WSJFResult = { featureId: string; wsjfScore: number };
 
-export const updateFeatureWSJF = async (
-  raw: unknown
-): Promise<WSJFResult> => {
+export const updateFeatureWSJF = async (raw: unknown): Promise<WSJFResult> => {
   const ctx = await requireTenantSession(await headers());
   requireRole(["ADMIN", "STE", "RTE", "PO"], ctx);
   enforce(ctx.role, "WSJF", "update");
@@ -38,7 +36,15 @@ export const updateFeatureWSJF = async (
     throw new Error("Feature not found or access denied");
   }
 
-  void dispatchEvent({ type: "feature.wsjf_updated", featureId, featureTitle: feature?.title ?? "", oldScore: feature?.wsjfScore ?? 0, newScore: newWSJF, tenantId: ctx.tenantId, userId: ctx.userId });
+  void dispatchEvent({
+    type: "feature.wsjf_updated",
+    featureId,
+    featureTitle: feature?.title ?? "",
+    oldScore: feature?.wsjfScore ?? 0,
+    newScore: newWSJF,
+    tenantId: ctx.tenantId,
+    userId: ctx.userId,
+  });
 
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
 

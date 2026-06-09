@@ -4,8 +4,8 @@ model GovernedEpic {
   id                       String    @id @default(cuid())
   tenantId                 String
   epicId                   String    @unique
-  valueStreamId            String?   // artId of the ART/value stream
-  themeId                  String?   // strategicThemeId
+  valueStreamId            String? // artId of the ART/value stream
+  themeId                  String? // strategicThemeId
   investmentEstimate       Float?
   governanceStatus         String    @default("draft") // draft/review/approved/rejected/on_hold/deferred
   guardrailFlags           Json      @default("[]") // string[]
@@ -50,7 +50,7 @@ model ApprovalRequest {
   id             String    @id @default(cuid())
   tenantId       String
   workflowId     String
-  targetType     String  // epic / guardrail / theme
+  targetType     String // epic / guardrail / theme
   targetId       String
   estado         String    @default("open") // open / in_review / approved / rejected / cancelled
   initiatorId    String
@@ -82,16 +82,39 @@ model ApprovalStepInstance {
   etapaOrdem        Int
   roleRequired      String // lpm / enterprise_architect / cfo / finance
   approverId        String?
+  backupApproverId  String?
   estado            String    @default("pending") // pending / approved / rejected / skipped
   comentario        String?   @db.Text
   timestamp         DateTime?
+  // Story-040 SLA tracking
+  slaDeadline       DateTime?
+  slaStatus         String    @default("ON_TRACK") // ON_TRACK / BREACHED
+  isParallel        Boolean   @default(false)
   createdAt         DateTime  @default(now())
 
-  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  approvalRequest ApprovalRequest @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  tenant             Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalRequest    ApprovalRequest       @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  governanceEscalations GovernanceEscalation[]
 
   @@index([tenantId])
   @@index([approvalRequestId])
+  @@index([slaDeadline])
+}
+
+model GovernanceEscalation {
+  id                  String   @id @default(cuid())
+  tenantId            String
+  approvalStepId      String
+  epicId              String?
+  escalatedAt         DateTime @default(now())
+  backupNotified      Boolean  @default(false)
+  backupNotifiedAt    DateTime?
+
+  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalStep ApprovalStepInstance @relation(fields: [approvalStepId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([approvalStepId])
 }
 
 model DecisionLogEntry {

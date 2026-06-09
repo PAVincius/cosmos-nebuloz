@@ -1,33 +1,39 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
-import { type Supplier } from "@repo/database";
-import { headers } from "next/headers";
+import { database, type Supplier } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
-  CreateSupplierSchema,
-  UpdateSupplierSchema,
-  SupplierFiltersSchema,
   type CreateSupplierInput,
-  type UpdateSupplierInput,
+  CreateSupplierSchema,
   type SupplierFilters,
+  SupplierFiltersSchema,
   type SupplierWithART,
+  type UpdateSupplierInput,
+  UpdateSupplierSchema,
 } from "./schema";
 
-export type { CreateSupplierInput, UpdateSupplierInput, SupplierFilters, SupplierWithART };
+export type {
+  CreateSupplierInput,
+  UpdateSupplierInput,
+  SupplierFilters,
+  SupplierWithART,
+};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listSuppliers(raw?: unknown): Promise<Result<Page<Supplier>>> {
+export async function listSuppliers(
+  raw?: unknown
+): Promise<Result<Page<Supplier>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const filters = SupplierFiltersSchema.parse(raw ?? {});
@@ -68,7 +74,9 @@ export async function getSupplierById(id: string): Promise<Result<Supplier>> {
       where: { id, tenantId: ctx.tenantId },
     });
 
-    if (!supplier) throw new Error("Fornecedor não encontrado.");
+    if (!supplier) {
+      throw new Error("Fornecedor não encontrado.");
+    }
     return supplier as Supplier;
   });
 }
@@ -84,7 +92,9 @@ export async function createSupplier(raw: unknown): Promise<Result<Supplier>> {
       const art = await database.aRT.findFirst({
         where: { id: data.artId, tenantId: ctx.tenantId },
       });
-      if (!art) throw new Error("ART não encontrada ou não pertence ao tenant.");
+      if (!art) {
+        throw new Error("ART não encontrada ou não pertence ao tenant.");
+      }
     }
 
     const supplier = await database.supplier.create({
@@ -115,14 +125,20 @@ export async function updateSupplier(
     const existing = await database.supplier.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Fornecedor não encontrado.");
+    if (!existing) {
+      throw new Error("Fornecedor não encontrado.");
+    }
 
     const updated = await database.supplier.update({
       where: { id },
       data: {
         ...(data.name !== undefined ? { name: data.name } : {}),
-        ...(data.contact !== undefined ? { contact: data.contact ?? null } : {}),
-        ...(data.description !== undefined ? { description: data.description ?? null } : {}),
+        ...(data.contact !== undefined
+          ? { contact: data.contact ?? null }
+          : {}),
+        ...(data.description !== undefined
+          ? { description: data.description ?? null }
+          : {}),
         ...(data.status !== undefined ? { status: data.status } : {}),
       },
     });
@@ -133,14 +149,18 @@ export async function updateSupplier(
   });
 }
 
-export async function deactivateSupplier(id: string): Promise<Result<Supplier>> {
+export async function deactivateSupplier(
+  id: string
+): Promise<Result<Supplier>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
     const existing = await database.supplier.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Fornecedor não encontrado.");
+    if (!existing) {
+      throw new Error("Fornecedor não encontrado.");
+    }
 
     const updated = await database.supplier.update({
       where: { id },
@@ -153,14 +173,18 @@ export async function deactivateSupplier(id: string): Promise<Result<Supplier>> 
   });
 }
 
-export async function deleteSupplier(id: string): Promise<Result<{ id: string }>> {
+export async function deleteSupplier(
+  id: string
+): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
     const existing = await database.supplier.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Fornecedor não encontrado.");
+    if (!existing) {
+      throw new Error("Fornecedor não encontrado.");
+    }
 
     await database.supplier.delete({ where: { id } });
 

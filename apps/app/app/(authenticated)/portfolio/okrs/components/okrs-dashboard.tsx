@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { LayoutListIcon, NetworkIcon, PlusIcon, TargetIcon } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -19,26 +17,37 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@repo/design-system/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import {
+  LayoutListIcon,
+  NetworkIcon,
+  PlusIcon,
+  TargetIcon,
+} from "lucide-react";
+import { useState, useTransition } from "react";
 import {
   createOKR,
   deleteOKR,
-  updateKeyResult,
-  updateOKRStatus,
+  type KeyResultWithProgress,
   type OKRStatus,
   type OKRWithContext,
-  type KeyResultWithProgress,
+  updateKeyResult,
+  updateOKRStatus,
 } from "@/app/actions/okrs";
-import { OKRCardV2 }      from "./okr-card-v2";
-import { OKRTreeView }    from "./okr-tree-view";
-import { OKRDetailPanel } from "./okr-detail-panel";
+import { OKRCardV2 } from "./okr-card-v2";
 import { OKRCheckInModal } from "./okr-checkin-modal";
+import { OKRDetailPanel } from "./okr-detail-panel";
+import { OKRTreeView } from "./okr-tree-view";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 type PIOption = { id: string; name: string };
-type View     = "list" | "tree";
+type View = "list" | "tree";
 
 type Props = {
   initialOKRs: OKRWithContext[];
@@ -48,80 +57,120 @@ type Props = {
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 
 export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
-  const [okrs,         setOkrs]         = useState<OKRWithContext[]>(initialOKRs);
-  const [view,         setView]         = useState<View>("list");
-  const [selectedPi,   setSelectedPi]   = useState<string>("all");
-  const [dialogOpen,   setDialogOpen]   = useState(false);
-  const [detailOKR,    setDetailOKR]    = useState<OKRWithContext | null>(null);
-  const [checkInOKR,   setCheckInOKR]   = useState<OKRWithContext | null>(null);
-  const [form, setForm] = useState({ title: "", description: "", piPlanId: "" });
+  const [okrs, setOkrs] = useState<OKRWithContext[]>(initialOKRs);
+  const [view, setView] = useState<View>("list");
+  const [selectedPi, setSelectedPi] = useState<string>("all");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [detailOKR, setDetailOKR] = useState<OKRWithContext | null>(null);
+  const [checkInOKR, setCheckInOKR] = useState<OKRWithContext | null>(null);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    piPlanId: "",
+  });
   const [isPending, startTransition] = useTransition();
 
-  const filteredOKRs = selectedPi === "all"
-    ? okrs
-    : okrs.filter((o) => o.piPlanId === selectedPi);
+  const filteredOKRs =
+    selectedPi === "all" ? okrs : okrs.filter((o) => o.piPlanId === selectedPi);
 
   // ─── Optimistic update helpers ─────────────────────────────────────────────
 
   function handleDelete(id: string) {
     setOkrs((prev) => prev.filter((o) => o.id !== id));
-    if (detailOKR?.id === id) setDetailOKR(null);
-    startTransition(() => { void deleteOKR(id); });
+    if (detailOKR?.id === id) {
+      setDetailOKR(null);
+    }
+    startTransition(() => {
+      void deleteOKR(id);
+    });
   }
 
   function handleStatusChange(id: string, status: OKRStatus) {
     const update = (prev: OKRWithContext[]) =>
-      prev.map((o) => o.id === id ? { ...o, status } : o);
+      prev.map((o) => (o.id === id ? { ...o, status } : o));
     setOkrs(update);
-    setDetailOKR((prev) => prev?.id === id ? { ...prev, status } : prev);
-    startTransition(() => { void updateOKRStatus(id, status); });
+    setDetailOKR((prev) => (prev?.id === id ? { ...prev, status } : prev));
+    startTransition(() => {
+      void updateOKRStatus(id, status);
+    });
   }
 
   function handleAddKeyResult(okrId: string, kr: KeyResultWithProgress) {
     const update = (prev: OKRWithContext[]) =>
       prev.map((o) => {
-        if (o.id !== okrId) return o;
+        if (o.id !== okrId) {
+          return o;
+        }
         const keyResults = [...o.keyResults, kr];
-        const progress = keyResults.length > 0
-          ? Math.round(keyResults.reduce((s, k) => s + k.progress, 0) / keyResults.length)
-          : 0;
+        const progress =
+          keyResults.length > 0
+            ? Math.round(
+                keyResults.reduce((s, k) => s + k.progress, 0) /
+                  keyResults.length
+              )
+            : 0;
         return { ...o, keyResults, progress };
       });
     setOkrs(update);
-    setDetailOKR((prev) => prev?.id === okrId ? update([prev])[0] ?? prev : prev);
+    setDetailOKR((prev) =>
+      prev?.id === okrId ? (update([prev])[0] ?? prev) : prev
+    );
   }
 
   function handleDeleteKeyResult(okrId: string, krId: string) {
     const update = (prev: OKRWithContext[]) =>
       prev.map((o) => {
-        if (o.id !== okrId) return o;
+        if (o.id !== okrId) {
+          return o;
+        }
         const keyResults = o.keyResults.filter((k) => k.id !== krId);
-        const progress = keyResults.length > 0
-          ? Math.round(keyResults.reduce((s, k) => s + k.progress, 0) / keyResults.length)
-          : 0;
+        const progress =
+          keyResults.length > 0
+            ? Math.round(
+                keyResults.reduce((s, k) => s + k.progress, 0) /
+                  keyResults.length
+              )
+            : 0;
         return { ...o, keyResults, progress };
       });
     setOkrs(update);
-    setDetailOKR((prev) => prev?.id === okrId ? update([prev])[0] ?? prev : prev);
+    setDetailOKR((prev) =>
+      prev?.id === okrId ? (update([prev])[0] ?? prev) : prev
+    );
   }
 
   function handleUpdateKRCurrent(okrId: string, krId: string, current: number) {
     const update = (prev: OKRWithContext[]) =>
       prev.map((o) => {
-        if (o.id !== okrId) return o;
+        if (o.id !== okrId) {
+          return o;
+        }
         const keyResults = o.keyResults.map((k) => {
-          if (k.id !== krId) return k;
-          const progress = k.target > 0 ? Math.min(100, Math.round((current / k.target) * 100)) : 0;
+          if (k.id !== krId) {
+            return k;
+          }
+          const progress =
+            k.target > 0
+              ? Math.min(100, Math.round((current / k.target) * 100))
+              : 0;
           return { ...k, current, progress };
         });
-        const progress = keyResults.length > 0
-          ? Math.round(keyResults.reduce((s, k) => s + k.progress, 0) / keyResults.length)
-          : 0;
+        const progress =
+          keyResults.length > 0
+            ? Math.round(
+                keyResults.reduce((s, k) => s + k.progress, 0) /
+                  keyResults.length
+              )
+            : 0;
         return { ...o, keyResults, progress };
       });
     setOkrs(update);
-    setDetailOKR((prev) => prev?.id === okrId ? update([prev])[0] ?? prev : prev);
-    startTransition(() => { void updateKeyResult(krId, { current }); });
+    setDetailOKR((prev) =>
+      prev?.id === okrId ? (update([prev])[0] ?? prev) : prev
+    );
+    startTransition(() => {
+      void updateKeyResult(krId, { current });
+    });
   }
 
   function handleCheckInSuccess(okrId: string, krId: string, newValue: number) {
@@ -129,37 +178,39 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
   }
 
   async function handleCreate() {
-    if (!form.title.trim()) return;
+    if (!form.title.trim()) {
+      return;
+    }
     const optimistic: OKRWithContext = {
-      id:               `tmp-${Date.now()}`,
-      title:            form.title,
-      description:      form.description || null,
-      status:           "ON_TRACK",
-      piPlanId:         form.piPlanId || null,
+      id: `tmp-${Date.now()}`,
+      title: form.title,
+      description: form.description || null,
+      status: "ON_TRACK",
+      piPlanId: form.piPlanId || null,
       strategicThemeId: null,
-      epicId:           null,
-      artId:            null,
-      teamId:           null,
-      type:             "portfolio_theme",
-      horizon:          null,
-      scope:            null,
-      ownerId:          null,
-      progress:         0,
-      keyResults:       [],
-      themeTitle:       null,
-      themeColor:       null,
-      tenantId:         "",
-      createdAt:        new Date(),
-      updatedAt:        new Date(),
+      epicId: null,
+      artId: null,
+      teamId: null,
+      type: "portfolio_theme",
+      horizon: null,
+      scope: null,
+      ownerId: null,
+      progress: 0,
+      keyResults: [],
+      themeTitle: null,
+      themeColor: null,
+      tenantId: "",
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
     setOkrs((prev) => [...prev, optimistic]);
     setForm({ title: "", description: "", piPlanId: "" });
     setDialogOpen(false);
     startTransition(() => {
       void createOKR({
-        title:       form.title,
+        title: form.title,
         description: form.description || undefined,
-        piPlanId:    form.piPlanId || undefined,
+        piPlanId: form.piPlanId || undefined,
       });
     });
   }
@@ -167,42 +218,41 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
   // ─── Common props for card/tree ────────────────────────────────────────────
 
   const cardProps = {
-    onDelete:           handleDelete,
-    onStatusChange:     handleStatusChange,
-    onAddKeyResult:     handleAddKeyResult,
-    onDeleteKeyResult:  handleDeleteKeyResult,
-    onUpdateKRCurrent:  handleUpdateKRCurrent,
-    onOpenDetail:       setDetailOKR,
-    onCheckIn:          setCheckInOKR,
+    onDelete: handleDelete,
+    onStatusChange: handleStatusChange,
+    onAddKeyResult: handleAddKeyResult,
+    onDeleteKeyResult: handleDeleteKeyResult,
+    onUpdateKRCurrent: handleUpdateKRCurrent,
+    onOpenDetail: setDetailOKR,
+    onCheckIn: setCheckInOKR,
   };
 
   return (
     <div className="space-y-5">
-
       {/* ── Toolbar row ──────────────────────────────────────────────────────── */}
       <div className="flex flex-wrap items-center gap-3">
         {/* View toggle */}
-        <div className="flex items-center rounded-md border border-border/80 p-0.5 gap-0.5">
+        <div className="flex items-center gap-0.5 rounded-md border border-border/80 p-0.5">
           <button
-            type="button"
-            onClick={() => setView("list")}
-            className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 rounded px-3 py-1.5 font-medium text-xs transition-colors ${
               view === "list"
                 ? "bg-foreground text-background"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            onClick={() => setView("list")}
+            type="button"
           >
             <LayoutListIcon className="h-3.5 w-3.5" />
             Lista
           </button>
           <button
-            type="button"
-            onClick={() => setView("tree")}
-            className={`flex items-center gap-1.5 rounded px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1.5 rounded px-3 py-1.5 font-medium text-xs transition-colors ${
               view === "tree"
                 ? "bg-foreground text-background"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}
+            onClick={() => setView("tree")}
+            type="button"
           >
             <NetworkIcon className="h-3.5 w-3.5" />
             Árvore
@@ -211,11 +261,13 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
 
         {/* PI Plan filter */}
         {piPlans.length > 0 && (
-          <Tabs value={selectedPi} onValueChange={setSelectedPi}>
+          <Tabs onValueChange={setSelectedPi} value={selectedPi}>
             <TabsList className="h-8">
-              <TabsTrigger value="all" className="text-xs h-7">Todos os PIs</TabsTrigger>
+              <TabsTrigger className="h-7 text-xs" value="all">
+                Todos os PIs
+              </TabsTrigger>
               {piPlans.map((pi) => (
-                <TabsTrigger key={pi.id} value={pi.id} className="text-xs h-7">
+                <TabsTrigger className="h-7 text-xs" key={pi.id} value={pi.id}>
                   {pi.name}
                 </TabsTrigger>
               ))}
@@ -225,8 +277,8 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
 
         <div className="flex-1" />
 
-        <Button size="sm" onClick={() => setDialogOpen(true)}>
-          <PlusIcon className="h-4 w-4 mr-1.5" />
+        <Button onClick={() => setDialogOpen(true)} size="sm">
+          <PlusIcon className="mr-1.5 h-4 w-4" />
           Novo OKR
         </Button>
       </div>
@@ -237,12 +289,13 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
           <TargetIcon className="h-10 w-10 text-muted-foreground/30" />
           <div>
             <p className="font-medium text-sm">Nenhum OKR encontrado</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Defina objetivos e key results para medir o progresso do portfolio SAFe.
+            <p className="mt-1 text-muted-foreground text-xs">
+              Defina objetivos e key results para medir o progresso do portfolio
+              SAFe.
             </p>
           </div>
-          <Button size="sm" onClick={() => setDialogOpen(true)}>
-            <PlusIcon className="h-4 w-4 mr-1.5" /> Criar primeiro OKR
+          <Button onClick={() => setDialogOpen(true)} size="sm">
+            <PlusIcon className="mr-1.5 h-4 w-4" /> Criar primeiro OKR
           </Button>
         </div>
       ) : view === "list" ? (
@@ -258,24 +311,24 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
       {/* ── Detail Panel ─────────────────────────────────────────────────────── */}
       <OKRDetailPanel
         okr={detailOKR}
-        open={detailOKR !== null}
-        onClose={() => setDetailOKR(null)}
         onCheckIn={setCheckInOKR}
+        onClose={() => setDetailOKR(null)}
         onUpdateKRCurrent={handleUpdateKRCurrent}
+        open={detailOKR !== null}
       />
 
       {/* ── Check-in Modal ───────────────────────────────────────────────────── */}
       {checkInOKR && (
         <OKRCheckInModal
-          open={checkInOKR !== null}
-          onClose={() => setCheckInOKR(null)}
           okr={checkInOKR}
           onCheckInSuccess={handleCheckInSuccess}
+          onClose={() => setCheckInOKR(null)}
+          open={checkInOKR !== null}
         />
       )}
 
       {/* ── Create Dialog ────────────────────────────────────────────────────── */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Novo OKR</DialogTitle>
@@ -284,27 +337,31 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
             <div className="grid gap-1.5">
               <Label>Objetivo *</Label>
               <Input
-                placeholder="Ex: Aumentar satisfação do cliente"
-                value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 onKeyDown={(e) => e.key === "Enter" && handleCreate()}
+                placeholder="Ex: Aumentar satisfação do cliente"
+                value={form.title}
               />
             </div>
             <div className="grid gap-1.5">
               <Label>Descrição (opcional)</Label>
               <Textarea
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 placeholder="Contexto e detalhes do objetivo..."
                 rows={3}
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </div>
             {piPlans.length > 0 && (
               <div className="grid gap-1.5">
                 <Label>PI Plan (opcional)</Label>
                 <Select
+                  onValueChange={(v) =>
+                    setForm({ ...form, piPlanId: v === "none" ? "" : v })
+                  }
                   value={form.piPlanId || "none"}
-                  onValueChange={(v) => setForm({ ...form, piPlanId: v === "none" ? "" : v })}
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Nenhum" />
@@ -312,7 +369,9 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
                   <SelectContent>
                     <SelectItem value="none">Nenhum</SelectItem>
                     {piPlans.map((pi) => (
-                      <SelectItem key={pi.id} value={pi.id}>{pi.name}</SelectItem>
+                      <SelectItem key={pi.id} value={pi.id}>
+                        {pi.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -320,8 +379,13 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreate} disabled={isPending || !form.title.trim()}>
+            <Button onClick={() => setDialogOpen(false)} variant="outline">
+              Cancelar
+            </Button>
+            <Button
+              disabled={isPending || !form.title.trim()}
+              onClick={handleCreate}
+            >
               Criar OKR
             </Button>
           </DialogFooter>

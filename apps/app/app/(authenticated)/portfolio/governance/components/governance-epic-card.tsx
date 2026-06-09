@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import type {
-  GovernedEpicWithDetails,
   ApprovalRequestWithSteps,
+  GovernedEpicWithDetails,
 } from "@/app/actions/governance";
 
 type Props = {
@@ -12,7 +12,8 @@ type Props = {
 };
 
 const GUARDRAIL_COLORS: Record<string, string> = {
-  novo_investimento_alto: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
+  novo_investimento_alto:
+    "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
   mudança_horizonte:
     "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
   novo_value_stream:
@@ -23,16 +24,17 @@ const DEFAULT_GUARDRAIL_COLOR =
   "bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300";
 
 export function GovernanceEpicCard({ epic, request }: Props) {
-  const pendingStep = request?.steps.find((s) => s.estado === "pending") ?? null;
+  const pendingStep =
+    request?.steps.find((s) => s.estado === "pending") ?? null;
 
   return (
-    <div className="rounded-md border bg-white p-3 shadow-sm dark:bg-card">
+    <div className="rounded-xl border border-hairline bg-surface p-3 shadow-[var(--card-shadow)]">
       <div className="flex items-start justify-between gap-2">
-        <p className="text-sm font-medium leading-tight">{epic.epicTitle}</p>
+        <p className="font-medium text-sm leading-tight">{epic.epicTitle}</p>
         {request !== null && (
           <Link
+            className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 font-medium text-primary text-xs hover:bg-primary/20"
             href={`/portfolio/governance/${request.id}`}
-            className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary hover:bg-primary/20"
           >
             Ver
           </Link>
@@ -40,7 +42,7 @@ export function GovernanceEpicCard({ epic, request }: Props) {
       </div>
 
       {epic.investmentEstimate !== null && (
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-1 text-muted-foreground text-xs">
           Investimento estimado:{" "}
           <span className="font-mono">
             R$ {epic.investmentEstimate.toLocaleString("pt-BR")}
@@ -52,10 +54,10 @@ export function GovernanceEpicCard({ epic, request }: Props) {
         <div className="mt-2 flex flex-wrap gap-1">
           {epic.guardrailFlags.map((flag) => (
             <span
-              key={flag}
-              className={`rounded px-1.5 py-0.5 text-xs font-medium ${
+              className={`rounded px-1.5 py-0.5 font-medium text-xs ${
                 GUARDRAIL_COLORS[flag] ?? DEFAULT_GUARDRAIL_COLOR
               }`}
+              key={flag}
             >
               {flag.replace(/_/g, " ")}
             </span>
@@ -64,7 +66,7 @@ export function GovernanceEpicCard({ epic, request }: Props) {
       )}
 
       {pendingStep !== null && (
-        <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+        <p className="mt-2 text-amber-700 text-xs dark:text-amber-400">
           Aguardando: {pendingStep.roleRequired.toUpperCase()}
         </p>
       )}

@@ -1,10 +1,10 @@
-import dynamic from "next/dynamic";
-import { notFound } from "next/navigation";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import dynamic from "next/dynamic";
 import { headers } from "next/headers";
-import { getEpicFeatures } from "@/app/actions/features";
+import { notFound } from "next/navigation";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getEpicFeatures } from "@/app/actions/features";
 import { appDesign } from "@/lib/app-design";
 
 const FeatureBoard = dynamic(
@@ -12,22 +12,29 @@ const FeatureBoard = dynamic(
   {
     loading: () => (
       <div className="flex min-h-[400px] items-center justify-center gap-3 rounded-lg border border-dashed text-muted-foreground text-sm">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" aria-hidden />
+        <div
+          aria-hidden
+          className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
+        />
         <span>A carregar quadro de features…</span>
       </div>
     ),
   }
 );
 
-interface Props {
+type Props = {
   params: Promise<{ epicId: string }>;
-}
+};
 
 export async function generateMetadata({ params }: Props) {
   const { epicId } = await params;
   const ctx = await requireTenantSession(await headers());
-  const epic = await database.epic.findFirst({ where: { id: epicId, tenantId: ctx.tenantId } });
-  return { title: epic ? `${epic.title} — Features | COSMOS` : "Features | COSMOS" };
+  const epic = await database.epic.findFirst({
+    where: { id: epicId, tenantId: ctx.tenantId },
+  });
+  return {
+    title: epic ? `${epic.title} — Features | COSMOS` : "Features | COSMOS",
+  };
 }
 
 export default async function EpicFeaturesPage({ params }: Props) {
@@ -39,7 +46,9 @@ export default async function EpicFeaturesPage({ params }: Props) {
     getEpicFeatures(epicId),
   ]);
 
-  if (!epic) notFound();
+  if (!epic) {
+    notFound();
+  }
 
   return (
     <div className={appDesign.shell}>
@@ -49,11 +58,15 @@ export default async function EpicFeaturesPage({ params }: Props) {
           { label: epic.title, href: `/epics/${epicId}` },
           { label: "Features" },
         ]}
-        title="Kanban de Features"
         subtitle={epic.title}
+        title="Kanban de Features"
       />
       <div className={appDesign.bodyScroll}>
-        <FeatureBoard epicId={epicId} epicTitle={epic.title} initialFeatures={features} />
+        <FeatureBoard
+          epicId={epicId}
+          epicTitle={epic.title}
+          initialFeatures={features}
+        />
       </div>
     </div>
   );

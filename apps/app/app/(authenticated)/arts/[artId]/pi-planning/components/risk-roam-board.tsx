@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import {
   DndContext,
   type DragEndEvent,
   PointerSensor,
+  useDraggable,
+  useDroppable,
   useSensor,
   useSensors,
-  useDroppable,
-  useDraggable,
 } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { Badge } from "@repo/design-system/components/ui/badge";
@@ -22,7 +21,6 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Textarea } from "@repo/design-system/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -30,8 +28,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { AlertTriangleIcon, PlusIcon, GripVerticalIcon } from "lucide-react";
-import { updateRiskStatus, createRisk } from "@/app/actions/arts/risks";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { AlertTriangleIcon, GripVerticalIcon, PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
+import { createRisk, updateRiskStatus } from "@/app/actions/arts/risks";
 
 type Risk = {
   id: string;
@@ -45,7 +45,12 @@ type Risk = {
 
 type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
 
-const ROAM_QUADRANTS: { id: RoamStatus; label: string; color: string; description: string }[] = [
+const ROAM_QUADRANTS: {
+  id: RoamStatus;
+  label: string;
+  color: string;
+  description: string;
+}[] = [
   {
     id: "resolved",
     label: "Resolved",
@@ -79,41 +84,50 @@ const IMPACT_COLORS: Record<string, string> = {
   low: "outline",
 };
 
-interface RoamRiskCardProps {
+type RoamRiskCardProps = {
   risk: Risk;
-}
+};
 
 function RoamRiskCard({ risk }: RoamRiskCardProps) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: risk.id,
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: risk.id,
+    });
 
   const style = transform
-    ? { transform: CSS.Translate.toString(transform), opacity: isDragging ? 0.4 : 1 }
+    ? {
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.4 : 1,
+      }
     : undefined;
 
   return (
     <div
+      className="group flex cursor-grab items-start gap-1.5 rounded-md border bg-card p-2 text-xs shadow-[var(--card-shadow)] active:cursor-grabbing"
       ref={setNodeRef}
       style={style}
-      className="group flex items-start gap-1.5 rounded-md border bg-card p-2 text-xs shadow-sm cursor-grab active:cursor-grabbing"
     >
       <GripVerticalIcon
         className="mt-0.5 h-3 w-3 shrink-0 text-muted-foreground/50 group-hover:text-muted-foreground"
         {...listeners}
         {...attributes}
       />
-      <div className="flex flex-col gap-1 min-w-0">
-        <p className="font-medium leading-snug truncate">{risk.title}</p>
-        <div className="flex gap-1 flex-wrap">
+      <div className="flex min-w-0 flex-col gap-1">
+        <p className="truncate font-medium leading-snug">{risk.title}</p>
+        <div className="flex flex-wrap gap-1">
           <Badge
-            variant={(IMPACT_COLORS[risk.impact] as "destructive" | "secondary" | "outline") ?? "outline"}
             className="h-4 px-1 text-[10px]"
+            variant={
+              (IMPACT_COLORS[risk.impact] as
+                | "destructive"
+                | "secondary"
+                | "outline") ?? "outline"
+            }
           >
             {risk.impact}
           </Badge>
           {risk.category && (
-            <Badge variant="outline" className="h-4 px-1 text-[10px]">
+            <Badge className="h-4 px-1 text-[10px]" variant="outline">
               {risk.category}
             </Badge>
           )}
@@ -123,35 +137,41 @@ function RoamRiskCard({ risk }: RoamRiskCardProps) {
   );
 }
 
-interface RoamQuadrantProps {
+type RoamQuadrantProps = {
   status: RoamStatus;
   label: string;
   color: string;
   description: string;
   risks: Risk[];
-}
+};
 
-function RoamQuadrant({ status, label, color, description, risks }: RoamQuadrantProps) {
+function RoamQuadrant({
+  status,
+  label,
+  color,
+  description,
+  risks,
+}: RoamQuadrantProps) {
   const { isOver, setNodeRef } = useDroppable({ id: status });
 
   return (
     <div
-      ref={setNodeRef}
       aria-label={`${label} — ${risks.length} riscos`}
-      className={`flex flex-col gap-2 rounded-xl border-2 p-3 transition-colors min-h-[180px] ${color} ${
+      className={`flex min-h-[180px] flex-col gap-2 rounded-xl border-2 p-3 transition-colors ${color} ${
         isOver ? "ring-2 ring-primary ring-offset-1" : ""
       }`}
+      ref={setNodeRef}
     >
       <div>
-        <h3 className="text-sm font-semibold">{label}</h3>
-        <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
+        <h3 className="font-semibold text-sm">{label}</h3>
+        <p className="mt-0.5 text-muted-foreground text-xs">{description}</p>
       </div>
       <div className="flex flex-col gap-1.5">
         {risks.map((r) => (
           <RoamRiskCard key={r.id} risk={r} />
         ))}
         {risks.length === 0 && (
-          <p className="text-xs text-muted-foreground/50 text-center py-4">
+          <p className="py-4 text-center text-muted-foreground/50 text-xs">
             Arraste riscos aqui
           </p>
         )}
@@ -160,12 +180,15 @@ function RoamQuadrant({ status, label, color, description, risks }: RoamQuadrant
   );
 }
 
-interface RiskRoamBoardProps {
+type RiskRoamBoardProps = {
   risks: Risk[];
   piPlanId: string;
-}
+};
 
-export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardProps) {
+export function RiskRoamBoard({
+  risks: initialRisks,
+  piPlanId,
+}: RiskRoamBoardProps) {
   const [risks, setRisks] = useState(initialRisks);
   const [isPending, startTransition] = useTransition();
   const [showAddRisk, setShowAddRisk] = useState(false);
@@ -184,12 +207,16 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
 
   function handleDragEnd(event: DragEndEvent) {
     const { active, over } = event;
-    if (!over) return;
+    if (!over) {
+      return;
+    }
 
     const riskId = active.id as string;
     const newStatus = over.id as RoamStatus;
     const risk = risks.find((r) => r.id === riskId);
-    if (!risk || risk.status === newStatus) return;
+    if (!risk || risk.status === newStatus) {
+      return;
+    }
 
     setRisks((prev) =>
       prev.map((r) => (r.id === riskId ? { ...r, status: newStatus } : r))
@@ -201,7 +228,9 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
   }
 
   async function handleAddRisk() {
-    if (!form.title.trim()) return;
+    if (!form.title.trim()) {
+      return;
+    }
     startTransition(async () => {
       const created = await createRisk({
         piPlanId,
@@ -213,7 +242,14 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
         status: form.status,
       });
       setRisks((prev) => [...prev, created as Risk]);
-      setForm({ title: "", description: "", impact: "medium", probability: "medium", category: "", status: "owned" });
+      setForm({
+        title: "",
+        description: "",
+        impact: "medium",
+        probability: "medium",
+        category: "",
+        status: "owned",
+      });
       setShowAddRisk(false);
     });
   }
@@ -223,38 +259,52 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertTriangleIcon className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">
+          <span className="font-medium text-sm">
             {risks.length} risco{risks.length !== 1 ? "s" : ""} program-level
           </span>
         </div>
-        <Button size="sm" variant="outline" onClick={() => setShowAddRisk(true)}>
+        <Button
+          onClick={() => setShowAddRisk(true)}
+          size="sm"
+          variant="outline"
+        >
           <PlusIcon className="mr-1.5 h-3.5 w-3.5" />
           Novo Risco
         </Button>
       </div>
 
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+      <DndContext onDragEnd={handleDragEnd} sensors={sensors}>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {ROAM_QUADRANTS.map((q) => (
             <RoamQuadrant
-              key={q.id}
-              status={q.id}
-              label={q.label}
               color={q.color}
               description={q.description}
+              key={q.id}
+              label={q.label}
               risks={risks.filter((r) => r.status === q.id)}
+              status={q.id}
             />
           ))}
         </div>
       </DndContext>
 
       {/* Unclassified risks */}
-      {risks.filter((r) => !["resolved", "owned", "accepted", "mitigated"].includes(r.status)).length > 0 && (
+      {risks.filter(
+        (r) =>
+          !["resolved", "owned", "accepted", "mitigated"].includes(r.status)
+      ).length > 0 && (
         <div className="rounded-lg border border-dashed p-3">
-          <p className="text-xs font-medium text-muted-foreground mb-2">Sem classificação ROAM</p>
+          <p className="mb-2 font-medium text-muted-foreground text-xs">
+            Sem classificação ROAM
+          </p>
           <div className="flex flex-col gap-1.5">
             {risks
-              .filter((r) => !["resolved", "owned", "accepted", "mitigated"].includes(r.status))
+              .filter(
+                (r) =>
+                  !["resolved", "owned", "accepted", "mitigated"].includes(
+                    r.status
+                  )
+              )
               .map((r) => (
                 <RoamRiskCard key={r.id} risk={r} />
               ))}
@@ -262,7 +312,7 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
         </div>
       )}
 
-      <Dialog open={showAddRisk} onOpenChange={setShowAddRisk}>
+      <Dialog onOpenChange={setShowAddRisk} open={showAddRisk}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Novo Risco Program-Level</DialogTitle>
@@ -272,25 +322,32 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
               <Label htmlFor="risk-title">Título</Label>
               <Input
                 id="risk-title"
-                value={form.title}
-                onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, title: e.target.value }))
+                }
                 placeholder="Descreva o risco..."
+                value={form.title}
               />
             </div>
             <div>
               <Label htmlFor="risk-desc">Descrição</Label>
               <Textarea
                 id="risk-desc"
-                value={form.description}
-                onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, description: e.target.value }))
+                }
                 placeholder="Detalhes opcionais..."
                 rows={2}
+                value={form.description}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Impacto</Label>
-                <Select value={form.impact} onValueChange={(v) => setForm((f) => ({ ...f, impact: v }))}>
+                <Select
+                  onValueChange={(v) => setForm((f) => ({ ...f, impact: v }))}
+                  value={form.impact}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -304,7 +361,12 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
               </div>
               <div>
                 <Label>Probabilidade</Label>
-                <Select value={form.probability} onValueChange={(v) => setForm((f) => ({ ...f, probability: v }))}>
+                <Select
+                  onValueChange={(v) =>
+                    setForm((f) => ({ ...f, probability: v }))
+                  }
+                  value={form.probability}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -319,7 +381,12 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label>Quadrante ROAM inicial</Label>
-                <Select value={form.status} onValueChange={(v) => setForm((f) => ({ ...f, status: v as RoamStatus }))}>
+                <Select
+                  onValueChange={(v) =>
+                    setForm((f) => ({ ...f, status: v as RoamStatus }))
+                  }
+                  value={form.status}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -334,18 +401,23 @@ export function RiskRoamBoard({ risks: initialRisks, piPlanId }: RiskRoamBoardPr
               <div>
                 <Label>Categoria</Label>
                 <Input
-                  value={form.category}
-                  onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, category: e.target.value }))
+                  }
                   placeholder="ex: técnico, negócio..."
+                  value={form.category}
                 />
               </div>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowAddRisk(false)}>
+            <Button onClick={() => setShowAddRisk(false)} variant="outline">
               Cancelar
             </Button>
-            <Button disabled={isPending || !form.title.trim()} onClick={handleAddRisk}>
+            <Button
+              disabled={isPending || !form.title.trim()}
+              onClick={handleAddRisk}
+            >
               {isPending ? "Criando..." : "Criar Risco"}
             </Button>
           </DialogFooter>

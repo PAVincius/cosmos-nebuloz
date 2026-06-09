@@ -1,12 +1,5 @@
 import { Badge } from "@repo/design-system/components/cosmos/badge";
 import { CosmosButton } from "@repo/design-system/components/cosmos/cosmos-button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
 import { ChevronRightIcon, TrainFrontIcon } from "lucide-react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -54,29 +47,33 @@ export default async function ARTsPage() {
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {arts.map((art) => (
-                <Card
-                  className="transition-colors hover:border-primary/50"
+                <div
+                  className="hover:-translate-y-0.5 flex flex-col rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)] transition-all duration-200 hover:border-primary/40 hover:shadow-[var(--hover-shadow)]"
                   key={art.id}
                 >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-start justify-between">
-                      <TrainFrontIcon className="h-5 w-5 text-primary" />
-                      <Badge tone="neutral">{art.piPlans.length} PIs</Badge>
+                  <div className="flex items-start justify-between p-5 pb-3">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                      <TrainFrontIcon className="h-4 w-4" />
                     </div>
-                    <CardTitle className="text-base">{art.name}</CardTitle>
-                    <CardDescription>
+                    <Badge tone="neutral">{art.piPlans.length} PIs</Badge>
+                  </div>
+                  <div className="flex-1 px-5 pb-4">
+                    <h3 className="font-semibold text-base leading-snug">
+                      {art.name}
+                    </h3>
+                    <p className="mt-1 text-muted-foreground text-sm">
                       Cadência: {art.cadence} semanas por PI
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
+                    </p>
+                  </div>
+                  <div className="border-hairline border-t px-5 py-3">
                     <Link href={`/arts/${art.id}`}>
                       <CosmosButton className="w-full" size="sm">
                         Ver ART
                         <ChevronRightIcon className="ml-auto h-4 w-4" />
                       </CosmosButton>
                     </Link>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               ))}
             </div>
           )}

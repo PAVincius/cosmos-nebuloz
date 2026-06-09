@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { UsersIcon, PlusIcon } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -15,6 +12,9 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { PlusIcon, UsersIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { createTeam } from "../actions";
 
 type Art = { id: string; name: string };
@@ -50,7 +50,7 @@ export function CreateTeamDialog({ arts }: { arts: Art[] }) {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -60,7 +60,7 @@ export function CreateTeamDialog({ arts }: { arts: Art[] }) {
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
               <UsersIcon className="h-5 w-5 text-primary" />
             </div>
@@ -78,22 +78,22 @@ export function CreateTeamDialog({ arts }: { arts: Art[] }) {
               Nome do time <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="team-name"
-              placeholder="ex: Team Phoenix, Plataforma Core..."
-              value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              autoFocus
+              placeholder="ex: Team Phoenix, Plataforma Core..."
+              value={name}
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="team-art">ART vinculado</Label>
             <select
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-foreground text-sm shadow-sm"
               id="team-art"
-              value={artId}
               onChange={(e) => setArtId(e.target.value)}
-              className="border-input bg-background text-foreground flex h-9 w-full rounded-md border px-3 py-1 text-sm shadow-sm"
+              value={artId}
             >
               <option value="none">Sem ART (time independente)</option>
               {arts.map((art) => (
@@ -109,13 +109,13 @@ export function CreateTeamDialog({ arts }: { arts: Art[] }) {
 
         <DialogFooter>
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !name.trim()}>
+          <Button disabled={isPending || !name.trim()} onClick={handleSubmit}>
             {isPending ? "Criando..." : "Criar Time"}
           </Button>
         </DialogFooter>

@@ -1,21 +1,17 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
-import { type LACE } from "@repo/database";
-import { headers } from "next/headers";
+import { database, type LACE } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 
+import { type Result, safeAction } from "../_base";
 import {
-  type Result,
-  safeAction,
-} from "../_base";
-import {
-  UpsertLACESchema,
+  type AddPrincipleInput,
   AddPrincipleSchema,
   type UpsertLACEInput,
-  type AddPrincipleInput,
+  UpsertLACESchema,
 } from "./schema";
 
 export type { UpsertLACEInput, AddPrincipleInput };
@@ -93,14 +89,18 @@ export async function addPrinciple(raw: unknown): Promise<Result<LACE>> {
   });
 }
 
-export async function removePrinciple(principle: string): Promise<Result<LACE>> {
+export async function removePrinciple(
+  principle: string
+): Promise<Result<LACE>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
     const existing = await database.lACE.findFirst({
       where: { tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("LACE não encontrado.");
+    if (!existing) {
+      throw new Error("LACE não encontrado.");
+    }
 
     const current = Array.isArray(existing.principles)
       ? (existing.principles as string[])
@@ -118,16 +118,23 @@ export async function removePrinciple(principle: string): Promise<Result<LACE>> 
   });
 }
 
-export async function reorderPrinciples(principles: string[]): Promise<Result<LACE>> {
+export async function reorderPrinciples(
+  principles: string[]
+): Promise<Result<LACE>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
-    const validated = z.array(z.string().min(1).max(200)).max(50).parse(principles);
+    const validated = z
+      .array(z.string().min(1).max(200))
+      .max(50)
+      .parse(principles);
 
     const existing = await database.lACE.findFirst({
       where: { tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("LACE não encontrado.");
+    if (!existing) {
+      throw new Error("LACE não encontrado.");
+    }
 
     const updated = await database.lACE.update({
       where: { tenantId: ctx.tenantId },

@@ -1,9 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
+import {
+  AlertTriangleIcon,
+  LayoutGridIcon,
+  TargetIcon,
+  UsersIcon,
+} from "lucide-react";
 import dynamic from "next/dynamic";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/design-system/components/ui/tabs";
-import { LayoutGridIcon, UsersIcon, TargetIcon, AlertTriangleIcon } from "lucide-react";
+import { useState } from "react";
 import type { PIPlanFullDetails } from "@/app/actions/arts/pi-plans";
 
 // Skeleton shown while tab content loads client-side (ssr:false prevents server/client ID mismatch)
@@ -11,7 +21,7 @@ function TabSkeleton() {
   return (
     <div className="flex flex-col gap-3 py-4">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="h-16 rounded-lg bg-muted/50 animate-pulse" />
+        <div className="h-16 animate-pulse rounded-lg bg-muted/50" key={i} />
       ))}
     </div>
   );
@@ -36,9 +46,9 @@ const RiskRoamBoard = dynamic(
 
 type Tab = "program-board" | "team-breakout" | "objectives" | "risks";
 
-interface PiWorkspaceTabsProps {
+type PiWorkspaceTabsProps = {
   piPlan: PIPlanFullDetails;
-}
+};
 
 export function PiWorkspaceTabs({ piPlan }: PiWorkspaceTabsProps) {
   const [activeTab, setActiveTab] = useState<Tab>("program-board");
@@ -55,55 +65,55 @@ export function PiWorkspaceTabs({ piPlan }: PiWorkspaceTabsProps) {
   }));
 
   return (
-    <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Tab)}>
+    <Tabs onValueChange={(v) => setActiveTab(v as Tab)} value={activeTab}>
       <TabsList className="w-full justify-start">
-        <TabsTrigger value="program-board" className="gap-1.5">
+        <TabsTrigger className="gap-1.5" value="program-board">
           <LayoutGridIcon className="h-3.5 w-3.5" />
           Program Board
         </TabsTrigger>
-        <TabsTrigger value="team-breakout" className="gap-1.5">
+        <TabsTrigger className="gap-1.5" value="team-breakout">
           <UsersIcon className="h-3.5 w-3.5" />
           Team Breakout
         </TabsTrigger>
-        <TabsTrigger value="objectives" className="gap-1.5">
+        <TabsTrigger className="gap-1.5" value="objectives">
           <TargetIcon className="h-3.5 w-3.5" />
           Objetivos de PI
           {piPlan.objectives.length > 0 && (
-            <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium">
+            <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 font-medium text-[10px]">
               {piPlan.objectives.length}
             </span>
           )}
         </TabsTrigger>
-        <TabsTrigger value="risks" className="gap-1.5">
+        <TabsTrigger className="gap-1.5" value="risks">
           <AlertTriangleIcon className="h-3.5 w-3.5" />
           Riscos ROAM
           {piPlan.risks.length > 0 && (
-            <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium">
+            <span className="ml-1 rounded-full bg-muted px-1.5 py-0.5 font-medium text-[10px]">
               {piPlan.risks.length}
             </span>
           )}
         </TabsTrigger>
       </TabsList>
 
-      <TabsContent value="program-board" className="mt-4">
+      <TabsContent className="mt-4" value="program-board">
         <ProgramBoardEmbedded
           artId={piPlan.artId}
+          cadence={piPlan.art.cadence}
+          features={features}
           piPlanId={piPlan.id}
           teams={piPlan.teams}
-          features={features}
-          cadence={piPlan.art.cadence}
         />
       </TabsContent>
 
-      <TabsContent value="team-breakout" className="mt-4">
+      <TabsContent className="mt-4" value="team-breakout">
         <TeamBreakoutView
-          teams={piPlan.teams}
-          features={features}
           cadence={piPlan.art.cadence}
+          features={features}
+          teams={piPlan.teams}
         />
       </TabsContent>
 
-      <TabsContent value="objectives" className="mt-4">
+      <TabsContent className="mt-4" value="objectives">
         <PiObjectivesView
           objectives={piPlan.objectives.map((o) => ({
             id: o.id,
@@ -114,13 +124,14 @@ export function PiWorkspaceTabs({ piPlan }: PiWorkspaceTabsProps) {
             businessValue: o.businessValue,
             teamId: o.teamId,
           }))}
-          teams={piPlan.teams}
           piPlanId={piPlan.id}
+          teams={piPlan.teams}
         />
       </TabsContent>
 
-      <TabsContent value="risks" className="mt-4">
+      <TabsContent className="mt-4" value="risks">
         <RiskRoamBoard
+          piPlanId={piPlan.id}
           risks={piPlan.risks.map((r) => ({
             id: r.id,
             title: r.title,
@@ -130,7 +141,6 @@ export function PiWorkspaceTabs({ piPlan }: PiWorkspaceTabsProps) {
             impact: r.impact,
             probability: r.probability,
           }))}
-          piPlanId={piPlan.id}
         />
       </TabsContent>
     </Tabs>

@@ -1,6 +1,6 @@
-import { embed } from "ai";
 import { models } from "@repo/ai/lib/models";
 import { searchKnowledge } from "@repo/database/vector-search";
+import { embed } from "ai";
 
 type KnowledgeSearchResult = {
   sourceType: string;
@@ -14,7 +14,7 @@ export async function runKnowledgeSearch(
   query: string,
   tenantId: string,
   sourceTypes?: string[],
-  limit = 8,
+  limit = 8
 ): Promise<KnowledgeSearchResult[]> {
   const { embedding } = await embed({ model: models.embeddings, value: query });
   const hits = await searchKnowledge(tenantId, embedding, query, {

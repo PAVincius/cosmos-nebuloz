@@ -3,7 +3,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { RefreshCw } from "lucide-react";
-import { BotIcon, SparkleIcon } from "../../components/copilot/copilot-icons";
 import { useCallback, useState, useTransition } from "react";
 import { syncTenantKnowledge } from "@/app/actions/safe-copilot/indexer";
 import type { SessionPreview } from "@/app/actions/safe-copilot/sessions";
@@ -13,6 +12,7 @@ import {
   loadCopilotSession,
 } from "@/app/actions/safe-copilot/sessions";
 import { CopilotChat } from "../../components/copilot/copilot-chat";
+import { BotIcon, SparkleIcon } from "../../components/copilot/copilot-icons";
 import { CopilotInputArea } from "../../components/copilot/copilot-input-area";
 import { CopilotPromptChips } from "../../components/copilot/copilot-prompt-chips";
 import type { CopilotMode } from "../../components/copilot/copilot-provider";

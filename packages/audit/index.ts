@@ -34,13 +34,13 @@ export type SecurityAction =
 
 export type DataAction = "created" | "updated" | "deleted" | "bulk_deleted";
 
-interface BaseAuditPayload {
+type BaseAuditPayload = {
   userId?: string;
   tenantId?: string;
   ipAddress?: string;
   userAgent?: string;
   metadata?: Record<string, unknown>;
-}
+};
 
 interface SecurityAuditPayload extends BaseAuditPayload {
   action: SecurityAction;
@@ -74,7 +74,7 @@ async function writeToDb(payload: {
         action: payload.action,
         entityType: payload.entityType,
         entityId: payload.entityId,
-        diff: payload.diff ?? null,
+        diff: payload.diff as object | undefined,
       },
     });
   } catch (err) {
@@ -86,7 +86,10 @@ async function writeToDb(payload: {
   }
 }
 
-function writeToLog(level: "info" | "warn", data: Record<string, unknown>): void {
+function writeToLog(
+  level: "info" | "warn",
+  data: Record<string, unknown>
+): void {
   log[level]("[audit]", data);
 }
 
@@ -94,7 +97,9 @@ function writeToLog(level: "info" | "warn", data: Record<string, unknown>): void
  * Log a security event (auth, access control, admin actions).
  * Works with or without a tenantId — system-level events go to observability only.
  */
-export async function logSecurityEvent(payload: SecurityAuditPayload): Promise<void> {
+export async function logSecurityEvent(
+  payload: SecurityAuditPayload
+): Promise<void> {
   const logData = {
     action: payload.action,
     userId: payload.userId,
@@ -160,7 +165,9 @@ export async function logDataEvent(payload: DataAuditPayload): Promise<void> {
  * Log an admin action (super-admin impersonation, tenant management).
  * Always logged to observability for tamper-evident trail.
  */
-export async function logAdminEvent(payload: SecurityAuditPayload): Promise<void> {
+export async function logAdminEvent(
+  payload: SecurityAuditPayload
+): Promise<void> {
   // Admin events always go to log (cannot be suppressed by DB failure)
   log.warn("[audit:admin]", {
     action: payload.action,

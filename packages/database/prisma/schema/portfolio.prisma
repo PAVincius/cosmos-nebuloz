@@ -121,26 +121,72 @@ model KeyResultSnapshot {
 }
 
 model LeanBudget {
-  id                  String   @id @default(cuid())
+  id                  String    @id @default(cuid())
   tenantId            String
   artId               String?
-  themeId             String? // optional link to a Strategic Theme
+  piPlanId            String?
+  themeId             String?
   name                String
   amount              Float
-  spent               Decimal? @db.Decimal(18, 6)
-  period              String // e.g. "PI-2025-Q2"
-  guardrails          Json? // {capex: number, opex: number}
-  spentSource         String   @default("MANUAL") // MANUAL | BILLING_AGGREGATE | FORECAST
-  spentManualOverride Decimal? @db.Decimal(18, 6)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  // Story-025 CapEx/OpEx split fields (AC-002)
+  capexPct            Float?    // 0-100
+  opexPct             Float?    // 0-100; capexPct + opexPct must = 100
+  immutableAt         DateTime? // set when PI closes (AC-005)
+  spent               Decimal?  @db.Decimal(18, 6)
+  period              String    // e.g. "PI-2025-Q2"
+  guardrails          Json?     // {capex: number, opex: number}
+  spentSource         String    @default("MANUAL") // MANUAL | BILLING_AGGREGATE | FORECAST
+  spentManualOverride Decimal?  @db.Decimal(18, 6)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
-  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  strategicTheme StrategicTheme? @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  tenant         Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  strategicTheme StrategicTheme?          @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  reallocations  LeanBudgetReallocation[]
 
+  @@unique([artId, piPlanId])
   @@index([tenantId])
   @@index([tenantId, artId])
   @@index([tenantId, themeId])
+}
+
+// Story-025: immutable audit trail for budget reallocations (AC-003)
+model LeanBudgetReallocation {
+  id           String   @id @default(cuid())
+  tenantId     String
+  leanBudgetId String
+  fromAmount   Float
+  toAmount     Float
+  reason       String   @db.Text
+  authorUserId String
+  createdAt    DateTime @default(now())
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leanBudget LeanBudget @relation(fields: [leanBudgetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([leanBudgetId])
+}
+
+// Story-025: Portfolio health batch analysis report (AC-006/007/008)
+model PortfolioAnalysisReport {
+  id               String    @id @default(cuid())
+  tenantId         String
+  artId            String
+  jobId            String?   @unique // Inngest job/function run ID
+  completionStatus String    @default("QUEUED") // QUEUED/RUNNING/COMPLETE/PARTIAL_SUCCESS/FAILED
+  epicCount        Int       @default(0)
+  skippedCount     Int       @default(0)
+  reportJson       Json?
+  expiresAt        DateTime? // 90-day TTL
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, artId])
+  @@index([tenantId, artId, createdAt])
 }
 
 model RoadmapItem {

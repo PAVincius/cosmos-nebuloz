@@ -61,6 +61,10 @@ model Story {
   externalSource String? // linear | github | asana | gitlab
   externalUrl    String?
 
+  // Story-025 GitHub PR linking
+  prStatus String? // OPEN | MERGED | CLOSED
+  prUrl    String?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -108,14 +112,20 @@ model Defect {
   id             String    @id @default(cuid())
   tenantId       String
   teamId         String?
+  sprintId       String?
   storyId        String?
   title          String
   description    String?   @db.Text
   severity       String    @default("medium") // critical/high/medium/low
-  status         String    @default("OPEN") // OPEN/IN_PROGRESS/RESOLVED/CLOSED
+  status         String    @default("OPEN") // OPEN/IN_PROGRESS/IN_REVIEW/CLOSED
   reporterUserId String?
   assigneeUserId String?
   resolvedAt     DateTime?
+  // Story-024 fields
+  originSprintId String?
+  reopenReason   String?   @db.Text
+  isStale        Boolean   @default(false)
+  staleAt        DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -124,24 +134,32 @@ model Defect {
   @@index([tenantId])
   @@index([teamId])
   @@index([tenantId, status])
+  @@index([sprintId])
 }
 
 model Impediment {
-  id          String    @id @default(cuid())
-  tenantId    String
-  teamId      String?
-  title       String
-  description String?   @db.Text
-  status      String    @default("OPEN") // OPEN/IN_PROGRESS/RESOLVED
-  ownerUserId String?
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id             String    @id @default(cuid())
+  tenantId       String
+  teamId         String?
+  artId          String?
+  title          String
+  description    String?   @db.Text
+  status         String    @default("OPEN") // OPEN/ESCALATED/RESOLVED
+  ownerUserId    String?
+  resolvedAt     DateTime?
+  // Story-024 escalation fields
+  linkedRiskId   String?
+  resolutionNote String?   @db.Text
+  resolutionTime Float?    // hours from createdAt to resolvedAt
+  severity       Int       @default(3) // 1-5
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([teamId])
+  @@index([tenantId, status])
 }
 
 model StandupEntry {
@@ -172,6 +190,8 @@ model SprintReview {
   // Story-023 accepted vs completed guard (AC-001)
   completedPoints Int?
   acceptedPoints  Int?
+  // Story-024 defect swimlane excluded from velocity (AC-007)
+  defectCount     Int  @default(0)
   demoNotes       String?  @db.Text
   goalMet         Boolean  @default(false)
   createdAt       DateTime @default(now())

@@ -1,18 +1,19 @@
 "use client";
 
-import { useTransition, useState } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Label } from "@repo/design-system/components/ui/label";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { CheckIcon, SendIcon } from "lucide-react";
+import { Label } from "@repo/design-system/components/ui/label";
+import { AlertTriangleIcon, CheckIcon, SendIcon } from "lucide-react";
+import { useState, useTransition } from "react";
+import { createImpediment } from "@/app/actions/impediments";
 import { upsertStandupEntry } from "@/app/actions/standup";
 
-interface StandupFormProps {
+type StandupFormProps = {
   teamId: string;
   todayIso: string; // "YYYY-MM-DD"
   existing?: {
@@ -20,15 +21,37 @@ interface StandupFormProps {
     today?: string | null;
     blockers?: string | null;
   };
-}
+};
 
 export function StandupForm({ teamId, todayIso, existing }: StandupFormProps) {
   const [isPending, startTransition] = useTransition();
+  const [isCreatingImpediment, startImpedimentTransition] = useTransition();
   const [submitted, setSubmitted] = useState(false);
+  const [impedimentCreated, setImpedimentCreated] = useState(false);
 
   const [yesterday, setYesterday] = useState(existing?.yesterday ?? "");
   const [today, setToday] = useState(existing?.today ?? "");
   const [blockers, setBlockers] = useState(existing?.blockers ?? "");
+
+  function handleCreateImpediment() {
+    if (!blockers.trim()) {
+      return;
+    }
+    startImpedimentTransition(async () => {
+      try {
+        await createImpediment({
+          teamId,
+          title: blockers.trim(),
+          status: "OPEN",
+        });
+        setImpedimentCreated(true);
+      } catch (err) {
+        alert(
+          err instanceof Error ? err.message : "Erro ao criar impedimento."
+        );
+      }
+    });
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -52,10 +75,10 @@ export function StandupForm({ teamId, todayIso, existing }: StandupFormProps) {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle className="text-base flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-base">
           Meu Standup de Hoje
           {submitted && (
-            <span className="flex items-center gap-1 text-xs text-green-600 font-normal">
+            <span className="flex items-center gap-1 font-normal text-green-600 text-xs">
               <CheckIcon className="h-3.5 w-3.5" />
               Salvo
             </span>
@@ -63,48 +86,66 @@ export function StandupForm({ teamId, todayIso, existing }: StandupFormProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="yesterday" className="text-sm">
+            <Label className="text-sm" htmlFor="yesterday">
               O que fiz ontem?
             </Label>
             <textarea
+              className="min-h-[80px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               id="yesterday"
-              value={yesterday}
+              maxLength={2000}
               onChange={(e) => setYesterday(e.target.value)}
               placeholder="Descreva o que você fez…"
-              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-              maxLength={2000}
+              value={yesterday}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="today" className="text-sm">
+            <Label className="text-sm" htmlFor="today">
               O que farei hoje?
             </Label>
             <textarea
+              className="min-h-[80px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               id="today"
-              value={today}
+              maxLength={2000}
               onChange={(e) => setToday(e.target.value)}
               placeholder="Descreva o que você planeja fazer…"
-              className="min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
-              maxLength={2000}
+              value={today}
             />
           </div>
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="blockers" className="text-sm">
+            <Label className="text-sm" htmlFor="blockers">
               Há bloqueios?
             </Label>
             <textarea
+              className="min-h-[60px] w-full resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               id="blockers"
-              value={blockers}
-              onChange={(e) => setBlockers(e.target.value)}
-              placeholder="Nenhum / Descreva os bloqueios…"
-              className="min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 resize-none"
               maxLength={2000}
+              onChange={(e) => {
+                setBlockers(e.target.value);
+                setImpedimentCreated(false);
+              }}
+              placeholder="Nenhum / Descreva os bloqueios…"
+              value={blockers}
             />
+            {blockers.trim() && (
+              <button
+                className="flex items-center gap-1 self-start font-medium text-[#5e6ad2] text-xs transition-colors hover:underline disabled:opacity-50"
+                disabled={isCreatingImpediment || impedimentCreated}
+                onClick={handleCreateImpediment}
+                type="button"
+              >
+                <AlertTriangleIcon className="h-3 w-3" />
+                {impedimentCreated
+                  ? "Impedimento criado ✓"
+                  : isCreatingImpediment
+                    ? "Criando…"
+                    : "+ Registrar como impedimento rastreável"}
+              </button>
+            )}
           </div>
           <div className="flex justify-end">
-            <Button type="submit" disabled={isPending} size="sm">
+            <Button disabled={isPending} size="sm" type="submit">
               <SendIcon className="mr-2 h-4 w-4" />
               {isPending ? "Salvando…" : existing ? "Atualizar" : "Enviar"}
             </Button>

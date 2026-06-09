@@ -1,8 +1,8 @@
-// Onboarding progress tracking
+// Onboarding progress tracking + platform operations (story-044)
 model OnboardingProgress {
   id             String   @id @default(cuid())
   tenantId       String
-  flowType       String   // "company_setup" | "migration_setup"
+  flowType       String // "company_setup" | "migration_setup"
   currentStep    Int      @default(0)
   completedSteps String[]
   data           Json     @default("{}")
@@ -19,8 +19,8 @@ model OnboardingProgress {
 model MigrationConnection {
   id            String   @id @default(cuid())
   tenantId      String
-  source        String   // "csv" | "jira" | "azure" | "trello"
-  config        Json     // { baseUrl?, apiToken?, pat?, projectKeys? }
+  source        String // "csv" | "jira" | "azure" | "trello"
+  config        Json // { baseUrl?, apiToken?, pat?, projectKeys? }
   status        String   @default("pending")
   errorMessage  String?
   discoveryData Json?
@@ -32,4 +32,18 @@ model MigrationConnection {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+}
+
+model JobFallbackQueue {
+  id          String   @id @default(cuid())
+  tenantId    String?
+  jobType     String
+  payload     Json
+  status      String   @default("PENDING") // PENDING|PROCESSING|DONE|FAILED
+  attempts    Int      @default(0)
+  lastError   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status, createdAt])
 }

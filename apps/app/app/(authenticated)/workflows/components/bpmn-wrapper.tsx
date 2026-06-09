@@ -131,7 +131,6 @@ type BpmnWrapperProps = {
 
 type IssueMap = Record<string, LintIssue[]>;
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: bpmn-js modeler orchestration requires unified state management
 export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
@@ -259,7 +258,6 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
       const canvas = document.createElement("canvas");
       canvas.width = img.width * scale;
       canvas.height = img.height * scale;
-      // biome-ignore lint/style/noNonNullAssertion: canvas 2d context always available
       const ctx = canvas.getContext("2d")!;
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -424,7 +422,6 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
           >
             <AlertTriangleIcon className="mr-1.5 h-3.5 w-3.5" />
             Lint
-            {/* biome-ignore lint/nursery/noLeakedRender: both are boolean/number checks */}
             {lintActive && totalCount > 0 && (
               <span className="ml-1.5 rounded-full bg-white/20 px-1.5 font-bold text-xs">
                 {totalCount}
@@ -461,7 +458,6 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
       </div>
 
       {/* Templates Panel */}
-      {/* biome-ignore lint/nursery/noLeakedRender: boolean state, never numeric/string */}
       {showTemplates && (
         <div className="shrink-0 border-b bg-muted/20 px-6 py-4">
           <p className="mb-3 font-medium text-muted-foreground text-xs uppercase tracking-wide">
@@ -470,7 +466,7 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
           <div className="flex flex-wrap gap-3">
             {BPMN_TEMPLATES.map((tpl) => (
               <button
-                className="flex flex-col items-start rounded-lg border bg-background px-4 py-3 text-left shadow-sm transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="flex flex-col items-start rounded-lg border bg-background px-4 py-3 text-left shadow-[var(--card-shadow)] transition-colors hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
                 key={tpl.id}
                 onClick={() => handleLoadTemplate(tpl)}
                 type="button"
@@ -507,7 +503,6 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
       </div>
 
       {/* Lint Panel */}
-      {/* biome-ignore lint/nursery/noLeakedRender: boolean state, never numeric/string */}
       {lintActive && (
         <div className="shrink-0 border-t bg-background">
           <button
@@ -519,21 +514,18 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
               <span className="text-muted-foreground uppercase tracking-wide">
                 Problemas
               </span>
-              {/* biome-ignore lint/nursery/noLeakedRender: number > 0 check, not plain number */}
               {errorCount > 0 && (
                 <span className="flex items-center gap-1 text-red-600">
                   <XCircleIcon className="h-3.5 w-3.5" />
                   {errorCount} {errorCount === 1 ? "erro" : "erros"}
                 </span>
               )}
-              {/* biome-ignore lint/nursery/noLeakedRender: number > 0 check, not plain number */}
               {warnCount > 0 && (
                 <span className="flex items-center gap-1 text-yellow-600">
                   <AlertTriangleIcon className="h-3.5 w-3.5" />
                   {warnCount} {warnCount === 1 ? "aviso" : "avisos"}
                 </span>
               )}
-              {/* biome-ignore lint/nursery/noLeakedRender: number === 0 check, boolean result */}
               {totalCount === 0 && (
                 <span className="text-green-600">Sem problemas detectados</span>
               )}
@@ -545,7 +537,6 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
             )}
           </button>
 
-          {/* biome-ignore lint/nursery/noLeakedRender: both boolean/length>0 checks */}
           {lintPanelOpen && allIssues.length > 0 && (
             <div className="max-h-40 divide-y overflow-y-auto border-t">
               {allIssues.map((issue) => (

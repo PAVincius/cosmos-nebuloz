@@ -53,7 +53,9 @@ function getInitials(name: string): string {
 }
 
 function formatSP(value: number | null | undefined): string {
-  if (value === null || value === undefined) return "—";
+  if (value === null || value === undefined) {
+    return "—";
+  }
   return value.toLocaleString("pt-BR");
 }
 
@@ -70,7 +72,7 @@ type MetricCardProps = {
 function MetricCard({ label, value, icon }: MetricCardProps) {
   return (
     <div
-      className="flex flex-1 items-center gap-3 rounded-lg border px-4 py-3 min-w-0"
+      className="flex min-w-0 flex-1 items-center gap-3 rounded-lg border px-4 py-3"
       style={{ borderColor: "var(--border)", background: "var(--surface)" }}
     >
       <div
@@ -79,15 +81,15 @@ function MetricCard({ label, value, icon }: MetricCardProps) {
       >
         <span style={{ color: "var(--accent-2)" }}>{icon}</span>
       </div>
-      <div className="flex flex-col min-w-0">
+      <div className="flex min-w-0 flex-col">
         <span
-          className="text-xs font-medium uppercase tracking-wide truncate"
+          className="truncate font-medium text-xs uppercase tracking-wide"
           style={{ color: "var(--text-faint)", letterSpacing: "0.08em" }}
         >
           {label}
         </span>
         <span
-          className="text-xl font-semibold tabular-nums"
+          className="font-semibold text-xl tabular-nums"
           style={{
             fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
             color: "var(--text)",
@@ -117,7 +119,9 @@ type CustomTooltipProps = {
 };
 
 function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
-  if (!active || !payload || payload.length === 0) return null;
+  if (!(active && payload) || payload.length === 0) {
+    return null;
+  }
 
   const labelMap: Record<string, string> = {
     ideal: "Ideal",
@@ -134,31 +138,26 @@ function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
         color: "var(--text)",
       }}
     >
-      <p
-        className="mb-1.5 font-medium"
-        style={{ color: "var(--text-muted)" }}
-      >
+      <p className="mb-1.5 font-medium" style={{ color: "var(--text-muted)" }}>
         {label}
       </p>
       {payload.map((entry) => {
-        if (entry.value === null || entry.value === undefined) return null;
+        if (entry.value === null || entry.value === undefined) {
+          return null;
+        }
         return (
-          <div
-            key={entry.name}
-            className="flex items-center gap-2"
-          >
+          <div className="flex items-center gap-2" key={entry.name}>
             <span
-              className="h-2 w-2 rounded-full shrink-0"
+              className="h-2 w-2 shrink-0 rounded-full"
               style={{ background: entry.color }}
             />
             <span style={{ color: "var(--text-muted)" }}>
               {labelMap[entry.name] ?? entry.name}:
             </span>
             <span
-              className="font-semibold tabular-nums ml-auto pl-2"
+              className="ml-auto pl-2 font-semibold tabular-nums"
               style={{
-                fontFamily:
-                  "var(--font-geist-mono, 'Geist Mono', monospace)",
+                fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
                 color: "var(--text)",
               }}
             >
@@ -180,7 +179,9 @@ type MemberVelocityTableProps = {
 };
 
 function MemberVelocityTable({ memberStats }: MemberVelocityTableProps) {
-  if (memberStats.length === 0) return null;
+  if (memberStats.length === 0) {
+    return null;
+  }
 
   const maxAvg = Math.max(...memberStats.map((m) => m.avgSPPerSprint), 1);
 
@@ -188,10 +189,7 @@ function MemberVelocityTable({ memberStats }: MemberVelocityTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr
-            className="border-b"
-            style={{ borderColor: "var(--border)" }}
-          >
+          <tr className="border-b" style={{ borderColor: "var(--border)" }}>
             {(
               [
                 "Membro",
@@ -201,8 +199,8 @@ function MemberVelocityTable({ memberStats }: MemberVelocityTableProps) {
               ] as const
             ).map((header) => (
               <th
+                className="pb-2 text-left font-medium text-xs uppercase tracking-wide"
                 key={header}
-                className="pb-2 text-left text-xs font-medium uppercase tracking-wide"
                 style={{
                   color: "var(--text-faint)",
                   letterSpacing: "0.08em",
@@ -221,17 +219,17 @@ function MemberVelocityTable({ memberStats }: MemberVelocityTableProps) {
                 : 0;
             return (
               <tr
-                key={member.userId}
                 className="border-b transition-colors"
+                key={member.userId}
                 style={{
                   borderColor: "var(--border)",
                 }}
               >
                 {/* Membro */}
                 <td className="py-2.5 pr-4">
-                  <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="flex min-w-0 items-center gap-2.5">
                     <div
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
+                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-semibold text-xs"
                       style={{
                         background: "var(--surface-3)",
                         color: "var(--accent-2)",
@@ -321,7 +319,7 @@ export function SprintBurndownChart({
 }: SprintBurndownChartProps) {
   // --- Derived values ---
   const hasData = burndownData.length > 0;
-  const lastPoint = hasData ? burndownData[burndownData.length - 1] : null;
+  const lastPoint = hasData ? burndownData.at(-1) : null;
   const sprintStarted = hasData && burndownData.some((p) => p.actual !== null);
 
   const currentCompleted = lastPoint?.completed ?? 0;
@@ -334,10 +332,7 @@ export function SprintBurndownChart({
         className="flex min-h-[200px] flex-col items-center justify-center rounded-xl border"
         style={{ borderColor: "var(--border)", background: "var(--surface)" }}
       >
-        <p
-          className="text-sm"
-          style={{ color: "var(--text-faint)" }}
-        >
+        <p className="text-sm" style={{ color: "var(--text-faint)" }}>
           Sem dados de sprint disponíveis
         </p>
       </div>
@@ -350,10 +345,7 @@ export function SprintBurndownChart({
         className="flex min-h-[200px] flex-col items-center justify-center rounded-xl border"
         style={{ borderColor: "var(--border)", background: "var(--surface)" }}
       >
-        <p
-          className="text-sm"
-          style={{ color: "var(--text-faint)" }}
-        >
+        <p className="text-sm" style={{ color: "var(--text-faint)" }}>
           Sprint não iniciada
         </p>
       </div>
@@ -368,33 +360,30 @@ export function SprintBurndownChart({
   return (
     <div className="flex flex-col gap-4">
       {/* Title */}
-      <p
-        className="text-sm font-medium"
-        style={{ color: "var(--text)" }}
-      >
+      <p className="font-medium text-sm" style={{ color: "var(--text)" }}>
         Burndown da Sprint Atual
       </p>
 
       {/* Section 1: Velocity summary row */}
       <div className="flex flex-col gap-2 sm:flex-row">
         <MetricCard
+          icon={<Zap size={16} />}
           label="Velocidade do Time"
           value={
             teamVelocity !== undefined
               ? `${teamVelocity} SP/sprint`
               : "— SP/sprint"
           }
-          icon={<Zap size={16} />}
         />
         <MetricCard
+          icon={<TrendingUp size={16} />}
           label="Entregues (sprint atual)"
           value={`${formatSP(currentCompleted)} SP`}
-          icon={<TrendingUp size={16} />}
         />
         <MetricCard
+          icon={<Activity size={16} />}
           label="Em andamento"
           value={`${formatSP(currentInProgress)} SP`}
-          icon={<Activity size={16} />}
         />
       </div>
 
@@ -403,14 +392,14 @@ export function SprintBurndownChart({
         className="rounded-xl border p-4"
         style={{ borderColor: "var(--border)", background: "var(--surface)" }}
       >
-        <ResponsiveContainer width="100%" height={220}>
+        <ResponsiveContainer height={220} width="100%">
           <AreaChart
             data={chartData}
             margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
           >
             <defs>
               {/* Gradient for actual burndown */}
-              <linearGradient id="gradActual" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="gradActual" x1="0" x2="0" y1="0" y2="1">
                 <stop
                   offset="5%"
                   stopColor="hsl(var(--primary, 262 83% 70%))"
@@ -423,50 +412,40 @@ export function SprintBurndownChart({
                 />
               </linearGradient>
               {/* Gradient for completed */}
-              <linearGradient id="gradCompleted" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="#22c55e"
-                  stopOpacity={0.2}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="#22c55e"
-                  stopOpacity={0}
-                />
+              <linearGradient id="gradCompleted" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="5%" stopColor="#22c55e" stopOpacity={0.2} />
+                <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
               </linearGradient>
             </defs>
 
             <CartesianGrid
-              strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.05)"
+              strokeDasharray="3 3"
               vertical={false}
             />
 
             <XAxis
+              axisLine={false}
               dataKey="label"
+              interval="preserveStartEnd"
               tick={{
                 fontSize: 11,
                 fill: "var(--text-faint)",
-                fontFamily:
-                  "var(--font-geist-mono, 'Geist Mono', monospace)",
+                fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
               }}
-              axisLine={false}
               tickLine={false}
-              interval="preserveStartEnd"
             />
 
             <YAxis
+              axisLine={false}
               tick={{
                 fontSize: 11,
                 fill: "var(--text-faint)",
-                fontFamily:
-                  "var(--font-geist-mono, 'Geist Mono', monospace)",
+                fontFamily: "var(--font-geist-mono, 'Geist Mono', monospace)",
               }}
-              axisLine={false}
+              tickFormatter={(v: number) => `${v}`}
               tickLine={false}
               width={40}
-              tickFormatter={(v: number) => `${v}`}
             />
 
             <Tooltip
@@ -478,45 +457,39 @@ export function SprintBurndownChart({
             />
 
             <ReferenceLine
-              y={0}
               stroke="rgba(255,255,255,0.10)"
               strokeWidth={1}
+              y={0}
             />
 
             {/* Ideal line (dashed, muted) */}
             <Area
-              type="linear"
-              dataKey="ideal"
-              stroke="var(--text-faint)"
-              strokeDasharray="4 4"
-              strokeWidth={1.5}
-              strokeOpacity={0.5}
-              fill="none"
-              dot={false}
               activeDot={false}
               connectNulls
+              dataKey="ideal"
+              dot={false}
+              fill="none"
+              stroke="var(--text-faint)"
+              strokeDasharray="4 4"
+              strokeOpacity={0.5}
+              strokeWidth={1.5}
+              type="linear"
             />
 
             {/* Completed (cumulative SP done) */}
             <Area
-              type="monotone"
-              dataKey="completed"
-              stroke="#22c55e"
-              strokeWidth={1.5}
-              fill="url(#gradCompleted)"
-              dot={false}
               activeDot={{ r: 3, fill: "#22c55e" }}
               connectNulls
+              dataKey="completed"
+              dot={false}
+              fill="url(#gradCompleted)"
+              stroke="#22c55e"
+              strokeWidth={1.5}
+              type="monotone"
             />
 
             {/* Actual remaining (primary, filled) */}
             <Area
-              type="monotone"
-              dataKey="actual"
-              stroke="var(--accent)"
-              strokeWidth={2}
-              fill="url(#gradActual)"
-              dot={false}
               activeDot={{
                 r: 4,
                 fill: "var(--accent)",
@@ -524,6 +497,12 @@ export function SprintBurndownChart({
                 strokeWidth: 2,
               }}
               connectNulls={false}
+              dataKey="actual"
+              dot={false}
+              fill="url(#gradActual)"
+              stroke="var(--accent)"
+              strokeWidth={2}
+              type="monotone"
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -537,23 +516,20 @@ export function SprintBurndownChart({
               { color: "#22c55e", label: "Completado", dashed: false },
             ] as const
           ).map((item) => (
-            <div key={item.label} className="flex items-center gap-1.5">
-              <svg width="16" height="8" className="shrink-0">
+            <div className="flex items-center gap-1.5" key={item.label}>
+              <svg className="shrink-0" height="8" width="16">
                 <line
-                  x1="0"
-                  y1="4"
-                  x2="16"
-                  y2="4"
                   stroke={item.color}
-                  strokeWidth="1.5"
                   strokeDasharray={item.dashed ? "3 2" : undefined}
                   strokeOpacity={item.dashed ? 0.6 : 1}
+                  strokeWidth="1.5"
+                  x1="0"
+                  x2="16"
+                  y1="4"
+                  y2="4"
                 />
               </svg>
-              <span
-                className="text-xs"
-                style={{ color: "var(--text-faint)" }}
-              >
+              <span className="text-xs" style={{ color: "var(--text-faint)" }}>
                 {item.label}
               </span>
             </div>
@@ -571,7 +547,7 @@ export function SprintBurndownChart({
           }}
         >
           <p
-            className="mb-3 text-xs font-medium uppercase tracking-wide"
+            className="mb-3 font-medium text-xs uppercase tracking-wide"
             style={{
               color: "var(--text-faint)",
               letterSpacing: "0.08em",

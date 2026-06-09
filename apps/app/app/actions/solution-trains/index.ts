@@ -1,30 +1,32 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
-import { type SolutionTrain } from "@repo/database";
-import { headers } from "next/headers";
+import { database, type SolutionTrain } from "@repo/database";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
+import { type Result, safeAction } from "../_base";
 import {
-  type Result,
-  safeAction,
-  err,
-} from "../_base";
-import {
-  CreateSolutionTrainSchema,
-  UpdateSolutionTrainSchema,
   type CreateSolutionTrainInput,
-  type UpdateSolutionTrainInput,
+  CreateSolutionTrainSchema,
   type SolutionTrainWithCounts,
   type SolutionTrainWithRelations,
+  type UpdateSolutionTrainInput,
+  UpdateSolutionTrainSchema,
 } from "./schema";
 
-export type { CreateSolutionTrainInput, UpdateSolutionTrainInput, SolutionTrainWithCounts, SolutionTrainWithRelations };
+export type {
+  CreateSolutionTrainInput,
+  UpdateSolutionTrainInput,
+  SolutionTrainWithCounts,
+  SolutionTrainWithRelations,
+};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listSolutionTrains(): Promise<Result<SolutionTrainWithCounts[]>> {
+export async function listSolutionTrains(): Promise<
+  Result<SolutionTrainWithCounts[]>
+> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -57,14 +59,18 @@ export async function getSolutionTrainById(
       },
     });
 
-    if (!train) throw new Error("Solution Train não encontrado.");
+    if (!train) {
+      throw new Error("Solution Train não encontrado.");
+    }
     return train;
   });
 }
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
-export async function createSolutionTrain(raw: unknown): Promise<Result<SolutionTrain>> {
+export async function createSolutionTrain(
+  raw: unknown
+): Promise<Result<SolutionTrain>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const data = CreateSolutionTrainSchema.parse(raw);
@@ -93,13 +99,17 @@ export async function updateSolutionTrain(
     const existing = await database.solutionTrain.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!existing) throw new Error("Solution Train não encontrado.");
+    if (!existing) {
+      throw new Error("Solution Train não encontrado.");
+    }
 
     const updated = await database.solutionTrain.update({
       where: { id },
       data: {
         ...(data.name !== undefined ? { name: data.name } : {}),
-        ...(data.description !== undefined ? { description: data.description ?? null } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description ?? null }
+          : {}),
       },
     });
 
@@ -108,7 +118,9 @@ export async function updateSolutionTrain(
   });
 }
 
-export async function deleteSolutionTrain(id: string): Promise<Result<{ id: string }>> {
+export async function deleteSolutionTrain(
+  id: string
+): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -118,7 +130,9 @@ export async function deleteSolutionTrain(id: string): Promise<Result<{ id: stri
         _count: { select: { capabilities: true, solutionEpics: true } },
       },
     });
-    if (!existing) throw new Error("Solution Train não encontrado.");
+    if (!existing) {
+      throw new Error("Solution Train não encontrado.");
+    }
 
     if (existing._count.capabilities > 0 || existing._count.solutionEpics > 0) {
       throw new Error(

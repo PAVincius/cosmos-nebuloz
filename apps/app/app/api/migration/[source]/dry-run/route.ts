@@ -1,16 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
 import { requireTenantSession } from "@repo/auth/server";
-import { headers } from "next/headers";
 import { database } from "@repo/database";
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
+import { fetchAzureWorkItems } from "@/lib/migration/azure-client";
 import { parseMigrationCSV } from "@/lib/migration/csv-parser";
 import { fetchJiraItems } from "@/lib/migration/jira-client";
-import { fetchAzureWorkItems } from "@/lib/migration/azure-client";
 import { fetchTrelloCards } from "@/lib/migration/trello-client";
-import type { DryRunResult, MappingRule, MigrationItem } from "@/lib/migration/types";
+import type {
+  DryRunResult,
+  MappingRule,
+  MigrationItem,
+} from "@/lib/migration/types";
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: Promise<{ source: string }> },
+  { params }: { params: Promise<{ source: string }> }
 ) {
   try {
     const ctx = await requireTenantSession(await headers());
@@ -26,7 +30,7 @@ export async function POST(
     if (!conn) {
       return NextResponse.json(
         { error: "Connection not found" },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -42,15 +46,15 @@ export async function POST(
       for (const p of (discovery?.projects ?? []).slice(0, 5)) {
         const fetched = await fetchJiraItems(
           config as { baseUrl: string; email: string; apiToken: string },
-          p.key ?? p.name,
+          p.key ?? p.name
         );
         allItems.push(...fetched);
       }
     } else if (source === "azure") {
       allItems.push(
-        ...await fetchAzureWorkItems(
-          config as { organization: string; project: string; pat: string },
-        ),
+        ...(await fetchAzureWorkItems(
+          config as { organization: string; project: string; pat: string }
+        ))
       );
     } else if (source === "trello") {
       const discovery = conn.discoveryData as {
@@ -59,7 +63,7 @@ export async function POST(
       for (const board of (discovery?.projects ?? []).slice(0, 3)) {
         const fetched = await fetchTrelloCards(
           config as { apiKey: string; apiToken: string },
-          board.id ?? "",
+          board.id ?? ""
         );
         allItems.push(...fetched);
       }
@@ -78,9 +82,13 @@ export async function POST(
     const conflicts: DryRunResult["conflicts"] = [];
 
     for (const item of allItems) {
-      if (item.type === "epic") counts.epics++;
-      else if (item.type === "feature") counts.features++;
-      else counts.stories++;
+      if (item.type === "epic") {
+        counts.epics++;
+      } else if (item.type === "feature") {
+        counts.features++;
+      } else {
+        counts.stories++;
+      }
 
       if (!item.title?.trim()) {
         conflicts.push({
@@ -99,7 +107,9 @@ export async function POST(
     return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Dry-run failed";
-    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(message)
+    const safeMessage = /token|password|secret|credential|apiToken|pat\b/i.test(
+      message
+    )
       ? "Operation failed. Check your credentials and try again."
       : message;
     return NextResponse.json({ error: safeMessage }, { status: 500 });

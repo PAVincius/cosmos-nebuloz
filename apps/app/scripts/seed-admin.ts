@@ -29,6 +29,7 @@ if (!ADMIN_PASSWORD) {
   console.error("❌ E2E_PASSWORD env var is required");
   process.exit(1);
 }
+const ADMIN_PASSWORD_VALUE: string = ADMIN_PASSWORD as string;
 const ADMIN_NAME = "Admin Cosmos";
 const TENANT_NAME = "COSMOS Dev";
 const TENANT_SLUG = "cosmos-dev";
@@ -71,7 +72,7 @@ async function main() {
     // ─── 2. Criar usuário via API do Better Auth (hash correto) ───
     // Usamos ctx interno para hashear a senha com scrypt
     const ctx = await auth.$context;
-    const hashedPassword = await ctx.password.hash(ADMIN_PASSWORD);
+    const hashedPassword = await ctx.password.hash(ADMIN_PASSWORD_VALUE);
 
     const newUser = await db.user.create({
       data: {

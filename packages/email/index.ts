@@ -5,8 +5,8 @@ import { InviteTemplate } from "./templates/invite";
 
 export const resend = new Resend(keys().RESEND_TOKEN);
 
-export { InviteTemplate } from "./templates/invite";
 export { ContactTemplate } from "./templates/contact";
+export { InviteTemplate } from "./templates/invite";
 
 type RenderInviteOptions = {
   inviteeName?: string;
@@ -16,7 +16,9 @@ type RenderInviteOptions = {
   expiresInDays?: number;
 };
 
-export async function renderInviteEmail(options: RenderInviteOptions): Promise<string> {
+export async function renderInviteEmail(
+  options: RenderInviteOptions
+): Promise<string> {
   return render(
     InviteTemplate({
       inviteeName: options.inviteeName,

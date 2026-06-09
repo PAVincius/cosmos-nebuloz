@@ -144,3 +144,22 @@ export async function buildPIWorkspaceContext(
     teams,
   };
 }
+
+export async function getPIWorkspaceSummary(
+  tenantId: string,
+  contextRef: { artId?: string; piId?: string }
+): Promise<string> {
+  const ctx = await buildPIWorkspaceContext(tenantId, contextRef);
+
+  const lines: string[] = [
+    `ART: ${ctx.artName}`,
+    `PI: ${ctx.piName}`,
+    `PI Dates: ${ctx.piDates.start ?? "N/A"} → ${ctx.piDates.end ?? "N/A"}`,
+    `Teams: ${ctx.teams.length}`,
+    `Features: ${ctx.features.length}`,
+    `Objectives: ${ctx.objectives.length}`,
+    `Risks: ${ctx.risks.length}`,
+  ];
+
+  return lines.join("\n");
+}

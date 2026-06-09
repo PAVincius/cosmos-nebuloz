@@ -25,7 +25,39 @@
             "noEmptyBlockStatements": "off",
             "noExplicitAny": "off"
           },
-          "complexity": { "noExcessiveCognitiveComplexity": "off" }
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noCommaOperator": "off"
+          },
+          "nursery": {
+            "noShadow": "off",
+            "noUnusedExpressions": "off"
+          },
+          "correctness": { "noUnusedFunctionParameters": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/lib/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": {
+            "noShadow": "off",
+            "noIncrementDecrement": "off",
+            "useMaxParams": "off",
+            "noUnusedExpressions": "off"
+          },
+          "suspicious": { "useAwait": "off", "noExplicitAny": "off" },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "noExportedImports": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          }
         }
       }
     },
@@ -139,8 +171,19 @@
       "includes": ["packages/**"],
       "linter": {
         "rules": {
-          "suspicious": { "noExplicitAny": "off", "useAwait": "off" },
-          "style": { "noNestedTernary": "off", "noNonNullAssertion": "off" },
+          "suspicious": {
+            "noExplicitAny": "off",
+            "useAwait": "off",
+            "noShadowRestrictedNames": "off",
+            "noEvolvingTypes": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off",
+            "noExportedImports": "off"
+          },
           "nursery": {
             "noIncrementDecrement": "off",
             "noEqualsToNull": "off",
@@ -150,21 +193,29 @@
             "noExcessiveCognitiveComplexity": "off",
             "noVoid": "off"
           },
-          "performance": { "noBarrelFile": "off", "useTopLevelRegex": "off" },
-          "style": {
-            "useFilenamingConvention": "off",
-            "noNonNullAssertion": "off",
-            "noNestedTernary": "off"
+          "performance": {
+            "noBarrelFile": "off",
+            "useTopLevelRegex": "off",
+            "noNamespaceImport": "off"
           },
           "correctness": {
             "noUnusedVariables": "off",
             "noUnusedFunctionParameters": "off"
-          },
-          "suspicious": {
-            "noShadowRestrictedNames": "off",
-            "noEvolvingTypes": "off",
-            "noEmptyBlockStatements": "off"
           }
+        }
+      }
+    },
+    {
+      "includes": ["docs/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "nursery": { "noShadow": "off", "noLeakedRender": "off" },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "performance": { "noImgElement": "off", "noBarrelFile": "off" }
         }
       }
     },
@@ -191,6 +242,24 @@
       "linter": {
         "rules": {
           "suspicious": { "noMisleadingCharacterClass": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/scripts/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": { "noIncrementDecrement": "off" },
+          "style": { "useForOf": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/storybook/**"],
+      "linter": {
+        "rules": {
+          "performance": { "noNamespaceImport": "off" }
         }
       }
     }

@@ -12,10 +12,8 @@ export function UnmappedCostAlert({ unmappedPct, unmappedCost }: Props) {
     return null;
   }
   return (
-    <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800">
-      <p className="font-semibold">
-        ⚠ Custo não mapeado: {unmappedPct}%
-      </p>
+    <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-amber-800 text-sm">
+      <p className="font-semibold">⚠ Custo não mapeado: {unmappedPct}%</p>
       <p className="mt-1 text-xs">
         {formatUSD(unmappedCost)} sem Tema Estratégico associado. Configure
         regras de mapeamento.

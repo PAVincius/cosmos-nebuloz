@@ -1,9 +1,9 @@
 import { getBpmnDefinition, saveBpmnDefinition } from "../../actions";
 import { BpmnLoader } from "../../components/bpmn-loader";
 
-interface BpmnPageProps {
+type BpmnPageProps = {
   params: Promise<{ teamId: string }>;
-}
+};
 
 export async function generateMetadata({ params }: BpmnPageProps) {
   const resolved = await params;
@@ -27,9 +27,9 @@ export default async function BpmnWorkflowPage({ params }: BpmnPageProps) {
     <div className="flex h-full w-full flex-col p-6">
       {/* BpmnLoader é um Client Component que faz o dynamic import com ssr:false */}
       <BpmnLoader
-        teamId={resolved.teamId}
         initialXml={initialXml || undefined}
         onSave={handleSave}
+        teamId={resolved.teamId}
       />
     </div>
   );

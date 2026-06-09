@@ -1,11 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpenIcon, UserIcon } from "./copilot-icons";
+import { CheckIcon, CopyIcon } from "lucide-react";
+import { useState } from "react";
+import { UserIcon } from "./copilot-icons";
 import { CopilotMarkdown } from "./copilot-markdown";
 import { CopilotReport, parseReports, stripReportTags } from "./copilot-report";
 import { CopilotStepsTimeline } from "./copilot-steps-timeline";
-import { CopilotSuggestions } from "./copilot-suggestions";
+import { CopilotSuggestions, parseSuggestions } from "./copilot-suggestions";
 import type { ChatMessage } from "./copilot-types";
 
 type Props = {
@@ -16,9 +18,14 @@ type Props = {
 };
 
 function getDisplayContent(content: string): string {
+  // strip complete tags, then any incomplete tag at end of stream
   return stripReportTags(
-    content.replace(/<suggestion[\s\S]*?<\/suggestion>/g, "")
-  ).trim();
+    content
+      .replace(/<suggestion[\s\S]*?<\/suggestion>/g, "")
+      .replace(/<suggestion[\s\S]*/g, "")
+  )
+    .replace(/<report[\s\S]*/g, "")
+    .trim();
 }
 
 /** Gradient-pulse thinking bubble shown before first assistant token. */
@@ -81,12 +88,74 @@ function ThinkingBubble() {
   );
 }
 
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+
+  function handleCopy() {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  return (
+    <button
+      aria-label="Copiar resposta"
+      className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground/40 transition-all hover:bg-muted hover:text-muted-foreground"
+      onClick={handleCopy}
+      type="button"
+    >
+      {copied ? (
+        <CheckIcon className="h-3.5 w-3.5 text-green-500" />
+      ) : (
+        <CopyIcon className="h-3.5 w-3.5" />
+      )}
+    </button>
+  );
+}
+
 export function CopilotThreadItem({
   userMessage,
   assistantMessage,
   isStreaming,
   sessionId,
 }: Props) {
+  const invocations = assistantMessage?.toolInvocations ?? [];
+
+  // Hide output-only tools from the steps timeline
+  const timelineInvocations = invocations.filter(
+    (inv) =>
+      inv.toolName !== "submitSuggestion" && inv.toolName !== "submitReport"
+  );
+
+  // Structured channel (new): suggestions/reports from tool invocations
+  const toolSuggestions = invocations
+    .filter(
+      (inv) => inv.toolName === "submitSuggestion" && inv.state === "result"
+    )
+    .map((inv) => ({
+      type: inv.args.type as string,
+      payload: inv.args.payload,
+    }));
+
+  const toolReports = invocations
+    .filter((inv) => inv.toolName === "submitReport" && inv.state === "result")
+    .map((inv) => ({
+      title: inv.args.title as string,
+      columns: inv.args.columns as string[],
+      rows: inv.args.rows as (string | number | null)[][],
+    }));
+
+  // Backward compat: also parse XML tags from stored messages
+  const allSuggestions = [
+    ...parseSuggestions(assistantMessage?.content ?? ""),
+    ...toolSuggestions,
+  ];
+  const allReports = [
+    ...parseReports(assistantMessage?.content ?? ""),
+    ...toolReports,
+  ];
+
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
@@ -108,9 +177,7 @@ export function CopilotThreadItem({
 
       {/* Thinking bubble — shown while waiting for first token */}
       <AnimatePresence>
-        {isStreaming && !assistantMessage && (
-          <ThinkingBubble key="thinking" />
-        )}
+        {isStreaming && !assistantMessage && <ThinkingBubble key="thinking" />}
       </AnimatePresence>
 
       {/* Assistant response */}
@@ -121,36 +188,35 @@ export function CopilotThreadItem({
           initial={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          {(assistantMessage.toolInvocations?.length ?? 0) > 0 && (
-            <CopilotStepsTimeline
-              invocations={assistantMessage.toolInvocations ?? []}
-            />
-          )}
-
           {(getDisplayContent(assistantMessage.content) || isStreaming) && (
-            <div>
-              {(assistantMessage.toolInvocations?.length ?? 0) > 0 && (
-                <div className="mb-2 flex items-center gap-1.5 text-muted-foreground">
-                  <BookOpenIcon className="h-3 w-3" />
-                  <span className="font-medium text-xs">Resposta</span>
-                </div>
-              )}
+            <div className="group relative">
               <CopilotMarkdown
                 content={getDisplayContent(assistantMessage.content)}
                 isStreaming={isStreaming}
               />
+              {!isStreaming && getDisplayContent(assistantMessage.content) && (
+                <div className="absolute top-0 right-0 opacity-0 transition-opacity group-hover:opacity-100">
+                  <CopyButton
+                    text={getDisplayContent(assistantMessage.content)}
+                  />
+                </div>
+              )}
             </div>
+          )}
+
+          {timelineInvocations.length > 0 && (
+            <CopilotStepsTimeline invocations={timelineInvocations} />
           )}
 
           {!isStreaming && assistantMessage.content && (
             <>
-              {parseReports(assistantMessage.content).map((report) => (
+              {allReports.map((report) => (
                 <CopilotReport key={report.title} report={report} />
               ))}
-              {!!sessionId && (
+              {!!sessionId && allSuggestions.length > 0 && (
                 <CopilotSuggestions
-                  content={assistantMessage.content}
                   sessionId={sessionId}
+                  suggestions={allSuggestions}
                 />
               )}
             </>

@@ -1,5 +1,6 @@
 import { generateText } from "ai";
 import { getActiveProvider, getAIModel } from "../router";
+import { graphRagContext } from "./graph-context";
 import { QueryCache } from "./query-cache";
 import { rewriteQuery } from "./query-rewriter";
 import { rerankChunks } from "./reranker";
@@ -61,9 +62,13 @@ export async function ragQuery(
   const chunks = await rerankChunks(question, rawChunks, topK);
 
   // ── 5. Generate answer ─────────────────────────────────────────────────────
-  const context = chunks
+  const vectorContext = chunks
     .map((c: RagChunk, i: number) => `[${i + 1}] ${c.content}`)
     .join("\n\n");
+
+  // Graph RAG: enriquece com contexto estrutural do grafo SAFe
+  const graphCtx = graphRagContext(question);
+  const context = graphCtx ? `${vectorContext}\n\n${graphCtx}` : vectorContext;
 
   const { text: answer } = await generateText({
     model: getAIModel(getActiveProvider()),

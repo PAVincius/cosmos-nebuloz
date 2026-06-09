@@ -3,10 +3,10 @@
  * Allows sub-pages under [teamId]/ to import from "../actions".
  */
 export {
+  createTeam,
+  getArts,
   getTeamById,
   getTeams,
-  getArts,
-  createTeam,
-  updateTeamConfig,
   type TeamMember,
+  updateTeamConfig,
 } from "../actions";

@@ -22,7 +22,7 @@ export type CostSummaryResult = {
 export type MonthlyTrendRow = { month: string; cost: number };
 
 export async function costSummaryByTheme(
-  opts: { startDate?: Date; endDate?: Date } = {},
+  opts: { startDate?: Date; endDate?: Date } = {}
 ): Promise<CostSummaryResult> {
   const ctx = await requireTenantSession(await headers());
   const { tenantId } = ctx;
@@ -51,7 +51,7 @@ export async function costSummaryByTheme(
   const themeMap = new Map(themes.map((t) => [t.id, t.title]));
   const totalCost = grouped.reduce(
     (acc, g) => acc + Number(g._sum.effectiveCost ?? 0),
-    0,
+    0
   );
 
   let unmappedCost = 0;

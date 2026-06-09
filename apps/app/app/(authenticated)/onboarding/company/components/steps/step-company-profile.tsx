@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -11,6 +10,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { BuildingIcon } from "lucide-react";
+import { useState } from "react";
 import {
   WizardStepHeader,
   wizardInputClassName,
@@ -31,18 +31,18 @@ const LOCALES = [
   { value: "es-ES", label: "Español" },
 ] as const;
 
-export interface CompanyProfileFormData {
+export type CompanyProfileFormData = {
   legalName: string;
   displayName: string;
   country: string;
   timezone: string;
   locale: string;
-}
+};
 
-interface StepCompanyProfileProps {
+type StepCompanyProfileProps = {
   defaultValues?: Partial<CompanyProfileFormData>;
   onChange: (data: CompanyProfileFormData) => void;
-}
+};
 
 export function StepCompanyProfile({
   defaultValues,
@@ -65,9 +65,9 @@ export function StepCompanyProfile({
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Informações básicas que identificam o tenant no COSMOS."
         icon={<BuildingIcon className="h-4 w-4" />}
         title="Perfil da empresa"
-        description="Informações básicas que identificam o tenant no COSMOS."
       />
 
       <div className="flex flex-col gap-4">
@@ -75,32 +75,32 @@ export function StepCompanyProfile({
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="legalName">
               Nome legal{" "}
-              <span className="text-destructive" aria-hidden>
+              <span aria-hidden className="text-destructive">
                 *
               </span>
             </Label>
             <Input
-              id="legalName"
+              autoFocus
               className={wizardInputClassName}
-              value={data.legalName}
+              id="legalName"
               onChange={(e) => update({ legalName: e.target.value })}
               placeholder="Acme Tecnologia LTDA"
-              autoFocus
+              value={data.legalName}
             />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="displayName">
               Nome de exibição{" "}
-              <span className="text-destructive" aria-hidden>
+              <span aria-hidden className="text-destructive">
                 *
               </span>
             </Label>
             <Input
-              id="displayName"
               className={wizardInputClassName}
-              value={data.displayName}
+              id="displayName"
               onChange={(e) => update({ displayName: e.target.value })}
               placeholder="Acme"
+              value={data.displayName}
             />
           </div>
         </div>
@@ -109,10 +109,10 @@ export function StepCompanyProfile({
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="timezone">Fuso horário</Label>
             <Select
-              value={data.timezone}
               onValueChange={(v) => update({ timezone: v })}
+              value={data.timezone}
             >
-              <SelectTrigger id="timezone" className={wizardInputClassName}>
+              <SelectTrigger className={wizardInputClassName} id="timezone">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -127,10 +127,10 @@ export function StepCompanyProfile({
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="locale">Idioma padrão</Label>
             <Select
-              value={data.locale}
               onValueChange={(v) => update({ locale: v })}
+              value={data.locale}
             >
-              <SelectTrigger id="locale" className={wizardInputClassName}>
+              <SelectTrigger className={wizardInputClassName} id="locale">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -151,7 +151,11 @@ export function StepCompanyProfile({
 export function validateCompanyProfile(
   data: CompanyProfileFormData
 ): string | null {
-  if (!data.legalName.trim()) return "Nome legal é obrigatório.";
-  if (!data.displayName.trim()) return "Nome de exibição é obrigatório.";
+  if (!data.legalName.trim()) {
+    return "Nome legal é obrigatório.";
+  }
+  if (!data.displayName.trim()) {
+    return "Nome de exibição é obrigatório.";
+  }
   return null;
 }

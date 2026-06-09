@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent, CardHeader } from "@repo/design-system/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+} from "@repo/design-system/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -26,63 +29,88 @@ import {
   CheckCircle2Icon,
   CircleDotIcon,
   HandIcon,
-  MinusCircleIcon,
   PlusIcon,
   ShieldCheckIcon,
   Trash2Icon,
 } from "lucide-react";
+import { useState, useTransition } from "react";
 import {
   createRisk,
   deleteRisk,
-  updateRiskStatus,
   type RiskWithPI,
+  updateRiskStatus,
 } from "@/app/actions/risks";
 
 type PIOption = { id: string; name: string; artId: string };
 
-type RoamStatus = "IDENTIFIED" | "RESOLVED" | "OWNED" | "ACCEPTED" | "MITIGATED";
+type RoamStatus =
+  | "IDENTIFIED"
+  | "RESOLVED"
+  | "OWNED"
+  | "ACCEPTED"
+  | "MITIGATED";
 
-const COLUMNS: { status: RoamStatus; label: string; color: string; bgColor: string; icon: React.ReactNode }[] = [
+const COLUMNS: {
+  status: RoamStatus;
+  label: string;
+  color: string;
+  bgColor: string;
+  icon: React.ReactNode;
+}[] = [
   {
     status: "IDENTIFIED",
     label: "Identificado",
     color: "text-gray-600 dark:text-gray-400",
-    bgColor: "bg-gray-50 border-gray-200 dark:bg-gray-900/40 dark:border-gray-700",
-    icon: <AlertTriangleIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />,
+    bgColor:
+      "bg-gray-50 border-gray-200 dark:bg-gray-900/40 dark:border-gray-700",
+    icon: (
+      <AlertTriangleIcon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+    ),
   },
   {
     status: "RESOLVED",
     label: "Resolvido",
     color: "text-green-700 dark:text-green-400",
-    bgColor: "bg-green-50 border-green-200 dark:bg-green-950/40 dark:border-green-800",
-    icon: <CheckCircle2Icon className="h-4 w-4 text-green-600 dark:text-green-400" />,
+    bgColor:
+      "bg-green-50 border-green-200 dark:bg-green-950/40 dark:border-green-800",
+    icon: (
+      <CheckCircle2Icon className="h-4 w-4 text-green-600 dark:text-green-400" />
+    ),
   },
   {
     status: "OWNED",
     label: "Atribuído",
     color: "text-blue-700 dark:text-blue-400",
-    bgColor: "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800",
+    bgColor:
+      "bg-blue-50 border-blue-200 dark:bg-blue-950/40 dark:border-blue-800",
     icon: <HandIcon className="h-4 w-4 text-blue-600 dark:text-blue-400" />,
   },
   {
     status: "ACCEPTED",
     label: "Aceito",
     color: "text-yellow-700 dark:text-yellow-400",
-    bgColor: "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:border-yellow-800",
-    icon: <CircleDotIcon className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />,
+    bgColor:
+      "bg-yellow-50 border-yellow-200 dark:bg-yellow-950/40 dark:border-yellow-800",
+    icon: (
+      <CircleDotIcon className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
+    ),
   },
   {
     status: "MITIGATED",
     label: "Mitigado",
     color: "text-purple-700 dark:text-purple-400",
-    bgColor: "bg-purple-50 border-purple-200 dark:bg-purple-950/40 dark:border-purple-800",
-    icon: <ShieldCheckIcon className="h-4 w-4 text-purple-600 dark:text-purple-400" />,
+    bgColor:
+      "bg-purple-50 border-purple-200 dark:bg-purple-950/40 dark:border-purple-800",
+    icon: (
+      <ShieldCheckIcon className="h-4 w-4 text-purple-600 dark:text-purple-400" />
+    ),
   },
 ];
 
 const IMPACT_COLORS: Record<string, string> = {
   low: "bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300",
-  medium: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300",
+  medium:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-300",
   high: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300",
   critical: "bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300",
 };
@@ -139,11 +167,13 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [isPending, startTransition] = useTransition();
 
-  const filteredRisks = filterPiId === "all"
-    ? risks
-    : risks.filter((r) => r.piPlanId === filterPiId);
+  const filteredRisks =
+    filterPiId === "all"
+      ? risks
+      : risks.filter((r) => r.piPlanId === filterPiId);
 
-  const byStatus = (status: RoamStatus) => filteredRisks.filter((r) => r.status === status);
+  const byStatus = (status: RoamStatus) =>
+    filteredRisks.filter((r) => r.status === status);
 
   const stats = {
     total: filteredRisks.length,
@@ -153,7 +183,7 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
   };
 
   function handleStatusChange(id: string, status: string) {
-    setRisks((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+    setRisks((prev) => prev.map((r) => (r.id === id ? { ...r, status } : r)));
     startTransition(() => updateRiskStatus(id, status));
   }
 
@@ -163,7 +193,9 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
   }
 
   async function handleCreate() {
-    if (!form.title.trim()) return;
+    if (!form.title.trim()) {
+      return;
+    }
     startTransition(async () => {
       await createRisk({
         title: form.title,
@@ -189,7 +221,7 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
       createdAt: new Date(),
       updatedAt: new Date(),
       piPlan: form.piPlanId
-        ? piPlans.find((p) => p.id === form.piPlanId) ?? null
+        ? (piPlans.find((p) => p.id === form.piPlanId) ?? null)
         : null,
     };
     setRisks((prev) => [optimistic, ...prev]);
@@ -202,14 +234,26 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
       {/* Stats */}
       <div className="grid grid-cols-4 gap-3">
         <StatCard label="Total" value={stats.total} />
-        <StatCard label="Críticos" value={stats.critical} className="text-red-600" />
-        <StatCard label="Identificados" value={stats.identified} className="text-gray-600" />
-        <StatCard label="Resolvidos" value={stats.resolved} className="text-green-600" />
+        <StatCard
+          className="text-red-600"
+          label="Críticos"
+          value={stats.critical}
+        />
+        <StatCard
+          className="text-gray-600"
+          label="Identificados"
+          value={stats.identified}
+        />
+        <StatCard
+          className="text-green-600"
+          label="Resolvidos"
+          value={stats.resolved}
+        />
       </div>
 
       {/* Toolbar */}
       <div className="flex items-center gap-3">
-        <Select value={filterPiId} onValueChange={setFilterPiId}>
+        <Select onValueChange={setFilterPiId} value={filterPiId}>
           <SelectTrigger className="w-52">
             <SelectValue placeholder="Filtrar por PI" />
           </SelectTrigger>
@@ -222,32 +266,41 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
             ))}
           </SelectContent>
         </Select>
-        <Button onClick={() => setDialogOpen(true)} className="ml-auto">
-          <PlusIcon className="h-4 w-4 mr-1" /> Novo Risco
+        <Button className="ml-auto" onClick={() => setDialogOpen(true)}>
+          <PlusIcon className="mr-1 h-4 w-4" /> Novo Risco
         </Button>
       </div>
 
       {/* ROAM Kanban */}
-      <div className="grid grid-cols-5 gap-3 min-h-[400px]">
+      <div className="grid min-h-[400px] grid-cols-5 gap-3">
         {COLUMNS.map((col) => {
           const colRisks = byStatus(col.status);
           return (
-            <div key={col.status} className={`rounded-lg border p-3 flex flex-col gap-2 ${col.bgColor}`}>
-              <div className="flex items-center gap-2 mb-1">
+            <div
+              className={`flex flex-col gap-2 rounded-lg border p-3 ${col.bgColor}`}
+              key={col.status}
+            >
+              <div className="mb-1 flex items-center gap-2">
                 {col.icon}
-                <span className={`text-sm font-semibold ${col.color}`}>{col.label}</span>
-                <Badge variant="secondary" className="ml-auto text-xs">{colRisks.length}</Badge>
+                <span className={`font-semibold text-sm ${col.color}`}>
+                  {col.label}
+                </span>
+                <Badge className="ml-auto text-xs" variant="secondary">
+                  {colRisks.length}
+                </Badge>
               </div>
               {colRisks.map((risk) => (
                 <RiskCard
                   key={risk.id}
-                  risk={risk}
-                  onStatusChange={handleStatusChange}
                   onDelete={handleDelete}
+                  onStatusChange={handleStatusChange}
+                  risk={risk}
                 />
               ))}
               {colRisks.length === 0 && (
-                <p className="text-xs text-muted-foreground text-center py-4">Nenhum risco</p>
+                <p className="py-4 text-center text-muted-foreground text-xs">
+                  Nenhum risco
+                </p>
               )}
             </div>
           );
@@ -255,7 +308,7 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
       </div>
 
       {/* Create Dialog */}
-      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>Novo Risco</DialogTitle>
@@ -264,39 +317,57 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
             <div className="grid gap-1">
               <Label>Título</Label>
               <Input
+                onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="Descreva o risco..."
                 value={form.title}
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
               />
             </div>
             <div className="grid gap-1">
               <Label>Descrição</Label>
               <Textarea
+                onChange={(e) =>
+                  setForm({ ...form, description: e.target.value })
+                }
                 placeholder="Contexto e detalhes do risco"
                 rows={3}
                 value={form.description}
-                onChange={(e) => setForm({ ...form, description: e.target.value })}
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1">
                 <Label>Status ROAM</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as RoamStatus })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  onValueChange={(v) =>
+                    setForm({ ...form, status: v as RoamStatus })
+                  }
+                  value={form.status}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {COLUMNS.map((c) => (
-                      <SelectItem key={c.status} value={c.status}>{c.label}</SelectItem>
+                      <SelectItem key={c.status} value={c.status}>
+                        {c.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-1">
                 <Label>Categoria</Label>
-                <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  onValueChange={(v) => setForm({ ...form, category: v })}
+                  value={form.category}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
+                      <SelectItem key={k} value={k}>
+                        {v}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -305,22 +376,36 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
             <div className="grid grid-cols-2 gap-3">
               <div className="grid gap-1">
                 <Label>Impacto</Label>
-                <Select value={form.impact} onValueChange={(v) => setForm({ ...form, impact: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  onValueChange={(v) => setForm({ ...form, impact: v })}
+                  value={form.impact}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {Object.entries(IMPACT_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
+                      <SelectItem key={k} value={k}>
+                        {v}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="grid gap-1">
                 <Label>Probabilidade</Label>
-                <Select value={form.probability} onValueChange={(v) => setForm({ ...form, probability: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
+                <Select
+                  onValueChange={(v) => setForm({ ...form, probability: v })}
+                  value={form.probability}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
                   <SelectContent>
                     {Object.entries(PROBABILITY_LABELS).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
+                      <SelectItem key={k} value={k}>
+                        {v}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -329,12 +414,21 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
             {piPlans.length > 0 && (
               <div className="grid gap-1">
                 <Label>PI Plan (opcional)</Label>
-                <Select value={form.piPlanId || "none"} onValueChange={(v) => setForm({ ...form, piPlanId: v === "none" ? "" : v })}>
-                  <SelectTrigger><SelectValue placeholder="Nenhum" /></SelectTrigger>
+                <Select
+                  onValueChange={(v) =>
+                    setForm({ ...form, piPlanId: v === "none" ? "" : v })
+                  }
+                  value={form.piPlanId || "none"}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Nenhum" />
+                  </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Nenhum</SelectItem>
                     {piPlans.map((p) => (
-                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -342,8 +436,13 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancelar</Button>
-            <Button onClick={handleCreate} disabled={isPending || !form.title.trim()}>
+            <Button onClick={() => setDialogOpen(false)} variant="outline">
+              Cancelar
+            </Button>
+            <Button
+              disabled={isPending || !form.title.trim()}
+              onClick={handleCreate}
+            >
               Criar Risco
             </Button>
           </DialogFooter>
@@ -353,12 +452,20 @@ export function ROAMBoard({ initialRisks, piPlans }: Props) {
   );
 }
 
-function StatCard({ label, value, className }: { label: string; value: number; className?: string }) {
+function StatCard({
+  label,
+  value,
+  className,
+}: {
+  label: string;
+  value: number;
+  className?: string;
+}) {
   return (
     <Card>
       <CardContent className="p-4">
-        <p className="text-xs text-muted-foreground">{label}</p>
-        <p className={`text-2xl font-bold ${className ?? ""}`}>{value}</p>
+        <p className="text-muted-foreground text-xs">{label}</p>
+        <p className={`font-bold text-2xl ${className ?? ""}`}>{value}</p>
       </CardContent>
     </Card>
   );
@@ -378,40 +485,55 @@ function RiskCard({
   return (
     <>
       <Card
-        className="cursor-pointer hover:shadow-sm transition-shadow"
+        className="cursor-pointer transition-shadow hover:shadow-sm"
         onClick={() => setOpen(true)}
       >
         <CardHeader className="p-3 pb-2">
-          <p className="text-xs font-semibold leading-tight">{risk.title}</p>
+          <p className="font-semibold text-xs leading-tight">{risk.title}</p>
         </CardHeader>
-        <CardContent className="p-3 pt-0 flex flex-wrap gap-1">
-          <Badge variant="outline" className={`text-xs ${IMPACT_COLORS[risk.impact]}`}>
+        <CardContent className="flex flex-wrap gap-1 p-3 pt-0">
+          <Badge
+            className={`text-xs ${IMPACT_COLORS[risk.impact]}`}
+            variant="outline"
+          >
             {IMPACT_LABELS[risk.impact]}
           </Badge>
           {risk.category && (
-            <Badge variant="outline" className="text-xs">
+            <Badge className="text-xs" variant="outline">
               {CATEGORY_LABELS[risk.category] ?? risk.category}
             </Badge>
           )}
           {risk.piPlan && (
-            <Badge variant="outline" className="text-xs text-muted-foreground">
+            <Badge className="text-muted-foreground text-xs" variant="outline">
               {risk.piPlan.name}
             </Badge>
           )}
         </CardContent>
       </Card>
 
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>{risk.title}</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 py-2">
-            {risk.description && <p className="text-sm text-muted-foreground">{risk.description}</p>}
+            {risk.description && (
+              <p className="text-muted-foreground text-sm">
+                {risk.description}
+              </p>
+            )}
             <div className="flex flex-wrap gap-2">
-              <Badge className={IMPACT_COLORS[risk.impact]}>{IMPACT_LABELS[risk.impact]}</Badge>
-              <Badge variant="outline">Prob: {PROBABILITY_LABELS[risk.probability] ?? risk.probability}</Badge>
-              {risk.category && <Badge variant="outline">{CATEGORY_LABELS[risk.category] ?? risk.category}</Badge>}
+              <Badge className={IMPACT_COLORS[risk.impact]}>
+                {IMPACT_LABELS[risk.impact]}
+              </Badge>
+              <Badge variant="outline">
+                Prob: {PROBABILITY_LABELS[risk.probability] ?? risk.probability}
+              </Badge>
+              {risk.category && (
+                <Badge variant="outline">
+                  {CATEGORY_LABELS[risk.category] ?? risk.category}
+                </Badge>
+              )}
             </div>
             <div className="grid gap-1">
               <Label className="text-xs">Mover para</Label>
@@ -419,12 +541,12 @@ function RiskCard({
                 {COLUMNS.map((col) => (
                   <Button
                     key={col.status}
-                    variant={risk.status === col.status ? "default" : "outline"}
-                    size="sm"
                     onClick={() => {
                       onStatusChange(risk.id, col.status);
                       setOpen(false);
                     }}
+                    size="sm"
+                    variant={risk.status === col.status ? "default" : "outline"}
                   >
                     {col.icon}
                     <span className="ml-1">{col.label}</span>
@@ -435,17 +557,19 @@ function RiskCard({
           </div>
           <DialogFooter>
             <Button
-              variant="outline"
-              size="sm"
               className="text-destructive hover:text-destructive"
               onClick={() => {
                 onDelete(risk.id);
                 setOpen(false);
               }}
+              size="sm"
+              variant="outline"
             >
-              <Trash2Icon className="h-4 w-4 mr-1" /> Excluir
+              <Trash2Icon className="mr-1 h-4 w-4" /> Excluir
             </Button>
-            <Button variant="outline" onClick={() => setOpen(false)}>Fechar</Button>
+            <Button onClick={() => setOpen(false)} variant="outline">
+              Fechar
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

@@ -11,13 +11,19 @@ model ART {
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 
+  // Story-039 Solution Train linkage
+  solutionTrainId String?
+
   tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   piPlans          PIPlan[]
   teams            Team[]
   themes           ThemeART[]
   sequenceCounters ArtSequenceCounter[]
+  artMemberships   ARTMembership[]
+  solutionTrain    SolutionTrain?       @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
+  @@index([solutionTrainId])
 }
 
 model Team {
@@ -126,7 +132,9 @@ model Risk {
   // Story-019 ROAM fields
   roamStatus           String    @default("UNCLASSIFIED") // UNCLASSIFIED/RESOLVED/OWNED/ACCEPTED/MITIGATED
   severity             Int       @default(3) // 1-5
-  category             String? // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY
+  category             String? // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY/IMPEDIMENT
+  // Story-024 bidirectional impediment link (AC-004)
+  impedimentId         String?
   impact               String    @default("medium")
   probability          String    @default("medium")
   ownerUserId          String?
@@ -210,13 +218,21 @@ model Epic {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  // Story-036 full-text search
+  searchVector Unsupported("tsvector")?
+
+  // Story-039 Solution Train linkage
+  solutionEpicId String?
+
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   features       Feature[]
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
   governedEpic   GovernedEpic?
+  solutionEpic   SolutionEpic?   @relation(fields: [solutionEpicId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([strategicThemeId])
+  @@index([solutionEpicId])
 }
 
 model ArtSequenceCounter {
@@ -269,6 +285,7 @@ model Feature {
   assigneeUserId String? // User responsible (links to User.id logically; no FK to keep it simple)
   startedAt      DateTime? // When statusId first moved to IN_PROGRESS
   completedAt    DateTime? // When statusId was set to DONE
+  deployedAt     DateTime? // Story-025: set when all Stories under feature are DEPLOYED
 
   // External integration fields
   externalId     String? // ID in external tool (Linear issue ID, GitHub issue #, etc.)
@@ -278,12 +295,20 @@ model Feature {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant    Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  epic      Epic?            @relation(fields: [epicId], references: [id], onDelete: SetNull)
-  piPlan    PIPlan?          @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
-  blocks    DependencyLink[] @relation("BlockingFeature")
-  blockedBy DependencyLink[] @relation("BlockedFeature")
-  stories   Story[]
+  // Story-036 full-text search
+  searchVector Unsupported("tsvector")?
+
+  // Story-039 Capability linkage
+  capabilityId String?
+
+  tenant               Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epic                 Epic?                 @relation(fields: [epicId], references: [id], onDelete: SetNull)
+  piPlan               PIPlan?               @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  blocks               DependencyLink[]      @relation("BlockingFeature")
+  blockedBy            DependencyLink[]      @relation("BlockedFeature")
+  stories              Story[]
+  capability           Capability?           @relation(fields: [capabilityId], references: [id], onDelete: SetNull)
+  supplierDeliverables SupplierDeliverable[]
 
   @@index([tenantId])
   @@index([epicId])
@@ -291,6 +316,7 @@ model Feature {
   @@index([assigneeUserId])
   @@index([tenantId, assigneeUserId])
   @@index([externalSource, externalId])
+  @@index([capabilityId])
 }
 
 model ScoringEvent {

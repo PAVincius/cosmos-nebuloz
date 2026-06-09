@@ -1,8 +1,5 @@
 "use client";
 
-import { useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { PackageIcon } from "lucide-react";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   Table,
@@ -12,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
+import { PackageIcon } from "lucide-react";
 
 type Supplier = {
   id: string;
@@ -30,13 +28,13 @@ export function SuppliersTab({
   if (initialSuppliers.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-        <PackageIcon className="text-muted-foreground mb-3 h-8 w-8" />
+        <PackageIcon className="mb-3 h-8 w-8 text-muted-foreground" />
         <p className="text-muted-foreground text-sm">
           Nenhum fornecedor registrado.
         </p>
-        <p className="text-muted-foreground mt-1 text-xs">
+        <p className="mt-1 text-muted-foreground text-xs">
           Gerencie fornecedores na página{" "}
-          <a href="/suppliers" className="underline underline-offset-2">
+          <a className="underline underline-offset-2" href="/suppliers">
             Fornecedores
           </a>
           .
@@ -68,7 +66,9 @@ export function SuppliersTab({
               </TableCell>
               <TableCell>
                 <Badge
-                  variant={supplier.status === "ACTIVE" ? "default" : "secondary"}
+                  variant={
+                    supplier.status === "ACTIVE" ? "default" : "secondary"
+                  }
                 >
                   {supplier.status === "ACTIVE" ? "Ativo" : "Inativo"}
                 </Badge>

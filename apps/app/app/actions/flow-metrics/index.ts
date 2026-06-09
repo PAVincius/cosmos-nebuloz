@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 const FlowScopeSchema = z.enum(["team", "art", "value_stream"]);
-const ScopeIdSchema = z.string().uuid("scopeId deve ser um UUID válido");
+const ScopeIdSchema = z.string().min(1, "scopeId é obrigatório");
 
 export type FlowScope = z.infer<typeof FlowScopeSchema>;
 export type FlowPeriod = "sprint" | "pi" | "quarter";
@@ -86,7 +86,6 @@ export async function getFlowScopeOptions(): Promise<FlowScopeOption[]> {
   ];
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: pre-existing — large data aggregation function, refactor tracked separately
 export async function getFlowMetrics(
   scope: FlowScope,
   scopeId: string

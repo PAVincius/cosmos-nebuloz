@@ -1,0 +1,45 @@
+// Story-038: RBAC models — ART-scoped membership and custom roles
+
+model ARTMembership {
+  id       String @id @default(cuid())
+  tenantId String
+  artId    String
+  userId   String
+  role     String @default("MEMBER") // SaFeRole: ADMIN|STE|RTE|PO|SM|DEV|MEMBER
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art    ART    @relation(fields: [artId], references: [id], onDelete: Cascade)
+
+  @@unique([artId, userId])
+  @@index([tenantId])
+  @@index([artId])
+  @@index([userId])
+}
+
+model CustomRole {
+  id          String   @id @default(cuid())
+  tenantId    String
+  name        String
+  permissions String[] @default([])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tenant      Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assignments CustomRoleAssignment[]
+
+  @@unique([tenantId, name])
+  @@index([tenantId])
+}
+
+model CustomRoleAssignment {
+  id           String @id @default(cuid())
+  tenantId     String
+  userId       String
+  customRoleId String
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customRole CustomRole @relation(fields: [customRoleId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId, customRoleId])
+  @@index([tenantId, userId])
+}

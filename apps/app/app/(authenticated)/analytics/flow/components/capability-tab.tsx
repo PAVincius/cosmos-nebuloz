@@ -8,7 +8,9 @@ import { CapabilityPrivacyNotice } from "./capability-privacy-notice";
 type TeamRow = {
   id: string;
   name: string;
-  capabilities: Partial<Record<string, { deliveredSp: number; confidenceLevel: number }>>;
+  capabilities: Partial<
+    Record<string, { deliveredSp: number; confidenceLevel: number }>
+  >;
 };
 
 type GapRow = {
@@ -32,19 +34,22 @@ export function CapabilityTab({ teams, gaps }: Props) {
       <CapabilityPrivacyNotice />
 
       <div>
-        <h3 className="mb-1 text-sm font-semibold">Team Capability Matrix</h3>
-        <p className="mb-2 text-xs text-muted-foreground">
+        <h3 className="mb-1 font-semibold text-sm">Team Capability Matrix</h3>
+        <p className="mb-2 text-muted-foreground text-xs">
           Capacidade técnica agregada por time × skill. Sem dados individuais.
         </p>
-        <CapabilityMatrix teams={teams} taskTypes={TASK_TYPES} />
+        <CapabilityMatrix taskTypes={TASK_TYPES} teams={teams} />
       </div>
 
       {gaps.length > 0 && (
         <div>
-          <h3 className="mb-2 text-sm font-semibold">Capability Gaps</h3>
+          <h3 className="mb-2 font-semibold text-sm">Capability Gaps</h3>
           <div className="grid gap-2 md:grid-cols-2">
             {gaps.map((g) => (
-              <CapabilityGapCard key={`${g.teamId}-${g.initiativeId}`} gap={g} />
+              <CapabilityGapCard
+                gap={g}
+                key={`${g.teamId}-${g.initiativeId}`}
+              />
             ))}
           </div>
         </div>

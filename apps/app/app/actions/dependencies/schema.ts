@@ -10,6 +10,18 @@ export type DependencyWithFeatures = {
   notes: string | null;
   dueDate: Date | null;
   createdAt: Date;
-  blockingFeature: { id: string; title: string; statusId: string; epicId: string | null; epic: { id: string; title: string } | null };
-  blockedFeature: { id: string; title: string; statusId: string; epicId: string | null; epic: { id: string; title: string } | null };
+  blockingFeature: {
+    id: string;
+    title: string;
+    statusId: string;
+    epicId: string | null;
+    epic: { id: string; title: string } | null;
+  };
+  blockedFeature: {
+    id: string;
+    title: string;
+    statusId: string;
+    epicId: string | null;
+    epic: { id: string; title: string } | null;
+  };
 };

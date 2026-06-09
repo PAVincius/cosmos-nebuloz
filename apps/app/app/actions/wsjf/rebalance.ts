@@ -1,25 +1,33 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import {
+  createRebalanceTrace,
+  flushLangfuse,
+  resolveModelName,
+} from "@repo/ai/lib/langfuse";
+import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { generateObject } from "ai";
-import { getAIModel, getActiveProvider } from "@repo/ai/lib/models";
-import { createRebalanceTrace, resolveModelName, flushLangfuse } from "@repo/ai/lib/langfuse";
+import { headers } from "next/headers";
 import { z } from "zod";
 import { getMemberVelocityStats } from "@/app/actions/velocity";
 import { getWSJFConfig } from "@/app/actions/wsjf";
-import type { AIAccessStatus, FeatureSuggestion, RebalancingResult } from "./rebalance-schema";
+import type {
+  AIAccessStatus,
+  FeatureSuggestion,
+  RebalancingResult,
+} from "./rebalance-schema";
 
 export type { AIAccessStatus, FeatureSuggestion, RebalancingResult };
 
 // ─── Plan gating ─────────────────────────────────────────────────────────────
 
 const AI_REBALANCE_LIMITS: Record<string, number> = {
-  ORBIT:    1,   // trial vitalício
-  GALAXY:   5,   // por PI
-  NEBULA:   20,  // por PI
-  UNIVERSE: Infinity,
+  ORBIT: 1, // trial vitalício
+  GALAXY: 5, // por PI
+  NEBULA: 20, // por PI
+  UNIVERSE: Number.POSITIVE_INFINITY,
 };
 
 type AIUsageMeta = {
@@ -35,13 +43,17 @@ export async function getAIAccessStatus(): Promise<AIAccessStatus> {
     where: { id: ctx.tenantId },
     select: { plan: true, metadata: true },
   });
-  if (!tenant) throw new Error("Tenant não encontrado");
+  if (!tenant) {
+    throw new Error("Tenant não encontrado");
+  }
 
   const plan = tenant.plan as string;
   const limit = AI_REBALANCE_LIMITS[plan] ?? 0;
   // Use dedicated namespace `wsjfAiUsage` to avoid collision with copilot chat quota
   // which writes to `aiUsage` with different field names (copilotUsedTotal etc.)
-  const rawUsage = (tenant.metadata as Record<string, unknown>)?.wsjfAiUsage as Partial<AIUsageMeta> | undefined;
+  const rawUsage = (tenant.metadata as Record<string, unknown>)?.wsjfAiUsage as
+    | Partial<AIUsageMeta>
+    | undefined;
   const meta: AIUsageMeta = {
     currentPiId: rawUsage?.currentPiId ?? null,
     usedThisPi: rawUsage?.usedThisPi ?? 0,
@@ -58,8 +70,15 @@ export async function getAIAccessStatus(): Promise<AIAccessStatus> {
   const piChanged = currentPiId && currentPiId !== meta.currentPiId;
   const usedThisPi = piChanged ? 0 : meta.usedThisPi;
 
-  if (limit === Infinity) {
-    return { allowed: true, plan, limit, usedThisPi, usedTotal: meta.usedTotal, remainingUses: -1 };
+  if (limit === Number.POSITIVE_INFINITY) {
+    return {
+      allowed: true,
+      plan,
+      limit,
+      usedThisPi,
+      usedTotal: meta.usedTotal,
+      remainingUses: -1,
+    };
   }
 
   // ORBIT: lifetime limit (1 trial)
@@ -72,7 +91,9 @@ export async function getAIAccessStatus(): Promise<AIAccessStatus> {
       usedThisPi: meta.usedTotal,
       usedTotal: meta.usedTotal,
       remainingUses: Math.max(0, limit - meta.usedTotal),
-      reason: allowed ? undefined : "Seu plano ORBIT inclui 1 uso trial gratuito. Faça upgrade para continuar.",
+      reason: allowed
+        ? undefined
+        : "Seu plano ORBIT inclui 1 uso trial gratuito. Faça upgrade para continuar.",
     };
   }
 
@@ -84,7 +105,9 @@ export async function getAIAccessStatus(): Promise<AIAccessStatus> {
     usedThisPi,
     usedTotal: meta.usedTotal,
     remainingUses: Math.max(0, limit - usedThisPi),
-    reason: allowed ? undefined : `Limite de ${limit} usos por PI atingido no plano ${plan}. Próximo PI libera novo ciclo.`,
+    reason: allowed
+      ? undefined
+      : `Limite de ${limit} usos por PI atingido no plano ${plan}. Próximo PI libera novo ciclo.`,
   };
 }
 
@@ -142,9 +165,16 @@ const IMPACT_FACTOR_VALUES = [
 type ImpactFactor = (typeof IMPACT_FACTOR_VALUES)[number];
 
 function normalizeImpactFactor(raw: unknown): ImpactFactor {
-  if (typeof raw !== "string") return "priority_drift";
-  const s = raw.trim().toLowerCase().replace(/[\s-]+/g, "_");
-  if ((IMPACT_FACTOR_VALUES as readonly string[]).includes(s)) return s as ImpactFactor;
+  if (typeof raw !== "string") {
+    return "priority_drift";
+  }
+  const s = raw
+    .trim()
+    .toLowerCase()
+    .replace(/[\s-]+/g, "_");
+  if ((IMPACT_FACTOR_VALUES as readonly string[]).includes(s)) {
+    return s as ImpactFactor;
+  }
   const aliases: Record<string, ImpactFactor> = {
     capacidade: "team_capacity",
     capacidade_do_time: "team_capacity",
@@ -214,7 +244,9 @@ async function buildPortfolioContext(tenantId: string) {
   const assigneeIds = [
     ...new Set(
       epics.flatMap((e) =>
-        e.features.map((f) => f.assigneeUserId).filter((id): id is string => !!id)
+        e.features
+          .map((f) => f.assigneeUserId)
+          .filter((id): id is string => !!id)
       )
     ),
   ];
@@ -246,7 +278,9 @@ async function buildPortfolioContext(tenantId: string) {
         rr: f.rr,
         js: f.js,
         wsjf: f.wsjfScore,
-        velSP: f.assigneeUserId ? (velocityMap[f.assigneeUserId] ?? null) : null,
+        velSP: f.assigneeUserId
+          ? (velocityMap[f.assigneeUserId] ?? null)
+          : null,
         // Send counts only — UUID arrays add noise without semantic value
         blocks: f.blocks.length,
         blockedBy: f.blockedBy.length,
@@ -267,7 +301,9 @@ async function buildPortfolioContext(tenantId: string) {
 
 // ─── Title lookup ─────────────────────────────────────────────────────────────
 
-function buildTitleMap(context: PortfolioContext): Map<string, { featureTitle: string; epicTitle: string }> {
+function buildTitleMap(
+  context: PortfolioContext
+): Map<string, { featureTitle: string; epicTitle: string }> {
   const map = new Map<string, { featureTitle: string; epicTitle: string }>();
   for (const epic of context.epics) {
     for (const f of epic.features) {
@@ -279,7 +315,10 @@ function buildTitleMap(context: PortfolioContext): Map<string, { featureTitle: s
 
 // ─── Role personas ────────────────────────────────────────────────────────────
 
-const ROLE_PERSONAS: Record<string, { title: string; audience: string; tone: string }> = {
+const ROLE_PERSONAS: Record<
+  string,
+  { title: string; audience: string; tone: string }
+> = {
   ADMIN: {
     title: "Administrador de Plataforma",
     audience: "liderança executiva e gestores de portfólio",
@@ -342,9 +381,20 @@ function buildWSJFMessages(context: PortfolioContext, role: string) {
   const persona = ROLE_PERSONAS[role] ?? ROLE_PERSONAS.RTE;
   const features = context.epics.flatMap((e) =>
     e.features.map((f) => ({
-      id: f.id, epic: e.title, title: f.title, status: f.status,
-      sp: f.sp, bv: f.bv, tc: f.tc, rr: f.rr, js: f.js, wsjf: f.wsjf,
-      velSP: f.velSP, blocks: f.blocks, blockedBy: f.blockedBy, completedAt: f.completedAt,
+      id: f.id,
+      epic: e.title,
+      title: f.title,
+      status: f.status,
+      sp: f.sp,
+      bv: f.bv,
+      tc: f.tc,
+      rr: f.rr,
+      js: f.js,
+      wsjf: f.wsjf,
+      velSP: f.velSP,
+      blocks: f.blocks,
+      blockedBy: f.blockedBy,
+      completedAt: f.completedAt,
     }))
   );
 
@@ -400,7 +450,9 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
   const context = await buildPortfolioContext(ctx.tenantId);
 
   if (context.totalFeatures === 0) {
-    throw new Error("Nenhuma feature encontrada no portfólio para rebalancear.");
+    throw new Error(
+      "Nenhuma feature encontrada no portfólio para rebalancear."
+    );
   }
 
   const userRole = ctx.role as string;
@@ -417,7 +469,10 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
   });
 
   // ── Agent 1: Context Collector (no AI) ──────────────────────────────────
-  const span1 = trace?.span({ name: "agent-1-context-collector", input: { tenantId: ctx.tenantId } });
+  const span1 = trace?.span({
+    name: "agent-1-context-collector",
+    input: { tenantId: ctx.tenantId },
+  });
   span1?.end({
     output: {
       totalEpics: context.totalEpics,
@@ -435,7 +490,11 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
     name: "agent-wsjf-rebalancer",
     model: modelName,
     input: messages,
-    metadata: { role: userRole, provider, schemaFields: Object.keys(RebalancingLLMSchema.shape) },
+    metadata: {
+      role: userRole,
+      provider,
+      schemaFields: Object.keys(RebalancingLLMSchema.shape),
+    },
   });
 
   const { object: raw, usage } = await generateObject({
@@ -450,11 +509,16 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
   });
 
   gen?.end({
-    output: { modifiedCount: raw.modifiedCount, unchangedCount: raw.unchangedCount },
+    output: {
+      modifiedCount: raw.modifiedCount,
+      unchangedCount: raw.unchangedCount,
+    },
     usage: {
       input: usage.inputTokens,
       output: usage.outputTokens,
-      total: usage.totalTokens ?? (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0),
+      total:
+        usage.totalTokens ??
+        (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0),
       unit: "TOKENS",
     },
   });
@@ -466,7 +530,9 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
     featureTitle: titleMap.get(s.featureId)?.featureTitle ?? s.featureId,
     epicTitle: titleMap.get(s.featureId)?.epicTitle ?? "",
   }));
-  const confident = enriched.filter((s) => s.confidence >= CONFIDENCE_THRESHOLD);
+  const confident = enriched.filter(
+    (s) => s.confidence >= CONFIDENCE_THRESHOLD
+  );
   const result: RebalancingResult = {
     ...raw,
     suggestions: confident,
@@ -480,22 +546,29 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
   trace?.score({ name: "features_modified", value: result.modifiedCount });
   trace?.score({
     name: "modification_rate",
-    value: context.totalFeatures > 0
-      ? Math.round((result.modifiedCount / context.totalFeatures) * 100) / 100
-      : 0,
+    value:
+      context.totalFeatures > 0
+        ? Math.round((result.modifiedCount / context.totalFeatures) * 100) / 100
+        : 0,
   });
   trace?.score({ name: "total_tokens_used", value: totalTokens });
   trace?.update({
-    output: { modifiedCount: result.modifiedCount, unchangedCount: result.unchangedCount, totalTokens },
+    output: {
+      modifiedCount: result.modifiedCount,
+      unchangedCount: result.unchangedCount,
+      totalTokens,
+    },
     metadata: {
-      avgDelta: result.suggestions.length > 0
-        ? Math.round(
-            result.suggestions
-              .filter((s) => s.delta !== 0)
-              .reduce((sum, s) => sum + Math.abs(s.delta), 0) /
-            Math.max(result.modifiedCount, 1) * 10
-          ) / 10
-        : 0,
+      avgDelta:
+        result.suggestions.length > 0
+          ? Math.round(
+              (result.suggestions
+                .filter((s) => s.delta !== 0)
+                .reduce((sum, s) => sum + Math.abs(s.delta), 0) /
+                Math.max(result.modifiedCount, 1)) *
+                10
+            ) / 10
+          : 0,
     },
   });
 

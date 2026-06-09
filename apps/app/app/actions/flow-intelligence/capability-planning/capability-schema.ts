@@ -1,6 +1,14 @@
 import { z } from "zod";
 
-export const TASK_TYPES = ["backend", "frontend", "ml", "infra", "qa", "data", "design"] as const;
+export const TASK_TYPES = [
+  "backend",
+  "frontend",
+  "ml",
+  "infra",
+  "qa",
+  "data",
+  "design",
+] as const;
 export type TaskType = (typeof TASK_TYPES)[number];
 
 export const teamCapabilitySchema = z.object({
@@ -12,7 +20,7 @@ export const teamCapabilitySchema = z.object({
       deliveredSp: z.number().min(0),
       avgCycleTimeHours: z.number().min(0),
       confidenceLevel: z.number().min(0).max(1),
-    }),
+    })
   ),
   windowSprints: z.number().int().positive(),
 });
@@ -37,7 +45,7 @@ export const capabilityGapSchema = z.object({
       capability: z.number(),
       gap: z.number(),
       weight: z.number(),
-    }),
+    })
   ),
   recommendation: z.string(),
 });

@@ -1,18 +1,26 @@
 // apps/app/app/(authenticated)/portfolio/budgets/page.tsx
-import { getLeanBudgets } from "@/app/actions/lean-budget";
+
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { getARTs } from "@/app/actions/arts/get-arts";
-import { getBudgetOverview } from "@/app/actions/billing/snapshots";
 import { listBillingIntegrations } from "@/app/actions/billing";
+import { getBudgetOverview } from "@/app/actions/billing/snapshots";
+import { getLeanBudgets } from "@/app/actions/lean-budget";
+import { appDesign } from "@/lib/app-design";
 import { BudgetDashboard } from "./components/budget-dashboard";
 
 export const metadata = {
   title: "Lean Budget — COSMOS",
-  description: "FinOps: controle de orçamento por Tema SAFe com custo real de nuvem.",
+  description:
+    "FinOps: controle de orçamento por Tema SAFe com custo real de nuvem.",
 };
 
 export default async function LeanBudgetPage() {
-  const periodStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
-  const periodEnd   = new Date();
+  const periodStart = new Date(
+    new Date().getFullYear(),
+    new Date().getMonth(),
+    1
+  );
+  const periodEnd = new Date();
 
   const [budgets, rawArts, overview, integrations] = await Promise.all([
     getLeanBudgets(),
@@ -26,21 +34,21 @@ export default async function LeanBudgetPage() {
   const billingIntegrations = integrations.ok ? integrations.data : [];
 
   return (
-    <div className="flex h-full min-w-0 flex-col">
-      <div className="flex items-center justify-between border-b px-6 py-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Lean Budget</h1>
-          <p className="text-muted-foreground text-sm mt-0.5">
-            Custo real de nuvem mapeado para Temas SAFe.
-          </p>
-        </div>
-      </div>
-      <div className="min-w-0 flex-1 overflow-y-auto p-6">
+    <div className={appDesign.shell}>
+      <PageHeader
+        breadcrumb={[
+          { label: "Portfolio", href: "/portfolio" },
+          { label: "Lean Budget" },
+        ]}
+        subtitle="Custo real de nuvem mapeado para Temas SAFe."
+        title="Lean Budget"
+      />
+      <div className={appDesign.bodyScroll}>
         <BudgetDashboard
-          initialBudgets={budgets}
           arts={arts}
-          overviewData={overviewData}
           billingIntegrations={billingIntegrations}
+          initialBudgets={budgets}
+          overviewData={overviewData}
         />
       </div>
     </div>

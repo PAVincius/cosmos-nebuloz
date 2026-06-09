@@ -1,6 +1,6 @@
 export function chunkText(
   text: string,
-  opts: { targetChars?: number; overlap?: number } = {},
+  opts: { targetChars?: number; overlap?: number } = {}
 ): string[] {
   const target = opts.targetChars ?? 1500;
   const overlap = opts.overlap ?? 150;
@@ -17,7 +17,7 @@ export function chunkText(
       }
       buf =
         overlap > 0 && chunks.length > 0
-          ? chunks[chunks.length - 1].slice(-overlap) + "\n\n" + p
+          ? `${chunks.at(-1).slice(-overlap)}\n\n${p}`
           : p;
     } else {
       buf = buf ? `${buf}\n\n${p}` : p;

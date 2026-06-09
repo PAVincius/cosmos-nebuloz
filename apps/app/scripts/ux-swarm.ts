@@ -15,12 +15,12 @@
 
 import { spawnSync } from "node:child_process";
 import path from "node:path";
-import { readAllFindings, readPersonaFindings } from "../e2e/swarm/state";
 import {
   buildSwarmReport,
   renderMarkdownReport,
   saveReport,
 } from "../e2e/swarm/reporter";
+import { readAllFindings, readPersonaFindings } from "../e2e/swarm/state";
 import type { PersonaId, PersonaReport } from "../e2e/swarm/types";
 
 const PERSONAS: PersonaId[] = ["lpm", "rte", "po", "sm", "devops"];
@@ -87,7 +87,7 @@ function generateReport(): void {
       persona,
       role: PERSONA_ROLES[persona],
       startedAt: findings[0]?.timestamp ?? Date.now(),
-      completedAt: findings[findings.length - 1]?.timestamp ?? Date.now(),
+      completedAt: findings.at(-1)?.timestamp ?? Date.now(),
       findings,
       flowsAttempted,
       flowsCompleted,
@@ -102,7 +102,7 @@ function generateReport(): void {
   const report = buildSwarmReport(personaReports);
   const reportPath = saveReport(report);
 
-  console.log("\n" + "=".repeat(60));
+  console.log(`\n${"=".repeat(60)}`);
   console.log(renderMarkdownReport(report));
   console.log("=".repeat(60));
   console.log(`\n📁 Report saved to: ${reportPath}`);
@@ -113,9 +113,7 @@ function generateReport(): void {
       `\n🔴 ${report.crossPersonaIssues.length} cross-persona issue(s) (multi-role impact):`
     );
     for (const issue of report.crossPersonaIssues.slice(0, 3)) {
-      console.log(
-        `   [${issue.severity.toUpperCase()}] ${issue.description}`
-      );
+      console.log(`   [${issue.severity.toUpperCase()}] ${issue.description}`);
       console.log(`   Affects: ${issue.affectedPersonas.join(", ")}`);
     }
   }

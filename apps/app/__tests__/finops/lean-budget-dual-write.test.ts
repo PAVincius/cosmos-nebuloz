@@ -15,7 +15,7 @@ describe("LeanBudget dual-write parity", () => {
   });
 
   it("spent=99999999.99 matches Decimal within 0.01", () => {
-    const spent = 99999999.99;
+    const spent = 99_999_999.99;
     const spentDecimal = Number("99999999.99");
     expect(Math.abs(spent - spentDecimal)).toBeLessThan(0.01);
   });

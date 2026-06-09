@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@repo/auth/server", () => ({
   requireTenantSession: vi.fn().mockResolvedValue({ tenantId: "t1" }),
@@ -13,20 +13,27 @@ vi.mock("@repo/database", () => ({
         { themeId: null, _sum: { effectiveCost: "300.00" } },
       ]),
       findMany: vi.fn().mockResolvedValue([]),
-      aggregate: vi.fn().mockResolvedValue({ _sum: { effectiveCost: "5432.10" } }),
+      aggregate: vi
+        .fn()
+        .mockResolvedValue({ _sum: { effectiveCost: "5432.10" } }),
     },
     strategicTheme: {
-      findMany: vi.fn().mockResolvedValue([
-        { id: "theme-1", title: "Cloud Modernization" },
-      ]),
+      findMany: vi
+        .fn()
+        .mockResolvedValue([{ id: "theme-1", title: "Cloud Modernization" }]),
     },
     epic: {
-      findFirst: vi.fn().mockResolvedValue({ id: "epic-1", themeId: "theme-1" }),
+      findFirst: vi
+        .fn()
+        .mockResolvedValue({ id: "epic-1", strategicThemeId: "theme-1" }),
     },
   },
 }));
 
-import { costSummaryByTheme, costTrendByMonth } from "@/app/actions/billing/cost-summary";
+import {
+  costSummaryByTheme,
+  costTrendByMonth,
+} from "@/app/actions/billing/cost-summary";
 import { getEpicCost } from "@/app/actions/billing/epic-cost";
 
 describe("costSummaryByTheme", () => {

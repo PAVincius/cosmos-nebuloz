@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { TrainFrontIcon, PlusIcon, InfoIcon } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -15,6 +12,9 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { InfoIcon, PlusIcon, TrainFrontIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { createART } from "../../../actions/arts/get-arts";
 
 const CADENCE_PRESETS = [
@@ -65,7 +65,7 @@ export function CreateARTDialog() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -75,7 +75,7 @@ export function CreateARTDialog() {
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
               <TrainFrontIcon className="h-5 w-5 text-primary" />
             </div>
@@ -93,12 +93,12 @@ export function CreateARTDialog() {
               Nome do ART <span className="text-destructive">*</span>
             </Label>
             <Input
+              autoFocus
               id="art-name"
-              placeholder="ex: Plataforma Digital, Core Banking..."
-              value={name}
               onChange={(e) => setName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-              autoFocus
+              placeholder="ex: Plataforma Digital, Core Banking..."
+              value={name}
             />
           </div>
 
@@ -114,20 +114,20 @@ export function CreateARTDialog() {
             <div className="grid grid-cols-3 gap-2">
               {CADENCE_PRESETS.map((preset) => (
                 <button
-                  key={preset.value}
-                  type="button"
-                  onClick={() => {
-                    setCadence(preset.value);
-                    setCustomCadence("");
-                  }}
                   className={`flex flex-col items-center rounded-lg border px-3 py-2.5 text-sm transition-colors ${
                     cadence === preset.value && !customCadence
                       ? "border-primary bg-primary/10 text-primary"
                       : "border-border hover:border-primary/50 hover:bg-muted/50"
                   }`}
+                  key={preset.value}
+                  onClick={() => {
+                    setCadence(preset.value);
+                    setCustomCadence("");
+                  }}
+                  type="button"
                 >
                   <span className="font-semibold">{preset.label}</span>
-                  <span className="text-muted-foreground text-xs mt-0.5">
+                  <span className="mt-0.5 text-muted-foreground text-xs">
                     {preset.desc}
                   </span>
                 </button>
@@ -136,24 +136,28 @@ export function CreateARTDialog() {
 
             <div className="flex items-center gap-2">
               <div className="h-px flex-1 bg-border" />
-              <span className="text-muted-foreground text-xs">ou personalizado</span>
+              <span className="text-muted-foreground text-xs">
+                ou personalizado
+              </span>
               <div className="h-px flex-1 bg-border" />
             </div>
 
             <div className="flex items-center gap-2">
               <Input
-                type="number"
-                min={4}
+                className="w-28 text-center"
                 max={26}
-                placeholder="ex: 14"
-                value={customCadence}
+                min={4}
                 onChange={(e) => {
                   setCustomCadence(e.target.value);
                   setCadence(0);
                 }}
-                className="w-28 text-center"
+                placeholder="ex: 14"
+                type="number"
+                value={customCadence}
               />
-              <span className="text-muted-foreground text-sm">semanas (4–26)</span>
+              <span className="text-muted-foreground text-sm">
+                semanas (4–26)
+              </span>
             </div>
           </div>
 
@@ -173,20 +177,18 @@ export function CreateARTDialog() {
             </span>
           </div>
 
-          {error && (
-            <p className="text-destructive text-sm">{error}</p>
-          )}
+          {error && <p className="text-destructive text-sm">{error}</p>}
         </div>
 
         <DialogFooter>
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !name.trim()}>
+          <Button disabled={isPending || !name.trim()} onClick={handleSubmit}>
             {isPending ? "Criando..." : "Criar ART"}
           </Button>
         </DialogFooter>

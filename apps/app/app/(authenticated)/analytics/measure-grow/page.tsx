@@ -1,8 +1,11 @@
-import { listAllAssessments, listAllImprovementActions } from "@/app/actions/measure-grow";
-import { getFlowScopeOptions } from "@/app/actions/flow-metrics";
+import { CheckCircle2Icon, StarIcon, TrendingUpIcon } from "lucide-react";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getFlowScopeOptions } from "@/app/actions/flow-metrics";
+import {
+  listAllAssessments,
+  listAllImprovementActions,
+} from "@/app/actions/measure-grow";
 import { appDesign } from "@/lib/app-design";
-import { StarIcon, TrendingUpIcon, CheckCircle2Icon } from "lucide-react";
 import { MeasureGrowDashboard } from "./components/measure-grow-dashboard";
 
 export const metadata = {
@@ -19,15 +22,17 @@ export default async function MeasureGrowPage() {
 
   // Normalise FlowScopeOption (type: FlowScope) into the generic ScopeOption shape
   const scopes = scopeOptions.map((s) => ({
-    id:    s.id,
+    id: s.id,
     label: s.label,
-    type:  s.type as string,
+    type: s.type as string,
   }));
 
   const avgScore =
     assessments.length > 0
       ? Math.round(
-          (assessments.reduce((sum, a) => sum + a.score, 0) / assessments.length) * 10
+          (assessments.reduce((sum, a) => sum + a.score, 0) /
+            assessments.length) *
+            10
         ) / 10
       : 0;
 
@@ -37,32 +42,36 @@ export default async function MeasureGrowPage() {
 
   // Normalise Prisma result to the component's ActionItem shape
   const actionItems = actions.map((a) => ({
-    id:            a.id,
-    title:         a.title,
-    description:   a.description,
-    status:        a.status,
+    id: a.id,
+    title: a.title,
+    description: a.description,
+    status: a.status,
     relatedMetric: a.relatedMetric,
-    dueDate:       a.dueDate,
-    scope:         a.scope,
-    scopeId:       a.scopeId,
+    dueDate: a.dueDate,
+    scope: a.scope,
+    scopeId: a.scopeId,
   }));
 
   return (
     <div className={appDesign.shell}>
       <PageHeader
         breadcrumb={[{ label: "Analytics", href: "/analytics" }]}
-        title="Measure & Grow"
-        subtitle="Avalie as competências SAFe da organização e registre ações de melhoria ligadas às Flow Metrics."
         stats={[
-          { label: "Assessments",   value: assessments.length, icon: StarIcon },
-          { label: "Score Médio",   value: `${avgScore}/5`,    icon: TrendingUpIcon },
-          { label: "Ações Abertas", value: openCount,          icon: CheckCircle2Icon },
+          { label: "Assessments", value: assessments.length, icon: StarIcon },
+          {
+            label: "Score Médio",
+            value: `${avgScore}/5`,
+            icon: TrendingUpIcon,
+          },
+          { label: "Ações Abertas", value: openCount, icon: CheckCircle2Icon },
         ]}
+        subtitle="Avalie as competências SAFe da organização e registre ações de melhoria ligadas às Flow Metrics."
+        title="Measure & Grow"
       />
       <div className={appDesign.bodyScroll}>
         <MeasureGrowDashboard
-          assessments={assessments}
           actions={actionItems}
+          assessments={assessments}
           scopes={scopes}
         />
       </div>

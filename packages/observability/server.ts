@@ -11,18 +11,22 @@ export const initializeSentry = (): ReturnType<typeof Sentry.init> =>
   Sentry.init({
     dsn: keys().NEXT_PUBLIC_SENTRY_DSN,
 
-    // Enable logging
     enableLogs: true,
-
-    // Adjust this value in production, or use tracesSampler for greater control
-    tracesSampleRate: 1,
-
-    // Setting this option to true will print useful information to the console while you're setting up Sentry.
+    tracesSampleRate: 0.1,
     debug: false,
 
-    // Integrations for console logging
     integrations: [
-      // Send console.log, console.error, and console.warn calls as logs to Sentry
       Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
     ],
+
+    // AC-006: strip PII from all Sentry events (Story-035)
+    beforeSend(event) {
+      if (event.user) {
+        event.user = { id: event.user.id };
+      }
+      if (event.request?.data) {
+        event.request.data = "[Filtered]";
+      }
+      return event;
+    },
   });

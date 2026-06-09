@@ -10,7 +10,12 @@ import type {
   ProgramBoardDependency,
   ProgramBoardFeature,
 } from "./schema";
-export type { ProgramBoardCell, ProgramBoardData, ProgramBoardDependency, ProgramBoardFeature };
+export type {
+  ProgramBoardCell,
+  ProgramBoardData,
+  ProgramBoardDependency,
+  ProgramBoardFeature,
+};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nnStr, optStr, optCuid, cuid } from "@/app/actions/_base";
+import { cuid, optCuid, optStr } from "@/app/actions/_base";
 
 export const GovernanceStatusSchema = z.enum([
   "draft",

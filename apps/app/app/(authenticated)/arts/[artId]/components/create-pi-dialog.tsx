@@ -1,8 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { CalendarIcon, PlusIcon, SparklesIcon } from "lucide-react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -15,6 +12,9 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { CalendarIcon, PlusIcon, SparklesIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { createPIPlan } from "../../../../actions/arts/pi-plans";
 
 type CreatePIDialogProps = {
@@ -88,7 +88,7 @@ export function CreatePIDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -98,13 +98,13 @@ export function CreatePIDialog({
 
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <div className="flex items-center gap-3 mb-1">
+          <div className="mb-1 flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10">
               <CalendarIcon className="h-5 w-5 text-primary" />
             </div>
             <div>
               <DialogTitle>Novo Program Increment</DialogTitle>
-              <p className="text-muted-foreground text-xs mt-0.5">{artName}</p>
+              <p className="mt-0.5 text-muted-foreground text-xs">{artName}</p>
             </div>
           </div>
           <DialogDescription>
@@ -125,11 +125,11 @@ export function CreatePIDialog({
               </span>
             </div>
             <Input
+              autoFocus
               id="pi-name"
+              onChange={(e) => setName(e.target.value)}
               placeholder="ex: PI 1, PI 2024-Q1..."
               value={name}
-              onChange={(e) => setName(e.target.value)}
-              autoFocus
             />
           </div>
 
@@ -138,19 +138,19 @@ export function CreatePIDialog({
               <Label htmlFor="pi-start">Início</Label>
               <Input
                 id="pi-start"
+                onChange={(e) => handleStartDateChange(e.target.value)}
                 type="date"
                 value={startDate}
-                onChange={(e) => handleStartDateChange(e.target.value)}
               />
             </div>
             <div className="flex flex-col gap-2">
               <Label htmlFor="pi-end">Término</Label>
               <Input
                 id="pi-end"
-                type="date"
-                value={endDate}
                 min={startDate}
                 onChange={(e) => setEndDate(e.target.value)}
+                type="date"
+                value={endDate}
               />
             </div>
           </div>
@@ -159,17 +159,17 @@ export function CreatePIDialog({
             <div className="rounded-lg bg-muted/50 px-4 py-3">
               <div className="grid grid-cols-3 gap-3 text-center">
                 <div>
-                  <p className="text-lg font-semibold">{durationDays}</p>
+                  <p className="font-semibold text-lg">{durationDays}</p>
                   <p className="text-muted-foreground text-xs">dias</p>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold">
+                  <p className="font-semibold text-lg">
                     {Math.round(durationDays / 7)}
                   </p>
                   <p className="text-muted-foreground text-xs">semanas</p>
                 </div>
                 <div>
-                  <p className="text-lg font-semibold">{sprintCount}</p>
+                  <p className="font-semibold text-lg">{sprintCount}</p>
                   <p className="text-muted-foreground text-xs">sprints</p>
                 </div>
               </div>
@@ -177,7 +177,7 @@ export function CreatePIDialog({
           )}
 
           {!startDate && (
-            <p className="text-muted-foreground text-xs text-center">
+            <p className="text-center text-muted-foreground text-xs">
               Datas são opcionais — podem ser definidas depois.
             </p>
           )}
@@ -187,13 +187,13 @@ export function CreatePIDialog({
 
         <DialogFooter>
           <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
             disabled={isPending}
+            onClick={() => setOpen(false)}
+            variant="outline"
           >
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} disabled={isPending || !name.trim()}>
+          <Button disabled={isPending || !name.trim()} onClick={handleSubmit}>
             {isPending ? "Criando..." : "Criar PI"}
           </Button>
         </DialogFooter>

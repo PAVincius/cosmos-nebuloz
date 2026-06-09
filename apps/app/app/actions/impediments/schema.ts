@@ -1,10 +1,10 @@
 import { z } from "zod";
 import {
-  PaginationSchema,
-  nnStr,
-  optStr,
-  optCuid,
   ImpedimentStatus,
+  nnStr,
+  optCuid,
+  optStr,
+  PaginationSchema,
 } from "../_base";
 
 export const CreateImpedimentSchema = z.object({

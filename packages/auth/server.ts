@@ -144,10 +144,22 @@ export async function requireTenantSession(
       throw new AuthError("NO_ACTIVE_ORGANIZATION");
     }
     tenantId = firstMember.tenantId;
-    await database.session.update({
-      where: { id: session.session.id },
-      data: { activeTenantId: tenantId },
-    });
+    try {
+      await database.session.update({
+        where: { id: session.session.id },
+        data: { activeTenantId: tenantId },
+      });
+    } catch (e: unknown) {
+      if (
+        typeof e === "object" &&
+        e !== null &&
+        "code" in e &&
+        (e as { code: string }).code === "P2025"
+      ) {
+        throw new AuthError("UNAUTHORIZED");
+      }
+      throw e;
+    }
     return {
       userId: session.user.id,
       tenantId,

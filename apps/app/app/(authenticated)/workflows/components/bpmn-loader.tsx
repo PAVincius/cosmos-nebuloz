@@ -16,10 +16,10 @@ const BpmnWrapperDynamic = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center border rounded-xl bg-background/50 backdrop-blur-sm">
+      <div className="flex h-[calc(100vh-4rem)] w-full items-center justify-center rounded-xl border bg-background/50 backdrop-blur-sm">
         <div className="flex flex-col items-center gap-3">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-          <p className="text-xs text-muted-foreground animate-pulse">
+          <p className="animate-pulse text-muted-foreground text-xs">
             Carregando motor BPMN.js corporativo...
           </p>
         </div>
@@ -28,18 +28,18 @@ const BpmnWrapperDynamic = dynamic(
   }
 );
 
-interface BpmnLoaderProps {
+type BpmnLoaderProps = {
   teamId: string;
   initialXml?: string;
   onSave?: (xmlContent: string) => Promise<void>;
-}
+};
 
 export function BpmnLoader({ teamId, initialXml, onSave }: BpmnLoaderProps) {
   return (
     <BpmnWrapperDynamic
-      teamId={teamId}
       initialXml={initialXml}
       onSave={onSave}
+      teamId={teamId}
     />
   );
 }

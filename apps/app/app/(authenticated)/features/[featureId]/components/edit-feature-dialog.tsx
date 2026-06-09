@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -19,8 +18,9 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { PencilIcon } from "lucide-react";
-import { updateFeature } from "@/app/actions/features";
 import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { updateFeature } from "@/app/actions/features";
 
 const FEATURE_STATUSES = [
   { value: "BACKLOG", label: "Backlog" },
@@ -30,7 +30,7 @@ const FEATURE_STATUSES = [
   { value: "DONE", label: "Concluído" },
 ] as const;
 
-interface EditFeatureDialogProps {
+type EditFeatureDialogProps = {
   feature: {
     id: string;
     title: string;
@@ -41,7 +41,7 @@ interface EditFeatureDialogProps {
     rr: number;
     js: number;
   };
-}
+};
 
 export function EditFeatureDialog({ feature }: EditFeatureDialogProps) {
   const router = useRouter();
@@ -80,15 +80,17 @@ export function EditFeatureDialog({ feature }: EditFeatureDialogProps) {
         setOpen(false);
         router.refresh();
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Erro ao atualizar feature.");
+        setError(
+          err instanceof Error ? err.message : "Erro ao atualizar feature."
+        );
       }
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
+        <Button size="sm" variant="outline">
           <PencilIcon className="mr-2 h-4 w-4" />
           Editar
         </Button>
@@ -97,20 +99,23 @@ export function EditFeatureDialog({ feature }: EditFeatureDialogProps) {
         <DialogHeader>
           <DialogTitle>Editar Feature</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">Título</Label>
             <Input
               id="title"
-              value={form.title}
               onChange={(e) => handleChange("title", e.target.value)}
               required
+              value={form.title}
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="statusId">Status</Label>
-            <Select value={form.statusId} onValueChange={(v) => handleChange("statusId", v)}>
+            <Select
+              onValueChange={(v) => handleChange("statusId", v)}
+              value={form.statusId}
+            >
               <SelectTrigger id="statusId">
                 <SelectValue />
               </SelectTrigger>
@@ -128,11 +133,13 @@ export function EditFeatureDialog({ feature }: EditFeatureDialogProps) {
             <Label htmlFor="storyPoints">Story Points</Label>
             <Input
               id="storyPoints"
-              type="number"
-              min={1}
               max={999}
+              min={1}
+              onChange={(e) =>
+                handleChange("storyPoints", e.target.valueAsNumber)
+              }
+              type="number"
               value={form.storyPoints}
-              onChange={(e) => handleChange("storyPoints", e.target.valueAsNumber)}
             />
           </div>
 
@@ -141,59 +148,63 @@ export function EditFeatureDialog({ feature }: EditFeatureDialogProps) {
               <Label htmlFor="bv">Business Value (BV)</Label>
               <Input
                 id="bv"
-                type="number"
-                min={1}
                 max={10}
-                step={0.1}
-                value={form.bv}
+                min={1}
                 onChange={(e) => handleChange("bv", e.target.valueAsNumber)}
+                step={0.1}
+                type="number"
+                value={form.bv}
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="tc">Time Criticality (TC)</Label>
               <Input
                 id="tc"
-                type="number"
-                min={1}
                 max={10}
-                step={0.1}
-                value={form.tc}
+                min={1}
                 onChange={(e) => handleChange("tc", e.target.valueAsNumber)}
+                step={0.1}
+                type="number"
+                value={form.tc}
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="rr">Risk Reduction (RR)</Label>
               <Input
                 id="rr"
-                type="number"
-                min={1}
                 max={10}
-                step={0.1}
-                value={form.rr}
+                min={1}
                 onChange={(e) => handleChange("rr", e.target.valueAsNumber)}
+                step={0.1}
+                type="number"
+                value={form.rr}
               />
             </div>
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="js">Job Size (JS)</Label>
               <Input
                 id="js"
-                type="number"
-                min={1}
                 max={10}
-                step={0.1}
-                value={form.js}
+                min={1}
                 onChange={(e) => handleChange("js", e.target.valueAsNumber)}
+                step={0.1}
+                type="number"
+                value={form.js}
               />
             </div>
           </div>
 
-          {error && <p className="text-sm text-destructive">{error}</p>}
+          {error && <p className="text-destructive text-sm">{error}</p>}
 
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+            <Button
+              onClick={() => setOpen(false)}
+              type="button"
+              variant="ghost"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "Salvando…" : "Salvar"}
             </Button>
           </div>

@@ -12,7 +12,7 @@ export type DecisionInput = {
 
 export async function logDecision(
   ctx: { tenantId: string; userId: string },
-  input: DecisionInput,
+  input: DecisionInput
 ) {
   return database.decisionLogEntry.create({
     data: {
@@ -37,7 +37,7 @@ export async function listDecisions(
     targetId?: string;
     from?: Date;
     to?: Date;
-  } = {},
+  } = {}
 ) {
   return database.decisionLogEntry.findMany({
     where: {

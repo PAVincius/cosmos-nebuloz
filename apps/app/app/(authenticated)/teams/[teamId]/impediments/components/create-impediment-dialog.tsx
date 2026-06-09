@@ -1,6 +1,5 @@
 "use client";
 
-import { useTransition, useState } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -12,13 +11,16 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { PlusIcon } from "lucide-react";
+import { useState, useTransition } from "react";
 import { createImpediment } from "@/app/actions/impediments";
 
-interface CreateImpedimentDialogProps {
+type CreateImpedimentDialogProps = {
   teamId: string;
-}
+};
 
-export function CreateImpedimentDialog({ teamId }: CreateImpedimentDialogProps) {
+export function CreateImpedimentDialog({
+  teamId,
+}: CreateImpedimentDialogProps) {
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -35,13 +37,15 @@ export function CreateImpedimentDialog({ teamId }: CreateImpedimentDialogProps) 
         });
         setOpen(false);
       } catch (err) {
-        alert(err instanceof Error ? err.message : "Erro ao criar impedimento.");
+        alert(
+          err instanceof Error ? err.message : "Erro ao criar impedimento."
+        );
       }
     });
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
         <Button size="sm">
           <PlusIcon className="mr-2 h-4 w-4" />
@@ -52,31 +56,35 @@ export function CreateImpedimentDialog({ teamId }: CreateImpedimentDialogProps) 
         <DialogHeader>
           <DialogTitle>Registrar Impedimento</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
+              maxLength={200}
               name="title"
               placeholder="Descreva o impedimento…"
               required
-              maxLength={200}
             />
           </div>
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="description">Descrição</Label>
             <Input
               id="description"
+              maxLength={5000}
               name="description"
               placeholder="Contexto e impacto do impedimento…"
-              maxLength={5000}
             />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={() => setOpen(false)}>
+            <Button
+              onClick={() => setOpen(false)}
+              type="button"
+              variant="outline"
+            >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isPending}>
+            <Button disabled={isPending} type="submit">
               {isPending ? "Registrando…" : "Registrar"}
             </Button>
           </div>

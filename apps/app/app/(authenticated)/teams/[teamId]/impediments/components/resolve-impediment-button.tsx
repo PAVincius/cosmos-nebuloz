@@ -1,15 +1,17 @@
 "use client";
 
-import { useTransition } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
 import { CheckCircleIcon } from "lucide-react";
+import { useTransition } from "react";
 import { resolveImpediment } from "@/app/actions/impediments";
 
-interface ResolveImpedimentButtonProps {
+type ResolveImpedimentButtonProps = {
   impedimentId: string;
-}
+};
 
-export function ResolveImpedimentButton({ impedimentId }: ResolveImpedimentButtonProps) {
+export function ResolveImpedimentButton({
+  impedimentId,
+}: ResolveImpedimentButtonProps) {
   const [isPending, startTransition] = useTransition();
 
   function handleResolve() {
@@ -20,11 +22,11 @@ export function ResolveImpedimentButton({ impedimentId }: ResolveImpedimentButto
 
   return (
     <Button
-      variant="outline"
-      size="sm"
       className="h-8 text-xs"
       disabled={isPending}
       onClick={handleResolve}
+      size="sm"
+      variant="outline"
     >
       <CheckCircleIcon className="mr-1.5 h-3.5 w-3.5" />
       {isPending ? "Resolvendo…" : "Resolver"}

@@ -3,7 +3,9 @@
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { useState } from "react";
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
+import { memo, useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { InvestScoreBar } from "./invest-score-bar";
 
@@ -33,139 +35,187 @@ export function investLabel(score: number | null): string {
   return `INVEST ${Math.round(score)}`;
 }
 
-export function KanbanCard({
-  epic,
-  isDragging,
-  onOpenDrawer,
-}: KanbanCardProps) {
-  const [hovered, setHovered] = useState(false);
-  const [focused, setFocused] = useState(false);
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform } =
-    useDraggable({ id: epic.id });
-
-  const style = transform
-    ? { transform: `translate3d(${transform.x}px,${transform.y}px,0)` }
-    : undefined;
-
+function epicVisualEqual(a: PortfolioEpic, b: PortfolioEpic): boolean {
   return (
-    <div
-      className={cn(
-        "group select-none rounded-lg border bg-card shadow-sm",
-        "hover:-translate-y-[2px] transition-all duration-200 ease-out hover:shadow-md",
-        "dark:border-[var(--hairline)] dark:bg-[var(--surface-3)] dark:shadow-none",
-        "dark:hover:border-[var(--hairline-strong)] dark:hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,.5)]",
-        isDragging === true && "rotate-1 opacity-50 shadow-lg",
-        epic.investScore !== null && epic.investScore < 50
-          ? "border-yellow-400/60 dark:border-yellow-600/40"
-          : "border-border"
-      )}
-      ref={setNodeRef}
-      style={style}
-    >
-      {/* Drag handle — dnd-kit spreads role="button" + tabIndex via {...attributes} */}
-      {/* biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive */}
-      {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: dnd-kit attributes make this interactive */}
-      <div
-        ref={setActivatorNodeRef}
-        {...listeners}
-        {...attributes}
-        className="cursor-grab touch-none active:cursor-grabbing"
-        onBlur={() => setFocused(false)}
-        onFocus={() => setFocused(true)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        {/* Theme color bar */}
-        {!!epic.themeColor && (
-          <div
-            className="h-0.5 w-full rounded-t-lg"
-            style={{ backgroundColor: epic.themeColor }}
-          />
-        )}
-
-        <InvestScoreBar className="rounded-none" score={epic.investScore} />
-
-        <div className="px-3 pt-2.5 pb-2">
-          {/* Title — click opens drawer, drag handle wraps the rest */}
-          <button
-            aria-label={`Abrir ${epic.title} no drawer`}
-            className="w-full text-left font-medium text-[13px] leading-snug tracking-[-0.01em] transition-colors hover:text-primary"
-            onClick={(e) => {
-              e.stopPropagation();
-              onOpenDrawer?.(epic.id);
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-            // Prevent the drag listeners from firing on click
-            type="button"
-          >
-            {epic.title}
-          </button>
-
-          {/* Metadata row */}
-          <div className="mt-2 flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[10px] text-muted-foreground">
-              {epic.featureCount}{" "}
-              {epic.featureCount === 1 ? "feature" : "features"}
-            </span>
-
-            {!!epic.epicType && epic.epicType !== "EPIC" && (
-              <span className="rounded bg-indigo-50 px-1.5 py-0.5 font-mono text-[9px] text-indigo-600 uppercase tracking-wide dark:bg-indigo-950 dark:text-indigo-400">
-                {epic.epicType === "FEATURE" ? "Feature" : "Story"}
-              </span>
-            )}
-
-            {epic.wsjfScore > 0 && (
-              <span className="rounded border border-border/60 bg-muted/40 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground dark:border-[rgba(251,191,36,.2)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]">
-                {epic.wsjfScore.toFixed(1)}
-              </span>
-            )}
-
-            {epic.governanceStatus === "BLOCKED" && (
-              <span className="font-semibold text-[9px] text-red-600">
-                ⚠ BLOCKED
-              </span>
-            )}
-          </div>
-
-          {/* WSJF breakdown on hover or focus */}
-          <AnimatePresence>
-            {Boolean(hovered || focused) && epic.wsjfScore > 0 ? (
-              <motion.div
-                animate={{ opacity: 1, height: "auto" }}
-                className="overflow-hidden"
-                exit={{ opacity: 0, height: 0 }}
-                initial={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-              >
-                <div className="mt-2 grid grid-cols-4 gap-1 border-border border-t pt-2">
-                  {[
-                    { label: "BV", value: epic.bv },
-                    { label: "TC", value: epic.tc },
-                    { label: "RR", value: epic.rr },
-                    { label: "JS", value: epic.js },
-                  ].map(({ label, value }) => (
-                    <div className="text-center" key={label}>
-                      <div className="text-[9px] text-muted-foreground">
-                        {label}
-                      </div>
-                      <div className="font-medium font-mono text-[11px]">
-                        {value}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-
-          {/* OKR indicator */}
-          {epic.linkedOKRCount > 0 && (
-            <div className="mt-1 text-[9px] text-indigo-500">
-              ◆ {epic.linkedOKRCount} OKR{epic.linkedOKRCount > 1 ? "s" : ""}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+    a.id === b.id &&
+    a.title === b.title &&
+    a.wsjfScore === b.wsjfScore &&
+    a.featureCount === b.featureCount &&
+    a.investScore === b.investScore &&
+    a.governanceStatus === b.governanceStatus &&
+    a.linkedOKRCount === b.linkedOKRCount &&
+    a.themeColor === b.themeColor
   );
 }
+
+export const KanbanCard = memo(
+  function KanbanCard({ epic, isDragging, onOpenDrawer }: KanbanCardProps) {
+    const [hovered, setHovered] = useState(false);
+    const [focused, setFocused] = useState(false);
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      setActivatorNodeRef,
+      transform,
+    } = useDraggable({ id: epic.id });
+
+    const style = transform
+      ? { transform: `translate3d(${transform.x}px,${transform.y}px,0)` }
+      : undefined;
+
+    const isWarn = epic.investScore !== null && epic.investScore < 50;
+    const showExpand = hovered || focused;
+
+    return (
+      <div
+        className={cn(
+          "group select-none overflow-hidden rounded-lg border border-hairline bg-card",
+          "shadow-[var(--card-shadow)] transition-all duration-200 ease-out",
+          "hover:-translate-y-[2px] hover:border-hairline-strong hover:shadow-[var(--hover-shadow)]",
+          "dark:bg-[var(--surface-3)]",
+          isDragging === true && "rotate-1 opacity-50 shadow-lg",
+          isWarn && "border-amber-400/40 dark:border-amber-500/30"
+        )}
+        ref={setNodeRef}
+        style={style}
+      >
+        {/* Drag handle — dnd-kit spreads role="button" + tabIndex via {...attributes} */}
+        {/* biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive */}
+        {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: dnd-kit attributes make this interactive */}
+        <div
+          ref={setActivatorNodeRef}
+          {...listeners}
+          {...attributes}
+          className="cursor-grab touch-none active:cursor-grabbing"
+          onBlur={() => setFocused(false)}
+          onFocus={() => setFocused(true)}
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
+        >
+          {/* Top color strip — theme color or accent on drag/hover */}
+          <div
+            className="h-[3px] w-full transition-colors duration-200"
+            style={{
+              backgroundColor: isDragging
+                ? "var(--accent-c)"
+                : hovered && epic.themeColor
+                  ? `${epic.themeColor}60`
+                  : hovered
+                    ? "rgba(var(--accent-rgb),.25)"
+                    : epic.themeColor
+                      ? `${epic.themeColor}25`
+                      : "transparent",
+            }}
+          />
+
+          {/* Body */}
+          <div className="px-3 pt-2.5 pb-2">
+            {/* Title */}
+            <button
+              aria-label={`Abrir ${epic.title} no drawer`}
+              className="line-clamp-2 w-full text-left font-medium text-[13px] text-foreground leading-[1.45] tracking-[-0.01em] transition-colors hover:text-primary"
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenDrawer?.(epic.id);
+              }}
+              onPointerDown={(e) => e.stopPropagation()}
+              type="button"
+            >
+              {epic.title}
+            </button>
+
+            {/* Badges */}
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              {!!epic.themeColor && (
+                <span
+                  className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium text-[10px]"
+                  style={{
+                    backgroundColor: `${epic.themeColor}18`,
+                    color: epic.themeColor,
+                  }}
+                >
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: epic.themeColor }}
+                  />
+                  {epic.epicType !== "EPIC" ? epic.epicType : "Épico"}
+                </span>
+              )}
+
+              {epic.wsjfScore > 0 && (
+                <span className="rounded border border-border/50 bg-muted/30 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground dark:border-[rgba(251,191,36,.15)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]">
+                  WSJF {epic.wsjfScore.toFixed(1)}
+                </span>
+              )}
+
+              {epic.governanceStatus === "BLOCKED" && (
+                <span className="rounded bg-red-50 px-1.5 py-0.5 font-semibold text-[9px] text-red-600 dark:bg-red-950/50 dark:text-red-400">
+                  ⚠ BLOCKED
+                </span>
+              )}
+            </div>
+
+            {/* INVEST bar — revealed on hover */}
+            {epic.investScore !== null && (
+              <InvestScoreBar className="mt-2.5" score={epic.investScore} />
+            )}
+
+            {/* BV/TC/RR/JS breakdown — revealed on hover */}
+            <AnimatePresence>
+              {showExpand && epic.wsjfScore > 0 ? (
+                <motion.div
+                  animate={{ opacity: 1, height: "auto" }}
+                  className="overflow-hidden"
+                  exit={{ opacity: 0, height: 0 }}
+                  initial={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.22, ease: "easeOut" }}
+                >
+                  <div className="mt-2 grid grid-cols-4 gap-1 border-border/40 border-t pt-2">
+                    {[
+                      { label: "BV", value: epic.bv },
+                      { label: "TC", value: epic.tc },
+                      { label: "RR", value: epic.rr },
+                      { label: "JS", value: epic.js },
+                    ].map(({ label, value }) => (
+                      <div className="text-center" key={label}>
+                        <div className="text-[9px] text-muted-foreground">
+                          {label}
+                        </div>
+                        <div className="font-mono font-semibold text-[11px]">
+                          {value}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between border-border/30 border-t bg-muted/20 px-3 py-1.5 dark:bg-black/15">
+          <span className="font-mono text-[10px] text-muted-foreground/70">
+            {epic.featureCount} feature{epic.featureCount !== 1 ? "s" : ""}
+            {epic.linkedOKRCount > 0
+              ? ` · ${epic.linkedOKRCount} OKR${epic.linkedOKRCount > 1 ? "s" : ""}`
+              : ""}
+          </span>
+          <Link
+            aria-label={`Ver épico ${epic.title}`}
+            className="text-muted-foreground/30 transition-colors hover:text-primary"
+            href={`/epics/${epic.id}`}
+            onClick={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            prefetch={false}
+          >
+            <ExternalLink aria-hidden className="h-3 w-3" />
+          </Link>
+        </div>
+      </div>
+    );
+  },
+  (prev, next) =>
+    prev.isDragging === next.isDragging && epicVisualEqual(prev.epic, next.epic)
+);
