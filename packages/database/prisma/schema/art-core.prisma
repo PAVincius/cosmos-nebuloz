@@ -162,6 +162,14 @@ model Epic {
   hypothesisResolution String? @db.Text
   leanBudgetAllocation Float? // USD or story points allocated for implementation
 
+  // Lean Business Case fields (Story-013)
+  businessOutcomes    Json? // array max 5 items: [{id, text}]
+  leadingIndicators   Json? // array max 5 items: [{id, text}]
+  nfrs                String? @db.Text
+  mvp                 String? @db.Text
+  sizeEstimate        String? // XS|S|M|L|XL
+  descriptionVersions Json? // ring buffer last 50: [{field, prev, next, savedAt, savedBy}]
+
   // Description content
   descriptionMd String? // Markdown source (saved by TipTap)
 
