@@ -9,9 +9,14 @@ model Sprint {
   goal       String?
   startDate  DateTime
   endDate    DateTime
-  status     String   @default("PLANNING") // PLANNING/ACTIVE/COMPLETED
+  status     String   @default("PLANNING") // PLANNING/ACTIVE/REVIEW/CLOSED
   isIPSprint Boolean  @default(false)
   capacity   Int?
+  velocity   Int? // computed at sprint close
+  closedAt   DateTime?
+  // Story-022 overcommitment fields
+  overcommitmentOverride        Boolean @default(false)
+  overcommitmentJustification   String? @db.Text
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -141,14 +146,16 @@ model Impediment {
 
 model StandupEntry {
   id        String   @id @default(cuid())
-  tenantId  String
-  teamId    String
-  userId    String
-  date      DateTime @db.Date
-  yesterday String?  @db.Text
-  today     String?  @db.Text
-  blockers  String?  @db.Text
-  createdAt DateTime @default(now())
+  tenantId            String
+  teamId              String
+  userId              String
+  date                DateTime @db.Date
+  yesterday           String?  @db.Text
+  today               String?  @db.Text
+  blockers            String?  @db.Text
+  // Story-022 blocker→impediment link
+  linkedImpedimentId  String?
+  createdAt           DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
