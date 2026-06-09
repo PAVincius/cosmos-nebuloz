@@ -17,12 +17,23 @@ import {
   useOthers,
   useStorage,
 } from "@repo/collaboration/hooks";
+import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { motion } from "framer-motion";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { analyzeAllEpics } from "@/app/actions/epics/analyze-all-epics";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
-import { updateEpicStatus } from "@/app/actions/epics/update-status";
+import { moveEpicAction } from "@/app/actions/portfolio-kanban";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import { EpicCreateModal } from "./epic-create-modal";
 import { EpicDrawer } from "./epic-drawer";
@@ -34,20 +45,70 @@ type KanbanBoardProps = {
   initialEpics: PortfolioEpic[];
   columns: KanbanColumnConfig[];
   canConfigure: boolean;
+  canOverrideWip: boolean;
   themes?: { id: string; title: string; color: string }[];
+  locale?: string;
 };
+
+type PendingMove = {
+  epicId: string;
+  fromColumn: string;
+  toColumn: string;
+  wipLimit: number;
+  wipCount: number;
+};
+
+type MoveMoveOpts = {
+  reason?: string;
+  wipOverrideReason?: string;
+};
+
+const TERMINAL_STATES = new Set(["DONE", "REJECTED"]);
 
 export const KanbanBoard = ({
   initialEpics,
   columns,
   canConfigure,
+  canOverrideWip,
   themes = [],
+  locale = "pt-BR",
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: React component — hooks rules prevent further extraction
 }: KanbanBoardProps) => {
-  const [themeFilter, setThemeFilter] = useState<string>("ALL");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // URL-persisted theme filter (AC-004)
+  const themeFilter = searchParams.get("theme") ?? "ALL";
+
+  const setThemeFilter = useCallback(
+    (id: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (id === "ALL") {
+        params.delete("theme");
+      } else {
+        params.set("theme", id);
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [router, searchParams]
+  );
+
   const [activeEpic, setActiveEpic] = useState<PortfolioEpic | null>(null);
   const [isAnalyzingAll, setIsAnalyzingAll] = useState(false);
   const [openEpicId, setOpenEpicId] = useState<string | null>(null);
   const [quickAddColumnId, setQuickAddColumnId] = useState<string | null>(null);
+
+  // WIP violation modal state (AC-002)
+  const [wipPending, setWipPending] = useState<PendingMove | null>(null);
+  const [wipOverrideReason, setWipOverrideReason] = useState("");
+
+  // REJECTED reason modal state (AC-005)
+  const [rejectPending, setRejectPending] = useState<{
+    epicId: string;
+    fromColumn: string;
+  } | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+
   const [, updatePresence] = useMyPresence();
   const others = useOthers();
 
@@ -69,7 +130,7 @@ export const KanbanBoard = ({
               new LiveObject({
                 id: e.id,
                 title: e.title,
-                statusId: e.statusId,
+                lifecycleStatus: e.lifecycleStatus,
                 order: e.order,
                 wsjfScore: e.wsjfScore,
                 bv: e.bv,
@@ -107,7 +168,7 @@ export const KanbanBoard = ({
           new LiveObject({
             id: e.id,
             title: e.title,
-            statusId: e.statusId,
+            lifecycleStatus: e.lifecycleStatus,
             order: e.order,
             wsjfScore: e.wsjfScore,
             bv: e.bv,
@@ -120,8 +181,8 @@ export const KanbanBoard = ({
     }
   }, []);
 
-  const moveEpic = useMutation(
-    ({ storage }, epicId: string, newStatusId: string) => {
+  const moveEpicInStorage = useMutation(
+    ({ storage }, epicId: string, toColumn: string) => {
       const epics = storage.get("kanbanEpics");
       if (!epics) {
         return;
@@ -131,9 +192,9 @@ export const KanbanBoard = ({
         return;
       }
       const order = epics.filter(
-        (e) => e.get("statusId") === newStatusId
+        (e) => e.get("lifecycleStatus") === toColumn
       ).length;
-      epic.set("statusId", newStatusId);
+      epic.set("lifecycleStatus", toColumn);
       epic.set("order", order);
     },
     []
@@ -154,7 +215,7 @@ export const KanbanBoard = ({
           new LiveObject({
             id: epic.id,
             title: epic.title,
-            statusId: epic.statusId,
+            lifecycleStatus: "FUNNEL",
             order: epic.order,
             wsjfScore: 0,
             bv: 0,
@@ -180,7 +241,8 @@ export const KanbanBoard = ({
         return {
           id: e.id,
           title: e.title,
-          statusId: e.statusId,
+          statusId: initial?.statusId ?? e.lifecycleStatus,
+          lifecycleStatus: e.lifecycleStatus,
           order: e.order,
           wsjfScore: e.wsjfScore,
           bv: initial?.bv ?? 0,
@@ -218,38 +280,104 @@ export const KanbanBoard = ({
       map.set(
         col.id,
         filteredEpics
-          .filter((e) => e.statusId === col.id)
+          .filter((e) => e.lifecycleStatus === col.id)
           .sort((a, b) => a.order - b.order)
       );
     }
     return map;
   }, [filteredEpics, columns]);
 
+  const executeMove = useCallback(
+    async (
+      epicId: string,
+      fromColumn: string,
+      toColumn: string,
+      opts: MoveMoveOpts = {}
+    ) => {
+      // Optimistic Liveblocks update (AC-003)
+      moveEpicInStorage(epicId, toColumn);
+
+      const result = await moveEpicAction({
+        epicId,
+        toColumn,
+        reason: opts.reason,
+        wipOverrideReason: opts.wipOverrideReason,
+      });
+
+      if (!result.ok) {
+        // Revert on failure
+        moveEpicInStorage(epicId, fromColumn);
+        let msg = result.error;
+        if (result.error === "GUARD_FAILED") {
+          if (locale === "es") {
+            msg = "Condiciones insuficientes para esta transición";
+          } else {
+            msg = "Condições insuficientes para esta transição";
+          }
+        }
+        toast.error(msg);
+      }
+    },
+    [moveEpicInStorage, locale]
+  );
+
   const onDragStart = useCallback(
     ({ active }: DragStartEvent) => {
       const epic = epics.find((e) => e.id === active.id);
       if (epic) {
         setActiveEpic(epic);
+        updatePresence({ dragging: epic.id });
       }
     },
-    [epics]
+    [epics, updatePresence]
   );
 
   const onDragEnd = useCallback(
     async ({ over }: DragEndEvent) => {
       setActiveEpic(null);
+      updatePresence({ dragging: null });
       if (!(over && activeEpic)) {
         return;
       }
-      const newStatusId = String(over.id);
-      if (newStatusId === activeEpic.statusId) {
+
+      const toColumn = String(over.id);
+      const fromColumn = activeEpic.lifecycleStatus;
+      if (toColumn === fromColumn) {
         return;
       }
-      moveEpic(activeEpic.id, newStatusId);
-      const order = epics.filter((e) => e.statusId === newStatusId).length;
-      await updateEpicStatus(activeEpic.id, newStatusId, order);
+
+      // Terminal states cannot be moved (AC-004 constraint)
+      if (TERMINAL_STATES.has(fromColumn)) {
+        return;
+      }
+
+      // REJECTED requires reason modal (AC-005)
+      if (toColumn === "REJECTED") {
+        setRejectPending({ epicId: activeEpic.id, fromColumn });
+        setRejectReason("");
+        return;
+      }
+
+      // WIP check (AC-002)
+      const targetCol = columns.find((c) => c.id === toColumn);
+      if (targetCol?.wipLimit) {
+        const currentCount = epicsByColumn.get(toColumn)?.length ?? 0;
+        if (currentCount >= targetCol.wipLimit) {
+          setWipPending({
+            epicId: activeEpic.id,
+            fromColumn,
+            toColumn,
+            wipLimit: targetCol.wipLimit,
+            wipCount: currentCount,
+          });
+          setWipOverrideReason("");
+          return;
+        }
+      }
+
+      await executeMove(activeEpic.id, fromColumn, toColumn);
     },
-    [activeEpic, moveEpic, epics]
+    [activeEpic, columns, epicsByColumn, executeMove, updatePresence]
   );
 
   const handleMouseMove = useCallback(
@@ -273,6 +401,49 @@ export const KanbanBoard = ({
       toast.error("Erro ao analisar épicos");
     }
   }, []);
+
+  // Localized strings
+  const t = useMemo(() => {
+    if (locale === "es") {
+      return {
+        filterByTheme: "Filtrar por tema:",
+        all: "Todos",
+        analyzing: "Analizando…",
+        analyzeAll: "Analyze All",
+        wipTitle: "Límite WIP excedido",
+        wipDesc: (n: number) =>
+          `Mover este épico excedería el límite WIP de ${n} para esta columna.`,
+        wipNoPermission: "No tienes permiso para exceder los límites WIP.",
+        wipOverrideLabel: "Motivo del override (obligatorio):",
+        proceed: "Proceder de todos modos",
+        cancel: "Cancelar",
+        rejectTitle: "Motivo de rechazo",
+        rejectDesc:
+          "Proporciona un motivo para rechazar este épico (mín. 20 caracteres).",
+        rejectLabel: "Motivo:",
+        rejectBtn: "Rechazar épico",
+      };
+    }
+    // pt-BR (default)
+    return {
+      filterByTheme: "Filtrar por tema:",
+      all: "Todos",
+      analyzing: "Analisando…",
+      analyzeAll: "Analyze All",
+      wipTitle: "Limite WIP excedido",
+      wipDesc: (n: number) =>
+        `Mover este épico excederia o limite WIP de ${n} para esta coluna.`,
+      wipNoPermission: "Você não tem permissão para exceder os limites WIP.",
+      wipOverrideLabel: "Motivo do override (obrigatório):",
+      proceed: "Prosseguir mesmo assim",
+      cancel: "Cancelar",
+      rejectTitle: "Motivo da rejeição",
+      rejectDesc:
+        "Forneça um motivo para rejeitar este épico (mín. 20 caracteres).",
+      rejectLabel: "Motivo:",
+      rejectBtn: "Rejeitar épico",
+    };
+  }, [locale]);
 
   return (
     /* biome-ignore lint/a11y/noStaticElementInteractions: tracks cursor for Liveblocks multiplayer presence */
@@ -300,26 +471,29 @@ export const KanbanBoard = ({
             type="button"
           >
             <span className="text-indigo-500">✦</span>
-            {isAnalyzingAll ? "Analisando…" : "Analyze All"}
+            {isAnalyzingAll ? t.analyzing : t.analyzeAll}
           </button>
           <span className="text-muted-foreground text-xs">
-            Filtrar por tema:
+            {t.filterByTheme}
           </span>
           <button
             className={`rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === "ALL" ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"}`}
             onClick={() => setThemeFilter("ALL")}
             type="button"
           >
-            Todos
+            {t.all}
           </button>
-          {themes.map((t) => (
+          {themes.map((theme) => (
             <button
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === t.id ? "border-foreground" : "border-border hover:bg-muted"}`}
-              key={t.id}
-              onClick={() => setThemeFilter(t.id)}
+              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === theme.id ? "border-foreground" : "border-border hover:bg-muted"}`}
+              key={theme.id}
+              onClick={() => setThemeFilter(theme.id)}
               style={
-                themeFilter === t.id
-                  ? { backgroundColor: `${t.color}22`, borderColor: t.color }
+                themeFilter === theme.id
+                  ? {
+                      backgroundColor: `${theme.color}22`,
+                      borderColor: theme.color,
+                    }
                   : {}
               }
               type="button"
@@ -327,9 +501,9 @@ export const KanbanBoard = ({
               <span
                 aria-hidden
                 className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: t.color }}
+                style={{ backgroundColor: theme.color }}
               />
-              {t.title}
+              {theme.title}
             </button>
           ))}
         </div>
@@ -358,7 +532,7 @@ export const KanbanBoard = ({
           ))}
         </div>
 
-        {/* Drag overlay — ghost card while dragging */}
+        {/* Drag overlay */}
         <DragOverlay
           dropAnimation={{
             duration: 250,
@@ -377,6 +551,114 @@ export const KanbanBoard = ({
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* WIP violation modal (AC-002) */}
+      <Dialog
+        onOpenChange={(open) => !open && setWipPending(null)}
+        open={wipPending !== null}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.wipTitle}</DialogTitle>
+            <DialogDescription>
+              {wipPending ? t.wipDesc(wipPending.wipLimit) : ""}
+            </DialogDescription>
+          </DialogHeader>
+
+          {canOverrideWip ? (
+            <div className="space-y-2">
+              {/* biome-ignore lint/a11y/noLabelWithoutControl: textarea is semantically associated by proximity */}
+              <label className="font-medium text-sm">
+                {t.wipOverrideLabel}
+              </label>
+              <Textarea
+                id="wip-override-reason"
+                onChange={(e) => setWipOverrideReason(e.target.value)}
+                placeholder="Justifique a exceção ao limite WIP…"
+                rows={3}
+                value={wipOverrideReason}
+              />
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">{t.wipNoPermission}</p>
+          )}
+
+          <DialogFooter>
+            <Button onClick={() => setWipPending(null)} variant="outline">
+              {t.cancel}
+            </Button>
+            {!!canOverrideWip && (
+              <Button
+                disabled={wipOverrideReason.trim().length < 5}
+                onClick={async () => {
+                  if (!wipPending) {
+                    return;
+                  }
+                  const { epicId, fromColumn, toColumn } = wipPending;
+                  setWipPending(null);
+                  await executeMove(epicId, fromColumn, toColumn, {
+                    wipOverrideReason: wipOverrideReason.trim(),
+                  });
+                }}
+              >
+                {t.proceed}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* REJECTED reason modal (AC-005) */}
+      <Dialog
+        onOpenChange={(open) => !open && setRejectPending(null)}
+        open={rejectPending !== null}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t.rejectTitle}</DialogTitle>
+            <DialogDescription>{t.rejectDesc}</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2">
+            {/* biome-ignore lint/a11y/noLabelWithoutControl: textarea is semantically associated by proximity */}
+            <label className="font-medium text-sm">{t.rejectLabel}</label>
+            <Textarea
+              id="reject-reason"
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Descreva o motivo da rejeição…"
+              rows={3}
+              value={rejectReason}
+            />
+            {rejectReason.length > 0 && rejectReason.length < 20 && (
+              <p className="text-[11px] text-red-500">
+                {20 - rejectReason.length} caracteres restantes
+              </p>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={() => setRejectPending(null)} variant="outline">
+              {t.cancel}
+            </Button>
+            <Button
+              disabled={rejectReason.trim().length < 20}
+              onClick={async () => {
+                if (!rejectPending) {
+                  return;
+                }
+                const { epicId, fromColumn } = rejectPending;
+                setRejectPending(null);
+                await executeMove(epicId, fromColumn, "REJECTED", {
+                  reason: rejectReason.trim(),
+                });
+              }}
+              variant="destructive"
+            >
+              {t.rejectBtn}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {!!openEpicId && (
         <EpicDrawer

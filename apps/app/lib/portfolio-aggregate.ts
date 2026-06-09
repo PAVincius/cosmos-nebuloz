@@ -8,6 +8,13 @@ export type FeatureWsjfFields = {
   rr: number;
   js: number;
   wsjfScore: number;
+  title?: string;
+  completedAt?: Date | null;
+};
+
+export type EpicTopFeature = {
+  title: string;
+  wsjfScore: number;
 };
 
 export type InvestBreakdown = {
@@ -23,6 +30,7 @@ export type AggregatedPortfolioEpic = {
   id: string;
   title: string;
   statusId: string;
+  lifecycleStatus: string;
   order: number;
   wsjfScore: number;
   bv: number;
@@ -30,6 +38,8 @@ export type AggregatedPortfolioEpic = {
   rr: number;
   js: number;
   featureCount: number;
+  completedFeatureCount: number;
+  topFeatures: EpicTopFeature[];
   strategicThemeId: string | null;
   themeTitle: string | null;
   themeColor: string | null;
@@ -53,6 +63,7 @@ export function aggregateEpicRow(epic: {
   id: string;
   title: string;
   statusId: string;
+  lifecycleStatus?: string;
   order: number;
   features: FeatureWsjfFields[];
   featureCount: number;
@@ -77,10 +88,23 @@ export function aggregateEpicRow(epic: {
   const wsjfSum = features.reduce((s, f) => s + effectiveFeatureWsjf(f), 0);
   const wsjfAvg = n > 0 ? Math.round((wsjfSum / n) * 100) / 100 : 0;
 
+  const completedFeatureCount = features.filter(
+    (f) => f.completedAt !== null
+  ).length;
+  const topFeatures: EpicTopFeature[] = features
+    .filter((f) => f.title)
+    .sort((a, b) => effectiveFeatureWsjf(b) - effectiveFeatureWsjf(a))
+    .slice(0, 4)
+    .map((f) => ({
+      title: f.title as string,
+      wsjfScore: effectiveFeatureWsjf(f),
+    }));
+
   return {
     id: epic.id,
     title: epic.title,
     statusId: epic.statusId,
+    lifecycleStatus: epic.lifecycleStatus ?? "FUNNEL",
     order: epic.order,
     wsjfScore: wsjfAvg,
     bv: sumBv,
@@ -88,6 +112,8 @@ export function aggregateEpicRow(epic: {
     rr: sumRr,
     js: sumJs > 0 ? sumJs : 1,
     featureCount: epic.featureCount,
+    completedFeatureCount,
+    topFeatures,
     strategicThemeId: epic.strategicThemeId ?? null,
     themeTitle: epic.themeTitle ?? null,
     themeColor: epic.themeColor ?? null,

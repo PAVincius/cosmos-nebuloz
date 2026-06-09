@@ -1,5 +1,6 @@
 import { getOrgId } from "@repo/auth/server";
 import dynamic from "next/dynamic";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getPortfolioEpics } from "@/app/actions/epics/get-portfolio";
 import {
@@ -15,6 +16,7 @@ import { WalkthroughModal } from "./components/walkthrough-modal";
 import { PortfolioRoom } from "./portfolio-room";
 
 const CONFIGURE_ROLES = new Set(["ADMIN", "STE"]);
+const WIP_OVERRIDE_ROLES = new Set(["ADMIN", "STE", "RTE", "PO", "SM"]);
 
 const KanbanBoard = dynamic(
   () =>
@@ -45,6 +47,10 @@ export default async function PortfolioPage() {
     notFound();
   }
 
+  const headersList = await headers();
+  const acceptLanguage = headersList.get("accept-language") ?? "pt-BR";
+  const locale = acceptLanguage.startsWith("es") ? "es" : "pt-BR";
+
   const [epics, configRes, roleRes, themes] = await Promise.all([
     getPortfolioEpics(),
     getPortfolioKanbanConfig(),
@@ -56,6 +62,7 @@ export default async function PortfolioPage() {
     ? configRes.data.columns
     : DEFAULT_PORTFOLIO_COLUMNS;
   const canConfigure = roleRes.ok && CONFIGURE_ROLES.has(roleRes.data);
+  const canOverrideWip = roleRes.ok && WIP_OVERRIDE_ROLES.has(roleRes.data);
   const themeOptions = themes.map((t) => ({
     id: t.id,
     title: t.title,
@@ -80,8 +87,10 @@ export default async function PortfolioPage() {
         <PortfolioRoom orgId={orgId}>
           <KanbanBoard
             canConfigure={canConfigure}
+            canOverrideWip={canOverrideWip}
             columns={columns}
             initialEpics={epics}
+            locale={locale}
             themes={themeOptions}
           />
         </PortfolioRoom>

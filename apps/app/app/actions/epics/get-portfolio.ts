@@ -26,6 +26,7 @@ type EpicWithRelations = Awaited<
   ReturnType<typeof database.epic.findMany>
 >[number] & {
   features: {
+    title: string;
     bv: number;
     tc: number;
     rr: number;
@@ -60,6 +61,7 @@ function mapEpicRow(
     id: e.id,
     title: e.title,
     statusId: e.statusId,
+    lifecycleStatus: e.lifecycleStatus,
     order: e.order,
     features: e.features.map((f) => ({
       ...f,
@@ -74,14 +76,16 @@ function mapEpicRow(
     investScore: e.investScore ?? null,
     investBreakdown: e.investBreakdown ?? null,
     descriptionMd: e.descriptionMd ?? null,
-    epicType: e.epicType,
-    dueDate: e.dueDate,
+    epicType: (e.epicType ??
+      "EPIC") as import("@/lib/portfolio-aggregate").EpicType,
+    dueDate: e.dueDate ?? null,
   });
 }
 
 const epicInclude = {
   features: {
     select: {
+      title: true,
       bv: true,
       tc: true,
       rr: true,
