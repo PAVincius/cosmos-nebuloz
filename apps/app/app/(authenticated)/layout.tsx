@@ -15,6 +15,7 @@ import { isOnboardingComplete } from "@/app/actions/onboarding/index";
 import { env } from "@/env";
 import { CommandPalette } from "./components/command-palette";
 import { CopilotProvider } from "./components/copilot/copilot-provider";
+import { KeyboardProvider } from "./components/keyboard-provider";
 import { NotificationsProvider } from "./components/notifications-provider";
 import { GlobalSidebar } from "./components/sidebar";
 import { getTeams } from "./teams/actions";
@@ -116,6 +117,7 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
             }}
           >
             <CommandPalette />
+            <KeyboardProvider />
             {!!betaFeature && (
               <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
                 Beta feature now available
