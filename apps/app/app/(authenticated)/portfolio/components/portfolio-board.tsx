@@ -94,7 +94,8 @@ const SortableCard = memo(function SortableCard({
   };
 
   return (
-    {/* biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive */}
+    // biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive
+    // biome-ignore lint/a11y/noNoninteractiveElementInteractions: dnd-kit attributes make this interactive
     <div
       ref={setNodeRef}
       style={style}
