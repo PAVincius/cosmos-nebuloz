@@ -78,7 +78,7 @@ describe("PERMISSION_MATRIX (AC-001, AC-004)", () => {
 describe("getEffectiveRole (AC-005)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    process.env.UPSTASH_REDIS_REST_URL = undefined;
+    process.env.UPSTASH_REDIS_REST_URL = "";
   });
 
   it("returns ART-scoped role when artId provided and membership exists (AC-005)", async () => {

@@ -35,9 +35,10 @@ export const AuditFiltersSchema = PaginationSchema.extend({
   action: AuditActionSchema.optional(),
   from: optDate,
   to: optDate,
+  cursor: z.string().cuid().optional(),
 }).transform((val) => ({
   ...val,
-  limit: Math.min(val.limit, 50),
+  limit: Math.min(val.limit, 100),
 }));
 export type AuditFilters = z.infer<typeof AuditFiltersSchema>;
 

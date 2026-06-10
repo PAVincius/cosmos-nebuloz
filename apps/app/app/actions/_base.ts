@@ -33,6 +33,7 @@ export type PageMeta = {
   pageCount: number;
   hasNext: boolean;
   hasPrev: boolean;
+  nextCursor?: string;
 };
 export type Page<T> = { items: T[]; meta: PageMeta };
 

@@ -43,6 +43,29 @@ export async function listAuditLogs(
         : {}),
     };
 
+    if (filters.cursor) {
+      const items = await database.auditLog.findMany({
+        where,
+        cursor: { id: filters.cursor },
+        skip: 1,
+        take,
+        orderBy: { createdAt: "desc" },
+      });
+      const nextCursor = items.length === take ? items.at(-1)?.id : undefined;
+      return {
+        items: items as AuditLog[],
+        meta: {
+          total: -1,
+          page: 1,
+          limit: filters.limit,
+          pageCount: -1,
+          hasNext: items.length === take,
+          hasPrev: true,
+          nextCursor,
+        },
+      };
+    }
+
     const [items, total] = await Promise.all([
       database.auditLog.findMany({
         where,
