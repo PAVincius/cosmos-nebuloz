@@ -56,7 +56,7 @@ export const fetchFirefliesTranscriptFn = inngest.createFunction(
     const normalized = normalizeFirefliesSummary(transcript);
 
     // Idempotent upsert keyed by (tenantId, meetingId).
-    await step.run("persist-transcript", () =>
+    const persisted = await step.run("persist-transcript", () =>
       database.meetingTranscript.upsert({
         where: { tenantId_meetingId: { tenantId, meetingId } },
         create: {
@@ -71,9 +71,18 @@ export const fetchFirefliesTranscriptFn = inngest.createFunction(
           title: normalized.title,
           rawSummary: normalized.rawSummary,
         },
+        select: { id: true },
       })
     );
 
-    return { ok: true, meetingId };
+    // Hand off to the AI mapper (story-049).
+    await step.run("enqueue-mapping", () =>
+      inngest.send({
+        name: "integration/fireflies.transcript.ready",
+        data: { tenantId, transcriptId: persisted.id },
+      })
+    );
+
+    return { ok: true, meetingId, transcriptId: persisted.id };
   }
 );
