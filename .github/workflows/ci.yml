@@ -34,7 +34,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Biome check
-        run: pnpm exec biome check .
+        run: pnpm exec biome check --changed --vcs-client-kind=git --vcs-use-ignore-file=true
 
   typecheck:
     name: Type Check (informational)

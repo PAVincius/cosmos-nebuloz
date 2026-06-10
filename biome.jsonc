@@ -262,6 +262,26 @@
           "performance": { "noNamespaceImport": "off" }
         }
       }
+    },
+    {
+      "includes": ["apps/app/e2e/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "useAwait": "off" },
+          "performance": { "useTopLevelRegex": "off" },
+          "style": { "noNestedTernary": "off" },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": { "noIncrementDecrement": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noExplicitAny": "off" }
+        }
+      }
     }
   ],
   "files": {
@@ -279,7 +299,10 @@
       "!apps/email/.react-email",
       "!packages/cms/basehub-types.d.ts",
       "!.claude/worktrees",
-      "!experiments/**/.venv"
+      "!experiments/**/.venv",
+      "!apps/app/playwright-report",
+      "!apps/app/coverage",
+      "!**/.next"
     ]
   }
 }
