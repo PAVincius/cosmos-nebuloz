@@ -1,0 +1,67 @@
+// Meeting Intelligence (epic-009) — transcrição de cerimônias SAFe → insights.
+// Provider-agnostic: Fireflies (1º), Fathom, Otter. Ver docs/srd-epic-009.md.
+
+/// Conexão de um provider de meeting por tenant.
+/// `config` guarda credenciais sensíveis (cifradas na camada de app — ver Integration).
+model MeetingIntegration {
+  id            String    @id @default(cuid())
+  tenantId      String
+  provider      String // fireflies | fathom | otter
+  name          String
+  config        Json // { apiKey, ... } — sensitive, store encrypted at app layer
+  webhookSecret String? // HMAC secret para verificar assinatura do webhook
+  status        String    @default("ACTIVE") // ACTIVE | PAUSED | ERROR
+  lastEventAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  transcripts MeetingTranscript[]
+
+  @@index([tenantId])
+  @@index([tenantId, provider])
+}
+
+/// Transcrição + summary de uma cerimônia. `meetingId` é o id no provider.
+/// `piPlanId` é loose-coupled (sem FK) — segue o padrão de external refs do repo.
+model MeetingTranscript {
+  id            String   @id @default(cuid())
+  tenantId      String
+  integrationId String
+  meetingId     String // id do meeting/transcript no provider
+  title         String?
+  rawSummary    Json? // { overview, action_items, keywords, outline }
+  piPlanId      String? // PIPlan vinculado (loose — resolvido por clientRef/timestamp)
+  status        String   @default("RECEIVED") // RECEIVED | MAPPED | ERROR
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  integration MeetingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  insights    MeetingInsight[]
+
+  @@unique([tenantId, meetingId]) // idempotency: 1 transcript por meeting/tenant
+  @@index([tenantId])
+  @@index([integrationId])
+  @@index([piPlanId])
+}
+
+/// Insight extraído do summary (action item, risco, decisão). Draft até revisão humana.
+model MeetingInsight {
+  id              String   @id @default(cuid())
+  tenantId        String
+  transcriptId    String
+  type            String // ACTION | RISK | DECISION
+  text            String
+  proposedTarget  String? // Task | Risk | DecisionLog
+  status          String   @default("PENDING") // PENDING | APPLIED | DISMISSED
+  appliedEntityId String? // id da entidade de domínio criada ao aprovar
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  transcript MeetingTranscript @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([transcriptId])
+}
