@@ -13,14 +13,9 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useMyPresence, useOthers } from "@repo/collaboration/hooks";
-import { Badge } from "@repo/design-system/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
+import { cn } from "@repo/design-system/lib/utils";
 import { calculateWSJF } from "@repo/safe-engine";
+import { AnimatePresence, motion } from "framer-motion";
 import { memo, useCallback, useState } from "react";
 
 type KanbanCardItem = {
@@ -64,6 +59,7 @@ const SortableCard = memo(function SortableCard({
 }: {
   readonly card: KanbanCardItem;
 }) {
+  const [hovered, setHovered] = useState(false);
   const {
     attributes,
     listeners,
@@ -77,6 +73,20 @@ const SortableCard = memo(function SortableCard({
       ? card.wsjfScore
       : calculateWSJF({ bv: card.bv, tc: card.tc, rr: card.rr, js: card.js });
 
+  const urgencyStrip =
+    wsjf >= 8
+      ? "var(--red-c, rgb(251,113,133))"
+      : wsjf >= 5
+        ? "var(--amber-c, rgb(251,191,36))"
+        : "transparent";
+
+  const wsjfBadgeCn =
+    wsjf >= 8
+      ? "border-red-400/30 bg-red-50/50 text-red-700 dark:border-red-500/20 dark:bg-red-950/30 dark:text-red-400"
+      : wsjf >= 5
+        ? "text-amber-700 dark:border-[rgba(251,191,36,.15)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]"
+        : "text-muted-foreground";
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -84,36 +94,80 @@ const SortableCard = memo(function SortableCard({
   };
 
   return (
-    <Card
+    {/* biome-ignore lint/a11y/noStaticElementInteractions: dnd-kit attributes make this interactive */}
+    <div
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...listeners}
-      className="cursor-grab bg-background/80 shadow-sm transition-colors hover:border-primary/50 active:cursor-grabbing"
+      className={cn(
+        "group select-none overflow-hidden rounded-lg border border-hairline bg-card",
+        "shadow-[var(--card-shadow)] transition-all duration-200 ease-out",
+        "cursor-grab touch-none active:cursor-grabbing",
+        "dark:bg-[var(--surface-3)]",
+        hovered &&
+          "-translate-y-[2px] border-hairline-strong shadow-[var(--hover-shadow)]"
+      )}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
-      <CardHeader className="flex flex-row items-start justify-between gap-2 p-3 pb-1">
-        <CardTitle className="font-medium text-xs leading-normal">
+      {/* Top urgency strip */}
+      <div
+        className="h-[3px] w-full transition-colors duration-200"
+        style={{ backgroundColor: urgencyStrip }}
+      />
+
+      <div className="px-3 pt-2.5 pb-2">
+        <p className="line-clamp-2 font-medium text-[13px] text-foreground leading-[1.45] tracking-[-0.01em]">
           {card.title}
-        </CardTitle>
-        <Badge
-          className="shrink-0 text-[10px]"
-          variant={
-            wsjf >= 8 ? "destructive" : wsjf >= 5 ? "default" : "secondary"
-          }
-        >
-          WSJF: {wsjf}
-        </Badge>
-      </CardHeader>
-      <CardContent className="flex gap-2 p-3 pt-1 text-[10px] text-muted-foreground">
-        <span>
-          {card.featureCount} feat{card.featureCount !== 1 ? "s" : ""}
-        </span>
-        <span>BV:{card.bv}</span>
-        <span>TC:{card.tc}</span>
-        <span>RR:{card.rr}</span>
-        <span>JS:{card.js}</span>
-      </CardContent>
-    </Card>
+        </p>
+
+        <div className="mt-2 flex items-center gap-1.5">
+          <span
+            className={cn(
+              "rounded border border-border/50 bg-muted/30 px-1.5 py-0.5 font-mono text-[10px]",
+              wsjfBadgeCn
+            )}
+          >
+            WSJF {wsjf.toFixed(1)}
+          </span>
+          <span className="font-mono text-[10px] text-muted-foreground/60">
+            {card.featureCount} feat{card.featureCount !== 1 ? "s" : ""}
+          </span>
+        </div>
+
+        {/* BV/TC/RR/JS breakdown — revealed on hover */}
+        <AnimatePresence>
+          {hovered ? (
+            <motion.div
+              animate={{ opacity: 1, height: "auto" }}
+              className="overflow-hidden"
+              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+            >
+              <div className="mt-2 grid grid-cols-4 gap-1 border-border/40 border-t pt-2">
+                {[
+                  { label: "BV", value: card.bv },
+                  { label: "TC", value: card.tc },
+                  { label: "RR", value: card.rr },
+                  { label: "JS", value: card.js },
+                ].map(({ label, value }) => (
+                  <div className="text-center" key={label}>
+                    <div className="text-[9px] text-muted-foreground">
+                      {label}
+                    </div>
+                    <div className="font-mono font-semibold text-[11px]">
+                      {value}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 });
 
@@ -147,6 +201,17 @@ function KanbanColumn({
             <SortableCard card={card} key={card.id} />
           ))}
         </SortableContext>
+        {colCards.length === 0 && (
+          <div className="flex flex-1 items-center justify-center">
+            <button
+              className="flex flex-col items-center gap-1.5 rounded-lg border border-border/40 border-dashed px-6 py-8 text-muted-foreground/40 transition-colors hover:border-primary/30 hover:text-primary/60"
+              type="button"
+            >
+              <span className="text-xl leading-none">+</span>
+              <span className="text-[11px]">Épico</span>
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
