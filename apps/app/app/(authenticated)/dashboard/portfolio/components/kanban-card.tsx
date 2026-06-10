@@ -65,6 +65,7 @@ export const KanbanCard = memo(
       : undefined;
 
     const isWarn = epic.investScore !== null && epic.investScore < 50;
+    const isBlocked = epic.governanceStatus === "BLOCKED";
     const showExpand = hovered || focused;
 
     return (
@@ -75,7 +76,10 @@ export const KanbanCard = memo(
           "hover:-translate-y-[2px] hover:border-hairline-strong hover:shadow-[var(--hover-shadow)]",
           "dark:bg-[var(--surface-3)]",
           isDragging === true && "rotate-1 opacity-50 shadow-lg",
-          isWarn && "border-amber-400/40 dark:border-amber-500/30"
+          isWarn &&
+            !isBlocked &&
+            "border-amber-400/40 dark:border-amber-500/30",
+          isBlocked && "cosmos-blocked"
         )}
         ref={setNodeRef}
         style={style}
@@ -149,8 +153,14 @@ export const KanbanCard = memo(
                 </span>
               )}
 
-              {epic.governanceStatus === "BLOCKED" && (
-                <span className="rounded bg-red-50 px-1.5 py-0.5 font-semibold text-[9px] text-red-600 dark:bg-red-950/50 dark:text-red-400">
+              {isBlocked && (
+                <span
+                  className="rounded px-1.5 py-0.5 font-semibold text-[9px]"
+                  style={{
+                    backgroundColor: "var(--red-soft, rgba(251,113,133,0.12))",
+                    color: "var(--red-text, rgb(220,38,38))",
+                  }}
+                >
                   ⚠ BLOCKED
                 </span>
               )}
