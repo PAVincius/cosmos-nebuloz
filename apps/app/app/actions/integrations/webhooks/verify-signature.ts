@@ -27,3 +27,18 @@ export function verifyGitHubSignature(
   }
   return timingSafeEqual(expected, received);
 }
+
+// Fireflies sends `x-hub-signature` as `sha256=<hmac>` (same scheme as GitHub).
+export function verifyFirefliesSignature(
+  rawBody: Buffer,
+  signature: string,
+  secret: string
+): boolean {
+  const hmac = createHmac("sha256", secret).update(rawBody).digest("hex");
+  const expected = Buffer.from(`sha256=${hmac}`);
+  const received = Buffer.from(signature);
+  if (expected.length !== received.length) {
+    return false;
+  }
+  return timingSafeEqual(expected, received);
+}
