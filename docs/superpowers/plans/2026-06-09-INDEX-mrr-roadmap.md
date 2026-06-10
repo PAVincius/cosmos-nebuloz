@@ -34,7 +34,7 @@ Objetivo: milhões USD em MRR via enterprises BR/LATAM rodando SAFe com 3+ ARTs.
 | 049 | AI mapper: insights → Task/Risk/DecisionLog | 12 | 8 | ✅ done |
 | 050 | Connect UI (Settings → Integrations → Fireflies) | 9 | 5 | ✅ done |
 | 051 | Insight review UI + timeline de cerimônias | 8 | 8 | ✅ done |
-| 052 | Fathom adapter (provider-agnostic) | 6 | 5 | pending |
+| 052 | Fathom adapter (provider-agnostic) | 6 | 5 | ✅ done |
 
 ---
 
