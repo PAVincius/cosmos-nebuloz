@@ -80,20 +80,22 @@ export default async function PortfolioPage() {
         subtitle="Visão geral dos épicos por etapa SAFe."
         title="Portfolio"
       />
-      <div className="min-w-0 flex-1 overflow-x-auto bg-muted/20 p-6 dark:bg-muted/10">
-        <div className="mb-8">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden bg-muted/20 dark:bg-muted/10">
+        <div className="flex-shrink-0 px-6 pt-6 pb-4">
           <PortfolioKpiRow epics={epics} />
         </div>
-        <PortfolioRoom orgId={orgId}>
-          <KanbanBoard
-            canConfigure={canConfigure}
-            canOverrideWip={canOverrideWip}
-            columns={columns}
-            initialEpics={epics}
-            locale={locale}
-            themes={themeOptions}
-          />
-        </PortfolioRoom>
+        <div className="min-h-0 flex-1 overflow-x-auto px-6 pb-6">
+          <PortfolioRoom orgId={orgId}>
+            <KanbanBoard
+              canConfigure={canConfigure}
+              canOverrideWip={canOverrideWip}
+              columns={columns}
+              initialEpics={epics}
+              locale={locale}
+              themes={themeOptions}
+            />
+          </PortfolioRoom>
+        </div>
       </div>
     </div>
   );

@@ -449,7 +449,7 @@ export const KanbanBoard = ({
     /* biome-ignore lint/a11y/noStaticElementInteractions: tracks cursor for Liveblocks multiplayer presence */
     /* biome-ignore lint/a11y/noNoninteractiveElementInteractions: tracks cursor for Liveblocks multiplayer presence */
     <div
-      className="relative h-full"
+      className="relative flex h-full flex-col"
       onMouseLeave={handleMouseLeave}
       onMouseMove={handleMouseMove}
     >
@@ -457,7 +457,7 @@ export const KanbanBoard = ({
 
       {/* Theme filter toolbar */}
       {themes.length > 0 ? (
-        <div className="mb-3 flex flex-wrap items-center gap-2">
+        <div className="mb-3 flex flex-shrink-0 flex-wrap items-center gap-2">
           {others.length > 0 && (
             <div className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-[10px]">
               <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
@@ -516,7 +516,7 @@ export const KanbanBoard = ({
         onDragStart={onDragStart}
         sensors={sensors}
       >
-        <div className="flex items-start gap-3 overflow-x-auto pb-4">
+        <div className="flex min-h-0 flex-1 items-stretch gap-3 pb-4">
           {columns.map((col) => (
             <KanbanColumn
               canConfigure={canConfigure}

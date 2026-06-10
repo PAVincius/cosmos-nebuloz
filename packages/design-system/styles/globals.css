@@ -852,7 +852,8 @@
 
 /* ─── COSMOS Animations ────────────────────────────────────────────── */
 @keyframes cosmos-blocked-pulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 0 0 0 rgba(251, 113, 133, 0);
     border-color: rgba(251, 113, 133, 0.35);
   }
@@ -863,8 +864,12 @@
 }
 
 @keyframes cosmos-ai-shimmer {
-  0%   { background-position: -200% center; }
-  100% { background-position: 200% center; }
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
 }
 
 .cosmos-blocked {
@@ -893,13 +898,21 @@
 }
 
 @keyframes sheet-slide-in {
-  from { transform: translateX(100%); }
-  to   { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 @keyframes sheet-slide-out {
-  from { transform: translateX(0); }
-  to   { transform: translateX(100%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(100%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -913,4 +926,30 @@
   [data-slot="sheet-content"] {
     animation: none !important;
   }
+}
+
+/* ── Custom scrollbar ────────────────────────────────────────────────────── */
+/* Webkit (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
 }

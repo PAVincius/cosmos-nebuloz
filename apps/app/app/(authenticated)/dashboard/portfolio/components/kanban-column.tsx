@@ -43,7 +43,7 @@ function KanbanColumnInner({
     <motion.div
       animate={{ width: isCollapsed ? 48 : 272 }}
       className={cn(
-        "flex flex-shrink-0 flex-col overflow-hidden rounded-[10px] border transition-colors duration-150 ease-out",
+        "flex h-full flex-shrink-0 flex-col overflow-hidden rounded-[10px] border transition-colors duration-150 ease-out",
         "border-hairline bg-surface shadow-[var(--card-shadow)]",
         isOver === true ? "border-primary/30 bg-primary/[0.03]" : ""
       )}
@@ -161,7 +161,7 @@ function KanbanColumnInner({
 
             <div
               className={cn(
-                "flex flex-1 flex-col gap-2 overflow-y-auto p-[10px]",
+                "flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-[10px]",
                 isOver === true ? "rounded-md" : ""
               )}
             >
