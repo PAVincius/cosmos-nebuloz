@@ -1017,7 +1017,7 @@ describe("gcpPricingTool", () => {
 
     it("omits key param from URL when GCP_PRICING_API_KEY is not set", async () => {
       const originalKey = process.env.GCP_PRICING_API_KEY;
-      process.env.GCP_PRICING_API_KEY = undefined;
+      process.env.GCP_PRICING_API_KEY = "";
 
       fetchMock.mockResolvedValue({
         ok: true,

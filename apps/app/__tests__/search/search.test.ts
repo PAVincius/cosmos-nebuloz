@@ -139,7 +139,7 @@ describe("sendDedupedNotification (AC-004)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // When UPSTASH_REDIS_REST_URL is unset, falls through to direct create
-    process.env.UPSTASH_REDIS_REST_URL = undefined;
+    process.env.UPSTASH_REDIS_REST_URL = "";
     dbMocks.notifCreate.mockResolvedValue({});
   });
 
