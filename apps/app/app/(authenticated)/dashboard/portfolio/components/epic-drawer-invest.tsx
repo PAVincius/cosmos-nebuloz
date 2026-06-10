@@ -24,6 +24,22 @@ function getScoreLabel(score: number): string {
   return "✗ Precisa revisão";
 }
 
+function confidenceLabel(score: number): { label: string; color: string } {
+  if (score >= 70) {
+    return {
+      label: "Alta confiança",
+      color: "text-green-600 dark:text-green-400",
+    };
+  }
+  if (score >= 50) {
+    return {
+      label: "Confiança média",
+      color: "text-amber-600 dark:text-amber-400",
+    };
+  }
+  return { label: "Baixa confiança", color: "text-red-600 dark:text-red-400" };
+}
+
 const INVEST_LABELS: Record<keyof InvestBreakdown, string> = {
   I: "Independent",
   N: "Negotiable",
@@ -116,16 +132,32 @@ export function EpicDrawerInvest({ epic }: Props) {
 
         <TabsContent className="space-y-4 p-6" value="invest">
           {score !== null && (
-            <div className="mb-4 flex items-center gap-3">
+            <div className="mb-4 flex items-start gap-3">
               <span className="font-bold text-4xl tabular-nums">
                 {Math.round(score)}
               </span>
-              <div>
+              <div className="flex-1">
                 <p className="text-muted-foreground text-xs">INVEST Score</p>
                 <p className="text-xs">
                   {score >= 70 ? "✓ Bem definido" : getScoreLabel(score)}
                 </p>
+                <p
+                  className={cn(
+                    "mt-0.5 font-medium text-[10px]",
+                    confidenceLabel(score).color
+                  )}
+                >
+                  {confidenceLabel(score).label}
+                </p>
               </div>
+              {!!breakdown && (
+                <p
+                  className="mt-0.5 text-right text-[10px]"
+                  style={{ color: "var(--cosmos-ai-fg)" }}
+                >
+                  ✦ Cosmos AI
+                </p>
+              )}
             </div>
           )}
 
