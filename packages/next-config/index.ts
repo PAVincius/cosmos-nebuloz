@@ -2,6 +2,8 @@ import withBundleAnalyzer from "@next/bundle-analyzer";
 import type { NextConfig } from "next";
 
 export const config: NextConfig = {
+  output: process.env.DOCKER_BUILD === "true" ? "standalone" : undefined,
+
   headers() {
     return [
       {
@@ -20,10 +22,11 @@ export const config: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
           {
-            key: "Content-Security-Policy-Report-Only",
+            // Enforcing CSP — 'unsafe-eval' kept for Liveblocks/WASM; review before removing
+            key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              "connect-src 'self' wss://*.liveblocks.io https://*.liveblocks.io https://*.anthropic.com https://*.googleapis.com https://us.i.posthog.com https://us-assets.i.posthog.com",
+              "connect-src 'self' wss://*.liveblocks.io https://*.liveblocks.io https://*.anthropic.com https://*.googleapis.com https://us.i.posthog.com https://us-assets.i.posthog.com https://api.inngest.com",
               "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
@@ -31,6 +34,7 @@ export const config: NextConfig = {
               "frame-ancestors 'none'",
               "object-src 'none'",
               "base-uri 'self'",
+              "upgrade-insecure-requests",
             ].join("; "),
           },
         ],
