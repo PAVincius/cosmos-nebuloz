@@ -9,34 +9,99 @@
 /* ─── COSMOS Light Mode (Linear-inspired) ─────────────────────────── */
 /* DS v1 short aliases — light */
 [data-theme="light"] {
-  --canvas:#f4f5f8; --surface:#fff; --surface-2:#f6f7f9; --surface-3:#eef0f4; --sidebar-bg:#fbfbfd;
-  --hairline:#e7e9ee; --hairline-strong:#d8dbe2;
-  --ink:#11151f; --ink-muted:#586173; --ink-subtle:#8b94a4; --ink-faint:#aeb6c2;
-  --chip-bg:#f1f3f7;
-  --card-shadow:0 1px 2px rgba(16,22,40,.05),0 4px 14px -8px rgba(16,22,40,.10);
-  --hover-shadow:0 2px 4px rgba(16,22,40,.06),0 18px 36px -20px rgba(94,106,210,.30);
-  --accent-c:#5e6ad2; --accent-rgb:94,106,210; --accent-fg:#fff;
-  --accent-soft:rgba(94,106,210,.10); --accent-text:#4b54b8;
-  --green:#16a34a; --green-c:#16a34a; --green-rgb:22,163,74; --green-soft:rgba(22,163,74,.10); --green-text:#15803d;
-  --red:#e11d48; --red-c:#e11d48; --red-rgb:225,29,72; --red-soft:rgba(225,29,72,.10); --red-text:#be123c;
-  --amber:#d97706; --amber-c:#d97706; --amber-rgb:217,119,6; --amber-soft:rgba(217,119,6,.12); --amber-text:#b45309;
-  --blue:#2563eb; --blue-c:#2563eb; --blue-rgb:37,99,235; --blue-soft:rgba(37,99,235,.10); --blue-text:#1d4ed8;
-  --purple:#7c3aed; --purple-c:#7c3aed; --purple-rgb:124,58,237; --purple-soft:rgba(124,58,237,.10); --purple-text:#6d28d9;
+  --canvas: #f4f5f8;
+  --surface: #fff;
+  --surface-2: #f6f7f9;
+  --surface-3: #eef0f4;
+  --sidebar-bg: #fbfbfd;
+  --hairline: #e7e9ee;
+  --hairline-strong: #d8dbe2;
+  --ink: #11151f;
+  --ink-muted: #586173;
+  --ink-subtle: #8b94a4;
+  --ink-faint: #aeb6c2;
+  --chip-bg: #f1f3f7;
+  --card-shadow:
+    0 1px 2px rgba(16, 22, 40, 0.05), 0 4px 14px -8px rgba(16, 22, 40, 0.1);
+  --hover-shadow:
+    0 2px 4px rgba(16, 22, 40, 0.06), 0 18px 36px -20px rgba(94, 106, 210, 0.3);
+  --accent-c: #5e6ad2;
+  --accent-rgb: 94, 106, 210;
+  --accent-fg: #fff;
+  --accent-soft: rgba(94, 106, 210, 0.1);
+  --accent-text: #4b54b8;
+  --green: #16a34a;
+  --green-c: #16a34a;
+  --green-rgb: 22, 163, 74;
+  --green-soft: rgba(22, 163, 74, 0.1);
+  --green-text: #15803d;
+  --red: #e11d48;
+  --red-c: #e11d48;
+  --red-rgb: 225, 29, 72;
+  --red-soft: rgba(225, 29, 72, 0.1);
+  --red-text: #be123c;
+  --amber: #d97706;
+  --amber-c: #d97706;
+  --amber-rgb: 217, 119, 6;
+  --amber-soft: rgba(217, 119, 6, 0.12);
+  --amber-text: #b45309;
+  --blue: #2563eb;
+  --blue-c: #2563eb;
+  --blue-rgb: 37, 99, 235;
+  --blue-soft: rgba(37, 99, 235, 0.1);
+  --blue-text: #1d4ed8;
+  --purple: #7c3aed;
+  --purple-c: #7c3aed;
+  --purple-rgb: 124, 58, 237;
+  --purple-soft: rgba(124, 58, 237, 0.1);
+  --purple-text: #6d28d9;
+  /* AI Copilot signature — EXCLUSIVE: never reuse for non-AI elements */
+  --cosmos-ai-fg: #6d5bbd;
+  --cosmos-ai-bg: rgba(94, 106, 210, 0.06);
+  --cosmos-ai-border: rgba(94, 106, 210, 0.15);
 }
 
 /* DS v1 short aliases — marketing (Linear canvas) */
 [data-theme="marketing"] {
-  --canvas:#010102; --surface:#0f1011; --surface-2:#141516; --surface-3:#18191a; --sidebar-bg:#0d0e0f;
-  --hairline:#23252a; --hairline-strong:#34343a;
-  --ink:#f7f8f8; --ink-muted:#d0d6e0; --ink-subtle:#8a8f98; --ink-faint:#62666d;
-  --chip-bg:#141516; --card-shadow:none; --hover-shadow:none;
-  --accent-c:#5e6ad2; --accent-rgb:94,106,210; --accent-fg:#fff;
-  --accent-soft:rgba(94,106,210,.14); --accent-text:#9ba4e8;
-  --green-c:#27a644; --green-rgb:39,166,68; --green-soft:rgba(39,166,68,.12); --green-text:#52c46a;
-  --red-c:#e84057; --red-rgb:232,64,87; --red-soft:rgba(232,64,87,.12); --red-text:#f07080;
-  --amber-c:#d4a017; --amber-rgb:212,160,23; --amber-soft:rgba(212,160,23,.12); --amber-text:#e5c04b;
-  --blue-c:#3a7bd5; --blue-rgb:58,123,213; --blue-soft:rgba(58,123,213,.12); --blue-text:#7aabea;
-  --purple-c:#8b5cf6; --purple-rgb:139,92,246; --purple-soft:rgba(139,92,246,.12); --purple-text:#b79dfa;
+  --canvas: #010102;
+  --surface: #0f1011;
+  --surface-2: #141516;
+  --surface-3: #18191a;
+  --sidebar-bg: #0d0e0f;
+  --hairline: #23252a;
+  --hairline-strong: #34343a;
+  --ink: #f7f8f8;
+  --ink-muted: #d0d6e0;
+  --ink-subtle: #8a8f98;
+  --ink-faint: #62666d;
+  --chip-bg: #141516;
+  --card-shadow: none;
+  --hover-shadow: none;
+  --accent-c: #5e6ad2;
+  --accent-rgb: 94, 106, 210;
+  --accent-fg: #fff;
+  --accent-soft: rgba(94, 106, 210, 0.14);
+  --accent-text: #9ba4e8;
+  --green-c: #27a644;
+  --green-rgb: 39, 166, 68;
+  --green-soft: rgba(39, 166, 68, 0.12);
+  --green-text: #52c46a;
+  --red-c: #e84057;
+  --red-rgb: 232, 64, 87;
+  --red-soft: rgba(232, 64, 87, 0.12);
+  --red-text: #f07080;
+  --amber-c: #d4a017;
+  --amber-rgb: 212, 160, 23;
+  --amber-soft: rgba(212, 160, 23, 0.12);
+  --amber-text: #e5c04b;
+  --blue-c: #3a7bd5;
+  --blue-rgb: 58, 123, 213;
+  --blue-soft: rgba(58, 123, 213, 0.12);
+  --blue-text: #7aabea;
+  --purple-c: #8b5cf6;
+  --purple-rgb: 139, 92, 246;
+  --purple-soft: rgba(139, 92, 246, 0.12);
+  --purple-text: #b79dfa;
 }
 
 :root {
@@ -45,25 +110,59 @@
 
   /* DS v1 short token fallbacks (light-mode values) — ensure components render
      correctly outside [data-theme] context (portals, SSR before hydration) */
-  --surface:#fff; --surface-2:#f6f7f9; --surface-3:#eef0f4; --sidebar-bg:#fbfbfd;
-  --hairline:#e7e9ee; --hairline-strong:#d8dbe2;
-  --ink:#11151f; --ink-muted:#586173; --ink-subtle:#8b94a4; --ink-faint:#aeb6c2;
-  --chip-bg:#f1f3f7;
-  --accent-c:#5e6ad2; --accent-rgb:94,106,210; --accent-fg:#fff;
-  --accent-soft:rgba(94,106,210,.10); --accent-text:#4b54b8;
-  --green:#16a34a; --green-c:#16a34a; --green-rgb:22,163,74; --green-soft:rgba(22,163,74,.10); --green-text:#15803d;
-  --red:#e11d48; --red-c:#e11d48; --red-rgb:225,29,72; --red-soft:rgba(225,29,72,.10); --red-text:#be123c;
-  --amber:#d97706; --amber-c:#d97706; --amber-rgb:217,119,6; --amber-soft:rgba(217,119,6,.12); --amber-text:#b45309;
-  --blue:#2563eb; --blue-c:#2563eb; --blue-rgb:37,99,235; --blue-soft:rgba(37,99,235,.10); --blue-text:#1d4ed8;
-  --purple:#7c3aed; --purple-c:#7c3aed; --purple-rgb:124,58,237; --purple-soft:rgba(124,58,237,.10); --purple-text:#6d28d9;
+  --surface: #fff;
+  --surface-2: #f6f7f9;
+  --surface-3: #eef0f4;
+  --sidebar-bg: #fbfbfd;
+  --hairline: #e7e9ee;
+  --hairline-strong: #d8dbe2;
+  --ink: #11151f;
+  --ink-muted: #586173;
+  --ink-subtle: #8b94a4;
+  --ink-faint: #aeb6c2;
+  --chip-bg: #f1f3f7;
+  --accent-c: #5e6ad2;
+  --accent-rgb: 94, 106, 210;
+  --accent-fg: #fff;
+  --accent-soft: rgba(94, 106, 210, 0.1);
+  --accent-text: #4b54b8;
+  --green: #16a34a;
+  --green-c: #16a34a;
+  --green-rgb: 22, 163, 74;
+  --green-soft: rgba(22, 163, 74, 0.1);
+  --green-text: #15803d;
+  --red: #e11d48;
+  --red-c: #e11d48;
+  --red-rgb: 225, 29, 72;
+  --red-soft: rgba(225, 29, 72, 0.1);
+  --red-text: #be123c;
+  --amber: #d97706;
+  --amber-c: #d97706;
+  --amber-rgb: 217, 119, 6;
+  --amber-soft: rgba(217, 119, 6, 0.12);
+  --amber-text: #b45309;
+  --blue: #2563eb;
+  --blue-c: #2563eb;
+  --blue-rgb: 37, 99, 235;
+  --blue-soft: rgba(37, 99, 235, 0.1);
+  --blue-text: #1d4ed8;
+  --purple: #7c3aed;
+  --purple-c: #7c3aed;
+  --purple-rgb: 124, 58, 237;
+  --purple-soft: rgba(124, 58, 237, 0.1);
+  --purple-text: #6d28d9;
 
   /* ── COSMOS Design System v2 — instrument panel tokens ──────────── */
   /* Accent */
   --cosmos-accent: #5e6ad2;
-  --cosmos-accent-rgb: 94,106,210;
+  --cosmos-accent-rgb: 94, 106, 210;
   --cosmos-accent-fg: #ffffff;
-  --cosmos-accent-soft: rgba(94,106,210,.10);
+  --cosmos-accent-soft: rgba(94, 106, 210, 0.1);
   --cosmos-accent-text: #4b54b8;
+  /* AI Copilot signature — EXCLUSIVE: never reuse for non-AI elements */
+  --cosmos-ai-fg: #6d5bbd;
+  --cosmos-ai-bg: rgba(94, 106, 210, 0.06);
+  --cosmos-ai-border: rgba(94, 106, 210, 0.15);
   --fx: 1;
 
   /* Surfaces */
@@ -85,20 +184,32 @@
   --cosmos-chip-bg: #f1f3f7;
 
   /* Shadows */
-  --cosmos-card-shadow: 0 1px 2px rgba(16,22,40,.05), 0 4px 14px -8px rgba(16,22,40,.10);
-  --cosmos-hover-shadow: 0 2px 4px rgba(16,22,40,.06), 0 18px 36px -20px rgba(94,106,210,.30);
+  --cosmos-card-shadow:
+    0 1px 2px rgba(16, 22, 40, 0.05), 0 4px 14px -8px rgba(16, 22, 40, 0.1);
+  --cosmos-hover-shadow:
+    0 2px 4px rgba(16, 22, 40, 0.06), 0 18px 36px -20px rgba(94, 106, 210, 0.3);
 
   /* Tones — solid + RGB + soft fill + accessible text */
-  --cosmos-green: #16a34a;        --cosmos-green-rgb: 22,163,74;
-  --cosmos-green-soft: rgba(22,163,74,.10);   --cosmos-green-text: #15803d;
-  --cosmos-red: #e11d48;          --cosmos-red-rgb: 225,29,72;
-  --cosmos-red-soft: rgba(225,29,72,.10);     --cosmos-red-text: #be123c;
-  --cosmos-amber: #d97706;        --cosmos-amber-rgb: 217,119,6;
-  --cosmos-amber-soft: rgba(217,119,6,.12);   --cosmos-amber-text: #b45309;
-  --cosmos-blue: #2563eb;         --cosmos-blue-rgb: 37,99,235;
-  --cosmos-blue-soft: rgba(37,99,235,.10);    --cosmos-blue-text: #1d4ed8;
-  --cosmos-purple: #7c3aed;       --cosmos-purple-rgb: 124,58,237;
-  --cosmos-purple-soft: rgba(124,58,237,.10); --cosmos-purple-text: #6d28d9;
+  --cosmos-green: #16a34a;
+  --cosmos-green-rgb: 22, 163, 74;
+  --cosmos-green-soft: rgba(22, 163, 74, 0.1);
+  --cosmos-green-text: #15803d;
+  --cosmos-red: #e11d48;
+  --cosmos-red-rgb: 225, 29, 72;
+  --cosmos-red-soft: rgba(225, 29, 72, 0.1);
+  --cosmos-red-text: #be123c;
+  --cosmos-amber: #d97706;
+  --cosmos-amber-rgb: 217, 119, 6;
+  --cosmos-amber-soft: rgba(217, 119, 6, 0.12);
+  --cosmos-amber-text: #b45309;
+  --cosmos-blue: #2563eb;
+  --cosmos-blue-rgb: 37, 99, 235;
+  --cosmos-blue-soft: rgba(37, 99, 235, 0.1);
+  --cosmos-blue-text: #1d4ed8;
+  --cosmos-purple: #7c3aed;
+  --cosmos-purple-rgb: 124, 58, 237;
+  --cosmos-purple-soft: rgba(124, 58, 237, 0.1);
+  --cosmos-purple-text: #6d28d9;
 
   /* Density */
   --cosmos-pad: 20px;
@@ -143,7 +254,7 @@
   --sidebar-accent: #f6f7f9;
   --sidebar-accent-foreground: #11151f;
   --sidebar-border: #e7e9ee;
-  --sidebar-ring: rgba(94,106,210,.4);
+  --sidebar-ring: rgba(94, 106, 210, 0.4);
   --font-weight-bold: 700;
 
   /* COSMOS semantic — SAFe entity types */
@@ -167,29 +278,68 @@
 /* ─── COSMOS Dark Mode (Linear canvas) — primary UI mode ──────────── */
 [data-theme="dark"] {
   /* DS v1 short aliases — dark */
-  --canvas:#070b14; --surface:#0e1422; --surface-2:#131b2c; --surface-3:#18223a; --sidebar-bg:#0a0f1b;
-  --hairline:rgba(255,255,255,.075); --hairline-strong:rgba(255,255,255,.15);
-  --ink:#eef2f8; --ink-muted:#93a1b3; --ink-subtle:#65748b; --ink-faint:#46566d;
-  --chip-bg:rgba(255,255,255,.05);
-  --card-shadow:0 1px 0 rgba(255,255,255,.04) inset,0 10px 30px -20px rgba(0,0,0,.8);
-  --hover-shadow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 50px -26px rgba(124,135,255,.5);
-  --accent-c:#7c87ff; --accent-rgb:124,135,255; --accent-fg:#fff;
-  --accent-soft:rgba(124,135,255,.14); --accent-text:#c7ccff;
-  --green:#34d399; --green-c:#34d399; --green-rgb:52,211,153; --green-soft:rgba(52,211,153,.12); --green-text:#7ff0bf;
-  --red:#fb7185; --red-c:#fb7185; --red-rgb:251,113,133; --red-soft:rgba(251,113,133,.14); --red-text:#fda4af;
-  --amber:#fbbf24; --amber-c:#fbbf24; --amber-rgb:251,191,36; --amber-soft:rgba(251,191,36,.13); --amber-text:#fcd34d;
-  --blue:#60a5fa; --blue-c:#60a5fa; --blue-rgb:96,165,250; --blue-soft:rgba(96,165,250,.14); --blue-text:#bfdbfe;
-  --purple:#a78bfa; --purple-c:#a78bfa; --purple-rgb:167,139,250; --purple-soft:rgba(167,139,250,.14); --purple-text:#ddd6fe;
+  --canvas: #070b14;
+  --surface: #0e1422;
+  --surface-2: #131b2c;
+  --surface-3: #18223a;
+  --sidebar-bg: #0a0f1b;
+  --hairline: rgba(255, 255, 255, 0.075);
+  --hairline-strong: rgba(255, 255, 255, 0.15);
+  --ink: #eef2f8;
+  --ink-muted: #93a1b3;
+  --ink-subtle: #65748b;
+  --ink-faint: #46566d;
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --card-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
+    rgba(0, 0, 0, 0.8);
+  --hover-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px
+    rgba(124, 135, 255, 0.5);
+  --accent-c: #7c87ff;
+  --accent-rgb: 124, 135, 255;
+  --accent-fg: #fff;
+  --accent-soft: rgba(124, 135, 255, 0.14);
+  --accent-text: #c7ccff;
+  --green: #34d399;
+  --green-c: #34d399;
+  --green-rgb: 52, 211, 153;
+  --green-soft: rgba(52, 211, 153, 0.12);
+  --green-text: #7ff0bf;
+  --red: #fb7185;
+  --red-c: #fb7185;
+  --red-rgb: 251, 113, 133;
+  --red-soft: rgba(251, 113, 133, 0.14);
+  --red-text: #fda4af;
+  --amber: #fbbf24;
+  --amber-c: #fbbf24;
+  --amber-rgb: 251, 191, 36;
+  --amber-soft: rgba(251, 191, 36, 0.13);
+  --amber-text: #fcd34d;
+  --blue: #60a5fa;
+  --blue-c: #60a5fa;
+  --blue-rgb: 96, 165, 250;
+  --blue-soft: rgba(96, 165, 250, 0.14);
+  --blue-text: #bfdbfe;
+  --purple: #a78bfa;
+  --purple-c: #a78bfa;
+  --purple-rgb: 167, 139, 250;
+  --purple-soft: rgba(167, 139, 250, 0.14);
+  --purple-text: #ddd6fe;
 
   /* Surface ladder: canvas → surface-1 → surface-2 → surface-3 */
   --background: oklch(0.09 0.003 280); /* Linear canvas ~#0f0f10 */
 
   /* ── COSMOS Design System v2 — dark / tecno-UI ───────────────────── */
   --cosmos-accent: #7c87ff;
-  --cosmos-accent-rgb: 124,135,255;
+  --cosmos-accent-rgb: 124, 135, 255;
   --cosmos-accent-fg: #ffffff;
-  --cosmos-accent-soft: rgba(124,135,255,.14);
+  --cosmos-accent-soft: rgba(124, 135, 255, 0.14);
   --cosmos-accent-text: #c7ccff;
+  /* AI Copilot signature — EXCLUSIVE: never reuse for non-AI elements */
+  --cosmos-ai-fg: #a89cff;
+  --cosmos-ai-bg: rgba(124, 106, 247, 0.08);
+  --cosmos-ai-border: rgba(124, 106, 247, 0.22);
   --fx: 1;
 
   --cosmos-canvas: #070b14;
@@ -198,28 +348,42 @@
   --cosmos-surface-3: #18223a;
   --cosmos-sidebar: #0a0f1b;
 
-  --cosmos-hairline: rgba(255,255,255,.075);
-  --cosmos-hairline-strong: rgba(255,255,255,.15);
+  --cosmos-hairline: rgba(255, 255, 255, 0.075);
+  --cosmos-hairline-strong: rgba(255, 255, 255, 0.15);
 
   --cosmos-ink: #eef2f8;
   --cosmos-ink-muted: #93a1b3;
   --cosmos-ink-subtle: #65748b;
   --cosmos-ink-faint: #46566d;
-  --cosmos-chip-bg: rgba(255,255,255,.05);
+  --cosmos-chip-bg: rgba(255, 255, 255, 0.05);
 
-  --cosmos-card-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 10px 30px -20px rgba(0,0,0,.8);
-  --cosmos-hover-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 24px 50px -26px rgba(124,135,255,.5);
+  --cosmos-card-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
+    rgba(0, 0, 0, 0.8);
+  --cosmos-hover-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px
+    rgba(124, 135, 255, 0.5);
 
-  --cosmos-green: #34d399;        --cosmos-green-rgb: 52,211,153;
-  --cosmos-green-soft: rgba(52,211,153,.12);  --cosmos-green-text: #7ff0bf;
-  --cosmos-red: #fb7185;          --cosmos-red-rgb: 251,113,133;
-  --cosmos-red-soft: rgba(251,113,133,.14);   --cosmos-red-text: #fda4af;
-  --cosmos-amber: #fbbf24;        --cosmos-amber-rgb: 251,191,36;
-  --cosmos-amber-soft: rgba(251,191,36,.13);  --cosmos-amber-text: #fcd34d;
-  --cosmos-blue: #60a5fa;         --cosmos-blue-rgb: 96,165,250;
-  --cosmos-blue-soft: rgba(96,165,250,.14);   --cosmos-blue-text: #bfdbfe;
-  --cosmos-purple: #a78bfa;       --cosmos-purple-rgb: 167,139,250;
-  --cosmos-purple-soft: rgba(167,139,250,.14);--cosmos-purple-text: #ddd6fe;
+  --cosmos-green: #34d399;
+  --cosmos-green-rgb: 52, 211, 153;
+  --cosmos-green-soft: rgba(52, 211, 153, 0.12);
+  --cosmos-green-text: #7ff0bf;
+  --cosmos-red: #fb7185;
+  --cosmos-red-rgb: 251, 113, 133;
+  --cosmos-red-soft: rgba(251, 113, 133, 0.14);
+  --cosmos-red-text: #fda4af;
+  --cosmos-amber: #fbbf24;
+  --cosmos-amber-rgb: 251, 191, 36;
+  --cosmos-amber-soft: rgba(251, 191, 36, 0.13);
+  --cosmos-amber-text: #fcd34d;
+  --cosmos-blue: #60a5fa;
+  --cosmos-blue-rgb: 96, 165, 250;
+  --cosmos-blue-soft: rgba(96, 165, 250, 0.14);
+  --cosmos-blue-text: #bfdbfe;
+  --cosmos-purple: #a78bfa;
+  --cosmos-purple-rgb: 167, 139, 250;
+  --cosmos-purple-soft: rgba(167, 139, 250, 0.14);
+  --cosmos-purple-text: #ddd6fe;
   --foreground: oklch(0.91 0.002 280); /* ink ~#e2e2e4 */
   --card: oklch(0.14 0.005 280); /* surface-1 ~#1a1a1e */
   --card-foreground: oklch(0.91 0.002 280);
@@ -251,8 +415,8 @@
   --sidebar-primary-foreground: #fff;
   --sidebar-accent: #131b2c;
   --sidebar-accent-foreground: #eef2f8;
-  --sidebar-border: rgba(255,255,255,.075);
-  --sidebar-ring: rgba(124,135,255,.5);
+  --sidebar-border: rgba(255, 255, 255, 0.075);
+  --sidebar-ring: rgba(124, 135, 255, 0.5);
 
   /* COSMOS semantic — dark mode (same hue, adjusted lightness) */
   --safe-epic: oklch(0.63 0.17 264);
@@ -378,8 +542,12 @@
 
   /* KPI card ECG sweep — used by KpiCard component */
   @keyframes ecg-sweep {
-    from { stroke-dashoffset: 760; }
-    to   { stroke-dashoffset: 0; }
+    from {
+      stroke-dashoffset: 760;
+    }
+    to {
+      stroke-dashoffset: 0;
+    }
   }
 
   /* ── COSMOS Design System v2 — Tailwind token mappings ──────────── */
@@ -430,31 +598,46 @@
   --spacing-cosmos-gap: var(--cosmos-gap);
 
   /* Radii */
-  --radius-cosmos-xs:   var(--cosmos-r-xs);
-  --radius-cosmos-sm:   var(--cosmos-r-sm);
-  --radius-cosmos-md:   var(--cosmos-r-md);
-  --radius-cosmos-lg:   var(--cosmos-r-lg);
-  --radius-cosmos-xl:   var(--cosmos-r-xl);
+  --radius-cosmos-xs: var(--cosmos-r-xs);
+  --radius-cosmos-sm: var(--cosmos-r-sm);
+  --radius-cosmos-md: var(--cosmos-r-md);
+  --radius-cosmos-lg: var(--cosmos-r-lg);
+  --radius-cosmos-xl: var(--cosmos-r-xl);
   --radius-cosmos-pill: var(--cosmos-r-pill);
 
   /* Fonts */
-  --font-display: var(--font-space-grotesk, "Space Grotesk", system-ui, sans-serif);
+  --font-display: var(
+    --font-space-grotesk,
+    "Space Grotesk",
+    system-ui,
+    sans-serif
+  );
 
   /* Animations */
-  --animate-fade-in:   fadeIn .45s ease;
-  --animate-ecg:       ecg-sweep 3s linear infinite;
-  --animate-shimmer:   shimmer 2.6s linear infinite;
-  --animate-lift:      none;
-  --ease-spring:       cubic-bezier(.2,.7,.3,1);
+  --animate-fade-in: fadeIn 0.45s ease;
+  --animate-ecg: ecg-sweep 3s linear infinite;
+  --animate-shimmer: shimmer 2.6s linear infinite;
+  --animate-lift: none;
+  --ease-spring: cubic-bezier(0.2, 0.7, 0.3, 1);
 
   @keyframes fadeIn {
-    from { transform: translateY(7px); opacity: 0; }
-    to   { transform: none; opacity: 1; }
+    from {
+      transform: translateY(7px);
+      opacity: 0;
+    }
+    to {
+      transform: none;
+      opacity: 1;
+    }
   }
 
   @keyframes shimmer {
-    from { background-position: 120% 0; }
-    to   { background-position: -120% 0; }
+    from {
+      background-position: 120% 0;
+    }
+    to {
+      background-position: -120% 0;
+    }
   }
 }
 
@@ -499,18 +682,29 @@
 
 /* Screen enter — every page root */
 @utility animate-fade-in {
-  animation: fadeIn .45s ease;
+  animation: fadeIn 0.45s ease;
 }
 
 /* Generic interactive row — lift on hover */
 @utility lift {
-  transition: transform .25s, border-color .25s, box-shadow .25s, background .25s;
-  &:hover { transform: translateY(-2px); }
+  transition:
+    transform 0.25s,
+    border-color 0.25s,
+    box-shadow 0.25s,
+    background 0.25s;
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* AI shimmer banner / skeleton */
 @utility ai-shimmer {
-  background: linear-gradient(110deg, transparent 20%, rgba(var(--cosmos-accent-rgb, 94,106,210), .18) 50%, transparent 80%);
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(var(--cosmos-accent-rgb, 94, 106, 210), 0.18) 50%,
+    transparent 80%
+  );
   background-size: 220% 100%;
   animation: shimmer 2.6s linear infinite;
 }
@@ -525,7 +719,11 @@
 @utility kpi-dots {
   background-image: radial-gradient(currentColor 1.1px, transparent 1.5px);
   background-size: 11px 11px;
-  -webkit-mask-image: radial-gradient(150% 130% at 100% 100%, #000 0%, transparent 58%);
+  -webkit-mask-image: radial-gradient(
+    150% 130% at 100% 100%,
+    #000 0%,
+    transparent 58%
+  );
   opacity: 0;
 }
 
@@ -563,4 +761,156 @@
   --tw-prose-invert-pre-bg: var(--color-background);
   --tw-prose-invert-th-borders: var(--color-border);
   --tw-prose-invert-td-borders: var(--color-border);
+}
+
+/* ─── Glow Button ──────────────────────────────────────────────────── */
+@property --btn-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes btnRing {
+  to {
+    --btn-angle: 360deg;
+  }
+}
+
+.btn-glow {
+  position: relative;
+  isolation: isolate;
+  overflow: visible;
+}
+
+.btn-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--btn-angle),
+    transparent 70%,
+    var(--accent-c) 85%,
+    #fff 93%,
+    var(--accent-c) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1.5px;
+  animation: btnRing 4.5s linear infinite;
+  z-index: -1;
+}
+
+.btn-glow::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: var(--accent-c);
+  opacity: 0.2;
+  filter: blur(10px);
+  z-index: -2;
+  transition:
+    opacity 0.3s ease,
+    filter 0.3s ease;
+}
+
+.btn-glow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(var(--accent-rgb), 0.3);
+}
+
+.btn-glow:hover::before {
+  animation-duration: 1.8s;
+}
+
+.btn-glow:hover::after {
+  opacity: 0.4;
+  filter: blur(14px);
+}
+
+.btn-glow:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-glow::before {
+    animation: none;
+  }
+  .btn-glow:hover {
+    transform: none;
+    box-shadow: none;
+  }
+}
+
+/* ─── COSMOS Animations ────────────────────────────────────────────── */
+@keyframes cosmos-blocked-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(251, 113, 133, 0);
+    border-color: rgba(251, 113, 133, 0.35);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(251, 113, 133, 0.12);
+    border-color: rgba(251, 113, 133, 0.65);
+  }
+}
+
+@keyframes cosmos-ai-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.cosmos-blocked {
+  animation: cosmos-blocked-pulse 2s ease-in-out infinite;
+  border-left: 3px solid var(--red-c) !important;
+}
+
+.cosmos-ai-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--cosmos-ai-bg) 25%,
+    rgba(var(--cosmos-accent-rgb), 0.15) 50%,
+    var(--cosmos-ai-bg) 75%
+  );
+  background-size: 200% auto;
+  animation: cosmos-ai-shimmer 1.8s linear infinite;
+}
+
+/* ─── Sheet (Drawer) spring animation override ──────────────────────── */
+[data-slot="sheet-content"][data-state="open"] {
+  animation: sheet-slide-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+[data-slot="sheet-content"][data-state="closed"] {
+  animation: sheet-slide-out 0.25s cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+@keyframes sheet-slide-in {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+@keyframes sheet-slide-out {
+  from { transform: translateX(0); }
+  to   { transform: translateX(100%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-blocked {
+    animation: none;
+    border-left: 3px solid var(--red-c) !important;
+  }
+  .cosmos-ai-shimmer {
+    animation: none;
+  }
+  [data-slot="sheet-content"] {
+    animation: none !important;
+  }
 }
