@@ -28,8 +28,8 @@ Objetivo: milhões USD em MRR via enterprises BR/LATAM rodando SAFe com 3+ ARTs.
 
 | Story | Título | WSJF | Pts | Status |
 |-------|--------|------|-----|--------|
-| 046 | Schema MeetingIntegration/Transcript/Insight | 14 | 5 | pending |
-| 047 | Webhook receiver `/api/webhooks/fireflies` | 13 | 5 | pending |
+| 046 | Schema MeetingIntegration/Transcript/Insight | 14 | 5 | ✅ done |
+| 047 | Webhook receiver `/api/webhooks/fireflies` | 13 | 5 | ✅ done |
 | 048 | Inngest worker: fetch GraphQL transcript+summary | 11 | 5 | pending |
 | 049 | AI mapper: insights → Task/Risk/DecisionLog | 12 | 8 | pending |
 | 050 | Connect UI (Settings → Integrations → Fireflies) | 9 | 5 | pending |
