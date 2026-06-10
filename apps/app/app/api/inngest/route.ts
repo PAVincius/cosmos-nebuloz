@@ -1,6 +1,7 @@
 import { serve } from "inngest/next";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
 import { inngest } from "@/lib/inngest/client";
+import { fetchFirefliesTranscriptFn } from "@/lib/inngest/fireflies-transcript";
 import { checkGovernanceSLA } from "@/lib/inngest/governance-sla";
 import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
@@ -14,5 +15,6 @@ export const { GET, POST, PUT } = serve({
     deliverWebhookEvent,
     checkGovernanceSLA,
     checkSolutionStaleness,
+    fetchFirefliesTranscriptFn,
   ],
 });
