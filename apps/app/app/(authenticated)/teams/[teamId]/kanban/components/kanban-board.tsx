@@ -3,12 +3,6 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -24,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -343,71 +338,90 @@ export function KanbanBoard({
 
               {/* Cards */}
               <div className="flex flex-1 flex-col gap-2">
-                {colStories.map((story) => (
-                  <Card className="shadow-none" key={story.id}>
-                    <CardHeader className="p-3 pb-1">
-                      <CardTitle className="font-medium text-sm leading-snug">
-                        {story.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-3 pt-0">
-                      <div className="mb-2 flex flex-wrap items-center gap-1.5">
-                        <Badge
-                          className="h-5 text-xs"
-                          variant={
-                            PRIORITY_BADGES[story.priority] ?? "secondary"
-                          }
-                        >
-                          {PRIORITY_LABELS[story.priority] ?? story.priority}
-                        </Badge>
-                        <span className="flex items-center gap-0.5 text-muted-foreground text-xs">
-                          <ZapIcon className="h-3 w-3" />
-                          {story.storyPoints} SP
-                        </span>
-                        {story.assigneeUserId && (
+                {colStories.map((story) => {
+                  const priorityBorder =
+                    story.priority === "critical"
+                      ? "var(--red-c, rgb(239,68,68))"
+                      : story.priority === "high"
+                        ? "var(--amber-c, rgb(251,191,36))"
+                        : "transparent";
+                  return (
+                    <div
+                      className={cn(
+                        "group relative overflow-hidden rounded-lg border border-hairline bg-card",
+                        "shadow-[var(--card-shadow)] transition-all duration-200 ease-out",
+                        "hover:-translate-y-[1px] hover:border-hairline-strong hover:shadow-[var(--hover-shadow)]",
+                        "dark:bg-[var(--surface-3)]"
+                      )}
+                      key={story.id}
+                    >
+                      {/* Priority left strip */}
+                      <div
+                        className="absolute top-0 left-0 h-full w-[3px]"
+                        style={{ backgroundColor: priorityBorder }}
+                      />
+                      <div className="pt-2.5 pr-3 pb-2 pl-2.5">
+                        <p className="font-medium text-[13px] text-foreground leading-snug">
+                          {story.title}
+                        </p>
+                        <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                          <Badge
+                            className="h-5 text-xs"
+                            variant={
+                              PRIORITY_BADGES[story.priority] ?? "secondary"
+                            }
+                          >
+                            {PRIORITY_LABELS[story.priority] ?? story.priority}
+                          </Badge>
                           <span className="flex items-center gap-0.5 text-muted-foreground text-xs">
-                            <UserIcon className="h-3 w-3" />
-                            <span className="max-w-[80px] truncate">
-                              {memberById.get(story.assigneeUserId)?.name ??
-                                story.assigneeUserId.slice(0, 8)}
-                            </span>
+                            <ZapIcon className="h-3 w-3" />
+                            {story.storyPoints} SP
                           </span>
-                        )}
+                          {story.assigneeUserId && (
+                            <span className="flex items-center gap-0.5 text-muted-foreground text-xs">
+                              <UserIcon className="h-3 w-3" />
+                              <span className="max-w-[80px] truncate">
+                                {memberById.get(story.assigneeUserId)?.name ??
+                                  story.assigneeUserId.slice(0, 8)}
+                              </span>
+                            </span>
+                          )}
+                        </div>
+                        {/* Move buttons — reveal on hover */}
+                        <div className="mt-1.5 flex items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                          {colIdx > 0 && (
+                            <Button
+                              aria-label="Mover para coluna anterior"
+                              className="h-6 px-1.5 text-xs"
+                              disabled={isPending}
+                              onClick={() =>
+                                moveStory(story.id, "back", story.status)
+                              }
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <ArrowLeftIcon className="h-3 w-3" />
+                            </Button>
+                          )}
+                          {colIdx < COLUMN_KEYS.length - 1 && (
+                            <Button
+                              aria-label="Mover para próxima coluna"
+                              className="ml-auto h-6 px-1.5 text-xs"
+                              disabled={isPending}
+                              onClick={() =>
+                                moveStory(story.id, "forward", story.status)
+                              }
+                              size="sm"
+                              variant="ghost"
+                            >
+                              <ArrowRightIcon className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                      {/* Move buttons */}
-                      <div className="flex items-center gap-1">
-                        {colIdx > 0 && (
-                          <Button
-                            aria-label="Mover para coluna anterior"
-                            className="h-6 px-1.5 text-xs"
-                            disabled={isPending}
-                            onClick={() =>
-                              moveStory(story.id, "back", story.status)
-                            }
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <ArrowLeftIcon className="h-3 w-3" />
-                          </Button>
-                        )}
-                        {colIdx < COLUMN_KEYS.length - 1 && (
-                          <Button
-                            aria-label="Mover para próxima coluna"
-                            className="ml-auto h-6 px-1.5 text-xs"
-                            disabled={isPending}
-                            onClick={() =>
-                              moveStory(story.id, "forward", story.status)
-                            }
-                            size="sm"
-                            variant="ghost"
-                          >
-                            <ArrowRightIcon className="h-3 w-3" />
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                    </div>
+                  );
+                })}
                 {colStories.length === 0 && (
                   <div className="min-h-[80px] flex-1 rounded-lg border border-dashed" />
                 )}
