@@ -20,6 +20,7 @@ import {
 import { logAudit } from "../audit/index";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
+import { evaluateStoryInvest } from "./invest";
 import type {
   CreateStoryInput,
   StoryFiltersInput,
@@ -183,6 +184,18 @@ export async function updateStory(
     });
     if (!story) {
       throw new Error("Story não encontrada");
+    }
+
+    if (data.status === "READY") {
+      const invest = evaluateStoryInvest({ ...story, ...data });
+      const errorCriteria = invest.criteria.filter(
+        (c) => !c.pass && c.level === "ERROR"
+      );
+      if (errorCriteria.length > 0) {
+        throw new Error(
+          `INVEST_BLOCK: ${errorCriteria.map((c) => c.hint).join("; ")}`
+        );
+      }
     }
 
     const completedAt =
