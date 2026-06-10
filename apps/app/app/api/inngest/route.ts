@@ -1,6 +1,7 @@
 import { serve } from "inngest/next";
 import { billingSyncFunction } from "@/lib/inngest/billing-sync";
 import { inngest } from "@/lib/inngest/client";
+import { fetchFathomTranscriptFn } from "@/lib/inngest/fathom-transcript";
 import { mapFirefliesInsightsFn } from "@/lib/inngest/fireflies-insights";
 import { fetchFirefliesTranscriptFn } from "@/lib/inngest/fireflies-transcript";
 import { checkGovernanceSLA } from "@/lib/inngest/governance-sla";
@@ -17,6 +18,7 @@ export const { GET, POST, PUT } = serve({
     checkGovernanceSLA,
     checkSolutionStaleness,
     fetchFirefliesTranscriptFn,
+    fetchFathomTranscriptFn,
     mapFirefliesInsightsFn,
   ],
 });

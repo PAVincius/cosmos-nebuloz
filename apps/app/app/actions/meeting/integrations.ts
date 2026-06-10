@@ -14,6 +14,10 @@ import { z } from "zod";
 import { err, ok, type Result } from "../_base";
 import { logAudit } from "../audit";
 import {
+  buildFathomWebhookUrl,
+  fathomTestConnection,
+} from "../integrations/connectors/fathom";
+import {
   buildFirefliesWebhookUrl,
   firefliesTestConnection,
 } from "../integrations/connectors/fireflies";
@@ -116,6 +120,62 @@ export async function connectFireflies(
     });
   } catch (e) {
     return err(e instanceof Error ? e.message : "Erro ao conectar Fireflies");
+  }
+}
+
+const ConnectFathomSchema = z.object({
+  name: z.string().min(1).max(100).default("Fathom"),
+  apiKey: z.string().min(1, "apiKey obrigatório"),
+});
+
+export async function connectFathom(
+  raw: unknown
+): Promise<Result<{ id: string; webhookUrl: string; webhookSecret: string }>> {
+  try {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(ADMIN_ROLES, ctx);
+
+    const input = ConnectFathomSchema.parse(raw);
+
+    const conn = await fathomTestConnection(input.apiKey);
+    if (!conn.ok) {
+      return err(conn.error ?? "Falha ao validar API key do Fathom");
+    }
+
+    const webhookSecret = randomBytes(32).toString("hex");
+
+    const created = await database.meetingIntegration.create({
+      data: {
+        tenantId: ctx.tenantId,
+        provider: "fathom",
+        name: input.name,
+        config: encryptConfigSecrets({ apiKey: input.apiKey }) as Record<
+          string,
+          string
+        >,
+        webhookSecret,
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    });
+
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "INTEGRATION",
+      entityId: created.id,
+      diff: { provider: "fathom" },
+    }).catch(() => null);
+
+    revalidatePath("/settings/integrations/meeting");
+
+    return ok({
+      id: created.id,
+      webhookUrl: buildFathomWebhookUrl(appBaseUrl(), created.id),
+      webhookSecret,
+    });
+  } catch (e) {
+    return err(e instanceof Error ? e.message : "Erro ao conectar Fathom");
   }
 }
 
