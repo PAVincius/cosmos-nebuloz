@@ -4,6 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import { indexEntity } from "../safe-copilot/indexer";
 
 export type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
 
@@ -21,6 +22,10 @@ export async function updateRiskStatus(riskId: string, status: string) {
   const updated = await database.risk.update({
     where: { id: riskId },
     data: { status },
+  });
+
+  queueMicrotask(() => {
+    indexEntity("risk", riskId, ctx.tenantId).catch(() => {});
   });
 
   revalidatePath(`/arts/${risk.piPlan?.art.id}/pi-planning`);
@@ -57,6 +62,10 @@ export async function createRisk(data: {
       category: data.category,
       status: data.status ?? "owned",
     },
+  });
+
+  queueMicrotask(() => {
+    indexEntity("risk", risk.id, ctx.tenantId).catch(() => {});
   });
 
   revalidatePath(`/arts/${piPlan.art.id}/pi-planning`);

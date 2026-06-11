@@ -10,6 +10,7 @@ import { logAudit } from "../audit/index";
 import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
+import { indexEntity } from "../safe-copilot/indexer";
 
 import type { FeatureDetail, FeatureRow } from "./schema";
 export type { FeatureDetail, FeatureRow };
@@ -101,6 +102,10 @@ export async function createFeature(raw: unknown) {
     action: "created",
     entityType: "Feature",
     entityId: created.id,
+  });
+
+  queueMicrotask(() => {
+    indexEntity("feature", created.id, ctx.tenantId).catch(() => {});
   });
 
   revalidatePath(`/epics/${data.epicId}/features`);
@@ -276,6 +281,10 @@ export async function updateFeature(id: string, raw: unknown) {
     featureTitle: feature.title,
     tenantId: ctx.tenantId,
     userId: ctx.userId,
+  });
+
+  queueMicrotask(() => {
+    indexEntity("feature", id, ctx.tenantId).catch(() => {});
   });
 
   revalidatePath(`/features/${id}`);

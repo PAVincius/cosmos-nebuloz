@@ -68,6 +68,30 @@ export async function loadCopilotSession(
     }));
 }
 
+const SESSION_WINDOW = 20;
+
+export function buildContextWindow(messages: StoredMessage[]): StoredMessage[] {
+  if (messages.length <= SESSION_WINDOW) {
+    return messages;
+  }
+
+  const older = messages.slice(0, messages.length - SESSION_WINDOW);
+  const recent = messages.slice(-SESSION_WINDOW);
+
+  const userTopics = older
+    .filter((m) => m.role === "user")
+    .map((m) => m.content.slice(0, 60))
+    .join("; ");
+
+  const summary: StoredMessage = {
+    id: "ctx-summary",
+    role: "assistant",
+    content: `[Contexto anterior: ${older.length} mensagens cobrindo: ${userTopics || "conversa anterior"}]`,
+  };
+
+  return [summary, ...recent];
+}
+
 export async function pinCopilotSession(sessionId: string): Promise<void> {
   const { tenantId } = await requireTenantSession(await headers());
   await database.copilotSession.updateMany({

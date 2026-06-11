@@ -5,7 +5,10 @@ import { embed, tool } from "ai";
 import { z } from "zod";
 import { awsPricingTool, gcpPricingTool } from "./tools/pricing-tools";
 
-export function buildCopilotTools(tenantId: string) {
+const VIEWER_ROLE = "VIEWER";
+
+export function buildCopilotTools(tenantId: string, role?: string) {
+  const isViewer = role === VIEWER_ROLE;
   return {
     queryFlowMetrics: tool({
       description:
@@ -244,6 +247,12 @@ export function buildCopilotTools(tenantId: string) {
         js,
         storyPoints,
       }) => {
+        if (isViewer) {
+          return {
+            ok: false,
+            error: "Sem permissão: VIEWER não pode criar features.",
+          };
+        }
         const wsjfScore = js > 0 ? (bv + tc + rr) / js : 0;
         const feature = await database.feature.create({
           data: {
@@ -275,6 +284,12 @@ export function buildCopilotTools(tenantId: string) {
           .describe("Target status"),
       }),
       execute: async ({ featureId, toStatus }) => {
+        if (isViewer) {
+          return {
+            ok: false,
+            error: "Sem permissão: VIEWER não pode mover features.",
+          };
+        }
         let extra: Record<string, unknown> = {};
         if (toStatus === "IN_PROGRESS") {
           extra = { startedAt: new Date() };

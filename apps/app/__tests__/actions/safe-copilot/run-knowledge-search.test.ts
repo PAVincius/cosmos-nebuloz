@@ -74,7 +74,10 @@ describe("runKnowledgeSearch", () => {
   });
 
   it("passes sourceTypes and limit through to searchKnowledge", async () => {
-    await runKnowledgeSearch("query", "tenant-42", ["epic", "story"], 5);
+    await runKnowledgeSearch("query", "tenant-42", {
+      sourceTypes: ["epic", "story"],
+      limit: 5,
+    });
 
     expect(mocks.searchKnowledge).toHaveBeenCalledWith(
       "tenant-42",
