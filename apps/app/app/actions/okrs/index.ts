@@ -1,6 +1,6 @@
 "use server";
 
-import { requireTenantSession } from "@repo/auth/server";
+import { AuthError, requireTenantSession } from "@repo/auth/server";
 import type { OKR } from "@repo/database";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
@@ -15,7 +15,10 @@ import {
   safeAction,
 } from "@/app/actions/_base";
 import { enforce } from "../permissions";
+import { checkKRThresholds } from "./notifications";
 import {
+  ArchiveQuarterOKRsSchema,
+  CreateAutomatedSnapshotSchema,
   CreateCheckInSchema,
   type CreateKeyResultInput,
   CreateKeyResultSchema,
@@ -47,6 +50,9 @@ export type {
   OKRWithContext,
   KeyResultSnapshotItem,
 };
+
+const ART_LEVEL_OKR_TYPES = new Set(["pi_art"]);
+const PO_BLOCKED_ROLES = new Set(["PO"]);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -141,12 +147,49 @@ export async function createOKR(raw: unknown): Promise<Result<OKR>> {
     enforce(ctx.role, "OKR", "create");
     const input = CreateOKRSchema.parse(raw);
 
+    // AC-002: PO cannot create ART-level OKRs
+    if (
+      input.type &&
+      ART_LEVEL_OKR_TYPES.has(input.type) &&
+      PO_BLOCKED_ROLES.has(ctx.role)
+    ) {
+      throw new AuthError(
+        "INSUFFICIENT_ROLE",
+        "Creating ART-level OKRs requires RTE role or above"
+      );
+    }
+
+    // AC-001: ≤10 OKRs per ART per quarter
+    if (input.artId && input.quarter && input.year) {
+      const count = await database.oKR.count({
+        where: {
+          tenantId: ctx.tenantId,
+          artId: input.artId,
+          quarter: input.quarter,
+          year: input.year,
+          archivedAt: null,
+        },
+      });
+      if (count >= 10) {
+        throw new Error("Maximum 10 OKRs per ART per quarter");
+      }
+    }
+
     const okr = await database.oKR.create({
       data: {
         tenantId: ctx.tenantId,
         title: input.title,
         description: input.description ?? null,
         piPlanId: input.piPlanId ?? null,
+        type: input.type ?? "portfolio_theme",
+        artId: input.artId ?? null,
+        teamId: input.teamId ?? null,
+        strategicThemeId: input.strategicThemeId ?? null,
+        epicId: input.epicId ?? null,
+        horizon: input.horizon ?? null,
+        scope: input.scope ?? null,
+        quarter: input.quarter ?? null,
+        year: input.year ?? null,
         ownerId: input.ownerId ?? null,
         status: input.status,
       },
@@ -284,6 +327,14 @@ export async function createKeyResult(
       throw new Error("OKR não encontrado ou sem permissão.");
     }
 
+    // AC-008: max 5 key results per OKR
+    const krCount = await database.keyResult.count({
+      where: { okrId: parsed.okrId, tenantId: ctx.tenantId },
+    });
+    if (krCount >= 5) {
+      throw new Error("Maximum 5 key results per OKR");
+    }
+
     const kr = await database.keyResult.create({
       data: {
         tenantId: ctx.tenantId,
@@ -355,6 +406,12 @@ export async function updateKeyResultProgress(
     enforce(ctx.role, "KeyResult", "update");
     const input = UpdateKeyResultProgressSchema.parse(raw);
 
+    // Fetch current value before update for threshold comparison (AC-003)
+    const before = await database.keyResult.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: { current: true, target: true, title: true },
+    });
+
     const { count } = await database.keyResult.updateMany({
       where: { id, tenantId: ctx.tenantId },
       data: { current: input.current },
@@ -367,6 +424,20 @@ export async function updateKeyResultProgress(
     const updated = await database.keyResult.findFirstOrThrow({
       where: { id, tenantId: ctx.tenantId },
     });
+
+    // AC-003: fire threshold notifications (fire-and-forget)
+    if (before) {
+      queueMicrotask(() => {
+        checkKRThresholds({
+          tenantId: ctx.tenantId,
+          krId: id,
+          krTitle: before.title,
+          prevValue: before.current,
+          newValue: input.current,
+          target: before.target,
+        }).catch(() => {});
+      });
+    }
 
     revalidatePath("/portfolio/okrs");
     revalidatePath("/portfolio");
@@ -435,6 +506,7 @@ export async function getOKRsWithContext(
           keyResultId: s.keyResultId,
           value: s.value,
           note: s.note,
+          source: s.source as "MANUAL" | "AUTOMATED",
           recordedAt: s.recordedAt,
         })),
       }));
@@ -494,6 +566,7 @@ export async function createKeyResultCheckIn(
       keyResultId: snapshot.keyResultId,
       value: snapshot.value,
       note: snapshot.note,
+      source: snapshot.source as "MANUAL" | "AUTOMATED",
       recordedAt: snapshot.recordedAt,
     };
   });
@@ -573,6 +646,112 @@ export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
       featureCount: features.length,
       featureDone: done,
       progress: prog,
+    };
+  });
+}
+
+// ─── AC-005: Quarter-close archive ───────────────────────────────────────────
+
+export async function archiveQuarterOKRs(
+  raw: unknown
+): Promise<Result<{ archived: number }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "OKR", "update");
+    const input = ArchiveQuarterOKRsSchema.parse(raw);
+
+    const okrs = await database.oKR.findMany({
+      where: {
+        tenantId: ctx.tenantId,
+        artId: input.artId,
+        quarter: input.quarter,
+        year: input.year,
+        archivedAt: null,
+      },
+      include: {
+        keyResults: {
+          select: {
+            id: true,
+            title: true,
+            current: true,
+            target: true,
+            unit: true,
+          },
+        },
+      },
+    });
+
+    if (okrs.length === 0) {
+      return { archived: 0 };
+    }
+
+    const now = new Date();
+    await Promise.all(
+      okrs.map((okr) =>
+        database.oKR.update({
+          where: { id: okr.id },
+          data: {
+            archivedAt: now,
+            finalAchievement: okr.keyResults.map((kr) => ({
+              id: kr.id,
+              title: kr.title,
+              current: kr.current,
+              target: kr.target,
+              unit: kr.unit,
+              pct:
+                kr.target > 0 ? Math.round((kr.current / kr.target) * 100) : 0,
+            })),
+          },
+        })
+      )
+    );
+
+    revalidatePath("/portfolio/okrs");
+    return { archived: okrs.length };
+  });
+}
+
+// ─── AC-004: Automated snapshot from webhook ──────────────────────────────────
+
+export async function createAutomatedSnapshot(
+  raw: unknown
+): Promise<Result<KeyResultSnapshotItem>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "KeyResult", "update");
+    const input = CreateAutomatedSnapshotSchema.parse(raw);
+
+    const kr = await database.keyResult.findFirst({
+      where: { id: input.keyResultId, tenantId: ctx.tenantId },
+    });
+    if (!kr) {
+      throw new Error("Key Result não encontrado.");
+    }
+
+    const [snapshot] = await Promise.all([
+      database.keyResultSnapshot.create({
+        data: {
+          tenantId: ctx.tenantId,
+          keyResultId: input.keyResultId,
+          value: input.value,
+          source: input.source,
+          note: input.note ?? null,
+        },
+      }),
+      database.keyResult.update({
+        where: { id: input.keyResultId },
+        data: { current: input.value },
+      }),
+    ]);
+
+    revalidatePath("/portfolio/okrs");
+    return {
+      id: snapshot.id,
+      keyResultId: snapshot.keyResultId,
+      value: snapshot.value,
+      note: snapshot.note,
+      source: snapshot.source as "MANUAL" | "AUTOMATED",
+      recordedAt: snapshot.recordedAt,
     };
   });
 }

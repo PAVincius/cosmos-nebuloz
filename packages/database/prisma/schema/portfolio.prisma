@@ -46,10 +46,10 @@ model ThemeART {
 }
 
 model OKR {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   tenantId         String
   // SAFe OKR typing — drives template + required links
-  type             String   @default("portfolio_theme") // portfolio_theme/portfolio_epic/pi_art/team_pi/improvement
+  type             String    @default("portfolio_theme") // portfolio_theme/portfolio_epic/pi_art/team_pi/improvement
   // Contextual links (one of these is required depending on type)
   piPlanId         String?
   strategicThemeId String?
@@ -62,9 +62,13 @@ model OKR {
   ownerId          String?
   horizon          String? // e.g. "2026", "PI-2026-Q1"
   scope            String? // for improvement type: portfolio/art/team
-  status           String   @default("ON_TRACK") // ON_TRACK/AT_RISK/BEHIND/ACHIEVED
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status           String    @default("ON_TRACK") // ON_TRACK/AT_RISK/BEHIND/ACHIEVED
+  quarter          Int? // 1-4 (structured quarter for ART OKRs)
+  year             Int? // e.g. 2026
+  finalAchievement Json? // snapshot of KR values at quarter-close
+  archivedAt       DateTime? // null = active; set on quarter-close
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
@@ -75,6 +79,7 @@ model OKR {
   @@index([tenantId, piPlanId])
   @@index([strategicThemeId])
   @@index([tenantId, type])
+  @@index([tenantId, artId, year, quarter])
 }
 
 model KeyResult {
@@ -91,6 +96,8 @@ model KeyResult {
   dueDate         DateTime?
   ownerId         String?
   dataSource      String? // where measurement comes from
+  confidence      String    @default("ON_TRACK") // ON_TRACK|AT_RISK|ACHIEVED
+  metricRuleId    String? // links to metric rule for automated snapshots
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
@@ -109,6 +116,7 @@ model KeyResultSnapshot {
   keyResultId  String
   value        Float
   note         String?
+  source       String   @default("MANUAL") // MANUAL|AUTOMATED
   recordedById String?
   recordedAt   DateTime @default(now())
 
@@ -129,12 +137,12 @@ model LeanBudget {
   name                String
   amount              Float
   // Story-025 CapEx/OpEx split fields (AC-002)
-  capexPct            Float?    // 0-100
-  opexPct             Float?    // 0-100; capexPct + opexPct must = 100
+  capexPct            Float? // 0-100
+  opexPct             Float? // 0-100; capexPct + opexPct must = 100
   immutableAt         DateTime? // set when PI closes (AC-005)
   spent               Decimal?  @db.Decimal(18, 6)
-  period              String    // e.g. "PI-2025-Q2"
-  guardrails          Json?     // {capex: number, opex: number}
+  period              String // e.g. "PI-2025-Q2"
+  guardrails          Json? // {capex: number, opex: number}
   spentSource         String    @default("MANUAL") // MANUAL | BILLING_AGGREGATE | FORECAST
   spentManualOverride Decimal?  @db.Decimal(18, 6)
   createdAt           DateTime  @default(now())

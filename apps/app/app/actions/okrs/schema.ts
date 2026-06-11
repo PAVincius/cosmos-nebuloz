@@ -11,9 +11,18 @@ import {
 
 export const CreateOKRSchema = z.object({
   piPlanId: optCuid,
+  type: z.string().max(50).optional(),
+  artId: optCuid,
+  teamId: optCuid,
+  strategicThemeId: optCuid,
+  epicId: optCuid,
   title: nnStr,
   description: optStr,
   ownerId: optCuid,
+  horizon: optStr,
+  scope: optStr,
+  quarter: z.number().int().min(1).max(4).optional(),
+  year: z.number().int().min(2024).max(2035).optional(),
   status: OKRStatus.default("ON_TRACK"),
 });
 
@@ -21,7 +30,25 @@ export const UpdateOKRSchema = CreateOKRSchema.partial();
 
 export const OKRFiltersSchema = PaginationSchema.extend({
   piPlanId: optCuid,
+  artId: optCuid,
+  quarter: z.number().int().min(1).max(4).optional(),
+  year: z.number().int().min(2024).max(2035).optional(),
+  archived: z.boolean().optional(),
   status: OKRStatus.optional(),
+});
+
+export const ArchiveQuarterOKRsSchema = z.object({
+  artId: cuid,
+  quarter: z.number().int().min(1).max(4),
+  year: z.number().int().min(2024).max(2035),
+});
+
+export const CreateAutomatedSnapshotSchema = z.object({
+  keyResultId: cuid,
+  value: z.number().finite().min(0),
+  source: z.enum(["MANUAL", "AUTOMATED"]).default("AUTOMATED"),
+  note: z.string().max(500).optional(),
+  metricRuleId: z.string().optional(),
 });
 
 export const CreateKeyResultSchema = z.object({
@@ -94,5 +121,11 @@ export type KeyResultSnapshotItem = {
   keyResultId: string;
   value: number;
   note: string | null;
+  source: "MANUAL" | "AUTOMATED";
   recordedAt: Date;
 };
+
+export type ArchiveQuarterInput = z.infer<typeof ArchiveQuarterOKRsSchema>;
+export type CreateAutomatedSnapshotInput = z.infer<
+  typeof CreateAutomatedSnapshotSchema
+>;
