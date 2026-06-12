@@ -27,6 +27,10 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
+vi.mock("../../app/actions/safe-copilot/indexer", () => ({
+  indexEntity: vi.fn().mockResolvedValue(undefined),
+}));
+
 import { createRisk, updateRiskStatus } from "../../app/actions/arts/risks";
 
 const NOT_FOUND_RX = /not found|não encontrado/i;
