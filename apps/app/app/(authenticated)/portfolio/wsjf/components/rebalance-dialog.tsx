@@ -22,12 +22,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
 import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
 import type { EpicWithFeatures } from "@/app/actions/wsjf";
+import { rebalanceWSJFWithAI } from "@/app/actions/wsjf/rebalance";
 import type {
   AIAccessStatus,
   FeatureSuggestion,
   RebalancingResult,
-} from "@/app/actions/wsjf/rebalance";
-import { rebalanceWSJFWithAI } from "@/app/actions/wsjf/rebalance";
+} from "@/app/actions/wsjf/rebalance-schema";
 import type { ExplainabilitySuggestion } from "./explainability-panel";
 
 type Phase = "idle" | "running" | "result" | "confirming" | "done" | "error";

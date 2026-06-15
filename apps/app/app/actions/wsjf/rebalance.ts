@@ -13,13 +13,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { getMemberVelocityStats } from "@/app/actions/velocity";
 import { getWSJFConfig } from "@/app/actions/wsjf";
-import type {
-  AIAccessStatus,
-  FeatureSuggestion,
-  RebalancingResult,
-} from "./rebalance-schema";
-
-export type { AIAccessStatus, FeatureSuggestion, RebalancingResult };
+import type { AIAccessStatus, RebalancingResult } from "./rebalance-schema";
 
 // ─── Plan gating ─────────────────────────────────────────────────────────────
 

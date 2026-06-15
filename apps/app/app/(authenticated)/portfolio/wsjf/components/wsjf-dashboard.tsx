@@ -39,7 +39,7 @@ import type {
   WSJFConfig,
 } from "@/app/actions/wsjf";
 import { saveWSJFConfig } from "@/app/actions/wsjf";
-import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance";
+import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance-schema";
 import {
   ExplainabilityPanel,
   type ExplainabilitySuggestion,
