@@ -28,10 +28,7 @@ function ConnectForm({
 }: {
   label: string;
   defaultName: string;
-  onConnect: (args: {
-    name: string;
-    apiKey: string;
-  }) => Promise<{
+  onConnect: (args: { name: string; apiKey: string }) => Promise<{
     ok: boolean;
     data?: { id: string; webhookUrl: string; webhookSecret: string };
     error?: string;

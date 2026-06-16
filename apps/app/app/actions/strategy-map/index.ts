@@ -42,7 +42,9 @@ export type StrategyMapData = {
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function calcProgress(krs: { current: number; target: number }[]): number {
-  if (krs.length === 0) return 0;
+  if (krs.length === 0) {
+    return 0;
+  }
   const avg =
     krs.reduce((s, kr) => s + Math.min(kr.current / (kr.target || 1), 1), 0) /
     krs.length;
@@ -109,7 +111,9 @@ export async function getStrategyMapData(): Promise<StrategyMapData> {
   // Build epicId → OKRNode[] lookup
   const epicOKRMap = new Map<string, OKRNode[]>();
   for (const okr of epicOKRs) {
-    if (!okr.epicId) continue;
+    if (!okr.epicId) {
+      continue;
+    }
     const node = toOKRNode(okr);
     const list = epicOKRMap.get(okr.epicId) ?? [];
     list.push(node);

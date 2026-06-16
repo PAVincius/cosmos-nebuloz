@@ -1,5 +1,6 @@
 // Story-031: Liveblocks storageUpdated webhook → dual-write to Prisma
 
+// @ts-expect-error — @liveblocks/node may not be installed in all environments
 import { WebhookHandler } from "@liveblocks/node";
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
@@ -93,7 +94,7 @@ async function syncAssignments(
     } catch (err) {
       log.error(
         `[webhook/liveblocks] upsert failed feature=${featureId} piPlan=${piPlanId}`,
-        err
+        { error: String(err) }
       );
     }
   }

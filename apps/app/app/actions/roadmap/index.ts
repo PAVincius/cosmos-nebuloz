@@ -7,25 +7,13 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "@/app/actions/_base";
 import {
-  type CreateRoadmapItemInput,
   CreateRoadmapItemSchema,
-  type RoadmapFiltersInput,
   RoadmapFiltersSchema,
   type RoadmapItemData,
   type RoadmapItemWithRelations,
   type RoadmapStatus as RoadmapStatusType,
-  type UpdateRoadmapItemInput,
   UpdateRoadmapItemSchema,
 } from "./schema";
-
-export type {
-  CreateRoadmapItemInput,
-  UpdateRoadmapItemInput,
-  RoadmapFiltersInput,
-  RoadmapItemData,
-  RoadmapItemWithRelations,
-};
-export type { RoadmapStatusType as RoadmapStatus };
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

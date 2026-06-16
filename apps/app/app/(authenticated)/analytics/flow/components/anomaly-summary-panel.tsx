@@ -82,7 +82,6 @@ export function AnomalySummaryPanel({ snapshotId }: { snapshotId: string }) {
         </p>
       )}
 
-      {/* biome-ignore lint/nursery/noLeakedRender: both conditions are explicitly boolean */}
       {analyzed && anomalies.length === 0 && (
         <div className="flex items-center gap-2 text-green-600 text-xs dark:text-green-400">
           <span className="h-2 w-2 rounded-full bg-green-500" />

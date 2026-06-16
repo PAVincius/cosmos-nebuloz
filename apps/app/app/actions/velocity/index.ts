@@ -10,14 +10,7 @@ import type {
   SprintWindow,
   TeamVelocityStats,
 } from "./schema";
-
-export type {
-  SprintWindow,
-  MemberVelocityStats,
-  TeamVelocityStats,
-  BurndownEntry,
-  BurndownPoint,
-};
+import type { TeamVelocitySummary } from "./types";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -406,17 +399,6 @@ export async function getSprintBurndownData(
 // ---------------------------------------------------------------------------
 // Function 4: getVelocityOverview — ART/tenant-level summary
 // ---------------------------------------------------------------------------
-
-export type TeamVelocitySummary = {
-  teamId: string;
-  teamName: string;
-  artId: string | null;
-  artName: string | null;
-  avgSPPerSprint: number;
-  lastSprintSP: number;
-  trend: "up" | "down" | "neutral";
-  sprints: { label: string; sp: number }[];
-};
 
 export async function getVelocityOverview(
   artId?: string

@@ -37,10 +37,11 @@ CHECKPOINT_FILE = ROOT / "data" / "raw" / ".gen_checkpoint.json"
 OUT_FILE.parent.mkdir(parents=True, exist_ok=True)
 
 MODEL = "claude-haiku-4-5-20251001"
-PAIRS_PER_BATCH = 50  # Haiku: rápido e barato, mantém 50 para JSON parse estável
+PAIRS_PER_BATCH = 15   # Haiku max_tokens=8192 → safe fit: 15 pairs × ~400 tok/pair ≈ 6k tok
 TARGET_TOTAL = 10_000
 MAX_RETRIES = 5
 BASE_BACKOFF = 2.0
+MAX_PASSES = 5         # repeat topic list passes until TARGET_TOTAL reached
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 log = logging.getLogger(__name__)
@@ -350,6 +351,10 @@ def generate_batch(
             wait = BASE_BACKOFF ** (attempt + 1) + random.uniform(0, 2)
             log.warning("  rate limit, waiting %.1fs (attempt %d/%d)", wait, attempt + 1, MAX_RETRIES)
             time.sleep(wait)
+        except (anthropic.APIConnectionError, anthropic.APIStatusError) as exc:
+            wait = BASE_BACKOFF * (attempt + 2) + random.uniform(0, 3)
+            log.warning("  connection error %s, waiting %.1fs (attempt %d/%d)", exc.__class__.__name__, wait, attempt + 1, MAX_RETRIES)
+            time.sleep(wait)
         except (json.JSONDecodeError, KeyError, IndexError) as exc:
             wait = BASE_BACKOFF * (attempt + 1)
             log.warning("  parse error %s, waiting %.1fs", exc, wait)
@@ -388,11 +393,8 @@ def main() -> None:
                     pass
     log.info("Existing pairs: %d", existing)
 
-    pending = [(tid, tema, ang) for tid, tema, ang in TOPICS if tid not in done]
-    log.info("Pending batches: %d/%d", len(pending), len(TOPICS))
-
     if args.dry_run:
-        for tid, tema, ang in pending[:3]:
+        for tid, tema, ang in TOPICS[:3]:
             log.info("DRY RUN — topic=%s tema=%s", tid, tema)
             print(build_prompt(tema, ang, PAIRS_PER_BATCH)[:500])
             print("...")
@@ -400,32 +402,49 @@ def main() -> None:
 
     total_written = existing
     with OUT_FILE.open("a", encoding="utf-8") as out:
-        for i, (tid, tema, ang) in enumerate(pending):
-            log.info("[%d/%d] Generating: topic=%s | %s", i + 1, len(pending), tid, tema)
+        for pass_num in range(1, MAX_PASSES + 1):
+            pending = [
+                (f"{tid}_p{pass_num}", tema, ang)
+                for tid, tema, ang in TOPICS
+                if f"{tid}_p{pass_num}" not in done
+            ]
+            if not pending:
+                log.info("Pass %d: all batches already done, skipping", pass_num)
+                continue
 
-            pairs = generate_batch(client, tid, tema, ang, PAIRS_PER_BATCH)
+            log.info("Pass %d/%d — %d batches pending", pass_num, MAX_PASSES, len(pending))
 
-            written = 0
-            for pair in pairs:
-                q_hash = hashlib.md5(pair["comment"].lower().encode()).hexdigest()
-                if q_hash in seen_questions:
-                    continue  # dedup
-                seen_questions.add(q_hash)
-                out.write(json.dumps(pair, ensure_ascii=False) + "\n")
-                written += 1
+            for i, (batch_id, tema, ang) in enumerate(pending):
+                log.info(
+                    "[pass%d %d/%d] topic=%s | %s",
+                    pass_num, i + 1, len(pending), batch_id, tema,
+                )
 
-            out.flush()
-            total_written += written
-            done.add(tid)
-            save_checkpoint(done)
+                pairs = generate_batch(client, batch_id, tema, ang, PAIRS_PER_BATCH)
 
-            log.info("  written=%d total=%d/%d", written, total_written, TARGET_TOTAL)
+                written = 0
+                for pair in pairs:
+                    q_hash = hashlib.md5(pair["comment"].lower().encode()).hexdigest()
+                    if q_hash in seen_questions:
+                        continue  # dedup
+                    seen_questions.add(q_hash)
+                    out.write(json.dumps(pair, ensure_ascii=False) + "\n")
+                    written += 1
 
-            # Polite delay between batches
-            time.sleep(1.5)
+                out.flush()
+                total_written += written
+                done.add(batch_id)
+                save_checkpoint(done)
+
+                log.info("  written=%d total=%d/%d", written, total_written, TARGET_TOTAL)
+
+                time.sleep(1.5)
+
+                if total_written >= TARGET_TOTAL:
+                    log.info("Target reached: %d pairs", total_written)
+                    break
 
             if total_written >= TARGET_TOTAL:
-                log.info("Target reached: %d pairs", total_written)
                 break
 
     log.info("Done. Total pairs in file: %d", total_written)

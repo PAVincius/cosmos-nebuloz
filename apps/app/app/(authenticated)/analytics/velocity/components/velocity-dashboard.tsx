@@ -27,7 +27,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import type { TeamVelocitySummary } from "@/app/actions/velocity";
+import type { TeamVelocitySummary } from "@/app/actions/velocity/types";
 
 function TrendIcon({ trend }: { trend: "up" | "down" | "neutral" }) {
   if (trend === "up") {

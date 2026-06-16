@@ -168,7 +168,6 @@ type Props = {
   availablePeriods: string[];
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: dashboard with period selector + refresh + summary cards
 export function BudgetAllocationPanel({
   initialData,
   availablePeriods,

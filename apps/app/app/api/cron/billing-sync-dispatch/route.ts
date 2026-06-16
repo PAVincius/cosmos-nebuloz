@@ -50,9 +50,8 @@ export async function POST(req: Request): Promise<NextResponse> {
     } catch (err) {
       // Log and continue — do not abort remaining pages
       log.error(
-        "[billing-sync-dispatch] inngest.send failed at offset",
-        offset,
-        err
+        `[billing-sync-dispatch] inngest.send failed at offset ${offset}`,
+        { error: String(err) }
       );
     }
     offset += PAGE_SIZE;

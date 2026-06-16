@@ -10,6 +10,7 @@ model PIPlanFeatureAssignment {
   rank      Int      @default(0)
   updatedAt DateTime @updatedAt
   updatedBy String?
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
 
   @@unique([piPlanId, featureId])
   @@index([tenantId, piPlanId, teamId, sprintId])
@@ -26,6 +27,7 @@ model BoardReconciliationLog {
   resolution      String
   createdAt       DateTime @default(now())
   metadata        Json?
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId, surface, entityId])
 }

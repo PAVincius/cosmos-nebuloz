@@ -6,13 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { logAudit } from "../audit/index";
 import { CreatePIPlanSchema } from "../schemas";
-import type {
-  CreatePIPlanDetailsInput,
-  PIObjectiveInput,
-  PIRiskInput,
-} from "./schema";
-
-export type { PIObjectiveInput, PIRiskInput, CreatePIPlanDetailsInput };
+import type { CreatePIPlanDetailsInput } from "./schema";
 
 // ─── Legacy simple create (kept for compat) ───────────────────────────────────
 
@@ -212,7 +206,7 @@ export async function getPIPlanWithDetails(artId: string) {
   return { ...latestPlan, objectives, risks, features, teams };
 }
 
-export type PIPlanDetails = NonNullable<
+type PIPlanDetails = NonNullable<
   Awaited<ReturnType<typeof getPIPlanWithDetails>>
 >;
 
@@ -251,7 +245,7 @@ export async function getPIPlanFullDetails(piPlanId: string) {
   return { ...piPlan, objectives, risks, features, teams };
 }
 
-export type PIPlanFullDetails = NonNullable<
+type PIPlanFullDetails = NonNullable<
   Awaited<ReturnType<typeof getPIPlanFullDetails>>
 >;
 
@@ -333,4 +327,32 @@ export async function createPIObjective(data: {
 
   revalidatePath(`/arts/${piPlan.art.id}/pi-planning`);
   return objective;
+}
+
+// ─── Miro board URL ───────────────────────────────────────────────────────────
+
+export async function saveMiroBoardUrl(
+  piPlanId: string,
+  miroBoardUrl: string | null
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    const ctx = await requireTenantSession(await headers());
+    const plan = await database.pIPlan.findFirst({
+      where: { id: piPlanId, tenantId: ctx.tenantId },
+      select: { id: true },
+    });
+    if (!plan) {
+      return { ok: false, error: "PI Plan não encontrado" };
+    }
+
+    await database.pIPlan.update({
+      where: { id: piPlanId },
+      data: { miroBoardUrl: miroBoardUrl ?? null },
+    });
+
+    revalidatePath("/pi-planning");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : "Erro" };
+  }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 const REVEAL: Variants = {
   hidden: { opacity: 0, y: 22 },
@@ -17,11 +17,11 @@ const STAGGER: Variants = {
   visible: { transition: { staggerChildren: 0.08 } },
 };
 
-interface FadeInProps {
+type FadeInProps = {
   children: ReactNode;
   className?: string;
   delay?: number;
-}
+};
 
 /** Single element fade-in on scroll */
 export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
@@ -29,8 +29,6 @@ export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
       variants={{
         hidden: REVEAL.hidden,
         visible: {
@@ -38,8 +36,10 @@ export function FadeIn({ children, className = "", delay = 0 }: FadeInProps) {
           transition: { duration: 0.6, ease: [0, 0, 0.2, 1], delay },
         },
       }}
+      viewport={{ once: true, margin: "-60px" }}
+      whileInView="visible"
     >
-      <>{children}</>
+      {children}
     </motion.div>
   );
 }
@@ -56,11 +56,11 @@ export function FadeInGroup({
     <motion.div
       className={className}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-60px" }}
       variants={STAGGER}
+      viewport={{ once: true, margin: "-60px" }}
+      whileInView="visible"
     >
-      <>{children}</>
+      {children}
     </motion.div>
   );
 }
@@ -75,7 +75,7 @@ export function FadeInChild({
 }) {
   return (
     <motion.div className={className} variants={REVEAL}>
-      <>{children}</>
+      {children}
     </motion.div>
   );
 }

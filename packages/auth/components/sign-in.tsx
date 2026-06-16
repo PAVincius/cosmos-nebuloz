@@ -29,7 +29,7 @@ export const SignIn = () => {
     const result = await authClient.signIn.email({
       email: email.trim().toLowerCase(),
       password,
-      callbackURL: "/portfolio",
+      callbackURL: "/dashboard",
     });
 
     if (result?.error) {

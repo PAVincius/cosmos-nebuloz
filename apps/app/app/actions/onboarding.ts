@@ -38,13 +38,21 @@ export async function createOnboardingWorkspace(name: string) {
     slug = `${baseSlug}-${attempt}`;
   }
 
+  const dbUser = await database.user.findUnique({
+    where: { email: session.user.email },
+    select: { id: true },
+  });
+  if (!dbUser) {
+    throw new Error("Usuário não encontrado no banco de dados.");
+  }
+
   const tenant = await database.tenant.create({
     data: {
       name: trimmed,
       slug,
       members: {
         create: {
-          userId: session.user.id,
+          userId: dbUser.id,
           role: "ADMIN",
         },
       },
@@ -52,7 +60,7 @@ export async function createOnboardingWorkspace(name: string) {
   });
 
   await database.session.updateMany({
-    where: { userId: session.user.id },
+    where: { userId: dbUser.id },
     data: { activeTenantId: tenant.id },
   });
 

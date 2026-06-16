@@ -10,8 +10,6 @@ import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 import type { RiskWithPI } from "./schema";
 
-export type { RiskWithPI };
-
 const CreateRiskSchema = z.object({
   title: z.string().min(1),
   description: z.string().optional(),

@@ -6,14 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction, TaskStatus } from "../_base";
 import { enforce } from "../permissions";
-import {
-  type CreateTaskInput,
-  CreateTaskSchema,
-  type UpdateTaskInput,
-  UpdateTaskSchema,
-} from "./schema";
-
-export type { CreateTaskInput, UpdateTaskInput };
+import { CreateTaskSchema, UpdateTaskSchema } from "./schema";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

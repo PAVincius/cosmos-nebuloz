@@ -36,7 +36,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { createEpic } from "@/app/actions/epics/create-epic";
 
-const mockDb = database as {
+const mockDb = database as unknown as {
   epic: {
     count: ReturnType<typeof vi.fn>;
     create: ReturnType<typeof vi.fn>;
@@ -74,7 +74,11 @@ describe("createEpic", () => {
       order: 2,
     });
 
-    const result = await createEpic({ title: "My Epic" });
+    const result = await createEpic({
+      title: "My Epic",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
+    });
 
     expect(result.ok).toBe(true);
     if (!result.ok) {
@@ -122,6 +126,7 @@ describe("createEpic", () => {
     const result = await createEpic({
       title: "In Progress Epic",
       statusId: "IN_PROGRESS",
+      epicType: "EPIC" as const,
     });
 
     expect(result.ok).toBe(true);
@@ -141,6 +146,8 @@ describe("createEpic", () => {
 
     await createEpic({
       title: "Themed Epic",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
       strategicThemeId: "theme-1",
       descriptionMd: "## Description",
     });
@@ -156,7 +163,11 @@ describe("createEpic", () => {
   });
 
   it("returns err when title is empty", async () => {
-    const result = await createEpic({ title: "" });
+    const result = await createEpic({
+      title: "",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
+    });
     expect(result.ok).toBe(false);
     if (result.ok) {
       return;
@@ -168,7 +179,11 @@ describe("createEpic", () => {
     mockDb.epic.count.mockResolvedValue(0);
     mockDb.epic.create.mockRejectedValue(new Error("DB connection failed"));
 
-    const result = await createEpic({ title: "Valid Title" });
+    const result = await createEpic({
+      title: "Valid Title",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
+    });
     expect(result.ok).toBe(false);
     if (result.ok) {
       return;
@@ -179,7 +194,11 @@ describe("createEpic", () => {
   it("returns err when session is not available", async () => {
     mockRequireTenantSession.mockRejectedValue(new Error("Unauthorized"));
 
-    const result = await createEpic({ title: "Valid Title" });
+    const result = await createEpic({
+      title: "Valid Title",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
+    });
     expect(result.ok).toBe(false);
     if (result.ok) {
       return;

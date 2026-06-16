@@ -3,6 +3,9 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getCycleTimeData } from "@/app/actions/analytics/cycle-time";
+import { getPIBurnupData } from "@/app/actions/analytics/pi-burnup";
+import { getPortfolioCFDData } from "@/app/actions/analytics/portfolio-cfd";
 import { computeTeamCapability } from "@/app/actions/flow-intelligence/capability-planning/team-capability-profile";
 import {
   getFlowMetrics,
@@ -12,10 +15,14 @@ import {
   getAssessments,
   getImprovementActions,
 } from "@/app/actions/measure-grow";
+import { getPIPlansByART } from "@/app/actions/program-board";
 import { appDesign } from "@/lib/app-design";
 import { CapabilityTab } from "./components/capability-tab";
 import { TeamCapacityTab } from "./components/capacity/team-capacity-tab";
+import { CycleTimeChart } from "./components/cycle-time-chart";
 import { FlowMetricsDashboard } from "./components/flow-metrics-dashboard";
+import { PIBurnupChart } from "./components/pi-burnup-chart";
+import { PortfolioCFDChart } from "./components/portfolio-cfd-chart";
 
 export const metadata = {
   title: "Flow Metrics | COSMOS",
@@ -58,7 +65,6 @@ function resolveSelectedScope(
   return null;
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: page orchestrates scope resolution, multi-tab data fetch and conditional rendering
 export default async function FlowMetricsPage({ searchParams }: Props) {
   const ctx = await requireTenantSession(await headers());
 
@@ -82,6 +88,13 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
   const activeTab = sp.tab ?? "metrics";
   const isTeamScope = selectedScope?.type === "team";
 
+  const cfdData =
+    activeTab === "portfolio" && selectedScope?.type !== "team"
+      ? await getPortfolioCFDData(
+          selectedScope?.type === "art" ? selectedScope.id : undefined
+        )
+      : null;
+
   const capabilityProfile =
     activeTab === "synergy" && isTeamScope && selectedScope
       ? await computeTeamCapability({
@@ -89,6 +102,28 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
           teamId: selectedScope.id,
           windowSprints: 5,
         }).catch(() => null)
+      : null;
+
+  // FLW-01: PI Burnup — for ART scope
+  const burnupData =
+    activeTab === "burnup" && selectedScope?.type === "art"
+      ? await (async () => {
+          const plans = await getPIPlansByART(selectedScope.id);
+          const latestPlan = plans[0];
+          if (!latestPlan?.id) {
+            return null;
+          }
+          const r = await getPIBurnupData(latestPlan.id);
+          return r.ok ? r.data : null;
+        })()
+      : null;
+
+  // FLW-02: Cycle Time — for team scope
+  const cycleTimeData =
+    activeTab === "cycletime" && isTeamScope && selectedScope
+      ? await getCycleTimeData(selectedScope.id).then((r) =>
+          r.ok ? r.data : null
+        )
       : null;
 
   return (
@@ -125,12 +160,45 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
               label="Team Capacity"
             />
             <TabButton
+              active={activeTab === "cycletime"}
+              href={`?scope=team&scopeId=${selectedScope?.id}&tab=cycletime`}
+              label="Cycle Time"
+            />
+            <TabButton
               active={activeTab === "synergy"}
               href={`?scope=team&scopeId=${selectedScope?.id}&tab=synergy`}
               label="Sinergia"
             />
           </div>
-        ) : null}
+        ) : (
+          <div className="mb-6 flex gap-2 border-border border-b">
+            <TabButton
+              active={activeTab !== "portfolio" && activeTab !== "burnup"}
+              href={
+                selectedScope
+                  ? `?scope=${selectedScope.type}&scopeId=${selectedScope.id}`
+                  : "?"
+              }
+              label="Flow Metrics"
+            />
+            <TabButton
+              active={activeTab === "portfolio"}
+              href={
+                selectedScope
+                  ? `?scope=${selectedScope.type}&scopeId=${selectedScope.id}&tab=portfolio`
+                  : "?tab=portfolio"
+              }
+              label="Portfolio CFD"
+            />
+            {selectedScope?.type === "art" && (
+              <TabButton
+                active={activeTab === "burnup"}
+                href={`?scope=art&scopeId=${selectedScope.id}&tab=burnup`}
+                label="PI Burnup"
+              />
+            )}
+          </div>
+        )}
 
         {activeTab === "capacity" && isTeamScope && selectedScope ? (
           <TeamCapacityTab teamId={selectedScope.id} />
@@ -149,7 +217,20 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
             ]}
           />
         ) : null}
-        {activeTab !== "capacity" && activeTab !== "synergy" ? (
+        {activeTab === "portfolio" && cfdData?.ok ? (
+          <PortfolioCFDChart data={cfdData.data} />
+        ) : null}
+        {activeTab === "burnup" && burnupData ? (
+          <PIBurnupChart data={burnupData} />
+        ) : null}
+        {activeTab === "cycletime" && cycleTimeData ? (
+          <CycleTimeChart data={cycleTimeData} />
+        ) : null}
+        {activeTab !== "capacity" &&
+        activeTab !== "synergy" &&
+        activeTab !== "portfolio" &&
+        activeTab !== "burnup" &&
+        activeTab !== "cycletime" ? (
           <FlowMetricsDashboard
             actions={actions}
             assessments={assessments}

@@ -12,22 +12,11 @@ import {
   safeAction,
 } from "../_base";
 import {
-  type CreateNotificationInput,
   CreateNotificationSchema,
   type Notification,
-  type NotificationFilters,
   NotificationFiltersSchema,
-  type NotificationRecord,
   type NotificationType,
 } from "./schema";
-
-export type {
-  NotificationType,
-  CreateNotificationInput,
-  NotificationFilters,
-  Notification,
-  NotificationRecord,
-};
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 

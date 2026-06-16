@@ -258,7 +258,7 @@ function Step2Members({
     if (parts.length === 1) {
       return name.slice(0, 2).toUpperCase();
     }
-    return (parts[0][0] + parts.at(-1)[0]).toUpperCase();
+    return (parts[0][0] + (parts.at(-1)?.[0] ?? "")).toUpperCase();
   };
 
   return (

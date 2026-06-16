@@ -27,11 +27,8 @@ import {
   WalletIcon,
 } from "lucide-react";
 import { useState, useTransition } from "react";
-import {
-  createLeanBudget,
-  type LeanBudgetWithStats,
-  linkBudgetToTheme,
-} from "@/app/actions/lean-budget";
+import { createLeanBudget, linkBudgetToTheme } from "@/app/actions/lean-budget";
+import type { LeanBudgetWithStats } from "@/app/actions/lean-budget/schema";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -91,7 +88,7 @@ function BudgetRow({ budget }: { budget: LeanBudgetWithStats }) {
           value={Math.min(budget.percentUsed, 100)}
         />
         <div className="flex justify-between text-[10px] text-muted-foreground">
-          <span>Gasto: {formatCurrency(budget.spent)}</span>
+          <span>Gasto: {formatCurrency(budget.spentDecimal ?? 0)}</span>
           <span>Total: {formatCurrency(budget.amount)}</span>
         </div>
       </div>
@@ -142,7 +139,7 @@ export function ThemeBudgetPanel({
   const [selectedToLink, setSelectedToLink] = useState("");
 
   const totalAllocated = budgets.reduce((s, b) => s + b.amount, 0);
-  const totalSpent = budgets.reduce((s, b) => s + b.spent, 0);
+  const totalSpent = budgets.reduce((s, b) => s + (b.spentDecimal ?? 0), 0);
   const overallPct =
     totalAllocated > 0
       ? Math.min(100, Math.round((totalSpent / totalAllocated) * 100))
@@ -181,7 +178,7 @@ export function ThemeBudgetPanel({
       isNearLimit: false,
       spentSource: "manual",
       spentManualOverride: null,
-    };
+    } as LeanBudgetWithStats;
 
     setBudgets((prev) => [...prev, optimistic]);
     setForm(DEFAULT_FORM);

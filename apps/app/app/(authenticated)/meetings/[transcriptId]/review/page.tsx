@@ -2,10 +2,12 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
+import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { listMeetingInsights } from "@/app/actions/meeting/insights";
 import { appDesign } from "@/lib/app-design";
 import { PageHeader } from "../../../components/page-header";
 import { ReviewClient } from "./review-client";
+import { TranscriptSummaryPanel } from "./transcript-summary-panel";
 
 type Props = {
   params: Promise<{ transcriptId: string }>;
@@ -17,7 +19,7 @@ export default async function InsightReviewPage({ params }: Props) {
 
   const transcript = await database.meetingTranscript.findFirst({
     where: { id: transcriptId, tenantId: ctx.tenantId },
-    select: { id: true, title: true, meetingId: true },
+    select: { id: true, title: true, meetingId: true, rawSummary: true },
   });
   if (!transcript) {
     notFound();
@@ -29,6 +31,14 @@ export default async function InsightReviewPage({ params }: Props) {
   return (
     <div className={appDesign.shell}>
       <PageHeader
+        actions={
+          <CopilotTriggerButton
+            contextRef={{ transcriptId, meetingId: transcript.meetingId }}
+            label="Copilot Meeting"
+            mode="spc"
+            surface="meeting_review"
+          />
+        }
         breadcrumb={[
           { label: "Meetings", href: "/meetings" },
           { label: transcript.title ?? transcript.meetingId },
@@ -37,7 +47,10 @@ export default async function InsightReviewPage({ params }: Props) {
         title="Revisão de Insights"
       />
       <div className={appDesign.bodyScroll}>
-        <ReviewClient initial={insights} transcriptTitle={transcript.title} />
+        <div className="space-y-6">
+          <TranscriptSummaryPanel rawSummary={transcript.rawSummary} />
+          <ReviewClient initial={insights} transcriptTitle={transcript.title} />
+        </div>
       </div>
     </div>
   );

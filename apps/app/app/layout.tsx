@@ -13,6 +13,10 @@ type RootLayoutProperties = {
 
 const RootLayout = ({ children }: RootLayoutProperties) => (
   <html className={fonts} lang="en" suppressHydrationWarning>
+    <head>
+      <link href="/manifest.json" rel="manifest" />
+      <meta content="#5e6ad2" name="theme-color" />
+    </head>
     <body>
       <AnalyticsProvider>
         <AuthProvider

@@ -39,14 +39,14 @@ model LinearSyncEvent {
 
 // Dead-letter queue for webhooks received while integration is PAUSED (AC-004)
 model WebhookDlq {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   tenantId      String
   integrationId String
   source        String // LINEAR | GITHUB
   webhookId     String? // idempotency key from payload
   payload       Json
-  receivedAt    DateTime @default(now())
-  retryCount    Int      @default(0)
+  receivedAt    DateTime  @default(now())
+  retryCount    Int       @default(0)
   lastRetryAt   DateTime?
   processedAt   DateTime?
 
@@ -97,18 +97,18 @@ model GitHubSyncEvent {
 
 // Story-025: Merged PRs with no Cosmos link — visible in Unlinked PRs panel (AC-004)
 model GitHubUnlinkedPR {
-  id          String   @id @default(cuid())
-  tenantId    String
-  githubRepo  String
-  prNumber    Int
-  prTitle     String
-  prUrl       String
-  prStatus    String // OPEN | MERGED | CLOSED
-  headBranch  String?
-  mergedAt    DateTime?
-  receivedAt  DateTime @default(now())
-  linkedAt    DateTime? // set when RTE manually links it
-  linkedToId  String?
+  id           String    @id @default(cuid())
+  tenantId     String
+  githubRepo   String
+  prNumber     Int
+  prTitle      String
+  prUrl        String
+  prStatus     String // OPEN | MERGED | CLOSED
+  headBranch   String?
+  mergedAt     DateTime?
+  receivedAt   DateTime  @default(now())
+  linkedAt     DateTime? // set when RTE manually links it
+  linkedToId   String?
   linkedToType String?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

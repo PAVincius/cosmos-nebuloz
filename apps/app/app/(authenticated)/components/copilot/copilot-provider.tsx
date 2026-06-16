@@ -29,6 +29,7 @@ export type CopilotSurface =
   | "flow_dashboard"
   | "lean_budget"
   | "risk_board"
+  | "meeting_review"
   | "global";
 
 export type CopilotConfig = {
@@ -124,9 +125,7 @@ export function CopilotProvider({
       value={{ isOpen, config, role, openCopilot, closeCopilot, setSessionId }}
     >
       {children}
-      {/* biome-ignore lint/nursery/noLeakedRender: mounted is boolean state */}
       {mounted && <CopilotPanel />}
-      {/* biome-ignore lint/nursery/noLeakedRender: mounted is boolean state */}
       {mounted && !pathname.startsWith("/copilot") && <CopilotFab />}
     </CopilotCtx.Provider>
   );

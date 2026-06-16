@@ -193,7 +193,7 @@ export async function createPIPlanWithSprints(
     const piMs = art.piCadenceWeeks * 7 * 24 * 3_600_000;
     const endDate = new Date(startDate.getTime() + piMs);
 
-    const sprints = generateSprints({
+    const sprintTemplate = generateSprints({
       piPlanId: "",
       tenantId: ctx.tenantId,
       startDate,
@@ -215,14 +215,20 @@ export async function createPIPlanWithSprints(
         select: { id: true },
       });
 
-      const sprintsWithId = sprints.map((s) => ({ ...s, piPlanId: plan.id }));
+      const sprintsWithId = art.teams.flatMap((team) =>
+        sprintTemplate.map((s) => ({
+          ...s,
+          piPlanId: plan.id,
+          teamId: team.id,
+        }))
+      );
       await tx.sprint.createMany({ data: sprintsWithId });
 
       return plan;
     });
 
     revalidatePath(`/arts/${input.artId}`);
-    return { id: piPlan.id, sprintCount: sprints.length };
+    return { id: piPlan.id, sprintCount: sprintTemplate.length };
   });
 }
 
@@ -404,15 +410,16 @@ async function computeAchievedValues(
   const sprints = await tx.sprint.findMany({
     where: { piPlanId, tenantId },
     include: {
-      sprintReviews: { select: { acceptedPoints: true, teamId: true } },
+      review: { select: { acceptedPoints: true } },
     },
   });
 
   const teamVelocity: Record<string, number> = {};
   for (const sprint of sprints) {
-    for (const review of sprint.sprintReviews) {
-      teamVelocity[review.teamId] =
-        (teamVelocity[review.teamId] ?? 0) + (review.acceptedPoints ?? 0);
+    if (sprint.review) {
+      teamVelocity[sprint.teamId] =
+        (teamVelocity[sprint.teamId] ?? 0) +
+        (sprint.review.acceptedPoints ?? 0);
     }
   }
 

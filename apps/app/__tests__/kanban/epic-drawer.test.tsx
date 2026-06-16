@@ -95,6 +95,7 @@ function makeEpic(
     id: "epic-1",
     title: "My Drawer Epic",
     statusId: "status-1",
+    lifecycleStatus: "ACTIVE",
     order: 0,
     wsjfScore: 4.5,
     bv: 8,
@@ -102,6 +103,8 @@ function makeEpic(
     rr: 3,
     js: 2,
     featureCount: 3,
+    completedFeatureCount: 0,
+    topFeatures: [],
     strategicThemeId: null,
     themeTitle: null,
     themeColor: null,
@@ -110,6 +113,8 @@ function makeEpic(
     investScore: null,
     investBreakdown: null,
     descriptionMd: null,
+    epicType: "EPIC" as const,
+    dueDate: null,
     ...overrides,
   };
 }

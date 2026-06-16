@@ -12,15 +12,10 @@ import {
   safeAction,
 } from "../_base";
 import {
-  type CreateDefectInput,
   CreateDefectSchema,
-  type DefectFiltersInput,
   DefectFiltersSchema,
-  type UpdateDefectInput,
   UpdateDefectSchema,
 } from "./schema";
-
-export type { CreateDefectInput, UpdateDefectInput, DefectFiltersInput };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 

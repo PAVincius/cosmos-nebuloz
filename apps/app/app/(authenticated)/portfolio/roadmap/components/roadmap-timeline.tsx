@@ -27,12 +27,11 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { CalendarIcon, FilterIcon, PlusIcon, Trash2Icon } from "lucide-react";
 import { useMemo, useState, useTransition } from "react";
-import {
-  createRoadmapItem,
-  deleteRoadmapItem,
-  type RoadmapItemData,
-  type RoadmapStatus,
-} from "@/app/actions/roadmap";
+import { createRoadmapItem, deleteRoadmapItem } from "@/app/actions/roadmap";
+import type {
+  RoadmapItemData,
+  RoadmapStatus,
+} from "@/app/actions/roadmap/schema";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

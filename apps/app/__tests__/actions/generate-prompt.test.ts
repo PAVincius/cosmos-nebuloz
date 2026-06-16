@@ -43,8 +43,10 @@ describe("generateAndDeliverPrompt", () => {
       ragDocIds: [],
     });
     expect(result.ok).toBe(true);
-    expect(result.data?.prompt).toContain("payments");
-    expect(result.data?.deepLink).toContain("cursor://");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.prompt).toContain("payments");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.deepLink).toContain("cursor://");
   });
 
   it("returns claude-ai deepLink for claude-ai target", async () => {
@@ -54,6 +56,7 @@ describe("generateAndDeliverPrompt", () => {
       ragDocIds: [],
     });
     expect(result.ok).toBe(true);
-    expect(result.data?.deepLink).toContain("claude.ai");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.deepLink).toContain("claude.ai");
   });
 });

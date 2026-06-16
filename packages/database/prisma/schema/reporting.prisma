@@ -8,19 +8,26 @@ enum ReportExecutionStatus {
 }
 
 model ScheduledReport {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   tenantId       String
   name           String
+  // Story-029: executive reporting type + cadence
+  type           String    @default("EXECUTIVE_SUMMARY") // EXECUTIVE_SUMMARY|PI_HEALTH|FLOW_METRICS|BUDGET_INTELLIGENCE|VELOCITY
+  cadence        String    @default("MONTHLY") // WEEKLY|MONTHLY|QUARTERLY
+  artId          String?
+  lastRunAt      DateTime?
+  artifactRef    String? // data-URL or blob reference for last generated report
+  createdBy      String?
   cronExpression String
-  timezone       String   @default("UTC")
+  timezone       String    @default("UTC")
   recipients     String[]
   slackChannelId String?
-  config         Json     @default("{}")
-  enabled        Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  config         Json      @default("{}")
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  tenant     Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant     Tenant                     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   executions ScheduledReportExecution[]
 
   @@index([tenantId])
@@ -39,18 +46,19 @@ model ScheduledReportExecution {
   updatedAt  DateTime              @updatedAt
 
   report ScheduledReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  tenant Tenant          @relation(fields: [tenantId], references: [id])
 
   @@index([reportId, status])
   @@index([tenantId])
 }
 
 model UserDashboardLayout {
-  id         String   @id @default(cuid())
-  tenantId   String
-  userId     String
-  config     Json     @default("{\"tiles\":[]}")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String
+  config    Json     @default("{\"tiles\":[]}")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 

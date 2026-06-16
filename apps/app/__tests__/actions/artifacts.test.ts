@@ -52,8 +52,10 @@ describe("saveArtifact", () => {
       epicId: "e1",
     });
     expect(result.ok).toBe(true);
-    expect(result.data?.title).toBe("My PRD");
-    expect(result.data?.type).toBe("prd");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.title).toBe("My PRD");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.type).toBe("prd");
   });
 
   it("fails with empty title", async () => {
@@ -70,6 +72,7 @@ describe("listArtifacts", () => {
   it("returns empty array when no artifacts", async () => {
     const result = await listArtifacts();
     expect(result.ok).toBe(true);
-    expect(result.data).toEqual([]);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data).toEqual([]);
   });
 });

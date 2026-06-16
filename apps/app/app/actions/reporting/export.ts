@@ -85,7 +85,7 @@ async function fetchRows(
         select: {
           id: true,
           title: true,
-          state: true,
+          statusId: true,
           createdAt: true,
           updatedAt: true,
         },
@@ -98,7 +98,7 @@ async function fetchRows(
         select: {
           id: true,
           title: true,
-          state: true,
+          statusId: true,
           createdAt: true,
           updatedAt: true,
         },

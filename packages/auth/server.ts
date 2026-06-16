@@ -4,6 +4,8 @@ import { database } from "@repo/database";
 
 export type { MemberRole } from "@repo/database";
 
+import type { MemberRole } from "@repo/database";
+
 import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -40,7 +42,6 @@ export const auth = betterAuth({
     additionalFields: {
       activeTenantId: {
         type: "string",
-        nullable: true,
         // Server-only: tenant changes go through POST /api/auth/switch-tenant (membership check).
         input: false,
       },
@@ -57,7 +58,7 @@ export const auth = betterAuth({
   databaseHooks: {
     session: {
       create: {
-        after: (session) => {
+        after: async (session) => {
           log.info("[auth] session.created", {
             userId: session.userId,
             sessionId: session.id,
@@ -67,7 +68,7 @@ export const auth = betterAuth({
         },
       },
       delete: {
-        after: (session) => {
+        after: async (session) => {
           log.info("[auth] session.deleted", {
             userId: (session as { userId?: string }).userId ?? "unknown",
             sessionId: session.id,

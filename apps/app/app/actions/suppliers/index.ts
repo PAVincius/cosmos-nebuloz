@@ -13,21 +13,10 @@ import {
   safeAction,
 } from "../_base";
 import {
-  type CreateSupplierInput,
   CreateSupplierSchema,
-  type SupplierFilters,
   SupplierFiltersSchema,
-  type SupplierWithART,
-  type UpdateSupplierInput,
   UpdateSupplierSchema,
 } from "./schema";
-
-export type {
-  CreateSupplierInput,
-  UpdateSupplierInput,
-  SupplierFilters,
-  SupplierWithART,
-};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 // Story-036: Notification deduplication and digest dispatch
-import { database } from "@repo/database";
+import { database, Prisma } from "@repo/database";
 import { log } from "@repo/observability/log";
 
 const DEDUP_TTL_SECONDS = 3600; // 1h window
@@ -53,7 +53,8 @@ async function createNotification(
         type: params.type,
         title: params.title,
         body: params.body,
-        metadata: params.metadata ?? null,
+        metadata: (params.metadata ??
+          Prisma.DbNull) as Prisma.NullableJsonNullValueInput,
       },
     })
     .catch((err) => {

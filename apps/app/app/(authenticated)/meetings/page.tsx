@@ -1,16 +1,41 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import Link from "next/link";
-import { listMeetingTimeline } from "@/app/actions/meeting/insights";
+import { Suspense } from "react";
+import {
+  listMeetingTimeline,
+  searchMeetings,
+} from "@/app/actions/meeting/insights";
 import { appDesign } from "@/lib/app-design";
 import { PageHeader } from "../components/page-header";
+import { MeetingSearchBar } from "./meeting-search-bar";
 
 export const metadata = {
   title: "Meetings | COSMOS",
   description: "Timeline de cerimônias SAFe e insights capturados",
 };
 
-export default async function MeetingsPage() {
-  const result = await listMeetingTimeline();
+type SearchParams = {
+  query?: string;
+  from?: string;
+  to?: string;
+  insightType?: string;
+};
+
+export default async function MeetingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
+  const sp = await searchParams;
+  const hasFilter = sp.query || sp.from || sp.to || sp.insightType;
+  const result = hasFilter
+    ? await searchMeetings({
+        query: sp.query,
+        from: sp.from,
+        to: sp.to,
+        insightType: sp.insightType,
+      })
+    : await listMeetingTimeline();
   const transcripts = result.ok ? result.data : [];
 
   return (
@@ -21,6 +46,9 @@ export default async function MeetingsPage() {
         title="Meeting Intelligence"
       />
       <div className={appDesign.bodyScroll}>
+        <Suspense>
+          <MeetingSearchBar />
+        </Suspense>
         {transcripts.length === 0 ? (
           <p className="text-muted-foreground text-sm">
             Nenhuma cerimônia transcrita ainda. Conecte o Fireflies em{" "}

@@ -19,6 +19,7 @@ const epic = {
   id: "e1",
   title: "Epic",
   statusId: "BACKLOG",
+  lifecycleStatus: "ACTIVE",
   order: 0,
   wsjfScore: 0,
   bv: 0,
@@ -26,6 +27,8 @@ const epic = {
   rr: 0,
   js: 1,
   featureCount: 0,
+  completedFeatureCount: 0,
+  topFeatures: [],
   strategicThemeId: null,
   themeTitle: null,
   themeColor: null,
@@ -34,6 +37,8 @@ const epic = {
   investScore: 72,
   investBreakdown: { I: 80, N: 70, V: 75, E: 65, S: 60, T: 85 },
   descriptionMd: null,
+  epicType: "EPIC" as const,
+  dueDate: null,
 };
 
 describe("EpicDrawerInvest", () => {

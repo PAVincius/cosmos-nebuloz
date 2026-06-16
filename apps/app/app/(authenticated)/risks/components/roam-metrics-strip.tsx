@@ -1,4 +1,4 @@
-import type { RiskWithPI } from "@/app/actions/risks";
+import type { RiskWithPI } from "@/app/actions/risks/schema";
 
 const ROAM_CONFIG: {
   status: string;

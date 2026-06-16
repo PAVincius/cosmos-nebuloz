@@ -7,20 +7,11 @@ import { headers } from "next/headers";
 
 import { type Result, safeAction } from "../_base";
 import {
-  type CreateSolutionTrainInput,
   CreateSolutionTrainSchema,
   type SolutionTrainWithCounts,
   type SolutionTrainWithRelations,
-  type UpdateSolutionTrainInput,
   UpdateSolutionTrainSchema,
 } from "./schema";
-
-export type {
-  CreateSolutionTrainInput,
-  UpdateSolutionTrainInput,
-  SolutionTrainWithCounts,
-  SolutionTrainWithRelations,
-};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 

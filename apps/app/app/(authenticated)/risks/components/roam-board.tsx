@@ -34,12 +34,8 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { useState, useTransition } from "react";
-import {
-  createRisk,
-  deleteRisk,
-  type RiskWithPI,
-  updateRiskStatus,
-} from "@/app/actions/risks";
+import { createRisk, deleteRisk, updateRiskStatus } from "@/app/actions/risks";
+import type { RiskWithPI } from "@/app/actions/risks/schema";
 
 type PIOption = { id: string; name: string; artId: string };
 

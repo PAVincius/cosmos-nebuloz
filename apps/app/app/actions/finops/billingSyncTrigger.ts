@@ -30,7 +30,7 @@ export async function triggerBillingSync(raw: unknown): Promise<
     // Verify integration belongs to tenant
     const integration = await database.integration.findFirstOrThrow({
       where: { id: input.integrationId, tenantId },
-      select: { id: true, provider: true },
+      select: { id: true, source: true },
     });
 
     const syncRun = await database.billingSyncRun.create({

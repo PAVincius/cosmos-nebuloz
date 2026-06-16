@@ -2,7 +2,7 @@
 
 // Story-033: Tenant admin — member lifecycle, security policy, bulk invite
 import { requireRole, requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
+import { database, Prisma } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -228,7 +228,7 @@ const SecurityPolicySchema = z.object({
   require2FA: z.boolean().optional(),
   gracePeriodDays: z.number().int().min(0).max(90).optional(),
   allowedIpRanges: z.array(z.string()).optional(),
-  terminologyMap: z.record(z.string()).optional(),
+  terminologyMap: z.record(z.string(), z.string()).optional(),
 });
 
 export type SecurityPolicyInput = z.infer<typeof SecurityPolicySchema>;
@@ -248,7 +248,9 @@ export async function upsertSecurityPolicy(
       require2FA: parsed.require2FA ?? false,
       gracePeriodDays: parsed.gracePeriodDays ?? 7,
       allowedIpRanges: parsed.allowedIpRanges ?? [],
-      terminologyMap: parsed.terminologyMap ?? null,
+      terminologyMap: parsed.terminologyMap
+        ? (parsed.terminologyMap as Prisma.InputJsonValue)
+        : Prisma.DbNull,
       updatedBy: ctx.userId,
     },
     update: {
@@ -260,7 +262,7 @@ export async function upsertSecurityPolicy(
         allowedIpRanges: parsed.allowedIpRanges,
       }),
       ...(parsed.terminologyMap !== undefined && {
-        terminologyMap: parsed.terminologyMap,
+        terminologyMap: parsed.terminologyMap as Prisma.InputJsonValue,
       }),
       updatedBy: ctx.userId,
     },

@@ -23,35 +23,13 @@ import { useState, useTransition } from "react";
 import {
   createKeyResult,
   deleteKeyResult,
+  type KeyResultWithProgress,
   type OKRWithContext,
   updateKeyResult,
   updateOKRStatus,
 } from "@/app/actions/okrs";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
-
-type KeyResultSnapshotItem = {
-  id: string;
-  keyResultId: string;
-  value: number;
-  note: string | null;
-  recordedAt: Date;
-};
-
-type KeyResultWithProgress = {
-  id: string;
-  title: string;
-  current: number;
-  target: number;
-  unit: string;
-  metric?: string | null;
-  baseline?: number | null;
-  measurementType?: string | null;
-  dataSource?: string | null;
-  dueDate?: Date | null;
-  progress: number;
-  snapshots?: KeyResultSnapshotItem[];
-};
 
 const STATUS_CONFIG: Record<OKRStatus, { label: string; cls: string }> = {
   ON_TRACK: {

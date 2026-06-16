@@ -34,7 +34,7 @@ async function resolveFromDb(
   artId?: string
 ): Promise<SaFeRole> {
   if (artId) {
-    const artMembership = await database.artMembership.findFirst({
+    const artMembership = await database.aRTMembership.findFirst({
       where: { userId, artId, tenantId },
       select: { role: true },
     });

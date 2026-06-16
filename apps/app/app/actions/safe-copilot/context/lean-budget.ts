@@ -82,7 +82,7 @@ export async function buildLeanBudgetContext(
       id: b.id,
       name: b.name,
       amount: b.amount,
-      spent: b.spent,
+      spent: Number(b.spent ?? 0),
       period: b.period,
       artId: b.artId,
     })),

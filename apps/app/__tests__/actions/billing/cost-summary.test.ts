@@ -87,10 +87,10 @@ describe("getEpicCost", () => {
 
   it("returns hasMapping false when epic has no themeId", async () => {
     const { database } = await import("@repo/database");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(database.epic.findFirst).mockResolvedValueOnce({
       id: "epic-2",
-      themeId: null,
-    });
+    } as any);
     const result = await getEpicCost("epic-2");
     expect(result.hasMapping).toBe(false);
     expect(result.totalCost).toBe(0);

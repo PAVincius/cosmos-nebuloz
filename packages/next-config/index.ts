@@ -22,12 +22,13 @@ export const config: NextConfig = {
             value: "camera=(), microphone=(), geolocation=()",
           },
           {
-            // Enforcing CSP — 'unsafe-eval' kept for Liveblocks/WASM; review before removing
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
               "connect-src 'self' wss://*.liveblocks.io https://*.liveblocks.io https://*.anthropic.com https://*.googleapis.com https://us.i.posthog.com https://us-assets.i.posthog.com https://api.inngest.com",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+              process.env.NODE_ENV === "development"
+                ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval'"
+                : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'",
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https:",
               "font-src 'self' data:",
@@ -52,7 +53,6 @@ export const config: NextConfig = {
     ],
   },
 
-  // biome-ignore lint/suspicious/useAwait: rewrites is async
   async rewrites() {
     return [
       {

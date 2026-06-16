@@ -42,7 +42,7 @@ export function computeDORAMetrics(
   const leadTimes = successful
     .filter((d) => d.firstCommitAt !== null)
     .map(
-      (d) => (d.deployedAt.getTime() - d.firstCommitAt?.getTime()) / ONE_HOUR_MS
+      (d) => (d.deployedAt.getTime() - d.firstCommitAt!.getTime()) / ONE_HOUR_MS
     );
   const avgLeadTimeHours = mean(leadTimes);
 

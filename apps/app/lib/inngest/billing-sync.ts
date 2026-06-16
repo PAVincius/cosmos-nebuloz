@@ -24,7 +24,7 @@ type BillingEntryInsert = {
   usageStartDate: Date;
   usageEndDate: Date;
   service: string;
-  chargeCategory: string;
+  chargeCategory: import("@repo/database").ChargeCategory;
   billedCost: string;
   effectiveCost: string;
   listCost: string;
@@ -91,7 +91,9 @@ function mapStagedRowToEntry(
     usageStartDate: new Date(String(e.usageStartDate)),
     usageEndDate: new Date(String(e.usageEndDate)),
     service: String(e.service ?? ""),
-    chargeCategory: String(e.chargeCategory ?? "Usage"),
+    chargeCategory: String(
+      e.chargeCategory ?? "Usage"
+    ) as import("@repo/database").ChargeCategory,
     ...extractCostFields(e),
     fxRate: "1",
     tags,

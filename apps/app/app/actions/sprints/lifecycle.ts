@@ -1,7 +1,7 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
+import { database, type Prisma } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -46,7 +46,7 @@ async function createSprintAnomaly(opts: {
       severity: opts.severity,
       metric: opts.metric,
       delta: opts.delta,
-      metadata: opts.metadata ?? {},
+      metadata: (opts.metadata ?? {}) as Prisma.InputJsonValue,
     },
   });
 }

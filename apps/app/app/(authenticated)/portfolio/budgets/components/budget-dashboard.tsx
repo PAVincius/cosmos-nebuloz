@@ -46,9 +46,9 @@ import type { BudgetOverviewItem } from "@/app/actions/billing/snapshots";
 import {
   createLeanBudget,
   deleteLeanBudget,
-  type LeanBudgetWithUsage,
   updateLeanBudget,
 } from "@/app/actions/lean-budget";
+import type { LeanBudgetWithUsage } from "@/app/actions/lean-budget/schema";
 import { FinOpsSection } from "./finops-section";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -138,7 +138,9 @@ function BudgetCard({
   onUpdateSpent: (id: string, spent: number) => void;
 }) {
   const [editingSpent, setEditingSpent] = useState(false);
-  const [localSpent, setLocalSpent] = useState(String(budget.spent));
+  const [localSpent, setLocalSpent] = useState(
+    String(budget.spentDecimal ?? 0)
+  );
   const [_isPending, startTransition] = useTransition();
 
   function handleSaveSpent() {
@@ -146,7 +148,6 @@ function BudgetCard({
     if (!Number.isNaN(val) && val >= 0) {
       onUpdateSpent(budget.id, val);
       startTransition(() => {
-        // biome-ignore lint/suspicious/noEmptyBlockStatements: fire-and-forget server action
         updateLeanBudget(budget.id, { spent: val }).catch(() => {});
       });
     }
@@ -244,7 +245,7 @@ function BudgetCard({
                 onClick={() => setEditingSpent(true)}
                 type="button"
               >
-                {formatCurrency(budget.spent)}
+                {formatCurrency(budget.spentDecimal ?? 0)}
               </button>
             )}
           </div>
@@ -310,7 +311,7 @@ export function BudgetDashboard({
       const existing = map.get(b.period) ?? { amount: 0, spent: 0 };
       return map.set(b.period, {
         amount: existing.amount + b.amount,
-        spent: existing.spent + b.spent,
+        spent: existing.spent + (b.spentDecimal ?? 0),
       });
     }, new Map<string, { amount: number; spent: number }>())
   ).sort(([a], [b]) => {
@@ -331,7 +332,6 @@ export function BudgetDashboard({
   function handleDelete(id: string) {
     setBudgets((prev) => prev.filter((b) => b.id !== id));
     startTransition(() => {
-      // biome-ignore lint/suspicious/noEmptyBlockStatements: fire-and-forget server action
       deleteLeanBudget(id).catch(() => {});
     });
   }
@@ -346,7 +346,12 @@ export function BudgetDashboard({
           b.amount > 0
             ? Math.min(100, Math.round((spent / b.amount) * 100))
             : 0;
-        return { ...b, spent, percentUsed, isOverGuardrail: percentUsed > 80 };
+        return {
+          ...b,
+          spentDecimal: spent,
+          percentUsed,
+          isOverGuardrail: percentUsed > 80,
+        };
       })
     );
   }
@@ -382,7 +387,7 @@ export function BudgetDashboard({
       spentManualOverride: null,
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    } as LeanBudgetWithUsage;
 
     setBudgets((prev) => [optimistic, ...prev]);
     setForm(DEFAULT_FORM);
@@ -395,7 +400,6 @@ export function BudgetDashboard({
         period: form.period,
         artId: form.artId || undefined,
         guardrails,
-        // biome-ignore lint/suspicious/noEmptyBlockStatements: fire-and-forget server action
       }).catch(() => {});
     });
   }
@@ -471,7 +475,9 @@ export function BudgetDashboard({
           <CardContent className="p-4">
             <p className="text-muted-foreground text-xs">Total Gasto</p>
             <p className="font-bold text-2xl">
-              {formatCurrency(budgets.reduce((s, b) => s + b.spent, 0))}
+              {formatCurrency(
+                budgets.reduce((s, b) => s + (b.spentDecimal ?? 0), 0)
+              )}
             </p>
           </CardContent>
         </Card>

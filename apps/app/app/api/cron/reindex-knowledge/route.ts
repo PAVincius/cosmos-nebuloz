@@ -20,7 +20,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Endpoint exists for future wiring with a service token approach.
     return NextResponse.json({ ok: true, message: "Reindex scheduled" });
   } catch (err) {
-    log.error("[cron/reindex] error", err);
+    log.error("[cron/reindex] error", { error: String(err) });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

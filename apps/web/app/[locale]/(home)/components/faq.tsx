@@ -1,10 +1,10 @@
 "use client";
 
-import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 import { Button } from "@repo/design-system/components/ui/button";
 import type { Dictionary } from "@repo/internationalization";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 
 type FAQProps = {
   dictionary: Dictionary;
@@ -71,7 +71,10 @@ const PLANS = [
 ] as const;
 
 export const FAQ = ({ dictionary: _ }: FAQProps) => (
-  <section className="w-full py-24" style={{ background: "var(--cosmos-black)" }}>
+  <section
+    className="w-full py-24"
+    style={{ background: "var(--cosmos-black)" }}
+  >
     <div className="mx-auto max-w-7xl px-5 md:px-20">
       <FadeIn className="mb-14 text-center">
         <p
@@ -96,7 +99,14 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
         >
           Preços que escalam com seu sucesso
         </h2>
-        <p className="mx-auto mt-4 max-w-xl" style={{ fontFamily: "var(--font-plex)", fontSize: 16, color: "var(--cosmos-gray-60)" }}>
+        <p
+          className="mx-auto mt-4 max-w-xl"
+          style={{
+            fontFamily: "var(--font-plex)",
+            fontSize: 16,
+            color: "var(--cosmos-gray-60)",
+          }}
+        >
           Comece com 1 ART. Expanda para o portfolio inteiro.
         </p>
       </FadeIn>
@@ -107,7 +117,9 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
             <motion.div
               className="relative flex h-full flex-col gap-6 rounded-xl p-8"
               style={{
-                background: plan.highlight ? "var(--cosmos-slate)" : "var(--cosmos-black)",
+                background: plan.highlight
+                  ? "var(--cosmos-slate)"
+                  : "var(--cosmos-black)",
                 border: plan.highlight
                   ? "1px solid rgba(0,212,255,0.45)"
                   : "1px solid var(--cosmos-deep)",
@@ -121,7 +133,7 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
               {/* Popular badge */}
               {plan.tag && (
                 <div
-                  className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full px-3 py-1"
+                  className="-top-3.5 -translate-x-1/2 absolute left-1/2 rounded-full px-3 py-1"
                   style={{
                     background: "var(--vega)",
                     fontFamily: "var(--font-mono)",
@@ -137,21 +149,52 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
 
               {/* Header */}
               <div>
-                <h3 style={{ fontFamily: "var(--font-plex)", fontWeight: 600, fontSize: 20, color: "var(--cosmos-white)" }}>
+                <h3
+                  style={{
+                    fontFamily: "var(--font-plex)",
+                    fontWeight: 600,
+                    fontSize: 20,
+                    color: "var(--cosmos-white)",
+                  }}
+                >
                   {plan.name}
                 </h3>
-                <p className="mt-1" style={{ fontFamily: "var(--font-plex)", fontSize: 13, color: "var(--cosmos-gray-60)" }}>
+                <p
+                  className="mt-1"
+                  style={{
+                    fontFamily: "var(--font-plex)",
+                    fontSize: 13,
+                    color: "var(--cosmos-gray-60)",
+                  }}
+                >
                   {plan.description}
                 </p>
               </div>
 
               {/* Price */}
               <div>
-                <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600, fontSize: 32, color: plan.highlight ? "var(--vega)" : "var(--cosmos-white)", lineHeight: 1 }}>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontWeight: 600,
+                    fontSize: 32,
+                    color: plan.highlight
+                      ? "var(--vega)"
+                      : "var(--cosmos-white)",
+                    lineHeight: 1,
+                  }}
+                >
                   {plan.price}
                 </span>
                 {plan.period && (
-                  <span style={{ fontFamily: "var(--font-plex)", fontSize: 14, color: "var(--cosmos-gray-60)", marginLeft: 4 }}>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-plex)",
+                      fontSize: 14,
+                      color: "var(--cosmos-gray-60)",
+                      marginLeft: 4,
+                    }}
+                  >
                     {plan.period}
                   </span>
                 )}
@@ -160,9 +203,27 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
               {/* Features */}
               <ul className="flex flex-1 flex-col gap-2.5">
                 {plan.features.map((f) => (
-                  <li key={f} className="flex items-start gap-2">
-                    <span style={{ color: "var(--aurora)", fontFamily: "var(--font-mono)", fontSize: 14, flexShrink: 0 }}>✓</span>
-                    <span style={{ fontFamily: "var(--font-plex)", fontSize: 14, color: "var(--cosmos-gray-40)", lineHeight: 1.4 }}>{f}</span>
+                  <li className="flex items-start gap-2" key={f}>
+                    <span
+                      style={{
+                        color: "var(--aurora)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 14,
+                        flexShrink: 0,
+                      }}
+                    >
+                      ✓
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: "var(--font-plex)",
+                        fontSize: 14,
+                        color: "var(--cosmos-gray-40)",
+                        lineHeight: 1.4,
+                      }}
+                    >
+                      {f}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -174,7 +235,9 @@ export const FAQ = ({ dictionary: _ }: FAQProps) => (
                 style={{
                   background: plan.highlight ? "var(--vega)" : "transparent",
                   color: plan.highlight ? "var(--cosmos-black)" : "var(--vega)",
-                  border: plan.highlight ? "none" : "1px solid rgba(0,212,255,0.35)",
+                  border: plan.highlight
+                    ? "none"
+                    : "1px solid rgba(0,212,255,0.35)",
                   fontFamily: "var(--font-plex)",
                   fontWeight: 600,
                   fontSize: 14,

@@ -32,6 +32,7 @@ import {
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LINT_CONFIG, type LintIssue } from "../lib/bpmn-lint";
 import { BPMN_TEMPLATES, type BpmnTemplate } from "../lib/bpmn-templates";
+import { BpmnCursors } from "./bpmn-cursors";
 
 // ─── PT-BR translations ───────────────────────────────────────────────────────
 const PT: Record<string, string> = {
@@ -127,11 +128,17 @@ type BpmnWrapperProps = {
   teamId: string;
   initialXml?: string;
   onSave?: (xmlContent: string) => Promise<void>;
+  showPresence?: boolean; // true when inside a Liveblocks RoomProvider
 };
 
 type IssueMap = Record<string, LintIssue[]>;
 
-export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
+export function BpmnWrapper({
+  teamId,
+  initialXml,
+  onSave,
+  showPresence = false,
+}: BpmnWrapperProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const propertiesPanelRef = useRef<HTMLDivElement>(null);
   const modelerRef = useRef<Modeler | null>(null);
@@ -493,6 +500,7 @@ export function BpmnWrapper({ teamId, initialXml, onSave }: BpmnWrapperProps) {
             className="[&_.bjs-powered-by]:!hidden absolute inset-0 h-full w-full [&_.djs-minimap]:overflow-hidden [&_.djs-minimap]:rounded-lg [&_.djs-minimap]:border [&_.djs-minimap]:shadow-md [&_.djs-palette]:rounded-r-lg [&_.djs-palette]:border [&_.djs-palette]:border-l-0 [&_.djs-palette]:bg-background/95 [&_.djs-palette]:shadow-md"
             ref={containerRef}
           />
+          {showPresence && <BpmnCursors containerRef={containerRef} />}
         </div>
 
         {/* Properties Panel */}

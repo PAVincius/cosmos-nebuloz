@@ -1,7 +1,7 @@
 "use client";
 
 import type { BudgetOverviewItem } from "@/app/actions/billing/snapshots";
-import type { LeanBudgetWithStats } from "@/app/actions/lean-budget";
+import type { LeanBudgetWithStats } from "@/app/actions/lean-budget/schema";
 import { CostBreakdownCard } from "./cost-breakdown-card";
 import { CostTrendChart } from "./cost-trend-chart";
 

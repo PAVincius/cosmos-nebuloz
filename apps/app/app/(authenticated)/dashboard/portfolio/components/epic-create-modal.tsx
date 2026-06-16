@@ -156,7 +156,6 @@ function ParentSelectItems({
   ));
 }
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: multi-type creation form with branchy per-type logic
 export function EpicCreateModal({
   statusId,
   onClose,
@@ -319,7 +318,7 @@ export function EpicCreateModal({
                 onClick={handleSuggestTitle}
                 title={
                   canSuggestTitle
-                    ? null
+                    ? undefined
                     : "Selecione um template e preencha o título primeiro"
                 }
                 type="button"

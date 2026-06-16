@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
-import type { PIPlanFullDetails } from "@/app/actions/arts/pi-plans";
+import type { PIPlanFullDetails } from "@/app/actions/arts/types";
 
 // Skeleton shown while tab content loads client-side (ssr:false prevents server/client ID mismatch)
 function TabSkeleton() {

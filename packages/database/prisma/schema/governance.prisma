@@ -92,8 +92,8 @@ model ApprovalStepInstance {
   isParallel        Boolean   @default(false)
   createdAt         DateTime  @default(now())
 
-  tenant             Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  approvalRequest    ApprovalRequest       @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  tenant                Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalRequest       ApprovalRequest        @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
   governanceEscalations GovernanceEscalation[]
 
   @@index([tenantId])
@@ -102,15 +102,15 @@ model ApprovalStepInstance {
 }
 
 model GovernanceEscalation {
-  id                  String   @id @default(cuid())
-  tenantId            String
-  approvalStepId      String
-  epicId              String?
-  escalatedAt         DateTime @default(now())
-  backupNotified      Boolean  @default(false)
-  backupNotifiedAt    DateTime?
+  id               String    @id @default(cuid())
+  tenantId         String
+  approvalStepId   String
+  epicId           String?
+  escalatedAt      DateTime  @default(now())
+  backupNotified   Boolean   @default(false)
+  backupNotifiedAt DateTime?
 
-  tenant       Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant       Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   approvalStep ApprovalStepInstance @relation(fields: [approvalStepId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])

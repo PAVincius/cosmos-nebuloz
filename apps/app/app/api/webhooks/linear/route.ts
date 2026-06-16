@@ -142,7 +142,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         integrationId: integration.id,
         source: "LINEAR",
         webhookId: payload.webhookId ?? null,
-        payload: payload as Record<string, unknown>,
+        payload: payload as import("@repo/database").Prisma.InputJsonValue,
       },
     });
     return NextResponse.json({ ok: true, queued: true });
@@ -159,7 +159,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     await enqueueToInngest(tenantId, integration.id, payload);
   } catch (err) {
-    log.error("[webhook/linear] inngest enqueue error", err);
+    log.error("[webhook/linear] inngest enqueue error", { error: String(err) });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 

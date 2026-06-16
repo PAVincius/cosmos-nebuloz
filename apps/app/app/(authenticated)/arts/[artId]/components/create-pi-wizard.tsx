@@ -37,11 +37,11 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import {
-  createPIPlanWithDetails,
-  type PIObjectiveInput,
-  type PIRiskInput,
-} from "../../../../actions/arts/pi-plans";
+import { createPIPlanWithDetails } from "../../../../actions/arts/pi-plans";
+import type {
+  PIObjectiveInput,
+  PIRiskInput,
+} from "../../../../actions/arts/schema";
 import {
   formatDraftAge,
   useDraftState,

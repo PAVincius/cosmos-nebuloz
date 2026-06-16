@@ -55,15 +55,26 @@ model TeamWorkflowEdge {
   @@index([tenantId, teamId])
 }
 
-// Enterprise Workflows (BPMN Compliance)
+// Enterprise Workflows (BPMN Compliance) — story-028
 model BpmnDefinition {
-  id         String @id @default(cuid())
-  tenantId   String
-  teamId     String
-  xmlContent String @db.Text // Conteúdo nativo para o bpmn-js processar
-  version    Int    @default(1)
+  id              String    @id @default(cuid())
+  tenantId        String
+  name            String
+  entityType      String // STORY|FEATURE|EPIC|CUSTOM
+  ownerType       String // ORG|TEAM|ART
+  ownerId         String
+  xmlGzip         Bytes
+  compiledMachine Json?
+  version         Int       @default(1)
+  active          Boolean   @default(false)
+  parentId        String?
+  lockedNodes     String[]
+  activatedAt     DateTime?
+  activatedBy     String?
+  createdAt       DateTime  @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@index([tenantId, teamId])
+  @@unique([tenantId, name, ownerType, ownerId])
+  @@index([tenantId, entityType, ownerId, active])
 }

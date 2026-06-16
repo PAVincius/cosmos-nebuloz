@@ -18,8 +18,8 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { ImpedimentWithTeam } from "@/app/actions/impediments";
 import { resolveImpediment } from "@/app/actions/impediments";
+import type { ImpedimentWithTeam } from "@/app/actions/impediments/types";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

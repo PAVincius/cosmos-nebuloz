@@ -3,7 +3,7 @@
 import type {
   ApprovalRequestWithSteps,
   GovernedEpicWithDetails,
-} from "@/app/actions/governance";
+} from "@/app/actions/governance/schema";
 import { GovernanceEpicCard } from "./governance-epic-card";
 
 const COLUMNS = [

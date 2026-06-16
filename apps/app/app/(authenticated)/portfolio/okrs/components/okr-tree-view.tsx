@@ -4,33 +4,13 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { ChevronDownIcon, ChevronRightIcon } from "lucide-react";
 import { useState } from "react";
-import type { OKRWithContext } from "@/app/actions/okrs";
+import type {
+  KeyResultWithProgress,
+  OKRWithContext,
+} from "@/app/actions/okrs/schema";
 import { OKRCardV2 } from "./okr-card-v2";
 
 type OKRStatus = "ON_TRACK" | "AT_RISK" | "BEHIND" | "ACHIEVED";
-
-type KeyResultSnapshotItem = {
-  id: string;
-  keyResultId: string;
-  value: number;
-  note: string | null;
-  recordedAt: Date;
-};
-
-type KeyResultWithProgress = {
-  id: string;
-  title: string;
-  current: number;
-  target: number;
-  unit: string;
-  metric?: string | null;
-  baseline?: number | null;
-  measurementType?: string | null;
-  dataSource?: string | null;
-  dueDate?: Date | null;
-  progress: number;
-  snapshots?: KeyResultSnapshotItem[];
-};
 
 const TYPE_CONFIG: Record<string, { label: string; icon: string }> = {
   portfolio_theme: { label: "Tema", icon: "🎯" },

@@ -27,7 +27,6 @@ function ColumnSkeleton({ count }: { readonly count: number }) {
       </div>
       <div className="flex flex-col gap-3 p-3">
         {Array.from({ length: count }).map((_, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton list
           <CardSkeleton key={i} />
         ))}
       </div>
@@ -41,7 +40,6 @@ export default function Loading() {
       <Skeleton className="h-8 w-52" />
       <div className="flex items-start gap-6 overflow-x-auto pb-4">
         {COLUMN_CARD_COUNTS.map((count, i) => (
-          // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton list
           <ColumnSkeleton count={count} key={i} />
         ))}
       </div>

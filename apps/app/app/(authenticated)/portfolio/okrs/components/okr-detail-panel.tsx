@@ -20,7 +20,8 @@ import {
   XIcon,
 } from "lucide-react";
 import { useState, useTransition } from "react";
-import { type OKRWithContext, updateKeyResult } from "@/app/actions/okrs";
+import { updateKeyResult } from "@/app/actions/okrs";
+import type { OKRWithContext } from "@/app/actions/okrs/schema";
 
 type KeyResultSnapshotItem = {
   id: string;

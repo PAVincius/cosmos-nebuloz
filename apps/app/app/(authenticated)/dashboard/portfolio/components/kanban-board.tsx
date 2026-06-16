@@ -27,14 +27,20 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useExportCsv } from "@repo/design-system/hooks/use-export-csv";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { analyzeAllEpics } from "@/app/actions/epics/analyze-all-epics";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
 import { moveEpicAction } from "@/app/actions/portfolio-kanban";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
+import {
+  CardConfigPanel,
+  type CardDisplayCfg,
+  DEFAULT_CARD_CFG,
+} from "./card-config-panel";
 import { EpicCreateModal } from "./epic-create-modal";
 import { EpicDrawer } from "./epic-drawer";
 import { KanbanCard } from "./kanban-card";
@@ -72,7 +78,6 @@ export const KanbanBoard = ({
   canOverrideWip,
   themes = [],
   locale = "pt-BR",
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: React component — hooks rules prevent further extraction
 }: KanbanBoardProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -97,6 +102,9 @@ export const KanbanBoard = ({
   const [isAnalyzingAll, setIsAnalyzingAll] = useState(false);
   const [openEpicId, setOpenEpicId] = useState<string | null>(null);
   const [quickAddColumnId, setQuickAddColumnId] = useState<string | null>(null);
+  const [cardCfg, setCardCfg] = useState<CardDisplayCfg>(DEFAULT_CARD_CFG);
+  const [showDisplay, setShowDisplay] = useState(false);
+  const displayWrapRef = useRef<HTMLDivElement>(null);
 
   // WIP violation modal state (AC-002)
   const [wipPending, setWipPending] = useState<PendingMove | null>(null);
@@ -234,37 +242,34 @@ export const KanbanBoard = ({
   }, [syncStorage, initialEpics]);
 
   const epics: PortfolioEpic[] =
-    liveEpics?.map(
-      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: pre-existing live-to-portfolio-epic mapping with many optional fields
-      (e) => {
-        const initial = initialEpics.find((ie) => ie.id === e.id);
-        return {
-          id: e.id,
-          title: e.title,
-          statusId: initial?.statusId ?? e.lifecycleStatus,
-          lifecycleStatus: e.lifecycleStatus,
-          order: e.order,
-          wsjfScore: e.wsjfScore,
-          bv: initial?.bv ?? 0,
-          tc: initial?.tc ?? 0,
-          rr: initial?.rr ?? 0,
-          js: initial?.js ?? 1,
-          featureCount: initial?.featureCount ?? 0,
-          strategicThemeId: initial?.strategicThemeId ?? null,
-          themeTitle: initial?.themeTitle ?? null,
-          themeColor: initial?.themeColor ?? null,
-          linkedOKRCount: initial?.linkedOKRCount ?? 0,
-          governanceStatus: initial?.governanceStatus ?? null,
-          investScore: initial?.investScore ?? null,
-          investBreakdown: initial?.investBreakdown ?? null,
-          descriptionMd: initial?.descriptionMd ?? null,
-          epicType: initial?.epicType ?? "EPIC",
-          dueDate: initial?.dueDate ?? null,
-          completedFeatureCount: initial?.completedFeatureCount ?? 0,
-          topFeatures: initial?.topFeatures ?? [],
-        };
-      }
-    ) ?? initialEpics;
+    liveEpics?.map((e) => {
+      const initial = initialEpics.find((ie) => ie.id === e.id);
+      return {
+        id: e.id,
+        title: e.title,
+        statusId: initial?.statusId ?? e.lifecycleStatus,
+        lifecycleStatus: e.lifecycleStatus,
+        order: e.order,
+        wsjfScore: e.wsjfScore,
+        bv: initial?.bv ?? 0,
+        tc: initial?.tc ?? 0,
+        rr: initial?.rr ?? 0,
+        js: initial?.js ?? 1,
+        featureCount: initial?.featureCount ?? 0,
+        strategicThemeId: initial?.strategicThemeId ?? null,
+        themeTitle: initial?.themeTitle ?? null,
+        themeColor: initial?.themeColor ?? null,
+        linkedOKRCount: initial?.linkedOKRCount ?? 0,
+        governanceStatus: initial?.governanceStatus ?? null,
+        investScore: initial?.investScore ?? null,
+        investBreakdown: initial?.investBreakdown ?? null,
+        descriptionMd: initial?.descriptionMd ?? null,
+        epicType: initial?.epicType ?? "EPIC",
+        dueDate: initial?.dueDate ?? null,
+        completedFeatureCount: initial?.completedFeatureCount ?? 0,
+        topFeatures: initial?.topFeatures ?? [],
+      };
+    }) ?? initialEpics;
 
   const filteredEpics = useMemo(
     () =>
@@ -273,6 +278,25 @@ export const KanbanBoard = ({
         : epics.filter((e) => e.strategicThemeId === themeFilter),
     [epics, themeFilter]
   );
+
+  const csvColumns = useMemo(
+    () => [
+      { header: "Título", accessor: (e: PortfolioEpic) => e.title },
+      { header: "Status", accessor: (e: PortfolioEpic) => e.lifecycleStatus },
+      { header: "WSJF", accessor: (e: PortfolioEpic) => e.wsjfScore },
+      { header: "BV", accessor: (e: PortfolioEpic) => e.bv },
+      {
+        header: "Features Concluídas",
+        accessor: (e: PortfolioEpic) => e.completedFeatureCount,
+      },
+      {
+        header: "Total Features",
+        accessor: (e: PortfolioEpic) => e.featureCount,
+      },
+    ],
+    []
+  );
+  const exportCsv = useExportCsv(filteredEpics, csvColumns, "portfolio-kanban");
 
   const epicsByColumn = useMemo(() => {
     const map = new Map<string, PortfolioEpic[]>();
@@ -455,59 +479,89 @@ export const KanbanBoard = ({
     >
       <MultiplayerCursors />
 
-      {/* Theme filter toolbar */}
-      {themes.length > 0 ? (
-        <div className="mb-3 flex flex-shrink-0 flex-wrap items-center gap-2">
-          {others.length > 0 && (
-            <div className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-[10px]">
-              <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
-              {others.length} online
-            </div>
+      {/* Toolbar */}
+      <div className="mb-3 flex flex-shrink-0 flex-wrap items-center gap-2">
+        {others.length > 0 && (
+          <div className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-[10px]">
+            <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+            {others.length} online
+          </div>
+        )}
+        <div className="relative" ref={displayWrapRef}>
+          <button
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] transition-colors hover:bg-muted ${
+              showDisplay
+                ? "border-primary/50 bg-primary/10 text-primary"
+                : "border-border"
+            }`}
+            onClick={() => setShowDisplay((v) => !v)}
+            type="button"
+          >
+            <span>⊞</span> Display
+          </button>
+          {showDisplay && (
+            <CardConfigPanel
+              cfg={cardCfg}
+              onChange={setCardCfg}
+              onClose={() => setShowDisplay(false)}
+              wrapRef={displayWrapRef}
+            />
           )}
-          <button
-            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-[11px] transition-colors hover:bg-muted disabled:opacity-50"
-            disabled={isAnalyzingAll}
-            onClick={handleAnalyzeAll}
-            type="button"
-          >
-            <span className="text-indigo-500">✦</span>
-            {isAnalyzingAll ? t.analyzing : t.analyzeAll}
-          </button>
-          <span className="text-muted-foreground text-xs">
-            {t.filterByTheme}
-          </span>
-          <button
-            className={`rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === "ALL" ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"}`}
-            onClick={() => setThemeFilter("ALL")}
-            type="button"
-          >
-            {t.all}
-          </button>
-          {themes.map((theme) => (
+        </div>
+        <button
+          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-[11px] transition-colors hover:bg-muted disabled:opacity-50"
+          disabled={isAnalyzingAll}
+          onClick={handleAnalyzeAll}
+          type="button"
+        >
+          <span className="text-indigo-500">✦</span>
+          {isAnalyzingAll ? t.analyzing : t.analyzeAll}
+        </button>
+        <button
+          className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 text-[11px] transition-colors hover:bg-muted"
+          onClick={exportCsv}
+          type="button"
+        >
+          ↓ CSV
+        </button>
+        {themes.length > 0 && (
+          <>
+            <span className="text-muted-foreground text-xs">
+              {t.filterByTheme}
+            </span>
             <button
-              className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === theme.id ? "border-foreground" : "border-border hover:bg-muted"}`}
-              key={theme.id}
-              onClick={() => setThemeFilter(theme.id)}
-              style={
-                themeFilter === theme.id
-                  ? {
-                      backgroundColor: `${theme.color}22`,
-                      borderColor: theme.color,
-                    }
-                  : {}
-              }
+              className={`rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === "ALL" ? "border-foreground bg-foreground text-background" : "border-border hover:bg-muted"}`}
+              onClick={() => setThemeFilter("ALL")}
               type="button"
             >
-              <span
-                aria-hidden
-                className="h-1.5 w-1.5 rounded-full"
-                style={{ backgroundColor: theme.color }}
-              />
-              {theme.title}
+              {t.all}
             </button>
-          ))}
-        </div>
-      ) : null}
+            {themes.map((theme) => (
+              <button
+                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] transition-colors ${themeFilter === theme.id ? "border-foreground" : "border-border hover:bg-muted"}`}
+                key={theme.id}
+                onClick={() => setThemeFilter(theme.id)}
+                style={
+                  themeFilter === theme.id
+                    ? {
+                        backgroundColor: `${theme.color}22`,
+                        borderColor: theme.color,
+                      }
+                    : {}
+                }
+                type="button"
+              >
+                <span
+                  aria-hidden
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: theme.color }}
+                />
+                {theme.title}
+              </button>
+            ))}
+          </>
+        )}
+      </div>
 
       {/* Kanban board */}
       <DndContext
@@ -520,6 +574,7 @@ export const KanbanBoard = ({
           {columns.map((col) => (
             <KanbanColumn
               canConfigure={canConfigure}
+              cfg={cardCfg}
               color={col.color}
               epics={epicsByColumn.get(col.id) ?? []}
               id={col.id}
@@ -546,7 +601,7 @@ export const KanbanBoard = ({
               style={{ boxShadow: "0 20px 48px rgba(0,0,0,0.18)" }}
               transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-              <KanbanCard epic={activeEpic} isDragging />
+              <KanbanCard cfg={cardCfg} epic={activeEpic} isDragging />
             </motion.div>
           ) : null}
         </DragOverlay>
@@ -567,7 +622,6 @@ export const KanbanBoard = ({
 
           {canOverrideWip ? (
             <div className="space-y-2">
-              {/* biome-ignore lint/a11y/noLabelWithoutControl: textarea is semantically associated by proximity */}
               <label className="font-medium text-sm">
                 {t.wipOverrideLabel}
               </label>
@@ -620,7 +674,6 @@ export const KanbanBoard = ({
           </DialogHeader>
 
           <div className="space-y-2">
-            {/* biome-ignore lint/a11y/noLabelWithoutControl: textarea is semantically associated by proximity */}
             <label className="font-medium text-sm">{t.rejectLabel}</label>
             <Textarea
               id="reject-reason"

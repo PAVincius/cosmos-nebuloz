@@ -4,8 +4,6 @@ import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { crossedThresholds } from "./threshold-logic";
 
-export { crossedThresholds } from "./threshold-logic";
-
 /** Fires deduped notifications for all newly crossed KR thresholds. */
 export async function checkKRThresholds(opts: {
   tenantId: string;

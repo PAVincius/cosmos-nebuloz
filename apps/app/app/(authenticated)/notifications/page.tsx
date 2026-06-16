@@ -3,8 +3,8 @@ import { appDesign } from "@/lib/app-design";
 import {
   getNotifications,
   getUnreadCountRaw,
-  type Notification,
 } from "../../actions/notifications/index";
+import type { Notification } from "../../actions/notifications/schema";
 import { PageHeader } from "../components/page-header";
 import { MarkAllReadButton } from "./components/mark-all-read-button";
 import { NotificationItem } from "./components/notification-item";

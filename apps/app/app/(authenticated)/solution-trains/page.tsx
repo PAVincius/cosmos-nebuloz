@@ -12,10 +12,8 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { appDesign } from "@/lib/app-design";
-import {
-  listSolutionTrains,
-  type SolutionTrainWithCounts,
-} from "../../actions/solution-trains";
+import { listSolutionTrains } from "../../actions/solution-trains";
+import type { SolutionTrainWithCounts } from "../../actions/solution-trains/schema";
 
 const CreateSolutionTrainDialog = dynamic(
   () =>

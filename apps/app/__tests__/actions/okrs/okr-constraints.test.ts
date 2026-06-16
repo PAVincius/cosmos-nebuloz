@@ -87,7 +87,8 @@ describe("createOKR — AC-001: valid creation with quarter/year", () => {
     mocks.okrCount.mockResolvedValue(10);
     const result = await createOKR(VALID_OKR_INPUT);
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(/Maximum 10 OKRs/);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(/Maximum 10 OKRs/);
     expect(mocks.okrCreate).not.toHaveBeenCalled();
   });
 });
@@ -104,7 +105,8 @@ describe("createOKR — AC-002: PO cannot create ART-level OKR", () => {
   it("blocks PO from creating pi_art OKR", async () => {
     const result = await createOKR({ ...VALID_OKR_INPUT, type: "pi_art" });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(/INSUFFICIENT_ROLE|RTE/i);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(/INSUFFICIENT_ROLE|RTE/i);
     expect(mocks.okrCreate).not.toHaveBeenCalled();
   });
 
@@ -157,7 +159,8 @@ describe("createKeyResult — AC-008: maximum 5 key results per OKR", () => {
       unit: "%",
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(/Maximum 5 key results/);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(/Maximum 5 key results/);
     expect(mocks.keyResultCreate).not.toHaveBeenCalled();
   });
 });

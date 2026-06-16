@@ -20,7 +20,6 @@ export async function getBudgetOverview(params: {
   periodStart: Date;
   periodEnd: Date;
 }): Promise<Result<BudgetOverviewItem[]>> {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: multi-pass aggregation with enrichment loop
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 

@@ -109,6 +109,7 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
           <GlobalSidebar
             initialActiveTenantId={initialActiveTenantId}
             initialTenants={initialTenants}
+            role={memberRole}
             teams={teams}
             user={{
               name: user.name ?? user.email,

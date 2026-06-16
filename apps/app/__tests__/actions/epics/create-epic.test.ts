@@ -37,6 +37,7 @@ const CREATED_EPIC = {
 const validInput = {
   title: "My Epic",
   statusId: "BACKLOG",
+  epicType: "EPIC" as const,
 };
 
 beforeEach(() => {
@@ -94,6 +95,7 @@ describe("createEpic", () => {
     const result = await createEpic({
       title: "a".repeat(201),
       statusId: "BACKLOG",
+      epicType: "EPIC" as const,
     });
 
     expect(result.ok).toBe(false);
@@ -125,7 +127,11 @@ describe("createEpic", () => {
   });
 
   it("returns { ok: false } for empty title", async () => {
-    const result = await createEpic({ title: "", statusId: "BACKLOG" });
+    const result = await createEpic({
+      title: "",
+      statusId: "BACKLOG",
+      epicType: "EPIC" as const,
+    });
 
     expect(result.ok).toBe(false);
     expect(mocks.epicCreate).not.toHaveBeenCalled();

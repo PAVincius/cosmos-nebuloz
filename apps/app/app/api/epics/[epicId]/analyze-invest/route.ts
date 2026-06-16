@@ -239,7 +239,7 @@ export async function POST(
         data: {
           investScore: scores.composite,
           investBreakdown:
-            scores as unknown as import("@prisma/client").Prisma.InputJsonValue,
+            scores as unknown as import("@repo/database").Prisma.InputJsonValue,
           investHash: contentHash,
           investScoreOverridden: false,
           investScoreOutdated: false,
@@ -262,5 +262,5 @@ export async function POST(
     },
   });
 
-  return result.toDataStreamResponse();
+  return result.toTextStreamResponse();
 }

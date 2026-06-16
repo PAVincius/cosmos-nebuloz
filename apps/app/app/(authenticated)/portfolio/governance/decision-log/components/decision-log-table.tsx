@@ -1,7 +1,7 @@
 "use client";
 
 import type { PageMeta } from "@/app/actions/_base";
-import type { DecisionLogEntryPublic } from "@/app/actions/governance";
+import type { DecisionLogEntryPublic } from "@/app/actions/governance/schema";
 
 const DECISAO_LABELS: Record<string, { label: string; class: string }> = {
   approved: { label: "Aprovado", class: "bg-green-100 text-green-800" },

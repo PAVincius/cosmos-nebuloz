@@ -42,16 +42,16 @@ services:
       dockerfile: apps/app/Dockerfile.e2e
     container_name: cosmos-e2e-app
     ports:
-      - "3000:3000"
+      - "3012:3012"
     environment:
       NODE_ENV: development
-      DATABASE_URL: postgresql://cosmos:cosmos_e2e_secret@cosmos-e2e-db:5432/cosmos_e2e
+      DATABASE_URL: postgresql://postgres:postgres@cosmos-e2e-db:5432/cosmos_dev
       BETTER_AUTH_SECRET: cosmos-e2e-test-secret-minimum-32-chars
-      BETTER_AUTH_URL: http://localhost:3000
-      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3012
+      NEXT_PUBLIC_APP_URL: http://localhost:3012
       NEXT_PUBLIC_WEB_URL: http://localhost:3001
       NEXT_PUBLIC_DOCS_URL: http://localhost:3004
-      VERCEL_PROJECT_PRODUCTION_URL: http://localhost:3000
+      VERCEL_PROJECT_PRODUCTION_URL: http://localhost:3012
       NEXT_PUBLIC_POSTHOG_KEY: phc_e2e_placeholder
       NEXT_PUBLIC_POSTHOG_HOST: https://app.posthog.com
       RESEND_TOKEN: re_e2e_placeholder
@@ -72,7 +72,7 @@ services:
       cosmos-e2e-db:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:3012/api/health || exit 1"]
       interval: 10s
       timeout: 10s
       retries: 15

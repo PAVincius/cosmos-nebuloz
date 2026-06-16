@@ -6,9 +6,6 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { cuid, optStr, type Result, safeAction } from "../_base";
-import type { UpsertSprintReviewInput } from "./schema";
-
-export type { UpsertSprintReviewInput };
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 

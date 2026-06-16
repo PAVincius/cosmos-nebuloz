@@ -22,12 +22,16 @@ vi.mock("@repo/design-system/lib/utils", () => ({
       .join(" "),
 }));
 
+import { DEFAULT_CARD_CFG } from "@/app/(authenticated)/dashboard/portfolio/components/card-config-panel";
 import {
   investColor,
   investLabel,
   KanbanCard,
 } from "@/app/(authenticated)/dashboard/portfolio/components/kanban-card";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+
+// Always-revealed cfg for tests that assert visible INVEST/BLOCKED elements
+const REVEAL_CFG = { ...DEFAULT_CARD_CFG, hoverReveal: false };
 
 // Top-level regex constants (Biome: useTopLevelRegex)
 const RE_BLOCKED = /BLOCKED/;
@@ -78,6 +82,7 @@ function makeEpic(overrides: Partial<PortfolioEpic> = {}): PortfolioEpic {
     id: "epic-1",
     title: "My Epic Title",
     statusId: "status-1",
+    lifecycleStatus: "active",
     order: 0,
     wsjfScore: 4.5,
     bv: 8,
@@ -85,6 +90,8 @@ function makeEpic(overrides: Partial<PortfolioEpic> = {}): PortfolioEpic {
     rr: 3,
     js: 2,
     featureCount: 3,
+    completedFeatureCount: 0,
+    topFeatures: [],
     strategicThemeId: null,
     themeTitle: null,
     themeColor: null,
@@ -111,7 +118,9 @@ describe("KanbanCard component", () => {
   });
 
   it("shows green-fill INVEST bar for score >= 70", () => {
-    render(<KanbanCard epic={makeEpic({ investScore: 75 })} />);
+    render(
+      <KanbanCard cfg={REVEAL_CFG} epic={makeEpic({ investScore: 75 })} />
+    );
     const bar = screen.getByRole("progressbar", { name: "INVEST 75" });
     const fill = bar.querySelector(
       '[data-testid="invest-bar-fill"]'
@@ -120,7 +129,9 @@ describe("KanbanCard component", () => {
   });
 
   it("shows yellow-fill INVEST bar for score between 50 and 69", () => {
-    render(<KanbanCard epic={makeEpic({ investScore: 55 })} />);
+    render(
+      <KanbanCard cfg={REVEAL_CFG} epic={makeEpic({ investScore: 55 })} />
+    );
     const bar = screen.getByRole("progressbar", { name: "INVEST 55" });
     const fill = bar.querySelector(
       '[data-testid="invest-bar-fill"]'
@@ -129,7 +140,9 @@ describe("KanbanCard component", () => {
   });
 
   it("shows red-fill INVEST bar for score < 50", () => {
-    render(<KanbanCard epic={makeEpic({ investScore: 30 })} />);
+    render(
+      <KanbanCard cfg={REVEAL_CFG} epic={makeEpic({ investScore: 30 })} />
+    );
     const bar = screen.getByRole("progressbar", { name: "INVEST 30" });
     const fill = bar.querySelector(
       '[data-testid="invest-bar-fill"]'
@@ -145,7 +158,12 @@ describe("KanbanCard component", () => {
   });
 
   it("shows BLOCKED warning when governanceStatus is BLOCKED", () => {
-    render(<KanbanCard epic={makeEpic({ governanceStatus: "BLOCKED" })} />);
+    render(
+      <KanbanCard
+        cfg={REVEAL_CFG}
+        epic={makeEpic({ governanceStatus: "BLOCKED" })}
+      />
+    );
     expect(screen.getByText(RE_BLOCKED)).toBeDefined();
   });
 

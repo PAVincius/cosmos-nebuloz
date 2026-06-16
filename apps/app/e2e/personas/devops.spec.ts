@@ -232,8 +232,7 @@ test.describe("DevOps — API Health & Integrations", () => {
         expected:
           "CI/CD dashboard: build status, deployment tracking, release traceability",
         actual: "No CI/CD routes or data models beyond schema stubs",
-        suggestion:
-          "Implement epic-008 Enterprise & Scale — CI/CD integration",
+        suggestion: "Implement epic-008 Enterprise & Scale — CI/CD integration",
         codeRef: "docs/stories/epic-008/",
       })
     );

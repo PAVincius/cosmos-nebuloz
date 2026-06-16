@@ -13,7 +13,7 @@ const TileSchema = z.object({
   y: z.number().int().min(0),
   w: z.number().int().min(1),
   h: z.number().int().min(1),
-  config: z.record(z.unknown()).optional(),
+  config: z.record(z.string(), z.unknown()).optional(),
 });
 
 const UpsertLayoutSchema = z.object({
@@ -56,9 +56,11 @@ export async function upsertDashboardLayout(
       create: {
         tenantId: ctx.tenantId,
         userId: ctx.userId,
-        config: data,
+        config: data as import("@repo/database").Prisma.InputJsonValue,
       },
-      update: { config: data },
+      update: {
+        config: data as import("@repo/database").Prisma.InputJsonValue,
+      },
       select: { config: true },
     });
 

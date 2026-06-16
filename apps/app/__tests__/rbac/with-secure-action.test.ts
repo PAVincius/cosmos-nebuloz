@@ -14,7 +14,7 @@ const dbMocks = vi.hoisted(() => ({
 
 vi.mock("@repo/database", () => ({
   database: {
-    artMembership: { findFirst: dbMocks.artMembershipFindFirst },
+    aRTMembership: { findFirst: dbMocks.artMembershipFindFirst },
     tenantMember: { findFirst: dbMocks.tenantMemberFindFirst },
     auditLog: { create: dbMocks.auditLogCreate },
     customRoleAssignment: { findMany: dbMocks.customRoleAssignmentFindMany },

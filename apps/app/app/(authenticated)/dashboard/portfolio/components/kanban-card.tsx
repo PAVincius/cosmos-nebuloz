@@ -2,17 +2,19 @@
 
 import { useDraggable } from "@dnd-kit/core";
 import { cn } from "@repo/design-system/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { memo, useState } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+import { type CardDisplayCfg, DEFAULT_CARD_CFG } from "./card-config-panel";
 import { InvestScoreBar } from "./invest-score-bar";
 
 type KanbanCardProps = {
   epic: PortfolioEpic;
   isDragging?: boolean;
   onOpenDrawer?: (epicId: string) => void;
+  cfg?: CardDisplayCfg;
 };
 
 export function investColor(score: number | null): string {
@@ -49,7 +51,13 @@ function epicVisualEqual(a: PortfolioEpic, b: PortfolioEpic): boolean {
 }
 
 export const KanbanCard = memo(
-  function KanbanCard({ epic, isDragging, onOpenDrawer }: KanbanCardProps) {
+  function KanbanCard({
+    epic,
+    isDragging,
+    onOpenDrawer,
+    cfg = DEFAULT_CARD_CFG,
+  }: KanbanCardProps) {
+    const prefersReducedMotion = useReducedMotion();
     const [hovered, setHovered] = useState(false);
     const [focused, setFocused] = useState(false);
     const {
@@ -66,7 +74,9 @@ export const KanbanCard = memo(
 
     const isWarn = epic.investScore !== null && epic.investScore < 50;
     const isBlocked = epic.governanceStatus === "BLOCKED";
-    const showExpand = hovered || focused;
+    const isActive = hovered || focused;
+    const showExpand = isActive;
+    const revealed = !cfg.hoverReveal || isActive;
 
     return (
       <div
@@ -113,6 +123,14 @@ export const KanbanCard = memo(
             }}
           />
 
+          {/* INVEST bar — top position */}
+          {cfg.showInvest &&
+            cfg.investPos === "top" &&
+            epic.investScore !== null &&
+            revealed && (
+              <InvestScoreBar className="mx-3 mt-2" score={epic.investScore} />
+            )}
+
           {/* Body */}
           <div className="px-3 pt-2.5 pb-2">
             {/* Title */}
@@ -129,57 +147,71 @@ export const KanbanCard = memo(
               {epic.title}
             </button>
 
-            {/* Badges */}
-            <div className="mt-2 flex flex-wrap items-center gap-1.5">
-              {!!epic.themeColor && (
-                <span
-                  className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium text-[10px]"
-                  style={{
-                    backgroundColor: `${epic.themeColor}18`,
-                    color: epic.themeColor,
-                  }}
-                >
-                  <span
-                    className="h-1.5 w-1.5 shrink-0 rounded-full"
-                    style={{ backgroundColor: epic.themeColor }}
-                  />
-                  {epic.epicType !== "EPIC" ? epic.epicType : "Épico"}
-                </span>
-              )}
-
-              {epic.wsjfScore > 0 && (
-                <span className="rounded border border-border/50 bg-muted/30 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground dark:border-[rgba(251,191,36,.15)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]">
-                  WSJF {epic.wsjfScore.toFixed(1)}
-                </span>
-              )}
-
-              {isBlocked && (
-                <span
-                  className="rounded px-1.5 py-0.5 font-semibold text-[9px]"
-                  style={{
-                    backgroundColor: "var(--red-soft, rgba(251,113,133,0.12))",
-                    color: "var(--red-text, rgb(220,38,38))",
-                  }}
-                >
-                  ⚠ BLOCKED
-                </span>
-              )}
-            </div>
-
-            {/* INVEST bar — revealed on hover */}
-            {epic.investScore !== null && (
-              <InvestScoreBar className="mt-2.5" score={epic.investScore} />
+            {/* Description preview */}
+            {cfg.showDesc && epic.descriptionMd && (
+              <p className="mt-1.5 line-clamp-2 text-[11.5px] text-muted-foreground leading-[1.5]">
+                {epic.descriptionMd.replace(/[#*`>[\]]/g, "").trim()}
+              </p>
             )}
 
-            {/* BV/TC/RR/JS breakdown — revealed on hover */}
+            {/* Badges */}
+            {revealed && (
+              <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                {!!epic.themeColor && (
+                  <span
+                    className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 font-medium text-[10px]"
+                    style={{
+                      backgroundColor: `${epic.themeColor}18`,
+                      color: epic.themeColor,
+                    }}
+                  >
+                    <span
+                      className="h-1.5 w-1.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: epic.themeColor }}
+                    />
+                    {epic.epicType !== "EPIC" ? epic.epicType : "Épico"}
+                  </span>
+                )}
+
+                {cfg.showWsjf && epic.wsjfScore > 0 && (
+                  <span className="rounded border border-border/50 bg-muted/30 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground dark:border-[rgba(251,191,36,.15)] dark:bg-[var(--amber-soft)] dark:text-[var(--amber-text)]">
+                    WSJF {epic.wsjfScore.toFixed(1)}
+                  </span>
+                )}
+
+                {isBlocked && (
+                  <span
+                    className="rounded px-1.5 py-0.5 font-semibold text-[9px]"
+                    style={{
+                      backgroundColor:
+                        "var(--red-soft, rgba(251,113,133,0.12))",
+                      color: "var(--red-text, rgb(220,38,38))",
+                    }}
+                  >
+                    ⚠ BLOCKED
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* BV/TC/RR/JS breakdown — always hover-only */}
             <AnimatePresence>
-              {showExpand && epic.wsjfScore > 0 ? (
+              {showExpand && cfg.showWsjf && epic.wsjfScore > 0 ? (
                 <motion.div
                   animate={{ opacity: 1, height: "auto" }}
                   className="overflow-hidden"
                   exit={{ opacity: 0, height: 0 }}
                   initial={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.22, ease: "easeOut" }}
+                  transition={
+                    prefersReducedMotion
+                      ? { duration: 0 }
+                      : {
+                          type: "spring",
+                          stiffness: 400,
+                          damping: 30,
+                          mass: 0.8,
+                        }
+                  }
                 >
                   <div className="mt-2 grid grid-cols-4 gap-1 border-border/40 border-t pt-2">
                     {[
@@ -202,13 +234,21 @@ export const KanbanCard = memo(
               ) : null}
             </AnimatePresence>
           </div>
+
+          {/* INVEST bar — bottom position */}
+          {cfg.showInvest &&
+            cfg.investPos === "bottom" &&
+            epic.investScore !== null &&
+            revealed && (
+              <InvestScoreBar className="mx-3 mb-2" score={epic.investScore} />
+            )}
         </div>
 
         {/* Footer */}
         <div className="flex items-center justify-between border-border/30 border-t bg-muted/20 px-3 py-1.5 dark:bg-black/15">
           <span className="font-mono text-[10px] text-muted-foreground/70">
             {epic.featureCount} feature{epic.featureCount !== 1 ? "s" : ""}
-            {epic.linkedOKRCount > 0
+            {cfg.showOkrs && epic.linkedOKRCount > 0
               ? ` · ${epic.linkedOKRCount} OKR${epic.linkedOKRCount > 1 ? "s" : ""}`
               : ""}
           </span>
@@ -227,5 +267,7 @@ export const KanbanCard = memo(
     );
   },
   (prev, next) =>
-    prev.isDragging === next.isDragging && epicVisualEqual(prev.epic, next.epic)
+    prev.isDragging === next.isDragging &&
+    prev.cfg === next.cfg &&
+    epicVisualEqual(prev.epic, next.epic)
 );

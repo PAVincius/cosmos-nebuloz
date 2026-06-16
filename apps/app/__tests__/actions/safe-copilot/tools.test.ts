@@ -66,6 +66,9 @@ vi.mock("../../../app/actions/safe-copilot/tools/pricing-tools", () => ({
 
 import { buildCopilotTools } from "../../../app/actions/safe-copilot/tools";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyTools = Record<string, { execute: (...args: any[]) => Promise<any> }>;
+
 // ─── Shared setup ───────────────────────────────────────────────────────────
 
 const TENANT_ID = "tenant-test";
@@ -100,7 +103,7 @@ describe("queryFlowMetrics", () => {
     };
     mocks.flowMetricSnapshotFindMany.mockResolvedValue([snapshot]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryFlowMetrics.execute(
       { scope: "team", scopeId: "team-42", periods: 2 },
       {} as never
@@ -123,7 +126,7 @@ describe("queryFlowMetrics", () => {
   it("returns empty snapshots array when no data found", async () => {
     mocks.flowMetricSnapshotFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryFlowMetrics.execute(
       { scope: "art", scopeId: "art-1", periods: 3 },
       {} as never
@@ -149,7 +152,7 @@ describe("queryLeanBudget", () => {
     };
     mocks.leanBudgetFindMany.mockResolvedValue([budget]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryLeanBudget.execute(
       { entityId: "art-1", entityType: "art" },
       {} as never
@@ -188,7 +191,7 @@ describe("queryLeanBudget", () => {
     mocks.leanBudgetFindMany.mockResolvedValue([budget]);
     mocks.strategicThemeFindMany.mockResolvedValue([theme]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryLeanBudget.execute(
       { entityId: "portfolio-1", entityType: "portfolio" },
       {} as never
@@ -236,7 +239,7 @@ describe("queryTeams", () => {
     ];
     mocks.teamFindMany.mockResolvedValue(teams);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryTeams.execute({}, {} as never);
 
     expect(mocks.teamFindMany).toHaveBeenCalledWith(
@@ -255,7 +258,7 @@ describe("queryTeams", () => {
     };
     mocks.teamFindMany.mockResolvedValue([team]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryTeams.execute(
       { artId: "art-1" },
       {} as never
@@ -285,7 +288,7 @@ describe("queryEpics", () => {
       },
     ]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryEpics.execute({ take: 15 }, {} as never);
 
     expect(result).toEqual({
@@ -304,7 +307,7 @@ describe("queryEpics", () => {
   it("passes statusId filter when status is provided", async () => {
     mocks.epicFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.queryEpics.execute({ status: "BACKLOG", take: 5 }, {} as never);
 
     expect(mocks.epicFindMany).toHaveBeenCalledWith(
@@ -318,7 +321,7 @@ describe("queryEpics", () => {
   it("omits statusId from where clause when status is not provided", async () => {
     mocks.epicFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.queryEpics.execute({ take: 15 }, {} as never);
 
     expect(mocks.epicFindMany).toHaveBeenCalledWith(
@@ -333,7 +336,7 @@ describe("queryEpics", () => {
 
 describe("queryOKRs", () => {
   it("returns empty okrs array when no data found", async () => {
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryOKRs.execute({}, {} as never);
 
     expect(result).toEqual({ okrs: [] });
@@ -361,7 +364,7 @@ describe("queryOKRs", () => {
     };
     mocks.oKRFindMany.mockResolvedValue([okr]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.queryOKRs.execute(
       { status: "AT_RISK" },
       {} as never
@@ -378,7 +381,7 @@ describe("queryOKRs", () => {
   it("omits status from where clause when not provided", async () => {
     mocks.oKRFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.queryOKRs.execute({}, {} as never);
 
     expect(mocks.oKRFindMany).toHaveBeenCalledWith(
@@ -401,7 +404,7 @@ describe("createFeature", () => {
     };
     mocks.featureCreate.mockResolvedValue(createdFeature);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.createFeature.execute(
       {
         title: "Export to CSV",
@@ -443,7 +446,7 @@ describe("createFeature", () => {
       statusId: "BACKLOG",
     });
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.createFeature.execute(
       { title: "Bulk Import", bv: 10, tc: 5, rr: 5, js: 8, storyPoints: 8 },
       {} as never
@@ -466,7 +469,7 @@ describe("createFeature", () => {
       statusId: "BACKLOG",
     });
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.createFeature.execute(
       { title: "Zero JS feature", bv: 8, tc: 4, rr: 3, js: 0, storyPoints: 5 },
       {} as never
@@ -491,7 +494,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "IN_PROGRESS" },
       {} as never
@@ -517,7 +520,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     const result = await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "DONE" },
       {} as never
@@ -543,7 +546,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID);
+    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
     await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "BACKLOG" },
       {} as never

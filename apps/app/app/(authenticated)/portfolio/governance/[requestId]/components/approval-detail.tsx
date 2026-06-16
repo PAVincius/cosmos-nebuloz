@@ -2,9 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { ApprovalRequestWithSteps } from "@/app/actions/governance";
 import { cancelApprovalRequest, reviewStep } from "@/app/actions/governance";
-import type { LeanBudgetWithStats } from "@/app/actions/lean-budget";
+import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
+import type { LeanBudgetWithStats } from "@/app/actions/lean-budget/schema";
 
 const STEP_ESTADO_LABELS: Record<string, { label: string; class: string }> = {
   pending: { label: "Pendente", class: "bg-yellow-100 text-yellow-800" },
@@ -145,7 +145,9 @@ export function ApprovalDetail({ request, budgets }: Props) {
                 <p className="font-medium">{b.name}</p>
                 <p className="text-muted-foreground text-xs">{b.period}</p>
                 <div className="mt-1 flex justify-between text-xs">
-                  <span>Gasto: R$ {b.spent.toLocaleString("pt-BR")}</span>
+                  <span>
+                    Gasto: R$ {(b.spentDecimal ?? 0).toLocaleString("pt-BR")}
+                  </span>
                   <span
                     className={b.isNearLimit ? "font-bold text-red-600" : ""}
                   >

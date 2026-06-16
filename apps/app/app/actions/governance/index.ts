@@ -23,12 +23,6 @@ import {
   type WorkflowEtapa,
 } from "./schema";
 
-export type {
-  GovernedEpicWithDetails,
-  ApprovalRequestWithSteps,
-  DecisionLogEntryPublic,
-};
-
 // ─── Governance role map ──────────────────────────────────────────────────────
 
 // Maps governance roleRequired strings to the MemberRole values that can approve them

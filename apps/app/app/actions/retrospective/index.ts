@@ -13,9 +13,6 @@ import {
   type Result,
   safeAction,
 } from "../_base";
-import type { RetroAction, UpsertRetroInput } from "./schema";
-
-export type { RetroAction, UpsertRetroInput };
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 

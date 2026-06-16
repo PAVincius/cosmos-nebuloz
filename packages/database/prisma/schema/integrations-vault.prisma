@@ -1,20 +1,20 @@
 // Story-037: API Keys, Webhook Endpoints, Credential Vault
 
 model ApiKey {
-  id         String    @id @default(cuid())
-  tenantId   String
-  name       String
-  keyHash    String    @unique // SHA-256 of raw key — never store plaintext
-  prefix     String    @default("cmbk_live_")
-  lastFour   String
-  scope      String[]  @default([])
-  expiresAt  DateTime?
-  revokedAt  DateTime?
-  createdBy  String
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id        String    @id @default(cuid())
+  tenantId  String
+  name      String
+  keyHash   String    @unique // SHA-256 of raw key — never store plaintext
+  prefix    String    @default("cmbk_live_")
+  lastFour  String
+  scope     String[]  @default([])
+  expiresAt DateTime?
+  revokedAt DateTime?
+  createdBy String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
-  tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant    Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   usageLogs ApiKeyUsageLog[]
 
   @@index([tenantId])
@@ -38,19 +38,19 @@ model ApiKeyUsageLog {
 }
 
 model WebhookEndpoint {
-  id          String    @id @default(cuid())
-  tenantId    String
-  url         String
-  secretHash  String    // HMAC secret (hashed for lookup; actual secret AES-encrypted)
-  secretEnc   String    // AES-256-GCM encrypted secret
-  eventTypes  String[]  @default([])
-  active      Boolean   @default(true)
-  createdBy   String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(cuid())
+  tenantId   String
+  url        String
+  secretHash String // HMAC secret (hashed for lookup; actual secret AES-encrypted)
+  secretEnc  String // AES-256-GCM encrypted secret
+  eventTypes String[] @default([])
+  active     Boolean  @default(true)
+  createdBy  String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  tenant        Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  deliveryLogs  WebhookDeliveryLog[]
+  tenant       Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  deliveryLogs WebhookDeliveryLog[]
 
   @@index([tenantId])
 }

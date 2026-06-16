@@ -52,7 +52,6 @@ export function CostBreakdownCard({ cloudCost, peopleCost, saasCost }: Props) {
             outerRadius={90}
           >
             {data.map((_, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: static color palette, no reordering
               <Cell fill={COLORS[i % COLORS.length]} key={i} />
             ))}
           </Pie>

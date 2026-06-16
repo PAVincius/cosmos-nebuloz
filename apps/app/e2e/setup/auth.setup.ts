@@ -1,5 +1,5 @@
-import { chromium, FullConfig } from "@playwright/test";
 import { execSync } from "node:child_process";
+import { chromium, type FullConfig } from "@playwright/test";
 import { database } from "@repo/database";
 
 /**
@@ -24,10 +24,10 @@ async function globalSetup(config: FullConfig) {
   const email = process.env.E2E_EMAIL ?? "admin@cosmos.local";
   const password = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
 
-  console.log(`🌱 Executing seed:e2e before E2E tests...`);
+  console.log("🌱 Executing seed:e2e before E2E tests...");
   try {
     execSync("pnpm seed:e2e", { stdio: "inherit" });
-  } catch (err) {
+  } catch (_err) {
     console.warn("⚠️ pnpm seed:e2e had warnings/errors but continuing...");
   }
 
@@ -47,10 +47,12 @@ async function globalSetup(config: FullConfig) {
     // Wait for DB session creation
     await page.waitForTimeout(3000);
 
-    console.log(`⚙️ Injecting activeTenantId into DB Session...`);
+    console.log("⚙️ Injecting activeTenantId into DB Session...");
     const user = await database.user.findUnique({ where: { email } });
     if (user) {
-      const member = await database.tenantMember.findFirst({ where: { userId: user.id } });
+      const member = await database.tenantMember.findFirst({
+        where: { userId: user.id },
+      });
       if (member) {
         await database.session.updateMany({
           where: { userId: user.id },

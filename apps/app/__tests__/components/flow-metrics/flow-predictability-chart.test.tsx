@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { render, screen } from "@testing-library/react";
-import { vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { FlowPredictabilityChart } from "@/app/(authenticated)/analytics/flow/components/flow-predictability-chart";
 
 vi.mock("recharts", () => ({

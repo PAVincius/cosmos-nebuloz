@@ -12,19 +12,12 @@ import {
   safeAction,
 } from "../_base";
 import {
-  type CreateImpedimentInput,
   CreateImpedimentSchema,
-  type ImpedimentFiltersInput,
   ImpedimentFiltersSchema,
-  type UpdateImpedimentInput,
   UpdateImpedimentSchema,
 } from "./schema";
 
-export type {
-  CreateImpedimentInput,
-  UpdateImpedimentInput,
-  ImpedimentFiltersInput,
-};
+import type { ImpedimentWithTeam } from "./types";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -68,22 +61,6 @@ export async function getImpedimentById(id: string): Promise<Result<any>> {
     return impediment;
   });
 }
-
-export type ImpedimentWithTeam = {
-  id: string;
-  tenantId: string;
-  teamId: string | null;
-  teamName: string | null;
-  title: string;
-  description: string | null;
-  status: string;
-  ownerUserId: string | null;
-  resolvedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  ageDays: number;
-  isEscalated: boolean;
-};
 
 export async function listImpedimentsByArt(
   artId: string

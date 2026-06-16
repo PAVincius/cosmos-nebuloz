@@ -3,13 +3,13 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { type ReactNode, useRef } from "react";
 
-interface TiltCardProps {
+type TiltCardProps = {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
   maxTilt?: number;
   glowColor?: string;
-}
+};
 
 export function TiltCard({
   children,
@@ -32,7 +32,9 @@ export function TiltCard({
   const rotateY = useTransform(x, [-1, 1], [-maxTilt, maxTilt]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current) return;
+    if (!ref.current) {
+      return;
+    }
     const rect = ref.current.getBoundingClientRect();
     const nx = (e.clientX - rect.left) / rect.width;
     const ny = (e.clientY - rect.top) / rect.height;
@@ -51,8 +53,10 @@ export function TiltCard({
 
   return (
     <motion.div
-      ref={ref}
       className={className}
+      onMouseLeave={handleMouseLeave}
+      onMouseMove={handleMouseMove}
+      ref={ref}
       style={{
         ...style,
         rotateX,
@@ -62,23 +66,21 @@ export function TiltCard({
         position: "relative",
         cursor: "default",
       }}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      whileHover={{ scale: 1.01 }}
       transition={{ scale: { duration: 0.2 } }}
+      whileHover={{ scale: 1.01 }}
     >
       {/* Dynamic glow that follows cursor */}
       <motion.div
-        className="pointer-events-none absolute inset-0 rounded-[inherit] z-0"
+        className="pointer-events-none absolute inset-0 z-0 rounded-[inherit]"
         style={{
           background: `radial-gradient(circle at ${rawGlowX.get()}% ${rawGlowY.get()}%, ${glowColor}, transparent 55%)`,
           opacity: 0,
         }}
-        whileHover={{ opacity: 1 }}
         transition={{ opacity: { duration: 0.2 } }}
+        whileHover={{ opacity: 1 }}
       />
       <div className="relative z-10" style={{ transform: "translateZ(20px)" }}>
-        <>{children}</>
+        {children}
       </div>
     </motion.div>
   );

@@ -1,6 +1,12 @@
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { background: #0a0a0d; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  background: #0a0a0d;
+}
 
 .panel-wrap {
   display: flex;
@@ -43,10 +49,20 @@ body { background: #0a0a0d; }
   color: #a89cff;
   cursor: pointer;
 }
-.type-select .dot { width: 6px; height: 6px; border-radius: 50%; background: #7c6af7; }
+.type-select .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7c6af7;
+}
 
-.breadcrumb { font-size: 11px; color: #555; }
-.breadcrumb span { color: #777; }
+.breadcrumb {
+  font-size: 11px;
+  color: #555;
+}
+.breadcrumb span {
+  color: #777;
+}
 
 .panel-status {
   margin-left: auto;
@@ -91,10 +107,14 @@ body { background: #0a0a0d; }
   border-radius: 999px;
   padding: 2px 10px;
   cursor: pointer;
-  transition: background .15s;
+  transition: background 0.15s;
 }
-.ai-chip:hover { background: #251a35; }
-.ai-chip .spark { margin-right: 3px; }
+.ai-chip:hover {
+  background: #251a35;
+}
+.ai-chip .spark {
+  margin-right: 3px;
+}
 
 /* Meta row */
 .meta-grid {
@@ -113,23 +133,51 @@ body { background: #0a0a0d; }
   align-items: center;
   gap: 8px;
 }
-.meta-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; min-width: 70px; }
-.meta-value { font-size: 12px; color: #ccc; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.meta-label {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  min-width: 70px;
+}
+.meta-value {
+  font-size: 12px;
+  color: #ccc;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 
 .avatar {
-  width: 22px; height: 22px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 9px; font-weight: 600; color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 600;
+  color: #fff;
   border: 1.5px solid #111114;
   flex-shrink: 0;
 }
 .avatar-add {
-  width: 22px; height: 22px; border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
   border: 1.5px dashed #444;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; color: #555; cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: #555;
+  cursor: pointer;
 }
-.avatar-add:hover { border-color: #7c6af7; color: #7c6af7; }
+.avatar-add:hover {
+  border-color: #7c6af7;
+  color: #7c6af7;
+}
 
 .team-badge {
   font-size: 10px;
@@ -148,7 +196,12 @@ body { background: #0a0a0d; }
   gap: 8px;
   border-bottom: 1px solid #1a1a1f;
 }
-.template-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; }
+.template-label {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 .template-chip {
   font-size: 11px;
   color: #888;
@@ -157,23 +210,38 @@ body { background: #0a0a0d; }
   border-radius: 6px;
   padding: 3px 10px;
   cursor: pointer;
-  transition: all .15s;
+  transition: all 0.15s;
 }
-.template-chip:hover { border-color: #7c6af7; color: #a89cff; }
-.template-chip.active { border-color: #7c6af7; color: #a89cff; background: #1a1520; }
+.template-chip:hover {
+  border-color: #7c6af7;
+  color: #a89cff;
+}
+.template-chip.active {
+  border-color: #7c6af7;
+  color: #a89cff;
+  background: #1a1520;
+}
 .template-new {
   font-size: 11px;
   color: #555;
   cursor: pointer;
   margin-left: auto;
 }
-.template-new:hover { color: #a89cff; }
+.template-new:hover {
+  color: #a89cff;
+}
 
 /* Summary / description */
 .summary-area {
   padding: 12px 20px;
 }
-.summary-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+.summary-label {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
 .summary-box {
   background: #0f0f12;
   border: 1px solid #1e1e24;
@@ -185,7 +253,9 @@ body { background: #0a0a0d; }
   min-height: 90px;
   position: relative;
 }
-.summary-box .placeholder { color: #444; }
+.summary-box .placeholder {
+  color: #444;
+}
 .ai-summary-row {
   display: flex;
   gap: 6px;
@@ -200,14 +270,22 @@ body { background: #0a0a0d; }
   padding: 3px 10px;
   cursor: pointer;
 }
-.ai-suggest-btn:hover { background: #251a35; }
+.ai-suggest-btn:hover {
+  background: #251a35;
+}
 
 /* ── AI ACTION BUTTONS ── */
 .ai-actions-row {
   padding: 12px 20px 16px;
   border-top: 1px solid #1a1a1f;
 }
-.ai-actions-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 10px; }
+.ai-actions-label {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
 .ai-buttons {
   display: flex;
   align-items: center;
@@ -221,7 +299,7 @@ body { background: #0a0a0d; }
   overflow: hidden;
   border-radius: 999px;
   cursor: pointer;
-  transition: all .25s cubic-bezier(.4,0,.2,1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   padding: 0;
   height: 36px;
@@ -254,7 +332,7 @@ body { background: #0a0a0d; }
   opacity: 0;
   max-width: 0;
   overflow: hidden;
-  transition: all .25s cubic-bezier(.4,0,.2,1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   letter-spacing: -0.01em;
 }
 .ai-btn:hover .ai-btn-label {
@@ -263,24 +341,46 @@ body { background: #0a0a0d; }
 }
 
 /* Claude */
-.btn-claude { background: linear-gradient(135deg, #c96a2a, #d4845a); }
-.btn-claude .ai-btn-label { color: #fff3ec; }
+.btn-claude {
+  background: linear-gradient(135deg, #c96a2a, #d4845a);
+}
+.btn-claude .ai-btn-label {
+  color: #fff3ec;
+}
 
 /* Claude Code */
-.btn-claude-code { background: linear-gradient(135deg, #1a1a2e, #2d2d5e); border: 1.5px solid #5050a0; }
-.btn-claude-code .ai-btn-label { color: #c0c0ff; }
+.btn-claude-code {
+  background: linear-gradient(135deg, #1a1a2e, #2d2d5e);
+  border: 1.5px solid #5050a0;
+}
+.btn-claude-code .ai-btn-label {
+  color: #c0c0ff;
+}
 
 /* GPT */
-.btn-gpt { background: linear-gradient(135deg, #0d5c3a, #1a8a58); }
-.btn-gpt .ai-btn-label { color: #b0ffe0; }
+.btn-gpt {
+  background: linear-gradient(135deg, #0d5c3a, #1a8a58);
+}
+.btn-gpt .ai-btn-label {
+  color: #b0ffe0;
+}
 
 /* Gemini */
-.btn-gemini { background: linear-gradient(135deg, #1a2a4a, #2a4a8a); }
-.btn-gemini .ai-btn-label { color: #b0d0ff; }
+.btn-gemini {
+  background: linear-gradient(135deg, #1a2a4a, #2a4a8a);
+}
+.btn-gemini .ai-btn-label {
+  color: #b0d0ff;
+}
 
 /* Perplexity */
-.btn-perplexity { background: linear-gradient(135deg, #1a1a1a, #333); border: 1.5px solid #555; }
-.btn-perplexity .ai-btn-label { color: #e0e0e0; }
+.btn-perplexity {
+  background: linear-gradient(135deg, #1a1a1a, #333);
+  border: 1.5px solid #555;
+}
+.btn-perplexity .ai-btn-label {
+  color: #e0e0e0;
+}
 
 /* Panel footer */
 .panel-footer {
@@ -290,10 +390,32 @@ body { background: #0a0a0d; }
   justify-content: flex-end;
   gap: 8px;
 }
-.btn-cancel { font-size: 12px; color: #666; background: none; border: 1px solid #2a2a30; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
-.btn-cancel:hover { border-color: #444; color: #aaa; }
-.btn-create { font-size: 12px; color: #fff; background: #7c6af7; border: none; border-radius: 6px; padding: 6px 16px; cursor: pointer; font-weight: 500; }
-.btn-create:hover { background: #9080ff; }
+.btn-cancel {
+  font-size: 12px;
+  color: #666;
+  background: none;
+  border: 1px solid #2a2a30;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+.btn-cancel:hover {
+  border-color: #444;
+  color: #aaa;
+}
+.btn-create {
+  font-size: 12px;
+  color: #fff;
+  background: #7c6af7;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.btn-create:hover {
+  background: #9080ff;
+}
 
 /* ── SIDE NOTES ── */
 .notes {
@@ -307,37 +429,71 @@ body { background: #0a0a0d; }
   padding: 14px;
   margin-bottom: 12px;
 }
-.note-title { font-size: 11px; font-weight: 600; color: #7c6af7; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .05em; }
-.note-item { font-size: 11px; color: #888; line-height: 1.6; padding-left: 10px; position: relative; }
-.note-item::before { content: '→'; position: absolute; left: 0; color: #555; }
+.note-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7c6af7;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.note-item {
+  font-size: 11px;
+  color: #888;
+  line-height: 1.6;
+  padding-left: 10px;
+  position: relative;
+}
+.note-item::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  color: #555;
+}
 </style>
 
 <h2 style="text-align:center;margin-bottom:4px">Task Panel — Cosmos Kanban</h2>
-<p class="subtitle" style="text-align:center;margin-bottom:20px">Epic/Feature creation with AI actions + templates</p>
+<p class="subtitle" style="text-align:center;margin-bottom:20px">
+  Epic/Feature creation with AI actions + templates
+</p>
 
 <div class="panel-wrap">
-
   <!-- MAIN PANEL -->
   <div class="task-panel">
-
     <!-- Top bar -->
     <div class="panel-topbar">
       <div class="type-select">
         <span class="dot"></span>
         Epic ▾
       </div>
-      <span class="breadcrumb">Portfolio Kanban → <span>Backlog</span></span>
+      <span class="breadcrumb"
+        >Portfolio Kanban → <span>Backlog</span></span
+      >
       <div class="panel-status">● In Analysis</div>
     </div>
 
     <!-- Title + AI suggestions -->
     <div class="panel-title-row">
-      <input class="panel-title" value="Migração para arquitetura de microserviços" readonly />
+      <input
+        class="panel-title"
+        value="Migração para arquitetura de microserviços"
+        readonly
+      >
       <div class="ai-title-suggest">
-        <span style="font-size:10px;color:#555;margin-right:2px;align-self:center">✦ Sugestões:</span>
-        <span class="ai-chip"><span class="spark">✦</span>Decomposição de monolito em serviços de domínio</span>
-        <span class="ai-chip"><span class="spark">✦</span>Migração gradual BFF + API Gateway</span>
-        <span class="ai-chip"><span class="spark">✦</span>Strangler Fig Pattern — Phase 1</span>
+        <span
+          style="font-size:10px;color:#555;margin-right:2px;align-self:center"
+          >✦ Sugestões:</span
+        >
+        <span class="ai-chip"
+          ><span class="spark">✦</span>Decomposição de monolito em serviços de
+          domínio</span
+        >
+        <span class="ai-chip"
+          ><span class="spark">✦</span>Migração gradual BFF + API Gateway</span
+        >
+        <span class="ai-chip"
+          ><span class="spark">✦</span>Strangler Fig Pattern — Phase 1</span
+        >
       </div>
     </div>
 
@@ -353,12 +509,13 @@ body { background: #0a0a0d; }
 
     <!-- Meta grid -->
     <div class="meta-grid">
-
       <div class="meta-cell">
         <span class="meta-label">Assignee</span>
         <div class="meta-value">
           <div class="avatar" style="background:#3b82f6">V</div>
-          <div class="avatar" style="background:#8b5cf6;margin-left:-6px">M</div>
+          <div class="avatar" style="background:#8b5cf6;margin-left:-6px">
+            M
+          </div>
           <div class="avatar-add">+</div>
         </div>
       </div>
@@ -382,32 +539,45 @@ body { background: #0a0a0d; }
       <div class="meta-cell">
         <span class="meta-label">WSJF</span>
         <div class="meta-value">
-          <span style="font-family:monospace;font-size:13px;color:#a89cff">8.2</span>
-          <span style="font-size:10px;color:#555">BV:8 · TC:7 · RR:9 · JS:1</span>
+          <span style="font-family:monospace;font-size:13px;color:#a89cff"
+            >8.2</span
+          >
+          <span style="font-size:10px;color:#555"
+            >BV:8 · TC:7 · RR:9 · JS:1</span
+          >
         </div>
       </div>
 
       <div class="meta-cell">
         <span class="meta-label">OKRs</span>
         <div class="meta-value">
-          <span style="font-size:11px;color:#4ade80">● Scale platform reliability</span>
+          <span style="font-size:11px;color:#4ade80"
+            >● Scale platform reliability</span
+          >
         </div>
       </div>
 
       <div class="meta-cell">
         <span class="meta-label">Tipo</span>
         <div class="meta-value">
-          <span class="team-badge" style="color:#c084fc;border-color:#7a4a9a;background:#1a0a2a">◈ Enabler</span>
+          <span
+            class="team-badge"
+            style="color:#c084fc;border-color:#7a4a9a;background:#1a0a2a"
+            >◈ Enabler</span
+          >
         </div>
       </div>
-
     </div>
 
     <!-- Summary -->
     <div class="summary-area">
       <div class="summary-label">Resumo / Descrição</div>
       <div class="summary-box">
-        <span style="color:#bbb">Migrar a aplicação monolítica legada para uma arquitetura baseada em microserviços usando Strangler Fig Pattern, começando pelos domínios de maior contention: auth, billing e notifications.</span>
+        <span style="color:#bbb"
+          >Migrar a aplicação monolítica legada para uma arquitetura baseada em
+          microserviços usando Strangler Fig Pattern, começando pelos domínios
+          de maior contention: auth, billing e notifications.</span
+        >
       </div>
       <div class="ai-summary-row">
         <button class="ai-suggest-btn">✦ Melhorar resumo</button>
@@ -420,14 +590,18 @@ body { background: #0a0a0d; }
     <div class="ai-actions-row">
       <div class="ai-actions-label">Abrir com IA</div>
       <div class="ai-buttons">
-
         <button class="ai-btn btn-claude" title="Claude">
           <div class="ai-btn-icon">🟠</div>
           <span class="ai-btn-label">Let's rock!</span>
         </button>
 
         <button class="ai-btn btn-claude-code" title="Claude Code">
-          <div class="ai-btn-icon" style="font-size:11px;font-weight:700;color:#c0c0ff">CC</div>
+          <div
+            class="ai-btn-icon"
+            style="font-size:11px;font-weight:700;color:#c0c0ff"
+          >
+            CC
+          </div>
           <span class="ai-btn-label">No mistakes! (lol)</span>
         </button>
 
@@ -442,10 +616,14 @@ body { background: #0a0a0d; }
         </button>
 
         <button class="ai-btn btn-perplexity" title="Perplexity">
-          <div class="ai-btn-icon" style="font-size:11px;font-weight:700;color:#ddd">Px</div>
+          <div
+            class="ai-btn-icon"
+            style="font-size:11px;font-weight:700;color:#ddd"
+          >
+            Px
+          </div>
           <span class="ai-btn-label">Search the world!</span>
         </button>
-
       </div>
     </div>
 
@@ -454,7 +632,6 @@ body { background: #0a0a0d; }
       <button class="btn-cancel">Cancelar</button>
       <button class="btn-create">Criar Épico</button>
     </div>
-
   </div>
 
   <!-- SIDE NOTES -->
@@ -462,24 +639,39 @@ body { background: #0a0a0d; }
     <div class="note-card">
       <div class="note-title">Assignee → Time</div>
       <div class="note-item">Seleciona assignee → time auto-preenche</div>
-      <div class="note-item" style="margin-top:4px">Ou seleciona time → filtra assignees disponíveis</div>
-      <div class="note-item" style="margin-top:4px">Co-autores = participantes sem ownership</div>
+      <div class="note-item" style="margin-top:4px">
+        Ou seleciona time → filtra assignees disponíveis
+      </div>
+      <div class="note-item" style="margin-top:4px">
+        Co-autores = participantes sem ownership
+      </div>
     </div>
     <div class="note-card">
       <div class="note-title">AI Buttons</div>
       <div class="note-item">Círculo completo, cor temática</div>
-      <div class="note-item" style="margin-top:4px">Hover → expande horizontalmente</div>
-      <div class="note-item" style="margin-top:4px">Frases únicas por IA, não genéricas</div>
-      <div class="note-item" style="margin-top:4px">Copia contexto da task pro clipboard + abre IA</div>
+      <div class="note-item" style="margin-top:4px">
+        Hover → expande horizontalmente
+      </div>
+      <div class="note-item" style="margin-top:4px">
+        Frases únicas por IA, não genéricas
+      </div>
+      <div class="note-item" style="margin-top:4px">
+        Copia contexto da task pro clipboard + abre IA
+      </div>
     </div>
     <div class="note-card">
       <div class="note-title">Templates</div>
       <div class="note-item">Linear-style: chips horizontais</div>
-      <div class="note-item" style="margin-top:4px">+ Criar template → modal minimal</div>
-      <div class="note-item" style="margin-top:4px">IA sugere template baseado no título digitado</div>
+      <div class="note-item" style="margin-top:4px">
+        + Criar template → modal minimal
+      </div>
+      <div class="note-item" style="margin-top:4px">
+        IA sugere template baseado no título digitado
+      </div>
     </div>
   </div>
-
 </div>
 
-<p style="text-align:center;font-size:11px;color:#444;margin-top:8px">Passe o mouse nos botões circulares IA para ver o expand → texto da ação</p>
+<p style="text-align:center;font-size:11px;color:#444;margin-top:8px">
+  Passe o mouse nos botões circulares IA para ver o expand → texto da ação
+</p>

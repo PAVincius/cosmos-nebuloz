@@ -13,24 +13,12 @@ import {
   safeAction,
 } from "../_base";
 import {
-  type CapabilityFilters,
   CapabilityFiltersSchema,
   type CapabilityWithSolutionTrain,
-  type CreateCapabilityInput,
   CreateCapabilitySchema,
-  type ReorderCapabilitiesInput,
   ReorderCapabilitiesSchema,
-  type UpdateCapabilityInput,
   UpdateCapabilitySchema,
 } from "./schema";
-
-export type {
-  CreateCapabilityInput,
-  UpdateCapabilityInput,
-  CapabilityFilters,
-  ReorderCapabilitiesInput,
-  CapabilityWithSolutionTrain,
-};
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 

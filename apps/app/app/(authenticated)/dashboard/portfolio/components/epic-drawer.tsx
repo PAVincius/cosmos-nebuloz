@@ -15,6 +15,7 @@ import {
 import type { AggregatedPortfolioEpic } from "@/lib/portfolio-aggregate";
 import { EpicDrawerDependencies } from "./epic-drawer-dependencies";
 import { EpicDrawerDescription } from "./epic-drawer-description";
+import { EpicDrawerHypothesis } from "./epic-drawer-hypothesis";
 import { EpicDrawerInvest } from "./epic-drawer-invest";
 import { EpicDrawerMore } from "./epic-drawer-more";
 
@@ -73,6 +74,7 @@ export function EpicDrawer({ epicId, epic, onClose }: EpicDrawerProps) {
               [
                 { value: "description", label: "Descrição" },
                 { value: "invest", label: "Análise IA" },
+                { value: "hypothesis", label: "Hipótese" },
                 { value: "dependencies", label: "Dependências" },
                 { value: "more", label: "Mais" },
               ] as const
@@ -93,6 +95,9 @@ export function EpicDrawer({ epicId, epic, onClose }: EpicDrawerProps) {
             </TabsContent>
             <TabsContent className="mt-0" value="invest">
               <EpicDrawerInvest epic={epic} />
+            </TabsContent>
+            <TabsContent className="mt-0" value="hypothesis">
+              <EpicDrawerHypothesis epicId={epicId} />
             </TabsContent>
             <TabsContent className="mt-0" value="dependencies">
               <EpicDrawerDependencies epicId={epicId} />

@@ -20,6 +20,7 @@ const SURFACE_LABELS: Record<CopilotSurface, string> = {
   flow_dashboard: "Flow Metrics",
   lean_budget: "Lean Budget",
   risk_board: "Risk Board",
+  meeting_review: "Meeting Review",
   global: "Global",
 };
 

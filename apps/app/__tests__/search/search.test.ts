@@ -14,6 +14,7 @@ const dbMocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@repo/database", () => ({
+  Prisma: { DbNull: null },
   database: {
     $queryRaw: dbMocks.queryRaw,
     featureFlagOverride: { findFirst: dbMocks.flagFindFirst },

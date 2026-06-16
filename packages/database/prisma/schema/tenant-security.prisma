@@ -1,14 +1,31 @@
 // Story-033: Tenant security policy — IP allowlist, 2FA enforcement, terminology
 
+// RBAC-01: SSO / SAML configuration per tenant
+model TenantSSOConfig {
+  id             String   @id @default(cuid())
+  tenantId       String   @unique
+  enabled        Boolean  @default(false)
+  idpMetadataUrl String?  @db.Text
+  idpEntityId    String?
+  idpCertificate String?  @db.Text
+  spEntityId     String?
+  updatedAt      DateTime @updatedAt
+  updatedBy      String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
 model TenantSecurityPolicy {
-  id               String   @id @default(cuid())
-  tenantId         String   @unique
-  require2FA       Boolean  @default(false)
-  gracePeriodDays  Int      @default(7)
-  allowedIpRanges  String[] @default([])
-  terminologyMap   Json?
-  updatedAt        DateTime @updatedAt
-  updatedBy        String?
+  id              String   @id @default(cuid())
+  tenantId        String   @unique
+  require2FA      Boolean  @default(false)
+  gracePeriodDays Int      @default(7)
+  allowedIpRanges String[] @default([])
+  terminologyMap  Json?
+  updatedAt       DateTime @updatedAt
+  updatedBy       String?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 

@@ -80,7 +80,7 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
     return ok(await fn());
   } catch (e) {
     if (!(e instanceof z.ZodError)) {
-      log.error("[safeAction]", e);
+      log.error("[safeAction]", { error: String(e) });
     }
     return err(toActionError(e));
   }

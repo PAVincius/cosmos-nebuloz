@@ -202,7 +202,7 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
       tenantId: "",
       createdAt: new Date(),
       updatedAt: new Date(),
-    };
+    } as unknown as OKRWithContext;
     setOkrs((prev) => [...prev, optimistic]);
     setForm({ title: "", description: "", piPlanId: "" });
     setDialogOpen(false);
@@ -223,8 +223,8 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
     onAddKeyResult: handleAddKeyResult,
     onDeleteKeyResult: handleDeleteKeyResult,
     onUpdateKRCurrent: handleUpdateKRCurrent,
-    onOpenDetail: setDetailOKR,
-    onCheckIn: setCheckInOKR,
+    onOpenDetail: (okr: OKRWithContext) => setDetailOKR(okr),
+    onCheckIn: (okr: OKRWithContext) => setCheckInOKR(okr),
   };
 
   return (

@@ -23,15 +23,17 @@ import type {
   FlowMetricsResult,
   FlowScopeOption,
 } from "@/app/actions/flow-metrics";
-import type { AssessmentWithActions } from "@/app/actions/measure-grow";
 import {
-  type ActionStatusValue,
-  type CompetencyKey,
   createAssessment,
   createImprovementAction,
   updateActionStatus,
 } from "@/app/actions/measure-grow";
 import { COMPETENCIES } from "@/app/actions/measure-grow/constants";
+import type {
+  ActionStatusValue,
+  CompetencyKey,
+} from "@/app/actions/measure-grow/schema";
+import type { AssessmentWithActions } from "@/app/actions/measure-grow/types";
 import { AnomalySummaryPanel } from "./anomaly-summary-panel";
 import { ReEvaluateModal } from "./re-evaluate-modal";
 import { StalenessBadge, type StalenessState } from "./staleness-badge";

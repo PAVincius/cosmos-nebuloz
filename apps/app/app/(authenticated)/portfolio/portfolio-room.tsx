@@ -19,7 +19,7 @@ export function PortfolioRoom({
           A ligar à sala colaborativa…
         </div>
       }
-      id={`${orgId}:portfolio-kanban`}
+      id={`${orgId}:portfolio-kanban:${orgId}`}
       resolveUsers={async ({ userIds }) => {
         const result = await getUsers(userIds);
         return "data" in result ? result.data : [];

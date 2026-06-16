@@ -27,3 +27,19 @@
   pointer-events: none;
   height: 0;
 }
+
+/* ─── Bento cell — hover managed in CSS, not JS ──────────────────────── */
+.bento-cell {
+  border: 1px solid #23252a;
+  transition: border-color 150ms ease;
+}
+
+.bento-cell:hover {
+  border-color: #34343a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-cell {
+    transition: none;
+  }
+}

@@ -7,14 +7,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 
 import { type Result, safeAction } from "../_base";
-import {
-  type AddPrincipleInput,
-  AddPrincipleSchema,
-  type UpsertLACEInput,
-  UpsertLACESchema,
-} from "./schema";
-
-export type { UpsertLACEInput, AddPrincipleInput };
+import { AddPrincipleSchema, UpsertLACESchema } from "./schema";
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 

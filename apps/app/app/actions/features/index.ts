@@ -13,7 +13,6 @@ import { enforce } from "../permissions";
 import { indexEntity } from "../safe-copilot/indexer";
 
 import type { FeatureDetail, FeatureRow } from "./schema";
-export type { FeatureDetail, FeatureRow };
 
 const CreateFeatureSchema = z.object({
   epicId: z.string().min(1),

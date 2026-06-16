@@ -132,7 +132,6 @@ async function syncInboundUpdate(args: InboundUpdateArgs): Promise<void> {
       title: true,
       description: true,
       updatedAt: true,
-      wsjfScore: true,
     },
   });
   if (!story) {
@@ -264,9 +263,13 @@ async function writeSyncEvent(args: WriteSyncEventArgs): Promise<void> {
       externalId: args.externalId ?? null,
       field: args.field ?? null,
       linearValue:
-        args.linearValue !== undefined ? args.linearValue : undefined,
+        args.linearValue !== undefined
+          ? (args.linearValue as import("@repo/database").Prisma.InputJsonValue)
+          : undefined,
       cosmosValue:
-        args.cosmosValue !== undefined ? args.cosmosValue : undefined,
+        args.cosmosValue !== undefined
+          ? (args.cosmosValue as import("@repo/database").Prisma.InputJsonValue)
+          : undefined,
     },
   });
 }

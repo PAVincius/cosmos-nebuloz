@@ -70,7 +70,9 @@ export async function loadCopilotSession(
 
 const SESSION_WINDOW = 20;
 
-export function buildContextWindow(messages: StoredMessage[]): StoredMessage[] {
+export async function buildContextWindow(
+  messages: StoredMessage[]
+): Promise<StoredMessage[]> {
   if (messages.length <= SESSION_WINDOW) {
     return messages;
   }

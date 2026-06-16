@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   const overdueWhere = {
     isArchived: false,
     OR: [{ lastStalenessCheck: null }, { lastStalenessCheck: { lt: cutoff } }],
-  } as const;
+  };
 
   // Fair-share: discover distinct tenants with overdue snapshots first
   const tenantsWithWork = await database.flowMetricSnapshot.findMany({

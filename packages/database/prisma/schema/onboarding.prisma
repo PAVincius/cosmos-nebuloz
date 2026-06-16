@@ -35,15 +35,15 @@ model MigrationConnection {
 }
 
 model JobFallbackQueue {
-  id          String   @id @default(cuid())
-  tenantId    String?
-  jobType     String
-  payload     Json
-  status      String   @default("PENDING") // PENDING|PROCESSING|DONE|FAILED
-  attempts    Int      @default(0)
-  lastError   String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(cuid())
+  tenantId  String?
+  jobType   String
+  payload   Json
+  status    String   @default("PENDING") // PENDING|PROCESSING|DONE|FAILED
+  attempts  Int      @default(0)
+  lastError String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([status, createdAt])
 }

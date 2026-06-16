@@ -20,14 +20,8 @@ export async function notifyAnomaly(args: {
 
   if (admins.length === 0) {
     log.error(
-      "[notify-anomaly] No ADMIN members found for tenant",
-      args.tenantId,
-      "— skipping notifications. severity:",
-      args.severity,
-      "rule:",
-      args.rule,
-      "anomaly:",
-      args.anomalyId
+      `[notify-anomaly] No ADMIN members found for tenant ${args.tenantId} — skipping notifications.`,
+      { severity: args.severity, rule: args.rule, anomalyId: args.anomalyId }
     );
     return;
   }

@@ -32,6 +32,14 @@ type Props = {
   onChange: (data: DiscoveryFormData) => void;
 };
 
+function toRules(m: Record<string, string>): MappingRule[] {
+  return Object.entries(m).map(([sourceKey, targetName]) => ({
+    sourceKey,
+    targetType: "art" as const,
+    targetName,
+  }));
+}
+
 export function StepDiscovery({
   connectionId,
   source,
@@ -83,16 +91,7 @@ export function StepDiscovery({
       }
       setLoading(false);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectionId, source, artNames[0], onChange, toRules]);
-
-  function toRules(m: Record<string, string>): MappingRule[] {
-    return Object.entries(m).map(([sourceKey, targetName]) => ({
-      sourceKey,
-      targetType: "art" as const,
-      targetName,
-    }));
-  }
+  }, [connectionId, source, artNames[0], onChange]);
 
   function updateMapping(projectName: string, artName: string) {
     const next = { ...mapping, [projectName]: artName };

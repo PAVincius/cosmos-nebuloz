@@ -67,7 +67,9 @@ async function routeToPausedDlq(
   deliveryId: string,
   rawBody: Buffer
 ): Promise<NextResponse> {
-  const payload = JSON.parse(rawBody.toString()) as Record<string, unknown>;
+  const payload = JSON.parse(
+    rawBody.toString()
+  ) as import("@repo/database").Prisma.InputJsonValue;
   await database.webhookDlq.create({
     data: {
       tenantId,
@@ -109,7 +111,7 @@ async function dispatchEvent(args: DispatchArgs): Promise<NextResponse> {
       payload
     );
   } catch (err) {
-    log.error("[webhook/github] inngest enqueue error", err);
+    log.error("[webhook/github] inngest enqueue error", { error: String(err) });
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 

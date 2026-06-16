@@ -8,11 +8,9 @@ import { headers } from "next/headers";
 import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
-import { type UpdateWSJFInput, UpdateWSJFSchema } from "../schemas";
+import { UpdateWSJFSchema } from "../schemas";
 
-export type { UpdateWSJFInput };
-
-export type WSJFResult = { featureId: string; wsjfScore: number };
+type WSJFResult = { featureId: string; wsjfScore: number };
 
 export const updateFeatureWSJF = async (raw: unknown): Promise<WSJFResult> => {
   const ctx = await requireTenantSession(await headers());

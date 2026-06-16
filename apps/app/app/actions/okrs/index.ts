@@ -20,36 +20,17 @@ import {
   ArchiveQuarterOKRsSchema,
   CreateAutomatedSnapshotSchema,
   CreateCheckInSchema,
-  type CreateKeyResultInput,
   CreateKeyResultSchema,
-  type CreateOKRInput,
   CreateOKRSchema,
   type KeyResultSnapshotItem,
   type KeyResultWithProgress,
-  type OKRFiltersInput,
   OKRFiltersSchema,
-  type OKRStatus as OKRStatusType,
   type OKRWithContext,
   type OKRWithProgress,
-  type UpdateKeyResultInput,
   UpdateKeyResultProgressSchema,
   UpdateKeyResultSchema,
-  type UpdateOKRInput,
   UpdateOKRSchema,
 } from "./schema";
-
-export type {
-  OKRStatusType as OKRStatus,
-  CreateOKRInput,
-  UpdateOKRInput,
-  OKRFiltersInput,
-  CreateKeyResultInput,
-  UpdateKeyResultInput,
-  KeyResultWithProgress,
-  OKRWithProgress,
-  OKRWithContext,
-  KeyResultSnapshotItem,
-};
 
 const ART_LEVEL_OKR_TYPES = new Set(["pi_art"]);
 const PO_BLOCKED_ROLES = new Set(["PO"]);
@@ -154,7 +135,7 @@ export async function createOKR(raw: unknown): Promise<Result<OKR>> {
       PO_BLOCKED_ROLES.has(ctx.role)
     ) {
       throw new AuthError(
-        "INSUFFICIENT_ROLE",
+        "FORBIDDEN",
         "Creating ART-level OKRs requires RTE role or above"
       );
     }
@@ -649,6 +630,13 @@ export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
     };
   });
 }
+
+export type {
+  KeyResultWithProgress,
+  OKRStatus,
+  OKRWithContext,
+  OKRWithProgress,
+} from "./schema";
 
 // ─── AC-005: Quarter-close archive ───────────────────────────────────────────
 

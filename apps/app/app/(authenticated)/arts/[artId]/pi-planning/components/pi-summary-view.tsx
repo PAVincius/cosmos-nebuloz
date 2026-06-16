@@ -8,7 +8,7 @@ import {
   StarIcon,
   TargetIcon,
 } from "lucide-react";
-import type { PIPlanFullDetails } from "@/app/actions/arts/pi-plans";
+import type { PIPlanFullDetails } from "@/app/actions/arts/types";
 
 const ROAM_CONFIG: Record<string, { label: string; className: string }> = {
   IDENTIFIED: {

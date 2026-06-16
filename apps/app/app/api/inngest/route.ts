@@ -12,6 +12,8 @@ import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
 import { runScheduledReport } from "@/lib/inngest/scheduled-report-runner";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
 import { deliverWebhookEvent } from "@/lib/inngest/webhook-delivery";
+import { checkWorkflowSla } from "@/lib/inngest/workflow-sla";
+import { releaseWorkflowWaitState } from "@/lib/inngest/workflow-wait-release";
 
 export const { GET, POST, PUT } = serve({
   client: inngest,
@@ -28,5 +30,7 @@ export const { GET, POST, PUT } = serve({
     drainJobFallbackQueue,
     runExport,
     runScheduledReport,
+    releaseWorkflowWaitState,
+    checkWorkflowSla,
   ],
 });

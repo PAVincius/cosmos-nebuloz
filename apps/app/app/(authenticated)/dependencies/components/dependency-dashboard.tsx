@@ -24,12 +24,12 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import type { DependencyWithFeatures } from "@/app/actions/dependencies";
 import {
   createDependency,
   deleteDependency,
   updateDependencyStatus,
 } from "@/app/actions/dependencies";
+import type { DependencyWithFeatures } from "@/app/actions/dependencies/schema";
 
 type Epic = {
   id: string;

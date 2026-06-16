@@ -12,7 +12,9 @@ export async function sendSafe(
   try {
     await inngest.send(event);
   } catch (e) {
-    log.error("[sendSafe] inngest.send failed — falling back to DB queue", e);
+    log.error("[sendSafe] inngest.send failed — falling back to DB queue", {
+      error: String(e),
+    });
 
     const name = Array.isArray(event) ? event[0]?.name : event.name;
     const payload = Array.isArray(event) ? event : [event];

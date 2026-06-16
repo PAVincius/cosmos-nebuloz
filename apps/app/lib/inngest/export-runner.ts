@@ -3,8 +3,11 @@ import { log } from "@repo/observability/log";
 import { inngest } from "./client";
 
 export const runExport = inngest.createFunction(
-  { id: "reporting-export-run", concurrency: { limit: 3 } },
-  { event: "reporting/export.run" },
+  {
+    id: "reporting-export-run",
+    concurrency: { limit: 3 },
+    triggers: [{ event: "reporting/export.run" }],
+  },
   async ({ event, step }) => {
     const { tenantId, userId, entityType, artId } = event.data as {
       tenantId: string;
@@ -27,7 +30,7 @@ export const runExport = inngest.createFunction(
             select: {
               id: true,
               title: true,
-              state: true,
+              statusId: true,
               createdAt: true,
               updatedAt: true,
             },
@@ -40,7 +43,7 @@ export const runExport = inngest.createFunction(
             select: {
               id: true,
               title: true,
-              state: true,
+              statusId: true,
               createdAt: true,
               updatedAt: true,
             },

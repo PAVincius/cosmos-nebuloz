@@ -25,12 +25,12 @@ async function getTeamsWithWorkflows(tenantId: string) {
 
   const definitions = await database.bpmnDefinition.findMany({
     where: { tenantId },
-    select: { teamId: true, version: true },
+    select: { ownerId: true, version: true },
     orderBy: { version: "desc" },
-    distinct: ["teamId"],
+    distinct: ["ownerId"],
   });
 
-  const defMap = new Map(definitions.map((d) => [d.teamId, d]));
+  const defMap = new Map(definitions.map((d) => [d.ownerId, d]));
 
   return teams.map((t) => ({ ...t, definition: defMap.get(t.id) ?? null }));
 }

@@ -20,12 +20,19 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { AlertTriangleIcon, GripVerticalIcon, LinkIcon } from "lucide-react";
-import { useMemo, useState } from "react";
+import {
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { ExternalSourceBadge } from "@/app/(authenticated)/components/external-source-badge";
 import type {
   ProgramBoardData,
   ProgramBoardFeature,
 } from "@/app/actions/program-board";
+import { saveProgramBoardLayout } from "@/app/actions/program-board";
 
 const STATUS_COLORS: Record<string, string> = {
   BACKLOG: "bg-muted text-muted-foreground",
@@ -73,6 +80,7 @@ function FeatureCard({
         isConflict ? "ring-2 ring-red-500 ring-offset-1" : "",
         !isConflict && isDependencyInvolved ? "ring-1 ring-amber-400/60" : "",
       ].join(" ")}
+      data-dep-id={feature.id}
       ref={setNodeRef}
       style={style}
     >
@@ -116,6 +124,128 @@ function FeatureCard({
         </div>
       </div>
     </div>
+  );
+}
+
+type DepLine = {
+  id: string;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  isConflict: boolean;
+};
+
+function DependencyLines({
+  placements,
+  dependencies,
+  conflictFeatureIds,
+}: {
+  placements: PlacedFeature[];
+  dependencies: ProgramBoardDep[];
+  conflictFeatureIds: Set<string>;
+}) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [lines, setLines] = useState<DepLine[]>([]);
+
+  useLayoutEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) {
+      return;
+    }
+    const container = svg.parentElement;
+    if (!container) {
+      return;
+    }
+    const cRect = container.getBoundingClientRect();
+    const scrollLeft = container.scrollLeft;
+    const scrollTop = container.scrollTop;
+
+    const computed: DepLine[] = [];
+    for (const dep of dependencies) {
+      const fromEl = container.querySelector<HTMLElement>(
+        `[data-dep-id="${dep.blockingFeatureId}"]`
+      );
+      const toEl = container.querySelector<HTMLElement>(
+        `[data-dep-id="${dep.blockedFeatureId}"]`
+      );
+      if (!(fromEl && toEl)) {
+        continue;
+      }
+      const fR = fromEl.getBoundingClientRect();
+      const tR = toEl.getBoundingClientRect();
+      computed.push({
+        id: dep.id,
+        x1: fR.right - cRect.left + scrollLeft,
+        y1: (fR.top + fR.bottom) / 2 - cRect.top + scrollTop,
+        x2: tR.left - cRect.left + scrollLeft,
+        y2: (tR.top + tR.bottom) / 2 - cRect.top + scrollTop,
+        isConflict:
+          conflictFeatureIds.has(dep.blockingFeatureId) ||
+          conflictFeatureIds.has(dep.blockedFeatureId),
+      });
+    }
+    setLines(computed);
+    svg.setAttribute("width", String(container.scrollWidth));
+    svg.setAttribute("height", String(container.scrollHeight));
+  }, [dependencies, conflictFeatureIds]);
+
+  if (dependencies.length === 0) {
+    return null;
+  }
+
+  return (
+    <svg
+      aria-hidden
+      ref={svgRef}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        pointerEvents: "none",
+        zIndex: 5,
+        overflow: "visible",
+      }}
+    >
+      <defs>
+        <marker
+          id="dep-arr-ok"
+          markerHeight="6"
+          markerWidth="6"
+          orient="auto"
+          refX="5"
+          refY="3"
+        >
+          <path d="M0,0 L0,6 L6,3 z" fill="#f59e0b" />
+        </marker>
+        <marker
+          id="dep-arr-err"
+          markerHeight="6"
+          markerWidth="6"
+          orient="auto"
+          refX="5"
+          refY="3"
+        >
+          <path d="M0,0 L0,6 L6,3 z" fill="#ef4444" />
+        </marker>
+      </defs>
+      {lines.map((l) => {
+        const color = l.isConflict ? "#ef4444" : "#f59e0b";
+        const mx = (l.x1 + l.x2) / 2;
+        return (
+          <path
+            d={`M${l.x1},${l.y1} C${mx},${l.y1} ${mx},${l.y2} ${l.x2},${l.y2}`}
+            fill="none"
+            key={l.id}
+            markerEnd={`url(#${l.isConflict ? "dep-arr-err" : "dep-arr-ok"})`}
+            opacity={0.75}
+            stroke={color}
+            strokeDasharray={l.isConflict ? undefined : "5 3"}
+            strokeWidth={1.5}
+          />
+        );
+      })}
+    </svg>
   );
 }
 
@@ -305,39 +435,10 @@ function TeamRow({
   );
 }
 
-function applyDragEnd(
-  event: DragEndEvent,
-  setActiveId: (id: string | null) => void,
-  setPlacements: React.Dispatch<React.SetStateAction<PlacedFeature[]>>
-): void {
-  setActiveId(null);
-  const { active, over } = event;
-  if (!over) {
-    return;
-  }
-  const featureId = active.id as string;
-  const [targetTeamId, targetSprintStr] = (over.id as string).split("::");
-  const targetSprintIndex = Number.parseInt(targetSprintStr, 10);
-  if (!targetTeamId) {
-    return;
-  }
-  if (Number.isNaN(targetSprintIndex)) {
-    return;
-  }
-  setPlacements((prev) =>
-    prev.map((p) =>
-      p.id === featureId
-        ? { ...p, teamId: targetTeamId, sprintIndex: targetSprintIndex }
-        : p
-    )
-  );
-}
-
 type ProgramBoardClientProps = {
   data: ProgramBoardData;
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: orchestrates DnD + conflict state across teams×sprints
 export function ProgramBoardClient({ data }: ProgramBoardClientProps) {
   const teamList =
     data.teams.length > 0
@@ -354,6 +455,7 @@ export function ProgramBoardClient({ data }: ProgramBoardClientProps) {
 
   const [placements, setPlacements] = useState<PlacedFeature[]>(initial);
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [isSaving, startSave] = useTransition();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -361,7 +463,34 @@ export function ProgramBoardClient({ data }: ProgramBoardClientProps) {
   );
 
   function handleDragEnd(event: DragEndEvent) {
-    applyDragEnd(event, setActiveId, setPlacements);
+    const { active, over } = event;
+    setActiveId(null);
+    if (!(over && data.piPlan)) {
+      return;
+    }
+    const featureId = active.id as string;
+    const parts = (over.id as string).split("::");
+    const targetTeamId = parts[0];
+    const targetSprintIndex = Number.parseInt(parts[1] ?? "", 10);
+    if (!targetTeamId || Number.isNaN(targetSprintIndex)) {
+      return;
+    }
+    const updated = placements.map((p) =>
+      p.id === featureId
+        ? { ...p, teamId: targetTeamId, sprintIndex: targetSprintIndex }
+        : p
+    );
+    setPlacements(updated);
+    startSave(async () => {
+      await saveProgramBoardLayout({
+        piPlanId: data.piPlan!.id,
+        placements: updated.map((p) => ({
+          featureId: p.id,
+          teamId: p.teamId,
+          sprintIndex: p.sprintIndex,
+        })),
+      });
+    });
   }
 
   const { conflictFeatureIds, dependencyFeatureIds, conflicts } = useMemo(
@@ -391,8 +520,9 @@ export function ProgramBoardClient({ data }: ProgramBoardClientProps) {
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-muted-foreground text-xs">
-            Arraste features entre células para reposicionar. Posicionamento é
-            temporário (sessão atual).
+            {isSaving
+              ? "Salvando..."
+              : "Arraste features para reposicionar. Layout salvo automaticamente."}
           </p>
 
           {/* Dependency summary chips */}
@@ -443,7 +573,12 @@ export function ProgramBoardClient({ data }: ProgramBoardClientProps) {
             </div>
           ) : null}
 
-          <div className="overflow-x-auto rounded-lg border">
+          <div className="relative overflow-x-auto rounded-lg border">
+            <DependencyLines
+              conflictFeatureIds={conflictFeatureIds}
+              dependencies={data.dependencies}
+              placements={placements}
+            />
             <table
               aria-label="Program Board — times × sprints"
               className="w-full border-collapse text-sm"

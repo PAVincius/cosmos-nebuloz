@@ -113,7 +113,7 @@ export async function POST(req: Request) {
       chunks: chunks.length,
     });
   } catch (error: unknown) {
-    log.error("[copilot/upload]", error);
+    log.error("[copilot/upload]", { error: String(error) });
     return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

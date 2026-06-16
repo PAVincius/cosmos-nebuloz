@@ -5,6 +5,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { memo } from "react";
 import type { PortfolioEpic } from "@/app/actions/epics/get-portfolio";
+import { type CardDisplayCfg, DEFAULT_CARD_CFG } from "./card-config-panel";
 import { ColumnSettings } from "./column-settings";
 import { KanbanCard } from "./kanban-card";
 import { WipLimitWarning } from "./wip-limit-warning";
@@ -18,6 +19,7 @@ type KanbanColumnProps = {
   onOpenDrawer?: (epicId: string) => void;
   onQuickAdd?: () => void;
   wipLimit?: number;
+  cfg?: CardDisplayCfg;
 };
 
 function columnEpicsSignature(epics: PortfolioEpic[]): string {
@@ -35,6 +37,7 @@ function KanbanColumnInner({
   onOpenDrawer,
   onQuickAdd,
   wipLimit,
+  cfg = DEFAULT_CARD_CFG,
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
   const isCollapsed = epics.length === 0 && !isOver;
@@ -167,6 +170,7 @@ function KanbanColumnInner({
             >
               {epics.map((epic) => (
                 <KanbanCard
+                  cfg={cfg}
                   epic={epic}
                   key={epic.id}
                   onOpenDrawer={onOpenDrawer}
@@ -205,5 +209,6 @@ export const KanbanColumn = memo(
     prev.canConfigure === next.canConfigure &&
     prev.wipLimit === next.wipLimit &&
     prev.onQuickAdd === next.onQuickAdd &&
+    prev.cfg === next.cfg &&
     columnEpicsSignature(prev.epics) === columnEpicsSignature(next.epics)
 );

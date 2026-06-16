@@ -4,8 +4,8 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { BellIcon, CheckIcon } from "lucide-react";
 import { useTransition } from "react";
-import type { NotificationRecord } from "../../../actions/notifications/index";
 import { markAsRead } from "../../../actions/notifications/index";
+import type { NotificationRecord } from "../../../actions/notifications/schema";
 
 const TYPE_LABELS: Record<string, string> = {
   pi_planning: "PI Planning",

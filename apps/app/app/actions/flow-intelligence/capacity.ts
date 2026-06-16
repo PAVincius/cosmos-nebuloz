@@ -1,7 +1,7 @@
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
-import { database } from "@repo/database";
+import { database, type TrendDirection } from "@repo/database";
 import { headers } from "next/headers";
 
 type Ok<T> = { ok: true; data: T };
@@ -121,7 +121,7 @@ export async function computeMemberBaseline(
   const avg =
     sprintCount > 0 ? values.reduce((a, b) => a + b, 0) / sprintCount : 0;
 
-  let trend = "NEUTRAL";
+  let trend: TrendDirection = "NEUTRAL";
   if (sprintCount >= 6) {
     const recent =
       (metrics[0].storyPointsDelivered +

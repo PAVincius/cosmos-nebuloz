@@ -220,7 +220,13 @@ export async function syncTenantKnowledge(): Promise<{
   return { indexed: counts, total };
 }
 
-type SourceType = "risk" | "pi_objective" | "feature" | "epic" | "okr";
+type SourceType =
+  | "risk"
+  | "pi_objective"
+  | "feature"
+  | "epic"
+  | "okr"
+  | "meeting_insight";
 
 type EntityContent = { title: string; body: string };
 
@@ -262,6 +268,15 @@ async function fetchEntityContent(
         select: { title: true },
       });
       return o ? { title: o.title, body: "" } : null;
+    }
+    case "meeting_insight": {
+      const ins = await database.meetingInsight.findFirst({
+        where: { id: sourceId, tenantId },
+        select: { type: true, text: true },
+      });
+      return ins
+        ? { title: `Insight de Meeting (${ins.type})`, body: ins.text }
+        : null;
     }
     default:
       return null;

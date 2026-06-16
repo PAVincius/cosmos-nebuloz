@@ -4,7 +4,7 @@ import Link from "next/link";
 import type {
   ApprovalRequestWithSteps,
   GovernedEpicWithDetails,
-} from "@/app/actions/governance";
+} from "@/app/actions/governance/schema";
 
 type Props = {
   epic: GovernedEpicWithDetails;

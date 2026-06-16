@@ -1,4 +1,7 @@
-import { getBpmnDefinition, saveBpmnDefinition } from "../../actions";
+import {
+  getBpmnDefinitionByTeam,
+  saveBpmnDefinitionLegacy,
+} from "../../actions";
 import { BpmnLoader } from "../../components/bpmn-loader";
 
 type BpmnPageProps = {
@@ -15,12 +18,12 @@ export async function generateMetadata({ params }: BpmnPageProps) {
 
 export default async function BpmnWorkflowPage({ params }: BpmnPageProps) {
   const resolved = await params;
-  const initialXml = await getBpmnDefinition(resolved.teamId);
+  const initialXml = await getBpmnDefinitionByTeam(resolved.teamId);
 
   // Wrapper que converte a chamada em Server Action atrelada ao TeamId
   const handleSave = async (xmlContent: string) => {
     "use server";
-    await saveBpmnDefinition(resolved.teamId, xmlContent);
+    await saveBpmnDefinitionLegacy(resolved.teamId, xmlContent);
   };
 
   return (

@@ -7,23 +7,12 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "@/app/actions/_base";
 import {
-  type CreateBudgetInput,
   CreateBudgetSchema,
-  type GuardrailsInput,
   type LeanBudgetWithStats,
   type LeanBudgetWithUsage,
-  type UpdateBudgetInput,
   UpdateBudgetSchema,
   UpdateSpentSchema,
 } from "./schema";
-
-export type {
-  CreateBudgetInput,
-  UpdateBudgetInput,
-  GuardrailsInput,
-  LeanBudgetWithStats,
-  LeanBudgetWithUsage,
-};
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -134,14 +123,15 @@ export async function getBudgetSummary(): Promise<
     let totalSpent = 0;
 
     for (const b of budgets) {
+      const spentNum = Number(b.spent ?? 0);
       totalBudget += b.amount;
-      totalSpent += b.spent;
+      totalSpent += spentNum;
 
       if (!byPeriod[b.period]) {
         byPeriod[b.period] = { budget: 0, spent: 0 };
       }
       byPeriod[b.period].budget += b.amount;
-      byPeriod[b.period].spent += b.spent;
+      byPeriod[b.period].spent += spentNum;
     }
 
     return { totalBudget, totalSpent, byPeriod };

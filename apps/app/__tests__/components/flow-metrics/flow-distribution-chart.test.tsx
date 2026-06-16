@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { render, screen } from "@testing-library/react";
-import { vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { FlowDistributionChart } from "@/app/(authenticated)/analytics/flow/components/flow-distribution-chart";
 
 const LEGEND_PATTERN = /História|Feature|Defect/;

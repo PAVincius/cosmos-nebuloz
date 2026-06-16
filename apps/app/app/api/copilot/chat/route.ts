@@ -29,7 +29,7 @@ const BodySchema = z.object({
 
 async function checkIpRateLimit(ip: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return false;
+    return true;
   }
   const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
@@ -112,7 +112,6 @@ export async function POST(req: Request) {
     const modeMessages = getModeMessages(
       mode,
       copilotContext,
-      // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
       body.messages as any,
       rolePrompt
     );
@@ -127,7 +126,6 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model,
-      // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
       messages: modeMessages as any,
       tools: buildCopilotTools(ctx.tenantId),
       stopWhen: stepCountIs(5),
@@ -166,7 +164,7 @@ export async function POST(req: Request) {
 
     return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
-    log.error("[copilot/chat]", error);
+    log.error("[copilot/chat]", { error: String(error) });
     return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * E2E — Sign-In Page (public route)
@@ -62,9 +62,7 @@ test.describe("Sign-In Page", () => {
   });
 
   test("should show validation error on empty submit", async ({ page }) => {
-    const submitButton = page
-      .locator('button[type="submit"]')
-      .first();
+    const submitButton = page.locator('button[type="submit"]').first();
 
     if (await submitButton.isVisible()) {
       await submitButton.click();

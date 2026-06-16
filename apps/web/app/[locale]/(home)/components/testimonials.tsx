@@ -1,8 +1,8 @@
 "use client";
 
-import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 import type { Dictionary } from "@repo/internationalization";
 import { motion } from "framer-motion";
+import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 
 type TestimonialsProps = {
   dictionary: Dictionary;
@@ -10,13 +10,15 @@ type TestimonialsProps = {
 
 const QUOTES = [
   {
-    quote: "Antes do Cosmos, nosso PI Planning durava 3 semanas e ainda saiamos com 20+ dependências descobertas na última hora. Agora fazemos tudo em 2 dias com visibilidade completa.",
+    quote:
+      "Antes do Cosmos, nosso PI Planning durava 3 semanas e ainda saiamos com 20+ dependências descobertas na última hora. Agora fazemos tudo em 2 dias com visibilidade completa.",
     author: "Head de Transformação Digital",
     company: "Fintech — 800 engenheiros",
     initials: "HT",
   },
   {
-    quote: "A questão do on-premise foi decisiva. Nosso jurídico havia bloqueado qualquer ferramenta de IA que mandasse dados para fora. O Cosmos resolveu isso nativamente.",
+    quote:
+      "A questão do on-premise foi decisiva. Nosso jurídico havia bloqueado qualquer ferramenta de IA que mandasse dados para fora. O Cosmos resolveu isso nativamente.",
     author: "VP de Engenharia",
     company: "Banco — 2.400 colaboradores",
     initials: "VP",
@@ -24,7 +26,10 @@ const QUOTES = [
 ] as const;
 
 export const Testimonials = ({ dictionary: _ }: TestimonialsProps) => (
-  <section className="w-full py-24" style={{ background: "var(--cosmos-slate)" }}>
+  <section
+    className="w-full py-24"
+    style={{ background: "var(--cosmos-slate)" }}
+  >
     <div className="mx-auto max-w-7xl px-5 md:px-20">
       <FadeIn className="mb-14">
         <p
@@ -94,7 +99,10 @@ export const Testimonials = ({ dictionary: _ }: TestimonialsProps) => (
               </p>
 
               {/* Author */}
-              <div className="flex items-center gap-3 pt-2" style={{ borderTop: "1px solid var(--cosmos-deep)" }}>
+              <div
+                className="flex items-center gap-3 pt-2"
+                style={{ borderTop: "1px solid var(--cosmos-deep)" }}
+              >
                 <div
                   className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full"
                   style={{
@@ -108,10 +116,23 @@ export const Testimonials = ({ dictionary: _ }: TestimonialsProps) => (
                   {q.initials}
                 </div>
                 <div>
-                  <p style={{ fontFamily: "var(--font-plex)", fontSize: 14, fontWeight: 500, color: "var(--cosmos-white)" }}>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-plex)",
+                      fontSize: 14,
+                      fontWeight: 500,
+                      color: "var(--cosmos-white)",
+                    }}
+                  >
                     {q.author}
                   </p>
-                  <p style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--cosmos-gray-60)" }}>
+                  <p
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: 11,
+                      color: "var(--cosmos-gray-60)",
+                    }}
+                  >
                     {q.company}
                   </p>
                 </div>

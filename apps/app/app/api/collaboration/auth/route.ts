@@ -86,7 +86,6 @@ export async function POST(req: Request): Promise<Response> {
       name: user.name ?? user.email,
       avatar: user.image ?? undefined,
       color: randomColor(),
-      role,
     },
   });
 }

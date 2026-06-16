@@ -53,7 +53,7 @@ export async function getPortfolioAllocation(
   });
 
   const portfolioTotal = budgets.reduce((s, b) => s + b.amount, 0);
-  const portfolioSpent = budgets.reduce((s, b) => s + b.spent, 0);
+  const portfolioSpent = budgets.reduce((s, b) => s + Number(b.spent ?? 0), 0);
 
   const grouped = new Map<string | null, typeof budgets>();
   for (const b of budgets) {
@@ -68,7 +68,7 @@ export async function getPortfolioAllocation(
     ([themeId, items]) => {
       const first = items[0];
       const totalAmount = items.reduce((s, b) => s + b.amount, 0);
-      const totalSpent = items.reduce((s, b) => s + b.spent, 0);
+      const totalSpent = items.reduce((s, b) => s + Number(b.spent ?? 0), 0);
       const percentUsed =
         totalAmount > 0
           ? Math.round((totalSpent / totalAmount) * 100 * 10) / 10

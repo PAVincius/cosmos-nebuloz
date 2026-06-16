@@ -25,7 +25,7 @@ const CreateReportSchema = z.object({
   timezone: z.string().min(1).max(64).default("UTC"),
   recipients: z.array(z.string().email()).min(1).max(20),
   slackChannelId: z.string().max(64).optional(),
-  config: z.record(z.unknown()).default({}),
+  config: z.record(z.string(), z.unknown()).default({}),
 });
 
 const UpdateReportSchema = CreateReportSchema.partial().extend({
@@ -48,7 +48,7 @@ export async function createScheduledReport(
         timezone: data.timezone,
         recipients: data.recipients,
         slackChannelId: data.slackChannelId,
-        config: data.config,
+        config: data.config as import("@repo/database").Prisma.InputJsonValue,
       },
       select: { id: true },
     });
@@ -86,7 +86,9 @@ export async function updateScheduledReport(
         ...(data.slackChannelId !== undefined && {
           slackChannelId: data.slackChannelId,
         }),
-        ...(data.config && { config: data.config }),
+        ...(data.config && {
+          config: data.config as import("@repo/database").Prisma.InputJsonValue,
+        }),
         ...(data.enabled !== undefined && { enabled: data.enabled }),
       },
       select: { id: true },

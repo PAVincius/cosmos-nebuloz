@@ -1,15 +1,12 @@
 import "./styles.css";
 import { AnalyticsProvider } from "@repo/analytics/provider";
 import { DesignSystemProvider } from "@repo/design-system";
-import { LenisProvider } from "@/components/cosmos/lenis-provider";
-import { ScrollProgress } from "@/components/cosmos/scroll-progress";
-import { CursorGlow } from "@/components/cosmos/cursor-glow";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
-import { getDictionary } from "@repo/internationalization";
 import type { ReactNode } from "react";
-import { Footer } from "./components/footer";
-import { Header } from "./components/header";
+import { CursorGlow } from "@/components/cosmos/cursor-glow";
+import { LenisProvider } from "@/components/cosmos/lenis-provider";
+import { ScrollProgress } from "@/components/cosmos/scroll-progress";
 
 type RootLayoutProperties = {
   readonly children: ReactNode;
@@ -20,7 +17,6 @@ type RootLayoutProperties = {
 
 const RootLayout = async ({ children, params }: RootLayoutProperties) => {
   const { locale } = await params;
-  const dictionary = await getDictionary(locale);
 
   return (
     <html
@@ -29,14 +25,14 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
       suppressHydrationWarning
     >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link href="https://fonts.googleapis.com" rel="preconnect" />
         <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
+          href="https://fonts.gstatic.com"
+          rel="preconnect"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
@@ -45,11 +41,7 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
         <ScrollProgress />
         <CursorGlow />
         <AnalyticsProvider>
-          <DesignSystemProvider>
-            <Header dictionary={dictionary} />
-            {children}
-            <Footer />
-          </DesignSystemProvider>
+          <DesignSystemProvider>{children}</DesignSystemProvider>
         </AnalyticsProvider>
       </body>
     </html>

@@ -1,6 +1,6 @@
 import type { PageMeta } from "@/app/actions/_base";
-import type { DecisionLogEntryPublic } from "@/app/actions/governance";
 import { listDecisionLog } from "@/app/actions/governance";
+import type { DecisionLogEntryPublic } from "@/app/actions/governance/schema";
 import { DecisionLogTable } from "./components/decision-log-table";
 
 export const metadata = { title: "Decision Log — COSMOS" };

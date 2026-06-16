@@ -32,7 +32,7 @@ export const Room = ({
   <LiveblocksProvider authEndpoint={authEndpoint} {...props}>
     <RoomProvider
       id={id}
-      initialPresence={{ cursor: null }}
+      initialPresence={{ cursor: null, dragging: null }}
       initialStorage={{} as Liveblocks["Storage"]}
     >
       <ClientSideSuspense fallback={fallback}>{children}</ClientSideSuspense>

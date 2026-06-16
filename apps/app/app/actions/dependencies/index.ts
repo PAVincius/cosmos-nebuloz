@@ -7,8 +7,6 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import type { DependencyWithFeatures } from "./schema";
 
-export type { DependencyWithFeatures };
-
 const CreateDependencySchema = z.object({
   blockingFeatureId: z.string().min(1),
   blockedFeatureId: z.string().min(1),

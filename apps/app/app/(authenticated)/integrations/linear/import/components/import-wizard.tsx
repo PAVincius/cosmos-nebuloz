@@ -904,7 +904,6 @@ function StepComplete({ result }: { result: ExecuteResult }) {
           </p>
           <ul style={{ fontSize: 12, color: "#ef4444", paddingLeft: 20 }}>
             {result.errors.map((errMsg, i) => (
-              // biome-ignore lint/suspicious/noArrayIndexKey: errors list is static after render
               <li key={i}>{errMsg}</li>
             ))}
           </ul>

@@ -1,8 +1,10 @@
--- DropForeignKey
-ALTER TABLE "lean_business_cases" DROP CONSTRAINT IF EXISTS "lean_business_cases_epicId_fkey";
-
--- DropForeignKey
-ALTER TABLE "lean_business_cases" DROP CONSTRAINT IF EXISTS "lean_business_cases_tenantId_fkey";
+-- DropForeignKey (guarded: table may not exist on fresh DB)
+DO $$ BEGIN
+  IF EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = 'lean_business_cases') THEN
+    ALTER TABLE "lean_business_cases" DROP CONSTRAINT IF EXISTS "lean_business_cases_epicId_fkey";
+    ALTER TABLE "lean_business_cases" DROP CONSTRAINT IF EXISTS "lean_business_cases_tenantId_fkey";
+  END IF;
+END $$;
 
 -- AlterTable
 ALTER TABLE "PIKnowledgeVector" ALTER COLUMN "updatedAt" DROP DEFAULT;

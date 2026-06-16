@@ -62,6 +62,8 @@ model PIPlan {
   closedAt                 DateTime?
   // Story-023 PPM
   ppm                      Float?
+  // INT-01 Miro embed
+  miroBoardUrl             String?   @db.Text
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 
@@ -98,21 +100,21 @@ model PIParticipant {
 
 // PI Objectives — committed ou stretch, com business value 1-10 (SAFe 6.0)
 model PIObjective {
-  id            String   @id @default(cuid())
-  tenantId      String
-  piPlanId      String
-  teamId        String?
-  title         String
-  description   String?
-  businessValue Int      @default(5) // 1-10
-  isStretch     Boolean  @default(false)
-  status        String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
+  id                  String   @id @default(cuid())
+  tenantId            String
+  piPlanId            String
+  teamId              String?
+  title               String
+  description         String?
+  businessValue       Int      @default(5) // 1-10
+  isStretch           Boolean  @default(false)
+  status              String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
   // Story-023 PPM fields
-  plannedValue         Float @default(0)
-  achievedValue        Float @default(0)
-  sprintContributions  Json  @default("{}") // {sprintId: points} for idempotency
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  plannedValue        Float    @default(0)
+  achievedValue       Float    @default(0)
+  sprintContributions Json     @default("{}") // {sprintId: points} for idempotency
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   piPlan PIPlan @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
@@ -291,6 +293,11 @@ model Feature {
   externalId     String? // ID in external tool (Linear issue ID, GitHub issue #, etc.)
   externalSource String? // linear | github | asana | gitlab
   externalUrl    String? // Direct URL to item in external tool
+
+  // Story-028 BPMN workflow runtime
+  workflowState   String?
+  workflowContext Json?
+  workflowVersion Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

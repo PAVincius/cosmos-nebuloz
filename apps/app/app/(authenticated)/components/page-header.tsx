@@ -39,7 +39,7 @@ export function PageHeader({
   actions,
 }: PageHeaderProps) {
   const backHref =
-    breadcrumb && breadcrumb.length > 0 ? breadcrumb.at(-1).href : undefined;
+    breadcrumb && breadcrumb.length > 0 ? breadcrumb.at(-1)?.href : undefined;
 
   return (
     <div className="shrink-0 border-border/80 border-b bg-background px-6 py-4">

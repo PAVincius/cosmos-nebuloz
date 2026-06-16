@@ -30,7 +30,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { updateEpic } from "@/app/actions/epics/update-epic";
 
-const mockDb = database as {
+const mockDb = database as unknown as {
   epic: {
     update: ReturnType<typeof vi.fn>;
   };

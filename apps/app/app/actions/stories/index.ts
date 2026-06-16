@@ -21,13 +21,6 @@ import { logAudit } from "../audit/index";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 import { evaluateStoryInvest } from "./invest";
-import type {
-  CreateStoryInput,
-  StoryFiltersInput,
-  UpdateStoryInput,
-} from "./schema";
-
-export type { CreateStoryInput, UpdateStoryInput, StoryFiltersInput };
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 
@@ -186,7 +179,7 @@ export async function updateStory(
       throw new Error("Story não encontrada");
     }
 
-    if (data.status === "READY") {
+    if ((data.status as string) === "READY") {
       const invest = evaluateStoryInvest({ ...story, ...data });
       const errorCriteria = invest.criteria.filter(
         (c) => !c.pass && c.level === "ERROR"

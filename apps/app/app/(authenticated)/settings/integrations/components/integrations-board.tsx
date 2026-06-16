@@ -34,9 +34,9 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
   deleteIntegration,
-  type Integration,
   upsertIntegration,
 } from "../../../../actions/settings/integrations";
+import type { Integration } from "../../../../actions/settings/integrations/schema";
 import { BillingConnectWizard } from "./billing-connect-wizard";
 
 // ─── Integration Catalog ──────────────────────────────────────────────────────

@@ -32,7 +32,6 @@ type SaveState = "idle" | "saving" | "saved" | "error";
 const SIZE_ESTIMATES = ["XS", "S", "M", "L", "XL"] as const;
 const MAX_OUTCOMES = 5;
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: form component with many fields — extraction would fragment the autosave logic
 export function BusinessCaseForm({ data, isReadOnly }: Props) {
   const [hypothesis, setHypothesis] = useState(data.hypothesis ?? "");
   const [outcomes, setOutcomes] = useState<LbcItem[]>(data.businessOutcomes);
@@ -481,7 +480,6 @@ export function BusinessCaseForm({ data, isReadOnly }: Props) {
       {/* Hypothesis Resolution (only shown for DONE epics) */}
       {data.lifecycleStatus === "DONE" && (
         <section className="space-y-2">
-          {/* biome-ignore lint/a11y/noLabelWithoutControl: display-only label — not associated with an interactive input */}
           <label className="font-medium text-sm">Resolução da hipótese</label>
           {data.hypothesisResolution ? (
             <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-green-800 text-xs dark:bg-green-900/30 dark:text-green-300">

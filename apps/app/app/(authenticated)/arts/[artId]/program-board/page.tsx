@@ -1,12 +1,18 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card, CardContent } from "@repo/design-system/components/ui/card";
-import { ArrowLeftIcon, LayoutGridIcon, PlusIcon } from "lucide-react";
+import {
+  ArrowLeftIcon,
+  LayoutGridIcon,
+  PlusIcon,
+  TargetIcon,
+} from "lucide-react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getARTById } from "@/app/actions/arts/get-arts";
+import { getPIPlanFullDetails } from "@/app/actions/arts/pi-plans";
 import {
   getPIPlansByART,
   getProgramBoardData,
@@ -61,9 +67,11 @@ export default async function ProgramBoardPage({
 
   const selectedPiPlanId = piPlanId ?? piPlans[0]?.id;
 
-  const boardData = selectedPiPlanId
-    ? await getProgramBoardData(artId, selectedPiPlanId)
-    : null;
+  const [boardData, planDetails] = await Promise.all([
+    selectedPiPlanId ? getProgramBoardData(artId, selectedPiPlanId) : null,
+    selectedPiPlanId ? getPIPlanFullDetails(selectedPiPlanId) : null,
+  ]);
+  const objectives = planDetails?.objectives ?? [];
 
   return (
     <div className={appDesign.shell}>
@@ -140,6 +148,41 @@ export default async function ProgramBoardPage({
                 Selecione um PI Plan para visualizar o board.
               </CardContent>
             </Card>
+          )}
+
+          {/* PI Objectives panel */}
+          {objectives.length > 0 && (
+            <details className="rounded-lg border" open>
+              <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-3 font-medium text-sm">
+                <TargetIcon className="h-4 w-4 text-muted-foreground" />
+                Objetivos PI ({objectives.length})
+              </summary>
+              <div className="border-t px-4 py-3">
+                <div className="flex flex-wrap gap-2">
+                  {objectives.map((obj) => (
+                    <div
+                      className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-1.5 text-xs"
+                      key={obj.id}
+                    >
+                      <span className="font-medium">{obj.title}</span>
+                      {obj.businessValue !== null && (
+                        <span className="text-muted-foreground">
+                          BV {obj.businessValue}
+                        </span>
+                      )}
+                      {obj.isStretch && (
+                        <Badge className="h-4 text-[10px]" variant="outline">
+                          Stretch
+                        </Badge>
+                      )}
+                      <Badge className="h-4 text-[10px]" variant="secondary">
+                        {obj.status ?? "PLANNED"}
+                      </Badge>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </details>
           )}
 
           {/* Program Board grid — DnD client */}

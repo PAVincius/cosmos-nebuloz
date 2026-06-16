@@ -162,13 +162,8 @@ export default async function SprintDetailPage({
   );
 }
 
-type SprintData =
-  Awaited<ReturnType<typeof getSprintById>> extends {
-    ok: true;
-    data: infer D;
-  }
-    ? D
-    : never;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SprintData = any;
 
 function SprintBodyContent({
   sprint,

@@ -17,7 +17,7 @@ export function chunkText(
       }
       buf =
         overlap > 0 && chunks.length > 0
-          ? `${chunks.at(-1).slice(-overlap)}\n\n${p}`
+          ? `${(chunks.at(-1) ?? "").slice(-overlap)}\n\n${p}`
           : p;
     } else {
       buf = buf ? `${buf}\n\n${p}` : p;

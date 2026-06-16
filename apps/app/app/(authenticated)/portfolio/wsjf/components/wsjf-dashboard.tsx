@@ -33,13 +33,13 @@ import {
 } from "react";
 import { ExternalSourceBadge } from "@/app/(authenticated)/components/external-source-badge";
 import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
+import { saveWSJFConfig } from "@/app/actions/wsjf";
+import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance-schema";
 import type {
   EpicWithFeatures,
   FeatureWSJF,
   WSJFConfig,
-} from "@/app/actions/wsjf";
-import { saveWSJFConfig } from "@/app/actions/wsjf";
-import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance-schema";
+} from "@/app/actions/wsjf/schema";
 import {
   ExplainabilityPanel,
   type ExplainabilitySuggestion,

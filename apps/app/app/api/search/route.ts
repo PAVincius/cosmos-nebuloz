@@ -100,7 +100,7 @@ async function getCachedOrSearch(
     });
     return results;
   } catch (err) {
-    log.error("[search] cache error", err);
+    log.error("[search] cache error", { error: String(err) });
     return fetcher();
   }
 }

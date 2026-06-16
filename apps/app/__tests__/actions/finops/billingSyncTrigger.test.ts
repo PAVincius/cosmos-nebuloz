@@ -99,7 +99,7 @@ describe("generateDateWindows (AC-004)", () => {
     // Each window covers 30 days except possibly the last
     expect(windows.length).toBeGreaterThanOrEqual(6);
     expect(windows[0].start).toEqual(start);
-    expect(windows.at(-1).end).toEqual(end);
+    expect(windows.at(-1)!.end).toEqual(end);
   });
 
   it("last window ends at endDate not beyond it (AC-004)", () => {

@@ -52,7 +52,7 @@ export async function listIntegrations(): Promise<Result<IntegrationRow[]>> {
         (r) =>
           ({
             id: r.id,
-            source: r.source,
+            source: r.source as import("./schema").IntegrationSource,
             name: r.name,
             status: r.status,
             lastSyncAt: r.lastSyncAt,
@@ -80,7 +80,6 @@ export async function listIntegrations(): Promise<Result<IntegrationRow[]>> {
 
 // ─── Test connection ──────────────────────────────────────────────────────────
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: multiple source branches required
 export async function testIntegrationConnection(
   raw: unknown
 ): Promise<Result<{ name?: string; login?: string }>> {
@@ -225,7 +224,6 @@ export async function deleteIntegration(id: string): Promise<Result<void>> {
 
 // ─── Import snapshot ──────────────────────────────────────────────────────────
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: multi-source import branches required
 export async function runImportSnapshot(raw: unknown): Promise<
   Result<{
     created: number;
@@ -371,7 +369,10 @@ export async function runImportSnapshot(raw: unknown): Promise<
         itemsCreated: created,
         itemsUpdated: updated,
         itemsSkipped: skipped,
-        errors: errors.length > 0 ? errors : undefined,
+        errors:
+          errors.length > 0
+            ? (errors as import("@repo/database").Prisma.InputJsonValue)
+            : undefined,
       },
     });
 

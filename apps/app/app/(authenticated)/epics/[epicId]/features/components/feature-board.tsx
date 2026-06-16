@@ -29,9 +29,9 @@ import { ExternalSourceBadge } from "@/app/(authenticated)/components/external-s
 import {
   createFeature,
   deleteFeature,
-  type FeatureRow,
   updateFeatureStatus,
 } from "@/app/actions/features";
+import type { FeatureRow } from "@/app/actions/features/schema";
 
 type Status = "BACKLOG" | "ANALYSIS" | "REVIEW" | "IMPLEMENTING" | "DONE";
 

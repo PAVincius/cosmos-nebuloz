@@ -3,9 +3,9 @@ import { transitionEpicStatus } from "@/app/actions/epics/transition-status";
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ epicId: string }> }
 ) {
-  const { id } = await params;
+  const { epicId: id } = await params;
   const body = (await request.json()) as Record<string, unknown>;
 
   // Explicitly whitelist client-supplied fields — userId/tenantId must NEVER come from the client

@@ -139,6 +139,8 @@ model Tenant {
   boardReconciliationLogs   BoardReconciliationLog[]
   // Story-033 Tenant security policy
   securityPolicy            TenantSecurityPolicy?
+  // RBAC-01 SSO config
+  ssoConfig                 TenantSSOConfig?
   // Story-034 LGPD compliance
   dataSubjectRequests       DataSubjectRequest[]
   // Story-036 notifications

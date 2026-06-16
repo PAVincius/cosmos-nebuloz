@@ -38,7 +38,7 @@ export const checkSolutionStaleness = inngest.createFunction(
     for (const f of staleFeatures) {
       await step.run(`notify-stale-${f.id}`, async () => {
         const asOf = new Date();
-        if (!isFeatureStale(f.updatedAt, asOf)) {
+        if (!isFeatureStale(new Date(f.updatedAt), asOf)) {
           return;
         }
 

@@ -32,7 +32,9 @@ export function writeFinding(finding: UxFinding): void {
 
 export function readPersonaFindings(persona: PersonaId): UxFinding[] {
   const filePath = getPersonaFindingsPath(persona);
-  if (!fs.existsSync(filePath)) return [];
+  if (!fs.existsSync(filePath)) {
+    return [];
+  }
   try {
     return JSON.parse(fs.readFileSync(filePath, "utf-8")) as UxFinding[];
   } catch {
@@ -51,7 +53,9 @@ export function clearSwarmState(): void {
   const personas: PersonaId[] = ["lpm", "rte", "po", "sm", "devops"];
   for (const p of personas) {
     const fp = getPersonaFindingsPath(p);
-    if (fs.existsSync(fp)) fs.unlinkSync(fp);
+    if (fs.existsSync(fp)) {
+      fs.unlinkSync(fp);
+    }
   }
 }
 

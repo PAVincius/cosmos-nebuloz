@@ -38,7 +38,7 @@ export const CollaborationProvider = ({
       fallback={
         <div className="px-3 text-muted-foreground text-xs">Loading...</div>
       }
-      id={`${orgId}:presence`}
+      id={`${orgId}:org-presence:${orgId}`}
       resolveMentionSuggestions={resolveMentionSuggestions}
       resolveUsers={resolveUsers}
     >

@@ -19,15 +19,7 @@ import {
 import { logAudit } from "../audit/index";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
-import {
-  type CreateSprintInput,
-  type SprintFiltersInput,
-  SprintFiltersSchema,
-  type UpdateSprintInput,
-  UpdateSprintSchema,
-} from "./schema";
-
-export type { CreateSprintInput, UpdateSprintInput, SprintFiltersInput };
+import { SprintFiltersSchema, UpdateSprintSchema } from "./schema";
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 

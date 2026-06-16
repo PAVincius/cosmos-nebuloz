@@ -6,19 +6,10 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { IntegrationType, type Result, safeAction } from "../_base";
 import {
-  type Integration,
   type IntegrationFull,
   type IntegrationPublic,
-  type UpsertIntegrationInput,
   UpsertIntegrationSchema,
 } from "./schema";
-
-export type {
-  UpsertIntegrationInput,
-  IntegrationPublic,
-  IntegrationFull,
-  Integration,
-};
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
