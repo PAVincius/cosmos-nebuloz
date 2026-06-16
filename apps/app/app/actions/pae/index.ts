@@ -6,7 +6,13 @@ import { headers } from "next/headers";
 import { type Result, safeAction } from "../_base";
 import { pushNotification } from "../notifications/index";
 import { can } from "../permissions";
-import { CreatePAERequestSchema, type PAERequest } from "./schema";
+import {
+  CreatePAERequestSchema,
+  durationToMs,
+  type PAEDuration,
+  type PAERequest,
+  ResolvePAERequestSchema,
+} from "./schema";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -160,5 +166,123 @@ export async function listPAERequests(): Promise<Result<PAERequest[]>> {
     });
 
     return requests as PAERequest[];
+  });
+}
+
+export async function approvePAERequest(
+  raw: unknown
+): Promise<Result<PAERequest>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const { id } = ResolvePAERequestSchema.parse(raw);
+
+    const req = await database.accessExceptionRequest.findUnique({
+      where: { id },
+    });
+    if (!req || req.tenantId !== ctx.tenantId) {
+      throw new Error("Solicitação não encontrada.");
+    }
+    if (req.status !== "PENDING") {
+      throw new Error("Solicitação não está pendente.");
+    }
+
+    const now = new Date();
+    const expiresAt = new Date(
+      now.getTime() + durationToMs(req.duration as PAEDuration)
+    );
+
+    const updated = await database.accessExceptionRequest.update({
+      where: { id },
+      data: {
+        status: "APPROVED",
+        approverId: ctx.userId,
+        approvedAt: now,
+        expiresAt,
+      },
+    });
+
+    pushNotification(ctx.tenantId, {
+      userId: req.requesterId,
+      type: "pae_approved",
+      title: `Acesso aprovado: ${req.action} ${req.entityType} por ${req.duration}`,
+      metadata: {
+        paeRequestId: id,
+        entityType: req.entityType,
+        action: req.action,
+        duration: req.duration,
+      },
+    }).catch(() => null);
+
+    return updated as PAERequest;
+  });
+}
+
+export async function denyPAERequest(
+  raw: unknown
+): Promise<Result<PAERequest>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const { id } = ResolvePAERequestSchema.parse(raw);
+
+    const req = await database.accessExceptionRequest.findUnique({
+      where: { id },
+    });
+    if (!req || req.tenantId !== ctx.tenantId) {
+      throw new Error("Solicitação não encontrada.");
+    }
+    if (req.status !== "PENDING") {
+      throw new Error("Solicitação não está pendente.");
+    }
+
+    const updated = await database.accessExceptionRequest.update({
+      where: { id },
+      data: {
+        status: "DENIED",
+        approverId: ctx.userId,
+        approvedAt: new Date(),
+      },
+    });
+
+    pushNotification(ctx.tenantId, {
+      userId: req.requesterId,
+      type: "pae_denied",
+      title: `Acesso negado: ${req.action} ${req.entityType}`,
+      metadata: {
+        paeRequestId: id,
+        entityType: req.entityType,
+        action: req.action,
+      },
+    }).catch(() => null);
+
+    return updated as PAERequest;
+  });
+}
+
+export async function revokePAEGrant(
+  raw: unknown
+): Promise<Result<PAERequest>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const { id } = ResolvePAERequestSchema.parse(raw);
+
+    const req = await database.accessExceptionRequest.findUnique({
+      where: { id },
+    });
+    if (!req || req.tenantId !== ctx.tenantId) {
+      throw new Error("Grant não encontrado.");
+    }
+    if (req.status !== "APPROVED") {
+      throw new Error("Só é possível revogar grants ativos.");
+    }
+    if (req.approverId !== ctx.userId && ctx.role !== "ADMIN") {
+      throw new Error("Sem permissão para revogar este grant.");
+    }
+
+    const updated = await database.accessExceptionRequest.update({
+      where: { id },
+      data: { status: "REVOKED" },
+    });
+
+    return updated as PAERequest;
   });
 }
