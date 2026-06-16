@@ -164,6 +164,8 @@ model Tenant {
   meetingIntegrations       MeetingIntegration[]
   meetingTranscripts        MeetingTranscript[]
   meetingInsights           MeetingInsight[]
+  // PAE — Personal Access Exception
+  accessExceptionRequests   AccessExceptionRequest[]
 }
 
 model User {
