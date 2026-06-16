@@ -16,7 +16,7 @@ export const CreatePAERequestSchema = z.object({
   entityType: z.string().min(1),
   action: z.string().min(1),
   targetEntityId: cuid.optional(),
-  justification: z.string().max(500).optional(),
+  justification: z.string().max(500).trim().optional(),
   duration: z.enum(PAE_DURATIONS),
 });
 export type CreatePAERequestInput = z.infer<typeof CreatePAERequestSchema>;
@@ -34,7 +34,7 @@ export type PAERequest = {
   action: string;
   targetEntityId: string | null;
   justification: string | null;
-  duration: string;
+  duration: PAEDuration;
   status: PAEStatus;
   approverId: string | null;
   approvedAt: Date | null;
