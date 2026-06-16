@@ -7,6 +7,10 @@ export const NotificationTypeSchema = z.enum([
   "risk",
   "deadline",
   "system",
+  "pae_request",
+  "pae_approved",
+  "pae_denied",
+  "pae_revoked",
 ]);
 export type NotificationType = z.infer<typeof NotificationTypeSchema>;
 
