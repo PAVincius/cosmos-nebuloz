@@ -10,11 +10,56 @@ import { CreatePAERequestSchema, type PAERequest } from "./schema";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+// Maps known entity types to their Prisma table accessor
+const ENTITY_TABLE_MAP: Record<string, keyof typeof database> = {
+  epic: "epic",
+  feature: "feature",
+  story: "story",
+};
+
 async function resolveApprovers(
   tenantId: string,
   entityType: string,
-  action: string
+  action: string,
+  targetEntityId: string | null
 ): Promise<string[]> {
+  // Owner-first: if target entity provided, notify its creator
+  if (targetEntityId) {
+    const tableKey = ENTITY_TABLE_MAP[entityType.toLowerCase()];
+    if (tableKey) {
+      const table = database[tableKey] as unknown as {
+        findFirst: (args: {
+          where: { id: string; tenantId: string };
+          select: { createdBy: boolean };
+        }) => Promise<{ createdBy: string | null } | null>;
+      };
+      const entity = await table
+        .findFirst({
+          where: { id: targetEntityId, tenantId },
+          select: { createdBy: true },
+        })
+        .catch(() => null);
+
+      if (entity?.createdBy) {
+        const member = await database.tenantMember.findFirst({
+          where: { tenantId, userId: entity.createdBy },
+          select: { userId: true, role: true },
+        });
+        if (
+          member &&
+          can(
+            member.role as Parameters<typeof can>[0],
+            entityType as Parameters<typeof can>[1],
+            action as Parameters<typeof can>[2]
+          )
+        ) {
+          return [member.userId];
+        }
+      }
+    }
+  }
+
+  // Fallback: broadcast to all qualifying tenant members
   const members = await database.tenantMember.findMany({
     where: { tenantId },
     select: { userId: true, role: true },
@@ -71,7 +116,8 @@ export async function createPAERequest(
     const approverIds = await resolveApprovers(
       ctx.tenantId,
       data.entityType,
-      data.action
+      data.action,
+      data.targetEntityId ?? null
     );
     for (const userId of approverIds) {
       pushNotification(ctx.tenantId, {
