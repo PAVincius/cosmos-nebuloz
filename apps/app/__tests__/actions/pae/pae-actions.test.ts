@@ -165,6 +165,7 @@ describe("listPAERequests", () => {
 
 describe("approvePAERequest", () => {
   it("sets status APPROVED and computes expiresAt for PENDING request", async () => {
+    mockCan.mockReturnValue(true); // caller has permission to approve
     db.accessExceptionRequest.findUnique.mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
@@ -235,10 +236,63 @@ describe("approvePAERequest", () => {
     expect(result.ok).toBe(false);
     expect(db.accessExceptionRequest.update).not.toHaveBeenCalled();
   });
+
+  it("rejects self-approval (requester === approver)", async () => {
+    db.accessExceptionRequest.findUnique.mockResolvedValue({
+      id: "cjld2cjxh0002qzrmn831i7rn",
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      requesterId: "cjld2cjxh0001qzrmn831i7rn", // same as ctx.userId
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "PENDING",
+      approverId: null,
+      approvedAt: null,
+      expiresAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    mockCan.mockReturnValue(true); // caller has permission but is the requester
+
+    const result = await approvePAERequest({ id: "cjld2cjxh0002qzrmn831i7rn" });
+
+    expect(result.ok).toBe(false);
+    expect((result as { ok: false; error: string }).error).toMatch(
+      /própria solicitação/i
+    );
+    expect(db.accessExceptionRequest.update).not.toHaveBeenCalled();
+  });
 });
 
 describe("denyPAERequest", () => {
+  it("rejects denial of non-PENDING request", async () => {
+    db.accessExceptionRequest.findUnique.mockResolvedValue({
+      id: "cjld2cjxh0002qzrmn831i7rn",
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      requesterId: "cjld2cjxh0004qzrmn831i7rn",
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "APPROVED",
+      approverId: "cjld2cjxh0001qzrmn831i7rn",
+      approvedAt: new Date(),
+      expiresAt: new Date(Date.now() + 3_600_000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const result = await denyPAERequest({ id: "cjld2cjxh0002qzrmn831i7rn" });
+
+    expect(result.ok).toBe(false);
+    expect(db.accessExceptionRequest.update).not.toHaveBeenCalled();
+  });
+
   it("sets status DENIED on PENDING request", async () => {
+    mockCan.mockReturnValue(true); // caller has permission to deny
     db.accessExceptionRequest.findUnique.mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
@@ -350,5 +404,52 @@ describe("revokePAEGrant", () => {
 
     expect(result.ok).toBe(false);
     expect(db.accessExceptionRequest.update).not.toHaveBeenCalled();
+  });
+
+  it("allows ADMIN to revoke even if not the original approver", async () => {
+    // Override the session mock to return ADMIN role
+    const { requireTenantSession } = await import("@repo/auth/server");
+    vi.mocked(requireTenantSession).mockResolvedValueOnce({
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      userId: "cjld2cjxh0099qzrmn831i7rn", // different user
+      role: "ADMIN",
+    });
+
+    db.accessExceptionRequest.findUnique.mockResolvedValue({
+      id: "cjld2cjxh0002qzrmn831i7rn",
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      requesterId: "cjld2cjxh0004qzrmn831i7rn",
+      approverId: "cjld2cjxh0001qzrmn831i7rn", // different from ADMIN userId
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "APPROVED",
+      approvedAt: new Date(),
+      expiresAt: new Date(Date.now() + 3_600_000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+    db.accessExceptionRequest.update.mockResolvedValue({
+      id: "cjld2cjxh0002qzrmn831i7rn",
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      requesterId: "cjld2cjxh0004qzrmn831i7rn",
+      approverId: "cjld2cjxh0001qzrmn831i7rn",
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "REVOKED",
+      approvedAt: new Date(),
+      expiresAt: new Date(Date.now() + 3_600_000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const result = await revokePAEGrant({ id: "cjld2cjxh0002qzrmn831i7rn" });
+
+    expect(result.ok).toBe(true);
   });
 });

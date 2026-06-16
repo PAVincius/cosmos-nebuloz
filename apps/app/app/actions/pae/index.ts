@@ -186,6 +186,21 @@ export async function approvePAERequest(
       throw new Error("Solicitação não está pendente.");
     }
 
+    // Security: caller must have the required permission for this entity+action
+    if (
+      !can(
+        ctx.role as Parameters<typeof can>[0],
+        req.entityType as Parameters<typeof can>[1],
+        req.action as Parameters<typeof can>[2]
+      )
+    ) {
+      throw new Error("Sem permissão para aprovar esta solicitação.");
+    }
+    // Security: prevent self-approval
+    if (req.requesterId === ctx.userId) {
+      throw new Error("Não é possível aprovar a própria solicitação.");
+    }
+
     const now = new Date();
     const expiresAt = new Date(
       now.getTime() + durationToMs(req.duration as PAEDuration)
@@ -234,12 +249,26 @@ export async function denyPAERequest(
       throw new Error("Solicitação não está pendente.");
     }
 
+    // Security: caller must have the required permission for this entity+action
+    if (
+      !can(
+        ctx.role as Parameters<typeof can>[0],
+        req.entityType as Parameters<typeof can>[1],
+        req.action as Parameters<typeof can>[2]
+      )
+    ) {
+      throw new Error("Sem permissão para aprovar esta solicitação.");
+    }
+    // Security: prevent self-approval
+    if (req.requesterId === ctx.userId) {
+      throw new Error("Não é possível aprovar a própria solicitação.");
+    }
+
     const updated = await database.accessExceptionRequest.update({
       where: { id },
       data: {
         status: "DENIED",
         approverId: ctx.userId,
-        approvedAt: new Date(),
       },
     });
 
@@ -282,6 +311,17 @@ export async function revokePAEGrant(
       where: { id },
       data: { status: "REVOKED" },
     });
+
+    pushNotification(ctx.tenantId, {
+      userId: req.requesterId,
+      type: "pae_revoked",
+      title: `Acesso revogado: ${req.action} ${req.entityType}`,
+      metadata: {
+        paeRequestId: id,
+        entityType: req.entityType,
+        action: req.action,
+      },
+    }).catch(() => null);
 
     return updated as PAERequest;
   });
