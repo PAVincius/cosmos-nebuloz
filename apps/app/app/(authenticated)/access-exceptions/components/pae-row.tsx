@@ -2,6 +2,7 @@
 
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import {
@@ -50,12 +51,19 @@ export function PAERow({
   canApprove,
 }: PAERowProps) {
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
   const badge = STATUS_BADGE[req.status];
 
-  function act(fn: () => Promise<{ ok: boolean; error?: string }>) {
+  function act(
+    fn: () => Promise<{ ok: boolean; error?: string }>,
+    successMsg: string
+  ) {
     startTransition(async () => {
       const result = await fn();
-      if (!result.ok) {
+      if (result.ok) {
+        toast.success(successMsg);
+        router.refresh();
+      } else {
         toast.error(result.error);
       }
     });
@@ -90,7 +98,9 @@ export function PAERow({
           <>
             <Button
               disabled={isPending}
-              onClick={() => act(() => approvePAERequest({ id: req.id }))}
+              onClick={() =>
+                act(() => approvePAERequest({ id: req.id }), "Acesso aprovado.")
+              }
               size="sm"
               variant="default"
             >
@@ -98,7 +108,9 @@ export function PAERow({
             </Button>
             <Button
               disabled={isPending}
-              onClick={() => act(() => denyPAERequest({ id: req.id }))}
+              onClick={() =>
+                act(() => denyPAERequest({ id: req.id }), "Solicitação negada.")
+              }
               size="sm"
               variant="outline"
             >
@@ -110,7 +122,9 @@ export function PAERow({
           (req.approverId === currentUserId || currentUserRole === "ADMIN") && (
             <Button
               disabled={isPending}
-              onClick={() => act(() => revokePAEGrant({ id: req.id }))}
+              onClick={() =>
+                act(() => revokePAEGrant({ id: req.id }), "Grant revogado.")
+              }
               size="sm"
               variant="destructive"
             >

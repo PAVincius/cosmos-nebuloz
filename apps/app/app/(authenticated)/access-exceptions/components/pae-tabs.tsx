@@ -33,8 +33,11 @@ export function PAETabs({
       (r.status === "APPROVED" && r.expiresAt && new Date(r.expiresAt) <= now)
   );
 
+  const APPROVER_ROLES = new Set(["ADMIN", "RTE", "SM", "PO", "STE"]);
+  const isApprover = APPROVER_ROLES.has(currentUserRole);
+
   function canApproveReq(req: PAERequest): boolean {
-    return req.requesterId !== currentUserId;
+    return isApprover && req.requesterId !== currentUserId;
   }
 
   const rowProps = { currentUserId, currentUserRole };
