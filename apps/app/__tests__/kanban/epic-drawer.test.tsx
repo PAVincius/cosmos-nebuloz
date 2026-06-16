@@ -19,6 +19,9 @@ vi.mock("@repo/auth/server", () => ({
   AuthError: class AuthError extends Error {},
 }));
 
+// Prevent @repo/database from calling keys().DATABASE_URL in jsdom
+vi.mock("@repo/database", () => ({ database: {} }));
+
 // Mock server actions that import @repo/auth/server
 vi.mock("@/app/actions/epics/update-epic", () => ({
   updateEpic: vi.fn().mockResolvedValue({ ok: true, data: { id: "e1" } }),
@@ -26,6 +29,16 @@ vi.mock("@/app/actions/epics/update-epic", () => ({
 
 vi.mock("@/app/actions/epics/analyze-invest", () => ({
   analyzeInvest: vi.fn().mockResolvedValue({ ok: true, data: {} }),
+}));
+
+vi.mock("@/app/actions/epics/business-case", () => ({
+  getBusinessCase: vi
+    .fn()
+    .mockResolvedValue({
+      ok: true,
+      data: { hypothesis: "", lbcItems: [], versionHistory: [] },
+    }),
+  autosaveBusinessCase: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
 vi.mock("@/app/actions/ai-prompt/generate-prompt", () => ({

@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   getSession: vi.fn(),
+  userFindUnique: vi.fn(),
   tenantFindUnique: vi.fn(),
   tenantCreate: vi.fn(),
   sessionUpdateMany: vi.fn(),
@@ -19,6 +20,9 @@ vi.mock("@repo/auth/server", () => ({
 }));
 vi.mock("@repo/database", () => ({
   database: {
+    user: {
+      findUnique: mocks.userFindUnique,
+    },
     tenant: {
       findUnique: mocks.tenantFindUnique,
       create: mocks.tenantCreate,
@@ -49,6 +53,7 @@ describe("createOnboardingWorkspace", () => {
     vi.clearAllMocks();
     mocks.headers.mockResolvedValue(new Headers());
     mocks.getSession.mockResolvedValue(defaultSession);
+    mocks.userFindUnique.mockResolvedValue({ id: "user-1" });
     mocks.tenantFindUnique.mockResolvedValue(null); // slug is available
     mocks.tenantCreate.mockResolvedValue(defaultTenant);
     mocks.sessionUpdateMany.mockResolvedValue({ count: 1 });
