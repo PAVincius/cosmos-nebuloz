@@ -1,7 +1,7 @@
 -- Migration 029: PAE — Personal Access Exception
 
 CREATE TABLE "AccessExceptionRequest" (
-  "id"             TEXT NOT NULL DEFAULT gen_random_uuid()::text,
+  "id"             TEXT NOT NULL,
   "tenantId"       TEXT NOT NULL,
   "requesterId"    TEXT NOT NULL,
   "entityType"     TEXT NOT NULL,
