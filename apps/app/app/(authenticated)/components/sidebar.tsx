@@ -37,6 +37,7 @@ import {
   PlugZapIcon,
   SendIcon,
   Settings2Icon,
+  ShieldAlertIcon,
   TrainFrontIcon,
   UsersIcon,
   type VoteIcon,
@@ -268,6 +269,11 @@ const buildNavData = (
     navSecondary: [
       { title: "Webhooks", url: "/webhooks", icon: AnchorIcon },
       { title: "Notificações", url: "/notifications", icon: BellIcon },
+      {
+        title: "Exceções de Acesso",
+        url: "/access-exceptions",
+        icon: ShieldAlertIcon,
+      },
       { title: "Perfil", url: "/profile", icon: UsersIcon },
       { title: "Suporte", url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
       { title: "Feedback", url: "/feedback", icon: SendIcon },
