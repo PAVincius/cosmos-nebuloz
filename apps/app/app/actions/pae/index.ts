@@ -138,14 +138,23 @@ export async function createPAERequest(
   });
 }
 
+const APPROVER_ROLES = new Set(["ADMIN", "RTE", "SM", "PO", "STE"]);
+
 export async function listPAERequests(): Promise<Result<PAERequest[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
+    const isApprover = APPROVER_ROLES.has(ctx.role);
+
     const requests = await database.accessExceptionRequest.findMany({
       where: {
         tenantId: ctx.tenantId,
-        OR: [{ requesterId: ctx.userId }, { status: "PENDING" }],
+        OR: [
+          { requesterId: ctx.userId },
+          ...(isApprover
+            ? [{ tenantId: ctx.tenantId, status: "PENDING" as const }]
+            : []),
+        ],
       },
       orderBy: { createdAt: "desc" },
     });
