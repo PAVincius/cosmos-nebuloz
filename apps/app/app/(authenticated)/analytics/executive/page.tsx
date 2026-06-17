@@ -7,10 +7,12 @@ import {
 } from "@repo/design-system/components/ui/card";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { getPortfolioConfidence } from "@/app/actions/analytics/epic-confidence";
 import { getExecutiveDashboard } from "@/app/actions/analytics/executive";
 import { getExecutiveTrends } from "@/app/actions/analytics/executive-trends";
 import { AnomalyFeed } from "./components/anomaly-feed";
 import { ArtHealthTable } from "./components/art-health-table";
+import { DeliveryConfidenceWidget } from "./components/delivery-confidence-widget";
 import { KpiTilesGrid as KpiTiles } from "./components/kpi-tiles";
 import { TrendCharts } from "./components/trend-charts";
 
@@ -19,9 +21,10 @@ export const metadata: Metadata = { title: "Executive Dashboard" };
 export default async function ExecutiveDashboardPage() {
   await requireTenantSession(await headers());
 
-  const [dashResult, trendsResult] = await Promise.all([
+  const [dashResult, trendsResult, confidenceResult] = await Promise.all([
     getExecutiveDashboard(),
     getExecutiveTrends(),
+    getPortfolioConfidence(),
   ]);
 
   if (!dashResult.ok) {
@@ -43,6 +46,10 @@ export default async function ExecutiveDashboardPage() {
       </div>
 
       <KpiTiles kpis={kpis} />
+
+      {confidenceResult.ok ? (
+        <DeliveryConfidenceWidget data={confidenceResult.data} />
+      ) : null}
 
       <Card>
         <CardHeader>

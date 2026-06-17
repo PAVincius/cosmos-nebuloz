@@ -18,6 +18,8 @@ import {
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ConfidenceBadge } from "@/app/(authenticated)/analytics/executive/components/confidence-badge";
+import { getEpicConfidence } from "@/app/actions/analytics/epic-confidence";
 import { appDesign } from "@/lib/app-design";
 import { effectiveFeatureWsjf } from "@/lib/portfolio-aggregate";
 import { EpicMetricCards } from "./components/epic-metric-cards";
@@ -182,6 +184,8 @@ export default async function EpicDetailPage({ params }: EpicPageProps) {
     notFound();
   }
 
+  const confidenceResult = await getEpicConfidence({ id: epicId });
+
   // ─── Derived metrics ───────────────────────────────────────────────────────
 
   const totalSP = epic.features.reduce((s, f) => s + f.storyPoints, 0);
@@ -278,6 +282,10 @@ export default async function EpicDetailPage({ params }: EpicPageProps) {
               >
                 {epicStatusInfo.label}
               </span>
+
+              {confidenceResult.ok ? (
+                <ConfidenceBadge confidence={confidenceResult.data} />
+              ) : null}
 
               {epic.strategicTheme && (
                 <Link
