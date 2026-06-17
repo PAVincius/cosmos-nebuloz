@@ -18,12 +18,15 @@ const HISTORY_SPRINTS = 6;
 const DEFAULT_CADENCE_DAYS = 14;
 const MS_PER_DAY = 86_400_000;
 
-async function computeCadenceDays(teamIds: string[]): Promise<number> {
+async function computeCadenceDays(
+  tenantId: string,
+  teamIds: string[]
+): Promise<number> {
   if (teamIds.length === 0) {
     return DEFAULT_CADENCE_DAYS;
   }
   const sprints = await database.sprint.findMany({
-    where: { teamId: { in: teamIds } },
+    where: { tenantId, teamId: { in: teamIds } },
     select: { startDate: true, endDate: true },
     orderBy: { startDate: "desc" },
     take: 6,
@@ -51,7 +54,7 @@ export async function computeEpicConfidence(
   }
 
   const features = await database.feature.findMany({
-    where: { epicId, statusId: { not: "DONE" } },
+    where: { tenantId, epicId, statusId: { not: "DONE" } },
     select: { assignedTeamId: true },
   });
   const remainingItems = features.length;
@@ -88,7 +91,7 @@ export async function computeEpicConfidence(
   }
   const historicalThroughput = [...bySprint.values()].slice(0, HISTORY_SPRINTS);
 
-  const cadenceDays = await computeCadenceDays(teamIds);
+  const cadenceDays = await computeCadenceDays(tenantId, teamIds);
 
   return epicConfidence({
     historicalThroughput,
