@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Componentes · COSMOS Design System</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+/* === PAGE STYLES === */
+.comp-section { margin-bottom: 52px; }
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+
+/* Buttons */
+.btn-primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); box-shadow: 0 1px 2px rgba(var(--accent-rgb),.4),0 4px 12px -6px rgba(var(--accent-rgb),.5); }
+.btn-primary:hover { background: rgba(var(--accent-rgb),.85); }
+.btn-secondary { background: var(--surface); color: var(--ink); border-color: var(--hairline-strong); }
+.btn-secondary:hover { background: var(--surface-2); border-color: var(--hairline-strong); }
+.btn-ghost { background: transparent; color: var(--ink-muted); border-color: transparent; }
+.btn-ghost:hover { background: var(--surface-2); color: var(--ink); }
+.btn-soft { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(var(--accent-rgb),.2); }
+.btn-soft:hover { background: rgba(var(--accent-rgb),.2); }
+.btn-danger { background: var(--red-soft); color: var(--red-text); border-color: rgba(var(--red-rgb),.2); }
+.btn-sm { padding: 5px 10px; font-size: 12.5px; border-radius: var(--r-sm); }
+.btn-lg { padding: 11px 20px; font-size: 14.5px; }
+
+/* Badges */
+.bdg-green { background: var(--green-soft); color: var(--green-text); border-color: rgba(var(--green-rgb),.22); }
+.bdg-red { background: var(--red-soft); color: var(--red-text); border-color: rgba(var(--red-rgb),.22); }
+.bdg-amber { background: var(--amber-soft); color: var(--amber-text); border-color: rgba(var(--amber-rgb),.22); }
+.bdg-blue { background: var(--blue-soft); color: var(--blue-text); border-color: rgba(var(--blue-rgb),.22); }
+.bdg-purple { background: var(--purple-soft); color: var(--purple-text); border-color: rgba(var(--purple-rgb),.22); }
+.bdg-accent { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(var(--accent-rgb),.22); }
+.bdg-neutral { background: var(--chip-bg); color: var(--ink-muted); border-color: var(--hairline); }
+.bdg-dot::before { content: ''; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 2px; }
+
+/* Avatar */
+.av-blue { background: var(--blue-soft); color: var(--blue-text); border: 1px solid rgba(var(--blue-rgb),.25); }
+.av-green { background: var(--green-soft); color: var(--green-text); border: 1px solid rgba(var(--green-rgb),.25); }
+.av-purple { background: var(--purple-soft); color: var(--purple-text); border: 1px solid rgba(var(--purple-rgb),.25); }
+.av-amber { background: var(--amber-soft); color: var(--amber-text); border: 1px solid rgba(var(--amber-rgb),.25); }
+
+/* Chip (icon chip) */
+.chip-icon { width: 34px; height: 34px; border-radius: var(--r-md); border: 1px solid; display: grid; place-items: center; }
+
+/* Switch */
+.switch { display: inline-flex; height: 22px; width: 40px; border-radius: 999px; padding: 2px; cursor: pointer; transition: all .2s; align-items: center; }
+.switch.on { background: var(--accent); justify-content: flex-end; box-shadow: 0 0 10px rgba(var(--accent-rgb),.35); }
+.switch.off { background: var(--surface-3); justify-content: flex-start; border: 1px solid var(--hairline-strong); }
+.switch-thumb { width: 16px; height: 16px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+
+/* Progress */
+.progress { height: 7px; border-radius: 999px; background: var(--surface-3); overflow: hidden; }
+.progress-bar { height: 100%; border-radius: 999px; transition: width .7s cubic-bezier(.2,.7,.3,1); }
+
+/* Tabs */
+.tabs { display: flex; border-bottom: 1px solid var(--hairline); gap: 0; }
+.tab { padding: 9px 16px; font-size: 13.5px; font-weight: 600; color: var(--ink-muted); border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer; transition: all .15s; }
+.tab:hover { color: var(--ink); }
+.tab.active { color: var(--accent-text); border-bottom-color: var(--accent); }
+.segmented { display: inline-flex; padding: 3px; border-radius: var(--r-md); background: var(--surface-2); border: 1px solid var(--hairline); gap: 2px; }
+.seg-item { padding: 5px 12px; border-radius: 7px; font-size: 12.5px; font-weight: 600; color: var(--ink-muted); cursor: pointer; transition: all .15s; }
+.seg-item.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+/* Form */
+.input { width: 100%; padding: 8px 12px; border-radius: var(--r-md); border: 1px solid var(--hairline-strong); background: var(--surface); color: var(--ink); font-size: 13.5px; font-family: 'Manrope', sans-serif; transition: border-color .15s, box-shadow .15s; outline: none; }
+.input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(var(--accent-rgb),.15); }
+.input::placeholder { color: var(--ink-faint); }
+.input-label { font-size: 12.5px; font-weight: 600; color: var(--ink-subtle); margin-bottom: 5px; display: block; }
+.input-hint { font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+.input-error { border-color: var(--red) !important; }
+.input-error:focus { box-shadow: 0 0 0 3px rgba(var(--red-rgb),.15) !important; }
+.input-group { display: flex; flex-direction: column; }
+select.input { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2365748b' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px; }
+textarea.input { resize: vertical; min-height: 80px; }
+.checkbox-row { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.checkbox { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--hairline-strong); background: var(--surface); display: grid; place-items: center; flex-shrink: 0; transition: all .15s; }
+.checkbox.checked { background: var(--accent); border-color: var(--accent); }
+.radio-row { display: flex; align-items: center; gap: 9px; cursor: pointer; }
+.radio { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--hairline-strong); background: var(--surface); display: grid; place-items: center; flex-shrink: 0; transition: all .15s; }
+.radio.checked { border-color: var(--accent); }
+.radio.checked::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+
+/* Dropdown */
+.dropdown { position: relative; display: inline-block; }
+.dropdown-menu { position: absolute; top: calc(100% + 6px); left: 0; min-width: 200px; background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: var(--r-lg); box-shadow: 0 8px 24px rgba(0,0,0,.25), 0 2px 6px rgba(0,0,0,.12); padding: 5px; z-index: 50; }
+.dd-item { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); font-size: 13px; font-weight: 500; color: var(--ink-muted); cursor: pointer; transition: all .1s; }
+.dd-item:hover { background: var(--surface-2); color: var(--ink); }
+.dd-item.danger:hover { background: var(--red-soft); color: var(--red-text); }
+.dd-sep { height: 1px; background: var(--hairline); margin: 4px 0; }
+.dd-icon { width: 16px; height: 16px; opacity: .6; }
+
+/* Modal */
+.modal-overlay { background: rgba(0,0,0,.6); position: fixed; inset: 0; display: grid; place-items: center; z-index: 100; backdrop-filter: blur(4px); }
+.modal { background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: var(--r-lg); box-shadow: 0 24px 60px rgba(0,0,0,.5); padding: 0; width: 460px; max-width: 90vw; overflow: hidden; animation: fadeIn .2s ease; }
+.modal-head { padding: 18px 20px; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; justify-content: space-between; }
+.modal-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; letter-spacing: -.01em; }
+.modal-body { padding: 20px; }
+.modal-foot { padding: 14px 20px; border-top: 1px solid var(--hairline); background: var(--surface-2); display: flex; justify-content: flex-end; gap: 8px; }
+
+/* Toast */
+.toast { display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--r-lg); border: 1px solid var(--hairline-strong); background: var(--surface); box-shadow: 0 8px 24px rgba(0,0,0,.28); min-width: 280px; max-width: 360px; }
+.toast-icon { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+.toast-title { font-size: 13.5px; font-weight: 700; margin-bottom: 2px; }
+.toast-sub { font-size: 12px; color: var(--ink-muted); }
+.toast-close { margin-left: auto; color: var(--ink-faint); cursor: pointer; font-size: 16px; line-height: 1; flex-shrink: 0; }
+
+/* Empty state */
+.empty { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 48px 24px; }
+.empty-icon { width: 48px; height: 48px; border-radius: var(--r-xl); background: var(--surface-2); border: 1px solid var(--hairline); display: grid; place-items: center; margin-bottom: 16px; color: var(--ink-faint); }
+.empty-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.empty-sub { font-size: 13px; color: var(--ink-muted); max-width: 280px; text-wrap: pretty; margin-bottom: 18px; }
+
+/* Skeleton */
+.skel { border-radius: 6px; background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 2s linear infinite; }
+
+/* Command palette */
+.cmd { background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: var(--r-lg); box-shadow: 0 24px 60px rgba(0,0,0,.5); overflow: hidden; width: 460px; max-width: 90%; }
+.cmd-input { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--hairline); }
+.cmd-input input { flex: 1; background: transparent; border: none; outline: none; font-size: 14px; font-family: 'Manrope', sans-serif; color: var(--ink); }
+.cmd-input input::placeholder { color: var(--ink-faint); }
+.cmd-search-icon { color: var(--ink-faint); }
+.cmd-list { padding: 6px; max-height: 280px; overflow-y: auto; }
+.cmd-group-label { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); padding: 6px 10px 4px; font-family: 'JetBrains Mono', monospace; }
+.cmd-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--r-sm); font-size: 13px; font-weight: 500; color: var(--ink-muted); cursor: pointer; }
+.cmd-item.sel { background: var(--accent-soft); color: var(--accent-text); }
+.cmd-item:not(.sel):hover { background: var(--surface-2); color: var(--ink); }
+.cmd-item-icon { width: 16px; height: 16px; opacity: .6; flex-shrink: 0; }
+.cmd-item-kbd { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-faint); background: var(--surface-2); padding: 2px 5px; border-radius: 4px; border: 1px solid var(--hairline); }
+.cmd-foot { padding: 8px 14px; border-top: 1px solid var(--hairline); display: flex; gap: 12px; background: var(--surface-2); }
+.cmd-hint { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-faint); display: flex; align-items: center; gap: 4px; }
+.cmd-key { background: var(--surface-3); border: 1px solid var(--hairline-strong); border-radius: 4px; padding: 1px 5px; font-size: 10px; }
+
+/* Nav item */
+.navitem { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: var(--r-sm); border: 1px solid transparent; font-size: 13px; font-weight: 500; color: var(--ink-muted); cursor: pointer; position: relative; transition: all .15s; width: 200px; }
+.navitem:hover { background: var(--surface-2); color: var(--ink); }
+.navitem.current { background: var(--accent-soft); color: var(--accent-text); border-color: rgba(var(--accent-rgb),.18); font-weight: 600; }
+.navitem.current::before { content: ''; position: absolute; left: -2px; top: 8px; bottom: 8px; width: 3px; border-radius: 999px; background: var(--accent); }
+.navitem-count { margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; background: var(--accent-soft); color: var(--accent-text); padding: 1px 6px; border-radius: 999px; }
+.navitem.current .navitem-count { background: rgba(var(--accent-rgb),.25); }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">C</div><span class="logo-name">COSMOS</span></div>
+  <span class="tsep"></span>
+  <span class="tpage">Design System · <b>Componentes</b></span>
+  <div class="tright">
+    <button class="tbtn" onclick="setTheme('light')" id="btn-light">Light</button>
+    <button class="tbtn on" onclick="setTheme('dark')" id="btn-dark">Dark</button>
+    <button class="tbtn" onclick="setTheme('marketing')" id="btn-mkt">Marketing</button>
+  </div>
+</header>
+<nav class="sidebar">
+  <div class="ng">
+    <div class="ng-label">Foundations</div>
+    <a class="nl" href="index.html">Visão Geral</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Componentes</div>
+    <a class="nl active" href="components.html">Biblioteca</a>
+    <a class="nl" href="#buttons">Botões</a>
+    <a class="nl" href="#badges">Badges</a>
+    <a class="nl" href="#avatars">Avatar &amp; Chip</a>
+    <a class="nl" href="#controls">Switch &amp; Progress</a>
+    <a class="nl" href="#tabs">Tabs</a>
+    <a class="nl" href="#forms">Formulários</a>
+    <a class="nl" href="#nav">Navegação</a>
+    <a class="nl" href="#overlays">Overlays</a>
+    <a class="nl" href="#feedback">Feedback</a>
+    <a class="nl" href="#command">Command</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Padrões</div>
+    <a class="nl" href="patterns.html">Telas &amp; Padrões</a>
+  </div>
+</nav>
+<main>
+  <div class="ph">
+    <div class="ph-eyebrow">Biblioteca de Componentes</div>
+    <h1 class="ph-title">Componentes</h1>
+    <p class="ph-sub">Todos os átomos e moléculas da plataforma. Todos os estados: default, hover, focus, disabled. Troque o tema para ver a adaptação.</p>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="comp-section" id="buttons">
+    <div class="blk-eyebrow">Botões</div>
+    <h2 class="blk-title">Button</h2>
+    <p class="blk-sub">4 variantes × 3 tamanhos. Ícone 15px, stroke 2.1. Sempre <code style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--accent-text);">font-weight:600</code>.</p>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:16px;">
+        <div class="row">
+          <button class="btn btn-primary">Primário</button>
+          <button class="btn btn-secondary">Secundário</button>
+          <button class="btn btn-soft">Soft</button>
+          <button class="btn btn-ghost">Ghost</button>
+          <button class="btn btn-danger">Danger</button>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary btn-sm">Pequeno</button>
+          <button class="btn btn-primary">Médio (default)</button>
+          <button class="btn btn-primary btn-lg">Grande</button>
+        </div>
+        <div class="row">
+          <button class="btn btn-primary" style="opacity:.45;cursor:not-allowed;">Desabilitado</button>
+          <button class="btn btn-secondary" style="opacity:.45;cursor:not-allowed;">Desabilitado</button>
+          <button class="ibtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg></button>
+          <button class="ibtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+          <button class="ibtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>
+        </div>
+      </div>
+      <div class="stage-f">btn · btn-primary / btn-secondary / btn-soft / btn-ghost / btn-danger · btn-sm / btn-lg · ibtn</div>
+    </div>
+  </div>
+
+  <!-- BADGES -->
+  <div class="comp-section" id="badges">
+    <div class="blk-eyebrow">Badges &amp; Pills</div>
+    <h2 class="blk-title">Badge</h2>
+    <p class="blk-sub">Sempre cor + texto. 6 tones semânticos + neutral. Dot opcional (status ao vivo).</p>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:12px;">
+        <div class="row">
+          <span class="bdg bdg-green">Saudável</span>
+          <span class="bdg bdg-red">Crítico</span>
+          <span class="bdg bdg-amber">Atenção</span>
+          <span class="bdg bdg-blue">Info</span>
+          <span class="bdg bdg-purple">IA</span>
+          <span class="bdg bdg-accent">Novo</span>
+          <span class="bdg bdg-neutral">Rascunho</span>
+        </div>
+        <div class="row">
+          <span class="bdg bdg-green bdg-dot">Em progresso</span>
+          <span class="bdg bdg-red bdg-dot">Bloqueado</span>
+          <span class="bdg bdg-amber bdg-dot">Em risco</span>
+          <span class="bdg bdg-blue bdg-dot">Planejado</span>
+          <span class="bdg bdg-neutral bdg-dot">Backlog</span>
+        </div>
+        <div class="row">
+          <span class="bdg bdg-green" style="font-size:10px;padding:2px 7px;">WSJF Alto</span>
+          <span class="bdg bdg-amber" style="font-size:10px;padding:2px 7px;">WSJF Médio</span>
+          <span class="bdg bdg-neutral" style="font-size:10px;padding:2px 7px;">WSJF Baixo</span>
+          <span class="bdg bdg-accent" style="font-size:10px;padding:2px 7px;">PI 2026-Q2</span>
+          <span class="bdg bdg-purple" style="font-size:10px;padding:2px 7px;">ART Platform</span>
+        </div>
+      </div>
+      <div class="stage-f">bdg · bdg-{green|red|amber|blue|purple|accent|neutral} · bdg-dot</div>
+    </div>
+  </div>
+
+  <!-- AVATARS -->
+  <div class="comp-section" id="avatars">
+    <div class="blk-eyebrow">Avatar &amp; Chip</div>
+    <h2 class="blk-title">Avatar + Icon Chip</h2>
+    <p class="blk-sub">Avatar: iniciais, tone da ART. Chip de ícone: 34×34px, soft+text, tone do estado.</p>
+    <div class="stage">
+      <div class="stage-c" style="gap:16px;align-items:center;">
+        <div class="av av-blue" style="width:36px;height:36px;font-size:12px;">MA</div>
+        <div class="av av-green" style="width:36px;height:36px;font-size:12px;">LC</div>
+        <div class="av av-purple" style="width:36px;height:36px;font-size:12px;">RP</div>
+        <div class="av av-amber" style="width:36px;height:36px;font-size:12px;">SC</div>
+        <div class="av av-blue" style="width:28px;height:28px;font-size:10px;">JB</div>
+        <div class="av av-green" style="width:28px;height:28px;font-size:10px;">TK</div>
+        <span style="width:1px;height:28px;background:var(--hairline);"></span>
+        <div class="chip-icon" style="background:var(--green-soft);color:var(--green);border-color:rgba(var(--green-rgb),.25);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div class="chip-icon" style="background:var(--red-soft);color:var(--red);border-color:rgba(var(--red-rgb),.25);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        </div>
+        <div class="chip-icon" style="background:var(--accent-soft);color:var(--accent);border-color:rgba(var(--accent-rgb),.25);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v8M8 12h8"/></svg>
+        </div>
+        <div class="chip-icon" style="background:var(--purple-soft);color:var(--purple);border-color:rgba(var(--purple-rgb),.25);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+      </div>
+      <div class="stage-f">av · av-{blue|green|purple|amber} · chip-icon (34×34 / r-md) · tone-soft + tone-text</div>
+    </div>
+  </div>
+
+  <!-- SWITCH + PROGRESS -->
+  <div class="comp-section" id="controls">
+    <div class="blk-eyebrow">Controles</div>
+    <h2 class="blk-title">Switch &amp; Progress</h2>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:20px;">
+        <div class="row" style="gap:20px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="switch on" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="switch-thumb"></div></div>
+            <span style="font-size:13px;font-weight:600;">Ativado</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div class="switch off" onclick="this.classList.toggle('on');this.classList.toggle('off');"><div class="switch-thumb"></div></div>
+            <span style="font-size:13px;color:var(--ink-muted);">Desativado</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;width:100%;max-width:400px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:2px;"><span style="font-size:12.5px;font-weight:600;">Throughput</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green-text);">87%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:87%;background:var(--green);box-shadow:0 0 10px rgba(var(--green-rgb),.4);"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;margin-bottom:2px;"><span style="font-size:12.5px;font-weight:600;">WSJF Executado</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--amber-text);">54%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:54%;background:var(--amber);"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;margin-bottom:2px;"><span style="font-size:12.5px;font-weight:600;">Capacidade Alocada</span><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--red-text);">98%</span></div>
+          <div class="progress"><div class="progress-bar" style="width:98%;background:var(--red);"></div></div>
+        </div>
+      </div>
+      <div class="stage-f">switch · on/off class · progress / progress-bar · tone color + box-shadow glow</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="comp-section" id="tabs">
+    <div class="blk-eyebrow">Navegação</div>
+    <h2 class="blk-title">Tabs &amp; Segmented</h2>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:20px;align-items:stretch;">
+        <div>
+          <div class="tabs">
+            <div class="tab active">Visão Geral</div>
+            <div class="tab">Épicos</div>
+            <div class="tab">Features</div>
+            <div class="tab">Capacidade</div>
+          </div>
+          <div style="padding:14px 0;font-size:13px;color:var(--ink-muted);">Conteúdo da tab selecionada</div>
+        </div>
+        <div class="row">
+          <div class="segmented">
+            <div class="seg-item active">Semana</div>
+            <div class="seg-item">Mês</div>
+            <div class="seg-item">Trimestre</div>
+          </div>
+          <div class="segmented">
+            <div class="seg-item active">Board</div>
+            <div class="seg-item">Lista</div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-f">tabs / tab.active · segmented / seg-item.active</div>
+    </div>
+  </div>
+
+  <!-- FORMS -->
+  <div class="comp-section" id="forms">
+    <div class="blk-eyebrow">Formulários</div>
+    <h2 class="blk-title">Inputs</h2>
+    <p class="blk-sub">Foco: border-color accent + ring 3px translúcido. Erro: border-color red. Sempre label + hint.</p>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:0;align-items:stretch;background:var(--surface);padding:24px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="input-group">
+            <label class="input-label">Título do Épico</label>
+            <input class="input" type="text" placeholder="ex: Refatoração do motor de pagamentos" value="Migração para microsserviços" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">ART Responsável</label>
+            <select class="input"><option>Payments</option><option>Platform</option><option>Growth</option><option>Data &amp; AI</option></select>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="input-group">
+            <label class="input-label">WSJF Score</label>
+            <input class="input" type="number" placeholder="0–100" value="74" />
+          </div>
+          <div class="input-group">
+            <label class="input-label">PI Alvo</label>
+            <select class="input"><option>2026-Q2</option><option>2026-Q3</option><option>2026-Q4</option></select>
+          </div>
+          <div class="input-group">
+            <label class="input-label">Prazo</label>
+            <input class="input" type="date" value="2026-09-30" />
+          </div>
+        </div>
+        <div class="input-group" style="margin-bottom:16px;">
+          <label class="input-label">Descrição</label>
+          <textarea class="input" rows="3" placeholder="Descreva o objetivo e valor de negócio...">Migrar o serviço de autorização para arquitetura de microsserviços, reduzindo latência em 40%.</textarea>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:6px;">
+          <div class="input-group">
+            <label class="input-label">Campo com erro</label>
+            <input class="input input-error" type="text" value="valor inválido" />
+            <div class="input-hint" style="color:var(--red-text);">Este campo é obrigatório</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;padding-top:20px;">
+            <div class="checkbox-row" onclick="this.querySelector('.checkbox').classList.toggle('checked')">
+              <div class="checkbox checked"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <span style="font-size:13px;">Épico habilitador</span>
+            </div>
+            <div class="checkbox-row" onclick="this.querySelector('.checkbox').classList.toggle('checked')">
+              <div class="checkbox"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <span style="font-size:13px;">Notificar stakeholders</span>
+            </div>
+            <div class="radio-row" onclick="this.querySelector('.radio').classList.toggle('checked')">
+              <div class="radio checked"></div>
+              <span style="font-size:13px;">Alta prioridade</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-f">input · input-error · input-label · input-hint · checkbox · radio · select · textarea</div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <div class="comp-section" id="nav">
+    <div class="blk-eyebrow">Navegação</div>
+    <h2 class="blk-title">Nav Item</h2>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:2px;background:var(--sidebar);padding:14px;">
+        <div class="navitem current">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Visão Geral
+          <span class="navitem-count">12</span>
+        </div>
+        <div class="navitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+          Portfolio Kanban
+        </div>
+        <div class="navitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+          Priorização WSJF
+        </div>
+        <div class="navitem">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          PI Planning
+        </div>
+      </div>
+      <div class="stage-f">navitem · navitem.current · navitem-count</div>
+    </div>
+  </div>
+
+  <!-- OVERLAYS -->
+  <div class="comp-section" id="overlays">
+    <div class="blk-eyebrow">Overlays</div>
+    <h2 class="blk-title">Dropdown &amp; Modal</h2>
+    <div class="stage">
+      <div class="stage-c" style="gap:32px;align-items:flex-start;">
+        <div style="position:relative;">
+          <div style="font-size:12px;color:var(--ink-faint);margin-bottom:8px;">Dropdown (aberto)</div>
+          <div class="dropdown-menu" style="position:relative;top:0;left:0;display:block;">
+            <div class="dd-item"><svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>Editar épico</div>
+            <div class="dd-item"><svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicar</div>
+            <div class="dd-item"><svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>Mover para ART</div>
+            <div class="dd-sep"></div>
+            <div class="dd-item danger"><svg class="dd-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>Excluir épico</div>
+          </div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:12px;color:var(--ink-faint);margin-bottom:8px;">Modal</div>
+          <div class="modal" style="position:relative;width:100%;animation:none;">
+            <div class="modal-head">
+              <span class="modal-title">Novo Épico</span>
+              <button class="ibtn" style="width:28px;height:28px;border:none;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+            <div class="modal-body">
+              <div class="input-group" style="margin-bottom:14px;"><label class="input-label">Título</label><input class="input" type="text" placeholder="Nome do épico" /></div>
+              <div class="input-group"><label class="input-label">ART</label><select class="input"><option>Payments</option></select></div>
+            </div>
+            <div class="modal-foot">
+              <button class="btn btn-ghost btn-sm">Cancelar</button>
+              <button class="btn btn-primary btn-sm">Criar épico</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-f">dropdown-menu · dd-item · dd-sep · modal · modal-head/body/foot</div>
+    </div>
+  </div>
+
+  <!-- FEEDBACK -->
+  <div class="comp-section" id="feedback">
+    <div class="blk-eyebrow">Feedback</div>
+    <h2 class="blk-title">Toast · Empty State · Skeleton</h2>
+    <div class="stage">
+      <div class="stage-c" style="flex-direction:column;gap:20px;align-items:stretch;">
+        <div class="row">
+          <div class="toast">
+            <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>
+            <div><div class="toast-title" style="color:var(--green-text);">Épico criado</div><div class="toast-sub">EP-0043 adicionado ao backlog de Payments.</div></div>
+            <span class="toast-close">×</span>
+          </div>
+          <div class="toast">
+            <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+            <div><div class="toast-title" style="color:var(--red-text);">Erro ao salvar</div><div class="toast-sub">Verifique a conexão e tente novamente.</div></div>
+            <span class="toast-close">×</span>
+          </div>
+        </div>
+        <div class="panel" style="overflow:hidden;">
+          <div class="empty">
+            <div class="empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg></div>
+            <div class="empty-title">Nenhum épico encontrado</div>
+            <p class="empty-sub">Crie o primeiro épico deste PI ou ajuste os filtros aplicados.</p>
+            <button class="btn btn-primary btn-sm">Criar épico</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;padding:4px 0;">
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="skel" style="width:36px;height:36px;border-radius:999px;flex-shrink:0;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;"><div class="skel" style="height:12px;width:60%;"></div><div class="skel" style="height:10px;width:40%;"></div></div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <div class="skel" style="width:36px;height:36px;border-radius:999px;flex-shrink:0;"></div>
+            <div style="flex:1;display:flex;flex-direction:column;gap:6px;"><div class="skel" style="height:12px;width:75%;"></div><div class="skel" style="height:10px;width:45%;"></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="stage-f">toast · empty · skel · @keyframes shimmer</div>
+    </div>
+  </div>
+
+  <!-- COMMAND PALETTE -->
+  <div class="comp-section" id="command">
+    <div class="blk-eyebrow">Command</div>
+    <h2 class="blk-title">Command Palette (⌘K)</h2>
+    <div class="stage">
+      <div class="stage-c" style="justify-content:center;background:rgba(0,0,0,.4);">
+        <div class="cmd">
+          <div class="cmd-input">
+            <svg class="cmd-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Pesquisar épicos, features, actions…" />
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);background:var(--surface-2);border:1px solid var(--hairline-strong);border-radius:4px;padding:2px 6px;">Esc</span>
+          </div>
+          <div class="cmd-list">
+            <div class="cmd-group-label">Ações rápidas</div>
+            <div class="cmd-item sel">
+              <svg class="cmd-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              Novo épico
+              <span class="cmd-item-kbd">⌘N</span>
+            </div>
+            <div class="cmd-item">
+              <svg class="cmd-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+              Abrir WSJF
+              <span class="cmd-item-kbd">⌘W</span>
+            </div>
+            <div class="cmd-group-label">Épicos recentes</div>
+            <div class="cmd-item">
+              <svg class="cmd-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+              <span>EP-0042 · Migração para microsserviços</span>
+            </div>
+            <div class="cmd-item">
+              <svg class="cmd-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+              <span>EP-0039 · Autenticação biométrica</span>
+            </div>
+          </div>
+          <div class="cmd-foot">
+            <span class="cmd-hint"><span class="cmd-key">↑↓</span> navegar</span>
+            <span class="cmd-hint"><span class="cmd-key">↵</span> abrir</span>
+            <span class="cmd-hint"><span class="cmd-key">Esc</span> fechar</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage-f">cmd · cmd-input · cmd-list · cmd-item.sel · cmd-group-label · cmd-foot</div>
+    </div>
+  </div>
+
+</main>
+<script>
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  document.getElementById('btn-light').classList.toggle('on',t==='light');
+  document.getElementById('btn-dark').classList.toggle('on',t==='dark');
+  document.getElementById('btn-mkt').classList.toggle('on',t==='marketing');
+  localStorage.setItem('cosmos-theme',t);
+}
+const s=localStorage.getItem('cosmos-theme'); if(s) setTheme(s);
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');});
+document.querySelectorAll('.seg-item').forEach(s=>s.onclick=()=>{s.closest('.segmented').querySelectorAll('.seg-item').forEach(x=>x.classList.remove('active'));s.classList.add('active');});
+</script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Padrões · COSMOS Design System</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+/* === KPI CARDS === */
+@keyframes ecgsweep { from{stroke-dashoffset:760;} to{stroke-dashoffset:0;} }
+
+.kpi {
+  --tone: var(--green); --tone-rgb: var(--green-rgb);
+  --tone-soft: var(--green-soft); --tone-text: var(--green-text);
+  --kpi-bg: radial-gradient(130% 130% at 0% 0%, rgba(52,211,153,.12), transparent 46%), linear-gradient(180deg,#0e1826,#0a111c);
+  --ink-corner: #0a111c;
+  position:relative; overflow:hidden;
+  width:100%; min-height:148px; padding:18px 20px;
+  border-radius:var(--r-xl); border:1px solid rgba(var(--tone-rgb),.20);
+  background:var(--kpi-bg);
+  display:flex; flex-direction:column; align-items:flex-start;
+  transition:transform .4s var(--ease-spring), border-color .4s, box-shadow .4s;
+}
+.kpi:hover { transform:translateY(-3px); border-color:rgba(var(--tone-rgb),.55); box-shadow:0 20px 44px -22px rgba(var(--tone-rgb),.55); }
+.kpi .dots {
+  position:absolute; inset:0; z-index:1; pointer-events:none; color:var(--tone);
+  opacity:0; transition:opacity .55s;
+  background-image:radial-gradient(currentColor 1.1px, transparent 1.5px); background-size:11px 11px;
+  -webkit-mask-image:radial-gradient(150% 130% at 100% 100%,#000 0%,transparent 58%);
+  mask-image:radial-gradient(150% 130% at 100% 100%,#000 0%,transparent 58%);
+}
+.kpi:hover .dots { opacity:.45; }
+.kpi .wm { position:absolute; right:-36px; bottom:-48px; z-index:1; pointer-events:none; transition:opacity .5s; }
+.kpi .wm-e { stroke:var(--ink-corner); filter:drop-shadow(0 1.5px .5px rgba(255,255,255,.11)) drop-shadow(0 -1.4px 1px rgba(0,0,0,.8)); opacity:1; }
+.kpi .wm-g { color:var(--tone); filter:drop-shadow(0 0 9px rgba(var(--tone-rgb),.85)); opacity:0; }
+.kpi:hover .wm-e { opacity:.20; }
+.kpi:hover .wm-g { opacity:.90; }
+.kpi .sig { position:absolute; left:0; right:0; bottom:5px; z-index:1; pointer-events:none; opacity:.32; transition:opacity .5s, filter .5s; }
+.kpi .sig path { stroke-dasharray:360 360; animation:ecgsweep 3s linear infinite; }
+.kpi:hover .sig { opacity:1; filter:drop-shadow(0 0 5px rgba(var(--tone-rgb),.6)); }
+.kpi .krow { display:flex; width:100%; justify-content:space-between; align-items:flex-start; position:relative; z-index:3; }
+.kpi .klabel { font-size:13px; font-weight:600; color:var(--ink-muted); letter-spacing:.005em; line-height:1.3; max-width:76%; }
+.kpi .kchip { display:grid; place-items:center; width:34px; height:34px; flex-shrink:0; border-radius:var(--r-md); color:var(--tone); background:rgba(var(--tone-rgb),.10); border:1px solid rgba(var(--tone-rgb),.22); }
+.kpi .kval { position:relative; z-index:3; margin:10px 0 12px; font-family:'JetBrains Mono',monospace; font-size:37px; line-height:1; font-weight:700; color:var(--tone-text); letter-spacing:-.02em; white-space:nowrap; }
+.kpi .kval .u { font-size:22px; font-weight:600; opacity:.8; margin-left:6px; }
+.kpi .kbadge { position:relative; z-index:3; display:inline-flex; align-items:center; gap:5px; padding:3px 10px; border-radius:999px; font-size:11.5px; font-weight:700; letter-spacing:.01em; background:rgba(var(--tone-rgb),.12); color:var(--tone-text); border:1px solid rgba(var(--tone-rgb),.18); }
+
+.kpi-red {
+  --tone:var(--red); --tone-rgb:var(--red-rgb); --tone-soft:var(--red-soft); --tone-text:var(--red-text);
+  --kpi-bg:radial-gradient(130% 150% at 100% 25%, rgba(251,113,133,.22), transparent 55%), linear-gradient(180deg,#22121a,#160c12);
+  --ink-corner:#160c12; border-color:rgba(var(--red-rgb),.22);
+}
+.kpi-amber {
+  --tone:var(--amber); --tone-rgb:var(--amber-rgb); --tone-soft:var(--amber-soft); --tone-text:var(--amber-text);
+  --kpi-bg:radial-gradient(130% 130% at 0% 0%, rgba(251,191,36,.12), transparent 48%), linear-gradient(180deg,#1a1610,#120f0a);
+  --ink-corner:#120f0a; border-color:rgba(var(--amber-rgb),.22);
+}
+.kpi-blue {
+  --tone:var(--blue); --tone-rgb:var(--blue-rgb); --tone-soft:var(--blue-soft); --tone-text:var(--blue-text);
+  --kpi-bg:radial-gradient(130% 130% at 0% 0%, rgba(96,165,250,.13), transparent 46%), linear-gradient(180deg,#0d1526,#0a1020);
+  --ink-corner:#0a1020; border-color:rgba(var(--blue-rgb),.20);
+}
+.kpi-purple {
+  --tone:var(--purple); --tone-rgb:var(--purple-rgb); --tone-soft:var(--purple-soft); --tone-text:var(--purple-text);
+  --kpi-bg:radial-gradient(130% 130% at 100% 0%, rgba(167,139,250,.13), transparent 48%), linear-gradient(180deg,#130f26,#0e0b1e);
+  --ink-corner:#0e0b1e; border-color:rgba(var(--purple-rgb),.20);
+}
+@media (prefers-reduced-motion:reduce) { .kpi .sig path { animation:none; } }
+
+/* KPI grid */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:12px; }
+
+/* Section card */
+.sc { border:1px solid var(--hairline); border-radius:var(--r-lg); background:var(--surface); box-shadow:var(--card-shadow); overflow:hidden; }
+.sc-head { display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--hairline); background:var(--surface-2); padding:12px 18px; }
+.sc-icon { display:grid; place-items:center; width:32px; height:32px; border-radius:var(--r-sm); background:var(--accent-soft); color:var(--accent); border:1px solid rgba(var(--accent-rgb),.2); flex-shrink:0; }
+.sc-title { font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:700; letter-spacing:-.01em; }
+.sc-sub { font-size:11.5px; color:var(--ink-muted); margin-top:1px; }
+.sc-body { padding:18px; }
+
+/* Table */
+.tbl { width:100%; border-collapse:collapse; }
+.tbl th { text-align:left; padding:9px 14px; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-family:'JetBrains Mono',monospace; border-bottom:1px solid var(--hairline); background:var(--surface-2); }
+.tbl th.sort { cursor:pointer; user-select:none; }
+.tbl th.sort:hover { color:var(--ink-subtle); }
+.tbl td { padding:11px 14px; border-bottom:1px solid var(--hairline); font-size:13px; vertical-align:middle; }
+.tbl tr:last-child td { border-bottom:none; }
+.tbl tr:hover td { background:var(--surface-2); }
+.tbl .mono { font-family:'JetBrains Mono',monospace; font-size:12px; }
+.tbl .actions { display:flex; gap:4px; opacity:0; transition:opacity .15s; }
+.tbl tr:hover .actions { opacity:1; }
+
+/* Kanban */
+.kboard { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.kcol { background:var(--surface-2); border-radius:var(--r-lg); border:1px solid var(--hairline); overflow:hidden; }
+.kcol-head { display:flex; align-items:center; gap:8px; padding:10px 14px; border-bottom:1px solid var(--hairline); }
+.kcol-label { font-size:12px; font-weight:700; letter-spacing:.03em; }
+.kcol-count { font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; background:var(--surface-3); color:var(--ink-faint); padding:1px 6px; border-radius:999px; margin-left:auto; }
+.kcol-body { padding:8px; display:flex; flex-direction:column; gap:6px; min-height:120px; }
+.kcard { background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-md); padding:11px 12px; cursor:pointer; transition:transform .2s var(--ease-spring), border-color .2s, box-shadow .2s; }
+.kcard:hover { transform:translateY(-2px); border-color:var(--hairline-strong); box-shadow:0 4px 12px rgba(0,0,0,.15); }
+.kcard-id { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-faint); margin-bottom:4px; }
+.kcard-title { font-size:13px; font-weight:600; margin-bottom:8px; line-height:1.35; }
+.kcard-foot { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+
+/* WSJF */
+.wsjf-table { width:100%; border-collapse:collapse; }
+.wsjf-table th { text-align:left; padding:9px 12px; font-size:10.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-faint); font-family:'JetBrains Mono',monospace; border-bottom:1px solid var(--hairline); background:var(--surface-2); }
+.wsjf-table td { padding:10px 12px; border-bottom:1px solid var(--hairline); font-size:13px; vertical-align:middle; }
+.wsjf-table tr:last-child td { border-bottom:none; }
+.wsjf-table tr:hover td { background:rgba(var(--accent-rgb),.03); }
+.wsjf-score { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700; }
+.wsjf-bar-wrap { display:flex; align-items:center; gap:8px; }
+.wsjf-bar-bg { flex:1; height:5px; border-radius:999px; background:var(--surface-3); overflow:hidden; }
+.wsjf-bar-fill { height:100%; border-radius:999px; }
+
+/* App shell preview */
+.shell-preview { border:1px solid var(--hairline); border-radius:var(--r-lg); overflow:hidden; height:460px; display:grid; grid-template:'tb tb' 44px 'sb mc' 1fr / 180px 1fr; }
+.sp-topbar { grid-area:tb; display:flex; align-items:center; gap:10px; padding:0 14px; border-bottom:1px solid var(--hairline); background:var(--sidebar); }
+.sp-logo { width:22px; height:22px; border-radius:6px; background:var(--accent); display:grid; place-items:center; font-size:11px; font-weight:700; color:#fff; font-family:'Space Grotesk',sans-serif; }
+.sp-name { font-size:13px; font-weight:700; font-family:'Space Grotesk',sans-serif; }
+.sp-sep { width:1px; height:16px; background:var(--hairline); }
+.sp-page { font-size:11.5px; color:var(--ink-subtle); }
+.sp-right { margin-left:auto; display:flex; align-items:center; gap:6px; }
+.sp-sidebar { grid-area:sb; border-right:1px solid var(--hairline); background:var(--sidebar); padding:10px 8px; display:flex; flex-direction:column; gap:2px; overflow:hidden; }
+.sp-nav { display:flex; align-items:center; gap:6px; padding:5px 8px; border-radius:var(--r-sm); font-size:12px; font-weight:500; color:var(--ink-muted); cursor:pointer; }
+.sp-nav:hover { background:var(--surface-2); color:var(--ink); }
+.sp-nav.a { background:var(--accent-soft); color:var(--accent-text); font-weight:600; }
+.sp-main { grid-area:mc; overflow-y:auto; padding:18px; background:var(--canvas); }
+.sp-section-label { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin:0 8px 4px; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">C</div><span class="logo-name">COSMOS</span></div>
+  <span class="tsep"></span>
+  <span class="tpage">Design System · <b>Padrões</b></span>
+  <div class="tright">
+    <button class="tbtn" onclick="setTheme('light')" id="btn-light">Light</button>
+    <button class="tbtn on" onclick="setTheme('dark')" id="btn-dark">Dark</button>
+    <button class="tbtn" onclick="setTheme('marketing')" id="btn-mkt">Marketing</button>
+  </div>
+</header>
+<nav class="sidebar">
+  <div class="ng">
+    <div class="ng-label">Foundations</div>
+    <a class="nl" href="index.html">Visão Geral</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Componentes</div>
+    <a class="nl" href="components.html">Biblioteca</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Padrões</div>
+    <a class="nl active" href="patterns.html">Telas &amp; Padrões</a>
+    <a class="nl" href="#kpi">KPI Cards</a>
+    <a class="nl" href="#sectioncard">Section Card</a>
+    <a class="nl" href="#table">Tabela de Dados</a>
+    <a class="nl" href="#kanban">Kanban</a>
+    <a class="nl" href="#wsjf">WSJF</a>
+    <a class="nl" href="#shell">App Shell</a>
+  </div>
+</nav>
+<main>
+  <div class="ph">
+    <div class="ph-eyebrow">Padrões &amp; Telas</div>
+    <h1 class="ph-title">Padrões SAFe</h1>
+    <p class="ph-sub">Padrões compostos para as telas principais da plataforma Cosmos. KPI cards com efeito tecno-UI, tabelas, kanban, WSJF e o shell da aplicação.</p>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div class="blk" id="kpi">
+    <div class="blk-eyebrow">KPI Cards</div>
+    <h2 class="blk-title">Cards de Métrica — Sangria + Sinal Vivo</h2>
+    <p class="blk-sub">Dark: gradiente radial de fundo, ícone sangrado (cravado → glow no hover), textura de bolinhas, ECG ao vivo. Regra: conteúdo em z-3, decoração em z-1.</p>
+    <div class="kpi-grid">
+      <!-- Green -->
+      <div class="kpi" tabindex="0">
+        <div class="dots"></div>
+        <svg class="wm wm-e" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <svg class="wm wm-g" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        <svg class="sig" width="100%" height="44" viewBox="0 0 312 44" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="sg1" x1="0" y1="0" x2="312" y2="0"><stop offset="0" stop-color="#34d399" stop-opacity="0"/><stop offset=".5" stop-color="#34d399" stop-opacity=".9"/><stop offset="1" stop-color="#34d399" stop-opacity="0"/></linearGradient></defs>
+          <path fill="none" stroke="url(#sg1)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M-30 24H60l6-14 8 28 7-20 5 8H170l6-12 7 20 6-12H430"/>
+        </svg>
+        <div class="krow"><span class="klabel">Throughput médio (SP/sprint)</span><span class="kchip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span></div>
+        <div class="kval">162<span class="u">SP</span></div>
+        <span class="kbadge">↗ +14% vs PI anterior</span>
+      </div>
+      <!-- Red -->
+      <div class="kpi kpi-red" tabindex="0">
+        <div class="dots"></div>
+        <svg class="wm wm-e" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 2"/></svg>
+        <svg class="wm wm-g" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 2"/></svg>
+        <svg class="sig" width="100%" height="44" viewBox="0 0 312 44" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="sg2" x1="0" y1="0" x2="312" y2="0"><stop offset="0" stop-color="#fb7185" stop-opacity="0"/><stop offset=".5" stop-color="#fb7185" stop-opacity=".9"/><stop offset="1" stop-color="#fb7185" stop-opacity="0"/></linearGradient></defs>
+          <path fill="none" stroke="url(#sg2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M-30 24H60l6-14 8 28 7-20 5 8H170l6-12 7 20 6-12H430"/>
+        </svg>
+        <div class="krow"><span class="klabel">Latência média LLM</span><span class="kchip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3.2 2"/></svg></span></div>
+        <div class="kval">8923<span class="u">ms</span></div>
+        <span class="kbadge">— Lentidão detectada</span>
+      </div>
+      <!-- Amber -->
+      <div class="kpi kpi-amber" tabindex="0">
+        <div class="dots"></div>
+        <svg class="wm wm-e" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2.4" x2="12" y2="21.6"/><path d="M16.5 6H9.75a3.25 3.25 0 0 0 0 6.5h4.5a3.25 3.25 0 0 1 0 6.5H7"/></svg>
+        <svg class="wm wm-g" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="2.4" x2="12" y2="21.6"/><path d="M16.5 6H9.75a3.25 3.25 0 0 0 0 6.5h4.5a3.25 3.25 0 0 1 0 6.5H7"/></svg>
+        <svg class="sig" width="100%" height="44" viewBox="0 0 312 44" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="sg3" x1="0" y1="0" x2="312" y2="0"><stop offset="0" stop-color="#fbbf24" stop-opacity="0"/><stop offset=".5" stop-color="#fbbf24" stop-opacity=".9"/><stop offset="1" stop-color="#fbbf24" stop-opacity="0"/></linearGradient></defs>
+          <path fill="none" stroke="url(#sg3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M-30 24H60l6-14 8 28 7-20 5 8H170l6-12 7 20 6-12H430"/>
+        </svg>
+        <div class="krow"><span class="klabel">Custo geração LLM (período)</span><span class="kchip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2.4" x2="12" y2="21.6"/><path d="M16.5 6H9.75a3.25 3.25 0 0 0 0 6.5h4.5a3.25 3.25 0 0 1 0 6.5H7"/></svg></span></div>
+        <div class="kval">US$<span class="u">2,52</span></div>
+        <span class="kbadge">— Soma das gerações · USD</span>
+      </div>
+      <!-- Blue -->
+      <div class="kpi kpi-blue" tabindex="0">
+        <div class="dots"></div>
+        <svg class="wm wm-e" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+        <svg class="wm wm-g" width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
+        <svg class="sig" width="100%" height="44" viewBox="0 0 312 44" preserveAspectRatio="none" aria-hidden="true">
+          <defs><linearGradient id="sg4" x1="0" y1="0" x2="312" y2="0"><stop offset="0" stop-color="#60a5fa" stop-opacity="0"/><stop offset=".5" stop-color="#60a5fa" stop-opacity=".9"/><stop offset="1" stop-color="#60a5fa" stop-opacity="0"/></linearGradient></defs>
+          <path fill="none" stroke="url(#sg4)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M-30 24H60l6-14 8 28 7-20 5 8H170l6-12 7 20 6-12H430"/>
+        </svg>
+        <div class="krow"><span class="klabel">Taxa de sucesso (execuções)</span><span class="kchip"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg></span></div>
+        <div class="kval">100<span class="u">%</span></div>
+        <span class="kbadge">↗ Excelente performance</span>
+      </div>
+    </div>
+    <div class="panel" style="margin-top:12px;">
+      <div class="phead">// anatomia do KPI card — hierarquia de camadas</div>
+      <div class="pbody" style="font-size:12.5px;color:var(--ink-muted);display:flex;flex-direction:column;gap:5px;font-family:'JetBrains Mono',monospace;">
+        <div><span style="color:var(--green-text);">z-3</span> — conteúdo: .krow (label + chip) → .kval (número) → .kbadge</div>
+        <div><span style="color:var(--ink-faint);">z-1</span> — .sig (ECG: .32→1.0 hover) · .wm-g (glow: 0→.90 hover) · .wm-e (cravado: 1.0→.20 hover) · .dots (0→.45 hover)</div>
+        <div><span style="color:var(--ink-faint);">z-0</span> — fundo: radial-gradient do tone + linear-gradient escura</div>
+        <div style="margin-top:4px;color:var(--ink-subtle);">--ink-corner = cor predominante do fundo no canto (crítico para o efeito cravado)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- SECTION CARD -->
+  <div class="blk" id="sectioncard">
+    <div class="blk-eyebrow">Section Card</div>
+    <h2 class="blk-title">SectionCard — Header + Body</h2>
+    <div class="sc">
+      <div class="sc-head">
+        <div class="sc-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg></div>
+        <div><div class="sc-title">Throughput por Sprint</div><div class="sc-sub">Story points concluídos · PI 2026-Q2</div></div>
+        <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+          <span class="bdg" style="background:var(--green-soft);color:var(--green-text);border:1px solid rgba(var(--green-rgb),.22);font-size:11px;padding:2px 8px;">Crescendo</span>
+          <button class="ibtn"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></button>
+        </div>
+      </div>
+      <div class="sc-body">
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;font-weight:600;">Sprint 12</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text);">87 SP</span></div>
+          <div class="progress"><div class="progress-bar" style="width:87%;background:var(--green);box-shadow:0 0 8px rgba(var(--green-rgb),.4);"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;font-weight:600;">Sprint 11</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--amber-text);">62 SP</span></div>
+          <div class="progress"><div class="progress-bar" style="width:62%;background:var(--amber);"></div></div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:13px;font-weight:600;">Sprint 10</span><span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--green-text);">79 SP</span></div>
+          <div class="progress"><div class="progress-bar" style="width:79%;background:var(--green);box-shadow:0 0 8px rgba(var(--green-rgb),.3);"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- TABLE -->
+  <div class="blk" id="table">
+    <div class="blk-eyebrow">Tabela</div>
+    <h2 class="blk-title">Tabela de Dados — Épicos</h2>
+    <div class="panel">
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--hairline);background:var(--surface);">
+        <input style="flex:1;max-width:260px;padding:6px 10px;border-radius:var(--r-sm);border:1px solid var(--hairline-strong);background:var(--surface-2);color:var(--ink);font-size:12.5px;font-family:'Manrope',sans-serif;outline:none;" placeholder="Buscar épicos…" />
+        <button class="btn btn-secondary btn-sm" style="display:flex;align-items:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>Filtros</button>
+        <button class="btn btn-primary btn-sm" style="display:flex;align-items:center;gap:5px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>Novo Épico</button>
+      </div>
+      <table class="tbl">
+        <thead><tr>
+          <th class="sort">ID ↕</th>
+          <th>Título</th>
+          <th>ART</th>
+          <th>Status</th>
+          <th class="sort">WSJF ↕</th>
+          <th>PI</th>
+          <th></th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="mono" style="color:var(--ink-faint);">EP-0042</td>
+            <td style="font-weight:600;max-width:220px;">Migração para microsserviços</td>
+            <td><span class="bdg" style="background:var(--blue-soft);color:var(--blue-text);border-color:rgba(var(--blue-rgb),.2);font-size:11px;padding:2px 8px;">Payments</span></td>
+            <td><span class="bdg" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);font-size:11px;padding:2px 8px;">● Em progresso</span></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--green-text);">74</span></td>
+            <td class="mono" style="color:var(--ink-muted);">2026-Q2</td>
+            <td><div class="actions"><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--ink-faint);">EP-0039</td>
+            <td style="font-weight:600;max-width:220px;">Autenticação biométrica mobile</td>
+            <td><span class="bdg" style="background:var(--purple-soft);color:var(--purple-text);border-color:rgba(var(--purple-rgb),.2);font-size:11px;padding:2px 8px;">Platform</span></td>
+            <td><span class="bdg" style="background:var(--amber-soft);color:var(--amber-text);border-color:rgba(var(--amber-rgb),.2);font-size:11px;padding:2px 8px;">● Em risco</span></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--amber-text);">61</span></td>
+            <td class="mono" style="color:var(--ink-muted);">2026-Q2</td>
+            <td><div class="actions"><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--ink-faint);">EP-0037</td>
+            <td style="font-weight:600;max-width:220px;">Dashboard de conversão Growth</td>
+            <td><span class="bdg" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);font-size:11px;padding:2px 8px;">Growth</span></td>
+            <td><span class="bdg" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);font-size:11px;padding:2px 8px;">● Concluído</span></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--green-text);">88</span></td>
+            <td class="mono" style="color:var(--ink-muted);">2026-Q1</td>
+            <td><div class="actions"><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg></button></div></td>
+          </tr>
+          <tr>
+            <td class="mono" style="color:var(--ink-faint);">EP-0035</td>
+            <td style="font-weight:600;max-width:220px;">Pipeline de dados LLM avaliação</td>
+            <td><span class="bdg" style="background:var(--amber-soft);color:var(--amber-text);border-color:rgba(var(--amber-rgb),.2);font-size:11px;padding:2px 8px;">Data &amp; AI</span></td>
+            <td><span class="bdg" style="background:var(--red-soft);color:var(--red-text);border-color:rgba(var(--red-rgb),.2);font-size:11px;padding:2px 8px;">● Bloqueado</span></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--red-text);">52</span></td>
+            <td class="mono" style="color:var(--ink-muted);">2026-Q3</td>
+            <td><div class="actions"><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button><button class="ibtn" style="width:26px;height:26px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg></button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- KANBAN -->
+  <div class="blk" id="kanban">
+    <div class="blk-eyebrow">Kanban</div>
+    <h2 class="blk-title">Portfolio Kanban — Épicos</h2>
+    <div class="kboard">
+      <div class="kcol">
+        <div class="kcol-head"><span class="kcol-label" style="color:var(--ink-subtle);">Backlog</span><span class="kcol-count">8</span></div>
+        <div class="kcol-body">
+          <div class="kcard">
+            <div class="kcard-id">EP-0045</div>
+            <div class="kcard-title">Refatoração motor de scoring</div>
+            <div class="kcard-foot">
+              <span class="bdg" style="background:var(--blue-soft);color:var(--blue-text);border-color:rgba(var(--blue-rgb),.2);font-size:10px;padding:1px 7px;">Payments</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-left:auto;">WSJF 44</span>
+            </div>
+          </div>
+          <div class="kcard">
+            <div class="kcard-id">EP-0044</div>
+            <div class="kcard-title">Observabilidade com OpenTelemetry</div>
+            <div class="kcard-foot">
+              <span class="bdg" style="background:var(--purple-soft);color:var(--purple-text);border-color:rgba(var(--purple-rgb),.2);font-size:10px;padding:1px 7px;">Platform</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-left:auto;">WSJF 39</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kcol">
+        <div class="kcol-head"><span class="kcol-label" style="color:var(--blue-text);">Em Progresso</span><span class="kcol-count" style="background:var(--blue-soft);color:var(--blue-text);">3</span></div>
+        <div class="kcol-body">
+          <div class="kcard" style="border-color:rgba(var(--blue-rgb),.25);">
+            <div class="kcard-id">EP-0042</div>
+            <div class="kcard-title">Migração para microsserviços</div>
+            <div class="kcard-foot">
+              <span class="bdg" style="background:var(--blue-soft);color:var(--blue-text);border-color:rgba(var(--blue-rgb),.2);font-size:10px;padding:1px 7px;">Payments</span>
+              <div style="margin-left:auto;display:flex;align-items:center;gap:4px;">
+                <div class="av av-blue" style="width:20px;height:20px;font-size:8px;">MA</div>
+                <div class="av av-green" style="width:20px;height:20px;font-size:8px;">LC</div>
+              </div>
+            </div>
+          </div>
+          <div class="kcard" style="border-color:rgba(var(--amber-rgb),.25);">
+            <div class="kcard-id">EP-0039</div>
+            <div class="kcard-title">Autenticação biométrica mobile</div>
+            <div class="kcard-foot">
+              <span class="bdg" style="background:var(--amber-soft);color:var(--amber-text);border-color:rgba(var(--amber-rgb),.2);font-size:10px;padding:1px 7px;">⚠ Em risco</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="kcol">
+        <div class="kcol-head"><span class="kcol-label" style="color:var(--green-text);">Concluído</span><span class="kcol-count" style="background:var(--green-soft);color:var(--green-text);">12</span></div>
+        <div class="kcol-body">
+          <div class="kcard" style="opacity:.75;">
+            <div class="kcard-id">EP-0037</div>
+            <div class="kcard-title">Dashboard de conversão Growth</div>
+            <div class="kcard-foot">
+              <span class="bdg" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);font-size:10px;padding:1px 7px;">✓ Entregue Q1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- WSJF -->
+  <div class="blk" id="wsjf">
+    <div class="blk-eyebrow">Priorização</div>
+    <h2 class="blk-title">WSJF — Weighted Shortest Job First</h2>
+    <div class="panel">
+      <table class="wsjf-table">
+        <thead><tr>
+          <th>Épico</th><th>Val. Negócio</th><th>Urgência</th><th>Redução Risco</th><th>Tamanho Job</th>
+          <th style="color:var(--accent-text);">WSJF</th><th>Prioridade</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:600;font-size:12.5px;">Dashboard de conversão<br/><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">EP-0037</span></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">8</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:80%;background:var(--accent);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">6</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:60%;background:var(--blue);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">8</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:80%;background:var(--green);"></div></div></div></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;">2</span></td>
+            <td><span class="wsjf-score" style="color:var(--green-text);">88</span></td>
+            <td><span class="bdg" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);font-size:11px;padding:2px 8px;">Alto</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;font-size:12.5px;">Migração microsserviços<br/><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">EP-0042</span></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">6</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:60%;background:var(--accent);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">8</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:80%;background:var(--blue);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">4</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:40%;background:var(--green);"></div></div></div></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;">3</span></td>
+            <td><span class="wsjf-score" style="color:var(--amber-text);">74</span></td>
+            <td><span class="bdg" style="background:var(--amber-soft);color:var(--amber-text);border-color:rgba(var(--amber-rgb),.2);font-size:11px;padding:2px 8px;">Médio</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;font-size:12.5px;">Pipeline LLM avaliação<br/><span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">EP-0035</span></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">4</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:40%;background:var(--accent);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family font-size:12px;min-width:18px;">3</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:30%;background:var(--blue);"></div></div></div></td>
+            <td><div class="wsjf-bar-wrap"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;min-width:18px;">6</span><div class="wsjf-bar-bg"><div class="wsjf-bar-fill" style="width:60%;background:var(--green);"></div></div></div></td>
+            <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px;">5</span></td>
+            <td><span class="wsjf-score" style="color:var(--ink-muted);">52</span></td>
+            <td><span class="bdg" style="background:var(--chip-bg);color:var(--ink-muted);border-color:var(--hairline);font-size:11px;padding:2px 8px;">Baixo</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- APP SHELL -->
+  <div class="blk" id="shell">
+    <div class="blk-eyebrow">App Shell</div>
+    <h2 class="blk-title">Shell da Aplicação — Visão Geral</h2>
+    <p class="blk-sub">Grid: topbar 56px fixo · sidebar 256px · corpo scroll. Density via --pad/--gap.</p>
+    <div class="shell-preview">
+      <div class="sp-topbar">
+        <div class="sp-logo">C</div>
+        <span class="sp-name">COSMOS</span>
+        <span style="width:1px;height:14px;background:var(--hairline);"></span>
+        <span class="sp-page">Portfolio · <b style="color:var(--ink);font-weight:600;">Visão Geral</b></span>
+        <div class="sp-right">
+          <button class="ibtn" style="width:28px;height:28px;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+          <div class="av av-blue" style="width:28px;height:28px;font-size:9px;">MA</div>
+        </div>
+      </div>
+      <div class="sp-sidebar">
+        <div class="sp-section-label">PORTFOLIO</div>
+        <div class="sp-nav a"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Visão Geral</div>
+        <div class="sp-nav"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg> Kanban</div>
+        <div class="sp-nav"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg> WSJF</div>
+        <div class="sp-section-label" style="margin-top:10px;">PLANNING</div>
+        <div class="sp-nav"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> PI Planning</div>
+        <div class="sp-nav"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg> Roadmap</div>
+      </div>
+      <div class="sp-main">
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:4px;">Visão Geral do Portfolio</div>
+        <div style="font-size:12px;color:var(--ink-muted);margin-bottom:14px;">PI 2026-Q2 · 4 ARTs · 42 épicos ativos</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="padding:12px;border-radius:var(--r-md);border:1px solid var(--hairline);background:var(--surface);">
+            <div style="font-size:10px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">THROUGHPUT</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--green);">162<span style="font-size:13px;opacity:.7;"> SP</span></div>
+          </div>
+          <div style="padding:12px;border-radius:var(--r-md);border:1px solid var(--hairline);background:var(--surface);">
+            <div style="font-size:10px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;margin-bottom:4px;">ÉPICOS ATIVOS</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--blue);">42<span style="font-size:13px;opacity:.7;"> total</span></div>
+          </div>
+        </div>
+        <div style="height:7px;border-radius:999px;background:var(--surface-3);overflow:hidden;"><div style="height:100%;border-radius:999px;background:var(--green);width:68%;box-shadow:0 0 8px rgba(var(--green-rgb),.4);"></div></div>
+        <div style="font-size:10.5px;color:var(--ink-faint);margin-top:4px;">68% do PI concluído</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+<script>
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  document.getElementById('btn-light').classList.toggle('on',t==='light');
+  document.getElementById('btn-dark').classList.toggle('on',t==='dark');
+  document.getElementById('btn-mkt').classList.toggle('on',t==='marketing');
+  localStorage.setItem('cosmos-theme',t);
+}
+const s=localStorage.getItem('cosmos-theme'); if(s) setTheme(s);
+</script>
+</body>
+</html>
