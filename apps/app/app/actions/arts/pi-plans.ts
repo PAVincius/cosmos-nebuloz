@@ -20,6 +20,9 @@ export async function createPIPlan(input: {
   requireRole(["ADMIN", "STE", "RTE"], ctx);
 
   const validated = CreatePIPlanSchema.parse(input);
+  if (!validated.name) {
+    throw new Error("Nome é obrigatório para createPIPlan (uso legado).");
+  }
 
   const art = await database.aRT.findFirst({
     where: { id: validated.artId, tenantId: ctx.tenantId },
@@ -42,6 +45,29 @@ export async function createPIPlan(input: {
   return plan;
 }
 
+// ─── PI naming ──────────────────────────────────────────────────────────────
+
+function getQuarter(date: Date): string {
+  return `Q${Math.floor(date.getMonth() / 3) + 1}`;
+}
+
+/** Reuses the ArtSequenceCounter pattern (see features/readiness.ts generateArtScopedId). */
+async function generatePIName(
+  artId: string,
+  tenantId: string,
+  startDate: Date | undefined,
+  tx: Parameters<Parameters<typeof database.$transaction>[0]>[0]
+): Promise<string> {
+  await tx.artSequenceCounter.upsert({
+    where: { artId_type: { artId, type: "PI" } },
+    update: { next: { increment: 1 } },
+    create: { artId, tenantId, type: "PI", next: 2 },
+    select: { next: true },
+  });
+  const reference = startDate ?? new Date();
+  return `PI-${reference.getFullYear()}-${getQuarter(reference)}`;
+}
+
 // ─── Full wizard create ────────────────────────────────────────────────────────
 
 export async function createPIPlanWithDetails(raw: CreatePIPlanDetailsInput) {
@@ -58,13 +84,21 @@ export async function createPIPlanWithDetails(raw: CreatePIPlanDetailsInput) {
   }
 
   const plan = await database.$transaction(async (tx) => {
+    const piName = await generatePIName(
+      validated.artId,
+      ctx.tenantId,
+      validated.startDate,
+      tx
+    );
+
     const pi = await tx.pIPlan.create({
       data: {
         tenantId: ctx.tenantId,
         artId: validated.artId,
-        name: validated.name,
+        name: piName,
         startDate: validated.startDate,
         endDate: validated.endDate,
+        confidenceThreshold: raw.confidenceThreshold ?? 3.0,
       },
     });
 
@@ -102,6 +136,20 @@ export async function createPIPlanWithDetails(raw: CreatePIPlanDetailsInput) {
           impact: r.impact,
           probability: r.probability,
         })),
+      });
+    }
+
+    if (raw.includeConfidenceVote) {
+      const piSession = await tx.pISession.create({
+        data: { tenantId: ctx.tenantId, piPlanId: pi.id, type: "PLANNING" },
+      });
+      await tx.confidenceVoteSession.create({
+        data: {
+          tenantId: ctx.tenantId,
+          piSessionId: piSession.id,
+          roundNumber: 1,
+          xStateStatus: "NOT_STARTED",
+        },
       });
     }
 

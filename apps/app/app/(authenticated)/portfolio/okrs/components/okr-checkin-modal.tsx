@@ -1,44 +1,16 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Progress } from "@repo/design-system/components/ui/progress";
+import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { useState, useTransition } from "react";
 import {
   createKeyResultCheckIn,
   type OKRWithContext,
 } from "@/app/actions/okrs";
-
-type KeyResultSnapshotItem = {
-  id: string;
-  keyResultId: string;
-  value: number;
-  note: string | null;
-  recordedAt: Date;
-};
-
-type KeyResultWithProgress = {
-  id: string;
-  title: string;
-  current: number;
-  target: number;
-  unit: string;
-  metric?: string | null;
-  baseline?: number | null;
-  measurementType?: string | null;
-  dataSource?: string | null;
-  dueDate?: Date | null;
-  progress: number;
-  snapshots?: KeyResultSnapshotItem[];
-};
+import { ModalShell } from "@/app/(authenticated)/components/modal-shell";
+import { toneForProgress } from "./okr-constants";
 
 type OKRCheckInModalProps = {
   open: boolean;
@@ -73,7 +45,7 @@ export function OKRCheckInModal({
   function hasChanges(): boolean {
     return okr.keyResults.some((kr) => {
       const newVal = Number.parseFloat(values[kr.id] ?? "");
-      return !isNaN(newVal) && newVal !== kr.current;
+      return !Number.isNaN(newVal) && newVal !== kr.current;
     });
   }
 
@@ -82,7 +54,7 @@ export function OKRCheckInModal({
       const promises = okr.keyResults
         .filter((kr) => {
           const newVal = Number.parseFloat(values[kr.id] ?? "");
-          return !isNaN(newVal) && newVal !== kr.current;
+          return !Number.isNaN(newVal) && newVal !== kr.current;
         })
         .map(async (kr) => {
           const newVal = Number.parseFloat(values[kr.id] ?? "");
@@ -101,97 +73,81 @@ export function OKRCheckInModal({
   }
 
   return (
-    <Dialog
-      onOpenChange={(o) => {
-        if (!o) {
-          onClose();
-        }
-      }}
-      open={open}
-    >
-      <DialogContent className="flex max-h-[90vh] max-w-lg flex-col">
-        <DialogHeader>
-          <DialogTitle className="font-semibold text-base leading-tight">
-            Registrar Check-in — {okr.title}
-          </DialogTitle>
-          <p className="mt-1 text-muted-foreground text-sm">
-            Atualize o progresso de cada Key Result
-          </p>
-        </DialogHeader>
-
-        <div className="flex-1 space-y-5 overflow-y-auto py-2 pr-1">
-          {okr.keyResults.map((kr) => {
-            const currentVal = Number.parseFloat(
-              values[kr.id] ?? String(kr.current)
-            );
-            const displayProgress = isNaN(currentVal)
-              ? kr.progress
-              : computeProgress(currentVal, kr.target);
-
-            return (
-              <div
-                className="space-y-2 rounded-lg border border-border/60 bg-muted/30 p-3"
-                key={kr.id}
-              >
-                <p className="font-medium text-sm leading-snug">{kr.title}</p>
-                <Progress className="h-1.5" value={displayProgress} />
-                <div className="flex items-center gap-3">
-                  <div className="flex-1">
-                    <Input
-                      className="h-8 text-sm"
-                      disabled={isPending}
-                      min={0}
-                      onChange={(e) => handleValueChange(kr.id, e.target.value)}
-                      step="any"
-                      type="number"
-                      value={values[kr.id] ?? ""}
-                    />
-                  </div>
-                  <p className="whitespace-nowrap text-muted-foreground text-xs">
-                    <span className="font-medium text-foreground">
-                      {kr.current}
-                    </span>
-                    {" → "}
-                    <span className="font-medium text-foreground">
-                      {kr.target}
-                    </span>{" "}
-                    <span>{kr.unit}</span>
-                  </p>
-                  <span className="w-10 shrink-0 text-right font-semibold text-xs tabular-nums">
-                    {displayProgress}%
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-
-          <div className="space-y-1.5">
-            <label className="font-medium text-foreground text-sm">
-              Nota{" "}
-              <span className="font-normal text-muted-foreground">
-                (opcional)
-              </span>
-            </label>
-            <Textarea
-              className="resize-none text-sm"
-              disabled={isPending}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Descreva o contexto desta atualização…"
-              rows={3}
-              value={note}
-            />
-          </div>
-        </div>
-
-        <DialogFooter className="gap-2 pt-2">
+    <ModalShell
+      eyebrow="Atualize os valores atuais e registre uma nota de contexto"
+      footer={
+        <>
           <Button disabled={isPending} onClick={onClose} variant="outline">
             Cancelar
           </Button>
-          <Button disabled={isPending || !hasChanges()} onClick={handleSubmit}>
-            {isPending ? "Salvando…" : "Registrar Check-in"}
+          <Button
+            disabled={isPending || !hasChanges()}
+            onClick={handleSubmit}
+          >
+            Registrar Check-in
           </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+        </>
+      }
+      onClose={onClose}
+      open={open}
+      title={`Check-in · ${okr.title}`}
+    >
+      <div className="space-y-4">
+        {okr.keyResults.map((kr) => {
+          const current = Number.parseFloat(values[kr.id] ?? String(kr.current));
+          const progress = Number.isNaN(current)
+            ? kr.progress
+            : computeProgress(current, kr.target);
+          const tone = toneForProgress(progress);
+          return (
+            <div className="space-y-1.5" key={kr.id}>
+              <div className="flex items-center justify-between gap-3">
+                <span className="truncate text-[13px] text-[var(--ink-muted)]">
+                  {kr.title}
+                </span>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <Input
+                    className="h-7 w-24 text-xs"
+                    disabled={isPending}
+                    onChange={(e) => handleValueChange(kr.id, e.target.value)}
+                    step="any"
+                    type="number"
+                    value={values[kr.id] ?? ""}
+                  />
+                  <span className="font-mono text-[var(--ink-muted)] text-xs">
+                    {kr.unit} / {kr.target}
+                    {kr.unit}
+                  </span>
+                </div>
+              </div>
+              <div
+                className="h-[7px] overflow-hidden rounded-full"
+                style={{ background: "var(--surface-3)" }}
+              >
+                <div
+                  className="h-full rounded-full transition-[width] duration-300 ease-out"
+                  style={{
+                    width: `${Math.round(progress)}%`,
+                    background: `var(--${tone})`,
+                  }}
+                />
+              </div>
+            </div>
+          );
+        })}
+
+        <div className="space-y-1.5">
+          <Label htmlFor="checkin-note">Nota (opcional)</Label>
+          <Textarea
+            disabled={isPending}
+            id="checkin-note"
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="O que mudou desde o último check-in?"
+            rows={3}
+            value={note}
+          />
+        </div>
+      </div>
+    </ModalShell>
   );
 }

@@ -220,37 +220,122 @@ export async function getPmHomeData() {
 
 export async function getLpmHomeData() {
   return safeAction(async () => {
-    const { userId, tenantId } = await requireTenantSession(await headers());
+    const { tenantId } = await requireTenantSession(await headers());
 
-    const [leanBudgets, notifications, arts, pendingEpics] = await Promise.all([
-      database.leanBudget.findMany({
-        where: { tenantId },
-        take: 5,
-      }),
-      database.notification.findMany({
-        where: {
-          tenantId,
-          userId,
-          read: false,
-          type: { in: ["risk", "system"] },
-        },
-        take: 4,
-        orderBy: { createdAt: "desc" },
-      }),
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const [
+      arts,
+      teamCount,
+      activeEpicsCount,
+      epicsInProgress,
+      activePiPlans,
+      closedSprints,
+      costByTheme,
+    ] = await Promise.all([
       database.aRT.findMany({
         where: { tenantId },
         take: 4,
       }),
+      database.team.count({ where: { tenantId } }),
+      database.epic.count({
+        where: { tenantId, lifecycleStatus: { notIn: ["DONE", "REJECTED"] } },
+      }),
       database.epic.findMany({
-        where: {
-          tenantId,
-          lifecycleStatus: { in: ["FUNNEL", "ANALYZING"] },
+        where: { tenantId, lifecycleStatus: "IMPLEMENTING" },
+        select: {
+          id: true,
+          title: true,
+          dueDate: true,
+          featureCount: true,
+          doneFeatureCount: true,
+          investScore: true,
+          strategicTheme: { select: { title: true, color: true } },
         },
-        take: 5,
+        orderBy: { updatedAt: "desc" },
+        take: 6,
+      }),
+      database.pIPlan.findMany({
+        where: { tenantId, status: "EXECUTING" },
+        select: { id: true, name: true, ppm: true, completionPct: true },
+        orderBy: { updatedAt: "desc" },
+        take: 4,
+      }),
+      database.sprint.findMany({
+        where: { tenantId, status: "CLOSED" },
+        select: { id: true, velocity: true, endDate: true },
+        orderBy: { endDate: "desc" },
+        take: 6,
+      }),
+      database.costSnapshot.groupBy({
+        by: ["themeId"],
+        where: { tenantId, period: { gte: startOfMonth } },
+        _sum: { cloudCost: true },
       }),
     ]);
 
-    return { leanBudgets, notifications, arts, pendingEpics };
+    const themeIds = costByTheme
+      .map((row) => row.themeId)
+      .filter((id): id is string => Boolean(id));
+
+    const themes = themeIds.length
+      ? await database.strategicTheme.findMany({
+          where: { tenantId, id: { in: themeIds } },
+          select: { id: true, title: true, color: true },
+        })
+      : [];
+
+    const themeAllocation = costByTheme
+      .map((row) => {
+        const theme = themes.find((t) => t.id === row.themeId);
+        return {
+          id: row.themeId ?? "unmapped",
+          title: theme?.title ?? "Não mapeado",
+          color: theme?.color ?? "#8a8f98",
+          cloudCost: Number(row._sum.cloudCost ?? 0),
+        };
+      })
+      .filter((row) => row.cloudCost > 0)
+      .sort((a, b) => b.cloudCost - a.cloudCost)
+      .slice(0, 5);
+
+    const cloudCostMtd = themeAllocation.reduce(
+      (sum, row) => sum + row.cloudCost,
+      0
+    );
+
+    const predictabilityPct =
+      activePiPlans.length > 0
+        ? Math.round(
+            activePiPlans.reduce(
+              (sum, plan) => sum + (plan.ppm ?? plan.completionPct ?? 0),
+              0
+            ) / activePiPlans.length
+          )
+        : null;
+
+    const sprintVelocities = [...closedSprints].reverse();
+    const lastVelocity = sprintVelocities.at(-1)?.velocity ?? null;
+    const prevVelocity = sprintVelocities.at(-2)?.velocity ?? null;
+    const throughputDeltaPct =
+      lastVelocity !== null && prevVelocity
+        ? Math.round(((lastVelocity - prevVelocity) / prevVelocity) * 100)
+        : null;
+
+    return {
+      arts,
+      teamCount,
+      activeEpicsCount,
+      epicsInProgress,
+      currentPiName: activePiPlans[0]?.name ?? null,
+      predictabilityPct,
+      sprintVelocities,
+      throughputDeltaPct,
+      themeAllocation,
+      cloudCostMtd,
+    };
   });
 }
 

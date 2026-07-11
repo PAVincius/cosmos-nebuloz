@@ -37,7 +37,7 @@ export const UserButton = ({ name, email, avatar }: UserButtonProps) => {
           className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           size="lg"
         >
-          <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 font-semibold text-primary text-xs">
+          <div className="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/20 font-semibold text-[oklch(0.72_0.16_264)] text-xs">
             {avatar ? (
               <img className="size-full object-cover" src={avatar} />
             ) : (
@@ -61,7 +61,7 @@ export const UserButton = ({ name, email, avatar }: UserButtonProps) => {
       >
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/20 font-semibold text-primary text-xs">
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary/20 font-semibold text-[oklch(0.72_0.16_264)] text-xs">
               {name.slice(0, 2).toUpperCase()}
             </div>
             <div className="grid flex-1 leading-tight">

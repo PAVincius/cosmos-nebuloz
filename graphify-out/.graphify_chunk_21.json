@@ -1,0 +1,731 @@
+{
+  "nodes": [
+    {
+      "id": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "label": "COSMOS UX Swarm Report 2026-05-12",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": "2026-05-12",
+      "author": "COSMOS UX Swarm DCU validation framework",
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "label": "COSMOS UX Swarm Report 2026-05-13",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": "COSMOS UX Swarm DCU validation framework",
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_dcu_swarm_framework",
+      "label": "COSMOS UX Swarm DCU Reports Framework",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "slm_pipeline_requirements_slm_pipeline",
+      "label": "SLM Pipeline Requirements",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_prd",
+      "label": "PRD Plataforma COSMOS SAFe 6.0 Full Management",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_dcu_score_formula",
+      "label": "DCU Score Formula",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "DCU Score section",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_finding_categories",
+      "label": "UX Finding Categories",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Finding Categories section",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_swarm_architecture",
+      "label": "UX Swarm Multi-Agent Architecture",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_inter_agent_communication",
+      "label": "Inter-Agent Communication Pattern",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Inter-Agent Communication section",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_persona_lpm",
+      "label": "Persona: Lean Portfolio Manager (lpm)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture > personas/lpm.spec.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_persona_rte",
+      "label": "Persona: Release Train Engineer (rte)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture > personas/rte.spec.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_persona_po",
+      "label": "Persona: Product Owner (po)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture > personas/po.spec.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_persona_sm",
+      "label": "Persona: Scrum Master (sm)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture > personas/sm.spec.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_readme_persona_devops",
+      "label": "Persona: DevOps Engineer (devops)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture > personas/devops.spec.ts",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_12_finding_ai_risk_copilot_missing",
+      "label": "Finding: AI Risk Copilot banner not implemented (2026-05-12)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "RTE findings - /arts route",
+      "source_url": null,
+      "captured_at": "2026-05-12",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_12_finding_get_features_api_missing",
+      "label": "Finding: No GET /api/features endpoint (2026-05-12)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "PO findings - /api/features route",
+      "source_url": null,
+      "captured_at": "2026-05-12",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_12_finding_design_token_violation",
+      "label": "Finding: Submit button design token violation lavender-blue (2026-05-12)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "PO findings - /sign-in route",
+      "source_url": null,
+      "captured_at": "2026-05-12",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_finding_ai_risk_copilot_missing",
+      "label": "Finding: AI Risk Copilot banner not implemented (2026-05-13)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "RTE findings - /arts route",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_finding_cicd_not_implemented",
+      "label": "Finding: CI/CD Integration not yet implemented (epic-008) (2026-05-13)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "DevOps findings - /integrations/cicd route",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_finding_page_title_branding",
+      "label": "Finding: Sign-in page title missing COSMOS branding (2026-05-13)",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "SM findings - /sign-in route",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "slm_pipeline_requirements_anthropic_sdk",
+      "label": "Dependency: anthropic (Anthropic Python SDK)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 1",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "slm_pipeline_requirements_pdfplumber",
+      "label": "Dependency: pdfplumber (PDF extraction)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 2",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "slm_pipeline_requirements_agent_governance_toolkit",
+      "label": "Dependency: agent-governance-toolkit[full]",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_real_time_planning_room",
+      "label": "Feature: Real-Time Planning Room (Yjs/Liveblocks multiplayer canvas)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2 - Diferenciais Competitivos",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_bpmn_workflows",
+      "label": "Feature: Enterprise BPMN Workflows (bpmn-js)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2 - Diferenciais Competitivos",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_xstate_confidence_vote",
+      "label": "Feature: XState Confidence Vote and Portfolio Approval Orchestration",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2 - Diferenciais Competitivos",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_ai_copilot_pgvector",
+      "label": "Feature: AI Copilot with pgvector for flow bottleneck and dependency prediction",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2 - Diferenciais Competitivos",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_opentelemetry_observability",
+      "label": "Feature: Enterprise Observability with OpenTelemetry",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2 - Diferenciais Competitivos",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "tarefas_prd_cosmos_platform_safe60_platform",
+      "label": "COSMOS Platform SAFe 6.0 Full Management",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 1 - Introdução",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_12_compliant_xstate_pi_planning",
+      "label": "Compliant: XState machine wired to ART Board PI Planning",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "source_url": null,
+      "captured_at": "2026-05-12",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_compliant_bpmn_canvas",
+      "label": "Compliant: BPMN canvas route reachable at /workflows/team-demo/bpmn",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "ux_reports_2026_05_13_compliant_multitenant_security",
+      "label": "Compliant: Multi-tenant security enforced - non-member switch returns 401",
+      "file_type": "rationale",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "source_url": null,
+      "captured_at": "2026-05-13",
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "ux_reports_readme_dcu_swarm_framework",
+      "target": "ux_reports_readme_dcu_score_formula",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "DCU Score section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_readme_dcu_swarm_framework",
+      "target": "ux_reports_readme_finding_categories",
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Finding Categories section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_readme_dcu_swarm_framework",
+      "target": "ux_reports_readme_swarm_architecture",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_readme_dcu_swarm_framework",
+      "target": "ux_reports_readme_inter_agent_communication",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Inter-Agent Communication section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_readme_swarm_architecture",
+      "target": "ux_reports_readme_persona_lpm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section - personas/lpm.spec.ts",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_readme_swarm_architecture",
+      "target": "ux_reports_readme_persona_rte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section - personas/rte.spec.ts",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_readme_swarm_architecture",
+      "target": "ux_reports_readme_persona_po",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section - personas/po.spec.ts",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_readme_swarm_architecture",
+      "target": "ux_reports_readme_persona_sm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section - personas/sm.spec.ts",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_readme_swarm_architecture",
+      "target": "ux_reports_readme_persona_devops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "Architecture section - personas/devops.spec.ts",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_readme_dcu_swarm_framework",
+      "relation": "generated_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "footer - Generated by COSMOS UX Swarm",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_readme_dcu_swarm_framework",
+      "relation": "generated_by",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "footer - Generated by COSMOS UX Swarm",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_2026_05_12_finding_ai_risk_copilot_missing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "RTE findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_2026_05_12_finding_get_features_api_missing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "PO findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_2026_05_12_finding_design_token_violation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "PO findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_2026_05_12_compliant_xstate_pi_planning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_2026_05_13_finding_ai_risk_copilot_missing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "RTE findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_2026_05_13_finding_cicd_not_implemented",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "DevOps findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_2026_05_13_finding_page_title_branding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "SM findings section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_2026_05_13_compliant_bpmn_canvas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "target": "ux_reports_2026_05_13_compliant_multitenant_security",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_finding_ai_risk_copilot_missing",
+      "target": "tarefas_prd_cosmos_platform_ai_copilot_pgvector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "RTE findings - epic-007 reference",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_2026_05_13_finding_ai_risk_copilot_missing",
+      "target": "tarefas_prd_cosmos_platform_ai_copilot_pgvector",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "RTE findings - epic-007 reference",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_2026_05_13_compliant_bpmn_canvas",
+      "target": "tarefas_prd_cosmos_platform_bpmn_workflows",
+      "relation": "validates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "weight": 0.85
+    },
+    {
+      "source": "ux_reports_2026_05_12_compliant_xstate_pi_planning",
+      "target": "tarefas_prd_cosmos_platform_xstate_confidence_vote",
+      "relation": "validates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "Compliant Flows section",
+      "weight": 0.85
+    },
+    {
+      "source": "slm_pipeline_requirements_slm_pipeline",
+      "target": "slm_pipeline_requirements_anthropic_sdk",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 1",
+      "weight": 1.0
+    },
+    {
+      "source": "slm_pipeline_requirements_slm_pipeline",
+      "target": "slm_pipeline_requirements_pdfplumber",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 2",
+      "weight": 1.0
+    },
+    {
+      "source": "slm_pipeline_requirements_slm_pipeline",
+      "target": "slm_pipeline_requirements_agent_governance_toolkit",
+      "relation": "depends_on",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "line 3",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_safe60_platform",
+      "relation": "describes",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 1",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_real_time_planning_room",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_bpmn_workflows",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_xstate_confidence_vote",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_ai_copilot_pgvector",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2",
+      "weight": 1.0
+    },
+    {
+      "source": "tarefas_prd_cosmos_platform_prd",
+      "target": "tarefas_prd_cosmos_platform_opentelemetry_observability",
+      "relation": "specifies",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/tarefas/prd-cosmos-platform.md",
+      "source_location": "Section 2",
+      "weight": 1.0
+    },
+    {
+      "source": "ux_reports_2026_05_12_swarm_report_swarm_report_20260512",
+      "target": "ux_reports_2026_05_13_swarm_report_swarm_report_20260513",
+      "relation": "precedes",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "document date",
+      "weight": 0.9
+    },
+    {
+      "source": "ux_reports_2026_05_12_finding_ai_risk_copilot_missing",
+      "target": "ux_reports_2026_05_13_finding_ai_risk_copilot_missing",
+      "relation": "is_reproduced_by",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/2026-05-13-swarm-report.md",
+      "source_location": "RTE findings - identical finding across both reports",
+      "weight": 0.95
+    },
+    {
+      "source": "ux_reports_readme_dcu_swarm_framework",
+      "target": "tarefas_prd_cosmos_platform_prd",
+      "relation": "validates",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/docs/ux-reports/README.md",
+      "source_location": "PRD references in findings",
+      "weight": 0.85
+    },
+    {
+      "source": "slm_pipeline_requirements_slm_pipeline",
+      "target": "tarefas_prd_cosmos_platform_ai_copilot_pgvector",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/experiments/slm-pipeline/requirements.txt",
+      "source_location": "anthropic dependency suggests AI pipeline for Cosmos AI Copilot",
+      "weight": 0.75
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

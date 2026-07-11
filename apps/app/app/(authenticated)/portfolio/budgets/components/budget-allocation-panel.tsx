@@ -1,18 +1,29 @@
 "use client";
 
 import {
-  AlertTriangleIcon,
   CheckCircle2Icon,
+  PencilIcon,
   PieChartIcon,
   RefreshCwIcon,
   ShieldAlertIcon,
+  TriangleAlertIcon,
 } from "lucide-react";
-import { useState, useTransition } from "react";
-import {
-  getPortfolioAllocation,
-  type PortfolioAllocation,
-  type ThemeAllocation,
+import { Gauge, type GaugeTone } from "@/app/(authenticated)/components/gauge";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
+import type {
+  PortfolioAllocation,
+  ThemeAllocation,
 } from "@/app/actions/lean-budget/portfolio-allocation";
+import type { ThemeListItem } from "@/app/actions/strategic-themes/schema";
+import { Select } from "./cosmos-form";
+
+// ─── Icon paths (single-`d` lucide glyphs, safe across Server→Client) ─────
+
+const ICON_SHIELD_ALERT =
+  "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM12 8v4M12 16h.01";
+const ICON_WALLET =
+  "M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4Z";
+const ICON_ACTIVITY = "M22 12h-4l-3 9L9 3l-3 9H2";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -25,32 +36,47 @@ const BRL = (v: number) =>
 
 function StatusIcon({ status }: { status: "ok" | "warn" | "over" }) {
   if (status === "over") {
-    return <ShieldAlertIcon className="h-3.5 w-3.5 text-red-500" />;
+    return (
+      <ShieldAlertIcon
+        className="h-3.5 w-3.5"
+        style={{ color: "var(--red-text)" }}
+      />
+    );
   }
   if (status === "warn") {
-    return <AlertTriangleIcon className="h-3.5 w-3.5 text-amber-500" />;
+    return (
+      <TriangleAlertIcon
+        className="h-3.5 w-3.5"
+        style={{ color: "var(--amber-text)" }}
+      />
+    );
   }
-  return <CheckCircle2Icon className="h-3.5 w-3.5 text-emerald-500" />;
-}
-
-function spendBarColor(pct: number): string {
-  if (pct > 100) {
-    return "bg-red-500";
-  }
-  if (pct > 80) {
-    return "bg-amber-500";
-  }
-  return "bg-emerald-500";
+  return (
+    <CheckCircle2Icon
+      className="h-3.5 w-3.5"
+      style={{ color: "var(--green-text)" }}
+    />
+  );
 }
 
 function spendTextColor(pct: number): string {
   if (pct > 100) {
-    return "text-red-600";
+    return "var(--red-text)";
   }
   if (pct > 80) {
-    return "text-amber-600";
+    return "var(--amber-text)";
   }
-  return "text-foreground";
+  return "var(--ink)";
+}
+
+function gaugeTone(pct: number): GaugeTone {
+  if (pct >= 100) {
+    return "red";
+  }
+  if (pct >= 80) {
+    return "amber";
+  }
+  return "green";
 }
 
 function GuardrailStatus({
@@ -62,7 +88,10 @@ function GuardrailStatus({
 }) {
   if (overCount > 0) {
     return (
-      <span className="flex items-center gap-1 font-semibold text-red-600 text-sm">
+      <span
+        className="flex items-center gap-1.5 font-semibold text-[13px]"
+        style={{ color: "var(--red-text)" }}
+      >
         <ShieldAlertIcon className="h-4 w-4" />
         {overCount} violação{overCount > 1 ? "ões" : ""}
       </span>
@@ -70,14 +99,20 @@ function GuardrailStatus({
   }
   if (warnCount > 0) {
     return (
-      <span className="flex items-center gap-1 font-semibold text-amber-600 text-sm">
-        <AlertTriangleIcon className="h-4 w-4" />
+      <span
+        className="flex items-center gap-1.5 font-semibold text-[13px]"
+        style={{ color: "var(--amber-text)" }}
+      >
+        <TriangleAlertIcon className="h-4 w-4" />
         {warnCount} atenção
       </span>
     );
   }
   return (
-    <span className="flex items-center gap-1 font-semibold text-emerald-600 text-sm">
+    <span
+      className="flex items-center gap-1.5 font-semibold text-[13px]"
+      style={{ color: "var(--green-text)" }}
+    >
       <CheckCircle2Icon className="h-4 w-4" />
       Todos OK
     </span>
@@ -86,11 +121,17 @@ function GuardrailStatus({
 
 // ─── Theme Card ───────────────────────────────────────────────────────────────
 
-function ThemeCard({ theme }: { theme: ThemeAllocation }) {
-  const spendPct = Math.min(theme.percentUsed, 100);
-
+function ThemeCard({
+  theme,
+  horizon,
+  onEditTheme,
+}: {
+  theme: ThemeAllocation;
+  horizon: string | null;
+  onEditTheme: (themeId: string) => void;
+}) {
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-sm">
+    <div className="rounded-cosmos-md border border-hairline bg-surface-2 p-4">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span
@@ -98,18 +139,31 @@ function ThemeCard({ theme }: { theme: ThemeAllocation }) {
             className="h-3 w-3 shrink-0 rounded-full"
             style={{ backgroundColor: theme.themeColor }}
           />
-          <span className="font-medium text-sm leading-snug">
+          <span className="font-semibold text-[13px] leading-snug text-ink">
             {theme.themeName}
           </span>
         </div>
-        <span className="rounded-full bg-muted px-2 py-0.5 font-semibold text-[10px] text-muted-foreground uppercase">
+        <span className="rounded-pill bg-surface-3 px-2 py-0.5 font-mono text-[9.5px] text-ink-muted uppercase">
           {theme.percentOfPortfolio}% do portfólio
         </span>
       </div>
 
-      <div className="mb-1 h-1.5 w-full overflow-hidden rounded-full bg-muted">
+      {horizon && (
+        <span
+          className="mb-3 inline-block rounded-pill px-2 py-0.5 font-mono text-[9.5px] tracking-[0.05em] uppercase"
+          style={{
+            background: "rgba(var(--accent-c),.12)",
+            color: "var(--accent-c)",
+            border: "1px solid rgba(var(--accent-c),.3)",
+          }}
+        >
+          {horizon}
+        </span>
+      )}
+
+      <div className="mb-1 h-1.5 w-full overflow-hidden rounded-pill bg-surface-4">
         <div
-          className="h-full rounded-full transition-all"
+          className="h-full rounded-pill transition-all"
           style={{
             width: `${theme.percentOfPortfolio}%`,
             backgroundColor: theme.themeColor,
@@ -117,46 +171,48 @@ function ThemeCard({ theme }: { theme: ThemeAllocation }) {
         />
       </div>
 
-      <div className="mb-3 flex items-center justify-between text-muted-foreground text-xs">
+      <div className="mb-3 flex items-center justify-between text-[11.5px] text-ink-muted">
         <span>{BRL(theme.totalAmount)} alocado</span>
         <span>{BRL(theme.totalSpent)} gasto</span>
       </div>
 
-      <div className="space-y-1">
-        <div className="flex justify-between text-[11px] text-muted-foreground">
-          <span>Consumo</span>
-          <span
-            className={
-              theme.percentUsed > 100 ? "font-semibold text-red-600" : ""
-            }
-          >
-            {theme.percentUsed}%
-          </span>
-        </div>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
-          <div
-            className={`h-full rounded-full transition-all ${spendBarColor(theme.percentUsed)}`}
-            style={{ width: `${spendPct}%` }}
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Gauge
+            label="Consumo"
+            size={44}
+            sublabel={`${theme.percentUsed}%`}
+            tone={gaugeTone(theme.percentUsed)}
+            value={Math.min(theme.percentUsed, 100)}
           />
+          {theme.guardrails !== null && theme.guardrails !== undefined && (
+            <div className="flex flex-col gap-1 text-[11px]">
+              <div className="flex items-center gap-1.5">
+                <StatusIcon status={theme.capexStatus} />
+                <span className="text-ink-muted">
+                  CapEx: {BRL(theme.guardrails.capex)}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <StatusIcon status={theme.opexStatus} />
+                <span className="text-ink-muted">
+                  OpEx: {BRL(theme.guardrails.opex)}
+                </span>
+              </div>
+            </div>
+          )}
         </div>
+        {theme.themeId && (
+          <button
+            className="flex shrink-0 items-center gap-1 rounded-md border border-hairline-strong px-2 py-1 font-semibold text-[11px] text-ink-muted transition-colors hover:bg-surface-3 hover:text-ink"
+            onClick={() => onEditTheme(theme.themeId as string)}
+            type="button"
+          >
+            <PencilIcon className="h-3 w-3" />
+            Editar
+          </button>
+        )}
       </div>
-
-      {theme.guardrails !== null && theme.guardrails !== undefined && (
-        <div className="mt-3 flex items-center gap-4 border-t pt-3">
-          <div className="flex items-center gap-1.5 text-[11px]">
-            <StatusIcon status={theme.capexStatus} />
-            <span className="text-muted-foreground">
-              CapEx: {BRL(theme.guardrails.capex)}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 text-[11px]">
-            <StatusIcon status={theme.opexStatus} />
-            <span className="text-muted-foreground">
-              OpEx: {BRL(theme.guardrails.opex)}
-            </span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -164,19 +220,25 @@ function ThemeCard({ theme }: { theme: ThemeAllocation }) {
 // ─── Main Panel ───────────────────────────────────────────────────────────────
 
 type Props = {
-  initialData: PortfolioAllocation | null;
+  data: PortfolioAllocation | null;
+  period: string;
   availablePeriods: string[];
+  isPending: boolean;
+  onPeriodChange: (period: string) => void;
+  themes: ThemeListItem[];
+  onEditTheme: (themeId: string) => void;
 };
 
 export function BudgetAllocationPanel({
-  initialData,
+  data,
+  period,
   availablePeriods,
+  isPending,
+  onPeriodChange,
+  themes,
+  onEditTheme,
 }: Props) {
-  const [data, setData] = useState(initialData);
-  const [period, setPeriod] = useState(
-    initialData?.period ?? availablePeriods[0] ?? ""
-  );
-  const [isPending, startTransition] = useTransition();
+  const horizonByThemeId = new Map(themes.map((t) => [t.id, t.horizon]));
 
   const overCount =
     data?.themes.filter(
@@ -191,20 +253,14 @@ export function BudgetAllocationPanel({
       ? Math.round((data.portfolioSpent / data.portfolioTotal) * 100 * 10) / 10
       : 0;
 
-  function loadPeriod(p: string) {
-    setPeriod(p);
-    startTransition(async () => {
-      const result = await getPortfolioAllocation(p);
-      setData(result);
-    });
-  }
-
   if (availablePeriods.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-        <PieChartIcon className="mb-4 h-10 w-10 text-muted-foreground/40" />
-        <p className="font-medium text-sm">Nenhum orçamento cadastrado</p>
-        <p className="mt-1 text-muted-foreground text-xs">
+      <div className="flex flex-col items-center justify-center gap-1 rounded-cosmos-lg border border-hairline border-dashed py-16 text-center">
+        <PieChartIcon className="mb-3 h-10 w-10 text-ink-muted opacity-40" />
+        <p className="font-semibold text-[13px] text-ink">
+          Nenhum orçamento cadastrado
+        </p>
+        <p className="mt-1 text-[12px] text-ink-muted">
           Crie orçamentos na aba principal para ver a alocação
         </p>
       </div>
@@ -216,20 +272,21 @@ export function BudgetAllocationPanel({
       {/* Header + period selector */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-semibold text-base">
+          <h2 className="font-semibold text-[14px] text-ink">
             Alocação por Tema Estratégico
           </h2>
-          <p className="mt-0.5 text-muted-foreground text-xs">
+          <p className="mt-0.5 text-[12px] text-ink-muted">
             Distribuição do orçamento do portfólio entre temas SAFe
           </p>
         </div>
         <div className="flex items-center gap-2">
           {isPending ? (
-            <RefreshCwIcon className="h-3.5 w-3.5 animate-spin text-muted-foreground" />
+            <RefreshCwIcon className="h-3.5 w-3.5 animate-spin text-ink-muted" />
           ) : null}
-          <select
-            className="rounded-md border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-            onChange={(e) => loadPeriod(e.target.value)}
+          <Select
+            aria-label="Período"
+            className="w-auto"
+            onChange={(e) => onPeriodChange(e.target.value)}
             value={period}
           >
             {availablePeriods.map((p) => (
@@ -237,56 +294,62 @@ export function BudgetAllocationPanel({
                 {p}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
       </div>
 
       {/* Portfolio summary row */}
       {data !== null && data !== undefined && (
-        <div className="grid gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
-            <p className="mb-1 text-muted-foreground text-xs uppercase tracking-wide">
-              Total alocado
-            </p>
-            <p className="font-bold text-xl tabular-nums">
-              {BRL(data.portfolioTotal)}
-            </p>
-          </div>
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
-            <p className="mb-1 text-muted-foreground text-xs uppercase tracking-wide">
-              Total gasto
-            </p>
-            <p
-              className={`font-bold text-xl tabular-nums ${spendTextColor(portfolioUsedPct)}`}
-            >
-              {BRL(data.portfolioSpent)}
-              <span className="ml-2 font-normal text-muted-foreground text-sm">
-                ({portfolioUsedPct}%)
-              </span>
-            </p>
-          </div>
-          <div className="rounded-xl border bg-card p-4 shadow-sm">
-            <p className="mb-1 text-muted-foreground text-xs uppercase tracking-wide">
+        <KpiGrid cols={3}>
+          <KpiCard
+            badge="— alocado no período"
+            iconPath={ICON_WALLET}
+            label="Total alocado"
+            tone="blue"
+            value={BRL(data.portfolioTotal)}
+          />
+          <KpiCard
+            badge={`— ${portfolioUsedPct}% do alocado`}
+            iconPath={ICON_ACTIVITY}
+            label="Total gasto"
+            tone={
+              portfolioUsedPct > 100
+                ? "red"
+                : portfolioUsedPct > 80
+                  ? "amber"
+                  : "green"
+            }
+            value={BRL(data.portfolioSpent)}
+          />
+          <div className="rounded-cosmos-md border border-hairline bg-surface-2 p-4">
+            <p className="font-mono text-[9.5px] text-ink-muted uppercase tracking-[0.08em]">
               Guardrails
             </p>
-            <div className="mt-1 flex items-center gap-3">
+            <div className="mt-3 flex items-center gap-3">
               <GuardrailStatus overCount={overCount} warnCount={warnCount} />
             </div>
           </div>
-        </div>
+        </KpiGrid>
       )}
 
       {/* Theme grid */}
       {data !== null && data !== undefined && data.themes.length > 0 ? (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {data.themes.map((theme) => (
-            <ThemeCard key={theme.themeId ?? "unallocated"} theme={theme} />
+            <ThemeCard
+              horizon={
+                theme.themeId ? (horizonByThemeId.get(theme.themeId) ?? null) : null
+              }
+              key={theme.themeId ?? "unallocated"}
+              onEditTheme={onEditTheme}
+              theme={theme}
+            />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-12 text-center">
-          <PieChartIcon className="mb-3 h-8 w-8 text-muted-foreground/40" />
-          <p className="text-muted-foreground text-sm">
+        <div className="flex flex-col items-center justify-center gap-1 rounded-cosmos-lg border border-hairline border-dashed py-12 text-center">
+          <PieChartIcon className="mb-2 h-8 w-8 text-ink-muted opacity-40" />
+          <p className="text-[13px] text-ink-muted">
             Nenhum orçamento para o período {period}
           </p>
         </div>

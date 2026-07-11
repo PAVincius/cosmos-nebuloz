@@ -1,11 +1,6 @@
 import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
-
-const NebulozApp = dynamic(
-  () => import("./nebuloz/app").then((m) => ({ default: m.NebulozApp })),
-  { ssr: false }
-);
+import NebulozClient from "./nebuloz-client";
 
 type HomeProps = {
   params: Promise<{
@@ -24,6 +19,6 @@ export const generateMetadata = async ({
   });
 };
 
-const Home = async () => <NebulozApp />;
+const Home = async () => <NebulozClient />;
 
 export default Home;

@@ -116,5 +116,350 @@
     "id": "rte-1778714170990-6",
     "persona": "rte",
     "timestamp": 1778714170990
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1782704195816-4",
+    "persona": "rte",
+    "timestamp": 1782704195816
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1782704196593-5",
+    "persona": "rte",
+    "timestamp": 1782704196593
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1782704197366-6",
+    "persona": "rte",
+    "timestamp": 1782704197366
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1782704197453-7",
+    "persona": "rte",
+    "timestamp": 1782704197453
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1782704199135-8",
+    "persona": "rte",
+    "timestamp": 1782704199135
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1782704524423-7",
+    "persona": "rte",
+    "timestamp": 1782704524423
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1782704524777-8",
+    "persona": "rte",
+    "timestamp": 1782704524777
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/health",
+    "description": "API health endpoint reachable",
+    "id": "rte-1782704524882-9",
+    "persona": "rte",
+    "timestamp": 1782704524882
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1782704525271-10",
+    "persona": "rte",
+    "timestamp": 1782704525271
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1782704525310-11",
+    "persona": "rte",
+    "timestamp": 1782704525310
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1782704525878-12",
+    "persona": "rte",
+    "timestamp": 1782704525878
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1782704848142-7",
+    "persona": "rte",
+    "timestamp": 1782704848142
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1782704848779-8",
+    "persona": "rte",
+    "timestamp": 1782704848779
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/health",
+    "description": "API health endpoint reachable",
+    "id": "rte-1782704848910-9",
+    "persona": "rte",
+    "timestamp": 1782704848910
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1782704849370-10",
+    "persona": "rte",
+    "timestamp": 1782704849370
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1782704849447-11",
+    "persona": "rte",
+    "timestamp": 1782704849447
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1782704850123-12",
+    "persona": "rte",
+    "timestamp": 1782704850123
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1783304070975-14",
+    "persona": "rte",
+    "timestamp": 1783304070975
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1783304071332-15",
+    "persona": "rte",
+    "timestamp": 1783304071332
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/health",
+    "description": "API health endpoint reachable",
+    "id": "rte-1783304071440-16",
+    "persona": "rte",
+    "timestamp": 1783304071440
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1783304071717-17",
+    "persona": "rte",
+    "timestamp": 1783304071717
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1783304071759-18",
+    "persona": "rte",
+    "timestamp": 1783304071759
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1783304072079-19",
+    "persona": "rte",
+    "timestamp": 1783304072079
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1783308640369-11",
+    "persona": "rte",
+    "timestamp": 1783308640369
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1783308640923-12",
+    "persona": "rte",
+    "timestamp": 1783308640923
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/health",
+    "description": "API health endpoint reachable",
+    "id": "rte-1783308641046-13",
+    "persona": "rte",
+    "timestamp": 1783308641046
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1783308641517-14",
+    "persona": "rte",
+    "timestamp": 1783308641517
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1783308641565-15",
+    "persona": "rte",
+    "timestamp": 1783308641565
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1783308642524-16",
+    "persona": "rte",
+    "timestamp": 1783308642524
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board route found at /arts",
+    "id": "rte-1783318893419-1",
+    "persona": "rte",
+    "timestamp": 1783318893419
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "PI Planning route exists at /arts/[artId]/pi-planning — auth required (rerun with AUTH_TEST=true)",
+    "id": "rte-1783318896286-2",
+    "persona": "rte",
+    "timestamp": 1783318896286
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/health",
+    "description": "API health endpoint reachable",
+    "id": "rte-1783318896699-3",
+    "persona": "rte",
+    "timestamp": 1783318896699
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/arts",
+    "description": "ART Board + PI Planning with Confidence Vote UI implemented — XState machine wired to /arts/[artId]/pi-planning",
+    "id": "rte-1783318898835-4",
+    "persona": "rte",
+    "timestamp": 1783318898835
+  },
+  {
+    "severity": "medium",
+    "category": "route-missing",
+    "route": "/arts",
+    "story": "Como RTE, quero receber alertas de risco sistêmico via IA Copilot.",
+    "description": "AI Risk Copilot banner not implemented (requires pgvector + AI insights)",
+    "expected": "Assistive Banner with risk prediction from PI history (pgvector embeddings)",
+    "actual": "PIKnowledgeVector model exists in schema but no UI/API",
+    "suggestion": "Implement in epic-007 (Solution Train & Advanced Features) — pgvector embeddings per PI",
+    "codeRef": "packages/database/prisma/schema/metrics.prisma",
+    "id": "rte-1783318898977-5",
+    "persona": "rte",
+    "timestamp": 1783318898977
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form rendered correctly",
+    "id": "rte-1783318902358-6",
+    "persona": "rte",
+    "timestamp": 1783318902358
   }
 ]

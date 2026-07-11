@@ -16,8 +16,17 @@ export type UpdateSolutionTrainInput = z.infer<
   typeof UpdateSolutionTrainSchema
 >;
 
+export type ArtWithTeamCount = {
+  id: string;
+  name: string;
+  status: string;
+  _count: { teams: number };
+};
+
 export type SolutionTrainWithCounts = SolutionTrain & {
   _count: { capabilities: number; solutionEpics: number };
+  arts: ArtWithTeamCount[];
+  capabilities: Capability[];
 };
 
 export type SolutionTrainWithRelations = SolutionTrain & {

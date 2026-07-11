@@ -59,7 +59,10 @@ export function CycleTimeChart({ data }: Props) {
       </div>
 
       <ResponsiveContainer height={280} width="100%">
-        <ScatterChart margin={{ left: 0, right: 16, top: 4, bottom: 4 }}>
+        <ScatterChart
+          aria-label="Cycle time por item"
+          margin={{ left: 0, right: 16, top: 4, bottom: 4 }}
+        >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="x"

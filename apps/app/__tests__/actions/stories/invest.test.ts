@@ -12,7 +12,7 @@ vi.mock("@repo/observability/log", () => ({
   log: { error: vi.fn(), info: vi.fn() },
 }));
 
-import { evaluateStoryInvest } from "../../../app/actions/stories/invest";
+import { evaluateStoryInvest } from "../../../app/actions/stories/invest-utils";
 
 const BASE = {
   title: "As a user I want X",

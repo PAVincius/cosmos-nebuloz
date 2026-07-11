@@ -1,4 +1,9 @@
+import { Badge } from "@repo/design-system/components/cosmos/badge";
+import { DollarSign, ShieldAlert } from "lucide-react";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { RelationChip } from "@/app/(authenticated)/components/relation-chip";
 import { listRecentAnomalies } from "@/app/actions/flow-intelligence/list-anomalies";
+import { appDesign } from "@/lib/app-design";
 import { AnomalyList } from "./components/anomaly-list";
 
 export const metadata = {
@@ -10,20 +15,49 @@ export const metadata = {
 export default async function AnomaliesPage() {
   const { anomalies, stats } = await listRecentAnomalies(100);
 
+  const open = anomalies.filter((a) => a.severity === "CRITICAL" || a.severity === "HIGH");
+  const scopesAffected = new Set(anomalies.map((a) => a.run.scopeId)).size;
+
   return (
-    <div className="flex h-full min-w-0 flex-col">
-      <div className="flex items-center justify-between border-b px-6 py-4">
-        <div>
-          <h1 className="font-bold text-2xl tracking-tight">
-            Anomalias de Flow
-          </h1>
-          <p className="mt-0.5 text-muted-foreground text-sm">
-            Anomalias detectadas pelo Copilot AI nas últimas análises de Flow
-            Metrics.
-          </p>
-        </div>
-      </div>
-      <div className="min-w-0 flex-1 overflow-y-auto p-6">
+    <div className={appDesign.shell}>
+      <PageHeader
+        actions={
+          <>
+            <RelationChip
+              eyebrow="Portfolio"
+              href="/portfolio/budgets"
+              icon={<DollarSign />}
+              label="Lean Budget"
+              tone="amber"
+            />
+            <RelationChip
+              eyebrow="Escalar para"
+              href="/portfolio/governance"
+              icon={<ShieldAlert />}
+              label="Governança"
+              tone="purple"
+            />
+          </>
+        }
+        badge={
+          <>
+            <Badge dot tone="red">
+              {open.length} críticas/altas
+            </Badge>
+            <Badge tone="neutral">{scopesAffected} escopos afetados</Badge>
+            <Badge dot tone="green">
+              {stats.total} analisadas
+            </Badge>
+          </>
+        }
+        breadcrumb={[
+          { label: "Portfolio", href: "/portfolio" },
+          { label: "Lean Budget", href: "/portfolio/budgets" },
+        ]}
+        subtitle="Anomalias detectadas pelo Copilot AI nas últimas análises de Flow Metrics."
+        title="Anomalias de Flow"
+      />
+      <div className={appDesign.bodyScroll}>
         <AnomalyList anomalies={anomalies} stats={stats} />
       </div>
     </div>

@@ -201,11 +201,32 @@ export async function updateImprovementActionResult(
 
 // ─── Spec-required aliases ────────────────────────────────────────────────────
 
-export const listAssessments = listAllAssessments;
-export const listImprovementActions = listAllImprovementActions;
-export const createAssessment = createAssessmentAction;
-export const createImprovementAction = createImprovementActionResult;
-export const updateImprovementAction = updateImprovementActionResult;
+export async function listAssessments(): Promise<AssessmentWithActions[]> {
+  return listAllAssessments();
+}
+
+export async function listImprovementActions() {
+  return listAllImprovementActions();
+}
+
+export async function createAssessment(
+  raw: unknown
+): Promise<Result<{ id: string }>> {
+  return createAssessmentAction(raw);
+}
+
+export async function createImprovementAction(
+  raw: unknown
+): Promise<Result<{ id: string }>> {
+  return createImprovementActionResult(raw);
+}
+
+export async function updateImprovementAction(
+  id: string,
+  raw: unknown
+): Promise<Result<void>> {
+  return updateImprovementActionResult(id, raw);
+}
 
 export async function updateActionStatus(
   id: string,

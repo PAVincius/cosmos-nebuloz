@@ -30,6 +30,16 @@ export async function listSolutionTrains(): Promise<
             solutionEpics: true,
           },
         },
+        arts: {
+          select: {
+            id: true,
+            name: true,
+            status: true,
+            _count: { select: { teams: true } },
+          },
+          orderBy: { name: "asc" },
+        },
+        capabilities: { orderBy: { order: "asc" } },
       },
       orderBy: { createdAt: "desc" },
     });

@@ -70,6 +70,14 @@ export async function updateWorkspace(input: {
     },
   });
 
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "TENANT",
+    entityId: ctx.tenantId,
+    diff: input,
+  });
+
   revalidatePath("/settings/workspace");
 }
 

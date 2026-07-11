@@ -1,14 +1,7 @@
 "use client";
 
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
+import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -19,368 +12,175 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { CalendarIcon, FlagIcon, LayersIcon, PlusIcon } from "lucide-react";
+import { type FormEvent, useMemo, useState, useTransition } from "react";
+import { ModalShell } from "@/app/(authenticated)/components/modal-shell";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@repo/design-system/components/ui/tooltip";
-import { CalendarIcon, FilterIcon, PlusIcon, Trash2Icon } from "lucide-react";
-import { useMemo, useState, useTransition } from "react";
+  PageHeader,
+  type StatItem,
+} from "@/app/(authenticated)/components/page-header";
+import { RelationChip } from "@/app/(authenticated)/components/relation-chip";
 import { createRoadmapItem, deleteRoadmapItem } from "@/app/actions/roadmap";
-import type {
-  RoadmapItemData,
-  RoadmapStatus,
-} from "@/app/actions/roadmap/schema";
+import type { RoadmapItemWithRelations } from "@/app/actions/roadmap/schema";
+import { appDesign } from "@/lib/app-design";
+import { RoadmapGantt } from "./roadmap-gantt";
+import { buildFixedQuarterColumns, LEGEND, TONE_RGB } from "./roadmap-gantt-utils";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+type ArtOption = { id: string; name: string };
+type EpicOption = { id: string; title: string; statusId: string };
 
-type ARTOption = { id: string; name: string };
-type EpicOption = { id: string; title: string };
-
-type Props = {
-  initialItems: RoadmapItemData[];
-  arts: ARTOption[];
+type RoadmapTimelineProps = {
+  arts: ArtOption[];
   epics: EpicOption[];
+  initialItems: RoadmapItemWithRelations[];
 };
 
-type CreateForm = {
-  title: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-  color: string;
-  status: RoadmapStatus;
-  artId: string;
-  epicId: string;
-};
-
-const DEFAULT_FORM: CreateForm = {
-  title: "",
-  description: "",
-  startDate: "",
-  endDate: "",
-  color: "#6366f1",
-  status: "PLANNED",
-  artId: "",
-  epicId: "",
-};
-
-// ─── Status Config ────────────────────────────────────────────────────────────
-
-const STATUS_CONFIG: Record<
-  RoadmapStatus,
-  { label: string; className: string }
+const CREATE_STATUS_OPTIONS = ["PLANNED", "IN_PROGRESS", "DONE"] as const;
+const CREATE_STATUS_LABEL: Record<
+  (typeof CREATE_STATUS_OPTIONS)[number],
+  string
 > = {
-  PLANNED: {
-    label: "Planejado",
-    className:
-      "bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300",
-  },
-  IN_PROGRESS: {
-    label: "Em Progresso",
-    className:
-      "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300",
-  },
-  DONE: {
-    label: "Concluído",
-    className:
-      "bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300",
-  },
-  CANCELLED: {
-    label: "Cancelado",
-    className: "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400",
-  },
+  DONE: "Entregue",
+  IN_PROGRESS: "Em execução",
+  PLANNED: "Planejado",
 };
 
-const STATUS_OPTIONS: RoadmapStatus[] = [
-  "PLANNED",
-  "IN_PROGRESS",
-  "DONE",
-  "CANCELLED",
+const FILTER_STATUS_OPTIONS = [
+  { label: "Planejado", value: "PLANNED" },
+  { label: "Em execução", value: "IN_PROGRESS" },
+  { label: "Entregue", value: "DONE" },
+  { label: "Cancelado", value: "CANCELLED" },
 ];
 
-// ─── Month grid helpers ───────────────────────────────────────────────────────
+type CreateFormState = {
+  artId: string;
+  color: string;
+  description: string;
+  endDate: string;
+  epicId: string;
+  milestone: boolean;
+  startDate: string;
+  status: (typeof CREATE_STATUS_OPTIONS)[number];
+  title: string;
+};
 
-type MonthCol = { year: number; month: number; label: string; key: string };
+const EMPTY_FORM: CreateFormState = {
+  artId: "",
+  color: "#6366f1",
+  description: "",
+  endDate: "",
+  epicId: "",
+  milestone: false,
+  startDate: "",
+  status: "PLANNED",
+  title: "",
+};
 
-function buildMonthColumns(items: RoadmapItemData[]): MonthCol[] {
-  if (items.length === 0) {
-    // Default: show next 12 months
-    const now = new Date();
-    return Array.from({ length: 12 }, (_, i) => {
-      const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-      return {
-        year: d.getFullYear(),
-        month: d.getMonth(),
-        label: d.toLocaleString("pt-BR", { month: "short", year: "2-digit" }),
-        key: `${d.getFullYear()}-${d.getMonth()}`,
-      };
-    });
-  }
-
-  const minDate = new Date(
-    Math.min(...items.map((i) => new Date(i.startDate).getTime()))
-  );
-  const maxDate = new Date(
-    Math.max(...items.map((i) => new Date(i.endDate).getTime()))
-  );
-
-  // Extend 1 month on each side
-  const start = new Date(minDate.getFullYear(), minDate.getMonth() - 1, 1);
-  const end = new Date(maxDate.getFullYear(), maxDate.getMonth() + 1, 1);
-
-  const cols: MonthCol[] = [];
-  const cursor = new Date(start);
-  while (cursor <= end) {
-    cols.push({
-      year: cursor.getFullYear(),
-      month: cursor.getMonth(),
-      label: cursor.toLocaleString("pt-BR", {
-        month: "short",
-        year: "2-digit",
-      }),
-      key: `${cursor.getFullYear()}-${cursor.getMonth()}`,
-    });
-    cursor.setMonth(cursor.getMonth() + 1);
-  }
-  return cols;
-}
-
-/**
- * Returns [startColIndex, endColIndex] (both inclusive) for an item in the month grid.
- * Returns null if the item doesn't intersect any column.
- */
-function getItemSpan(
-  item: RoadmapItemData,
-  cols: MonthCol[]
-): { startIdx: number; endIdx: number } | null {
-  const start = new Date(item.startDate);
-  const end = new Date(item.endDate);
-
-  let startIdx = -1;
-  let endIdx = -1;
-
-  for (let i = 0; i < cols.length; i++) {
-    const col = cols[i];
-    const colStart = new Date(col.year, col.month, 1);
-    const colEnd = new Date(col.year, col.month + 1, 0); // last day of month
-
-    const overlaps = start <= colEnd && end >= colStart;
-    if (overlaps) {
-      if (startIdx === -1) {
-        startIdx = i;
-      }
-      endIdx = i;
-    }
-  }
-
-  if (startIdx === -1) {
-    return null;
-  }
-  return { startIdx, endIdx };
-}
-
-// ─── Roadmap Row ──────────────────────────────────────────────────────────────
-
-function RoadmapRow({
-  item,
-  cols,
-  artName,
-  epicTitle,
-  onDelete,
-}: {
-  item: RoadmapItemData;
-  cols: MonthCol[];
-  artName: string | undefined;
-  epicTitle: string | undefined;
-  onDelete: (id: string) => void;
-}) {
-  const span = getItemSpan(item, cols);
-  const status = item.status as RoadmapStatus;
-  const statusCfg = STATUS_CONFIG[status];
-
-  // Build cells
-  const cells: React.ReactNode[] = cols.map((col, colIdx) => {
-    if (!span) {
-      return (
-        <td
-          className="relative h-10 min-w-[80px] border-border/30 border-r"
-          key={col.key}
-        />
-      );
-    }
-
-    if (colIdx === span.startIdx) {
-      const colSpan = span.endIdx - span.startIdx + 1;
-      return (
-        <td className="relative h-10 px-1 py-1" colSpan={colSpan} key={col.key}>
-          <TooltipProvider delayDuration={300}>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div
-                  className="flex h-full w-full min-w-0 cursor-default select-none items-center overflow-hidden rounded px-2"
-                  style={{ backgroundColor: `${item.color}cc` }}
-                >
-                  <span className="truncate font-medium text-white text-xs drop-shadow-sm">
-                    {item.title}
-                  </span>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-xs" side="top">
-                <p className="font-semibold">{item.title}</p>
-                {item.description && (
-                  <p className="mt-0.5 text-xs opacity-80">
-                    {item.description}
-                  </p>
-                )}
-                <div className="mt-1 flex flex-wrap gap-1">
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-xs ${statusCfg.className}`}
-                  >
-                    {statusCfg.label}
-                  </span>
-                  {artName && (
-                    <span className="rounded bg-muted px-1.5 py-0.5 text-xs">
-                      {artName}
-                    </span>
-                  )}
-                </div>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </td>
-      );
-    }
-
-    // Cells consumed by the colSpan — skip
-    if (span && colIdx > span.startIdx && colIdx <= span.endIdx) {
-      return null;
-    }
-
-    return (
-      <td
-        className="relative h-10 min-w-[80px] border-border/30 border-r"
-        key={col.key}
-      />
-    );
-  });
-
-  return (
-    <tr className="group border-border/50 border-b hover:bg-muted/20">
-      {/* Item info column */}
-      <td className="w-52 shrink-0 border-border border-r px-3 py-2">
-        <div className="flex items-start justify-between gap-1">
-          <div className="min-w-0">
-            <p className="truncate font-medium text-xs">{item.title}</p>
-            <div className="mt-0.5 flex flex-wrap items-center gap-1">
-              <span
-                className={`rounded px-1 py-0.5 text-xs ${statusCfg.className}`}
-              >
-                {statusCfg.label}
-              </span>
-              {artName && (
-                <span className="truncate text-muted-foreground text-xs">
-                  {artName}
-                </span>
-              )}
-            </div>
-          </div>
-          <button
-            aria-label="Excluir item"
-            className="shrink-0 text-muted-foreground opacity-0 transition-colors hover:text-destructive group-hover:opacity-100"
-            onClick={() => onDelete(item.id)}
-            type="button"
-          >
-            <Trash2Icon className="h-3 w-3" />
-          </button>
-        </div>
-      </td>
-      {cells}
-    </tr>
-  );
-}
-
-// ─── Main Timeline ────────────────────────────────────────────────────────────
-
-export function RoadmapTimeline({ initialItems, arts, epics }: Props) {
+export function RoadmapTimeline({
+  arts,
+  epics,
+  initialItems,
+}: RoadmapTimelineProps) {
   const [items, setItems] = useState(initialItems);
-  const [filterArtId, setFilterArtId] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState<CreateForm>(DEFAULT_FORM);
+  const [filterArt, setFilterArt] = useState("all");
+  const [filterStatus, setFilterStatus] = useState("all");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [form, setForm] = useState<CreateFormState>(EMPTY_FORM);
+  const [formError, setFormError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
-  const artMap = new Map(arts.map((a) => [a.id, a.name]));
-  const epicMap = new Map(epics.map((e) => [e.id, e.title]));
+  const filteredItems = useMemo(
+    () =>
+      items.filter(
+        (item) =>
+          (filterArt === "all" || item.artId === filterArt) &&
+          (filterStatus === "all" || item.status === filterStatus)
+      ),
+    [items, filterArt, filterStatus]
+  );
 
-  const filteredItems = items
-    .filter((i) => filterArtId === "all" || i.artId === filterArtId)
-    .filter((i) => filterStatus === "all" || i.status === filterStatus);
+  const milestonesCount = useMemo(
+    () => items.filter((item) => item.milestone).length,
+    [items]
+  );
 
-  const cols = useMemo(() => buildMonthColumns(filteredItems), [filteredItems]);
+  const currentPILabel = useMemo(() => buildFixedQuarterColumns(4)[1].label, []);
 
-  function handleDelete(id: string) {
-    setItems((prev) => prev.filter((i) => i.id !== id));
-    startTransition(() => {
-      void deleteRoadmapItem(id);
+  const stats: StatItem[] = [
+    { label: "Itens no horizonte", value: items.length },
+    { icon: FlagIcon, label: "Marcos", value: milestonesCount },
+    { label: "PI atual", value: currentPILabel },
+  ];
+
+  function handleDelete(item: RoadmapItemWithRelations) {
+    const previous = items;
+    setItems((prev) => prev.filter((i) => i.id !== item.id));
+    startTransition(async () => {
+      const result = await deleteRoadmapItem(item.id);
+      if (!result.ok) {
+        setItems(previous);
+      }
     });
   }
 
-  async function handleCreate() {
-    if (!(form.title.trim() && form.startDate && form.endDate)) {
-      return;
-    }
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setFormError(null);
 
-    const startDate = new Date(form.startDate);
-    const endDate = new Date(form.endDate);
-    if (endDate < startDate) {
-      return;
-    }
-
-    const optimistic: RoadmapItemData = {
-      id: `tmp-${Date.now()}`,
-      title: form.title,
-      description: form.description || null,
-      startDate,
-      endDate,
+    const raw = {
+      artId: form.artId || undefined,
       color: form.color,
+      description: form.description || undefined,
+      endDate: form.endDate,
+      epicId: form.epicId || undefined,
+      milestone: form.milestone,
+      startDate: form.startDate,
       status: form.status,
-      artId: form.artId || null,
-      epicId: form.epicId || null,
+      title: form.title,
     };
 
-    setItems((prev) =>
-      [...prev, optimistic].sort(
-        (a, b) =>
-          new Date(a.startDate).getTime() - new Date(b.startDate).getTime()
-      )
-    );
-    setForm(DEFAULT_FORM);
-    setDialogOpen(false);
-
-    startTransition(() => {
-      void createRoadmapItem({
-        title: form.title,
-        description: form.description || undefined,
-        startDate,
-        endDate,
-        color: form.color,
-        status: form.status,
-        artId: form.artId || undefined,
-        epicId: form.epicId || undefined,
-      });
+    startTransition(async () => {
+      const result = await createRoadmapItem(raw);
+      if (!result.ok) {
+        setFormError(result.error);
+        return;
+      }
+      const art = form.artId ? arts.find((a) => a.id === form.artId) : undefined;
+      const epic = form.epicId
+        ? epics.find((e) => e.id === form.epicId)
+        : undefined;
+      const created = result.data;
+      const durationDays = Math.max(
+        0,
+        Math.round(
+          (new Date(created.endDate).getTime() -
+            new Date(created.startDate).getTime()) /
+            86_400_000
+        )
+      );
+      setItems((prev) => [
+        ...prev,
+        {
+          ...created,
+          art: art ? { id: art.id, name: art.name } : null,
+          durationDays,
+          epic: epic
+            ? { id: epic.id, statusId: epic.statusId, title: epic.title }
+            : null,
+        },
+      ]);
+      setForm(EMPTY_FORM);
+      setModalOpen(false);
     });
   }
 
   return (
-    <div className="space-y-4">
-      {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-2">
-          <FilterIcon className="h-4 w-4 text-muted-foreground" />
-          {arts.length > 0 && (
-            <Select onValueChange={setFilterArtId} value={filterArtId}>
+    <>
+      <PageHeader
+        accentRgb="167,139,250"
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <Select onValueChange={setFilterArt} value={filterArt}>
               <SelectTrigger className="h-8 w-40 text-xs">
                 <SelectValue placeholder="Filtrar por ART" />
               </SelectTrigger>
@@ -393,258 +193,300 @@ export function RoadmapTimeline({ initialItems, arts, epics }: Props) {
                 ))}
               </SelectContent>
             </Select>
-          )}
-          <Select onValueChange={setFilterStatus} value={filterStatus}>
-            <SelectTrigger className="h-8 w-40 text-xs">
-              <SelectValue placeholder="Filtrar por status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os Status</SelectItem>
-              {STATUS_OPTIONS.map((s) => (
-                <SelectItem key={s} value={s}>
-                  {STATUS_CONFIG[s].label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            <Select onValueChange={setFilterStatus} value={filterStatus}>
+              <SelectTrigger className="h-8 w-40 text-xs">
+                <SelectValue placeholder="Filtrar por status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os status</SelectItem>
+                {FILTER_STATUS_OPTIONS.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button
+              onClick={() => {
+                setFormError(null);
+                setForm(EMPTY_FORM);
+                setModalOpen(true);
+              }}
+              size="sm"
+            >
+              <PlusIcon className="mr-1.5 h-3.5 w-3.5" /> Novo Item
+            </Button>
+          </div>
+        }
+        breadcrumb={[
+          { href: "/portfolio", label: "Portfolio" },
+          { label: "Roadmap" },
+        ]}
+        stats={stats}
+        subtitle="Entregas por ART ao longo de 4 Program Increments. Cada barra é um épico posicionado pelo PI de início e duração."
+        title="Roadmap Multi-PI"
+      />
+      <div className={appDesign.bodyScroll}>
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <RelationChip
+            eyebrow="Estrutura"
+            href="/arts"
+            icon={<LayersIcon className="h-3.5 w-3.5" />}
+            label="ARTs"
+          />
+          <RelationChip
+            eyebrow="Backlog"
+            href="/epics"
+            icon={<LayersIcon className="h-3.5 w-3.5" />}
+            label="Épicos"
+          />
+          <RelationChip
+            eyebrow="Execução"
+            href="/pi-planning"
+            icon={<LayersIcon className="h-3.5 w-3.5" />}
+            label="PI Planning"
+          />
         </div>
-        <Button
-          className="ml-auto"
-          onClick={() => setDialogOpen(true)}
-          size="sm"
-        >
-          <PlusIcon className="mr-1.5 h-4 w-4" /> Novo Item
-        </Button>
-      </div>
 
-      {/* Status legend */}
-      <div className="flex flex-wrap gap-2">
-        {STATUS_OPTIONS.map((s) => (
-          <Badge
-            className={`text-xs ${STATUS_CONFIG[s].className}`}
-            key={s}
-            variant="outline"
+        <div className="mb-4 flex flex-wrap items-center gap-4">
+          {LEGEND.map((entry) => (
+            <div className="flex items-center gap-1.5" key={entry.label}>
+              <span
+                aria-hidden
+                style={{
+                  background: `rgb(${TONE_RGB[entry.tone]})`,
+                  borderRadius: "50%",
+                  height: 7,
+                  width: 7,
+                }}
+              />
+              <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>
+                {entry.label}
+              </span>
+            </div>
+          ))}
+          <div className="flex items-center gap-1.5">
+            <FlagIcon
+              className="h-3 w-3"
+              style={{ color: "var(--amber-text)" }}
+            />
+            <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>
+              Marco
+            </span>
+          </div>
+        </div>
+
+        {filteredItems.length === 0 ? (
+          <div
+            className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-center"
+            style={{
+              border: "1px dashed var(--hairline-strong)",
+              borderRadius: "var(--cosmos-r-lg)",
+            }}
           >
-            {STATUS_CONFIG[s].label}
-          </Badge>
-        ))}
-      </div>
-
-      {/* Timeline grid */}
-      {filteredItems.length === 0 ? (
-        <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
-          <CalendarIcon className="h-10 w-10 text-muted-foreground/40" />
-          <div>
-            <p className="font-medium text-sm">Nenhum item no roadmap</p>
-            <p className="mt-1 text-muted-foreground text-xs">
-              Adicione épicos, features ou iniciativas ao roadmap para
-              visualizar a linha do tempo.
+            <CalendarIcon
+              className="h-9 w-9"
+              style={{ color: "var(--ink-faint)" }}
+            />
+            <p style={{ color: "var(--ink-muted)", fontSize: 12.5 }}>
+              {items.length === 0
+                ? "Nenhum item de roadmap cadastrado ainda."
+                : "Nenhum item corresponde aos filtros selecionados."}
             </p>
+            {items.length === 0 && (
+              <Button
+                onClick={() => {
+                  setForm(EMPTY_FORM);
+                  setModalOpen(true);
+                }}
+                size="sm"
+                variant="secondary"
+              >
+                <PlusIcon className="mr-1.5 h-3.5 w-3.5" /> Adicionar item
+              </Button>
+            )}
           </div>
-          <Button onClick={() => setDialogOpen(true)} size="sm">
-            <PlusIcon className="mr-1.5 h-4 w-4" /> Adicionar item
-          </Button>
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-border bg-card">
-          <table
-            className="w-full border-collapse"
-            style={{ minWidth: `${52 + cols.length * 80}px` }}
-          >
-            <thead>
-              <tr className="border-border border-b bg-muted/40">
-                {/* Item label column */}
-                <th className="w-52 border-border border-r px-3 py-2 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                  Item
-                </th>
-                {cols.map((col) => {
-                  const isCurrentMonth =
-                    col.year === new Date().getFullYear() &&
-                    col.month === new Date().getMonth();
-                  return (
-                    <th
-                      className={[
-                        "min-w-[80px] border-border/30 border-r px-1 py-2 text-center font-medium text-xs uppercase tracking-wider",
-                        isCurrentMonth
-                          ? "bg-primary/5 text-primary"
-                          : "text-muted-foreground",
-                      ].join(" ")}
-                      key={col.key}
-                    >
-                      {col.label}
-                    </th>
-                  );
-                })}
-              </tr>
-            </thead>
-            <tbody>
-              {filteredItems.map((item) => (
-                <RoadmapRow
-                  artName={item.artId ? artMap.get(item.artId) : undefined}
-                  cols={cols}
-                  epicTitle={item.epicId ? epicMap.get(item.epicId) : undefined}
-                  item={item}
-                  key={item.id}
-                  onDelete={handleDelete}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        ) : (
+          <RoadmapGantt arts={arts} items={filteredItems} onDelete={handleDelete} />
+        )}
+      </div>
 
-      {/* Create Dialog */}
-      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Novo Item no Roadmap</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-2">
-            <div className="grid gap-1">
-              <Label>Título</Label>
-              <Input
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                placeholder="Ex: Migração de plataforma"
-                value={form.title}
-              />
-            </div>
-            <div className="grid gap-1">
-              <Label>Descrição (opcional)</Label>
-              <Textarea
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                placeholder="Detalhes do item..."
-                rows={2}
-                value={form.description}
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <Label>Data de Início</Label>
-                <Input
-                  onChange={(e) =>
-                    setForm({ ...form, startDate: e.target.value })
-                  }
-                  type="date"
-                  value={form.startDate}
-                />
-              </div>
-              <div className="grid gap-1">
-                <Label>Data de Fim</Label>
-                <Input
-                  min={form.startDate}
-                  onChange={(e) =>
-                    setForm({ ...form, endDate: e.target.value })
-                  }
-                  type="date"
-                  value={form.endDate}
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="grid gap-1">
-                <Label>Status</Label>
-                <Select
-                  onValueChange={(v) =>
-                    setForm({ ...form, status: v as RoadmapStatus })
-                  }
-                  value={form.status}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUS_OPTIONS.map((s) => (
-                      <SelectItem key={s} value={s}>
-                        {STATUS_CONFIG[s].label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-1">
-                <Label>Cor</Label>
-                <div className="flex items-center gap-2">
-                  <input
-                    className="h-9 w-14 cursor-pointer rounded border border-border p-0.5"
-                    onChange={(e) =>
-                      setForm({ ...form, color: e.target.value })
-                    }
-                    type="color"
-                    value={form.color}
-                  />
-                  <span className="font-mono text-muted-foreground text-xs">
-                    {form.color}
-                  </span>
-                </div>
-              </div>
-            </div>
-            {arts.length > 0 && (
-              <div className="grid gap-1">
-                <Label>ART (opcional)</Label>
-                <Select
-                  onValueChange={(v) =>
-                    setForm({ ...form, artId: v === "none" ? "" : v })
-                  }
-                  value={form.artId || "none"}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Nenhuma" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Nenhuma</SelectItem>
-                    {arts.map((art) => (
-                      <SelectItem key={art.id} value={art.id}>
-                        {art.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-            {epics.length > 0 && (
-              <div className="grid gap-1">
-                <Label>Épico (opcional)</Label>
-                <Select
-                  onValueChange={(v) =>
-                    setForm({ ...form, epicId: v === "none" ? "" : v })
-                  }
-                  value={form.epicId || "none"}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Nenhum" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Nenhum</SelectItem>
-                    {epics.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>
-                        {e.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-          <DialogFooter>
-            <Button onClick={() => setDialogOpen(false)} variant="outline">
+      <ModalShell
+        eyebrow="Posiciona uma entrega por ART e Program Increment"
+        footer={
+          <>
+            <Button
+              onClick={() => setModalOpen(false)}
+              type="button"
+              variant="ghost"
+            >
               Cancelar
             </Button>
-            <Button
-              disabled={
-                isPending ||
-                !form.title.trim() ||
-                !form.startDate ||
-                !form.endDate
-              }
-              onClick={handleCreate}
-            >
-              Adicionar ao Roadmap
+            <Button disabled={isPending} form="roadmap-create-form" type="submit">
+              {isPending ? "Salvando…" : "Criar item"}
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
+          </>
+        }
+        onClose={() => setModalOpen(false)}
+        open={modalOpen}
+        title="Novo item de roadmap"
+      >
+        <form
+          className="space-y-4"
+          id="roadmap-create-form"
+          onSubmit={handleSubmit}
+        >
+          {formError && (
+            <p style={{ color: "var(--red-text)", fontSize: 12.5 }}>
+              {formError}
+            </p>
+          )}
+          <div className="space-y-1.5">
+            <Label htmlFor="rm-title">Título</Label>
+            <Input
+              id="rm-title"
+              onChange={(e) =>
+                setForm((f) => ({ ...f, title: e.target.value }))
+              }
+              required
+              value={form.title}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="rm-description">Descrição</Label>
+            <Textarea
+              id="rm-description"
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
+              value={form.description}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-start">Início</Label>
+              <Input
+                id="rm-start"
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, startDate: e.target.value }))
+                }
+                required
+                type="date"
+                value={form.startDate}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-end">Fim</Label>
+              <Input
+                id="rm-end"
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, endDate: e.target.value }))
+                }
+                required
+                type="date"
+                value={form.endDate}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-status">Status</Label>
+              <Select
+                onValueChange={(value) =>
+                  setForm((f) => ({
+                    ...f,
+                    status: value as CreateFormState["status"],
+                  }))
+                }
+                value={form.status}
+              >
+                <SelectTrigger id="rm-status">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CREATE_STATUS_OPTIONS.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {CREATE_STATUS_LABEL[status]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-color">Cor</Label>
+              <Input
+                className="h-9 w-full p-1"
+                id="rm-color"
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, color: e.target.value }))
+                }
+                type="color"
+                value={form.color}
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-art">ART</Label>
+              <Select
+                onValueChange={(value) =>
+                  setForm((f) => ({
+                    ...f,
+                    artId: value === "none" ? "" : value,
+                  }))
+                }
+                value={form.artId || "none"}
+              >
+                <SelectTrigger id="rm-art">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem ART</SelectItem>
+                  {arts.map((art) => (
+                    <SelectItem key={art.id} value={art.id}>
+                      {art.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="rm-epic">Épico</Label>
+              <Select
+                onValueChange={(value) =>
+                  setForm((f) => ({
+                    ...f,
+                    epicId: value === "none" ? "" : value,
+                  }))
+                }
+                value={form.epicId || "none"}
+              >
+                <SelectTrigger id="rm-epic">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem épico</SelectItem>
+                  {epics.map((epic) => (
+                    <SelectItem key={epic.id} value={epic.id}>
+                      {epic.title}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Checkbox
+              checked={form.milestone}
+              id="rm-milestone"
+              onCheckedChange={(checked) =>
+                setForm((f) => ({ ...f, milestone: checked === true }))
+              }
+            />
+            <Label htmlFor="rm-milestone">Marcar como marco (milestone)</Label>
+          </div>
+        </form>
+      </ModalShell>
+    </>
   );
 }

@@ -1,13 +1,6 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -17,18 +10,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-} from "@repo/design-system/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import {
-  LayoutListIcon,
-  NetworkIcon,
-  PlusIcon,
-  TargetIcon,
-} from "lucide-react";
+import { PlusIcon, TargetIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import {
   createOKR,
@@ -39,26 +23,26 @@ import {
   updateKeyResult,
   updateOKRStatus,
 } from "@/app/actions/okrs";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
+import { ModalShell } from "@/app/(authenticated)/components/modal-shell";
 import { OKRCardV2 } from "./okr-card-v2";
 import { OKRCheckInModal } from "./okr-checkin-modal";
 import { OKRDetailPanel } from "./okr-detail-panel";
-import { OKRTreeView } from "./okr-tree-view";
+import { ICON_ALERT, ICON_CHECK, ICON_GAUGE, ICON_TARGET } from "./okr-constants";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
+// ─── Types ──────────────────────────────────────────────────────
 
 type PIOption = { id: string; name: string };
-type View = "list" | "tree";
 
 type Props = {
   initialOKRs: OKRWithContext[];
   piPlans: PIOption[];
 };
 
-// ─── Main Dashboard ───────────────────────────────────────────────────────────
+// ─── Main Dashboard ─────────────────────────────────────────────
 
 export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
   const [okrs, setOkrs] = useState<OKRWithContext[]>(initialOKRs);
-  const [view, setView] = useState<View>("list");
   const [selectedPi, setSelectedPi] = useState<string>("all");
   const [dialogOpen, setDialogOpen] = useState(false);
   const [detailOKR, setDetailOKR] = useState<OKRWithContext | null>(null);
@@ -73,7 +57,18 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
   const filteredOKRs =
     selectedPi === "all" ? okrs : okrs.filter((o) => o.piPlanId === selectedPi);
 
-  // ─── Optimistic update helpers ─────────────────────────────────────────────
+  // ─── KPI grid (mirrors cosmos.html's flattened-KR stats — screen-okrs.jsx) ───
+
+  const allKRs = okrs.flatMap((o) => o.keyResults);
+  const avgProgress =
+    allKRs.length > 0
+      ? Math.round(allKRs.reduce((s, k) => s + k.progress, 0) / allKRs.length)
+      : 0;
+  const onTrackKRs = allKRs.filter((k) => k.progress >= 70).length;
+  const atRiskKRs = allKRs.filter((k) => k.progress < 40).length;
+  const withOwner = okrs.filter((o) => o.ownerId).length;
+
+  // ─── Optimistic update helpers ──────────────────────────────────
 
   function handleDelete(id: string) {
     setOkrs((prev) => prev.filter((o) => o.id !== id));
@@ -215,7 +210,7 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
     });
   }
 
-  // ─── Common props for card/tree ────────────────────────────────────────────
+  // ─── Common props for card ──────────────────────────────────────
 
   const cardProps = {
     onDelete: handleDelete,
@@ -229,45 +224,52 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
 
   return (
     <div className="space-y-5">
-      {/* ── Toolbar row ──────────────────────────────────────────────────────── */}
-      <div className="flex flex-wrap items-center gap-3">
-        {/* View toggle */}
-        <div className="flex items-center gap-0.5 rounded-md border border-border/80 p-0.5">
-          <button
-            className={`flex items-center gap-1.5 rounded px-3 py-1.5 font-medium text-xs transition-colors ${
-              view === "list"
-                ? "bg-foreground text-background"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-            onClick={() => setView("list")}
-            type="button"
-          >
-            <LayoutListIcon className="h-3.5 w-3.5" />
-            Lista
-          </button>
-          <button
-            className={`flex items-center gap-1.5 rounded px-3 py-1.5 font-medium text-xs transition-colors ${
-              view === "tree"
-                ? "bg-foreground text-background"
-                : "text-muted-foreground hover:bg-muted hover:text-foreground"
-            }`}
-            onClick={() => setView("tree")}
-            type="button"
-          >
-            <NetworkIcon className="h-3.5 w-3.5" />
-            Árvore
-          </button>
-        </div>
+      {/* ── KPI grid — mirrors screen-okrs.jsx's 4-card grid ──────────── */}
+      <KpiGrid>
+        <KpiCard
+          badge="vs. check-in anterior"
+          iconPath={ICON_GAUGE}
+          label="Progresso médio dos OKRs"
+          tone="accent"
+          unit="%"
+          value={avgProgress}
+        />
+        <KpiCard
+          badge={`de ${allKRs.length} no total`}
+          iconPath={ICON_CHECK}
+          label="Key Results on track"
+          tone="green"
+          value={onTrackKRs}
+        />
+        <KpiCard
+          badge="< 40% do alvo"
+          iconPath={ICON_ALERT}
+          label="Key Results em risco"
+          tone="red"
+          value={atRiskKRs}
+        />
+        <KpiCard
+          badge={
+            okrs.length > 0
+              ? `${Math.round((withOwner / okrs.length) * 100)}% atribuídos`
+              : "—"
+          }
+          iconPath={ICON_TARGET}
+          label="Objetivos com dono"
+          tone="purple"
+          unit={`/${okrs.length}`}
+          value={withOwner}
+        />
+      </KpiGrid>
 
-        {/* PI Plan filter */}
+      {/* ── Toolbar row ──────────────────────────────────────────────── */}
+      <div className="flex flex-wrap items-center gap-3">
         {piPlans.length > 0 && (
           <Tabs onValueChange={setSelectedPi} value={selectedPi}>
-            <TabsList className="h-8">
-              <TabsTrigger className="h-7 text-xs" value="all">
-                Todos os PIs
-              </TabsTrigger>
+            <TabsList>
+              <TabsTrigger value="all">Todos os PIs</TabsTrigger>
               {piPlans.map((pi) => (
-                <TabsTrigger className="h-7 text-xs" key={pi.id} value={pi.id}>
+                <TabsTrigger key={pi.id} value={pi.id}>
                   {pi.name}
                 </TabsTrigger>
               ))}
@@ -278,37 +280,35 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
         <div className="flex-1" />
 
         <Button onClick={() => setDialogOpen(true)} size="sm">
-          <PlusIcon className="mr-1.5 h-4 w-4" />
+          <PlusIcon className="h-4 w-4" />
           Novo OKR
         </Button>
       </div>
 
-      {/* ── Content ──────────────────────────────────────────────────────────── */}
+      {/* ── Content ──────────────────────────────────────────────────── */}
       {filteredOKRs.length === 0 ? (
-        <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-12 text-center">
-          <TargetIcon className="h-10 w-10 text-muted-foreground/30" />
+        <div className="flex min-h-[320px] flex-col items-center justify-center gap-4 rounded-[var(--r-lg)] border border-hairline border-dashed p-12 text-center">
+          <TargetIcon className="h-10 w-10 text-[var(--ink-faint)]" />
           <div>
             <p className="font-medium text-sm">Nenhum OKR encontrado</p>
-            <p className="mt-1 text-muted-foreground text-xs">
+            <p className="mt-1 text-[var(--ink-muted)] text-xs">
               Defina objetivos e key results para medir o progresso do portfolio
               SAFe.
             </p>
           </div>
           <Button onClick={() => setDialogOpen(true)} size="sm">
-            <PlusIcon className="mr-1.5 h-4 w-4" /> Criar primeiro OKR
+            <PlusIcon className="h-4 w-4" /> Criar primeiro OKR
           </Button>
         </div>
-      ) : view === "list" ? (
-        <div className="flex flex-col gap-3">
+      ) : (
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {filteredOKRs.map((okr) => (
             <OKRCardV2 key={okr.id} okr={okr} {...cardProps} />
           ))}
         </div>
-      ) : (
-        <OKRTreeView okrs={filteredOKRs} {...cardProps} />
       )}
 
-      {/* ── Detail Panel ─────────────────────────────────────────────────────── */}
+      {/* ── Detail Panel ─────────────────────────────────────────────── */}
       <OKRDetailPanel
         okr={detailOKR}
         onCheckIn={setCheckInOKR}
@@ -317,7 +317,7 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
         open={detailOKR !== null}
       />
 
-      {/* ── Check-in Modal ───────────────────────────────────────────────────── */}
+      {/* ── Check-in Modal ───────────────────────────────────────────── */}
       {checkInOKR && (
         <OKRCheckInModal
           okr={checkInOKR}
@@ -327,70 +327,67 @@ export function OKRsDashboard({ initialOKRs, piPlans }: Props) {
         />
       )}
 
-      {/* ── Create Dialog ────────────────────────────────────────────────────── */}
-      <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>Novo OKR</DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-2">
-            <div className="grid gap-1.5">
-              <Label>Objetivo *</Label>
-              <Input
-                onChange={(e) => setForm({ ...form, title: e.target.value })}
-                onKeyDown={(e) => e.key === "Enter" && handleCreate()}
-                placeholder="Ex: Aumentar satisfação do cliente"
-                value={form.title}
-              />
-            </div>
-            <div className="grid gap-1.5">
-              <Label>Descrição (opcional)</Label>
-              <Textarea
-                onChange={(e) =>
-                  setForm({ ...form, description: e.target.value })
-                }
-                placeholder="Contexto e detalhes do objetivo..."
-                rows={3}
-                value={form.description}
-              />
-            </div>
-            {piPlans.length > 0 && (
-              <div className="grid gap-1.5">
-                <Label>PI Plan (opcional)</Label>
-                <Select
-                  onValueChange={(v) =>
-                    setForm({ ...form, piPlanId: v === "none" ? "" : v })
-                  }
-                  value={form.piPlanId || "none"}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Nenhum" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">Nenhum</SelectItem>
-                    {piPlans.map((pi) => (
-                      <SelectItem key={pi.id} value={pi.id}>
-                        {pi.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-          </div>
-          <DialogFooter>
+      {/* ── Create Modal ─────────────────────────────────────────────── */}
+      <ModalShell
+        eyebrow="Defina um objetivo mensurável para o portfólio"
+        footer={
+          <>
             <Button onClick={() => setDialogOpen(false)} variant="outline">
               Cancelar
             </Button>
-            <Button
-              disabled={isPending || !form.title.trim()}
-              onClick={handleCreate}
-            >
+            <Button disabled={!form.title.trim()} onClick={handleCreate}>
               Criar OKR
             </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+          </>
+        }
+        onClose={() => setDialogOpen(false)}
+        open={dialogOpen}
+        title="Novo OKR"
+      >
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="okr-title">Título</Label>
+            <Input
+              id="okr-title"
+              onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
+              placeholder="Ex: Reduzir lead time do portfólio em 30%"
+              value={form.title}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="okr-description">Descrição (opcional)</Label>
+            <Textarea
+              id="okr-description"
+              onChange={(e) =>
+                setForm((f) => ({ ...f, description: e.target.value }))
+              }
+              placeholder="Contexto adicional sobre o objetivo"
+              rows={3}
+              value={form.description}
+            />
+          </div>
+          {piPlans.length > 0 && (
+            <div className="space-y-1.5">
+              <Label htmlFor="okr-pi-plan">PI Plan (opcional)</Label>
+              <Select
+                onValueChange={(v) => setForm((f) => ({ ...f, piPlanId: v }))}
+                value={form.piPlanId}
+              >
+                <SelectTrigger id="okr-pi-plan">
+                  <SelectValue placeholder="Selecione um PI" />
+                </SelectTrigger>
+                <SelectContent>
+                  {piPlans.map((pi) => (
+                    <SelectItem key={pi.id} value={pi.id}>
+                      {pi.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+      </ModalShell>
     </div>
   );
 }

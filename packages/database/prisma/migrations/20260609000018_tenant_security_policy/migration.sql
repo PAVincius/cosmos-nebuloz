@@ -20,4 +20,4 @@ CREATE INDEX "tenant_security_policies_tenantId_idx"
 
 ALTER TABLE "tenant_security_policies"
   ADD CONSTRAINT "tenant_security_policies_tenantId_fkey"
-  FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;

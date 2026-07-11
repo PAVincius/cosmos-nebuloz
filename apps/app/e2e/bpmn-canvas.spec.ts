@@ -75,14 +75,14 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
 
     // Aguarda o componente carregar (next/dynamic tem delay)
     await expect(
-      page.locator("h2:has-text('Modelador BPMN Corporativo')")
+      page.locator("h2:has-text('Modelador BPMN')")
     ).toBeVisible({ timeout: 15_000 });
   });
 
   test("Exportar SVG button is present", async ({ page }) => {
     await page.goto("/workflows/team-demo/bpmn");
 
-    await expect(page.locator("button:has-text('Exportar SVG')")).toBeVisible({
+    await expect(page.locator("button:has-text('SVG')")).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -90,7 +90,7 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
   test("Salvar Fluxo button is present", async ({ page }) => {
     await page.goto("/workflows/team-demo/bpmn");
 
-    await expect(page.locator("button:has-text('Salvar Fluxo')")).toBeVisible({
+    await expect(page.locator("button:has-text('Salvar')")).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -108,7 +108,7 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
     await page.goto("/workflows/team-demo/bpmn");
 
     await expect(
-      page.locator("p:has-text('Equipe ID: team-demo')")
+      page.locator("p:has-text('Equipe: team-demo')")
     ).toBeVisible({ timeout: 15_000 });
   });
 });

@@ -29,7 +29,7 @@ CREATE INDEX "linear_sync_events_tenantId_entityType_entityId_idx"
 
 ALTER TABLE "linear_sync_events"
     ADD CONSTRAINT "linear_sync_events_tenantId_fkey"
-    FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- WebhookDlq: dead-letter queue for webhooks received while integration is PAUSED
 CREATE TABLE "webhook_dlq" (
@@ -55,7 +55,7 @@ CREATE INDEX "webhook_dlq_tenantId_integrationId_idx"
 
 ALTER TABLE "webhook_dlq"
     ADD CONSTRAINT "webhook_dlq_tenantId_fkey"
-    FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- Integration.status: add PAUSED to allowed comment (no DDL change needed — stored as text)
-COMMENT ON COLUMN "integrations"."status" IS 'ACTIVE | PAUSED | INACTIVE | ERROR';
+COMMENT ON COLUMN "Integration"."status" IS 'ACTIVE | PAUSED | INACTIVE | ERROR';

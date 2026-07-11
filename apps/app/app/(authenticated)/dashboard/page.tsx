@@ -65,7 +65,18 @@ export default async function DashboardPage() {
       const result = await getLpmHomeData();
       const data = result.ok
         ? result.data
-        : { leanBudgets: [], notifications: [], arts: [], pendingEpics: [] };
+        : {
+            arts: [],
+            teamCount: 0,
+            activeEpicsCount: 0,
+            epicsInProgress: [],
+            currentPiName: null,
+            predictabilityPct: null,
+            sprintVelocities: [],
+            throughputDeltaPct: null,
+            themeAllocation: [],
+            cloudCostMtd: 0,
+          };
       homeContent = <LpmHome {...data} activeView={config.activeView} />;
       break;
     }
@@ -75,6 +86,14 @@ export default async function DashboardPage() {
       homeContent = <GlobalHome {...data} />;
       break;
     }
+  }
+
+  // LpmHome renders its own cosmos.html-parity PageHeader (title, meta
+  // badges, CTAs) — the generic banner below would duplicate it, so it's
+  // skipped only for this persona. Other personas keep the shared banner
+  // unchanged (out of this task's scope).
+  if (config.persona === "lpm") {
+    return <div>{homeContent}</div>;
   }
 
   return (
@@ -89,11 +108,12 @@ export default async function DashboardPage() {
       >
         <div>
           <h1
+            className="font-display"
             style={{
               fontSize: 20,
-              fontWeight: 600,
+              fontWeight: 700,
               letterSpacing: "-0.4px",
-              color: "#f7f8f8",
+              color: "var(--ink)",
               margin: 0,
             }}
           >
@@ -102,7 +122,7 @@ export default async function DashboardPage() {
           <p
             style={{
               fontSize: 13,
-              color: "#8a8f98",
+              color: "var(--ink-muted)",
               margin: "4px 0 0",
             }}
           >
@@ -113,7 +133,7 @@ export default async function DashboardPage() {
           href="/profile"
           style={{
             fontSize: 12,
-            color: "#5e6ad2",
+            color: "var(--accent-c)",
             textDecoration: "none",
           }}
         >

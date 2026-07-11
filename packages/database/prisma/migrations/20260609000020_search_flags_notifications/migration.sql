@@ -10,14 +10,12 @@ UPDATE "Epic" SET "searchVector" = to_tsvector('english',
   coalesce(title, '') || ' ' || coalesce("descriptionMd", '') || ' ' || coalesce(hypothesis, '')
 );
 
-UPDATE "Feature" SET "searchVector" = to_tsvector('english',
-  coalesce(title, '') || ' ' || coalesce("description", '')
-);
+UPDATE "Feature" SET "searchVector" = to_tsvector('english', coalesce(title, ''));
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "Epic_searchVector_gin_idx"
+CREATE INDEX IF NOT EXISTS "Epic_searchVector_gin_idx"
   ON "Epic" USING gin("searchVector");
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "Feature_searchVector_gin_idx"
+CREATE INDEX IF NOT EXISTS "Feature_searchVector_gin_idx"
   ON "Feature" USING gin("searchVector");
 
 -- Auto-update triggers
@@ -40,10 +38,7 @@ FOR EACH ROW EXECUTE FUNCTION update_epic_search_vector();
 CREATE OR REPLACE FUNCTION update_feature_search_vector()
 RETURNS TRIGGER AS $$
 BEGIN
-  NEW."searchVector" = to_tsvector('english',
-    coalesce(NEW.title, '') || ' ' ||
-    coalesce(NEW."description", '')
-  );
+  NEW."searchVector" = to_tsvector('english', coalesce(NEW.title, ''));
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -78,7 +73,7 @@ CREATE INDEX "NotificationPreference_tenantId_userId_idx"
 
 ALTER TABLE "NotificationPreference"
   ADD CONSTRAINT "NotificationPreference_tenantId_fkey"
-  FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ─── 3. FeatureFlag + FeatureFlagOverride tables ──────────────────────────────
 
@@ -120,7 +115,7 @@ CREATE INDEX "FeatureFlagOverride_expiresAt_idx"
 
 ALTER TABLE "FeatureFlagOverride"
   ADD CONSTRAINT "FeatureFlagOverride_tenantId_fkey"
-  FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+  FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE "FeatureFlagOverride"
   ADD CONSTRAINT "FeatureFlagOverride_flagKey_fkey"

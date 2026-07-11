@@ -1,19 +1,45 @@
 import { requireTenantSession } from "@repo/auth/server";
-import { Badge } from "@repo/design-system/components/ui/badge";
+import { Badge } from "@repo/design-system/components/cosmos/badge";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
-import { AlertTriangleIcon, CalendarIcon, UserIcon } from "lucide-react";
+  AlertTriangleIcon,
+  CalendarIcon,
+  ChevronLeftIcon,
+  PlusIcon,
+  UserIcon,
+} from "lucide-react";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { getActiveSprint } from "@/app/actions/sprints";
 import { getStandupHistory, listTodayStandup } from "@/app/actions/standup";
 import { appDesign } from "@/lib/app-design";
 import { getTeamById } from "../actions";
+import {
+  type StandupAvatarTone,
+  StandupEntryCard,
+} from "./components/standup-entry-card";
 import { StandupForm } from "./components/standup-form";
+
+const ICON_USERS =
+  "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75";
+const ICON_ACTIVITY = "M22 12h-4l-3 9L9 3l-3 9H2";
+const ICON_KANBAN = "M4 4h16v16H4zM9 4v16M15 4v16";
+const ICON_ALERT =
+  "M21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3ZM12 9v4M12 17h.01";
+
+const TEAM_TONES: StandupAvatarTone[] = ["blue", "green", "purple", "amber"];
+
+/** Deterministic tone per team so every member avatar in a team shares an accent (mirrors prototype's per-team `t.tone`). */
+function teamTone(teamId: string): StandupAvatarTone {
+  let hash = 0;
+  for (const char of teamId) {
+    hash = (hash * 31 + char.charCodeAt(0)) % 997;
+  }
+  return TEAM_TONES[hash % TEAM_TONES.length];
+}
 
 type StandupPageProps = {
   params: Promise<{ teamId: string }>;
@@ -30,10 +56,12 @@ export async function generateMetadata({ params }: StandupPageProps) {
 export default async function StandupPage({ params }: StandupPageProps) {
   const { teamId } = await params;
 
-  const [team, ctx] = await Promise.all([
+  const [team, ctx, activeSprintResult] = await Promise.all([
     getTeamById(teamId),
     requireTenantSession(await headers()),
+    getActiveSprint(teamId),
   ]);
+  const activeSprint = activeSprintResult.ok ? activeSprintResult.data : null;
 
   if (!team) {
     notFound();
@@ -101,27 +129,96 @@ export default async function StandupPage({ params }: StandupPageProps) {
     year: "numeric",
   });
 
+  // Legacy `members` JSON roster — display-only headcount, not used for capacity logic.
+  const memberCount = Array.isArray(team.members)
+    ? team.members.length
+    : entries.length;
+  const blockedCount = entries.filter((e) => !!e.blockers?.trim()).length;
+  const tone = teamTone(teamId);
+
   return (
     <div className={appDesign.shell}>
       <PageHeader
+        accentRgb="91,141,239"
+        actions={
+          <div className="flex items-center gap-2">
+            <Button asChild size="sm" variant="outline">
+              <Link href="/teams">
+                <ChevronLeftIcon className="mr-1.5 h-4 w-4" />
+                Todos os times
+              </Link>
+            </Button>
+            <Button asChild size="sm">
+              <a href="#meu-standup">
+                <PlusIcon className="mr-1.5 h-4 w-4" />
+                Preencher
+              </a>
+            </Button>
+          </div>
+        }
+        badge={
+          blockedCount > 0 ? (
+            <Badge tone="red">
+              {blockedCount} bloqueio{blockedCount > 1 ? "s" : ""}
+            </Badge>
+          ) : (
+            <Badge tone="green">sem bloqueios</Badge>
+          )
+        }
         breadcrumb={[
+          { label: "Times", href: "/teams" },
           { label: team.name, href: `/teams/${teamId}` },
           { label: "Standup" },
         ]}
-        stats={[
-          { label: "Entradas hoje", value: entries.length, icon: UserIcon },
-        ]}
-        subtitle={displayDate}
+        subtitle={
+          activeSprint?.goal
+            ? `Sprint goal: ${activeSprint.goal}`
+            : displayDate
+        }
         title="Daily Standup"
       />
       <div className={appDesign.bodyScroll}>
         <div className="flex flex-col gap-6">
+          <KpiGrid cols={4}>
+            <KpiCard
+              badge="— No time"
+              iconPath={ICON_USERS}
+              label="Membros"
+              tone="blue"
+              value={memberCount}
+            />
+            <KpiCard
+              badge="— Sprint atual"
+              iconPath={ICON_ACTIVITY}
+              label="Velocity"
+              tone="green"
+              unit="SP"
+              value={team.velocity ?? 0}
+            />
+            <KpiCard
+              badge={team.wip > 6 ? "— Acima do limite" : "— Saudável"}
+              iconPath={ICON_KANBAN}
+              label="Flow load (WIP)"
+              tone={team.wip > 6 ? "red" : "accent"}
+              value={team.wip}
+            />
+            <KpiCard
+              badge={blockedCount > 0 ? "— Ativos hoje" : "↗ Nenhum"}
+              iconPath={ICON_ALERT}
+              label="Bloqueios"
+              tone={blockedCount > 0 ? "red" : "green"}
+              value={blockedCount}
+            />
+          </KpiGrid>
+
           {/* My standup form */}
-          <StandupForm
-            existing={existingEntry}
-            teamId={teamId}
-            todayIso={todayIso}
-          />
+          <div id="meu-standup">
+            <StandupForm
+              existing={existingEntry}
+              teamId={teamId}
+              todayIso={todayIso}
+            />
+          </div>
 
           {/* Team entries today */}
           <section>
@@ -130,29 +227,68 @@ export default async function StandupPage({ params }: StandupPageProps) {
               {entries.length === 1 ? "entrada" : "entradas"})
             </h2>
 
-            {entries.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-10 text-center">
-                <UserIcon className="mb-2 h-8 w-8 text-muted-foreground" />
-                <p className="text-muted-foreground text-sm">
-                  Nenhum membro fez standup hoje ainda.
-                </p>
-              </div>
+            {todayResult.ok ? (
+              entries.length === 0 ? (
+                <div className="flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed py-10 text-center">
+                  <UserIcon className="h-8 w-8 text-muted-foreground" />
+                  <p className="text-muted-foreground text-sm">
+                    Nenhum membro fez standup hoje ainda.
+                  </p>
+                  <Button asChild className="mt-1" size="sm" variant="outline">
+                    <a href="#meu-standup">Preencher meu standup</a>
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid gap-3.5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
+                  {!!myEntry && (
+                    <StandupEntryCard
+                      blockers={myEntry.blockers}
+                      isMe
+                      name="Você"
+                      today={myEntry.today}
+                      tone={tone}
+                      yesterday={myEntry.yesterday}
+                    />
+                  )}
+                  {otherEntries.map((entry) => (
+                    <StandupEntryCard
+                      blockers={entry.blockers}
+                      key={entry.id}
+                      name={entry.userId.slice(0, 8)}
+                      today={entry.today}
+                      tone={tone}
+                      yesterday={entry.yesterday}
+                    />
+                  ))}
+                </div>
+              )
             ) : (
-              <div className="flex flex-col gap-3">
-                {!!myEntry && <EntryCard entry={myEntry} isMe label="Você" />}
-                {otherEntries.map((entry) => (
-                  <EntryCard
-                    entry={entry}
-                    key={entry.id}
-                    label={entry.userId.slice(0, 8)}
-                  />
-                ))}
+              <div className="flex items-center gap-2 rounded-xl border border-[rgba(var(--red-rgb),.35)] bg-red-soft px-4 py-3 text-red-text text-sm">
+                <AlertTriangleIcon aria-hidden size={16} />
+                <span>
+                  Falha ao carregar o standup de hoje: {todayResult.error}.{" "}
+                  <a className="underline" href={`/teams/${teamId}/standup`}>
+                    Tentar novamente
+                  </a>
+                </span>
               </div>
             )}
           </section>
 
           {/* History — last 5 days */}
-          {historyDates.length > 0 && (
+          {!historyResult.ok && (
+            <div className="flex items-center gap-2 rounded-xl border border-[rgba(var(--red-rgb),.35)] bg-red-soft px-4 py-3 text-red-text text-sm">
+              <AlertTriangleIcon aria-hidden size={16} />
+              <span>
+                Falha ao carregar o histórico: {historyResult.error}.{" "}
+                <a className="underline" href={`/teams/${teamId}/standup`}>
+                  Tentar novamente
+                </a>
+              </span>
+            </div>
+          )}
+
+          {historyResult.ok && historyDates.length > 0 && (
             <section>
               <h2 className="mb-3 flex items-center gap-2 font-medium text-muted-foreground text-sm uppercase tracking-wide">
                 <CalendarIcon className="h-4 w-4" />
@@ -173,18 +309,21 @@ export default async function StandupPage({ params }: StandupPageProps) {
                       <p className="mb-2 font-medium text-muted-foreground text-xs capitalize">
                         {label}
                       </p>
-                      <div className="flex flex-col gap-2">
+                      <div className="grid gap-2.5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
                         {dayEntries.map((entry) => (
-                          <EntryCard
+                          <StandupEntryCard
+                            blockers={entry.blockers}
                             compact
-                            entry={entry}
                             isMe={entry.userId === ctx.userId}
                             key={entry.id}
-                            label={
+                            name={
                               entry.userId === ctx.userId
                                 ? "Você"
                                 : entry.userId.slice(0, 8)
                             }
+                            today={entry.today}
+                            tone={tone}
+                            yesterday={entry.yesterday}
                           />
                         ))}
                       </div>
@@ -197,85 +336,5 @@ export default async function StandupPage({ params }: StandupPageProps) {
         </div>
       </div>
     </div>
-  );
-}
-
-function EntryCard({
-  entry,
-  label,
-  isMe,
-  compact,
-}: {
-  entry: {
-    yesterday?: string | null;
-    today?: string | null;
-    blockers?: string | null;
-  };
-  label: string;
-  isMe?: boolean;
-  compact?: boolean;
-}) {
-  const hasBlockers = !!(entry.blockers && entry.blockers.trim().length > 0);
-
-  let cardClassName: string | undefined;
-  if (isMe) {
-    cardClassName = "border-primary/30 bg-primary/5";
-  } else if (compact) {
-    cardClassName = "opacity-70";
-  }
-
-  return (
-    <Card className={cardClassName}>
-      <CardHeader className="pb-2">
-        <CardTitle className="flex items-center gap-2 text-sm">
-          <UserIcon className="h-4 w-4 text-muted-foreground" />
-          {label}
-          {!!isMe && (
-            <Badge className="text-xs" variant="outline">
-              você
-            </Badge>
-          )}
-          {hasBlockers ? (
-            <Badge
-              className="flex items-center gap-1 text-xs"
-              variant="destructive"
-            >
-              <AlertTriangleIcon className="h-3 w-3" />
-              Bloqueio
-            </Badge>
-          ) : null}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <div>
-          <p className="mb-1 font-medium text-muted-foreground text-xs">
-            Ontem
-          </p>
-          <p className="whitespace-pre-wrap text-sm">
-            {entry.yesterday?.trim() || (
-              <span className="text-muted-foreground italic">—</span>
-            )}
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 font-medium text-muted-foreground text-xs">Hoje</p>
-          <p className="whitespace-pre-wrap text-sm">
-            {entry.today?.trim() || (
-              <span className="text-muted-foreground italic">—</span>
-            )}
-          </p>
-        </div>
-        <div>
-          <p className="mb-1 font-medium text-muted-foreground text-xs">
-            Bloqueios
-          </p>
-          <p className="whitespace-pre-wrap text-sm">
-            {entry.blockers?.trim() || (
-              <span className="text-muted-foreground italic">Nenhum</span>
-            )}
-          </p>
-        </div>
-      </CardContent>
-    </Card>
   );
 }

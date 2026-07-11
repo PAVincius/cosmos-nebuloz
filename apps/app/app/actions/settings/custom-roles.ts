@@ -6,33 +6,10 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { err, ok, type Result } from "../_base";
-
-const ALLOWED_PERMISSIONS = [
-  "epic:read",
-  "epic:write",
-  "epic:transition",
-  "feature:read",
-  "feature:write",
-  "story:read",
-  "story:write",
-  "sprint:read",
-  "sprint:manage",
-  "standup:write",
-  "art:manage",
-  "pi-plan:read",
-  "pi-plan:manage",
-  "governance:approve",
-  "budget:read",
-  "budget:write",
-  "member:read",
-  "analytics:read",
-  "reporting:export",
-  "impediment:manage",
-  "retro:manage",
-  "wsjf:write",
-] as const;
-
-type AllowedPermission = (typeof ALLOWED_PERMISSIONS)[number];
+import {
+  ALLOWED_PERMISSIONS,
+  type AllowedPermission,
+} from "./permissions";
 
 const CreateRoleSchema = z.object({
   name: z.string().min(1).max(80),
@@ -155,5 +132,3 @@ export async function deleteCustomRole(
     return err(e instanceof Error ? e.message : "Erro ao excluir role");
   }
 }
-
-export { ALLOWED_PERMISSIONS };

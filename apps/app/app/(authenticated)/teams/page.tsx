@@ -1,17 +1,19 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { Button } from "@repo/design-system/components/ui/button";
-import {
-  ChevronRightIcon,
-  TrainFrontIcon,
-  UsersIcon,
-  ZapIcon,
-} from "lucide-react";
+import { UsersIcon } from "lucide-react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { getTenantMembersForSearch } from "@/app/actions/teams/members";
 import { appDesign } from "@/lib/app-design";
 import type { TeamMember } from "./actions";
 import { getArts, getTeams } from "./actions";
+import { TeamCard } from "./components/team-card";
+
+// screens-team.js:4 (screenTeams kpiRow) — users / users / activity / alert
+const ICON_USERS =
+  "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75";
+const ICON_ACTIVITY = "M22 12h-4l-3 9L9 3l-3 9H2";
+const ICON_ALERT =
+  "M21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3ZM12 9v4M12 17h.01";
 
 const CreateTeamWizard = dynamic(
   () =>
@@ -27,8 +29,8 @@ const CreateTeamWizard = dynamic(
 );
 
 export const metadata = {
-  title: "Equipes Ágeis | COSMOS",
-  description: "Gerencie os times ágeis e associe-os aos Agile Release Trains",
+  title: "Times | COSMOS",
+  description: "Times ágeis do workspace, agrupados por ART",
 };
 
 export default async function TeamsPage() {
@@ -38,88 +40,89 @@ export default async function TeamsPage() {
     getTenantMembersForSearch(),
   ]);
 
-  return (
-    <div className={`${appDesign.shell} h-full`}>
-      <header className={appDesign.pageHeader}>
-        <div className="flex items-start justify-between">
-          <div>
-            <h1 className={appDesign.pageTitle}>Equipes Ágeis</h1>
-            <p className={appDesign.pageSubtitle}>
-              Times SAFe com configuração de membros, skills e capacidade
-            </p>
-            <div aria-hidden className={appDesign.accentBar} />
-          </div>
-          <CreateTeamWizard arts={arts} initialMembers={initialMembers} />
-        </div>
-      </header>
+  const teamsWithVelocity = teams.filter((t) => t.velocity != null);
+  const totalMembers = teams.reduce(
+    (s, t) => s + ((t.members as TeamMember[] | null)?.length ?? 0),
+    0
+  );
+  const avgVelocity =
+    teamsWithVelocity.length > 0
+      ? Math.round(
+          teamsWithVelocity.reduce((s, t) => s + (t.velocity ?? 0), 0) /
+            teamsWithVelocity.length
+        )
+      : 0;
+  const blockedTeams = teams.reduce((s, t) => s + t.openImpediments, 0);
 
-      <div className={`${appDesign.bodyScroll} flex flex-col gap-6`}>
-        {teams.length === 0 ? (
-          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-            <UsersIcon className="mb-4 h-10 w-10 text-muted-foreground" />
-            <p className="mb-3 text-muted-foreground text-sm">
-              Nenhuma equipe cadastrada neste Tenant.
-            </p>
-            <CreateTeamWizard arts={arts} initialMembers={initialMembers} />
-          </div>
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {teams.map((team) => {
-              const members = (team.members ?? []) as TeamMember[];
-              const totalHours = members.reduce(
-                (s, m) => s + m.hoursPerWeek,
-                0
-              );
-              return (
-                <div
-                  className="hover:-translate-y-0.5 flex flex-col rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)] transition-all duration-200 hover:border-primary/40 hover:shadow-[var(--hover-shadow)]"
-                  key={team.id}
-                >
-                  <div className="flex items-start justify-between p-5 pb-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                      <UsersIcon className="h-4 w-4" />
-                    </div>
-                    <Badge variant={team.art ? "default" : "secondary"}>
-                      {team.art ? team.art.name : "Independente"}
-                    </Badge>
-                  </div>
-                  <div className="flex-1 px-5 pb-3">
-                    <h3 className="font-semibold text-base leading-snug">
-                      {team.name}
-                    </h3>
-                    <p className="mt-1 text-muted-foreground text-sm">
-                      {members.length > 0
-                        ? `${members.length} membros · ${totalHours}h/sem`
-                        : "Sem membros configurados"}
-                    </p>
-                    <div className="mt-3 flex flex-col gap-1.5">
-                      {team.velocity && (
-                        <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                          <ZapIcon className="h-3 w-3" />
-                          <span>Velocidade: {team.velocity} SP/sprint</span>
-                        </div>
-                      )}
-                      {team.art && (
-                        <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-                          <TrainFrontIcon className="h-3 w-3" />
-                          <span>Cadência: {team.art.cadence}w por PI</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="border-hairline border-t px-5 py-3">
-                    <Link href={`/teams/${team.id}`}>
-                      <Button className="w-full" size="sm" variant="outline">
-                        Configurar time
-                        <ChevronRightIcon className="ml-auto h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+  return (
+    <div className={appDesign.shell}>
+      <PageHeader
+        actions={
+          <CreateTeamWizard arts={arts} initialMembers={initialMembers} />
+        }
+        stats={[
+          { label: "Squads", value: teams.length, icon: UsersIcon },
+          { label: "ARTs", value: arts.length },
+          { label: "Impedimentos abertos", value: blockedTeams },
+        ]}
+        subtitle="Todos os times do workspace, agrupados por ART. Clique em um time para abrir o standup diário."
+        title="Times"
+      />
+      <div className={appDesign.bodyScroll}>
+        <div className="flex flex-col gap-6">
+          <KpiGrid>
+            <KpiCard
+              badge={`— ${arts.length} ART${arts.length === 1 ? "" : "s"}`}
+              iconPath={ICON_USERS}
+              label="Times ativos"
+              tone="blue"
+              value={teams.length}
+            />
+            <KpiCard
+              badge="— No workspace"
+              iconPath={ICON_USERS}
+              label="Membros"
+              tone="accent"
+              value={totalMembers}
+            />
+            <KpiCard
+              badge="— Por sprint"
+              iconPath={ICON_ACTIVITY}
+              label="Velocity média"
+              tone="green"
+              unit="SP"
+              value={avgVelocity}
+            />
+            <KpiCard
+              badge={blockedTeams > 0 ? "— Requer atenção" : "↗ Nenhum ativo"}
+              iconPath={ICON_ALERT}
+              label="Impedimentos"
+              tone={blockedTeams > 0 ? "red" : "green"}
+              value={blockedTeams}
+            />
+          </KpiGrid>
+
+          {teams.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-cosmos-lg border border-hairline border-dashed py-16 text-center">
+              <UsersIcon className="mb-4 h-10 w-10 text-ink-muted" />
+              <p className="mb-3 text-ink-muted text-sm">
+                Nenhum time cadastrado neste tenant.
+              </p>
+              <CreateTeamWizard arts={arts} initialMembers={initialMembers} />
+            </div>
+          ) : (
+            <div
+              className="grid gap-3.5"
+              style={{
+                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              }}
+            >
+              {teams.map((team, index) => (
+                <TeamCard index={index} key={team.id} team={team} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

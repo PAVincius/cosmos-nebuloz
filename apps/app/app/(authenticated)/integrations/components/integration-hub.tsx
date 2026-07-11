@@ -1,13 +1,8 @@
 "use client";
 
+import { Badge } from "@repo/design-system/components/cosmos/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertCircleIcon,
   CheckCircle2Icon,
@@ -23,52 +18,53 @@ import { deleteIntegration } from "@/app/actions/integrations";
 import type { IntegrationRow } from "@/app/actions/integrations/schema";
 import { ConnectWizard } from "./connect-wizard";
 
+// ─── Motion (DESIGN.md §Motion) ────────────────────────────────────────────
+
+const revealVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: [0.25, 0, 0, 1] },
+  },
+} as const;
+
+const staggerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.08 } },
+} as const;
+
 // ─── Source config ────────────────────────────────────────────────────────────
+// Re-skin of prototype's `.intg-card` (batch3.css) — tone rgb from DESIGN.md palette.
 
 const SOURCE_CONFIG: Record<
   string,
-  { label: string; color: string; logo: string }
+  { label: string; rgb: string; logo: string }
 > = {
-  linear: {
-    label: "Linear",
-    color: "bg-violet-500/10 text-violet-700 border-violet-400/30",
-    logo: "⬡",
-  },
-  github: {
-    label: "GitHub Projects",
-    color: "bg-slate-500/10 text-slate-700 border-slate-400/30",
-    logo: "⚙",
-  },
-  asana: {
-    label: "Asana",
-    color: "bg-pink-500/10 text-pink-700 border-pink-400/30",
-    logo: "◈",
-  },
-  gitlab: {
-    label: "GitLab",
-    color: "bg-orange-500/10 text-orange-700 border-orange-400/30",
-    logo: "◆",
-  },
+  linear: { label: "Linear", rgb: "167,139,250", logo: "⬡" },
+  github: { label: "GitHub Projects", rgb: "91,141,239", logo: "⚙" },
+  asana: { label: "Asana", rgb: "251,113,133", logo: "◈" },
+  gitlab: { label: "GitLab", rgb: "251,191,36", logo: "◆" },
 };
 
 const STATUS_CONFIG = {
-  ACTIVE: { label: "Ativa", icon: CheckCircle2Icon, color: "text-green-600" },
+  ACTIVE: { label: "Ativa", icon: CheckCircle2Icon, tone: "green" as const },
   INACTIVE: {
     label: "Inativa",
     icon: ClockIcon,
-    color: "text-muted-foreground",
+    tone: "neutral" as const,
   },
-  ERROR: { label: "Erro", icon: AlertCircleIcon, color: "text-red-600" },
+  ERROR: { label: "Erro", icon: AlertCircleIcon, tone: "red" as const },
 };
 
-function syncLogColor(status: string): string {
+function syncLogTone(status: string): "green" | "amber" | "red" {
   if (status === "success") {
-    return "text-green-600";
+    return "green";
   }
   if (status === "partial") {
-    return "text-amber-600";
+    return "amber";
   }
-  return "text-red-600";
+  return "red";
 }
 
 function syncLogIcon(status: string): string {
@@ -82,15 +78,19 @@ function syncLogIcon(status: string): string {
 }
 
 function SyncLogBadge({ log }: { log: IntegrationRow["syncLogs"][number] }) {
+  const tone = syncLogTone(log.status);
   return (
-    <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
-      <span className={`font-medium ${syncLogColor(log.status)}`}>
+    <div className="flex items-center gap-1.5 font-mono text-[11px] text-ink-muted">
+      <span
+        className="font-bold"
+        style={{ color: `var(--${tone}-text)` }}
+      >
         {syncLogIcon(log.status)}
       </span>
       <span>
         +{log.itemsCreated} ↻{log.itemsUpdated} ⊘{log.itemsSkipped}
       </span>
-      <span className="text-muted-foreground/60">
+      <span className="text-ink-muted/60">
         {new Date(log.createdAt).toLocaleDateString("pt-BR", {
           day: "2-digit",
           month: "short",
@@ -114,16 +114,22 @@ function IntegrationCard({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [importOpen, setImportOpen] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   const src = SOURCE_CONFIG[integration.source] ?? {
     label: integration.source,
-    color: "",
+    rgb: "154,161,178",
     logo: "◌",
   };
   const sts =
     STATUS_CONFIG[integration.status as keyof typeof STATUS_CONFIG] ??
     STATUS_CONFIG.INACTIVE;
   const StatusIcon = sts.icon;
+
+  const totalItems = integration.syncLogs.reduce(
+    (sum, log) => sum + log.itemsCreated + log.itemsUpdated,
+    0
+  );
 
   function handleDelete() {
     startTransition(async () => {
@@ -133,34 +139,44 @@ function IntegrationCard({
   }
 
   return (
-    <Card className="relative">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-2.5">
-            <span
-              className={`flex h-8 w-8 items-center justify-center rounded-lg border font-bold text-sm ${src.color}`}
-            >
-              {src.logo}
-            </span>
-            <div>
-              <CardTitle className="font-semibold text-sm">
-                {integration.name}
-              </CardTitle>
-              <CardDescription className="text-xs">{src.label}</CardDescription>
-            </div>
+    <motion.div
+      className="flex flex-col gap-3 rounded-2xl border border-hairline bg-surface p-[18px]"
+      variants={revealVariants}
+      whileHover={
+        prefersReducedMotion
+          ? undefined
+          : { y: -3, boxShadow: "0 24px 80px rgba(0,0,0,0.40)" }
+      }
+      transition={{ duration: 0.22, ease: [0.25, 0, 0, 1] }}
+    >
+      {/* ── intg-top ──────────────────────────────────────────────────────── */}
+      <div className="flex items-center gap-3">
+        <span
+          className="grid h-8 w-8 shrink-0 place-items-center rounded-lg border font-bold text-sm"
+          style={{
+            color: `rgb(${src.rgb})`,
+            background: `linear-gradient(180deg, rgba(${src.rgb},.2), rgba(${src.rgb},.08))`,
+            borderColor: `rgba(${src.rgb},.3)`,
+          }}
+        >
+          {src.logo}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="truncate font-bold text-[15px] text-ink">
+            {integration.name}
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <StatusIcon className={`h-3.5 w-3.5 ${sts.color}`} />
-            <span className={`font-medium text-xs ${sts.color}`}>
-              {sts.label}
-            </span>
-          </div>
+          <div className="text-[11px] text-ink-muted">{src.label}</div>
         </div>
-      </CardHeader>
+        <Badge dot tone={sts.tone}>
+          <StatusIcon className="h-3 w-3" />
+          {sts.label}
+        </Badge>
+      </div>
 
-      <CardContent className="space-y-3">
+      {/* ── intg-desc ─────────────────────────────────────────────────────── */}
+      <div className="flex-1 space-y-1.5 text-[12.5px] text-ink-muted leading-[1.5]">
         {integration.lastSyncAt ? (
-          <p className="text-muted-foreground text-xs">
+          <p>
             Último sync:{" "}
             {new Date(integration.lastSyncAt).toLocaleDateString("pt-BR", {
               day: "2-digit",
@@ -169,40 +185,53 @@ function IntegrationCard({
               minute: "2-digit",
             })}
           </p>
-        ) : null}
+        ) : (
+          <p className="text-ink-muted">Ainda sem sincronização.</p>
+        )}
 
-        {integration.syncLogs.length > 0 ? (
-          <div className="space-y-1 border-t pt-2">
-            <p className="mb-1 font-medium text-muted-foreground text-xs">
-              Últimos syncs
-            </p>
+        {integration.syncLogs.length > 0 && (
+          <div className="space-y-1 border-hairline border-t pt-2">
             {integration.syncLogs.slice(0, 3).map((log) => (
               <SyncLogBadge key={log.id} log={log} />
             ))}
           </div>
-        ) : null}
+        )}
+      </div>
 
-        <div className="flex items-center gap-2 pt-1">
-          <Button
-            className="h-7 flex-1 gap-1 text-xs"
-            onClick={() => setImportOpen(true)}
-            size="sm"
-            variant="outline"
-          >
-            <RefreshCwIcon className="h-3 w-3" />
-            Importar
-          </Button>
-          <Button
-            className="h-7 w-7 p-0 text-muted-foreground hover:text-destructive"
-            disabled={isPending}
-            onClick={handleDelete}
-            size="sm"
-            variant="ghost"
-          >
-            <TrashIcon className="h-3.5 w-3.5" />
-          </Button>
-        </div>
-      </CardContent>
+      {/* ── intg-stat ─────────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between border-hairline border-t pt-3 font-mono text-[11px] text-ink-muted">
+        <span>{totalItems ? `${totalItems} itens` : "sem dados"}</span>
+        <span>
+          sync:{" "}
+          {integration.lastSyncAt
+            ? new Date(integration.lastSyncAt).toLocaleDateString("pt-BR", {
+                day: "2-digit",
+                month: "short",
+              })
+            : "nunca"}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Button
+          className="h-8 flex-1 gap-1.5 text-xs"
+          onClick={() => setImportOpen(true)}
+          size="sm"
+          variant="outline"
+        >
+          <RefreshCwIcon className="h-3.5 w-3.5" />
+          Importar
+        </Button>
+        <Button
+          className="h-8 w-8 p-0 text-ink-muted hover:text-red-text"
+          disabled={isPending}
+          onClick={handleDelete}
+          size="sm"
+          variant="ghost"
+        >
+          <TrashIcon className="h-3.5 w-3.5" />
+        </Button>
+      </div>
 
       {importOpen ? (
         <ConnectWizard
@@ -213,11 +242,11 @@ function IntegrationCard({
           onClose={() => setImportOpen(false)}
         />
       ) : null}
-    </Card>
+    </motion.div>
   );
 }
 
-// ─── Main hub ─────────────────────────────────────────────────────────────────
+// ─── Main hub ───────────────────────────────────────────────────────────────
 
 type Props = {
   integrations: IntegrationRow[];
@@ -231,28 +260,37 @@ export function IntegrationHub({ integrations, arts, epics }: Props) {
   return (
     <div className="flex flex-col gap-6">
       {/* ROI value proposition */}
-      <div className="rounded-lg border bg-gradient-to-r from-violet-500/5 to-blue-500/5 p-5">
+      <div className="rounded-2xl border border-hairline bg-surface-2 p-5">
         <div className="flex flex-wrap items-start gap-4">
           <div className="min-w-[240px] flex-1">
-            <p className="font-semibold text-base tracking-tight">
+            <p className="font-semibold text-[15px] text-ink tracking-tight">
               Continue no seu fluxo. Ganhe visibilidade SAFe.
             </p>
-            <p className="mt-1 text-muted-foreground text-sm">
+            <p className="mt-1 text-[13px] text-ink-muted">
               Devs continuam no Linear ou GitHub. RTEs, LPMs e PMs veem Program
               Board, WSJF, Flow Metrics e PI Planning com os dados reais — sem
               pedir que o time troque de ferramenta.
             </p>
-            <div className="mt-3 flex flex-wrap gap-4 text-muted-foreground text-xs">
+            <div className="mt-3 flex flex-wrap gap-4 text-[11px] text-ink-muted">
               <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: "var(--green)" }}
+                />
                 Sem ruptura de stack
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: "var(--blue)" }}
+                />
                 Features importadas aparecem no Program Board + WSJF
               </div>
               <div className="flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ background: "var(--purple)" }}
+                />
                 Link direto para o item original em cada card
               </div>
             </div>
@@ -260,8 +298,14 @@ export function IntegrationHub({ integrations, arts, epics }: Props) {
           <div className="flex shrink-0 flex-wrap items-center gap-2">
             {Object.entries(SOURCE_CONFIG).map(([key, cfg]) => (
               <span
-                className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 font-medium text-xs ${cfg.color} ${key === "asana" || key === "gitlab" ? "opacity-40" : ""}`}
+                className="inline-flex items-center gap-1 rounded-pill border px-2 py-0.5 font-medium text-[11px]"
                 key={key}
+                style={{
+                  color: `rgb(${cfg.rgb})`,
+                  background: `rgba(${cfg.rgb},.1)`,
+                  borderColor: `rgba(${cfg.rgb},.3)`,
+                  opacity: key === "asana" || key === "gitlab" ? 0.4 : 1,
+                }}
               >
                 {cfg.logo} {cfg.label}
                 {(key === "asana" || key === "gitlab") && (
@@ -276,7 +320,7 @@ export function IntegrationHub({ integrations, arts, epics }: Props) {
       {/* Integration grid */}
       <div>
         <div className="mb-4 flex items-center justify-between">
-          <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+          <p className="font-semibold text-[11px] text-ink-muted uppercase tracking-wide">
             Integrações ({integrations.length})
           </p>
           <Button
@@ -290,24 +334,29 @@ export function IntegrationHub({ integrations, arts, epics }: Props) {
         </div>
 
         {integrations.length === 0 ? (
-          <div className="flex flex-col items-center gap-4 rounded-lg border border-dashed py-16 text-center">
-            <PlugZapIcon className="h-10 w-10 text-muted-foreground/40" />
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-hairline border-dashed py-16 text-center">
+            <PlugZapIcon className="h-8 w-8 text-ink-muted" />
             <div>
-              <p className="font-semibold text-sm">
+              <p className="font-semibold text-[13px] text-ink">
                 Nenhuma integração configurada
               </p>
-              <p className="mt-1 text-muted-foreground text-xs">
+              <p className="mt-1 text-[12px] text-ink-muted">
                 Conecte Linear ou GitHub Projects para importar features e
                 stories diretamente para o COSMOS.
               </p>
             </div>
             <Button className="gap-1.5" onClick={() => setWizardOpen(true)}>
-              <PlusIcon className="h-4 w-4" />
+              <PlusIcon className="h-3.5 w-3.5" />
               Conectar agora
             </Button>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <motion.div
+            animate="visible"
+            className="grid gap-3.5 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]"
+            initial="hidden"
+            variants={staggerVariants}
+          >
             {integrations.map((i) => (
               <IntegrationCard
                 arts={arts}
@@ -316,32 +365,32 @@ export function IntegrationHub({ integrations, arts, epics }: Props) {
                 key={i.id}
               />
             ))}
-          </div>
+          </motion.div>
         )}
       </div>
 
       {/* How it works */}
-      <div className="space-y-3 rounded-lg border p-4">
-        <p className="font-semibold text-muted-foreground text-xs uppercase tracking-wide">
+      <div className="space-y-3 rounded-2xl border border-hairline p-4">
+        <p className="font-semibold text-[11px] text-ink-muted uppercase tracking-wide">
           Como funciona
         </p>
-        <div className="grid gap-3 text-muted-foreground text-xs sm:grid-cols-3">
+        <div className="grid gap-3 text-[12px] text-ink-muted sm:grid-cols-3">
           <div className="space-y-1">
-            <p className="font-medium text-foreground">1. Conecte</p>
+            <p className="font-medium text-ink">1. Conecte</p>
             <p>
               Informe seu API key ou token. O COSMOS testa a conexão e lista
               seus projetos/times.
             </p>
           </div>
           <div className="space-y-1">
-            <p className="font-medium text-foreground">2. Importe</p>
+            <p className="font-medium text-ink">2. Importe</p>
             <p>
               Selecione o projeto e mapeie para Epic, PI ou Time no COSMOS.
               Issues viram Features ou Stories.
             </p>
           </div>
           <div className="space-y-1">
-            <p className="font-medium text-foreground">3. Use no COSMOS</p>
+            <p className="font-medium text-ink">3. Use no COSMOS</p>
             <p>
               Features importadas aparecem no Program Board, WSJF, Flow Metrics
               e PI Planning — com link para o item original.

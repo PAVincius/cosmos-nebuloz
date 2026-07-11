@@ -1,7 +1,6 @@
 // Story-031: Liveblocks storageUpdated webhook → dual-write to Prisma
 
-// @ts-expect-error — @liveblocks/node may not be installed in all environments
-import { WebhookHandler } from "@liveblocks/node";
+import { Liveblocks, WebhookHandler } from "@liveblocks/node";
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { type NextRequest, NextResponse } from "next/server";
@@ -20,7 +19,8 @@ type StorageData = {
 // AC-005: dual-write within 500ms — parse room context from storageUpdated event
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const secret = process.env.LIVEBLOCKS_WEBHOOK_SECRET;
-  if (!secret) {
+  const apiSecret = process.env.LIVEBLOCKS_SECRET;
+  if (!(secret && apiSecret)) {
     return NextResponse.json(
       { error: "Webhook secret not configured" },
       { status: 500 }
@@ -29,6 +29,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
   const rawBody = await req.text();
   const webhookHandler = new WebhookHandler(secret);
+  const liveblocks = new Liveblocks({ secret: apiSecret });
 
   let event: ReturnType<typeof webhookHandler.verifyRequest>;
   try {
@@ -54,7 +55,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   const tenantId = parts[0] ?? "";
   const piPlanId = parts[2] ?? "";
 
-  const storageData = event.data.storage as StorageData | undefined;
+  const storageData = (await liveblocks.getStorageDocument(
+    roomId,
+    "json"
+  )) as StorageData;
   const assignments = storageData?.assignments ?? {};
 
   await syncAssignments(tenantId, piPlanId, assignments);

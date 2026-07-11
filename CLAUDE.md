@@ -64,4 +64,44 @@ pnpm typecheck    # tsc --noEmit (run inside apps/app)
 
 ---
 
-**Last Updated**: 2026-05-31
+## Knowledge Graph (graphify-out/)
+
+Graph built from full repo: 10.189 nodes · 15.392 edges · 871 communities.
+
+**When to query instead of reading files:**
+
+| Task | Use graph |
+|------|-----------|
+| "What calls X?" | Yes — BFS from node X |
+| "Impact of changing Y?" | Yes — neighbors + community |
+| "Where is Z defined?" | No — `grep`/LSP faster |
+| "How does feature F flow end-to-end?" | Yes — DFS path query |
+| Understanding unfamiliar module | Yes — community context |
+| Adding a new file | No — just read adjacent files |
+
+**God nodes** (highest connectivity — touch with care):
+- `auth_server_requiretenantsession` — multi-tenant session guard
+- `actions_base_safeaction` — server action HOF wrapper
+- `actions_base_result` — Result<T> pattern, used everywhere
+- `lib_app_design_appdesign` — central design system
+- `auth_server_requirerole` — RBAC enforcement
+
+**Query commands:**
+```bash
+# Broad context (BFS)
+/graphify query "how does PI Planning confidence vote work?"
+
+# Trace specific path (DFS)
+/graphify path "actions_base_safeaction" "audit_index_logaudit"
+
+# Explain a node
+/graphify explain "auth_server_requiretenantsession"
+```
+
+**Rebuild** (after significant new files): `/graphify --update`
+
+**Visualize**: open `graphify-out/graph.html` in browser.
+
+---
+
+**Last Updated**: 2026-06-20

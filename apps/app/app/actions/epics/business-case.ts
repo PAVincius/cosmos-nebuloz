@@ -44,7 +44,7 @@ const LbcItemSchema = z.object({
   text: z.string().max(500),
 });
 
-export const AutosaveBusinessCaseSchema = z.object({
+const AutosaveBusinessCaseSchema = z.object({
   epicId: z.string().min(1),
   hypothesis: z.string().max(5000).optional().nullable(),
   businessOutcomes: z.array(LbcItemSchema).max(5).optional(),

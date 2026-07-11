@@ -19,6 +19,16 @@ const kpiBg: Record<Tone, string> = {
     "radial-gradient(130% 130% at 0% 0%, rgba(167,139,250,.13), transparent 46%), linear-gradient(180deg,#110d1f,#0c0915)",
 };
 
+// Light mode: visible tone tint — enough personality, not overpowering
+const kpiBgLight: Record<Tone, string> = {
+  accent: "radial-gradient(140% 130% at 0% 0%, rgba(94,106,210,.13), transparent 52%)",
+  green:  "radial-gradient(140% 130% at 0% 0%, rgba(22,163,74,.12), transparent 52%)",
+  red:    "radial-gradient(140% 150% at 100% 25%, rgba(225,29,72,.16), transparent 56%)",
+  amber:  "radial-gradient(140% 130% at 0% 0%, rgba(217,119,6,.14), transparent 52%)",
+  blue:   "radial-gradient(140% 130% at 0% 0%, rgba(37,99,235,.13), transparent 52%)",
+  purple: "radial-gradient(140% 130% at 0% 0%, rgba(124,58,237,.13), transparent 52%)",
+};
+
 const inkCorner: Record<Tone, string> = {
   accent: "#080c18",
   green: "#0a111c",
@@ -59,9 +69,8 @@ export function KpiCard({
   const deltaPos = delta?.positive ?? false;
 
   const shadowRest = "var(--card-shadow)";
-  // rgba(var(--tone-rgb),...) works: --tone-rgb resolves to "r,g,b" string
   const shadowHover =
-    "0 0 0 2px rgba(var(--tone-rgb),.55), 0 8px 40px -4px rgba(var(--tone-rgb),.65), 0 20px 60px -12px rgba(var(--tone-rgb),.35), 0 1px 0 rgba(255,255,255,.10) inset";
+    "0 0 0 2px rgba(var(--tone-rgb),.45), 0 8px 40px -4px rgba(var(--tone-rgb),.50), 0 20px 60px -12px rgba(var(--tone-rgb),.25)";
 
   return (
     // biome-ignore lint/a11y/noStaticElementInteractions: hover for visual animation only
@@ -90,14 +99,21 @@ export function KpiCard({
         } as React.CSSProperties
       }
     >
-      {/* ── z-0  Background gradient (dark only) */}
+      {/* ── z-0  Background gradient — light mode */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-0 rounded-[18px] dark:hidden"
+        style={{ background: kpiBgLight[tone] }}
+      />
+
+      {/* ── z-0  Background gradient — dark mode */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 z-0 hidden rounded-[18px] dark:block"
         style={{ background: kpiBg[tone] }}
       />
 
-      {/* ── z-1  Dot texture */}
+      {/* ── z-1  Dot texture — dark mode only (too heavy for light) */}
       <span
         aria-hidden
         className="pointer-events-none absolute inset-0 z-[1] hidden opacity-0 transition-opacity duration-[550ms] ease-out group-hover:opacity-[.45] dark:block"
@@ -113,17 +129,33 @@ export function KpiCard({
         }}
       />
 
-      {/* ── z-1  Watermark bleed: engrave + glow */}
+      {/* ── z-1  Watermark bleed */}
       {!!iconPath && (
         <div
           aria-hidden
-          className="pointer-events-none absolute right-[-36px] bottom-[-48px] z-[1] hidden dark:block"
+          className="pointer-events-none absolute right-[-36px] bottom-[-48px] z-[1]"
           style={{ width: 208, height: 208 }}
         >
+          {/* Light mode: subtle tone-colored outline */}
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative watermark, aria-hidden on parent */}
           <svg
             aria-hidden
-            className="absolute inset-0 opacity-100 transition-opacity duration-[500ms] ease-out group-hover:opacity-20"
+            className="absolute inset-0 opacity-[0.12] transition-opacity duration-[500ms] ease-out group-hover:opacity-[0.22] dark:hidden"
+            fill="none"
+            height="208"
+            strokeWidth="1.15"
+            style={{ stroke: "var(--tone)" }}
+            viewBox="0 0 24 24"
+            width="208"
+          >
+            <path d={iconPath} strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+
+          {/* Dark mode: engrave */}
+          {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative watermark, aria-hidden on parent */}
+          <svg
+            aria-hidden
+            className="absolute inset-0 opacity-100 transition-opacity duration-[500ms] ease-out group-hover:opacity-20 hidden dark:block"
             fill="none"
             height="208"
             strokeWidth="1.15"
@@ -137,10 +169,11 @@ export function KpiCard({
           >
             <path d={iconPath} strokeLinecap="round" strokeLinejoin="round" />
           </svg>
+          {/* Dark mode: glow on hover */}
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative watermark, aria-hidden on parent */}
           <svg
             aria-hidden
-            className="absolute inset-0 opacity-0 transition-opacity duration-[500ms] ease-out group-hover:opacity-90"
+            className="absolute inset-0 opacity-0 transition-opacity duration-[500ms] ease-out group-hover:opacity-90 hidden dark:block"
             fill="none"
             height="208"
             strokeWidth="1.15"
@@ -175,16 +208,9 @@ export function KpiCard({
         )}
       </div>
 
-      {/* Value */}
+      {/* Value — unified span, tone-text covers both modes via CSS variables */}
       <div className="relative z-[3] mt-auto mb-3 whitespace-nowrap pt-3.5 font-bold font-mono text-[38px] leading-none tracking-[-0.02em]">
-        <span
-          aria-hidden="true"
-          className="dark:hidden"
-          style={{ color: `var(--${tone}-text)` }}
-        >
-          {value}
-        </span>
-        <span className="hidden dark:inline" style={{ color: "var(--tone)" }}>
+        <span style={{ color: "var(--tone-text)" }}>
           {value}
         </span>
         {!!unit && (

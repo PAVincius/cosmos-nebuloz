@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import { computeCompetencyMaturity } from "./maturity-utils";
 
 const COMPETENCY_SHORT: Record<string, string> = {
   TEAM_TECHNICAL_AGILITY: "TTA",
@@ -30,7 +31,7 @@ const COMPETENCY_LABEL: Record<string, string> = {
   LEAN_AGILE_LEADERSHIP: "Lean-Agile Leadership",
 };
 
-type Assessment = { competency: string; score: number };
+type Assessment = { competency: string; score: number; assessedAt: Date };
 
 type Props = {
   assessments: Assessment[];
@@ -38,24 +39,6 @@ type Props = {
 };
 
 export function CompetencyRadar({ assessments, height = 280 }: Props) {
-  const grouped: Record<string, number[]> = {};
-  for (const a of assessments) {
-    grouped[a.competency] ??= [];
-    grouped[a.competency].push(a.score);
-  }
-
-  const data = Object.keys(COMPETENCY_SHORT).map((key) => {
-    const scores = grouped[key] ?? [];
-    const avg =
-      scores.length > 0 ? scores.reduce((s, v) => s + v, 0) / scores.length : 0;
-    return {
-      competency: COMPETENCY_SHORT[key],
-      fullLabel: COMPETENCY_LABEL[key],
-      avg: Math.round(avg * 10) / 10,
-      fullMark: 5,
-    };
-  });
-
   if (assessments.length === 0) {
     return (
       <p className="py-8 text-center text-muted-foreground text-sm">
@@ -64,12 +47,23 @@ export function CompetencyRadar({ assessments, height = 280 }: Props) {
     );
   }
 
+  const keys = Object.keys(COMPETENCY_SHORT);
+  const maturity = computeCompetencyMaturity(keys, assessments);
+
+  const data = keys.map((key) => {
+    const m = maturity[key];
+    return {
+      competency: COMPETENCY_SHORT[key],
+      fullLabel: COMPETENCY_LABEL[key],
+      avg: m.score,
+      prevAvg: m.prevScore,
+      fullMark: 5,
+    };
+  });
+
   return (
     <ResponsiveContainer height={height} width="100%">
-      <RadarChart
-        data={data}
-        margin={{ top: 8, right: 32, bottom: 8, left: 32 }}
-      >
+      <RadarChart data={data} margin={{ top: 8, right: 32, bottom: 8, left: 32 }}>
         <PolarGrid stroke="hsl(var(--border))" />
         <PolarAngleAxis
           dataKey="competency"
@@ -82,11 +76,19 @@ export function CompetencyRadar({ assessments, height = 280 }: Props) {
           tickCount={6}
         />
         <Radar
+          dataKey="prevAvg"
+          fill="none"
+          name="Ciclo anterior"
+          stroke="hsl(var(--muted-foreground))"
+          strokeDasharray="4 3"
+          strokeWidth={1.5}
+        />
+        <Radar
           dataKey="avg"
           dot={{ r: 3, fill: "#5e6ad2" }}
           fill="#5e6ad2"
           fillOpacity={0.35}
-          name="Score médio"
+          name="Ciclo atual"
           stroke="#5e6ad2"
         />
         <Tooltip
@@ -97,9 +99,9 @@ export function CompetencyRadar({ assessments, height = 280 }: Props) {
           }}
           formatter={(
             value: number,
-            _: string,
+            name: string,
             props: { payload?: { fullLabel: string } }
-          ) => [`${value}/5`, props.payload?.fullLabel ?? ""]}
+          ) => [`${value}/5`, `${props.payload?.fullLabel ?? ""} — ${name}`]}
         />
       </RadarChart>
     </ResponsiveContainer>

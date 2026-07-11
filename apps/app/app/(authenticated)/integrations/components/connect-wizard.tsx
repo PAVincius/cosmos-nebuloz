@@ -1,13 +1,6 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -24,7 +17,9 @@ import {
   XCircleIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 import { useState, useTransition } from "react";
+import { ModalShell } from "@/app/(authenticated)/components/modal-shell";
 import {
   createIntegration,
   discoverIntegrationProjects,
@@ -33,13 +28,21 @@ import {
 } from "@/app/actions/integrations";
 import type { IntegrationRow } from "@/app/actions/integrations/schema";
 
+const STEP_EYEBROW: Record<WizardStep, string> = {
+  source: "Escolha a ferramenta",
+  credentials: "Autenticação",
+  test: "Testando conexão",
+  project: "Selecionar projeto",
+  mapping: "Mapear destino no COSMOS",
+  done: "Concluído",
+};
+
 type WizardStep =
   | "source"
   | "credentials"
   | "test"
   | "project"
   | "mapping"
-  | "import"
   | "done";
 
 type Props = {
@@ -182,13 +185,88 @@ export function ConnectWizard({
   const title =
     mode === "connect" ? "Conectar ferramenta" : "Importar snapshot";
 
-  return (
-    <Dialog onOpenChange={(o) => !o && onClose()} open>
-      <DialogContent className="max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-        </DialogHeader>
+  let footer: ReactNode = null;
+  if (step === "source") {
+    footer = (
+      <>
+        <Button onClick={onClose} variant="outline">
+          Cancelar
+        </Button>
+        <Button disabled={!name.trim()} onClick={() => setStep("credentials")}>
+          Próximo
+        </Button>
+      </>
+    );
+  } else if (step === "credentials") {
+    footer = (
+      <>
+        <Button onClick={() => setStep("source")} variant="outline">
+          Voltar
+        </Button>
+        <Button
+          disabled={
+            isPending || (source === "linear" ? !apiKey : !(token && org))
+          }
+          onClick={handleTest}
+        >
+          {isPending ? (
+            <>
+              <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
+              Testando...
+            </>
+          ) : (
+            "Testar conexão"
+          )}
+        </Button>
+      </>
+    );
+  } else if (step === "project") {
+    footer = (
+      <>
+        <Button onClick={() => setStep("credentials")} variant="outline">
+          Voltar
+        </Button>
+        <Button disabled={isPending || !projectId} onClick={handleSaveAndMap}>
+          {isPending ? (
+            <LoaderIcon className="h-3.5 w-3.5 animate-spin" />
+          ) : (
+            "Próximo"
+          )}
+        </Button>
+      </>
+    );
+  } else if (step === "mapping") {
+    footer = (
+      <>
+        <Button onClick={() => setStep("project")} variant="outline">
+          Voltar
+        </Button>
+        <Button disabled={isPending} onClick={handleImport}>
+          {isPending ? (
+            <>
+              <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
+              Importando...
+            </>
+          ) : (
+            "Importar agora"
+          )}
+        </Button>
+      </>
+    );
+  } else if (step === "done") {
+    footer = <Button onClick={onClose}>Fechar</Button>;
+  }
 
+  return (
+    <ModalShell
+      eyebrow={STEP_EYEBROW[step]}
+      footer={footer}
+      onClose={onClose}
+      open
+      size="md"
+      title={title}
+    >
+      <div className="space-y-4">
         {/* Error message */}
         {errorMsg && (
           <div className="flex items-center gap-2 rounded-lg border border-red-300/50 bg-red-500/5 px-4 py-2.5 text-red-700 text-sm">
@@ -199,7 +277,7 @@ export function ConnectWizard({
 
         {/* ── SOURCE ── */}
         {step === "source" && (
-          <div className="space-y-4">
+          <>
             <div className="space-y-1.5">
               <Label>Ferramenta *</Label>
               <Select onValueChange={setSource} value={source}>
@@ -226,96 +304,61 @@ export function ConnectWizard({
                 value={name}
               />
             </div>
-            <DialogFooter>
-              <Button onClick={onClose} variant="outline">
-                Cancelar
-              </Button>
-              <Button
-                disabled={!name.trim()}
-                onClick={() => setStep("credentials")}
-              >
-                Próximo
-              </Button>
-            </DialogFooter>
-          </div>
+          </>
         )}
 
         {/* ── CREDENTIALS ── */}
-        {step === "credentials" && (
-          <div className="space-y-4">
-            {source === "linear" ? (
+        {step === "credentials" &&
+          (source === "linear" ? (
+            <div className="space-y-1.5">
+              <Label>API Key do Linear *</Label>
+              <Input
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="lin_api_..."
+                type="password"
+                value={apiKey}
+              />
+              <p className="text-muted-foreground text-xs">
+                Obtenha em{" "}
+                <a
+                  className="inline-flex items-center gap-0.5 underline"
+                  href="https://linear.app/settings/api"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                >
+                  linear.app/settings/api{" "}
+                  <ExternalLinkIcon className="h-2.5 w-2.5" />
+                </a>
+              </p>
+            </div>
+          ) : (
+            <>
               <div className="space-y-1.5">
-                <Label>API Key do Linear *</Label>
+                <Label>Personal Access Token (GitHub) *</Label>
                 <Input
-                  onChange={(e) => setApiKey(e.target.value)}
-                  placeholder="lin_api_..."
+                  onChange={(e) => setToken(e.target.value)}
+                  placeholder="ghp_..."
                   type="password"
-                  value={apiKey}
+                  value={token}
                 />
                 <p className="text-muted-foreground text-xs">
-                  Obtenha em{" "}
-                  <a
-                    className="inline-flex items-center gap-0.5 underline"
-                    href="https://linear.app/settings/api"
-                    rel="noopener noreferrer"
-                    target="_blank"
-                  >
-                    linear.app/settings/api{" "}
-                    <ExternalLinkIcon className="h-2.5 w-2.5" />
-                  </a>
+                  Precisa de escopo: <code>read:org, project, repo</code>
                 </p>
               </div>
-            ) : (
-              <>
-                <div className="space-y-1.5">
-                  <Label>Personal Access Token (GitHub) *</Label>
-                  <Input
-                    onChange={(e) => setToken(e.target.value)}
-                    placeholder="ghp_..."
-                    type="password"
-                    value={token}
-                  />
-                  <p className="text-muted-foreground text-xs">
-                    Precisa de escopo: <code>read:org, project, repo</code>
-                  </p>
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Organização ou usuário GitHub *</Label>
-                  <Input
-                    onChange={(e) => setOrg(e.target.value)}
-                    placeholder="minha-org"
-                    value={org}
-                  />
-                </div>
-              </>
-            )}
-
-            <DialogFooter>
-              <Button onClick={() => setStep("source")} variant="outline">
-                Voltar
-              </Button>
-              <Button
-                disabled={
-                  isPending || (source === "linear" ? !apiKey : !(token && org))
-                }
-                onClick={handleTest}
-              >
-                {isPending ? (
-                  <>
-                    <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
-                    Testando...
-                  </>
-                ) : (
-                  "Testar conexão"
-                )}
-              </Button>
-            </DialogFooter>
-          </div>
-        )}
+              <div className="space-y-1.5">
+                <Label>Organização ou usuário GitHub *</Label>
+                <Input
+                  onChange={(e) => setOrg(e.target.value)}
+                  placeholder="minha-org"
+                  value={org}
+                />
+              </div>
+            </>
+          ))}
 
         {/* ── TEST result + PROJECT selection ── */}
         {step === "project" && (
-          <div className="space-y-4">
+          <>
             {testStatus === "ok" && (
               <div className="flex items-center gap-2 rounded-lg border border-green-300/50 bg-green-500/5 px-3 py-2 text-green-700 text-sm">
                 <CheckCircle2Icon className="h-4 w-4 shrink-0" />
@@ -348,28 +391,12 @@ export function ConnectWizard({
                 </Select>
               )}
             </div>
-
-            <DialogFooter>
-              <Button onClick={() => setStep("credentials")} variant="outline">
-                Voltar
-              </Button>
-              <Button
-                disabled={isPending || !projectId}
-                onClick={handleSaveAndMap}
-              >
-                {isPending ? (
-                  <LoaderIcon className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  "Próximo"
-                )}
-              </Button>
-            </DialogFooter>
-          </div>
+          </>
         )}
 
         {/* ── MAPPING ── */}
         {step === "mapping" && (
-          <div className="space-y-4">
+          <>
             <p className="text-muted-foreground text-xs">
               Configure para onde os itens importados serão mapeados no COSMOS.
             </p>
@@ -418,53 +445,32 @@ export function ConnectWizard({
               Items importados mantêm link para o item original (externalUrl)
               para navegação rápida.
             </div>
-
-            <DialogFooter>
-              <Button onClick={() => setStep("project")} variant="outline">
-                Voltar
-              </Button>
-              <Button disabled={isPending} onClick={handleImport}>
-                {isPending ? (
-                  <>
-                    <LoaderIcon className="mr-1.5 h-3.5 w-3.5 animate-spin" />{" "}
-                    Importando...
-                  </>
-                ) : (
-                  "Importar agora"
-                )}
-              </Button>
-            </DialogFooter>
-          </div>
+          </>
         )}
 
         {/* ── DONE ── */}
         {step === "done" && importResult && (
-          <div className="space-y-4">
-            <div className="flex flex-col items-center gap-3 py-6 text-center">
-              <CheckCircle2Icon className="h-10 w-10 text-green-500" />
-              <p className="font-semibold text-base">Import concluído!</p>
-              <div className="flex items-center gap-4 text-sm">
-                <span className="font-semibold text-green-700">
-                  +{importResult.created} criados
-                </span>
-                <span className="font-semibold text-blue-700">
-                  ↻{importResult.updated} atualizados
-                </span>
-                <span className="text-muted-foreground">
-                  ⊘{importResult.skipped} ignorados
-                </span>
-              </div>
-              <p className="mt-1 text-muted-foreground text-xs">
-                Os itens aparecem no WSJF, Program Board e Feature Boards com
-                link para a ferramenta original.
-              </p>
+          <div className="flex flex-col items-center gap-3 py-6 text-center">
+            <CheckCircle2Icon className="h-10 w-10 text-green-500" />
+            <p className="font-semibold text-base">Import concluído!</p>
+            <div className="flex items-center gap-4 text-sm">
+              <span className="font-semibold text-green-700">
+                +{importResult.created} criados
+              </span>
+              <span className="font-semibold text-blue-700">
+                ↻{importResult.updated} atualizados
+              </span>
+              <span className="text-muted-foreground">
+                ⊘{importResult.skipped} ignorados
+              </span>
             </div>
-            <DialogFooter>
-              <Button onClick={onClose}>Fechar</Button>
-            </DialogFooter>
+            <p className="mt-1 text-muted-foreground text-xs">
+              Os itens aparecem no WSJF, Program Board e Feature Boards com
+              link para a ferramenta original.
+            </p>
           </div>
         )}
-      </DialogContent>
-    </Dialog>
+      </div>
+    </ModalShell>
   );
 }

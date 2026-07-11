@@ -141,6 +141,11 @@ model TagRule {
   artId   String?
   epicId  String?
 
+  // cosmos.html screen-tags — automated labeling display fields
+  scope         String? // human label of what this rule targets (e.g. "Épicos e Features")
+  outputTag     String? // label applied to matched items
+  outputTagTone String? @default("accent")
+
   priority        Int       @default(0)
   enabled         Boolean   @default(true)
   matchCount      Int       @default(0)

@@ -1,5 +1,7 @@
+import { Badge } from "@repo/design-system/components/cosmos/badge";
 import dynamic from "next/dynamic";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import type { DependencyWithFeatures } from "@/app/actions/dependencies/schema";
 import {
   getDependencies,
   getEpicsWithFeatures,
@@ -18,7 +20,7 @@ const DependencyDashboard = dynamic(
           aria-hidden
           className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"
         />
-        <span>A carregar matriz de dependências…</span>
+        <span>A carregar mapa de dependências…</span>
       </div>
     ),
   }
@@ -26,23 +28,48 @@ const DependencyDashboard = dynamic(
 
 export const metadata = {
   title: "Dependências | COSMOS",
-  description: "Matriz de dependências entre épicos e features SAFe",
+  description: "Mapa de dependências entre features e épicos SAFe",
 };
 
 export default async function DependenciesPage() {
-  const [dependencies, epics] = await Promise.all([
-    getDependencies(),
-    getEpicsWithFeatures(),
-  ]);
+  let dependencies: DependencyWithFeatures[] = [];
+  let epics: Awaited<ReturnType<typeof getEpicsWithFeatures>> = [];
+  let loadError = false;
+
+  try {
+    [dependencies, epics] = await Promise.all([
+      getDependencies(),
+      getEpicsWithFeatures(),
+    ]);
+  } catch {
+    loadError = true;
+  }
+
+  const blockedCount = dependencies.filter(
+    (dependency) => dependency.status === "blocked"
+  ).length;
 
   return (
     <div className={appDesign.shell}>
       <PageHeader
-        subtitle="Rastreie dependências entre features e épicos. Linhas = épico dependente, colunas = épico do qual depende."
-        title="Dependências"
+        accentRgb="251,113,133"
+        badge={
+          !loadError && blockedCount > 0 ? (
+            <Badge dot tone="red">
+              {blockedCount} bloqueio{blockedCount === 1 ? "" : "s"} crítico
+              {blockedCount === 1 ? "" : "s"}
+            </Badge>
+          ) : undefined
+        }
+        subtitle="Bloqueios cruzados entre épicos. Linhas vermelhas indicam dependências não resolvidas que travam features downstream."
+        title="Mapa de Dependências"
       />
       <div className={appDesign.bodyScroll}>
-        <DependencyDashboard dependencies={dependencies} epics={epics} />
+        <DependencyDashboard
+          dependencies={dependencies}
+          epics={epics}
+          loadError={loadError}
+        />
       </div>
     </div>
   );

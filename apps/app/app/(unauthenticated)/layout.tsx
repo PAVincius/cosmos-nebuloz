@@ -22,11 +22,11 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
 
       {/* Logo */}
       <div className="relative z-20 flex items-center gap-2">
-        <span className="text-[#5e6ad2] text-xl">◆</span>
+        <span className="text-[#818cf8] text-xl">◆</span>
         <span className="font-bold text-lg text-white tracking-tight">
           Cosmos
         </span>
-        <span className="ml-2 rounded-full border border-[#5e6ad2]/30 px-2 py-0.5 font-semibold text-[#5e6ad2]/70 text-[10px] uppercase tracking-widest">
+        <span className="ml-2 rounded-full border border-[#818cf8]/40 px-2 py-0.5 font-semibold text-[#818cf8] text-[10px] uppercase tracking-widest">
           Beta
         </span>
       </div>

@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../_base";
+import { syncARTCurrentPI } from "../_denorm";
 
 // ─── Fibonacci guard for sprint counts ───────────────────────────────────────
 
@@ -329,6 +330,7 @@ export async function transitionPIPlan(
     });
 
     revalidatePath("/arts");
+    void syncARTCurrentPI(piPlan.artId, ctx.tenantId);
     return { status: nextStatus };
   });
 }

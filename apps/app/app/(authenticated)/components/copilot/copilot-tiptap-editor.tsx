@@ -33,6 +33,11 @@ export function CopilotTipTapEditor({
       Placeholder.configure({ placeholder: "Pergunte sobre seus dados..." }),
     ],
     editorProps: {
+      attributes: {
+        role: "textbox",
+        "aria-label": "Mensagem para o Copilot",
+        "aria-multiline": "true",
+      },
       handleKeyDown: (_view, event) => {
         if (event.key === "Enter" && !event.shiftKey) {
           event.preventDefault();

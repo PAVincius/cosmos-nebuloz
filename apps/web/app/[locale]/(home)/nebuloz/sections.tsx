@@ -12,6 +12,7 @@ import {
 import dynamic from "next/dynamic";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
+import { OrbFallback, SceneMount } from "./scene-mount";
 import { WorkspaceShell } from "./workspace";
 
 const CoreScene = dynamic(
@@ -63,25 +64,28 @@ export function ProofStrip() {
 export function Convictions() {
   const items = [
     {
-      tag: "01",
+      label: "MODEL",
       title: "Sovereign AI Factory",
       text: "Deploy models inside your perimeter. BYOK encryption, per-workspace residency, and zero data retention. Every inference is scoped, attributed, and auditable.",
       bullets: ["BYOK + VPC", "Residency", "Zero training"],
       icon: ShieldIcon,
+      accent: "var(--c-violet)",
     },
     {
-      tag: "02",
+      label: "PLANNER",
       title: "Agentic Orchestration",
       text: "Decompose intent into a supervised DAG of typed tool-calls. The planner diffs before commit, replays on demand, and routes across models by policy.",
       bullets: ["Typed retrieval", "Diff-first", "Multi-model"],
       icon: LensIcon,
+      accent: "var(--c-indigo)",
     },
     {
-      tag: "03",
+      label: "POLICY",
       title: "Governance Engine",
       text: "Declarative rules for who, what, where, when. SOC 2 Type II, ISO 27001, LGPD, GDPR. Every signal logged, every action attributable.",
       bullets: ["Policy as code", "Compliance", "Audit trail"],
       icon: GridIcon,
+      accent: "var(--c-cyan)",
     },
   ];
   return (
@@ -106,11 +110,12 @@ export function Convictions() {
 }
 
 interface ConvictionItem {
-  tag: string;
+  label: string;
   title: string;
   text: string;
   bullets: string[];
   icon: React.ComponentType;
+  accent: string;
 }
 
 function ConvictionCard({ it, i }: { it: ConvictionItem; i: number }) {
@@ -125,8 +130,8 @@ function ConvictionCard({ it, i }: { it: ConvictionItem; i: number }) {
   const sRotY = useSpring(rotY, { stiffness: 280, damping: 22 });
   const onMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
-    rotX.set(((e.clientY - r.top) / r.height - 0.5) * -13);
-    rotY.set(((e.clientX - r.left) / r.width - 0.5) * 13);
+    rotX.set(((e.clientY - r.top) / r.height - 0.5) * -10);
+    rotY.set(((e.clientX - r.left) / r.width - 0.5) * 10);
   };
   const onLeave = () => {
     rotX.set(0);
@@ -135,7 +140,7 @@ function ConvictionCard({ it, i }: { it: ConvictionItem; i: number }) {
   };
 
   return (
-    <div style={{ perspective: "900px" }}>
+    <div style={{ perspective: "1000px" }}>
       <motion.div
         animate={inView ? { opacity: 1, y: 0 } : {}}
         className="grad-shell h-full"
@@ -144,94 +149,83 @@ function ConvictionCard({ it, i }: { it: ConvictionItem; i: number }) {
         onMouseLeave={onLeave}
         onMouseMove={onMove}
         ref={ref}
-        style={{
-          rotateX: sRotX,
-          rotateY: sRotY,
-          transformStyle: "preserve-3d",
-        }}
+        style={
+          {
+            rotateX: sRotX,
+            rotateY: sRotY,
+            transformStyle: "preserve-3d",
+            "--accent": it.accent,
+          } as React.CSSProperties
+        }
         transition={{ duration: 0.7, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
       >
-        <div className="grad-shell-inner group relative overflow-hidden p-8">
-          {/* Top accent line — brightens on hover */}
+        <div className="grad-shell-inner group relative flex h-full flex-col overflow-hidden p-8">
+          {/* Top accent rule — this card's hue, brightens on hover */}
           <motion.div
-            animate={{ opacity: hovered ? 0.85 : 0.18 }}
+            animate={{ opacity: hovered ? 0.9 : 0.25 }}
             className="pointer-events-none absolute top-0 right-0 left-0 h-px"
             style={{
               background:
-                "linear-gradient(90deg, transparent, var(--c-violet), var(--c-cyan), transparent)",
+                "linear-gradient(90deg, transparent, var(--accent), transparent)",
             }}
             transition={{ duration: 0.35 }}
           />
 
-          {/* Beam sweep — fires once on hover entry */}
-          <AnimatePresence>
-            {hovered && (
-              <motion.div
-                animate={{ left: "calc(100% + 120px)" }}
-                className="pointer-events-none absolute inset-y-0"
-                exit={{ opacity: 0 }}
-                initial={{ left: -120 }}
-                style={{
-                  width: 120,
-                  background:
-                    "linear-gradient(90deg, transparent, var(--c-violet), var(--c-cyan), transparent)",
-                  opacity: 0.18,
-                }}
-                transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-              />
-            )}
-          </AnimatePresence>
-
-          {/* Radial glow using palette CSS var */}
+          {/* Corner glow in the card's hue */}
           <div
-            className="-top-16 -right-16 pointer-events-none absolute h-56 w-56 rounded-full opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+            className="-top-20 -right-20 pointer-events-none absolute h-56 w-56 rounded-full opacity-0 transition-opacity duration-700 group-hover:opacity-100"
             style={{
-              background:
-                "radial-gradient(circle, var(--c-violet), transparent 65%)",
+              background: "radial-gradient(circle, var(--accent), transparent 62%)",
             }}
           />
 
-          {/* Icon + tag */}
-          <div className="mb-7 flex items-start justify-between">
+          {/* Icon + role tag */}
+          <div className="mb-7 flex items-center justify-between">
             <div
-              className="flex h-12 w-12 items-center justify-center rounded-xl border bg-white/[0.04] text-ink"
+              className="flex h-12 w-12 items-center justify-center rounded-xl border bg-white/[0.04]"
               style={{
+                color: hovered ? "var(--accent)" : "var(--c-ink, #fff)",
                 borderColor: hovered
-                  ? "var(--c-violet)"
+                  ? "var(--accent)"
                   : "rgba(255,255,255,0.14)",
-                boxShadow: hovered ? "0 0 18px var(--c-violet)" : "none",
-                transition: "border-color 0.3s ease, box-shadow 0.3s ease",
+                boxShadow: hovered ? "0 0 22px -4px var(--accent)" : "none",
+                transition:
+                  "border-color 0.3s ease, box-shadow 0.3s ease, color 0.3s ease",
               }}
             >
               <Icon />
             </div>
-            <div className="label text-muted">{it.tag}</div>
+            <span
+              className="mono text-[10px] tracking-[0.2em]"
+              style={{ color: "var(--accent)", opacity: 0.85 }}
+            >
+              {it.label}
+            </span>
           </div>
 
-          <h3 className="display grad-text mb-3 text-[38px]">{it.title}</h3>
+          {/* Title — solid for legibility, with an accent tick as signature */}
+          <h3 className="display mb-3 text-[34px] leading-[0.98] text-ink">
+            {it.title}
+          </h3>
+          <div
+            className="mb-5 h-[2px] w-9 rounded-full transition-all duration-500 group-hover:w-14"
+            style={{ background: "var(--accent)" }}
+          />
+
           <p className="mb-7 text-[15px] text-body leading-[1.6]">{it.text}</p>
 
-          <ul className="space-y-2 border-hairline border-t pt-5">
+          {/* Capability chips */}
+          <ul className="mt-auto flex flex-wrap gap-2 border-hairline border-t pt-6">
             {it.bullets.map((b) => (
               <li
-                className="mono flex items-center gap-2.5 text-[12.5px] text-body"
+                className="mono inline-flex items-center gap-1.5 rounded-full border border-hairline px-2.5 py-1 text-[11px] text-body"
                 key={b}
               >
-                <svg
-                  className="shrink-0"
-                  height="9"
-                  style={{ color: "var(--c-cyan)", opacity: 0.7 }}
-                  viewBox="0 0 9 9"
-                  width="9"
-                >
-                  <path
-                    d="M0 4.5h7m-2.5 -2.5l2.5 2.5l-2.5 2.5"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1"
-                  />
-                </svg>
-                <span>{b}</span>
+                <span
+                  className="h-1 w-1 shrink-0 rounded-full"
+                  style={{ background: "var(--accent)" }}
+                />
+                {b}
               </li>
             ))}
           </ul>
@@ -528,7 +522,17 @@ export function MetaBrain() {
                   backgroundSize: "32px 32px",
                 }}
               />
-              <CoreScene />
+              <SceneMount className="absolute inset-0" fallback={<OrbFallback />}>
+                <CoreScene />
+              </SceneMount>
+              {/* Vignette + dim — tames CoreScene bloom so it reads as an orb, not static */}
+              <div
+                className="pointer-events-none absolute inset-0 z-[3]"
+                style={{
+                  background:
+                    "radial-gradient(circle at 50% 50%, rgba(7,8,12,0.28) 0%, rgba(7,8,12,0.5) 52%, rgba(7,8,12,0.94) 100%)",
+                }}
+              />
               {/* HUD overlays */}
               <div className="mono absolute top-4 right-4 left-4 z-10 flex items-center justify-between text-[10px] text-white/60">
                 <span>METABRAIN · v2.4</span>
@@ -833,8 +837,11 @@ export function CTA() {
   return (
     <section className="relative overflow-hidden py-32 md:py-44" id="join">
       <div className="absolute inset-0">
-        <CoreScene />
+        <SceneMount className="h-full w-full" fallback={<OrbFallback />}>
+          <CoreScene />
+        </SceneMount>
       </div>
+      <div className="grain-overlay" />
       <div
         className="pointer-events-none absolute inset-0"
         style={{

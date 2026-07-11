@@ -65,9 +65,15 @@ test.describe("Sign-In Page", () => {
     const submitButton = page.locator('button[type="submit"]').first();
 
     if (await submitButton.isVisible()) {
-      await submitButton.click();
-      // Page should still be on sign-in (not redirected)
-      await expect(page).toHaveURL(/sign-in/);
+      // Button is disabled when fields are empty — that IS the validation behavior
+      const isDisabled = await submitButton.isDisabled();
+      if (isDisabled) {
+        // Validation blocks submission via disabled state
+        await expect(page).toHaveURL(/sign-in/);
+      } else {
+        await submitButton.click();
+        await expect(page).toHaveURL(/sign-in/);
+      }
     }
   });
 });

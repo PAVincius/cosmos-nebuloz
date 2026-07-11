@@ -4,26 +4,29 @@ import { cn } from "@repo/design-system/lib/utils";
 import { motion, useReducedMotion } from "framer-motion";
 import type { ReactNode } from "react";
 
-// ─── Design tokens ────────────────────────────────────────────────────────────
+// ─── Design tokens via CSS vars — works in light + dark mode ──────────────────
 const tok = {
-  canvas: "#010102",
-  surface1: "#0f1011",
-  surface2: "#141516",
-  surface3: "#18191a",
-  hairline: "#23252a",
-  hairlineStrong: "#34343a",
-  ink: "#f7f8f8",
-  inkMuted: "#d0d6e0",
-  inkSubtle: "#8a8f98",
-  inkTertiary: "#62666d",
-  primary: "#5e6ad2",
-  success: "#27a644",
-  risk: "#e54d4d",
-  warn: "#d97706",
-  info: "#3b82f6",
-  purple: "#8b5cf6",
-  amber: "#f59e0b",
+  canvas: "var(--canvas)",
+  surface1: "var(--surface)",
+  surface2: "var(--surface-2)",
+  surface3: "var(--surface-3)",
+  hairline: "var(--hairline)",
+  hairlineStrong: "var(--hairline-strong)",
+  ink: "var(--ink)",
+  inkMuted: "var(--ink-muted)",
+  inkSubtle: "var(--ink-subtle)",
+  inkTertiary: "var(--ink-faint)",
+  primary: "var(--accent-c)",
+  success: "var(--green)",
+  risk: "var(--red)",
+  warn: "var(--amber)",
+  info: "var(--blue)",
+  purple: "var(--purple)",
+  amber: "var(--amber)",
 } as const;
+
+// Fallback hex for alpha-channel concatenation (critical border/glow only)
+const RISK_HEX = "#e54d4d";
 
 // ─── BentoGrid ────────────────────────────────────────────────────────────────
 export function BentoGrid({
@@ -84,13 +87,16 @@ export function BentoCell({
 }: BentoCellProps) {
   const prefersReducedMotion = useReducedMotion();
   const isCritical = priority === "critical";
-  const accent = accentColor ?? tok.risk;
+  // accentColor is always a hex from callers — needed for hex+alpha concatenation
+  const accentHex = accentColor ?? RISK_HEX;
 
-  const criticalStyles = isCritical
-    ? {
-        boxShadow: `inset 0 1px 0 0 ${accent}33, 0 0 0 1px ${accent}22`,
-        backgroundImage: `linear-gradient(to right, ${accent}11 0%, transparent 60%)`,
-      }
+  // Merge accent ring + card elevation shadow so both themes look premium
+  const boxShadow = isCritical
+    ? `inset 0 1px 0 0 ${accentHex}33, 0 0 0 1px ${accentHex}22, var(--card-shadow)`
+    : "var(--card-shadow)";
+
+  const criticalBg = isCritical
+    ? { backgroundImage: `linear-gradient(to right, ${accentHex}11 0%, transparent 60%)` }
     : {};
 
   return (
@@ -99,11 +105,13 @@ export function BentoCell({
       style={{
         gridColumn: `span ${span}`,
         background: tok.surface1,
+        border: "1px solid var(--hairline)",
         borderRadius: "12px",
         padding: "16px",
         position: "relative",
         overflow: "hidden",
-        ...criticalStyles,
+        boxShadow,
+        ...criticalBg,
       }}
       variants={{
         hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 10 },
@@ -124,7 +132,7 @@ export function BentoCell({
             left: 0,
             right: 0,
             height: "1px",
-            background: `linear-gradient(to right, transparent, ${accent}, transparent)`,
+            background: `linear-gradient(to right, transparent, ${accentHex}, transparent)`,
           }}
         />
       )}
@@ -161,7 +169,7 @@ export function CellEyebrow({
           fontSize: "11px",
           textTransform: "uppercase",
           letterSpacing: "0.4px",
-          color: color ?? tok.inkTertiary,
+          color: color ?? tok.inkMuted,
           fontWeight: 500,
         }}
       >
@@ -252,7 +260,7 @@ export function CellSub({ children }: { children: ReactNode }) {
     <div
       style={{
         fontSize: "12px",
-        color: tok.inkTertiary,
+        color: tok.inkMuted,
         marginTop: "4px",
         lineHeight: 1.4,
       }}
@@ -264,11 +272,11 @@ export function CellSub({ children }: { children: ReactNode }) {
 
 // ─── StatusBadge ──────────────────────────────────────────────────────────────
 const badgeVariants = {
-  green: { bg: "#27a6441a", border: "#27a64433", text: "#27a644" },
-  red: { bg: "#e54d4d1a", border: "#e54d4d33", text: "#e54d4d" },
-  amber: { bg: "#f59e0b1a", border: "#f59e0b33", text: "#f59e0b" },
-  blue: { bg: "#3b82f61a", border: "#3b82f633", text: "#3b82f6" },
-  purple: { bg: "#8b5cf61a", border: "#8b5cf633", text: "#8b5cf6" },
+  green:  { bg: "rgba(var(--green-rgb), 0.1)",  border: "rgba(var(--green-rgb), 0.2)",  text: "var(--green)" },
+  red:    { bg: "rgba(var(--red-rgb), 0.1)",    border: "rgba(var(--red-rgb), 0.2)",    text: "var(--red)" },
+  amber:  { bg: "rgba(var(--amber-rgb), 0.1)",  border: "rgba(var(--amber-rgb), 0.2)",  text: "var(--amber)" },
+  blue:   { bg: "rgba(var(--blue-rgb), 0.1)",   border: "rgba(var(--blue-rgb), 0.2)",   text: "var(--blue)" },
+  purple: { bg: "rgba(var(--purple-rgb), 0.1)", border: "rgba(var(--purple-rgb), 0.2)", text: "var(--purple)" },
 } as const;
 
 export function StatusBadge({

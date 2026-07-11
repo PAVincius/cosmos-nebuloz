@@ -1,6 +1,13 @@
 "use client";
 
-import { Clock, LayoutGrid, Package, Shuffle, Target, Zap } from "lucide-react";
+import {
+  Clock,
+  LayoutGrid,
+  Layers3,
+  Shuffle,
+  Target,
+  Zap,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import {
@@ -18,7 +25,9 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import KpiCard from "@/app/(authenticated)/analytics/components/KpiCard";
+import { Gauge } from "@/app/(authenticated)/components/gauge";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
+import { SectionCard } from "@/app/(authenticated)/components/section-card";
 import type {
   FlowMetricsResult,
   FlowScopeOption,
@@ -39,76 +48,22 @@ import { ReEvaluateModal } from "./re-evaluate-modal";
 import { StalenessBadge, type StalenessState } from "./staleness-badge";
 
 // ── Module-level constants ─────────────────────────────────────────────────────
-const DEBT_TYPE_RE = /debt|débito/i;
 
-const KPI_CONFIG = [
-  {
-    key: "velocity",
-    label: "Velocity",
-    unit: "itens/sprint",
-    color: "hsl(var(--chart-1))",
-    icon: "Zap",
-    inverse: false,
-  },
-  {
-    key: "flow_time",
-    label: "Flow Time",
-    unit: "dias end-to-end",
-    color: "hsl(var(--chart-2))",
-    icon: "Clock",
-    inverse: true,
-  },
-  {
-    key: "flow_load",
-    label: "Flow Load",
-    unit: "itens em WIP",
-    color: "oklch(0.68 0.18 50)",
-    icon: "Package",
-    inverse: true,
-  },
-  {
-    key: "efficiency",
-    label: "Efficiency",
-    unit: "% tempo ativo",
-    color: "hsl(var(--success))",
-    icon: "Target",
-    inverse: false,
-  },
-  {
-    key: "predictability",
-    label: "Predictability",
-    unit: "% entregue/planejado",
-    color: "hsl(var(--primary))",
-    icon: "Shuffle",
-    inverse: false,
-  },
-  {
-    key: "distribution",
-    label: "Distribution",
-    unit: "tipos balanceados",
-    color: "hsl(var(--chart-5))",
-    icon: "LayoutGrid",
-    inverse: false,
-  },
-] as const;
-
-type KpiKey = (typeof KPI_CONFIG)[number]["key"];
-
+/** Cosmos tone cycle for multi-series charts (Flow Time bars, Distribution donut). */
 const DIST_COLORS = [
-  "hsl(var(--chart-1))",
-  "hsl(var(--chart-2))",
-  "hsl(var(--chart-3))",
-  "hsl(var(--chart-4))",
-  "hsl(var(--chart-5))",
-  "oklch(0.68 0.18 220)",
-  "oklch(0.72 0.18 30)",
+  "rgb(var(--green-rgb))",
+  "rgb(var(--blue-rgb))",
+  "rgb(var(--purple-rgb))",
+  "rgb(var(--amber-rgb))",
+  "rgb(var(--red-rgb))",
+  "rgb(var(--accent-rgb))",
 ];
 
 const STATUS_COLOR: Record<string, string> = {
-  OPEN: "oklch(0.68 0.18 50)",
-  IN_PROGRESS: "hsl(var(--primary))",
-  DONE: "hsl(var(--success))",
-  CANCELLED: "hsl(var(--muted-foreground))",
+  OPEN: "rgb(var(--amber-rgb))",
+  IN_PROGRESS: "rgb(var(--accent-rgb))",
+  DONE: "rgb(var(--green-rgb))",
+  CANCELLED: "var(--ink-faint)",
 };
 
 const METRIC_LABELS: Record<string, string> = {
@@ -121,6 +76,19 @@ const METRIC_LABELS: Record<string, string> = {
 };
 
 const DEBT_TYPE_RX = /debt|débito/i;
+
+/** Watermark icon paths for KpiCard (viewBox 0 0 24 24, stroke-only). */
+const KPI_ICON_PATH = {
+  velocity: "M13 2 3 14h9l-1 8 10-12h-9l1-8z",
+  flow_time: "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2",
+  flow_load:
+    "M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73zM3.3 7l8.7 5 8.7-5M12 22V12",
+  efficiency:
+    "M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8z",
+  predictability:
+    "M2 18h1.4c1.3 0 2.5-.6 3.2-1.7l.9-1.3c.7-1.1 1.9-1.7 3.2-1.7h3M2 6h1.4c1.3 0 2.5.6 3.2 1.7l3.6 5.6c.7 1.1 1.9 1.7 3.2 1.7h3M18 3l4 3-4 3M18 15l4 3-4 3",
+  distribution: "M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z",
+} as const;
 
 // ── KPI tone helper ────────────────────────────────────────────────────────────
 
@@ -139,214 +107,23 @@ function kpiTone(
   return good ? "green" : "red";
 }
 
-// ── KPI icon renderer ──────────────────────────────────────────────────────────
-
-function KpiIcon({ name, size = 14 }: { name: string; size?: number }) {
-  const props = { size, strokeWidth: 2 };
-  switch (name) {
-    case "Zap":
-      return <Zap {...props} />;
-    case "Clock":
-      return <Clock {...props} />;
-    case "Package":
-      return <Package {...props} />;
-    case "Target":
-      return <Target {...props} />;
-    case "Shuffle":
-      return <Shuffle {...props} />;
-    case "LayoutGrid":
-      return <LayoutGrid {...props} />;
-    default:
-      return null;
-  }
-}
-
-// ── Sparkline ─────────────────────────────────────────────────────────────────
-
-function Sparkline({ data, color }: { data: number[]; color: string }) {
-  if (data.length < 2) {
-    return null;
-  }
-  const max = Math.max(...data);
-  const min = Math.min(...data);
-  const range = max - min || 1;
-  const w = 100,
-    h = 26;
-  const pts = data
-    .map((v, i) => {
-      const x = (i / (data.length - 1)) * w;
-      const y = h - ((v - min) / range) * (h - 2) - 1;
-      return `${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-  return (
-    <svg
-      aria-label="Sparkline chart"
-      height={h}
-      role="img"
-      style={{ overflow: "visible", display: "block" }}
-      viewBox={`0 0 ${w} ${h}`}
-      width={w}
-    >
-      <title>Sparkline chart</title>
-      <polyline
-        fill="none"
-        opacity=".9"
-        points={pts}
-        stroke={color}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="1.8"
-      />
-    </svg>
-  );
-}
-
-// ── Delta badge ───────────────────────────────────────────────────────────────
-
-function Delta({
-  value,
-  inverse = false,
-}: {
-  value: number;
-  inverse?: boolean;
-}) {
+function formatDelta(value: number): string {
   if (value === 0) {
-    return (
-      <span
-        style={{
-          fontSize: 10,
-          color: "hsl(var(--muted-foreground))",
-          fontWeight: 600,
-        }}
-      >
-        —
-      </span>
-    );
+    return "— estável";
   }
-  const good = inverse ? value < 0 : value > 0;
-  const clr = good ? "hsl(var(--success))" : "hsl(var(--destructive))";
-  return (
-    <span
-      style={{
-        fontSize: 10,
-        fontWeight: 700,
-        color: clr,
-        background: `color-mix(in srgb, ${clr} 12%, transparent)`,
-        padding: "2px 5px",
-        borderRadius: 4,
-      }}
-    >
-      {value > 0 ? "↑" : "↓"} {Math.abs(value)}
-    </span>
-  );
-}
-
-// ── Chart card shell ──────────────────────────────────────────────────────────
-
-function ChartCard({
-  title,
-  subtitle,
-  badge,
-  footer,
-  children,
-}: {
-  title: string;
-  subtitle?: string;
-  badge?: React.ReactNode;
-  footer?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      style={{
-        background: "hsl(var(--card))",
-        borderRadius: 14,
-        border: "1px solid hsl(var(--border))",
-        padding: "18px 20px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          marginBottom: 14,
-        }}
-      >
-        <div>
-          <div
-            style={{
-              fontSize: 11,
-              fontWeight: 800,
-              color: "hsl(var(--foreground))",
-              letterSpacing: ".04em",
-              textTransform: "uppercase",
-            }}
-          >
-            {title}
-          </div>
-          {!!subtitle && (
-            <div
-              style={{
-                fontSize: 10,
-                color: "hsl(var(--muted-foreground))",
-                marginTop: 2,
-              }}
-            >
-              {subtitle}
-            </div>
-          )}
-        </div>
-        {badge}
-      </div>
-      {children}
-      {!!footer && (
-        <div
-          style={{
-            fontSize: 10,
-            color: "hsl(var(--muted-foreground))",
-            marginTop: 12,
-            borderTop: "1px solid hsl(var(--border))",
-            paddingTop: 10,
-          }}
-        >
-          {footer}
-        </div>
-      )}
-    </div>
-  );
+  return `${value > 0 ? "↑" : "↓"} ${Math.abs(value)}`;
 }
 
 // ── Section title (Measure & Grow) ────────────────────────────────────────────
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        marginBottom: 12,
-      }}
-    >
+    <div className="mb-3 flex items-center gap-2">
       <div
-        style={{
-          height: 4,
-          width: 16,
-          borderRadius: 4,
-          background: "hsl(var(--primary))",
-        }}
+        className="h-1 w-4 rounded-full"
+        style={{ background: "rgb(var(--accent-rgb))" }}
       />
-      <span
-        style={{
-          fontSize: 11,
-          fontWeight: 800,
-          color: "hsl(var(--muted-foreground))",
-          letterSpacing: ".06em",
-          textTransform: "uppercase",
-        }}
-      >
+      <span className="font-mono text-[11px] font-extrabold uppercase tracking-[.06em] text-ink-muted">
         {children}
       </span>
     </div>
@@ -366,12 +143,10 @@ function chipStyle(
     cursor: "pointer",
     fontFamily: "inherit",
     border: active
-      ? "1.5px solid hsl(var(--primary))"
-      : "1.5px solid hsl(var(--border))",
-    background: active ? "hsl(var(--primary))" : "hsl(var(--card))",
-    color: active
-      ? "hsl(var(--primary-foreground))"
-      : "hsl(var(--muted-foreground))",
+      ? "1.5px solid rgb(var(--accent-rgb))"
+      : "1.5px solid var(--hairline)",
+    background: active ? "rgb(var(--accent-rgb))" : "var(--surface-2)",
+    color: active ? "var(--accent-text)" : "var(--ink-muted)",
     fontSize: 11,
     fontWeight: 600,
     transition: "background .12s, border-color .12s, color .12s",
@@ -439,7 +214,6 @@ export function FlowMetricsDashboard({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [activeTab, setActiveTab] = useState<"flow" | "measure">("flow");
-  const [activeKpi, setActiveKpi] = useState<KpiKey>("velocity");
   const [reEvalOpen, setReEvalOpen] = useState(false);
 
   const [assessCompetency, setAssessCompetency] = useState(COMPETENCIES[0].id);
@@ -489,85 +263,6 @@ export function FlowMetricsDashboard({
     setActionMetric("");
     setActionLoading(false);
     router.refresh();
-  }
-
-  // ── Derived KPI data ─────────────────────────────────────────────────────────
-
-  function kpiData(key: KpiKey): {
-    value: string;
-    sub: string;
-    delta: number;
-    warn?: boolean;
-    spark: number[];
-  } {
-    if (!metrics) {
-      return { value: "—", sub: "", delta: 0, spark: [] };
-    }
-    switch (key) {
-      case "velocity": {
-        const last = metrics.flowVelocity.at(-1)?.total ?? 0;
-        const prev = metrics.flowVelocity.at(-2)?.total ?? last;
-        return {
-          value: String(last),
-          sub: "Média últimas 3 sprints",
-          delta: last - prev,
-          spark: metrics.flowVelocity.map((d) => d.total),
-        };
-      }
-      case "flow_time":
-        return {
-          value: String(metrics.flowTimeOverall),
-          sub: "P50 ciclo de entrega",
-          delta: 0,
-          spark: [],
-        };
-      case "flow_load": {
-        const wip = metrics.flowLoad;
-        return {
-          value: String(wip),
-          sub: "Limite WIP recomendado: 15",
-          delta: 0,
-          warn: wip > 15,
-          spark: metrics.flowLoadHistory.map((d) => d.wip),
-        };
-      }
-      case "efficiency": {
-        const pct = Math.round(metrics.flowEfficiency * 100);
-        return {
-          value: String(pct),
-          sub: "Tempo em fluxo vs espera",
-          delta: 0,
-          warn: pct < 30,
-          spark: [],
-        };
-      }
-      case "predictability": {
-        const pct = Math.round(metrics.flowPredictability * 100);
-        const spark = metrics.flowPredictabilityHistory.map((d) =>
-          d.planned > 0 ? Math.round((d.delivered / d.planned) * 100) : 0
-        );
-        const prev = spark.at(-2) ?? pct;
-        return {
-          value: String(pct),
-          sub: "Compromisso vs entrega",
-          delta: pct - prev,
-          spark,
-        };
-      }
-      case "distribution":
-        return {
-          value: String(metrics.flowDistribution.length),
-          sub: metrics.flowDistribution
-            .map((d) => `${d.type} ${d.pct}%`)
-            .join(" · "),
-          delta: 0,
-          spark: [],
-        };
-      default: {
-        const _exhaustive: never = key;
-        return { value: "—", sub: "", delta: 0, spark: [] };
-      }
-    }
   }
 
   // ── Alerts ───────────────────────────────────────────────────────────────────
@@ -683,33 +378,15 @@ export function FlowMetricsDashboard({
 
   const filterBar = (
     <div
-      style={{
-        marginLeft: -24,
-        marginRight: -24,
-        marginTop: -24,
-        padding: "12px 24px",
-        background: "hsl(var(--card))",
-        borderBottom: "1px solid hsl(var(--border))",
-        display: "flex",
-        alignItems: "center",
-        gap: 18,
-        flexWrap: "wrap",
-      }}
+      className="flex flex-wrap items-center gap-[18px] border-hairline border-b bg-surface-2"
+      style={{ marginLeft: -24, marginRight: -24, marginTop: -24, padding: "12px 24px" }}
     >
       {arts.length > 0 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 800,
-              color: "hsl(var(--muted-foreground))",
-              letterSpacing: ".09em",
-              textTransform: "uppercase",
-            }}
-          >
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[9px] font-extrabold uppercase tracking-[.09em] text-ink-muted">
             ART
           </span>
-          <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+          <div className="flex flex-wrap gap-1.5">
             {arts.map((a) => (
               <button
                 aria-pressed={activeId === a.id}
@@ -725,28 +402,14 @@ export function FlowMetricsDashboard({
         </div>
       )}
       {arts.length > 0 && teams.length > 0 && (
-        <div
-          style={{
-            width: 1,
-            height: 22,
-            background: "hsl(var(--border))",
-          }}
-        />
+        <div className="h-[22px] w-px bg-hairline" />
       )}
       {teams.length > 0 && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span
-            style={{
-              fontSize: 9,
-              fontWeight: 800,
-              color: "hsl(var(--muted-foreground))",
-              letterSpacing: ".09em",
-              textTransform: "uppercase",
-            }}
-          >
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[9px] font-extrabold uppercase tracking-[.09em] text-ink-muted">
             Time
           </span>
-          <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+          <div className="flex flex-wrap gap-1.5">
             {teams.map((t) => (
               <button
                 aria-pressed={activeId === t.id}
@@ -762,28 +425,14 @@ export function FlowMetricsDashboard({
         </div>
       )}
       {scopeOptions.length === 0 && (
-        <span style={{ fontSize: 12, color: "hsl(var(--muted-foreground))" }}>
+        <span className="text-[12px] text-ink-muted">
           Nenhum escopo disponível
         </span>
       )}
       {!!metrics && (
         <button
+          className="ml-auto flex items-center gap-1.5 rounded-cosmos-pill border border-hairline-strong bg-surface px-3.5 py-[7px] font-semibold text-[12px] text-ink transition-colors hover:bg-surface-3"
           onClick={() => exportMetricsCSV(metrics, selectedScope)}
-          style={{
-            marginLeft: "auto",
-            display: "flex",
-            alignItems: "center",
-            gap: 6,
-            padding: "7px 14px",
-            background: "hsl(var(--muted))",
-            border: "1px solid hsl(var(--border))",
-            borderRadius: 8,
-            fontSize: 12,
-            fontWeight: 600,
-            color: "hsl(var(--foreground))",
-            cursor: "pointer",
-            fontFamily: "inherit",
-          }}
           type="button"
         >
           ↓ Export CSV
@@ -794,34 +443,18 @@ export function FlowMetricsDashboard({
 
   const tabBar = (
     <div
-      style={{
-        marginLeft: -24,
-        marginRight: -24,
-        padding: "0 24px",
-        background: "hsl(var(--card))",
-        borderBottom: "1px solid hsl(var(--border))",
-        display: "flex",
-        gap: 22,
-      }}
+      className="flex gap-[22px] border-hairline border-b bg-surface-2"
+      style={{ marginLeft: -24, marginRight: -24, padding: "0 24px" }}
     >
       {(["flow", "measure"] as const).map((tab) => (
         <button
+          className="border-transparent border-b-[2.5px] py-[11px] font-bold text-[13px] transition-colors"
           key={tab}
           onClick={() => setActiveTab(tab)}
           style={{
-            padding: "11px 0",
-            border: "none",
-            background: "transparent",
-            cursor: "pointer",
-            borderBottom: `2.5px solid ${activeTab === tab ? "hsl(var(--primary))" : "transparent"}`,
-            color:
-              activeTab === tab
-                ? "hsl(var(--foreground))"
-                : "hsl(var(--muted-foreground))",
-            fontSize: 13,
-            fontWeight: 700,
-            fontFamily: "inherit",
-            transition: "color .15s",
+            borderBottomColor:
+              activeTab === tab ? "rgb(var(--accent-rgb))" : "transparent",
+            color: activeTab === tab ? "var(--ink)" : "var(--ink-faint)",
           }}
           type="button"
         >
@@ -836,17 +469,7 @@ export function FlowMetricsDashboard({
       <div>
         {filterBar}
         {tabBar}
-        <div
-          style={{
-            height: 160,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "hsl(var(--muted-foreground))",
-            fontSize: 14,
-            marginTop: 24,
-          }}
-        >
+        <div className="mt-6 flex h-40 items-center justify-center text-[14px] text-ink-muted">
           Selecione um escopo para ver as métricas.
         </div>
       </div>
@@ -856,6 +479,25 @@ export function FlowMetricsDashboard({
   const alerts = buildAlerts();
   const insights = buildInsights();
 
+  const velocityLast = metrics.flowVelocity.at(-1)?.total;
+  const velocityPrev = metrics.flowVelocity.at(-2)?.total ?? velocityLast;
+  const velocityDelta =
+    velocityLast !== undefined && velocityPrev !== undefined
+      ? velocityLast - velocityPrev
+      : 0;
+  const flowTimeDays = metrics.flowTimeOverall;
+  const flowLoad = metrics.flowLoad;
+  const effPct = Math.round(metrics.flowEfficiency * 100);
+  const predPct = Math.round(metrics.flowPredictability * 100);
+  const predSpark = metrics.flowPredictabilityHistory.map((d) =>
+    d.planned > 0 ? Math.round((d.delivered / d.planned) * 100) : 0
+  );
+  const predPrev = predSpark.at(-2) ?? predPct;
+  const predDelta = predPct - predPrev;
+  const debtType = metrics.flowDistribution.find((d) =>
+    DEBT_TYPE_RX.test(d.type)
+  );
+
   return (
     <div>
       {filterBar}
@@ -863,66 +505,37 @@ export function FlowMetricsDashboard({
 
       {/* ── FLOW METRICS ──────────────────────────────────────────────────────── */}
       {activeTab === "flow" && (
-        <div
-          style={{
-            marginTop: 24,
-            display: "flex",
-            flexDirection: "column",
-            gap: 20,
-          }}
-        >
+        <div className="mt-6 flex flex-col gap-5">
           {/* Alert banners */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="flex flex-col gap-2">
             {alerts.map((a) => {
-              const s =
-                a.tone === "warn"
-                  ? {
-                      bg: "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
-                      border:
-                        "color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
-                      title: "oklch(0.55 0.15 50)",
-                      desc: "oklch(0.45 0.12 50)",
-                    }
-                  : {
-                      bg: "color-mix(in srgb, hsl(var(--success)) 10%, hsl(var(--card)))",
-                      border:
-                        "color-mix(in srgb, hsl(var(--success)) 30%, transparent)",
-                      title: "hsl(var(--success))",
-                      desc: "color-mix(in srgb, hsl(var(--success)) 80%, hsl(var(--foreground)))",
-                    };
+              const rgb = a.tone === "warn" ? "var(--amber-rgb)" : "var(--green-rgb)";
+              const titleColor =
+                a.tone === "warn" ? "var(--amber-text)" : "var(--green-text)";
               return (
                 <div
+                  className="flex items-start gap-2.5 rounded-cosmos-md border px-3.5 py-2.5"
                   key={a.title}
                   style={{
-                    background: s.bg,
-                    border: `1px solid ${s.border}`,
-                    borderRadius: 10,
-                    padding: "10px 14px",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 10,
+                    background: `rgba(${rgb},.10)`,
+                    borderColor: `rgba(${rgb},.30)`,
                   }}
                 >
-                  <span style={{ fontSize: 16, lineHeight: 1.3 }}>
-                    {a.icon}
-                  </span>
-                  <div style={{ flex: 1 }}>
+                  <span className="text-[16px] leading-tight">{a.icon}</span>
+                  <div className="flex-1">
                     <div
-                      style={{ fontSize: 12, fontWeight: 700, color: s.title }}
+                      className="text-[12px] font-bold"
+                      style={{ color: titleColor }}
                     >
                       {a.title}
                     </div>
-                    <div style={{ fontSize: 11, color: s.desc, marginTop: 2 }}>
+                    <div className="mt-0.5 text-[11px] text-ink-muted">
                       {a.desc}
                     </div>
                   </div>
                   <div
-                    style={{
-                      fontSize: 11,
-                      color: s.title,
-                      fontWeight: 600,
-                      whiteSpace: "nowrap",
-                    }}
+                    className="whitespace-nowrap text-[11px] font-semibold"
+                    style={{ color: titleColor }}
                   >
                     {a.action} →
                   </div>
@@ -931,15 +544,19 @@ export function FlowMetricsDashboard({
             })}
           </div>
 
-          {/* Staleness badge + re-evaluate modal */}
-          {staleness && snapshotId && (
+          {/* Staleness banner + re-evaluate modal */}
+          {!!staleness && !!snapshotId && (
             <>
               <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "flex-end",
-                }}
+                className="flex items-center justify-between rounded-cosmos-md border px-4 py-2.5"
+                style={
+                  staleness === "FRESH"
+                    ? { justifyContent: "flex-end", background: "transparent", border: "none", padding: 0 }
+                    : {
+                        background: "rgba(var(--amber-rgb),.10)",
+                        borderColor: "rgba(var(--amber-rgb),.30)",
+                      }
+                }
               >
                 <StalenessBadge
                   onReEvaluate={
@@ -949,6 +566,11 @@ export function FlowMetricsDashboard({
                   }
                   state={staleness}
                 />
+                {staleness !== "FRESH" && (
+                  <span className="text-[11px] text-[color:var(--amber-text)]">
+                    Dados podem estar desatualizados — re-avalie para precisão.
+                  </span>
+                )}
               </div>
               <ReEvaluateModal
                 onClose={() => setReEvalOpen(false)}
@@ -959,355 +581,166 @@ export function FlowMetricsDashboard({
           )}
 
           {/* KPI grid */}
-          <div className="flex flex-wrap gap-4 rounded-[18px] bg-[#070b14] p-6">
-            {(() => {
-              const velocityLast = metrics.flowVelocity.at(-1)?.total;
-              const velocityPrev =
-                metrics.flowVelocity.at(-2)?.total ?? velocityLast;
-              const velocityDelta =
-                velocityLast !== undefined && velocityPrev !== undefined
-                  ? velocityLast - velocityPrev
-                  : 0;
+          <KpiGrid cols={3}>
+            <KpiCard
+              badge={formatDelta(velocityDelta)}
+              iconPath={KPI_ICON_PATH.velocity}
+              label="Velocity"
+              tone={kpiTone(velocityLast, false, 30)}
+              unit="itens/sprint"
+              value={velocityLast ?? "—"}
+            />
+            <KpiCard
+              badge="— estável"
+              iconPath={KPI_ICON_PATH.flow_time}
+              label="Flow Time"
+              tone={kpiTone(flowTimeDays, true, 14)}
+              unit="dias end-to-end"
+              value={flowTimeDays}
+            />
+            <KpiCard
+              badge={flowLoad > 15 ? "⚠ acima do limite" : "— dentro do limite"}
+              iconPath={KPI_ICON_PATH.flow_load}
+              label="Flow Load"
+              tone="amber"
+              unit="itens em WIP"
+              value={flowLoad}
+            />
+            <KpiCard
+              badge="— estável"
+              iconPath={KPI_ICON_PATH.efficiency}
+              label="Efficiency"
+              tone={kpiTone(effPct, false, 60)}
+              unit="% tempo ativo"
+              value={effPct}
+            />
+            <KpiCard
+              badge={formatDelta(predDelta)}
+              iconPath={KPI_ICON_PATH.predictability}
+              label="Predictability"
+              tone={kpiTone(predPct, false, 80)}
+              unit="% entregue/planejado"
+              value={predPct}
+            />
+            <KpiCard
+              badge={metrics.flowDistribution
+                .map((d) => `${d.type} ${d.pct}%`)
+                .join(" · ")}
+              iconPath={KPI_ICON_PATH.distribution}
+              label="Distribution"
+              tone="amber"
+              unit="tipos balanceados"
+              value={metrics.flowDistribution.length}
+            />
+          </KpiGrid>
 
-              const flowTimeDays = metrics.flowTimeOverall;
-              const flowLoad = metrics.flowLoad;
-              const effPct = Math.round(metrics.flowEfficiency * 100);
-              const predPct = Math.round(metrics.flowPredictability * 100);
-              const predSpark = metrics.flowPredictabilityHistory.map((d) =>
-                d.planned > 0 ? Math.round((d.delivered / d.planned) * 100) : 0
-              );
-              const predPrev = predSpark.at(-2) ?? predPct;
-              const predDelta = predPct - predPrev;
-
-              return (
-                <>
-                  <KpiCard
-                    badge={<Delta inverse={false} value={velocityDelta} />}
-                    icon="activity"
-                    label="Velocity"
-                    tone={kpiTone(velocityLast, false, 30)}
-                    unit="itens/sprint"
-                    value={String(velocityLast ?? "—")}
-                  />
-                  <KpiCard
-                    badge={<Delta inverse={true} value={0} />}
-                    icon="clock"
-                    label="Flow Time"
-                    tone={kpiTone(flowTimeDays, true, 14)}
-                    unit="dias end-to-end"
-                    value={String(flowTimeDays)}
-                  />
-                  <KpiCard
-                    badge={
-                      flowLoad > 15 ? (
-                        <span className="rounded bg-amber-500/20 px-1.5 py-0.5 font-bold text-[10px] text-amber-400">
-                          acima do limite
-                        </span>
-                      ) : (
-                        <span className="text-[10px] text-muted-foreground">
-                          WIP
-                        </span>
-                      )
-                    }
-                    icon="activity"
-                    label="Flow Load"
-                    tone="amber"
-                    unit="itens em WIP"
-                    value={String(flowLoad)}
-                  />
-                  <KpiCard
-                    badge={<Delta inverse={false} value={0} />}
-                    icon="check"
-                    label="Efficiency"
-                    tone={kpiTone(effPct, false, 60)}
-                    unit="% tempo ativo"
-                    value={String(effPct)}
-                  />
-                  <KpiCard
-                    badge={<Delta inverse={false} value={predDelta} />}
-                    icon="check"
-                    label="Predictability"
-                    tone={kpiTone(predPct, false, 80)}
-                    unit="% entregue/planejado"
-                    value={String(predPct)}
-                  />
-                  <KpiCard
-                    badge={
-                      <span className="text-[10px] text-muted-foreground">
-                        {metrics.flowDistribution
-                          .map((d) => `${d.type} ${d.pct}%`)
-                          .join(" · ")}
-                      </span>
-                    }
-                    icon="activity"
-                    label="Distribution"
-                    tone="amber"
-                    unit="tipos balanceados"
-                    value={String(metrics.flowDistribution.length)}
-                  />
-                </>
-              );
-            })()}
-          </div>
-
-          {/* ── Staleness banner ─────────────────────────────────────── */}
-          {!!staleness && staleness !== "FRESH" && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                background:
-                  "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
-                border:
-                  "1px solid color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
-                borderRadius: 10,
-                padding: "10px 16px",
-              }}
-            >
-              <StalenessBadge
-                onReEvaluate={
-                  staleness === "STALE" || staleness === "CRITICAL"
-                    ? () => setReEvalOpen(true)
-                    : undefined
-                }
-                state={staleness}
-              />
-              <span style={{ fontSize: 11, color: "oklch(0.55 0.15 50)" }}>
-                Dados podem estar desatualizados — re-avalie para precisão.
-              </span>
-            </div>
-          )}
-
-          {/* ── Sub-sections: metric preview cards ────────────────────── */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: 12,
-            }}
-          >
-            <div
-              onClick={() => setActiveKpi("velocity")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setActiveKpi("velocity");
-                }
-              }}
-              role="button"
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 10,
-                border: `1px solid ${activeKpi === "velocity" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
-                padding: "14px 16px",
-                cursor: "pointer",
-              }}
-              tabIndex={0}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "hsl(var(--foreground))",
-                  marginBottom: 8,
-                }}
-              >
-                Velocity
-              </div>
-              <Sparkline
-                color="hsl(var(--chart-1))"
-                data={metrics.flowVelocity.map((v) => v.total)}
-              />
-              <button
-                style={{
-                  fontSize: 10,
-                  color: "hsl(var(--primary))",
-                  marginTop: 8,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  fontWeight: 600,
-                }}
-                type="button"
-              >
-                Ver tudo →
-              </button>
-            </div>
-
-            <div
-              onClick={() => setActiveKpi("flow_time")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setActiveKpi("flow_time");
-                }
-              }}
-              role="button"
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 10,
-                border: `1px solid ${activeKpi === "flow_time" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
-                padding: "14px 16px",
-                cursor: "pointer",
-              }}
-              tabIndex={0}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "hsl(var(--foreground))",
-                  marginBottom: 8,
-                }}
-              >
-                Flow Time
-              </div>
-              <Sparkline
-                color="hsl(var(--chart-2))"
-                data={metrics.flowTime.map((v) => v.avgDays)}
-              />
-              <button
-                style={{
-                  fontSize: 10,
-                  color: "hsl(var(--primary))",
-                  marginTop: 8,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  fontWeight: 600,
-                }}
-                type="button"
-              >
-                Ver tudo →
-              </button>
-            </div>
-
-            <div
-              onClick={() => setActiveKpi("efficiency")}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  setActiveKpi("efficiency");
-                }
-              }}
-              role="button"
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 10,
-                border: `1px solid ${activeKpi === "efficiency" ? "hsl(var(--primary))" : "hsl(var(--border))"}`,
-                padding: "14px 16px",
-                cursor: "pointer",
-              }}
-              tabIndex={0}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "hsl(var(--foreground))",
-                  marginBottom: 8,
-                }}
-              >
-                Efficiency
-              </div>
-              <Sparkline
-                color="hsl(var(--success))"
-                data={(metrics.flowLoadHistory ?? []).map((v) => v.wip)}
-              />
-              <button
-                style={{
-                  fontSize: 10,
-                  color: "hsl(var(--primary))",
-                  marginTop: 8,
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  padding: 0,
-                  fontWeight: 600,
-                }}
-                type="button"
-              >
-                Ver tudo →
-              </button>
-            </div>
-          </div>
-
-          {/* Detail chart — driven by active KPI */}
-          {activeKpi === "velocity" && (
-            <ChartCard
-              footer="Meta: 45 itens/sprint"
-              subtitle="Itens entregues por sprint"
-              title="Flow Velocity"
-            >
+          {/* Charts — fixed 2-column grid (no interactive master/detail) */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <SectionCard icon={Zap} title="Flow Velocity" subtitle="Itens entregues por sprint">
               {metrics.flowVelocity.length > 0 ? (
                 <ResponsiveContainer height={200} width="100%">
                   <BarChart barSize={28} data={metrics.flowVelocity}>
-                    <CartesianGrid
-                      stroke="hsl(var(--border))"
-                      strokeDasharray="3 3"
-                      vertical={false}
-                    />
+                    <CartesianGrid stroke="var(--hairline)" strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
+                        background: "var(--surface-2)",
+                        border: "1px solid var(--hairline-strong)",
                         borderRadius: 8,
                         fontSize: 12,
+                        color: "var(--ink)",
                       }}
                     />
-                    <Bar
-                      dataKey="total"
-                      fill="hsl(var(--chart-1))"
-                      radius={[6, 6, 0, 0]}
-                    />
+                    <Bar dataKey="total" fill="rgb(var(--green-rgb))" radius={[6, 6, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               ) : (
                 <EmptyChart text="Sem sprints concluídos." />
               )}
-            </ChartCard>
-          )}
+            </SectionCard>
 
-          {activeKpi === "flow_time" && (
-            <ChartCard
-              subtitle="Ciclo médio por tipo de item (dias)"
-              title="Flow Time"
+            <SectionCard
+              icon={LayoutGrid}
+              title="Flow Distribution"
+              subtitle="Mix de trabalho no período"
+              actions={
+                debtType && debtType.pct > 15 ? (
+                  <span className="rounded-full bg-[rgba(var(--amber-rgb),.16)] px-2 py-0.5 text-[10px] font-bold text-[color:var(--amber-text)]">
+                    Débito acima da meta
+                  </span>
+                ) : undefined
+              }
             >
+              {metrics.flowDistribution.length > 0 ? (
+                <div className="flex items-center gap-5">
+                  <ResponsiveContainer height={180} width={180}>
+                    <PieChart>
+                      <Pie
+                        cx="50%"
+                        cy="50%"
+                        data={metrics.flowDistribution}
+                        dataKey="count"
+                        innerRadius={50}
+                        nameKey="type"
+                        outerRadius={80}
+                        paddingAngle={2}
+                      >
+                        {metrics.flowDistribution.map((d, i) => (
+                          <Cell fill={DIST_COLORS[i % DIST_COLORS.length]} key={d.type} />
+                        ))}
+                      </Pie>
+                      <Tooltip
+                        contentStyle={{
+                          background: "var(--surface-2)",
+                          border: "1px solid var(--hairline-strong)",
+                          borderRadius: 8,
+                          fontSize: 12,
+                          color: "var(--ink)",
+                        }}
+                      />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex flex-col gap-2.5">
+                    {metrics.flowDistribution.map((d, i) => (
+                      <div className="flex items-center gap-2 text-[12px]" key={d.type}>
+                        <div
+                          className="h-2 w-2 shrink-0 rounded-full"
+                          style={{ background: DIST_COLORS[i % DIST_COLORS.length] }}
+                        />
+                        <span className="font-semibold text-ink">{d.type}</span>
+                        <span className="text-ink-muted">
+                          {d.count} ({d.pct}%)
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <EmptyChart text="Sem itens concluídos no período." />
+              )}
+              <div className="mt-3 border-hairline border-t pt-2.5 text-[10px] text-ink-muted">
+                Recomendado: Feature 60% · Bug 10% · Débito 15% · Spike 15%
+              </div>
+            </SectionCard>
+
+            <SectionCard icon={Clock} title="Flow Time" subtitle="Ciclo médio por tipo de item (dias)">
               {metrics.flowTime.length > 0 ? (
                 <ResponsiveContainer height={200} width="100%">
-                  <BarChart
-                    barSize={20}
-                    data={metrics.flowTime}
-                    layout="vertical"
-                  >
-                    <CartesianGrid
-                      horizontal={false}
-                      stroke="hsl(var(--border))"
-                      strokeDasharray="3 3"
-                    />
+                  <BarChart barSize={20} data={metrics.flowTime} layout="vertical">
+                    <CartesianGrid horizontal={false} stroke="var(--hairline)" strokeDasharray="3 3" />
                     <XAxis
                       axisLine={false}
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                       type="number"
                       unit="d"
@@ -1315,29 +748,24 @@ export function FlowMetricsDashboard({
                     <YAxis
                       axisLine={false}
                       dataKey="type"
-                      tick={{
-                        fontSize: 11,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 11, fill: "var(--ink-faint)" }}
                       tickLine={false}
                       type="category"
                       width={70}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
+                        background: "var(--surface-2)",
+                        border: "1px solid var(--hairline-strong)",
                         borderRadius: 8,
                         fontSize: 12,
+                        color: "var(--ink)",
                       }}
                       formatter={(v: number) => [`${v}d`, "Média"]}
                     />
                     <Bar dataKey="avgDays" radius={[0, 6, 6, 0]}>
                       {metrics.flowTime.map((entry, i) => (
-                        <Cell
-                          fill={DIST_COLORS[i % DIST_COLORS.length]}
-                          key={entry.type}
-                        />
+                        <Cell fill={DIST_COLORS[i % DIST_COLORS.length]} key={entry.type} />
                       ))}
                     </Bar>
                   </BarChart>
@@ -1345,63 +773,50 @@ export function FlowMetricsDashboard({
               ) : (
                 <EmptyChart text="Configure startedAt nos boards para calcular Flow Time real." />
               )}
-            </ChartCard>
-          )}
+            </SectionCard>
 
-          {activeKpi === "flow_load" && (
-            <ChartCard
-              footer="Linha vermelha = limite recomendado (15)"
-              subtitle="Itens em andamento por sprint"
+            <SectionCard
+              icon={Layers3}
               title="Flow Load — WIP"
+              subtitle="Itens em andamento por sprint"
             >
               {metrics.flowLoadHistory.length > 0 ? (
                 <ResponsiveContainer height={200} width="100%">
                   <LineChart data={metrics.flowLoadHistory}>
-                    <CartesianGrid
-                      stroke="hsl(var(--border))"
-                      strokeDasharray="3 3"
-                    />
+                    <CartesianGrid stroke="var(--hairline)" strokeDasharray="3 3" />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
+                        background: "var(--surface-2)",
+                        border: "1px solid var(--hairline-strong)",
                         borderRadius: 8,
                         fontSize: 12,
+                        color: "var(--ink)",
                       }}
                     />
                     <Line
                       activeDot={{ r: 6 }}
                       dataKey="wip"
-                      dot={{ r: 4, fill: "oklch(0.68 0.18 50)" }}
-                      stroke="oklch(0.68 0.18 50)"
+                      dot={{ r: 4, fill: "rgb(var(--amber-rgb))" }}
+                      stroke="rgb(var(--amber-rgb))"
                       strokeWidth={2.5}
                       type="monotone"
                     />
                     <Line
-                      data={metrics.flowLoadHistory.map((d) => ({
-                        ...d,
-                        limit: 15,
-                      }))}
+                      data={metrics.flowLoadHistory.map((d) => ({ ...d, limit: 15 }))}
                       dataKey="limit"
                       dot={false}
-                      stroke="color-mix(in srgb, hsl(var(--destructive)) 38%, transparent)"
+                      stroke="rgba(var(--red-rgb),.5)"
                       strokeDasharray="4 2"
                       strokeWidth={1.5}
                       type="monotone"
@@ -1411,142 +826,49 @@ export function FlowMetricsDashboard({
               ) : (
                 <EmptyChart text="Sem histórico de sprints." />
               )}
-            </ChartCard>
-          )}
+              <div className="mt-3 border-hairline border-t pt-2.5 text-[10px] text-ink-muted">
+                Linha vermelha = limite recomendado (15)
+              </div>
+            </SectionCard>
 
-          {activeKpi === "efficiency" && (
-            <ChartCard
-              subtitle="Tempo ativo vs tempo de espera no fluxo"
+            <SectionCard
+              icon={Target}
               title="Flow Efficiency"
+              subtitle="Tempo ativo vs tempo de espera no fluxo"
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 28,
-                  padding: "16px 0",
-                }}
-              >
-                <svg
-                  style={{ width: 120, height: 120, flexShrink: 0 }}
-                  viewBox="0 0 120 120"
-                >
-                  <title>Flow Efficiency</title>
-                  <circle
-                    cx="60"
-                    cy="60"
-                    fill="none"
-                    r="50"
-                    stroke="hsl(var(--border))"
-                    strokeWidth="12"
-                  />
-                  <circle
-                    cx="60"
-                    cy="60"
-                    fill="none"
-                    r="50"
-                    stroke="hsl(var(--success))"
-                    strokeDasharray={`${2 * Math.PI * 50 * metrics.flowEfficiency} ${2 * Math.PI * 50 * (1 - metrics.flowEfficiency)}`}
-                    strokeLinecap="round"
-                    strokeWidth="12"
-                    transform="rotate(-90 60 60)"
-                  />
-                  <text
-                    fill="hsl(var(--foreground))"
-                    fontSize="22"
-                    fontWeight="800"
-                    textAnchor="middle"
-                    x="60"
-                    y="55"
-                  >
-                    {Math.round(metrics.flowEfficiency * 100)}
-                  </text>
-                  <text
-                    fill="hsl(var(--muted-foreground))"
-                    fontSize="10"
-                    textAnchor="middle"
-                    x="60"
-                    y="72"
-                  >
-                    %
-                  </text>
-                </svg>
-                <div>
-                  <div
-                    style={{
-                      fontSize: 13,
-                      fontWeight: 600,
-                      color: "hsl(var(--foreground))",
-                      marginBottom: 4,
-                    }}
-                  >
-                    Tempo ativo / tempo total
-                  </div>
-                  <div
-                    style={{
-                      fontSize: 11,
-                      color: "hsl(var(--muted-foreground))",
-                    }}
-                  >
-                    Meta: &gt;60% de eficiência
-                  </div>
-                  <div style={{ marginTop: 14, display: "flex", gap: 16 }}>
-                    <div>
-                      <div
-                        style={{
-                          fontSize: 10,
-                          color: "hsl(var(--muted-foreground))",
-                          textTransform: "uppercase",
-                          letterSpacing: ".06em",
-                          fontWeight: 700,
-                        }}
-                      >
-                        Ativo
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 18,
-                          fontWeight: 800,
-                          color: "hsl(var(--success))",
-                          marginTop: 2,
-                        }}
-                      >
-                        {Math.round(metrics.flowEfficiency * 100)}%
-                      </div>
+              <div className="flex items-center gap-7 py-2">
+                <Gauge
+                  label="Eficiência de fluxo"
+                  size={104}
+                  sublabel="Meta: >60%"
+                  tone={kpiTone(effPct, false, 60)}
+                  value={effPct}
+                />
+                <div className="flex gap-4">
+                  <div>
+                    <div className="font-bold text-[10px] uppercase tracking-[.06em] text-ink-muted">
+                      Ativo
                     </div>
-                    <div>
-                      <div
-                        style={{
-                          fontSize: 10,
-                          color: "hsl(var(--muted-foreground))",
-                          textTransform: "uppercase",
-                          letterSpacing: ".06em",
-                          fontWeight: 700,
-                        }}
-                      >
-                        Espera
-                      </div>
-                      <div
-                        style={{
-                          fontSize: 18,
-                          fontWeight: 800,
-                          color: "hsl(var(--muted-foreground))",
-                          marginTop: 2,
-                        }}
-                      >
-                        {100 - Math.round(metrics.flowEfficiency * 100)}%
-                      </div>
+                    <div className="mt-0.5 font-extrabold text-[18px] text-[color:var(--green-text)]">
+                      {effPct}%
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold text-[10px] uppercase tracking-[.06em] text-ink-muted">
+                      Espera
+                    </div>
+                    <div className="mt-0.5 font-extrabold text-[18px] text-ink-muted">
+                      {100 - effPct}%
                     </div>
                   </div>
                 </div>
               </div>
-            </ChartCard>
-          )}
+            </SectionCard>
 
-          {activeKpi === "predictability" && (
-            <ChartCard
-              subtitle="Planejado vs entregue por sprint"
+            <SectionCard
+              icon={Shuffle}
               title="Flow Predictability"
+              subtitle="Planejado vs entregue por sprint"
             >
               {metrics.flowPredictabilityHistory.length > 0 ? (
                 <ResponsiveContainer height={200} width="100%">
@@ -1555,51 +877,37 @@ export function FlowMetricsDashboard({
                     barGap={4}
                     data={metrics.flowPredictabilityHistory}
                   >
-                    <CartesianGrid
-                      stroke="hsl(var(--border))"
-                      strokeDasharray="3 3"
-                      vertical={false}
-                    />
+                    <CartesianGrid stroke="var(--hairline)" strokeDasharray="3 3" vertical={false} />
                     <XAxis
                       axisLine={false}
                       dataKey="label"
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <YAxis
                       axisLine={false}
-                      tick={{
-                        fontSize: 10,
-                        fill: "hsl(var(--muted-foreground))",
-                      }}
+                      tick={{ fontSize: 10, fill: "var(--ink-faint)" }}
                       tickLine={false}
                     />
                     <Tooltip
                       contentStyle={{
-                        background: "hsl(var(--card))",
-                        border: "1px solid hsl(var(--border))",
+                        background: "var(--surface-2)",
+                        border: "1px solid var(--hairline-strong)",
                         borderRadius: 8,
                         fontSize: 12,
+                        color: "var(--ink)",
                       }}
                     />
-                    <Legend
-                      wrapperStyle={{
-                        fontSize: 11,
-                        color: "hsl(var(--muted-foreground))",
-                      }}
-                    />
+                    <Legend wrapperStyle={{ fontSize: 11, color: "var(--ink-faint)" }} />
                     <Bar
                       dataKey="planned"
-                      fill="color-mix(in srgb, hsl(var(--primary)) 35%, hsl(var(--card)))"
+                      fill="rgba(var(--accent-rgb),.3)"
                       name="Planejado"
                       radius={[4, 4, 0, 0]}
                     />
                     <Bar
                       dataKey="delivered"
-                      fill="hsl(var(--primary))"
+                      fill="rgb(var(--accent-rgb))"
                       name="Entregue"
                       radius={[4, 4, 0, 0]}
                     />
@@ -1608,199 +916,44 @@ export function FlowMetricsDashboard({
               ) : (
                 <EmptyChart text="Sem histórico de sprints." />
               )}
-            </ChartCard>
-          )}
-
-          {activeKpi === "distribution" &&
-            (() => {
-              const debt = metrics.flowDistribution.find((d) =>
-                DEBT_TYPE_RE.test(d.type)
-              );
-              return (
-                <ChartCard
-                  badge={
-                    debt && debt.pct > 15 ? (
-                      <span
-                        style={{
-                          padding: "2px 8px",
-                          borderRadius: 5,
-                          background:
-                            "color-mix(in srgb, oklch(0.68 0.18 50) 15%, hsl(var(--card)))",
-                          color: "oklch(0.55 0.15 50)",
-                          fontWeight: 700,
-                          fontSize: 10,
-                        }}
-                      >
-                        Débito acima da meta
-                      </span>
-                    ) : undefined
-                  }
-                  footer="Recomendado: Feature 60% · Bug 10% · Débito 15% · Spike 15%"
-                  subtitle="Mix de trabalho no período"
-                  title="Flow Distribution"
-                >
-                  {metrics.flowDistribution.length > 0 ? (
-                    <div
-                      style={{ display: "flex", alignItems: "center", gap: 20 }}
-                    >
-                      <ResponsiveContainer height={180} width={180}>
-                        <PieChart>
-                          <Pie
-                            cx="50%"
-                            cy="50%"
-                            data={metrics.flowDistribution}
-                            dataKey="count"
-                            innerRadius={50}
-                            nameKey="type"
-                            outerRadius={80}
-                            paddingAngle={2}
-                          >
-                            {metrics.flowDistribution.map((d, i) => (
-                              <Cell
-                                fill={DIST_COLORS[i % DIST_COLORS.length]}
-                                key={d.type}
-                              />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{
-                              background: "hsl(var(--card))",
-                              border: "1px solid hsl(var(--border))",
-                              borderRadius: 8,
-                              fontSize: 12,
-                            }}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 10,
-                        }}
-                      >
-                        {metrics.flowDistribution.map((d, i) => (
-                          <div
-                            key={d.type}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: 8,
-                              fontSize: 12,
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: 8,
-                                height: 8,
-                                borderRadius: 4,
-                                background: DIST_COLORS[i % DIST_COLORS.length],
-                                flexShrink: 0,
-                              }}
-                            />
-                            <span
-                              style={{
-                                fontWeight: 600,
-                                color: "hsl(var(--foreground))",
-                              }}
-                            >
-                              {d.type}
-                            </span>
-                            <span
-                              style={{
-                                color: "hsl(var(--muted-foreground))",
-                              }}
-                            >
-                              {d.count} ({d.pct}%)
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <EmptyChart text="Sem itens concluídos no período." />
-                  )}
-                </ChartCard>
-              );
-            })()}
+            </SectionCard>
+          </div>
 
           {/* Insights */}
           {insights.length > 0 && (
             <div>
               <SectionTitle>Insights automáticos</SectionTitle>
               <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-                  gap: 12,
-                }}
+                className="grid gap-3"
+                style={{ gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}
               >
                 {insights.map((ins) => {
-                  let s = {
-                    bg: "color-mix(in srgb, hsl(var(--primary)) 10%, hsl(var(--card)))",
-                    border:
-                      "color-mix(in srgb, hsl(var(--primary)) 30%, transparent)",
-                    title: "hsl(var(--primary))",
-                    desc: "color-mix(in srgb, hsl(var(--primary)) 80%, hsl(var(--foreground)))",
-                  };
-                  if (ins.tone === "good") {
-                    s = {
-                      bg: "color-mix(in srgb, hsl(var(--success)) 10%, hsl(var(--card)))",
-                      border:
-                        "color-mix(in srgb, hsl(var(--success)) 30%, transparent)",
-                      title: "hsl(var(--success))",
-                      desc: "color-mix(in srgb, hsl(var(--success)) 80%, hsl(var(--foreground)))",
-                    };
-                  } else if (ins.tone === "warn") {
-                    s = {
-                      bg: "color-mix(in srgb, oklch(0.68 0.18 50) 10%, hsl(var(--card)))",
-                      border:
-                        "color-mix(in srgb, oklch(0.68 0.18 50) 30%, transparent)",
-                      title: "oklch(0.55 0.15 50)",
-                      desc: "oklch(0.45 0.12 50)",
-                    };
-                  }
+                  const rgb =
+                    ins.tone === "good"
+                      ? "var(--green-rgb)"
+                      : ins.tone === "warn"
+                        ? "var(--amber-rgb)"
+                        : "var(--blue-rgb)";
+                  const titleColor =
+                    ins.tone === "good"
+                      ? "var(--green-text)"
+                      : ins.tone === "warn"
+                        ? "var(--amber-text)"
+                        : "var(--blue-text)";
                   return (
                     <div
+                      className="rounded-cosmos-lg border px-4 py-3.5"
                       key={ins.title}
-                      style={{
-                        background: s.bg,
-                        border: `1px solid ${s.border}`,
-                        borderRadius: 12,
-                        padding: "14px 16px",
-                      }}
+                      style={{ background: `rgba(${rgb},.10)`, borderColor: `rgba(${rgb},.30)` }}
                     >
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 8,
-                          marginBottom: 6,
-                        }}
-                      >
-                        <span style={{ fontSize: 16 }}>{ins.icon}</span>
-                        <span
-                          style={{
-                            fontSize: 12,
-                            fontWeight: 700,
-                            color: s.title,
-                          }}
-                        >
+                      <div className="mb-1.5 flex items-center gap-2">
+                        <span className="text-[16px]">{ins.icon}</span>
+                        <span className="text-[12px] font-bold" style={{ color: titleColor }}>
                           {ins.title}
                         </span>
                       </div>
-                      <p
-                        style={{ fontSize: 11, color: s.desc, marginBottom: 8 }}
-                      >
-                        {ins.desc}
-                      </p>
-                      <div
-                        style={{
-                          fontSize: 11,
-                          color: s.title,
-                          fontWeight: 600,
-                        }}
-                      >
+                      <p className="mb-2 text-[11px] text-ink-muted">{ins.desc}</p>
+                      <div className="text-[11px] font-semibold" style={{ color: titleColor }}>
                         → {ins.action}
                       </div>
                     </div>
@@ -1812,7 +965,7 @@ export function FlowMetricsDashboard({
 
           {/* ── Anomaly Summary Panel ─────────────────────────────────────── */}
           {snapshotId && (
-            <div className="mt-6">
+            <div className="mt-2">
               <AnomalySummaryPanel snapshotId={snapshotId} />
             </div>
           )}
@@ -1823,85 +976,43 @@ export function FlowMetricsDashboard({
       {activeTab === "measure" && selectedScope && (
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Competency scores */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="flex flex-col gap-4">
             <SectionTitle>Competências SAFe — scores</SectionTitle>
 
-            <div
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 14,
-                border: "1px solid hsl(var(--border))",
-                padding: "16px 18px",
-                display: "flex",
-                flexDirection: "column",
-                gap: 14,
-              }}
-            >
+            <div className="flex flex-col gap-3.5 rounded-cosmos-lg border border-hairline bg-surface p-4">
               {COMPETENCIES.map((c) => {
                 const latest = assessments
                   .filter((a) => a.competency === c.id)
                   .sort(
                     (a, b) =>
-                      new Date(b.assessedAt).getTime() -
-                      new Date(a.assessedAt).getTime()
+                      new Date(b.assessedAt).getTime() - new Date(a.assessedAt).getTime()
                   )[0];
                 const score = latest?.score ?? null;
-                let fillColor = "hsl(var(--primary))";
+                let fillColor = "rgb(var(--accent-rgb))";
                 if (score !== null) {
                   if (score >= 4) {
-                    fillColor = "hsl(var(--success))";
+                    fillColor = "rgb(var(--green-rgb))";
                   } else if (score >= 3) {
-                    fillColor = "hsl(var(--primary))";
+                    fillColor = "rgb(var(--accent-rgb))";
                   } else {
-                    fillColor = "oklch(0.68 0.18 50)";
+                    fillColor = "rgb(var(--amber-rgb))";
                   }
                 }
                 return (
                   <div key={c.id}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        marginBottom: 5,
-                      }}
-                    >
+                    <div className="mb-1 flex justify-between">
+                      <span className="text-[12px] font-semibold text-ink">{c.label}</span>
                       <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 600,
-                          color: "hsl(var(--foreground))",
-                        }}
-                      >
-                        {c.label}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: 12,
-                          fontWeight: 800,
-                          color: score
-                            ? fillColor
-                            : "hsl(var(--muted-foreground))",
-                        }}
+                        className="text-[12px] font-extrabold"
+                        style={{ color: score ? fillColor : "var(--ink-faint)" }}
                       >
                         {score ? `${score}/5` : "—"}
                       </span>
                     </div>
-                    <div
-                      style={{
-                        height: 6,
-                        borderRadius: 99,
-                        background: "hsl(var(--muted))",
-                        overflow: "hidden",
-                      }}
-                    >
+                    <div className="h-1.5 overflow-hidden rounded-full bg-surface-3">
                       <div
-                        style={{
-                          height: "100%",
-                          borderRadius: 99,
-                          background: fillColor,
-                          width: score ? `${(score / 5) * 100}%` : "0%",
-                          transition: "width .4s",
-                        }}
+                        className="h-full rounded-full transition-[width] duration-300"
+                        style={{ background: fillColor, width: score ? `${(score / 5) * 100}%` : "0%" }}
                       />
                     </div>
                   </div>
@@ -1910,35 +1021,15 @@ export function FlowMetricsDashboard({
             </div>
 
             {/* Assessment form */}
-            <div
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 14,
-                border: "1px solid hsl(var(--border))",
-                padding: "16px 18px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  color: "hsl(var(--muted-foreground))",
-                  letterSpacing: ".06em",
-                  textTransform: "uppercase",
-                  marginBottom: 12,
-                }}
-              >
+            <div className="rounded-cosmos-lg border border-hairline bg-surface p-4">
+              <div className="mb-3 font-mono text-[11px] font-extrabold uppercase tracking-[.06em] text-ink-muted">
                 Novo Assessment
               </div>
-              <form
-                onSubmit={submitAssessment}
-                style={{ display: "flex", flexDirection: "column", gap: 10 }}
-              >
+              <form className="flex flex-col gap-2.5" onSubmit={submitAssessment}>
                 <select
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
-                  onChange={(e) =>
-                    setAssessCompetency(e.target.value as CompetencyKey)
-                  }
+                  aria-label="Competência"
+                  className="w-full rounded-lg border border-hairline bg-surface-2 px-3 py-2 text-ink text-sm"
+                  onChange={(e) => setAssessCompetency(e.target.value as CompetencyKey)}
                   value={assessCompetency}
                 >
                   {COMPETENCIES.map((c) => (
@@ -1947,41 +1038,20 @@ export function FlowMetricsDashboard({
                     </option>
                   ))}
                 </select>
-                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <span
-                    style={{
-                      fontSize: 11,
-                      color: "hsl(var(--muted-foreground))",
-                      width: 40,
-                    }}
-                  >
-                    Score:
-                  </span>
-                  <div style={{ display: "flex", gap: 4 }}>
+                <div className="flex items-center gap-2.5">
+                  <span className="w-10 text-[11px] text-ink-muted">Score:</span>
+                  <div className="flex gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <button
                         aria-label={`Score ${n}`}
                         aria-pressed={assessScore >= n}
+                        className="h-8 w-8 rounded-lg font-extrabold text-[13px] transition-colors"
                         key={n}
                         onClick={() => setAssessScore(n)}
                         style={{
-                          width: 32,
-                          height: 32,
-                          borderRadius: 8,
-                          fontWeight: 800,
-                          fontSize: 13,
-                          border: "none",
-                          cursor: "pointer",
-                          fontFamily: "inherit",
                           background:
-                            assessScore >= n
-                              ? "hsl(var(--primary))"
-                              : "hsl(var(--muted))",
-                          color:
-                            assessScore >= n
-                              ? "hsl(var(--primary-foreground))"
-                              : "hsl(var(--muted-foreground))",
-                          transition: "background .12s",
+                            assessScore >= n ? "rgb(var(--accent-rgb))" : "var(--surface-3)",
+                          color: assessScore >= n ? "var(--accent-text)" : "var(--ink-faint)",
                         }}
                         type="button"
                       >
@@ -1991,24 +1061,19 @@ export function FlowMetricsDashboard({
                   </div>
                 </div>
                 <textarea
-                  className="w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  aria-label="Observações"
+                  className="w-full resize-none rounded-lg border border-hairline bg-surface-2 px-3 py-2 text-ink text-sm"
                   onChange={(e) => setAssessNotes(e.target.value)}
                   placeholder="Observações (opcional)"
                   rows={2}
                   value={assessNotes}
                 />
                 <button
+                  className="rounded-lg py-2.5 font-bold text-[13px] transition-opacity"
                   disabled={assessLoading}
                   style={{
-                    background: "hsl(var(--primary))",
-                    color: "hsl(var(--primary-foreground))",
-                    border: "none",
-                    borderRadius: 8,
-                    padding: "9px 0",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
+                    background: "rgb(var(--accent-rgb))",
+                    color: "var(--accent-text)",
                     opacity: assessLoading ? 0.6 : 1,
                   }}
                   type="submit"
@@ -2020,80 +1085,35 @@ export function FlowMetricsDashboard({
           </div>
 
           {/* Improvement actions */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <div className="flex flex-col gap-4">
             <SectionTitle>Ações de Melhoria</SectionTitle>
 
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 8,
-                maxHeight: 320,
-                overflowY: "auto",
-              }}
-            >
+            <div className="flex max-h-80 flex-col gap-2 overflow-y-auto">
               {actions.length === 0 && (
-                <div
-                  style={{
-                    textAlign: "center",
-                    color: "hsl(var(--muted-foreground))",
-                    fontSize: 13,
-                    padding: "24px 0",
-                  }}
-                >
+                <div className="py-6 text-center text-[13px] text-ink-muted">
                   Nenhuma ação registrada.
                 </div>
               )}
               {actions.map((action) => (
                 <div
+                  className="flex items-start gap-2.5 rounded-cosmos-md border border-hairline bg-surface px-3.5 py-2.5"
                   key={action.id}
-                  style={{
-                    background: "hsl(var(--card))",
-                    borderRadius: 10,
-                    border: "1px solid hsl(var(--border))",
-                    padding: "10px 14px",
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 10,
-                  }}
                 >
                   <div
-                    style={{
-                      marginTop: 4,
-                      width: 8,
-                      height: 8,
-                      borderRadius: 4,
-                      flexShrink: 0,
-                      background:
-                        STATUS_COLOR[action.status] ??
-                        "hsl(var(--muted-foreground))",
-                    }}
+                    className="mt-1 h-2 w-2 shrink-0 rounded-full"
+                    style={{ background: STATUS_COLOR[action.status] ?? "var(--ink-faint)" }}
                   />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div
-                      style={{
-                        fontSize: 12,
-                        fontWeight: 600,
-                        color: "hsl(var(--foreground))",
-                      }}
-                    >
-                      {action.title}
-                    </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-[12px] font-semibold text-ink">{action.title}</div>
                     {action.relatedMetric && (
-                      <div
-                        style={{
-                          fontSize: 10,
-                          color: "hsl(var(--muted-foreground))",
-                          marginTop: 2,
-                        }}
-                      >
-                        {METRIC_LABELS[action.relatedMetric] ??
-                          action.relatedMetric}
+                      <div className="mt-0.5 text-[10px] text-ink-muted">
+                        {METRIC_LABELS[action.relatedMetric] ?? action.relatedMetric}
                       </div>
                     )}
                   </div>
                   <select
-                    className="rounded border border-border bg-background px-1 py-0.5 text-[10px]"
+                    aria-label="Status da ação"
+                    className="rounded border border-hairline bg-surface-2 px-1 py-0.5 text-[10px] text-ink"
                     onChange={(e) => {
                       const val = e.target.value as ActionStatusValue;
                       startTransition(async () => {
@@ -2114,32 +1134,13 @@ export function FlowMetricsDashboard({
             </div>
 
             {/* New action form */}
-            <div
-              style={{
-                background: "hsl(var(--card))",
-                borderRadius: 14,
-                border: "1px solid hsl(var(--border))",
-                padding: "16px 18px",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: 11,
-                  fontWeight: 800,
-                  color: "hsl(var(--muted-foreground))",
-                  letterSpacing: ".06em",
-                  textTransform: "uppercase",
-                  marginBottom: 12,
-                }}
-              >
+            <div className="rounded-cosmos-lg border border-hairline bg-surface p-4">
+              <div className="mb-3 font-mono text-[11px] font-extrabold uppercase tracking-[.06em] text-ink-muted">
                 Nova Ação
               </div>
-              <form
-                onSubmit={submitAction}
-                style={{ display: "flex", flexDirection: "column", gap: 8 }}
-              >
+              <form className="flex flex-col gap-2" onSubmit={submitAction}>
                 <input
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-hairline bg-surface-2 px-3 py-2 text-ink text-sm"
                   onChange={(e) => setActionTitle(e.target.value)}
                   placeholder="Título da ação"
                   required
@@ -2147,7 +1148,8 @@ export function FlowMetricsDashboard({
                   value={actionTitle}
                 />
                 <select
-                  className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                  aria-label="Métrica relacionada"
+                  className="w-full rounded-lg border border-hairline bg-surface-2 px-3 py-2 text-ink text-sm"
                   onChange={(e) => setActionMetric(e.target.value)}
                   value={actionMetric}
                 >
@@ -2159,17 +1161,11 @@ export function FlowMetricsDashboard({
                   ))}
                 </select>
                 <button
+                  className="rounded-lg py-2.5 font-bold text-[13px] transition-opacity"
                   disabled={actionLoading || !actionTitle.trim()}
                   style={{
-                    background: "hsl(var(--primary))",
-                    color: "hsl(var(--primary-foreground))",
-                    border: "none",
-                    borderRadius: 8,
-                    padding: "9px 0",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
+                    background: "rgb(var(--accent-rgb))",
+                    color: "var(--accent-text)",
                     opacity: actionLoading || !actionTitle.trim() ? 0.5 : 1,
                   }}
                   type="submit"
@@ -2189,16 +1185,7 @@ export function FlowMetricsDashboard({
 
 function EmptyChart({ text }: { text: string }) {
   return (
-    <div
-      style={{
-        height: 160,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "hsl(var(--muted-foreground))",
-        fontSize: 13,
-      }}
-    >
+    <div className="flex h-40 items-center justify-center text-[13px] text-ink-muted">
       {text}
     </div>
   );

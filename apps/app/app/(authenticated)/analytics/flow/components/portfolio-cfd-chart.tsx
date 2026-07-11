@@ -33,6 +33,7 @@ function DistributionChart({ data }: { data: PortfolioDistribution[] }) {
       <h3 className="font-medium text-sm">Distribuição Atual por Status</h3>
       <ResponsiveContainer height={220} width="100%">
         <BarChart
+          aria-label="Distribuição atual por status"
           data={data}
           layout="vertical"
           margin={{ left: 16, right: 24, top: 4, bottom: 4 }}
@@ -78,6 +79,7 @@ function TrendChart({
       </h3>
       <ResponsiveContainer height={220} width="100%">
         <LineChart
+          aria-label="Throughput e WIP ao longo do tempo"
           data={data}
           margin={{ left: 0, right: 16, top: 4, bottom: 4 }}
         >

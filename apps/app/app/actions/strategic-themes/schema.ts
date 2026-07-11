@@ -61,6 +61,7 @@ export const CreateThemeSchema = z.object({
   themeType: ThemeType.optional(),
   ownerUserId: optCuid,
   budgetTotal: z.number().nonnegative().optional(),
+  targetAllocationPct: z.number().min(0).max(100).optional(),
 });
 
 export const UpdateThemeSchema = CreateThemeSchema.partial();
@@ -238,6 +239,7 @@ export type UpdateKRInput = z.infer<typeof UpdateKeyResultSchema>;
 
 export type StrategicThemeWithCount = StrategicTheme & {
   _count: { epics: number; okrs: number };
+  okrs: { keyResults: { current: number; target: number }[] }[];
 };
 
 export type RiskOKRWithRisk = RiskOKR & { risk: Risk };
@@ -268,6 +270,9 @@ export type ThemeListItem = {
   themeType: string | null;
   ownerUserId: string | null;
   budgetTotal: number | null;
+  healthStatus: string;
+  targetAllocationPct: number | null;
+  progress: number;
   epicCount: number;
   okrCount: number;
 };

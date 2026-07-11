@@ -16,19 +16,42 @@ model StrategicTheme {
   ownerUserId String?
   budgetTotal Float?
 
+  // cosmos.html screen-themes — Strategy Map health + allocation target
+  healthStatus        String  @default("on") // on/watch/behind
+  targetAllocationPct Float? // desired % of portfolio lean budget
+  pillarId            String? // Strategy Map pillar grouping
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant         Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   epics          Epic[]
   okrs           OKR[]
   arts           ThemeART[]
   leanBudgets    LeanBudget[]
   billingEntries BillingEntry[]
+  pillar         StrategyPillar? @relation(fields: [pillarId], references: [id], onDelete: SetNull)
 
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([pillarId])
+}
+
+// cosmos.html screen-strategy — Strategy Map pillars grouping strategic themes
+model StrategyPillar {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  tone      String   @default("accent")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  themes StrategicTheme[]
+
+  @@index([tenantId])
 }
 
 // M:N junction StrategicTheme <-> ART
@@ -208,6 +231,7 @@ model RoadmapItem {
   color       String   @default("#6366f1")
   artId       String?
   status      String   @default("PLANNED") // PLANNED/IN_PROGRESS/DONE
+  milestone   Boolean  @default(false) // cosmos.html screen-roadmap milestone flag
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

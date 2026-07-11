@@ -40,6 +40,8 @@ type Objective = {
   status: string;
   businessValue: number;
   teamId?: string | null;
+  plannedValue?: number;
+  achievedValue?: number;
 };
 
 type Team = { id: string; name: string; velocity?: number | null };
@@ -53,8 +55,8 @@ const STATUS_CONFIG: Record<
 > = {
   NOT_STARTED: { label: "Não Iniciado", variant: "outline" },
   IN_PROGRESS: { label: "Em Progresso", variant: "secondary" },
-  COMPLETED: { label: "Concluído", variant: "default" },
-  CANCELLED: { label: "Cancelado", variant: "destructive" },
+  ACHIEVED: { label: "Atingido", variant: "default" },
+  MISSED: { label: "Não Atingido", variant: "destructive" },
 };
 
 type ObjectiveCardProps = {
@@ -110,6 +112,44 @@ function ObjectiveCard({
                 {objective.businessValue}
               </span>
             </span>
+          )}
+          {!!objective.plannedValue && objective.plannedValue > 0 && (
+            <>
+              <div
+                className="obj-prog h-1.5 overflow-hidden rounded-full"
+                style={{ width: 130, background: "var(--surface-3)" }}
+              >
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${Math.min(
+                      100,
+                      Math.round(
+                        ((objective.achievedValue ?? 0) /
+                          objective.plannedValue) *
+                          100
+                      )
+                    )}%`,
+                    background:
+                      (objective.achievedValue ?? 0) >= objective.plannedValue
+                        ? "var(--green)"
+                        : "var(--accent-c)",
+                  }}
+                />
+              </div>
+              <span
+                className="obj-val"
+                style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  minWidth: 54,
+                  textAlign: "right",
+                }}
+              >
+                {objective.achievedValue ?? 0}/{objective.plannedValue}
+              </span>
+            </>
           )}
           <Select
             disabled={isPending}

@@ -1,16 +1,24 @@
 "use client";
 
+import { Badge } from "@repo/design-system/components/cosmos/badge";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { AnomalyCard } from "@/app/(authenticated)/analytics/flow/components/anomaly-card";
+import { Activity } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
+import { SectionCard } from "@/app/(authenticated)/components/section-card";
 import type {
-  AnomalyRow,
+  AnomalyRow as AnomalyRowData,
   AnomalyStats,
 } from "@/app/actions/flow-intelligence/list-anomalies";
+import { AnomalyRow } from "./anomaly-row";
 
 const SNOOZE_DAYS = 7;
-const SNOOZE_PREFIX = "cosmos_anomaly_snooze_";
+
+const ICON_ALERT =
+  "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01";
+const ICON_LAYERS =
+  "M12 2 2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5";
+const ICON_CLOCK = "M12 22a10 10 0 100-20 10 10 0 000 20zM12 6v6l4 2";
 
 function getSnoozed(): Set<string> {
   try {
@@ -36,10 +44,12 @@ function snoozeAnomaly(id: string) {
     const parsed: Record<string, number> = raw ? JSON.parse(raw) : {};
     parsed[id] = Date.now() + SNOOZE_DAYS * 24 * 60 * 60 * 1000;
     localStorage.setItem("cosmos_anomaly_snoozed", JSON.stringify(parsed));
-  } catch {}
+  } catch {
+    // localStorage unavailable — snooze degrades to a no-op for this session.
+  }
 }
 
-function buildGovernanceUrl(a: AnomalyRow, ruleLabel: string): string {
+function buildGovernanceUrl(a: AnomalyRowData, ruleLabel: string): string {
   const title = encodeURIComponent(`Anomalia: ${ruleLabel}`);
   const desc = encodeURIComponent(
     `Métrica: ${a.metric} · Delta: ${a.delta > 0 ? "+" : ""}${a.delta.toFixed(2)} · Escopo: ${a.run.scope}`
@@ -77,7 +87,7 @@ const RULE_LABELS: Record<string, string> = {
 };
 
 type Props = {
-  anomalies: AnomalyRow[];
+  anomalies: AnomalyRowData[];
   stats: AnomalyStats;
 };
 
@@ -104,30 +114,49 @@ export function AnomalyList({ anomalies, stats }: Props) {
     (s) => (stats.bySeverity[s] ?? 0) > 0
   );
 
+  const criticalHigh =
+    (stats.bySeverity.CRITICAL ?? 0) + (stats.bySeverity.HIGH ?? 0);
+  const scopesAffected = useMemo(
+    () => new Set(anomalies.map((a) => a.run.scopeId)).size,
+    [anomalies]
+  );
+
   return (
-    <div className="space-y-6">
-      {/* Stats row */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {SEV_ORDER.map((sev) => {
-          const count = stats.bySeverity[sev] ?? 0;
-          return (
-            <div className="rounded-lg border bg-card px-4 py-3" key={sev}>
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn("h-2 w-2 shrink-0 rounded-full", SEV_DOT[sev])}
-                />
-                <span className="text-muted-foreground text-xs">
-                  {SEV_LABELS[sev]}
-                </span>
-              </div>
-              <p className="mt-1 font-bold text-2xl tabular-nums">{count}</p>
-            </div>
-          );
-        })}
-      </div>
+    <div className="animate-fade-in space-y-6">
+      {/* KPI row — re-skin of prototype's 4-card grid (screen-anomalies.jsx) */}
+      <KpiGrid cols={4}>
+        <KpiCard
+          badge="— Requerem ação"
+          iconPath={ICON_ALERT}
+          label="Anomalias abertas"
+          tone="red"
+          value={stats.total}
+        />
+        <KpiCard
+          badge="— Severidade elevada"
+          iconPath={ICON_ALERT}
+          label="Críticas + altas"
+          tone="amber"
+          value={criticalHigh}
+        />
+        <KpiCard
+          badge="— ARTs / times monitorados"
+          iconPath={ICON_LAYERS}
+          label="Escopos afetados"
+          tone="blue"
+          value={scopesAffected}
+        />
+        <KpiCard
+          badge="— Adiadas pelo time"
+          iconPath={ICON_CLOCK}
+          label="Ignoradas (7d)"
+          tone="purple"
+          value={snoozed.size}
+        />
+      </KpiGrid>
 
       {/* Filter tabs */}
-      {activeSeverities.length > 0 ? (
+      {activeSeverities.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {(["ALL", ...activeSeverities] as Severity[]).map((sev) => (
             <button
@@ -141,11 +170,11 @@ export function AnomalyList({ anomalies, stats }: Props) {
               onClick={() => setFilter(sev)}
               type="button"
             >
-              {sev !== "ALL" ? (
+              {sev !== "ALL" && (
                 <span
                   className={cn("h-1.5 w-1.5 rounded-full", SEV_DOT[sev])}
                 />
-              ) : null}
+              )}
               {SEV_LABELS[sev]}
               {sev !== "ALL" ? (
                 <span className="opacity-60">{stats.bySeverity[sev] ?? 0}</span>
@@ -155,72 +184,45 @@ export function AnomalyList({ anomalies, stats }: Props) {
             </button>
           ))}
         </div>
-      ) : null}
-
-      {/* List */}
-      {visible.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-          <div className="mb-3 h-3 w-3 rounded-full bg-green-500" />
-          <p className="font-medium text-sm">Nenhuma anomalia detectada</p>
-          <p className="mt-1 text-muted-foreground text-xs">
-            Flow saudável para o filtro selecionado.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {visible.map((a) => {
-            const ruleLabel = RULE_LABELS[a.rule] ?? a.rule;
-            return (
-              <div className="space-y-1" key={a.id}>
-                <AnomalyCard
-                  anomaly={{
-                    id: a.id,
-                    rule: ruleLabel,
-                    severity: a.severity,
-                    metadata: a.metadata,
-                  }}
-                />
-                <div className="flex flex-wrap items-center justify-between gap-2 px-1">
-                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
-                    <span>
-                      {a.metric} · delta: {a.delta > 0 ? "+" : ""}
-                      {a.delta.toFixed(2)}
-                    </span>
-                    <span>·</span>
-                    <span className="uppercase">
-                      {a.run.scope} — {a.run.trigger}
-                    </span>
-                    <span>·</span>
-                    <span>
-                      {new Date(a.run.ranAt).toLocaleString("pt-BR", {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Link href={buildGovernanceUrl(a, ruleLabel)}>
-                      <button
-                        className="rounded px-2 py-0.5 font-medium text-[#5e6ad2] text-[11px] transition-colors hover:bg-[#5e6ad2]/10"
-                        type="button"
-                      >
-                        Escalar
-                      </button>
-                    </Link>
-                    <button
-                      className="rounded px-2 py-0.5 font-medium text-[11px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                      onClick={() => handleSnooze(a.id)}
-                      type="button"
-                    >
-                      Ignorar 7d
-                    </button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       )}
+
+      {/* List — re-skin of the prototype's SectionCard + AnomalyRow list */}
+      <SectionCard
+        accentRgb="251,113,133"
+        actions={
+          <Badge dot tone="green">
+            monitorando {scopesAffected} escopos
+          </Badge>
+        }
+        icon={Activity}
+        subtitle="Ordenadas por severidade e recência"
+        title="Anomalias detectadas"
+      >
+        {visible.length === 0 ? (
+          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
+            <div className="mb-3 h-3 w-3 rounded-full bg-green-500" />
+            <p className="font-medium text-sm">Nenhuma anomalia detectada</p>
+            <p className="mt-1 text-muted-foreground text-xs">
+              Flow saudável para o filtro selecionado.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            {visible.map((a) => {
+              const ruleLabel = RULE_LABELS[a.rule] ?? a.rule;
+              return (
+                <AnomalyRow
+                  anomaly={a}
+                  governanceHref={buildGovernanceUrl(a, ruleLabel)}
+                  key={a.id}
+                  onSnooze={() => handleSnooze(a.id)}
+                  ruleLabel={ruleLabel}
+                />
+              );
+            })}
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }

@@ -86,7 +86,7 @@ function SidebarContent({
   return (
     <>
       <div className="flex items-center justify-between px-3 py-3">
-        <span className="font-semibold text-gray-700 text-sm dark:text-zinc-300">
+        <span className="font-semibold text-ink-muted text-sm">
           Conversas
         </span>
         <Button
@@ -103,7 +103,7 @@ function SidebarContent({
 
       <div className="flex-1 overflow-y-auto px-2 pb-4 [scrollbar-width:thin]">
         {groups.length === 0 ? (
-          <p className="px-2 py-4 text-center text-gray-400 text-xs dark:text-zinc-600">
+          <p className="px-2 py-4 text-center text-ink-muted text-xs">
             Nenhuma conversa ainda
           </p>
         ) : (
@@ -160,14 +160,14 @@ export function SessionSidebar({
       {/* Desktop sidebar */}
       <aside
         className={cn(
-          "hidden h-full flex-col border-black/[0.06] border-r bg-gray-50/80 transition-all duration-200 lg:flex dark:border-white/[0.06] dark:bg-zinc-900/60",
+          "hidden h-full flex-col border-hairline border-r bg-surface-2 transition-all duration-200 lg:flex",
           isOpen ? "w-64" : "w-12"
         )}
       >
         {isOpen ? (
           <>
             <div className="flex items-center justify-between px-3 py-3">
-              <span className="font-semibold text-gray-700 text-sm dark:text-zinc-300">
+              <span className="font-semibold text-ink-muted text-sm">
                 Conversas
               </span>
               <div className="flex items-center gap-1">
@@ -195,7 +195,7 @@ export function SessionSidebar({
 
             <div className="flex-1 overflow-y-auto px-2 pb-4 [scrollbar-width:thin]">
               {groupSessions(sessions).length === 0 ? (
-                <p className="px-2 py-4 text-center text-gray-400 text-xs dark:text-zinc-600">
+                <p className="px-2 py-4 text-center text-ink-muted text-xs">
                   Nenhuma conversa ainda
                 </p>
               ) : (

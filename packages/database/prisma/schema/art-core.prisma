@@ -14,6 +14,9 @@ model ART {
   // Story-039 Solution Train linkage
   solutionTrainId String?
 
+  // Layout denorm — active PI for quick dashboard reads (no FK; app layer keeps in sync)
+  currentPiPlanId String?
+
   tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   piPlans          PIPlan[]
   teams            Team[]
@@ -34,6 +37,13 @@ model Team {
   velocity         Int? // story points por sprint (referência histórica)
   sprintLengthDays Int      @default(14)
   members          Json? // [{name, role, skills: string[], hoursPerWeek}]
+  // cosmos.html screen-teams directory fields
+  leadUserId       String?
+  focusArea        String?  @db.Text
+  // Layout denorm — visual identity + WIP counter for dashboards/program board
+  avatarUrl        String?
+  color            String?  @default("#6366f1")
+  wip              Int      @default(0) // current WIP; recomputed when stories change status
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -64,6 +74,8 @@ model PIPlan {
   ppm                      Float?
   // INT-01 Miro embed
   miroBoardUrl             String?   @db.Text
+  // Layout denorm — completion % for PI cards; recomputed at story/feature state changes
+  completionPct            Float     @default(0)
   createdAt                DateTime  @default(now())
   updatedAt                DateTime  @updatedAt
 
@@ -217,6 +229,10 @@ model Epic {
   // Description content
   descriptionMd String? // Markdown source (saved by TipTap)
 
+  // Layout denorm — feature counts for kanban cards; recomputed when features change
+  featureCount     Int @default(0)
+  doneFeatureCount Int @default(0)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -266,6 +282,7 @@ model Feature {
   readinessOverrideNote String?   @db.Text
   readinessOverrideBy   String?
   readinessOverrideAt   DateTime?
+  milestone             Boolean   @default(false) // cosmos.html screen-program milestone flag
 
   // WSJF Parameters
   bv        Float @default(0) // Business Value
@@ -285,6 +302,8 @@ model Feature {
 
   storyPoints    Int       @default(1) // SP estimate for this feature
   assigneeUserId String? // User responsible (links to User.id logically; no FK to keep it simple)
+  // Layout denorm — % stories done; recomputed when child stories change status
+  progressPct    Float     @default(0)
   startedAt      DateTime? // When statusId first moved to IN_PROGRESS
   completedAt    DateTime? // When statusId was set to DONE
   deployedAt     DateTime? // Story-025: set when all Stories under feature are DEPLOYED

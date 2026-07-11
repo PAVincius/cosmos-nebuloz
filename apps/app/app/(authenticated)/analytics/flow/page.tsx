@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { CopilotTriggerButton } from "@/app/(authenticated)/components/copilot/copilot-trigger-button";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { RelationChip } from "@/app/(authenticated)/components/relation-chip";
 import { getCycleTimeData } from "@/app/actions/analytics/cycle-time";
 import { getPIBurnupData } from "@/app/actions/analytics/pi-burnup";
 import { getPortfolioCFDData } from "@/app/actions/analytics/portfolio-cfd";
@@ -126,6 +127,14 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
         )
       : null;
 
+  const isHealthy = metrics
+    ? metrics.flowPredictability >= 0.8 && metrics.flowLoad <= 15
+    : false;
+  const scopeLabel =
+    metrics?.scopeLabel ??
+    scopeOptions.find((o) => o.id === selectedScope?.id)?.label ??
+    selectedScope?.id;
+
   return (
     <div className={`${appDesign.shell} h-full overflow-auto`}>
       <PageHeader
@@ -141,6 +150,65 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
             surface="flow_dashboard"
           />
         }
+        badge={
+          selectedScope ? (
+            <div className="flex flex-wrap items-center gap-2">
+              {(selectedScope.type === "art" ||
+                selectedScope.type === "team") && (
+                <RelationChip
+                  eyebrow={selectedScope.type === "art" ? "ART" : "Time"}
+                  href={
+                    selectedScope.type === "art"
+                      ? `/arts/${selectedScope.id}`
+                      : `/teams/${selectedScope.id}`
+                  }
+                  label={scopeLabel ?? selectedScope.id}
+                  tone={selectedScope.type === "art" ? "purple" : "blue"}
+                />
+              )}
+              <RelationChip
+                eyebrow="Análise"
+                href="/analytics/measure-grow"
+                label="Measure & Grow"
+                tone="accent"
+              />
+              <RelationChip
+                eyebrow="Portfolio"
+                href="/analytics/executive"
+                label="Executive Dashboard"
+                tone="neutral"
+              />
+              {metrics && (
+                <span
+                  className="inline-flex items-center gap-1.5 rounded-cosmos-pill border px-2.5 py-1 text-[11px] font-semibold"
+                  style={
+                    isHealthy
+                      ? {
+                          background: "rgba(var(--green-rgb),.14)",
+                          borderColor: "rgba(var(--green-rgb),.3)",
+                          color: "var(--green-text)",
+                        }
+                      : {
+                          background: "rgba(var(--amber-rgb),.14)",
+                          borderColor: "rgba(var(--amber-rgb),.3)",
+                          color: "var(--amber-text)",
+                        }
+                  }
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{
+                      background: isHealthy
+                        ? "var(--green)"
+                        : "var(--amber)",
+                    }}
+                  />
+                  {isHealthy ? "Fluxo saudável" : "Fluxo em risco"}
+                </span>
+              )}
+            </div>
+          ) : undefined
+        }
         breadcrumb={[{ label: "Analytics", href: "/analytics" }]}
         subtitle="SAFe 6.0 — Distribution · Velocity · Time · Load · Efficiency · Predictability"
         title="Flow Metrics"
@@ -148,7 +216,7 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
 
       <div className="min-w-0 flex-1 p-6">
         {isTeamScope ? (
-          <div className="mb-6 flex gap-2 border-border border-b">
+          <div className="mb-6 flex gap-1.5 border-hairline border-b pb-2">
             <TabButton
               active={activeTab === "metrics"}
               href={`?scope=team&scopeId=${selectedScope?.id}`}
@@ -171,7 +239,7 @@ export default async function FlowMetricsPage({ searchParams }: Props) {
             />
           </div>
         ) : (
-          <div className="mb-6 flex gap-2 border-border border-b">
+          <div className="mb-6 flex gap-1.5 border-hairline border-b pb-2">
             <TabButton
               active={activeTab !== "portfolio" && activeTab !== "burnup"}
               href={
@@ -257,10 +325,10 @@ function TabButton({
 }) {
   return (
     <a
-      className={`border-b-2 px-4 py-2 font-medium text-sm transition-colors ${
+      className={`rounded-cosmos-pill px-4 py-1.5 font-semibold text-[13px] transition-colors ${
         active
-          ? "border-foreground text-foreground"
-          : "border-transparent text-muted-foreground hover:text-foreground"
+          ? "border border-hairline-strong bg-surface-2 text-ink"
+          : "border border-transparent text-ink-muted hover:bg-surface-2 hover:text-ink-muted"
       }`}
       href={href}
     >

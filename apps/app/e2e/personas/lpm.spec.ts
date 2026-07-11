@@ -193,8 +193,6 @@ test.describe("LPM — Portfolio Kanban", () => {
       !process.env.AUTH_TEST,
       "Auth tests disabled (set AUTH_TEST=true)"
     );
-    test.use({ storageState: "./e2e/fixtures/auth-session.json" });
-
     await page.goto("/portfolio");
     await page.waitForLoadState("networkidle");
 

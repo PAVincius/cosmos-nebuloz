@@ -14,10 +14,13 @@ import {
   PlatformArch,
   Workspace,
 } from "./sections";
+import { BackgroundBeams } from "./background-beams";
+import { tierWgl, useSceneTier } from "./scene-mount";
 import { TweaksPanel, useTweaks } from "./tweaks";
 
 export function NebulozApp() {
   const tw = useTweaks();
+  const tier = useSceneTier();
   const [, force] = useState(0);
 
   // Force one extra render shortly after mount to kick off framer-motion animations
@@ -49,12 +52,18 @@ export function NebulozApp() {
   }, [tw.palette]);
 
   return (
-    <WebGLCtx.Provider value={tw.wgl}>
+    <WebGLCtx.Provider
+      value={tierWgl(
+        { ...tw.wgl, fxaa: true, noise: true, noiseOpacity: 0.08 },
+        tier
+      )}
+    >
       <PaletteCtx.Provider value={tw.palette}>
         <div className="relative" data-screen-label="Nebuloz Home">
+          <BackgroundBeams />
           <CursorGlow palette={tw.palette} />
-          <Hero />
-          <main id="main-content">
+          <Hero variant="blend" />
+          <main className="relative" id="main-content">
             <PlatformArch />
             <Convictions />
             <Workspace />

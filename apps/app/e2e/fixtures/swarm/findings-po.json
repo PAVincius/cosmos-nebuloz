@@ -106,5 +106,167 @@
     "id": "po-1778714170930-5",
     "persona": "po",
     "timestamp": 1778714170930
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1782704191310-1",
+    "persona": "po",
+    "timestamp": 1782704191310
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1782704192832-2",
+    "persona": "po",
+    "timestamp": 1782704192832
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1782704193401-3",
+    "persona": "po",
+    "timestamp": 1782704193401
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1782704523162-1",
+    "persona": "po",
+    "timestamp": 1782704523162
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1782704523828-2",
+    "persona": "po",
+    "timestamp": 1782704523828
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1782704524329-3",
+    "persona": "po",
+    "timestamp": 1782704524329
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1782704846826-1",
+    "persona": "po",
+    "timestamp": 1782704846826
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1782704847151-2",
+    "persona": "po",
+    "timestamp": 1782704847151
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1782704847928-3",
+    "persona": "po",
+    "timestamp": 1782704847928
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1783304069220-11",
+    "persona": "po",
+    "timestamp": 1783304069220
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1783304069863-12",
+    "persona": "po",
+    "timestamp": 1783304069863
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1783304070229-13",
+    "persona": "po",
+    "timestamp": 1783304070229
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1783308640571-1",
+    "persona": "po",
+    "timestamp": 1783308640571
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1783308641734-2",
+    "persona": "po",
+    "timestamp": 1783308641734
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1783308642521-3",
+    "persona": "po",
+    "timestamp": 1783308642521
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/teams/backlog",
+    "description": "Backlog route found at /teams/backlog",
+    "id": "po-1783318889005-7",
+    "persona": "po",
+    "timestamp": 1783318889005
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/api/auth/switch-tenant",
+    "description": "Multi-tenant security enforced — non-member switch returns 401",
+    "id": "po-1783318889579-8",
+    "persona": "po",
+    "timestamp": 1783318889579
+  },
+  {
+    "severity": "info",
+    "category": "compliant",
+    "route": "/sign-in",
+    "description": "Sign-in form has all required elements",
+    "id": "po-1783318891724-9",
+    "persona": "po",
+    "timestamp": 1783318891724
   }
 ]

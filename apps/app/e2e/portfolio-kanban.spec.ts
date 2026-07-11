@@ -69,12 +69,14 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
 
   test("renders the Portfolio Kanban title", async ({ page }) => {
     await page.goto("/portfolio");
-    await expect(page.locator("h1:has-text('Portfolio Kanban')")).toBeVisible({
+    await expect(page.locator("h1:has-text('Portfolio')")).toBeVisible({
       timeout: 15_000,
     });
   });
 
   test("renders all 5 SAFe columns", async ({ page }) => {
+    // Abort Liveblocks auth so board renders without waiting for real-time connection
+    await page.route("**/api/collaboration/auth**", (route) => route.abort());
     await page.goto("/portfolio");
 
     // Aguarda o board carregar
@@ -89,6 +91,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   });
 
   test("each column has a card counter badge", async ({ page }) => {
+    await page.route("**/api/collaboration/auth**", (route) => route.abort());
     await page.goto("/portfolio");
 
     await page
@@ -105,7 +108,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   test("page has correct SEO title", async ({ page }) => {
     await page.goto("/portfolio");
     await page.waitForLoadState("domcontentloaded");
-    await expect(page).toHaveTitle(/Portfolio Kanban.*COSMOS/i);
+    await expect(page).toHaveTitle(/Portfolio.*COSMOS/i);
   });
 
   test("shows collaborative loading fallback for Liveblocks Room", async ({

@@ -36,8 +36,8 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
+import { computeCapacityStatus } from "../../../app/actions/features/dependencies-capacity";
 import {
-  computeCapacityStatus,
   createDependencyLink,
   updateDependencyBoardStatus,
 } from "../../../app/actions/features/dependencies";

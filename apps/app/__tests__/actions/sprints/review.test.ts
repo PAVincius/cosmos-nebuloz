@@ -35,10 +35,10 @@ vi.mock("@repo/database", () => ({
 
 import {
   computePIPPM,
-  ppmFormula,
   saveSprintReview,
   updatePIObjectiveAchieved,
 } from "../../../app/actions/sprints/review";
+import { ppmFormula } from "../../../app/actions/sprints/ppm-formula";
 
 // ─── ppmFormula (pure, no mocks needed) ──────────────────────────────────────
 

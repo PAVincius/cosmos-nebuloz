@@ -1,14 +1,13 @@
 "use client";
 
+import { CosmosHeader } from "@repo/design-system/components/cosmos";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
-import { AlertTriangleIcon, CheckIcon, SendIcon } from "lucide-react";
+import { AlertTriangleIcon, CheckIcon, MicIcon, SendIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { createImpediment } from "@/app/actions/impediments";
 import { upsertStandupEntry } from "@/app/actions/standup";
@@ -73,18 +72,20 @@ export function StandupForm({ teamId, todayIso, existing }: StandupFormProps) {
   }
 
   return (
-    <Card>
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-base">
-          Meu Standup de Hoje
-          {submitted && (
-            <span className="flex items-center gap-1 font-normal text-green-600 text-xs">
+    <Card className="overflow-hidden">
+      <CosmosHeader
+        action={
+          submitted ? (
+            <span className="flex items-center gap-1 font-medium text-emerald-600 text-xs dark:text-emerald-400">
               <CheckIcon className="h-3.5 w-3.5" />
               Salvo
             </span>
-          )}
-        </CardTitle>
-      </CardHeader>
+          ) : undefined
+        }
+        icon={<MicIcon className="h-4 w-4" />}
+        title="Meu Standup de Hoje"
+        tone="accent"
+      />
       <CardContent>
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-1.5">

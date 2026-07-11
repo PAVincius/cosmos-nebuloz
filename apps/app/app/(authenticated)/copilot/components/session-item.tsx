@@ -112,8 +112,8 @@ export function SessionItem({
           className={cn(
             "group flex w-full items-start gap-2 rounded-lg px-2 py-2 text-left transition-colors",
             isActive
-              ? "bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300"
-              : "text-gray-600 hover:bg-gray-100 dark:text-zinc-400 dark:hover:bg-zinc-800/60"
+              ? "bg-[var(--cosmos-ai-bg)] text-[var(--cosmos-ai-fg)]"
+              : "text-ink-muted hover:bg-surface-3"
           )}
           onClick={() => onSelect(session.id)}
           onMouseEnter={() => setHovered(true)}
@@ -129,8 +129,8 @@ export function SessionItem({
               className={cn(
                 "shrink-0 cursor-pointer rounded p-0.5 transition-opacity",
                 isPinned
-                  ? "text-violet-500 opacity-100"
-                  : "text-gray-400 opacity-0 group-hover:opacity-100 dark:text-zinc-500"
+                  ? "text-[var(--cosmos-ai-fg)] opacity-100"
+                  : "text-ink-muted opacity-0 group-hover:opacity-100"
               )}
               onClick={handlePinClick}
               onKeyDown={(e) => {

@@ -51,7 +51,7 @@ CREATE INDEX "DataSubjectRequest_tenantId_status_idx"
 
 ALTER TABLE "DataSubjectRequest"
   ADD CONSTRAINT "DataSubjectRequest_tenantId_fkey"
-  FOREIGN KEY ("tenantId") REFERENCES "tenants"("id")
+  FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id")
   ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- ─── 4. RLS for tables created in stories 031-033 ────────────────────────────
@@ -86,5 +86,5 @@ CREATE POLICY "tenant_isolation" ON "DataSubjectRequest"
 -- AuditLog already has (tenantId, createdAt) from migration 20260603000001.
 -- Add covering index for cursor queries that also filter by action.
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS "AuditLog_tenantId_action_createdAt_idx"
+CREATE INDEX IF NOT EXISTS "AuditLog_tenantId_action_createdAt_idx"
   ON "AuditLog"("tenantId", "action", "createdAt" DESC);

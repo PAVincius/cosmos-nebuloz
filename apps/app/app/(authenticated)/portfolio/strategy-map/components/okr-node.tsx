@@ -49,7 +49,7 @@ export function OKRNode({ okr, compact = false }: OKRNodeProps) {
 
   return (
     <div className="flex items-start gap-2 rounded-xl border border-hairline bg-surface px-3 py-2.5 shadow-[var(--card-shadow)]">
-      <TargetIcon className="mt-0.5 h-4 w-4 shrink-0 text-[#5e6ad2]" />
+      <TargetIcon className="mt-0.5 h-4 w-4 shrink-0 text-accent-text" />
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="font-medium text-sm">{okr.title}</span>
@@ -63,7 +63,7 @@ export function OKRNode({ okr, compact = false }: OKRNodeProps) {
         <div className="mt-1.5 flex items-center gap-2">
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-[#5e6ad2] transition-all duration-500"
+              className="h-full rounded-full bg-[var(--accent-c)] transition-all duration-500"
               style={{ width: `${okr.progress}%` }}
             />
           </div>

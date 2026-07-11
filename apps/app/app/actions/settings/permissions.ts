@@ -1,0 +1,26 @@
+export const ALLOWED_PERMISSIONS = [
+  "epic:read",
+  "epic:write",
+  "epic:transition",
+  "feature:read",
+  "feature:write",
+  "story:read",
+  "story:write",
+  "sprint:read",
+  "sprint:manage",
+  "standup:write",
+  "art:manage",
+  "pi-plan:read",
+  "pi-plan:manage",
+  "governance:approve",
+  "budget:read",
+  "budget:write",
+  "member:read",
+  "analytics:read",
+  "reporting:export",
+  "impediment:manage",
+  "retro:manage",
+  "wsjf:write",
+] as const;
+
+export type AllowedPermission = (typeof ALLOWED_PERMISSIONS)[number];

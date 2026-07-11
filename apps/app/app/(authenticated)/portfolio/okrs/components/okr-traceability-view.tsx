@@ -8,6 +8,7 @@ import {
   LayersIcon,
   TargetIcon,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import type { OKRTraceabilityNode } from "@/app/actions/okrs";
 
@@ -157,9 +158,12 @@ export function OKRTraceabilityView({ nodes }: Props) {
                       <LayersIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-muted-foreground" />
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">
+                          <Link
+                            className="font-medium text-sm underline-offset-2 hover:text-accent hover:underline"
+                            href={`/epics/${node.epicId}`}
+                          >
                             {node.epicTitle}
-                          </span>
+                          </Link>
                           {node.epicStatus && (
                             <Badge
                               className="text-xs uppercase"

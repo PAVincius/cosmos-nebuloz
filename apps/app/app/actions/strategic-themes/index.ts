@@ -19,6 +19,7 @@ import {
   CreateThemeOkrSchema,
   CreateThemeSchema,
   canTransition,
+  computeThemeProgress,
   type EpicForTheme,
   LinkArtSchema,
   type StrategicThemeDetail,
@@ -82,7 +83,12 @@ export async function listStrategicThemes(
             }
           : {}),
       },
-      include: { _count: { select: { epics: true, okrs: true } } },
+      include: {
+        _count: { select: { epics: true, okrs: true } },
+        okrs: {
+          select: { keyResults: { select: { current: true, target: true } } },
+        },
+      },
       orderBy: { order: "asc" },
     });
   });
@@ -181,6 +187,7 @@ export async function createStrategicTheme(
         themeType: input.themeType ?? null,
         ownerUserId: input.ownerUserId ?? null,
         budgetTotal: input.budgetTotal ?? null,
+        targetAllocationPct: input.targetAllocationPct ?? null,
         status: "DRAFT",
       },
     });
@@ -234,6 +241,10 @@ export async function updateStrategicTheme(
         input.budgetTotal === undefined
           ? undefined
           : (input.budgetTotal ?? null),
+      targetAllocationPct:
+        input.targetAllocationPct === undefined
+          ? undefined
+          : (input.targetAllocationPct ?? null),
     });
 
     const updated = await database.strategicTheme.update({
@@ -846,6 +857,9 @@ export async function getStrategicThemes(): Promise<ThemeListItem[]> {
     themeType: t.themeType,
     ownerUserId: t.ownerUserId,
     budgetTotal: t.budgetTotal ?? null,
+    healthStatus: t.healthStatus,
+    targetAllocationPct: t.targetAllocationPct ?? null,
+    progress: computeThemeProgress(t.okrs),
     epicCount: t._count.epics,
     okrCount: t._count.okrs,
   }));

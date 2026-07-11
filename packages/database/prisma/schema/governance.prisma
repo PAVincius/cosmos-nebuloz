@@ -129,6 +129,9 @@ model DecisionLogEntry {
   dadosSuporte  Json     @default("{}") // { flowMetrics?, okrs?, budgetInfo? }
   decisorId     String
   dataDecisao   DateTime @default(now())
+  // cosmos.html screen-governance DecisionsScreen
+  titulo        String?
+  tags          String[] @default([])
   createdAt     DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

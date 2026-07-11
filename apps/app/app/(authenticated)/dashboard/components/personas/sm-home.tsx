@@ -1,20 +1,23 @@
-import {
-  BentoCell,
-  BentoGrid,
-  CellEyebrow,
-  CellLabel,
-  CellSub,
-  CellValue,
-  ProgressBar,
-  StatusBadge,
-} from "../bento-cell";
-import { NotificationsCell } from "../notifications-cell";
+import { Check, Users } from "lucide-react";
+import Link from "next/link";
+import { KpiCard, KpiGrid } from "../../../components/kpi-card";
+import { RelationChip } from "../../../components/relation-chip";
+import { BentoCell, BentoGrid, CellSub } from "../bento-cell";
 
-type OkrRow = {
-  id: string;
-  title: string;
-  keyResults: Array<{ id: string; current: number; target: number }>;
-};
+// Lucide path data flattened to a single `d` string (multiple `M` subpaths are
+// valid SVG) so it can cross the Server → Client boundary as a plain string.
+const ICON_ALERT =
+  "M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0zM12 9v4M12 17h.01";
+const ICON_ACTIVITY = "M22 12h-4l-3 9L9 3l-3 9H2";
+const ICON_KANBAN = "M4 4h16v16H4zM9 4v16M15 4v16";
+const ICON_CLOCK =
+  "M12 2a10 10 0 100 20 10 10 0 000-20zM12 6v6l4 2";
+
+// Placeholder figures for fields not yet wired to a backend source (WIP and
+// Flow Efficiency have no persisted metric today — see task deviations note).
+const PLACEHOLDER_WIP = 6;
+const PLACEHOLDER_FLOW_EFF = 64;
+const PLACEHOLDER_CYCLE_TIME = 4.2;
 
 type SmHomeProps = {
   team: { id: string; name: string } | null;
@@ -34,378 +37,401 @@ type SmHomeProps = {
     velocity: number | null;
     status: string;
   } | null;
-  teamOkrs?: OkrRow[];
+  teamOkrs?: Array<{
+    id: string;
+    title: string;
+    keyResults: Array<{ id: string; current: number; target: number }>;
+  }>;
   activeView?: string;
 };
 
-const STATUS_PILL_COLORS: Record<string, { bg: string; text: string }> = {
-  open: { bg: "#e54d4d22", text: "#e54d4d" },
-  in_progress: { bg: "#f59e0b22", text: "#f59e0b" },
-  resolved: { bg: "#27a64422", text: "#27a644" },
+function flowEffTone(pct: number): "green" | "amber" | "red" {
+  if (pct >= 70) {
+    return "green";
+  }
+  if (pct >= 55) {
+    return "amber";
+  }
+  return "red";
+}
+
+const FLOW_EFF_TEXT_VAR: Record<"green" | "amber" | "red", string> = {
+  green: "var(--green-text)",
+  amber: "var(--amber-text)",
+  red: "var(--red-text)",
 };
 
-const MEMBERS = [
-  { initials: "AL", name: "Ana Lima", tasks: 4 },
-  { initials: "CR", name: "Carlos Reis", tasks: 6 },
-  { initials: "BF", name: "Beatriz Farias", tasks: 3 },
-];
-
-const GOALS = [
-  { label: "Meta A", value: 60 },
-  { label: "Meta B", value: 90 },
-  { label: "Meta C", value: 45 },
-];
-
-const ACTIONS = [
-  { label: "Board", href: "/board", icon: "▦" },
-  { label: "Impedimentos", href: "/impediments", icon: "⚠" },
-  { label: "Retro", href: "/retro", icon: "↺" },
-  { label: "Burndown", href: "/burndown", icon: "↘" },
-];
-
-const AGENDA = [
-  { label: "Daily Standup", time: "09:00", badge: null },
-  { label: "Sprint Review", time: "Amanhã", badge: "amber" as const },
-  { label: "Retrospectiva", time: "Sexta", badge: null },
-];
-
 export default function SmHome({
-  team: _team,
+  team,
   impediments,
-  notifications,
+  notifications: _notifications,
   activeSprint,
-  teamOkrs = [],
+  teamOkrs: _teamOkrs = [],
   activeView: _activeView,
 }: SmHomeProps) {
+  const standupHref = team ? `/teams/${team.id}/standup` : "/teams";
+  const flowEffPct = PLACEHOLDER_FLOW_EFF;
+  const flowTone = flowEffTone(flowEffPct);
+
   return (
-    <BentoGrid>
-      {/* ── Row 1 ── */}
-
-      {/* Impedimentos */}
-      <BentoCell
-        accentColor="#e54d4d"
-        eyebrow="Impedimentos"
-        eyebrowAction={{ label: "Ver todos", href: "/teams" }}
-        priority="critical"
-        span={2}
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* ── Header ─────────────────────────────────────────────────────────── */}
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          gap: 16,
+        }}
       >
-        <CellValue color="#f87171" value={impediments.length} />
-        <CellLabel>bloqueadores ativos</CellLabel>
-
-        {impediments.length > 0 && (
+        <div>
           <div
+            className="font-mono"
             style={{
-              marginTop: "12px",
               display: "flex",
-              flexDirection: "column",
-              gap: "6px",
+              alignItems: "center",
+              gap: 6,
+              fontSize: 11,
+              fontWeight: 600,
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              color: "var(--amber-text)",
             }}
           >
-            {impediments.slice(0, 2).map((imp) => {
-              const pill =
-                STATUS_PILL_COLORS[imp.status] ?? STATUS_PILL_COLORS.open;
-              return (
+            <Users aria-hidden size={12} />
+            Scrum Master · SAFe 6.0
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              marginTop: 4,
+            }}
+          >
+            <h2
+              className="font-display"
+              style={{
+                fontSize: 18,
+                fontWeight: 700,
+                letterSpacing: "-0.3px",
+                color: "var(--ink)",
+                margin: 0,
+              }}
+            >
+              Dashboard · SM
+            </h2>
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                fontSize: 11,
+                fontWeight: 600,
+                padding: "3px 9px",
+                borderRadius: 999,
+                color: "var(--amber-text)",
+                background: "rgba(var(--amber-rgb),.12)",
+                border: "1px solid rgba(var(--amber-rgb),.25)",
+              }}
+            >
+              <Users aria-hidden size={11} />
+              Scrum Master
+            </span>
+          </div>
+          <p style={{ fontSize: 13, color: "var(--ink-muted)", margin: "4px 0 0" }}>
+            Saúde dos times, impedimentos, WIP e flow efficiency em um painel
+            operacional.
+          </p>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          <RelationChip
+            eyebrow="Squads"
+            href="/teams"
+            icon={<Users />}
+            label="Todos os times"
+            tone="neutral"
+          />
+          <RelationChip
+            eyebrow="Ritual"
+            href={standupHref}
+            icon={<Check />}
+            label="Standup"
+            tone="amber"
+          />
+        </div>
+      </div>
+
+      {/* ── KPI row ────────────────────────────────────────────────────────── */}
+      <KpiGrid>
+        <KpiCard
+          badge={
+            impediments.length > 0
+              ? "— Bloqueando agora"
+              : "↗ Nenhum ativo"
+          }
+          iconPath={ICON_ALERT}
+          label="Impedimentos"
+          tone={impediments.length > 0 ? "red" : "green"}
+          value={impediments.length}
+        />
+        <KpiCard
+          badge="— Por sprint"
+          iconPath={ICON_ACTIVITY}
+          label="Velocity média"
+          tone="green"
+          unit="SP"
+          value={activeSprint?.velocity ?? "—"}
+        />
+        <KpiCard
+          badge="— No time mais carregado"
+          iconPath={ICON_KANBAN}
+          label="WIP máximo"
+          tone="amber"
+          value={PLACEHOLDER_WIP}
+        />
+        <KpiCard
+          badge="↘ Melhorando"
+          iconPath={ICON_CLOCK}
+          label="Cycle Time"
+          tone="accent"
+          unit="d"
+          value={PLACEHOLDER_CYCLE_TIME}
+        />
+      </KpiGrid>
+
+      {/* ── Saúde dos Times ────────────────────────────────────────────────── */}
+      <BentoGrid>
+        <BentoCell accentColor="#f59e0b" eyebrow="Saúde dos Times" span={4}>
+          <CellSub>Velocity · WIP · Flow efficiency</CellSub>
+
+          {team ? (
+            <div
+              style={{
+                marginTop: 10,
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                gap: 10,
+              }}
+            >
+              <Link
+                className="motion-safe:transition-all motion-safe:duration-150 hover:border-[var(--hairline-strong)] motion-safe:hover:-translate-y-0.5"
+                href={standupHref}
+                style={{
+                  display: "block",
+                  padding: "12px 14px",
+                  borderRadius: 10,
+                  border: "1px solid var(--hairline)",
+                  background: "var(--surface-2)",
+                  textDecoration: "none",
+                }}
+              >
                 <div
-                  key={imp.id}
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
                     alignItems: "center",
-                    fontSize: "13px",
-                    color: "#d0d6e0",
+                    gap: 6,
+                    fontSize: 13,
+                    fontWeight: 700,
+                    marginBottom: 10,
+                    color: "var(--amber-text)",
                   }}
                 >
-                  <span
+                  {team.name}
+                  {impediments.length > 0 && (
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 3,
+                        color: "var(--red-text)",
+                        fontSize: 11,
+                      }}
+                    >
+                      <svg
+                        aria-hidden
+                        fill="none"
+                        height="11"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        viewBox="0 0 24 24"
+                        width="11"
+                      >
+                        <path d={ICON_ALERT} />
+                      </svg>
+                      {impediments.length}
+                    </span>
+                  )}
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: 6,
+                  }}
+                >
+                  <div style={{ textAlign: "center" }}>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: "var(--green-text)",
+                      }}
+                    >
+                      {activeSprint?.velocity ?? "—"}
+                    </div>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 8,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        color: "var(--ink-faint)",
+                        marginTop: 2,
+                      }}
+                    >
+                      SP/sprint
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color:
+                          PLACEHOLDER_WIP > 6
+                            ? "var(--red-text)"
+                            : "var(--ink)",
+                      }}
+                    >
+                      {PLACEHOLDER_WIP}
+                    </div>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 8,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        color: "var(--ink-faint)",
+                        marginTop: 2,
+                      }}
+                    >
+                      WIP
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "center" }}>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 18,
+                        fontWeight: 700,
+                        color: FLOW_EFF_TEXT_VAR[flowTone],
+                      }}
+                    >
+                      {flowEffPct}%
+                    </div>
+                    <div
+                      className="font-mono"
+                      style={{
+                        fontSize: 8,
+                        letterSpacing: "0.05em",
+                        textTransform: "uppercase",
+                        color: "var(--ink-faint)",
+                        marginTop: 2,
+                      }}
+                    >
+                      Flow eff
+                    </div>
+                  </div>
+                </div>
+
+                {activeSprint?.name && (
+                  <div
                     style={{
+                      marginTop: 9,
+                      paddingTop: 9,
+                      borderTop: "1px solid var(--hairline)",
+                      fontSize: 11.5,
+                      lineHeight: 1.4,
+                      color: "var(--ink-muted)",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
-                      maxWidth: "70%",
                     }}
                   >
-                    {imp.title}
-                  </span>
-                  <span
-                    style={{
-                      fontSize: "11px",
-                      padding: "2px 7px",
-                      borderRadius: "999px",
-                      background: pill.bg,
-                      color: pill.text,
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {imp.status}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </BentoCell>
-
-      {/* WIP do Time */}
-      <BentoCell accentColor="#d97706" priority="critical" span={1}>
-        <CellEyebrow label="WIP do Time" />
-        <CellValue color="#fbbf24" value="6" />
-        <CellSub>limite: 5</CellSub>
-        <div style={{ marginTop: "10px" }}>
-          <StatusBadge variant="amber">⚠ Revisar hoje</StatusBadge>
-        </div>
-      </BentoCell>
-
-      {/* Velocidade Sprint */}
-      <BentoCell span={1}>
-        <CellEyebrow label="Velocidade Sprint" />
-        <CellValue
-          suffix="pts"
-          value={activeSprint?.velocity?.toString() ?? "—"}
-        />
-        <CellLabel>sprint atual</CellLabel>
-        <ProgressBar
-          color="green"
-          max={35}
-          value={activeSprint?.velocity ?? 0}
-        />
-      </BentoCell>
-
-      {/* ── Row 2 ── */}
-
-      {/* Notificações */}
-      <BentoCell
-        accentColor="#27a644"
-        eyebrow="Notificações"
-        eyebrowAction={{ label: "Ver todas", href: "/notifications" }}
-        priority="critical"
-        span={2}
-      >
-        <NotificationsCell notifications={notifications} />
-      </BentoCell>
-
-      {/* Membros do Time */}
-      <BentoCell span={2}>
-        <CellEyebrow label="Membros do Time" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-            marginTop: "4px",
-          }}
-        >
-          {MEMBERS.map((m) => (
-            <div
-              key={m.initials}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-              }}
-            >
-              <div
-                style={{
-                  width: "30px",
-                  height: "30px",
-                  borderRadius: "50%",
-                  background: "#23252a",
-                  border: "1px solid #34343a",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "#d0d6e0",
-                  flexShrink: 0,
-                }}
-              >
-                {m.initials}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: "13px",
-                    color: "#f7f8f8",
-                    fontWeight: 500,
-                  }}
-                >
-                  {m.name}
-                </div>
-                <div style={{ fontSize: "11px", color: "#62666d" }}>
-                  {m.tasks} tasks abertas
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </BentoCell>
-
-      {/* ── Row 3 ── */}
-
-      {/* OKRs do Time */}
-      <BentoCell span={2}>
-        <CellEyebrow
-          action={{ label: "Ver →", href: "/portfolio/okrs" }}
-          label="OKRs do Time"
-        />
-        {teamOkrs.length === 0 ? (
-          <CellSub>Nenhum OKR de time ativo</CellSub>
-        ) : (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              marginTop: "4px",
-            }}
-          >
-            {teamOkrs.map((okr) => {
-              const total = okr.keyResults.reduce((s, kr) => s + kr.target, 0);
-              const current = okr.keyResults.reduce(
-                (s, kr) => s + kr.current,
-                0
-              );
-              const pct =
-                total > 0
-                  ? Math.min(100, Math.round((current / total) * 100))
-                  : 0;
-              return (
-                <div key={okr.id}>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      fontSize: "12px",
-                      color: "#8a8f98",
-                      marginBottom: "3px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        whiteSpace: "nowrap",
-                        maxWidth: "75%",
-                      }}
-                    >
-                      {okr.title}
-                    </span>
-                    <span>{pct}%</span>
+                    Sprint: {activeSprint.name}
                   </div>
-                  <ProgressBar
-                    color={pct >= 70 ? "green" : "primary"}
-                    max={100}
-                    value={pct}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </BentoCell>
-
-      {/* Sprint Goals */}
-      <BentoCell span={2}>
-        <CellEyebrow label="Sprint Goals" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "12px",
-            marginTop: "4px",
-          }}
-        >
-          {GOALS.map((g) => (
-            <div key={g.label}>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  fontSize: "12px",
-                  color: "#8a8f98",
-                  marginBottom: "4px",
-                }}
-              >
-                <span>{g.label}</span>
-                <span>{g.value}%</span>
-              </div>
-              <ProgressBar color="primary" max={100} value={g.value} />
+                )}
+              </Link>
             </div>
-          ))}
-        </div>
-      </BentoCell>
-
-      {/* Ações Rápidas */}
-      <BentoCell span={1}>
-        <CellEyebrow label="Ações Rápidas" />
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "8px",
-            marginTop: "8px",
-          }}
-        >
-          {ACTIONS.map((a) => (
-            <a
-              href={a.href}
-              key={a.label}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "4px",
-                padding: "10px 4px",
-                borderRadius: "8px",
-                background: "#141516",
-                border: "1px solid #23252a",
-                fontSize: "11px",
-                color: "#8a8f98",
-                textDecoration: "none",
-                textAlign: "center",
-                transition: "border-color 150ms ease, color 150ms ease",
-              }}
-            >
-              <span style={{ fontSize: "16px" }}>{a.icon}</span>
-              {a.label}
-            </a>
-          ))}
-        </div>
-      </BentoCell>
-
-      {/* Agenda do Time */}
-      <BentoCell span={1}>
-        <CellEyebrow label="Agenda do Time" />
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "8px",
-            marginTop: "4px",
-          }}
-        >
-          {AGENDA.map((ev) => (
+          ) : (
             <div
-              key={ev.label}
               style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                fontSize: "13px",
+                marginTop: 10,
+                padding: "20px",
+                textAlign: "center",
+                color: "var(--ink-faint)",
+                fontSize: 13,
               }}
             >
-              <span style={{ color: "#d0d6e0" }}>{ev.label}</span>
-              {ev.badge ? (
-                <StatusBadge variant={ev.badge}>{ev.time}</StatusBadge>
-              ) : (
-                <span style={{ fontSize: "11px", color: "#62666d" }}>
-                  {ev.time}
-                </span>
-              )}
+              Nenhum time atribuído a este Scrum Master.
             </div>
-          ))}
-        </div>
-      </BentoCell>
-    </BentoGrid>
+          )}
+        </BentoCell>
+      </BentoGrid>
+    </div>
+  );
+}
+
+/**
+ * Loading skeleton — matches the KPI row + Saúde dos Times shapes above.
+ * Not yet wired: this route has no persona-specific Suspense boundary, and
+ * `dashboard/page.tsx` (shared across all persona homes) is out of scope for
+ * this atomic task. Ready to be used by a future `dashboard/loading.tsx`.
+ */
+export function SmHomeSkeleton() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      <div
+        className="motion-safe:animate-pulse"
+        style={{
+          height: 62,
+          borderRadius: 10,
+          background: "var(--surface-2)",
+        }}
+      />
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: 16,
+        }}
+      >
+        {["a", "b", "c", "d"].map((slot) => (
+          <div
+            className="motion-safe:animate-pulse"
+            key={`kpi-skeleton-${slot}`}
+            style={{
+              height: 92,
+              borderRadius: 10,
+              background: "var(--surface-2)",
+            }}
+          />
+        ))}
+      </div>
+      <div
+        className="motion-safe:animate-pulse"
+        style={{
+          height: 140,
+          borderRadius: 10,
+          background: "var(--surface-2)",
+        }}
+      />
+    </div>
   );
 }

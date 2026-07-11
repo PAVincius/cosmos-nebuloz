@@ -21,6 +21,7 @@ const RoadmapItemBaseSchema = z.object({
     .default("#6366f1"),
   artId: optCuid,
   status: RoadmapStatus.default("PLANNED"),
+  milestone: z.boolean().default(false),
 });
 
 export const CreateRoadmapItemSchema = RoadmapItemBaseSchema.refine(

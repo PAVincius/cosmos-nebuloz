@@ -203,7 +203,10 @@ function InlineEditKR({ okrId, kr, onUpdateKRCurrent }: InlineEditKRProps) {
         </span>
       </div>
 
-      <Progress className="h-1" value={kr.progress} />
+      <Progress
+        className="h-1"
+        value={Number.isFinite(kr.progress) ? kr.progress : 0}
+      />
     </div>
   );
 }

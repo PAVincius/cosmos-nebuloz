@@ -1,11 +1,11 @@
 -- Story-025: GitHub SAFe-Aware Sync & DORA Metrics
 
 -- Story.prStatus and Story.prUrl for PR linking (AC-001/AC-002)
-ALTER TABLE "stories" ADD COLUMN "prStatus" TEXT;
-ALTER TABLE "stories" ADD COLUMN "prUrl"    TEXT;
+ALTER TABLE "Story" ADD COLUMN "prStatus" TEXT;
+ALTER TABLE "Story" ADD COLUMN "prUrl"    TEXT;
 
 -- Feature.deployedAt for deployment tracking (AC-003)
-ALTER TABLE "features" ADD COLUMN "deployedAt" TIMESTAMP(3);
+ALTER TABLE "Feature" ADD COLUMN "deployedAt" TIMESTAMP(3);
 
 -- GitHubSyncEvent: per-entity sync event log
 CREATE TABLE "github_sync_events" (
@@ -33,7 +33,7 @@ CREATE INDEX "github_sync_events_tenantId_entityType_entityId_idx"
 
 ALTER TABLE "github_sync_events"
     ADD CONSTRAINT "github_sync_events_tenantId_fkey"
-    FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- GitHubUnlinkedPR: merged PRs with no Cosmos link (AC-004)
 CREATE TABLE "github_unlinked_prs" (
@@ -59,7 +59,7 @@ CREATE INDEX "github_unlinked_prs_tenantId_prStatus_linkedAt_idx"
 
 ALTER TABLE "github_unlinked_prs"
     ADD CONSTRAINT "github_unlinked_prs_tenantId_fkey"
-    FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- GitHubDeploymentEvent: raw events for DORA computation (AC-005)
 CREATE TABLE "github_deployment_events" (
@@ -87,4 +87,4 @@ CREATE INDEX "github_deployment_events_tenantId_githubRepo_deploymentId_idx"
 
 ALTER TABLE "github_deployment_events"
     ADD CONSTRAINT "github_deployment_events_tenantId_fkey"
-    FOREIGN KEY ("tenantId") REFERENCES "tenants"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    FOREIGN KEY ("tenantId") REFERENCES "Tenant"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -151,15 +151,17 @@ export async function requireTenantSession(
         data: { activeTenantId: tenantId },
       });
     } catch (e: unknown) {
-      if (
+      // P2025 = session row not found by id (stale better-auth cookie-cache id after a
+      // session rotation). Persisting activeTenantId here is best-effort — we already have
+      // a validated session and a confirmed membership, so proceed rather than deny access.
+      const isRecordNotFound =
         typeof e === "object" &&
         e !== null &&
         "code" in e &&
-        (e as { code: string }).code === "P2025"
-      ) {
-        throw new AuthError("UNAUTHORIZED");
+        (e as { code: string }).code === "P2025";
+      if (!isRecordNotFound) {
+        throw e;
       }
-      throw e;
     }
     return {
       userId: session.user.id,

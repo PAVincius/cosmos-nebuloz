@@ -22,7 +22,7 @@ export function SessionGroup({
 }: Props) {
   return (
     <div className="mb-3">
-      <p className="mb-1 px-2 font-medium text-[10px] text-gray-400 uppercase tracking-wider dark:text-zinc-600">
+      <p className="mb-1 px-2 font-medium text-[10px] text-ink-muted uppercase tracking-wider">
         {label}
       </p>
       <div className="space-y-0.5">

@@ -15,11 +15,39 @@ export type TeamMember = {
 
 export async function getTeams() {
   const ctx = await requireTenantSession(await headers());
-  return database.team.findMany({
-    where: { tenantId: ctx.tenantId },
-    include: { art: true },
-    orderBy: { createdAt: "desc" },
-  });
+  const [teams, impedimentCounts, defectCounts] = await Promise.all([
+    database.team.findMany({
+      where: { tenantId: ctx.tenantId },
+      include: {
+        art: true,
+        sprints: {
+          where: { status: "ACTIVE" },
+          take: 1,
+          select: { id: true, name: true, endDate: true, goal: true },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    }),
+    database.impediment.groupBy({
+      by: ["teamId"],
+      where: { tenantId: ctx.tenantId, teamId: { not: null }, status: { not: "RESOLVED" } },
+      _count: { id: true },
+    }),
+    database.defect.groupBy({
+      by: ["teamId"],
+      where: { tenantId: ctx.tenantId, teamId: { not: null }, status: { notIn: ["CLOSED", "IN_REVIEW"] } },
+      _count: { id: true },
+    }),
+  ]);
+
+  const impMap = new Map(impedimentCounts.map((r) => [r.teamId as string, r._count.id]));
+  const defMap = new Map(defectCounts.map((r) => [r.teamId as string, r._count.id]));
+
+  return teams.map((team) => ({
+    ...team,
+    openImpediments: impMap.get(team.id) ?? 0,
+    openDefects: defMap.get(team.id) ?? 0,
+  }));
 }
 
 export async function getTeamById(teamId: string) {

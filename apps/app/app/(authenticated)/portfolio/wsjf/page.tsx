@@ -1,4 +1,8 @@
+import { LayoutGrid } from "lucide-react";
 import dynamic from "next/dynamic";
+import { Badge } from "@repo/design-system/components/cosmos/badge";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { RelationChip } from "@/app/(authenticated)/components/relation-chip";
 import { getEpicsWithFeatureWSJF, getWSJFConfig } from "@/app/actions/wsjf";
 import { getAIAccessStatus } from "@/app/actions/wsjf/rebalance";
 import { appDesign } from "@/lib/app-design";
@@ -30,16 +34,32 @@ export default async function WSJFPage() {
     getAIAccessStatus(),
   ]);
 
+  const totalFeatures = epics.reduce((sum, epic) => sum + epic.features.length, 0);
+
   return (
-    <div className={`${appDesign.shell} h-full`}>
-      <header className={appDesign.pageHeader}>
-        <h1 className={appDesign.pageTitle}>Priorização WSJF</h1>
-        <p className={appDesign.pageSubtitle}>
-          Weighted Shortest Job First — ordene épicos e features por custo de
-          atraso ÷ tamanho do job.
-        </p>
-        <div aria-hidden className={appDesign.accentBar} />
-      </header>
+    <div className={appDesign.shell}>
+      <PageHeader
+        accentRgb="0,212,255"
+        actions={
+          <RelationChip
+            eyebrow="Board"
+            href="/portfolio"
+            icon={<LayoutGrid />}
+            label="Portfolio Kanban"
+            tone="accent"
+          />
+        }
+        badge={
+          totalFeatures > 0 ? (
+            <Badge dot tone="accent">
+              {totalFeatures} {totalFeatures === 1 ? "item" : "itens"} na fila
+            </Badge>
+          ) : undefined
+        }
+        breadcrumb={[{ label: "Portfolio", href: "/portfolio" }]}
+        subtitle="Weighted Shortest Job First — ordene épicos e features por custo de atraso ÷ tamanho do job."
+        title="Priorização WSJF"
+      />
 
       <div className={appDesign.bodyScroll}>
         <WSJFDashboard access={access} config={config} epics={epics} />

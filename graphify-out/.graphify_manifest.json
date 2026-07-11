@@ -1,0 +1,27 @@
+{
+  "scan_root": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz",
+  "total_files": 2117,
+  "total_words": 2112495,
+  "graph": {
+    "nodes": 10189,
+    "edges": 15392,
+    "communities": 871
+  },
+  "god_nodes": [
+    "auth_server_requiretenantsession",
+    "actions_base_safeaction",
+    "actions_base_result",
+    "lib_app_design_appdesign",
+    "helpers_action_mocks_tenantctx",
+    "components_page_header_pageheader",
+    "auth_server_requirerole",
+    "audit_index_logaudit",
+    "lib_router_getaimodel",
+    "lib_router_getactiveprovider"
+  ],
+  "outputs": [
+    "graph.json",
+    "graph.html",
+    "GRAPH_REPORT.md"
+  ]
+}

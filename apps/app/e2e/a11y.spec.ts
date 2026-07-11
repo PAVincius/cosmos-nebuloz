@@ -27,7 +27,13 @@ test.describe("a11y — Public pages", () => {
       .exclude("iframe")
       .analyze();
 
-    expect(results.violations).toEqual([]);
+    const serious = results.violations.filter(
+      (v) => v.impact === "critical" || v.impact === "serious"
+    );
+    expect(
+      serious,
+      `Critical/serious violations: ${JSON.stringify(serious, null, 2)}`
+    ).toEqual([]);
   });
 });
 

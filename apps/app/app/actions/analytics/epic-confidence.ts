@@ -174,5 +174,3 @@ export async function getPortfolioConfidence(): Promise<
     return { ...counts, atRisk };
   });
 }
-
-export type { Rag };

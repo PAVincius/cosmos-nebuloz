@@ -10,6 +10,7 @@ import {
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { Nav } from "./chrome";
+import { OrbFallback, useSceneActive } from "./scene-mount";
 import { ProofStrip } from "./sections";
 
 const NebulaScene = dynamic(
@@ -198,7 +199,8 @@ export function HeroShell() {
               "Team",
             ].map((l, i) => (
               <div
-                className={`mb-0.5 rounded-md px-2 py-1.5 text-[11px] ${i === 0 ? "bg-white/[0.05] text-ink" : "text-muted"}`}
+                className={`mb-0.5 cursor-pointer rounded-md px-2 py-1.5 text-[11px] transition-colors hover:text-ink ${i === 0 ? "bg-white/[0.05] text-ink" : "text-muted"}`}
+                data-pulse
                 key={l}
               >
                 {l}
@@ -299,16 +301,21 @@ export function HeroShell() {
 }
 
 /* ===== Hero ===== */
-export function Hero() {
+export function Hero({
+  variant = "default",
+}: { variant?: "default" | "blend" } = {}) {
+  const isBlend = variant === "blend";
   const sectionRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
 
-  // Scroll-driven: sphere drifts as user scrolls
+  // Mount the WebGL scene only when near-viewport + capable + tab visible.
+  const sceneActive = useSceneActive(sectionRef);
+
+  // Scroll-driven: sphere drifts down as user scrolls (no scaling).
   const sphereY = useTransform(scrollYProgress, [0, 1], [0, 180]);
-  const sphereScale = useTransform(scrollYProgress, [0, 0.6], [1, 0.84]);
   const sphereOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const textY = useTransform(scrollYProgress, [0, 1], [0, 90]);
   const textOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
@@ -336,12 +343,15 @@ export function Hero() {
     >
       <Nav />
 
+      {/* Film grain — sits above sphere, below text */}
+      <div className="grain-overlay" />
+
       {/* ── SPHERE — covers full section height, behind everything ── */}
       <motion.div
         className="pointer-events-none absolute top-0 right-[-18%] bottom-0 z-0 w-[72%]"
-        style={{ y: sphereY, scale: sphereScale, opacity: sphereOpacity }}
+        style={{ y: sphereY, opacity: sphereOpacity }}
       >
-        <NebulaScene phase={phase} />
+        {sceneActive ? <NebulaScene phase={phase} /> : <OrbFallback />}
         {/* Right-edge fade */}
         <div
           className="pointer-events-none absolute inset-0"
@@ -369,7 +379,11 @@ export function Hero() {
         {/* ── TEXT PANEL — left, aligned to the same max-w grid as all sections ── */}
         <div className="pointer-events-none relative z-20 mx-auto w-full max-w-[1280px] px-6">
           <motion.div
-            className="pointer-events-auto w-full flex-shrink-0 pt-28 md:w-[480px] md:pt-0 lg:w-[560px]"
+            className={`pointer-events-auto w-full flex-shrink-0 pt-28 md:pt-0 ${
+              isBlend
+                ? "md:w-[640px] lg:w-[860px]"
+                : "md:w-[480px] lg:w-[560px]"
+            }`}
             style={{ y: textY, opacity: textOpacity }}
           >
             {/* Category eyebrow */}
@@ -388,7 +402,13 @@ export function Hero() {
             </motion.div>
 
             {/* Headline */}
-            <h1 className="display hero-heading mb-6 text-[clamp(44px,6.4vw,100px)]">
+            <h1
+              className={`display hero-heading mb-6 ${
+                isBlend
+                  ? "text-[clamp(56px,11vw,150px)] tracking-[-0.03em] leading-[0.92]"
+                  : "text-[clamp(44px,6.4vw,100px)]"
+              }`}
+            >
               <SplitHeading delay={0.45} text="Clarity from" />
               <SplitHeading accent delay={0.6} text="complexity." />
             </h1>

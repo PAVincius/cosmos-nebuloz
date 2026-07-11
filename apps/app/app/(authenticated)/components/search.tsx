@@ -15,6 +15,7 @@ export const Search = () => (
         type="text"
       />
       <Button
+        aria-label="Buscar"
         className="absolute top-px right-px bottom-px h-8 w-8"
         size="icon"
         variant="ghost"

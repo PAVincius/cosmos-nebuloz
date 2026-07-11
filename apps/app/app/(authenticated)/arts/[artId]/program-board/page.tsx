@@ -1,23 +1,21 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent } from "@repo/design-system/components/ui/card";
-import {
-  ArrowLeftIcon,
-  LayoutGridIcon,
-  PlusIcon,
-  TargetIcon,
-} from "lucide-react";
+import { requireTenantSession } from "@repo/auth/server";
+import { database } from "@repo/database";
+import { CalendarIcon, LayoutGridIcon, UsersIcon } from "lucide-react";
 import type { Metadata } from "next";
 import dynamic from "next/dynamic";
-import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { getARTById } from "@/app/actions/arts/get-arts";
+import { getARTById, getARTs } from "@/app/actions/arts/get-arts";
 import { getPIPlanFullDetails } from "@/app/actions/arts/pi-plans";
 import {
   getPIPlansByART,
   getProgramBoardData,
 } from "@/app/actions/program-board";
-import { appDesign } from "@/lib/app-design";
+import type { PiRelationItem } from "@/app/(authenticated)/components/relation-chip";
+import { PiRelationChip, RelationChip } from "@/app/(authenticated)/components/relation-chip";
+import { PageHeader } from "@/app/(authenticated)/components/page-header";
+import { ProgramBoardHeaderActions } from "./components/program-board-header-actions";
+import { ProgramBoardBody } from "./components/program-board-body";
 
 const ProgramBoardClient = dynamic(
   () =>
@@ -26,7 +24,12 @@ const ProgramBoardClient = dynamic(
     ),
   {
     loading: () => (
-      <div className="h-64 animate-pulse rounded-lg border bg-muted/30" />
+      <div className="flex h-full min-h-[400px] items-center justify-center rounded-cosmos-lg border border-hairline bg-surface">
+        <div className="flex items-center gap-2 text-ink-muted text-sm">
+          <span className="h-2 w-2 animate-pulse rounded-full bg-accent" />
+          Carregando program board…
+        </div>
+      </div>
     ),
   }
 );
@@ -56,9 +59,10 @@ export default async function ProgramBoardPage({
   const { artId } = await params;
   const { piPlanId } = await searchParams;
 
-  const [art, piPlans] = await Promise.all([
+  const [art, piPlans, { tenantId }] = await Promise.all([
     getARTById(artId),
     getPIPlansByART(artId),
+    requireTenantSession(await headers()),
   ]);
 
   if (!art) {
@@ -67,127 +71,84 @@ export default async function ProgramBoardPage({
 
   const selectedPiPlanId = piPlanId ?? piPlans[0]?.id;
 
-  const [boardData, planDetails] = await Promise.all([
+  const [boardData, planDetails, arts, epics] = await Promise.all([
     selectedPiPlanId ? getProgramBoardData(artId, selectedPiPlanId) : null,
     selectedPiPlanId ? getPIPlanFullDetails(selectedPiPlanId) : null,
+    getARTs(),
+    database.epic.findMany({
+      orderBy: { title: "asc" },
+      select: { id: true, title: true },
+      where: { tenantId },
+    }),
   ]);
   const objectives = planDetails?.objectives ?? [];
+  const epicsForModal = epics.map((epic) => ({ ...epic, sequenceNumber: null }));
+  const teamsForModal = boardData?.teams.map((t) => ({ id: t.id, name: t.name })) ?? [];
+
+  const piRelations: PiRelationItem[] = piPlans.map((pi) => ({
+    id: pi.id,
+    label: pi.name,
+    href: `/arts/${artId}/program-board?piPlanId=${pi.id}`,
+  }));
+
+  const selectedPi = piPlans.find((pi) => pi.id === selectedPiPlanId);
 
   return (
-    <div className={appDesign.shell}>
-      <div className={appDesign.pageHeader}>
-        <Button asChild className="-ml-2 w-fit" size="sm" variant="ghost">
-          <Link href={`/arts/${artId}`}>
-            <ArrowLeftIcon className="mr-2 h-4 w-4" />
-            {art.name}
-          </Link>
-        </Button>
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 font-semibold text-2xl tracking-tight">
-              <LayoutGridIcon className="h-6 w-6 text-muted-foreground" />
-              Program Board
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Visão cruzada times × sprints do PI — {art.name}
-            </p>
-          </div>
+    <div className="flex h-full flex-col">
+      <PageHeader
+        badge={
+          <>
+            <RelationChip
+              eyebrow="ART"
+              label={art.name}
+              href={`/arts/${artId}`}
+              tone="accent"
+            />
+            {piRelations.length > 0 && (
+              <PiRelationChip
+                pis={piRelations}
+                activeId={selectedPiPlanId}
+                entityName={art.name}
+              />
+            )}
+          </>
+        }
+        title="Program Board"
+        subtitle={
+          selectedPi
+            ? `${selectedPi.name} · features por time e iteração. Dependências e capacidade em uma visão de ART.`
+            : "Features por time e iteração. Dependências e capacidade em uma visão de ART."
+        }
+        stats={[
+          {
+            label: "TIMES",
+            value: boardData?.teams.length ?? 0,
+            icon: UsersIcon,
+          },
+          {
+            label: "SPRINTS",
+            value: boardData ? `${boardData.sprints.length - 1} + IP` : "—",
+            icon: CalendarIcon,
+          },
+        ]}
+        actions={
+          <ProgramBoardHeaderActions
+            arts={arts}
+            epics={epicsForModal}
+            teams={teamsForModal}
+          />
+        }
+      />
 
-          {/* PI Selector */}
-          {piPlans.length > 0 && (
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground text-sm">PI:</span>
-              <div className="flex flex-wrap gap-1.5">
-                {piPlans.map((pi) => (
-                  <Link
-                    href={`/arts/${artId}/program-board?piPlanId=${pi.id}`}
-                    key={pi.id}
-                  >
-                    <Badge
-                      className="cursor-pointer"
-                      variant={
-                        pi.id === selectedPiPlanId ? "default" : "outline"
-                      }
-                    >
-                      {pi.name}
-                    </Badge>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-      <div className={appDesign.bodyScroll}>
-        <div className="flex flex-col gap-6">
-          {/* No PIs state */}
-          {piPlans.length === 0 && (
-            <Card>
-              <CardContent className="flex flex-col items-center gap-4 py-12 text-center">
-                <LayoutGridIcon className="h-10 w-10 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Nenhum PI criado ainda</p>
-                  <p className="text-muted-foreground text-sm">
-                    Crie um PI Plan para visualizar o Program Board.
-                  </p>
-                </div>
-                <Button asChild>
-                  <Link href={`/arts/${artId}`}>
-                    <PlusIcon className="mr-2 h-4 w-4" />
-                    Criar PI Plan
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* PI selected but no board data */}
-          {piPlans.length > 0 && !boardData && (
-            <Card>
-              <CardContent className="py-12 text-center text-muted-foreground text-sm">
-                Selecione um PI Plan para visualizar o board.
-              </CardContent>
-            </Card>
-          )}
-
-          {/* PI Objectives panel */}
-          {objectives.length > 0 && (
-            <details className="rounded-lg border" open>
-              <summary className="flex cursor-pointer select-none items-center gap-2 px-4 py-3 font-medium text-sm">
-                <TargetIcon className="h-4 w-4 text-muted-foreground" />
-                Objetivos PI ({objectives.length})
-              </summary>
-              <div className="border-t px-4 py-3">
-                <div className="flex flex-wrap gap-2">
-                  {objectives.map((obj) => (
-                    <div
-                      className="flex items-center gap-2 rounded-md border bg-muted/30 px-3 py-1.5 text-xs"
-                      key={obj.id}
-                    >
-                      <span className="font-medium">{obj.title}</span>
-                      {obj.businessValue !== null && (
-                        <span className="text-muted-foreground">
-                          BV {obj.businessValue}
-                        </span>
-                      )}
-                      {obj.isStretch && (
-                        <Badge className="h-4 text-[10px]" variant="outline">
-                          Stretch
-                        </Badge>
-                      )}
-                      <Badge className="h-4 text-[10px]" variant="secondary">
-                        {obj.status ?? "PLANNED"}
-                      </Badge>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </details>
-          )}
-
-          {/* Program Board grid — DnD client */}
+      <div className="flex-1 overflow-auto p-6">
+        <ProgramBoardBody
+          artId={artId}
+          boardData={boardData}
+          hasPiPlans={piPlans.length > 0}
+          objectives={objectives}
+        >
           {boardData && <ProgramBoardClient data={boardData} />}
-        </div>
+        </ProgramBoardBody>
       </div>
     </div>
   );

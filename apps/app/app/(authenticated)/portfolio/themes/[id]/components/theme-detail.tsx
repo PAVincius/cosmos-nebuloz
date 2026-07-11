@@ -170,8 +170,8 @@ type Props = {
   auditLogs: AuditLogWithUser[];
   allArts: { id: string; name: string }[];
   allRisks: TenantRisk[];
-  linkedBudgets: import("@/app/actions/lean-budget").LeanBudgetWithStats[];
-  allBudgets: import("@/app/actions/lean-budget").LeanBudgetWithStats[];
+  linkedBudgets: import("@/app/actions/lean-budget/schema").LeanBudgetWithStats[];
+  allBudgets: import("@/app/actions/lean-budget/schema").LeanBudgetWithStats[];
 };
 
 // ─── Component ───────────────────────────────────────────────────────────────

@@ -17,10 +17,13 @@ export type PIRiskInput = {
 
 export type CreatePIPlanDetailsInput = {
   artId: string;
-  name: string;
+  /** Ignored server-side — name is always generated as PI-{YYYY}-{Q}. Kept optional for backward compat. */
+  name?: string;
   startDate?: string;
   endDate?: string;
   featureIds: string[];
   objectives: PIObjectiveInput[];
   risks: PIRiskInput[];
+  includeConfidenceVote?: boolean;
+  confidenceThreshold?: number;
 };

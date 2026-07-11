@@ -27,6 +27,9 @@ export type ARTHealthIndicators = {
   unresolvedRisks: number;
   piHealth: PIHealthSummary[];
   latestFlowPredictability: number;
+  confidenceAvg: number | null;
+  budgetAllocatedM: number | null;
+  budgetSpentM: number | null;
 };
 
 export type ARTObservabilityData = {
@@ -148,6 +151,23 @@ export async function getARTObservability(
   ).length;
 
   const lastPI = piHealth[0];
+  const latestPi = piPlans.at(-1);
+
+  const [latestConfidenceVote, leanBudget] = await Promise.all([
+    latestPi
+      ? database.confidenceVoteSession.findFirst({
+          where: { tenantId, piSession: { piPlanId: latestPi.id } },
+          orderBy: { roundNumber: "desc" },
+          select: { averageScore: true },
+        })
+      : null,
+    latestPi
+      ? database.leanBudget.findFirst({
+          where: { tenantId, artId, piPlanId: latestPi.id },
+          select: { amount: true, spent: true },
+        })
+      : null,
+  ]);
 
   return {
     events,
@@ -156,6 +176,9 @@ export async function getARTObservability(
       unresolvedRisks,
       piHealth,
       latestFlowPredictability: lastPI?.predictability ?? 0,
+      confidenceAvg: latestConfidenceVote?.averageScore ?? null,
+      budgetAllocatedM: leanBudget ? leanBudget.amount / 1_000_000 : null,
+      budgetSpentM: leanBudget ? Number(leanBudget.spent) / 1_000_000 : null,
     },
   };
 }

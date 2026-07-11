@@ -48,8 +48,7 @@ CREATE POLICY "tenant_isolation" ON "BillingEntryAllocation" USING ("tenantId" =
 ALTER TABLE "BillingEntryStaging" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "BillingEntryStaging" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "BillingSyncCursor" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "BillingSyncCursor" USING ("tenantId" = current_tenant_id());
+-- BillingSyncCursor has no tenantId — no RLS policy
 
 ALTER TABLE "BillingSyncRun" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "BillingSyncRun" USING ("tenantId" = current_tenant_id());
@@ -72,11 +71,13 @@ CREATE POLICY "tenant_isolation" ON "CompetencyAssessment" USING ("tenantId" = c
 ALTER TABLE "ConfidenceVoteSession" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "ConfidenceVoteSession" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "CopilotMessage" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "CopilotMessage" USING ("tenantId" = current_tenant_id());
+-- CopilotMessage was renamed to copilot_messages in 20260523100000_normalize_copilot_sessions
+ALTER TABLE copilot_messages ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "tenant_isolation" ON copilot_messages USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "CopilotSession" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "CopilotSession" USING ("tenantId" = current_tenant_id());
+-- CopilotSession was renamed to copilot_sessions in 20260523100000_normalize_copilot_sessions
+ALTER TABLE copilot_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "tenant_isolation" ON copilot_sessions USING ("tenantId" = current_tenant_id());
 
 ALTER TABLE "CostAnomaly" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "CostAnomaly" USING ("tenantId" = current_tenant_id());
@@ -84,8 +85,7 @@ CREATE POLICY "tenant_isolation" ON "CostAnomaly" USING ("tenantId" = current_te
 ALTER TABLE "CostSnapshot" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "CostSnapshot" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "CurrencyRate" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "CurrencyRate" USING ("tenantId" = current_tenant_id());
+-- CurrencyRate has no tenantId — no RLS policy
 
 ALTER TABLE "DecisionLogEntry" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "DecisionLogEntry" USING ("tenantId" = current_tenant_id());
@@ -105,8 +105,8 @@ CREATE POLICY "tenant_isolation" ON "Feature" USING ("tenantId" = current_tenant
 ALTER TABLE "FlowMetricSnapshot" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "FlowMetricSnapshot" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "GitHubSync" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "GitHubSync" USING ("tenantId" = current_tenant_id());
+-- GitHubSync created after this migration — skipped, handled in later migration
+
 
 ALTER TABLE "GovernedEpic" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "GovernedEpic" USING ("tenantId" = current_tenant_id());
@@ -138,8 +138,8 @@ CREATE POLICY "tenant_isolation" ON "LACE" USING ("tenantId" = current_tenant_id
 ALTER TABLE "LeanBudget" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "LeanBudget" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "LinearSync" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "LinearSync" USING ("tenantId" = current_tenant_id());
+-- LinearSync created after this migration — skipped, handled in later migration
+
 
 ALTER TABLE "MemberSprintMetrics" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "MemberSprintMetrics" USING ("tenantId" = current_tenant_id());
@@ -174,8 +174,8 @@ CREATE POLICY "tenant_isolation" ON "PIKnowledgeVector" USING ("tenantId" = curr
 ALTER TABLE "PIObjective" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "PIObjective" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "PIParticipant" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "PIParticipant" USING ("tenantId" = current_tenant_id());
+-- PIParticipant created after this migration — skipped, handled in later migration
+
 
 ALTER TABLE "PIPlan" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "PIPlan" USING ("tenantId" = current_tenant_id());
@@ -189,8 +189,7 @@ CREATE POLICY "tenant_isolation" ON "Retrospective" USING ("tenantId" = current_
 ALTER TABLE "Risk" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "Risk" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "RiskOKR" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "RiskOKR" USING ("tenantId" = current_tenant_id());
+-- RiskOKR has no tenantId — no RLS policy
 
 ALTER TABLE "RoadmapItem" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "RoadmapItem" USING ("tenantId" = current_tenant_id());
@@ -252,8 +251,7 @@ CREATE POLICY "tenant_isolation" ON "TenantInvitation" USING ("tenantId" = curre
 ALTER TABLE "TenantMember" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "TenantMember" USING ("tenantId" = current_tenant_id());
 
-ALTER TABLE "ThemeART" ENABLE ROW LEVEL SECURITY;
-CREATE POLICY "tenant_isolation" ON "ThemeART" USING ("tenantId" = current_tenant_id());
+-- ThemeART has no tenantId — no RLS policy
 
 ALTER TABLE "UnmappedCostBucket" ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "tenant_isolation" ON "UnmappedCostBucket" USING ("tenantId" = current_tenant_id());

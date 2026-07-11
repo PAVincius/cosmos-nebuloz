@@ -20,7 +20,7 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
 
   return (
     <html
-      className={cn(fonts, "scroll-smooth")}
+      className={cn(fonts, "scroll-smooth relative")}
       lang={locale}
       suppressHydrationWarning
     >
@@ -36,7 +36,7 @@ const RootLayout = async ({ children, params }: RootLayoutProperties) => {
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className="grain">
         <LenisProvider />
         <ScrollProgress />
         <CursorGlow />

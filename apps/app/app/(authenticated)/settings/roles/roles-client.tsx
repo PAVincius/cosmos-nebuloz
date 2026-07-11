@@ -14,12 +14,12 @@ import { PlusIcon, Trash2Icon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import {
-  ALLOWED_PERMISSIONS,
   type CustomRoleRow,
   createCustomRole,
   deleteCustomRole,
   updateCustomRole,
 } from "@/app/actions/settings/custom-roles";
+import { ALLOWED_PERMISSIONS } from "@/app/actions/settings/permissions";
 
 type Props = {
   roles: CustomRoleRow[];

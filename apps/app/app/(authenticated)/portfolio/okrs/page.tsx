@@ -1,10 +1,10 @@
-import { CheckCircle2Icon, TargetIcon, TrendingUpIcon } from "lucide-react";
+import { TargetIcon } from "lucide-react";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { getOKRsWithContext, getOKRTraceability } from "@/app/actions/okrs";
 import { getPIPlans } from "@/app/actions/risks";
 import { appDesign } from "@/lib/app-design";
-import { OKRTraceabilityView } from "./components/okr-traceability-view";
-import { OKRsDashboard } from "./components/okrs-dashboard";
+import { OkrBadge } from "./components/okr-badge";
+import { OKRsView } from "./components/okrs-view";
 
 export const metadata = {
   title: "OKRs - COSMOS",
@@ -18,32 +18,31 @@ export default async function OKRsPage() {
     getOKRTraceability(),
   ]);
 
-  const onTrack = okrs.filter(
-    (o) => o.status === "ON_TRACK" || o.status === "ACHIEVED"
-  ).length;
   const totalKRs = okrs.reduce((s, o) => s + o.keyResults.length, 0);
-  const onTrackPct =
-    okrs.length > 0 ? Math.round((onTrack / okrs.length) * 100) : 0;
 
   return (
     <div className={appDesign.shell}>
       <PageHeader
-        breadcrumb={[{ label: "Portfolio", href: "/portfolio" }]}
-        stats={[
-          { label: "Objetivos", value: okrs.length, icon: TargetIcon },
-          { label: "Key Results", value: totalKRs, icon: CheckCircle2Icon },
-          { label: "No Prazo", value: `${onTrackPct}%`, icon: TrendingUpIcon },
-        ]}
-        subtitle="Objetivos e Key Results — acompanhe o progresso das metas estratégicas por horizonte SAFe."
+        badge={
+          <div className="flex flex-wrap items-center gap-2">
+            <OkrBadge icon={<TargetIcon className="h-3 w-3" />} tone="accent">
+              {okrs.length} objetivos
+            </OkrBadge>
+            <OkrBadge tone="neutral">{totalKRs} key results</OkrBadge>
+            <OkrBadge dot tone="green">
+              Check-in semanal
+            </OkrBadge>
+          </div>
+        }
+        subtitle="Objetivos e Key Results do portfólio SAFe — acompanhe o progresso das metas por horizonte."
         title="OKRs"
       />
       <div className={appDesign.bodyScroll}>
-        <OKRsDashboard initialOKRs={okrs} piPlans={piPlans} />
-        {traceability.length > 0 && (
-          <div className="mt-8">
-            <OKRTraceabilityView nodes={traceability} />
-          </div>
-        )}
+        <OKRsView
+          initialOKRs={okrs}
+          piPlans={piPlans}
+          traceability={traceability}
+        />
       </div>
     </div>
   );

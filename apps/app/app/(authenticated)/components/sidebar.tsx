@@ -313,7 +313,9 @@ export const GlobalSidebar = ({
         <Search />
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>SAFe Workspace</SidebarGroupLabel>
+            <SidebarGroupLabel className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)]">
+              SAFe Workspace
+            </SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
@@ -321,8 +323,18 @@ export const GlobalSidebar = ({
                   defaultOpen={item.isActive}
                   key={item.title}
                 >
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={item.title}>
+                  <SidebarMenuItem className="relative">
+                    {item.isActive && (
+                      <span
+                        aria-hidden
+                        className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-0 h-4 w-[3px] rounded-full bg-[var(--accent-c)] shadow-[0_0_8px_var(--accent-c)]"
+                      />
+                    )}
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.isActive}
+                      tooltip={item.title}
+                    >
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>

@@ -8,7 +8,7 @@ test.describe("Persona Home — /dashboard", () => {
     await expect(page.locator("h1")).not.toHaveText("500");
     await expect(page.locator("h1")).not.toHaveText("Error");
     await expect(
-      page.getByRole("link", { name: "Trocar persona" })
+      page.getByRole("group", { name: "Trocar persona" })
     ).toBeVisible();
   });
 
@@ -37,6 +37,9 @@ test.describe("Persona Home — /dashboard", () => {
 
   test("page header greeting is present", async ({ page }) => {
     await page.goto("/dashboard");
-    await expect(page.getByText("Bom dia")).toBeVisible();
+    // greeting varies by time of day
+    await expect(
+      page.getByText(/Bom dia|Boa tarde|Boa noite/i).first()
+    ).toBeVisible();
   });
 });

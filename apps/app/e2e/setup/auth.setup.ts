@@ -1,19 +1,8 @@
 import { execSync } from "node:child_process";
 import { chromium, type FullConfig } from "@playwright/test";
-import { database } from "@repo/database";
 
-/**
- * Playwright Global Setup — Auth Session Generator
- *
- * This script creates an authenticated browser session and saves it to
- * e2e/fixtures/auth-session.json for use in @auth tests.
- *
- * Run once before @auth tests:
- *   pnpm exec playwright test --project=setup
- *
- * Or set AUTH_EMAIL and AUTH_PASSWORD env vars and run:
- *   AUTH_TEST=true pnpm test:e2e
- */
+// ponytail: no direct DB — requireTenantSession auto-sets activeTenantId on first request
+
 async function globalSetup(config: FullConfig) {
   if (!process.env.AUTH_TEST) {
     console.log("⏭  Skipping auth setup (AUTH_TEST not set)");
@@ -39,33 +28,17 @@ async function globalSetup(config: FullConfig) {
   try {
     await page.goto(`${baseURL}/sign-in`);
 
-    // Fill in credentials
     await page.locator('input[type="email"]').fill(email);
     await page.locator('input[type="password"]').fill(password);
     await page.locator('button[type="submit"]').click();
 
-    // Wait for DB session creation
-    await page.waitForTimeout(3000);
-
-    console.log("⚙️ Injecting activeTenantId into DB Session...");
-    const user = await database.user.findUnique({ where: { email } });
-    if (user) {
-      const member = await database.tenantMember.findFirst({
-        where: { userId: user.id },
-      });
-      if (member) {
-        await database.session.updateMany({
-          where: { userId: user.id },
-          data: { activeTenantId: member.tenantId },
-        });
-        console.log(`✅ activeTenantId set to ${member.tenantId}`);
-      }
-    }
-
-    // Wait for redirect to dashboard/home
+    // Wait for redirect to authenticated area
     await page.waitForURL(/dashboard|portfolio|\/$/, { timeout: 30_000 });
 
-    // Save auth state (cookies + localStorage)
+    // Hit dashboard so requireTenantSession runs and auto-sets activeTenantId
+    await page.goto(`${baseURL}/dashboard`);
+    await page.waitForLoadState("networkidle");
+
     await page.context().storageState({
       path: "./e2e/fixtures/auth-session.json",
     });
@@ -73,6 +46,7 @@ async function globalSetup(config: FullConfig) {
     console.log("✅ Auth session saved to e2e/fixtures/auth-session.json");
   } catch (err) {
     console.error("❌ Auth setup failed:", err);
+    throw err;
   } finally {
     await browser.close();
   }

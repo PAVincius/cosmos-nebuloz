@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Select,
@@ -16,12 +15,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@repo/design-system/components/ui/sheet";
-import {
-  ChevronDown,
-  ChevronRight,
-  Settings2Icon,
-  Sparkles,
-} from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { Settings2Icon, Sparkles } from "lucide-react";
 import dynamic from "next/dynamic";
 import {
   useCallback,
@@ -31,331 +26,41 @@ import {
   useState,
   useTransition,
 } from "react";
-import { ExternalSourceBadge } from "@/app/(authenticated)/components/external-source-badge";
-import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
 import { saveWSJFConfig } from "@/app/actions/wsjf";
 import type { AIAccessStatus } from "@/app/actions/wsjf/rebalance-schema";
-import type {
-  EpicWithFeatures,
-  FeatureWSJF,
-  WSJFConfig,
-} from "@/app/actions/wsjf/schema";
+import { updateFeatureWSJF } from "@/app/actions/features/update-wsjf";
+import type { EpicWithFeatures, WSJFConfig } from "@/app/actions/wsjf/schema";
 import {
   ExplainabilityPanel,
   type ExplainabilitySuggestion,
 } from "./explainability-panel";
 import {
+  DEFAULT_WSJF_WEIGHTS,
+  isDefaultWeights,
+  RebalanceWeightsDialog,
+  type WSJFWeights,
+} from "./rebalance-weights-dialog";
+import {
   type FeatureForScenario,
   ScenarioSimulator,
 } from "./scenario-simulator";
+import { WsjfPriorityTable } from "./wsjf-priority-table";
 
 const RebalanceDialog = dynamic(
   () => import("./rebalance-dialog").then((m) => m.RebalanceDialog),
   { loading: () => null }
 );
 
-// ─── Sub-component: Score Picker ─────────────────────────────────────────────
-
-type ScorePickerProps = {
-  label: string;
-  value: number;
-  scale: number[];
-  onSelect: (v: number) => void;
-  disabled: boolean;
-};
-
-function ScorePicker({
-  label,
-  value,
-  scale,
-  onSelect,
-  disabled,
-}: ScorePickerProps) {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div className="relative">
-      <button
-        aria-label={`${label}: ${value}`}
-        className="rounded border border-border px-2 py-0.5 font-mono text-xs transition-colors hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50"
-        disabled={disabled}
-        onClick={() => setOpen((prev) => !prev)}
-        type="button"
-      >
-        <span className="mr-1 text-muted-foreground">{label}</span>
-        <span className="font-semibold">{value}</span>
-      </button>
-
-      {open ? (
-        <>
-          {/* backdrop */}
-          <div
-            aria-hidden
-            className="fixed inset-0 z-10"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute z-20 mt-1 grid min-w-[120px] grid-cols-4 gap-1 rounded-lg border border-border bg-background p-2 shadow-lg">
-            {scale.map((v) => (
-              <button
-                className={[
-                  "rounded px-2 py-1 font-mono text-xs transition-colors",
-                  v === value
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted",
-                ].join(" ")}
-                key={v}
-                onClick={() => {
-                  onSelect(v);
-                  setOpen(false);
-                }}
-                type="button"
-              >
-                {v}
-              </button>
-            ))}
-          </div>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
-// ─── Sub-component: WSJF Badge ───────────────────────────────────────────────
-
-function WSJFBadge({ score }: { score: number }) {
-  if (score >= 10) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 font-mono font-semibold text-green-600 text-xs dark:text-green-400">
-        {score.toFixed(2)}
-      </span>
-    );
-  }
-  if (score >= 5) {
-    return (
-      <span className="inline-flex items-center rounded-full bg-yellow-500/10 px-2 py-0.5 font-mono font-semibold text-xs text-yellow-600 dark:text-yellow-500">
-        {score.toFixed(2)}
-      </span>
-    );
-  }
-  return (
-    <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 font-mono font-semibold text-muted-foreground text-xs">
-      {score.toFixed(2)}
-    </span>
-  );
-}
-
-// ─── Sub-component: Feature Row ──────────────────────────────────────────────
-
-type FeatureRowProps = {
-  feature: FeatureWSJF;
-  scale: number[];
-  labels: WSJFConfig["labels"];
-  onUpdate: (
-    featureId: string,
-    field: "bv" | "tc" | "rr" | "js",
-    value: number
-  ) => void;
-  isPending: boolean;
-};
-
-function FeatureRow({
-  feature,
-  scale,
-  labels,
-  onUpdate,
-  isPending,
-}: FeatureRowProps) {
-  return (
-    <tr className="border-border/50 border-b last:border-0">
-      <td className="py-2 pr-4 pl-10">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted-foreground text-sm">{feature.title}</span>
-          <ExternalSourceBadge
-            source={feature.externalSource}
-            url={feature.externalUrl}
-          />
-          <span className="font-mono text-muted-foreground/60 text-xs uppercase">
-            {feature.statusId}
-          </span>
-        </div>
-      </td>
-      <td className="px-2 py-2">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <ScorePicker
-            disabled={isPending}
-            label={labels.bv}
-            onSelect={(v) => onUpdate(feature.id, "bv", v)}
-            scale={scale}
-            value={feature.bv}
-          />
-          <ScorePicker
-            disabled={isPending}
-            label={labels.tc}
-            onSelect={(v) => onUpdate(feature.id, "tc", v)}
-            scale={scale}
-            value={feature.tc}
-          />
-          <ScorePicker
-            disabled={isPending}
-            label={labels.rr}
-            onSelect={(v) => onUpdate(feature.id, "rr", v)}
-            scale={scale}
-            value={feature.rr}
-          />
-          <ScorePicker
-            disabled={isPending}
-            label={labels.js}
-            onSelect={(v) => onUpdate(feature.id, "js", v)}
-            scale={scale}
-            value={feature.js}
-          />
-        </div>
-      </td>
-      <td className="py-2 pr-4 pl-2 text-right">
-        <WSJFBadge score={feature.wsjfScore} />
-      </td>
-    </tr>
-  );
-}
-
-// ─── Sub-component: Epic Row ─────────────────────────────────────────────────
-
-type EpicRowProps = {
-  epic: EpicWithFeatures;
-  scale: number[];
-  labels: WSJFConfig["labels"];
-  onUpdateFeature: (
-    epicId: string,
-    featureId: string,
-    field: "bv" | "tc" | "rr" | "js",
-    value: number
-  ) => void;
-  isPending: boolean;
-};
-
-type ExpandedContentOpts = {
-  expanded: boolean;
-  epic: EpicWithFeatures;
-  scale: number[];
-  labels: WSJFConfig["labels"];
-  onUpdateFeature: EpicRowProps["onUpdateFeature"];
-  isPending: boolean;
-};
-
-function renderExpandedContent(opts: ExpandedContentOpts) {
-  const { expanded, epic, scale, labels, onUpdateFeature, isPending } = opts;
-  if (!expanded) {
-    return null;
-  }
-  if (epic.features.length === 0) {
-    return (
-      <tr className="border-border/50 border-b">
-        <td
-          className="py-3 pl-10 text-muted-foreground text-sm italic"
-          colSpan={3}
-        >
-          Nenhuma feature neste épico ainda.
-        </td>
-      </tr>
-    );
-  }
-  return epic.features.map((f) => (
-    <FeatureRow
-      feature={f}
-      isPending={isPending}
-      key={f.id}
-      labels={labels}
-      onUpdate={(featureId, field, value) =>
-        onUpdateFeature(epic.id, featureId, field, value)
-      }
-      scale={scale}
-    />
-  ));
-}
-
-function EpicRow({
-  epic,
-  scale,
-  labels,
-  onUpdateFeature,
-  isPending,
-}: EpicRowProps) {
-  const [expanded, setExpanded] = useState(false);
-
-  return (
-    <>
-      <tr
-        className="cursor-pointer border-border border-b transition-colors hover:bg-muted/30"
-        onClick={() => setExpanded((prev) => !prev)}
-      >
-        <td className="py-3 pr-2 pl-4">
-          <div className="flex flex-wrap items-center gap-2">
-            {expanded ? (
-              <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
-            )}
-            <span className="font-medium text-sm">{epic.title}</span>
-            <Badge
-              className="text-xs uppercase tracking-wide"
-              variant="outline"
-            >
-              {epic.statusId}
-            </Badge>
-            {epic.themeTitle ? (
-              <span
-                className="inline-flex items-center rounded-full border px-2 py-0.5 font-medium text-[10px]"
-                style={
-                  epic.themeColor
-                    ? {
-                        background: `${epic.themeColor}18`,
-                        borderColor: `${epic.themeColor}55`,
-                        color: epic.themeColor,
-                      }
-                    : {}
-                }
-              >
-                {epic.themeTitle}
-              </span>
-            ) : null}
-            {epic.dependencyCount > 0 ? (
-              <span className="inline-flex items-center gap-0.5 rounded-full border border-amber-400/40 bg-amber-500/10 px-1.5 py-0.5 font-medium text-[10px] text-amber-600">
-                <svg
-                  aria-hidden="true"
-                  className="h-2.5 w-2.5"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M7 1a1 1 0 0 0 0 2h1.586L5.293 6.293a1 1 0 1 0 1.414 1.414L10 4.414V6a1 1 0 0 0 2 0V2a1 1 0 0 0-1-1H7zm-4 7a1 1 0 0 1 1 1v1.586l3.293-3.293a1 1 0 1 1 1.414 1.414L5.414 11H7a1 1 0 0 1 0 2H3a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z" />
-                </svg>
-                {epic.dependencyCount} dep
-              </span>
-            ) : null}
-            <span className="text-muted-foreground text-xs">
-              {epic.features.length} feature
-              {epic.features.length !== 1 ? "s" : ""}
-            </span>
-          </div>
-        </td>
-        <td className="px-2 py-3 text-muted-foreground text-xs">
-          {expanded ? "—" : "Clique para expandir"}
-        </td>
-        <td className="py-3 pr-4 pl-2 text-right">
-          <WSJFBadge score={epic.totalWSJF} />
-        </td>
-      </tr>
-
-      {renderExpandedContent({
-        expanded,
-        epic,
-        scale,
-        labels,
-        onUpdateFeature,
-        isPending,
-      })}
-    </>
-  );
-}
+// KPI icon paths (lucide-react v0.542.0, multi-subpath icons flattened into a
+// single `d` string — first command of each subpath forced to absolute `M`
+// so their original coordinates hold once merged).
+const ICON_TRENDING_UP = "M16 7h6v6M22 7-8.5 8.5-5-5L2 17";
+const ICON_FLAG =
+  "M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528";
+const ICON_ACTIVITY =
+  "M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2";
+const ICON_LIST_CHECKS = "M3 17 2 2 4-4M3 7 2 2 4-4M13 6h8M13 12h8M13 18h8";
 
 // ─── Sub-component: Scale Config Sheet content ───────────────────────────────
 
@@ -461,6 +166,7 @@ export function WSJFDashboard({
   config: initialConfig,
   access,
 }: WSJFDashboardProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [isPending, startTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
   const [configOpen, setConfigOpen] = useState(false);
@@ -594,6 +300,41 @@ export function WSJFDashboard({
     });
   }, []);
 
+  // ── M9 Rebalance — client-side BV/TC/RR weighting, re-ranks the table
+  // live and never persists (mirrors openRebalanceDialog in the prototype).
+  const [weights, setWeights] = useState<WSJFWeights>(DEFAULT_WSJF_WEIGHTS);
+  const [rebalanceOpen, setRebalanceOpen] = useState(false);
+
+  const allFeatures = useMemo(
+    () => optimisticEpics.flatMap((epic) => epic.features),
+    [optimisticEpics]
+  );
+
+  const weightedScores = useMemo(
+    () =>
+      allFeatures.map((f) => {
+        const js = f.js > 0 ? f.js : 1;
+        return (
+          Math.round(
+            ((f.bv * weights.bv + f.tc * weights.tc + f.rr * weights.rr) /
+              js) *
+              100
+          ) / 100
+        );
+      }),
+    [allFeatures, weights]
+  );
+
+  const maxScore =
+    weightedScores.length > 0 ? Math.max(...weightedScores) : 0;
+  const avgScore =
+    weightedScores.length > 0
+      ? weightedScores.reduce((a, b) => a + b, 0) / weightedScores.length
+      : 0;
+  const epicsAwaitingScore = optimisticEpics.filter(
+    (epic) => epic.features.length === 0
+  ).length;
+
   return (
     <div className="w-full min-w-0 space-y-6">
       {/* Config Sheet */}
@@ -657,62 +398,84 @@ export function WSJFDashboard({
         </div>
       </div>
 
-      {/* Section 2: Priority table */}
-      <div className="w-full min-w-0 overflow-hidden rounded-lg border border-border bg-card">
-        {filteredEpics.length === 0 ? (
-          <div className="py-16 text-center">
-            <p className="text-muted-foreground text-sm">
-              {optimisticEpics.length === 0
-                ? "Nenhum épico encontrado. Crie épicos no Portfolio Kanban para começar a priorizar."
-                : "Nenhum épico para o tema selecionado."}
+      {/* Section 2: KPIs */}
+      <KpiGrid>
+        <KpiCard
+          badge="— Fila WSJF"
+          iconPath={ICON_TRENDING_UP}
+          label="Features priorizadas"
+          tone="accent"
+          value={allFeatures.length}
+        />
+        <KpiCard
+          badge="↗ Próxima a puxar"
+          iconPath={ICON_FLAG}
+          label="Maior WSJF"
+          tone="green"
+          value={maxScore.toFixed(1)}
+        />
+        <KpiCard
+          badge="— Média do portfólio"
+          iconPath={ICON_ACTIVITY}
+          label="WSJF médio"
+          tone="blue"
+          value={avgScore.toFixed(1)}
+        />
+        <KpiCard
+          badge="— Sem features ainda"
+          iconPath={ICON_LIST_CHECKS}
+          label="Aguardando score"
+          tone="amber"
+          value={epicsAwaitingScore}
+        />
+      </KpiGrid>
+
+      {/* Section 3: AI Rebalancing banner (screen-wsjf.jsx order: KPIs → AI banner → ranking table) */}
+      <div
+        className="relative flex w-full min-w-0 flex-col gap-4 overflow-hidden p-6 sm:flex-row sm:items-center sm:justify-between"
+        style={{
+          borderRadius: 16,
+          border: "1px solid rgba(var(--accent-rgb),.28)",
+          background: "var(--accent-soft)",
+        }}
+      >
+        {!prefersReducedMotion && (
+          <motion.div
+            animate={{ x: ["-120%", "220%"] }}
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 left-0 w-1/3"
+            style={{
+              background:
+                "linear-gradient(90deg, transparent, rgba(255,255,255,.10), transparent)",
+            }}
+            transition={{ duration: 2.8, ease: "linear", repeat: Infinity }}
+          />
+        )}
+        <div className="relative flex min-w-0 flex-1 items-center gap-4">
+          <div
+            className="flex shrink-0 items-center justify-center"
+            style={{
+              background: "var(--accent-c)",
+              borderRadius: 12,
+              boxShadow: "0 8px 20px -6px rgba(var(--accent-rgb),.55)",
+              color: "#04121a",
+              height: 44,
+              width: 44,
+            }}
+          >
+            <Sparkles className="h-5 w-5" />
+          </div>
+          <div className="min-w-0">
+            <p className="font-semibold text-sm" style={{ color: "var(--ink)" }}>
+              Rebalanceamento por IA
+            </p>
+            <p className="mt-1 text-sm" style={{ color: "var(--ink-muted)" }}>
+              Analise todos os épicos e features com base nas metas do
+              portfólio e receba sugestões de repriorização automática.
             </p>
           </div>
-        ) : (
-          <div className="w-full overflow-x-auto">
-            <table className="w-full min-w-[640px]">
-              <thead>
-                <tr className="border-border border-b bg-muted/40">
-                  <th className="py-3 pr-2 pl-4 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                    Épico / Feature
-                  </th>
-                  <th className="px-2 py-3 text-left font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                    Parâmetros WSJF
-                  </th>
-                  <th className="w-28 py-3 pr-4 pl-2 text-right font-medium text-muted-foreground text-xs uppercase tracking-wider">
-                    Score
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredEpics.map((epic) => (
-                  <EpicRow
-                    epic={epic}
-                    isPending={isPending}
-                    key={epic.id}
-                    labels={initialConfig.labels}
-                    onUpdateFeature={handleUpdateFeature}
-                    scale={initialConfig.scale}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {/* Section 3: AI Rebalancing */}
-      <div className="flex w-full min-w-0 flex-col gap-4 rounded-xl border border-primary/30 border-dashed bg-primary/5 p-6 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <p className="flex items-center gap-2 font-semibold text-sm">
-            <Sparkles className="h-4 w-4 shrink-0 text-primary" />
-            Rebalanceamento por IA
-          </p>
-          <p className="mt-1 text-muted-foreground text-sm">
-            Analise todos os épicos e features com base nas metas do portfólio e
-            receba sugestões de repriorização automática.
-          </p>
         </div>
-        <div className="shrink-0 sm:pl-4">
+        <div className="relative shrink-0 sm:pl-4">
           <RebalanceDialog
             access={access}
             epics={optimisticEpics}
@@ -721,7 +484,27 @@ export function WSJFDashboard({
         </div>
       </div>
 
-      {/* Section 4: Explainability Panel */}
+      {/* Section 4: Priority table (screenWsjf, screens-portfolio.js:9) */}
+      <WsjfPriorityTable
+        epics={filteredEpics}
+        hasAnyFeatures={allFeatures.length > 0}
+        isPending={isPending}
+        labels={initialConfig.labels}
+        onOpenRebalance={() => setRebalanceOpen(true)}
+        onUpdateFeature={handleUpdateFeature}
+        scale={initialConfig.scale}
+        weights={weights}
+        weightsActive={!isDefaultWeights(weights)}
+      />
+
+      <RebalanceWeightsDialog
+        onClose={() => setRebalanceOpen(false)}
+        onWeightsChange={setWeights}
+        open={rebalanceOpen}
+        weights={weights}
+      />
+
+      {/* Section 5: Explainability Panel */}
       <div className="w-full min-w-0">
         <ExplainabilityPanel suggestions={suggestions} />
       </div>

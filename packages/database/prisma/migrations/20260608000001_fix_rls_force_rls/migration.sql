@@ -20,6 +20,7 @@ ALTER TABLE "AuditLog"                  FORCE ROW LEVEL SECURITY;
 ALTER TABLE "BillingEntry"              FORCE ROW LEVEL SECURITY;
 ALTER TABLE "BillingEntryAllocation"    FORCE ROW LEVEL SECURITY;
 ALTER TABLE "BillingEntryStaging"       FORCE ROW LEVEL SECURITY;
+ALTER TABLE "BillingSyncCursor"         ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "BillingSyncCursor"         FORCE ROW LEVEL SECURITY;
 ALTER TABLE "BillingSyncRun"            FORCE ROW LEVEL SECURITY;
 ALTER TABLE "BpmnDefinition"            FORCE ROW LEVEL SECURITY;
@@ -28,10 +29,11 @@ ALTER TABLE "Capability"                FORCE ROW LEVEL SECURITY;
 ALTER TABLE "CommitmentDiscount"        FORCE ROW LEVEL SECURITY;
 ALTER TABLE "CompetencyAssessment"      FORCE ROW LEVEL SECURITY;
 ALTER TABLE "ConfidenceVoteSession"     FORCE ROW LEVEL SECURITY;
-ALTER TABLE "CopilotMessage"            FORCE ROW LEVEL SECURITY;
-ALTER TABLE "CopilotSession"            FORCE ROW LEVEL SECURITY;
+ALTER TABLE copilot_messages            FORCE ROW LEVEL SECURITY;
+ALTER TABLE copilot_sessions            FORCE ROW LEVEL SECURITY;
 ALTER TABLE "CostAnomaly"               FORCE ROW LEVEL SECURITY;
 ALTER TABLE "CostSnapshot"              FORCE ROW LEVEL SECURITY;
+ALTER TABLE "CurrencyRate"              ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "CurrencyRate"              FORCE ROW LEVEL SECURITY;
 ALTER TABLE "DecisionLogEntry"          FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Defect"                    FORCE ROW LEVEL SECURITY;
@@ -39,7 +41,11 @@ ALTER TABLE "DependencyLink"            FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Epic"                      FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Feature"                   FORCE ROW LEVEL SECURITY;
 ALTER TABLE "FlowMetricSnapshot"        FORCE ROW LEVEL SECURITY;
-ALTER TABLE "GitHubSync"                FORCE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='GitHubSync') THEN
+    ALTER TABLE "GitHubSync" FORCE ROW LEVEL SECURITY;
+  END IF;
+END $$;
 ALTER TABLE "GovernedEpic"              FORCE ROW LEVEL SECURITY;
 ALTER TABLE "GroupSynergy"              FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Impediment"                FORCE ROW LEVEL SECURITY;
@@ -50,7 +56,11 @@ ALTER TABLE "KeyResult"                 FORCE ROW LEVEL SECURITY;
 ALTER TABLE "KeyResultSnapshot"         FORCE ROW LEVEL SECURITY;
 ALTER TABLE "LACE"                      FORCE ROW LEVEL SECURITY;
 ALTER TABLE "LeanBudget"                FORCE ROW LEVEL SECURITY;
-ALTER TABLE "LinearSync"                FORCE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='LinearSync') THEN
+    ALTER TABLE "LinearSync" FORCE ROW LEVEL SECURITY;
+  END IF;
+END $$;
 ALTER TABLE "MemberSprintMetrics"       FORCE ROW LEVEL SECURITY;
 ALTER TABLE "MemberThroughputBaseline"  FORCE ROW LEVEL SECURITY;
 ALTER TABLE "MigrationConnection"       FORCE ROW LEVEL SECURITY;
@@ -62,11 +72,16 @@ ALTER TABLE "PersonCost"                FORCE ROW LEVEL SECURITY;
 ALTER TABLE "PersonSkillProfile"        FORCE ROW LEVEL SECURITY;
 ALTER TABLE "PIKnowledgeVector"         FORCE ROW LEVEL SECURITY;
 ALTER TABLE "PIObjective"               FORCE ROW LEVEL SECURITY;
-ALTER TABLE "PIParticipant"             FORCE ROW LEVEL SECURITY;
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='PIParticipant') THEN
+    ALTER TABLE "PIParticipant" FORCE ROW LEVEL SECURITY;
+  END IF;
+END $$;
 ALTER TABLE "PIPlan"                    FORCE ROW LEVEL SECURITY;
 ALTER TABLE "PISession"                 FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Retrospective"             FORCE ROW LEVEL SECURITY;
 ALTER TABLE "Risk"                      FORCE ROW LEVEL SECURITY;
+ALTER TABLE "RiskOKR"                   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "RiskOKR"                   FORCE ROW LEVEL SECURITY;
 ALTER TABLE "RoadmapItem"               FORCE ROW LEVEL SECURITY;
 ALTER TABLE "SolutionEpic"              FORCE ROW LEVEL SECURITY;
@@ -88,6 +103,7 @@ ALTER TABLE "TeamWorkflowEdge"          FORCE ROW LEVEL SECURITY;
 ALTER TABLE "TeamWorkflowNode"          FORCE ROW LEVEL SECURITY;
 ALTER TABLE "TenantInvitation"          FORCE ROW LEVEL SECURITY;
 ALTER TABLE "TenantMember"              FORCE ROW LEVEL SECURITY;
+ALTER TABLE "ThemeART"                  ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "ThemeART"                  FORCE ROW LEVEL SECURITY;
 ALTER TABLE "UnmappedCostBucket"        FORCE ROW LEVEL SECURITY;
 
@@ -240,13 +256,13 @@ CREATE POLICY "tenant_isolation" ON "ConfidenceVoteSession"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "CopilotMessage";
-CREATE POLICY "tenant_isolation" ON "CopilotMessage"
+DROP POLICY IF EXISTS "tenant_isolation" ON copilot_messages;
+CREATE POLICY "tenant_isolation" ON copilot_messages
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "CopilotSession";
-CREATE POLICY "tenant_isolation" ON "CopilotSession"
+DROP POLICY IF EXISTS "tenant_isolation" ON copilot_sessions;
+CREATE POLICY "tenant_isolation" ON copilot_sessions
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
@@ -290,10 +306,12 @@ CREATE POLICY "tenant_isolation" ON "FlowMetricSnapshot"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "GitHubSync";
-CREATE POLICY "tenant_isolation" ON "GitHubSync"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='GitHubSync') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "tenant_isolation" ON "GitHubSync"';
+    EXECUTE 'CREATE POLICY "tenant_isolation" ON "GitHubSync" USING ("tenantId" = current_tenant_id()) WITH CHECK ("tenantId" = current_tenant_id())';
+  END IF;
+END $$;
 
 DROP POLICY IF EXISTS "tenant_isolation" ON "GovernedEpic";
 CREATE POLICY "tenant_isolation" ON "GovernedEpic"
@@ -345,10 +363,12 @@ CREATE POLICY "tenant_isolation" ON "LeanBudget"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "LinearSync";
-CREATE POLICY "tenant_isolation" ON "LinearSync"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='LinearSync') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "tenant_isolation" ON "LinearSync"';
+    EXECUTE 'CREATE POLICY "tenant_isolation" ON "LinearSync" USING ("tenantId" = current_tenant_id()) WITH CHECK ("tenantId" = current_tenant_id())';
+  END IF;
+END $$;
 
 DROP POLICY IF EXISTS "tenant_isolation" ON "MemberSprintMetrics";
 CREATE POLICY "tenant_isolation" ON "MemberSprintMetrics"
@@ -405,10 +425,12 @@ CREATE POLICY "tenant_isolation" ON "PIObjective"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
 
-DROP POLICY IF EXISTS "tenant_isolation" ON "PIParticipant";
-CREATE POLICY "tenant_isolation" ON "PIParticipant"
-  USING ("tenantId" = current_tenant_id())
-  WITH CHECK ("tenantId" = current_tenant_id());
+DO $$ BEGIN
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname='public' AND tablename='PIParticipant') THEN
+    EXECUTE 'DROP POLICY IF EXISTS "tenant_isolation" ON "PIParticipant"';
+    EXECUTE 'CREATE POLICY "tenant_isolation" ON "PIParticipant" USING ("tenantId" = current_tenant_id()) WITH CHECK ("tenantId" = current_tenant_id())';
+  END IF;
+END $$;
 
 DROP POLICY IF EXISTS "tenant_isolation" ON "PIPlan";
 CREATE POLICY "tenant_isolation" ON "PIPlan"

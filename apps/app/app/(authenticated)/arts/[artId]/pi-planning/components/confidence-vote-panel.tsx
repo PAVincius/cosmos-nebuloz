@@ -1,15 +1,6 @@
 "use client";
 
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
-import { Separator } from "@repo/design-system/components/ui/separator";
 import { type ConfidenceVoteEvent, getNextVoteEvents } from "@repo/safe-engine";
 import {
   CheckCheckIcon,
@@ -20,6 +11,7 @@ import {
 } from "lucide-react";
 import { useTransition } from "react";
 import { sendVoteEvent } from "../../../../../actions/arts/confidence-vote";
+import { PiBadge, TONE_TEXT_VAR, TONE_VAR, type Tone } from "./pi-tone";
 
 type ConfidenceVotePanelProps = {
   sessionId: string;
@@ -36,15 +28,44 @@ const STATE_LABELS: Record<string, string> = {
   APPROVED: "Aprovado",
 };
 
-const STATE_COLORS: Record<string, string> = {
-  NOT_STARTED: "bg-muted text-muted-foreground",
-  OPEN: "bg-primary/10 text-primary border-primary/30",
-  TALLYING: "bg-yellow-500/10 text-yellow-500 border-yellow-500/30",
-  REWORK: "bg-destructive/10 text-destructive border-destructive/30",
-  APPROVED: "bg-green-500/10 text-green-500 border-green-500/30",
+const STATE_TONE: Record<string, Tone> = {
+  NOT_STARTED: "neutral",
+  OPEN: "accent",
+  TALLYING: "amber",
+  REWORK: "red",
+  APPROVED: "green",
 };
 
 const VOTE_SCORES = [1, 2, 3, 4, 5];
+
+function scoreTone(score: number): Tone {
+  if (score >= 4) {
+    return "green";
+  }
+  return score === 3 ? "amber" : "red";
+}
+
+/** Fist-of-five dot row — mirrors cosmos.html FistOfFive. */
+function FistOfFive({ value, size = 9 }: { value: number; size?: number }) {
+  const tone = scoreTone(value);
+  return (
+    <span className="inline-flex gap-[3px]">
+      {VOTE_SCORES.map((n) => (
+        <span
+          className="rounded-full"
+          key={n}
+          style={{
+            width: size,
+            height: size,
+            background:
+              n <= value ? `var(--${tone})` : "var(--surface-3)",
+            border: n <= value ? "none" : "1px solid var(--hairline-strong)",
+          }}
+        />
+      ))}
+    </span>
+  );
+}
 
 type EventConfig = {
   event: ConfidenceVoteEvent;
@@ -57,35 +78,36 @@ const EVENT_CONFIGS: EventConfig[] = [
   {
     event: { type: "START_VOTING" },
     label: "Iniciar Votação",
-    icon: <PlayIcon className="h-4 w-4" />,
+    icon: <PlayIcon className="h-3.5 w-3.5" />,
     variant: "default",
   },
   {
     event: { type: "CLOSE_VOTING" },
     label: "Encerrar Votação",
-    icon: <XIcon className="h-4 w-4" />,
+    icon: <CheckCheckIcon className="h-3.5 w-3.5" />,
     variant: "outline",
   },
   {
     event: { type: "APPROVE_PI" },
     label: "Aprovar PI",
-    icon: <CheckCheckIcon className="h-4 w-4" />,
+    icon: <ThumbsUpIcon className="h-3.5 w-3.5" />,
     variant: "default",
   },
   {
     event: { type: "REQUIRE_REWORK" },
     label: "Requerer Retrabalho",
-    icon: <RotateCcwIcon className="h-4 w-4" />,
+    icon: <XIcon className="h-3.5 w-3.5" />,
     variant: "destructive",
   },
   {
     event: { type: "RESET_VOTING" },
     label: "Reiniciar Votação",
-    icon: <RotateCcwIcon className="h-4 w-4" />,
+    icon: <RotateCcwIcon className="h-3.5 w-3.5" />,
     variant: "outline",
   },
 ];
 
+/** Confidence Vote round detail — dot-scale visual matches cosmos.html FistOfFive. */
 export function ConfidenceVotePanel({
   sessionId,
   xStateStatus,
@@ -104,121 +126,135 @@ export function ConfidenceVotePanel({
 
   const avgScore =
     votes.length > 0
-      ? (votes.reduce((a, b) => a + b, 0) / votes.length).toFixed(1)
+      ? votes.reduce((a, b) => a + b, 0) / votes.length
       : null;
 
-  const colorClass = STATE_COLORS[xStateStatus] ?? STATE_COLORS.NOT_STARTED;
-
   return (
-    <Card className="border-primary/20">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base">
-            Confidence Vote — Rodada {roundNumber}
-          </CardTitle>
-          <span
-            className={`rounded-full border px-3 py-1 font-medium text-xs ${colorClass}`}
-          >
-            {STATE_LABELS[xStateStatus] ?? xStateStatus}
-          </span>
-        </div>
-        <CardDescription>
-          Transições validadas por XState antes de persistir no banco.
-        </CardDescription>
-      </CardHeader>
+    <div
+      className="flex flex-col gap-4 rounded-lg p-4"
+      style={{
+        border: "1px solid var(--hairline)",
+        background: "var(--surface-2)",
+      }}
+    >
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span
+          className="font-semibold text-[13px]"
+          style={{ color: "var(--ink)" }}
+        >
+          Rodada {roundNumber}
+        </span>
+        <PiBadge dot tone={STATE_TONE[xStateStatus] ?? "neutral"}>
+          {STATE_LABELS[xStateStatus] ?? xStateStatus}
+        </PiBadge>
+      </div>
 
-      <CardContent className="flex flex-col gap-4">
-        {/* Vote Score Input — only when OPEN */}
-        {xStateStatus === "OPEN" && (
-          <div>
-            <p className="mb-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-              Submeter Voto (1–5)
-            </p>
-            <div className="flex gap-2">
-              {VOTE_SCORES.map((score) => (
-                <Button
-                  className="h-10 w-10 font-semibold"
+      {xStateStatus === "OPEN" && (
+        <div className="flex flex-col gap-2">
+          <p
+            className="font-medium text-[11px] uppercase tracking-wide"
+            style={{ color: "var(--ink-subtle)" }}
+          >
+            Submeter Voto (1–5)
+          </p>
+          <div className="flex gap-2">
+            {VOTE_SCORES.map((score) => {
+              const tone = scoreTone(score);
+              return (
+                <button
+                  className="h-9 w-9 rounded-full font-bold text-[13px] transition-opacity hover:opacity-80 disabled:opacity-40"
                   disabled={isPending}
                   key={score}
                   onClick={() =>
                     handleEvent({ type: "SUBMIT_VOTE", vote: score })
                   }
-                  size="sm"
-                  variant="outline"
+                  style={{
+                    border: `1px solid var(--${tone})`,
+                    color: TONE_TEXT_VAR[tone],
+                    background: "var(--surface)",
+                  }}
+                  type="button"
                 >
                   {score}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Vote Stats */}
-        {votes.length > 0 && (
-          <>
-            <Separator />
-            <div className="flex flex-wrap items-center gap-3 text-sm">
-              <div className="flex items-center gap-1.5">
-                <ThumbsUpIcon className="h-4 w-4 text-primary" />
-                <span className="font-medium">{votes.length} voto(s)</span>
-              </div>
-              {avgScore && (
-                <span className="text-muted-foreground">
-                  Média:{" "}
-                  <span className="font-semibold text-foreground">
-                    {avgScore}
-                  </span>
-                  /5
-                </span>
-              )}
-              <div className="flex flex-wrap gap-1">
-                {votes.map((v, i) => (
-                  <Badge
-                    className="font-mono text-xs"
-                    key={`${i}-${v}`}
-                    variant="outline"
-                  >
-                    {v}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        <Separator />
-
-        {/* Transition Buttons — disabled if not in available events */}
-        <div>
-          <p className="mb-2 font-medium text-muted-foreground text-xs uppercase tracking-wide">
-            Ações disponíveis
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {EVENT_CONFIGS.map(({ event, label, icon, variant }) => {
-              const canDo = availableEventTypes.includes(event.type);
-              return (
-                <Button
-                  className="gap-2"
-                  disabled={!canDo || isPending}
-                  key={event.type}
-                  onClick={() => handleEvent(event)}
-                  size="sm"
-                  variant={canDo ? variant : "ghost"}
-                >
-                  {icon}
-                  {label}
-                </Button>
+                </button>
               );
             })}
           </div>
         </div>
+      )}
 
-        {xStateStatus === "APPROVED" && (
-          <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-3 text-green-500 text-sm">
-            PI Aprovado — confiança média de {avgScore}/5
+      {votes.length > 0 && avgScore !== null && (
+        <div
+          className="flex flex-wrap items-center justify-between gap-3 rounded-md px-3 py-2.5"
+          style={{
+            border: "1px solid var(--hairline)",
+            background: "var(--surface)",
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <FistOfFive value={Math.round(avgScore)} />
+            <span
+              className="mono font-extrabold text-[17px]"
+              style={{ color: TONE_TEXT_VAR[scoreTone(avgScore)] }}
+            >
+              {avgScore.toFixed(1)}
+            </span>
+            <span
+              className="text-[11px]"
+              style={{ color: "var(--ink-subtle)" }}
+            >
+              média · {votes.length} voto(s)
+            </span>
           </div>
-        )}
-      </CardContent>
-    </Card>
+          <div className="flex flex-wrap gap-1">
+            {votes.map((v, i) => (
+              <PiBadge key={`${i}-${v}`} tone={scoreTone(v)}>
+                {v}
+              </PiBadge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-2">
+        <p
+          className="font-medium text-[11px] uppercase tracking-wide"
+          style={{ color: "var(--ink-subtle)" }}
+        >
+          Ações disponíveis
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {EVENT_CONFIGS.map(({ event, label, icon, variant }) => {
+            const canDo = availableEventTypes.includes(event.type);
+            return (
+              <Button
+                className="gap-2"
+                disabled={!canDo || isPending}
+                key={event.type}
+                onClick={() => handleEvent(event)}
+                size="sm"
+                variant={canDo ? variant : "ghost"}
+              >
+                {icon}
+                {label}
+              </Button>
+            );
+          })}
+        </div>
+      </div>
+
+      {xStateStatus === "APPROVED" && avgScore !== null && (
+        <div
+          className="rounded-md p-3 text-[13px]"
+          style={{
+            border: `1px solid ${TONE_VAR.green}55`,
+            background: "var(--green-soft)",
+            color: "var(--green-text)",
+          }}
+        >
+          PI Aprovado — confiança média de {avgScore.toFixed(1)}/5
+        </div>
+      )}
+    </div>
   );
 }

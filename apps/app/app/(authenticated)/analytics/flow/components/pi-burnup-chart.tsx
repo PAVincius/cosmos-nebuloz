@@ -62,6 +62,7 @@ export function PIBurnupChart({ data }: Props) {
 
       <ResponsiveContainer height={280} width="100%">
         <LineChart
+          aria-label="Burnup do PI"
           data={data.points}
           margin={{ left: 0, right: 16, top: 4, bottom: 4 }}
         >
@@ -69,7 +70,7 @@ export function PIBurnupChart({ data }: Props) {
           <XAxis
             dataKey="sprintName"
             tick={{ fontSize: 10 }}
-            tickFormatter={(v: string) => v.split(" ").at(-1)}
+            tickFormatter={(v: string) => v.split(" ").at(-1) ?? v}
           />
           <YAxis allowDecimals={false} />
           <Tooltip

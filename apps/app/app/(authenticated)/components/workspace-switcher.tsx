@@ -88,9 +88,10 @@ export const WorkspaceSwitcher = ({
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            data-testid="workspace-switcher"
             size="lg"
           >
-            <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-primary font-semibold text-primary-foreground text-xs">
+            <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-primary/90 font-semibold text-white text-xs">
               {activeTenant?.name?.slice(0, 2).toUpperCase() ?? "??"}
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
@@ -119,7 +120,7 @@ export const WorkspaceSwitcher = ({
               key={tenant.id}
               onSelect={() => switchTenant(tenant.id)}
             >
-              <div className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 font-semibold text-primary text-xs">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 font-semibold text-[oklch(0.72_0.16_264)] text-xs">
                 {tenant.name.slice(0, 2).toUpperCase()}
               </div>
               <span className="flex-1 truncate">{tenant.name}</span>

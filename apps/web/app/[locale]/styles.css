@@ -53,9 +53,9 @@
   letter-spacing: -0.045em;
 }
 .hero-heading {
-  font-weight: 900;
-  letter-spacing: -0.05em;
-  line-height: 0.93;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
 }
 .label {
   font-family: "JetBrains Mono", "IBM Plex Mono", monospace;
@@ -628,4 +628,94 @@
 .shiki[title]:before {
   content: attr(title);
   @apply inline-block text-muted-foreground text-right mb-6 text-sm;
+}
+
+/* ===== Background beams — subtle periodic light sweeps behind sections ===== */
+.bg-beams {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+/* faint dot pattern base */
+.bg-beams::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.02) 1px,
+    transparent 1px
+  );
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 80%);
+}
+.bg-beam {
+  position: absolute;
+  top: -30%;
+  height: 160%;
+  width: 340px;
+  filter: blur(58px);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: nz-beam var(--beam-dur, 18s) ease-in-out infinite;
+  animation-delay: var(--beam-delay, 0s);
+}
+@keyframes nz-beam {
+  0% {
+    transform: translateX(-10%) rotate(var(--beam-rot, 14deg));
+    opacity: 0;
+  }
+  25% {
+    opacity: var(--beam-op, 0.07);
+  }
+  75% {
+    opacity: var(--beam-op, 0.07);
+  }
+  100% {
+    transform: translateX(10%) rotate(var(--beam-rot, 14deg));
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bg-beam {
+    animation: none;
+    opacity: 0.04;
+  }
+}
+
+/* ===== Film grain — static SVG fractal noise, GPU-cheap ===== */
+:root {
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Global, very subtle — sits above everything, ignores pointer. */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: var(--grain);
+  background-size: 160px 160px;
+}
+
+/* Per-section overlay — stronger, blends with content for depth. */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  background-image: var(--grain);
+  background-size: 150px 150px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grain::before,
+  .grain-overlay {
+    opacity: 0.025;
+  }
 }

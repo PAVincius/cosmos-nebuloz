@@ -216,7 +216,7 @@ export async function HomeDashboard() {
                 href={story.teamId ? `/teams/${story.teamId}/kanban` : "/teams"}
                 key={story.id}
               >
-                <ClockIcon className="h-3.5 w-3.5 shrink-0 text-ink-faint" />
+                <ClockIcon className="h-3.5 w-3.5 shrink-0 text-ink-muted" />
                 <span className="min-w-0 flex-1 truncate text-sm">
                   {story.title}
                 </span>

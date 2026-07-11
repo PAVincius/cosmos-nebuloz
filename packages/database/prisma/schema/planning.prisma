@@ -71,6 +71,10 @@ model BpmnDefinition {
   lockedNodes     String[]
   activatedAt     DateTime?
   activatedBy     String?
+  // Layout denorm — cosmos.html screen-workflows list cards; recomputed on activate/run
+  triggerLabel    String?
+  actionCount     Int       @default(0)
+  runCount        Int       @default(0)
   createdAt       DateTime  @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

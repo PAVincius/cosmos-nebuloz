@@ -1,3 +1,4 @@
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { CheckCircle2Icon, StarIcon, TrendingUpIcon } from "lucide-react";
 import { PageHeader } from "@/app/(authenticated)/components/page-header";
 import { getFlowScopeOptions } from "@/app/actions/flow-metrics";
@@ -5,8 +6,12 @@ import {
   listAllAssessments,
   listAllImprovementActions,
 } from "@/app/actions/measure-grow";
+import { SAFE_COMPETENCIES } from "@/app/actions/measure-grow/schema";
 import { appDesign } from "@/lib/app-design";
+import { computeCompetencyMaturity } from "./components/maturity-utils";
+import { MaturityOverview } from "./components/maturity-overview";
 import { MeasureGrowDashboard } from "./components/measure-grow-dashboard";
+import { MeasureGrowHeaderActions } from "./components/measure-grow-header-actions";
 
 export const metadata = {
   title: "Measure & Grow | COSMOS",
@@ -40,6 +45,14 @@ export default async function MeasureGrowPage() {
     (a) => a.status === "OPEN" || a.status === "IN_PROGRESS"
   ).length;
 
+  const maturity = computeCompetencyMaturity(
+    SAFE_COMPETENCIES.map((c) => c.key),
+    assessments
+  );
+  const improvedCount = Object.values(maturity).filter(
+    (m) => m.delta > 0
+  ).length;
+
   // Normalise Prisma result to the component's ActionItem shape
   const actionItems = actions.map((a) => ({
     id: a.id,
@@ -55,6 +68,21 @@ export default async function MeasureGrowPage() {
   return (
     <div className={appDesign.shell}>
       <PageHeader
+        actions={<MeasureGrowHeaderActions scopes={scopes} />}
+        badge={
+          <>
+            <Badge variant="outline">
+              {SAFE_COMPETENCIES.length} competências
+            </Badge>
+            <Badge
+              className="border-transparent bg-emerald-500/15 text-emerald-400"
+              variant="outline"
+            >
+              {improvedCount} em evolução
+            </Badge>
+            <Badge variant="outline">Escala 1–5</Badge>
+          </>
+        }
         breadcrumb={[{ label: "Analytics", href: "/analytics" }]}
         stats={[
           { label: "Assessments", value: assessments.length, icon: StarIcon },
@@ -69,11 +97,14 @@ export default async function MeasureGrowPage() {
         title="Measure & Grow"
       />
       <div className={appDesign.bodyScroll}>
-        <MeasureGrowDashboard
-          actions={actionItems}
-          assessments={assessments}
-          scopes={scopes}
-        />
+        <div className="flex flex-col gap-6">
+          <MaturityOverview assessments={assessments} />
+          <MeasureGrowDashboard
+            actions={actionItems}
+            assessments={assessments}
+            scopes={scopes}
+          />
+        </div>
       </div>
     </div>
   );

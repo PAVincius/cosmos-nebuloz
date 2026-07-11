@@ -33,10 +33,8 @@ vi.mock("@repo/rate-limit", () => ({
   redis: { set: mocks.redisSet },
 }));
 
-import {
-  buildPortfolioReport,
-  triggerPortfolioAnalysis,
-} from "../../../app/actions/portfolio/analysis";
+import { buildPortfolioReport } from "../../../app/actions/portfolio/analysis-report";
+import { triggerPortfolioAnalysis } from "../../../app/actions/portfolio/analysis";
 
 // ─── buildPortfolioReport (pure) ─────────────────────────────────────────────
 

@@ -57,6 +57,7 @@ model Capability {
   description     String?
   status          String   @default("BACKLOG") // BACKLOG/ANALYZING/IMPLEMENTING/DONE
   order           Int      @default(0)
+  milestone       String? // cosmos.html screen-solution milestone label (e.g. "Marco Q2")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

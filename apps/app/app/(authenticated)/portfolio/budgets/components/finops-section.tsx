@@ -1,9 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { KpiCard, KpiGrid } from "@/app/(authenticated)/components/kpi-card";
 import type { BudgetOverviewItem } from "@/app/actions/billing/snapshots";
 
-// ─── Types ───────────────────────────────────────────────────────────────────
+// ─── Icon paths (single-`d` lucide glyphs, safe across Server→Client) ─────
+
+const ICON_WALLET =
+  "M21 12V7H5a2 2 0 0 1 0-4h14v4M3 5v14a2 2 0 0 0 2 2h16v-5M18 12a2 2 0 0 0 0 4h4v-4Z";
+const ICON_ACTIVITY = "M22 12h-4l-3 9L9 3l-3 9H2";
+const ICON_SHIELD_ALERT =
+  "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10ZM12 8v4M12 16h.01";
+
+// ─── Types ──────────────────────────────────────────────────────────────
 
 type BillingIntegration = {
   id: string;
@@ -13,34 +22,7 @@ type BillingIntegration = {
   lastSyncAt: Date | null;
 };
 
-// ─── KPI Card ────────────────────────────────────────────────────────────────
-
-function KpiCard({
-  label,
-  value,
-  isPercent,
-  className,
-}: {
-  label: string;
-  value: number;
-  isPercent?: boolean;
-  className?: string;
-}) {
-  const formatted = isPercent
-    ? `${value.toFixed(1)}%`
-    : new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "USD",
-      }).format(value);
-  return (
-    <div className={`rounded-lg border p-4 ${className ?? ""}`}>
-      <p className="text-muted-foreground text-xs">{label}</p>
-      <p className="mt-1 font-semibold text-xl tabular-nums">{formatted}</p>
-    </div>
-  );
-}
-
-// ─── computeFinOps ───────────────────────────────────────────────────────────
+// ─── computeFinOps ────────────────────────────────────────────────────────
 
 function computeFinOps(
   overviewData: BudgetOverviewItem[],
@@ -60,7 +42,14 @@ function computeFinOps(
   };
 }
 
-// ─── FinOps Overview Section ─────────────────────────────────────────────────
+function formatUSD(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "USD",
+  }).format(value);
+}
+
+// ─── FinOps Overview Section ───────────────────────────────────────────────
 
 export function FinOpsSection({
   overviewData,
@@ -77,19 +66,24 @@ export function FinOpsSection({
     unmappedPct,
   } = computeFinOps(overviewData, billingIntegrations);
 
+  const utilPct = totalPlanned > 0 ? (totalActual / totalPlanned) * 100 : 0;
+  const unmappedTone = unmappedPct > 5 ? "amber" : "green";
+
   return (
     <>
       {totalUnmapped > 0 && unmappedPct > 5 && (
-        <div className="mb-4 flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm dark:border-amber-800 dark:bg-amber-950">
-          <span className="font-medium text-amber-800 dark:text-amber-200">
-            {new Intl.NumberFormat("pt-BR", {
-              style: "currency",
-              currency: "USD",
-            }).format(totalUnmapped)}{" "}
-            não mapeado para temas SAFe
+        <div
+          className="flex items-center gap-3 rounded-cosmos-md border px-4 py-3 text-[13px]"
+          style={{
+            borderColor: "rgba(var(--amber-rgb),.35)",
+            background: "rgba(var(--amber-rgb),.08)",
+          }}
+        >
+          <span className="font-semibold" style={{ color: "var(--amber-text)" }}>
+            {formatUSD(totalUnmapped)} não mapeado para temas SAFe
           </span>
           <Link
-            className="ml-auto text-amber-700 underline dark:text-amber-300"
+            className="ml-auto text-ink-muted underline transition-colors hover:text-ink"
             href="/portfolio/budgets/tag-rules"
           >
             Revisar regras →
@@ -97,25 +91,25 @@ export function FinOpsSection({
         </div>
       )}
       {!hasConnectors && (
-        <div className="mb-6 rounded-xl border-2 border-dashed p-8 text-center">
-          <p className="mb-4 text-muted-foreground">
+        <div className="flex flex-col items-center gap-4 rounded-cosmos-lg border border-hairline border-dashed p-8 text-center">
+          <p className="text-[13px] text-ink-muted">
             Conecte um provedor de billing para ver custos reais
           </p>
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-2">
             <Link
-              className="rounded-md bg-primary px-4 py-2 text-primary-foreground text-sm"
+              className="rounded-cosmos-md bg-accent-c px-3.5 py-2 font-semibold text-[13px] text-white transition-opacity hover:opacity-90"
               href="/settings/integrations?provider=billing_aws"
             >
               Conectar AWS
             </Link>
             <Link
-              className="rounded-md border px-4 py-2 text-sm"
+              className="rounded-cosmos-md border border-hairline-strong bg-surface px-3.5 py-2 font-semibold text-[13px] text-ink transition-colors hover:bg-surface-2"
               href="/settings/integrations?provider=billing_gcp"
             >
               Conectar GCP
             </Link>
             <Link
-              className="rounded-md border px-4 py-2 text-sm"
+              className="rounded-cosmos-md border border-hairline-strong bg-surface px-3.5 py-2 font-semibold text-[13px] text-ink transition-colors hover:bg-surface-2"
               href="/settings/integrations?provider=billing_azure"
             >
               Conectar Azure
@@ -123,20 +117,37 @@ export function FinOpsSection({
           </div>
         </div>
       )}
-      <div className="mb-6 grid grid-cols-4 gap-4">
-        <KpiCard label="Planejado MTD" value={totalPlanned} />
-        <KpiCard label="Real MTD" value={totalActual} />
+      <KpiGrid>
         <KpiCard
-          isPercent
+          badge="— custo planejado do mês"
+          iconPath={ICON_WALLET}
+          label="Planejado MTD"
+          tone="blue"
+          value={formatUSD(totalPlanned)}
+        />
+        <KpiCard
+          badge="— custo real de nuvem"
+          iconPath={ICON_ACTIVITY}
+          label="Real MTD"
+          tone="accent"
+          value={formatUSD(totalActual)}
+        />
+        <KpiCard
+          badge={utilPct >= 100 ? "— acima do planejado" : "— dentro do plano"}
+          iconPath={ICON_ACTIVITY}
           label="% Utilizado"
-          value={(totalActual / (totalPlanned || 1)) * 100}
+          tone={utilPct >= 100 ? "red" : utilPct >= 80 ? "amber" : "green"}
+          unit="%"
+          value={Math.round(utilPct * 10) / 10}
         />
         <KpiCard
-          className={unmappedPct > 5 ? "border-amber-300" : ""}
+          badge={unmappedPct > 5 ? "— revisar regras de tag" : "— sob controle"}
+          iconPath={ICON_SHIELD_ALERT}
           label="Não mapeado"
-          value={totalUnmapped}
+          tone={unmappedTone}
+          value={formatUSD(totalUnmapped)}
         />
-      </div>
+      </KpiGrid>
     </>
   );
 }

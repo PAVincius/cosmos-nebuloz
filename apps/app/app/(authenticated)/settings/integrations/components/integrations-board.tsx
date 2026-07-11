@@ -36,7 +36,7 @@ import {
   deleteIntegration,
   upsertIntegration,
 } from "../../../../actions/settings/integrations";
-import type { Integration } from "../../../../actions/settings/integrations/schema";
+import type { Integration } from "../../../../actions/settings/schema";
 import { BillingConnectWizard } from "./billing-connect-wizard";
 
 // ─── Integration Catalog ──────────────────────────────────────────────────────
