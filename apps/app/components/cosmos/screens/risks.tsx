@@ -44,14 +44,35 @@ function severityScore(probability: string, impact: string): number {
   return LEVEL_SCORE[toLevel(probability)] * LEVEL_SCORE[toLevel(impact)];
 }
 
-function severityTone(s: number): "green" | "blue" | "amber" | "red" {
+// Tom da CÉLULA da matriz probabilidade × impacto, com base no
+// severityScore derivado (range 4-16, produto de LEVEL_SCORE). Os 9
+// combos possíveis de (probabilidade, impacto) geram os scores
+// {4, 6, 8, 9, 12, 16}, então os limiares abaixo cobrem as 4 faixas:
+// green apenas no score 4 (low×low), blue em 6/8, amber em 9/12, red em 16.
+function matrixCellTone(s: number): "green" | "blue" | "amber" | "red" {
   if (s >= 16) {
     return "red";
   }
   if (s >= 9) {
     return "amber";
   }
-  if (s >= 4) {
+  if (s >= 6) {
+    return "blue";
+  }
+  return "green";
+}
+
+// Tom do BADGE/linha do registro de riscos, com base no campo real
+// `severity` (1-5, definido explicitamente pelo RTE) — não no score
+// derivado de probabilidade × impacto.
+function severityTone(severity: number): "green" | "blue" | "amber" | "red" {
+  if (severity >= 5) {
+    return "red";
+  }
+  if (severity >= 4) {
+    return "amber";
+  }
+  if (severity >= 3) {
     return "blue";
   }
   return "green";
@@ -93,8 +114,8 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
           {[...LEVELS].reverse().map((p) =>
             LEVELS.map((i) => {
               const items = cell(p, i);
-              const s = LEVEL_SCORE[p] * LEVEL_SCORE[i];
-              const tone = severityTone(s);
+              const s = severityScore(p, i);
+              const tone = matrixCellTone(s);
               return (
                 <div
                   key={`${p}-${i}`}
@@ -154,8 +175,7 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
 }
 
 function RiskRow({ r }: { r: RiskView }) {
-  const s = severityScore(r.probability, r.impact);
-  const sevTone = severityTone(s);
+  const sevTone = severityTone(r.severity);
   const roamTone = ROAM_TONE[r.roamStatus] || "neutral";
 
   return (
@@ -187,7 +207,7 @@ function RiskRow({ r }: { r: RiskView }) {
           boxShadow: `0 4px 12px -3px rgba(var(--${sevTone}-rgb),.6)`,
         }}
       >
-        {s}
+        {r.severity}
       </div>
       <div style={{ minWidth: 0 }}>
         <div
@@ -284,14 +304,10 @@ export default function RisksScreen() {
     });
   }, []);
 
-  const sorted = [...risks].sort(
-    (a, b) =>
-      severityScore(b.probability, b.impact) -
-      severityScore(a.probability, a.impact)
-  );
-  const critical = risks.filter(
-    (r) => severityScore(r.probability, r.impact) >= 16
-  ).length;
+  // listRisks() já retorna os riscos ordenados por severity desc
+  // (orderBy no servidor), então não é necessário reordenar no cliente.
+  const sorted = risks;
+  const critical = risks.filter((r) => r.severity >= 4).length;
   const open = risks.filter((r) => r.roamStatus === "OWNED").length;
   const resolved = risks.filter(
     (r) => r.roamStatus === "RESOLVED" || r.roamStatus === "MITIGATED"
