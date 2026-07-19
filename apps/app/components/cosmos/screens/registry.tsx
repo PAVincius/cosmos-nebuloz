@@ -11,6 +11,7 @@ import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
 import RisksScreen from "./risks";
 import TeamsScreen from "./teams";
+import ThemesScreen from "./themes";
 import WsjfScreen from "./wsjf";
 
 export type ScreenProps = { param?: string };
@@ -27,4 +28,5 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   flow: FlowScreen,
   program: ProgramScreen,
   piplanning: PiPlanningScreen,
+  themes: ThemesScreen,
 };
