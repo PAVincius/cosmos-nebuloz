@@ -8,6 +8,7 @@ const txMock = {
   feature: { updateMany: vi.fn() },
   pIObjective: { createMany: vi.fn() },
   risk: { createMany: vi.fn() },
+  artSequenceCounter: { upsert: vi.fn() },
 };
 
 const mocks = vi.hoisted(() => ({

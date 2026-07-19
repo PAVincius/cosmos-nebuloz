@@ -5,6 +5,8 @@ const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   requireTenantSession: vi.fn(),
   pIPlanFindMany: vi.fn(),
+  confidenceVoteSessionFindFirst: vi.fn(),
+  leanBudgetFindFirst: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
@@ -12,7 +14,11 @@ vi.mock("@repo/auth/server", () => ({
   requireTenantSession: mocks.requireTenantSession,
 }));
 vi.mock("@repo/database", () => ({
-  database: { pIPlan: { findMany: mocks.pIPlanFindMany } },
+  database: {
+    pIPlan: { findMany: mocks.pIPlanFindMany },
+    confidenceVoteSession: { findFirst: mocks.confidenceVoteSessionFindFirst },
+    leanBudget: { findFirst: mocks.leanBudgetFindFirst },
+  },
 }));
 
 import { getARTObservability } from "../../app/actions/arts/observability";

@@ -283,11 +283,14 @@ describe("addRetroActionItem (AC-005)", () => {
   });
 
   it("creates action item with owner and future due date (AC-005)", async () => {
+    const futureDueDate = new Date(
+      Date.now() + 30 * 24 * 60 * 60 * 1000
+    ).toISOString();
     const result = await addRetroActionItem({
       retroId: "retro-1",
       title: "Set up automated integration tests",
       ownerId: "user-1",
-      dueDate: "2026-07-01T00:00:00.000Z",
+      dueDate: futureDueDate,
     });
 
     expect(result.ok).toBe(true);
