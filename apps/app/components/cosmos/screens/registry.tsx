@@ -13,6 +13,7 @@ import OkrsScreen from "./okrs";
 import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
 import RisksScreen from "./risks";
+import RoadmapScreen from "./roadmap";
 import StrategyScreen from "./strategy";
 import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
@@ -32,6 +33,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   teams: TeamsScreen,
   okrs: OkrsScreen,
   risks: RisksScreen,
+  roadmap: RoadmapScreen,
   flow: FlowScreen,
   program: ProgramScreen,
   piplanning: PiPlanningScreen,
