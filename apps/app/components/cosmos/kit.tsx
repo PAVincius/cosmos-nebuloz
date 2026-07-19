@@ -1095,6 +1095,27 @@ export function SkeletonKpi() {
   );
 }
 
+export function ErrorState({ message }: { message?: string }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "14px 16px",
+        borderRadius: "var(--r-md)",
+        border: "1px solid rgba(var(--red-rgb),.28)",
+        background: "rgba(var(--red-rgb),.08)",
+        color: "var(--red-text)",
+        fontSize: 13,
+      }}
+    >
+      <Icon name="alert" size={16} strokeWidth={2} />
+      <span>{message ?? "Não foi possível carregar os dados."}</span>
+    </div>
+  );
+}
+
 // ── CopyId — click a mono ID to copy it ──
 export function CopyId({
   children,
