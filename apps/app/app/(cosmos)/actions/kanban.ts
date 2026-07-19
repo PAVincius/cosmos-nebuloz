@@ -93,7 +93,7 @@ const cachedEpics = (tenantId: string) =>
     { tags: [portfolioEpicsCacheTag(tenantId)] }
   )();
 
-export function listEpics(): Promise<Result<KanbanEpic[]>> {
+export async function listEpics(): Promise<Result<KanbanEpic[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     return cachedEpics(ctx.tenantId);
@@ -106,7 +106,7 @@ const MoveEpicSchema = z.object({
   order: z.number().int().min(0),
 });
 
-export function moveEpic(
+export async function moveEpic(
   input: z.infer<typeof MoveEpicSchema>
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
@@ -152,7 +152,7 @@ const CreateEpicSchema = z.object({
   strategicThemeId: z.string().optional(),
 });
 
-export function createEpic(
+export async function createEpic(
   input: z.infer<typeof CreateEpicSchema>
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {

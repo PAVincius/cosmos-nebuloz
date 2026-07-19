@@ -23,7 +23,7 @@ export type EpicDetail = {
   }[];
 };
 
-export function getEpic(id: string): Promise<Result<EpicDetail | null>> {
+export async function getEpic(id: string): Promise<Result<EpicDetail | null>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const epic = await database.epic.findFirst({
@@ -82,7 +82,9 @@ export type FeatureDetail = {
   epicId: string | null;
 };
 
-export function getFeature(id: string): Promise<Result<FeatureDetail | null>> {
+export async function getFeature(
+  id: string
+): Promise<Result<FeatureDetail | null>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const feature = await database.feature.findFirst({

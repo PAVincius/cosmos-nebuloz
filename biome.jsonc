@@ -64,6 +64,7 @@
     {
       "includes": [
         "apps/app/app/actions/**",
+        "apps/app/app/(cosmos)/actions/**",
         "apps/app/app/api/**",
         "apps/app/app/hooks/**"
       ],
