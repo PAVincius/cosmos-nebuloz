@@ -52,3 +52,50 @@ export function getEpic(id: string): Promise<Result<EpicDetail | null>> {
     return (epic as EpicDetail | null) ?? null;
   });
 }
+
+export type FeatureDetail = {
+  id: string;
+  title: string;
+  statusId: string;
+  bv: number;
+  tc: number;
+  rr: number;
+  js: number;
+  wsjfScore: number;
+  storyPoints: number;
+  progressPct: number;
+  acceptanceCriteria: string[];
+  epicId: string | null;
+};
+
+export function getFeature(id: string): Promise<Result<FeatureDetail | null>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const feature = await database.feature.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: {
+        id: true,
+        title: true,
+        statusId: true,
+        bv: true,
+        tc: true,
+        rr: true,
+        js: true,
+        wsjfScore: true,
+        storyPoints: true,
+        progressPct: true,
+        acceptanceCriteria: true,
+        epicId: true,
+      },
+    });
+    if (!feature) {
+      return null;
+    }
+    return {
+      ...feature,
+      acceptanceCriteria: Array.isArray(feature.acceptanceCriteria)
+        ? (feature.acceptanceCriteria as string[])
+        : [],
+    };
+  });
+}

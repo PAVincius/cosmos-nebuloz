@@ -157,6 +157,18 @@ export function Button({
   );
 }
 
+// ── NavButton (Button wired to app navigation via useNav) ──
+// Lets server-rendered screens trigger client-side navigation without
+// passing a function prop across the server/client boundary.
+export function NavButton({
+  to,
+  param,
+  ...buttonProps
+}: Omit<ButtonProps, "onClick"> & { to: string; param?: string }) {
+  const { navigate } = useNav();
+  return <Button {...buttonProps} onClick={() => navigate(to, param)} />;
+}
+
 export function IconButton({
   name,
   onClick,
