@@ -11,6 +11,7 @@ import OkrsScreen from "./okrs";
 import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
 import RisksScreen from "./risks";
+import StrategyScreen from "./strategy";
 import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
 import WsjfScreen from "./wsjf";
@@ -31,4 +32,5 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   program: ProgramScreen,
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
+  strategy: StrategyScreen,
 };
