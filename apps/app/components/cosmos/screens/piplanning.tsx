@@ -1,425 +1,280 @@
 "use client";
 
-// piplanning.tsx — PI Planning (confidence vote, objectives, ROAM risks).
+// piplanning.tsx — PI Planning (confidence vote, objectives, ROAM risks),
+// wired to getActivePiPlanning(). Team-level fist-of-five breakdown isn't in
+// scope for this read pass — shown as a single "Confiança média" KPI.
 
+import { useEffect, useState } from "react";
 import {
-  CONFIDENCE_VOTE,
-  type ConfidenceVote,
-  PI_OBJECTIVES,
-  PI_TEAMS,
-  type PiObjective,
-  ROAM_RISKS,
-  type RoamRisk,
-  type Tone,
-} from "@/lib/cosmos-data";
-import { Icon } from "../icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-} from "../kit";
+  getActivePiPlanning,
+  type PiPlanningView,
+} from "@/app/(cosmos)/actions/piplanning";
+import { Badge, ErrorState, KpiCard, PageHeader, SectionCard } from "../kit";
 
-const teamById = (id: string): { name: string; tone: Tone } =>
-  PI_TEAMS.find((t) => t.id === id) || { name: id, tone: "neutral" };
+const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
+  NOT_STARTED: "neutral",
+  IN_PROGRESS: "amber",
+  ACHIEVED: "green",
+  MISSED: "red",
+};
 
-function FistOfFive({ v, size = 9 }: { v: number; size?: number }) {
-  const tone = v >= 4 ? "green" : v === 3 ? "amber" : "red";
-  return (
-    <span style={{ display: "inline-flex", gap: 3 }}>
-      {[1, 2, 3, 4, 5].map((n) => (
-        <span
-          key={n}
-          style={{
-            width: size,
-            height: size,
-            borderRadius: 99,
-            background: n <= v ? `var(--${tone})` : "var(--surface-3)",
-            boxShadow: n <= v ? `0 0 7px rgba(var(--${tone}-rgb),.5)` : "none",
-            border: n <= v ? "none" : "1px solid var(--hairline-strong)",
-          }}
-        />
-      ))}
-    </span>
-  );
-}
+const ROAM_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
+  UNCLASSIFIED: "neutral",
+  RESOLVED: "green",
+  OWNED: "amber",
+  ACCEPTED: "neutral",
+  MITIGATED: "green",
+};
 
 export default function PiPlanningScreen() {
-  const committed = PI_OBJECTIVES.filter((o) => o.committed);
-  const committedBV = committed.reduce((s, o) => s + o.bv, 0);
-  const stretchBV = PI_OBJECTIVES.filter((o) => !o.committed).reduce(
-    (s, o) => s + o.bv,
-    0
-  );
-  const avgConf =
-    CONFIDENCE_VOTE.reduce((s, v) => s + v.v, 0) / CONFIDENCE_VOTE.length;
-  const openRisks = ROAM_RISKS.filter(
-    (r) => r.status === "Owned" || r.status === "Accepted"
-  ).length;
+  const [plan, setPlan] = useState<PiPlanningView | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getActivePiPlanning().then((r) => {
+      if (r.ok) {
+        setPlan(r.data);
+      } else {
+        setError(r.error);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const committedBV =
+    plan?.objectives
+      .filter((o) => !o.isStretch)
+      .reduce((s, o) => s + o.businessValue, 0) ?? 0;
+  const stretchBV =
+    plan?.objectives
+      .filter((o) => o.isStretch)
+      .reduce((s, o) => s + o.businessValue, 0) ?? 0;
+  const openRisks =
+    plan?.risks.filter((r) => r.roamStatus === "OWNED").length ?? 0;
 
   return (
     <div className="fade-in" style={{ paddingBottom: 76 }}>
       <PageHeader
         meta={
-          <>
+          plan && (
             <Badge dot tone="accent">
-              PI-26 · Dia 2 de 2
+              {plan.piPlanName}
             </Badge>
-            <Badge icon="check" tone="green">
-              Objetivos travados
-            </Badge>
-          </>
+          )
         }
-        subtitle="PI-26 · planejamento incremental do Payments ART. Confiança do time, objetivos e riscos ROAM."
+        subtitle="Planejamento incremental do ART. Confiança do time, objetivos e riscos ROAM."
         title="PI Planning"
-      >
-        <Button icon="externalLink" size="md" variant="secondary">
-          Exportar plano
-        </Button>
-      </PageHeader>
+      />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-          gap: "var(--gap)",
-          marginBottom: "var(--gap)",
-        }}
-      >
+      {error && <ErrorState message={error} />}
+
+      {!(error || loading) && plan === null && (
         <KpiCard
-          hint={`${committed.length} objetivos`}
+          hint="Nenhum PI em Planning, Committed ou Executing"
           icon="target"
-          label="Business Value committed"
-          tone="green"
-          value={committedBV}
-        />
-        <KpiCard
-          hint="não committed"
-          icon="zap"
-          label="Business Value stretch"
-          tone="purple"
-          value={stretchBV}
-        />
-        <KpiCard
-          delta="vote 2"
-          deltaTone="accent"
-          hint="fist-of-five"
-          icon="gauge"
-          label="Confiança média do ART"
+          label="Nenhum PI ativo"
           tone="accent"
-          unit="/5"
-          value={avgConf.toFixed(1)}
+          value="—"
         />
-        <KpiCard
-          hint={`${ROAM_RISKS.length} no ROAM`}
-          icon="alert"
-          label="Riscos a endereçar"
-          tone="amber"
-          value={openRisks}
-        />
-      </div>
+      )}
 
-      {/* confidence vote */}
-      <div style={{ marginBottom: "var(--gap)" }}>
-        <SectionCard
-          action={
-            <Badge dot tone={avgConf >= 3.5 ? "green" : "amber"}>
-              {avgConf >= 3.5 ? "ART confiante" : "atenção"}
-            </Badge>
-          }
-          icon="users"
-          subtitle="Fist-of-five por time · objetivos do PI"
-          title="Confidence Vote"
-        >
+      {plan && (
+        <>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-              gap: 12,
+              gap: "var(--gap)",
+              marginBottom: "var(--gap)",
             }}
           >
-            {CONFIDENCE_VOTE.map((cv: ConfidenceVote) => {
-              const t = teamById(cv.id);
-              return (
-                <div
-                  className="lift"
-                  key={cv.id}
-                  style={{
-                    padding: "14px 16px",
-                    borderRadius: "var(--r-md)",
-                    border: "1px solid var(--hairline)",
-                    background: "var(--surface-2)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      marginBottom: 12,
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: 8,
-                        height: 8,
-                        borderRadius: 99,
-                        background: `var(--${t.tone})`,
-                      }}
-                    />
-                    <span
-                      style={{
-                        fontSize: 13,
-                        fontWeight: 700,
-                        color: "var(--ink)",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {t.name}
-                    </span>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <FistOfFive v={cv.v} />
-                    <span
-                      className="mono"
-                      style={{
-                        fontSize: 18,
-                        fontWeight: 800,
-                        color:
-                          cv.v >= 4
-                            ? "var(--green-text)"
-                            : cv.v === 3
-                              ? "var(--amber-text)"
-                              : "var(--red-text)",
-                      }}
-                    >
-                      {cv.v}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            <KpiCard
+              hint={`${plan.objectives.filter((o) => !o.isStretch).length} objetivos`}
+              icon="target"
+              label="Business Value committed"
+              tone="green"
+              value={committedBV}
+            />
+            <KpiCard
+              hint="não committed"
+              icon="zap"
+              label="Business Value stretch"
+              tone="purple"
+              value={stretchBV}
+            />
+            <KpiCard
+              hint="fist-of-five"
+              icon="gauge"
+              label="Confiança média"
+              tone="accent"
+              unit="/5"
+              value={
+                plan.confidenceAvg === null
+                  ? "—"
+                  : plan.confidenceAvg.toFixed(1)
+              }
+            />
+            <KpiCard
+              hint={`${plan.risks.length} no ROAM`}
+              icon="alert"
+              label="Riscos a endereçar"
+              tone="amber"
+              value={openRisks}
+            />
           </div>
-        </SectionCard>
-      </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1.45fr 1fr",
-          gap: "var(--gap)",
-        }}
-      >
-        {/* objectives */}
-        <SectionCard
-          action={
-            <Badge tone="neutral">{PI_OBJECTIVES.length} objetivos</Badge>
-          }
-          bodyStyle={{ padding: 12 }}
-          icon="target"
-          subtitle="Committed e stretch · com business value"
-          title="PI Objectives"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {PI_OBJECTIVES.map((o: PiObjective, i: number) => {
-              const t = teamById(o.team);
-              return (
-                <div
-                  className="lift"
-                  key={i}
-                  style={{
-                    display: "flex",
-                    gap: 13,
-                    alignItems: "center",
-                    padding: "13px 14px",
-                    borderRadius: "var(--r-md)",
-                    border: "1px solid var(--hairline)",
-                    background: o.committed
-                      ? "var(--surface)"
-                      : "var(--surface-2)",
-                    borderLeft: `3px solid var(--${t.tone})`,
-                    opacity: o.committed ? 1 : 0.92,
-                  }}
-                >
-                  <div style={{ minWidth: 0, flex: 1 }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1.45fr 1fr",
+              gap: "var(--gap)",
+            }}
+          >
+            {/* objectives */}
+            <SectionCard
+              action={
+                <Badge tone="neutral">{plan.objectives.length} objetivos</Badge>
+              }
+              bodyStyle={{ padding: 12 }}
+              icon="target"
+              subtitle="Committed e stretch · com business value"
+              title="PI Objectives"
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {plan.objectives.map((o) => (
+                  <div
+                    className="lift"
+                    key={o.id}
+                    style={{
+                      display: "flex",
+                      gap: 13,
+                      alignItems: "center",
+                      padding: "13px 14px",
+                      borderRadius: "var(--r-md)",
+                      border: "1px solid var(--hairline)",
+                      background: o.isStretch
+                        ? "var(--surface-2)"
+                        : "var(--surface)",
+                      opacity: o.isStretch ? 0.92 : 1,
+                    }}
+                  >
+                    <div style={{ minWidth: 0, flex: 1 }}>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          marginBottom: 4,
+                        }}
+                      >
+                        <Badge tone={STATUS_TONE[o.status] ?? "neutral"}>
+                          {o.status}
+                        </Badge>
+                        {o.isStretch && <Badge tone="neutral">stretch</Badge>}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 13.5,
+                          fontWeight: 600,
+                          color: "var(--ink)",
+                          lineHeight: 1.35,
+                          textWrap: "pretty",
+                        }}
+                      >
+                        {o.title}
+                      </div>
+                    </div>
+                    <div style={{ textAlign: "right", flexShrink: 0 }}>
+                      <div
+                        className="mono"
+                        style={{
+                          fontSize: 21,
+                          fontWeight: 800,
+                          color: o.isStretch
+                            ? "var(--ink-faint)"
+                            : "var(--green-text)",
+                          letterSpacing: "-.02em",
+                        }}
+                      >
+                        {o.businessValue}
+                      </div>
+                      <div
+                        style={{
+                          fontSize: 10,
+                          color: "var(--ink-subtle)",
+                          fontWeight: 700,
+                          letterSpacing: ".06em",
+                        }}
+                      >
+                        BV
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {plan.objectives.length === 0 && (
+                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                    Nenhum objetivo cadastrado.
+                  </span>
+                )}
+              </div>
+            </SectionCard>
+
+            {/* ROAM */}
+            <SectionCard
+              action={<Badge tone="amber">{openRisks} abertos</Badge>}
+              bodyStyle={{ padding: 12 }}
+              icon="alert"
+              subtitle="Resolved · Owned · Accepted · Mitigated"
+              title="Riscos · ROAM"
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                {plan.risks.map((r) => (
+                  <div
+                    className="lift"
+                    key={r.id}
+                    style={{
+                      padding: "12px 13px",
+                      borderRadius: "var(--r-md)",
+                      border: "1px solid var(--hairline)",
+                      background: "var(--surface-2)",
+                    }}
+                  >
                     <div
                       style={{
                         display: "flex",
                         alignItems: "center",
                         gap: 8,
-                        marginBottom: 4,
+                        marginBottom: 6,
                       }}
                     >
-                      <Badge dot tone={t.tone}>
-                        {t.name.replace("Squad ", "")}
+                      <Badge tone={ROAM_TONE[r.roamStatus] ?? "neutral"}>
+                        {r.roamStatus}
                       </Badge>
-                      {!o.committed && <Badge tone="neutral">stretch</Badge>}
                     </div>
                     <div
                       style={{
-                        fontSize: 13.5,
-                        fontWeight: 600,
+                        fontSize: 12.5,
+                        fontWeight: 500,
                         color: "var(--ink)",
-                        lineHeight: 1.35,
+                        lineHeight: 1.4,
                         textWrap: "pretty",
                       }}
                     >
-                      {o.text}
+                      {r.title}
                     </div>
                   </div>
-                  <div style={{ textAlign: "right", flexShrink: 0 }}>
-                    <div
-                      className="mono"
-                      style={{
-                        fontSize: 21,
-                        fontWeight: 800,
-                        color: o.committed
-                          ? "var(--green-text)"
-                          : "var(--ink-faint)",
-                        letterSpacing: "-.02em",
-                      }}
-                    >
-                      {o.bv}
-                    </div>
-                    <div
-                      style={{
-                        fontSize: 10,
-                        color: "var(--ink-subtle)",
-                        fontWeight: 700,
-                        letterSpacing: ".06em",
-                      }}
-                    >
-                      BV
-                    </div>
-                    <div style={{ marginTop: 6 }}>
-                      <FistOfFive size={7} v={o.conf} />
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </SectionCard>
-
-        {/* ROAM */}
-        <SectionCard
-          action={<Badge tone="amber">{openRisks} abertos</Badge>}
-          bodyStyle={{ padding: 12 }}
-          icon="alert"
-          subtitle="Resolved · Owned · Accepted · Mitigated"
-          title="Riscos · ROAM"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {ROAM_RISKS.map((r: RoamRisk) => (
-              <div
-                className="lift"
-                key={r.id}
-                style={{
-                  padding: "12px 13px",
-                  borderRadius: "var(--r-md)",
-                  border: "1px solid var(--hairline)",
-                  background: "var(--surface-2)",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 8,
-                    marginBottom: 6,
-                  }}
-                >
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 10.5,
-                      color: "var(--ink-subtle)",
-                      fontWeight: 600,
-                    }}
-                  >
-                    {r.id}
+                ))}
+                {plan.risks.length === 0 && (
+                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                    Nenhum risco cadastrado.
                   </span>
-                  <Badge tone={r.tone}>{r.status}</Badge>
-                </div>
-                <div
-                  style={{
-                    fontSize: 12.5,
-                    fontWeight: 500,
-                    color: "var(--ink)",
-                    lineHeight: 1.4,
-                    textWrap: "pretty",
-                  }}
-                >
-                  {r.text}
-                </div>
-                <div
-                  style={{
-                    marginTop: 8,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 6,
-                    fontSize: 11.5,
-                    color: "var(--ink-subtle)",
-                  }}
-                >
-                  <Avatar
-                    name={r.owner}
-                    size={20}
-                    tone={r.tone === "neutral" ? "accent" : r.tone}
-                  />
-                  <span style={{ fontWeight: 500 }}>{r.owner}</span>
-                </div>
+                )}
               </div>
-            ))}
+            </SectionCard>
           </div>
-        </SectionCard>
-      </div>
-
-      {/* sticky ceremony CTA */}
-      <div
-        style={{
-          position: "sticky",
-          bottom: -40,
-          marginTop: 18,
-          paddingTop: 14,
-          background: "linear-gradient(180deg, transparent, var(--canvas) 38%)",
-        }}
-      >
-        <button
-          className="btn"
-          style={{
-            width: "100%",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 10,
-            padding: "15px",
-            borderRadius: "var(--r-lg)",
-            border: "1px solid var(--accent)",
-            background: "var(--accent)",
-            color: "var(--accent-fg)",
-            fontFamily: "inherit",
-            fontSize: 15,
-            fontWeight: 700,
-            letterSpacing: ".01em",
-            cursor: "pointer",
-            boxShadow: "0 12px 30px -10px rgba(var(--accent-rgb),.8)",
-          }}
-        >
-          <Icon name="send" size={18} strokeWidth={2.2} />
-          Iniciar Cerimônia (Todos)
-        </button>
-      </div>
+        </>
+      )}
     </div>
   );
 }
