@@ -1,203 +1,25 @@
-"use client";
-
 // dashboard.tsx — Visão Geral (portfolio executive summary), ported from the
 // cosmos handoff. KPI row, velocity area chart, predictability bars, theme
 // allocation bars, and in-flight epics list.
-import { useId, useState } from "react";
-import { ARTS, EPICS } from "@/lib/cosmos-data";
+import { listEpics } from "@/app/(cosmos)/actions/kanban";
+import { ARTS } from "@/lib/cosmos-data";
 import {
   Badge,
   Button,
-  ChartTip,
-  CopilotInsightBar,
   CopyId,
   KpiCard,
+  NavButton,
   PageHeader,
   Progress,
   SectionCard,
-  useNav,
 } from "../kit";
-
-// ── AreaChart ──
-function AreaChart({
-  data,
-  tone = "accent",
-  height = 132,
-  labels,
-}: {
-  data: number[];
-  tone?: string;
-  height?: number;
-  labels?: string[];
-}) {
-  const [hover, setHover] = useState<number | null>(null);
-  const gid = useId();
-  const w = 520,
-    h = height,
-    pad = 6;
-  const max = Math.max(...data),
-    min = Math.min(...data);
-  const xs = (i: number) => pad + (i / (data.length - 1)) * (w - pad * 2);
-  const ys = (v: number) =>
-    pad + (1 - (v - min) / (max - min || 1)) * (h - pad * 2);
-  const line = data
-    .map((v, i) => `${i ? "L" : "M"}${xs(i)} ${ys(v)}`)
-    .join(" ");
-  const area = `${line} L${xs(data.length - 1)} ${h} L${xs(0)} ${h} Z`;
-  return (
-    <div style={{ position: "relative" }}>
-      <svg
-        height={h}
-        preserveAspectRatio="none"
-        style={{ overflow: "visible", display: "block" }}
-        viewBox={`0 0 ${w} ${h}`}
-        width="100%"
-      >
-        <defs>
-          <linearGradient id={gid} x1="0" x2="0" y1="0" y2="1">
-            <stop offset="0" stopColor={`var(--${tone})`} stopOpacity="0.32" />
-            <stop offset="1" stopColor={`var(--${tone})`} stopOpacity="0" />
-          </linearGradient>
-        </defs>
-        <path d={area} fill={`url(#${gid})`} />
-        {hover !== null && (
-          <line
-            stroke="var(--ink-faint)"
-            strokeDasharray="3 3"
-            strokeWidth="1"
-            x1={xs(hover)}
-            x2={xs(hover)}
-            y1={0}
-            y2={h}
-          />
-        )}
-        <path
-          d={line}
-          fill="none"
-          stroke={`var(--${tone})`}
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2.4"
-          style={{
-            filter: `drop-shadow(0 4px 8px rgba(var(--${tone}-rgb),.4))`,
-          }}
-        />
-        {data.map((v, i) => (
-          <g key={i}>
-            <circle
-              className="chart-hit"
-              cx={xs(i)}
-              cy={ys(v)}
-              fill="transparent"
-              onMouseEnter={() => setHover(i)}
-              onMouseLeave={() => setHover(null)}
-              r="12"
-            />
-            <circle
-              cx={xs(i)}
-              cy={ys(v)}
-              fill="var(--surface)"
-              r={hover === i ? 5.5 : i === data.length - 1 ? 4 : 2.6}
-              stroke={`var(--${tone})`}
-              strokeWidth={hover === i ? 2.8 : 2.2}
-              style={{
-                transition: "r .15s ease",
-                pointerEvents: "none",
-                filter:
-                  hover === i ? `drop-shadow(0 0 6px var(--${tone}))` : "none",
-              }}
-            />
-          </g>
-        ))}
-      </svg>
-      {hover !== null && (
-        <ChartTip
-          left={(xs(hover) / w) * 100}
-          top={(ys(data[hover]) / h) * 100}
-        >
-          <b>{labels ? labels[hover] : `#${hover + 1}`}</b> ·{" "}
-          <span className="mono">{data[hover]} SP</span>
-        </ChartTip>
-      )}
-    </div>
-  );
-}
-
-// ── VBars — vertical bar chart ──
-function VBars({ data }: { data: { label: string; v: number }[] }) {
-  const [hover, setHover] = useState<number | null>(null);
-  const max = Math.max(...data.map((d) => d.v), 100);
-  return (
-    <div
-      style={{
-        position: "relative",
-        display: "flex",
-        alignItems: "flex-end",
-        gap: 10,
-        height: 150,
-        paddingTop: 8,
-      }}
-    >
-      {data.map((d, i) => {
-        const pct = (d.v / max) * 100;
-        const good = d.v >= 80;
-        const tone = good ? "green" : d.v >= 60 ? "amber" : "red";
-        return (
-          <div
-            className="chart-hit"
-            key={i}
-            onMouseEnter={() => setHover(i)}
-            onMouseLeave={() => setHover(null)}
-            style={{
-              flex: 1,
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 6,
-              height: "100%",
-              justifyContent: "flex-end",
-            }}
-          >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: 34,
-                height: `${pct}%`,
-                borderRadius: "6px 6px 2px 2px",
-                background: `var(--${tone})`,
-                boxShadow:
-                  hover === i
-                    ? `0 0 14px rgba(var(--${tone}-rgb),.55)`
-                    : `0 0 8px rgba(var(--${tone}-rgb),.4)`,
-                transition:
-                  "height .6s cubic-bezier(.2,.8,.3,1), box-shadow .15s ease",
-              }}
-            />
-            <span
-              className="mono"
-              style={{
-                fontSize: 11,
-                fontWeight: 700,
-                color: "var(--ink-muted)",
-              }}
-            >
-              {d.v}%
-            </span>
-            <span
-              style={{
-                fontSize: 10.5,
-                color: "var(--ink-faint)",
-                fontWeight: 600,
-              }}
-            >
-              {d.label}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+import {
+  AnomaliesCopilotBar,
+  AreaChart,
+  EpicRow,
+  OrbitButton,
+  VBars,
+} from "./dashboard-client";
 
 // ── HBars — horizontal bar chart ──
 function HBars({
@@ -270,9 +92,10 @@ const themeAlloc = [
   { label: "Eficiência de Custo", v: 340, tone: "amber" },
 ];
 
-export default function DashboardScreen() {
-  const { navigate } = useNav();
-  const inProgress = EPICS.filter((e) => e.col === "implementing");
+export default async function DashboardScreen(_props?: { param?: string }) {
+  const epicsResult = await listEpics();
+  const epics = epicsResult.ok ? epicsResult.data : [];
+  const inProgress = epics.filter((e) => e.column === "implementing");
 
   return (
     <div className="fade-in">
@@ -292,22 +115,16 @@ export default function DashboardScreen() {
         <Button icon="download" variant="secondary">
           Exportar
         </Button>
-        <Button
-          icon="sparkles"
-          onClick={() => navigate("copilot")}
-          variant="primary"
-        >
-          Perguntar ao ORBIT
-        </Button>
+        <OrbitButton />
       </PageHeader>
 
-      <CopilotInsightBar onAction={() => navigate("anomalies")}>
+      <AnomaliesCopilotBar>
         <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
           ORBIT
         </strong>{" "}
         · custo de nuvem subiu 12% no mês com 2 anomalias abertas — revise os
         guardrails de FinOps antes do próximo checkpoint.
-      </CopilotInsightBar>
+      </AnomaliesCopilotBar>
 
       <div
         style={{
@@ -401,14 +218,14 @@ export default function DashboardScreen() {
         </SectionCard>
         <SectionCard
           action={
-            <Button
+            <NavButton
               iconRight="arrowRight"
-              onClick={() => navigate("kanban")}
               size="sm"
+              to="kanban"
               variant="ghost"
             >
               Ver Kanban
-            </Button>
+            </NavButton>
           }
           icon="layers"
           subtitle={`${inProgress.length} em execução`}
@@ -417,28 +234,19 @@ export default function DashboardScreen() {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {inProgress.map((e) => {
-              const art = ARTS[e.art];
+              const art = e.art ? ARTS[e.art] : undefined;
+              const artTone = art?.tone ?? "accent";
               return (
-                <div
-                  className="chart-hit"
-                  key={e.id}
-                  onClick={() => navigate("epic", e.id)}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    cursor: "pointer",
-                  }}
-                >
+                <EpicRow id={e.id} key={e.id}>
                   <CopyId value={e.id}>
                     <span
                       className="mono"
                       style={{
                         fontSize: 11,
                         fontWeight: 800,
-                        color: `var(--${art.tone}-text)`,
-                        background: `rgba(var(--${art.tone}-rgb),.14)`,
-                        border: `1px solid rgba(var(--${art.tone}-rgb),.28)`,
+                        color: `var(--${artTone}-text)`,
+                        background: `rgba(var(--${artTone}-rgb),.14)`,
+                        border: `1px solid rgba(var(--${artTone}-rgb),.28)`,
                         borderRadius: 5,
                         padding: "1px 6px",
                       }}
@@ -460,7 +268,7 @@ export default function DashboardScreen() {
                       {e.title}
                     </div>
                     <div style={{ marginTop: 5 }}>
-                      <Progress height={5} tone={art.tone} value={e.progress} />
+                      <Progress height={5} tone={artTone} value={e.progress} />
                     </div>
                   </div>
                   <span
@@ -474,7 +282,7 @@ export default function DashboardScreen() {
                   >
                     {e.progress}%
                   </span>
-                </div>
+                </EpicRow>
               );
             })}
           </div>
