@@ -11,6 +11,10 @@ export default async function EpicDetailScreen({ param }: { param?: string }) {
     return <ComingSoon id="epic" />;
   }
   const e = res.data;
+  // descriptionMd: fetched for a future markdown-rendered body section, not yet implemented
+  const investEntries = e.investBreakdown
+    ? Object.entries(e.investBreakdown)
+    : [];
   return (
     <div className="fade-in">
       <PageHeader
@@ -56,6 +60,53 @@ export default async function EpicDetailScreen({ param }: { param?: string }) {
           value={e.sizePoints ?? "—"}
         />
       </div>
+      {e.hypothesis && (
+        <div style={{ marginBottom: 18 }}>
+          <SectionCard
+            bodyStyle={{ padding: "12px 16px" }}
+            icon="flask"
+            title="Hipótese"
+            tone="accent"
+          >
+            <p style={{ fontSize: 13, color: "var(--ink)", margin: 0 }}>
+              {e.hypothesis}
+            </p>
+          </SectionCard>
+        </div>
+      )}
+      {investEntries.length > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <SectionCard
+            bodyStyle={{ padding: "12px 16px" }}
+            icon="target"
+            subtitle="INVEST"
+            title="INVEST breakdown"
+            tone="green"
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))",
+                gap: 10,
+              }}
+            >
+              {investEntries.map(([key, { score, rationale }]) => (
+                <div
+                  key={key}
+                  style={{ display: "flex", flexDirection: "column", gap: 4 }}
+                >
+                  <Badge tone="green">
+                    {key}: {score}
+                  </Badge>
+                  <span style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
+                    {rationale}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        </div>
+      )}
       <SectionCard
         bodyStyle={{ padding: "12px 16px" }}
         icon="grid"

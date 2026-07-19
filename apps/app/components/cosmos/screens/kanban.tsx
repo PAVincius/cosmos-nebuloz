@@ -1066,7 +1066,7 @@ export default function KanbanScreen() {
 
   const load = useCallback(async () => {
     const res = await listEpics();
-    if (res.ok && res.data.length > 0) {
+    if (res.ok) {
       setEpics(res.data);
       setSource("live");
     } else {

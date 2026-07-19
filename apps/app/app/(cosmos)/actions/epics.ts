@@ -49,7 +49,21 @@ export function getEpic(id: string): Promise<Result<EpicDetail | null>> {
         },
       },
     });
-    return (epic as EpicDetail | null) ?? null;
+    if (!epic) {
+      return null;
+    }
+    return {
+      ...epic,
+      investBreakdown:
+        epic.investBreakdown &&
+        typeof epic.investBreakdown === "object" &&
+        !Array.isArray(epic.investBreakdown)
+          ? (epic.investBreakdown as Record<
+              string,
+              { score: number; rationale: string }
+            >)
+          : null,
+    };
   });
 }
 
