@@ -58,7 +58,7 @@ export async function getActiveProgramBoard(): Promise<
     ];
     const teams = teamIds.length
       ? await database.team.findMany({
-          where: { id: { in: teamIds } },
+          where: { id: { in: teamIds }, tenantId: ctx.tenantId },
           select: { id: true, name: true },
         })
       : [];
