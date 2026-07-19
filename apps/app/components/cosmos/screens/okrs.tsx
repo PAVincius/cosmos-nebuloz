@@ -1,10 +1,19 @@
 "use client";
 
-// okrs.tsx — OKRs do portfólio (objetivos + key results).
+// okrs.tsx — OKRs do portfólio (objetivos + key results), wired to listOkrs().
 
-import { OKRS, type Okr, type Tone } from "@/lib/cosmos-data";
+import { useEffect, useState } from "react";
+import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
+import type { Tone } from "@/lib/cosmos-data";
 import { Icon } from "../icons";
 import { Avatar, Badge, Button, KpiCard, PageHeader, Progress } from "../kit";
+
+const STATUS_TONE: Record<string, Tone> = {
+  ON_TRACK: "green",
+  AT_RISK: "amber",
+  BEHIND: "red",
+  ACHIEVED: "blue",
+};
 
 function krStatus(v: number): { tone: Tone; label: string } {
   if (v >= 70) {
@@ -16,8 +25,14 @@ function krStatus(v: number): { tone: Tone; label: string } {
   return { tone: "red", label: "Atrasado" };
 }
 
-function ObjectiveCard({ o }: { o: Okr }) {
-  const avg = Math.round(o.krs.reduce((s, k) => s + k.v, 0) / o.krs.length);
+function ObjectiveCard({ o }: { o: OkrView }) {
+  const tone = STATUS_TONE[o.status] ?? "neutral";
+  const avg = o.keyResults.length
+    ? Math.round(
+        o.keyResults.reduce((s, k) => s + k.progressPct, 0) /
+          o.keyResults.length
+      )
+    : 0;
   const st = krStatus(avg);
   return (
     <div
@@ -37,7 +52,7 @@ function ObjectiveCard({ o }: { o: Okr }) {
           padding: "16px 20px",
           borderBottom: "1px solid var(--hairline)",
           background: "var(--surface-2)",
-          borderLeft: `3px solid var(--${o.tone})`,
+          borderLeft: `3px solid var(--${tone})`,
         }}
       >
         <span
@@ -48,9 +63,9 @@ function ObjectiveCard({ o }: { o: Okr }) {
             height: 40,
             borderRadius: "var(--r-md)",
             flexShrink: 0,
-            color: `var(--${o.tone})`,
-            background: `var(--${o.tone}-soft)`,
-            border: `1px solid rgba(var(--${o.tone}-rgb),.22)`,
+            color: `var(--${tone})`,
+            background: `var(--${tone}-soft)`,
+            border: `1px solid rgba(var(--${tone}-rgb),.22)`,
           }}
         >
           <Icon name="star" size={20} strokeWidth={1.8} />
@@ -74,9 +89,6 @@ function ObjectiveCard({ o }: { o: Okr }) {
             >
               {o.id}
             </span>
-            <Badge dot tone={o.tone}>
-              {o.scope}
-            </Badge>
           </div>
           <div
             className="display"
@@ -89,7 +101,7 @@ function ObjectiveCard({ o }: { o: Okr }) {
               textWrap: "pretty",
             }}
           >
-            {o.objective}
+            {o.title}
           </div>
           <div
             style={{
@@ -101,8 +113,8 @@ function ObjectiveCard({ o }: { o: Okr }) {
               color: "var(--ink-subtle)",
             }}
           >
-            <Avatar name={o.owner} size={20} tone={o.tone} />
-            <span style={{ fontWeight: 500 }}>{o.owner}</span>
+            <Avatar name={o.ownerName} size={20} tone={tone} />
+            <span style={{ fontWeight: 500 }}>{o.ownerName}</span>
           </div>
         </div>
         <div style={{ textAlign: "right", flexShrink: 0 }}>
@@ -126,15 +138,17 @@ function ObjectiveCard({ o }: { o: Okr }) {
         </div>
       </div>
       <div style={{ padding: "8px 20px 16px" }}>
-        {o.krs.map((k, i) => {
-          const ks = krStatus(k.v);
+        {o.keyResults.map((k, i) => {
+          const ks = krStatus(k.progressPct);
           return (
             <div
-              key={i}
+              key={k.id}
               style={{
                 padding: "12px 0",
                 borderBottom:
-                  i < o.krs.length - 1 ? "1px solid var(--hairline)" : "none",
+                  i < o.keyResults.length - 1
+                    ? "1px solid var(--hairline)"
+                    : "none",
               }}
             >
               <div
@@ -164,7 +178,7 @@ function ObjectiveCard({ o }: { o: Okr }) {
                     textWrap: "pretty",
                   }}
                 >
-                  {k.text}
+                  {k.title}
                 </span>
                 <span
                   className="mono"
@@ -177,14 +191,16 @@ function ObjectiveCard({ o }: { o: Okr }) {
                   <span
                     style={{ color: `var(--${ks.tone}-text)`, fontWeight: 700 }}
                   >
-                    {k.now}
+                    {k.current}
+                    {k.unit}
                   </span>{" "}
-                  / {k.goal}
+                  / {k.target}
+                  {k.unit}
                 </span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <Progress height={7} tone={ks.tone} value={k.v} />
+                  <Progress height={7} tone={ks.tone} value={k.progressPct} />
                 </div>
                 <span
                   className="mono"
@@ -196,7 +212,7 @@ function ObjectiveCard({ o }: { o: Okr }) {
                     color: `var(--${ks.tone}-text)`,
                   }}
                 >
-                  {k.v}%
+                  {k.progressPct}%
                 </span>
               </div>
             </div>
@@ -208,19 +224,32 @@ function ObjectiveCard({ o }: { o: Okr }) {
 }
 
 export default function OkrsScreen() {
-  const allKrs = OKRS.flatMap((o) => o.krs);
-  const avgAll = Math.round(
-    allKrs.reduce((s, k) => s + k.v, 0) / allKrs.length
-  );
-  const onTrack = allKrs.filter((k) => k.v >= 70).length;
-  const atRisk = allKrs.filter((k) => k.v < 40).length;
+  const [okrs, setOkrs] = useState<OkrView[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    listOkrs().then((r) => {
+      if (r.ok) {
+        setOkrs(r.data);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const allKrs = okrs.flatMap((o) => o.keyResults);
+  const avgAll = allKrs.length
+    ? Math.round(allKrs.reduce((s, k) => s + k.progressPct, 0) / allKrs.length)
+    : 0;
+  const onTrack = allKrs.filter((k) => k.progressPct >= 70).length;
+  const atRisk = allKrs.filter((k) => k.progressPct < 40).length;
+  const withOwner = okrs.filter((o) => o.ownerName !== "—").length;
   return (
     <div className="fade-in">
       <PageHeader
         meta={
           <>
             <Badge icon="star" tone="accent">
-              {OKRS.length} objetivos
+              {okrs.length} objetivos
             </Badge>
             <Badge tone="neutral">{allKrs.length} key results</Badge>
             <Badge dot tone="green">
@@ -228,11 +257,11 @@ export default function OkrsScreen() {
             </Badge>
           </>
         }
-        subtitle="Objetivos e Key Results do portfólio · Q2 2026. Conectam a estratégia às entregas dos ARTs e times."
+        subtitle="Objetivos e Key Results do portfólio. Conectam a estratégia às entregas dos ARTs e times."
         title="OKRs"
       >
         <Button icon="calendar" size="md" variant="secondary">
-          Q2 2026
+          Período atual
         </Button>
         <Button icon="sparkles" size="md" variant="primary">
           Atualizar progresso
@@ -248,9 +277,7 @@ export default function OkrsScreen() {
         }}
       >
         <KpiCard
-          delta="+8 pts"
-          deltaTone="accent"
-          hint="vs. check-in anterior"
+          hint="média dos key results"
           icon="gauge"
           label="Progresso médio dos OKRs"
           tone="accent"
@@ -265,8 +292,6 @@ export default function OkrsScreen() {
           value={onTrack}
         />
         <KpiCard
-          delta="−1"
-          deltaTone="red"
           hint="< 40% do alvo"
           icon="alert"
           label="Key Results em risco"
@@ -274,12 +299,11 @@ export default function OkrsScreen() {
           value={atRisk}
         />
         <KpiCard
-          hint="100% atribuídos"
+          hint={`de ${okrs.length} objetivos`}
           icon="target"
           label="Objetivos com dono"
           tone="purple"
-          unit="/4"
-          value={OKRS.length}
+          value={withOwner}
         />
       </div>
 
@@ -290,7 +314,16 @@ export default function OkrsScreen() {
           gap: "var(--gap)",
         }}
       >
-        {OKRS.map((o) => (
+        {!loading && okrs.length === 0 && (
+          <KpiCard
+            hint="Crie um OKR de portfólio"
+            icon="target"
+            label="Nenhum OKR"
+            tone="accent"
+            value="—"
+          />
+        )}
+        {okrs.map((o) => (
           <ObjectiveCard key={o.id} o={o} />
         ))}
       </div>
