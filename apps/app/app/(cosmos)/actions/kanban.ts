@@ -100,32 +100,6 @@ export function listEpics(): Promise<Result<KanbanEpic[]>> {
   });
 }
 
-/**
- * DEV-ONLY scaffolding — reads the seeded `cosmos-demo` tenant WITHOUT auth so
- * the board can be viewed before a real login exists. Hard-gated to non-production;
- * returns an error in prod. Remove once dev auth / real login is wired.
- */
-export function listEpicsDev(): Promise<Result<KanbanEpic[]>> {
-  return safeAction(async () => {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("dev-only");
-    }
-    const tenant = await database.tenant.findUnique({
-      where: { slug: "cosmos-demo" },
-      select: { id: true },
-    });
-    if (!tenant) {
-      throw new Error("Demo tenant não encontrado — rode o seed.");
-    }
-    const rows = await database.epic.findMany({
-      where: { tenantId: tenant.id, lifecycleStatus: { not: "REJECTED" } },
-      orderBy: [{ lifecycleStatus: "asc" }, { order: "asc" }],
-      select: EPIC_SELECT,
-    });
-    return rows.map(toKanbanEpic);
-  });
-}
-
 const MoveEpicSchema = z.object({
   id: z.string().min(1),
   column: z.enum(["funnel", "analyzing", "backlog", "implementing", "done"]),
@@ -166,43 +140,6 @@ export function moveEpic(
       },
     });
     revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
-    return { id };
-  });
-}
-
-/**
- * DEV-ONLY move — no auth/RBAC, writes to the seeded `cosmos-demo` tenant so drag
- * persistence is testable before real login. Hard-gated to non-production.
- * Ownership is still enforced (epic must belong to the demo tenant). Remove with
- * the other dev scaffolding once real dev auth lands.
- */
-export function moveEpicDev(
-  input: z.infer<typeof MoveEpicSchema>
-): Promise<Result<{ id: string }>> {
-  return safeAction(async () => {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("dev-only");
-    }
-    const { id, column, order } = MoveEpicSchema.parse(input);
-    const tenant = await database.tenant.findUnique({
-      where: { slug: "cosmos-demo" },
-      select: { id: true },
-    });
-    if (!tenant) {
-      throw new Error("Demo tenant não encontrado.");
-    }
-    const existing = await database.epic.findFirst({
-      where: { id, tenantId: tenant.id },
-      select: { id: true },
-    });
-    if (!existing) {
-      throw new Error("Épico não encontrado.");
-    }
-    await database.epic.update({
-      where: { id },
-      data: { lifecycleStatus: COLUMN_TO_LIFECYCLE[column], order },
-    });
-    revalidateTag(portfolioEpicsCacheTag(tenant.id), "max");
     return { id };
   });
 }
@@ -252,38 +189,6 @@ export function createEpic(
       diff: { title, lifecycleStatus: COLUMN_TO_LIFECYCLE[column] },
     });
     revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
-    return { id: created.id };
-  });
-}
-
-/**
- * DEV-ONLY create — no auth/RBAC, writes to the seeded `cosmos-demo` tenant.
- * Hard-gated to non-production. Remove with the other dev scaffolding.
- */
-export function createEpicDev(
-  input: z.infer<typeof CreateEpicSchema>
-): Promise<Result<{ id: string }>> {
-  return safeAction(async () => {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("dev-only");
-    }
-    const { title, column } = CreateEpicSchema.parse(input);
-    const tenant = await database.tenant.findUnique({
-      where: { slug: "cosmos-demo" },
-      select: { id: true },
-    });
-    if (!tenant) {
-      throw new Error("Demo tenant não encontrado.");
-    }
-    const created = await database.epic.create({
-      data: {
-        tenantId: tenant.id,
-        title,
-        lifecycleStatus: COLUMN_TO_LIFECYCLE[column],
-      },
-      select: { id: true },
-    });
-    revalidateTag(portfolioEpicsCacheTag(tenant.id), "max");
     return { id: created.id };
   });
 }

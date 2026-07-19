@@ -11,18 +11,15 @@ import {
   useState,
 } from "react";
 // kanban.tsx — Kanban de Épicos. Renders from the real Epic read-model via the
-// listEpics server action (dev fallback → listEpicsDev → static mock), so the
-// board shows live tenant data once authenticated. Filter popover, drag
-// affordance, NewEpic modal + Copilot bar are self-contained.
+// listEpics server action, so the board shows live tenant data once
+// authenticated. Filter popover, drag affordance, NewEpic modal + Copilot bar
+// are self-contained.
 import { createPortal } from "react-dom";
 import {
   createEpic,
-  createEpicDev,
   type KanbanEpic,
   listEpics,
-  listEpicsDev,
   moveEpic,
-  moveEpicDev,
 } from "@/app/(cosmos)/actions/kanban";
 import { Icon } from "../icons";
 import {
@@ -194,10 +191,7 @@ function NewEpicModal({
     }
     setSaving(true);
     const payload = { title: title.trim(), column: col ?? "funnel" };
-    let res = await createEpic(payload);
-    if (!res.ok) {
-      res = await createEpicDev(payload);
-    }
+    const res = await createEpic(payload);
     setSaving(false);
     close();
     if (res.ok) {
@@ -1041,7 +1035,7 @@ function KanbanFilterPopover({
 export default function KanbanScreen() {
   const [epics, setEpics] = useState<KanbanEpic[]>(MOCK);
   const [loading, setLoading] = useState(true);
-  const [source, setSource] = useState<"live" | "dev" | "mock">("mock");
+  const [source, setSource] = useState<"live" | "mock">("mock");
   const { filters, setFilters, activeCount, matches } = useKanbanFilters();
   const [filterOpen, setFilterOpen] = useState(false);
   const [modalNode, setModalNode] = useState<ReactNode>(null);
@@ -1062,10 +1056,7 @@ export default function KanbanScreen() {
     const order = epics.filter((e) => e.column === column).length;
     // optimistic
     setEpics((prev) => prev.map((e) => (e.id === id ? { ...e, column } : e)));
-    let res = await moveEpic({ id, column, order });
-    if (!res.ok) {
-      res = await moveEpicDev({ id, column, order });
-    }
+    const res = await moveEpic({ id, column, order });
     if (!res.ok) {
       setEpics((prev) =>
         prev.map((e) => (e.id === id ? { ...e, column: prevColumn } : e))
@@ -1074,15 +1065,10 @@ export default function KanbanScreen() {
   };
 
   const load = useCallback(async () => {
-    let res = await listEpics();
-    let src: "live" | "dev" | "mock" = "live";
-    if (!res.ok || res.data.length === 0) {
-      res = await listEpicsDev();
-      src = "dev";
-    }
+    const res = await listEpics();
     if (res.ok && res.data.length > 0) {
       setEpics(res.data);
-      setSource(src);
+      setSource("live");
     } else {
       setSource("mock");
     }

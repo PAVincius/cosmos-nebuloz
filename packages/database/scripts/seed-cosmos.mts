@@ -35,6 +35,21 @@ const EPICS = [
   { id: 'EP-055', col: 'done', title: 'Migração para Design System v3', theme: 'Modernização da Plataforma', art: 'plat', owner: 'Helena Souza', wsjf: 7.5, size: 31, progress: 100 },
 ];
 
+type DevDb = typeof db;
+
+export async function seedDevMembership(devDb: DevDb, tenantId: string) {
+  const user = await devDb.user.upsert({
+    where: { email: 'dev@cosmos.local' },
+    update: {},
+    create: { email: 'dev@cosmos.local', name: 'Admin Cosmos', emailVerified: true },
+  });
+  return devDb.tenantMember.upsert({
+    where: { tenantId_userId: { tenantId, userId: user.id } },
+    update: { role: 'ADMIN' },
+    create: { tenantId, userId: user.id, role: 'ADMIN' },
+  });
+}
+
 async function main() {
   const tenant = await db.tenant.upsert({
     where: { slug: 'cosmos-demo' },
@@ -42,6 +57,7 @@ async function main() {
     create: { name: 'COSMOS Demo', slug: 'cosmos-demo' },
   });
   console.log('tenant:', tenant.id, tenant.slug);
+  await seedDevMembership(db, tenant.id);
 
   const themeNames = [...new Set(EPICS.map((e) => e.theme))];
   const themeByName = new Map<string, string>();
