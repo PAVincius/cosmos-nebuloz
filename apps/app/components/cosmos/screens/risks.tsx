@@ -1,19 +1,70 @@
 "use client";
 
-// risks.tsx — Registro de riscos (ROAM) + matriz probabilidade × impacto.
+// risks.tsx — Registro de riscos (ROAM) + matriz probabilidade × impacto,
+// wired to listRisks(). O modelo Risk real usa probability/impact em escala
+// string (low/medium/high), então a matriz é uma grade 3×3 (em vez da 5×5
+// numérica dos dados de demonstração).
+import { useEffect, useState } from "react";
+import { listRisks, type RiskView } from "@/app/(cosmos)/actions/risks";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  SectionCard,
+} from "../kit";
 
-import { ARTS, RISKS, type Risk, ROAM_TONE } from "@/lib/cosmos-data";
-import { Avatar, Badge, Button, PageHeader, SectionCard } from "../kit";
+const LEVELS = ["low", "medium", "high"] as const;
+type Level = (typeof LEVELS)[number];
 
-function RiskMatrix({ risks }: { risks: Risk[] }) {
-  const cell = (p: number, i: number) =>
-    risks.filter((r) => r.prob === p && r.impact === i);
-  const sev = (p: number, i: number) => p * i; // 1..25
-  const cellTone = (s: number) =>
-    s >= 16 ? "red" : s >= 9 ? "amber" : s >= 4 ? "blue" : "green";
+const LEVEL_LABEL: Record<Level, string> = {
+  low: "Baixa",
+  medium: "Média",
+  high: "Alta",
+};
+
+// Mapeia low/medium/high para pontos ordinais 2/3/4 (não há escala 1-5 no
+// schema real) para reaproveitar a matemática de severidade prob × impact.
+const LEVEL_SCORE: Record<Level, number> = { low: 2, medium: 3, high: 4 };
+
+const ROAM_TONE: Record<string, "green" | "amber" | "blue" | "neutral"> = {
+  RESOLVED: "green",
+  OWNED: "amber",
+  ACCEPTED: "blue",
+  MITIGATED: "green",
+  UNCLASSIFIED: "neutral",
+};
+
+function toLevel(value: string): Level {
+  return LEVELS.includes(value as Level) ? (value as Level) : "medium";
+}
+
+function severityScore(probability: string, impact: string): number {
+  return LEVEL_SCORE[toLevel(probability)] * LEVEL_SCORE[toLevel(impact)];
+}
+
+function severityTone(s: number): "green" | "blue" | "amber" | "red" {
+  if (s >= 16) {
+    return "red";
+  }
+  if (s >= 9) {
+    return "amber";
+  }
+  if (s >= 4) {
+    return "blue";
+  }
+  return "green";
+}
+
+function RiskMatrix({ risks }: { risks: RiskView[] }) {
+  const cell = (p: Level, i: Level) =>
+    risks.filter(
+      (r) => toLevel(r.probability) === p && toLevel(r.impact) === i
+    );
+
   return (
     <div style={{ display: "flex", gap: 12 }}>
-      {/* y axis label */}
       <div style={{ display: "flex", alignItems: "center" }}>
         <span
           style={{
@@ -33,17 +84,17 @@ function RiskMatrix({ risks }: { risks: Risk[] }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(5, 1fr)",
-            gridTemplateRows: "repeat(5, 1fr)",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gridTemplateRows: "repeat(3, 1fr)",
             gap: 6,
-            aspectRatio: "5 / 4",
+            aspectRatio: "3 / 2.4",
           }}
         >
-          {[5, 4, 3, 2, 1].map((p) =>
-            [1, 2, 3, 4, 5].map((i) => {
+          {[...LEVELS].reverse().map((p) =>
+            LEVELS.map((i) => {
               const items = cell(p, i);
-              const s = sev(p, i);
-              const tone = cellTone(s);
+              const s = LEVEL_SCORE[p] * LEVEL_SCORE[i];
+              const tone = severityTone(s);
               return (
                 <div
                   key={`${p}-${i}`}
@@ -74,9 +125,9 @@ function RiskMatrix({ risks }: { risks: Risk[] }) {
                         boxShadow: `0 2px 6px -1px rgba(var(--${tone}-rgb),.6)`,
                         cursor: "default",
                       }}
-                      title={`${r.id} · ${r.text}`}
+                      title={r.title}
                     >
-                      {r.id.replace("R-", "")}
+                      {r.id.slice(0, 6)}
                     </span>
                   ))}
                 </div>
@@ -102,12 +153,11 @@ function RiskMatrix({ risks }: { risks: Risk[] }) {
   );
 }
 
-function RiskRow({ r }: { r: Risk }) {
-  const s = r.prob * r.impact;
-  const sevTone =
-    s >= 16 ? "red" : s >= 9 ? "amber" : s >= 4 ? "blue" : "green";
-  const roamTone = ROAM_TONE[r.roam] || "neutral";
-  const art = ARTS[r.art];
+function RiskRow({ r }: { r: RiskView }) {
+  const s = severityScore(r.probability, r.impact);
+  const sevTone = severityTone(s);
+  const roamTone = ROAM_TONE[r.roamStatus] || "neutral";
+
   return (
     <div
       className="lift"
@@ -156,10 +206,10 @@ function RiskRow({ r }: { r: Risk }) {
               fontWeight: 600,
             }}
           >
-            {r.id}
+            {r.id.slice(0, 8)}
           </span>
-          <Badge dot tone={art.tone}>
-            {art.name.replace(" ART", "")}
+          <Badge dot tone="neutral">
+            {r.category}
           </Badge>
         </div>
         <div
@@ -171,31 +221,10 @@ function RiskRow({ r }: { r: Risk }) {
             textWrap: "pretty",
           }}
         >
-          {r.text}
+          {r.title}
         </div>
       </div>
       <div style={{ textAlign: "center" }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 3,
-            marginBottom: 4,
-          }}
-        >
-          {[1, 2, 3, 4, 5].map((n) => (
-            <span
-              key={n}
-              style={{
-                width: 6,
-                height: 12,
-                borderRadius: 2,
-                background:
-                  n <= r.prob ? `var(--${sevTone})` : "var(--surface-3)",
-              }}
-            />
-          ))}
-        </div>
         <span
           style={{
             fontSize: 10,
@@ -204,12 +233,13 @@ function RiskRow({ r }: { r: Risk }) {
             letterSpacing: ".04em",
           }}
         >
-          P{r.prob} · I{r.impact}
+          P: {LEVEL_LABEL[toLevel(r.probability)]} · I:{" "}
+          {LEVEL_LABEL[toLevel(r.impact)]}
         </span>
       </div>
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Badge dot tone={roamTone}>
-          {r.roam}
+          {r.roamStatus}
         </Badge>
       </div>
       <div
@@ -220,11 +250,7 @@ function RiskRow({ r }: { r: Risk }) {
           justifyContent: "flex-end",
         }}
       >
-        <Avatar
-          name={r.owner}
-          size={22}
-          tone={r.tone === "neutral" ? "accent" : r.tone}
-        />
+        <Avatar name="—" size={22} tone="accent" />
         <span
           style={{
             fontSize: 12,
@@ -235,7 +261,7 @@ function RiskRow({ r }: { r: Risk }) {
             textOverflow: "ellipsis",
           }}
         >
-          {r.owner}
+          —
         </span>
       </div>
     </div>
@@ -243,14 +269,34 @@ function RiskRow({ r }: { r: Risk }) {
 }
 
 export default function RisksScreen() {
-  const sorted = [...RISKS].sort(
-    (a, b) => b.prob * b.impact - a.prob * a.impact
+  const [risks, setRisks] = useState<RiskView[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | undefined>();
+
+  useEffect(() => {
+    listRisks().then((r) => {
+      if (r.ok) {
+        setRisks(r.data);
+      } else {
+        setError(r.error);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const sorted = [...risks].sort(
+    (a, b) =>
+      severityScore(b.probability, b.impact) -
+      severityScore(a.probability, a.impact)
   );
-  const critical = RISKS.filter((r) => r.prob * r.impact >= 16).length;
-  const open = RISKS.filter((r) => r.roam === "Owned").length;
-  const resolved = RISKS.filter(
-    (r) => r.roam === "Resolved" || r.roam === "Mitigated"
+  const critical = risks.filter(
+    (r) => severityScore(r.probability, r.impact) >= 16
   ).length;
+  const open = risks.filter((r) => r.roamStatus === "OWNED").length;
+  const resolved = risks.filter(
+    (r) => r.roamStatus === "RESOLVED" || r.roamStatus === "MITIGATED"
+  ).length;
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -276,74 +322,88 @@ export default function RisksScreen() {
         </Button>
       </PageHeader>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1.6fr",
-          gap: "var(--gap)",
-          alignItems: "start",
-        }}
-      >
-        <SectionCard
-          icon="scale"
-          subtitle="Probabilidade × impacto · severidade por cor"
-          title="Matriz de risco"
+      {error ? (
+        <ErrorState message={error} />
+      ) : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1fr 1.6fr",
+            gap: "var(--gap)",
+            alignItems: "start",
+          }}
         >
-          <RiskMatrix risks={RISKS} />
-          <div
-            style={{
-              display: "flex",
-              gap: 14,
-              flexWrap: "wrap",
-              marginTop: 16,
-              justifyContent: "center",
-            }}
+          <SectionCard
+            icon="scale"
+            subtitle="Probabilidade × impacto · severidade por cor"
+            title="Matriz de risco"
           >
-            {[
-              { t: "green", l: "Baixo" },
-              { t: "blue", l: "Moderado" },
-              { t: "amber", l: "Alto" },
-              { t: "red", l: "Crítico" },
-            ].map((x) => (
-              <span
-                key={x.l}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 6,
-                  fontSize: 11.5,
-                  color: "var(--ink-muted)",
-                  fontWeight: 500,
-                }}
-              >
+            <RiskMatrix risks={risks} />
+            <div
+              style={{
+                display: "flex",
+                gap: 14,
+                flexWrap: "wrap",
+                marginTop: 16,
+                justifyContent: "center",
+              }}
+            >
+              {[
+                { t: "green", l: "Baixo" },
+                { t: "blue", l: "Moderado" },
+                { t: "amber", l: "Alto" },
+                { t: "red", l: "Crítico" },
+              ].map((x) => (
                 <span
+                  key={x.l}
                   style={{
-                    width: 9,
-                    height: 9,
-                    borderRadius: 3,
-                    background: `var(--${x.t})`,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 11.5,
+                    color: "var(--ink-muted)",
+                    fontWeight: 500,
                   }}
-                />
-                {x.l}
-              </span>
-            ))}
-          </div>
-        </SectionCard>
+                >
+                  <span
+                    style={{
+                      width: 9,
+                      height: 9,
+                      borderRadius: 3,
+                      background: `var(--${x.t})`,
+                    }}
+                  />
+                  {x.l}
+                </span>
+              ))}
+            </div>
+          </SectionCard>
 
-        <SectionCard
-          action={<Badge tone="neutral">{RISKS.length} riscos</Badge>}
-          bodyStyle={{ padding: 12 }}
-          icon="shield"
-          subtitle="Ordenado por severidade"
-          title="Registro de riscos"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-            {sorted.map((r) => (
-              <RiskRow key={r.id} r={r} />
-            ))}
-          </div>
-        </SectionCard>
-      </div>
+          <SectionCard
+            action={<Badge tone="neutral">{risks.length} riscos</Badge>}
+            bodyStyle={{ padding: 12 }}
+            icon="shield"
+            subtitle="Ordenado por severidade"
+            title="Registro de riscos"
+          >
+            {loading ? (
+              <div style={{ padding: 16, color: "var(--ink-faint)" }}>
+                Carregando…
+              </div>
+            ) : sorted.length === 0 ? (
+              <div style={{ padding: 16, color: "var(--ink-faint)" }}>
+                Nenhum risco registrado.
+              </div>
+            ) : (
+              <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                {sorted.map((r) => (
+                  <RiskRow key={r.id} r={r} />
+                ))}
+              </div>
+            )}
+          </SectionCard>
+        </div>
+      )}
     </div>
   );
 }
