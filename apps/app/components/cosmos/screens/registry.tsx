@@ -3,6 +3,7 @@
 import type { ComponentType } from "react";
 import BudgetsScreen from "./budgets";
 import DashboardScreen from "./dashboard";
+import DependenciesScreen from "./dependencies";
 import EpicDetailScreen from "./epic-detail";
 import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
@@ -21,6 +22,7 @@ export type ScreenProps = { param?: string };
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   dashboard: DashboardScreen,
   budgets: BudgetsScreen,
+  dependencies: DependenciesScreen,
   epic: EpicDetailScreen,
   feature: FeatureDetailScreen,
   kanban: KanbanScreen,
