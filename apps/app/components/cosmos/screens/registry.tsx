@@ -2,6 +2,7 @@
 // here fall back to <ComingSoon> in the route. Add entries as screens land.
 import type { ComponentType } from "react";
 import DashboardScreen from "./dashboard";
+import EpicDetailScreen from "./epic-detail";
 import FlowScreen from "./flow";
 import KanbanScreen from "./kanban";
 import OkrsScreen from "./okrs";
@@ -15,6 +16,7 @@ export type ScreenProps = { param?: string };
 
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   dashboard: DashboardScreen,
+  epic: EpicDetailScreen,
   kanban: KanbanScreen,
   wsjf: WsjfScreen,
   teams: TeamsScreen,

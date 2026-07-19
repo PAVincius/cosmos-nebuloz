@@ -1,0 +1,54 @@
+"use server";
+
+import { requireTenantSession } from "@repo/auth/server";
+import { database } from "@repo/database";
+import { headers } from "next/headers";
+import { type Result, safeAction } from "../../actions/_base";
+
+export type EpicDetail = {
+  id: string;
+  title: string;
+  lifecycleStatus: string;
+  wsjf: number | null;
+  sizePoints: number | null;
+  investScore: number | null;
+  investBreakdown: Record<string, { score: number; rationale: string }> | null;
+  hypothesis: string | null;
+  descriptionMd: string | null;
+  features: {
+    id: string;
+    title: string;
+    wsjfScore: number;
+    progressPct: number;
+  }[];
+};
+
+export function getEpic(id: string): Promise<Result<EpicDetail | null>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const epic = await database.epic.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: {
+        id: true,
+        title: true,
+        lifecycleStatus: true,
+        wsjf: true,
+        sizePoints: true,
+        investScore: true,
+        investBreakdown: true,
+        hypothesis: true,
+        descriptionMd: true,
+        features: {
+          select: {
+            id: true,
+            title: true,
+            wsjfScore: true,
+            progressPct: true,
+          },
+          orderBy: { wsjfScore: "desc" },
+        },
+      },
+    });
+    return (epic as EpicDetail | null) ?? null;
+  });
+}
