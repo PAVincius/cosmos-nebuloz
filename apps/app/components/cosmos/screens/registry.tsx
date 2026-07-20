@@ -8,6 +8,7 @@ import DependenciesScreen from "./dependencies";
 import EpicDetailScreen from "./epic-detail";
 import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
+import GovernanceScreen from "./governance";
 import KanbanScreen from "./kanban";
 import OkrsScreen from "./okrs";
 import PiPlanningScreen from "./piplanning";
@@ -37,6 +38,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   risks: RisksScreen,
   roadmap: RoadmapScreen,
   flow: FlowScreen,
+  governance: GovernanceScreen,
   program: ProgramScreen,
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
