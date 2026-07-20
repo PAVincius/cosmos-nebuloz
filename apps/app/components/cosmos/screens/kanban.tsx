@@ -403,7 +403,13 @@ function EpicCard({
     <div
       className="lift card-in"
       draggable
-      onClick={() => navigate("epic", epic.id)}
+      onClick={() => {
+        // MOCK fallback ids (e.g. "EP-097") aren't real epic ids — never
+        // link to a detail route that can't resolve.
+        if (!epic.id.startsWith("EP-")) {
+          navigate("epic", epic.id);
+        }
+      }}
       onDragStart={() => onDragStart(epic.id)}
       style={{
         animationDelay: `${Math.min(index, 8) * 40}ms`,
