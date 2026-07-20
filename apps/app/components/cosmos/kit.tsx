@@ -3,6 +3,7 @@
 // kit.tsx — cosmos UI primitives ported from cosmos-kit.jsx.
 // Card, SectionCard, KpiCard (the vibe), Badge, Button, Progress, Avatar,
 // IconButton, Switch, PageHeader, LivePulse + skeletons.
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "next-themes";
 import {
   type CSSProperties,
@@ -456,6 +457,7 @@ export function SectionCard({
   bodyStyle,
   headStyle,
   tone,
+  onActivate,
 }: {
   title: ReactNode;
   subtitle?: ReactNode;
@@ -465,8 +467,29 @@ export function SectionCard({
   bodyStyle?: CSSProperties;
   headStyle?: CSSProperties;
   tone?: Tone;
+  /** Card-Header-Glow: makes the header clickable + adds the one-shot mouse-enter pulse. */
+  onActivate?: () => void;
 }) {
   const dark = useThemeName() === "dark";
+  const reduceMotion = useReducedMotion();
+  const [pulse, setPulse] = useState<{
+    x: number;
+    y: number;
+    key: number;
+  } | null>(null);
+
+  function handleHeadEnter(e: React.MouseEvent<HTMLDivElement>) {
+    if (reduceMotion) {
+      return;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    setPulse({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+      key: Date.now(),
+    });
+  }
+
   return (
     <div
       style={{
@@ -478,6 +501,14 @@ export function SectionCard({
       }}
     >
       <div
+        onClick={onActivate}
+        onKeyDown={(e) => {
+          if (onActivate && e.key === "Enter") {
+            onActivate();
+          }
+        }}
+        onMouseEnter={handleHeadEnter}
+        role={onActivate ? "button" : undefined}
         style={{
           position: "relative",
           overflow: "hidden",
@@ -487,8 +518,10 @@ export function SectionCard({
           padding: "13px 18px",
           borderBottom: "1px solid var(--hairline)",
           background: dark ? "var(--surface-2)" : "var(--surface)",
+          cursor: onActivate ? "pointer" : undefined,
           ...headStyle,
         }}
+        tabIndex={onActivate ? 0 : undefined}
       >
         {tone && (
           <div
@@ -503,6 +536,49 @@ export function SectionCard({
             }}
           />
         )}
+        {/* single radial pulse, born at cursor, one-shot per mouseenter — always on */}
+        <AnimatePresence>
+          {pulse && (
+            <motion.span
+              animate={{ opacity: 0, scale: 16 }}
+              initial={{ opacity: 0.5, scale: 0 }}
+              key={pulse.key}
+              onAnimationComplete={() => setPulse(null)}
+              style={{
+                position: "absolute",
+                left: pulse.x,
+                top: pulse.y,
+                width: 12,
+                height: 12,
+                marginLeft: -6,
+                marginTop: -6,
+                borderRadius: "50%",
+                background: tone
+                  ? `radial-gradient(circle, rgba(var(--${tone}-rgb),.5) 0%, transparent 70%)`
+                  : "radial-gradient(circle, rgba(255,255,255,.25) 0%, transparent 70%)",
+                pointerEvents: "none",
+                zIndex: 2,
+              }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            />
+          )}
+        </AnimatePresence>
+        {tone && dark && (
+          <div
+            className="cosmos-dot-texture"
+            style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              opacity: 0.5,
+              color: `rgba(var(--${tone}-rgb),.24)`,
+              WebkitMaskImage:
+                "radial-gradient(160% 140% at 100% 100%, #000 0%, transparent 55%)",
+              maskImage:
+                "radial-gradient(160% 140% at 100% 100%, #000 0%, transparent 55%)",
+            }}
+          />
+        )}
         {tone && dark && (
           <div
             style={{
@@ -510,6 +586,20 @@ export function SectionCard({
               inset: 0,
               pointerEvents: "none",
               background: `radial-gradient(80% 120% at 0% 50%, rgba(var(--${tone}-rgb),.1) 0%, transparent 70%)`,
+            }}
+          />
+        )}
+        {dark && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 1,
+              pointerEvents: "none",
+              background:
+                "linear-gradient(90deg, transparent 0%, rgba(255,255,255,.1) 30%, rgba(255,255,255,.06) 70%, transparent 100%)",
             }}
           />
         )}
@@ -648,6 +738,64 @@ export function Avatar({
   );
 }
 
+// 8-way compass unit vectors (E, SE, S, SW, W, NW, N, NE) — the echo wave's
+// origin snaps to one of these, so it only ever travels vertically,
+// horizontally, or diagonally, never from an arbitrary point.
+const KPI_ECHO_DIRECTIONS: ReadonlyArray<readonly [number, number]> = [
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+  [0, -1],
+  [1, -1],
+];
+
+export function Tabs({
+  tabs,
+  active,
+  onChange,
+}: {
+  tabs: { id: string; label: string }[];
+  active: string;
+  onChange: (id: string) => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: 4,
+        borderBottom: "1px solid var(--hairline)",
+        marginBottom: 16,
+      }}
+    >
+      {tabs.map((t) => (
+        <button
+          key={t.id}
+          onClick={() => onChange(t.id)}
+          style={{
+            padding: "8px 14px",
+            fontSize: 13,
+            fontWeight: 600,
+            background: "transparent",
+            border: "none",
+            borderBottom:
+              active === t.id
+                ? "2px solid var(--accent)"
+                : "2px solid transparent",
+            color: active === t.id ? "var(--ink)" : "var(--ink-muted)",
+            cursor: "pointer",
+          }}
+          type="button"
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 // ── KPI Card — the vibe ──
 export function KpiCard({
   icon,
@@ -671,6 +819,39 @@ export function KpiCard({
   big?: boolean;
 }) {
   const dark = useThemeName() === "dark";
+
+  // Light-mode-only echo: wave snapped to the edge/corner matching the
+  // direction the cursor entered from (vertical / horizontal / diagonal
+  // only), not the raw cursor point. Dark theme already has its own "sinal
+  // vivo" via the dots/watermark/ECG sig below, so this stays scoped to
+  // light (CSS handles the reduced-motion opt-out — see cosmos.css
+  // .kpi-echo-*).
+  function handleKpiEnter(e: React.MouseEvent<HTMLDivElement>) {
+    if (dark) {
+      return;
+    }
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const dx = x / rect.width - 0.5;
+    const dy = y / rect.height - 0.5;
+    const angleDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
+    const dirIndex = Math.round(((angleDeg + 360) % 360) / 45) % 8;
+    const [ux, uy] = KPI_ECHO_DIRECTIONS[dirIndex];
+
+    const originX = ux === 0 ? rect.width / 2 : ux > 0 ? rect.width : 0;
+    const originY = uy === 0 ? rect.height / 2 : uy > 0 ? rect.height : 0;
+
+    el.style.setProperty("--mx", `${originX}px`);
+    el.style.setProperty("--my", `${originY}px`);
+    el.classList.remove("echo-ping");
+    // force reflow so rapid re-entries restart the animation
+    const _reflow = el.offsetWidth;
+    el.classList.add("echo-ping");
+  }
+
   const T = TONES[tone] || TONES.green;
 
   const rawNum = Number.parseFloat(String(value).replace(",", "."));
@@ -738,6 +919,8 @@ export function KpiCard({
   return (
     <div
       className="kpi"
+      onAnimationEnd={(e) => e.currentTarget.classList.remove("echo-ping")}
+      onMouseEnter={handleKpiEnter}
       style={
         {
           ...toneVars(tone),
@@ -759,6 +942,7 @@ export function KpiCard({
       }
     >
       <div className="kpi-clip">
+        <span aria-hidden className="kpi-echo-edge" />
         <div className="dots" />
         <Icon
           className="wm wm-engrave"
