@@ -11,6 +11,7 @@ import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
 import GovernanceScreen from "./governance";
 import KanbanScreen from "./kanban";
+import MeasureScreen from "./measure";
 import OkrsScreen from "./okrs";
 import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
@@ -34,6 +35,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   epic: EpicDetailScreen,
   feature: FeatureDetailScreen,
   kanban: KanbanScreen,
+  measure: MeasureScreen,
   wsjf: WsjfScreen,
   teams: TeamsScreen,
   team: TeamDetailScreen,
