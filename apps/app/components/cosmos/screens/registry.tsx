@@ -20,6 +20,7 @@ import StrategyScreen from "./strategy";
 import TeamDetailScreen from "./team-detail";
 import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
+import VelocityScreen from "./velocity";
 import WsjfScreen from "./wsjf";
 
 export type ScreenProps = { param?: string };
@@ -45,4 +46,5 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
   strategy: StrategyScreen,
+  velocity: VelocityScreen,
 };
