@@ -146,6 +146,18 @@ export default function EpicDetailClient({
       );
       if (refreshed.ok) {
         setApproval(refreshed.data);
+        if (
+          refreshed.data.estado === "approved" ||
+          refreshed.data.estado === "rejected"
+        ) {
+          setData((d) => ({
+            ...d,
+            governance: {
+              ...d.governance,
+              governanceStatus: refreshed.data.estado,
+            },
+          }));
+        }
       }
     } else if (!res.ok) {
       setSaveError(res.error);
@@ -522,7 +534,15 @@ export default function EpicDetailClient({
                     <span style={{ fontSize: 13, color: "var(--ink)" }}>
                       {s.roleRequired}
                     </span>
-                    <Badge tone={s.estado === "approved" ? "green" : "neutral"}>
+                    <Badge
+                      tone={
+                        s.estado === "approved"
+                          ? "green"
+                          : s.estado === "rejected"
+                            ? "red"
+                            : "neutral"
+                      }
+                    >
                       {s.estado}
                     </Badge>
                     {s.estado === "pending" && (
