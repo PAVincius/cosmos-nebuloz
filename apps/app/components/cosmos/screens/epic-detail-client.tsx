@@ -1,9 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { EpicDetailFull } from "@/app/(cosmos)/actions/epic-detail";
 import { autosaveBusinessCase } from "@/app/actions/epics/business-case";
 import { draftHypothesisAction } from "@/app/actions/epics/draft-hypothesis";
+import {
+  getApprovalRequest,
+  reviewStep,
+  submitEpicForApproval,
+} from "@/app/actions/governance";
+import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
 import {
   Badge,
   ErrorState,
@@ -38,6 +44,28 @@ export default function EpicDetailClient({
   const [data, setData] = useState(initial);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [drafting, setDrafting] = useState(false);
+  const [approval, setApproval] = useState<ApprovalRequestWithSteps | null>(
+    null
+  );
+  const [submitting, setSubmitting] = useState(false);
+  const [reviewing, setReviewing] = useState<string | null>(null);
+
+  useEffect(() => {
+    const requestId = data.governance.currentApprovalRequestId;
+    if (!requestId) {
+      setApproval(null);
+      return;
+    }
+    let active = true;
+    getApprovalRequest(requestId).then((res) => {
+      if (active && res.ok) {
+        setApproval(res.data);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [data.governance.currentApprovalRequestId]);
 
   async function saveField(
     field: "hypothesis" | "nfrs" | "mvp",
@@ -84,6 +112,42 @@ export default function EpicDetailClient({
         setSaveError(saveRes.error);
       }
     } else {
+      setSaveError(res.error);
+    }
+  }
+
+  async function submitForApproval() {
+    setSubmitting(true);
+    setSaveError(null);
+    const res = await submitEpicForApproval({ epicId });
+    setSubmitting(false);
+    if (res.ok) {
+      setData((d) => ({
+        ...d,
+        governance: {
+          ...d.governance,
+          currentApprovalRequestId: res.data.requestId,
+          governanceStatus: "review",
+        },
+      }));
+    } else {
+      setSaveError(res.error);
+    }
+  }
+
+  async function decide(stepId: string, decision: "approved" | "rejected") {
+    setReviewing(stepId);
+    setSaveError(null);
+    const res = await reviewStep({ stepId, decision });
+    setReviewing(null);
+    if (res.ok && data.governance.currentApprovalRequestId) {
+      const refreshed = await getApprovalRequest(
+        data.governance.currentApprovalRequestId
+      );
+      if (refreshed.ok) {
+        setApproval(refreshed.data);
+      }
+    } else if (!res.ok) {
       setSaveError(res.error);
     }
   }
@@ -400,7 +464,109 @@ export default function EpicDetailClient({
       )}
 
       {tab === "lifecycle" && (
-        <div data-testid="lifecycle-tab-placeholder-for-task-3" />
+        <SectionCard
+          bodyStyle={{ padding: "12px 16px" }}
+          icon="shield"
+          title="Governança"
+          tone="purple"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              {data.governance.governanceStatus ? (
+                <Badge icon="lock" tone="purple">
+                  {data.governance.governanceStatus}
+                </Badge>
+              ) : (
+                <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                  Épico não é governado.
+                </span>
+              )}
+            </div>
+
+            {!data.governance.currentApprovalRequestId && (
+              <button
+                disabled={submitting}
+                onClick={submitForApproval}
+                style={{
+                  alignSelf: "flex-start",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  padding: "6px 12px",
+                  borderRadius: "var(--r-md)",
+                  border: "1px solid var(--hairline)",
+                  background: "var(--surface)",
+                  color: "var(--ink)",
+                  cursor: submitting ? "default" : "pointer",
+                }}
+                type="button"
+              >
+                {submitting ? "Enviando…" : "Enviar para aprovação"}
+              </button>
+            )}
+
+            {approval && (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  {approval.workflowNome} · {approval.estado}
+                </span>
+                {approval.steps.map((s) => (
+                  <div
+                    key={s.id}
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 100px 140px",
+                      alignItems: "center",
+                      gap: 12,
+                    }}
+                  >
+                    <span style={{ fontSize: 13, color: "var(--ink)" }}>
+                      {s.roleRequired}
+                    </span>
+                    <Badge tone={s.estado === "approved" ? "green" : "neutral"}>
+                      {s.estado}
+                    </Badge>
+                    {s.estado === "pending" && (
+                      <div style={{ display: "flex", gap: 6 }}>
+                        <button
+                          disabled={reviewing === s.id}
+                          onClick={() => decide(s.id, "approved")}
+                          style={{
+                            fontSize: 12,
+                            padding: "4px 8px",
+                            borderRadius: "var(--r-sm)",
+                            border: "1px solid var(--hairline)",
+                            background: "var(--surface)",
+                            color: "var(--ink)",
+                            cursor: "pointer",
+                          }}
+                          type="button"
+                        >
+                          Aprovar
+                        </button>
+                        <button
+                          disabled={reviewing === s.id}
+                          onClick={() => decide(s.id, "rejected")}
+                          style={{
+                            fontSize: 12,
+                            padding: "4px 8px",
+                            borderRadius: "var(--r-sm)",
+                            border: "1px solid var(--hairline)",
+                            background: "var(--surface)",
+                            color: "var(--ink)",
+                            cursor: "pointer",
+                          }}
+                          type="button"
+                        >
+                          Rejeitar
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionCard>
       )}
     </div>
   );
