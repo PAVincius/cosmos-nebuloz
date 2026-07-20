@@ -15,6 +15,7 @@ import ProgramScreen from "./program";
 import RisksScreen from "./risks";
 import RoadmapScreen from "./roadmap";
 import StrategyScreen from "./strategy";
+import TeamDetailScreen from "./team-detail";
 import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
 import WsjfScreen from "./wsjf";
@@ -31,6 +32,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   kanban: KanbanScreen,
   wsjf: WsjfScreen,
   teams: TeamsScreen,
+  team: TeamDetailScreen,
   okrs: OkrsScreen,
   risks: RisksScreen,
   roadmap: RoadmapScreen,
