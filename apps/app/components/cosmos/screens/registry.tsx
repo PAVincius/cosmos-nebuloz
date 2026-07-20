@@ -18,6 +18,7 @@ import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
 import RisksScreen from "./risks";
 import RoadmapScreen from "./roadmap";
+import SettingsScreen from "./settings";
 import SolutionTrainScreen from "./solution-train";
 import StrategyScreen from "./strategy";
 import TeamDetailScreen from "./team-detail";
@@ -53,6 +54,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   themes: ThemesScreen,
   solution: SolutionTrainScreen,
   strategy: StrategyScreen,
+  settings: SettingsScreen,
   velocity: VelocityScreen,
   webhooks: WebhooksScreen,
 };
