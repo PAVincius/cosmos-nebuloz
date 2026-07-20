@@ -1,15 +1,12 @@
 "use client";
 
-// teams.tsx — Times (diretório de squads do portfólio).
+// teams.tsx — Times (diretório de squads do portfólio), wired to listTeams().
 
-import { ARTS, type Art, TEAMS_DIR, type TeamDir } from "@/lib/cosmos-data";
-import { Icon } from "../icons";
-import { Avatar, Badge, Button, KpiCard, PageHeader, Progress } from "../kit";
+import { useEffect, useState } from "react";
+import { listTeams, type TeamListView } from "@/app/(cosmos)/actions/teams";
+import { Badge, ErrorState, PageHeader } from "../kit";
 
-function TeamCard({ tm }: { tm: TeamDir }) {
-  const art: Art = ARTS[tm.art];
-  const loadPct = Math.round((tm.load / tm.cap) * 100);
-  const over = tm.load > tm.cap;
+function TeamCard({ tm }: { tm: TeamListView }) {
   return (
     <div
       className="lift"
@@ -27,22 +24,13 @@ function TeamCard({ tm }: { tm: TeamDir }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span
           style={{
-            display: "grid",
-            placeItems: "center",
-            width: 42,
-            height: 42,
-            borderRadius: "var(--r-md)",
+            width: 12,
+            height: 12,
+            borderRadius: "var(--r-pill)",
             flexShrink: 0,
-            fontWeight: 800,
-            fontSize: 15,
-            color: "#fff",
-            background: `var(--${tm.tone})`,
-            boxShadow: `0 6px 16px -6px rgba(var(--${tm.tone}-rgb),.7)`,
-            fontFamily: "'Space Grotesk',sans-serif",
+            background: tm.color ?? "var(--accent)",
           }}
-        >
-          {tm.name.replace("Squad ", "").slice(0, 2).toUpperCase()}
-        </span>
+        />
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
             className="display"
@@ -57,76 +45,18 @@ function TeamCard({ tm }: { tm: TeamDir }) {
           >
             {tm.name}
           </div>
-          <div style={{ marginTop: 3 }}>
-            <Badge dot tone={art.tone}>
-              {art.name}
-            </Badge>
+          <div
+            style={{
+              marginTop: 3,
+              fontSize: 12.5,
+              color: "var(--ink-subtle)",
+            }}
+          >
+            {tm.focusArea ?? "—"}
           </div>
         </div>
-        <button
-          className="btn navitem"
-          style={{
-            display: "grid",
-            placeItems: "center",
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            border: "none",
-            background: "transparent",
-            color: "var(--ink-faint)",
-            cursor: "pointer",
-          }}
-        >
-          <Icon name="more" size={16} />
-        </button>
       </div>
 
-      <p
-        style={{
-          margin: 0,
-          fontSize: 12.5,
-          color: "var(--ink-subtle)",
-          lineHeight: 1.45,
-        }}
-      >
-        {tm.focus}
-      </p>
-
-      {/* capacity */}
-      <div>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: 11.5,
-            marginBottom: 6,
-          }}
-        >
-          <span
-            style={{
-              fontWeight: 700,
-              letterSpacing: ".04em",
-              textTransform: "uppercase",
-              color: "var(--ink-faint)",
-              fontSize: 10.5,
-            }}
-          >
-            Carga · PI-26
-          </span>
-          <span
-            className="mono"
-            style={{
-              fontWeight: 700,
-              color: over ? "var(--red-text)" : "var(--ink-muted)",
-            }}
-          >
-            {tm.load}/{tm.cap} pts · {loadPct}%
-          </span>
-        </div>
-        <Progress height={7} tone={over ? "red" : tm.tone} value={loadPct} />
-      </div>
-
-      {/* stats */}
       <div
         style={{
           display: "grid",
@@ -138,14 +68,10 @@ function TeamCard({ tm }: { tm: TeamDir }) {
       >
         {(
           [
-            { k: "Membros", v: tm.members, tone: "ink" },
-            { k: "Velocity", v: tm.vel, tone: "ink" },
-            {
-              k: "Predict.",
-              v: `${tm.pred}%`,
-              tone: tm.pred >= 90 ? "green" : "amber",
-            },
-          ] as { k: string; v: number | string; tone: string }[]
+            { k: "Membros", v: tm.memberCount },
+            { k: "WIP", v: tm.wip },
+            { k: "Velocity", v: tm.velocity ?? "—" },
+          ] as { k: string; v: number | string }[]
         ).map((s) => (
           <div key={s.k} style={{ textAlign: "center" }}>
             <div
@@ -154,8 +80,7 @@ function TeamCard({ tm }: { tm: TeamDir }) {
                 fontSize: 19,
                 fontWeight: 800,
                 letterSpacing: "-.02em",
-                color:
-                  s.tone === "ink" ? "var(--ink)" : `var(--${s.tone}-text)`,
+                color: "var(--ink)",
               }}
             >
               {s.v}
@@ -174,151 +99,64 @@ function TeamCard({ tm }: { tm: TeamDir }) {
           </div>
         ))}
       </div>
-
-      <div
-        style={{ display: "flex", alignItems: "center", gap: 9, paddingTop: 4 }}
-      >
-        <Avatar name={tm.lead} size={24} tone={tm.tone} />
-        <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ink)" }}>
-            {tm.lead}
-          </div>
-          <div style={{ fontSize: 11, color: "var(--ink-subtle)" }}>
-            Tech Lead
-          </div>
-        </div>
-        <span style={{ marginLeft: "auto", display: "flex", marginRight: 2 }}>
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              style={{
-                width: 24,
-                height: 24,
-                borderRadius: 99,
-                marginLeft: i ? -8 : 0,
-                background: "var(--surface-3)",
-                border: "2px solid var(--surface)",
-                display: "grid",
-                placeItems: "center",
-                fontSize: 9.5,
-                fontWeight: 700,
-                color: "var(--ink-subtle)",
-              }}
-            >
-              {["AR", "JS", "MC"][i]}
-            </span>
-          ))}
-          <span
-            style={{
-              width: 24,
-              height: 24,
-              borderRadius: 99,
-              marginLeft: -8,
-              background: `var(--${tm.tone}-soft)`,
-              border: "2px solid var(--surface)",
-              display: "grid",
-              placeItems: "center",
-              fontSize: 9.5,
-              fontWeight: 700,
-              color: `var(--${tm.tone}-text)`,
-            }}
-          >
-            +{tm.members - 3}
-          </span>
-        </span>
-      </div>
     </div>
   );
 }
 
 export default function TeamsScreen() {
-  const totalMembers = TEAMS_DIR.reduce((s, t) => s + t.members, 0);
-  const avgPred = Math.round(
-    TEAMS_DIR.reduce((s, t) => s + t.pred, 0) / TEAMS_DIR.length
-  );
-  const overloaded = TEAMS_DIR.filter((t) => t.load > t.cap).length;
+  const [teams, setTeams] = useState<TeamListView[]>([]);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    listTeams().then((r) => {
+      if (r.ok) {
+        setTeams(r.data);
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  const totalMembers = teams.reduce((s, t) => s + t.memberCount, 0);
+
   return (
     <div className="fade-in">
       <PageHeader
         meta={
-          <>
-            <Badge icon="users" tone="accent">
-              {TEAMS_DIR.length} squads · {totalMembers} pessoas
-            </Badge>
-            <Badge dot tone="green">
-              4 ARTs
-            </Badge>
-            {overloaded > 0 && (
-              <Badge tone="red">{overloaded} sobrecarregado(s)</Badge>
-            )}
-          </>
+          <Badge icon="users" tone="accent">
+            {teams.length} squads · {totalMembers} pessoas
+          </Badge>
         }
-        subtitle="Squads do portfólio COSMOS, organizados por ART. Capacidade, velocity e predictability consolidados por time."
+        subtitle="Squads do portfólio COSMOS. Membros, WIP e velocity consolidados por time."
         title="Times"
-      >
-        <Button icon="filter" size="md" variant="secondary">
-          Por ART
-        </Button>
-        <Button icon="plus" size="md" variant="primary">
-          Novo time
-        </Button>
-      </PageHeader>
+      />
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, minmax(0,1fr))",
-          gap: "var(--gap)",
-          marginBottom: "var(--gap)",
-        }}
-      >
-        <KpiCard
-          delta="+5 no PI"
-          deltaTone="accent"
-          hint={`${TEAMS_DIR.length} squads`}
-          icon="users"
-          label="Pessoas no portfólio"
-          tone="accent"
-          value={totalMembers}
-        />
-        <KpiCard
-          hint="por sprint"
-          icon="activity"
-          label="Velocity somada"
-          tone="blue"
-          unit="SP"
-          value={TEAMS_DIR.reduce((s, t) => s + t.vel, 0)}
-        />
-        <KpiCard
-          delta="+4 pts"
-          deltaTone="green"
-          hint="todos os times"
-          icon="gauge"
-          label="Predictability média"
-          tone="green"
-          unit="%"
-          value={avgPred}
-        />
-        <KpiCard
-          hint="rebalancear carga"
-          icon="alert"
-          label="Times acima da capacidade"
-          tone={overloaded ? "red" : "green"}
-          value={overloaded}
-        />
-      </div>
-
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, minmax(0,1fr))",
-          gap: "var(--gap)",
-        }}
-      >
-        {TEAMS_DIR.map((tm) => (
-          <TeamCard key={tm.id} tm={tm} />
-        ))}
-      </div>
+      {error && <ErrorState />}
+      {!(error || loading) && teams.length === 0 && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Nenhum time encontrado.
+        </div>
+      )}
+      {!error && loading && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Carregando...
+        </div>
+      )}
+      {!(error || loading) && teams.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+            gap: "var(--gap)",
+          }}
+        >
+          {teams.map((tm) => (
+            <TeamCard key={tm.id} tm={tm} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
