@@ -19,7 +19,11 @@ async function listSolutionTrains(): Promise<Result<SolutionTrainView[]>> {
     const ctx = await requireTenantSession(await headers());
     const trains = await database.solutionTrain.findMany({
       where: { tenantId: ctx.tenantId },
-      include: { arts: true, solutionEpics: true, capabilities: true },
+      include: {
+        arts: { select: { id: true } },
+        solutionEpics: { select: { id: true } },
+        capabilities: { select: { id: true } },
+      },
       orderBy: { name: "asc" },
     });
 
