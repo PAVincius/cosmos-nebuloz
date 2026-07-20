@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { Result } from "../../app/actions/_base";
 import { Icon, type IconName } from "./icons";
 
 export type Tone =
@@ -32,6 +33,41 @@ export const useThemeName = (): "light" | "dark" => {
   const { resolvedTheme } = useTheme();
   return resolvedTheme === "light" ? "light" : "dark";
 };
+
+// ── Shared fetch-state hook (loading | error | data) for real-data screens ──
+export function useAction<T>(
+  action: () => Promise<Result<T>>,
+  deps: unknown[] = []
+) {
+  const [data, setData] = useState<T | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    mounted.current = true;
+    setLoading(true);
+    setError(false);
+    action().then((r) => {
+      if (!mounted.current) {
+        return;
+      }
+      if (r.ok) {
+        setData(r.data);
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    });
+    return () => {
+      mounted.current = false;
+    };
+    // biome-ignore lint/correctness/useExhaustiveDependencies: deps is the caller-supplied dependency array
+  }, deps);
+
+  return { data, loading, error };
+}
+
 export const NavCtx = createContext<{
   navigate: (id: string, param?: string) => void;
 }>({ navigate: () => {} });
