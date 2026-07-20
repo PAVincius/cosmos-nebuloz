@@ -42,14 +42,16 @@ export function useAction<T>(
   const [data, setData] = useState<T | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const mounted = useRef(true);
 
   useEffect(() => {
-    mounted.current = true;
+    // `active` is local to this effect run, not shared across re-runs — a
+    // shared ref would let a stale response from a superseded run (deps
+    // changed mid-flight) overwrite fresher data once it resolves.
+    let active = true;
     setLoading(true);
     setError(false);
     action().then((r) => {
-      if (!mounted.current) {
+      if (!active) {
         return;
       }
       if (r.ok) {
@@ -60,7 +62,7 @@ export function useAction<T>(
       setLoading(false);
     });
     return () => {
-      mounted.current = false;
+      active = false;
     };
     // biome-ignore lint/correctness/useExhaustiveDependencies: deps is the caller-supplied dependency array
   }, deps);
