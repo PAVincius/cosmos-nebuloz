@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --filter=!docs",
+    "dev": "turbo dev --filter=!docs --continue",
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
     "test": "turbo test",
