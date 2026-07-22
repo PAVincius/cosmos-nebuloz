@@ -3,11 +3,8 @@
  * Software house de saúde (EHR, IA Clínica, Integração FHIR/HL7)
  * 50 funcionários — admin: vinicius.pratesaraujo@gmail.com
  *
- * Uso (raiz do monorepo):
- *   DATABASE_URL="..." BETTER_AUTH_SECRET="..." BETTER_AUTH_URL="http://localhost:3000" \
- *   node --import tsx/esm packages/database/seed-safe-full.ts
- *
- *   ou: pnpm seed:safe
+ * Uso: pnpm --filter @repo/database seed:safe
+ * (lê DATABASE_URL/BETTER_AUTH_* de packages/database/.env via --env-file)
  */
 
 import { betterAuth } from "better-auth";
