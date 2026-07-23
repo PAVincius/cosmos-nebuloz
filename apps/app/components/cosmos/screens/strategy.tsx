@@ -1,14 +1,17 @@
 "use client";
 
 // strategy.tsx — Strategy Map: pillars grouping strategic themes, wired to
-// listStrategyPillars(). Read-only map — pillar/theme detail drill-down and
-// editing are out of scope for this Tier-1 read-data pass.
-import { useEffect, useState } from "react";
+// listStrategyPillars(). Supports creating new pillars via NewPillarModal;
+// theme detail drill-down remains out of scope for this pass.
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
+  createPillar,
   listStrategyPillars,
   type PillarView,
 } from "@/app/(cosmos)/actions/strategy";
-import { Badge, PageHeader, SectionCard, type Tone } from "../kit";
+import { Badge, Button, PageHeader, SectionCard, type Tone } from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   on: "green",
@@ -30,6 +33,16 @@ const VALID_TONES = new Set<Tone>([
 function toTone(value: string): Tone {
   return VALID_TONES.has(value as Tone) ? (value as Tone) : "accent";
 }
+
+const TONE_LABEL: Record<Tone, string> = {
+  green: "Verde",
+  red: "Vermelho",
+  amber: "Âmbar",
+  blue: "Azul",
+  purple: "Roxo",
+  accent: "Destaque",
+  neutral: "Neutro",
+};
 
 function PillarCard({ pillar }: { pillar: PillarView }) {
   return (
@@ -76,11 +89,119 @@ function PillarCard({ pillar }: { pillar: PillarView }) {
   );
 }
 
-export default function StrategyScreen() {
+const selectStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+function NewPillarModal({ onCreated }: { onCreated?: () => void }) {
+  const { close } = useModal();
+  const [name, setName] = useState("");
+  const [tone, setTone] = useState<Tone>("accent");
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    if (!name.trim() || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => createPillar({ name: name.trim(), tone }),
+      {
+        loading: "Criando pilar estratégico...",
+        success: "Pilar estratégico criado.",
+        error: (err: string) => `Não foi possível criar o pilar: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onCreated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      subtitle="Adicionar um pilar estratégico ao portfólio"
+      title="Novo pilar estratégico"
+      width={460}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="pillar-name" style={fieldLabelStyle}>
+            Nome
+          </label>
+          <input
+            autoFocus
+            id="pillar-name"
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                create();
+              }
+            }}
+            placeholder="Ex: Crescimento…"
+            style={selectStyle}
+            value={name}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="pillar-tone" style={fieldLabelStyle}>
+            Cor
+          </label>
+          <select
+            id="pillar-tone"
+            onChange={(e) => setTone(e.target.value as Tone)}
+            style={selectStyle}
+            value={tone}
+          >
+            {Array.from(VALID_TONES).map((t) => (
+              <option key={t} value={t}>
+                {TONE_LABEL[t]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Criar pilar
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function StrategyBody() {
+  const modal = useModal();
   const [pillars, setPillars] = useState<PillarView[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     listStrategyPillars().then((r) => {
       if (r.ok) {
         setPillars(r.data);
@@ -89,6 +210,10 @@ export default function StrategyScreen() {
     });
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [load]);
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -96,7 +221,16 @@ export default function StrategyScreen() {
         meta={<Badge tone="accent">{pillars.length} pilares</Badge>}
         subtitle="Pilares estratégicos e os temas que os compõem."
         title="Strategy Map"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewPillarModal onCreated={load} />)}
+          size="md"
+          variant="primary"
+        >
+          Novo pilar
+        </Button>
+      </PageHeader>
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {!loading && pillars.length === 0 && (
           <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
@@ -108,5 +242,13 @@ export default function StrategyScreen() {
         ))}
       </div>
     </div>
+  );
+}
+
+export default function StrategyScreen() {
+  return (
+    <ModalProvider>
+      <StrategyBody />
+    </ModalProvider>
   );
 }
