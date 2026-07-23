@@ -3,8 +3,11 @@
 // governance.tsx — Governance Board, wired to listGovernedEpics(). Lists real
 // GovernedEpic rows with status + investment estimate. Gate policy editing is
 // wired via GovernancePolicyModal (upserts ApprovalWorkflow by tenantId+tipo).
-// Gate review/approve flow and the per-epic Gate Detail page (RF §2.18) are
-// still NOT wired.
+// Gate review (approve/reject the current pending ApprovalStepInstance) is
+// wired via GateReviewModal, which reuses the existing reviewStep/
+// getApprovalRequest actions (no new mutation — see epic-detail-client.tsx's
+// decide() for the reference flow this mirrors). The per-epic Gate Detail
+// page (RF §2.18) is still NOT wired.
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -12,6 +15,8 @@ import {
   listGovernedEpics,
   upsertApprovalWorkflow,
 } from "@/app/(cosmos)/actions/governance";
+import { getApprovalRequest, reviewStep } from "@/app/actions/governance";
+import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
 import { Icon } from "../icons";
 import {
   Badge,
@@ -285,6 +290,204 @@ function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
   );
 }
 
+// GateReviewModal — decides the current pending ApprovalStepInstance for a
+// GovernedEpic row. Reuses the existing reviewStep/getApprovalRequest
+// actions (story-016); Epic.lifecycleStatus / GovernedEpic.governanceStatus
+// updates are handled entirely by reviewStep, not by this component.
+function GateReviewModal({
+  governedEpic,
+  onDecided,
+}: {
+  governedEpic: GovernedEpicView;
+  onDecided?: () => void;
+}) {
+  const { close } = useModal();
+  const [approval, setApproval] = useState<ApprovalRequestWithSteps | null>(
+    null
+  );
+  const [loading, setLoading] = useState(true);
+  const [decision, setDecision] = useState<"approved" | "rejected">("approved");
+  const [comentario, setComentario] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const requestId = governedEpic.currentApprovalRequestId;
+    if (!requestId) {
+      setLoading(false);
+      return;
+    }
+    let active = true;
+    getApprovalRequest(requestId).then((res) => {
+      if (active) {
+        if (res.ok) {
+          setApproval(res.data);
+        }
+        setLoading(false);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [governedEpic.currentApprovalRequestId]);
+
+  const pendingStep =
+    approval?.steps.find((s) => s.estado === "pending") ?? null;
+  const rationaleMissing = decision === "rejected" && !comentario.trim();
+
+  const submit = async () => {
+    if (!pendingStep || saving || rationaleMissing) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        reviewStep({
+          stepId: pendingStep.id,
+          decision,
+          comentario: comentario.trim() || undefined,
+        }),
+      {
+        loading: "Registrando decisão do gate...",
+        success: "Decisão do gate registrada.",
+        error: (err: string) => `Não foi possível registrar a decisão: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onDecided?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="check" size={16} strokeWidth={2.4} />}
+      subtitle={governedEpic.epicTitle}
+      title="Revisar gate"
+      width={460}
+    >
+      {loading && (
+        <div style={{ fontSize: 13, color: "var(--ink-subtle)" }}>
+          Carregando…
+        </div>
+      )}
+      {!(loading || pendingStep) && (
+        <div style={{ fontSize: 13, color: "var(--ink-subtle)" }}>
+          Nenhuma etapa pendente para revisão neste momento.
+        </div>
+      )}
+      {!loading && pendingStep && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+            Etapa {pendingStep.etapaOrdem} · Papel requerido:{" "}
+            {pendingStep.roleRequired}
+          </div>
+
+          <div>
+            <span style={fieldLabelStyle}>Decisão</span>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setDecision("approved")}
+                style={{
+                  flex: 1,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  padding: "8px 12px",
+                  borderRadius: "var(--r-md)",
+                  border:
+                    decision === "approved"
+                      ? "1px solid var(--green)"
+                      : "1px solid var(--hairline-strong)",
+                  background:
+                    decision === "approved"
+                      ? "var(--green-soft)"
+                      : "var(--surface)",
+                  color:
+                    decision === "approved"
+                      ? "var(--green-text)"
+                      : "var(--ink)",
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                Aprovar
+              </button>
+              <button
+                onClick={() => setDecision("rejected")}
+                style={{
+                  flex: 1,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  padding: "8px 12px",
+                  borderRadius: "var(--r-md)",
+                  border:
+                    decision === "rejected"
+                      ? "1px solid var(--red)"
+                      : "1px solid var(--hairline-strong)",
+                  background:
+                    decision === "rejected"
+                      ? "var(--red-soft)"
+                      : "var(--surface)",
+                  color:
+                    decision === "rejected" ? "var(--red-text)" : "var(--ink)",
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                Rejeitar
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label htmlFor="gate-review-comentario" style={fieldLabelStyle}>
+              Justificativa {decision === "rejected" ? "" : "(opcional)"}
+            </label>
+            <textarea
+              id="gate-review-comentario"
+              onChange={(e) => setComentario(e.target.value)}
+              placeholder="Racional da decisão…"
+              rows={3}
+              style={{ ...inputStyle, resize: "vertical" }}
+              value={comentario}
+            />
+            {rationaleMissing && (
+              <span style={{ fontSize: 11.5, color: "var(--red-text)" }}>
+                Justificativa obrigatória para rejeitar.
+              </span>
+            )}
+          </div>
+
+          <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+            <Button onClick={close} size="sm" variant="secondary">
+              Cancelar
+            </Button>
+            <button
+              disabled={saving || rationaleMissing}
+              onClick={submit}
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                padding: "7px 14px",
+                borderRadius: "var(--r-md)",
+                border: "1px solid var(--accent)",
+                background: "var(--accent)",
+                color: "var(--accent-fg)",
+                cursor: saving || rationaleMissing ? "default" : "pointer",
+                opacity: saving || rationaleMissing ? 0.6 : 1,
+              }}
+              type="button"
+            >
+              {saving ? "Enviando…" : "Confirmar decisão"}
+            </button>
+          </div>
+        </div>
+      )}
+    </ModalCard>
+  );
+}
+
 function GovernanceBody() {
   const modal = useModal();
   const [rows, setRows] = useState<GovernedEpicView[]>([]);
@@ -368,6 +571,19 @@ function GovernanceBody() {
               <Badge tone={STATUS_TONE[g.governanceStatus] ?? "neutral"}>
                 {g.governanceStatus}
               </Badge>
+              {g.currentApprovalRequestId && (
+                <Button
+                  onClick={() =>
+                    modal.open(
+                      <GateReviewModal governedEpic={g} onDecided={load} />
+                    )
+                  }
+                  size="sm"
+                  variant="secondary"
+                >
+                  Revisar gate
+                </Button>
+              )}
             </div>
           ))}
         </div>

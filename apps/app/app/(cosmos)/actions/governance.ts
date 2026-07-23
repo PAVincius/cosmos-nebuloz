@@ -14,6 +14,7 @@ export type GovernedEpicView = {
   governanceStatus: string;
   investmentEstimate: number | null;
   submittedAt: string | null;
+  currentApprovalRequestId: string | null;
 };
 
 export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
@@ -27,6 +28,7 @@ export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
         governanceStatus: true,
         investmentEstimate: true,
         submittedAt: true,
+        currentApprovalRequestId: true,
         epic: { select: { title: true } },
       },
     });
@@ -36,6 +38,7 @@ export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
       governanceStatus: g.governanceStatus,
       investmentEstimate: g.investmentEstimate,
       submittedAt: g.submittedAt?.toISOString() ?? null,
+      currentApprovalRequestId: g.currentApprovalRequestId,
     }));
   });
 }

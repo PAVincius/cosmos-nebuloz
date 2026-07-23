@@ -53,6 +53,7 @@ describe("listGovernedEpics", () => {
         governanceStatus: "review",
         investmentEstimate: 250_000,
         submittedAt: new Date("2026-02-01"),
+        currentApprovalRequestId: "req-1",
         epic: { title: "Migração multi-tenant" },
       },
     ]);
@@ -67,6 +68,7 @@ describe("listGovernedEpics", () => {
     if (r.ok) {
       expect(r.data[0].epicTitle).toBe("Migração multi-tenant");
       expect(typeof r.data[0].submittedAt).toBe("string");
+      expect(r.data[0].currentApprovalRequestId).toBe("req-1");
     }
   });
 });
