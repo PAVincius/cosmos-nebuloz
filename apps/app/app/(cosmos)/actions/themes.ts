@@ -1,9 +1,12 @@
 "use server";
 
-import { requireTenantSession } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
+import { logAudit } from "../../actions/audit";
 
 export type ThemeView = {
   id: string;
@@ -59,5 +62,42 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
         avgProgress,
       };
     });
+  });
+}
+
+const CreateThemeSchema = z.object({
+  title: z.string().min(1).max(200),
+  description: z.string().max(2000).optional(),
+  // "Investment amount" — see StrategicTheme.budgetTotal in schema.
+  budgetTotal: z.number().nonnegative().optional(),
+});
+
+export async function createTheme(
+  input: z.input<typeof CreateThemeSchema>
+): Promise<Result<{ id: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { title, description, budgetTotal } = CreateThemeSchema.parse(input);
+
+    const created = await database.strategicTheme.create({
+      data: {
+        tenantId: ctx.tenantId,
+        title,
+        description: description ?? null,
+        budgetTotal: budgetTotal ?? null,
+      },
+      select: { id: true },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "theme",
+      entityId: created.id,
+      diff: { title },
+    });
+    revalidateTag(`themes:${ctx.tenantId}`, "max");
+    return { id: created.id };
   });
 }
