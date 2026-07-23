@@ -162,18 +162,22 @@ export async function rebalanceThemeTargets(
       )
     );
 
-    await logAudit(ctx.tenantId, {
-      userId: ctx.userId,
-      action: "updated",
-      entityType: "theme",
-      entityId: themeIds.join(","),
-      diff: Object.fromEntries(
-        targets.map((t) => [
-          t.themeId,
-          `${before.get(t.themeId) ?? 0}→${t.targetAllocationPct}`,
-        ])
-      ),
-    });
+    // One audit row per theme — entityId must be that theme's own cuid so
+    // getAuditLogsByEntity (exact-equality lookup) can find it.
+    await Promise.all(
+      targets.map((t) =>
+        logAudit(ctx.tenantId, {
+          userId: ctx.userId,
+          action: "updated",
+          entityType: "theme",
+          entityId: t.themeId,
+          diff: {
+            from: String(before.get(t.themeId) ?? 0),
+            to: String(t.targetAllocationPct),
+          },
+        })
+      )
+    );
     revalidateTag(`themes:${ctx.tenantId}`, "max");
     return { count: targets.length };
   });

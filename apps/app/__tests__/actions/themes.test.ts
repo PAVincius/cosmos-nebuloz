@@ -256,11 +256,23 @@ describe("rebalanceThemeTargets", () => {
     });
     expect(h.transaction).toHaveBeenCalledTimes(1);
     expect(h.transaction.mock.calls[0][0]).toHaveLength(2);
-    expect(h.logAudit).toHaveBeenCalledTimes(1);
+    expect(h.logAudit).toHaveBeenCalledTimes(2);
     expect(h.logAudit).toHaveBeenCalledWith(
       tenantCtx.tenantId,
       expect.objectContaining({
+        action: "updated",
         entityType: "theme",
+        entityId: "th1",
+        diff: { from: "60", to: "60" },
+      })
+    );
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "updated",
+        entityType: "theme",
+        entityId: "th2",
+        diff: { from: "40", to: "40" },
       })
     );
     expect(h.revalidateTag).toHaveBeenCalledTimes(1);
