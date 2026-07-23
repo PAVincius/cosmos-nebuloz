@@ -123,11 +123,8 @@ export async function scoreWsjfAction(
     // directly here (not via getWsjfSettings) so a genuine lookup failure
     // propagates instead of being swallowed into a Result. The 1.0/1.0/1.0
     // classic weights apply ONLY when no settings row exists for this
-    // tenant — reproducing the pre-Task-16 formula byte-for-byte. The `?.`
-    // guards against the settings delegate itself being absent (e.g. an
-    // older test double that doesn't mock wsjfSettings); a real query
-    // rejection still throws and is never treated as "no row".
-    const settingsRow = await database.wsjfSettings?.findUnique({
+    // tenant — reproducing the pre-Task-16 formula byte-for-byte.
+    const settingsRow = await database.wsjfSettings.findUnique({
       where: { tenantId: ctx.tenantId },
     });
     const weights = settingsRow

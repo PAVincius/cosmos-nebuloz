@@ -22,6 +22,7 @@ const mocks = vi.hoisted(() => ({
   featureFindMany: vi.fn(),
   scoringEventCreate: vi.fn(),
   transaction: vi.fn(),
+  wsjfSettingsFindUnique: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
@@ -39,6 +40,9 @@ vi.mock("@repo/database", () => ({
     },
     scoringEvent: {
       create: mocks.scoringEventCreate,
+    },
+    wsjfSettings: {
+      findUnique: mocks.wsjfSettingsFindUnique,
     },
     $transaction: mocks.transaction,
   },
@@ -61,6 +65,7 @@ describe("scoreWsjfAction", () => {
     ]);
     mocks.featureUpdate.mockResolvedValue({});
     mocks.scoringEventCreate.mockResolvedValue({});
+    mocks.wsjfSettingsFindUnique.mockResolvedValue(null);
     mocks.transaction.mockImplementation((fn: (tx: unknown) => unknown) => {
       if (typeof fn === "function") {
         return fn({
