@@ -17,6 +17,12 @@ vi.mock("@repo/database", () => ({
     feature: { findMany: vi.fn().mockResolvedValue([]) },
     team: { findMany: vi.fn().mockResolvedValue([]) },
     strategicTheme: { findMany: vi.fn().mockResolvedValue([]) },
+    aRT: {
+      findMany: vi.fn().mockResolvedValue([
+        { id: "art1", name: "ART Pagamentos" },
+        { id: "art2", name: "ART Onboarding" },
+      ]),
+    },
   },
 }));
 
@@ -40,6 +46,26 @@ describe("searchEntities", () => {
       expect(r.data).toEqual([
         { id: "e1", label: "Antifraude em tempo real" },
         { id: "e2", label: "Onboarding digital" },
+      ]);
+    }
+  });
+
+  it("searches ARTs by name, tenant-scoped", async () => {
+    const r = await searchEntities("art", "pag");
+    expect(r.ok).toBe(true);
+    expect(database.aRT.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: "t1",
+          name: { contains: "pag", mode: "insensitive" },
+        },
+        take: 10,
+      })
+    );
+    if (r.ok) {
+      expect(r.data).toEqual([
+        { id: "art1", label: "ART Pagamentos" },
+        { id: "art2", label: "ART Onboarding" },
       ]);
     }
   });

@@ -1,9 +1,12 @@
 "use server";
 
-import { requireTenantSession } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
+import { logAudit } from "../../actions/audit";
 
 export type TeamListView = {
   id: string;
@@ -112,5 +115,50 @@ export async function getTeam(
         actualSp: s.actualSpDelivered,
       })),
     };
+  });
+}
+
+const CreateTeamSchema = z.object({
+  name: z.string().min(1).max(200),
+  artId: z.string().min(1).optional(),
+});
+
+export async function createTeam(
+  input: z.input<typeof CreateTeamSchema>
+): Promise<Result<{ id: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "RTE"], ctx);
+    const { name, artId } = CreateTeamSchema.parse(input);
+
+    // Cross-tenant IDOR guard — client-supplied artId must belong to this tenant.
+    if (artId) {
+      const art = await database.aRT.findFirst({
+        where: { id: artId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!art) {
+        throw new Error("ART inválido.");
+      }
+    }
+
+    const created = await database.team.create({
+      data: {
+        tenantId: ctx.tenantId,
+        name,
+        artId: artId ?? null,
+      },
+      select: { id: true },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "team",
+      entityId: created.id,
+      diff: { name },
+    });
+    revalidateTag(`teams:${ctx.tenantId}`, "max");
+    return { id: created.id };
   });
 }

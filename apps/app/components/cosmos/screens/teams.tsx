@@ -2,9 +2,119 @@
 
 // teams.tsx — Times (diretório de squads do portfólio), wired to listTeams().
 
-import { useEffect, useState } from "react";
-import { listTeams, type TeamListView } from "@/app/(cosmos)/actions/teams";
-import { Badge, ErrorState, PageHeader } from "../kit";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import {
+  createTeam,
+  listTeams,
+  type TeamListView,
+} from "@/app/(cosmos)/actions/teams";
+import { EntityLinkField } from "../entity-link-field";
+import { Icon } from "../icons";
+import { Badge, Button, ErrorState, PageHeader } from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
+
+const selectStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
+  const { close } = useModal();
+  const [name, setName] = useState("");
+  const [art, setArt] = useState<EntityOption | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    if (!name.trim() || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createTeam({
+          name: name.trim(),
+          artId: art?.id,
+        }),
+      {
+        loading: "Criando time...",
+        success: "Time criado.",
+        error: (err: string) => `Não foi possível criar o time: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onCreated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
+      subtitle="Adicionar um novo squad ao portfólio COSMOS"
+      title="Novo time"
+      width={440}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="team-name" style={fieldLabelStyle}>
+            Nome do time
+          </label>
+          <input
+            autoFocus
+            id="team-name"
+            onChange={(e) => setName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                create();
+              }
+            }}
+            placeholder="Ex: Squad Pagamentos"
+            style={selectStyle}
+            value={name}
+          />
+        </div>
+
+        <EntityLinkField
+          kind="art"
+          label="ART (opcional)"
+          onChange={setArt}
+          value={art}
+        />
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Criar time
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
 
 function TeamCard({ tm }: { tm: TeamListView }) {
   return (
@@ -103,12 +213,14 @@ function TeamCard({ tm }: { tm: TeamListView }) {
   );
 }
 
-export default function TeamsScreen() {
+function TeamsBody() {
+  const modal = useModal();
   const [teams, setTeams] = useState<TeamListView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     listTeams().then((r) => {
       if (r.ok) {
         setTeams(r.data);
@@ -118,6 +230,10 @@ export default function TeamsScreen() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const totalMembers = teams.reduce((s, t) => s + t.memberCount, 0);
 
@@ -131,7 +247,16 @@ export default function TeamsScreen() {
         }
         subtitle="Squads do portfólio COSMOS. Membros, WIP e velocity consolidados por time."
         title="Times"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewTeamModal onCreated={load} />)}
+          size="md"
+          variant="primary"
+        >
+          Novo time
+        </Button>
+      </PageHeader>
 
       {error && <ErrorState />}
       {!(error || loading) && teams.length === 0 && (
@@ -158,5 +283,13 @@ export default function TeamsScreen() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function TeamsScreen() {
+  return (
+    <ModalProvider>
+      <TeamsBody />
+    </ModalProvider>
   );
 }
