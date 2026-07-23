@@ -148,6 +148,49 @@ const UpsertWsjfSettingsSchema = z.object({
     .max(30, "Alerta de score desatualizado deve ser entre 3 e 30 dias."),
 });
 
+// ─── Scenario simulator (Task 18: ScenarioSimulatorModal) ─────────────────────
+// Read-only: no requireRole, no logAudit, no revalidateTag, no write. Same
+// no-mutation-ceremony shape as entity-search.ts. Only Feature carries
+// bv/tc/rr/js — Epic only has a rolled-up wsjf, so the what-if simulator is
+// Feature-only (see the WSJF screen for how Epic rows are handled).
+
+export type FeatureWsjfComponents = {
+  id: string;
+  title: string;
+  bv: number;
+  tc: number;
+  rr: number;
+  js: number;
+  wsjfScore: number;
+};
+
+export async function getFeatureWsjfComponents(
+  featureId: string
+): Promise<Result<FeatureWsjfComponents>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+
+    const feature = await database.feature.findFirst({
+      where: { id: featureId, tenantId: ctx.tenantId },
+      select: {
+        id: true,
+        title: true,
+        bv: true,
+        tc: true,
+        rr: true,
+        js: true,
+        wsjfScore: true,
+      },
+    });
+
+    if (!feature) {
+      throw new Error("Feature não encontrada.");
+    }
+
+    return feature;
+  });
+}
+
 export async function upsertWsjfSettings(
   input: z.input<typeof UpsertWsjfSettingsSchema>
 ): Promise<Result<WsjfSettingsView>> {

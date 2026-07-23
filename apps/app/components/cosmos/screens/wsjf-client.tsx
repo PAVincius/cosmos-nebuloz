@@ -3,19 +3,25 @@
 // wsjf-client.tsx — client-only pieces of the WSJF Rankings screen: rows with
 // hover/toggle state (useState) and navigation/modal hooks (useNav,
 // useModal). Split out so wsjf.tsx can be a real async server component.
-import { type CSSProperties, type ReactNode, useState } from "react";
+import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 import type {
   WsjfRankItem,
   WsjfSettingsView,
 } from "@/app/(cosmos)/actions/wsjf";
-import { upsertWsjfSettings } from "@/app/(cosmos)/actions/wsjf";
+import {
+  getFeatureWsjfComponents,
+  getWsjfSettings,
+  upsertWsjfSettings,
+} from "@/app/(cosmos)/actions/wsjf";
 import { ARTS } from "@/lib/cosmos-data";
+import { computeWeightedWsjfScore } from "@/lib/wsjf-math";
 import { Icon } from "../icons";
 import {
   Badge,
   Button,
   CopyId,
   GlossaryTip,
+  IconButton,
   KpiCard,
   PageHeader,
   Progress,
@@ -25,7 +31,7 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-const WCOLS = "44px minmax(180px,1fr) 48px 104px 56px";
+const WCOLS = "44px minmax(180px,1fr) 48px 104px 56px 40px";
 
 function HeadCell({
   children,
@@ -69,6 +75,7 @@ function NumCell({ children }: { children: ReactNode }) {
 }
 
 function WsjfRow({ item }: { item: WsjfRankItem }) {
+  const modal = useModal();
   const art = item.art ? ARTS[item.art] : undefined;
   const tone = item.wsjf >= 18 ? "green" : item.wsjf >= 14 ? "accent" : "amber";
   const moved = item.prev - item.rank; // positive = subiu
@@ -198,6 +205,25 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
           {item.ai}
         </span>
       </div>
+
+      {/* scenario simulator — Feature only: Epic has no bv/tc/rr/js components */}
+      <div style={{ textAlign: "center" }}>
+        {item.type === "Feature" && (
+          <IconButton
+            name="flask"
+            onClick={() =>
+              modal.open(
+                <ScenarioSimulatorModal
+                  featureId={item.id}
+                  featureName={item.name}
+                />
+              )
+            }
+            size={28}
+            title="Simular cenário WSJF"
+          />
+        )}
+      </div>
     </div>
   );
 }
@@ -237,51 +263,262 @@ function RebalanceModal() {
   );
 }
 
-function ScenarioSimulatorModal() {
+// ── scenario simulator (Task 18: real, tenant-scoped Feature components) ──
+// Strictly non-persistent: fetches the feature's real bv/tc/rr/js + tenant
+// weights read-only, lets the user drag hypothetical values, and recomputes
+// the score client-side via the shared computeWeightedWsjfScore. Nothing is
+// ever written — closing discards every change.
+
+function ScenarioComponentSlider({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+}) {
+  return (
+    <div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          fontSize: 11.5,
+          color: "var(--ink-muted)",
+          marginBottom: 4,
+        }}
+      >
+        <span>{label}</span>
+        <span className="mono" style={{ color: "var(--accent-text)" }}>
+          {value}
+        </span>
+      </div>
+      <input
+        max={21}
+        min={1}
+        onChange={(e) => onChange(Number(e.target.value))}
+        style={{ width: "100%", accentColor: "var(--accent)" }}
+        type="range"
+        value={value}
+      />
+    </div>
+  );
+}
+
+function ScenarioSimulatorModal({
+  featureId,
+  featureName,
+}: {
+  featureId: string;
+  featureName: string;
+}) {
   const { close } = useModal();
-  const [size, setSize] = useState(10);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [storedScore, setStoredScore] = useState<number | null>(null);
+  const [weights, setWeights] = useState<{
+    weightBv: number;
+    weightTc: number;
+    weightRr: number;
+  } | null>(null);
+  const [bv, setBv] = useState(1);
+  const [tc, setTc] = useState(1);
+  const [rr, setRr] = useState(1);
+  const [js, setJs] = useState(1);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    Promise.all([getFeatureWsjfComponents(featureId), getWsjfSettings()]).then(
+      ([componentsRes, settingsRes]) => {
+        if (cancelled) {
+          return;
+        }
+        // Never fall back to defaults on a failed read — surface it instead
+        // of showing an authoritative-looking number computed on 1.0s.
+        if (!componentsRes.ok) {
+          setError(componentsRes.error);
+          setLoading(false);
+          return;
+        }
+        if (!settingsRes.ok) {
+          setError(settingsRes.error);
+          setLoading(false);
+          return;
+        }
+        setBv(componentsRes.data.bv);
+        setTc(componentsRes.data.tc);
+        setRr(componentsRes.data.rr);
+        setJs(componentsRes.data.js);
+        setStoredScore(componentsRes.data.wsjfScore);
+        setWeights({
+          weightBv: settingsRes.data.weightBv,
+          weightTc: settingsRes.data.weightTc,
+          weightRr: settingsRes.data.weightRr,
+        });
+        setLoading(false);
+      }
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [featureId]);
+
+  const liveScore = weights
+    ? computeWeightedWsjfScore({ bv, tc, rr, js }, weights)
+    : null;
+  const delta =
+    liveScore !== null && storedScore !== null
+      ? Math.round((liveScore - storedScore) * 100) / 100
+      : null;
+
   return (
     <ModalCard
-      subtitle="E se o Job Size mudar?"
+      icon={<Icon name="flask" size={16} strokeWidth={2.4} />}
+      subtitle={`${featureName} — simulação não é salva`}
       title="Simulador de Cenários"
       width={480}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            fontSize: 12,
-            color: "var(--ink-muted)",
-          }}
-        >
-          <span>Job Size hipotético</span>
-          <span className="mono" style={{ color: "var(--accent-text)" }}>
-            {size} SP
-          </span>
-        </div>
-        <input
-          max={30}
-          min={3}
-          onChange={(e) => setSize(Number(e.target.value))}
-          style={{ width: "100%", accentColor: "var(--accent)" }}
-          type="range"
-          value={size}
-        />
-        <p
-          style={{
-            margin: 0,
-            fontSize: 12.5,
-            color: "var(--ink-subtle)",
-            lineHeight: 1.5,
-          }}
-        >
-          Reduzir o tamanho do épico #1 para {size} SP elevaria seu WSJF para{" "}
-          <b className="mono" style={{ color: "var(--green-text)" }}>
-            {((21 + 18 + 13) / size).toFixed(1)}
-          </b>
-          , mantendo a liderança do portfólio.
-        </p>
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {loading && (
+          <p style={{ margin: 0, fontSize: 13, color: "var(--ink-muted)" }}>
+            Carregando componentes WSJF da feature...
+          </p>
+        )}
+
+        {!loading && error && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              color: "var(--red-text)",
+              lineHeight: 1.5,
+            }}
+          >
+            Não foi possível carregar os dados para simulação: {error}
+          </p>
+        )}
+
+        {!(loading || error) && weights && (
+          <>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 14,
+              }}
+            >
+              <ScenarioComponentSlider
+                label="Business Value"
+                onChange={setBv}
+                value={bv}
+              />
+              <ScenarioComponentSlider
+                label="Time Criticality"
+                onChange={setTc}
+                value={tc}
+              />
+              <ScenarioComponentSlider
+                label="Risk Reduction"
+                onChange={setRr}
+                value={rr}
+              />
+              <ScenarioComponentSlider
+                label="Job Size"
+                onChange={setJs}
+                value={js}
+              />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "12px 14px",
+                borderRadius: "var(--r-md)",
+                border: "1px solid var(--hairline)",
+                background: "var(--surface-2)",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    letterSpacing: ".04em",
+                    textTransform: "uppercase",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  WSJF simulado
+                </div>
+                <div
+                  className="mono"
+                  style={{
+                    fontSize: 22,
+                    fontWeight: 800,
+                    color: "var(--accent-text)",
+                  }}
+                >
+                  {liveScore?.toFixed(2)}
+                </div>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <div
+                  style={{
+                    fontSize: 10.5,
+                    fontWeight: 700,
+                    letterSpacing: ".04em",
+                    textTransform: "uppercase",
+                    color: "var(--ink-faint)",
+                  }}
+                >
+                  Score atual · Δ
+                </div>
+                <div style={{ fontSize: 13 }}>
+                  <span className="mono" style={{ color: "var(--ink-muted)" }}>
+                    {storedScore?.toFixed(2)}
+                  </span>{" "}
+                  <span
+                    className="mono"
+                    style={{
+                      fontWeight: 700,
+                      color:
+                        delta !== null && delta > 0
+                          ? "var(--green-text)"
+                          : delta !== null && delta < 0
+                            ? "var(--red-text)"
+                            : "var(--ink-muted)",
+                    }}
+                  >
+                    {delta !== null && delta > 0 ? "+" : ""}
+                    {delta?.toFixed(2)}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <p
+              style={{
+                margin: 0,
+                fontSize: 11.5,
+                color: "var(--ink-faint)",
+                lineHeight: 1.5,
+              }}
+            >
+              Simulação — nada é salvo. Pesos aplicados: BV ×
+              {weights.weightBv.toFixed(1)}, TC ×{weights.weightTc.toFixed(1)},
+              RR ×{weights.weightRr.toFixed(1)} (Configurações de WSJF do
+              tenant). Fechar descarta as alterações.
+            </p>
+          </>
+        )}
+
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button onClick={close} size="sm" variant="secondary">
             Fechar
@@ -647,13 +884,6 @@ function WsjfBody({
         title="WSJF Rankings"
       >
         <Button
-          icon="flask"
-          onClick={() => modal.open(<ScenarioSimulatorModal />)}
-          variant="secondary"
-        >
-          Simulador
-        </Button>
-        <Button
           icon="sliders"
           onClick={() =>
             modal.open(
@@ -730,6 +960,7 @@ function WsjfBody({
             WSJF
           </HeadCell>
           <HeadCell center>Δ IA</HeadCell>
+          <HeadCell center> </HeadCell>
         </div>
         <div
           style={{

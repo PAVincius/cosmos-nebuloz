@@ -8,6 +8,9 @@ const h = vi.hoisted(() => ({
   revalidateTag: vi.fn(),
   epicFindMany: vi.fn(),
   featureFindMany: vi.fn(),
+  featureFindFirst: vi.fn(),
+  featureUpdate: vi.fn(),
+  transaction: vi.fn(),
   wsjfSettingsFindUnique: vi.fn(),
   wsjfSettingsUpsert: vi.fn(),
   logAudit: vi.fn(),
@@ -23,17 +26,23 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     epic: { findMany: h.epicFindMany },
-    feature: { findMany: h.featureFindMany },
+    feature: {
+      findMany: h.featureFindMany,
+      findFirst: h.featureFindFirst,
+      update: h.featureUpdate,
+    },
     wsjfSettings: {
       findUnique: h.wsjfSettingsFindUnique,
       upsert: h.wsjfSettingsUpsert,
     },
+    $transaction: h.transaction,
   },
 }));
 vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  getFeatureWsjfComponents,
   getWsjfSettings,
   listWsjfItems,
   upsertWsjfSettings,
@@ -191,5 +200,75 @@ describe("upsertWsjfSettings", () => {
 
     expect(res.ok).toBe(false);
     expect(h.wsjfSettingsUpsert).not.toHaveBeenCalled();
+  });
+});
+
+// ─── getFeatureWsjfComponents (Task 18: ScenarioSimulatorModal) ───────────────
+
+describe("getFeatureWsjfComponents", () => {
+  it("returns the feature's real bv/tc/rr/js/wsjfScore, tenant-scoped", async () => {
+    h.featureFindFirst.mockResolvedValue({
+      id: "f1",
+      title: "Feature B",
+      bv: 8,
+      tc: 5,
+      rr: 3,
+      js: 5,
+      wsjfScore: 3.2,
+    });
+
+    const res = await getFeatureWsjfComponents("f1");
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data).toEqual({
+        id: "f1",
+        title: "Feature B",
+        bv: 8,
+        tc: 5,
+        rr: 3,
+        js: 5,
+        wsjfScore: 3.2,
+      });
+    }
+    expect(h.featureFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "f1", tenantId: tenantCtx.tenantId },
+      })
+    );
+  });
+
+  it("is tenant-scoped: a feature from another tenant is not found and errors (IDOR guard)", async () => {
+    // Prisma's findFirst with a tenantId filter simply returns null when the
+    // row belongs to a different tenant — it never leaks cross-tenant rows.
+    h.featureFindFirst.mockResolvedValue(null);
+
+    const res = await getFeatureWsjfComponents("f-other-tenant");
+
+    expect(res.ok).toBe(false);
+    expect(h.featureFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "f-other-tenant", tenantId: tenantCtx.tenantId },
+      })
+    );
+  });
+
+  it("performs NO write: never calls update, $transaction, or logAudit", async () => {
+    h.featureFindFirst.mockResolvedValue({
+      id: "f1",
+      title: "Feature B",
+      bv: 8,
+      tc: 5,
+      rr: 3,
+      js: 5,
+      wsjfScore: 3.2,
+    });
+
+    await getFeatureWsjfComponents("f1");
+
+    expect(h.featureUpdate).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+    expect(h.revalidateTag).not.toHaveBeenCalled();
   });
 });
