@@ -10,7 +10,14 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 
-export const EntityKind = z.enum(["epic", "feature", "team", "theme", "art"]);
+export const EntityKind = z.enum([
+  "epic",
+  "feature",
+  "team",
+  "theme",
+  "art",
+  "solutionTrain",
+]);
 export type EntityKind = z.infer<typeof EntityKind>;
 
 export type EntityOption = { id: string; label: string };
@@ -64,6 +71,14 @@ export async function searchEntities(
       }
       case "art": {
         const rows = await database.aRT.findMany({
+          where: { tenantId: ctx.tenantId, name: contains },
+          take: 10,
+          select: { id: true, name: true },
+        });
+        return rows.map((r) => ({ id: r.id, label: r.name }));
+      }
+      case "solutionTrain": {
+        const rows = await database.solutionTrain.findMany({
           where: { tenantId: ctx.tenantId, name: contains },
           take: 10,
           select: { id: true, name: true },
