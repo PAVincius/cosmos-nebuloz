@@ -30,6 +30,7 @@ import {
   useNav,
   useThemeName,
 } from "../kit";
+import { useActionToast } from "../use-action-toast";
 
 // ── board columns (real SAFe lifecycle → 5 columns) ──
 type BoardColumnDef = {
@@ -191,7 +192,12 @@ function NewEpicModal({
     }
     setSaving(true);
     const payload = { title: title.trim(), column: col ?? "funnel" };
-    const res = await createEpic(payload);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => createEpic(payload), {
+      loading: "Criando épico...",
+      success: "Épico criado.",
+      error: (err: string) => `Não foi possível criar o épico: ${err}`,
+    });
     setSaving(false);
     close();
     if (res.ok) {
@@ -1062,7 +1068,12 @@ export default function KanbanScreen() {
     const order = epics.filter((e) => e.column === column).length;
     // optimistic
     setEpics((prev) => prev.map((e) => (e.id === id ? { ...e, column } : e)));
-    const res = await moveEpic({ id, column, order });
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => moveEpic({ id, column, order }), {
+      loading: "Movendo épico...",
+      success: "Épico movido.",
+      error: (err: string) => `Não foi possível mover o épico: ${err}`,
+    });
     if (!res.ok) {
       setEpics((prev) =>
         prev.map((e) => (e.id === id ? { ...e, column: prevColumn } : e))
