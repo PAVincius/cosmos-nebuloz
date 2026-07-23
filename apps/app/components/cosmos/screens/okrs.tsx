@@ -1,13 +1,145 @@
 "use client";
 
 // okrs.tsx — OKRs do portfólio (objetivos + key results), wired to listOkrs().
+// UpdateProgressModal reuses the existing createKeyResultCheckIn action
+// (story check-in flow) to register a KR progress update from this screen.
 
-import { useEffect, useState } from "react";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
+import { createKeyResultCheckIn } from "@/app/actions/okrs";
 import type { Tone } from "@/lib/cosmos-data";
 import { CardHeaderGlow, IconBadge } from "../card-header-glow";
 import { Icon } from "../icons";
-import { Avatar, Badge, Button, KpiCard, PageHeader, Progress } from "../kit";
+import {
+  Avatar,
+  Badge,
+  Button,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  Progress,
+} from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
+
+type KeyResultView = OkrView["keyResults"][number];
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+const inputStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+// UpdateProgressModal — manual KR check-in form. AI cross-referencing
+// against epic/feature progress (mentioned in the handoff) is a deferred
+// enhancement; this is the manual-entry path only.
+function UpdateProgressModal({
+  kr,
+  onUpdated,
+}: {
+  kr: KeyResultView;
+  onUpdated?: () => void;
+}) {
+  const { close } = useModal();
+  const [value, setValue] = useState(String(kr.current));
+  const [note, setNote] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const parsed = Number(value);
+  const valid = value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0;
+
+  const submit = async () => {
+    if (!(valid && !saving)) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createKeyResultCheckIn({
+          keyResultId: kr.id,
+          note: note.trim() || undefined,
+          value: parsed,
+        }),
+      {
+        error: (err: string) =>
+          `Não foi possível atualizar o progresso: ${err}`,
+        loading: "Registrando check-in...",
+        success: "Progresso atualizado.",
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onUpdated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="gauge" size={16} strokeWidth={2.4} />}
+      subtitle={kr.title}
+      title="Atualizar progresso"
+      width={420}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="kr-checkin-value" style={fieldLabelStyle}>
+            Novo valor ({kr.unit}) — alvo {kr.target}
+            {kr.unit}
+          </label>
+          <input
+            id="kr-checkin-value"
+            min={0}
+            onChange={(e) => setValue(e.target.value)}
+            style={inputStyle}
+            type="number"
+            value={value}
+          />
+        </div>
+        <div>
+          <label htmlFor="kr-checkin-note" style={fieldLabelStyle}>
+            Nota (opcional)
+          </label>
+          <textarea
+            id="kr-checkin-note"
+            maxLength={500}
+            onChange={(e) => setNote(e.target.value)}
+            placeholder="Contexto do check-in…"
+            rows={3}
+            style={{ ...inputStyle, resize: "vertical" }}
+            value={note}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={submit} size="sm" variant="primary">
+            Salvar check-in
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
 
 const STATUS_TONE: Record<string, Tone> = {
   ON_TRACK: "green",
@@ -26,7 +158,14 @@ function krStatus(v: number): { tone: Tone; label: string } {
   return { tone: "red", label: "Atrasado" };
 }
 
-function ObjectiveCard({ o }: { o: OkrView }) {
+function ObjectiveCard({
+  o,
+  onUpdated,
+}: {
+  o: OkrView;
+  onUpdated: () => void;
+}) {
+  const modal = useModal();
   const tone = STATUS_TONE[o.status] ?? "neutral";
   const avg = o.keyResults.length
     ? Math.round(
@@ -193,6 +332,16 @@ function ObjectiveCard({ o }: { o: OkrView }) {
                 >
                   {k.progressPct}%
                 </span>
+                <IconButton
+                  name="gauge"
+                  onClick={() =>
+                    modal.open(
+                      <UpdateProgressModal kr={k} onUpdated={onUpdated} />
+                    )
+                  }
+                  size={26}
+                  title="Atualizar progresso"
+                />
               </div>
             </div>
           );
@@ -202,11 +351,11 @@ function ObjectiveCard({ o }: { o: OkrView }) {
   );
 }
 
-export default function OkrsScreen() {
+function OkrsBody() {
   const [okrs, setOkrs] = useState<OkrView[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     listOkrs().then((r) => {
       if (r.ok) {
         setOkrs(r.data);
@@ -214,6 +363,10 @@ export default function OkrsScreen() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const allKrs = okrs.flatMap((o) => o.keyResults);
   const avgAll = allKrs.length
@@ -303,9 +456,17 @@ export default function OkrsScreen() {
           />
         )}
         {okrs.map((o) => (
-          <ObjectiveCard key={o.id} o={o} />
+          <ObjectiveCard key={o.id} o={o} onUpdated={load} />
         ))}
       </div>
     </div>
+  );
+}
+
+export default function OkrsScreen() {
+  return (
+    <ModalProvider>
+      <OkrsBody />
+    </ModalProvider>
   );
 }
