@@ -189,4 +189,103 @@ describe("createEpic", () => {
       })
     );
   });
+
+  it("title-only create leaves hypothesis and wsjf null (regression guard)", async () => {
+    h.epicCreate.mockResolvedValue({ id: "new-ep" });
+    const res = await createEpic({ title: "Só título", column: "funnel" });
+    expect(res.ok).toBe(true);
+    expect(h.epicCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          title: "Só título",
+          hypothesis: null,
+          wsjf: null,
+        }),
+      })
+    );
+  });
+
+  it("persists hypothesis and the server-computed, correctly-rounded wsjf", async () => {
+    h.epicCreate.mockResolvedValue({ id: "new-ep" });
+    const res = await createEpic({
+      title: "Com WSJF",
+      column: "funnel",
+      hypothesis: "Se fizermos X, esperamos Y.",
+      bv: 8,
+      tc: 5,
+      rr: 3,
+      js: 3,
+    });
+    expect(res.ok).toBe(true);
+    // (8+5+3)/3 = 5.333... → Math.round(x*100)/100 = 5.33
+    expect(h.epicCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          hypothesis: "Se fizermos X, esperamos Y.",
+          wsjf: 5.33,
+        }),
+      })
+    );
+  });
+
+  it("ignores a client-supplied score field — wsjf always comes from the server computation", async () => {
+    h.epicCreate.mockResolvedValue({ id: "new-ep" });
+    const res = await createEpic({
+      title: "Score forjado",
+      column: "funnel",
+      bv: 1,
+      tc: 1,
+      rr: 1,
+      js: 1,
+      wsjf: 999,
+    } as Parameters<typeof createEpic>[0] & { wsjf: number });
+    expect(res.ok).toBe(true);
+    expect(h.epicCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ wsjf: 3 }), // (1+1+1)/1 = 3, never 999
+      })
+    );
+  });
+
+  it("leaves wsjf null when only some of bv/tc/rr/js are provided (no partial score)", async () => {
+    h.epicCreate.mockResolvedValue({ id: "new-ep" });
+    const res = await createEpic({
+      title: "Parcial",
+      column: "funnel",
+      bv: 8,
+      tc: 5,
+    });
+    expect(res.ok).toBe(true);
+    expect(h.epicCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ wsjf: null }),
+      })
+    );
+  });
+
+  it("rejects out-of-range bv (>10)", async () => {
+    const res = await createEpic({
+      title: "BV inválido",
+      column: "funnel",
+      bv: 11,
+      tc: 5,
+      rr: 5,
+      js: 5,
+    });
+    expect(res.ok).toBe(false);
+    expect(h.epicCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects out-of-range js (0 — job size is a divisor, min is 1)", async () => {
+    const res = await createEpic({
+      title: "JS inválido",
+      column: "funnel",
+      bv: 5,
+      tc: 5,
+      rr: 5,
+      js: 0,
+    });
+    expect(res.ok).toBe(false);
+    expect(h.epicCreate).not.toHaveBeenCalled();
+  });
 });

@@ -15,12 +15,14 @@ import {
 // authenticated. Filter popover, drag affordance, NewEpic modal + Copilot bar
 // are self-contained.
 import { createPortal } from "react-dom";
+import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import {
   createEpic,
   type KanbanEpic,
   listEpics,
   moveEpic,
 } from "@/app/(cosmos)/actions/kanban";
+import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
 import {
   Button,
@@ -175,6 +177,57 @@ function ModalHost({
   );
 }
 
+// Parses a WSJF slider's raw text value into a finite number, or undefined
+// when the field is untouched/blank — an untouched field must never be
+// coerced into 0 and sent to the server.
+function parseWsjfField(raw: string): number | undefined {
+  if (raw.trim() === "") {
+    return;
+  }
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : undefined;
+}
+
+// Same formula + rounding as computeEpicWsjf in
+// app/(cosmos)/actions/kanban.ts, so the live preview always matches what
+// gets persisted. Unweighted — see that file for the Task 16 divergence note.
+function computeLiveWsjf(
+  bv?: number,
+  tc?: number,
+  rr?: number,
+  js?: number
+): number | null {
+  if (
+    bv === undefined ||
+    tc === undefined ||
+    rr === undefined ||
+    js === undefined ||
+    js <= 0
+  ) {
+    return null;
+  }
+  return Math.round(((bv + tc + rr) / js) * 100) / 100;
+}
+
+const fieldLabelStyle: CSSProperties = {
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+};
+const fieldInputStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: 10,
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
 function NewEpicModal({
   col,
   onCreated,
@@ -184,14 +237,35 @@ function NewEpicModal({
 }) {
   const { close } = useModal();
   const [title, setTitle] = useState("");
+  const [hypothesis, setHypothesis] = useState("");
+  const [bv, setBv] = useState("");
+  const [tc, setTc] = useState("");
+  const [rr, setRr] = useState("");
+  const [js, setJs] = useState("");
+  const [theme, setTheme] = useState<EntityOption | null>(null);
   const [saving, setSaving] = useState(false);
   const colDef = BOARD_COLUMNS.find((c) => c.id === col);
+  const liveWsjf = computeLiveWsjf(
+    parseWsjfField(bv),
+    parseWsjfField(tc),
+    parseWsjfField(rr),
+    parseWsjfField(js)
+  );
   const create = async () => {
     if (!title.trim() || saving) {
       return;
     }
     setSaving(true);
-    const payload = { title: title.trim(), column: col ?? "funnel" };
+    const payload: Parameters<typeof createEpic>[0] = {
+      title: title.trim(),
+      column: col ?? "funnel",
+      ...(hypothesis.trim() ? { hypothesis: hypothesis.trim() } : {}),
+      ...(theme ? { strategicThemeId: theme.id } : {}),
+      ...(parseWsjfField(bv) !== undefined ? { bv: parseWsjfField(bv) } : {}),
+      ...(parseWsjfField(tc) !== undefined ? { tc: parseWsjfField(tc) } : {}),
+      ...(parseWsjfField(rr) !== undefined ? { rr: parseWsjfField(rr) } : {}),
+      ...(parseWsjfField(js) !== undefined ? { js: parseWsjfField(js) } : {}),
+    };
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(() => createEpic(payload), {
       loading: "Criando épico...",
@@ -309,6 +383,126 @@ function NewEpicModal({
           }}
           value={title}
         />
+
+        <label htmlFor="new-epic-hypothesis" style={fieldLabelStyle}>
+          Hipótese de negócio
+        </label>
+        <textarea
+          id="new-epic-hypothesis"
+          maxLength={2000}
+          onChange={(e) => setHypothesis(e.target.value)}
+          placeholder="Acreditamos que… resultará em… medido por…"
+          rows={3}
+          style={{
+            ...fieldInputStyle,
+            resize: "vertical",
+            fontFamily: "inherit",
+          }}
+          value={hypothesis}
+        />
+
+        <EntityLinkField
+          kind="theme"
+          label="Tema estratégico"
+          onChange={setTheme}
+          value={theme}
+        />
+
+        <div>
+          <span style={fieldLabelStyle}>WSJF (opcional)</span>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr 1fr",
+              gap: 8,
+              marginTop: 6,
+            }}
+          >
+            <div>
+              <label htmlFor="new-epic-bv" style={fieldLabelStyle}>
+                BV
+              </label>
+              <input
+                id="new-epic-bv"
+                max={10}
+                min={0}
+                onChange={(e) => setBv(e.target.value)}
+                style={{ ...fieldInputStyle, marginTop: 4 }}
+                type="number"
+                value={bv}
+              />
+            </div>
+            <div>
+              <label htmlFor="new-epic-tc" style={fieldLabelStyle}>
+                TC
+              </label>
+              <input
+                id="new-epic-tc"
+                max={10}
+                min={0}
+                onChange={(e) => setTc(e.target.value)}
+                style={{ ...fieldInputStyle, marginTop: 4 }}
+                type="number"
+                value={tc}
+              />
+            </div>
+            <div>
+              <label htmlFor="new-epic-rr" style={fieldLabelStyle}>
+                RR
+              </label>
+              <input
+                id="new-epic-rr"
+                max={10}
+                min={0}
+                onChange={(e) => setRr(e.target.value)}
+                style={{ ...fieldInputStyle, marginTop: 4 }}
+                type="number"
+                value={rr}
+              />
+            </div>
+            <div>
+              <label htmlFor="new-epic-js" style={fieldLabelStyle}>
+                JS
+              </label>
+              <input
+                id="new-epic-js"
+                max={10}
+                min={1}
+                onChange={(e) => setJs(e.target.value)}
+                style={{ ...fieldInputStyle, marginTop: 4 }}
+                type="number"
+                value={js}
+              />
+            </div>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginTop: 8,
+              padding: "8px 12px",
+              borderRadius: 10,
+              background: "var(--accent-soft)",
+              border: "1px solid rgba(var(--accent-rgb),.25)",
+            }}
+          >
+            <span style={{ fontSize: 12.5, color: "var(--ink-muted)" }}>
+              Score WSJF
+            </span>
+            <span
+              className="mono"
+              style={{
+                fontSize: 14,
+                fontWeight: 700,
+                color: "var(--accent-text)",
+              }}
+            >
+              {liveWsjf === null ? "—" : liveWsjf.toFixed(2)}
+            </span>
+          </div>
+        </div>
+
         <div
           style={{
             display: "flex",

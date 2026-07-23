@@ -150,7 +150,37 @@ const CreateEpicSchema = z.object({
     .enum(["funnel", "analyzing", "backlog", "implementing", "done"])
     .default("funnel"),
   strategicThemeId: z.string().optional(),
+  hypothesis: z.string().max(2000).optional(),
+  // WSJF quick-create inputs — component scores, not a rollup. `js` is a
+  // divisor and must never be 0. No `score`/`wsjf` key: the value the client
+  // sees is always recomputed here, never trusted from the request.
+  bv: z.number().min(0).max(10).optional(),
+  tc: z.number().min(0).max(10).optional(),
+  rr: z.number().min(0).max(10).optional(),
+  js: z.number().min(1).max(10).optional(),
 });
+
+// Unweighted (bv+tc+rr)/js, matching Epic.wsjf's existing rollup semantics —
+// see commit body for the divergence from Task 16's tenant-weighted Feature
+// scoring in app/actions/wsjf/score.ts. Only computed when all four inputs
+// are present; a partial set of sliders must never produce a partial score.
+function computeEpicWsjf(input: {
+  bv?: number;
+  tc?: number;
+  rr?: number;
+  js?: number;
+}): number | null {
+  const { bv, tc, rr, js } = input;
+  if (
+    bv === undefined ||
+    tc === undefined ||
+    rr === undefined ||
+    js === undefined
+  ) {
+    return null;
+  }
+  return Math.round(((bv + tc + rr) / js) * 100) / 100;
+}
 
 export async function createEpic(
   input: z.infer<typeof CreateEpicSchema>
@@ -158,7 +188,8 @@ export async function createEpic(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "RTE", "PO"], ctx);
-    const { title, column, strategicThemeId } = CreateEpicSchema.parse(input);
+    const { title, column, strategicThemeId, hypothesis, bv, tc, rr, js } =
+      CreateEpicSchema.parse(input);
 
     // Cross-tenant IDOR guard — a client-supplied FK must belong to this tenant.
     if (strategicThemeId) {
@@ -171,12 +202,16 @@ export async function createEpic(
       }
     }
 
+    const wsjf = computeEpicWsjf({ bv, tc, rr, js });
+
     const created = await database.epic.create({
       data: {
         tenantId: ctx.tenantId,
         title,
         lifecycleStatus: COLUMN_TO_LIFECYCLE[column],
         strategicThemeId: strategicThemeId ?? null,
+        hypothesis: hypothesis ?? null,
+        wsjf,
       },
       select: { id: true },
     });
@@ -186,7 +221,11 @@ export async function createEpic(
       action: "created",
       entityType: "epic",
       entityId: created.id,
-      diff: { title, lifecycleStatus: COLUMN_TO_LIFECYCLE[column] },
+      diff: {
+        title,
+        lifecycleStatus: COLUMN_TO_LIFECYCLE[column],
+        ...(wsjf !== null ? { wsjf: String(wsjf) } : {}),
+      },
     });
     revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
     return { id: created.id };
