@@ -90,6 +90,7 @@
   --purple-text: #6d28d9;
   --accent-soft: rgba(var(--accent-rgb), 0.1);
   --accent-text: #4b54b8;
+  --scrim: rgba(4, 6, 14, 0.6);
 }
 
 /* ===================== DARK — the tecno-UI pegada ===================== */
@@ -137,6 +138,7 @@
   --purple-text: #ddd6fe;
   --accent-soft: rgba(var(--accent-rgb), 0.14);
   --accent-text: #c7ccff;
+  --scrim: rgba(4, 6, 14, 0.6);
 }
 
 /* scrollbars */

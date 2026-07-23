@@ -76,7 +76,7 @@ export function CommandPalette() {
         position: "fixed",
         inset: 0,
         zIndex: 500,
-        background: "rgba(4,6,14,.6)",
+        background: "var(--scrim)",
         backdropFilter: "blur(6px)",
         display: "flex",
         alignItems: "flex-start",
