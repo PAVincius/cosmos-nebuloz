@@ -101,3 +101,80 @@ export async function createTheme(
     return { id: created.id };
   });
 }
+
+const RebalanceTargetSchema = z.object({
+  themeId: z.string().min(1),
+  targetAllocationPct: z.number().finite().min(0).max(100),
+});
+
+const RebalanceThemeTargetsSchema = z
+  .object({
+    targets: z.array(RebalanceTargetSchema).min(1),
+  })
+  .refine(
+    (v) => new Set(v.targets.map((t) => t.themeId)).size === v.targets.length,
+    {
+      message: "IDs de tema duplicados na requisição.",
+      path: ["targets"],
+    }
+  )
+  .refine(
+    (v) =>
+      Math.abs(
+        v.targets.reduce((sum, t) => sum + t.targetAllocationPct, 0) - 100
+      ) < 0.01,
+    {
+      message: "A soma das alocações deve ser 100%.",
+      path: ["targets"],
+    }
+  );
+
+export async function rebalanceThemeTargets(
+  input: z.input<typeof RebalanceThemeTargetsSchema>
+): Promise<Result<{ count: number }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { targets } = RebalanceThemeTargetsSchema.parse(input);
+    const themeIds = targets.map((t) => t.themeId);
+
+    // IDOR guard — every themeId must belong to this tenant. Never update by
+    // id alone: fetch by id+tenantId and assert the count matches.
+    const owned = await database.strategicTheme.findMany({
+      where: { id: { in: themeIds }, tenantId: ctx.tenantId },
+      select: { id: true, targetAllocationPct: true },
+    });
+    if (owned.length !== themeIds.length) {
+      throw new Error("Um ou mais temas não pertencem a este tenant.");
+    }
+
+    const before = new Map(owned.map((t) => [t.id, t.targetAllocationPct]));
+
+    // Atomic batch — a partial rebalance must never persist. updateMany can't
+    // set different values per row, so this is an array of updates inside a
+    // single $transaction.
+    await database.$transaction(
+      targets.map((t) =>
+        database.strategicTheme.update({
+          where: { id: t.themeId },
+          data: { targetAllocationPct: t.targetAllocationPct },
+        })
+      )
+    );
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "theme",
+      entityId: themeIds.join(","),
+      diff: Object.fromEntries(
+        targets.map((t) => [
+          t.themeId,
+          `${before.get(t.themeId) ?? 0}→${t.targetAllocationPct}`,
+        ])
+      ),
+    });
+    revalidateTag(`themes:${ctx.tenantId}`, "max");
+    return { count: targets.length };
+  });
+}

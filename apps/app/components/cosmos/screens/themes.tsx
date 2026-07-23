@@ -6,6 +6,7 @@ import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   createTheme,
   listThemes,
+  rebalanceThemeTargets,
   type ThemeView,
 } from "@/app/(cosmos)/actions/themes";
 import {
@@ -194,6 +195,128 @@ function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
   );
 }
 
+function RebalanceTargetsModal({
+  themes,
+  onSaved,
+}: {
+  themes: ThemeView[];
+  onSaved?: () => void;
+}) {
+  const { close } = useModal();
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      themes.map((t) => [t.id, String(t.targetAllocationPct ?? 0)])
+    )
+  );
+  const [saving, setSaving] = useState(false);
+
+  const total = themes.reduce(
+    (sum, t) => sum + (Number.parseFloat(values[t.id]) || 0),
+    0
+  );
+  const sumValid = Math.abs(total - 100) < 0.01;
+
+  const save = async () => {
+    if (!sumValid || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        rebalanceThemeTargets({
+          targets: themes.map((t) => ({
+            themeId: t.id,
+            targetAllocationPct: Number.parseFloat(values[t.id]) || 0,
+          })),
+        }),
+      {
+        loading: "Rebalanceando alocação...",
+        success: "Alocação rebalanceada.",
+        error: (err: string) => `Não foi possível rebalancear: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onSaved?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      subtitle="Ajustar a alocação-alvo (%) de cada tema — a soma deve fechar em 100%"
+      title="Rebalancear alocação"
+      width={460}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {themes.map((t) => (
+          <div
+            key={t.id}
+            style={{ display: "flex", alignItems: "center", gap: 12 }}
+          >
+            <span
+              style={{
+                flex: 1,
+                fontSize: 13.5,
+                color: "var(--ink)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {t.title}
+            </span>
+            <input
+              max={100}
+              min={0}
+              onChange={(e) =>
+                setValues((prev) => ({ ...prev, [t.id]: e.target.value }))
+              }
+              style={{ ...selectStyle, width: 90 }}
+              type="number"
+              value={values[t.id]}
+            />
+          </div>
+        ))}
+
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: 12.5,
+            fontWeight: 700,
+            color: sumValid ? "var(--green-text)" : "var(--red-text)",
+          }}
+        >
+          <span>Total</span>
+          <span className="mono">
+            {total.toFixed(2)}% {sumValid ? "" : "— deve somar 100%"}
+          </span>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button
+            onClick={save}
+            size="sm"
+            style={
+              sumValid && !saving
+                ? undefined
+                : { opacity: 0.5, cursor: "not-allowed" }
+            }
+            variant="primary"
+          >
+            Salvar rebalanceamento
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
 function ThemesBody() {
   const modal = useModal();
   const [themes, setThemes] = useState<ThemeView[]>([]);
@@ -221,6 +344,16 @@ function ThemesBody() {
         subtitle="Alocação de investimento por tema, alinhada à estratégia de portfólio."
         title="Temas Estratégicos"
       >
+        <Button
+          icon="scale"
+          onClick={() =>
+            modal.open(<RebalanceTargetsModal onSaved={load} themes={themes} />)
+          }
+          size="md"
+          variant="secondary"
+        >
+          Rebalancear alocação
+        </Button>
         <Button
           icon="plus"
           onClick={() => modal.open(<NewThemeModal onCreated={load} />)}

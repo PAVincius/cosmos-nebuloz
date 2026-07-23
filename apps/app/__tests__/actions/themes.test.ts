@@ -8,6 +8,8 @@ const h = vi.hoisted(() => ({
   revalidateTag: vi.fn(),
   strategicThemeFindMany: vi.fn(),
   strategicThemeCreate: vi.fn(),
+  strategicThemeUpdate: vi.fn(),
+  transaction: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -23,13 +25,19 @@ vi.mock("@repo/database", () => ({
     strategicTheme: {
       findMany: h.strategicThemeFindMany,
       create: h.strategicThemeCreate,
+      update: h.strategicThemeUpdate,
     },
+    $transaction: h.transaction,
   },
 }));
 vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
-import { createTheme, listThemes } from "../../app/(cosmos)/actions/themes";
+import {
+  createTheme,
+  listThemes,
+  rebalanceThemeTargets,
+} from "../../app/(cosmos)/actions/themes";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -132,5 +140,129 @@ describe("createTheme", () => {
         }),
       })
     );
+  });
+});
+
+describe("rebalanceThemeTargets", () => {
+  const validInput = {
+    targets: [
+      { themeId: "th1", targetAllocationPct: 60 },
+      { themeId: "th2", targetAllocationPct: 40 },
+    ],
+  };
+
+  beforeEach(() => {
+    h.transaction.mockImplementation((ops: unknown[]) => Promise.all(ops));
+    h.strategicThemeUpdate.mockResolvedValue({});
+  });
+
+  it("is denied when the role is not permitted (RBAC)", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await rebalanceThemeTargets(validInput);
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "STE"], tenantCtx);
+    expect(h.strategicThemeFindMany).not.toHaveBeenCalled();
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects a themeId that does not belong to this tenant, and runs no update", async () => {
+    // Only th1 is owned by this tenant — th2 belongs to another tenant.
+    h.strategicThemeFindMany.mockResolvedValue([
+      { id: "th1", targetAllocationPct: 60 },
+    ]);
+
+    const res = await rebalanceThemeTargets(validInput);
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+    expect(h.revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("rejects when the allocations do not sum to 100", async () => {
+    const res = await rebalanceThemeTargets({
+      targets: [
+        { themeId: "th1", targetAllocationPct: 60 },
+        { themeId: "th2", targetAllocationPct: 30 },
+      ],
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindMany).not.toHaveBeenCalled();
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+  });
+
+  it("rejects duplicate themeIds even if the sum is 100", async () => {
+    const res = await rebalanceThemeTargets({
+      targets: [
+        { themeId: "th1", targetAllocationPct: 60 },
+        { themeId: "th1", targetAllocationPct: 40 },
+      ],
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindMany).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+  });
+
+  it("accepts a sum within float tolerance (99.995 ~ 100)", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      { id: "th1", targetAllocationPct: 60 },
+      { id: "th2", targetAllocationPct: 40 },
+    ]);
+
+    const res = await rebalanceThemeTargets({
+      targets: [
+        { themeId: "th1", targetAllocationPct: 60.003 },
+        { themeId: "th2", targetAllocationPct: 39.995 },
+      ],
+    });
+
+    expect(res.ok).toBe(true);
+  });
+
+  it("updates every theme in a single transaction, audits once, and revalidates on success", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      { id: "th1", targetAllocationPct: 60 },
+      { id: "th2", targetAllocationPct: 40 },
+    ]);
+
+    const res = await rebalanceThemeTargets(validInput);
+
+    expect(res.ok).toBe(true);
+    expect(h.strategicThemeFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: { in: ["th1", "th2"] },
+          tenantId: tenantCtx.tenantId,
+        },
+      })
+    );
+    expect(h.strategicThemeUpdate).toHaveBeenCalledTimes(2);
+    expect(h.strategicThemeUpdate).toHaveBeenCalledWith({
+      where: { id: "th1" },
+      data: { targetAllocationPct: 60 },
+    });
+    expect(h.strategicThemeUpdate).toHaveBeenCalledWith({
+      where: { id: "th2" },
+      data: { targetAllocationPct: 40 },
+    });
+    expect(h.transaction).toHaveBeenCalledTimes(1);
+    expect(h.transaction.mock.calls[0][0]).toHaveLength(2);
+    expect(h.logAudit).toHaveBeenCalledTimes(1);
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        entityType: "theme",
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalledTimes(1);
   });
 });
