@@ -2,12 +2,18 @@
 
 // dependencies.tsx — Dependências, wired to listDependencies(). Lists real
 // DependencyLink rows (blocking → blocked feature) with status + critical-path flag.
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  createDependency,
   type DependencyView,
   listDependencies,
 } from "@/app/(cosmos)/actions/dependencies";
-import { Badge, ErrorState, PageHeader, SectionCard } from "../kit";
+import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { EntityLinkField } from "../entity-link-field";
+import { Icon } from "../icons";
+import { Badge, Button, ErrorState, PageHeader, SectionCard } from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   "not-started": "neutral",
@@ -17,12 +23,118 @@ const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   completed: "green",
 };
 
-export default function DependenciesScreen() {
+function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
+  const { close } = useModal();
+  const [blocking, setBlocking] = useState<EntityOption | null>(null);
+  const [blocked, setBlocked] = useState<EntityOption | null>(null);
+  const [description, setDescription] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    if (!(blocking && blocked) || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createDependency({
+          blockingFeatureId: blocking.id,
+          blockedFeatureId: blocked.id,
+          description: description.trim() || undefined,
+        }),
+      {
+        loading: "Registrando dependência...",
+        success: "Dependência registrada.",
+        error: (err: string) =>
+          `Não foi possível registrar a dependência: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onCreated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
+      subtitle="Vincular uma feature bloqueadora a uma feature bloqueada"
+      title="Nova dependência"
+      width={480}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <EntityLinkField
+          kind="feature"
+          label="Feature bloqueadora"
+          onChange={setBlocking}
+          value={blocking}
+        />
+        <EntityLinkField
+          kind="feature"
+          label="Feature bloqueada"
+          onChange={setBlocked}
+          value={blocked}
+        />
+
+        <div>
+          <label
+            htmlFor="dependency-description"
+            style={{
+              display: "block",
+              fontSize: 11.5,
+              fontWeight: 700,
+              letterSpacing: ".04em",
+              textTransform: "uppercase",
+              color: "var(--ink-faint)",
+              marginBottom: 6,
+            }}
+          >
+            Descrição
+          </label>
+          <textarea
+            id="dependency-description"
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Contexto da dependência…"
+            rows={3}
+            style={{
+              width: "100%",
+              padding: "10px 12px",
+              fontSize: 14,
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--hairline-strong)",
+              background: "var(--surface)",
+              color: "var(--ink)",
+              fontFamily: "inherit",
+              outline: "none",
+              resize: "vertical",
+            }}
+            value={description}
+          />
+        </div>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Registrar dependência
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function DependenciesBody() {
+  const modal = useModal();
   const [deps, setDeps] = useState<DependencyView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     listDependencies().then((r) => {
       if (r.ok) {
         setDeps(r.data);
@@ -33,6 +145,10 @@ export default function DependenciesScreen() {
     });
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [load]);
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -40,7 +156,16 @@ export default function DependenciesScreen() {
         meta={<Badge tone="accent">{deps.length} dependências</Badge>}
         subtitle="Vínculos entre features de times diferentes, com status e caminho crítico."
         title="Dependências"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewDependencyModal onCreated={load} />)}
+          size="md"
+          variant="primary"
+        >
+          Nova dependência
+        </Button>
+      </PageHeader>
       {error && <ErrorState />}
       <SectionCard
         bodyStyle={{ padding: "12px 16px" }}
@@ -91,5 +216,13 @@ export default function DependenciesScreen() {
         </div>
       </SectionCard>
     </div>
+  );
+}
+
+export default function DependenciesScreen() {
+  return (
+    <ModalProvider>
+      <DependenciesBody />
+    </ModalProvider>
   );
 }
