@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 // the (cosmos) layout is not remounted between routes.
 import { useTheme } from "next-themes";
 import { type CSSProperties, type ReactNode, useState } from "react";
+import { CommandPalette } from "./command-palette";
 import { Icon, type IconName } from "./icons";
 import { Avatar, Button, IconButton, NavCtx } from "./kit";
 
@@ -675,6 +676,7 @@ export function CosmosShell({ children }: { children?: ReactNode }) {
           </div>
         </div>
       </div>
+      <CommandPalette />
     </NavCtx.Provider>
   );
 }
