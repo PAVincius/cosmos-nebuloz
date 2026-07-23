@@ -128,7 +128,7 @@ export function EntityLinkField({
             width: "100%",
             padding: "10px 12px 10px 34px",
             fontSize: 14,
-            borderRadius: 10,
+            borderRadius: "var(--r-md)",
             border: "1px solid var(--hairline-strong)",
             background: "var(--surface)",
             color: "var(--ink)",
@@ -150,8 +150,8 @@ export function EntityLinkField({
             overflowY: "auto",
             background: "var(--surface-2)",
             border: "1px solid var(--hairline-strong)",
-            borderRadius: 10,
-            boxShadow: "0 24px 48px -16px rgba(0,0,0,.5)",
+            borderRadius: "var(--r-md)",
+            boxShadow: "var(--card-shadow)",
           }}
         >
           {loading && (

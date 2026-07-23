@@ -1,8 +1,8 @@
 // use-action-toast.ts — thin toast.promise-style wrapper around a Result<T>
-// server-action call. Shows a loading toast, then replaces it in place (same
-// id, no stacking) with a success or error toast once the action settles.
-// Always returns the original Result<T> so callers keep their existing
-// control flow (optimistic updates, reverts, etc.).
+// server-action call (RF-95). Shows a loading toast, then replaces it in
+// place (same id, no stacking) with a success or error toast once the
+// action settles. Always returns the original Result<T> so callers keep
+// their existing control flow (optimistic updates, reverts, etc.).
 import { toast } from "sonner";
 import type { Result } from "../../app/actions/_base";
 
