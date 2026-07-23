@@ -4,9 +4,14 @@
 // wired to listRisks(). O modelo Risk real usa probability/impact em escala
 // string (low/medium/high), então a matriz é uma grade 3×3 (em vez da 5×5
 // numérica dos dados de demonstração).
-import { useEffect, useState } from "react";
-import { listRisks, type RiskView } from "@/app/(cosmos)/actions/risks";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
+import {
+  createRisk,
+  listRisks,
+  type RiskView,
+} from "@/app/(cosmos)/actions/risks";
 import { EmptyState } from "../empty-state";
+import { Icon } from "../icons";
 import {
   Avatar,
   Badge,
@@ -15,6 +20,8 @@ import {
   PageHeader,
   SectionCard,
 } from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 const LEVELS = ["low", "medium", "high"] as const;
 type Level = (typeof LEVELS)[number];
@@ -289,12 +296,234 @@ function RiskRow({ r }: { r: RiskView }) {
   );
 }
 
-export default function RisksScreen() {
+const CATEGORIES = [
+  "TECHNICAL",
+  "BUSINESS",
+  "DEPENDENCY",
+  "EXTERNAL",
+  "COMPLIANCE",
+  "CAPACITY",
+  "IMPEDIMENT",
+] as const;
+
+const CATEGORY_LABEL: Record<(typeof CATEGORIES)[number], string> = {
+  TECHNICAL: "Técnico",
+  BUSINESS: "Negócio",
+  DEPENDENCY: "Dependência",
+  EXTERNAL: "Externo",
+  COMPLIANCE: "Compliance",
+  CAPACITY: "Capacidade",
+  IMPEDIMENT: "Impedimento",
+};
+
+const selectStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+function NewRiskModal({ onCreated }: { onCreated?: () => void }) {
+  const { close } = useModal();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState<(typeof CATEGORIES)[number] | "">(
+    ""
+  );
+  const [severity, setSeverity] = useState(3);
+  const [probability, setProbability] = useState<Level>("medium");
+  const [impact, setImpact] = useState<Level>("medium");
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    if (!title.trim() || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createRisk({
+          title: title.trim(),
+          description: description.trim() || undefined,
+          category: category || undefined,
+          severity,
+          probability,
+          impact,
+        }),
+      {
+        loading: "Registrando risco...",
+        success: "Risco registrado.",
+        error: (err: string) => `Não foi possível registrar o risco: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onCreated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
+      subtitle="Adicionar um risco ao registro ROAM do ART"
+      title="Registrar risco"
+      width={480}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="risk-title" style={fieldLabelStyle}>
+            Título do risco
+          </label>
+          <input
+            autoFocus
+            id="risk-title"
+            onChange={(e) => setTitle(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                create();
+              }
+            }}
+            placeholder="Ex: Instabilidade no gateway de pagamento…"
+            style={selectStyle}
+            value={title}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="risk-description" style={fieldLabelStyle}>
+            Descrição
+          </label>
+          <textarea
+            id="risk-description"
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Contexto, causa raiz, impacto potencial…"
+            rows={3}
+            style={{ ...selectStyle, resize: "vertical" }}
+            value={description}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="risk-category" style={fieldLabelStyle}>
+            Categoria
+          </label>
+          <select
+            id="risk-category"
+            onChange={(e) =>
+              setCategory(e.target.value as (typeof CATEGORIES)[number] | "")
+            }
+            style={selectStyle}
+            value={category}
+          >
+            <option value="">Sem categoria</option>
+            {CATEGORIES.map((c) => (
+              <option key={c} value={c}>
+                {CATEGORY_LABEL[c]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              ...fieldLabelStyle,
+            }}
+          >
+            <span>Severidade</span>
+            <span className="mono" style={{ color: "var(--accent-text)" }}>
+              {severity}
+            </span>
+          </div>
+          <input
+            max={5}
+            min={1}
+            onChange={(e) => setSeverity(Number(e.target.value))}
+            style={{ width: "100%", accentColor: "var(--accent)" }}
+            type="range"
+            value={severity}
+          />
+        </div>
+
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+        >
+          <div>
+            <label htmlFor="risk-probability" style={fieldLabelStyle}>
+              Probabilidade
+            </label>
+            <select
+              id="risk-probability"
+              onChange={(e) => setProbability(e.target.value as Level)}
+              style={selectStyle}
+              value={probability}
+            >
+              {LEVELS.map((l) => (
+                <option key={l} value={l}>
+                  {LEVEL_LABEL[l]}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label htmlFor="risk-impact" style={fieldLabelStyle}>
+              Impacto
+            </label>
+            <select
+              id="risk-impact"
+              onChange={(e) => setImpact(e.target.value as Level)}
+              style={selectStyle}
+              value={impact}
+            >
+              {LEVELS.map((l) => (
+                <option key={l} value={l}>
+                  {LEVEL_LABEL[l]}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Registrar risco
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function RisksBody() {
+  const modal = useModal();
   const [risks, setRisks] = useState<RiskView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | undefined>();
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     listRisks().then((r) => {
       if (r.ok) {
         setRisks(r.data);
@@ -304,6 +533,10 @@ export default function RisksScreen() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   // listRisks() já retorna os riscos ordenados por severity desc
   // (orderBy no servidor), então não é necessário reordenar no cliente.
@@ -334,7 +567,12 @@ export default function RisksScreen() {
         <Button icon="filter" size="md" variant="secondary">
           Por ART
         </Button>
-        <Button icon="plus" size="md" variant="primary">
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewRiskModal onCreated={load} />)}
+          size="md"
+          variant="primary"
+        >
           Registrar risco
         </Button>
       </PageHeader>
@@ -424,5 +662,13 @@ export default function RisksScreen() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RisksScreen() {
+  return (
+    <ModalProvider>
+      <RisksBody />
+    </ModalProvider>
   );
 }
