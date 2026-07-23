@@ -5,6 +5,7 @@
 import { useEffect, useState } from "react";
 import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
 import type { Tone } from "@/lib/cosmos-data";
+import { CardHeaderGlow, IconBadge } from "../card-header-glow";
 import { Icon } from "../icons";
 import { Avatar, Badge, Button, KpiCard, PageHeader, Progress } from "../kit";
 
@@ -44,32 +45,10 @@ function ObjectiveCard({ o }: { o: OkrView }) {
         overflow: "hidden",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "flex-start",
-          gap: 14,
-          padding: "16px 20px",
-          borderBottom: "1px solid var(--hairline)",
-          background: "var(--surface-2)",
-          borderLeft: `3px solid var(--${tone})`,
-        }}
-      >
-        <span
-          style={{
-            display: "grid",
-            placeItems: "center",
-            width: 40,
-            height: 40,
-            borderRadius: "var(--r-md)",
-            flexShrink: 0,
-            color: `var(--${tone})`,
-            background: `var(--${tone}-soft)`,
-            border: `1px solid rgba(var(--${tone}-rgb),.22)`,
-          }}
-        >
+      <CardHeaderGlow tone={tone}>
+        <IconBadge tone={tone}>
           <Icon name="star" size={20} strokeWidth={1.8} />
-        </span>
+        </IconBadge>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
             style={{
@@ -136,7 +115,7 @@ function ObjectiveCard({ o }: { o: OkrView }) {
             </Badge>
           </div>
         </div>
-      </div>
+      </CardHeaderGlow>
       <div style={{ padding: "8px 20px 16px" }}>
         {o.keyResults.map((k, i) => {
           const ks = krStatus(k.progressPct);
