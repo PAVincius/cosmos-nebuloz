@@ -386,3 +386,25 @@ model ScoringEvent {
   @@index([featureId])
   @@index([epicId])
 }
+
+// Tenant-wide WSJF calculation parameters (Task 16 — WsjfSettingsModal).
+// One row per tenant. Only weightBv/weightTc/weightRr are consumed by
+// scoreWsjfAction today; scale/autoRecalc/rebalanceApprover/staleDays are
+// persisted and editable but not yet wired to any enforcement (see commit).
+model WsjfSettings {
+  id                String   @id @default(cuid())
+  tenantId          String   @unique
+  weightBv          Float    @default(1)
+  weightTc          Float    @default(1)
+  weightRr          Float    @default(1)
+  scale             String   @default("fibonacci") // fibonacci|linear
+  autoRecalc        String   @default("daily") // realtime|daily|weekly|manual
+  rebalanceApprover String   @default("rte") // rte|lpm|po|any
+  staleDays         Int      @default(14)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}

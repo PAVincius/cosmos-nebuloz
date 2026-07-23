@@ -5,6 +5,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { getWsjfSettings } from "../../(cosmos)/actions/wsjf";
 import { type Result, safeAction } from "../_base";
 
 const FIBONACCI = new Set([1, 2, 3, 5, 8, 13, 20]);
@@ -119,7 +120,19 @@ export async function scoreWsjfAction(
       );
     }
 
-    const costOfDelay = input.bv + input.tc + input.rr;
+    // Tenant weight multipliers (Task 16, WsjfSettingsModal). Falls back to
+    // the classic 1.0/1.0/1.0 weights — reproducing the pre-Task-16 formula
+    // byte-for-byte — whenever no settings row exists or the lookup fails,
+    // so scoring is never blocked by a settings-lookup hiccup.
+    const settingsResult = await getWsjfSettings();
+    const weights = settingsResult.ok
+      ? settingsResult.data
+      : { weightBv: 1, weightTc: 1, weightRr: 1 };
+
+    const costOfDelay =
+      input.bv * weights.weightBv +
+      input.tc * weights.weightTc +
+      input.rr * weights.weightRr;
     const wsjfScore = Math.round((costOfDelay / input.js) * 100) / 100;
 
     await database.$transaction(async (tx) => {

@@ -125,6 +125,7 @@ model Tenant {
   billingEntryStaging       BillingEntryStaging[]
   activeSessions            Session[]                  @relation("SessionActiveTenant")
   scoringEvents             ScoringEvent[]
+  wsjfSettings              WsjfSettings?
   // Story-025 portfolio health
   leanBudgetReallocations   LeanBudgetReallocation[]
   portfolioAnalysisReports  PortfolioAnalysisReport[]
