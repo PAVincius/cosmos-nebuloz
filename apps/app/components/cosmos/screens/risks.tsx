@@ -6,6 +6,7 @@
 // numérica dos dados de demonstração).
 import { useEffect, useState } from "react";
 import { listRisks, type RiskView } from "@/app/(cosmos)/actions/risks";
+import { EmptyState } from "../empty-state";
 import {
   Avatar,
   Badge,
@@ -407,9 +408,11 @@ export default function RisksScreen() {
                 Carregando…
               </div>
             ) : sorted.length === 0 ? (
-              <div style={{ padding: 16, color: "var(--ink-faint)" }}>
-                Nenhum risco registrado.
-              </div>
+              <EmptyState
+                description="Riscos identificados no PI aparecerão aqui, com probabilidade, impacto e status ROAM."
+                icon="shield"
+                title="Nenhum risco registrado"
+              />
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                 {sorted.map((r) => (
