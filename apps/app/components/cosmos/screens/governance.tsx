@@ -1,15 +1,28 @@
 "use client";
 
 // governance.tsx — Governance Board, wired to listGovernedEpics(). Lists real
-// GovernedEpic rows with status + investment estimate. Gate policy editing,
-// gate review/approve flow, and the per-epic Gate Detail page (RF §2.18) are
-// NOT wired — read-only list for this pass.
-import { useEffect, useState } from "react";
+// GovernedEpic rows with status + investment estimate. Gate policy editing is
+// wired via GovernancePolicyModal (upserts ApprovalWorkflow by tenantId+tipo).
+// Gate review/approve flow and the per-epic Gate Detail page (RF §2.18) are
+// still NOT wired.
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   type GovernedEpicView,
   listGovernedEpics,
+  upsertApprovalWorkflow,
 } from "@/app/(cosmos)/actions/governance";
-import { Badge, ErrorState, PageHeader, SectionCard } from "../kit";
+import { Icon } from "../icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  IconButton,
+  PageHeader,
+  SectionCard,
+} from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<
   string,
@@ -23,12 +36,263 @@ const STATUS_TONE: Record<
   deferred: "amber",
 };
 
-export default function GovernanceScreen() {
+const TIPO_OPTIONS: { value: string; label: string }[] = [
+  { value: "epic_investment", label: "Investimento em Épico" },
+  { value: "budget_guardrail_change", label: "Mudança de Guardrail de Budget" },
+  { value: "theme_creation", label: "Criação de Tema" },
+];
+
+const ROLE_OPTIONS = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"];
+
+type GateStepDraft = {
+  roleRequired: string;
+  slaDays: string;
+};
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+const inputStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+const selectStyle: CSSProperties = inputStyle;
+
+function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
+  const { close } = useModal();
+  const [tipo, setTipo] = useState(TIPO_OPTIONS[0].value);
+  const [nome, setNome] = useState("");
+  const [ativo, setAtivo] = useState(true);
+  const [steps, setSteps] = useState<GateStepDraft[]>([
+    { roleRequired: "STE", slaDays: "" },
+  ]);
+  const [saving, setSaving] = useState(false);
+
+  const addStep = () => {
+    setSteps((prev) => [...prev, { roleRequired: "STE", slaDays: "" }]);
+  };
+
+  const removeStep = (index: number) => {
+    setSteps((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const updateStep = (index: number, patch: Partial<GateStepDraft>) => {
+    setSteps((prev) =>
+      prev.map((step, i) => (i === index ? { ...step, ...patch } : step))
+    );
+  };
+
+  const save = async () => {
+    if (!nome.trim() || steps.length === 0 || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        upsertApprovalWorkflow({
+          tipo: tipo as
+            | "epic_investment"
+            | "budget_guardrail_change"
+            | "theme_creation",
+          nome: nome.trim(),
+          ativo,
+          etapas: steps.map((step, order) => ({
+            order,
+            roleRequired: step.roleRequired as
+              | "ADMIN"
+              | "STE"
+              | "RTE"
+              | "SM"
+              | "PO"
+              | "DEV"
+              | "MEMBER",
+            slaDays: step.slaDays.trim() ? Number(step.slaDays) : undefined,
+          })),
+        }),
+      {
+        loading: "Salvando política de gate...",
+        success: "Política de gate salva.",
+        error: (err: string) => `Não foi possível salvar a política: ${err}`,
+      }
+    );
+    setSaving(false);
+    close();
+    if (res.ok) {
+      onSaved?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="shield" size={16} strokeWidth={2.4} />}
+      subtitle="Definir o gate de aprovação (etapas e papéis) para um tipo de decisão"
+      title="Nova política de gate"
+      width={520}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="gate-tipo" style={fieldLabelStyle}>
+            Tipo
+          </label>
+          <select
+            id="gate-tipo"
+            onChange={(e) => setTipo(e.target.value)}
+            style={selectStyle}
+            value={tipo}
+          >
+            {TIPO_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label htmlFor="gate-nome" style={fieldLabelStyle}>
+            Nome do gate
+          </label>
+          <input
+            id="gate-nome"
+            onChange={(e) => setNome(e.target.value)}
+            placeholder="Ex.: Aprovação de Épico de Portfólio"
+            style={inputStyle}
+            value={nome}
+          />
+        </div>
+
+        <div>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: 6,
+            }}
+          >
+            <span style={fieldLabelStyle}>Etapas de aprovação</span>
+            <Button icon="plus" onClick={addStep} size="sm" variant="secondary">
+              Etapa
+            </Button>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {steps.map((step, index) => (
+              <div
+                // biome-ignore lint/suspicious/noArrayIndexKey: steps are an ordered, position-addressed draft list with no stable id
+                key={index}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  padding: "8px 10px",
+                  borderRadius: "var(--r-md)",
+                  border: "1px solid var(--hairline)",
+                  background: "var(--surface)",
+                }}
+              >
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 11.5,
+                    color: "var(--ink-faint)",
+                    width: 18,
+                    flexShrink: 0,
+                  }}
+                >
+                  {index + 1}
+                </span>
+                <select
+                  aria-label={`Papel requerido na etapa ${index + 1}`}
+                  onChange={(e) =>
+                    updateStep(index, { roleRequired: e.target.value })
+                  }
+                  style={{ ...selectStyle, flex: 1 }}
+                  value={step.roleRequired}
+                >
+                  {ROLE_OPTIONS.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  aria-label={`SLA em dias da etapa ${index + 1}`}
+                  min={0}
+                  onChange={(e) =>
+                    updateStep(index, { slaDays: e.target.value })
+                  }
+                  placeholder="SLA (dias)"
+                  style={{ ...inputStyle, width: 110 }}
+                  type="number"
+                  value={step.slaDays}
+                />
+                <IconButton
+                  name="x"
+                  onClick={() => removeStep(index)}
+                  size={30}
+                  title="Remover etapa"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <label
+          htmlFor="gate-ativo"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 13,
+            color: "var(--ink-muted)",
+          }}
+        >
+          <input
+            checked={ativo}
+            id="gate-ativo"
+            onChange={(e) => setAtivo(e.target.checked)}
+            type="checkbox"
+          />
+          Ativo
+        </label>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={save} size="sm" variant="primary">
+            Salvar política
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function GovernanceBody() {
+  const modal = useModal();
   const [rows, setRows] = useState<GovernedEpicView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
+    setLoading(true);
     listGovernedEpics().then((r) => {
       if (r.ok) {
         setRows(r.data);
@@ -39,6 +303,10 @@ export default function GovernanceScreen() {
     });
   }, []);
 
+  useEffect(() => {
+    load();
+  }, [load]);
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -46,7 +314,16 @@ export default function GovernanceScreen() {
         meta={<Badge tone="accent">{rows.length} épicos</Badge>}
         subtitle="Pipeline de gates de governança por épico."
         title="Governance Board"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<GovernancePolicyModal onSaved={load} />)}
+          size="md"
+          variant="primary"
+        >
+          Nova política de gate
+        </Button>
+      </PageHeader>
       {error && <ErrorState />}
       <SectionCard
         bodyStyle={{ padding: "12px 16px" }}
@@ -96,5 +373,13 @@ export default function GovernanceScreen() {
         </div>
       </SectionCard>
     </div>
+  );
+}
+
+export default function GovernanceScreen() {
+  return (
+    <ModalProvider>
+      <GovernanceBody />
+    </ModalProvider>
   );
 }
