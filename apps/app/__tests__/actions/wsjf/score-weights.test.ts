@@ -123,4 +123,24 @@ describe("scoreWsjfAction — tenant WSJF weights", () => {
     // costOfDelay = (8*2)+5+3 = 24, wsjfScore = 24/5 = 4.80
     expect(result.data.wsjfScore).toBe(4.8);
   });
+
+  it("propagates a genuine settings-lookup error and writes nothing", async () => {
+    mocks.wsjfSettingsFindUnique.mockRejectedValue(
+      new Error("connection terminated unexpectedly")
+    );
+
+    const result = await scoreWsjfAction({
+      featureId: "feat-1",
+      bv: 8,
+      tc: 5,
+      rr: 3,
+      js: 5,
+      source: "MANUAL",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+    expect(mocks.featureUpdate).not.toHaveBeenCalled();
+    expect(mocks.scoringEventCreate).not.toHaveBeenCalled();
+  });
 });

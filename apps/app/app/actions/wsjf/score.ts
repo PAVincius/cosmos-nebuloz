@@ -5,7 +5,6 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { getWsjfSettings } from "../../(cosmos)/actions/wsjf";
 import { type Result, safeAction } from "../_base";
 
 const FIBONACCI = new Set([1, 2, 3, 5, 8, 13, 20]);
@@ -120,13 +119,23 @@ export async function scoreWsjfAction(
       );
     }
 
-    // Tenant weight multipliers (Task 16, WsjfSettingsModal). Falls back to
-    // the classic 1.0/1.0/1.0 weights — reproducing the pre-Task-16 formula
-    // byte-for-byte — whenever no settings row exists or the lookup fails,
-    // so scoring is never blocked by a settings-lookup hiccup.
-    const settingsResult = await getWsjfSettings();
-    const weights = settingsResult.ok
-      ? settingsResult.data
+    // Tenant weight multipliers (Task 16, WsjfSettingsModal). Queried
+    // directly here (not via getWsjfSettings) so a genuine lookup failure
+    // propagates instead of being swallowed into a Result. The 1.0/1.0/1.0
+    // classic weights apply ONLY when no settings row exists for this
+    // tenant — reproducing the pre-Task-16 formula byte-for-byte. The `?.`
+    // guards against the settings delegate itself being absent (e.g. an
+    // older test double that doesn't mock wsjfSettings); a real query
+    // rejection still throws and is never treated as "no row".
+    const settingsRow = await database.wsjfSettings?.findUnique({
+      where: { tenantId: ctx.tenantId },
+    });
+    const weights = settingsRow
+      ? {
+          weightBv: settingsRow.weightBv,
+          weightTc: settingsRow.weightTc,
+          weightRr: settingsRow.weightRr,
+        }
       : { weightBv: 1, weightTc: 1, weightRr: 1 };
 
     const costOfDelay =
