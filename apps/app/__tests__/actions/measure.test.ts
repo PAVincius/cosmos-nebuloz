@@ -54,4 +54,20 @@ describe("listCompetencyScores", () => {
       expect(noData?.score).toBeNull();
     }
   });
+
+  it("computes the prev-cycle delta from the second-most-recent assessment", async () => {
+    const r = await listCompetencyScores();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const tta = r.data.find((c) => c.competency === "TEAM_TECHNICAL_AGILITY");
+      // latest 4.1, prior 3.8 -> delta +0.3
+      expect(tta?.prevScore).toBe(3.8);
+      expect(tta?.delta).toBe(0.3);
+
+      const apd = r.data.find((c) => c.competency === "AGILE_PRODUCT_DELIVERY");
+      // only one assessment on record -> no prior cycle, honest null
+      expect(apd?.prevScore).toBeNull();
+      expect(apd?.delta).toBeNull();
+    }
+  });
 });

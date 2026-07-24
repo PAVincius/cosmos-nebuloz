@@ -10,6 +10,8 @@ export type CompetencyScoreView = {
   competency: string;
   competencyLabel: string;
   score: number | null;
+  prevScore: number | null;
+  delta: number | null;
   assessedAt: Date | null;
 };
 
@@ -24,19 +26,28 @@ export async function listCompetencyScores(): Promise<
       select: { competency: true, score: true, assessedAt: true },
     });
 
-    const latestByCompetency = new Map<string, (typeof assessments)[number]>();
+    // Group every assessment per competency (already ordered newest-first by
+    // the query) so we can read off both the latest and the prior cycle.
+    const byCompetency = new Map<string, (typeof assessments)[number][]>();
     for (const a of assessments) {
-      if (!latestByCompetency.has(a.competency)) {
-        latestByCompetency.set(a.competency, a);
-      }
+      const history = byCompetency.get(a.competency) ?? [];
+      history.push(a);
+      byCompetency.set(a.competency, history);
     }
 
     return SAFE_COMPETENCIES.map(({ key, label }) => {
-      const latest = latestByCompetency.get(key);
+      const [latest, prior] = byCompetency.get(key) ?? [];
+      const score = latest ? Number(latest.score) : null;
+      const prevScore = prior ? Number(prior.score) : null;
       return {
         competency: key,
         competencyLabel: label,
-        score: latest ? Number(latest.score) : null,
+        score,
+        prevScore,
+        delta:
+          score !== null && prevScore !== null
+            ? Number((score - prevScore).toFixed(1))
+            : null,
         assessedAt: latest?.assessedAt ?? null,
       };
     });
