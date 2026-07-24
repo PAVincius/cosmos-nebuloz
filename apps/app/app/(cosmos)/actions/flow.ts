@@ -161,6 +161,67 @@ export async function getAgingWip(): Promise<Result<AgingWipItem[]>> {
   });
 }
 
+// Handoff shows an 8-period window for the CFD / throughput charts.
+const FLOW_SERIES_WINDOW = 8;
+
+export type FlowMetricsSeriesPoint = {
+  periodRef: string;
+  recordedAt: string;
+  label: string;
+  flowVelocityTotal: number;
+};
+
+// Windowed sibling of getLatestFlowMetrics — same tenant-wide, unscoped feed
+// (no scope/period filter), just the last N snapshots instead of only the
+// most recent one. Drives the CFD + throughput-per-period charts. Only
+// flowVelocityTotal is exposed here (not flowDistribution) — its per-type
+// values are proportions, not counts, and can't be recombined with
+// deliveredItems (a different denominator) into an honest absolute
+// breakdown per period.
+export async function getFlowMetricsSeries(): Promise<
+  Result<FlowMetricsSeriesPoint[]>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const snaps = await database.flowMetricSnapshot.findMany({
+      where: { tenantId: ctx.tenantId },
+      orderBy: { recordedAt: "desc" },
+      take: FLOW_SERIES_WINDOW,
+      select: {
+        periodRef: true,
+        recordedAt: true,
+        flowVelocityTotal: true,
+      },
+    });
+    if (snaps.length === 0) {
+      return [];
+    }
+
+    // Sprint-period snapshots get a human label (sprint name); anything
+    // else falls back to the recorded date.
+    const sprints = await database.sprint.findMany({
+      where: {
+        tenantId: ctx.tenantId,
+        id: { in: snaps.map((s) => s.periodRef) },
+      },
+      select: { id: true, name: true },
+    });
+    const sprintNameById = new Map(sprints.map((s) => [s.id, s.name]));
+
+    return snaps
+      .slice()
+      .reverse() // chronological order for the CFD/throughput charts
+      .map((s) => ({
+        periodRef: s.periodRef,
+        recordedAt: s.recordedAt.toISOString(),
+        label:
+          sprintNameById.get(s.periodRef) ??
+          new Date(s.recordedAt).toLocaleDateString("pt-BR"),
+        flowVelocityTotal: s.flowVelocityTotal,
+      }));
+  });
+}
+
 export async function getLatestFlowMetrics(): Promise<
   Result<FlowMetricsView | null>
 > {

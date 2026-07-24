@@ -11,14 +11,20 @@ const mocks = vi.hoisted(() => ({
   sprintUpdateMany: vi.fn(),
   storyAggregate: vi.fn(),
   storyFindFirstOrThrow: vi.fn(),
+  storyFindMany: vi.fn(),
   storyUpdateMany: vi.fn(),
   storyCreate: vi.fn(),
+  defectFindMany: vi.fn(),
   standupCreate: vi.fn(),
   standupFindMany: vi.fn(),
   memberFindMany: vi.fn(),
   anomalyRunCreate: vi.fn(),
   anomalyCreate: vi.fn(),
   stateTransitionCreate: vi.fn(),
+  stateTransitionHistoryFindMany: vi.fn(),
+  flowMetricSnapshotFindFirst: vi.fn(),
+  flowMetricSnapshotCreate: vi.fn(),
+  logError: vi.fn(),
   queryRaw: vi.fn(),
   transaction: vi.fn(),
 }));
@@ -27,6 +33,9 @@ vi.mock("next/headers", () => ({ headers: mocks.headers }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@repo/auth/server", () => ({
   requireTenantSession: mocks.requireTenantSession,
+}));
+vi.mock("@repo/observability/log", () => ({
+  log: { error: mocks.logError },
 }));
 vi.mock("@repo/database", () => ({
   database: {
@@ -39,9 +48,11 @@ vi.mock("@repo/database", () => ({
     story: {
       aggregate: mocks.storyAggregate,
       findFirstOrThrow: mocks.storyFindFirstOrThrow,
+      findMany: mocks.storyFindMany,
       updateMany: mocks.storyUpdateMany,
       create: mocks.storyCreate,
     },
+    defect: { findMany: mocks.defectFindMany },
     standupEntry: {
       create: mocks.standupCreate,
       findMany: mocks.standupFindMany,
@@ -49,7 +60,14 @@ vi.mock("@repo/database", () => ({
     teamMemberAssignment: { findMany: mocks.memberFindMany },
     anomalyDetectionRun: { create: mocks.anomalyRunCreate },
     anomaly: { create: mocks.anomalyCreate },
-    stateTransitionHistory: { create: mocks.stateTransitionCreate },
+    stateTransitionHistory: {
+      create: mocks.stateTransitionCreate,
+      findMany: mocks.stateTransitionHistoryFindMany,
+    },
+    flowMetricSnapshot: {
+      findFirst: mocks.flowMetricSnapshotFindFirst,
+      create: mocks.flowMetricSnapshotCreate,
+    },
     $transaction: mocks.transaction,
     $queryRaw: mocks.queryRaw,
   },
@@ -213,6 +231,14 @@ describe("closeSprint velocity anomaly (AC-007)", () => {
     mocks.sprintUpdateMany.mockResolvedValue({ count: 1 });
     mocks.anomalyRunCreate.mockResolvedValue({ id: "run-1" });
     mocks.anomalyCreate.mockResolvedValue({ id: "anomaly-1" });
+    // Snapshot origination (post-transaction, best-effort) — sane defaults
+    // so it succeeds cleanly in tests that aren't specifically about it.
+    mocks.storyFindMany.mockResolvedValue([]);
+    mocks.defectFindMany.mockResolvedValue([]);
+    mocks.stateTransitionHistoryFindMany.mockResolvedValue([]);
+    mocks.memberFindMany.mockResolvedValue([]);
+    mocks.flowMetricSnapshotFindFirst.mockResolvedValue(null);
+    mocks.flowMetricSnapshotCreate.mockResolvedValue({ id: "snap-1" });
     makeTransactionMock();
   });
 
@@ -284,6 +310,77 @@ describe("closeSprint velocity anomaly (AC-007)", () => {
 
     expect(result.ok).toBe(true);
     expect(mocks.anomalyCreate).not.toHaveBeenCalled();
+  });
+});
+
+// ─── closeSprint snapshot origination ────────────────────────────────────────
+
+describe("closeSprint snapshot origination", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.headers.mockResolvedValue(new Headers());
+    mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "SM" });
+    mocks.sprintFindFirstOrThrow.mockResolvedValue({
+      id: "sprint-1",
+      teamId: "team-1",
+      status: "ACTIVE",
+    });
+    mocks.sprintUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.storyAggregate.mockResolvedValue({ _sum: { storyPoints: 38 } });
+    // Not enough history for the VELOCITY_DROP check
+    mocks.sprintFindMany.mockResolvedValue([]);
+    mocks.storyFindMany.mockResolvedValue([]);
+    mocks.defectFindMany.mockResolvedValue([]);
+    mocks.stateTransitionHistoryFindMany.mockResolvedValue([]);
+    mocks.memberFindMany.mockResolvedValue([]);
+    mocks.flowMetricSnapshotFindFirst.mockResolvedValue(null);
+    mocks.flowMetricSnapshotCreate.mockResolvedValue({ id: "snap-1" });
+    makeTransactionMock();
+  });
+
+  it("writes exactly one FlowMetricSnapshot on a successful close", async () => {
+    const result = await closeSprint({ sprintId: "sprint-1" });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledTimes(1);
+    expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId: tenantCtx.tenantId,
+          scope: "team",
+          scopeId: "team-1",
+          period: "sprint",
+          periodRef: "sprint-1",
+        }),
+      })
+    );
+  });
+
+  it("is idempotent on re-run — does not double-write when a snapshot already exists", async () => {
+    mocks.flowMetricSnapshotFindFirst.mockResolvedValue({
+      id: "existing-flow",
+    });
+
+    const result = await closeSprint({ sprintId: "sprint-1" });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.flowMetricSnapshotCreate).not.toHaveBeenCalled();
+  });
+
+  it("does NOT fail the close when flow snapshot computation throws (best-effort)", async () => {
+    mocks.flowMetricSnapshotFindFirst.mockRejectedValue(new Error("db down"));
+
+    const result = await closeSprint({ sprintId: "sprint-1" });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.velocity).toBe(38);
+    expect(mocks.logError).toHaveBeenCalledWith(
+      expect.stringContaining("flow snapshot"),
+      expect.objectContaining({ sprintId: "sprint-1" })
+    );
   });
 });
 

@@ -7,8 +7,10 @@
 import {
   AGING_WIP_SLA_DAYS,
   type AgingWipItem,
+  type FlowMetricsSeriesPoint,
   type FlowMetricsView,
   getAgingWip,
+  getFlowMetricsSeries,
   getLatestFlowMetrics,
 } from "@/app/(cosmos)/actions/flow";
 import { EmptyState } from "../empty-state";
@@ -136,6 +138,195 @@ function AgingWipPanel() {
   );
 }
 
+// ── Throughput / CFD history — driven by getFlowMetricsSeries() ──
+
+function ThroughputChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
+  const max = Math.max(1, ...series.map((s) => s.flowVelocityTotal));
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          color: "var(--ink-muted)",
+          marginBottom: 10,
+        }}
+      >
+        Throughput por sprint (SP entregues)
+      </div>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 10,
+          height: 120,
+        }}
+      >
+        {series.map((s) => {
+          const pct = Math.max(3, (s.flowVelocityTotal / max) * 100);
+          return (
+            <div
+              key={s.periodRef}
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 6,
+                height: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
+              <span
+                className="mono"
+                style={{
+                  fontSize: 11,
+                  fontWeight: 700,
+                  color: "var(--ink-muted)",
+                }}
+              >
+                {s.flowVelocityTotal}
+              </span>
+              <div
+                style={{
+                  width: "100%",
+                  maxWidth: 34,
+                  height: `${pct}%`,
+                  borderRadius: "6px 6px 2px 2px",
+                  background: "var(--green)",
+                  boxShadow: "0 0 8px rgba(var(--green-rgb),.4)",
+                }}
+              />
+              <span
+                style={{
+                  fontSize: 10.5,
+                  color: "var(--ink-faint)",
+                  fontWeight: 600,
+                  textAlign: "center",
+                }}
+              >
+                {s.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// Cumulative Flow Diagram — running total of flowVelocityTotal (SP
+// delivered) across periods. A single "Done" band rather than the classic
+// multi-status stacked area: FlowMetricSnapshot doesn't retain a
+// per-status WIP time series, only a point-in-time flowLoadCurrent, so a
+// true Backlog/WIP/Done stack isn't derivable from real data yet.
+function CfdChart({ series }: { series: FlowMetricsSeriesPoint[] }) {
+  let running = 0;
+  const cumulative = series.map((s) => {
+    running += s.flowVelocityTotal;
+    return { ...s, cumulative: running };
+  });
+  const max = Math.max(1, running);
+  const w = 520;
+  const h = 130;
+  const pad = 6;
+  const xs = (i: number) =>
+    pad + (i / Math.max(1, cumulative.length - 1)) * (w - pad * 2);
+  const ys = (v: number) => pad + (1 - v / max) * (h - pad * 2);
+  const line = cumulative
+    .map((p, i) => `${i ? "L" : "M"}${xs(i)} ${ys(p.cumulative)}`)
+    .join(" ");
+  const area = `${line} L${xs(cumulative.length - 1)} ${h} L${xs(0)} ${h} Z`;
+
+  return (
+    <div>
+      <div
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          color: "var(--ink-muted)",
+          marginBottom: 10,
+        }}
+      >
+        Fluxo cumulativo (CFD) — SP entregues acumulados
+      </div>
+      <svg
+        height={h}
+        preserveAspectRatio="none"
+        style={{ display: "block", overflow: "visible" }}
+        viewBox={`0 0 ${w} ${h}`}
+        width="100%"
+      >
+        <path d={area} fill="rgba(var(--blue-rgb),.18)" />
+        <path
+          d={line}
+          fill="none"
+          stroke="var(--blue)"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2.4"
+        />
+      </svg>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: 4,
+        }}
+      >
+        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+          {cumulative[0]?.label}
+        </span>
+        <span style={{ fontSize: 10.5, color: "var(--ink-faint)" }}>
+          {cumulative.at(-1)?.label}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function FlowHistorySection() {
+  const { data, loading, error } =
+    useAction<FlowMetricsSeriesPoint[]>(getFlowMetricsSeries);
+  const series = data ?? [];
+
+  return (
+    <SectionCard
+      icon="barChart"
+      subtitle="Throughput e fluxo cumulativo das sprints fechadas"
+      title="Histórico de Flow"
+      tone="blue"
+    >
+      {error && <ErrorState />}
+      {!error && loading && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Carregando...
+        </div>
+      )}
+      {!(error || loading) && series.length === 0 && (
+        <EmptyState
+          description="O histórico é criado automaticamente a cada fechamento de sprint. Feche uma sprint para começar a acumular CFD e throughput."
+          icon="barChart"
+          title="Sem histórico de flow ainda"
+        />
+      )}
+      {!(error || loading) && series.length > 0 && (
+        <div
+          style={{
+            padding: 16,
+            display: "flex",
+            flexDirection: "column",
+            gap: 24,
+          }}
+        >
+          <ThroughputChart series={series} />
+          <CfdChart series={series} />
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
 export default function FlowScreen() {
   const { data, loading, error } = useAction<FlowMetricsView | null>(
     getLatestFlowMetrics
@@ -239,6 +430,9 @@ export default function FlowScreen() {
           </SectionCard>
         </>
       )}
+      <div style={{ marginTop: 14 }}>
+        <FlowHistorySection />
+      </div>
       <div style={{ marginTop: 14 }}>
         <AgingWipPanel />
       </div>

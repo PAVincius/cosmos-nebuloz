@@ -2,10 +2,12 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database, type Prisma } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../_base";
+import { originateFlowSnapshot } from "./snapshot-origination";
 
 // AC-002: >20% over capacity requires override
 const OVERCOMMITMENT_THRESHOLD = 1.2;
@@ -158,7 +160,7 @@ export async function closeSprint(
     const { tenantId } = await requireTenantSession(await headers());
     const input = closeSprintSchema.parse(raw);
 
-    return database.$transaction(async (tx) => {
+    const closed = await database.$transaction(async (tx) => {
       const sprint = await tx.sprint.findFirstOrThrow({
         where: { id: input.sprintId, tenantId },
         select: { id: true, teamId: true, status: true },
@@ -213,8 +215,27 @@ export async function closeSprint(
       });
 
       revalidatePath("/");
-      return { velocity };
+      return { velocity, teamId: sprint.teamId, sprintId: sprint.id };
     });
+
+    // Best-effort snapshot origination — deliberately OUTSIDE the sprint's
+    // own transaction: a failed write here must never poison or roll back
+    // the transaction that already closed the sprint (rule mirrors
+    // update-epic.ts's guarded copilot-reindex side effect).
+    try {
+      await originateFlowSnapshot(database, {
+        tenantId,
+        teamId: closed.teamId,
+        sprintId: closed.sprintId,
+      });
+    } catch (error) {
+      log.error("[closeSprint] flow snapshot origination failed", {
+        sprintId: closed.sprintId,
+        error,
+      });
+    }
+
+    return { velocity: closed.velocity };
   });
 }
 

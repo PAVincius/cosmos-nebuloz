@@ -4,9 +4,11 @@ const h = vi.hoisted(() => ({
   headers: vi.fn(),
   requireTenantSession: vi.fn(),
   flowMetricSnapshotFindFirst: vi.fn(),
+  flowMetricSnapshotFindMany: vi.fn(),
   storyFindMany: vi.fn(),
   featureFindMany: vi.fn(),
   epicFindMany: vi.fn(),
+  sprintFindMany: vi.fn(),
   stateTransitionHistoryFindMany: vi.fn(),
 }));
 
@@ -16,10 +18,14 @@ vi.mock("@repo/auth/server", () => ({
 }));
 vi.mock("@repo/database", () => ({
   database: {
-    flowMetricSnapshot: { findFirst: h.flowMetricSnapshotFindFirst },
+    flowMetricSnapshot: {
+      findFirst: h.flowMetricSnapshotFindFirst,
+      findMany: h.flowMetricSnapshotFindMany,
+    },
     story: { findMany: h.storyFindMany },
     feature: { findMany: h.featureFindMany },
     epic: { findMany: h.epicFindMany },
+    sprint: { findMany: h.sprintFindMany },
     stateTransitionHistory: { findMany: h.stateTransitionHistoryFindMany },
   },
 }));
@@ -28,6 +34,7 @@ import { database } from "@repo/database";
 import {
   AGING_WIP_SLA_DAYS,
   getAgingWip,
+  getFlowMetricsSeries,
   getLatestFlowMetrics,
 } from "../../app/(cosmos)/actions/flow";
 
@@ -44,10 +51,67 @@ beforeEach(() => {
     flowPredictability: 0.87,
     recordedAt: new Date("2026-02-01"),
   });
+  h.flowMetricSnapshotFindMany.mockResolvedValue([]);
   h.storyFindMany.mockResolvedValue([]);
   h.featureFindMany.mockResolvedValue([]);
   h.epicFindMany.mockResolvedValue([]);
+  h.sprintFindMany.mockResolvedValue([]);
   h.stateTransitionHistoryFindMany.mockResolvedValue([]);
+});
+
+describe("getFlowMetricsSeries", () => {
+  it("is tenant-scoped and windowed to the last 8 snapshots", async () => {
+    await getFlowMetricsSeries();
+
+    expect(h.flowMetricSnapshotFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "t1" },
+        orderBy: { recordedAt: "desc" },
+        take: 8,
+      })
+    );
+  });
+
+  it("returns an empty series when there is no history yet", async () => {
+    h.flowMetricSnapshotFindMany.mockResolvedValue([]);
+
+    const r = await getFlowMetricsSeries();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toEqual([]);
+    }
+    expect(h.sprintFindMany).not.toHaveBeenCalled();
+  });
+
+  it("returns points in chronological order, labeled with the sprint name", async () => {
+    h.flowMetricSnapshotFindMany.mockResolvedValue([
+      {
+        periodRef: "sprint-2",
+        recordedAt: new Date("2026-02-01"),
+        flowVelocityTotal: 40,
+      },
+      {
+        periodRef: "sprint-1",
+        recordedAt: new Date("2026-01-01"),
+        flowVelocityTotal: 30,
+      },
+    ]);
+    h.sprintFindMany.mockResolvedValue([
+      { id: "sprint-1", name: "Sprint 1" },
+      { id: "sprint-2", name: "Sprint 2" },
+    ]);
+
+    const r = await getFlowMetricsSeries();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(r.data.map((p) => p.periodRef)).toEqual(["sprint-1", "sprint-2"]);
+    expect(r.data[0].label).toBe("Sprint 1");
+    expect(r.data[1].flowVelocityTotal).toBe(40);
+  });
 });
 
 describe("getLatestFlowMetrics", () => {
