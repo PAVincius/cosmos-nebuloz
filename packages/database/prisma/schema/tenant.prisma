@@ -106,6 +106,7 @@ model Tenant {
   capacitySnapshots         TeamCapacitySnapshot[]
   pairSynergies             PairSynergy[]
   groupSynergies            GroupSynergy[]
+  capacityAdjustmentNotes   CapacityAdjustmentNote[]
   // S1: AI Copilot
   copilotSessions           CopilotSession[]
   copilotMessages           CopilotMessage[]

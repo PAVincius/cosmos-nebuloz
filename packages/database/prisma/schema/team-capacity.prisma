@@ -145,3 +145,25 @@ enum TrendDirection {
   DOWN
   NEUTRAL
 }
+
+// Free-text annotation explaining a sprint's capacity variance (training,
+// holiday, onboarding, hiring) — surfaced next to the per-team capacity grid
+// on the Capacity Planning screen. `teamId`/`sprintId` are plain app-layer
+// tenant-guarded references, not Prisma relations — matching the existing
+// TeamCapacitySnapshot.teamId precedent (see that model above).
+model CapacityAdjustmentNote {
+  id          String   @id @default(cuid())
+  tenantId    String
+  teamId      String
+  sprintId    String?
+  text        String   @db.Text
+  tone        String   @default("neutral") // green | amber | red | neutral — matches capacity.tsx utilTone()
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, teamId])
+  @@index([tenantId, sprintId])
+}
