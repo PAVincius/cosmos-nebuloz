@@ -1,17 +1,25 @@
 // dashboard.tsx — Visão Geral (portfolio executive summary), ported from the
 // cosmos handoff. KPI row, velocity area chart, predictability bars, theme
-// allocation bars, and in-flight epics list.
+// allocation bars, and in-flight epics list. Every number on this screen is
+// wired to a real tenant-scoped server action — see the commit body for the
+// per-KPI/chart data source.
+
+import { listLeanBudgets } from "@/app/(cosmos)/actions/budgets";
+import { getCloudCostSummary } from "@/app/(cosmos)/actions/finops";
 import { listEpics } from "@/app/(cosmos)/actions/kanban";
+import { listRecentPiPredictability } from "@/app/(cosmos)/actions/piplanning";
+import { listRecentSprints } from "@/app/(cosmos)/actions/velocity";
 import { ARTS } from "@/lib/cosmos-data";
+import { EmptyState } from "../empty-state";
 import {
   Badge,
-  Button,
   CopyId,
   KpiCard,
   NavButton,
   PageHeader,
   Progress,
   SectionCard,
+  type Tone,
 } from "../kit";
 import {
   AnomaliesCopilotBar,
@@ -75,27 +83,91 @@ function HBars({
   );
 }
 
-const velocity = [128, 141, 134, 150, 156, 162];
-const velocityLabels = ["PI-21", "PI-22", "PI-23", "PI-24", "PI-25", "PI-26"];
-const predict = [
-  { label: "PI-22", v: 78 },
-  { label: "PI-23", v: 85 },
-  { label: "PI-24", v: 81 },
-  { label: "PI-25", v: 88 },
-  { label: "PI-26", v: 87 },
-];
-const themeAlloc = [
-  { label: "Modernização da Plataforma", v: 1240, tone: "accent" },
-  { label: "Expansão LATAM", v: 980, tone: "blue" },
-  { label: "Confiança & Risco", v: 720, tone: "purple" },
-  { label: "Data & AI", v: 610, tone: "green" },
-  { label: "Eficiência de Custo", v: 340, tone: "amber" },
-];
+// ── epic WSJF priority tone — mirrors kanban.tsx's epicPriority thresholds ──
+function wsjfTone(wsjf: number): Tone {
+  if (wsjf >= 18) {
+    return "red";
+  }
+  return wsjf >= 13 ? "amber" : "green";
+}
+
+const THEME_ALLOC_TONES = ["accent", "blue", "purple", "green", "amber"];
+
+function formatCostK(usd: number): string {
+  return (usd / 1000).toFixed(1).replace(".", ",");
+}
 
 export default async function DashboardScreen(_props?: { param?: string }) {
-  const epicsResult = await listEpics();
+  const [
+    epicsResult,
+    sprintsResult,
+    predictabilityResult,
+    budgetsResult,
+    cloudCostResult,
+  ] = await Promise.all([
+    listEpics(),
+    listRecentSprints(),
+    listRecentPiPredictability(),
+    listLeanBudgets(),
+    getCloudCostSummary(),
+  ]);
+
   const epics = epicsResult.ok ? epicsResult.data : [];
   const inProgress = epics.filter((e) => e.column === "implementing");
+
+  // ── Velocity — SP delivered per closed sprint, oldest→newest ──
+  const closedSprints = (sprintsResult.ok ? sprintsResult.data : []).filter(
+    (s) => s.velocity !== null
+  );
+  const recentSprints = closedSprints.slice(0, 6).reverse();
+  const velocity = recentSprints.map((s) => s.velocity ?? 0);
+  const velocityLabels = recentSprints.map((s) => s.name);
+  const latestSprint = closedSprints[0];
+  const prevSprint = closedSprints[1];
+  const latestSprintVelocity = latestSprint?.velocity ?? null;
+  const prevSprintVelocity = prevSprint?.velocity ?? null;
+  const throughputDeltaPct =
+    latestSprintVelocity !== null &&
+    prevSprintVelocity !== null &&
+    prevSprintVelocity > 0
+      ? Math.round(
+          ((latestSprintVelocity - prevSprintVelocity) / prevSprintVelocity) *
+            100
+        )
+      : null;
+
+  // ── Predictability — PIPlan.ppm per closed PI, oldest→newest ──
+  const predict = predictabilityResult.ok ? predictabilityResult.data : [];
+  const latestPi = predict.at(-1);
+  const prevPi = predict.length >= 2 ? predict.at(-2) : undefined;
+  const predictabilityDelta =
+    latestPi && prevPi ? latestPi.ppmPct - prevPi.ppmPct : null;
+
+  // ── Theme allocation — committed Lean Budget amount, grouped by theme ──
+  const budgets = budgetsResult.ok ? budgetsResult.data : [];
+  const themeTotals = new Map<string, number>();
+  for (const b of budgets) {
+    if (!b.themeName) {
+      continue;
+    }
+    themeTotals.set(
+      b.themeName,
+      (themeTotals.get(b.themeName) ?? 0) + b.amount
+    );
+  }
+  const themeAlloc = [...themeTotals.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([label, amount], i) => ({
+      label,
+      v: Math.round(amount / 1000),
+      tone: THEME_ALLOC_TONES[i % THEME_ALLOC_TONES.length],
+    }));
+
+  // ── Cloud cost — CostSnapshot/CostAnomaly, current calendar month ──
+  const cloudCost = cloudCostResult.ok ? cloudCostResult.data : null;
+  const openAnomalyCount = cloudCost?.openAnomalyCount ?? 0;
+  const cloudCostUsd = cloudCost?.currentMonthCostUsd ?? null;
+  const cloudCostDeltaPct = cloudCost?.deltaPct ?? null;
 
   return (
     <div className="fade-in">
@@ -112,9 +184,6 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         subtitle="Saúde do portfólio SAFe em um olhar — predictability, throughput, custo e épicos em execução ao longo dos ARTs."
         title="Visão Geral"
       >
-        <Button icon="download" variant="secondary">
-          Exportar
-        </Button>
         <OrbitButton />
       </PageHeader>
 
@@ -122,8 +191,20 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
           ORBIT
         </strong>{" "}
-        · custo de nuvem subiu 12% no mês com 2 anomalias abertas — revise os
-        guardrails de FinOps antes do próximo checkpoint.
+        ·{" "}
+        {openAnomalyCount > 0 ? (
+          <>
+            custo de nuvem
+            {cloudCostDeltaPct !== null
+              ? ` ${cloudCostDeltaPct >= 0 ? "subiu" : "caiu"} ${Math.abs(cloudCostDeltaPct)}% no mês`
+              : ""}{" "}
+            com {openAnomalyCount}{" "}
+            {openAnomalyCount === 1 ? "anomalia aberta" : "anomalias abertas"} —
+            revise os guardrails de FinOps antes do próximo checkpoint.
+          </>
+        ) : (
+          "nenhuma anomalia de custo em aberto no momento — guardrails de FinOps dentro do esperado."
+        )}
       </AnomaliesCopilotBar>
 
       <div
@@ -135,14 +216,22 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         }}
       >
         <KpiCard
-          delta="+6 pts"
-          deltaTone="green"
-          hint="vs. PI-25"
+          delta={
+            predictabilityDelta !== null
+              ? `${predictabilityDelta >= 0 ? "+" : ""}${predictabilityDelta} pts`
+              : undefined
+          }
+          deltaTone={
+            predictabilityDelta !== null && predictabilityDelta >= 0
+              ? "green"
+              : "red"
+          }
+          hint={prevPi ? `vs. ${prevPi.label}` : "PI mais recente encerrado"}
           icon="target"
           label="PI Predictability"
-          tone="green"
-          unit="%"
-          value="87"
+          tone={latestPi ? "green" : "neutral"}
+          unit={latestPi ? "%" : undefined}
+          value={latestPi ? latestPi.ppmPct : "—"}
         />
         <KpiCard
           hint="4 ARTs"
@@ -152,24 +241,44 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           value={String(inProgress.length)}
         />
         <KpiCard
-          delta="+8%"
-          deltaTone="green"
-          hint="média 6 sprints"
+          delta={
+            throughputDeltaPct !== null
+              ? `${throughputDeltaPct >= 0 ? "+" : ""}${throughputDeltaPct}%`
+              : undefined
+          }
+          deltaTone={
+            throughputDeltaPct !== null && throughputDeltaPct >= 0
+              ? "green"
+              : "amber"
+          }
+          hint={prevSprint ? `vs. ${prevSprint.name}` : "sem sprint anterior"}
           icon="activity"
-          label="Throughput semanal"
+          label="Throughput por Sprint"
           tone="blue"
-          unit="SP"
-          value="34"
+          unit={latestSprintVelocity !== null ? "SP" : undefined}
+          value={latestSprintVelocity !== null ? latestSprintVelocity : "—"}
         />
         <KpiCard
-          delta="+12%"
-          deltaTone="amber"
-          hint="2 anomalias"
+          delta={
+            cloudCostDeltaPct !== null
+              ? `${cloudCostDeltaPct >= 0 ? "+" : ""}${cloudCostDeltaPct}%`
+              : undefined
+          }
+          deltaTone={
+            cloudCostDeltaPct !== null && cloudCostDeltaPct > 0
+              ? "amber"
+              : "green"
+          }
+          hint={
+            openAnomalyCount > 0
+              ? `${openAnomalyCount} ${openAnomalyCount === 1 ? "anomalia" : "anomalias"}`
+              : "sem anomalias"
+          }
           icon="dollar"
           label="Custo de nuvem · MTD"
-          tone="amber"
-          unit="k"
-          value="48,2"
+          tone={cloudCostUsd !== null ? "amber" : "neutral"}
+          unit={cloudCostUsd !== null ? "k" : undefined}
+          value={cloudCostUsd !== null ? formatCostK(cloudCostUsd) : "—"}
         />
       </div>
 
@@ -184,20 +293,38 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         <SectionCard
           bodyStyle={{ overflow: "visible" }}
           icon="activity"
-          subtitle="Story points entregues por PI"
+          subtitle="Story points entregues por sprint encerrado"
           title="Velocity do Programa"
           tone="accent"
         >
-          <AreaChart data={velocity} labels={velocityLabels} tone="accent" />
+          {velocity.length >= 2 ? (
+            <AreaChart data={velocity} labels={velocityLabels} tone="accent" />
+          ) : (
+            <EmptyState
+              description="Histórico de sprints encerrados insuficiente para exibir a tendência de velocity."
+              icon="activity"
+              title="Sem dados de velocity"
+            />
+          )}
         </SectionCard>
         <SectionCard
           bodyStyle={{ overflow: "visible" }}
           icon="target"
-          subtitle="Objetivos committed entregues"
+          subtitle="Program Predictability Measure (PPM) por PI encerrado"
           title="Predictability por PI"
           tone="green"
         >
-          <VBars data={predict} />
+          {predict.length > 0 ? (
+            <VBars
+              data={predict.map((p) => ({ label: p.label, v: p.ppmPct }))}
+            />
+          ) : (
+            <EmptyState
+              description="Nenhum PI encerrado com PPM calculado ainda."
+              icon="target"
+              title="Sem dados de predictability"
+            />
+          )}
         </SectionCard>
       </div>
 
@@ -214,7 +341,15 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           title="Alocação por Tema Estratégico"
           tone="purple"
         >
-          <HBars rows={themeAlloc} />
+          {themeAlloc.length > 0 ? (
+            <HBars rows={themeAlloc} />
+          ) : (
+            <EmptyState
+              description="Nenhum Lean Budget com tema estratégico associado ainda."
+              icon="compass"
+              title="Sem alocação por tema"
+            />
+          )}
         </SectionCard>
         <SectionCard
           action={
@@ -254,6 +389,16 @@ export default async function DashboardScreen(_props?: { param?: string }) {
                       {e.id}
                     </span>
                   </CopyId>
+                  <div style={{ display: "flex", gap: 4, flexShrink: 0 }}>
+                    <Badge
+                      tone={wsjfTone(e.wsjf)}
+                    >{`WSJF ${e.wsjf.toFixed(1)}`}</Badge>
+                    {e.hot && (
+                      <Badge icon="zap" tone="red">
+                        Quente
+                      </Badge>
+                    )}
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div
                       style={{

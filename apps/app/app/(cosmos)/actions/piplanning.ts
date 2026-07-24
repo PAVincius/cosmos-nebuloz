@@ -66,3 +66,32 @@ export async function getActivePiPlanning(): Promise<
     };
   });
 }
+
+export type PiPredictabilityPoint = {
+  id: string;
+  label: string;
+  ppmPct: number;
+};
+
+// Last closed PIs' Program Predictability Measure (PIPlan.ppm), oldest→newest —
+// the real SAFe PI predictability trend, only defined once a PI is closed.
+export async function listRecentPiPredictability(): Promise<
+  Result<PiPredictabilityPoint[]>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const rows = await database.pIPlan.findMany({
+      where: { tenantId: ctx.tenantId, status: "CLOSED", ppm: { not: null } },
+      orderBy: { endDate: "desc" },
+      take: 6,
+      select: { id: true, name: true, ppm: true },
+    });
+    return rows
+      .map((p) => ({
+        id: p.id,
+        label: p.name,
+        ppmPct: Math.round(p.ppm as number),
+      }))
+      .reverse();
+  });
+}

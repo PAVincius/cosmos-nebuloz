@@ -23,6 +23,10 @@ vi.mock("@repo/database", () => ({
         ],
         risks: [{ id: "r1", title: "Risco A", roamStatus: "OWNED" }],
       }),
+      findMany: vi.fn().mockResolvedValue([
+        { id: "piB", name: "PI Mais Recente", ppm: 88 },
+        { id: "piA", name: "PI Anterior", ppm: 81.4 },
+      ]),
     },
     confidenceVoteTally: {
       findFirst: vi.fn().mockResolvedValue({ aggregateScore: 3.8 }),
@@ -31,7 +35,10 @@ vi.mock("@repo/database", () => ({
 }));
 
 import { database } from "@repo/database";
-import { getActivePiPlanning } from "../../app/(cosmos)/actions/piplanning";
+import {
+  getActivePiPlanning,
+  listRecentPiPredictability,
+} from "../../app/(cosmos)/actions/piplanning";
 
 describe("getActivePiPlanning", () => {
   it("returns tenant-scoped objectives, risks, and confidence average", async () => {
@@ -52,5 +59,28 @@ describe("getActivePiPlanning", () => {
         where: expect.objectContaining({ tenantId: "t1", piPlanId: "pi1" }),
       })
     );
+  });
+});
+
+describe("listRecentPiPredictability", () => {
+  it("returns tenant-scoped closed-PI PPM history, oldest→newest", async () => {
+    const r = await listRecentPiPredictability();
+    expect(r.ok).toBe(true);
+    expect(database.pIPlan.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          tenantId: "t1",
+          status: "CLOSED",
+          ppm: { not: null },
+        }),
+      })
+    );
+    if (r.ok) {
+      expect(r.data.map((p) => p.label)).toEqual([
+        "PI Anterior",
+        "PI Mais Recente",
+      ]);
+      expect(r.data[1].ppmPct).toBe(88);
+    }
   });
 });
