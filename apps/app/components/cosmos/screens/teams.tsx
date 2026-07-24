@@ -12,7 +12,7 @@ import {
 } from "@/app/(cosmos)/actions/teams";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
-import { Badge, Button, ErrorState, PageHeader } from "../kit";
+import { Badge, Button, ErrorState, PageHeader, useNav } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
@@ -117,9 +117,11 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
 }
 
 function TeamCard({ tm }: { tm: TeamListView }) {
+  const { navigate } = useNav();
   return (
-    <div
+    <button
       className="lift"
+      onClick={() => navigate("team", tm.id)}
       style={{
         background: "var(--surface)",
         border: "1px solid var(--hairline)",
@@ -129,7 +131,13 @@ function TeamCard({ tm }: { tm: TeamListView }) {
         display: "flex",
         flexDirection: "column",
         gap: 16,
+        width: "100%",
+        textAlign: "left",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        color: "inherit",
       }}
+      type="button"
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span
@@ -209,7 +217,7 @@ function TeamCard({ tm }: { tm: TeamListView }) {
           </div>
         ))}
       </div>
-    </div>
+    </button>
   );
 }
 
