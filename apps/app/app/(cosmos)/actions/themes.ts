@@ -15,6 +15,10 @@ export type ThemeView = {
   color: string;
   healthStatus: string;
   targetAllocationPct: number | null;
+  // Derived from BillingEntryAllocation, same normalization getTheme() uses
+  // for a single theme (see below) — null only when the tenant has no
+  // themed allocation data at all yet, never fabricated.
+  actualAllocationPct: number | null;
   horizon: string | null;
   epicCount: number;
   avgProgress: number;
@@ -23,22 +27,45 @@ export type ThemeView = {
 export async function listThemes(): Promise<Result<ThemeView[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    const rows = await database.strategicTheme.findMany({
-      where: { tenantId: ctx.tenantId },
-      orderBy: { order: "asc" },
-      select: {
-        id: true,
-        title: true,
-        description: true,
-        color: true,
-        healthStatus: true,
-        // Simplification (Tier 1, documented): targetAllocationPct is used
-        // as-is; a real "current allocation" aggregate is not yet materialized.
-        targetAllocationPct: true,
-        horizon: true,
-        epics: { select: { featureCount: true, doneFeatureCount: true } },
-      },
-    });
+    const [rows, allocations] = await Promise.all([
+      database.strategicTheme.findMany({
+        where: { tenantId: ctx.tenantId },
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          color: true,
+          healthStatus: true,
+          targetAllocationPct: true,
+          horizon: true,
+          epics: { select: { featureCount: true, doneFeatureCount: true } },
+        },
+      }),
+      // Same tenant-scoped BillingEntryAllocation aggregation getTheme()
+      // performs for one theme, batched across every theme at once: each
+      // theme's actual cost, normalized against the sum across every themed
+      // allocation in the tenant.
+      database.billingEntryAllocation.findMany({
+        where: { tenantId: ctx.tenantId, themeId: { not: null } },
+        select: {
+          themeId: true,
+          percentage: true,
+          billingEntry: { select: { effectiveCost: true } },
+        },
+      }),
+    ]);
+
+    const costByTheme = new Map<string, number>();
+    let totalCost = 0;
+    for (const a of allocations) {
+      const cost =
+        (Number(a.percentage) / 100) * Number(a.billingEntry.effectiveCost);
+      totalCost += cost;
+      if (a.themeId) {
+        costByTheme.set(a.themeId, (costByTheme.get(a.themeId) ?? 0) + cost);
+      }
+    }
 
     return rows.map((t) => {
       const withFeatures = t.epics.filter((e) => e.featureCount > 0);
@@ -50,6 +77,10 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
             ) / withFeatures.length
           )
         : 0;
+      const actualAllocationPct =
+        totalCost > 0
+          ? Math.round(((costByTheme.get(t.id) ?? 0) / totalCost) * 1000) / 10
+          : null;
       return {
         id: t.id,
         title: t.title,
@@ -57,6 +88,7 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
         color: t.color,
         healthStatus: t.healthStatus,
         targetAllocationPct: t.targetAllocationPct,
+        actualAllocationPct,
         horizon: t.horizon,
         epicCount: t.epics.length,
         avgProgress,

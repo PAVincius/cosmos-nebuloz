@@ -1,7 +1,8 @@
 "use client";
 
 // themes.tsx — Temas Estratégicos (portfolio investment themes), wired to
-// listThemes(). Card grid: health, target allocation, epic count, avg progress.
+// listThemes(). KPI row + card grid: health, target-vs-actual allocation
+// (BillingEntryAllocation-derived, see actions/themes.ts), epic count.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   createTheme,
@@ -27,9 +28,57 @@ const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   behind: "red",
 };
 
+// Portfolio-wide KPIs derived from the themes already returned by
+// listThemes() — no extra round trip. Every value degrades to null (never a
+// fabricated number) when the underlying data isn't there yet.
+function computeThemeKpis(themes: ThemeView[]) {
+  const withActual = themes.filter((t) => t.actualAllocationPct !== null);
+  // % of the target-weighted portfolio (targets sum to 100 once rebalanced)
+  // that has real cost data mapped to it.
+  const mappedInvestmentPct = withActual.length
+    ? Math.round(
+        withActual.reduce((s, t) => s + (t.targetAllocationPct ?? 0), 0)
+      )
+    : null;
+  const epicsUnderThemes = themes.reduce((s, t) => s + t.epicCount, 0);
+  const withBoth = themes.filter(
+    (t) => t.actualAllocationPct !== null && t.targetAllocationPct !== null
+  );
+  const targetAdherencePct = withBoth.length
+    ? Math.round(
+        Math.max(
+          0,
+          Math.min(
+            100,
+            100 -
+              withBoth.reduce(
+                (s, t) =>
+                  s +
+                  Math.abs(
+                    (t.actualAllocationPct as number) -
+                      (t.targetAllocationPct as number)
+                  ),
+                0
+              ) /
+                withBoth.length
+          )
+        )
+      )
+    : null;
+  return { mappedInvestmentPct, epicsUnderThemes, targetAdherencePct };
+}
+
 function ThemeCard({ theme }: { theme: ThemeView }) {
   const { navigate } = useNav();
   const tone = HEALTH_TONE[theme.healthStatus] ?? "green";
+  const hasDrift =
+    theme.actualAllocationPct !== null && theme.targetAllocationPct !== null;
+  const drift = hasDrift
+    ? Math.round(
+        (theme.actualAllocationPct as number) -
+          (theme.targetAllocationPct as number)
+      )
+    : null;
   return (
     <SectionCard
       action={
@@ -42,7 +91,7 @@ function ThemeCard({ theme }: { theme: ThemeView }) {
       title={theme.title}
       tone={tone}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <div
           style={{
             display: "flex",
@@ -50,15 +99,58 @@ function ThemeCard({ theme }: { theme: ThemeView }) {
             fontSize: 12.5,
           }}
         >
-          <span style={{ color: "var(--ink-muted)" }}>Alocação-alvo</span>
+          <span style={{ color: "var(--ink-muted)" }}>
+            {theme.actualAllocationPct !== null
+              ? "Real vs. alvo"
+              : "Alocação-alvo"}
+          </span>
           <span
             className="mono"
             style={{ fontWeight: 700, color: "var(--ink)" }}
           >
-            {theme.targetAllocationPct ?? "—"}%
+            {theme.actualAllocationPct !== null
+              ? `${theme.actualAllocationPct}%`
+              : `${theme.targetAllocationPct ?? "—"}%`}
+            {theme.actualAllocationPct !== null &&
+              theme.targetAllocationPct !== null &&
+              ` / alvo ${theme.targetAllocationPct}%`}
           </span>
         </div>
-        <Progress tone={tone} value={theme.avgProgress} />
+        {theme.actualAllocationPct !== null ? (
+          <div style={{ position: "relative" }}>
+            <Progress tone={tone} value={theme.actualAllocationPct} />
+            {theme.targetAllocationPct !== null && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -2,
+                  bottom: -2,
+                  left: `${theme.targetAllocationPct}%`,
+                  width: 2,
+                  background: "var(--ink-faint)",
+                  borderRadius: 2,
+                }}
+              />
+            )}
+          </div>
+        ) : (
+          <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+            Sem dados de alocação real
+          </span>
+        )}
+        {drift !== null && drift !== 0 && (
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: drift > 0 ? "var(--amber-text)" : "var(--blue-text)",
+            }}
+          >
+            {drift > 0
+              ? `+${drift}pp acima do alvo`
+              : `${drift}pp abaixo do alvo`}
+          </span>
+        )}
         <div
           style={{
             display: "flex",
@@ -339,6 +431,8 @@ function ThemesBody() {
     load();
   }, [load]);
 
+  const kpis = computeThemeKpis(themes);
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -366,6 +460,38 @@ function ThemesBody() {
           Novo tema
         </Button>
       </PageHeader>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: 16,
+          marginBottom: 16,
+        }}
+      >
+        <KpiCard
+          hint="do orçamento-alvo do portfólio"
+          icon="compass"
+          label="Investimento mapeado"
+          tone="accent"
+          unit={kpis.mappedInvestmentPct === null ? undefined : "%"}
+          value={kpis.mappedInvestmentPct ?? "—"}
+        />
+        <KpiCard
+          hint="vinculados a temas"
+          icon="layers"
+          label="Épicos sob temas"
+          tone="purple"
+          value={kpis.epicsUnderThemes}
+        />
+        <KpiCard
+          hint="média entre temas com dados reais"
+          icon="gauge"
+          label="Aderência ao alvo"
+          tone="green"
+          unit={kpis.targetAdherencePct === null ? undefined : "%"}
+          value={kpis.targetAdherencePct ?? "—"}
+        />
+      </div>
       <div
         style={{
           display: "grid",
