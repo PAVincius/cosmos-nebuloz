@@ -16,6 +16,7 @@ import IntegrationsScreen from "./integrations";
 import KanbanScreen from "./kanban";
 import MeasureScreen from "./measure";
 import OkrsScreen from "./okrs";
+import PillarDetailScreen from "./pillar-detail";
 import PiPlanningScreen from "./piplanning";
 import ProgramScreen from "./program";
 import RisksScreen from "./risks";
@@ -60,6 +61,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
   theme: ThemeDetailScreen,
+  pillar: PillarDetailScreen,
   tags: TagsScreen,
   solution: SolutionTrainScreen,
   strategy: StrategyScreen,
