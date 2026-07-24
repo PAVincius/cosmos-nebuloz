@@ -16,6 +16,14 @@ export type TeamListView = {
   wip: number;
   velocity: number | null;
   memberCount: number;
+  artId: string | null;
+  artName: string | null;
+  // Latest TeamCapacitySnapshot for this team (same source getTeam() reads).
+  capacity: { expectedSp: number; actualSp: number } | null;
+  // Avg actualSpDelivered/expectedSpNextSprint across snapshots with a
+  // non-zero expectation — same say-do ratio idea as listTeamPredictability,
+  // computed over TeamCapacitySnapshot instead of Sprint rows.
+  predictabilityPct: number | null;
 };
 
 export type TeamDetailView = {
@@ -43,6 +51,48 @@ function parseMembers(json: unknown): { name: string; role: string }[] {
     }));
 }
 
+type CapacityAgg = {
+  capacity: { expectedSp: number; actualSp: number } | null;
+  predictabilityPct: number | null;
+};
+
+// Tenant-scoped, keyed by teamId. `rows` must already be sorted newest-first
+// (recordedAt desc) so the first row seen per team is the latest snapshot.
+function aggregateCapacityByTeam(
+  rows: {
+    teamId: string;
+    expectedSpNextSprint: number;
+    actualSpDelivered: number;
+  }[]
+): Map<string, CapacityAgg> {
+  const latest = new Map<string, { expectedSp: number; actualSp: number }>();
+  const ratios = new Map<string, number[]>();
+  for (const s of rows) {
+    if (!latest.has(s.teamId)) {
+      latest.set(s.teamId, {
+        expectedSp: s.expectedSpNextSprint,
+        actualSp: s.actualSpDelivered,
+      });
+    }
+    if (s.expectedSpNextSprint > 0) {
+      const list = ratios.get(s.teamId) ?? [];
+      list.push((s.actualSpDelivered / s.expectedSpNextSprint) * 100);
+      ratios.set(s.teamId, list);
+    }
+  }
+  const out = new Map<string, CapacityAgg>();
+  for (const [teamId, capacity] of latest) {
+    const list = ratios.get(teamId);
+    out.set(teamId, {
+      capacity,
+      predictabilityPct: list?.length
+        ? Math.round(list.reduce((a, b) => a + b, 0) / list.length)
+        : null,
+    });
+  }
+  return out;
+}
+
 export async function listTeams(): Promise<Result<TeamListView[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -57,17 +107,41 @@ export async function listTeams(): Promise<Result<TeamListView[]>> {
         wip: true,
         velocity: true,
         members: true,
+        artId: true,
+        art: { select: { name: true } },
       },
     });
-    return rows.map((t) => ({
-      id: t.id,
-      name: t.name,
-      focusArea: t.focusArea,
-      color: t.color,
-      wip: t.wip,
-      velocity: t.velocity,
-      memberCount: Array.isArray(t.members) ? t.members.length : 0,
-    }));
+
+    const teamIds = rows.map((t) => t.id);
+    const snapshots = teamIds.length
+      ? await database.teamCapacitySnapshot.findMany({
+          where: { tenantId: ctx.tenantId, teamId: { in: teamIds } },
+          orderBy: { recordedAt: "desc" },
+          select: {
+            teamId: true,
+            expectedSpNextSprint: true,
+            actualSpDelivered: true,
+          },
+        })
+      : [];
+    const capacityByTeam = aggregateCapacityByTeam(snapshots);
+
+    return rows.map((t) => {
+      const agg = capacityByTeam.get(t.id);
+      return {
+        id: t.id,
+        name: t.name,
+        focusArea: t.focusArea,
+        color: t.color,
+        wip: t.wip,
+        velocity: t.velocity,
+        memberCount: Array.isArray(t.members) ? t.members.length : 0,
+        artId: t.artId,
+        artName: t.art?.name ?? null,
+        capacity: agg?.capacity ?? null,
+        predictabilityPct: agg?.predictabilityPct ?? null,
+      };
+    });
   });
 }
 

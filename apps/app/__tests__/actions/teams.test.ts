@@ -63,8 +63,11 @@ describe("listTeams", () => {
         wip: 5,
         velocity: 40,
         members: [{ name: "Ana" }, { name: "Bruno" }],
+        artId: null,
+        art: null,
       },
     ]);
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
 
     const r = await listTeams();
     expect(r.ok).toBe(true);
@@ -76,6 +79,98 @@ describe("listTeams", () => {
     if (r.ok) {
       expect(r.data[0].memberCount).toBe(2);
     }
+  });
+
+  it("scopes the TeamCapacitySnapshot aggregate query to the tenant", async () => {
+    h.teamFindMany.mockResolvedValue([
+      {
+        id: "tm1",
+        name: "Squad Alpha",
+        focusArea: "Pagamentos",
+        color: "#2563eb",
+        wip: 5,
+        velocity: 40,
+        members: [],
+        artId: "art-1",
+        art: { name: "ART Pagamentos" },
+      },
+    ]);
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
+
+    await listTeams();
+
+    expect(database.teamCapacitySnapshot.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, teamId: { in: ["tm1"] } },
+      })
+    );
+  });
+
+  it("surfaces the latest capacity snapshot and avg predictability per team, tenant-scoped", async () => {
+    h.teamFindMany.mockResolvedValue([
+      {
+        id: "tm1",
+        name: "Squad Alpha",
+        focusArea: "Pagamentos",
+        color: "#2563eb",
+        wip: 5,
+        velocity: 40,
+        members: [],
+        artId: "art-1",
+        art: { name: "ART Pagamentos" },
+      },
+    ]);
+    // Newest-first, as the real orderBy: recordedAt desc produces.
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([
+      {
+        teamId: "tm1",
+        expectedSpNextSprint: 40,
+        actualSpDelivered: 44,
+      },
+      {
+        teamId: "tm1",
+        expectedSpNextSprint: 40,
+        actualSpDelivered: 36,
+      },
+    ]);
+
+    const r = await listTeams();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].artId).toBe("art-1");
+      expect(r.data[0].artName).toBe("ART Pagamentos");
+      // Latest snapshot (first row) is the capacity shown on the card.
+      expect(r.data[0].capacity).toEqual({ expectedSp: 40, actualSp: 44 });
+      // (110% + 90%) / 2 = 100%
+      expect(r.data[0].predictabilityPct).toBe(100);
+    }
+  });
+
+  it("does not surface a team belonging to another tenant even if it shares a name", async () => {
+    // The tenant-scoped team.findMany already filters to this tenant; a
+    // snapshot referencing an id outside that result set must never appear
+    // as this team's capacity — the aggregate join is keyed off `teamId`
+    // returned by the tenant-scoped team query only.
+    h.teamFindMany.mockResolvedValue([
+      {
+        id: "tm1",
+        name: "Squad Alpha",
+        focusArea: null,
+        color: null,
+        wip: 0,
+        velocity: null,
+        members: [],
+        artId: null,
+        art: null,
+      },
+    ]);
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
+
+    await listTeams();
+
+    const call = h.teamCapacitySnapshotFindMany.mock.calls[0][0];
+    expect(call.where.teamId.in).toEqual(["tm1"]);
+    expect(call.where.teamId.in).not.toContain("other-tenant-team");
   });
 });
 

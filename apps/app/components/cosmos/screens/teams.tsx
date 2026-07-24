@@ -1,9 +1,12 @@
 "use client";
 
 // teams.tsx — Times (diretório de squads do portfólio), wired to listTeams().
+// Portfolio KPI row, ART filter popover, and per-team capacity/predictability
+// (both from the same TeamCapacitySnapshot the team-detail screen reads).
 
 import type { CSSProperties } from "react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import {
   createTeam,
@@ -12,7 +15,16 @@ import {
 } from "@/app/(cosmos)/actions/teams";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
-import { Badge, Button, ErrorState, PageHeader, useNav } from "../kit";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  useNav,
+  useThemeName,
+} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
@@ -118,6 +130,12 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
 
 function TeamCard({ tm }: { tm: TeamListView }) {
   const { navigate } = useNav();
+  const over =
+    tm.capacity !== null && tm.capacity.actualSp > tm.capacity.expectedSp;
+  const capacityPct =
+    tm.capacity && tm.capacity.expectedSp > 0
+      ? Math.round((tm.capacity.actualSp / tm.capacity.expectedSp) * 100)
+      : null;
   return (
     <button
       className="lift"
@@ -173,12 +191,53 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             {tm.focusArea ?? "—"}
           </div>
         </div>
+        {tm.artName && <Badge tone="neutral">{tm.artName}</Badge>}
       </div>
+
+      {tm.capacity && capacityPct !== null && (
+        <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontSize: 11,
+              marginBottom: 6,
+            }}
+          >
+            <span
+              style={{
+                fontWeight: 700,
+                letterSpacing: ".04em",
+                textTransform: "uppercase",
+                color: "var(--ink-faint)",
+                fontSize: 10.5,
+              }}
+            >
+              Capacidade
+            </span>
+            <span
+              className="mono"
+              style={{
+                fontWeight: 700,
+                color: over ? "var(--red-text)" : "var(--ink-muted)",
+              }}
+            >
+              {tm.capacity.actualSp}/{tm.capacity.expectedSp} SP · {capacityPct}
+              %
+            </span>
+          </div>
+          <Progress
+            height={7}
+            tone={over ? "red" : capacityPct >= 90 ? "green" : "amber"}
+            value={Math.min(100, capacityPct)}
+          />
+        </div>
+      )}
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3,1fr)",
+          gridTemplateColumns: "repeat(4,1fr)",
           gap: 10,
           paddingTop: 14,
           borderTop: "1px solid var(--hairline)",
@@ -189,13 +248,20 @@ function TeamCard({ tm }: { tm: TeamListView }) {
             { k: "Membros", v: tm.memberCount },
             { k: "WIP", v: tm.wip },
             { k: "Velocity", v: tm.velocity ?? "—" },
+            {
+              k: "Predict.",
+              v:
+                tm.predictabilityPct !== null
+                  ? `${tm.predictabilityPct}%`
+                  : "—",
+            },
           ] as { k: string; v: number | string }[]
         ).map((s) => (
           <div key={s.k} style={{ textAlign: "center" }}>
             <div
               className="mono"
               style={{
-                fontSize: 19,
+                fontSize: 17,
                 fontWeight: 800,
                 letterSpacing: "-.02em",
                 color: "var(--ink)",
@@ -221,11 +287,108 @@ function TeamCard({ tm }: { tm: TeamListView }) {
   );
 }
 
+const chipStyle = (on: boolean): CSSProperties => ({
+  fontSize: 11.5,
+  fontWeight: 600,
+  padding: "5px 10px",
+  borderRadius: 99,
+  cursor: "pointer",
+  border: `1px solid ${on ? "rgba(var(--accent-rgb),.4)" : "var(--hairline-strong)"}`,
+  background: on ? "var(--accent-soft)" : "var(--surface)",
+  color: on ? "var(--accent-text)" : "var(--ink-muted)",
+});
+
+function ArtFilterPopover({
+  options,
+  selected,
+  onChange,
+  btnRect,
+}: {
+  options: { id: string; name: string }[];
+  selected: Set<string>;
+  onChange: (next: Set<string>) => void;
+  btnRect: DOMRect;
+}) {
+  const themeName = useThemeName();
+  const toggle = (id: string) => {
+    const next = new Set(selected);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    onChange(next);
+  };
+  return createPortal(
+    <div
+      data-team-art-filter
+      data-theme={themeName}
+      style={{
+        position: "fixed",
+        top: btnRect.bottom + 8,
+        left: Math.max(8, btnRect.right - 240),
+        zIndex: 400,
+        width: 240,
+        background: "var(--surface-3)",
+        border: "1px solid var(--hairline-strong)",
+        borderRadius: "var(--r-md)",
+        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+        padding: 14,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          marginBottom: 10,
+        }}
+      >
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: "var(--ink)" }}>
+          Filtrar por ART
+        </span>
+        {selected.size > 0 && (
+          <button
+            onClick={() => onChange(new Set())}
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              color: "var(--accent)",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+            type="button"
+          >
+            Limpar
+          </button>
+        )}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {options.map((o) => (
+          <button
+            key={o.id}
+            onClick={() => toggle(o.id)}
+            style={chipStyle(selected.has(o.id))}
+            type="button"
+          >
+            {o.name}
+          </button>
+        ))}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
 function TeamsBody() {
   const modal = useModal();
   const [teams, setTeams] = useState<TeamListView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [artFilter, setArtFilter] = useState<Set<string>>(() => new Set());
+  const [filterOpen, setFilterOpen] = useState(false);
+  const btnRef = useRef<HTMLSpanElement>(null);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -243,19 +406,86 @@ function TeamsBody() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (!filterOpen) {
+      return;
+    }
+    const close = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (
+        !(
+          t.closest("[data-team-art-filter]") ||
+          t.closest("[data-team-filter-trigger]")
+        )
+      ) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [filterOpen]);
+
   const totalMembers = teams.reduce((s, t) => s + t.memberCount, 0);
+  const totalVelocity = teams.reduce((s, t) => s + (t.velocity ?? 0), 0);
+  const predictabilities = teams
+    .map((t) => t.predictabilityPct)
+    .filter((p): p is number => p !== null);
+  const avgPredictability = predictabilities.length
+    ? Math.round(
+        predictabilities.reduce((a, b) => a + b, 0) / predictabilities.length
+      )
+    : null;
+  const overCapacityCount = teams.filter(
+    (t) => t.capacity !== null && t.capacity.actualSp > t.capacity.expectedSp
+  ).length;
+
+  const artOptions = Array.from(
+    new Map(
+      teams
+        .filter((t): t is TeamListView & { artId: string; artName: string } =>
+          Boolean(t.artId && t.artName)
+        )
+        .map((t) => [t.artId, { id: t.artId, name: t.artName }])
+    ).values()
+  );
+  const visibleTeams = teams.filter(
+    (t) => artFilter.size === 0 || (t.artId && artFilter.has(t.artId))
+  );
 
   return (
     <div className="fade-in">
       <PageHeader
         meta={
-          <Badge icon="users" tone="accent">
-            {teams.length} squads · {totalMembers} pessoas
-          </Badge>
+          <>
+            <Badge icon="users" tone="accent">
+              {teams.length} squads · {totalMembers} pessoas
+            </Badge>
+            {artFilter.size > 0 && (
+              <Badge dot tone="amber">
+                {visibleTeams.length} visíveis
+              </Badge>
+            )}
+          </>
         }
-        subtitle="Squads do portfólio COSMOS. Membros, WIP e velocity consolidados por time."
+        subtitle="Squads do portfólio COSMOS. Membros, WIP, velocity, capacidade e predictability consolidados por time."
         title="Times"
       >
+        {artOptions.length > 0 && (
+          <span
+            data-team-filter-trigger
+            ref={btnRef}
+            style={{ display: "inline-flex" }}
+          >
+            <Button
+              icon="filter"
+              onClick={() => setFilterOpen((o) => !o)}
+              size="md"
+              variant={artFilter.size > 0 ? "primary" : "secondary"}
+            >
+              Por ART{artFilter.size > 0 ? ` (${artFilter.size})` : ""}
+            </Button>
+          </span>
+        )}
         <Button
           icon="plus"
           onClick={() => modal.open(<NewTeamModal onCreated={load} />)}
@@ -266,7 +496,53 @@ function TeamsBody() {
         </Button>
       </PageHeader>
 
+      {filterOpen && btnRef.current && (
+        <ArtFilterPopover
+          btnRect={btnRef.current.getBoundingClientRect()}
+          onChange={setArtFilter}
+          options={artOptions}
+          selected={artFilter}
+        />
+      )}
+
       {error && <ErrorState />}
+      {!(error || loading) && teams.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4, minmax(0,1fr))",
+            gap: "var(--gap)",
+            marginBottom: "var(--gap)",
+          }}
+        >
+          <KpiCard
+            icon="users"
+            label="Pessoas no portfólio"
+            tone="accent"
+            value={totalMembers}
+          />
+          <KpiCard
+            icon="activity"
+            label="Velocity somada"
+            tone="blue"
+            unit="SP"
+            value={totalVelocity}
+          />
+          <KpiCard
+            icon="gauge"
+            label="Predictability média"
+            tone="green"
+            unit={avgPredictability !== null ? "%" : undefined}
+            value={avgPredictability ?? "—"}
+          />
+          <KpiCard
+            icon="alert"
+            label="Times acima da capacidade"
+            tone={overCapacityCount > 0 ? "red" : "green"}
+            value={overCapacityCount}
+          />
+        </div>
+      )}
       {!(error || loading) && teams.length === 0 && (
         <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
           Nenhum time encontrado.
@@ -277,7 +553,19 @@ function TeamsBody() {
           Carregando...
         </div>
       )}
-      {!(error || loading) && teams.length > 0 && (
+      {!(error || loading) && teams.length > 0 && visibleTeams.length === 0 && (
+        <div
+          style={{
+            padding: "40px 20px",
+            textAlign: "center",
+            color: "var(--ink-faint)",
+            fontSize: 13,
+          }}
+        >
+          Nenhum time corresponde ao filtro selecionado.
+        </div>
+      )}
+      {!(error || loading) && visibleTeams.length > 0 && (
         <div
           style={{
             display: "grid",
@@ -285,7 +573,7 @@ function TeamsBody() {
             gap: "var(--gap)",
           }}
         >
-          {teams.map((tm) => (
+          {visibleTeams.map((tm) => (
             <TeamCard key={tm.id} tm={tm} />
           ))}
         </div>
