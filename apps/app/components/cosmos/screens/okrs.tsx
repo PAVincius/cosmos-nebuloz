@@ -86,8 +86,8 @@ function UpdateProgressModal({
       }
     );
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onUpdated?.();
     }
   };
@@ -391,14 +391,7 @@ function OkrsBody() {
         }
         subtitle="Objetivos e Key Results do portfólio. Conectam a estratégia às entregas dos ARTs e times."
         title="OKRs"
-      >
-        <Button icon="calendar" size="md" variant="secondary">
-          Período atual
-        </Button>
-        <Button icon="sparkles" size="md" variant="primary">
-          Atualizar progresso
-        </Button>
-      </PageHeader>
+      />
 
       <div
         style={{
