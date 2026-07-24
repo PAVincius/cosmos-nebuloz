@@ -103,6 +103,75 @@ describe("listRecentPiPredictability", () => {
       expect(r.data[1].ppmPct).toBe(88);
     }
   });
+
+  it("excludes a null-endDate CLOSED PI so it can't hijack the 'most recent' slot (Postgres sorts NULLs first on DESC)", async () => {
+    const fakeRows = [
+      {
+        id: "null-end",
+        name: "PI Sem Data de Fim",
+        ppm: 50,
+        endDate: null as Date | null,
+        status: "CLOSED",
+        tenantId: "t1",
+      },
+      {
+        id: "pi-newest",
+        name: "PI Mais Recente",
+        ppm: 90,
+        endDate: new Date("2026-06-01"),
+        status: "CLOSED",
+        tenantId: "t1",
+      },
+      {
+        id: "pi-older",
+        name: "PI Anterior",
+        ppm: 70,
+        endDate: new Date("2026-01-01"),
+        status: "CLOSED",
+        tenantId: "t1",
+      },
+    ];
+
+    // Minimal in-memory stand-in for the real query: honors the same where
+    // filters the action passes, and replicates Postgres's NULLS FIRST on
+    // ORDER BY ... DESC — the exact behavior that let a null-endDate row
+    // hijack the "most recent" slot before the fix.
+    vi.mocked(database.pIPlan.findMany).mockImplementationOnce(
+      // biome-ignore lint/suspicious/noExplicitAny: minimal Prisma stand-in for this one test
+      (async (args: any) => {
+        let rows = fakeRows.filter(
+          (row) =>
+            row.tenantId === args.where.tenantId &&
+            row.status === args.where.status
+        );
+        if (args.where.ppm) {
+          rows = rows.filter((row) => row.ppm !== null);
+        }
+        if (args.where.endDate) {
+          rows = rows.filter((row) => row.endDate !== null);
+        }
+        rows = [...rows].sort((a, b) => {
+          if (a.endDate === null || b.endDate === null) {
+            return a.endDate === null ? -1 : 1;
+          }
+          return b.endDate.getTime() - a.endDate.getTime();
+        });
+        return rows
+          .slice(0, args.take)
+          .map((row) => ({ id: row.id, name: row.name, ppm: row.ppm }));
+        // biome-ignore lint/suspicious/noExplicitAny: matches Prisma's findMany signature loosely enough for this stand-in
+      }) as any
+    );
+
+    const r = await listRecentPiPredictability();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.map((p) => p.id)).not.toContain("null-end");
+      // oldest → newest; the last entry is the one treated as "latest".
+      expect(r.data.at(-1)?.id).toBe("pi-newest");
+    }
+  });
 });
 
 describe("getActiveArtCount", () => {

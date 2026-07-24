@@ -134,7 +134,16 @@ export async function listRecentPiPredictability(): Promise<
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const rows = await database.pIPlan.findMany({
-      where: { tenantId: ctx.tenantId, status: "CLOSED", ppm: { not: null } },
+      where: {
+        tenantId: ctx.tenantId,
+        status: "CLOSED",
+        ppm: { not: null },
+        // Postgres sorts NULLs first on DESC — a null endDate would hijack
+        // the "most recent" slot ahead of genuinely newer PIs. A closed PI
+        // without an endDate also has no well-defined position in a
+        // "recent" trend, so exclude it rather than guess an ordering.
+        endDate: { not: null },
+      },
       orderBy: { endDate: "desc" },
       take: 6,
       select: { id: true, name: true, ppm: true },
