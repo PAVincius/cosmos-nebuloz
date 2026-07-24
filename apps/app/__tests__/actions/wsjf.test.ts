@@ -465,6 +465,52 @@ describe("applyWsjfRebalance", () => {
     expect(h.revalidateTag).toHaveBeenCalled();
   });
 
+  // F4 regression: a bulk rebalance must leave one discoverable audit row
+  // per moved epic — a single synthetic "wsjf-rebalance" entityId makes
+  // getAuditLogsByEntity (exact-equality lookup) find nothing for any real
+  // epic id.
+  it("writes one audit row per moved epic, each keyed by that epic's own id", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    await applyWsjfRebalance();
+
+    expect(h.logAudit).toHaveBeenCalledTimes(2);
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "status_changed",
+        entityType: "epic",
+        entityId: "e1",
+      })
+    );
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "status_changed",
+        entityType: "epic",
+        entityId: "e2",
+      })
+    );
+    for (const call of h.logAudit.mock.calls) {
+      expect(call[1].entityId).not.toBe("wsjf-rebalance");
+    }
+  });
+
   it("never writes an epic outside the caller's tenant (IDOR guard: tenant-scoped read + tenant-scoped write)", async () => {
     h.epicFindMany.mockResolvedValue([
       {

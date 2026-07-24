@@ -297,16 +297,22 @@ export async function applyWsjfRebalance(): Promise<Result<{ moved: number }>> {
       )
     );
 
-    await logAudit(ctx.tenantId, {
-      userId: ctx.userId,
-      action: "status_changed",
-      entityType: "epic",
-      entityId: "wsjf-rebalance",
-      diff: {
-        moved: String(moves.length),
-        items: moves.map((m) => `${m.id}:${m.fromRank}->${m.toRank}`).join(","),
-      },
-    });
+    // One audit row per epic — entityId must be that epic's own cuid so
+    // getAuditLogsByEntity (exact-equality lookup) can find it.
+    await Promise.all(
+      moves.map((move) =>
+        logAudit(ctx.tenantId, {
+          userId: ctx.userId,
+          action: "status_changed",
+          entityType: "epic",
+          entityId: move.id,
+          diff: {
+            fromRank: String(move.fromRank),
+            toRank: String(move.toRank),
+          },
+        })
+      )
+    );
     revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
 
     return { moved: moves.length };
