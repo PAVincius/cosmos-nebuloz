@@ -4,6 +4,7 @@
 // hover/toggle state (useState) and navigation/modal hooks (useNav,
 // useModal). Split out so wsjf.tsx can be a real async server component.
 import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
+import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import type {
   WsjfRankItem,
   WsjfSettingsView,
@@ -15,6 +16,7 @@ import {
 } from "@/app/(cosmos)/actions/wsjf";
 import { ARTS } from "@/lib/cosmos-data";
 import { computeWeightedWsjfScore } from "@/lib/wsjf-math";
+import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
 import {
   Badge,
@@ -280,15 +282,27 @@ function ScenarioComponentSlider({
   );
 }
 
+// featureId/featureName are pre-filled when opened from a WSJF row
+// (WsjfRow) — the simulator loads straight into the sliders. Opened
+// standalone (the header "Simulador" button), both are undefined and an
+// EntityLinkField feature picker is shown first; once a feature is chosen
+// it behaves exactly like the row-triggered flow, sharing every line of
+// load/compute logic below. No duplicate modal.
 function ScenarioSimulatorModal({
-  featureId,
-  featureName,
+  featureId: initialFeatureId,
+  featureName: initialFeatureName,
 }: {
-  featureId: string;
-  featureName: string;
+  featureId?: string;
+  featureName?: string;
 }) {
   const { close } = useModal();
-  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<EntityOption | null>(
+    initialFeatureId
+      ? { id: initialFeatureId, label: initialFeatureName ?? initialFeatureId }
+      : null
+  );
+  const featureId = selected?.id;
+  const [loading, setLoading] = useState(Boolean(initialFeatureId));
   const [error, setError] = useState<string | null>(null);
   const [storedScore, setStoredScore] = useState<number | null>(null);
   const [weights, setWeights] = useState<{
@@ -302,6 +316,9 @@ function ScenarioSimulatorModal({
   const [js, setJs] = useState(1);
 
   useEffect(() => {
+    if (!featureId) {
+      return;
+    }
     let cancelled = false;
     setLoading(true);
     setError(null);
@@ -353,18 +370,31 @@ function ScenarioSimulatorModal({
   return (
     <ModalCard
       icon={<Icon name="flask" size={16} strokeWidth={2.4} />}
-      subtitle={`${featureName} — simulação não é salva`}
+      subtitle={
+        selected
+          ? `${selected.label} — simulação não é salva`
+          : "Selecione uma feature para simular WSJF"
+      }
       title="Simulador de Cenários"
       width={480}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        {loading && (
+        {!featureId && (
+          <EntityLinkField
+            kind="feature"
+            label="Feature"
+            onChange={setSelected}
+            value={selected}
+          />
+        )}
+
+        {featureId && loading && (
           <p style={{ margin: 0, fontSize: 13, color: "var(--ink-muted)" }}>
             Carregando componentes WSJF da feature...
           </p>
         )}
 
-        {!loading && error && (
+        {featureId && !loading && error && (
           <p
             style={{
               margin: 0,
@@ -849,6 +879,13 @@ function WsjfBody({
         }
         title="WSJF Rankings"
       >
+        <Button
+          icon="flask"
+          onClick={() => modal.open(<ScenarioSimulatorModal />)}
+          variant="secondary"
+        >
+          Simulador
+        </Button>
         <Button
           icon="sliders"
           onClick={() =>
