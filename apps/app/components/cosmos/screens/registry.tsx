@@ -1,6 +1,7 @@
 // registry.tsx — maps a screen id to its ported component. Screens not listed
 // here fall back to <ComingSoon> in the route. Add entries as screens land.
 import type { ComponentType } from "react";
+import AnomaliesScreen from "./anomalies";
 import BudgetsScreen from "./budgets";
 import CapacityScreen from "./capacity";
 import CopilotScreen from "./copilot";
@@ -42,6 +43,7 @@ import WsjfScreen from "./wsjf";
 export type ScreenProps = { param?: string };
 
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
+  anomalies: AnomaliesScreen,
   executive: ExecutiveScreen,
   dashboard: DashboardScreen,
   copilot: CopilotScreen,
