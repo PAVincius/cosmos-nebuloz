@@ -9,7 +9,14 @@ import {
   getActivePiPlanning,
   type PiPlanningView,
 } from "@/app/(cosmos)/actions/piplanning";
-import { Badge, ErrorState, KpiCard, PageHeader, SectionCard } from "../kit";
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+} from "../kit";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   NOT_STARTED: "neutral",
@@ -52,6 +59,14 @@ export default function PiPlanningScreen() {
       .reduce((s, o) => s + o.businessValue, 0) ?? 0;
   const openRisks =
     plan?.risks.filter((r) => r.roamStatus === "OWNED").length ?? 0;
+  const totalPlannedValue =
+    plan?.objectives.reduce((s, o) => s + o.plannedValue, 0) ?? 0;
+  const totalAchievedValue =
+    plan?.objectives.reduce((s, o) => s + o.achievedValue, 0) ?? 0;
+  const ppmPct =
+    totalPlannedValue > 0
+      ? Math.round((totalAchievedValue / totalPlannedValue) * 100)
+      : null;
 
   return (
     <div className="fade-in" style={{ paddingBottom: 76 }}>
@@ -172,6 +187,9 @@ export default function PiPlanningScreen() {
                           {o.status}
                         </Badge>
                         {o.isStretch && <Badge tone="neutral">stretch</Badge>}
+                        {o.teamName && (
+                          <Badge tone="accent">{o.teamName}</Badge>
+                        )}
                       </div>
                       <div
                         style={{
@@ -268,6 +286,95 @@ export default function PiPlanningScreen() {
                 {plan.risks.length === 0 && (
                   <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
                     Nenhum risco cadastrado.
+                  </span>
+                )}
+              </div>
+            </SectionCard>
+          </div>
+
+          {/* Business value: planned vs. actual */}
+          <div style={{ marginTop: "var(--gap)" }}>
+            <SectionCard
+              action={
+                <Badge
+                  tone={ppmPct !== null && ppmPct >= 80 ? "green" : "amber"}
+                >
+                  {ppmPct === null ? "—" : `${ppmPct}%`} PPM
+                </Badge>
+              }
+              bodyStyle={{ padding: 12 }}
+              icon="gauge"
+              subtitle="Program Predictability (PPM) · meta SAFe ≥ 80%"
+              title="Business Value · Planejado vs. Realizado"
+            >
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
+                {plan.objectives.map((o) => {
+                  const pct =
+                    o.plannedValue > 0
+                      ? Math.round((o.achievedValue / o.plannedValue) * 100)
+                      : 0;
+                  const hit = o.achievedValue >= o.plannedValue;
+                  return (
+                    <div
+                      key={o.id}
+                      style={{
+                        padding: "10px 12px",
+                        borderRadius: "var(--r-md)",
+                        border: "1px solid var(--hairline)",
+                        background: "var(--surface-2)",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 8,
+                          marginBottom: 7,
+                        }}
+                      >
+                        {o.teamName ? (
+                          <Badge dot tone="accent">
+                            {o.teamName}
+                          </Badge>
+                        ) : (
+                          <Badge tone="neutral">Sem time</Badge>
+                        )}
+                        <span
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            fontSize: 12,
+                            color: "var(--ink-muted)",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {o.title}
+                        </span>
+                        <span
+                          className="mono"
+                          style={{
+                            flexShrink: 0,
+                            fontSize: 12,
+                            fontWeight: 800,
+                            color: hit
+                              ? "var(--green-text)"
+                              : "var(--amber-text)",
+                          }}
+                        >
+                          {o.achievedValue} / {o.plannedValue} BV
+                        </span>
+                      </div>
+                      <Progress tone={hit ? "green" : "amber"} value={pct} />
+                    </div>
+                  );
+                })}
+                {plan.objectives.length === 0 && (
+                  <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+                    Nenhum objetivo cadastrado.
                   </span>
                 )}
               </div>

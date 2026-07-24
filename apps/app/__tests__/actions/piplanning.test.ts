@@ -19,6 +19,9 @@ vi.mock("@repo/database", () => ({
             businessValue: 8,
             status: "IN_PROGRESS",
             isStretch: false,
+            plannedValue: 10,
+            achievedValue: 7,
+            teamId: "tm1",
           },
         ],
         risks: [{ id: "r1", title: "Risco A", roamStatus: "OWNED" }],
@@ -28,6 +31,9 @@ vi.mock("@repo/database", () => ({
         { id: "piB", name: "PI Mais Recente", ppm: 88 },
         { id: "piA", name: "PI Anterior", ppm: 81.4 },
       ]),
+    },
+    team: {
+      findMany: vi.fn().mockResolvedValue([{ id: "tm1", name: "Squad Alpha" }]),
     },
     confidenceVoteTally: {
       findFirst: vi.fn().mockResolvedValue({ aggregateScore: 3.8 }),
@@ -59,10 +65,18 @@ describe("getActivePiPlanning", () => {
       expect(r.data.risks[0].roamStatus).toBe("OWNED");
       expect(r.data.confidenceAvg).toBe(3.8);
       expect(r.data.activeSprintName).toBe("Sprint 3");
+      expect(r.data.objectives[0].plannedValue).toBe(10);
+      expect(r.data.objectives[0].achievedValue).toBe(7);
+      expect(r.data.objectives[0].teamName).toBe("Squad Alpha");
     }
     expect(database.confidenceVoteTally.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ tenantId: "t1", piPlanId: "pi1" }),
+      })
+    );
+    expect(database.team.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ tenantId: "t1", id: { in: ["tm1"] } }),
       })
     );
   });

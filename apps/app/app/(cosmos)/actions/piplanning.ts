@@ -19,6 +19,10 @@ export type PiPlanningView = {
     businessValue: number;
     status: string;
     isStretch: boolean;
+    plannedValue: number;
+    achievedValue: number;
+    teamId: string | null;
+    teamName: string | null;
   }[];
   risks: { id: string; title: string; roamStatus: string }[];
   confidenceAvg: number | null;
@@ -46,6 +50,9 @@ export async function getActivePiPlanning(): Promise<
             businessValue: true,
             status: true,
             isStretch: true,
+            plannedValue: true,
+            achievedValue: true,
+            teamId: true,
           },
         },
         risks: { select: { id: true, title: true, roamStatus: true } },
@@ -67,10 +74,35 @@ export async function getActivePiPlanning(): Promise<
       select: { aggregateScore: true },
     });
 
+    const teamIds = [
+      ...new Set(
+        plan.piObjectives
+          .map((o) => o.teamId)
+          .filter((id): id is string => !!id)
+      ),
+    ];
+    const teams = teamIds.length
+      ? await database.team.findMany({
+          where: { id: { in: teamIds }, tenantId: ctx.tenantId },
+          select: { id: true, name: true },
+        })
+      : [];
+    const teamNameById = new Map(teams.map((t) => [t.id, t.name]));
+
     return {
       piPlanName: plan.name,
       activeSprintName: plan.sprints[0]?.name ?? null,
-      objectives: plan.piObjectives,
+      objectives: plan.piObjectives.map((o) => ({
+        id: o.id,
+        title: o.title,
+        businessValue: o.businessValue,
+        status: o.status,
+        isStretch: o.isStretch,
+        plannedValue: o.plannedValue,
+        achievedValue: o.achievedValue,
+        teamId: o.teamId,
+        teamName: (o.teamId && teamNameById.get(o.teamId)) || null,
+      })),
       risks: plan.risks,
       confidenceAvg: tally?.aggregateScore ?? null,
     };
