@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   billingEntryFindMany: vi.fn(),
   anomalyRuleConfigFindUnique: vi.fn(),
-  costAnomalyFindFirst: vi.fn(),
   costAnomalyCreate: vi.fn(),
 }));
 
@@ -12,7 +11,6 @@ vi.mock("@repo/database", () => ({
     billingEntry: { findMany: mocks.billingEntryFindMany },
     anomalyRuleConfig: { findUnique: mocks.anomalyRuleConfigFindUnique },
     costAnomaly: {
-      findFirst: mocks.costAnomalyFindFirst,
       create: mocks.costAnomalyCreate,
     },
   },
@@ -60,7 +58,6 @@ function spikingGroupEntries(service: string, accountId: string) {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.anomalyRuleConfigFindUnique.mockResolvedValue(null);
-  mocks.costAnomalyFindFirst.mockResolvedValue(null);
   mocks.costAnomalyCreate.mockResolvedValue({ id: "ca-new" });
 });
 
@@ -93,11 +90,6 @@ describe("detectCostAnomaliesForTenant — tenant scoping", () => {
     );
     await detectCostAnomaliesForTenant(TENANT_ID, NOW);
 
-    expect(mocks.costAnomalyFindFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({ tenantId: TENANT_ID }),
-      })
-    );
     expect(mocks.costAnomalyCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({ tenantId: TENANT_ID }),
@@ -253,26 +245,74 @@ describe("detectCostAnomaliesForTenant — detection", () => {
   });
 });
 
-describe("detectCostAnomaliesForTenant — idempotent re-run", () => {
-  it("does not double-insert when a CostAnomaly already exists for (tenant, service, accountId, period)", async () => {
+function p2002Error(): Error & { code: string } {
+  return Object.assign(new Error("Unique constraint failed"), {
+    code: "P2002",
+  });
+}
+
+describe("detectCostAnomaliesForTenant — idempotent re-run (race-safe via DB unique constraint)", () => {
+  it("treats a P2002 conflict on create() as a caught no-op, not a thrown error", async () => {
     mocks.billingEntryFindMany.mockResolvedValue(
       spikingGroupEntries("EC2", "acc-1")
     );
-    mocks.costAnomalyFindFirst.mockResolvedValue({ id: "existing-anomaly" });
+    mocks.costAnomalyCreate.mockRejectedValueOnce(p2002Error());
 
     const result = await detectCostAnomaliesForTenant(TENANT_ID, NOW);
 
+    expect(result.evaluated).toBe(1);
     expect(result.created).toBe(0);
-    expect(mocks.costAnomalyCreate).not.toHaveBeenCalled();
-    expect(mocks.costAnomalyFindFirst).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: expect.objectContaining({
-          tenantId: TENANT_ID,
-          service: "EC2",
-          accountId: "acc-1",
-          period: new Date("2026-07-01T00:00:00.000Z"),
-        }),
-      })
+    expect(mocks.costAnomalyCreate).toHaveBeenCalledTimes(1);
+  });
+
+  it("re-throws a non-unique-constraint create() error instead of silently swallowing it", async () => {
+    mocks.billingEntryFindMany.mockResolvedValue(
+      spikingGroupEntries("EC2", "acc-1")
     );
+    mocks.costAnomalyCreate.mockRejectedValueOnce(new Error("db is down"));
+
+    await expect(detectCostAnomaliesForTenant(TENANT_ID, NOW)).rejects.toThrow(
+      "db is down"
+    );
+  });
+
+  it("a second detection for the same (tenant, service, accountId, period) key, run concurrently, does not create a second row", async () => {
+    mocks.billingEntryFindMany.mockResolvedValue(
+      spikingGroupEntries("EC2", "acc-1")
+    );
+
+    // Faithful stand-in for the CostAnomaly_tenantId_service_accountId_period_key
+    // unique index: check-and-insert happens synchronously (no await inside
+    // the mock body), so of two "concurrent" calls racing to create() around
+    // the same microtask, only the first to run wins — the second observes
+    // the key already present and rejects with P2002, exactly like Postgres
+    // would for two racing "Detectar agora" clicks.
+    const existingKeys = new Set<string>();
+    mocks.costAnomalyCreate.mockImplementation(
+      (args: {
+        data: {
+          tenantId: string;
+          service: string;
+          accountId: string;
+          period: Date;
+        };
+      }) => {
+        const { tenantId, service, accountId, period } = args.data;
+        const key = `${tenantId}::${service}::${accountId}::${period.getTime()}`;
+        if (existingKeys.has(key)) {
+          return Promise.reject(p2002Error());
+        }
+        existingKeys.add(key);
+        return Promise.resolve({ id: `ca-${existingKeys.size}` });
+      }
+    );
+
+    const [first, second] = await Promise.all([
+      detectCostAnomaliesForTenant(TENANT_ID, NOW),
+      detectCostAnomaliesForTenant(TENANT_ID, NOW),
+    ]);
+
+    expect(first.created + second.created).toBe(1);
+    expect(existingKeys.size).toBe(1);
   });
 });

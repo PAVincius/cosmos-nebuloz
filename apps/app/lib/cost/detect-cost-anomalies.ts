@@ -2,20 +2,12 @@
 // groups by (service, accountId), computes a monthly baseline via
 // lib/cost/anomaly-detection.ts, and writes CostAnomaly rows for breaches.
 //
-// Idempotency: CostAnomaly's DB unique constraint is
-// (tenantId, themeId, service, period) — themeId is nullable, and Postgres
-// treats NULLs as distinct in unique indexes, so that constraint does NOT
-// dedupe rows sharing the same (tenantId, service, period) with different
-// accountId when themeId is null (the common case here, since detection
-// groups by accountId, not themeId). We therefore rely on an explicit
-// find-then-create guarded by (tenantId, service, accountId, period)
-// before every insert. This is a find-then-create race window, not a DB
-// guarantee — the same class of risk noted for FlowMetricSnapshot
-// elsewhere in this codebase. Acceptable here because detection is
-// triggered by a single ADMIN action (or a future single-concurrency
-// Inngest job), not by concurrent user requests; a real fix would add a
-// migration for a proper unique index, which is out of scope per the
-// "no migration unless trivial" constraint.
+// Idempotency: CostAnomaly has a real DB unique constraint on
+// (tenantId, service, accountId, period) — see migration
+// 20260724050000_cost_anomaly_unique_key. We rely on that constraint
+// directly: create() and, on a P2002 conflict, treat the racing loser as a
+// caught no-op — the same pattern used for FlowMetricSnapshot/
+// TeamCapacitySnapshot origination (app/actions/sprints/snapshot-origination.ts).
 import { database } from "@repo/database";
 import {
   DEFAULT_SENSITIVITY_THRESHOLD,
@@ -33,6 +25,15 @@ const LOOKBACK_MONTHS = 6;
 // sentinel (see app/actions/intelligence/anomalyRules.ts). Cost anomalies
 // are tenant-wide, not per-ART, so we reuse that convention.
 const TENANT_WIDE_ART_SENTINEL = "";
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "P2002"
+  );
+}
 
 function monthStart(date: Date, offsetMonths = 0): Date {
   return new Date(
@@ -125,38 +126,33 @@ export async function detectCostAnomaliesForTenant(
       continue;
     }
 
-    // Idempotency guard — see module doc comment above.
-    const existing = await database.costAnomaly.findFirst({
-      where: {
-        tenantId,
-        service: group.service,
-        accountId: group.accountId,
-        period: currentMonthStart,
-      },
-      select: { id: true },
-    });
-    if (existing) {
-      continue;
+    // Idempotency guard — see module doc comment above. Relies on the DB
+    // unique constraint: a racing/duplicate write hits P2002 and is treated
+    // as a caught no-op rather than a double-inserted anomaly.
+    try {
+      await database.costAnomaly.create({
+        data: {
+          tenantId,
+          integrationId: group.integrationId,
+          period: currentMonthStart,
+          service: group.service,
+          accountId: group.accountId,
+          baselineMedian: result.median,
+          baselineMAD: result.mad,
+          actualAmount: result.actual,
+          modifiedZScore: result.modifiedZScore,
+          deltaAbs: result.deltaAbs,
+          deltaPct: result.deltaPct,
+          severity: result.severity,
+          status: "OPEN",
+        },
+      });
+      created += 1;
+    } catch (error) {
+      if (!isUniqueConstraintError(error)) {
+        throw error;
+      }
     }
-
-    await database.costAnomaly.create({
-      data: {
-        tenantId,
-        integrationId: group.integrationId,
-        period: currentMonthStart,
-        service: group.service,
-        accountId: group.accountId,
-        baselineMedian: result.median,
-        baselineMAD: result.mad,
-        actualAmount: result.actual,
-        modifiedZScore: result.modifiedZScore,
-        deltaAbs: result.deltaAbs,
-        deltaPct: result.deltaPct,
-        severity: result.severity,
-        status: "OPEN",
-      },
-    });
-    created += 1;
   }
 
   return { evaluated, created };

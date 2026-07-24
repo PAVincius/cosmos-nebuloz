@@ -234,6 +234,7 @@ model CostAnomaly {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@unique([tenantId, themeId, service, period])
+  @@unique([tenantId, service, accountId, period])
   @@index([tenantId, status, severity])
   @@index([tenantId, themeId, detectedAt])
 }
