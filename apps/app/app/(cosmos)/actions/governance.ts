@@ -8,6 +8,17 @@ import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
 
+// Compact per-row gate-stage step summary — mirrors the estado shape read
+// by getApprovalRequest (apps/app/app/actions/governance), just the fields
+// the dot indicator needs. Sourced from the ApprovalRequest matching
+// currentApprovalRequestId, joined in the single listGovernedEpics query
+// below (no per-row refetch).
+export type GovernanceGateStepView = {
+  etapaOrdem: number;
+  roleRequired: string;
+  estado: string;
+};
+
 export type GovernedEpicView = {
   id: string;
   epicId: string;
@@ -16,9 +27,23 @@ export type GovernedEpicView = {
   investmentEstimate: number | null;
   submittedAt: string | null;
   currentApprovalRequestId: string | null;
+  gateSteps: GovernanceGateStepView[];
 };
 
-export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
+export type GovernanceKpis = {
+  totalUnderGovernance: number;
+  awaitingDecision: number;
+  investmentInReview: number;
+};
+
+export type ListGovernedEpicsResult = {
+  epics: GovernedEpicView[];
+  kpis: GovernanceKpis;
+};
+
+export async function listGovernedEpics(): Promise<
+  Result<ListGovernedEpicsResult>
+> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const rows = await database.governedEpic.findMany({
@@ -32,17 +57,54 @@ export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
         submittedAt: true,
         currentApprovalRequestId: true,
         epic: { select: { title: true } },
+        // Tenant-scoped even though it's already a child of the
+        // tenant-scoped GovernedEpic above (defense in depth). One join,
+        // not N+1 — Prisma batches this across all rows in the findMany.
+        approvalRequests: {
+          where: { tenantId: ctx.tenantId },
+          select: {
+            id: true,
+            steps: {
+              select: { etapaOrdem: true, roleRequired: true, estado: true },
+              orderBy: { etapaOrdem: "asc" },
+            },
+          },
+        },
       },
     });
-    return rows.map((g) => ({
-      id: g.id,
-      epicId: g.epicId,
-      epicTitle: g.epic.title,
-      governanceStatus: g.governanceStatus,
-      investmentEstimate: g.investmentEstimate,
-      submittedAt: g.submittedAt?.toISOString() ?? null,
-      currentApprovalRequestId: g.currentApprovalRequestId,
-    }));
+
+    const epics = rows.map((g) => {
+      const currentRequest = g.approvalRequests.find(
+        (r) => r.id === g.currentApprovalRequestId
+      );
+      return {
+        id: g.id,
+        epicId: g.epicId,
+        epicTitle: g.epic.title,
+        governanceStatus: g.governanceStatus,
+        investmentEstimate: g.investmentEstimate,
+        submittedAt: g.submittedAt?.toISOString() ?? null,
+        currentApprovalRequestId: g.currentApprovalRequestId,
+        gateSteps: currentRequest?.steps ?? [],
+      };
+    });
+
+    // "Tempo médio no gate" (handoff's 4th KPI) is deliberately NOT
+    // computed: GovernedEpic.submittedAt is selected/read everywhere in
+    // this codebase but never written by any action (grepped the whole
+    // app — submitEpicForApproval, reviewStep, bypassApproval all leave it
+    // null). A submittedAt → decision diff would average over nulls, which
+    // is fabrication dressed as a metric. Omitted, not faked.
+    const kpis: GovernanceKpis = {
+      totalUnderGovernance: epics.length,
+      awaitingDecision: epics.filter((e) => e.governanceStatus === "review")
+        .length,
+      investmentInReview: epics
+        .filter((e) => e.governanceStatus === "review")
+        .reduce((sum, e) => sum + (e.investmentEstimate ?? 0), 0),
+    };
+
+    return { epics, kpis };
   });
 }
 

@@ -12,17 +12,27 @@ const reviewStepMock = vi.fn();
 vi.mock("@/app/(cosmos)/actions/governance", () => ({
   listGovernedEpics: vi.fn().mockResolvedValue({
     ok: true,
-    data: [
-      {
-        id: "ge-1",
-        epicId: "epic-1",
-        epicTitle: "Real Epic",
-        governanceStatus: "review",
-        investmentEstimate: 100_000,
-        submittedAt: null,
-        currentApprovalRequestId: "req-1",
+    data: {
+      epics: [
+        {
+          id: "ge-1",
+          epicId: "epic-1",
+          epicTitle: "Real Epic",
+          governanceStatus: "review",
+          investmentEstimate: 100_000,
+          submittedAt: null,
+          currentApprovalRequestId: "req-1",
+          gateSteps: [
+            { etapaOrdem: 0, roleRequired: "lpm", estado: "pending" },
+          ],
+        },
+      ],
+      kpis: {
+        totalUnderGovernance: 1,
+        awaitingDecision: 1,
+        investmentInReview: 100_000,
       },
-    ],
+    },
   }),
   upsertApprovalWorkflow: vi.fn(),
 }));

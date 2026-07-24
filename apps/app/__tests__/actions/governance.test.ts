@@ -58,6 +58,7 @@ describe("listGovernedEpics", () => {
         submittedAt: new Date("2026-02-01"),
         currentApprovalRequestId: "req-1",
         epic: { title: "Migração multi-tenant" },
+        approvalRequests: [],
       },
     ]);
 
@@ -69,10 +70,142 @@ describe("listGovernedEpics", () => {
       })
     );
     if (r.ok) {
-      expect(r.data[0].epicTitle).toBe("Migração multi-tenant");
-      expect(typeof r.data[0].submittedAt).toBe("string");
-      expect(r.data[0].currentApprovalRequestId).toBe("req-1");
+      expect(r.data.epics[0].epicTitle).toBe("Migração multi-tenant");
+      expect(typeof r.data.epics[0].submittedAt).toBe("string");
+      expect(r.data.epics[0].currentApprovalRequestId).toBe("req-1");
     }
+  });
+
+  it("joins the current ApprovalRequest's steps into gateSteps, in one query (no per-row refetch)", async () => {
+    h.governedEpicFindMany.mockResolvedValue([
+      {
+        id: "g1",
+        governanceStatus: "review",
+        investmentEstimate: 250_000,
+        submittedAt: null,
+        currentApprovalRequestId: "req-1",
+        epic: { title: "Migração multi-tenant" },
+        approvalRequests: [
+          {
+            id: "req-1",
+            steps: [
+              { etapaOrdem: 0, roleRequired: "STE", estado: "approved" },
+              { etapaOrdem: 1, roleRequired: "RTE", estado: "pending" },
+            ],
+          },
+          // A stale/superseded request that is NOT the current one — its
+          // steps must not leak into gateSteps.
+          {
+            id: "req-0",
+            steps: [{ etapaOrdem: 0, roleRequired: "PO", estado: "rejected" }],
+          },
+        ],
+      },
+    ]);
+
+    const r = await listGovernedEpics();
+
+    expect(database.governedEpic.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.objectContaining({
+          approvalRequests: expect.objectContaining({
+            where: { tenantId: tenantCtx.tenantId },
+          }),
+        }),
+      })
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.epics[0].gateSteps).toEqual([
+        { etapaOrdem: 0, roleRequired: "STE", estado: "approved" },
+        { etapaOrdem: 1, roleRequired: "RTE", estado: "pending" },
+      ]);
+    }
+  });
+
+  it("returns an empty gateSteps array when the epic has no matching current approval request", async () => {
+    h.governedEpicFindMany.mockResolvedValue([
+      {
+        id: "g1",
+        governanceStatus: "draft",
+        investmentEstimate: null,
+        submittedAt: null,
+        currentApprovalRequestId: null,
+        epic: { title: "Épico ainda não submetido" },
+        approvalRequests: [],
+      },
+    ]);
+
+    const r = await listGovernedEpics();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.epics[0].gateSteps).toEqual([]);
+    }
+  });
+
+  it("computes the KPI rollup (total / awaiting decision / investment in review) from real governanceStatus + investmentEstimate", async () => {
+    h.governedEpicFindMany.mockResolvedValue([
+      {
+        id: "g1",
+        governanceStatus: "review",
+        investmentEstimate: 250_000,
+        submittedAt: null,
+        currentApprovalRequestId: null,
+        epic: { title: "Épico A" },
+        approvalRequests: [],
+      },
+      {
+        id: "g2",
+        governanceStatus: "review",
+        investmentEstimate: 100_000,
+        submittedAt: null,
+        currentApprovalRequestId: null,
+        epic: { title: "Épico B" },
+        approvalRequests: [],
+      },
+      {
+        id: "g3",
+        governanceStatus: "approved",
+        investmentEstimate: 500_000,
+        submittedAt: null,
+        currentApprovalRequestId: null,
+        epic: { title: "Épico C" },
+        approvalRequests: [],
+      },
+    ]);
+
+    const r = await listGovernedEpics();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.kpis).toEqual({
+        totalUnderGovernance: 3,
+        awaitingDecision: 2,
+        investmentInReview: 350_000,
+      });
+    }
+  });
+
+  it("never leaks another tenant's approval requests into gateSteps — approvalRequests is always ctx.tenantId-scoped", async () => {
+    h.requireTenantSession.mockResolvedValue({
+      ...tenantCtx,
+      tenantId: "other-tenant",
+    });
+    h.governedEpicFindMany.mockResolvedValue([]);
+
+    await listGovernedEpics();
+
+    expect(database.governedEpic.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "other-tenant" },
+        select: expect.objectContaining({
+          approvalRequests: expect.objectContaining({
+            where: { tenantId: "other-tenant" },
+          }),
+        }),
+      })
+    );
   });
 });
 
