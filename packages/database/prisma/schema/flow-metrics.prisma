@@ -65,6 +65,7 @@ model FlowMetricSnapshot {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, scope, scopeId, period, periodRef])
   @@index([tenantId])
   @@index([tenantId, scope, scopeId])
   @@index([tenantId, periodRef])

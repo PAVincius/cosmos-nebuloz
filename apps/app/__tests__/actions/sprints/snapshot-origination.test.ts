@@ -93,6 +93,48 @@ describe("originateFlowSnapshot", () => {
     expect(db.story.findMany).not.toHaveBeenCalled();
   });
 
+  it("does not persist a second row when two originations race on the same key — mirrors TeamCapacitySnapshot's @@unique race-safety: pre-check races (both see null), the DB unique constraint stops the duplicate write, and the error propagates for the caller's try/catch (lifecycle.ts / backfill-snapshots.ts) to catch", async () => {
+    const rows: Record<string, unknown>[] = [];
+    const db = makeDb({
+      flowMetricSnapshot: {
+        // Simulate the race: both concurrent callers' pre-check ran before
+        // either write landed, so findFirst returns null for both.
+        findFirst: vi.fn().mockResolvedValue(null),
+        create: vi
+          .fn()
+          .mockImplementation(({ data }: { data: Record<string, unknown> }) => {
+            const isDuplicate = rows.some(
+              (r) =>
+                r.tenantId === data.tenantId &&
+                r.scope === data.scope &&
+                r.scopeId === data.scopeId &&
+                r.period === data.period &&
+                r.periodRef === data.periodRef
+            );
+            if (isDuplicate) {
+              const error = new Error(
+                "Unique constraint failed on the fields: (`tenantId`,`scope`,`scopeId`,`period`,`periodRef`)"
+              ) as Error & { code: string };
+              error.code = "P2002";
+              return Promise.reject(error);
+            }
+            rows.push(data);
+            return Promise.resolve({ id: `snap-${rows.length}` });
+          }),
+      },
+    });
+
+    const first = await originateFlowSnapshot(db, params);
+    expect(first).toEqual({ created: true });
+
+    await expect(originateFlowSnapshot(db, params)).rejects.toMatchObject({
+      code: "P2002",
+    });
+
+    expect(rows).toHaveLength(1);
+    expect(db.flowMetricSnapshot.create).toHaveBeenCalledTimes(2);
+  });
+
   it("computes flowPredictability as deliveredItems/plannedItems", async () => {
     const db = makeDb({
       story: {
