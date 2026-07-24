@@ -13,6 +13,23 @@ const SYSTEM =
   "You are a FinOps assistant. Explain a cloud cost anomaly to an engineering leader in 2-3 plain-English sentences, then give 1-2 specific next actions. Never give generic advice. Return valid JSON only.";
 
 const JSON_OBJECT_PATTERN = /\{[\s\S]*\}/;
+const MAX_INTERPOLATED_FIELD_LENGTH = 200;
+const MIN_PRINTABLE_CODE_POINT = 0x20;
+
+// Light guard on values interpolated into the LLM prompt — caps length and
+// drops non-printable/control characters. Not a full injection defense
+// (narrative renders as plain text, no tool/exec surface), just cheap
+// hardening on service/accountId strings sourced from BillingEntry.
+function sanitizeForPrompt(value: string): string {
+  let out = "";
+  for (const ch of value.slice(0, MAX_INTERPOLATED_FIELD_LENGTH)) {
+    const codePoint = ch.codePointAt(0) ?? 0;
+    if (codePoint >= MIN_PRINTABLE_CODE_POINT) {
+      out += ch;
+    }
+  }
+  return out;
+}
 
 export type CostAnomalyNarrativeInput = {
   service: string | null;
@@ -31,9 +48,13 @@ export type CostAnomalyNarrativeResult = {
 };
 
 function buildPrompt(data: CostAnomalyNarrativeInput): string {
-  return `Cloud cost for service "${data.service ?? "desconhecido"}" (account ${
-    data.accountId ?? "desconhecida"
-  }) is $${data.actualAmount.toFixed(2)}, versus a historical baseline (median) of $${data.baselineMedian.toFixed(
+  const service = data.service
+    ? sanitizeForPrompt(data.service)
+    : "desconhecido";
+  const accountId = data.accountId
+    ? sanitizeForPrompt(data.accountId)
+    : "desconhecida";
+  return `Cloud cost for service "${service}" (account ${accountId}) is $${data.actualAmount.toFixed(2)}, versus a historical baseline (median) of $${data.baselineMedian.toFixed(
     2
   )} — a ${data.deltaPct.toFixed(1)}% change (modified z-score ${data.modifiedZScore.toFixed(
     2

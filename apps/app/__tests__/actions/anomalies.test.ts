@@ -183,6 +183,105 @@ describe("setAnomalySensitivity — RBAC", () => {
   });
 });
 
+describe("setAnomalySensitivity — persists under the tenant-wide sentinel so it round-trips", () => {
+  // Faithful in-memory stand-in for the AnomalyRuleConfig unique row: a
+  // Postgres upsert's `where` lookup matches against what was actually
+  // *stored* by a prior `create` — not against the `where` clause itself.
+  // If `create.artId` (null, pre-fix) ever diverges from `where.artId`
+  // (the "" sentinel), every subsequent upsert believes no row exists and
+  // inserts a fresh duplicate instead of updating.
+  type Row = {
+    tenantId: string;
+    artId: string | null;
+    ruleId: string;
+    threshold: number;
+  };
+
+  function setupFakeAnomalyRuleConfigTable() {
+    const rows: Row[] = [];
+
+    h.anomalyRuleConfigUpsert.mockImplementation(
+      async (args: {
+        where: { tenantId_artId_ruleId: Omit<Row, "threshold"> };
+        create: Row;
+        update: { threshold: number };
+      }) => {
+        const key = args.where.tenantId_artId_ruleId;
+        const existing = rows.find(
+          (r) =>
+            r.tenantId === key.tenantId &&
+            r.artId === key.artId &&
+            r.ruleId === key.ruleId
+        );
+        if (existing) {
+          existing.threshold = args.update.threshold;
+          return { threshold: String(existing.threshold) };
+        }
+        rows.push({ ...args.create });
+        return { threshold: String(args.create.threshold) };
+      }
+    );
+
+    h.anomalyRuleConfigFindUnique.mockImplementation(
+      async (args: {
+        where: { tenantId_artId_ruleId: Omit<Row, "threshold"> };
+      }) => {
+        const key = args.where.tenantId_artId_ruleId;
+        const found = rows.find(
+          (r) =>
+            r.tenantId === key.tenantId &&
+            r.artId === key.artId &&
+            r.ruleId === key.ruleId
+        );
+        return found ? { threshold: String(found.threshold) } : null;
+      }
+    );
+
+    return rows;
+  }
+
+  it("creates using the TENANT_WIDE_ART_SENTINEL artId, matching the where/read key", async () => {
+    setupFakeAnomalyRuleConfigTable();
+    await setAnomalySensitivity({ threshold: 4.0 });
+
+    expect(h.anomalyRuleConfigUpsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId_artId_ruleId: {
+            tenantId: tenantCtx.tenantId,
+            artId: "",
+            ruleId: "R-COST-01",
+          },
+        },
+        create: expect.objectContaining({ artId: "" }),
+      })
+    );
+  });
+
+  it("round-trips a non-default threshold through set -> get (fails on the null-artId bug)", async () => {
+    setupFakeAnomalyRuleConfigTable();
+
+    await setAnomalySensitivity({ threshold: 4.0 });
+    const res = await getAnomalySensitivity();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.threshold).toBe(4.0);
+      expect(res.data.isDefault).toBe(false);
+    }
+  });
+
+  it("a second set updates the same row instead of inserting a duplicate", async () => {
+    const rows = setupFakeAnomalyRuleConfigTable();
+
+    await setAnomalySensitivity({ threshold: 4.0 });
+    await setAnomalySensitivity({ threshold: 4.5 });
+
+    expect(rows).toHaveLength(1);
+    expect(rows[0].threshold).toBe(4.5);
+  });
+});
+
 describe("acknowledgeCostAnomaly — RBAC + tenant scoping (IDOR guard)", () => {
   it("is denied when the role is not ADMIN/STE/RTE", async () => {
     h.requireRole.mockImplementation(() => {

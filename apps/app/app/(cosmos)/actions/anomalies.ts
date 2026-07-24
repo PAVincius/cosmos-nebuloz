@@ -163,7 +163,7 @@ export async function setAnomalySensitivity(
       },
       create: {
         tenantId: ctx.tenantId,
-        artId: null,
+        artId: TENANT_WIDE_ART_SENTINEL,
         ruleId: COST_ANOMALY_RULE_ID,
         threshold,
       },
