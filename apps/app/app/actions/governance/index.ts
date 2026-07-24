@@ -162,6 +162,9 @@ export async function getApprovalRequest(
         estado: s.estado as ApprovalRequestWithSteps["steps"][number]["estado"],
         comentario: s.comentario,
         timestamp: s.timestamp,
+        slaDeadline: s.slaDeadline,
+        slaStatus:
+          s.slaStatus as ApprovalRequestWithSteps["steps"][number]["slaStatus"],
       })),
       createdAt: req.createdAt,
       updatedAt: req.updatedAt,
@@ -209,6 +212,9 @@ export async function listApprovalRequests(
         estado: s.estado as ApprovalRequestWithSteps["steps"][number]["estado"],
         comentario: s.comentario,
         timestamp: s.timestamp,
+        slaDeadline: s.slaDeadline,
+        slaStatus:
+          s.slaStatus as ApprovalRequestWithSteps["steps"][number]["slaStatus"],
       })),
       createdAt: req.createdAt,
       updatedAt: req.updatedAt,

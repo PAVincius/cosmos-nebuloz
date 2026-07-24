@@ -7,7 +7,8 @@
 // wired via GateReviewModal, which reuses the existing reviewStep/
 // getApprovalRequest actions (no new mutation — see epic-detail-client.tsx's
 // decide() for the reference flow this mirrors). The per-epic Gate Detail
-// page (RF §2.18) is still NOT wired.
+// page (RF-2.18) is now wired at screens/gate.tsx — each row below links to
+// it via navigate("gate", g.epicId).
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -25,6 +26,7 @@ import {
   IconButton,
   PageHeader,
   SectionCard,
+  useNav,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
@@ -490,6 +492,7 @@ function GateReviewModal({
 
 function GovernanceBody() {
   const modal = useModal();
+  const { navigate } = useNav();
   const [rows, setRows] = useState<GovernedEpicView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -571,6 +574,13 @@ function GovernanceBody() {
               <Badge tone={STATUS_TONE[g.governanceStatus] ?? "neutral"}>
                 {g.governanceStatus}
               </Badge>
+              <Button
+                onClick={() => navigate("gate", g.epicId)}
+                size="sm"
+                variant="secondary"
+              >
+                Ver gate
+              </Button>
               {g.currentApprovalRequestId && (
                 <Button
                   onClick={() =>

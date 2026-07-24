@@ -7,6 +7,7 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   governedEpicFindMany: vi.fn(),
+  governedEpicFindFirst: vi.fn(),
   approvalWorkflowFindFirst: vi.fn(),
   approvalWorkflowUpsert: vi.fn(),
   logAudit: vi.fn(),
@@ -23,6 +24,7 @@ vi.mock("@repo/database", () => ({
   database: {
     governedEpic: {
       findMany: h.governedEpicFindMany,
+      findFirst: h.governedEpicFindFirst,
     },
     approvalWorkflow: {
       findFirst: h.approvalWorkflowFindFirst,
@@ -34,6 +36,7 @@ vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  getGovernedEpicDetail,
   listGovernedEpics,
   upsertApprovalWorkflow,
 } from "../../app/(cosmos)/actions/governance";
@@ -70,6 +73,65 @@ describe("listGovernedEpics", () => {
       expect(typeof r.data[0].submittedAt).toBe("string");
       expect(r.data[0].currentApprovalRequestId).toBe("req-1");
     }
+  });
+});
+
+describe("getGovernedEpicDetail", () => {
+  it("returns the tenant-scoped governed epic detail with resolved epic fields", async () => {
+    h.governedEpicFindFirst.mockResolvedValue({
+      id: "g1",
+      epicId: "epic-1",
+      governanceStatus: "review",
+      investmentEstimate: 2_500_000,
+      valueStreamId: "vs-1",
+      themeId: "theme-1",
+      guardrailFlags: ["needs-board-review"],
+      currentApprovalRequestId: "req-1",
+      submittedAt: new Date("2026-02-01"),
+      epic: { title: "Migração multi-tenant", lifecycleStatus: "IMPLEMENTING" },
+    });
+
+    const r = await getGovernedEpicDetail("epic-1");
+
+    expect(r.ok).toBe(true);
+    expect(database.governedEpic.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { epicId: "epic-1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    if (r.ok && r.data) {
+      expect(r.data.epicTitle).toBe("Migração multi-tenant");
+      expect(r.data.epicLifecycleStatus).toBe("IMPLEMENTING");
+      expect(r.data.guardrailFlags).toEqual(["needs-board-review"]);
+      expect(typeof r.data.submittedAt).toBe("string");
+    }
+  });
+
+  it("returns null when no GovernedEpic exists for this epic in this tenant", async () => {
+    h.governedEpicFindFirst.mockResolvedValue(null);
+
+    const r = await getGovernedEpicDetail("epic-1");
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toBeNull();
+    }
+  });
+
+  it("never leaks another tenant's governed epic — where clause always uses ctx.tenantId", async () => {
+    h.requireTenantSession.mockResolvedValue({
+      ...tenantCtx,
+      tenantId: "other-tenant",
+    });
+    h.governedEpicFindFirst.mockResolvedValue(null);
+
+    await getGovernedEpicDetail("epic-1");
+
+    expect(database.governedEpic.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { epicId: "epic-1", tenantId: "other-tenant" },
+      })
+    );
   });
 });
 

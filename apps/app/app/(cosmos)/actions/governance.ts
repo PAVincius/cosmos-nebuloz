@@ -10,6 +10,7 @@ import { logAudit } from "../../actions/audit";
 
 export type GovernedEpicView = {
   id: string;
+  epicId: string;
   epicTitle: string;
   governanceStatus: string;
   investmentEstimate: number | null;
@@ -25,6 +26,7 @@ export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
+        epicId: true,
         governanceStatus: true,
         investmentEstimate: true,
         submittedAt: true,
@@ -34,12 +36,74 @@ export async function listGovernedEpics(): Promise<Result<GovernedEpicView[]>> {
     });
     return rows.map((g) => ({
       id: g.id,
+      epicId: g.epicId,
       epicTitle: g.epic.title,
       governanceStatus: g.governanceStatus,
       investmentEstimate: g.investmentEstimate,
       submittedAt: g.submittedAt?.toISOString() ?? null,
       currentApprovalRequestId: g.currentApprovalRequestId,
     }));
+  });
+}
+
+// ─── Per-epic Gate Detail (RF §2.18) ───────────────────────────────────────────
+// Thin read composing GovernedEpic + its Epic for the gate detail screen.
+// The approval steps themselves (role/SLA/state) are loaded client-side via
+// the existing getApprovalRequest (apps/app/app/actions/governance) — no
+// duplication of that query here.
+
+export type GovernedEpicDetail = {
+  id: string;
+  epicId: string;
+  epicTitle: string;
+  epicLifecycleStatus: string;
+  governanceStatus: string;
+  investmentEstimate: number | null;
+  valueStreamId: string | null;
+  themeId: string | null;
+  guardrailFlags: string[];
+  currentApprovalRequestId: string | null;
+  submittedAt: string | null;
+};
+
+export async function getGovernedEpicDetail(
+  epicId: string
+): Promise<Result<GovernedEpicDetail | null>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const ge = await database.governedEpic.findFirst({
+      where: { epicId, tenantId: ctx.tenantId },
+      select: {
+        id: true,
+        epicId: true,
+        governanceStatus: true,
+        investmentEstimate: true,
+        valueStreamId: true,
+        themeId: true,
+        guardrailFlags: true,
+        currentApprovalRequestId: true,
+        submittedAt: true,
+        epic: { select: { title: true, lifecycleStatus: true } },
+      },
+    });
+    if (!ge) {
+      return null;
+    }
+    return {
+      id: ge.id,
+      epicId: ge.epicId,
+      epicTitle: ge.epic.title,
+      epicLifecycleStatus: ge.epic.lifecycleStatus,
+      governanceStatus: ge.governanceStatus,
+      investmentEstimate: ge.investmentEstimate,
+      valueStreamId: ge.valueStreamId,
+      themeId: ge.themeId,
+      guardrailFlags: Array.isArray(ge.guardrailFlags)
+        ? (ge.guardrailFlags as string[])
+        : [],
+      currentApprovalRequestId: ge.currentApprovalRequestId,
+      submittedAt: ge.submittedAt?.toISOString() ?? null,
+    };
   });
 }
 

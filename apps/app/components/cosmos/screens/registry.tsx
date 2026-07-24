@@ -9,6 +9,7 @@ import DependenciesScreen from "./dependencies";
 import EpicDetailScreen from "./epic-detail";
 import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
+import GateScreen from "./gate";
 import GovernanceScreen from "./governance";
 import IntegrationsScreen from "./integrations";
 import KanbanScreen from "./kanban";
@@ -49,6 +50,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   risks: RisksScreen,
   roadmap: RoadmapScreen,
   flow: FlowScreen,
+  gate: GateScreen,
   governance: GovernanceScreen,
   integrations: IntegrationsScreen,
   program: ProgramScreen,
