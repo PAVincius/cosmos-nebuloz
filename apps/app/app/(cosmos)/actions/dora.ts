@@ -55,6 +55,8 @@ export type DoraMetricsView = {
 };
 
 const NO_INCIDENT_SOURCE = "sem fonte de incidente";
+const NO_RECOGNIZED_DEPLOYMENT_STATE =
+  "nenhum deployment de produção com estado reconhecido";
 
 export async function getDoraMetrics(): Promise<Result<DoraMetricsView>> {
   return safeAction(async () => {
@@ -113,10 +115,18 @@ export async function getDoraMetrics(): Promise<Result<DoraMetricsView>> {
       hasProductionDeployments: true,
       totalProductionDeployments: deployments.length,
       successfulProductionDeployments: successful.length,
-      deploymentFrequency: {
-        status: "measured",
-        value: metrics.deploymentFrequency,
-      },
+      // Production events existed (events.length > 0 passed the guard above),
+      // but every one may have an unrecognized GitHub state (closed set,
+      // isDeploymentRecordState) — deployments then ends up empty and
+      // computeDORAMetrics([...]) would return a real 0, which reads as
+      // "measured zero deploys" despite unclassifiable production events
+      // actually existing. Same fabrication class the CFR/MTTR markers guard
+      // against, so gate on deployments.length rather than trusting the
+      // computed value.
+      deploymentFrequency:
+        deployments.length > 0
+          ? { status: "measured", value: metrics.deploymentFrequency }
+          : { status: "unavailable", reason: NO_RECOGNIZED_DEPLOYMENT_STATE },
       leadTimeHours:
         leadTimeSampleSize > 0
           ? { status: "measured", value: metrics.avgLeadTimeHours }

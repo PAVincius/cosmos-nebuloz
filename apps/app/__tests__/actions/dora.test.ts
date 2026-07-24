@@ -108,6 +108,33 @@ describe("getDoraMetrics", () => {
     expect(r.data.leadTimeHours.status).toBe("unavailable");
   });
 
+  it("marks deployment frequency unavailable (not a fabricated 0) when production events exist but none has a recognized GitHub state", async () => {
+    h.gitHubDeploymentEventFindMany.mockResolvedValue([
+      {
+        deployedAt: new Date("2026-07-20T12:00:00.000Z"),
+        firstCommitAt: new Date("2026-07-20T10:00:00.000Z"),
+        state: "pending", // not in VALID_DEPLOYMENT_STATES
+      },
+      {
+        deployedAt: new Date("2026-07-21T12:00:00.000Z"),
+        firstCommitAt: new Date("2026-07-21T08:00:00.000Z"),
+        state: "queued", // not in VALID_DEPLOYMENT_STATES
+      },
+    ]);
+
+    const r = await getDoraMetrics();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(r.data.deploymentFrequency).toEqual({
+      status: "unavailable",
+      reason: expect.any(String),
+    });
+    expect(r.data.totalProductionDeployments).toBe(0);
+  });
+
   it("never reports change-failure-rate or MTTR as a measured 0 — always the unavailable marker", async () => {
     h.gitHubDeploymentEventFindMany.mockResolvedValue([
       {
