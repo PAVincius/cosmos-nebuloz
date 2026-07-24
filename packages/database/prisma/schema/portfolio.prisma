@@ -267,3 +267,29 @@ model RoadmapItem {
   @@index([tenantId])
   @@index([tenantId, startDate, endDate])
 }
+
+// EpicValueMetric — links a delivered epic to a business-value metric with
+// planned vs. actual realization (Value Realization screen, design handoff
+// screen-bundle-1.jsx:1283). Genuinely new sub-domain: zero backing existed
+// anywhere before this model (see docs/superpowers/plans/
+// 2026-07-23-PROGRAM-cosmos-remaining-work.md §2). epicId is a plain
+// app-layer tenant-guarded reference, no DB relation to Epic — same
+// precedent as RoadmapItem.epicId / LeanBudget.artId above.
+model EpicValueMetric {
+  id           String    @id @default(cuid())
+  tenantId     String
+  epicId       String
+  metricLabel  String
+  unit         String?
+  plannedValue Float
+  actualValue  Float?
+  status       String    @default("pending") // pending/tracking/at-risk/done
+  measuredAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, epicId])
+}

@@ -31,6 +31,7 @@ import TeamDetailScreen from "./team-detail";
 import TeamsScreen from "./teams";
 import ThemeDetailScreen from "./theme-detail";
 import ThemesScreen from "./themes";
+import ValueScreen from "./value";
 import VelocityScreen from "./velocity";
 import ValueStreamDetailScreen from "./vs-detail";
 import WebhooksScreen from "./webhooks";
@@ -65,6 +66,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
   theme: ThemeDetailScreen,
+  value: ValueScreen,
   pillar: PillarDetailScreen,
   vs: ValueStreamDetailScreen,
   horizon: HorizonDetailScreen,
