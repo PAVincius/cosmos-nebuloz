@@ -7,10 +7,13 @@ import { type CSSProperties, type ReactNode, useEffect, useState } from "react";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import type {
   WsjfRankItem,
+  WsjfRebalanceMove,
   WsjfSettingsView,
 } from "@/app/(cosmos)/actions/wsjf";
 import {
+  applyWsjfRebalance,
   getFeatureWsjfComponents,
+  getWsjfRebalancePreview,
   getWsjfSettings,
   upsertWsjfSettings,
 } from "@/app/(cosmos)/actions/wsjf";
@@ -20,6 +23,7 @@ import {
   computeWeightedWsjfScore,
   WSJF_FIBONACCI_VALUES,
 } from "@/lib/wsjf-math";
+import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
 import {
@@ -38,6 +42,17 @@ import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
 const WCOLS = "44px minmax(180px,1fr) 48px 104px 40px";
+
+// Column labels match kanban.tsx's BOARD_COLUMNS literally (that board
+// displays them in English) — reused here instead of inventing new
+// Portuguese translations for the same lifecycle statuses.
+const LIFECYCLE_COLUMN_LABEL: Record<string, string> = {
+  FUNNEL: "Funnel",
+  ANALYZING: "Analyzing",
+  PORTFOLIO_BACKLOG: "Portfolio Backlog",
+  IMPLEMENTING: "Implementing",
+  DONE: "Done",
+};
 
 function HeadCell({
   children,
@@ -208,36 +223,199 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
   );
 }
 
-// ── light modals ──
-function RebalanceModal() {
-  const { close } = useModal();
+// ── rebalance (Task 19: real WSJF-rank deltas, Epic-only, per-column) ──
+// Reads a live preview of what applying the rebalance would change (sorted
+// by WSJF desc, diffed against the stored `order`, independently per
+// lifecycle column — see lib/wsjf-rebalance.ts for why). "Aplicar" persists
+// exactly that: a real batch mutation, not a no-op. Epic-only: Feature has
+// no `order` field, so it's never included and the UI says so plainly.
+function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
+  const rose = move.toRank < move.fromRank;
   return (
-    <ModalCard
-      subtitle="ORBIT recalcula o ranking WSJF"
-      title="Rebalanceamento IA"
-      width={500}
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 10,
+        padding: "9px 12px",
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--hairline)",
+        background: "var(--surface)",
+      }}
     >
-      <p
+      <div style={{ minWidth: 0 }}>
+        <div
+          style={{
+            fontSize: 13,
+            fontWeight: 600,
+            color: "var(--ink)",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {move.title}
+        </div>
+        <div style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+          {LIFECYCLE_COLUMN_LABEL[move.lifecycleStatus] ?? move.lifecycleStatus}
+        </div>
+      </div>
+      <div
+        className="mono"
         style={{
-          margin: "0 0 14px",
-          fontSize: 13,
-          color: "var(--ink-muted)",
-          lineHeight: 1.55,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          fontSize: 12.5,
+          fontWeight: 700,
+          color: rose ? "var(--green-text)" : "var(--amber-text)",
+          whiteSpace: "nowrap",
         }}
       >
-        A IA analisou Cost of Delay, dependências e capacidade dos ARTs. Sugere{" "}
-        <strong style={{ color: "var(--ink)" }}>4 movimentos</strong> de ranking
-        para maximizar valor entregue no PI-26 — destaque para{" "}
-        <strong style={{ color: "var(--accent-text)" }}>EP-061</strong> subindo
-        2 posições.
-      </p>
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-        <Button onClick={close} size="sm" variant="secondary">
-          Descartar
-        </Button>
-        <Button icon="check" onClick={close} size="sm" variant="primary">
-          Aplicar rebalanceamento
-        </Button>
+        <span style={{ color: "var(--ink-faint)" }}>#{move.fromRank}</span>
+        <Icon name="arrowRight" size={12} />
+        <span>#{move.toRank}</span>
+      </div>
+    </div>
+  );
+}
+
+function RebalanceModal() {
+  const { close } = useModal();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [moves, setMoves] = useState<WsjfRebalanceMove[]>([]);
+  const [applying, setApplying] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
+
+    getWsjfRebalancePreview().then((res) => {
+      if (cancelled) {
+        return;
+      }
+      if (!res.ok) {
+        setError(res.error);
+        setLoading(false);
+        return;
+      }
+      setMoves(res.data);
+      setLoading(false);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const apply = async () => {
+    if (applying || moves.length === 0) {
+      return;
+    }
+    setApplying(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => applyWsjfRebalance(), {
+      loading: "Aplicando rebalanceamento...",
+      success: (data) => `${data.moved} épico(s) reordenado(s).`,
+      error: (err) => `Não foi possível aplicar o rebalanceamento: ${err}`,
+    });
+    setApplying(false);
+    if (res.ok) {
+      close();
+    }
+  };
+
+  return (
+    <ModalCard
+      subtitle="Reordena Epics pelo WSJF atual, dentro de cada coluna do kanban"
+      title="Rebalanceamento WSJF"
+      width={500}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        {loading && (
+          <p style={{ margin: 0, fontSize: 13, color: "var(--ink-muted)" }}>
+            Calculando ranking WSJF...
+          </p>
+        )}
+
+        {!loading && error && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              color: "var(--red-text)",
+              lineHeight: 1.5,
+            }}
+          >
+            Não foi possível calcular o rebalanceamento: {error}
+          </p>
+        )}
+
+        {!(loading || error) && moves.length === 0 && (
+          <EmptyState
+            description="A ordem dos Epics em cada coluna já corresponde ao ranking WSJF atual."
+            icon="check"
+            title="Nada para rebalancear"
+          />
+        )}
+
+        {!(loading || error) && moves.length > 0 && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+              maxHeight: 260,
+              overflowY: "auto",
+            }}
+          >
+            {moves.map((move) => (
+              <RebalanceMoveRow key={move.id} move={move} />
+            ))}
+          </div>
+        )}
+
+        <p
+          style={{
+            margin: 0,
+            fontSize: 11.5,
+            color: "var(--ink-faint)",
+            lineHeight: 1.5,
+          }}
+        >
+          Apenas Epics são reordenados — Features não têm um campo de ordem
+          próprio no kanban e não são afetadas.
+        </p>
+
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end",
+            borderTop: "1px solid var(--hairline)",
+            paddingTop: 12,
+          }}
+        >
+          <Button onClick={close} size="sm" variant="secondary">
+            Descartar
+          </Button>
+          <Button
+            icon="check"
+            onClick={apply}
+            size="sm"
+            style={
+              moves.length === 0 || applying
+                ? { opacity: 0.6, pointerEvents: "none" }
+                : {}
+            }
+            variant="primary"
+          >
+            Aplicar rebalanceamento
+          </Button>
+        </div>
       </div>
     </ModalCard>
   );

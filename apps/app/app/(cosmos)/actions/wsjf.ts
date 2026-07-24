@@ -1,12 +1,23 @@
 "use server";
 
+import type { MemberRole } from "@repo/auth/server";
 import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import {
+  computeEpicRebalanceMoves,
+  type WsjfRebalanceMove,
+} from "@/lib/wsjf-rebalance";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
+import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
+
+// Re-exported (type-only, erased at compile time — allowed in a "use
+// server" file unlike a value export) so client components can import it
+// alongside WsjfRankItem/WsjfSettingsView from this one actions module.
+export type { WsjfRebalanceMove } from "@/lib/wsjf-rebalance";
 
 export type WsjfRankItem = {
   rank: number;
@@ -64,9 +75,11 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
       })),
     ].sort((a, b) => b.wsjf - a.wsjf);
 
-    // No `prev`/`ai` fields here: a previous-rank snapshot needs `order` to
-    // be persisted across recalculations, which is Tier-7 Task 19. Until
-    // that lands, don't fake a rank delta — the WSJF screen has no Δ column.
+    // No `prev`/`ai` fields here: a real rank delta (Tier-7 Task 19,
+    // getWsjfRebalancePreview/applyWsjfRebalance below) is Epic-only and
+    // scoped per lifecycle column — it doesn't fit this flat, Epic+Feature,
+    // global-WSJF-order table. The WSJF screen surfaces it in the
+    // Rebalancear modal instead of faking a Δ column here.
     return merged.map((item, i) => ({
       ...item,
       rank: i + 1,
@@ -223,5 +236,79 @@ export async function upsertWsjfSettings(
         saved.rebalanceApprover as WsjfSettingsView["rebalanceApprover"],
       staleDays: saved.staleDays,
     };
+  });
+}
+
+// ─── Rebalance (Task 19: RebalanceModal) ───────────────────────────────────────
+// Real rank-delta computation — sorts the tenant's Epics by WSJF score and
+// diffs that against the stored `order`, per lifecycle column (see
+// lib/wsjf-rebalance.ts for why it's per-column, not global). No AI call:
+// the handoff's "AI-suggested" framing is cosmetic copy, not an ML
+// requirement. Epic-only: Feature has no `order` field to rebalance.
+const REBALANCE_ROLES: MemberRole[] = ["ADMIN", "RTE", "PO"]; // same gate as moveEpic —
+// applying a rebalance is just a batch of the same per-epic order/lifecycle
+// write moveEpic already performs one at a time.
+
+async function fetchEpicsForRebalance(tenantId: string) {
+  return database.epic.findMany({
+    where: { tenantId, lifecycleStatus: { not: "REJECTED" } },
+    select: {
+      id: true,
+      title: true,
+      lifecycleStatus: true,
+      order: true,
+      wsjf: true,
+    },
+  });
+}
+
+export async function getWsjfRebalancePreview(): Promise<
+  Result<WsjfRebalanceMove[]>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const epics = await fetchEpicsForRebalance(ctx.tenantId);
+    return computeEpicRebalanceMoves(epics);
+  });
+}
+
+export async function applyWsjfRebalance(): Promise<Result<{ moved: number }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(REBALANCE_ROLES, ctx);
+
+    // Recomputed server-side from a tenant-scoped read, never trusting a
+    // client-supplied move list — closes the gap between what the user
+    // previewed and what actually gets written if the ranking changed
+    // between preview and apply.
+    const epics = await fetchEpicsForRebalance(ctx.tenantId);
+    const moves = computeEpicRebalanceMoves(epics);
+
+    if (moves.length === 0) {
+      return { moved: 0 };
+    }
+
+    await database.$transaction(
+      moves.map((move) =>
+        database.epic.updateMany({
+          where: { id: move.id, tenantId: ctx.tenantId },
+          data: { order: move.toOrder },
+        })
+      )
+    );
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "status_changed",
+      entityType: "epic",
+      entityId: "wsjf-rebalance",
+      diff: {
+        moved: String(moves.length),
+        items: moves.map((m) => `${m.id}:${m.fromRank}->${m.toRank}`).join(","),
+      },
+    });
+    revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+
+    return { moved: moves.length };
   });
 }

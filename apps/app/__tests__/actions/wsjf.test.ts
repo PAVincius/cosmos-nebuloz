@@ -7,6 +7,7 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   epicFindMany: vi.fn(),
+  epicUpdateMany: vi.fn(),
   featureFindMany: vi.fn(),
   featureFindFirst: vi.fn(),
   featureUpdate: vi.fn(),
@@ -25,7 +26,7 @@ vi.mock("@repo/auth/server", () => ({
 }));
 vi.mock("@repo/database", () => ({
   database: {
-    epic: { findMany: h.epicFindMany },
+    epic: { findMany: h.epicFindMany, updateMany: h.epicUpdateMany },
     feature: {
       findMany: h.featureFindMany,
       findFirst: h.featureFindFirst,
@@ -42,7 +43,9 @@ vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  applyWsjfRebalance,
   getFeatureWsjfComponents,
+  getWsjfRebalancePreview,
   getWsjfSettings,
   listWsjfItems,
   upsertWsjfSettings,
@@ -279,5 +282,216 @@ describe("getFeatureWsjfComponents", () => {
     expect(h.transaction).not.toHaveBeenCalled();
     expect(h.logAudit).not.toHaveBeenCalled();
     expect(h.revalidateTag).not.toHaveBeenCalled();
+  });
+});
+
+// ─── WSJF rebalance (Task 19: real Epic-only, per-column rank deltas) ─────────
+
+describe("getWsjfRebalancePreview", () => {
+  it("computes pending moves per lifecycle column, tenant-scoped, read-only", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    const res = await getWsjfRebalancePreview();
+
+    expect(res.ok).toBe(true);
+    expect(h.epicFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ tenantId: tenantCtx.tenantId }),
+      })
+    );
+    if (res.ok) {
+      expect(res.data).toHaveLength(2);
+      const e2Move = res.data.find((m) => m.id === "e2");
+      expect(e2Move).toMatchObject({ fromRank: 2, toRank: 1, toOrder: 0 });
+    }
+    expect(h.epicUpdateMany).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+  });
+
+  it("returns no moves when the ranking already matches the stored order", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 20,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 10,
+      },
+    ]);
+
+    const res = await getWsjfRebalancePreview();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data).toHaveLength(0);
+    }
+  });
+});
+
+describe("applyWsjfRebalance", () => {
+  beforeEach(() => {
+    h.transaction.mockImplementation((ops: unknown[]) => Promise.all(ops));
+    h.epicUpdateMany.mockResolvedValue({ count: 1 });
+  });
+
+  it("is denied when the role is not permitted (RBAC)", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await applyWsjfRebalance();
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(
+      ["ADMIN", "RTE", "PO"],
+      tenantCtx
+    );
+    expect(h.epicFindMany).not.toHaveBeenCalled();
+    expect(h.transaction).not.toHaveBeenCalled();
+  });
+
+  it("is a no-op when the ranking already matches order — no writes, no transaction, no audit", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 20,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 10,
+      },
+    ]);
+
+    const res = await applyWsjfRebalance();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.moved).toBe(0);
+    }
+    expect(h.transaction).not.toHaveBeenCalled();
+    expect(h.epicUpdateMany).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+    expect(h.revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("writes one tenant-scoped updateMany per moved epic inside a single transaction", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    const res = await applyWsjfRebalance();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.moved).toBe(2);
+    }
+    expect(h.transaction).toHaveBeenCalledTimes(1);
+    expect(h.transaction.mock.calls[0][0]).toHaveLength(2);
+    expect(h.epicUpdateMany).toHaveBeenCalledWith({
+      where: { id: "e2", tenantId: tenantCtx.tenantId },
+      data: { order: 0 },
+    });
+    expect(h.epicUpdateMany).toHaveBeenCalledWith({
+      where: { id: "e1", tenantId: tenantCtx.tenantId },
+      data: { order: 1 },
+    });
+  });
+
+  it("audits and revalidates the portfolio epics cache tag on success", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    await applyWsjfRebalance();
+
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({ action: "status_changed", entityType: "epic" })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  it("never writes an epic outside the caller's tenant (IDOR guard: tenant-scoped read + tenant-scoped write)", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        order: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        order: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    await applyWsjfRebalance();
+
+    expect(h.epicFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ tenantId: tenantCtx.tenantId }),
+      })
+    );
+    for (const call of h.epicUpdateMany.mock.calls) {
+      expect(call[0].where.tenantId).toBe(tenantCtx.tenantId);
+    }
   });
 });
