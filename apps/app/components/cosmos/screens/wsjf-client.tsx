@@ -8,6 +8,7 @@ import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import type {
   WsjfRankItem,
   WsjfRebalanceMove,
+  WsjfRebalanceResult,
   WsjfSettingsView,
 } from "@/app/(cosmos)/actions/wsjf";
 import {
@@ -225,10 +226,12 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
 
 // ── rebalance (Task 19: real WSJF-rank deltas, Epic-only, per-column) ──
 // Reads a live preview of what applying the rebalance would change (sorted
-// by WSJF desc, diffed against the stored `order`, independently per
-// lifecycle column — see lib/wsjf-rebalance.ts for why). "Aplicar" persists
-// exactly that: a real batch mutation, not a no-op. Epic-only: Feature has
-// no `order` field, so it's never included and the UI says so plainly.
+// by WSJF desc, diffed against the stored `lifecycleOrder`, independently
+// per lifecycle column — see lib/wsjf-rebalance.ts for why). "Aplicar"
+// persists exactly that: a real batch mutation, not a no-op. Epic-only:
+// Feature has no order field, so it's never included and the UI says so
+// plainly. Unscored epics (wsjf === null) are excluded from ranking — see
+// lib/wsjf-rebalance.ts — and the modal reports how many were skipped.
 function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
   const rose = move.toRank < move.fromRank;
   return (
@@ -281,12 +284,20 @@ function RebalanceMoveRow({ move }: { move: WsjfRebalanceMove }) {
   );
 }
 
+const EMPTY_REBALANCE_RESULT: WsjfRebalanceResult = {
+  moves: [],
+  skippedUnscored: 0,
+};
+
 function RebalanceModal() {
   const { close } = useModal();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [moves, setMoves] = useState<WsjfRebalanceMove[]>([]);
+  const [result, setResult] = useState<WsjfRebalanceResult>(
+    EMPTY_REBALANCE_RESULT
+  );
   const [applying, setApplying] = useState(false);
+  const { moves, skippedUnscored } = result;
 
   useEffect(() => {
     let cancelled = false;
@@ -302,7 +313,7 @@ function RebalanceModal() {
         setLoading(false);
         return;
       }
-      setMoves(res.data);
+      setResult(res.data);
       setLoading(false);
     });
 
@@ -356,7 +367,11 @@ function RebalanceModal() {
 
         {!(loading || error) && moves.length === 0 && (
           <EmptyState
-            description="A ordem dos Epics em cada coluna já corresponde ao ranking WSJF atual."
+            description={
+              skippedUnscored > 0
+                ? `Nenhum Epic com WSJF completo (BV/TC/RR/JS) para reordenar — ${skippedUnscored} épico(s) sem pontuação não entram no ranking.`
+                : "A ordem dos Epics em cada coluna já corresponde ao ranking WSJF atual."
+            }
             icon="check"
             title="Nada para rebalancear"
           />
@@ -376,6 +391,20 @@ function RebalanceModal() {
               <RebalanceMoveRow key={move.id} move={move} />
             ))}
           </div>
+        )}
+
+        {!(loading || error) && skippedUnscored > 0 && (
+          <p
+            style={{
+              margin: 0,
+              fontSize: 11.5,
+              color: "var(--amber-text)",
+              lineHeight: 1.5,
+            }}
+          >
+            {skippedUnscored} épico(s) sem WSJF completo (BV/TC/RR/JS) ficaram
+            de fora do ranking e mantêm sua posição atual.
+          </p>
         )}
 
         <p

@@ -44,7 +44,7 @@ const EPIC_SELECT = {
   id: true,
   title: true,
   lifecycleStatus: true,
-  order: true,
+  lifecycleOrder: true,
   wsjf: true,
   sizePoints: true,
   hot: true,
@@ -84,7 +84,7 @@ const cachedEpics = (tenantId: string) =>
     async () => {
       const rows = await database.epic.findMany({
         where: { tenantId, lifecycleStatus: { not: "REJECTED" } },
-        orderBy: [{ lifecycleStatus: "asc" }, { order: "asc" }],
+        orderBy: [{ lifecycleStatus: "asc" }, { lifecycleOrder: "asc" }],
         select: EPIC_SELECT,
       });
       return rows.map(toKanbanEpic);
@@ -126,7 +126,9 @@ export async function moveEpic(
     const lifecycleStatus = COLUMN_TO_LIFECYCLE[column];
     await database.epic.update({
       where: { id },
-      data: { lifecycleStatus, order },
+      // DB column is lifecycleOrder — see art-core.prisma / H1 fix commit
+      // body for why this is deliberately not the legacy `order` field.
+      data: { lifecycleStatus, lifecycleOrder: order },
     });
 
     await logAudit(ctx.tenantId, {

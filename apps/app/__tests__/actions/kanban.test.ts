@@ -51,7 +51,7 @@ const epicRow = {
   id: "ep-1",
   title: "Antifraude",
   lifecycleStatus: "ANALYZING",
-  order: 0,
+  lifecycleOrder: 0,
   wsjf: 19.6,
   sizePoints: 55,
   hot: true,
@@ -139,7 +139,7 @@ describe("moveEpic", () => {
     expect(h.epicUpdate).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { id: "ep-1" },
-        data: { lifecycleStatus: "DONE", order: 3 },
+        data: { lifecycleStatus: "DONE", lifecycleOrder: 3 },
       })
     );
     expect(h.logAudit).toHaveBeenCalledWith(

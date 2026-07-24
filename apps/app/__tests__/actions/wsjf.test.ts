@@ -294,14 +294,14 @@ describe("getWsjfRebalancePreview", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 10,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 20,
       },
     ]);
@@ -312,11 +312,14 @@ describe("getWsjfRebalancePreview", () => {
     expect(h.epicFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: expect.objectContaining({ tenantId: tenantCtx.tenantId }),
+        // H1: reads lifecycleOrder, not the legacy statusId-scoped `order`.
+        select: expect.objectContaining({ lifecycleOrder: true }),
       })
     );
     if (res.ok) {
-      expect(res.data).toHaveLength(2);
-      const e2Move = res.data.find((m) => m.id === "e2");
+      expect(res.data.moves).toHaveLength(2);
+      expect(res.data.skippedUnscored).toBe(0);
+      const e2Move = res.data.moves.find((m) => m.id === "e2");
       expect(e2Move).toMatchObject({ fromRank: 2, toRank: 1, toOrder: 0 });
     }
     expect(h.epicUpdateMany).not.toHaveBeenCalled();
@@ -329,14 +332,14 @@ describe("getWsjfRebalancePreview", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 20,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 10,
       },
     ]);
@@ -345,7 +348,83 @@ describe("getWsjfRebalancePreview", () => {
 
     expect(res.ok).toBe(true);
     if (res.ok) {
-      expect(res.data).toHaveLength(0);
+      expect(res.data.moves).toHaveLength(0);
+    }
+  });
+
+  // ─── H2 regression: unscored epics must never be ranked by cuid ─────────
+
+  it("produces zero moves for a column where every epic is unscored, and reports the skip count", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 0,
+        wsjf: null,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 1,
+        wsjf: null,
+      },
+      {
+        id: "e3",
+        title: "Epic C",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 2,
+        wsjf: null,
+      },
+    ]);
+
+    const res = await getWsjfRebalancePreview();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.moves).toHaveLength(0);
+      expect(res.data.skippedUnscored).toBe(3);
+    }
+  });
+
+  it("reorders only the scored epics in a mixed column and leaves unscored epics untouched", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "unscored-1",
+        title: "Unscored 1",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 0,
+        wsjf: null,
+      },
+      {
+        id: "low",
+        title: "Low WSJF",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 1,
+        wsjf: 5,
+      },
+      {
+        id: "high",
+        title: "High WSJF",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 2,
+        wsjf: 50,
+      },
+    ]);
+
+    const res = await getWsjfRebalancePreview();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.skippedUnscored).toBe(1);
+      expect(res.data.moves.find((m) => m.id === "unscored-1")).toBeUndefined();
+      expect(res.data.moves.find((m) => m.id === "high")).toMatchObject({
+        toOrder: 1,
+      });
+      expect(res.data.moves.find((m) => m.id === "low")).toMatchObject({
+        toOrder: 2,
+      });
     }
   });
 });
@@ -378,14 +457,14 @@ describe("applyWsjfRebalance", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 20,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 10,
       },
     ]);
@@ -408,14 +487,14 @@ describe("applyWsjfRebalance", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 10,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 20,
       },
     ]);
@@ -430,12 +509,50 @@ describe("applyWsjfRebalance", () => {
     expect(h.transaction.mock.calls[0][0]).toHaveLength(2);
     expect(h.epicUpdateMany).toHaveBeenCalledWith({
       where: { id: "e2", tenantId: tenantCtx.tenantId },
-      data: { order: 0 },
+      data: { lifecycleOrder: 0 },
     });
     expect(h.epicUpdateMany).toHaveBeenCalledWith({
       where: { id: "e1", tenantId: tenantCtx.tenantId },
-      data: { order: 1 },
+      data: { lifecycleOrder: 1 },
     });
+  });
+
+  // H1 regression: `order` (statusId-scoped) and `lifecycleOrder`
+  // (lifecycleStatus-scoped) are separate columns precisely so a bulk
+  // rebalance write can never collide with the legacy statusId-scoped
+  // readers (app/actions/wsjf/index.ts's getEpicsWithFeatureWSJF,
+  // app/actions/strategic-themes/index.ts's getAllEpics, and
+  // app/actions/epics/{create-epic,update-status,get-portfolio}.ts, all of
+  // which order by [statusId, order]). This asserts the write payload never
+  // touches `order` or `statusId` — the only field it writes is
+  // lifecycleOrder — so those readers stay coherent after every apply.
+  it("only ever writes lifecycleOrder — never touches the legacy order/statusId columns the other readers depend on", async () => {
+    h.epicFindMany.mockResolvedValue([
+      {
+        id: "e1",
+        title: "Epic A",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 0,
+        wsjf: 10,
+      },
+      {
+        id: "e2",
+        title: "Epic B",
+        lifecycleStatus: "FUNNEL",
+        lifecycleOrder: 1,
+        wsjf: 20,
+      },
+    ]);
+
+    await applyWsjfRebalance();
+
+    expect(h.epicUpdateMany).toHaveBeenCalledTimes(2);
+    for (const call of h.epicUpdateMany.mock.calls) {
+      const data = call[0].data as Record<string, unknown>;
+      expect(Object.keys(data)).toEqual(["lifecycleOrder"]);
+      expect(data).not.toHaveProperty("order");
+      expect(data).not.toHaveProperty("statusId");
+    }
   });
 
   it("audits and revalidates the portfolio epics cache tag on success", async () => {
@@ -444,14 +561,14 @@ describe("applyWsjfRebalance", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 10,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 20,
       },
     ]);
@@ -475,14 +592,14 @@ describe("applyWsjfRebalance", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 10,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 20,
       },
     ]);
@@ -517,14 +634,14 @@ describe("applyWsjfRebalance", () => {
         id: "e1",
         title: "Epic A",
         lifecycleStatus: "FUNNEL",
-        order: 0,
+        lifecycleOrder: 0,
         wsjf: 10,
       },
       {
         id: "e2",
         title: "Epic B",
         lifecycleStatus: "FUNNEL",
-        order: 1,
+        lifecycleOrder: 1,
         wsjf: 20,
       },
     ]);

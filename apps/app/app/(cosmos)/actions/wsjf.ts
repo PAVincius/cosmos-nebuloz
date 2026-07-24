@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import {
   computeEpicRebalanceMoves,
-  type WsjfRebalanceMove,
+  type WsjfRebalanceResult,
 } from "@/lib/wsjf-rebalance";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
@@ -17,7 +17,10 @@ import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
 // Re-exported (type-only, erased at compile time — allowed in a "use
 // server" file unlike a value export) so client components can import it
 // alongside WsjfRankItem/WsjfSettingsView from this one actions module.
-export type { WsjfRebalanceMove } from "@/lib/wsjf-rebalance";
+export type {
+  WsjfRebalanceMove,
+  WsjfRebalanceResult,
+} from "@/lib/wsjf-rebalance";
 
 export type WsjfRankItem = {
   rank: number;
@@ -241,29 +244,42 @@ export async function upsertWsjfSettings(
 
 // ─── Rebalance (Task 19: RebalanceModal) ───────────────────────────────────────
 // Real rank-delta computation — sorts the tenant's Epics by WSJF score and
-// diffs that against the stored `order`, per lifecycle column (see
-// lib/wsjf-rebalance.ts for why it's per-column, not global). No AI call:
+// diffs that against the stored `lifecycleOrder`, per lifecycle column (see
+// lib/wsjf-rebalance.ts for why it's per-column, not global, and why it has
+// its own column instead of sharing the legacy `order` field). No AI call:
 // the handoff's "AI-suggested" framing is cosmetic copy, not an ML
-// requirement. Epic-only: Feature has no `order` field to rebalance.
+// requirement. Epic-only: Feature has no order field to rebalance. Unscored
+// epics (wsjf === null) are never reordered — see lib/wsjf-rebalance.ts.
 const REBALANCE_ROLES: MemberRole[] = ["ADMIN", "RTE", "PO"]; // same gate as moveEpic —
 // applying a rebalance is just a batch of the same per-epic order/lifecycle
 // write moveEpic already performs one at a time.
 
 async function fetchEpicsForRebalance(tenantId: string) {
-  return database.epic.findMany({
+  const rows = await database.epic.findMany({
     where: { tenantId, lifecycleStatus: { not: "REJECTED" } },
     select: {
       id: true,
       title: true,
       lifecycleStatus: true,
-      order: true,
+      lifecycleOrder: true,
       wsjf: true,
     },
   });
+  // computeEpicRebalanceMoves is DB-agnostic and just calls this position
+  // "order" — the DB column is lifecycleOrder specifically so this
+  // lifecycleStatus-scoped ordering never shares a column with the
+  // statusId-scoped legacy readers/writers (see lib/wsjf-rebalance.ts, H1).
+  return rows.map((row) => ({
+    id: row.id,
+    title: row.title,
+    lifecycleStatus: row.lifecycleStatus,
+    order: row.lifecycleOrder,
+    wsjf: row.wsjf,
+  }));
 }
 
 export async function getWsjfRebalancePreview(): Promise<
-  Result<WsjfRebalanceMove[]>
+  Result<WsjfRebalanceResult>
 > {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -282,7 +298,7 @@ export async function applyWsjfRebalance(): Promise<Result<{ moved: number }>> {
     // previewed and what actually gets written if the ranking changed
     // between preview and apply.
     const epics = await fetchEpicsForRebalance(ctx.tenantId);
-    const moves = computeEpicRebalanceMoves(epics);
+    const { moves } = computeEpicRebalanceMoves(epics);
 
     if (moves.length === 0) {
       return { moved: 0 };
@@ -292,7 +308,7 @@ export async function applyWsjfRebalance(): Promise<Result<{ moved: number }>> {
       moves.map((move) =>
         database.epic.updateMany({
           where: { id: move.id, tenantId: ctx.tenantId },
-          data: { order: move.toOrder },
+          data: { lifecycleOrder: move.toOrder },
         })
       )
     );

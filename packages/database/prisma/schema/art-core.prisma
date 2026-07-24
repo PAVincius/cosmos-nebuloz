@@ -195,7 +195,7 @@ model Epic {
   tenantId         String
   title            String
   statusId         String    @default("BACKLOG")
-  order            Int       @default(0)
+  order            Int       @default(0) // position within statusId (legacy portfolio ordering — see lifecycleOrder below)
   yjsDocumentState String? // CRDT document state para sync Yjs
   epicType         String    @default("EPIC") // EPIC | FEATURE | STORY
   dueDate          DateTime?
@@ -204,6 +204,16 @@ model Epic {
 
   // SAFe Lifecycle state machine (separate from kanban statusId)
   lifecycleStatus String @default("FUNNEL") // FUNNEL/ANALYZING/PORTFOLIO_BACKLOG/IMPLEMENTING/DONE/REJECTED
+  // Position within lifecycleStatus — the Kanban de Épicos board's own
+  // ordering (drag-and-drop via moveEpic, WSJF rebalance). Deliberately a
+  // separate column from `order`: `order` is scoped by `statusId`, which is
+  // an independent, unsynced field (not 1:1 with lifecycleStatus — verified
+  // by grep, no code path writes both together). Reusing `order` here would
+  // let a lifecycleStatus-scoped bulk rewrite (WSJF rebalance) corrupt the
+  // statusId-scoped readers/writers (app/actions/wsjf/index.ts,
+  // app/actions/strategic-themes/index.ts, app/actions/epics/*.ts) and
+  // vice versa. See the WSJF rebalance H1 fix commit body.
+  lifecycleOrder Int @default(0)
 
   // AI INVEST scoring (cached — recomputed when title/description changes)
   investScore           Float? // 0-100 composite
@@ -263,7 +273,7 @@ model Epic {
   @@index([strategicThemeId])
   @@index([solutionEpicId])
   // Board query: one tenant scan ordered by lifecycle column + position
-  @@index([tenantId, lifecycleStatus, order])
+  @@index([tenantId, lifecycleStatus, lifecycleOrder])
 }
 
 model ArtSequenceCounter {
