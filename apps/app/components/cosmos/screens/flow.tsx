@@ -5,6 +5,11 @@
 // history), so this is a KPI summary of the latest snapshot rather than the
 // original 8-week CFD/FlowBars/Donut charts.
 import {
+  type DoraMetricsView,
+  type DoraMetricValue,
+  getDoraMetrics,
+} from "@/app/(cosmos)/actions/dora";
+import {
   AGING_WIP_SLA_DAYS,
   type AgingWipItem,
   type FlowMetricsSeriesPoint,
@@ -132,6 +137,92 @@ function AgingWipPanel() {
               />
             </div>
           ))}
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
+// ── DORA metrics — driven by getDoraMetrics() ──
+// Only deployment frequency and lead time are wired: they're the two DORA
+// metrics GitHubDeploymentEvent can actually back today. Change failure
+// rate and MTTR need incident data with no source (no Incident model, no
+// PagerDuty/etc integration) — they render as "sem fonte de incidente",
+// never as a 0 (which would read as "zero failures ever").
+
+function doraKpiValue(m: DoraMetricValue, format: (n: number) => string) {
+  return m.status === "measured" ? format(m.value) : "—";
+}
+
+function doraKpiHint(m: DoraMetricValue, whenMeasured: string) {
+  return m.status === "measured" ? whenMeasured : m.reason;
+}
+
+function DoraSection() {
+  const { data, loading, error } = useAction<DoraMetricsView>(getDoraMetrics);
+
+  return (
+    <SectionCard
+      icon="gitBranch"
+      subtitle="Frequência de deploy e lead time, últimos 30 dias de deployments de produção"
+      title="DORA Metrics"
+      tone="purple"
+    >
+      {error && <ErrorState />}
+      {!error && loading && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Carregando...
+        </div>
+      )}
+      {!(error || loading) && data && !data.hasProductionDeployments && (
+        <EmptyState
+          description="Nenhum deployment de produção foi registrado nos últimos 30 dias. As métricas aparecem assim que o webhook do GitHub reportar deployments."
+          icon="gitBranch"
+          title="Sem deployments de produção"
+        />
+      )}
+      {!(error || loading) && data?.hasProductionDeployments && (
+        <div
+          style={{
+            padding: 16,
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+            gap: 14,
+          }}
+        >
+          <KpiCard
+            hint={doraKpiHint(
+              data.deploymentFrequency,
+              `${data.successfulProductionDeployments} deploy(s) com sucesso em ${data.windowDays}d`
+            )}
+            icon="gitBranch"
+            label="Deployment Frequency"
+            tone="green"
+            unit="/dia"
+            value={doraKpiValue(data.deploymentFrequency, (n) => n.toFixed(2))}
+          />
+          <KpiCard
+            hint={doraKpiHint(data.leadTimeHours, "commit → produção")}
+            icon="clock"
+            label="Lead Time"
+            tone="blue"
+            unit={data.leadTimeHours.status === "measured" ? "d" : undefined}
+            value={doraKpiValue(data.leadTimeHours, (n) => (n / 24).toFixed(1))}
+          />
+          <KpiCard
+            hint={data.changeFailureRate.reason}
+            icon="alert"
+            label="Change Failure Rate"
+            tone="neutral"
+            value="—"
+          />
+          <KpiCard
+            hint={data.mttrHours.reason}
+            icon="alert"
+            label="MTTR"
+            tone="neutral"
+            value="—"
+          />
         </div>
       )}
     </SectionCard>
@@ -435,6 +526,9 @@ export default function FlowScreen() {
       </div>
       <div style={{ marginTop: 14 }}>
         <AgingWipPanel />
+      </div>
+      <div style={{ marginTop: 14 }}>
+        <DoraSection />
       </div>
     </div>
   );
