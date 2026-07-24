@@ -10,6 +10,7 @@ const h = vi.hoisted(() => ({
   decisionLogEntryCreate: vi.fn(),
   epicFindFirst: vi.fn(),
   strategicThemeFindFirst: vi.fn(),
+  userFindMany: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -31,6 +32,9 @@ vi.mock("@repo/database", () => ({
     },
     strategicTheme: {
       findFirst: h.strategicThemeFindFirst,
+    },
+    user: {
+      findMany: h.userFindMany,
     },
   },
 }));
@@ -75,6 +79,35 @@ describe("listDecisions", () => {
     if (r.ok) {
       expect(r.data[0].titulo).toBe("Aprovar migração multi-tenant");
       expect(typeof r.data[0].dataDecisao).toBe("string");
+      expect(r.data[0].decisorName).toBeNull();
+    }
+    expect(h.userFindMany).not.toHaveBeenCalled();
+  });
+
+  it("resolves the decisor name for decisions that have a decisorId", async () => {
+    h.decisionLogEntryFindMany.mockResolvedValue([
+      {
+        id: "d1",
+        titulo: "Aprovar migração multi-tenant",
+        decisao: "approved",
+        justificativa: "Reduz dívida técnica crítica",
+        tipo: "epic_decision",
+        targetType: "epic",
+        dataDecisao: new Date("2026-02-10"),
+        tags: ["tech-debt"],
+        decisorId: "user-1",
+      },
+    ]);
+    h.userFindMany.mockResolvedValue([{ id: "user-1", name: "Helena Souza" }]);
+
+    const r = await listDecisions();
+
+    expect(r.ok).toBe(true);
+    expect(h.userFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: { in: ["user-1"] } } })
+    );
+    if (r.ok) {
+      expect(r.data[0].decisorName).toBe("Helena Souza");
     }
   });
 });

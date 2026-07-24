@@ -13,7 +13,14 @@ import {
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
-import { Badge, Button, ErrorState, PageHeader, SectionCard } from "../kit";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  SectionCard,
+} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
@@ -348,6 +355,18 @@ function DecisionsBody() {
                       {tag}
                     </Badge>
                   ))}
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: 12,
+                    color: "var(--ink-subtle)",
+                  }}
+                >
+                  <Avatar name={d.decisorName ?? undefined} size={18} />
+                  <span>{d.decisorName ?? "Autor desconhecido"}</span>
                 </div>
               </div>
             ))}

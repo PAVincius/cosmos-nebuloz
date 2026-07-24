@@ -16,6 +16,7 @@ export type DecisionView = {
   tipo: string;
   dataDecisao: string;
   tags: string[];
+  decisorName: string | null;
 };
 
 export async function listDecisions(): Promise<Result<DecisionView[]>> {
@@ -33,8 +34,23 @@ export async function listDecisions(): Promise<Result<DecisionView[]>> {
         targetType: true,
         dataDecisao: true,
         tags: true,
+        decisorId: true,
       },
     });
+
+    const decisorIds = [
+      ...new Set(
+        rows.map((r) => r.decisorId).filter((id): id is string => !!id)
+      ),
+    ];
+    const decisors = decisorIds.length
+      ? await database.user.findMany({
+          where: { id: { in: decisorIds } },
+          select: { id: true, name: true },
+        })
+      : [];
+    const decisorNameById = new Map(decisors.map((u) => [u.id, u.name]));
+
     return rows.map((d) => ({
       id: d.id,
       titulo: d.titulo ?? `${d.tipo} · ${d.targetType}`,
@@ -43,6 +59,7 @@ export async function listDecisions(): Promise<Result<DecisionView[]>> {
       tipo: d.tipo,
       dataDecisao: d.dataDecisao.toISOString(),
       tags: d.tags,
+      decisorName: (d.decisorId && decisorNameById.get(d.decisorId)) || null,
     }));
   });
 }
