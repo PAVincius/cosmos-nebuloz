@@ -1,15 +1,26 @@
 "use client";
 
 // strategy.tsx — Strategy Map: pillars grouping strategic themes, wired to
-// listStrategyPillars(). Supports creating new pillars via NewPillarModal;
-// theme detail drill-down remains out of scope for this pass.
+// listStrategyPillars(). Cards show a real epic-count/progress rollup
+// (rolled up through themes -> epics, same aggregation getStrategyPillar()
+// uses) and link to the pillar detail screen. Supports creating new pillars
+// via NewPillarModal.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   createPillar,
   listStrategyPillars,
   type PillarView,
 } from "@/app/(cosmos)/actions/strategy";
-import { Badge, Button, PageHeader, SectionCard, type Tone } from "../kit";
+import { Icon } from "../icons";
+import {
+  Badge,
+  Button,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
@@ -44,13 +55,80 @@ const TONE_LABEL: Record<Tone, string> = {
   neutral: "Neutro",
 };
 
+// Static reference copy — explains what the Strategy Map represents
+// (SAFe 6.0 pillar -> theme -> epic rollup). Not a per-tenant vision value:
+// StrategyPillar has no vision field in the schema, so nothing tenant-
+// specific is fabricated here.
+function VisionBanner() {
+  return (
+    <div
+      style={{
+        position: "relative",
+        overflow: "hidden",
+        borderRadius: "var(--r-lg)",
+        border: "1px solid var(--hairline)",
+        background: "var(--accent-soft)",
+        padding: "18px 20px",
+        marginBottom: 16,
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+      }}
+    >
+      <span
+        style={{
+          display: "grid",
+          placeItems: "center",
+          width: 44,
+          height: 44,
+          borderRadius: "var(--r-md)",
+          flexShrink: 0,
+          background: "var(--accent)",
+          color: "var(--accent-fg)",
+        }}
+      >
+        <Icon name="compass" size={20} />
+      </span>
+      <div>
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 800,
+            letterSpacing: ".08em",
+            textTransform: "uppercase",
+            color: "var(--accent-text)",
+            marginBottom: 4,
+          }}
+        >
+          Da estratégia ao épico
+        </div>
+        <div
+          style={{
+            fontSize: 13.5,
+            color: "var(--ink-muted)",
+            lineHeight: 1.5,
+          }}
+        >
+          Pilares estratégicos (SAFe 6.0) traduzem a estratégia do portfólio em
+          apostas de investimento financiáveis. Cada pilar agrupa temas
+          estratégicos, que se desdobram em épicos executáveis — o rollup abaixo
+          reflete o progresso real desse trabalho.
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PillarCard({ pillar }: { pillar: PillarView }) {
+  const { navigate } = useNav();
+  const tone = toTone(pillar.tone);
   return (
     <SectionCard
       icon="anchor"
+      onActivate={() => navigate("pillar", pillar.id)}
       subtitle={`${pillar.themes.length} temas`}
       title={pillar.name}
-      tone={toTone(pillar.tone)}
+      tone={tone}
     >
       {pillar.themes.length === 0 ? (
         <span style={{ fontSize: 12.5, color: "var(--ink-faint)" }}>
@@ -59,7 +137,7 @@ function PillarCard({ pillar }: { pillar: PillarView }) {
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {pillar.themes.map((theme) => {
-            const tone = HEALTH_TONE[theme.healthStatus] ?? "green";
+            const healthTone = HEALTH_TONE[theme.healthStatus] ?? "green";
             return (
               <div
                 key={theme.id}
@@ -76,7 +154,7 @@ function PillarCard({ pillar }: { pillar: PillarView }) {
                   <span className="mono" style={{ color: "var(--ink-muted)" }}>
                     {theme.targetAllocationPct ?? "—"}%
                   </span>
-                  <Badge dot tone={tone}>
+                  <Badge dot tone={healthTone}>
                     {theme.healthStatus}
                   </Badge>
                 </div>
@@ -85,6 +163,33 @@ function PillarCard({ pillar }: { pillar: PillarView }) {
           })}
         </div>
       )}
+      <div
+        style={{
+          marginTop: 14,
+          paddingTop: 12,
+          borderTop: "1px solid var(--hairline)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            fontSize: 11.5,
+            marginBottom: 6,
+          }}
+        >
+          <span style={{ color: "var(--ink-muted)", fontWeight: 600 }}>
+            {pillar.epicCount} épicos
+          </span>
+          <span
+            className="mono"
+            style={{ fontWeight: 700, color: "var(--ink)" }}
+          >
+            {pillar.avgProgress}%
+          </span>
+        </div>
+        <Progress tone={tone} value={pillar.avgProgress} />
+      </div>
     </SectionCard>
   );
 }
@@ -231,6 +336,7 @@ function StrategyBody() {
           Novo pilar
         </Button>
       </PageHeader>
+      <VisionBanner />
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         {!loading && pillars.length === 0 && (
           <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
