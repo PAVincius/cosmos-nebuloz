@@ -22,10 +22,13 @@ import {
   listEpics,
   moveEpic,
 } from "@/app/(cosmos)/actions/kanban";
+import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
 import {
   Button,
+  CopilotInsightBar,
+  ErrorState,
   PageHeader,
   Progress,
   Skel,
@@ -57,62 +60,6 @@ const BOARD_COLUMNS: BoardColumnDef[] = [
     hex: "94,106,210",
   },
   { id: "done", label: "Done", tone: "green", hex: "22,163,74" },
-];
-
-// static fallback (no session + no seed) so the board never renders empty in dev
-const MOCK: KanbanEpic[] = [
-  {
-    id: "EP-097",
-    title: "Antifraude em tempo real (ML)",
-    column: "analyzing",
-    theme: "Confiança & Risco",
-    art: "data",
-    artTone: "amber",
-    owner: "Letícia Rocha",
-    wsjf: 19.6,
-    size: 55,
-    progress: 6,
-    hot: true,
-  },
-  {
-    id: "EP-076",
-    title: "Migração core para multi-tenant",
-    column: "backlog",
-    theme: "Modernização da Plataforma",
-    art: "plat",
-    artTone: "purple",
-    owner: "Helena Souza",
-    wsjf: 22.4,
-    size: 89,
-    progress: 0,
-    hot: true,
-  },
-  {
-    id: "EP-061",
-    title: "SSO & SCIM Enterprise",
-    column: "implementing",
-    theme: "Enterprise Ready",
-    art: "plat",
-    artTone: "purple",
-    owner: "Rafael Teixeira",
-    wsjf: 18.2,
-    size: 34,
-    progress: 64,
-    hot: false,
-  },
-  {
-    id: "EP-042",
-    title: "FinOps guardrails por ART",
-    column: "done",
-    theme: "Eficiência de Custo",
-    art: "data",
-    artTone: "amber",
-    owner: "Letícia Rocha",
-    wsjf: 9.8,
-    size: 26,
-    progress: 100,
-    hot: false,
-  },
 ];
 
 // ── helpers ──
@@ -273,8 +220,8 @@ function NewEpicModal({
       error: (err: string) => `Não foi possível criar o épico: ${err}`,
     });
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onCreated?.();
     }
   };
@@ -523,59 +470,6 @@ function NewEpicModal({
   );
 }
 
-function CopilotInsightBar() {
-  return (
-    <div
-      className="ai-shimmer"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        padding: "11px 16px",
-        marginBottom: 18,
-        borderRadius: "var(--r-lg)",
-        border: "1px solid rgba(var(--accent-rgb),.25)",
-        background: "var(--accent-soft)",
-      }}
-    >
-      <span
-        style={{
-          display: "grid",
-          placeItems: "center",
-          width: 30,
-          height: 30,
-          borderRadius: 8,
-          background: "rgba(var(--accent-rgb),.16)",
-          border: "1px solid rgba(var(--accent-rgb),.28)",
-          color: "var(--accent-text)",
-          flexShrink: 0,
-        }}
-      >
-        <Icon name="sparkles" size={16} />
-      </span>
-      <span
-        style={{ fontSize: 13, color: "var(--ink-muted)", lineHeight: 1.45 }}
-      >
-        <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
-          ORBIT
-        </strong>{" "}
-        detectou épicos quentes com WSJF alto ainda em Funnel/Analyzing —
-        priorize <strong style={{ color: "var(--ink)" }}>EP-097</strong> e{" "}
-        <strong style={{ color: "var(--ink)" }}>EP-076</strong> no próximo
-        refinamento.
-      </span>
-      <Button
-        iconRight="arrowRight"
-        size="sm"
-        style={{ marginLeft: "auto", color: "var(--accent-text)" }}
-        variant="ghost"
-      >
-        Revisar
-      </Button>
-    </div>
-  );
-}
-
 // ── EpicCard ──
 function EpicCard({
   epic,
@@ -603,13 +497,7 @@ function EpicCard({
     <div
       className="lift card-in"
       draggable
-      onClick={() => {
-        // MOCK fallback ids (e.g. "EP-097") aren't real epic ids — never
-        // link to a detail route that can't resolve.
-        if (!epic.id.startsWith("EP-")) {
-          navigate("epic", epic.id);
-        }
-      }}
+      onClick={() => navigate("epic", epic.id)}
       onDragStart={() => onDragStart(epic.id)}
       style={{
         animationDelay: `${Math.min(index, 8) * 40}ms`,
@@ -1239,9 +1127,10 @@ function KanbanFilterPopover({
 
 // ── Screen ──
 export default function KanbanScreen() {
-  const [epics, setEpics] = useState<KanbanEpic[]>(MOCK);
+  const { navigate } = useNav();
+  const [epics, setEpics] = useState<KanbanEpic[]>([]);
   const [loading, setLoading] = useState(true);
-  const [source, setSource] = useState<"live" | "mock">("mock");
+  const [error, setError] = useState(false);
   const { filters, setFilters, activeCount, matches } = useKanbanFilters();
   const [filterOpen, setFilterOpen] = useState(false);
   const [modalNode, setModalNode] = useState<ReactNode>(null);
@@ -1279,9 +1168,9 @@ export default function KanbanScreen() {
     const res = await listEpics();
     if (res.ok) {
       setEpics(res.data);
-      setSource("live");
+      setError(false);
     } else {
-      setSource("mock");
+      setError(true);
     }
     setLoading(false);
   }, []);
@@ -1311,6 +1200,16 @@ export default function KanbanScreen() {
   const visible = epics.filter(matches);
   const modal = { open: setModalNode, close: () => setModalNode(null) };
 
+  // real hot/high-WSJF epics still sitting in the earliest board columns —
+  // the only thing the Copilot bar is allowed to claim it "detected".
+  const hotHighWsjfEarly = epics
+    .filter(
+      (e) =>
+        (e.column === "funnel" || e.column === "analyzing") &&
+        epicPriority(e.wsjf) === "high"
+    )
+    .sort((a, b) => b.wsjf - a.wsjf);
+
   return (
     <ModalCtx.Provider value={modal}>
       <div
@@ -1322,19 +1221,7 @@ export default function KanbanScreen() {
           meta={
             <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
               <strong style={{ color: "var(--ink)" }}>{visible.length}</strong>{" "}
-              de {epics.length} épicos{activeCount > 0 ? " (filtrado)" : ""} ·
-              fonte:{" "}
-              <span
-                className="mono"
-                style={{
-                  color:
-                    source === "live"
-                      ? "var(--green-text)"
-                      : "var(--amber-text)",
-                }}
-              >
-                {source}
-              </span>
+              de {epics.length} épicos{activeCount > 0 ? " (filtrado)" : ""}
             </span>
           }
           subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
@@ -1396,55 +1283,93 @@ export default function KanbanScreen() {
           />
         )}
 
-        <CopilotInsightBar />
+        {!(loading || error) && hotHighWsjfEarly.length > 0 && (
+          <CopilotInsightBar
+            onAction={() => navigate("epic", hotHighWsjfEarly[0].id)}
+          >
+            <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
+              ORBIT
+            </strong>{" "}
+            detectou{" "}
+            {hotHighWsjfEarly.length === 1
+              ? "1 épico"
+              : `${hotHighWsjfEarly.length} épicos`}{" "}
+            com WSJF alto ainda em Funnel/Analyzing — priorize{" "}
+            {hotHighWsjfEarly.slice(0, 2).map((e, i) => (
+              <span key={e.id}>
+                {i > 0 && " e "}
+                <strong style={{ color: "var(--ink)" }}>{e.title}</strong>
+              </span>
+            ))}{" "}
+            no próximo refinamento.
+          </CopilotInsightBar>
+        )}
 
-        <div
-          className="scroll"
-          style={{
-            display: "flex",
-            gap: 12,
-            overflowX: "auto",
-            overflowY: "hidden",
-            flex: 1,
-            paddingBottom: 8,
-            minHeight: 420,
-          }}
-        >
-          {loading
-            ? Array.from({ length: 5 }).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    flexShrink: 0,
-                    width: 290,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 9,
-                    background: "var(--surface-2)",
-                    borderRadius: 16,
-                    border: "1px solid var(--hairline)",
-                    padding: 12,
-                  }}
-                >
-                  <Skel h={16} w="60%" />
-                  {Array.from({ length: 3 }).map((_, j) => (
-                    <Skel h={90} key={j} r={14} />
-                  ))}
-                </div>
-              ))
-            : BOARD_COLUMNS.map((col) => (
-                <KanbanColumn
-                  col={col}
-                  items={visible.filter((e) => e.column === col.id)}
-                  key={col.id}
-                  onCreated={load}
-                  onDragStart={(id) => {
-                    dragId.current = id;
-                  }}
-                  onDropEpic={moveTo}
-                />
-              ))}
-        </div>
+        {error && (
+          <ErrorState message="Não foi possível carregar os épicos do portfólio." />
+        )}
+
+        {!(loading || error) && epics.length === 0 && (
+          <EmptyState
+            action={{
+              label: "Novo Épico",
+              onClick: () => modal.open(<NewEpicModal onCreated={load} />),
+            }}
+            description="Nenhum épico foi registrado neste tenant ainda."
+            icon="kanban"
+            title="Nenhum épico no portfólio"
+          />
+        )}
+
+        {!error && (loading || epics.length > 0) && (
+          <div
+            className="scroll"
+            style={{
+              display: "flex",
+              gap: 12,
+              overflowX: "auto",
+              overflowY: "hidden",
+              flex: 1,
+              paddingBottom: 8,
+              minHeight: 420,
+            }}
+          >
+            {loading
+              ? Array.from({ length: 5 }).map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      flexShrink: 0,
+                      width: 290,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 9,
+                      background: "var(--surface-2)",
+                      borderRadius: 16,
+                      border: "1px solid var(--hairline)",
+                      padding: 12,
+                    }}
+                  >
+                    <Skel h={16} w="60%" />
+                    {Array.from({ length: 3 }).map((_, j) => (
+                      <Skel h={90} key={j} r={14} />
+                    ))}
+                  </div>
+                ))
+              : BOARD_COLUMNS.map((col) => (
+                  <KanbanColumn
+                    col={col}
+                    items={visible.filter((e) => e.column === col.id)}
+                    key={col.id}
+                    onCreated={load}
+                    onDragStart={(id) => {
+                      dragId.current = id;
+                    }}
+                    onDropEpic={moveTo}
+                  />
+                ))}
+          </div>
+        )}
       </div>
       <ModalHost node={modalNode} onClose={modal.close} />
     </ModalCtx.Provider>
