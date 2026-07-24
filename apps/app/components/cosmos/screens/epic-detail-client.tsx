@@ -14,6 +14,7 @@ import {
   Badge,
   ErrorState,
   KpiCard,
+  NavButton,
   PageHeader,
   Progress,
   SectionCard,
@@ -26,6 +27,37 @@ const TABS = [
   { id: "hypothesis", label: "Hipótese" },
   { id: "lifecycle", label: "Lifecycle" },
 ];
+
+// INVEST dimension labels (I=Independent, N=Negotiable, V=Valuable,
+// E=Estimable, S=Small, T=Testable) — same six letters analyzeInvest/the
+// analyze-invest route always score, in this fixed display order.
+const INVEST_LETTERS = ["I", "N", "V", "E", "S", "T"] as const;
+const INVEST_LABEL: Record<(typeof INVEST_LETTERS)[number], string> = {
+  I: "Independent",
+  N: "Negotiable",
+  V: "Valuable",
+  E: "Estimable",
+  S: "Small",
+  T: "Testable",
+};
+
+// Real Feature.statusId values — see flow.ts's comment on
+// updateFeatureStatus for the authoritative enum (no "Blocked" state exists
+// on Feature; never fabricated here).
+const FEATURE_STATE_ORDER = [
+  "BACKLOG",
+  "ANALYSIS",
+  "REVIEW",
+  "IMPLEMENTING",
+  "DONE",
+] as const;
+const FEATURE_STATE_TONE: Record<string, "neutral" | "blue" | "green"> = {
+  BACKLOG: "neutral",
+  ANALYSIS: "blue",
+  REVIEW: "blue",
+  IMPLEMENTING: "blue",
+  DONE: "green",
+};
 
 const RESOLUTIONS = [
   "VALIDATED",
@@ -165,6 +197,35 @@ export default function EpicDetailClient({
   }
 
   const isDone = data.lifecycleStatus === "DONE";
+  const investBreakdown = data.investBreakdown;
+  const featureStateCounts = data.features.reduce<Record<string, number>>(
+    (acc, f) => {
+      acc[f.statusId] = (acc[f.statusId] ?? 0) + 1;
+      return acc;
+    },
+    {}
+  );
+  // Known statusId values first (in lifecycle order), then any other value
+  // actually present — real data is never silently dropped from the rollup.
+  const featureStates = [
+    ...FEATURE_STATE_ORDER.filter((s) => featureStateCounts[s]),
+    ...Object.keys(featureStateCounts).filter(
+      (s) => !(FEATURE_STATE_ORDER as readonly string[]).includes(s)
+    ),
+  ];
+  const overallProgress = data.features.length
+    ? Math.round(
+        data.features.reduce((sum, f) => sum + f.progressPct, 0) /
+          data.features.length
+      )
+    : 0;
+  const contextLine = [
+    data.art ? `ART: ${data.art.name}` : null,
+    data.theme ? `Tema: ${data.theme.title}` : null,
+    data.owner ? `Owner: ${data.owner}` : null,
+  ]
+    .filter((part): part is string => part !== null)
+    .join(" · ");
 
   return (
     <div className="fade-in">
@@ -180,8 +241,13 @@ export default function EpicDetailClient({
             )}
           </>
         }
+        subtitle={contextLine || undefined}
         title={data.title}
-      />
+      >
+        <NavButton icon="kanban" to="kanban" variant="secondary">
+          Ver no Kanban
+        </NavButton>
+      </PageHeader>
       <Tabs active={tab} onChange={setTab} tabs={TABS} />
       {saveError && <ErrorState message={saveError} />}
 
@@ -220,6 +286,186 @@ export default function EpicDetailClient({
             unit="USD"
             value={data.leanBudgetAllocation ?? "—"}
           />
+        </div>
+      )}
+
+      {tab === "overview" && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))",
+            gap: 16,
+            marginTop: 16,
+          }}
+        >
+          <SectionCard
+            icon="gauge"
+            subtitle="Qualidade do épico por dimensão"
+            title="INVEST Score"
+            tone="accent"
+          >
+            {investBreakdown ? (
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
+              >
+                {INVEST_LETTERS.map((letter) => {
+                  const v = investBreakdown[letter];
+                  const dimTone = v >= 70 ? "green" : v >= 50 ? "amber" : "red";
+                  return (
+                    <div key={letter}>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          marginBottom: 4,
+                          fontSize: 12,
+                        }}
+                      >
+                        <span
+                          style={{ fontWeight: 700, color: "var(--ink-muted)" }}
+                        >
+                          {INVEST_LABEL[letter]}
+                        </span>
+                        <span
+                          className="mono"
+                          style={{
+                            fontWeight: 700,
+                            color: `var(--${dimTone}-text)`,
+                          }}
+                        >
+                          {v}/100
+                        </span>
+                      </div>
+                      <Progress height={5} tone={dimTone} value={v} />
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 12.5,
+                  color: "var(--ink-faint)",
+                  lineHeight: 1.5,
+                }}
+              >
+                {data.investScore === null
+                  ? "Este épico ainda não recebeu uma análise INVEST."
+                  : "Apenas o score consolidado está disponível — a decomposição por dimensão (I/N/V/E/S/T) não foi armazenada para este épico."}
+              </p>
+            )}
+          </SectionCard>
+
+          <SectionCard
+            icon="layers"
+            subtitle="ART responsável · tema · owner"
+            title="Contexto de Portfolio"
+            tone="blue"
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {(
+                [
+                  { label: "ART", value: data.art?.name ?? null, tone: "blue" },
+                  {
+                    label: "Tema estratégico",
+                    value: data.theme?.title ?? null,
+                    tone: "purple",
+                  },
+                  { label: "Owner", value: data.owner, tone: "neutral" },
+                ] as const
+              ).map((row) => (
+                <div
+                  key={row.label}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 12px",
+                    background: "var(--surface-3)",
+                    borderRadius: 9,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      color: "var(--ink-muted)",
+                    }}
+                  >
+                    {row.label}
+                  </span>
+                  {row.value ? (
+                    <Badge tone={row.tone}>{row.value}</Badge>
+                  ) : (
+                    <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+                      —
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+
+          <SectionCard
+            icon="check"
+            subtitle="Progresso e features por estado"
+            title="Entrega"
+            tone="green"
+          >
+            <div style={{ marginBottom: 14 }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 12.5,
+                  marginBottom: 8,
+                }}
+              >
+                <span style={{ color: "var(--ink-muted)" }}>
+                  Progresso médio
+                </span>
+                <span
+                  className="mono"
+                  style={{ fontWeight: 700, color: "var(--green-text)" }}
+                >
+                  {overallProgress}%
+                </span>
+              </div>
+              <Progress height={9} tone="green" value={overallProgress} />
+            </div>
+            {featureStates.map((s) => (
+              <div
+                key={s}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  padding: "8px 0",
+                  borderBottom: "1px solid var(--hairline)",
+                }}
+              >
+                <Badge dot tone={FEATURE_STATE_TONE[s] ?? "neutral"}>
+                  {s}
+                </Badge>
+                <span
+                  className="mono"
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 700,
+                    color: "var(--ink-muted)",
+                  }}
+                >
+                  {featureStateCounts[s]}
+                </span>
+              </div>
+            ))}
+            {data.features.length === 0 && (
+              <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
+                Nenhuma feature vinculada.
+              </span>
+            )}
+          </SectionCard>
         </div>
       )}
 
