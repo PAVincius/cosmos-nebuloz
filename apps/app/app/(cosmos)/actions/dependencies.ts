@@ -16,6 +16,16 @@ export type DependencyView = {
   status: string;
   boardStatus: string;
   criticalPath: boolean;
+  // Team that owns the blocking/blocked feature, resolved via
+  // Feature.assignedTeamId → Team, tenant-scoped both hops. Null when the
+  // feature has no assigned team, or when the assigned team id doesn't
+  // resolve inside this tenant (never surfaced from another tenant).
+  fromTeamId: string | null;
+  fromTeamName: string | null;
+  fromTeamColor: string | null;
+  toTeamId: string | null;
+  toTeamName: string | null;
+  toTeamColor: string | null;
 };
 
 export async function listDependencies(): Promise<Result<DependencyView[]>> {
@@ -30,21 +40,58 @@ export async function listDependencies(): Promise<Result<DependencyView[]>> {
         status: true,
         boardStatus: true,
         criticalPath: true,
-        blockingFeature: { select: { title: true } },
-        blockedFeature: { select: { title: true } },
+        blockingFeature: { select: { title: true, assignedTeamId: true } },
+        blockedFeature: { select: { title: true, assignedTeamId: true } },
       },
     });
-    return rows.map((d) => ({
-      id: d.id,
-      title:
-        d.description ??
-        `${d.blockingFeature.title} → ${d.blockedFeature.title}`,
-      blockingTitle: d.blockingFeature.title,
-      blockedTitle: d.blockedFeature.title,
-      status: d.status,
-      boardStatus: d.boardStatus,
-      criticalPath: d.criticalPath,
-    }));
+
+    // Feature.assignedTeamId has no declared Prisma relation, so the team
+    // name/color must be resolved with a separate, tenant-scoped lookup —
+    // this is also the IDOR guard: a foreign-tenant team id simply won't
+    // be found in this tenant-scoped query and resolves to null.
+    const teamIds = [
+      ...new Set(
+        rows.flatMap((d) =>
+          [
+            d.blockingFeature.assignedTeamId,
+            d.blockedFeature.assignedTeamId,
+          ].filter((id): id is string => id !== null)
+        )
+      ),
+    ];
+    const teams = teamIds.length
+      ? await database.team.findMany({
+          where: { id: { in: teamIds }, tenantId: ctx.tenantId },
+          select: { id: true, name: true, color: true },
+        })
+      : [];
+    const teamById = new Map(teams.map((t) => [t.id, t]));
+
+    return rows.map((d) => {
+      const fromTeam = d.blockingFeature.assignedTeamId
+        ? (teamById.get(d.blockingFeature.assignedTeamId) ?? null)
+        : null;
+      const toTeam = d.blockedFeature.assignedTeamId
+        ? (teamById.get(d.blockedFeature.assignedTeamId) ?? null)
+        : null;
+      return {
+        id: d.id,
+        title:
+          d.description ??
+          `${d.blockingFeature.title} → ${d.blockedFeature.title}`,
+        blockingTitle: d.blockingFeature.title,
+        blockedTitle: d.blockedFeature.title,
+        status: d.status,
+        boardStatus: d.boardStatus,
+        criticalPath: d.criticalPath,
+        fromTeamId: fromTeam?.id ?? null,
+        fromTeamName: fromTeam?.name ?? null,
+        fromTeamColor: fromTeam?.color ?? null,
+        toTeamId: toTeam?.id ?? null,
+        toTeamName: toTeam?.name ?? null,
+        toTeamColor: toTeam?.color ?? null,
+      };
+    });
   });
 }
 

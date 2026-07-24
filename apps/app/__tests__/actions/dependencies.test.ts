@@ -9,6 +9,7 @@ const h = vi.hoisted(() => ({
   dependencyLinkFindMany: vi.fn(),
   dependencyLinkCreate: vi.fn(),
   featureFindFirst: vi.fn(),
+  teamFindMany: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -27,6 +28,9 @@ vi.mock("@repo/database", () => ({
     },
     feature: {
       findFirst: h.featureFindFirst,
+    },
+    team: {
+      findMany: h.teamFindMany,
     },
   },
 }));
@@ -54,10 +58,14 @@ describe("listDependencies", () => {
         status: "at-risk",
         boardStatus: "IDENTIFIED",
         criticalPath: true,
-        blockingFeature: { title: "Tenant isolation layer" },
-        blockedFeature: { title: "Pix agendado · fila" },
+        blockingFeature: {
+          title: "Tenant isolation layer",
+          assignedTeamId: null,
+        },
+        blockedFeature: { title: "Pix agendado · fila", assignedTeamId: null },
       },
     ]);
+    h.teamFindMany.mockResolvedValue([]);
 
     const r = await listDependencies();
     expect(r.ok).toBe(true);
@@ -69,6 +77,88 @@ describe("listDependencies", () => {
     if (r.ok) {
       expect(r.data[0].blockingTitle).toBe("Tenant isolation layer");
       expect(r.data[0].blockedTitle).toBe("Pix agendado · fila");
+    }
+  });
+
+  it("skips the team lookup entirely when no feature has an assigned team", async () => {
+    h.dependencyLinkFindMany.mockResolvedValue([
+      {
+        id: "d1",
+        description: null,
+        status: "not-started",
+        boardStatus: "IDENTIFIED",
+        criticalPath: false,
+        blockingFeature: { title: "A", assignedTeamId: null },
+        blockedFeature: { title: "B", assignedTeamId: null },
+      },
+    ]);
+
+    const r = await listDependencies();
+    expect(r.ok).toBe(true);
+    expect(h.teamFindMany).not.toHaveBeenCalled();
+    if (r.ok) {
+      expect(r.data[0].fromTeamId).toBeNull();
+      expect(r.data[0].toTeamId).toBeNull();
+    }
+  });
+
+  it("resolves from/to team name+color via a tenant-scoped Team lookup", async () => {
+    h.dependencyLinkFindMany.mockResolvedValue([
+      {
+        id: "d1",
+        description: null,
+        status: "on-track",
+        boardStatus: "IN_PROGRESS",
+        criticalPath: false,
+        blockingFeature: { title: "A", assignedTeamId: "team-a" },
+        blockedFeature: { title: "B", assignedTeamId: "team-b" },
+      },
+    ]);
+    h.teamFindMany.mockResolvedValue([
+      { id: "team-a", name: "Squad Alpha", color: "#2563eb" },
+      { id: "team-b", name: "Squad Beta", color: "#16a34a" },
+    ]);
+
+    const r = await listDependencies();
+    expect(r.ok).toBe(true);
+    expect(h.teamFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          id: { in: ["team-a", "team-b"] },
+          tenantId: tenantCtx.tenantId,
+        },
+      })
+    );
+    if (r.ok) {
+      expect(r.data[0].fromTeamId).toBe("team-a");
+      expect(r.data[0].fromTeamName).toBe("Squad Alpha");
+      expect(r.data[0].fromTeamColor).toBe("#2563eb");
+      expect(r.data[0].toTeamId).toBe("team-b");
+      expect(r.data[0].toTeamName).toBe("Squad Beta");
+    }
+  });
+
+  it("falls back to null (never leaks the id) when the assigned team doesn't resolve inside the tenant", async () => {
+    // assignedTeamId points at a team the tenant-scoped Team query didn't
+    // return (e.g. belongs to another tenant) — must not be surfaced.
+    h.dependencyLinkFindMany.mockResolvedValue([
+      {
+        id: "d1",
+        description: null,
+        status: "blocked",
+        boardStatus: "IDENTIFIED",
+        criticalPath: true,
+        blockingFeature: { title: "A", assignedTeamId: "foreign-team" },
+        blockedFeature: { title: "B", assignedTeamId: null },
+      },
+    ]);
+    h.teamFindMany.mockResolvedValue([]); // tenant-scoped query found nothing
+
+    const r = await listDependencies();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].fromTeamId).toBeNull();
+      expect(r.data[0].fromTeamName).toBeNull();
     }
   });
 });
