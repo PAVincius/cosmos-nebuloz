@@ -17,6 +17,8 @@ vi.mock("@/app/actions/analytics/executive", () => ({
         costPerPoint: null,
         actionCompletionRate: 60,
         activeARTsCount: 1,
+        flowSnapshotCount: 1,
+        totalRetroActions: 5,
       },
       artTable: [
         {
@@ -126,6 +128,8 @@ describe("buildSnapshotCsv", () => {
           costPerPoint: null,
           actionCompletionRate: 60,
           activeARTsCount: 1,
+          flowSnapshotCount: 1,
+          totalRetroActions: 5,
         },
         artTable: [
           {

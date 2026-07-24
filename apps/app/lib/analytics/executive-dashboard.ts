@@ -12,6 +12,11 @@ export type KpiTiles = {
   costPerPoint: number | null;
   actionCompletionRate: number;
   activeARTsCount: number;
+  // Source counts so callers can tell a real 0% from "no data measured yet" —
+  // flowSnapshotCount backs flowEfficiency/cycleTimeDays, totalRetroActions
+  // backs actionCompletionRate.
+  flowSnapshotCount: number;
+  totalRetroActions: number;
 };
 
 export type ARTRow = {
@@ -198,6 +203,8 @@ export async function buildExecutiveDashboardData(
       costPerPoint: null,
       actionCompletionRate,
       activeARTsCount: arts.length,
+      flowSnapshotCount: snapshots.length,
+      totalRetroActions: totalActions,
     },
     artTable,
     anomalyFeed,

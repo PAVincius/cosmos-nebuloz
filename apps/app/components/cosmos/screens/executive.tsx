@@ -446,7 +446,7 @@ function RiskSnapshotRow({ risk }: { risk: RiskView }) {
           height: 26,
           borderRadius: 7,
           background: `var(--${tone})`,
-          color: "#fff",
+          color: "var(--on-solid)",
           fontSize: 12,
           fontWeight: 800,
           flexShrink: 0,
@@ -563,6 +563,8 @@ function ExecutiveBody() {
 
   const dashboard = state.dashboard;
   const hasArtData = dashboard.artTable.length > 0;
+  const hasFlowData = dashboard.kpis.flowSnapshotCount > 0;
+  const hasRetroActionData = dashboard.kpis.totalRetroActions > 0;
 
   return (
     <div className="fade-in" id="executive-print-root">
@@ -785,24 +787,26 @@ function ExecutiveBody() {
             icon="zap"
             label="Flow Efficiency"
             tone="purple"
-            unit="%"
-            value={dashboard.kpis.flowEfficiency}
+            unit={hasFlowData ? "%" : undefined}
+            value={hasFlowData ? dashboard.kpis.flowEfficiency : "—"}
           />
           <KpiCard
             hint="mediana do portfólio"
             icon="clock"
             label="Cycle Time"
             tone="blue"
-            unit="d"
-            value={dashboard.kpis.cycleTimeDays}
+            unit={hasFlowData ? "d" : undefined}
+            value={hasFlowData ? dashboard.kpis.cycleTimeDays : "—"}
           />
           <KpiCard
             hint="retro action items"
             icon="check"
             label="Ações de Retro Concluídas"
             tone="green"
-            unit="%"
-            value={dashboard.kpis.actionCompletionRate}
+            unit={hasRetroActionData ? "%" : undefined}
+            value={
+              hasRetroActionData ? dashboard.kpis.actionCompletionRate : "—"
+            }
           />
         </div>
       </div>
