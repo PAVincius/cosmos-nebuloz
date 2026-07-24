@@ -16,6 +16,7 @@ import HorizonDetailScreen from "./horizon-detail";
 import IntegrationsScreen from "./integrations";
 import KanbanScreen from "./kanban";
 import MeasureScreen from "./measure";
+import ObjectiveDetailScreen from "./objective-detail";
 import OkrsScreen from "./okrs";
 import PillarDetailScreen from "./pillar-detail";
 import PiPlanningScreen from "./piplanning";
@@ -53,6 +54,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   teams: TeamsScreen,
   team: TeamDetailScreen,
   okrs: OkrsScreen,
+  okr: ObjectiveDetailScreen,
   risks: RisksScreen,
   roadmap: RoadmapScreen,
   flow: FlowScreen,

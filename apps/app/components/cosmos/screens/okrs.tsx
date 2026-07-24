@@ -19,6 +19,7 @@ import {
   KpiCard,
   PageHeader,
   Progress,
+  useNav,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
@@ -166,6 +167,7 @@ function ObjectiveCard({
   onUpdated: () => void;
 }) {
   const modal = useModal();
+  const { navigate } = useNav();
   const tone = STATUS_TONE[o.status] ?? "neutral";
   const avg = o.keyResults.length
     ? Math.round(
@@ -184,7 +186,7 @@ function ObjectiveCard({
         overflow: "hidden",
       }}
     >
-      <CardHeaderGlow tone={tone}>
+      <CardHeaderGlow onActivate={() => navigate("okr", o.id)} tone={tone}>
         <IconBadge tone={tone}>
           <Icon name="star" size={20} strokeWidth={1.8} />
         </IconBadge>
