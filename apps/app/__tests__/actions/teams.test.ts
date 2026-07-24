@@ -10,6 +10,9 @@ const h = vi.hoisted(() => ({
   teamFindFirst: vi.fn(),
   teamCreate: vi.fn(),
   teamCapacitySnapshotFindMany: vi.fn(),
+  sprintFindMany: vi.fn(),
+  featureFindMany: vi.fn(),
+  pIObjectiveFindMany: vi.fn(),
   aRTFindFirst: vi.fn(),
   logAudit: vi.fn(),
 }));
@@ -31,6 +34,15 @@ vi.mock("@repo/database", () => ({
     teamCapacitySnapshot: {
       findMany: h.teamCapacitySnapshotFindMany,
     },
+    sprint: {
+      findMany: h.sprintFindMany,
+    },
+    feature: {
+      findMany: h.featureFindMany,
+    },
+    pIObjective: {
+      findMany: h.pIObjectiveFindMany,
+    },
     aRT: {
       findFirst: h.aRTFindFirst,
     },
@@ -50,6 +62,9 @@ beforeEach(() => {
   h.headers.mockResolvedValue(new Headers());
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  h.sprintFindMany.mockResolvedValue([]);
+  h.featureFindMany.mockResolvedValue([]);
+  h.pIObjectiveFindMany.mockResolvedValue([]);
 });
 
 describe("listTeams", () => {
@@ -181,6 +196,7 @@ describe("getTeam", () => {
         recordedAt: new Date("2026-01-01"),
         expectedSpNextSprint: 38,
         actualSpDelivered: 35,
+        actualCapacityUtil: 0.92,
       },
     ]);
     h.teamFindFirst.mockResolvedValue({
@@ -197,6 +213,79 @@ describe("getTeam", () => {
     if (r.ok) {
       expect(r.data?.members[0].name).toBe("Ana");
       expect(r.data?.recentCapacity[0].actualSp).toBe(35);
+      expect(r.data?.recentCapacity[0].utilizationPct).toBe(92);
+    }
+  });
+
+  it("scopes the sprint/feature/PIObjective reads to the tenant and team", async () => {
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
+    h.teamFindFirst.mockResolvedValue({
+      id: "tm1",
+      name: "Squad Alpha",
+      focusArea: null,
+      velocity: null,
+      wip: 0,
+      members: [],
+    });
+
+    await getTeam("tm1");
+
+    expect(h.sprintFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: tenantCtx.tenantId,
+          teamId: "tm1",
+          status: "CLOSED",
+        },
+      })
+    );
+    expect(h.featureFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, assignedTeamId: "tm1" },
+      })
+    );
+    expect(h.pIObjectiveFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, teamId: "tm1" },
+      })
+    );
+  });
+
+  it("returns the team's real sprint series, features, and PI objectives", async () => {
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
+    h.teamFindFirst.mockResolvedValue({
+      id: "tm1",
+      name: "Squad Alpha",
+      focusArea: null,
+      velocity: 30,
+      wip: 2,
+      members: [],
+    });
+    h.sprintFindMany.mockResolvedValue([
+      { id: "sp1", name: "Sprint 10", capacity: 40, velocity: 38 },
+    ]);
+    h.featureFindMany.mockResolvedValue([
+      { id: "f1", title: "Checkout PIX", statusId: "DONE", progressPct: 100 },
+    ]);
+    h.pIObjectiveFindMany.mockResolvedValue([
+      {
+        id: "o1",
+        title: "Reduzir latência",
+        status: "IN_PROGRESS",
+        businessValue: 8,
+        plannedValue: 100,
+        achievedValue: 40,
+      },
+    ]);
+
+    const r = await getTeam("tm1");
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data?.sprints).toEqual([
+        { id: "sp1", name: "Sprint 10", capacity: 40, velocity: 38 },
+      ]);
+      expect(r.data?.features[0].title).toBe("Checkout PIX");
+      expect(r.data?.piObjectives[0].title).toBe("Reduzir latência");
     }
   });
 });

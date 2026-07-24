@@ -33,7 +33,38 @@ export type TeamDetailView = {
   velocity: number | null;
   wip: number;
   members: { name: string; role: string }[];
-  recentCapacity: { period: string; expectedSp: number; actualSp: number }[];
+  recentCapacity: {
+    period: string;
+    expectedSp: number;
+    actualSp: number;
+    utilizationPct: number;
+  }[];
+  // Closed sprints for this team, newest-first — same shape/source as
+  // velocity.ts's listRecentSprints(), scoped to a single team.
+  sprints: {
+    id: string;
+    name: string;
+    capacity: number | null;
+    velocity: number | null;
+  }[];
+  // Features assigned to this team (Feature.assignedTeamId), not filtered
+  // to any particular PI — there is no "current PI" concept established
+  // for team screens yet, so filtering would be a guess.
+  features: {
+    id: string;
+    title: string;
+    statusId: string;
+    progressPct: number;
+  }[];
+  // Most recent PIObjective rows for this team (PIObjective.teamId).
+  piObjectives: {
+    id: string;
+    title: string;
+    status: string;
+    businessValue: number;
+    plannedValue: number;
+    achievedValue: number;
+  }[];
 };
 
 function parseMembers(json: unknown): { name: string; role: string }[] {
@@ -173,6 +204,34 @@ export async function getTeam(
         recordedAt: true,
         expectedSpNextSprint: true,
         actualSpDelivered: true,
+        actualCapacityUtil: true,
+      },
+    });
+
+    const sprints = await database.sprint.findMany({
+      where: { tenantId: ctx.tenantId, teamId: team.id, status: "CLOSED" },
+      orderBy: { endDate: "desc" },
+      take: 8,
+      select: { id: true, name: true, capacity: true, velocity: true },
+    });
+
+    const features = await database.feature.findMany({
+      where: { tenantId: ctx.tenantId, assignedTeamId: team.id },
+      orderBy: { wsjfScore: "desc" },
+      select: { id: true, title: true, statusId: true, progressPct: true },
+    });
+
+    const piObjectives = await database.pIObjective.findMany({
+      where: { tenantId: ctx.tenantId, teamId: team.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        id: true,
+        title: true,
+        status: true,
+        businessValue: true,
+        plannedValue: true,
+        achievedValue: true,
       },
     });
 
@@ -187,7 +246,11 @@ export async function getTeam(
         period: s.recordedAt.toISOString().slice(0, 10),
         expectedSp: s.expectedSpNextSprint,
         actualSp: s.actualSpDelivered,
+        utilizationPct: Math.round(s.actualCapacityUtil * 100),
       })),
+      sprints,
+      features,
+      piObjectives,
     };
   });
 }
