@@ -7,6 +7,7 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   strategyPillarFindMany: vi.fn(),
+  strategyPillarFindFirst: vi.fn(),
   strategyPillarCreate: vi.fn(),
   logAudit: vi.fn(),
 }));
@@ -22,6 +23,7 @@ vi.mock("@repo/database", () => ({
   database: {
     strategyPillar: {
       findMany: h.strategyPillarFindMany,
+      findFirst: h.strategyPillarFindFirst,
       create: h.strategyPillarCreate,
     },
   },
@@ -31,6 +33,7 @@ vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 import { database } from "@repo/database";
 import {
   createPillar,
+  getStrategyPillar,
   listStrategyPillars,
 } from "../../app/(cosmos)/actions/strategy";
 
@@ -69,6 +72,85 @@ describe("listStrategyPillars", () => {
     if (r.ok) {
       expect(r.data[0].themes[0].title).toBe("Expansão LATAM");
     }
+  });
+});
+
+describe("getStrategyPillar", () => {
+  it("is tenant-scoped and returns not-found for a cross-tenant pillar id", async () => {
+    // Simulates the real Prisma behavior when `id` belongs to another tenant:
+    // a `where: { id, tenantId }` finds nothing. This assertion also pins the
+    // exact where-clause shape, so it fails if `tenantId` were ever dropped
+    // from the query (the pillar would then resolve across tenants).
+    h.strategyPillarFindFirst.mockResolvedValue(null);
+
+    const res = await getStrategyPillar("foreign-pillar");
+
+    expect(res.ok).toBe(false);
+    expect(h.strategyPillarFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "foreign-pillar", tenantId: tenantCtx.tenantId },
+      })
+    );
+  });
+
+  it("computes the epic rollup from the real StrategicTheme -> Epic relation", async () => {
+    h.strategyPillarFindFirst.mockResolvedValue({
+      id: "p1",
+      name: "Crescimento",
+      tone: "accent",
+      themes: [
+        {
+          id: "th1",
+          title: "Expansão LATAM",
+          healthStatus: "on",
+          targetAllocationPct: 25,
+          epics: [
+            {
+              id: "e1",
+              title: "Epic A",
+              wsjf: 12,
+              featureCount: 4,
+              doneFeatureCount: 2,
+            },
+            {
+              id: "e2",
+              title: "Epic B",
+              wsjf: 8,
+              featureCount: 4,
+              doneFeatureCount: 4,
+            },
+          ],
+        },
+        {
+          id: "th2",
+          title: "Tema sem épicos",
+          healthStatus: "watch",
+          targetAllocationPct: null,
+          epics: [],
+        },
+      ],
+    });
+
+    const r = await getStrategyPillar("p1");
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    // Rollup is derived from the nested themes[].epics, not a direct
+    // pillar->epic relation (none exists) — verifies the join is walked.
+    expect(r.data.epicCount).toBe(2);
+    expect(r.data.doneEpicCount).toBe(1);
+    expect(r.data.avgProgress).toBe(75);
+    expect(r.data.epics.map((e) => e.themeTitle)).toEqual([
+      "Expansão LATAM",
+      "Expansão LATAM",
+    ]);
+    expect(r.data.epics.find((e) => e.id === "e2")?.progressPct).toBe(100);
+    expect(r.data.themes[0].epicCount).toBe(2);
+    expect(r.data.themes[0].avgProgress).toBe(75);
+    expect(r.data.themes[1].epicCount).toBe(0);
+    expect(r.data.themes[1].avgProgress).toBe(0);
   });
 });
 
