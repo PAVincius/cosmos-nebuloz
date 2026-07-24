@@ -35,18 +35,24 @@ const GOVERNANCE_ROLE_MAP: Record<string, string[]> = {
 
 // ─── Default workflows ────────────────────────────────────────────────────────
 
+// etapaOrdem is 0-based — matches the other workflow writer
+// ((cosmos)/actions/governance.ts's GateStepSchema, whose `order` is the
+// 0-based array index of the step in the editor UI). gate-detail-client.tsx
+// and governance.tsx render `etapaOrdem + 1` for a 1-based display label, so
+// both writers must agree on this base or the same screen numbers a gate
+// differently depending on which one authored it.
 const DEFAULT_WORKFLOWS = [
   {
     tipo: "epic_investment",
     nome: "Aprovação de Épico de Portfólio",
     etapas: [
       {
-        order: 1,
+        order: 0,
         roleRequired: "lpm",
         criteria: "Validar alinhamento estratégico e ROI estimado",
       },
       {
-        order: 2,
+        order: 1,
         roleRequired: "finance",
         criteria: "Validar viabilidade orçamentária",
       },
@@ -57,11 +63,11 @@ const DEFAULT_WORKFLOWS = [
     nome: "Mudança de Guardrail de Budget",
     etapas: [
       {
-        order: 1,
+        order: 0,
         roleRequired: "lpm",
         criteria: "Validar impacto nos value streams",
       },
-      { order: 2, roleRequired: "finance", criteria: "Aprovação financeira" },
+      { order: 1, roleRequired: "finance", criteria: "Aprovação financeira" },
     ],
   },
 ] as const;
@@ -402,6 +408,17 @@ export async function reviewStep(
     const ge = step.approvalRequest.governedEpic;
 
     await database.$transaction(async (tx) => {
+      // Lock the parent request row for the duration of this decision.
+      // Without this, two concurrent reviewStep calls on sibling steps of
+      // the same request (READ COMMITTED) can each re-read the other's
+      // step as still "pending" before either commits, both concluding
+      // "not done yet" and leaving the request stuck in in_review even
+      // though every step ends up decided. Locking here forces the second
+      // transaction to wait and then re-read the first's committed step
+      // update, so the aggregate state below is always computed from a
+      // fully up-to-date view.
+      await tx.$queryRaw`SELECT id FROM "ApprovalRequest" WHERE id = ${requestId} FOR UPDATE`;
+
       await tx.approvalStepInstance.update({
         where: { id: step.id },
         data: {
@@ -429,6 +446,22 @@ export async function reviewStep(
       );
 
       if (anyRejected) {
+        // Cancel any still-pending sibling steps so this request can never
+        // again present an active decision control (client) or accept a
+        // further decision (reviewStep's own `estado: "pending"` guard on
+        // the initial lookup refuses it once no step is left pending) —
+        // otherwise a later decision on a sibling would re-terminate an
+        // already-rejected request and log a second, contradictory
+        // decision entry. Mirrors multi-step.ts's cancel-siblings-on-reject.
+        const pendingSiblingIds = finalSteps
+          .filter((s) => s.estado === "pending")
+          .map((s) => s.id);
+        if (pendingSiblingIds.length > 0) {
+          await tx.approvalStepInstance.updateMany({
+            where: { id: { in: pendingSiblingIds } },
+            data: { estado: "skipped" },
+          });
+        }
         await tx.approvalRequest.update({
           where: { id: requestId },
           data: { estado: "rejected" },

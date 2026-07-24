@@ -116,7 +116,7 @@ function StepRow({
               ? "2px solid var(--accent)"
               : "1px solid var(--hairline-strong)",
             color: isDone
-              ? "#fff"
+              ? "var(--on-solid)"
               : isPending
                 ? "var(--accent)"
                 : "var(--ink-faint)",
@@ -471,7 +471,16 @@ export default function GateDetailClient({
         title="Etapas do gate"
         tone="accent"
       >
-        {!data.currentApprovalRequestId && (
+        {/* Gate resubmission on the request's own terminal state, not on
+            whether a pointer exists — reviewStep() rejects a request
+            without ever clearing GovernedEpic.currentApprovalRequestId
+            (unlike cancelApprovalRequest), and submitEpicForApproval only
+            blocks duplicates while a request is open/in_review. Keeping
+            the pointer intact (instead of nulling it on rejection) lets
+            this screen still show the rejected request's step history
+            above, while the button becomes available again. */}
+        {(!data.currentApprovalRequestId ||
+          data.governanceStatus === "rejected") && (
           <button
             disabled={submitting}
             onClick={submitForApproval}
@@ -508,7 +517,12 @@ export default function GateDetailClient({
                 isLast={i === approval.steps.length - 1}
                 key={step.id}
                 onDecide={decide}
-                reviewing={reviewingStepId === step.id}
+                // Disable every step's controls while ANY step is being
+                // reviewed, not just the clicked one — reviewStep()
+                // re-derives the whole request's aggregate state from its
+                // siblings, so a second in-flight decision on a different
+                // pending step is a race, not an independent action.
+                reviewing={reviewingStepId !== null}
                 step={step}
               />
             ))}

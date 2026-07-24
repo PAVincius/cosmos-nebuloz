@@ -382,7 +382,9 @@ function GateReviewModal({
       {!loading && pendingStep && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div style={{ fontSize: 12, color: "var(--ink-muted)" }}>
-            Etapa {pendingStep.etapaOrdem} · Papel requerido:{" "}
+            {/* etapaOrdem is 0-based (see actions/governance/index.ts) — +1
+                for a 1-based display label, matching gate-detail-client.tsx. */}
+            Etapa {pendingStep.etapaOrdem + 1} · Papel requerido:{" "}
             {pendingStep.roleRequired}
           </div>
 
