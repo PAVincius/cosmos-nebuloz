@@ -1,6 +1,6 @@
 "use server";
 
-import { requireTenantSession } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import type { Prisma, TagRule } from "@repo/database";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
@@ -62,6 +62,7 @@ export async function createTagRule(
 ): Promise<Result<TagRule>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
     const data = TagRuleSchema.parse(input);
     const rule = await database.tagRule.create({
       data: {
@@ -91,6 +92,7 @@ export async function updateTagRule(
 ): Promise<Result<TagRule>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
 
     const existing = await database.tagRule.findFirst({
       where: { id, tenantId: ctx.tenantId },
@@ -133,6 +135,7 @@ export async function deleteTagRule(
 ): Promise<Result<{ deleted: boolean }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
     await database.tagRule.deleteMany({
       where: { id, tenantId: ctx.tenantId },
     });
