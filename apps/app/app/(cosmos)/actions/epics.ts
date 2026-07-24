@@ -67,6 +67,20 @@ export async function getEpic(id: string): Promise<Result<EpicDetail | null>> {
   });
 }
 
+export type FeatureTaskView = {
+  id: string;
+  title: string;
+  status: string;
+};
+
+export type FeatureStoryView = {
+  id: string;
+  title: string;
+  status: string;
+  storyPoints: number;
+  tasks: FeatureTaskView[];
+};
+
 export type FeatureDetail = {
   id: string;
   title: string;
@@ -80,6 +94,13 @@ export type FeatureDetail = {
   progressPct: number;
   acceptanceCriteria: string[];
   epicId: string | null;
+  epicTitle: string | null;
+  stories: FeatureStoryView[];
+  // Prev/next within the epic, ordered the same way getEpic() lists
+  // features (wsjfScore desc) — null at either end, or when the feature
+  // has no epic to order siblings within.
+  prevFeatureId: string | null;
+  nextFeatureId: string | null;
 };
 
 export async function getFeature(
@@ -102,16 +123,68 @@ export async function getFeature(
         progressPct: true,
         acceptanceCriteria: true,
         epicId: true,
+        epic: { select: { title: true } },
+        stories: {
+          select: {
+            id: true,
+            title: true,
+            status: true,
+            storyPoints: true,
+            tasks: {
+              select: { id: true, title: true, status: true },
+              orderBy: { createdAt: "asc" },
+            },
+          },
+          orderBy: { order: "asc" },
+        },
       },
     });
     if (!feature) {
       return null;
     }
+
+    let prevFeatureId: string | null = null;
+    let nextFeatureId: string | null = null;
+    if (feature.epicId) {
+      const siblings = await database.feature.findMany({
+        where: { epicId: feature.epicId, tenantId: ctx.tenantId },
+        select: { id: true },
+        orderBy: { wsjfScore: "desc" },
+      });
+      const idx = siblings.findIndex((s) => s.id === feature.id);
+      if (idx > 0) {
+        prevFeatureId = siblings[idx - 1].id;
+      }
+      if (idx >= 0 && idx < siblings.length - 1) {
+        nextFeatureId = siblings[idx + 1].id;
+      }
+    }
+
     return {
-      ...feature,
+      id: feature.id,
+      title: feature.title,
+      statusId: feature.statusId,
+      bv: feature.bv,
+      tc: feature.tc,
+      rr: feature.rr,
+      js: feature.js,
+      wsjfScore: feature.wsjfScore,
+      storyPoints: feature.storyPoints,
+      progressPct: feature.progressPct,
       acceptanceCriteria: Array.isArray(feature.acceptanceCriteria)
         ? (feature.acceptanceCriteria as string[])
         : [],
+      epicId: feature.epicId,
+      epicTitle: feature.epic?.title ?? null,
+      stories: feature.stories.map((s) => ({
+        id: s.id,
+        title: s.title,
+        status: s.status,
+        storyPoints: s.storyPoints,
+        tasks: s.tasks,
+      })),
+      prevFeatureId,
+      nextFeatureId,
     };
   });
 }
