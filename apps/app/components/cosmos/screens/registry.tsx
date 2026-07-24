@@ -30,6 +30,7 @@ import TeamsScreen from "./teams";
 import ThemeDetailScreen from "./theme-detail";
 import ThemesScreen from "./themes";
 import VelocityScreen from "./velocity";
+import ValueStreamDetailScreen from "./vs-detail";
 import WebhooksScreen from "./webhooks";
 import WorkflowsScreen from "./workflows";
 import WsjfScreen from "./wsjf";
@@ -62,6 +63,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   themes: ThemesScreen,
   theme: ThemeDetailScreen,
   pillar: PillarDetailScreen,
+  vs: ValueStreamDetailScreen,
   tags: TagsScreen,
   solution: SolutionTrainScreen,
   strategy: StrategyScreen,

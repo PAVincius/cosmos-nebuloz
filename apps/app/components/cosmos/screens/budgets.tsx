@@ -20,6 +20,7 @@ import {
   PageHeader,
   Progress,
   SectionCard,
+  useNav,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
@@ -207,6 +208,7 @@ function BudgetRow({
   onGuardrailsSaved: () => void;
 }) {
   const modal = useModal();
+  const { navigate } = useNav();
   const tone = utilizationTone(b.utilizationPct);
   return (
     <div
@@ -228,6 +230,23 @@ function BudgetRow({
         <div style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
           {b.themeName ?? "Sem tema"} · {b.period}
         </div>
+        {b.artId && (
+          <button
+            onClick={() => navigate("vs", b.artId as string)}
+            style={{
+              background: "none",
+              border: "none",
+              padding: 0,
+              marginTop: 4,
+              cursor: "pointer",
+            }}
+            type="button"
+          >
+            <Badge icon="layers" tone="accent">
+              {b.artName ?? "Value stream"}
+            </Badge>
+          </button>
+        )}
       </div>
       <span
         className="mono"

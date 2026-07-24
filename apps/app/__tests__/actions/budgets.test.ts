@@ -9,6 +9,9 @@ const h = vi.hoisted(() => ({
   leanBudgetFindMany: vi.fn(),
   leanBudgetFindFirst: vi.fn(),
   leanBudgetUpdate: vi.fn(),
+  aRTFindMany: vi.fn(),
+  aRTFindFirst: vi.fn(),
+  governedEpicFindMany: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -26,12 +29,20 @@ vi.mock("@repo/database", () => ({
       findFirst: h.leanBudgetFindFirst,
       update: h.leanBudgetUpdate,
     },
+    aRT: {
+      findMany: h.aRTFindMany,
+      findFirst: h.aRTFindFirst,
+    },
+    governedEpic: {
+      findMany: h.governedEpicFindMany,
+    },
   },
 }));
 vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  getValueStreamDetail,
   listLeanBudgets,
   updateLeanBudgetGuardrails,
 } from "../../app/(cosmos)/actions/budgets";
@@ -72,6 +83,115 @@ describe("listLeanBudgets", () => {
       expect(r.data[0].utilizationPct).toBe(62);
       expect(r.data[0].spendLimitUsd).toBe(500);
       expect(r.data[0].approvalThresholdUsd).toBe(300);
+    }
+  });
+
+  it("resolves the ART (value stream) name tenant-scoped for budgets with an artId", async () => {
+    h.leanBudgetFindMany.mockResolvedValue([
+      {
+        id: "b1",
+        name: "Payments PI-26",
+        amount: 100,
+        spent: "62",
+        period: "PI-26",
+        capexPct: 60,
+        opexPct: 40,
+        spendLimitUsd: 500,
+        approvalThresholdUsd: 300,
+        artId: "art1",
+        strategicTheme: { title: "Expansão LATAM" },
+      },
+    ]);
+    h.aRTFindMany.mockResolvedValue([{ id: "art1", name: "Payments ART" }]);
+
+    const r = await listLeanBudgets();
+
+    expect(h.aRTFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: { in: ["art1"] }, tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].artId).toBe("art1");
+      expect(r.data[0].artName).toBe("Payments ART");
+    }
+  });
+});
+
+describe("getValueStreamDetail", () => {
+  it("rejects an artId that is not owned by the tenant (IDOR guard)", async () => {
+    h.aRTFindFirst.mockResolvedValue(null);
+
+    const res = await getValueStreamDetail("foreign-art");
+
+    expect(res.ok).toBe(false);
+    expect(h.aRTFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "foreign-art", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.leanBudgetFindMany).not.toHaveBeenCalled();
+  });
+
+  it("aggregates LeanBudget rows for the ART and derives guardrailPct from spendLimitUsd", async () => {
+    h.aRTFindFirst.mockResolvedValue({ id: "art1", name: "Payments ART" });
+    h.leanBudgetFindMany.mockResolvedValue([
+      { amount: 100, spent: "60", spendLimitUsd: 120 },
+      { amount: 50, spent: "20", spendLimitUsd: null },
+    ]);
+    h.governedEpicFindMany.mockResolvedValue([
+      {
+        epic: {
+          id: "e1",
+          title: "Epic A",
+          wsjf: 12,
+          featureCount: 4,
+          doneFeatureCount: 2,
+        },
+      },
+    ]);
+
+    const r = await getValueStreamDetail("art1");
+
+    expect(h.leanBudgetFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, artId: "art1" },
+      })
+    );
+    expect(h.governedEpicFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, valueStreamId: "art1" },
+      })
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.budgetAllocated).toBe(150);
+      expect(r.data.spent).toBe(80);
+      // Only one of the two LeanBudget rows has a spendLimitUsd — that's the
+      // only one summed into the guardrail denominator.
+      expect(r.data.spendLimitUsd).toBe(120);
+      expect(r.data.guardrailPct).toBe(67); // round(80/120*100)
+      expect(r.data.utilizationPct).toBe(53); // round(80/150*100)
+      expect(r.data.epics).toHaveLength(1);
+      expect(r.data.epics[0].progressPct).toBe(50);
+    }
+  });
+
+  it("returns a null guardrailPct (never a fabricated 0) when no budget has a spend limit", async () => {
+    h.aRTFindFirst.mockResolvedValue({ id: "art1", name: "Payments ART" });
+    h.leanBudgetFindMany.mockResolvedValue([
+      { amount: 100, spent: "10", spendLimitUsd: null },
+    ]);
+    h.governedEpicFindMany.mockResolvedValue([]);
+
+    const r = await getValueStreamDetail("art1");
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.spendLimitUsd).toBeNull();
+      expect(r.data.guardrailPct).toBeNull();
+      expect(r.data.epics).toHaveLength(0);
     }
   });
 });
