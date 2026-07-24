@@ -15,6 +15,152 @@ export type FlowMetricsView = {
   recordedAt: string;
 };
 
+// Aging WIP / SLA — handoff default threshold. Per-tenant SLA configuration
+// is a genuine follow-up (RF-26) that belongs with a settings surface; a
+// config model with no settings UI to edit it would be dead config.
+export const AGING_WIP_SLA_DAYS = 14;
+
+// Real status values written by the entities' own transition writers — see
+// moveStoryOnBoard (Story.status: TODO/IN_PROGRESS/IN_REVIEW/DONE),
+// updateFeatureStatus (Feature.statusId: BACKLOG/ANALYSIS/REVIEW/
+// IMPLEMENTING/DONE) and epics/transition-status.ts (Epic.lifecycleStatus:
+// FUNNEL/ANALYZING/PORTFOLIO_BACKLOG/IMPLEMENTING/DONE/REJECTED).
+const STORY_IN_PROGRESS_STATUSES = ["IN_PROGRESS", "IN_REVIEW"];
+const FEATURE_IN_PROGRESS_STATUSES = ["ANALYSIS", "REVIEW", "IMPLEMENTING"];
+const EPIC_IN_PROGRESS_STATUSES = ["ANALYZING", "IMPLEMENTING"];
+
+export type AgingWipEntityType = "Story" | "Feature" | "Epic";
+
+export type AgingWipItem = {
+  entityType: AgingWipEntityType;
+  entityId: string;
+  title: string;
+  status: string;
+  days: number;
+  slaDays: number;
+  overSla: boolean;
+};
+
+type AgingWipCandidate = { id: string; title: string; status: string };
+
+// Finds, per candidate, the latest StateTransitionHistory row whose toStatus
+// matches the entity's *current* status (i.e. the transition that put it
+// there) and derives days-in-state from it. Candidates with no such row
+// (created directly in this status, pre-dating the writer, etc.) are
+// dropped rather than backfilled with a fabricated date — honest over complete.
+async function agingWipForType(
+  tenantId: string,
+  entityType: AgingWipEntityType,
+  candidates: AgingWipCandidate[]
+): Promise<AgingWipItem[]> {
+  if (candidates.length === 0) {
+    return [];
+  }
+
+  const history = await database.stateTransitionHistory.findMany({
+    where: {
+      tenantId,
+      entityType,
+      entityId: { in: candidates.map((c) => c.id) },
+    },
+    orderBy: { transitionedAt: "desc" },
+    select: { entityId: true, toStatus: true, transitionedAt: true },
+  });
+
+  const statusById = new Map(candidates.map((c) => [c.id, c.status]));
+  const latestTransitionAt = new Map<string, Date>();
+  for (const row of history) {
+    if (latestTransitionAt.has(row.entityId)) {
+      continue; // already found the latest matching row (rows are desc-ordered)
+    }
+    if (row.toStatus === statusById.get(row.entityId)) {
+      latestTransitionAt.set(row.entityId, row.transitionedAt);
+    }
+  }
+
+  const now = Date.now();
+  const items: AgingWipItem[] = [];
+  for (const c of candidates) {
+    const transitionedAt = latestTransitionAt.get(c.id);
+    if (!transitionedAt) {
+      continue;
+    }
+    const days = Math.floor(
+      (now - transitionedAt.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    items.push({
+      entityType,
+      entityId: c.id,
+      title: c.title,
+      status: c.status,
+      days,
+      slaDays: AGING_WIP_SLA_DAYS,
+      overSla: days > AGING_WIP_SLA_DAYS,
+    });
+  }
+  return items;
+}
+
+export async function getAgingWip(): Promise<Result<AgingWipItem[]>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+
+    const [stories, features, epics] = await Promise.all([
+      database.story.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          status: { in: STORY_IN_PROGRESS_STATUSES },
+        },
+        select: { id: true, title: true, status: true },
+      }),
+      database.feature.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          statusId: { in: FEATURE_IN_PROGRESS_STATUSES },
+        },
+        select: { id: true, title: true, statusId: true },
+      }),
+      database.epic.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          lifecycleStatus: { in: EPIC_IN_PROGRESS_STATUSES },
+        },
+        select: { id: true, title: true, lifecycleStatus: true },
+      }),
+    ]);
+
+    const [storyItems, featureItems, epicItems] = await Promise.all([
+      agingWipForType(
+        ctx.tenantId,
+        "Story",
+        stories.map((s) => ({ id: s.id, title: s.title, status: s.status }))
+      ),
+      agingWipForType(
+        ctx.tenantId,
+        "Feature",
+        features.map((f) => ({
+          id: f.id,
+          title: f.title,
+          status: f.statusId,
+        }))
+      ),
+      agingWipForType(
+        ctx.tenantId,
+        "Epic",
+        epics.map((e) => ({
+          id: e.id,
+          title: e.title,
+          status: e.lifecycleStatus,
+        }))
+      ),
+    ]);
+
+    return [...storyItems, ...featureItems, ...epicItems].sort(
+      (a, b) => b.days - a.days
+    );
+  });
+}
+
 export async function getLatestFlowMetrics(): Promise<
   Result<FlowMetricsView | null>
 > {
