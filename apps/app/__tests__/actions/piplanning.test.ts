@@ -22,6 +22,7 @@ vi.mock("@repo/database", () => ({
           },
         ],
         risks: [{ id: "r1", title: "Risco A", roamStatus: "OWNED" }],
+        sprints: [{ name: "Sprint 3" }],
       }),
       findMany: vi.fn().mockResolvedValue([
         { id: "piB", name: "PI Mais Recente", ppm: 88 },
@@ -31,11 +32,15 @@ vi.mock("@repo/database", () => ({
     confidenceVoteTally: {
       findFirst: vi.fn().mockResolvedValue({ aggregateScore: 3.8 }),
     },
+    aRT: {
+      count: vi.fn().mockResolvedValue(3),
+    },
   },
 }));
 
 import { database } from "@repo/database";
 import {
+  getActiveArtCount,
   getActivePiPlanning,
   listRecentPiPredictability,
 } from "../../app/(cosmos)/actions/piplanning";
@@ -53,6 +58,7 @@ describe("getActivePiPlanning", () => {
       expect(r.data.objectives[0].title).toBe("Objetivo A");
       expect(r.data.risks[0].roamStatus).toBe("OWNED");
       expect(r.data.confidenceAvg).toBe(3.8);
+      expect(r.data.activeSprintName).toBe("Sprint 3");
     }
     expect(database.confidenceVoteTally.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -81,6 +87,21 @@ describe("listRecentPiPredictability", () => {
         "PI Mais Recente",
       ]);
       expect(r.data[1].ppmPct).toBe(88);
+    }
+  });
+});
+
+describe("getActiveArtCount", () => {
+  it("returns the tenant-scoped count of active ARTs", async () => {
+    const r = await getActiveArtCount();
+    expect(r.ok).toBe(true);
+    expect(database.aRT.count).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ tenantId: "t1", status: "ACTIVE" }),
+      })
+    );
+    if (r.ok) {
+      expect(r.data).toBe(3);
     }
   });
 });

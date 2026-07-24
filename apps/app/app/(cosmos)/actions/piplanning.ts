@@ -10,6 +10,9 @@ import { type Result, safeAction } from "../../actions/_base";
 
 export type PiPlanningView = {
   piPlanName: string;
+  // Current in-progress sprint under this PI (Sprint.status === "ACTIVE"),
+  // null when no team has an active sprint right now.
+  activeSprintName: string | null;
   objectives: {
     id: string;
     title: string;
@@ -46,6 +49,12 @@ export async function getActivePiPlanning(): Promise<
           },
         },
         risks: { select: { id: true, title: true, roamStatus: true } },
+        sprints: {
+          where: { tenantId: ctx.tenantId, status: "ACTIVE" },
+          orderBy: { startDate: "desc" },
+          take: 1,
+          select: { name: true },
+        },
       },
     });
     if (!plan) {
@@ -60,10 +69,22 @@ export async function getActivePiPlanning(): Promise<
 
     return {
       piPlanName: plan.name,
+      activeSprintName: plan.sprints[0]?.name ?? null,
       objectives: plan.piObjectives,
       risks: plan.risks,
       confidenceAvg: tally?.aggregateScore ?? null,
     };
+  });
+}
+
+// Count of ARTs currently running (ART.status === "ACTIVE"), tenant-scoped —
+// backs the "N ARTs ativos" dashboard header badge and KPI hint.
+export async function getActiveArtCount(): Promise<Result<number>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    return database.aRT.count({
+      where: { tenantId: ctx.tenantId, status: "ACTIVE" },
+    });
   });
 }
 

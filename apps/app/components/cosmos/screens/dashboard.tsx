@@ -7,7 +7,11 @@
 import { listLeanBudgets } from "@/app/(cosmos)/actions/budgets";
 import { getCloudCostSummary } from "@/app/(cosmos)/actions/finops";
 import { listEpics } from "@/app/(cosmos)/actions/kanban";
-import { listRecentPiPredictability } from "@/app/(cosmos)/actions/piplanning";
+import {
+  getActiveArtCount,
+  getActivePiPlanning,
+  listRecentPiPredictability,
+} from "@/app/(cosmos)/actions/piplanning";
 import { listRecentSprints } from "@/app/(cosmos)/actions/velocity";
 import { ARTS } from "@/lib/cosmos-data";
 import { EmptyState } from "../empty-state";
@@ -104,12 +108,16 @@ export default async function DashboardScreen(_props?: { param?: string }) {
     predictabilityResult,
     budgetsResult,
     cloudCostResult,
+    piHeaderResult,
+    artCountResult,
   ] = await Promise.all([
     listEpics(),
     listRecentSprints(),
     listRecentPiPredictability(),
     listLeanBudgets(),
     getCloudCostSummary(),
+    getActivePiPlanning(),
+    getActiveArtCount(),
   ]);
 
   const epics = epicsResult.ok ? epicsResult.data : [];
@@ -169,16 +177,29 @@ export default async function DashboardScreen(_props?: { param?: string }) {
   const cloudCostUsd = cloudCost?.currentMonthCostUsd ?? null;
   const cloudCostDeltaPct = cloudCost?.deltaPct ?? null;
 
+  // ── Header badges — active PIPlan/Sprint and running-ART count ──
+  const piHeader = piHeaderResult.ok ? piHeaderResult.data : null;
+  const artCount = artCountResult.ok ? artCountResult.data : 0;
+  const artCountLabel =
+    artCount === 1 ? "1 ART ativo" : `${artCount} ARTs ativos`;
+  const artCountHint = artCount === 1 ? "1 ART" : `${artCount} ARTs`;
+
   return (
     <div className="fade-in">
       <PageHeader
         eyebrow="Portfolio · Resumo executivo"
         meta={
           <>
-            <Badge dot pulse tone="green">
-              PI-26 · Sprint 3
-            </Badge>
-            <Badge tone="neutral">4 ARTs ativos</Badge>
+            {piHeader ? (
+              <Badge dot pulse tone="green">
+                {piHeader.activeSprintName
+                  ? `${piHeader.piPlanName} · ${piHeader.activeSprintName}`
+                  : piHeader.piPlanName}
+              </Badge>
+            ) : (
+              <Badge tone="neutral">Sem PI ativo</Badge>
+            )}
+            <Badge tone="neutral">{artCountLabel}</Badge>
           </>
         }
         subtitle="Saúde do portfólio SAFe em um olhar — predictability, throughput, custo e épicos em execução ao longo dos ARTs."
@@ -234,7 +255,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           value={latestPi ? latestPi.ppmPct : "—"}
         />
         <KpiCard
-          hint="4 ARTs"
+          hint={artCountHint}
           icon="layers"
           label="Épicos em progresso"
           tone="accent"
