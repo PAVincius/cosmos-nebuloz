@@ -7,8 +7,10 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   strategicThemeFindMany: vi.fn(),
+  strategicThemeFindFirst: vi.fn(),
   strategicThemeCreate: vi.fn(),
   strategicThemeUpdate: vi.fn(),
+  billingEntryAllocationFindMany: vi.fn(),
   transaction: vi.fn(),
   logAudit: vi.fn(),
 }));
@@ -24,8 +26,12 @@ vi.mock("@repo/database", () => ({
   database: {
     strategicTheme: {
       findMany: h.strategicThemeFindMany,
+      findFirst: h.strategicThemeFindFirst,
       create: h.strategicThemeCreate,
       update: h.strategicThemeUpdate,
+    },
+    billingEntryAllocation: {
+      findMany: h.billingEntryAllocationFindMany,
     },
     $transaction: h.transaction,
   },
@@ -35,6 +41,7 @@ vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
 import { database } from "@repo/database";
 import {
   createTheme,
+  getTheme,
   listThemes,
   rebalanceThemeTargets,
 } from "../../app/(cosmos)/actions/themes";
@@ -74,6 +81,90 @@ describe("listThemes", () => {
     if (r.ok) {
       expect(r.data[0].epicCount).toBe(2);
       expect(r.data[0].avgProgress).toBe(75); // (50 + 100) / 2
+    }
+  });
+});
+
+describe("getTheme", () => {
+  const themeRow = {
+    id: "th1",
+    title: "Expansão LATAM",
+    description: null,
+    color: "#6366f1",
+    healthStatus: "on",
+    horizon: "PI-26",
+    targetAllocationPct: 30,
+    pillar: { id: "pil1", name: "Crescimento" },
+    epics: [
+      {
+        id: "ep1",
+        title: "Epic 1",
+        statusId: "DOING",
+        lifecycleStatus: "IMPLEMENTING",
+        wsjf: 12,
+        featureCount: 4,
+        doneFeatureCount: 2,
+      },
+    ],
+  };
+
+  it("scopes the lookup by id + tenantId (IDOR guard) — must fail if tenantId were dropped from the where clause", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(themeRow);
+    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+
+    await getTheme("th1");
+
+    expect(h.strategicThemeFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "th1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.billingEntryAllocationFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, themeId: "th1" },
+      })
+    );
+  });
+
+  it("returns an error when the theme does not belong to this tenant (not found)", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(null);
+
+    const res = await getTheme("other-tenant-theme");
+
+    expect(res.ok).toBe(false);
+    expect(h.billingEntryAllocationFindMany).not.toHaveBeenCalled();
+  });
+
+  it("computes actualAllocationPct from BillingEntryAllocation, normalized against all themed allocations", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(themeRow);
+    h.billingEntryAllocationFindMany
+      .mockResolvedValueOnce([
+        { percentage: 100, billingEntry: { effectiveCost: 300 } },
+      ]) // this theme's allocations
+      .mockResolvedValueOnce([
+        { percentage: 100, billingEntry: { effectiveCost: 300 } },
+        { percentage: 100, billingEntry: { effectiveCost: 700 } },
+      ]); // all themed allocations tenant-wide
+
+    const res = await getTheme("th1");
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.actualAllocationPct).toBe(30); // 300 / 1000 * 100
+      expect(res.data.pillar).toEqual({ id: "pil1", name: "Crescimento" });
+      expect(res.data.epics[0].progressPct).toBe(50);
+    }
+  });
+
+  it("returns null actualAllocationPct (never fabricates a number) when there is no allocation data", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(themeRow);
+    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+
+    const res = await getTheme("th1");
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.actualAllocationPct).toBeNull();
     }
   });
 });

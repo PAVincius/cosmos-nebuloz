@@ -65,6 +65,133 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
   });
 }
 
+export type ThemeDetailView = {
+  id: string;
+  title: string;
+  description: string | null;
+  color: string;
+  healthStatus: string;
+  horizon: string | null;
+  targetAllocationPct: number | null;
+  // Derived from BillingEntryAllocation (percentage-based cost attribution,
+  // finops.prisma). null when the tenant has no allocation data at all yet —
+  // never fabricated, never defaulted to 0.
+  actualAllocationPct: number | null;
+  pillar: { id: string; name: string } | null;
+  epics: {
+    id: string;
+    title: string;
+    statusId: string;
+    lifecycleStatus: string;
+    wsjf: number | null;
+    progressPct: number;
+  }[];
+  avgProgress: number;
+};
+
+export async function getTheme(id: string): Promise<Result<ThemeDetailView>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const theme = await database.strategicTheme.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        color: true,
+        healthStatus: true,
+        horizon: true,
+        targetAllocationPct: true,
+        pillar: { select: { id: true, name: true } },
+        epics: {
+          select: {
+            id: true,
+            title: true,
+            statusId: true,
+            lifecycleStatus: true,
+            wsjf: true,
+            featureCount: true,
+            doneFeatureCount: true,
+          },
+        },
+      },
+    });
+
+    if (!theme) {
+      throw new Error("Tema estratégico não encontrado.");
+    }
+
+    const epics = theme.epics.map((e) => ({
+      id: e.id,
+      title: e.title,
+      statusId: e.statusId,
+      lifecycleStatus: e.lifecycleStatus,
+      wsjf: e.wsjf,
+      progressPct:
+        e.featureCount > 0
+          ? Math.round((e.doneFeatureCount / e.featureCount) * 100)
+          : 0,
+    }));
+    const withFeatures = theme.epics.filter((e) => e.featureCount > 0);
+    const avgProgress = withFeatures.length
+      ? Math.round(
+          withFeatures.reduce(
+            (s, e) => s + (e.doneFeatureCount / e.featureCount) * 100,
+            0
+          ) / withFeatures.length
+        )
+      : 0;
+
+    // Real allocation: sum(billingEntry.effectiveCost * percentage/100) for
+    // this theme's allocations, normalized against the same sum across every
+    // themed allocation in the tenant — comparable to targetAllocationPct,
+    // which is also a % of total portfolio investment.
+    const [themeAllocations, allThemeAllocations] = await Promise.all([
+      database.billingEntryAllocation.findMany({
+        where: { tenantId: ctx.tenantId, themeId: id },
+        select: {
+          percentage: true,
+          billingEntry: { select: { effectiveCost: true } },
+        },
+      }),
+      database.billingEntryAllocation.findMany({
+        where: { tenantId: ctx.tenantId, themeId: { not: null } },
+        select: {
+          percentage: true,
+          billingEntry: { select: { effectiveCost: true } },
+        },
+      }),
+    ]);
+    const sumCost = (
+      rows: { percentage: unknown; billingEntry: { effectiveCost: unknown } }[]
+    ) =>
+      rows.reduce(
+        (sum, a) =>
+          sum +
+          (Number(a.percentage) / 100) * Number(a.billingEntry.effectiveCost),
+        0
+      );
+    const themeCost = sumCost(themeAllocations);
+    const totalCost = sumCost(allThemeAllocations);
+    const actualAllocationPct =
+      totalCost > 0 ? Math.round((themeCost / totalCost) * 1000) / 10 : null;
+
+    return {
+      id: theme.id,
+      title: theme.title,
+      description: theme.description,
+      color: theme.color,
+      healthStatus: theme.healthStatus,
+      horizon: theme.horizon,
+      targetAllocationPct: theme.targetAllocationPct,
+      actualAllocationPct,
+      pillar: theme.pillar,
+      epics,
+      avgProgress,
+    };
+  });
+}
+
 const CreateThemeSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),

@@ -16,6 +16,7 @@ import {
   PageHeader,
   Progress,
   SectionCard,
+  useNav,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
@@ -27,6 +28,7 @@ const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
 };
 
 function ThemeCard({ theme }: { theme: ThemeView }) {
+  const { navigate } = useNav();
   const tone = HEALTH_TONE[theme.healthStatus] ?? "green";
   return (
     <SectionCard
@@ -35,6 +37,7 @@ function ThemeCard({ theme }: { theme: ThemeView }) {
           {theme.healthStatus}
         </Badge>
       }
+      onActivate={() => navigate("theme", theme.id)}
       subtitle={theme.description ?? undefined}
       title={theme.title}
       tone={tone}
