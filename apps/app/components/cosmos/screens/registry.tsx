@@ -27,6 +27,7 @@ import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
 import VelocityScreen from "./velocity";
 import WebhooksScreen from "./webhooks";
+import WorkflowsScreen from "./workflows";
 import WsjfScreen from "./wsjf";
 
 export type ScreenProps = { param?: string };
@@ -59,4 +60,5 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   settings: SettingsScreen,
   velocity: VelocityScreen,
   webhooks: WebhooksScreen,
+  workflows: WorkflowsScreen,
 };
