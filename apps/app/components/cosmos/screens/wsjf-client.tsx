@@ -18,7 +18,6 @@ import {
   getWsjfSettings,
   upsertWsjfSettings,
 } from "@/app/(cosmos)/actions/wsjf";
-import { ARTS } from "@/lib/cosmos-data";
 import {
   closestWsjfFibonacciIndex,
   computeWeightedWsjfScore,
@@ -98,7 +97,7 @@ function NumCell({ children }: { children: ReactNode }) {
 
 function WsjfRow({ item }: { item: WsjfRankItem }) {
   const modal = useModal();
-  const art = item.art ? ARTS[item.art] : undefined;
+  const artTone = item.art ? item.artTone : null;
   const tone = item.wsjf >= 18 ? "green" : item.wsjf >= 14 ? "accent" : "amber";
 
   return (
@@ -146,12 +145,12 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
               style={{
                 fontSize: 10.5,
                 fontWeight: 800,
-                color: art ? `var(--${art.tone}-text)` : "var(--ink-muted)",
-                background: art
-                  ? `rgba(var(--${art.tone}-rgb),.14)`
+                color: artTone ? `var(--${artTone}-text)` : "var(--ink-muted)",
+                background: artTone
+                  ? `rgba(var(--${artTone}-rgb),.14)`
                   : "var(--surface-3)",
-                border: art
-                  ? `1px solid rgba(var(--${art.tone}-rgb),.28)`
+                border: artTone
+                  ? `1px solid rgba(var(--${artTone}-rgb),.28)`
                   : "1px solid var(--hairline)",
                 borderRadius: 5,
                 padding: "1px 6px",

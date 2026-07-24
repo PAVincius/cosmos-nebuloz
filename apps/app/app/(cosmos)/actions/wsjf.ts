@@ -6,6 +6,7 @@ import { database } from "@repo/database";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import type { Tone } from "@/lib/cosmos-data";
 import {
   computeEpicRebalanceMoves,
   type WsjfRebalanceResult,
@@ -28,6 +29,7 @@ export type WsjfRankItem = {
   name: string;
   type: "Epic" | "Feature";
   art: string | null;
+  artTone: Tone;
   wsjf: number;
   size: number;
 };
@@ -43,6 +45,7 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
           id: true,
           title: true,
           artId: true,
+          artTone: true,
           wsjf: true,
           sizePoints: true,
         },
@@ -65,6 +68,9 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
         name: e.title,
         type: "Epic" as const,
         art: e.artId,
+        // Real, tenant-scoped tone stored on Epic — see kanban.ts's
+        // toKanbanEpic for the same field/fallback.
+        artTone: (e.artTone as Tone | null) ?? "accent",
         wsjf: e.wsjf ?? 0,
         size: e.sizePoints ?? 0,
       })),
@@ -73,6 +79,9 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
         name: f.title,
         type: "Feature" as const,
         art: f.artScopedId,
+        // Feature has no artTone column (no per-feature ART accent stored) —
+        // fall back to the same neutral default kanban.ts uses for Epics.
+        artTone: "accent" as Tone,
         wsjf: f.wsjfScore,
         size: f.storyPoints,
       })),

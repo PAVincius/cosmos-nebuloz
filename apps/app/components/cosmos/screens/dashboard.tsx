@@ -13,7 +13,6 @@ import {
   listRecentPiPredictability,
 } from "@/app/(cosmos)/actions/piplanning";
 import { listRecentSprints } from "@/app/(cosmos)/actions/velocity";
-import { ARTS } from "@/lib/cosmos-data";
 import { EmptyState } from "../empty-state";
 import {
   Badge,
@@ -390,8 +389,7 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {inProgress.map((e) => {
-              const art = e.art ? ARTS[e.art] : undefined;
-              const artTone = art?.tone ?? "accent";
+              const artTone = e.artTone;
               return (
                 <EpicRow id={e.id} key={e.id}>
                   <CopyId value={e.id}>

@@ -9,6 +9,7 @@ import { database, type Prisma } from "@repo/database";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import type { Tone } from "@/lib/cosmos-data";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
 import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
@@ -32,7 +33,7 @@ export type KanbanEpic = {
   column: BoardColumn;
   theme: string | null;
   art: string | null;
-  artTone: string;
+  artTone: Tone;
   owner: string;
   wsjf: number;
   size: number;
@@ -65,7 +66,7 @@ function toKanbanEpic(row: EpicRow): KanbanEpic {
     column: LIFECYCLE_TO_COLUMN[row.lifecycleStatus] ?? "funnel",
     theme: row.strategicTheme?.title ?? null,
     art: row.artId,
-    artTone: row.artTone ?? "accent",
+    artTone: (row.artTone as Tone | null) ?? "accent",
     owner: row.ownerName ?? "",
     wsjf: row.wsjf ?? 0,
     size: row.sizePoints ?? 0,
