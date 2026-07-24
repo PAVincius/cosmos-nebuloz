@@ -3,6 +3,7 @@
 import type { ComponentType } from "react";
 import BudgetsScreen from "./budgets";
 import CapacityScreen from "./capacity";
+import CopilotScreen from "./copilot";
 import DashboardScreen from "./dashboard";
 import DecisionsScreen from "./decisions";
 import DependenciesScreen from "./dependencies";
@@ -36,6 +37,7 @@ export type ScreenProps = { param?: string };
 
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   dashboard: DashboardScreen,
+  copilot: CopilotScreen,
   decisions: DecisionsScreen,
   budgets: BudgetsScreen,
   capacity: CapacityScreen,
