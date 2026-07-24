@@ -13,6 +13,7 @@ const mocks = vi.hoisted(() => ({
   keyResultCount: vi.fn(),
   keyResultFindFirst: vi.fn(),
   keyResultFindFirstOrThrow: vi.fn(),
+  keyResultDeleteMany: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
@@ -43,14 +44,20 @@ vi.mock("@repo/database", () => ({
       count: mocks.keyResultCount,
       findFirst: mocks.keyResultFindFirst,
       findFirstOrThrow: mocks.keyResultFindFirstOrThrow,
+      deleteMany: mocks.keyResultDeleteMany,
     },
   },
 }));
 
-import { createKeyResult, createOKR } from "../../../app/actions/okrs";
+import {
+  createKeyResult,
+  createOKR,
+  deleteKeyResult,
+} from "../../../app/actions/okrs";
 
 const RTE_CTX = { ...tenantCtx, role: "RTE" as const };
 const PO_CTX = { ...tenantCtx, role: "PO" as const };
+const DEV_CTX = { ...tenantCtx, role: "DEV" as const };
 
 const VALID_OKR_INPUT = {
   title: "Increase deployment frequency",
@@ -162,5 +169,33 @@ describe("createKeyResult — AC-008: maximum 5 key results per OKR", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     expect((result as any).error).toMatch(/Maximum 5 key results/);
     expect(mocks.keyResultCreate).not.toHaveBeenCalled();
+  });
+});
+
+describe("deleteKeyResult — RBAC", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.headers.mockResolvedValue(new Headers());
+    mocks.keyResultDeleteMany.mockResolvedValue({ count: 1 });
+  });
+
+  it("blocks a DEV from deleting a key result", async () => {
+    mocks.requireTenantSession.mockResolvedValue(DEV_CTX);
+    const result = await deleteKeyResult("ctest1234567890kr000001");
+    expect(result.ok).toBe(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(/não tem permissão/i);
+    expect(mocks.keyResultDeleteMany).not.toHaveBeenCalled();
+  });
+
+  it("allows an RTE to delete a key result", async () => {
+    mocks.requireTenantSession.mockResolvedValue(RTE_CTX);
+    const result = await deleteKeyResult("ctest1234567890kr000001");
+    expect(result.ok).toBe(true);
+    expect(mocks.keyResultDeleteMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "ctest1234567890kr000001", tenantId: tenantCtx.tenantId },
+      })
+    );
   });
 });

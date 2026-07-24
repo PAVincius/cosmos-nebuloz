@@ -437,6 +437,7 @@ export async function deleteKeyResult(
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "KeyResult", "delete");
 
     const { count } = await database.keyResult.deleteMany({
       where: { id, tenantId: ctx.tenantId },
