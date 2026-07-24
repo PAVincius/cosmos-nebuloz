@@ -46,7 +46,7 @@ beforeEach(() => {
 });
 
 describe("listSolutionTrains", () => {
-  it("returns tenant-scoped solution trains with computed counts", async () => {
+  it("returns tenant-scoped solution trains with computed counts and capability details", async () => {
     h.solutionTrainFindMany.mockResolvedValue([
       {
         id: "s1",
@@ -54,7 +54,21 @@ describe("listSolutionTrains", () => {
         description: null,
         arts: [{ id: "a1" }, { id: "a2" }],
         solutionEpics: [{ id: "e1" }],
-        capabilities: [{ id: "c1" }, { id: "c2" }, { id: "c3" }],
+        capabilities: [
+          {
+            id: "c1",
+            title: "Checkout unificado",
+            status: "IMPLEMENTING",
+            milestone: "Marco Q2",
+          },
+          {
+            id: "c2",
+            title: "PIX instantâneo",
+            status: "BACKLOG",
+            milestone: null,
+          },
+          { id: "c3", title: "Antifraude v2", status: "DONE", milestone: null },
+        ],
       },
     ]);
 
@@ -74,6 +88,21 @@ describe("listSolutionTrains", () => {
         artCount: 2,
         epicCount: 1,
         capabilityCount: 3,
+        capabilities: [
+          {
+            id: "c1",
+            title: "Checkout unificado",
+            status: "IMPLEMENTING",
+            milestone: "Marco Q2",
+          },
+          {
+            id: "c2",
+            title: "PIX instantâneo",
+            status: "BACKLOG",
+            milestone: null,
+          },
+          { id: "c3", title: "Antifraude v2", status: "DONE", milestone: null },
+        ],
       });
     }
   });

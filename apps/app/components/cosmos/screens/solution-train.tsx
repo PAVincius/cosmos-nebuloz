@@ -10,6 +10,7 @@ import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import {
   createCapability,
   listSolutionTrains,
+  type SolutionTrainCapabilityView,
 } from "@/app/(cosmos)/actions/solution-train";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
@@ -31,6 +32,20 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
   { value: "IMPLEMENTING", label: "Implementando" },
   { value: "DONE", label: "Concluída" },
 ];
+
+const CAPABILITY_STATUS_TONE: Record<
+  string,
+  "neutral" | "amber" | "accent" | "green"
+> = {
+  BACKLOG: "neutral",
+  ANALYZING: "amber",
+  IMPLEMENTING: "accent",
+  DONE: "green",
+};
+
+function capabilityStatusLabel(status: string): string {
+  return STATUS_OPTIONS.find((opt) => opt.value === status)?.label ?? status;
+}
 
 const fieldLabelStyle: CSSProperties = {
   display: "block",
@@ -179,6 +194,75 @@ function NewCapabilityModal({ onCreated }: { onCreated?: () => void }) {
   );
 }
 
+function CapabilityList({
+  capabilities,
+}: {
+  capabilities: SolutionTrainCapabilityView[];
+}) {
+  if (capabilities.length === 0) {
+    return (
+      <div
+        style={{
+          marginTop: 12,
+          padding: "10px 0 2px",
+          fontSize: 12.5,
+          color: "var(--ink-faint)",
+        }}
+      >
+        Nenhuma capability cadastrada neste solution train.
+      </div>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        marginTop: 12,
+        paddingTop: 10,
+        borderTop: "1px solid var(--hairline)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      }}
+    >
+      {capabilities.map((c) => (
+        <div
+          key={c.id}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+          }}
+        >
+          <div style={{ minWidth: 0 }}>
+            <div
+              style={{
+                fontSize: 12.5,
+                fontWeight: 600,
+                color: "var(--ink)",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
+              {c.title}
+            </div>
+            {c.milestone && (
+              <div style={{ fontSize: 11, color: "var(--ink-subtle)" }}>
+                {c.milestone}
+              </div>
+            )}
+          </div>
+          <Badge tone={CAPABILITY_STATUS_TONE[c.status] ?? "neutral"}>
+            {capabilityStatusLabel(c.status)}
+          </Badge>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function SolutionTrainBody() {
   const modal = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -259,6 +343,7 @@ function SolutionTrainBody() {
                 value={t.capabilityCount}
               />
             </div>
+            <CapabilityList capabilities={t.capabilities} />
           </SectionCard>
         ))}
       </div>

@@ -8,6 +8,13 @@ import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
 
+export type SolutionTrainCapabilityView = {
+  id: string;
+  title: string;
+  status: string;
+  milestone: string | null;
+};
+
 export type SolutionTrainView = {
   id: string;
   name: string;
@@ -15,6 +22,7 @@ export type SolutionTrainView = {
   artCount: number;
   epicCount: number;
   capabilityCount: number;
+  capabilities: SolutionTrainCapabilityView[];
 };
 
 async function listSolutionTrains(): Promise<Result<SolutionTrainView[]>> {
@@ -25,7 +33,10 @@ async function listSolutionTrains(): Promise<Result<SolutionTrainView[]>> {
       include: {
         arts: { select: { id: true } },
         solutionEpics: { select: { id: true } },
-        capabilities: { select: { id: true } },
+        capabilities: {
+          select: { id: true, title: true, status: true, milestone: true },
+          orderBy: { order: "asc" },
+        },
       },
       orderBy: { name: "asc" },
     });
@@ -37,6 +48,7 @@ async function listSolutionTrains(): Promise<Result<SolutionTrainView[]>> {
       artCount: s.arts.length,
       epicCount: s.solutionEpics.length,
       capabilityCount: s.capabilities.length,
+      capabilities: s.capabilities,
     }));
   });
 }
