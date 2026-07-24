@@ -33,7 +33,17 @@ export type StoredMessage = {
 export async function loadCopilotSession(
   sessionId: string
 ): Promise<StoredMessage[]> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
+
+  // Ownership check first: CopilotMessage rows carry no userId, so the
+  // session itself is the authority on who may read this conversation.
+  const session = await database.copilotSession.findFirst({
+    where: { id: sessionId, tenantId, userId },
+    select: { messages: true },
+  });
+  if (!session) {
+    return [];
+  }
 
   // Prefer normalized rows; fall back to JSON blob for pre-normalization sessions
   const rows = await database.copilotMessage.findMany({
@@ -50,14 +60,6 @@ export async function loadCopilotSession(
     }));
   }
 
-  // Fallback: JSON blob from copilot_sessions.messages
-  const session = await database.copilotSession.findFirst({
-    where: { id: sessionId, tenantId },
-    select: { messages: true },
-  });
-  if (!session) {
-    return [];
-  }
   const raw = Array.isArray(session.messages) ? session.messages : [];
   return (raw as { role?: string; content?: string }[])
     .filter((m) => m.role === "user" || m.role === "assistant")
@@ -95,25 +97,25 @@ export async function buildContextWindow(
 }
 
 export async function pinCopilotSession(sessionId: string): Promise<void> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
   await database.copilotSession.updateMany({
-    where: { id: sessionId, tenantId },
+    where: { id: sessionId, tenantId, userId },
     data: { pinnedAt: new Date() },
   });
 }
 
 export async function unpinCopilotSession(sessionId: string): Promise<void> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
   await database.copilotSession.updateMany({
-    where: { id: sessionId, tenantId },
+    where: { id: sessionId, tenantId, userId },
     data: { pinnedAt: null },
   });
 }
 
 export async function deleteCopilotSession(sessionId: string): Promise<void> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
   await database.copilotSession.deleteMany({
-    where: { id: sessionId, tenantId },
+    where: { id: sessionId, tenantId, userId },
   });
 }
 
@@ -121,17 +123,17 @@ export async function renameCopilotSession(
   sessionId: string,
   title: string
 ): Promise<void> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
   await database.copilotSession.updateMany({
-    where: { id: sessionId, tenantId },
+    where: { id: sessionId, tenantId, userId },
     data: { title: title.slice(0, 120) },
   });
 }
 
 export async function listCopilotSessions(): Promise<SessionPreview[]> {
-  const { tenantId } = await requireTenantSession(await headers());
+  const { tenantId, userId } = await requireTenantSession(await headers());
   const sessions = await database.copilotSession.findMany({
-    where: { tenantId },
+    where: { tenantId, userId },
     orderBy: [{ pinnedAt: "desc" }, { updatedAt: "desc" }],
     take: 50,
     select: {
