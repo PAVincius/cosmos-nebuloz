@@ -127,7 +127,15 @@ export function ModalCard({
           ×
         </button>
       </div>
-      <div style={{ padding: 18 }}>{children}</div>
+      <div
+        style={{
+          padding: 18,
+          maxHeight: "calc(100vh - 140px)",
+          overflowY: "auto",
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 }
