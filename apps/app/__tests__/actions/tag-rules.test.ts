@@ -13,6 +13,10 @@ const h = vi.hoisted(() => ({
   tagRuleCreate: vi.fn(),
   tagRuleUpdate: vi.fn(),
   tagRuleDeleteMany: vi.fn(),
+  strategicThemeFindFirst: vi.fn(),
+  aRTFindFirst: vi.fn(),
+  epicFindFirst: vi.fn(),
+  integrationFindFirst: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: h.headers }));
@@ -30,6 +34,18 @@ vi.mock("@repo/database", () => ({
       create: h.tagRuleCreate,
       update: h.tagRuleUpdate,
       deleteMany: h.tagRuleDeleteMany,
+    },
+    strategicTheme: {
+      findFirst: h.strategicThemeFindFirst,
+    },
+    aRT: {
+      findFirst: h.aRTFindFirst,
+    },
+    epic: {
+      findFirst: h.epicFindFirst,
+    },
+    integration: {
+      findFirst: h.integrationFindFirst,
     },
   },
 }));
@@ -118,5 +134,105 @@ describe("deleteTagRule — RBAC", () => {
 
     expect(res.ok).toBe(false);
     expect(h.tagRuleDeleteMany).not.toHaveBeenCalled();
+  });
+});
+
+// ─── F3 regression: FKs are tenant-guarded before the write ───────────────────
+
+describe("createTagRule — cross-tenant FK guard", () => {
+  it("rejects a themeId that does not belong to the tenant", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(null);
+
+    const res = await createTagRule({
+      ...validInput,
+      themeId: "clforeigntheme00000001",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "clforeigntheme00000001", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.tagRuleCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an artId that does not belong to the tenant", async () => {
+    h.aRTFindFirst.mockResolvedValue(null);
+
+    const res = await createTagRule({
+      ...validInput,
+      artId: "clforeignart000000001",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.tagRuleCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an epicId that does not belong to the tenant", async () => {
+    h.epicFindFirst.mockResolvedValue(null);
+
+    const res = await createTagRule({
+      ...validInput,
+      epicId: "clforeignepic000000001",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.tagRuleCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an integrationId that does not belong to the tenant", async () => {
+    h.integrationFindFirst.mockResolvedValue(null);
+
+    const res = await createTagRule({
+      ...validInput,
+      integrationId: "clforeignintegration01",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.tagRuleCreate).not.toHaveBeenCalled();
+  });
+
+  it("does not query any FK guard when none is supplied", async () => {
+    await createTagRule(validInput);
+
+    expect(h.strategicThemeFindFirst).not.toHaveBeenCalled();
+    expect(h.aRTFindFirst).not.toHaveBeenCalled();
+    expect(h.epicFindFirst).not.toHaveBeenCalled();
+    expect(h.integrationFindFirst).not.toHaveBeenCalled();
+    expect(h.tagRuleCreate).toHaveBeenCalled();
+  });
+
+  it("proceeds when the supplied themeId belongs to the tenant", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "cltheme000000000000001",
+    });
+
+    const res = await createTagRule({
+      ...validInput,
+      themeId: "cltheme000000000000001",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.tagRuleCreate).toHaveBeenCalled();
+  });
+});
+
+describe("updateTagRule — cross-tenant FK guard", () => {
+  it("rejects a themeId that does not belong to the tenant", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(null);
+
+    const res = await updateTagRule("rule-1", {
+      themeId: "clforeigntheme00000001",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "clforeigntheme00000001", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.tagRuleUpdate).not.toHaveBeenCalled();
+    expect(h.inngestSend).not.toHaveBeenCalled();
   });
 });

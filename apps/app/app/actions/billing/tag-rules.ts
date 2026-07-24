@@ -47,6 +47,52 @@ const TagRuleSchema = z.object({
   conditions: z.array(TagRuleConditionSchema).max(10).optional(),
 });
 
+// Cross-tenant IDOR guard — client-supplied FKs must belong to this tenant.
+async function assertTagRuleForeignKeysBelongToTenant(
+  data: Pick<
+    z.infer<typeof TagRuleSchema>,
+    "themeId" | "artId" | "epicId" | "integrationId"
+  >,
+  tenantId: string
+): Promise<void> {
+  if (data.themeId) {
+    const theme = await database.strategicTheme.findFirst({
+      where: { id: data.themeId, tenantId },
+      select: { id: true },
+    });
+    if (!theme) {
+      throw new Error("Tema estratégico inválido.");
+    }
+  }
+  if (data.artId) {
+    const art = await database.aRT.findFirst({
+      where: { id: data.artId, tenantId },
+      select: { id: true },
+    });
+    if (!art) {
+      throw new Error("ART inválido.");
+    }
+  }
+  if (data.epicId) {
+    const epic = await database.epic.findFirst({
+      where: { id: data.epicId, tenantId },
+      select: { id: true },
+    });
+    if (!epic) {
+      throw new Error("Épico inválido.");
+    }
+  }
+  if (data.integrationId) {
+    const integration = await database.integration.findFirst({
+      where: { id: data.integrationId, tenantId },
+      select: { id: true },
+    });
+    if (!integration) {
+      throw new Error("Integração inválida.");
+    }
+  }
+}
+
 export async function listTagRules(): Promise<Result<TagRule[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -64,6 +110,7 @@ export async function createTagRule(
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "STE"], ctx);
     const data = TagRuleSchema.parse(input);
+    await assertTagRuleForeignKeysBelongToTenant(data, ctx.tenantId);
     const rule = await database.tagRule.create({
       data: {
         ...data,
@@ -102,6 +149,7 @@ export async function updateTagRule(
     }
 
     const data = TagRuleSchema.partial().parse(input);
+    await assertTagRuleForeignKeysBelongToTenant(data, ctx.tenantId);
 
     const rule = await database.tagRule.update({
       where: { id },
