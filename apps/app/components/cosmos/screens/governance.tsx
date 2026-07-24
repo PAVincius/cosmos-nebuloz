@@ -139,8 +139,8 @@ function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
       }
     );
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onSaved?.();
     }
   };
@@ -356,8 +356,8 @@ function GateReviewModal({
       }
     );
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onDecided?.();
     }
   };

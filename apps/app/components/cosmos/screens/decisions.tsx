@@ -128,8 +128,8 @@ function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
       }
     );
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onCreated?.();
     }
   };

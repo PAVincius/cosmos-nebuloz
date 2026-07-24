@@ -105,8 +105,8 @@ function GuardrailsModal({
       }
     );
     setSaving(false);
-    close();
     if (res.ok) {
+      close();
       onSuccess?.();
     }
   };
