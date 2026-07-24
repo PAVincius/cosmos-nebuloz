@@ -66,6 +66,9 @@ beforeEach(() => {
       artScopedId: "plat",
       wsjfScore: 15,
       storyPoints: 3,
+      bv: 8,
+      tc: 5,
+      rr: 3,
     },
   ]);
 });
@@ -98,6 +101,29 @@ describe("listWsjfItems", () => {
     if (r.ok) {
       expect(r.data[0]).not.toHaveProperty("prev");
       expect(r.data[0]).not.toHaveProperty("ai");
+    }
+  });
+
+  it("returns real bv/tc/rr/cod for Feature rows (CoD = bv+tc+rr)", async () => {
+    const r = await listWsjfItems();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const feature = r.data.find((i) => i.id === "f1");
+      expect(feature).toMatchObject({ bv: 8, tc: 5, rr: 3, cod: 16 });
+    }
+  });
+
+  it("never fabricates bv/tc/rr/cod for Epic rows — null, not a made-up number", async () => {
+    const r = await listWsjfItems();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const epic = r.data.find((i) => i.id === "e1");
+      expect(epic).toMatchObject({
+        bv: null,
+        tc: null,
+        rr: null,
+        cod: null,
+      });
     }
   });
 });

@@ -41,7 +41,7 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-const WCOLS = "44px minmax(180px,1fr) 48px 104px 40px";
+const WCOLS = "44px minmax(160px,1fr) 40px 40px 40px 52px 48px 104px 40px";
 
 // Column labels match kanban.tsx's BOARD_COLUMNS literally (that board
 // displays them in English) — reused here instead of inventing new
@@ -95,14 +95,31 @@ function NumCell({ children }: { children: ReactNode }) {
   );
 }
 
+// Feature-only components (bv/tc/rr/cod) — Epic rows render "—" instead of
+// fabricating a value the schema doesn't store. See WsjfRankItem's comment.
+function ComponentCell({ value }: { value: number | null }) {
+  return <NumCell>{value ?? "—"}</NumCell>;
+}
+
 function WsjfRow({ item }: { item: WsjfRankItem }) {
   const modal = useModal();
+  const { navigate } = useNav();
   const artTone = item.art ? item.artTone : null;
   const tone = item.wsjf >= 18 ? "green" : item.wsjf >= 14 ? "accent" : "amber";
+  const targetRoute = item.type === "Epic" ? "epic" : "feature";
+  const goToDetail = () => navigate(targetRoute, item.id);
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: can't be a <button> — wraps a nested IconButton (Feature scenario simulator)
     <div
       className="lift"
+      onClick={goToDetail}
+      onKeyDown={(e) => {
+        if (e.key === "Enter") {
+          goToDetail();
+        }
+      }}
+      role="button"
       style={{
         display: "grid",
         gridTemplateColumns: WCOLS,
@@ -113,7 +130,9 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         border: "1px solid var(--hairline)",
         background: "var(--surface)",
         boxShadow: "var(--card-shadow)",
+        cursor: "pointer",
       }}
+      tabIndex={0}
     >
       {/* rank + movement */}
       <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
@@ -177,6 +196,10 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         </div>
       </div>
 
+      <ComponentCell value={item.bv} />
+      <ComponentCell value={item.tc} />
+      <ComponentCell value={item.rr} />
+      <ComponentCell value={item.cod} />
       <NumCell>{item.size}</NumCell>
 
       {/* wsjf */}
@@ -201,8 +224,14 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         </div>
       </div>
 
-      {/* scenario simulator — Feature only: Epic has no bv/tc/rr/js components */}
-      <div style={{ textAlign: "center" }}>
+      {/* scenario simulator — Feature only: Epic has no bv/tc/rr/js components.
+          Stops propagation so activating it doesn't also trigger the row's
+          navigate-to-detail click/Enter handler. */}
+      <div
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
+        style={{ textAlign: "center" }}
+      >
         {item.type === "Feature" && (
           <IconButton
             name="flask"
@@ -1167,6 +1196,18 @@ function WsjfBody({
         <div style={headStyle}>
           <HeadCell>#</HeadCell>
           <HeadCell>Item</HeadCell>
+          <HeadCell center hint="Business Value">
+            BV
+          </HeadCell>
+          <HeadCell center hint="Time Criticality">
+            TC
+          </HeadCell>
+          <HeadCell center hint="Risk Reduction / Opportunity Enablement">
+            RR
+          </HeadCell>
+          <HeadCell center hint="Cost of Delay = BV + TC + RR">
+            CoD
+          </HeadCell>
           <HeadCell center>Size</HeadCell>
           <HeadCell center hint="WSJF">
             WSJF
@@ -1196,6 +1237,17 @@ function WsjfBody({
             items.map((item) => <WsjfRow item={item} key={item.id} />)
           )}
         </div>
+        <p
+          style={{
+            margin: "10px 16px 0",
+            fontSize: 11.5,
+            color: "var(--ink-faint)",
+            lineHeight: 1.5,
+          }}
+        >
+          Epics mostram apenas o score WSJF consolidado — BV/TC/RR/CoD são
+          componentes armazenados por Feature e não existem por Epic.
+        </p>
       </SectionCard>
     </div>
   );

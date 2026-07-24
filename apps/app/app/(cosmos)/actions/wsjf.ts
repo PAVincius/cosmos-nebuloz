@@ -32,6 +32,14 @@ export type WsjfRankItem = {
   artTone: Tone;
   wsjf: number;
   size: number;
+  // Feature-only: bv/tc/rr are stored per-feature (WSJF Parameters on the
+  // Feature model). Epic only stores a rolled-up `wsjf` — it has no
+  // components to show, so these are null for Epic rows (rendered "—", never
+  // fabricated). cod = bv + tc + rr (Cost of Delay), null for the same reason.
+  bv: number | null;
+  tc: number | null;
+  rr: number | null;
+  cod: number | null;
 };
 
 export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
@@ -58,6 +66,9 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
           artScopedId: true,
           wsjfScore: true,
           storyPoints: true,
+          bv: true,
+          tc: true,
+          rr: true,
         },
       }),
     ]);
@@ -73,6 +84,12 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
         artTone: (e.artTone as Tone | null) ?? "accent",
         wsjf: e.wsjf ?? 0,
         size: e.sizePoints ?? 0,
+        // Epic has no bv/tc/rr components — only a rolled-up wsjf. Never
+        // fabricated; the table renders these as "—".
+        bv: null,
+        tc: null,
+        rr: null,
+        cod: null,
       })),
       ...features.map((f) => ({
         id: f.id,
@@ -84,6 +101,10 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
         artTone: "accent" as Tone,
         wsjf: f.wsjfScore,
         size: f.storyPoints,
+        bv: f.bv,
+        tc: f.tc,
+        rr: f.rr,
+        cod: f.bv + f.tc + f.rr,
       })),
     ].sort((a, b) => b.wsjf - a.wsjf);
 
