@@ -53,6 +53,14 @@ function FeatureChip({
         background: "var(--surface)",
       }}
     >
+      {feature.milestone && (
+        <Icon
+          name="flag"
+          size={13}
+          strokeWidth={2.2}
+          style={{ color: "var(--amber)", flexShrink: 0 }}
+        />
+      )}
       <span
         style={{
           flex: 1,
@@ -64,6 +72,25 @@ function FeatureChip({
       >
         {feature.title}
       </span>
+      {feature.hasDependency && (
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 3,
+            flexShrink: 0,
+            fontSize: 10,
+            fontWeight: 700,
+            color: "var(--amber-text)",
+            background: "var(--amber-soft)",
+            borderRadius: 4,
+            padding: "1px 5px",
+          }}
+          title="Possui dependência"
+        >
+          <Icon name="plug" size={10} strokeWidth={2.2} />
+        </span>
+      )}
       <span
         className="mono"
         style={{ fontSize: 11, fontWeight: 700, color: "var(--ink-muted)" }}

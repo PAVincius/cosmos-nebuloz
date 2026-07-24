@@ -19,6 +19,8 @@ export type ProgramBoardView = {
       title: string;
       storyPoints: number;
       statusId: string;
+      milestone: boolean;
+      hasDependency: boolean;
     }[];
   }[];
 };
@@ -45,6 +47,8 @@ export async function getActiveProgramBoard(): Promise<
             storyPoints: true,
             statusId: true,
             assignedTeamId: true,
+            milestone: true,
+            _count: { select: { blocks: true, blockedBy: true } },
           },
         },
       },
@@ -79,6 +83,8 @@ export async function getActiveProgramBoard(): Promise<
             title: f.title,
             storyPoints: f.storyPoints,
             statusId: f.statusId,
+            milestone: f.milestone,
+            hasDependency: f._count.blocks + f._count.blockedBy > 0,
           })),
       })),
     };

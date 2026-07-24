@@ -58,6 +58,8 @@ describe("getActiveProgramBoard", () => {
           storyPoints: 5,
           statusId: "IN_PROGRESS",
           assignedTeamId: "tm1",
+          milestone: true,
+          _count: { blocks: 1, blockedBy: 0 },
         },
       ],
     });
@@ -73,6 +75,34 @@ describe("getActiveProgramBoard", () => {
     if (r.ok && r.data) {
       expect(r.data.teams[0].name).toBe("Squad Alpha");
       expect(r.data.teams[0].features[0].title).toBe("Feature A");
+      expect(r.data.teams[0].features[0].milestone).toBe(true);
+      expect(r.data.teams[0].features[0].hasDependency).toBe(true);
+    }
+  });
+
+  it("marks hasDependency false when the feature has no blocking/blocked links", async () => {
+    h.piPlanFindFirst.mockResolvedValue({
+      id: "pi1",
+      name: "PI-26",
+      features: [
+        {
+          id: "f2",
+          title: "Feature B",
+          storyPoints: 3,
+          statusId: "BACKLOG",
+          assignedTeamId: "tm1",
+          milestone: false,
+          _count: { blocks: 0, blockedBy: 0 },
+        },
+      ],
+    });
+    h.teamFindMany.mockResolvedValue([{ id: "tm1", name: "Squad Alpha" }]);
+
+    const r = await getActiveProgramBoard();
+    expect(r.ok).toBe(true);
+    if (r.ok && r.data) {
+      expect(r.data.teams[0].features[0].milestone).toBe(false);
+      expect(r.data.teams[0].features[0].hasDependency).toBe(false);
     }
   });
 });
