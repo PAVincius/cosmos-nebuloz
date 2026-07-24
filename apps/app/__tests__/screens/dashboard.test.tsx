@@ -21,6 +21,27 @@ vi.mock("@/app/(cosmos)/actions/kanban", () => ({
   }),
 }));
 
+// The dashboard awaits a Promise.all over several server actions. Every one of
+// them must be mocked: importing the real module pulls in @repo/auth/server ->
+// @repo/database, which throws under the client-side env guard in this suite.
+vi.mock("@/app/(cosmos)/actions/velocity", () => ({
+  listRecentSprints: vi.fn().mockResolvedValue({ ok: true, data: [] }),
+}));
+
+vi.mock("@/app/(cosmos)/actions/budgets", () => ({
+  listLeanBudgets: vi.fn().mockResolvedValue({ ok: true, data: [] }),
+}));
+
+vi.mock("@/app/(cosmos)/actions/finops", () => ({
+  getCloudCostSummary: vi.fn().mockResolvedValue({ ok: true, data: null }),
+}));
+
+vi.mock("@/app/(cosmos)/actions/piplanning", () => ({
+  getActiveArtCount: vi.fn().mockResolvedValue({ ok: true, data: 0 }),
+  getActivePiPlanning: vi.fn().mockResolvedValue({ ok: true, data: null }),
+  listRecentPiPredictability: vi.fn().mockResolvedValue({ ok: true, data: [] }),
+}));
+
 import DashboardScreen from "../../components/cosmos/screens/dashboard";
 
 describe("DashboardScreen", () => {
