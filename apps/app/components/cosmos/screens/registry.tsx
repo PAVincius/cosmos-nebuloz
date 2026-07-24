@@ -21,6 +21,7 @@ import RoadmapScreen from "./roadmap";
 import SettingsScreen from "./settings";
 import SolutionTrainScreen from "./solution-train";
 import StrategyScreen from "./strategy";
+import TagsScreen from "./tags";
 import TeamDetailScreen from "./team-detail";
 import TeamsScreen from "./teams";
 import ThemesScreen from "./themes";
@@ -52,6 +53,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   program: ProgramScreen,
   piplanning: PiPlanningScreen,
   themes: ThemesScreen,
+  tags: TagsScreen,
   solution: SolutionTrainScreen,
   strategy: StrategyScreen,
   settings: SettingsScreen,

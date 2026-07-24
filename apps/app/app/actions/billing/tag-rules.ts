@@ -20,7 +20,7 @@ const TagRuleConditionSchema = z.object({
 
 export type TagRuleCondition = z.infer<typeof TagRuleConditionSchema>;
 
-const TAG_RULE_OUTPUT_TONES = [
+export const TAG_RULE_OUTPUT_TONES = [
   "green",
   "red",
   "amber",

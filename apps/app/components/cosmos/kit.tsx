@@ -1102,36 +1102,63 @@ export function KpiCard({
 }
 
 // ── Switch ──
-export function Switch({ on, tone = "accent" }: { on?: boolean; tone?: Tone }) {
-  return (
+export function Switch({
+  on,
+  tone = "accent",
+  onClick,
+}: {
+  on?: boolean;
+  tone?: Tone;
+  onClick?: () => void;
+}) {
+  const trackStyle: CSSProperties = {
+    display: "inline-flex",
+    alignItems: "center",
+    width: 38,
+    height: 22,
+    borderRadius: 99,
+    padding: 2,
+    background: on ? `var(--${tone})` : "var(--surface-3)",
+    border: `1px solid ${on ? "transparent" : "var(--hairline-strong)"}`,
+    boxShadow: on ? `0 0 12px rgba(var(--${tone}-rgb),.45)` : "none",
+    transition: "background .2s ease",
+    justifyContent: on ? "flex-end" : "flex-start",
+    flexShrink: 0,
+    cursor: "pointer",
+  };
+  const thumb = (
     <span
       style={{
-        display: "inline-flex",
-        alignItems: "center",
-        width: 38,
-        height: 22,
+        width: 16,
+        height: 16,
         borderRadius: 99,
-        padding: 2,
-        background: on ? `var(--${tone})` : "var(--surface-3)",
-        border: `1px solid ${on ? "transparent" : "var(--hairline-strong)"}`,
-        boxShadow: on ? `0 0 12px rgba(var(--${tone}-rgb),.45)` : "none",
-        transition: "background .2s ease",
-        justifyContent: on ? "flex-end" : "flex-start",
-        flexShrink: 0,
-        cursor: "pointer",
+        background: on ? "#fff" : "var(--ink-faint)",
+        boxShadow: "0 1px 2px rgba(0,0,0,.3)",
       }}
-    >
-      <span
-        style={{
-          width: 16,
-          height: 16,
-          borderRadius: 99,
-          background: on ? "#fff" : "var(--ink-faint)",
-          boxShadow: "0 1px 2px rgba(0,0,0,.3)",
-        }}
-      />
-    </span>
+    />
   );
+
+  if (onClick) {
+    return (
+      <span
+        aria-checked={on}
+        onClick={onClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick();
+          }
+        }}
+        role="switch"
+        style={trackStyle}
+        tabIndex={0}
+      >
+        {thumb}
+      </span>
+    );
+  }
+
+  return <span style={trackStyle}>{thumb}</span>;
 }
 
 // ── Page header — depth treatment ──
