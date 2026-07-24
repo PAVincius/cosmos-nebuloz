@@ -52,6 +52,7 @@ describe("listWebhooks", () => {
         url: "https://hooks.slack.com/x",
         eventTypes: ["pi_committed"],
         active: true,
+        deliveryLogs: [],
       },
     ]);
     const r = await listWebhooks();
@@ -59,11 +60,34 @@ describe("listWebhooks", () => {
     expect(h.webhookFindMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { tenantId: tenantCtx.tenantId },
-        select: { id: true, url: true, eventTypes: true, active: true },
       })
     );
+    const call = h.webhookFindMany.mock.calls[0][0];
+    expect(call.select).not.toHaveProperty("secretHash");
+    expect(call.select).not.toHaveProperty("secretEnc");
     if (r.ok) {
       expect(r.data[0].eventTypes).toContain("pi_committed");
+      expect(r.data[0].lastDeliveryStatus).toBeNull();
+      expect(r.data[0].lastDeliveryAt).toBeNull();
+    }
+  });
+
+  it("surfaces the latest delivery status and timestamp per endpoint", async () => {
+    const createdAt = new Date("2026-07-20T12:00:00.000Z");
+    h.webhookFindMany.mockResolvedValue([
+      {
+        id: "w2",
+        url: "https://hooks.example.com/y",
+        eventTypes: ["risk.created"],
+        active: true,
+        deliveryLogs: [{ status: "FAILED", createdAt }],
+      },
+    ]);
+    const r = await listWebhooks();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].lastDeliveryStatus).toBe("FAILED");
+      expect(r.data[0].lastDeliveryAt).toBe(createdAt.toISOString());
     }
   });
 });

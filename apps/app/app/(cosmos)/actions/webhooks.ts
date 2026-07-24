@@ -15,6 +15,8 @@ export type WebhookView = {
   url: string;
   eventTypes: string[];
   active: boolean;
+  lastDeliveryStatus: string | null;
+  lastDeliveryAt: string | null;
 };
 
 export async function listWebhooks(): Promise<Result<WebhookView[]>> {
@@ -24,9 +26,26 @@ export async function listWebhooks(): Promise<Result<WebhookView[]>> {
       where: { tenantId: ctx.tenantId },
       orderBy: { createdAt: "desc" },
       // SECURITY: never select `secretHash`/`secretEnc` — signing secrets.
-      select: { id: true, url: true, eventTypes: true, active: true },
+      select: {
+        id: true,
+        url: true,
+        eventTypes: true,
+        active: true,
+        deliveryLogs: {
+          orderBy: { createdAt: "desc" },
+          take: 1,
+          select: { status: true, createdAt: true },
+        },
+      },
     });
-    return rows;
+    return rows.map((r) => ({
+      id: r.id,
+      url: r.url,
+      eventTypes: r.eventTypes,
+      active: r.active,
+      lastDeliveryStatus: r.deliveryLogs[0]?.status ?? null,
+      lastDeliveryAt: r.deliveryLogs[0]?.createdAt.toISOString() ?? null,
+    }));
   });
 }
 

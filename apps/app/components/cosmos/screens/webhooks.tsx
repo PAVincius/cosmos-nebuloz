@@ -24,6 +24,24 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
+const FAILING_STATUSES = new Set(["FAILED", "FAILED_PERMANENTLY"]);
+
+function isFailing(status: string | null): boolean {
+  return status !== null && FAILING_STATUSES.has(status);
+}
+
+function fmtLastDelivery(iso: string | null): string {
+  if (!iso) {
+    return "Sem entregas";
+  }
+  return `Última entrega ${new Date(iso).toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  })}`;
+}
+
 const EVENT_TYPE_OPTIONS: { value: string; label: string }[] = [
   { value: "epic.created", label: "Epic criado" },
   { value: "sprint.activated", label: "Sprint ativado" },
@@ -249,11 +267,26 @@ function WebhooksBody() {
     load();
   }, [load]);
 
+  const activeCount = hooks.filter((h) => h.active).length;
+  const failingCount = hooks.filter((h) =>
+    isFailing(h.lastDeliveryStatus)
+  ).length;
+
   return (
     <div className="fade-in">
       <PageHeader
         eyebrow="Plataforma"
-        meta={<Badge tone="accent">{hooks.length} webhooks</Badge>}
+        meta={
+          <>
+            <Badge tone="accent">{hooks.length} webhooks</Badge>
+            <Badge dot tone="green">
+              {activeCount} ativos
+            </Badge>
+            {failingCount > 0 && (
+              <Badge tone="red">{failingCount} com falha</Badge>
+            )}
+          </>
+        }
         subtitle="Endpoints configurados para eventos críticos do portfólio."
         title="Webhooks"
       >
@@ -279,51 +312,75 @@ function WebhooksBody() {
               Nenhum webhook configurado.
             </span>
           )}
-          {hooks.map((h) => (
-            <div
-              key={h.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "12px 16px",
-                borderRadius: 12,
-                border: "1px solid var(--hairline)",
-                background: "var(--surface)",
-              }}
-            >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  className="mono"
-                  style={{
-                    fontSize: 12.5,
-                    color: "var(--ink)",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {h.url}
+          {hooks.map((h) => {
+            const failing = isFailing(h.lastDeliveryStatus);
+            const leftBorderColor = failing
+              ? "var(--red)"
+              : h.active
+                ? "var(--green)"
+                : "var(--hairline-strong)";
+            return (
+              <div
+                key={h.id}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  padding: "12px 16px",
+                  borderRadius: 12,
+                  border: "1px solid var(--hairline)",
+                  borderLeft: `3px solid ${leftBorderColor}`,
+                  background: "var(--surface)",
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    className="mono"
+                    style={{
+                      fontSize: 12.5,
+                      color: "var(--ink)",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {h.url}
+                  </div>
+                  <div
+                    style={{
+                      marginTop: 4,
+                      display: "flex",
+                      gap: 6,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    {h.eventTypes.map((e) => (
+                      <Badge key={e} tone="neutral">
+                        {e}
+                      </Badge>
+                    ))}
+                  </div>
                 </div>
-                <div
-                  style={{
-                    marginTop: 4,
-                    display: "flex",
-                    gap: 6,
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {h.eventTypes.map((e) => (
-                    <Badge key={e} tone="neutral">
-                      {e}
-                    </Badge>
-                  ))}
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <Badge
+                    dot
+                    tone={failing ? "red" : h.active ? "green" : "neutral"}
+                  >
+                    {failing ? "Falhando" : h.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                  <div
+                    className="mono"
+                    style={{
+                      marginTop: 5,
+                      fontSize: 11,
+                      color: failing ? "var(--red-text)" : "var(--ink-subtle)",
+                    }}
+                  >
+                    {fmtLastDelivery(h.lastDeliveryAt)}
+                  </div>
                 </div>
               </div>
-              <Badge dot tone={h.active ? "green" : "neutral"}>
-                {h.active ? "Ativo" : "Inativo"}
-              </Badge>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </SectionCard>
     </div>
