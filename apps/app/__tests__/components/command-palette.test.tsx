@@ -80,7 +80,7 @@ describe("CommandPalette", () => {
   test("selecting an entry navigates and closes the palette", () => {
     const navigate = vi.fn();
     render(
-      <NavCtx.Provider value={{ navigate }}>
+      <NavCtx.Provider value={{ navigate, isComingSoon: () => false }}>
         <CommandPalette />
       </NavCtx.Provider>
     );
@@ -89,5 +89,22 @@ describe("CommandPalette", () => {
 
     expect(navigate).toHaveBeenCalledWith("wsjf");
     expect(screen.queryByPlaceholderText(PLACEHOLDER)).toBeNull();
+  });
+
+  test("a coming-soon entry (id not in SCREENS) is marked and does not navigate", () => {
+    const navigate = vi.fn();
+    render(
+      <NavCtx.Provider
+        value={{ navigate, isComingSoon: (id) => id === "executive" }}
+      >
+        <CommandPalette />
+      </NavCtx.Provider>
+    );
+    pressCmdK();
+
+    expect(screen.queryByText("Em breve")).not.toBeNull();
+    fireEvent.click(screen.getByText("Board Snapshot"));
+
+    expect(navigate).not.toHaveBeenCalled();
   });
 });

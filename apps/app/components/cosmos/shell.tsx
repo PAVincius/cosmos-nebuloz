@@ -7,10 +7,16 @@ import { usePathname, useRouter } from "next/navigation";
 // the pathname. Theme is held here and survives client-side navigation because
 // the (cosmos) layout is not remounted between routes.
 import { useTheme } from "next-themes";
-import { type CSSProperties, type ReactNode, useState } from "react";
+import {
+  type CSSProperties,
+  type ReactNode,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 import { CommandPalette } from "./command-palette";
 import { Icon, type IconName } from "./icons";
-import { Avatar, Button, IconButton, NavCtx } from "./kit";
+import { Avatar, Button, IconButton, NavCtx, useNav } from "./kit";
 
 type NavChild = { id: string; label: string };
 type NavItem = {
@@ -110,6 +116,28 @@ export const TITLES: Record<string, [string, string]> = {
 
 const href = (id: string) => `/cosmos/${id}`;
 
+function ComingSoonPill() {
+  return (
+    <span
+      className="mono"
+      style={{
+        flexShrink: 0,
+        fontSize: 9,
+        fontWeight: 700,
+        letterSpacing: ".04em",
+        textTransform: "uppercase",
+        padding: "1px 6px",
+        borderRadius: 99,
+        background: "var(--surface-3)",
+        border: "1px solid var(--hairline)",
+        color: "var(--ink-faint)",
+      }}
+    >
+      Em breve
+    </span>
+  );
+}
+
 function NavRow({
   icon,
   label,
@@ -118,6 +146,7 @@ function NavRow({
   to,
   trailing,
   onClick,
+  comingSoon,
 }: {
   icon?: IconName;
   label: string;
@@ -126,6 +155,7 @@ function NavRow({
   to?: string;
   trailing?: ReactNode;
   onClick?: () => void;
+  comingSoon?: boolean;
 }) {
   const style: CSSProperties = {
     display: "flex",
@@ -144,6 +174,8 @@ function NavRow({
     letterSpacing: ".005em",
     position: "relative",
     textDecoration: "none",
+    opacity: comingSoon ? 0.55 : 1,
+    cursor: comingSoon ? "default" : undefined,
   };
   const inner = (
     <>
@@ -184,9 +216,19 @@ function NavRow({
       >
         {label}
       </span>
-      {trailing}
+      {comingSoon ? <ComingSoonPill /> : trailing}
     </>
   );
+  // Coming-soon entries render as inert, non-navigable rows — no <Link>/
+  // <button> — so they stay visible (roadmap legibility) without being a
+  // dead-end click.
+  if (comingSoon) {
+    return (
+      <div aria-disabled="true" className="navitem" style={style}>
+        {inner}
+      </div>
+    );
+  }
   if (to) {
     return (
       <Link className="navitem btn" href={to} style={style}>
@@ -202,6 +244,7 @@ function NavRow({
 }
 
 function Sidebar({ activeId }: { activeId: string }) {
+  const { isComingSoon } = useNav();
   const childActive = (item: NavItem) =>
     !!item.children?.some((c) => c.id === activeId);
   const [openKeys, setOpenKeys] = useState<Record<string, boolean>>({
@@ -370,6 +413,7 @@ function Sidebar({ activeId }: { activeId: string }) {
                       {item.children.map((c) => (
                         <NavRow
                           active={activeId === c.id}
+                          comingSoon={isComingSoon(c.id)}
                           depth={1}
                           key={c.id}
                           label={c.label}
@@ -384,6 +428,7 @@ function Sidebar({ activeId }: { activeId: string }) {
             return (
               <NavRow
                 active={activeId === item.id}
+                comingSoon={isComingSoon(item.id!)}
                 icon={item.icon}
                 key={item.id}
                 label={item.label}
@@ -409,6 +454,7 @@ function Sidebar({ activeId }: { activeId: string }) {
           />
           <NavRow
             active={activeId === "copilot"}
+            comingSoon={isComingSoon("copilot")}
             icon="bot"
             label="Copilot"
             to={href("copilot")}
@@ -638,20 +684,36 @@ function activeIdFromPath(pathname: string) {
   return parts[1] || "dashboard";
 }
 
-export function CosmosShell({ children }: { children?: ReactNode }) {
+export function CosmosShell({
+  children,
+  screenIds,
+}: {
+  children?: ReactNode;
+  // Keys of SCREENS (screens/registry.tsx), passed down from the (server)
+  // layout — a screen id not in this list has no ported component yet, so
+  // nav renders it "coming soon" instead of a dead-end link. Computed from
+  // the registry itself, not duplicated here, so it can't drift.
+  screenIds: string[];
+}) {
   const pathname = usePathname() || "/cosmos";
   const router = useRouter();
   const { resolvedTheme, setTheme } = useTheme();
   const theme = resolvedTheme === "light" ? "light" : "dark";
   const activeId = activeIdFromPath(pathname);
 
+  const screenIdSet = useMemo(() => new Set(screenIds), [screenIds]);
+  const isComingSoon = useCallback(
+    (id: string) => !screenIdSet.has(id),
+    [screenIdSet]
+  );
+  const navigate = useCallback(
+    (id: string, param?: string) =>
+      router.push(param ? `${href(id)}/${param}` : href(id)),
+    [router]
+  );
+
   return (
-    <NavCtx.Provider
-      value={{
-        navigate: (id: string, param?: string) =>
-          router.push(param ? `${href(id)}/${param}` : href(id)),
-      }}
-    >
+    <NavCtx.Provider value={{ navigate, isComingSoon }}>
       {/* theme comes from next-themes (data-theme on <html>); toggling is CSS-only, no tree re-render */}
       <div className="cosmos-root" style={{ display: "flex" } as CSSProperties}>
         <Sidebar activeId={activeId} />

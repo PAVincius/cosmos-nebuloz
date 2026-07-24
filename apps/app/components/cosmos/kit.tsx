@@ -73,7 +73,11 @@ export function useAction<T>(
 
 export const NavCtx = createContext<{
   navigate: (id: string, param?: string) => void;
-}>({ navigate: () => {} });
+  // True when `id` has no ported screen in the registry yet (see
+  // screens/registry.tsx SCREENS) — nav UI uses this to render the entry as
+  // "coming soon" instead of a dead-end link.
+  isComingSoon: (id: string) => boolean;
+}>({ navigate: () => {}, isComingSoon: () => false });
 export const useNav = () => useContext(NavCtx);
 
 // tone → dark gradient backgrounds (match the tecno-UI cards)

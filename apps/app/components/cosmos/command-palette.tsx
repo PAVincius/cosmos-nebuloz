@@ -42,7 +42,7 @@ const ENTRIES = flattenNav();
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false);
-  const { navigate } = useNav();
+  const { navigate, isComingSoon } = useNav();
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -64,6 +64,9 @@ export function CommandPalette() {
   }
 
   const handleSelect = (id: string) => {
+    if (isComingSoon(id)) {
+      return;
+    }
     navigate(id);
     setOpen(false);
   };
@@ -145,31 +148,45 @@ export function CommandPalette() {
           >
             Nenhum resultado
           </Command.Empty>
-          {ENTRIES.map((entry) => (
-            <Command.Item
-              key={entry.id}
-              onSelect={() => handleSelect(entry.id)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                padding: "8px 10px",
-                borderRadius: "var(--r-md)",
-                fontSize: 13.5,
-                color: "var(--ink-muted)",
-                cursor: "pointer",
-              }}
-              value={entry.label}
-            >
-              {entry.icon && <Icon name={entry.icon} size={16} />}
-              <span style={{ flex: 1 }}>{entry.label}</span>
-              {entry.parentLabel && (
-                <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
-                  {entry.parentLabel}
-                </span>
-              )}
-            </Command.Item>
-          ))}
+          {ENTRIES.map((entry) => {
+            const comingSoon = isComingSoon(entry.id);
+            return (
+              <Command.Item
+                disabled={comingSoon}
+                key={entry.id}
+                onSelect={() => handleSelect(entry.id)}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 10,
+                  padding: "8px 10px",
+                  borderRadius: "var(--r-md)",
+                  fontSize: 13.5,
+                  color: comingSoon ? "var(--ink-faint)" : "var(--ink-muted)",
+                  cursor: comingSoon ? "default" : "pointer",
+                  opacity: comingSoon ? 0.6 : 1,
+                }}
+                value={entry.label}
+              >
+                {entry.icon && <Icon name={entry.icon} size={16} />}
+                <span style={{ flex: 1 }}>{entry.label}</span>
+                {comingSoon ? (
+                  <span
+                    className="mono"
+                    style={{ fontSize: 10, color: "var(--ink-faint)" }}
+                  >
+                    Em breve
+                  </span>
+                ) : (
+                  entry.parentLabel && (
+                    <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                      {entry.parentLabel}
+                    </span>
+                  )
+                )}
+              </Command.Item>
+            );
+          })}
         </Command.List>
       </Command>
     </div>,
