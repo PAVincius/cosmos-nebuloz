@@ -12,6 +12,7 @@ const h = vi.hoisted(() => ({
   teamCapacitySnapshotFindMany: vi.fn(),
   sprintFindMany: vi.fn(),
   sprintFindFirst: vi.fn(),
+  pIPlanFindFirst: vi.fn(),
   capacityAdjustmentNoteFindMany: vi.fn(),
   capacityAdjustmentNoteCreate: vi.fn(),
 }));
@@ -36,6 +37,9 @@ vi.mock("@repo/database", () => ({
       findMany: h.sprintFindMany,
       findFirst: h.sprintFindFirst,
     },
+    pIPlan: {
+      findFirst: h.pIPlanFindFirst,
+    },
     capacityAdjustmentNote: {
       findMany: h.capacityAdjustmentNoteFindMany,
       create: h.capacityAdjustmentNoteCreate,
@@ -49,6 +53,7 @@ import {
   createCapacityAdjustmentNote,
   listCapacityAdjustmentNotes,
   listTeamCapacity,
+  listTeamCapacityAcrossPI,
   listTeamSprints,
 } from "../../app/(cosmos)/actions/capacity";
 
@@ -69,6 +74,7 @@ beforeEach(() => {
       recordedAt: new Date(),
     },
   ]);
+  h.pIPlanFindFirst.mockResolvedValue(null);
 });
 
 describe("listTeamCapacity", () => {
@@ -85,6 +91,77 @@ describe("listTeamCapacity", () => {
       expect(r.data[0].actualSp).toBe(35);
       expect(r.data[0].utilizationPct).toBe(92);
     }
+  });
+});
+
+describe("listTeamCapacityAcrossPI", () => {
+  it("is tenant-scoped when looking up the active PI", async () => {
+    await listTeamCapacityAcrossPI();
+
+    expect(h.pIPlanFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: tenantCtx.tenantId,
+          status: { in: ["PLANNING", "COMMITTED", "EXECUTING"] },
+        },
+      })
+    );
+  });
+
+  it("returns null when there is no active PI (honest empty state)", async () => {
+    h.pIPlanFindFirst.mockResolvedValue(null);
+
+    const r = await listTeamCapacityAcrossPI();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toBeNull();
+    }
+    expect(h.sprintFindMany).not.toHaveBeenCalled();
+  });
+
+  it("builds a tenant-scoped team × sprint-ordinal grid from the active PI's sprints", async () => {
+    h.pIPlanFindFirst.mockResolvedValue({ id: "pi1", name: "PI 2026.1" });
+    h.sprintFindMany.mockResolvedValue([
+      { id: "sp1", name: "Sprint 1", teamId: "tm1" },
+      { id: "sp2", name: "Sprint 2", teamId: "tm1" },
+    ]);
+    h.teamFindMany.mockResolvedValue([{ id: "tm1", name: "Squad Alpha" }]);
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([
+      {
+        sprintId: "sp1",
+        teamId: "tm1",
+        expectedSpNextSprint: 40,
+        actualSpDelivered: 36,
+        actualCapacityUtil: 0.9,
+      },
+    ]);
+
+    const r = await listTeamCapacityAcrossPI();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(h.sprintFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, piPlanId: "pi1" },
+      })
+    );
+    expect(r.data?.sprintCount).toBe(2);
+    expect(r.data?.rows).toHaveLength(1);
+    expect(r.data?.rows[0].cells[0]).toEqual({
+      sprintName: "Sprint 1",
+      expectedSp: 40,
+      actualSp: 36,
+      utilizationPct: 90,
+    });
+    expect(r.data?.rows[0].cells[1]).toEqual({
+      sprintName: "Sprint 2",
+      expectedSp: null,
+      actualSp: null,
+      utilizationPct: null,
+    });
   });
 });
 

@@ -7,10 +7,14 @@ const mocks = vi.hoisted(() => ({
   requireRole: vi.fn(),
   sprintFindMany: vi.fn(),
   storyFindMany: vi.fn(),
+  storyAggregate: vi.fn(),
   defectFindMany: vi.fn(),
   stateTransitionHistoryFindMany: vi.fn(),
+  memberFindMany: vi.fn(),
   flowMetricSnapshotFindFirst: vi.fn(),
   flowMetricSnapshotCreate: vi.fn(),
+  teamCapacitySnapshotFindFirst: vi.fn(),
+  teamCapacitySnapshotCreate: vi.fn(),
   logError: vi.fn(),
 }));
 
@@ -26,12 +30,20 @@ vi.mock("@repo/observability/log", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     sprint: { findMany: mocks.sprintFindMany },
-    story: { findMany: mocks.storyFindMany },
+    story: {
+      findMany: mocks.storyFindMany,
+      aggregate: mocks.storyAggregate,
+    },
     defect: { findMany: mocks.defectFindMany },
     stateTransitionHistory: { findMany: mocks.stateTransitionHistoryFindMany },
+    teamMemberAssignment: { findMany: mocks.memberFindMany },
     flowMetricSnapshot: {
       findFirst: mocks.flowMetricSnapshotFindFirst,
       create: mocks.flowMetricSnapshotCreate,
+    },
+    teamCapacitySnapshot: {
+      findFirst: mocks.teamCapacitySnapshotFindFirst,
+      create: mocks.teamCapacitySnapshotCreate,
     },
   },
 }));
@@ -44,14 +56,18 @@ beforeEach(() => {
   mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "ADMIN" });
   mocks.requireRole.mockReturnValue(undefined);
   mocks.sprintFindMany.mockResolvedValue([
-    { id: "sprint-1", teamId: "team-1" },
-    { id: "sprint-2", teamId: "team-1" },
+    { id: "sprint-1", teamId: "team-1", velocity: 30 },
+    { id: "sprint-2", teamId: "team-1", velocity: 20 },
   ]);
   mocks.storyFindMany.mockResolvedValue([]);
+  mocks.storyAggregate.mockResolvedValue({ _sum: { storyPoints: 0 } });
   mocks.defectFindMany.mockResolvedValue([]);
   mocks.stateTransitionHistoryFindMany.mockResolvedValue([]);
+  mocks.memberFindMany.mockResolvedValue([]);
   mocks.flowMetricSnapshotFindFirst.mockResolvedValue(null);
   mocks.flowMetricSnapshotCreate.mockResolvedValue({ id: "snap" });
+  mocks.teamCapacitySnapshotFindFirst.mockResolvedValue(null);
+  mocks.teamCapacitySnapshotCreate.mockResolvedValue({ id: "cap" });
 });
 
 describe("backfillPeriodSnapshots", () => {
@@ -80,7 +96,7 @@ describe("backfillPeriodSnapshots", () => {
     );
   });
 
-  it("originates a flow snapshot per closed sprint missing one", async () => {
+  it("originates a flow + capacity snapshot per closed sprint missing one", async () => {
     const res = await backfillPeriodSnapshots();
 
     expect(res.ok).toBe(true);
@@ -90,8 +106,10 @@ describe("backfillPeriodSnapshots", () => {
     expect(res.data).toEqual({
       sprintsProcessed: 2,
       flowSnapshotsCreated: 2,
+      capacitySnapshotsCreated: 2,
     });
     expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledTimes(2);
+    expect(mocks.teamCapacitySnapshotCreate).toHaveBeenCalledTimes(2);
   });
 
   it("is idempotent — a second run creates nothing new", async () => {
@@ -99,6 +117,7 @@ describe("backfillPeriodSnapshots", () => {
 
     // Second run: snapshots now "exist" for every sprint.
     mocks.flowMetricSnapshotFindFirst.mockResolvedValue({ id: "existing" });
+    mocks.teamCapacitySnapshotFindFirst.mockResolvedValue({ id: "existing" });
 
     const res = await backfillPeriodSnapshots();
 
@@ -107,6 +126,7 @@ describe("backfillPeriodSnapshots", () => {
       return;
     }
     expect(res.data.flowSnapshotsCreated).toBe(0);
+    expect(res.data.capacitySnapshotsCreated).toBe(0);
     expect(res.data.sprintsProcessed).toBe(2);
   });
 
@@ -123,6 +143,7 @@ describe("backfillPeriodSnapshots", () => {
     }
     // sprint-1's flow snapshot failed; sprint-2's still succeeded.
     expect(res.data.flowSnapshotsCreated).toBe(1);
+    expect(res.data.capacitySnapshotsCreated).toBe(2);
     expect(mocks.logError).toHaveBeenCalledWith(
       expect.stringContaining("flow snapshot"),
       expect.objectContaining({ sprintId: "sprint-1" })

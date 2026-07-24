@@ -1,17 +1,18 @@
 /**
  * Snapshot origination for sprint close — the recurring period-snapshot
- * writer pattern. FlowMetricSnapshot (flow history / CFD) is the first
- * consumer; TeamCapacitySnapshot reuses this exact pattern separately.
+ * writer pattern shared by FlowMetricSnapshot (flow history / CFD) and
+ * TeamCapacitySnapshot (per-sprint capacity grid). Both are computed from
+ * the same closing sprint's real Story/Defect/TeamMemberAssignment data.
  *
- * Idempotent: originateFlowSnapshot looks for an existing snapshot keyed on
- * the closing sprint before writing, so re-closing or a backfill re-run can
+ * Idempotent: each function looks for an existing snapshot keyed on the
+ * closing sprint before writing, so re-closing or a backfill re-run can
  * never double-write.
  *
  * Plain helper module (no "use server") on purpose — a "use server" file can
- * only export async server actions, not internal helpers, and this is
+ * only export async server actions, not internal helpers, and these are
  * called from both closeSprint (lifecycle.ts) and the backfill admin action.
  *
- * Callers MUST treat this as best-effort: wrap calls in try/catch and
+ * Callers MUST treat these as best-effort: wrap calls in try/catch and
  * log-only on failure. A snapshot computation must never fail the sprint
  * close itself (mirrors update-epic.ts's guarded copilot-reindex side effect).
  */
@@ -19,7 +20,12 @@ import type { database } from "@repo/database";
 
 type SnapshotDb = Pick<
   typeof database,
-  "story" | "defect" | "stateTransitionHistory" | "flowMetricSnapshot"
+  | "story"
+  | "defect"
+  | "stateTransitionHistory"
+  | "flowMetricSnapshot"
+  | "teamMemberAssignment"
+  | "teamCapacitySnapshot"
 >;
 
 function average(values: number[]): number {
@@ -211,6 +217,70 @@ export async function originateFlowSnapshot(
       plannedItems,
       deliveredItems,
       staleness: "FRESH",
+    },
+  });
+
+  return { created: true };
+}
+
+// ─── TeamCapacitySnapshot ───────────────────────────────────────────────────
+
+export async function originateCapacitySnapshot(
+  db: SnapshotDb,
+  params: {
+    tenantId: string;
+    teamId: string;
+    sprintId: string;
+    velocity: number;
+  }
+): Promise<OriginateSnapshotResult> {
+  const { tenantId, teamId, sprintId, velocity } = params;
+
+  const existing = await db.teamCapacitySnapshot.findFirst({
+    where: { tenantId, sprintId, teamId },
+    select: { id: true },
+  });
+  if (existing) {
+    return { created: false };
+  }
+
+  const [assignments, committed] = await Promise.all([
+    db.teamMemberAssignment.findMany({
+      where: { tenantId, sprintId },
+      select: { capacityFactor: true },
+    }),
+    db.story.aggregate({
+      where: { tenantId, sprintId },
+      _sum: { storyPoints: true },
+    }),
+  ]);
+
+  const totalMembersCommitted = assignments.length;
+  const totalCapacityFactor = assignments.reduce(
+    (sum, a) => sum + a.capacityFactor,
+    0
+  );
+  // "Expected" here is the sprint's committed capacity target, not a
+  // forecast for a different future sprint — matches how listTeamCapacity
+  // already pairs expectedSpNextSprint with actualSpDelivered from the same
+  // snapshot/sprint.
+  const expectedSpNextSprint = committed._sum.storyPoints ?? 0;
+  const actualSpDelivered = velocity;
+  // Not clamped — utilization over 100% is real over-commitment info that
+  // capacity.tsx's utilTone() already renders (>=100 => red).
+  const actualCapacityUtil =
+    expectedSpNextSprint > 0 ? actualSpDelivered / expectedSpNextSprint : 0;
+
+  await db.teamCapacitySnapshot.create({
+    data: {
+      tenantId,
+      sprintId,
+      teamId,
+      totalMembersCommitted,
+      totalCapacityFactor,
+      expectedSpNextSprint,
+      actualSpDelivered,
+      actualCapacityUtil,
     },
   });
 

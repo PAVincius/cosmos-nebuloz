@@ -12,11 +12,13 @@ import { useCallback, useEffect, useState } from "react";
 import {
   CAPACITY_NOTE_TONES,
   type CapacityAdjustmentNoteView,
+  type CapacityGridView,
   type CapacityNoteTone,
   type CapacityView,
   createCapacityAdjustmentNote,
   listCapacityAdjustmentNotes,
   listTeamCapacity,
+  listTeamCapacityAcrossPI,
   listTeamSprints,
   type TeamSprintOption,
 } from "@/app/(cosmos)/actions/capacity";
@@ -29,6 +31,7 @@ import {
   Progress,
   SectionCard,
   type Tone,
+  useAction,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
@@ -331,6 +334,109 @@ function CapacityNotesPanel({ rows }: { rows: CapacityView[] }) {
   );
 }
 
+// ── Per-sprint capacity grid across the active PI ──
+
+function CapacityGridSection() {
+  const { data, loading, error } = useAction<CapacityGridView | null>(
+    listTeamCapacityAcrossPI
+  );
+  const rows = data?.rows ?? [];
+  const sprintCount = data?.sprintCount ?? 0;
+
+  return (
+    <SectionCard
+      icon="grid"
+      subtitle="Times × sprints do PI ativo — SP esperado vs. entregue"
+      title="Capacidade por sprint"
+      tone="purple"
+    >
+      {error && <ErrorState />}
+      {!error && loading && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Carregando...
+        </div>
+      )}
+      {!(error || loading) && rows.length === 0 && (
+        <EmptyState
+          description="A grade aparece assim que houver um PI em planejamento/execução com sprints e snapshots de capacidade."
+          icon="grid"
+          title="Sem PI ativo ou sem sprints ainda"
+        />
+      )}
+      {!(error || loading) && rows.length > 0 && (
+        <div style={{ overflowX: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr
+                style={{
+                  textAlign: "left",
+                  fontSize: 12,
+                  color: "var(--ink-muted)",
+                }}
+              >
+                <th style={{ padding: "8px 12px" }}>Time</th>
+                {Array.from({ length: sprintCount }, (_, i) => (
+                  <th key={i} style={{ padding: "8px 12px" }}>
+                    Sprint {i + 1}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr
+                  key={row.teamId}
+                  style={{ borderTop: "1px solid var(--hairline)" }}
+                >
+                  <td
+                    style={{
+                      padding: "10px 12px",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {row.teamName}
+                  </td>
+                  {row.cells.map((cell, i) => (
+                    <td key={i} style={{ padding: "10px 12px", minWidth: 120 }}>
+                      {cell ? (
+                        <div
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                          }}
+                        >
+                          <span className="mono" style={{ fontSize: 12.5 }}>
+                            {cell.actualSp ?? "—"} / {cell.expectedSp ?? "—"} SP
+                          </span>
+                          {cell.utilizationPct !== null && (
+                            <Progress
+                              tone={utilTone(cell.utilizationPct)}
+                              value={cell.utilizationPct}
+                            />
+                          )}
+                        </div>
+                      ) : (
+                        <span
+                          style={{ fontSize: 13, color: "var(--ink-muted)" }}
+                        >
+                          —
+                        </span>
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
 export default function CapacityScreen() {
   const [rows, setRows] = useState<CapacityView[]>([]);
   const [error, setError] = useState(false);
@@ -445,6 +551,9 @@ export default function CapacityScreen() {
             )}
           </SectionCard>
         )}
+        <div style={{ marginTop: 14 }}>
+          <CapacityGridSection />
+        </div>
         <div style={{ marginTop: 14 }}>
           <CapacityNotesPanel rows={rows} />
         </div>

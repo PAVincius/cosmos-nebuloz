@@ -62,6 +62,128 @@ export async function listTeamCapacity(): Promise<Result<CapacityView[]>> {
   });
 }
 
+export type CapacityGridCell = {
+  sprintName: string;
+  expectedSp: number | null;
+  actualSp: number | null;
+  utilizationPct: number | null;
+};
+
+export type CapacityGridRow = {
+  teamId: string;
+  teamName: string;
+  // Aligned to a shared 1..sprintCount column index — each team's OWN
+  // sprints (by piPlanId), ordered by startDate. Teams with fewer sprints
+  // in this PI than sprintCount get null cells for the missing columns.
+  cells: (CapacityGridCell | null)[];
+};
+
+export type CapacityGridView = {
+  piPlanId: string;
+  piPlanName: string;
+  sprintCount: number;
+  rows: CapacityGridRow[];
+};
+
+// Per-sprint capacity grid across the active PI (team rows × sprint
+// columns) — a sibling of listTeamCapacity's latest-per-team dedup, which
+// stays as-is for the KPI table above the grid.
+export async function listTeamCapacityAcrossPI(): Promise<
+  Result<CapacityGridView | null>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+
+    // Same "active PI" convention as getActiveProgramBoard.
+    const plan = await database.pIPlan.findFirst({
+      where: {
+        tenantId: ctx.tenantId,
+        status: { in: ["PLANNING", "COMMITTED", "EXECUTING"] },
+      },
+      orderBy: { updatedAt: "desc" },
+      select: { id: true, name: true },
+    });
+    if (!plan) {
+      return null;
+    }
+
+    const sprints = await database.sprint.findMany({
+      where: { tenantId: ctx.tenantId, piPlanId: plan.id },
+      orderBy: { startDate: "asc" },
+      select: { id: true, name: true, teamId: true },
+    });
+    if (sprints.length === 0) {
+      return {
+        piPlanId: plan.id,
+        piPlanName: plan.name,
+        sprintCount: 0,
+        rows: [],
+      };
+    }
+
+    const teamIds = [...new Set(sprints.map((s) => s.teamId))];
+    const [teams, snapshots] = await Promise.all([
+      database.team.findMany({
+        where: { tenantId: ctx.tenantId, id: { in: teamIds } },
+        select: { id: true, name: true },
+      }),
+      database.teamCapacitySnapshot.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          sprintId: { in: sprints.map((s) => s.id) },
+        },
+        select: {
+          sprintId: true,
+          teamId: true,
+          expectedSpNextSprint: true,
+          actualSpDelivered: true,
+          actualCapacityUtil: true,
+        },
+      }),
+    ]);
+
+    const snapByKey = new Map(
+      snapshots.map((s) => [`${s.sprintId}:${s.teamId}`, s])
+    );
+
+    const sprintsByTeam = new Map<string, typeof sprints>();
+    for (const s of sprints) {
+      const arr = sprintsByTeam.get(s.teamId) ?? [];
+      arr.push(s);
+      sprintsByTeam.set(s.teamId, arr);
+    }
+
+    const sprintCount = Math.max(
+      0,
+      ...teams.map((t) => sprintsByTeam.get(t.id)?.length ?? 0)
+    );
+
+    const rows: CapacityGridRow[] = teams.map((t) => {
+      const teamSprints = sprintsByTeam.get(t.id) ?? [];
+      const cells: (CapacityGridCell | null)[] = [];
+      for (let i = 0; i < sprintCount; i++) {
+        const sprint = teamSprints[i];
+        if (!sprint) {
+          cells.push(null);
+          continue;
+        }
+        const snap = snapByKey.get(`${sprint.id}:${t.id}`);
+        cells.push({
+          sprintName: sprint.name,
+          expectedSp: snap?.expectedSpNextSprint ?? null,
+          actualSp: snap?.actualSpDelivered ?? null,
+          utilizationPct: snap
+            ? Math.round(snap.actualCapacityUtil * 100)
+            : null,
+        });
+      }
+      return { teamId: t.id, teamName: t.name, cells };
+    });
+
+    return { piPlanId: plan.id, piPlanName: plan.name, sprintCount, rows };
+  });
+}
+
 // ── Capacity adjustment notes ──
 // Free-text annotations explaining a sprint's capacity variance (training,
 // holiday, onboarding, hiring), surfaced next to the per-team capacity grid.

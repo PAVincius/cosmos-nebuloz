@@ -24,6 +24,8 @@ const mocks = vi.hoisted(() => ({
   stateTransitionHistoryFindMany: vi.fn(),
   flowMetricSnapshotFindFirst: vi.fn(),
   flowMetricSnapshotCreate: vi.fn(),
+  teamCapacitySnapshotFindFirst: vi.fn(),
+  teamCapacitySnapshotCreate: vi.fn(),
   logError: vi.fn(),
   queryRaw: vi.fn(),
   transaction: vi.fn(),
@@ -67,6 +69,10 @@ vi.mock("@repo/database", () => ({
     flowMetricSnapshot: {
       findFirst: mocks.flowMetricSnapshotFindFirst,
       create: mocks.flowMetricSnapshotCreate,
+    },
+    teamCapacitySnapshot: {
+      findFirst: mocks.teamCapacitySnapshotFindFirst,
+      create: mocks.teamCapacitySnapshotCreate,
     },
     $transaction: mocks.transaction,
     $queryRaw: mocks.queryRaw,
@@ -335,14 +341,17 @@ describe("closeSprint snapshot origination", () => {
     mocks.memberFindMany.mockResolvedValue([]);
     mocks.flowMetricSnapshotFindFirst.mockResolvedValue(null);
     mocks.flowMetricSnapshotCreate.mockResolvedValue({ id: "snap-1" });
+    mocks.teamCapacitySnapshotFindFirst.mockResolvedValue(null);
+    mocks.teamCapacitySnapshotCreate.mockResolvedValue({ id: "cap-1" });
     makeTransactionMock();
   });
 
-  it("writes exactly one FlowMetricSnapshot on a successful close", async () => {
+  it("writes exactly one FlowMetricSnapshot and one TeamCapacitySnapshot on a successful close", async () => {
     const result = await closeSprint({ sprintId: "sprint-1" });
 
     expect(result.ok).toBe(true);
     expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledTimes(1);
+    expect(mocks.teamCapacitySnapshotCreate).toHaveBeenCalledTimes(1);
     expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledWith(
       expect.objectContaining({
         data: expect.objectContaining({
@@ -354,17 +363,30 @@ describe("closeSprint snapshot origination", () => {
         }),
       })
     );
+    expect(mocks.teamCapacitySnapshotCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId: tenantCtx.tenantId,
+          teamId: "team-1",
+          sprintId: "sprint-1",
+        }),
+      })
+    );
   });
 
-  it("is idempotent on re-run — does not double-write when a snapshot already exists", async () => {
+  it("is idempotent on re-run — does not double-write when snapshots already exist", async () => {
     mocks.flowMetricSnapshotFindFirst.mockResolvedValue({
       id: "existing-flow",
+    });
+    mocks.teamCapacitySnapshotFindFirst.mockResolvedValue({
+      id: "existing-cap",
     });
 
     const result = await closeSprint({ sprintId: "sprint-1" });
 
     expect(result.ok).toBe(true);
     expect(mocks.flowMetricSnapshotCreate).not.toHaveBeenCalled();
+    expect(mocks.teamCapacitySnapshotCreate).not.toHaveBeenCalled();
   });
 
   it("does NOT fail the close when flow snapshot computation throws (best-effort)", async () => {
@@ -377,8 +399,28 @@ describe("closeSprint snapshot origination", () => {
       return;
     }
     expect(result.data.velocity).toBe(38);
+    // Capacity snapshot is independent — still attempted and written.
+    expect(mocks.teamCapacitySnapshotCreate).toHaveBeenCalledTimes(1);
     expect(mocks.logError).toHaveBeenCalledWith(
       expect.stringContaining("flow snapshot"),
+      expect.objectContaining({ sprintId: "sprint-1" })
+    );
+  });
+
+  it("does NOT fail the close when capacity snapshot computation throws (best-effort)", async () => {
+    mocks.teamCapacitySnapshotFindFirst.mockRejectedValue(new Error("db down"));
+
+    const result = await closeSprint({ sprintId: "sprint-1" });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.velocity).toBe(38);
+    // Flow snapshot is independent — still attempted and written.
+    expect(mocks.flowMetricSnapshotCreate).toHaveBeenCalledTimes(1);
+    expect(mocks.logError).toHaveBeenCalledWith(
+      expect.stringContaining("capacity snapshot"),
       expect.objectContaining({ sprintId: "sprint-1" })
     );
   });

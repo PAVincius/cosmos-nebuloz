@@ -7,7 +7,10 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../_base";
-import { originateFlowSnapshot } from "./snapshot-origination";
+import {
+  originateCapacitySnapshot,
+  originateFlowSnapshot,
+} from "./snapshot-origination";
 
 // AC-002: >20% over capacity requires override
 const OVERCOMMITMENT_THRESHOLD = 1.2;
@@ -221,7 +224,9 @@ export async function closeSprint(
     // Best-effort snapshot origination — deliberately OUTSIDE the sprint's
     // own transaction: a failed write here must never poison or roll back
     // the transaction that already closed the sprint (rule mirrors
-    // update-epic.ts's guarded copilot-reindex side effect).
+    // update-epic.ts's guarded copilot-reindex side effect). Each call is
+    // independently guarded so a flow-snapshot failure can't skip the
+    // capacity snapshot or vice versa.
     try {
       await originateFlowSnapshot(database, {
         tenantId,
@@ -230,6 +235,19 @@ export async function closeSprint(
       });
     } catch (error) {
       log.error("[closeSprint] flow snapshot origination failed", {
+        sprintId: closed.sprintId,
+        error,
+      });
+    }
+    try {
+      await originateCapacitySnapshot(database, {
+        tenantId,
+        teamId: closed.teamId,
+        sprintId: closed.sprintId,
+        velocity: closed.velocity,
+      });
+    } catch (error) {
+      log.error("[closeSprint] capacity snapshot origination failed", {
         sprintId: closed.sprintId,
         error,
       });
