@@ -76,6 +76,7 @@ model Tenant {
   leanBudgets               LeanBudget[]
   roadmapItems              RoadmapItem[]
   strategyPillars           StrategyPillar[]
+  investmentHorizons        InvestmentHorizon[]
   governedEpics             GovernedEpic[]
   approvalWorkflows         ApprovalWorkflow[]
   approvalRequests          ApprovalRequest[]

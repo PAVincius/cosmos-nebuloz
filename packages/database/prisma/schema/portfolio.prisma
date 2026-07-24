@@ -157,6 +157,9 @@ model LeanBudget {
   artId                String?
   piPlanId             String?
   themeId              String?
+  // Investment Horizon classification (e.g. Emerging/Growth/Core) this
+  // value stream's budget is bucketed under — see InvestmentHorizon below.
+  horizonId            String?
   name                 String
   amount               Float
   // Story-025 CapEx/OpEx split fields (AC-002)
@@ -182,6 +185,27 @@ model LeanBudget {
   @@index([tenantId])
   @@index([tenantId, artId])
   @@index([tenantId, themeId])
+  @@index([tenantId, horizonId])
+}
+
+// cosmos.html screen-budgets HorizonDetailScreen — an investment horizon
+// (e.g. Emerging/Growth/Core) groups value streams (LeanBudget.horizonId)
+// by maturity/risk bet, target % of portfolio investment vs. actual (derived
+// from real LeanBudget rows, never stored). New persistent domain concept —
+// minimal shape for the screen, not a full investment-horizon subsystem.
+model InvestmentHorizon {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  label     String
+  targetPct Float
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }
 
 // Story-025: immutable audit trail for budget reallocations (AC-003)

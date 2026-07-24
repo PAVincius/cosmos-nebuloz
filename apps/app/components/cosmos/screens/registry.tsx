@@ -12,6 +12,7 @@ import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
 import GateScreen from "./gate";
 import GovernanceScreen from "./governance";
+import HorizonDetailScreen from "./horizon-detail";
 import IntegrationsScreen from "./integrations";
 import KanbanScreen from "./kanban";
 import MeasureScreen from "./measure";
@@ -64,6 +65,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   theme: ThemeDetailScreen,
   pillar: PillarDetailScreen,
   vs: ValueStreamDetailScreen,
+  horizon: HorizonDetailScreen,
   tags: TagsScreen,
   solution: SolutionTrainScreen,
   strategy: StrategyScreen,

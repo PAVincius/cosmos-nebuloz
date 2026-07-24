@@ -95,6 +95,10 @@ export type ValueStreamDetailView = {
   // "guardrail rompido" badge. null (never 0) when no budget for this ART
   // has a spend limit set — there is no guardrail to measure against yet.
   guardrailPct: number | null;
+  // The investment horizon this value stream's budgets are classified into
+  // (LeanBudget.horizonId) — null when none of its budgets have been
+  // classified, or when they disagree (no single horizon to show).
+  horizon: { id: string; name: string; label: string } | null;
   epics: {
     id: string;
     title: string;
@@ -122,7 +126,12 @@ export async function getValueStreamDetail(
     const [budgets, governedEpics] = await Promise.all([
       database.leanBudget.findMany({
         where: { tenantId: ctx.tenantId, artId },
-        select: { amount: true, spent: true, spendLimitUsd: true },
+        select: {
+          amount: true,
+          spent: true,
+          spendLimitUsd: true,
+          horizonId: true,
+        },
       }),
       database.governedEpic.findMany({
         where: { tenantId: ctx.tenantId, valueStreamId: artId },
@@ -163,6 +172,19 @@ export async function getValueStreamDetail(
           : 0,
     }));
 
+    // Only show a horizon when every budget for this ART agrees on one —
+    // a mixed classification has no single honest answer to display.
+    const horizonIds = new Set(
+      budgets.map((b) => b.horizonId).filter((v): v is string => v !== null)
+    );
+    const singleHorizonId = horizonIds.size === 1 ? [...horizonIds][0] : null;
+    const horizon = singleHorizonId
+      ? await database.investmentHorizon.findFirst({
+          where: { id: singleHorizonId, tenantId: ctx.tenantId },
+          select: { id: true, name: true, label: true },
+        })
+      : null;
+
     return {
       id: art.id,
       name: art.name,
@@ -173,6 +195,7 @@ export async function getValueStreamDetail(
       utilizationPct:
         budgetAllocated > 0 ? Math.round((spent / budgetAllocated) * 100) : 0,
       guardrailPct,
+      horizon,
       epics,
       epicCount: epics.length,
     };

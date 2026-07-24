@@ -69,6 +69,22 @@ export default function ValueStreamDetailClient({
                 {over ? "guardrail rompido" : "dentro do guardrail"}
               </Badge>
             )}
+            {initial.horizon && (
+              <button
+                onClick={() => navigate("horizon", initial.horizon?.id)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                }}
+                type="button"
+              >
+                <Badge icon="layers" tone="amber">
+                  {initial.horizon.name}
+                </Badge>
+              </button>
+            )}
           </>
         }
         subtitle="Financiamento contínuo deste fluxo de valor de ponta a ponta."

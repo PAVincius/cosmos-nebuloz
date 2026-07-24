@@ -12,6 +12,7 @@ const h = vi.hoisted(() => ({
   aRTFindMany: vi.fn(),
   aRTFindFirst: vi.fn(),
   governedEpicFindMany: vi.fn(),
+  investmentHorizonFindFirst: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -35,6 +36,9 @@ vi.mock("@repo/database", () => ({
     },
     governedEpic: {
       findMany: h.governedEpicFindMany,
+    },
+    investmentHorizon: {
+      findFirst: h.investmentHorizonFindFirst,
     },
   },
 }));
@@ -192,6 +196,53 @@ describe("getValueStreamDetail", () => {
       expect(r.data.spendLimitUsd).toBeNull();
       expect(r.data.guardrailPct).toBeNull();
       expect(r.data.epics).toHaveLength(0);
+    }
+  });
+
+  it("resolves the horizon tenant-scoped when every LeanBudget row agrees on one", async () => {
+    h.aRTFindFirst.mockResolvedValue({ id: "art1", name: "Payments ART" });
+    h.leanBudgetFindMany.mockResolvedValue([
+      { amount: 100, spent: "10", spendLimitUsd: null, horizonId: "h1" },
+      { amount: 50, spent: "5", spendLimitUsd: null, horizonId: "h1" },
+    ]);
+    h.governedEpicFindMany.mockResolvedValue([]);
+    h.investmentHorizonFindFirst.mockResolvedValue({
+      id: "h1",
+      name: "Growth",
+      label: "Crescimento",
+    });
+
+    const r = await getValueStreamDetail("art1");
+
+    expect(h.investmentHorizonFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "h1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.horizon).toEqual({
+        id: "h1",
+        name: "Growth",
+        label: "Crescimento",
+      });
+    }
+  });
+
+  it("returns a null horizon (no fabricated guess) when the ART's budgets disagree on horizon", async () => {
+    h.aRTFindFirst.mockResolvedValue({ id: "art1", name: "Payments ART" });
+    h.leanBudgetFindMany.mockResolvedValue([
+      { amount: 100, spent: "10", spendLimitUsd: null, horizonId: "h1" },
+      { amount: 50, spent: "5", spendLimitUsd: null, horizonId: "h2" },
+    ]);
+    h.governedEpicFindMany.mockResolvedValue([]);
+
+    const r = await getValueStreamDetail("art1");
+
+    expect(h.investmentHorizonFindFirst).not.toHaveBeenCalled();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.horizon).toBeNull();
     }
   });
 });
