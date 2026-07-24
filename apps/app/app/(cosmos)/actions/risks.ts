@@ -16,6 +16,7 @@ export type RiskView = {
   probability: string;
   impact: string;
   category: string;
+  ownerName: string;
 };
 
 export async function listRisks(): Promise<Result<RiskView[]>> {
@@ -32,8 +33,22 @@ export async function listRisks(): Promise<Result<RiskView[]>> {
         probability: true,
         impact: true,
         category: true,
+        ownerUserId: true,
       },
     });
+
+    const ownerIds = [
+      ...new Set(
+        rows.map((r) => r.ownerUserId).filter((id): id is string => !!id)
+      ),
+    ];
+    const owners = ownerIds.length
+      ? await database.user.findMany({
+          where: { id: { in: ownerIds } },
+          select: { id: true, name: true },
+        })
+      : [];
+    const ownerNameById = new Map(owners.map((o) => [o.id, o.name]));
 
     return rows.map((r) => ({
       id: r.id,
@@ -43,6 +58,7 @@ export async function listRisks(): Promise<Result<RiskView[]>> {
       probability: r.probability,
       impact: r.impact,
       category: r.category ?? "OUTRO",
+      ownerName: (r.ownerUserId && ownerNameById.get(r.ownerUserId)) || "—",
     }));
   });
 }

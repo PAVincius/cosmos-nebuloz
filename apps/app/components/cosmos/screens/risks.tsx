@@ -278,7 +278,11 @@ function RiskRow({ r }: { r: RiskView }) {
           justifyContent: "flex-end",
         }}
       >
-        <Avatar name="—" size={22} tone="accent" />
+        <Avatar
+          name={r.ownerName === "—" ? undefined : r.ownerName}
+          size={22}
+          tone="accent"
+        />
         <span
           style={{
             fontSize: 12,
@@ -289,7 +293,7 @@ function RiskRow({ r }: { r: RiskView }) {
             textOverflow: "ellipsis",
           }}
         >
-          —
+          {r.ownerName}
         </span>
       </div>
     </div>

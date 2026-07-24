@@ -8,6 +8,7 @@ const h = vi.hoisted(() => ({
   revalidateTag: vi.fn(),
   riskFindMany: vi.fn(),
   riskCreate: vi.fn(),
+  userFindMany: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -23,6 +24,9 @@ vi.mock("@repo/database", () => ({
     risk: {
       findMany: h.riskFindMany,
       create: h.riskCreate,
+    },
+    user: {
+      findMany: h.userFindMany,
     },
   },
 }));
@@ -49,8 +53,10 @@ describe("listRisks", () => {
         probability: "high",
         impact: "high",
         category: "TECHNICAL",
+        ownerUserId: null,
       },
     ]);
+    h.userFindMany.mockResolvedValue([]);
 
     const r = await listRisks();
     expect(r.ok).toBe(true);
@@ -61,6 +67,53 @@ describe("listRisks", () => {
     );
     if (r.ok) {
       expect(r.data[0].title).toBe("Latência antifraude");
+    }
+  });
+
+  it("resolves the owner's display name from ownerUserId", async () => {
+    h.riskFindMany.mockResolvedValue([
+      {
+        id: "r1",
+        title: "Latência antifraude",
+        roamStatus: "OWNED",
+        severity: 4,
+        probability: "high",
+        impact: "high",
+        category: "TECHNICAL",
+        ownerUserId: "u1",
+      },
+    ]);
+    h.userFindMany.mockResolvedValue([{ id: "u1", name: "Marina Alves" }]);
+
+    const r = await listRisks();
+    expect(r.ok).toBe(true);
+    expect(database.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { id: { in: ["u1"] } } })
+    );
+    if (r.ok) {
+      expect(r.data[0].ownerName).toBe("Marina Alves");
+    }
+  });
+
+  it("degrades to em dash when ownerUserId is unset", async () => {
+    h.riskFindMany.mockResolvedValue([
+      {
+        id: "r2",
+        title: "Sem dono",
+        roamStatus: "UNCLASSIFIED",
+        severity: 2,
+        probability: "low",
+        impact: "low",
+        category: "TECHNICAL",
+        ownerUserId: null,
+      },
+    ]);
+    h.userFindMany.mockResolvedValue([]);
+
+    const r = await listRisks();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].ownerName).toBe("—");
     }
   });
 });
