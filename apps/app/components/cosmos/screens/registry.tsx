@@ -8,6 +8,7 @@ import DashboardScreen from "./dashboard";
 import DecisionsScreen from "./decisions";
 import DependenciesScreen from "./dependencies";
 import EpicDetailScreen from "./epic-detail";
+import ExecutiveScreen from "./executive";
 import FeatureDetailScreen from "./feature-detail";
 import FlowScreen from "./flow";
 import GateScreen from "./gate";
@@ -41,6 +42,7 @@ import WsjfScreen from "./wsjf";
 export type ScreenProps = { param?: string };
 
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
+  executive: ExecutiveScreen,
   dashboard: DashboardScreen,
   copilot: CopilotScreen,
   decisions: DecisionsScreen,
