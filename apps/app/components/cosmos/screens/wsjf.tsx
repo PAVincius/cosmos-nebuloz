@@ -1,7 +1,7 @@
 // wsjf.tsx — WSJF Rankings (portfolio prioritization table), ported from the
-// cosmos handoff. Ranked backlog with rank-movement deltas, glossary terms,
-// and AI rebalance / scenario-simulator modals (light versions). Also loads
-// tenant WsjfSettings (Task 16) so WsjfSettingsModal opens pre-filled.
+// cosmos handoff. Ranked backlog with glossary terms, and AI rebalance /
+// scenario-simulator modals (light versions). Also loads tenant WsjfSettings
+// (Task 16) so WsjfSettingsModal opens pre-filled.
 import { getWsjfSettings, listWsjfItems } from "@/app/(cosmos)/actions/wsjf";
 import { WsjfInner } from "./wsjf-client";
 

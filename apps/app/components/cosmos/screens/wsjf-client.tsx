@@ -31,7 +31,7 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-const WCOLS = "44px minmax(180px,1fr) 48px 104px 56px 40px";
+const WCOLS = "44px minmax(180px,1fr) 48px 104px 40px";
 
 function HeadCell({
   children,
@@ -78,7 +78,6 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
   const modal = useModal();
   const art = item.art ? ARTS[item.art] : undefined;
   const tone = item.wsjf >= 18 ? "green" : item.wsjf >= 14 ? "accent" : "amber";
-  const moved = item.prev - item.rank; // positive = subiu
 
   return (
     <div
@@ -107,24 +106,6 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
         >
           {item.rank}
         </span>
-        {moved !== 0 && (
-          <span
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              fontSize: 10,
-              fontWeight: 800,
-              color: moved > 0 ? "var(--green-text)" : "var(--red-text)",
-            }}
-          >
-            <Icon
-              name={moved > 0 ? "trendingUp" : "trendingDown"}
-              size={11}
-              strokeWidth={2.5}
-            />
-            {Math.abs(moved)}
-          </span>
-        )}
       </div>
 
       {/* item */}
@@ -197,13 +178,6 @@ function WsjfRow({ item }: { item: WsjfRankItem }) {
             value={Math.min(100, (item.wsjf / 25) * 100)}
           />
         </div>
-      </div>
-
-      {/* AI delta suggestion */}
-      <div style={{ textAlign: "center" }}>
-        <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
-          {item.ai}
-        </span>
       </div>
 
       {/* scenario simulator — Feature only: Epic has no bv/tc/rr/js components */}
@@ -850,7 +824,6 @@ function WsjfBody({
     items.length === 0
       ? "0.0"
       : (items.reduce((s, i) => s + i.wsjf, 0) / items.length).toFixed(1);
-  const movers = items.filter((i) => i.prev !== i.rank).length;
   const top = items[0];
 
   const headStyle: CSSProperties = {
@@ -865,14 +838,7 @@ function WsjfBody({
     <div className="fade-in">
       <PageHeader
         eyebrow="Portfolio · Priorização"
-        meta={
-          <>
-            <Badge tone="accent">{items.length} itens</Badge>
-            <Badge dot tone="green">
-              {movers} recalculados pela IA
-            </Badge>
-          </>
-        }
+        meta={<Badge tone="accent">{items.length} itens</Badge>}
         subtitle={
           <>
             Backlog de portfólio ordenado por{" "}
@@ -925,14 +891,6 @@ function WsjfBody({
           tone="green"
           value={top ? top.wsjf.toString() : "—"}
         />
-        <KpiCard
-          delta="ORBIT"
-          deltaTone="purple"
-          icon="shuffle"
-          label="Recalculados pela IA"
-          tone="purple"
-          value={String(movers)}
-        />
       </div>
 
       <SectionCard
@@ -959,7 +917,6 @@ function WsjfBody({
           <HeadCell center hint="WSJF">
             WSJF
           </HeadCell>
-          <HeadCell center>Δ IA</HeadCell>
           <HeadCell center> </HeadCell>
         </div>
         <div

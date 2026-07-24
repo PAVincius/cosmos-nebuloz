@@ -88,6 +88,15 @@ describe("listWsjfItems", () => {
       expect(r.data[1].rank).toBe(2);
     }
   });
+
+  it("does not fabricate a previous-rank/AI-suggestion field (no fake Δ IA)", async () => {
+    const r = await listWsjfItems();
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0]).not.toHaveProperty("prev");
+      expect(r.data[0]).not.toHaveProperty("ai");
+    }
+  });
 });
 
 describe("getWsjfSettings", () => {

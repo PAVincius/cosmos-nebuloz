@@ -16,8 +16,6 @@ export type WsjfRankItem = {
   art: string | null;
   wsjf: number;
   size: number;
-  prev: number;
-  ai: string;
 };
 
 export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
@@ -66,11 +64,12 @@ export async function listWsjfItems(): Promise<Result<WsjfRankItem[]>> {
       })),
     ].sort((a, b) => b.wsjf - a.wsjf);
 
+    // No `prev`/`ai` fields here: a previous-rank snapshot needs `order` to
+    // be persisted across recalculations, which is Tier-7 Task 19. Until
+    // that lands, don't fake a rank delta — the WSJF screen has no Δ column.
     return merged.map((item, i) => ({
       ...item,
       rank: i + 1,
-      prev: i + 1,
-      ai: "—",
     }));
   });
 }
