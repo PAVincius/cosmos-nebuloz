@@ -15,7 +15,11 @@ import {
   upsertWsjfSettings,
 } from "@/app/(cosmos)/actions/wsjf";
 import { ARTS } from "@/lib/cosmos-data";
-import { computeWeightedWsjfScore } from "@/lib/wsjf-math";
+import {
+  closestWsjfFibonacciIndex,
+  computeWeightedWsjfScore,
+  WSJF_FIBONACCI_VALUES,
+} from "@/lib/wsjf-math";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
 import {
@@ -245,6 +249,10 @@ function RebalanceModal() {
 // the score client-side via the shared computeWeightedWsjfScore. Nothing is
 // ever written — closing discards every change.
 
+// Index-based stepping over the Modified Fibonacci set — scoreWsjfAction
+// (app/actions/wsjf/score.ts) rejects any bv/tc/rr/js outside
+// {1,2,3,5,8,13,20}, so the slider must only ever be able to land on one of
+// those values, never an arbitrary integer a real re-score could reject.
 function ScenarioComponentSlider({
   label,
   value,
@@ -254,6 +262,7 @@ function ScenarioComponentSlider({
   value: number;
   onChange: (v: number) => void;
 }) {
+  const index = closestWsjfFibonacciIndex(value);
   return (
     <div>
       <div
@@ -271,12 +280,14 @@ function ScenarioComponentSlider({
         </span>
       </div>
       <input
-        max={21}
-        min={1}
-        onChange={(e) => onChange(Number(e.target.value))}
+        max={WSJF_FIBONACCI_VALUES.length - 1}
+        min={0}
+        onChange={(e) =>
+          onChange(WSJF_FIBONACCI_VALUES[Number(e.target.value)])
+        }
         style={{ width: "100%", accentColor: "var(--accent)" }}
         type="range"
-        value={value}
+        value={index}
       />
     </div>
   );

@@ -32,3 +32,27 @@ export function computeWeightedWsjfScore(
     components.rr * weights.weightRr;
   return Math.round((costOfDelay / components.js) * 100) / 100;
 }
+
+// Modified Fibonacci set — the ONLY values scoreWsjfAction
+// (app/actions/wsjf/score.ts) accepts for bv/tc/rr/js. That file has
+// "use server", which permits only async function exports, so this is the
+// shared source of truth both it and any client component (e.g.
+// ScenarioSimulatorModal's sliders) import from, instead of each hardcoding
+// the literal and risking drift.
+export const WSJF_FIBONACCI_VALUES = [1, 2, 3, 5, 8, 13, 20] as const;
+
+// Index of the closest Modified Fibonacci value to an arbitrary number —
+// backs index-based slider stepping so a slider always snaps onto the set
+// even when the starting value (e.g. legacy/seed data) isn't already on it.
+export function closestWsjfFibonacciIndex(value: number): number {
+  let closest = 0;
+  let minDiff = Number.POSITIVE_INFINITY;
+  for (const [index, fib] of WSJF_FIBONACCI_VALUES.entries()) {
+    const diff = Math.abs(fib - value);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = index;
+    }
+  }
+  return closest;
+}

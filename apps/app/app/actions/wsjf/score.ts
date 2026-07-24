@@ -5,9 +5,13 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { WSJF_FIBONACCI_VALUES } from "@/lib/wsjf-math";
 import { type Result, safeAction } from "../_base";
 
-const FIBONACCI = new Set([1, 2, 3, 5, 8, 13, 20]);
+// Shared with the WSJF scenario simulator's sliders (wsjf-client.tsx) via
+// lib/wsjf-math.ts — this file has "use server" and can't export the
+// constant directly, so it imports it instead of hardcoding a second copy.
+const FIBONACCI = new Set<number>(WSJF_FIBONACCI_VALUES);
 const SA_LOCK_ROLES = new Set(["ADMIN", "RTE", "STE"]);
 
 const WsjfScoreSchema = z.object({
