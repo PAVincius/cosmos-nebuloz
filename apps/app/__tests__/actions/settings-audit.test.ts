@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { tenantCtx } from "../helpers/action-mocks";
+import { MockAuthError, tenantCtx } from "../helpers/action-mocks";
 
 const authMocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn(),
+  requireRole: vi.fn(),
   headers: vi.fn(),
 }));
 vi.mock("@repo/auth/server", () => ({
   requireTenantSession: authMocks.requireTenantSession,
+  requireRole: authMocks.requireRole,
 }));
 vi.mock("next/headers", () => ({ headers: authMocks.headers }));
 
@@ -38,6 +40,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   authMocks.headers.mockResolvedValue(new Headers());
   authMocks.requireTenantSession.mockResolvedValue(tenantCtx);
+  authMocks.requireRole.mockReturnValue(undefined);
   matureMocks.getTenantMembersForSearch.mockResolvedValue([
     {
       userId: "u1",
@@ -147,5 +150,16 @@ describe("getAuditTab", () => {
     const r = await getAuditTab(1);
 
     expect(r.ok).toBe(false);
+  });
+
+  it("rejects non-ADMIN callers before ever reading the audit trail (admin-only tab)", async () => {
+    authMocks.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "Role MEMBER not permitted");
+    });
+
+    const r = await getAuditTab(1);
+
+    expect(r.ok).toBe(false);
+    expect(matureMocks.listAuditLogs).not.toHaveBeenCalled();
   });
 });

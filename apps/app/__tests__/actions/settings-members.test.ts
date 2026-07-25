@@ -44,6 +44,7 @@ describe("getMembersTab", () => {
   it("returns the real member list plus the caller's role/id for UI gating", async () => {
     matureMocks.getTenantMembersForSearch.mockResolvedValue([
       {
+        id: "mem-1",
         userId: "u1",
         name: "Marina Alves",
         email: "marina@cosmos.local",
@@ -60,6 +61,28 @@ describe("getMembersTab", () => {
       expect(r.data.members[0].name).toBe("Marina Alves");
       expect(r.data.currentUserRole).toBe(tenantCtx.role);
       expect(r.data.currentUserId).toBe(tenantCtx.userId);
+    }
+  });
+
+  it("passes through the real TenantMember.id (membership id) — the UI must send this, not userId, to updateMemberRoleAction/removeMemberAction", async () => {
+    matureMocks.getTenantMembersForSearch.mockResolvedValue([
+      {
+        id: "mem-1",
+        userId: "u1",
+        name: "Marina Alves",
+        email: "marina@cosmos.local",
+        image: null,
+        role: "ADMIN",
+        source: "current_tenant",
+      },
+    ]);
+
+    const r = await getMembersTab();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.members[0].id).toBe("mem-1");
+      expect(r.data.members[0].id).not.toBe(r.data.members[0].userId);
     }
   });
 });

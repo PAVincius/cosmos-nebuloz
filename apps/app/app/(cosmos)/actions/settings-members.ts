@@ -38,6 +38,7 @@ const MemberRoleSchema = z.enum([
 
 export type MembersTabView = {
   members: {
+    id: string;
     userId: string;
     name: string;
     email: string;

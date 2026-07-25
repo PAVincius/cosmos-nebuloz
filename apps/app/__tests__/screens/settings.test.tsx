@@ -126,14 +126,17 @@ const AUDIT_DATA = {
 };
 
 describe("SettingsScreen", () => {
-  it("renders the tab shell with all 7 tabs and the Workspace tab active by default", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+  it("renders the tab shell with all 7 tabs for an ADMIN, Workspace tab active by default", async () => {
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
-      data: WORKSPACE_DATA,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" },
     });
     render(<SettingsScreen />);
 
     expect(screen.getByText("Settings")).toBeTruthy();
+    // ADMIN renders the tenant name inside an editable input (see the
+    // "shows editable fields..." test below) — wait on its value, not text.
+    expect(await screen.findByDisplayValue("Acme")).toBeTruthy();
     for (const label of [
       "Workspace",
       "Membros",
@@ -145,11 +148,31 @@ describe("SettingsScreen", () => {
     ]) {
       expect(screen.getByRole("button", { name: label })).toBeTruthy();
     }
+  });
+
+  it("hides the Auditoria and Segurança tab buttons for a non-ADMIN — both actions are now admin-gated server-side too", async () => {
+    getWorkspaceTabMock.mockResolvedValue({
+      ok: true,
+      data: WORKSPACE_DATA, // currentUserRole: "MEMBER"
+    });
+    render(<SettingsScreen />);
+
     expect(await screen.findByText("Acme")).toBeTruthy();
+    for (const label of [
+      "Workspace",
+      "Membros",
+      "Notificações",
+      "SAFe",
+      "Faturamento",
+    ]) {
+      expect(screen.getByRole("button", { name: label })).toBeTruthy();
+    }
+    expect(screen.queryByRole("button", { name: "Segurança" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Auditoria" })).toBeNull();
   });
 
   it("renders Workspace fields read-only for a non-ADMIN role", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: WORKSPACE_DATA,
     });
@@ -161,7 +184,7 @@ describe("SettingsScreen", () => {
   });
 
   it("shows editable fields and a save control for an ADMIN", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" },
     });
@@ -172,7 +195,7 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the SAFe tab and renders real ART cadence read-only for a non-privileged role", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: WORKSPACE_DATA,
     });
@@ -188,7 +211,7 @@ describe("SettingsScreen", () => {
   });
 
   it("shows the error state when the workspace action fails", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({ ok: false, error: "boom" });
+    getWorkspaceTabMock.mockResolvedValue({ ok: false, error: "boom" });
     render(<SettingsScreen />);
 
     expect(
@@ -197,7 +220,7 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the Membros tab and shows the real member list without invite/remove controls for a non-ADMIN", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: WORKSPACE_DATA,
     });
@@ -214,7 +237,7 @@ describe("SettingsScreen", () => {
   });
 
   it("shows invite/remove controls on the Membros tab for an ADMIN", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: WORKSPACE_DATA,
     });
@@ -233,14 +256,15 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the Auditoria tab and renders real, tenant-scoped log entries", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
-      data: WORKSPACE_DATA,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" }, // Auditoria is admin-only
     });
     getAuditTabMock.mockResolvedValueOnce({ ok: true, data: AUDIT_DATA });
     render(<SettingsScreen />);
 
-    await screen.findByText("Acme");
+    // ADMIN renders the tenant name inside an editable input, not as text.
+    await screen.findByDisplayValue("Acme");
     fireEvent.click(screen.getByRole("button", { name: "Auditoria" }));
 
     expect(await screen.findByText("Marina Alves")).toBeTruthy();
@@ -250,9 +274,9 @@ describe("SettingsScreen", () => {
   });
 
   it("shows an honest empty state on the Auditoria tab with zero entries", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
-      data: WORKSPACE_DATA,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" }, // Auditoria is admin-only
     });
     getAuditTabMock.mockResolvedValueOnce({
       ok: true,
@@ -260,7 +284,8 @@ describe("SettingsScreen", () => {
     });
     render(<SettingsScreen />);
 
-    await screen.findByText("Acme");
+    // ADMIN renders the tenant name inside an editable input, not as text.
+    await screen.findByDisplayValue("Acme");
     fireEvent.click(screen.getByRole("button", { name: "Auditoria" }));
 
     expect(
@@ -270,9 +295,13 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the Segurança tab and shows SSO status without any cert/metadata content, read-only for non-ADMIN", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    // Segurança is admin-gated at the shell too — reaching the tab requires
+    // an ADMIN session. This test then exercises the tab's own independent
+    // read-only rendering (defense in depth) for a currentUserRole that
+    // getSecurityTab itself reports as non-ADMIN.
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
-      data: WORKSPACE_DATA,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" },
     });
     getSecurityTabMock.mockResolvedValueOnce({
       ok: true,
@@ -289,7 +318,8 @@ describe("SettingsScreen", () => {
     });
     render(<SettingsScreen />);
 
-    await screen.findByText("Acme");
+    // ADMIN renders the tenant name inside an editable input, not as text.
+    await screen.findByDisplayValue("Acme");
     fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
 
     expect(await screen.findByText("SSO ativo")).toBeTruthy();
@@ -303,9 +333,9 @@ describe("SettingsScreen", () => {
   });
 
   it("shows SSO and security-policy edit controls on the Segurança tab for an ADMIN", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
-      data: WORKSPACE_DATA,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" },
     });
     getSecurityTabMock.mockResolvedValueOnce({
       ok: true,
@@ -318,7 +348,8 @@ describe("SettingsScreen", () => {
     });
     render(<SettingsScreen />);
 
-    await screen.findByText("Acme");
+    // ADMIN renders the tenant name inside an editable input, not as text.
+    await screen.findByDisplayValue("Acme");
     fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
 
     await screen.findByText("SSO desativado");
@@ -326,7 +357,7 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the Notificações tab and shows real, self-scoped preferences", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
+    getWorkspaceTabMock.mockResolvedValue({
       ok: true,
       data: WORKSPACE_DATA,
     });
@@ -351,9 +382,9 @@ describe("SettingsScreen", () => {
   });
 
   it("switches to the Faturamento tab and shows only the real plan tier plus an honest 'Em breve' — never invoices/seats/card", async () => {
-    getWorkspaceTabMock
-      .mockResolvedValueOnce({ ok: true, data: WORKSPACE_DATA }) // Workspace tab (default)
-      .mockResolvedValueOnce({ ok: true, data: WORKSPACE_DATA }); // Billing tab's own fetch
+    // Called by the shell (tab gating), the default Workspace tab, and
+    // Billing's own fetch — same data serves all three call sites.
+    getWorkspaceTabMock.mockResolvedValue({ ok: true, data: WORKSPACE_DATA });
     render(<SettingsScreen />);
 
     await screen.findByText("Acme");

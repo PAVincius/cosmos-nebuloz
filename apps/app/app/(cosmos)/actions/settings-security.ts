@@ -42,6 +42,7 @@ export type SecurityTabView = {
 export async function getSecurityTab(): Promise<Result<SecurityTabView>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN"], ctx);
 
     const [sso, policy] = await Promise.all([
       // SECURITY: select only enabled/updatedAt — never idp*/certificate fields.

@@ -8,7 +8,7 @@
 // this also fetches the real tenant member list and joins by userId to
 // show a name instead of a raw id — still real data, no fabrication; a
 // userId with no matching member (removed since) falls back to the raw id.
-import { requireTenantSession } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
 import { listAuditLogs } from "../../actions/audit";
@@ -34,7 +34,8 @@ export type AuditTabView = {
 
 export async function getAuditTab(page = 1): Promise<Result<AuditTabView>> {
   return safeAction(async () => {
-    await requireTenantSession(await headers());
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN"], ctx);
 
     const [logsResult, members] = await Promise.all([
       listAuditLogs({ page, limit: PAGE_SIZE }),

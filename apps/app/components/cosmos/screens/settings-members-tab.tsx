@@ -133,7 +133,7 @@ function RemoveMemberModal({
   const remove = async () => {
     setRemoving(true);
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
-    const res = await useActionToast(() => removeMemberAction(member.userId), {
+    const res = await useActionToast(() => removeMemberAction(member.id), {
       loading: "Removendo membro...",
       success: "Membro removido.",
       error: (err: string) =>
@@ -200,7 +200,7 @@ function MemberRow({
     setChangingRole(true);
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(
-      () => updateMemberRoleAction(member.userId, nextRole),
+      () => updateMemberRoleAction(member.id, nextRole),
       {
         loading: "Atualizando papel...",
         success: "Papel atualizado.",

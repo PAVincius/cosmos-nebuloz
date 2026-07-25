@@ -12,6 +12,7 @@ import { headers } from "next/headers";
 // ---------------------------------------------------------------------------
 
 type TenantMemberResult = {
+  id: string;
   userId: string;
   name: string;
   email: string;
@@ -53,6 +54,7 @@ export async function getTenantMembersForSearch(): Promise<
   });
 
   return memberships.map((m) => ({
+    id: m.id,
     userId: m.user.id,
     name: m.user.name ?? m.user.email,
     email: m.user.email,
@@ -81,6 +83,7 @@ export async function searchMembersWithCrossTenant(
   });
 
   const allCurrentMembers: TenantMemberResult[] = memberships.map((m) => ({
+    id: m.id,
     userId: m.user.id,
     name: m.user.name ?? m.user.email,
     email: m.user.email,

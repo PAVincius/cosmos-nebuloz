@@ -48,6 +48,22 @@ beforeEach(() => {
 });
 
 describe("getSecurityTab", () => {
+  beforeEach(() => {
+    authMocks.requireRole.mockReturnValue(undefined);
+  });
+
+  it("rejects non-ADMIN callers before ever reading the SSO/security rows (admin-only tab)", async () => {
+    authMocks.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "Role MEMBER not permitted");
+    });
+
+    const r = await getSecurityTab();
+
+    expect(r.ok).toBe(false);
+    expect(dbMocks.ssoFindUnique).not.toHaveBeenCalled();
+    expect(dbMocks.policyFindUnique).not.toHaveBeenCalled();
+  });
+
   it("never selects idpMetadataUrl/idpEntityId/idpCertificate — status fields only", async () => {
     dbMocks.ssoFindUnique.mockResolvedValue({
       enabled: true,
