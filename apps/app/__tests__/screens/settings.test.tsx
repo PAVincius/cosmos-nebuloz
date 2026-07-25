@@ -1,7 +1,7 @@
 // settings.test.tsx — tab-shell coverage: all 7 tabs render, switching tabs
-// works, the Workspace and SAFe tabs show real data and gate their edit
-// controls by the role the action layer returned (not a client-only guess),
-// and not-yet-wired tabs render an honest placeholder rather than fake data.
+// works, and each tab shows real data and gates its edit controls by the
+// role the action layer returned (not a client-only guess). Billing never
+// renders invoices/seats/card — only the real plan tier plus "Em breve".
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
@@ -38,6 +38,24 @@ vi.mock("@/app/(cosmos)/actions/settings-members", () => ({
 const getAuditTabMock = vi.fn();
 vi.mock("@/app/(cosmos)/actions/settings-audit", () => ({
   getAuditTab: (...args: unknown[]) => getAuditTabMock(...args),
+}));
+
+const getSecurityTabMock = vi.fn();
+const toggleSsoEnabledMock = vi.fn();
+const saveSecurityPolicyActionMock = vi.fn();
+vi.mock("@/app/(cosmos)/actions/settings-security", () => ({
+  getSecurityTab: (...args: unknown[]) => getSecurityTabMock(...args),
+  toggleSsoEnabled: (...args: unknown[]) => toggleSsoEnabledMock(...args),
+  saveSecurityPolicyAction: (...args: unknown[]) =>
+    saveSecurityPolicyActionMock(...args),
+}));
+
+const getNotificationsTabMock = vi.fn();
+const updateNotificationsActionMock = vi.fn();
+vi.mock("@/app/(cosmos)/actions/settings-notifications", () => ({
+  getNotificationsTab: (...args: unknown[]) => getNotificationsTabMock(...args),
+  updateNotificationsAction: (...args: unknown[]) =>
+    updateNotificationsActionMock(...args),
 }));
 
 import SettingsScreen from "../../components/cosmos/screens/settings";
@@ -169,20 +187,6 @@ describe("SettingsScreen", () => {
     expect(screen.queryByRole("spinbutton")).toBeNull();
   });
 
-  it("shows honest placeholders (not fake data) for tabs not yet wired", async () => {
-    getWorkspaceTabMock.mockResolvedValueOnce({
-      ok: true,
-      data: WORKSPACE_DATA,
-    });
-    render(<SettingsScreen />);
-
-    await screen.findByText("Acme");
-    fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
-    expect(
-      await screen.findByText(/ainda não wireada nesta versão/)
-    ).toBeTruthy();
-  });
-
   it("shows the error state when the workspace action fails", async () => {
     getWorkspaceTabMock.mockResolvedValueOnce({ ok: false, error: "boom" });
     render(<SettingsScreen />);
@@ -263,5 +267,104 @@ describe("SettingsScreen", () => {
       await screen.findByText("Nenhum evento de auditoria registrado ainda.")
     ).toBeTruthy();
     expect(screen.queryByText("Exportar CSV")).toBeNull();
+  });
+
+  it("switches to the Segurança tab and shows SSO status without any cert/metadata content, read-only for non-ADMIN", async () => {
+    getWorkspaceTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: WORKSPACE_DATA,
+    });
+    getSecurityTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: {
+        ssoEnabled: true,
+        ssoUpdatedAt: "2026-01-01T00:00:00.000Z",
+        securityPolicy: {
+          require2FA: true,
+          gracePeriodDays: 14,
+          allowedIpRanges: ["10.0.0.0/8"],
+        },
+        currentUserRole: "MEMBER",
+      },
+    });
+    render(<SettingsScreen />);
+
+    await screen.findByText("Acme");
+    fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
+
+    expect(await screen.findByText("SSO ativo")).toBeTruthy();
+    // No secret-shaped content ever rendered on this tab.
+    expect(
+      screen.queryByText(/certificate|metadataUrl|idpEntityId/i)
+    ).toBeNull();
+    // Non-ADMIN: no switch role/checkbox controls for SSO or the policy.
+    expect(screen.queryAllByRole("switch")).toHaveLength(0);
+    expect(screen.getByText("2FA obrigatório")).toBeTruthy();
+  });
+
+  it("shows SSO and security-policy edit controls on the Segurança tab for an ADMIN", async () => {
+    getWorkspaceTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: WORKSPACE_DATA,
+    });
+    getSecurityTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: {
+        ssoEnabled: false,
+        ssoUpdatedAt: null,
+        securityPolicy: null,
+        currentUserRole: "ADMIN",
+      },
+    });
+    render(<SettingsScreen />);
+
+    await screen.findByText("Acme");
+    fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
+
+    await screen.findByText("SSO desativado");
+    expect(screen.getAllByRole("switch").length).toBeGreaterThan(0);
+  });
+
+  it("switches to the Notificações tab and shows real, self-scoped preferences", async () => {
+    getWorkspaceTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: WORKSPACE_DATA,
+    });
+    getNotificationsTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: {
+        pi_planning: true,
+        risk_alerts: false,
+        feature_updates: true,
+        team_changes: false,
+        weekly_digest: true,
+      },
+    });
+    render(<SettingsScreen />);
+
+    await screen.findByText("Acme");
+    fireEvent.click(screen.getByRole("button", { name: "Notificações" }));
+
+    expect(await screen.findByText("Eventos de PI Planning")).toBeTruthy();
+    expect(screen.getByText("Alertas de risco")).toBeTruthy();
+    expect(screen.getAllByRole("switch")).toHaveLength(5);
+  });
+
+  it("switches to the Faturamento tab and shows only the real plan tier plus an honest 'Em breve' — never invoices/seats/card", async () => {
+    getWorkspaceTabMock
+      .mockResolvedValueOnce({ ok: true, data: WORKSPACE_DATA }) // Workspace tab (default)
+      .mockResolvedValueOnce({ ok: true, data: WORKSPACE_DATA }); // Billing tab's own fetch
+    render(<SettingsScreen />);
+
+    await screen.findByText("Acme");
+    fireEvent.click(screen.getByRole("button", { name: "Faturamento" }));
+
+    expect(await screen.findByText("ORBIT")).toBeTruthy();
+    expect(screen.getByText("Em breve")).toBeTruthy();
+    // No fabricated monetary amount, invoice, or card content — only the
+    // real plan tier and the honest disclaimer prose.
+    expect(
+      screen.queryByText(/R\$|cartão de crédito|\d+ assentos/i)
+    ).toBeNull();
   });
 });

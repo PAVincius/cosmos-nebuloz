@@ -19,9 +19,11 @@ import { useState } from "react";
 import { Badge, PageHeader, Tabs } from "../kit";
 import { ModalProvider } from "../modal";
 import SettingsAuditTab from "./settings-audit-tab";
+import SettingsBillingTab from "./settings-billing-tab";
 import SettingsMembersTab from "./settings-members-tab";
+import SettingsNotificationsTab from "./settings-notifications-tab";
 import SettingsSafeTab from "./settings-safe-tab";
-import { PlaceholderTab } from "./settings-shared";
+import SettingsSecurityTab from "./settings-security-tab";
 import SettingsWorkspaceTab from "./settings-workspace-tab";
 
 const TABS = [
@@ -49,29 +51,11 @@ function SettingsBody() {
 
       {active === "workspace" && <SettingsWorkspaceTab />}
       {active === "members" && <SettingsMembersTab />}
-      {active === "security" && (
-        <PlaceholderTab
-          icon="shield"
-          note="Aba de segurança/SSO ainda não wireada nesta versão."
-          title="Segurança"
-        />
-      )}
+      {active === "security" && <SettingsSecurityTab />}
       {active === "audit" && <SettingsAuditTab />}
-      {active === "notifications" && (
-        <PlaceholderTab
-          icon="bell"
-          note="Aba de notificações ainda não wireada nesta versão."
-          title="Notificações"
-        />
-      )}
+      {active === "notifications" && <SettingsNotificationsTab />}
       {active === "safe" && <SettingsSafeTab />}
-      {active === "billing" && (
-        <PlaceholderTab
-          icon="wallet"
-          note="Aba de faturamento ainda não wireada nesta versão."
-          title="Faturamento"
-        />
-      )}
+      {active === "billing" && <SettingsBillingTab />}
     </div>
   );
 }
