@@ -18,6 +18,8 @@
 import { useState } from "react";
 import { Badge, PageHeader, Tabs } from "../kit";
 import { ModalProvider } from "../modal";
+import SettingsAuditTab from "./settings-audit-tab";
+import SettingsMembersTab from "./settings-members-tab";
 import SettingsSafeTab from "./settings-safe-tab";
 import { PlaceholderTab } from "./settings-shared";
 import SettingsWorkspaceTab from "./settings-workspace-tab";
@@ -46,13 +48,7 @@ function SettingsBody() {
       <Tabs active={active} onChange={setActive} tabs={TABS} />
 
       {active === "workspace" && <SettingsWorkspaceTab />}
-      {active === "members" && (
-        <PlaceholderTab
-          icon="users"
-          note="Aba de membros e RBAC ainda não wireada nesta versão."
-          title="Membros"
-        />
-      )}
+      {active === "members" && <SettingsMembersTab />}
       {active === "security" && (
         <PlaceholderTab
           icon="shield"
@@ -60,13 +56,7 @@ function SettingsBody() {
           title="Segurança"
         />
       )}
-      {active === "audit" && (
-        <PlaceholderTab
-          icon="book"
-          note="Aba de log de auditoria ainda não wireada nesta versão."
-          title="Auditoria"
-        />
-      )}
+      {active === "audit" && <SettingsAuditTab />}
       {active === "notifications" && (
         <PlaceholderTab
           icon="bell"
