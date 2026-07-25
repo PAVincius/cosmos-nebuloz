@@ -21,8 +21,8 @@ export default async function OnboardingPage({ searchParams }: Props) {
   return (
     <OnboardingWizard
       fromInvite={fromInvite}
-      workspaceName={workspaceName}
       userName={session.user.name ?? ""}
+      workspaceName={workspaceName}
     />
   );
 }

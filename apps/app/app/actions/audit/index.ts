@@ -2,20 +2,20 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import {
-  type Result,
-  type Page,
-  safeAction,
   buildPage,
+  type Page,
   paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
   AuditFiltersSchema,
-  WriteAuditLogSchema,
   type AuditLog,
   type WriteAuditLogInput,
+  WriteAuditLogSchema,
 } from "./schema";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -42,6 +42,29 @@ export async function listAuditLogs(
           }
         : {}),
     };
+
+    if (filters.cursor) {
+      const items = await database.auditLog.findMany({
+        where,
+        cursor: { id: filters.cursor },
+        skip: 1,
+        take,
+        orderBy: { createdAt: "desc" },
+      });
+      const nextCursor = items.length === take ? items.at(-1)?.id : undefined;
+      return {
+        items: items as AuditLog[],
+        meta: {
+          total: -1,
+          page: 1,
+          limit: filters.limit,
+          pageCount: -1,
+          hasNext: items.length === take,
+          hasPrev: true,
+          nextCursor,
+        },
+      };
+    }
 
     const [items, total] = await Promise.all([
       database.auditLog.findMany({
@@ -79,9 +102,7 @@ export async function getAuditLogsByEntity(
 
 // ─── Mutations ────────────────────────────────────────────────────────────────
 
-export async function writeAuditLog(
-  raw: unknown
-): Promise<Result<AuditLog>> {
+export async function writeAuditLog(raw: unknown): Promise<Result<AuditLog>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const data = WriteAuditLogSchema.parse(raw);
@@ -93,7 +114,7 @@ export async function writeAuditLog(
         action: data.action,
         entityType: data.entityType,
         entityId: data.entityId,
-        diff: data.diff as Record<string, string> ?? undefined,
+        diff: (data.diff as Record<string, string>) ?? undefined,
       },
     });
 
@@ -120,7 +141,7 @@ export async function logAudit(
         action: payload.action,
         entityType: payload.entityType,
         entityId: payload.entityId,
-        diff: payload.diff as Record<string, string> ?? undefined,
+        diff: (payload.diff as Record<string, string>) ?? undefined,
       },
     })
     .catch(() => null);

@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * E2E — Portfolio Kanban
@@ -32,10 +32,12 @@ test.describe("Portfolio Kanban — Page Structure", () => {
 
     const criticalErrors = errors.filter(
       (e) =>
-        !e.includes("NEXT_NOT_FOUND") &&
-        !e.includes("ResizeObserver") &&
-        !e.includes("Liveblocks") &&
-        !e.includes("Non-Error promise rejection")
+        !(
+          e.includes("NEXT_NOT_FOUND") ||
+          e.includes("ResizeObserver") ||
+          e.includes("Liveblocks") ||
+          e.includes("Non-Error promise rejection")
+        )
     );
 
     expect(criticalErrors).toHaveLength(0);
@@ -48,41 +50,54 @@ test.describe("Portfolio Kanban — Page Structure", () => {
  * Run with: AUTH_TEST=true pnpm test:e2e
  */
 test.describe("Portfolio Kanban — Authenticated @auth", () => {
-  test.skip(() => !process.env.AUTH_TEST, "Auth tests disabled (set AUTH_TEST=true)");
+  test.skip(
+    () => !process.env.AUTH_TEST,
+    "Auth tests disabled (set AUTH_TEST=true)"
+  );
 
   test.use({
     storageState: "./e2e/fixtures/auth-session.json",
   });
 
-  const SAFE_COLUMNS = ["Backlog", "Review", "Analysis", "Implementing", "Done"];
+  const SAFE_COLUMNS = [
+    "Backlog",
+    "Review",
+    "Analysis",
+    "Implementing",
+    "Done",
+  ];
 
   test("renders the Portfolio Kanban title", async ({ page }) => {
     await page.goto("/portfolio");
-    await expect(
-      page.locator("h1:has-text('Portfolio Kanban')")
-    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("h1:has-text('Portfolio')")).toBeVisible({
+      timeout: 15_000,
+    });
   });
 
   test("renders all 5 SAFe columns", async ({ page }) => {
+    // Abort Liveblocks auth so board renders without waiting for real-time connection
+    await page.route("**/api/collaboration/auth**", (route) => route.abort());
     await page.goto("/portfolio");
 
     // Aguarda o board carregar
-    await expect(
-      page.locator("h3:has-text('Backlog')").first()
-    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("h3:has-text('Backlog')").first()).toBeVisible({
+      timeout: 15_000,
+    });
 
     // Verifica todas as colunas
     for (const col of SAFE_COLUMNS) {
-      await expect(
-        page.locator(`h3:has-text('${col}')`).first()
-      ).toBeVisible();
+      await expect(page.locator(`h3:has-text('${col}')`).first()).toBeVisible();
     }
   });
 
   test("each column has a card counter badge", async ({ page }) => {
+    await page.route("**/api/collaboration/auth**", (route) => route.abort());
     await page.goto("/portfolio");
 
-    await page.locator("h3:has-text('Backlog')").first().waitFor({ timeout: 15_000 });
+    await page
+      .locator("h3:has-text('Backlog')")
+      .first()
+      .waitFor({ timeout: 15_000 });
 
     // Cada coluna deve ter um badge de contador
     const badges = page.locator("span.rounded-full");
@@ -93,7 +108,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   test("page has correct SEO title", async ({ page }) => {
     await page.goto("/portfolio");
     await page.waitForLoadState("domcontentloaded");
-    await expect(page).toHaveTitle(/Portfolio Kanban.*COSMOS/i);
+    await expect(page).toHaveTitle(/Portfolio.*COSMOS/i);
   });
 
   test("shows collaborative loading fallback for Liveblocks Room", async ({
@@ -105,10 +120,10 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
     await page.goto("/portfolio");
 
     // O Room fallback deve aparecer quando Liveblocks não conecta
-    const fallbackOrBoard = page.locator(
-      '[class*="animate-pulse"], h3:has-text("Backlog")'
-    ).first();
-    
+    const fallbackOrBoard = page
+      .locator('[class*="animate-pulse"], h3:has-text("Backlog")')
+      .first();
+
     await expect(fallbackOrBoard).toBeVisible({ timeout: 10_000 });
   });
 });

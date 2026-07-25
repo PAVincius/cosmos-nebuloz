@@ -3,15 +3,62 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { z } from "zod";
+import { err, ok, type Result } from "../_base";
 
-export type {
+import type {
   ProgramBoardCell,
   ProgramBoardData,
   ProgramBoardDependency,
-  ProgramBoardFeature,
 } from "./schema";
 
-import type { ProgramBoardCell, ProgramBoardDependency } from "./schema";
+const SaveBoardLayoutSchema = z.object({
+  piPlanId: z.string().min(1),
+  placements: z.array(
+    z.object({
+      featureId: z.string(),
+      teamId: z.string(),
+      sprintIndex: z.number().int().min(0),
+    })
+  ),
+});
+
+export async function saveProgramBoardLayout(
+  raw: unknown
+): Promise<Result<{ saved: number }>> {
+  try {
+    const ctx = await requireTenantSession(await headers());
+    const { piPlanId, placements } = SaveBoardLayoutSchema.parse(raw);
+
+    await Promise.all(
+      placements.map((p) =>
+        database.pIPlanFeatureAssignment.upsert({
+          where: { piPlanId_featureId: { piPlanId, featureId: p.featureId } },
+          create: {
+            tenantId: ctx.tenantId,
+            piPlanId,
+            featureId: p.featureId,
+            teamId: p.teamId,
+            sprintId: String(p.sprintIndex),
+            rank: 0,
+            updatedAt: new Date(),
+            updatedBy: ctx.userId,
+          },
+          update: {
+            teamId: p.teamId,
+            sprintId: String(p.sprintIndex),
+            updatedAt: new Date(),
+            updatedBy: ctx.userId,
+          },
+        })
+      )
+    );
+
+    return ok({ saved: placements.length });
+  } catch (e) {
+    return err(e instanceof Error ? e.message : "Erro ao salvar layout");
+  }
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -209,6 +256,48 @@ export async function getProgramBoardData(
   const userToTeamIndex = buildUserToTeamIndex(features, teamList);
   const matrix = initMatrix(teamList, sprints);
   placeFeatures(features, { matrix, userToTeamIndex, teamList, sprints });
+
+  // Overwrite round-robin positions with any saved board layout
+  const savedAssignments = await database.pIPlanFeatureAssignment.findMany({
+    where: { piPlanId, tenantId: ctx.tenantId },
+    select: { featureId: true, teamId: true, sprintId: true },
+  });
+  if (savedAssignments.length > 0) {
+    const savedMap = new Map(
+      savedAssignments.map((a) => [
+        a.featureId,
+        { teamId: a.teamId, sprintIndex: Number.parseInt(a.sprintId, 10) },
+      ])
+    );
+    // Remove features with saved positions from their round-robin cells
+    for (const cell of matrix) {
+      cell.features = cell.features.filter((f) => !savedMap.has(f.id));
+    }
+    // Place features in their saved positions
+    for (const feature of features) {
+      const saved = savedMap.get(feature.id);
+      if (!saved) {
+        continue;
+      }
+      const cell = matrix.find(
+        (c) => c.teamId === saved.teamId && c.sprintIndex === saved.sprintIndex
+      );
+      if (cell) {
+        cell.features.push({
+          id: feature.id,
+          title: feature.title,
+          statusId: feature.statusId,
+          storyPoints: feature.storyPoints,
+          wsjfScore: feature.wsjfScore,
+          assigneeUserId: feature.assigneeUserId,
+          epicId: feature.epicId,
+          epicTitle: feature.epic?.title ?? null,
+          externalSource: feature.externalSource ?? null,
+          externalUrl: feature.externalUrl ?? null,
+        });
+      }
+    }
+  }
 
   const featurePlacement = new Map<
     string,

@@ -1,0 +1,56 @@
+# Git
+.git
+.gitignore
+
+# Node
+**/node_modules
+**/.pnpm-store
+
+# Next.js build artifacts
+**/.next
+**/out
+
+# Test artifacts
+**/playwright-report
+**/coverage
+**/__tests__
+**/e2e
+
+# Dev files
+**/.env.local
+**/.env.*.local
+
+# IDE/Editor
+.vscode
+.idea
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Turbo
+.turbo
+
+# Docs / Stories
+docs
+apps/storybook
+**/.storybook
+**/storybook-static
+
+# Scripts that aren't needed at runtime
+apps/app/scripts
+apps/app/e2e
+
+# CI/CD (not needed in image)
+.github
+
+# Claude / Superpowers meta
+.claude
+.superpowers
+experiments

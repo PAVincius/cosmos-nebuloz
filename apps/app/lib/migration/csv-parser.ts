@@ -10,7 +10,9 @@ export function parseMigrationCSV(csvContent: string): MigrationItem[] {
     trim: true,
   }) as Record<string, string>[];
 
-  if (records.length === 0) return [];
+  if (records.length === 0) {
+    return [];
+  }
 
   const cols = Object.keys(records[0]);
   for (const req of REQUIRED_COLUMNS) {
@@ -30,7 +32,9 @@ export function parseMigrationCSV(csvContent: string): MigrationItem[] {
       status: r.status?.trim() || undefined,
       team: r.team?.trim() || undefined,
       sprint: r.sprint?.trim() || undefined,
-      storyPoints: r.storyPoints ? parseInt(r.storyPoints, 10) || 0 : undefined,
+      storyPoints: r.storyPoints
+        ? Number.parseInt(r.storyPoints, 10) || 0
+        : undefined,
       parentTitle: r.parentTitle?.trim() || undefined,
     }));
 }

@@ -1,6 +1,6 @@
 import "server-only";
-import { database } from "@repo/database";
 import type { MemberRole } from "@repo/database";
+import { database } from "@repo/database";
 
 /**
  * Returns all userIds with any of the given roles within a tenant.

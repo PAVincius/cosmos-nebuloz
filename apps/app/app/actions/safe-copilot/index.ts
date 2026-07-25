@@ -17,7 +17,7 @@ const SuggestionTypeSchema = z.enum([
 type SuggestionType = z.infer<typeof SuggestionTypeSchema>;
 
 // Items come from LLM output — require title, passthrough extra fields.
-export const SuggestionPayloadSchema = z.object({
+const SuggestionPayloadSchema = z.object({
   items: z
     .array(z.object({ title: z.string().min(1).max(500) }).passthrough())
     .max(50),

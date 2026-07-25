@@ -1,30 +1,27 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { completeFlow, saveStep } from "@/app/actions/onboarding/index";
+import { approveMigrationMapping } from "@/app/actions/onboarding/migration";
+import type { DryRunResult, ImportReport } from "@/lib/migration/types";
 import {
   OnboardingWizardShell,
   type WizardStepMeta,
 } from "../../company/components/onboarding-wizard-shell";
 import {
-  StepSourceSelect,
-  type MigrationSource,
-  type SourceSelectFormData,
-} from "./steps/step-source-select";
-import {
-  StepConnectIntegration,
   type ConnectFormData,
+  StepConnectIntegration,
 } from "./steps/step-connect-integration";
-import {
-  StepDiscovery,
-  type DiscoveryFormData,
-} from "./steps/step-discovery";
+import { type DiscoveryFormData, StepDiscovery } from "./steps/step-discovery";
 import { StepDryRun } from "./steps/step-dry-run";
 import { StepImport } from "./steps/step-import";
 import { StepPostMigration } from "./steps/step-post-migration";
-import { saveStep, completeFlow } from "@/app/actions/onboarding/index";
-import { approveMigrationMapping } from "@/app/actions/onboarding/migration";
-import type { DryRunResult, ImportReport } from "@/lib/migration/types";
+import {
+  type MigrationSource,
+  type SourceSelectFormData,
+  StepSourceSelect,
+} from "./steps/step-source-select";
 
 const STEPS: WizardStepMeta[] = [
   { key: "source_select", label: "Origem" },
@@ -35,12 +32,12 @@ const STEPS: WizardStepMeta[] = [
   { key: "post_migration", label: "Resultado" },
 ];
 
-interface Props {
+type Props = {
   initialStep: number;
   completedSteps: string[];
   savedData: Record<string, unknown>;
   artNames: string[];
-}
+};
 
 export function MigrationWizardClient({
   initialStep,
@@ -64,10 +61,9 @@ export function MigrationWizardClient({
   const [connectData, setConnectData] = useState<ConnectFormData | null>(
     (savedData.connect as ConnectFormData | null) ?? null
   );
-  const [discoveryData, setDiscoveryData] =
-    useState<DiscoveryFormData | null>(
-      (savedData.discovery as DiscoveryFormData | null) ?? null
-    );
+  const [discoveryData, setDiscoveryData] = useState<DiscoveryFormData | null>(
+    (savedData.discovery as DiscoveryFormData | null) ?? null
+  );
   const [dryRunResult, setDryRunResult] = useState<DryRunResult | null>(
     (savedData.dry_run as DryRunResult | null) ?? null
   );
@@ -130,9 +126,7 @@ export function MigrationWizardClient({
         );
         setCurrentStep((s) => s + 1);
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erro. Tente novamente."
-        );
+        setError(err instanceof Error ? err.message : "Erro. Tente novamente.");
       }
     });
   }
@@ -150,29 +144,27 @@ export function MigrationWizardClient({
         await completeFlow("migration_setup");
         router.push("/onboarding/migration/complete");
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erro ao finalizar."
-        );
+        setError(err instanceof Error ? err.message : "Erro ao finalizar.");
       }
     });
   }
 
   return (
     <OnboardingWizardShell
-      steps={STEPS}
-      currentStep={currentStep}
       completedSteps={completedSteps}
+      currentStep={currentStep}
+      isNextDisabled={nextDisabled}
+      isSaving={isPending}
+      nextLabel={isLastStep ? "Concluir migração" : undefined}
       onBack={() => {
         setError(null);
         setCurrentStep((s) => Math.max(s - 1, 0));
       }}
       onNext={isLastStep ? handleComplete : handleNext}
-      isNextDisabled={nextDisabled}
-      isSaving={isPending}
-      nextLabel={isLastStep ? "Concluir migração" : undefined}
+      steps={STEPS}
     >
       {error && (
-        <div className="mb-4 rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2 text-sm text-destructive">
+        <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-destructive text-sm">
           {error}
         </div>
       )}
@@ -184,41 +176,45 @@ export function MigrationWizardClient({
       )}
       {stepKey === "connect" && (
         <StepConnectIntegration
-          source={source}
           defaultValues={connectData ?? undefined}
           onConnected={setConnectData}
+          source={source}
         />
       )}
       {stepKey === "discovery" && (
         <StepDiscovery
-          connectionId={connectData?.connectionId ?? ""}
-          source={source}
           artNames={artNames}
+          connectionId={connectData?.connectionId ?? ""}
           defaultValues={discoveryData ?? undefined}
           onChange={setDiscoveryData}
+          source={source}
         />
       )}
       {stepKey === "dry_run" && (
         <StepDryRun
           connectionId={connectData?.connectionId ?? ""}
-          source={source}
           mappingData={discoveryData?.mappingData ?? []}
           onResult={setDryRunResult}
+          source={source}
         />
       )}
       {stepKey === "import" && (
         <StepImport
           connectionId={connectData?.connectionId ?? ""}
-          source={source}
           mappingData={discoveryData?.mappingData ?? []}
           onComplete={setImportReport}
+          source={source}
         />
       )}
-      {stepKey === "post_migration" && (
-        importReport
-          ? <StepPostMigration report={importReport} />
-          : <p className="text-sm text-muted-foreground">Nenhum relatório de importação disponível. Volte para a etapa de importação.</p>
-      )}
+      {stepKey === "post_migration" &&
+        (importReport ? (
+          <StepPostMigration report={importReport} />
+        ) : (
+          <p className="text-muted-foreground text-sm">
+            Nenhum relatório de importação disponível. Volte para a etapa de
+            importação.
+          </p>
+        ))}
     </OnboardingWizardShell>
   );
 }

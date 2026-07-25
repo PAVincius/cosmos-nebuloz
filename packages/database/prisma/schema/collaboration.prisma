@@ -1,0 +1,33 @@
+// Story-031: Liveblocks CRDT Board — PI Planning assignments + reconciliation log
+
+model PIPlanFeatureAssignment {
+  id        String   @id @default(cuid())
+  tenantId  String
+  piPlanId  String
+  featureId String
+  teamId    String
+  sprintId  String
+  rank      Int      @default(0)
+  updatedAt DateTime @updatedAt
+  updatedBy String?
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@unique([piPlanId, featureId])
+  @@index([tenantId, piPlanId, teamId, sprintId])
+}
+
+model BoardReconciliationLog {
+  id              String   @id @default(cuid())
+  tenantId        String
+  surface         String
+  entityId        String
+  lbCount         Int
+  dbCount         Int
+  divergenceCount Int
+  resolution      String
+  createdAt       DateTime @default(now())
+  metadata        Json?
+  tenant          Tenant   @relation(fields: [tenantId], references: [id])
+
+  @@index([tenantId, surface, entityId])
+}

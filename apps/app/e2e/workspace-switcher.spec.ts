@@ -1,4 +1,4 @@
-import { type Page, test, expect } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 /**
  * E2E — Workspace Switcher
@@ -18,7 +18,7 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
   /**
    * Helper: set up API mocks for tenant data
    */
-  async function setupTenantMocks(page: Page) {
+  async function _setupTenantMocks(page: Page) {
     // Mock: GET /api/tenants
     await page.route("**/api/tenants", (route) => {
       route.fulfill({
@@ -26,8 +26,20 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
         contentType: "application/json",
         body: JSON.stringify({
           tenants: [
-            { id: "tenant-1", name: "Acme Corp", slug: "acme", logo: null, role: "ADMIN" },
-            { id: "tenant-2", name: "Beta Team", slug: "beta", logo: null, role: "MEMBER" },
+            {
+              id: "tenant-1",
+              name: "Acme Corp",
+              slug: "acme",
+              logo: null,
+              role: "ADMIN",
+            },
+            {
+              id: "tenant-2",
+              name: "Beta Team",
+              slug: "beta",
+              logo: null,
+              role: "MEMBER",
+            },
           ],
           activeTenantId: "tenant-1",
         }),
@@ -55,7 +67,7 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
     // Direct API test: verifica que o endpoint existe e responde
     // (vai retornar 401/redirect se não autenticado — isso é esperado)
     const response = await request.get("/api/tenants");
-    
+
     // O endpoint deve existir (não 404) — pode retornar 401/redirect se não auth
     expect([200, 401, 302, 307, 308]).toContain(response.status());
   });
@@ -67,7 +79,7 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
     const response = await request.post("/api/auth/switch-tenant", {
       data: { tenantId: "tenant-1" },
     });
-    
+
     expect([200, 401, 302, 307, 308, 400]).toContain(response.status());
   });
 
@@ -76,7 +88,7 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
   }) => {
     // Ao acessar rota autenticada sem sessão, deve redirecionar para sign-in
     const response = await page.goto("/portfolio");
-    
+
     // Expect redirect to sign-in or the page shows sign-in content
     await expect(page).toHaveURL(/sign-in|portfolio/);
     expect(response?.status()).toBeLessThan(500);
@@ -99,7 +111,10 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
  * To run with auth: AUTH_TEST=true pnpm test:e2e
  */
 test.describe("WorkspaceSwitcher — Visual @auth", () => {
-  test.skip(() => !process.env.AUTH_TEST, "Auth tests disabled (set AUTH_TEST=true)");
+  test.skip(
+    () => !process.env.AUTH_TEST,
+    "Auth tests disabled (set AUTH_TEST=true)"
+  );
 
   test.use({
     storageState: "./e2e/fixtures/auth-session.json",
@@ -108,7 +123,9 @@ test.describe("WorkspaceSwitcher — Visual @auth", () => {
   test("should display the active tenant name in sidebar", async ({ page }) => {
     await page.goto("/dashboard");
     // O workspace switcher deve estar visível na sidebar
-    const switcher = page.locator('[data-testid="workspace-switcher"], .sidebar-menu-button').first();
+    const switcher = page
+      .locator('[data-testid="workspace-switcher"], .sidebar-menu-button')
+      .first();
     await expect(switcher).toBeVisible({ timeout: 10_000 });
   });
 
@@ -118,7 +135,7 @@ test.describe("WorkspaceSwitcher — Visual @auth", () => {
     await page.goto("/dashboard");
     const switcher = page.locator('[data-testid="workspace-switcher"]').first();
     await switcher.click();
-    
+
     const dropdownContent = page.locator('[role="menu"]');
     await expect(dropdownContent).toBeVisible();
   });

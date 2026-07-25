@@ -2,16 +2,23 @@
 // Architecture: heuristic rules detect → LLM enriches with narrative
 
 model AnomalyDetectionRun {
-  id          String    @id @default(cuid())
-  tenantId    String
-  scope       String    // "team" | "art"
-  scopeId     String
-  snapshotId  String    // FlowMetricSnapshot.id that triggered this run
-  trigger     String    // "snapshot_created" | "scheduled" | "manual"
-  status      String    @default("PENDING")
-  summary     Json?
-  ranAt       DateTime  @default(now())
-  completedAt DateTime?
+  id                 String    @id @default(cuid())
+  tenantId           String
+  scope              String // "team" | "art"
+  scopeId            String
+  snapshotId         String // FlowMetricSnapshot.id that triggered this run
+  trigger            String // "snapshot_created" | "scheduled" | "manual" | "cron"
+  status             String    @default("PENDING")
+  // Story-021 engine metadata
+  source             String    @default("CRON") // CRON | MANUAL
+  ruleEngineVersion  String    @default("1.0")
+  itemsEvaluated     Int       @default(0)
+  anomaliesFound     Int       @default(0)
+  partialCompletion  Boolean   @default(false)
+  continuationCursor String? // entity ID cursor for resumption (AC-007)
+  summary            Json?
+  ranAt              DateTime  @default(now())
+  completedAt        DateTime?
 
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   anomalies Anomaly[]
@@ -23,17 +30,20 @@ model AnomalyDetectionRun {
 }
 
 model Anomaly {
-  id        String   @id @default(cuid())
-  tenantId  String
-  runId     String
-  rule      String   // VelocityCliff | WIPOverload | PredictabilityCollapse |
-                     // CycleTimeDegradation | EfficiencyNosedive |
-                     // WorkTypeImbalance | StaleCompetencyAssessment | ImprovementActionOverdue
-  severity  String   // CRITICAL | HIGH | MEDIUM | LOW
-  metric    String
-  delta     Float
-  metadata  Json?
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  tenantId   String
+  runId      String
+  rule       String // VelocityCliff | WIPOverload | ... | VELOCITY_DROP | IMPEDIMENT_AGING | STALE_DEFECT | CRITICAL_DEFECT
+  severity   String // CRITICAL | HIGH | MEDIUM | LOW
+  metric     String
+  delta      Float
+  // Story-021 dedup + lifecycle fields (AC-002)
+  entityId   String? // teamId | sprintId | featureId — used for dedup
+  entityType String? // Team | Sprint | Feature | Defect | Impediment
+  status     String   @default("OPEN") // OPEN | RESOLVED | SUPPRESSED
+  detectedAt DateTime @default(now())
+  metadata   Json?
+  createdAt  DateTime @default(now())
 
   tenant Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   run    AnomalyDetectionRun @relation(fields: [runId], references: [id], onDelete: Cascade)
@@ -42,4 +52,23 @@ model Anomaly {
   @@index([runId])
   @@index([tenantId, severity])
   @@index([tenantId, rule])
+  @@index([tenantId, rule, entityId, status]) // dedup index
+}
+
+// Story-021: per-org rule threshold overrides with platform bounds (AC-005)
+model AnomalyRuleConfig {
+  id         String   @id @default(cuid())
+  tenantId   String
+  artId      String?
+  ruleId     String // e.g. "R-VEL-01"
+  threshold  Float // org-level override value
+  isDisabled Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, artId, ruleId])
+  @@index([tenantId])
+  @@index([tenantId, artId])
 }

@@ -1,18 +1,18 @@
 "use client";
 
-import { CheckCircle2Icon, XCircleIcon, ShieldCheckIcon } from "lucide-react";
+import { CheckCircle2Icon, ShieldCheckIcon, XCircleIcon } from "lucide-react";
 
-export interface HealthCheckData {
+export type HealthCheckData = {
   hasPortfolio: boolean;
   hasART: boolean;
   hasPI: boolean;
   hasTeam: boolean;
   hasUsers: boolean;
-}
+};
 
-interface Props {
+type Props = {
   data: HealthCheckData;
-}
+};
 
 export function StepHealthCheck({ data }: Props) {
   const items: { label: string; ok: boolean }[] = [
@@ -29,8 +29,8 @@ export function StepHealthCheck({ data }: Props) {
       <div className="flex items-center gap-2">
         <ShieldCheckIcon className="h-5 w-5 text-muted-foreground" />
         <div>
-          <h2 className="text-lg font-semibold">Checklist final</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-lg">Checklist final</h2>
+          <p className="text-muted-foreground text-sm">
             Verifique se a estrutura SAFe mínima está configurada.
           </p>
         </div>
@@ -38,7 +38,7 @@ export function StepHealthCheck({ data }: Props) {
 
       <div className="flex flex-col gap-3">
         {items.map((item) => (
-          <div key={item.label} className="flex items-center gap-3">
+          <div className="flex items-center gap-3" key={item.label}>
             {item.ok ? (
               <CheckCircle2Icon className="h-5 w-5 shrink-0 text-green-500" />
             ) : (
@@ -54,7 +54,7 @@ export function StepHealthCheck({ data }: Props) {
       </div>
 
       {allGood ? (
-        <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4 text-sm text-green-600">
+        <div className="rounded-lg border border-green-500/30 bg-green-500/5 p-4 text-green-600 text-sm">
           Estrutura mínima completa. Clique em &ldquo;Concluir setup&rdquo; para
           começar.
         </div>

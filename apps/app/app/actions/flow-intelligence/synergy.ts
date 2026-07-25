@@ -1,3 +1,9 @@
+/**
+ * @deprecated Use capability-planning/compute-gaps instead.
+ * PairSynergy/GroupSynergy data is preserved internally but UI no longer surfaces
+ * individual-level data. Removed for GDPR/LGPD compliance (no individual-level monitoring).
+ * See: apps/app/app/actions/flow-intelligence/capability-planning/
+ */
 "use server";
 
 import { requireTenantSession } from "@repo/auth/server";
@@ -22,7 +28,7 @@ export async function updatePairSynergiesForTask(
     }),
     database.story.findFirst({
       where: { tenantId, tasks: { some: { id: taskId } } },
-      select: { storyPoints: true, taskType: true },
+      select: { storyPoints: true },
     }),
   ]);
 
@@ -32,7 +38,7 @@ export async function updatePairSynergiesForTask(
 
   const userIds = assignees.map((a) => a.userId);
   const actualSp = story?.storyPoints ?? 1;
-  const taskType = (story as { taskType?: string | null })?.taskType ?? "any";
+  const taskType = "any";
 
   const pairs: [string, string][] = [];
   for (let i = 0; i < userIds.length; i++) {

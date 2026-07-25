@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getOrCreateProgress } from "@/app/actions/onboarding/index";
 import { getARTs } from "@/app/actions/arts/get-arts";
+import { getOrCreateProgress } from "@/app/actions/onboarding/index";
 import { CompanyWizardClient } from "./components/company-wizard-client";
 
 export default async function CompanySetupPage() {
@@ -16,10 +16,10 @@ export default async function CompanySetupPage() {
 
   return (
     <CompanyWizardClient
-      initialStep={progress.currentStep}
-      completedSteps={progress.completedSteps as string[]}
-      savedData={stepData}
       artNames={artNames}
+      completedSteps={progress.completedSteps as string[]}
+      initialStep={progress.currentStep}
+      savedData={stepData}
     />
   );
 }

@@ -1,16 +1,34 @@
 "use client";
 
-import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
+import type { Dictionary } from "@repo/internationalization";
 import { AnimatedCounter } from "@/components/cosmos/animated-counter";
 import { ConicBorderCard } from "@/components/cosmos/conic-border";
-import type { Dictionary } from "@repo/internationalization";
+import { FadeIn, FadeInChild, FadeInGroup } from "@/components/cosmos/fade-in";
 
 type StatsProps = { dictionary: Dictionary };
 
 const STATS = [
-  { value: 80, prefix: "", suffix: "%", label: "dos PIs chegam atrasados no primeiro ano de SAFe", color: "var(--accent)" },
-  { value: 800, prefix: "R$", suffix: "K+", label: "custo médio em horas de executivo por ciclo de PI", color: "var(--violet)" },
-  { value: 30, prefix: "", suffix: "+", label: "dependências críticas descobertas na reunião, não antes", color: "var(--warning)" },
+  {
+    value: 80,
+    prefix: "",
+    suffix: "%",
+    label: "dos PIs chegam atrasados no primeiro ano de SAFe",
+    color: "var(--accent)",
+  },
+  {
+    value: 800,
+    prefix: "R$",
+    suffix: "K+",
+    label: "custo médio em horas de executivo por ciclo de PI",
+    color: "var(--violet)",
+  },
+  {
+    value: 30,
+    prefix: "",
+    suffix: "+",
+    label: "dependências críticas descobertas na reunião, não antes",
+    color: "var(--warning)",
+  },
 ] as const;
 
 export const Stats = ({ dictionary: _ }: StatsProps) => (
@@ -58,9 +76,7 @@ export const Stats = ({ dictionary: _ }: StatsProps) => (
                 }}
               >
                 <AnimatedCounter
-                  value={stat.value}
                   prefix={stat.prefix}
-                  suffix={stat.suffix}
                   style={{
                     fontFamily: "monospace",
                     fontWeight: 700,
@@ -70,6 +86,8 @@ export const Stats = ({ dictionary: _ }: StatsProps) => (
                     color: stat.color,
                     display: "block",
                   }}
+                  suffix={stat.suffix}
+                  value={stat.value}
                 />
                 <p
                   style={{

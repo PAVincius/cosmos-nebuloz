@@ -45,8 +45,8 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
-  createSAFeStructureFromOnboarding,
   createPIsFromOnboarding,
+  createSAFeStructureFromOnboarding,
 } from "../../app/actions/onboarding/company";
 
 const tenantCtx = { tenantId: "t1", userId: "u1", role: "RTE" as const };

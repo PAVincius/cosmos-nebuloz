@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { cuid, nnStr, optStr, optCuid, TaskStatus } from "../_base";
+import { cuid, nnStr, optCuid, optStr, TaskStatus } from "../_base";
 
 export const CreateTaskSchema = z.object({
   storyId: cuid,
@@ -10,7 +10,9 @@ export const CreateTaskSchema = z.object({
   estimateHours: z.number().positive().max(999).optional(),
 });
 
-export const UpdateTaskSchema = CreateTaskSchema.partial().omit({ storyId: true });
+export const UpdateTaskSchema = CreateTaskSchema.partial().omit({
+  storyId: true,
+});
 
 export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;

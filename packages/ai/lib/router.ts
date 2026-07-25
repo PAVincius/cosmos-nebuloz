@@ -8,9 +8,15 @@ export type AIProvider = "anthropic" | "google" | "openai" | "none";
 
 export function getActiveProvider(): AIProvider {
   const k = keys();
-  if (k.ANTHROPIC_API_KEY) return "anthropic";
-  if (k.GOOGLE_GENERATIVE_AI_API_KEY) return "google";
-  if (k.OPENAI_API_KEY) return "openai";
+  if (k.ANTHROPIC_API_KEY) {
+    return "anthropic";
+  }
+  if (k.GOOGLE_GENERATIVE_AI_API_KEY) {
+    return "google";
+  }
+  if (k.OPENAI_API_KEY) {
+    return "openai";
+  }
   return "none";
 }
 

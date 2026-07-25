@@ -134,7 +134,7 @@ describe("safeAction", () => {
   });
 
   it("returns err result on thrown ZodError", async () => {
-    const result = await safeAction(() => {
+    const result = await safeAction(async () => {
       z.string().parse(123);
     });
     expect(result.ok).toBe(false);

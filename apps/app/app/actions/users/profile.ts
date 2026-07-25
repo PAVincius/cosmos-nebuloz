@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 
 export async function getMyProfile() {
   const ctx = await requireTenantSession(await headers());
@@ -11,7 +11,13 @@ export async function getMyProfile() {
   const [user, member] = await Promise.all([
     database.user.findUnique({
       where: { id: ctx.userId },
-      select: { id: true, name: true, email: true, image: true, createdAt: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        image: true,
+        createdAt: true,
+      },
     }),
     database.tenantMember.findFirst({
       where: { tenantId: ctx.tenantId, userId: ctx.userId },
@@ -19,7 +25,9 @@ export async function getMyProfile() {
     }),
   ]);
 
-  if (!user || !member) throw new Error("Perfil não encontrado.");
+  if (!(user && member)) {
+    throw new Error("Perfil não encontrado.");
+  }
 
   const tenant = await database.tenant.findUnique({
     where: { id: ctx.tenantId },
@@ -43,7 +51,9 @@ export async function updateProfile(input: { name?: string; image?: string }) {
   revalidatePath("/profile");
 }
 
-export async function updateNotificationPreferences(prefs: Record<string, boolean>) {
+export async function updateNotificationPreferences(
+  prefs: Record<string, boolean>
+) {
   const ctx = await requireTenantSession(await headers());
 
   // Store notification preferences in Tenant.metadata under a per-user key
@@ -68,7 +78,9 @@ export async function updateNotificationPreferences(prefs: Record<string, boolea
   revalidatePath("/profile");
 }
 
-export async function getNotificationPreferences(): Promise<Record<string, boolean>> {
+export async function getNotificationPreferences(): Promise<
+  Record<string, boolean>
+> {
   const ctx = await requireTenantSession(await headers());
 
   const tenant = await database.tenant.findUnique({

@@ -99,21 +99,36 @@ ALTER TABLE copilot_sessions
   DROP COLUMN IF EXISTS "metadata",
   DROP COLUMN IF EXISTS "artId";
 
--- Step 5: Add tenantId + tokens to copilot_messages
-ALTER TABLE copilot_messages
-  ADD COLUMN IF NOT EXISTS "tenantId" TEXT NOT NULL DEFAULT '',
-  ADD COLUMN IF NOT EXISTS "tokens"   INTEGER;
-
--- Drop unused columns from original schema
-ALTER TABLE copilot_messages
-  DROP COLUMN IF EXISTS "sender";
-
--- Backfill tenantId from the parent session
-UPDATE copilot_messages cm
-SET    "tenantId" = cs."tenantId"
-FROM   copilot_sessions cs
-WHERE  cm."sessionId" = cs."id"
-  AND  cm."tenantId"  = '';
+-- Step 5: Create or alter copilot_messages (idempotent)
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'copilot_messages') THEN
+    CREATE TABLE copilot_messages (
+      "id"        TEXT NOT NULL,
+      "sessionId" TEXT NOT NULL,
+      "role"      TEXT NOT NULL,
+      "content"   TEXT NOT NULL,
+      "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      "tenantId"  TEXT NOT NULL DEFAULT '',
+      "tokens"    INTEGER,
+      CONSTRAINT "copilot_messages_pkey" PRIMARY KEY ("id")
+    );
+    ALTER TABLE copilot_messages
+      ADD CONSTRAINT "copilot_messages_sessionId_fkey"
+      FOREIGN KEY ("sessionId") REFERENCES copilot_sessions("id")
+      ON DELETE CASCADE ON UPDATE CASCADE;
+  ELSE
+    ALTER TABLE copilot_messages
+      ADD COLUMN IF NOT EXISTS "tenantId" TEXT NOT NULL DEFAULT '',
+      ADD COLUMN IF NOT EXISTS "tokens"   INTEGER;
+    ALTER TABLE copilot_messages DROP COLUMN IF EXISTS "sender";
+    UPDATE copilot_messages cm
+    SET    "tenantId" = cs."tenantId"
+    FROM   copilot_sessions cs
+    WHERE  cm."sessionId" = cs."id"
+      AND  cm."tenantId"  = '';
+  END IF;
+END $$;
 
 -- Step 6: Add composite index for efficient session listing (most recent first)
 CREATE INDEX IF NOT EXISTS "copilot_sessions_tenantId_updatedAt_idx"
@@ -126,5 +141,5 @@ CREATE INDEX IF NOT EXISTS "copilot_messages_tenantId_sessionId_idx"
 -- Step 7: Drop unused enum types (only after columns converted)
 DROP TYPE IF EXISTS "CopilotMode";
 DROP TYPE IF EXISTS "CopilotSurface";
-DROP TYPE IF EXISTS "SuggestionStatus";
-DROP TYPE IF EXISTS "SuggestionType";
+DROP TYPE IF EXISTS "SuggestionStatus" CASCADE;
+DROP TYPE IF EXISTS "SuggestionType" CASCADE;

@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import { Button } from "@repo/design-system/components/ui/button";
-import { DownloadIcon, CheckCircle2Icon } from "lucide-react";
-import { WizardStepHeader } from "../../../../components/wizard-ui";
+import { CheckCircle2Icon, DownloadIcon } from "lucide-react";
+import { useState } from "react";
 import type { ImportReport, MappingRule } from "@/lib/migration/types";
+import { WizardStepHeader } from "../../../../components/wizard-ui";
 
-interface Props {
+type Props = {
   connectionId: string;
   source: string;
   mappingData: MappingRule[];
   onComplete: (report: ImportReport) => void;
-}
+};
 
 export function StepImport({
   connectionId,
@@ -51,17 +51,17 @@ export function StepImport({
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Esta operação criará épicos, stories e times no COSMOS."
         icon={<DownloadIcon className="h-5 w-5" />}
         title="Importar dados"
-        description="Esta operação criará épicos, stories e times no COSMOS."
       />
       {status === "idle" && (
         <Button onClick={() => void runImport()}>Iniciar importação</Button>
       )}
       {status === "importing" && (
         <div className="flex items-center gap-3">
-          <div className="h-4 w-4 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          <span className="text-sm text-muted-foreground">Importando...</span>
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span className="text-muted-foreground text-sm">Importando...</span>
         </div>
       )}
       {status === "done" && report && (
@@ -78,7 +78,7 @@ export function StepImport({
         </div>
       )}
       {status === "error" && (
-        <p className="text-sm text-destructive">{errorMsg}</p>
+        <p className="text-destructive text-sm">{errorMsg}</p>
       )}
     </div>
   );
@@ -87,8 +87,8 @@ export function StepImport({
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border p-3 text-center">
-      <p className="text-2xl font-bold">{value}</p>
-      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="font-bold text-2xl">{value}</p>
+      <p className="text-muted-foreground text-xs">{label}</p>
     </div>
   );
 }

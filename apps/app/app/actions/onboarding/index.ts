@@ -4,11 +4,8 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { SaveStepSchema } from "./schema";
-
-export type { FlowType } from "./schema";
-
 import type { FlowType } from "./schema";
+import { SaveStepSchema } from "./schema";
 
 export async function getOrCreateProgress(flowType: FlowType) {
   const ctx = await requireTenantSession(await headers());

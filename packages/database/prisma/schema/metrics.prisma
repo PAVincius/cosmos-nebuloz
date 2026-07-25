@@ -19,19 +19,52 @@ model PISession {
 
 // Rodada de Confidence Vote dentro de uma PISession SAFe
 model ConfidenceVoteSession {
-  id           String @id @default(cuid())
-  tenantId     String
-  piSessionId  String
-  roundNumber  Int    @default(1)
-  xStateStatus String @default("NOT_STARTED")
-  votes        Json   @default("[]") // number[] — raw vote values
+  id              String  @id @default(cuid())
+  tenantId        String
+  piSessionId     String
+  roundNumber     Int     @default(1)
+  xStateStatus    String  @default("NOT_STARTED")
+  votes           Json    @default("[]") // number[] — raw vote values (legacy)
+  // Story-018: aggregate fields for commitment gate (story-017) integration
+  averageScore    Float?
+  facilitatorNote String? @db.Text
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  piSession PISession @relation(fields: [piSessionId], references: [id], onDelete: Cascade)
+  tenant    Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piSession PISession             @relation(fields: [piSessionId], references: [id], onDelete: Cascade)
+  tallies   ConfidenceVoteTally[]
 
   @@unique([piSessionId, roundNumber])
   @@index([tenantId])
   @@index([piSessionId])
+}
+
+// Story-018: Anonymous tally — no userId anywhere
+model ConfidenceVoteTally {
+  id                String    @id @default(cuid())
+  tenantId          String
+  voteSessionId     String
+  piPlanId          String
+  round             Int       @default(1)
+  score1Count       Int       @default(0)
+  score2Count       Int       @default(0)
+  score3Count       Int       @default(0)
+  score4Count       Int       @default(0)
+  score5Count       Int       @default(0)
+  totalVotes        Int       @default(0)
+  participantCount  Int       @default(0)
+  participationRate Float     @default(0)
+  aggregateScore    Float?
+  revealedAt        DateTime?
+  closedAt          DateTime?
+  facilitatorNote   String?   @db.Text
+  createdAt         DateTime  @default(now())
+
+  tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  voteSession ConfidenceVoteSession @relation(fields: [voteSessionId], references: [id], onDelete: Cascade)
+
+  @@unique([voteSessionId, round])
+  @@index([tenantId])
+  @@index([piPlanId])
 }
 
 // Inteligência Assistiva (AI Copilot via pgvector)
@@ -40,17 +73,17 @@ model PIKnowledgeVector {
   tenantId    String
   // Source classification: "risk" | "pi_objective" | "feature" | "epic" | "okr" | "document"
   sourceType  String   @default("document")
-  sourceId    String?  // ID of source entity; null for uploaded documents
-  sessionId   String?  // Non-null for session-scoped uploads
+  sourceId    String? // ID of source entity; null for uploaded documents
+  sessionId   String? // Non-null for session-scoped uploads
   chunkIndex  Int      @default(0)
   title       String?  @db.Text
   textContent String   @db.Text
-  metadata    Json?    // artId, piId, fileName, etc.
+  metadata    Json? // artId, piId, fileName, etc.
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   // Requer Unsupported no Prisma para a extensão pgvector
-  embedding   Unsupported("vector(1536)")?
+  embedding Unsupported("vector(1536)")?
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 

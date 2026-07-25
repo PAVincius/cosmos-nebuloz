@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
-import { getOrCreateProgress } from "@/app/actions/onboarding/index";
 import { getARTs } from "@/app/actions/arts/get-arts";
+import { getOrCreateProgress } from "@/app/actions/onboarding/index";
 import { MigrationWizardClient } from "./components/migration-wizard-client";
 
 export default async function MigrationSetupPage() {
@@ -19,10 +19,10 @@ export default async function MigrationSetupPage() {
 
   return (
     <MigrationWizardClient
-      initialStep={progress.currentStep}
-      completedSteps={completedSteps}
-      savedData={savedData}
       artNames={artNames}
+      completedSteps={completedSteps}
+      initialStep={progress.currentStep}
+      savedData={savedData}
     />
   );
 }

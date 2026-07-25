@@ -37,15 +37,25 @@ FROM base AS runner
 
 WORKDIR /app
 
+# Root node_modules + pnpm store
 COPY --from=deps /app/node_modules ./node_modules
+# App-level node_modules
 COPY --from=deps /app/apps/app/node_modules ./apps/app/node_modules
+# Todos os packages com seus node_modules (deps stage tem source + node_modules instalados)
+COPY --from=deps /app/packages ./packages
+# Source atual do monorepo (sobrescreve source dos packages, preserva node_modules já copiados acima)
 COPY . .
+# Restaurar packages/node_modules que COPY . . pode ter sobrescrito com versão sem node_modules
+COPY --from=deps /app/packages ./packages
+# Turbopack resolve @tailwindcss/postcss a partir do CWD — expor no root node_modules
+RUN mkdir -p /app/node_modules/@tailwindcss && \
+    ln -sf /app/packages/design-system/node_modules/@tailwindcss/postcss /app/node_modules/@tailwindcss/postcss
 
 WORKDIR /app/apps/app
 
-EXPOSE 3000
+EXPOSE 3012
 
 # Gera o Prisma client antes de rodar
 RUN cd ../../packages/database && npx prisma generate || true
 
-CMD ["pnpm", "dev"]
+CMD ["sh", "-c", "cd /app/packages/database && npx prisma migrate deploy && cd /app/apps/app && pnpm dev"]

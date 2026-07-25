@@ -2,19 +2,10 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
-import {
-  type Result,
-  safeAction,
-  cuid,
-  isoDate,
-  optStr,
-} from "../_base";
-import type { UpsertStandupInput } from "./schema";
-
-export type { UpsertStandupInput };
+import { cuid, isoDate, optStr, type Result, safeAction } from "../_base";
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 
@@ -41,9 +32,7 @@ function normalizeDateToMidnightUTC(d: Date): Date {
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listTodayStandup(
-  teamId: string,
-): Promise<Result<any[]>> {
+export async function listTodayStandup(teamId: string): Promise<Result<any[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const today = normalizeDateToMidnightUTC(new Date());
@@ -57,7 +46,7 @@ export async function listTodayStandup(
 
 export async function getStandupHistory(
   teamId: string,
-  days = 14,
+  days = 14
 ): Promise<Result<any[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -116,7 +105,7 @@ export async function upsertStandupEntry(raw: unknown): Promise<Result<any>> {
 }
 
 export async function deleteStandupEntry(
-  id: string,
+  id: string
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -124,11 +113,14 @@ export async function deleteStandupEntry(
     const entry = await database.standupEntry.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!entry) throw new Error("Standup entry não encontrada");
+    if (!entry) {
+      throw new Error("Standup entry não encontrada");
+    }
 
     // Business rule: only the owner can delete their entry
-    if (entry.userId !== ctx.userId)
+    if (entry.userId !== ctx.userId) {
       throw new Error("Apenas o autor pode excluir seu próprio standup");
+    }
 
     await database.standupEntry.delete({ where: { id } });
 

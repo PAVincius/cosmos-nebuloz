@@ -10,8 +10,8 @@
  *   pnpm swarm:report       # regenerate report from last run
  */
 
-import { defineConfig, devices } from "@playwright/test";
 import path from "node:path";
+import { defineConfig, devices } from "@playwright/test";
 
 const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
 
@@ -27,10 +27,7 @@ export default defineConfig({
 
   reporter: [
     ["list"],
-    [
-      "html",
-      { outputFolder: "playwright-report/swarm", open: "never" },
-    ],
+    ["html", { outputFolder: "playwright-report/swarm", open: "never" }],
     // Custom JSON reporter for orchestrator
     ["json", { outputFile: "test-results/swarm-results.json" }],
   ],
@@ -40,7 +37,7 @@ export default defineConfig({
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     navigationTimeout: 20_000,
-    actionTimeout: 8_000,
+    actionTimeout: 8000,
   },
 
   projects: [

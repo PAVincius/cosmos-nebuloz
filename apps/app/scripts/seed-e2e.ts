@@ -1,15 +1,37 @@
 /**
  * scripts/seed-e2e.ts
  *
- * Seed completo para testes E2E. Cria uma empresa simulada com:
- * - Usuário admin + tenant COSMOS Dev (UNIVERSE)
- * - ART + 1 Time dimensionado (5 membros)
- * - 3 Sprints (COMPLETED / ACTIVE / PLANNING)
- * - 1 PI Plan + 4 PI Objectives
- * - 3 Temas Estratégicos → 3 OKRs → 6 Key Results
- * - 3 Épicos → 4 Features em múltiplos status
- * - 6 Stories em todos os status (BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE)
- * - 9 Tasks em todos os status (TODO/IN_PROGRESS/DONE)
+ * Seed completo para testes E2E. Cria uma empresa simulada com todas as
+ * entidades do Cosmos preenchidas:
+ *
+ * Auth & Org
+ *   - 1 Usuário admin (E2E_EMAIL / E2E_PASSWORD)
+ *   - 1 Tenant COSMOS Dev (UNIVERSE) + membership ADMIN
+ *   - OnboardingProgress (company_setup concluído)
+ *
+ * SAFe Delivery
+ *   - LACE (Large Solution)
+ *   - 1 ART → 1 Time (5 membros)
+ *   - 3 Sprints (COMPLETED / ACTIVE / PLANNING)
+ *   - 1 SprintReview + 1 Retrospective (sprint COMPLETED)
+ *   - 1 PI Plan → 4 PI Objectives
+ *
+ * Portfolio
+ *   - 3 Temas Estratégicos → 3 OKRs → 7 Key Results + snapshots
+ *   - 3 Épicos → 4 Features → DependencyLink entre features
+ *   - 6 Stories em todos os status → 9 Tasks em todos os status
+ *
+ * Gestão de Riscos & Qualidade
+ *   - 5 Risks (ROAM completo: IDENTIFIED/OWNED/ACCEPTED/MITIGATED/RESOLVED)
+ *   - 3 Impediments (OPEN/IN_PROGRESS/RESOLVED)
+ *   - 3 Defects (severidades: critical/high/medium)
+ *
+ * Flow & Competências
+ *   - 2 FlowMetricSnapshots (sprints concluídos)
+ *   - 2 StandupEntries (últimos 2 dias)
+ *   - 1 CompetencyAssessment (team) + 1 (ART)
+ *   - 2 ImprovementActions
+ *   - 1 PersonSkillProfile
  *
  * Idempotente — limpa dados do tenant antes do re-seed.
  *
@@ -17,26 +39,27 @@
  *   cd apps/app
  *   DATABASE_URL="postgresql://postgres:postgres@localhost:5432/cosmos_dev" \
  *   BETTER_AUTH_SECRET="cosmos-dev-secret-key-min-32-chars-placeholder" \
- *   BETTER_AUTH_URL="http://localhost:3000" \
+ *   BETTER_AUTH_URL="http://localhost:3012" \
  *   npx tsx scripts/seed-e2e.ts
  */
 
 import dotenv from "dotenv";
+
 dotenv.config({ path: ".env.local" });
 
-import { PrismaClient } from "../../../packages/database/generated";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { Pool } from "pg";
+import { PrismaClient } from "../../../packages/database/generated";
 
-const E2E_EMAIL    = process.env.E2E_EMAIL    ?? "admin@cosmos.local";
+const E2E_EMAIL = process.env.E2E_EMAIL ?? "admin@cosmos.local";
 const E2E_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
-const TENANT_SLUG  = process.env.SEED_TENANT_SLUG ?? "cosmos-dev";
+const TENANT_SLUG = process.env.SEED_TENANT_SLUG ?? "cosmos-dev";
 
-const pool    = new Pool({ connectionString: process.env.DATABASE_URL });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
-const db      = new PrismaClient({ adapter });
+const db = new PrismaClient({ adapter });
 
 const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
@@ -46,36 +69,67 @@ const auth = betterAuth({
       activeTenantId: { type: "string", nullable: true, input: false },
     },
   },
-  secret:  process.env.BETTER_AUTH_SECRET ?? "cosmos-dev-secret-key-min-32-chars-placeholder",
-  baseURL: process.env.BETTER_AUTH_URL    ?? "http://localhost:3000",
+  secret:
+    process.env.BETTER_AUTH_SECRET ??
+    "cosmos-dev-secret-key-min-32-chars-placeholder",
+  baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3012",
 });
 
 function wsjf(bv: number, tc: number, rr: number, js: number) {
   return Math.round(((bv + tc + rr) / js) * 10) / 10;
 }
 
-const addDays  = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
+const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
 const addWeeks = (d: Date, w: number) => addDays(d, w * 7);
 
 async function main() {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
-  // ─── 1. Usuário ───────────────────────────────────────────────────
+  // ─── 1. Usuário ────────────────────────────────────────────────────────────
   let userId: string;
-  const existingUser = await db.user.findUnique({ where: { email: E2E_EMAIL } });
+  const existingUser = await db.user.findUnique({
+    where: { email: E2E_EMAIL },
+  });
+  const ctx = await auth.$context;
+  const hashedPassword = await ctx.password.hash(E2E_PASSWORD);
+
   if (existingUser) {
     userId = existingUser.id;
-    console.log(`  ✓ user (já existe) ${E2E_EMAIL}`);
+    await db.user.update({
+      where: { id: userId },
+      data: { emailVerified: true },
+    });
+    const credAccount = await db.account.findFirst({
+      where: { userId, providerId: "credential" },
+    });
+    if (credAccount) {
+      await db.account.update({
+        where: { id: credAccount.id },
+        data: { password: hashedPassword },
+      });
+    } else {
+      await db.account.create({
+        data: {
+          userId,
+          accountId: E2E_EMAIL,
+          providerId: "credential",
+          password: hashedPassword,
+        },
+      });
+    }
+    console.log(`  ✓ user (atualizado) ${E2E_EMAIL}`);
   } else {
-    const ctx = await auth.$context;
-    const hashedPassword = await ctx.password.hash(E2E_PASSWORD);
     const user = await db.user.create({
       data: {
         email: E2E_EMAIL,
         name: "Admin E2E",
         emailVerified: true,
         accounts: {
-          create: { accountId: E2E_EMAIL, providerId: "credential", password: hashedPassword },
+          create: {
+            accountId: E2E_EMAIL,
+            providerId: "credential",
+            password: hashedPassword,
+          },
         },
       },
     });
@@ -83,32 +137,72 @@ async function main() {
     console.log(`  ✓ user criado ${E2E_EMAIL}`);
   }
 
-  // ─── 2. Tenant ───────────────────────────────────────────────────
+  // ─── 2. Tenant ─────────────────────────────────────────────────────────────
   let tenant = await db.tenant.findUnique({ where: { slug: TENANT_SLUG } });
-  if (!tenant) {
+  if (tenant) {
+    await db.tenant.update({
+      where: { id: tenant.id },
+      data: { plan: "UNIVERSE" },
+    });
+    console.log(`  ✓ tenant (já existe) ${TENANT_SLUG}`);
+  } else {
     tenant = await db.tenant.create({
-      data: { name: "COSMOS Dev", slug: TENANT_SLUG, plan: "UNIVERSE", metadata: { seeded: true } },
+      data: {
+        name: "COSMOS Dev",
+        slug: TENANT_SLUG,
+        plan: "UNIVERSE",
+        metadata: { seeded: true },
+      },
     });
     console.log(`  ✓ tenant criado ${TENANT_SLUG}`);
-  } else {
-    await db.tenant.update({ where: { id: tenant.id }, data: { plan: "UNIVERSE" } });
-    console.log(`  ✓ tenant (já existe) ${TENANT_SLUG}`);
   }
   const TENANT_ID = tenant.id;
 
-  const membership = await db.tenantMember.findFirst({ where: { userId, tenantId: TENANT_ID } });
+  const membership = await db.tenantMember.findFirst({
+    where: { userId, tenantId: TENANT_ID },
+  });
   if (!membership) {
-    await db.tenantMember.create({ data: { userId, tenantId: TENANT_ID, role: "ADMIN" } });
-    console.log(`  ✓ membership ADMIN criado`);
+    await db.tenantMember.create({
+      data: { userId, tenantId: TENANT_ID, role: "ADMIN" },
+    });
+    console.log("  ✓ membership ADMIN criado");
   }
 
-  // ─── 3. Cleanup dados de portfolio e entrega ─────────────────────
+  // Remove memberships in other tenants (E2E user = only cosmos-dev)
+  const removedMemberships = await db.tenantMember.deleteMany({
+    where: { userId, tenantId: { not: TENANT_ID } },
+  });
+  if (removedMemberships.count > 0) {
+    console.log(
+      `  ✓ ${removedMemberships.count} membership(s) de outros tenants removido(s)`
+    );
+  }
+
+  // Delete all sessions — forces fresh login, cookieCache bypass
+  const deletedSessions = await db.session.deleteMany({ where: { userId } });
+  console.log(
+    `  ✓ ${deletedSessions.count} sessão(ões) deletada(s) — relogin necessário`
+  );
+
+  // ─── 3. Cleanup ────────────────────────────────────────────────────────────
   console.log("\n  Limpando dados existentes...");
+  await db.flowMetricSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.standupEntry.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.improvementAction.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.competencyAssessment.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.personSkillProfile.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.defect.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.impediment.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.risk.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.dependencyLink.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.task.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.story.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.retrospective.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.sprintReview.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.sprint.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.feature.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.keyResultSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResult.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.oKR.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.themeART.deleteMany({ where: { theme: { tenantId: TENANT_ID } } });
@@ -117,15 +211,56 @@ async function main() {
   await db.pIPlan.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.team.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.aRT.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.lACE.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.onboardingProgress.deleteMany({ where: { tenantId: TENANT_ID } });
   console.log("  ✓ Cleanup concluído");
 
-  // ─── 4. ART ──────────────────────────────────────────────────────
+  // ─── 4. OnboardingProgress ─────────────────────────────────────────────────
+  await db.onboardingProgress.create({
+    data: {
+      tenantId: TENANT_ID,
+      flowType: "company_setup",
+      currentStep: 5,
+      completedSteps: ["welcome", "company", "art", "team", "pi"],
+      status: "completed",
+      data: {
+        companyName: "COSMOS Dev",
+        artName: "Plataforma COSMOS",
+        teamSize: 5,
+      },
+    },
+  });
+  console.log("  ✓ OnboardingProgress (company_setup concluído)");
+
+  // ─── 5. LACE ───────────────────────────────────────────────────────────────
+  const lace = await db.lACE.create({
+    data: {
+      tenantId: TENANT_ID,
+      name: "LACE COSMOS",
+      description:
+        "Lean-Agile Center of Excellence da plataforma COSMOS — coordena a implementação SAFe em todos os ARTs.",
+      principles: [
+        "Take an economic view",
+        "Apply systems thinking",
+        "Assume variability; preserve options",
+        "Build incrementally with fast, integrated learning cycles",
+        "Base milestones on objective evaluation of working systems",
+        "Visualize and limit WIP, reduce batch sizes, and manage queue lengths",
+        "Apply cadence, synchronize with cross-domain planning",
+        "Unlock the intrinsic motivation of knowledge workers",
+        "Decentralize decision-making",
+      ],
+    },
+  });
+  console.log(`  ✓ LACE "${lace.name}" (9 princípios)`);
+
+  // ─── 6. ART ────────────────────────────────────────────────────────────────
   const art = await db.aRT.create({
     data: { tenantId: TENANT_ID, name: "Plataforma COSMOS", cadence: 10 },
   });
   console.log(`\n  ✓ ART "${art.name}"`);
 
-  // ─── 5. Time dimensionado ─────────────────────────────────────────
+  // ─── 7. Time ───────────────────────────────────────────────────────────────
   const team = await db.team.create({
     data: {
       tenantId: TENANT_ID,
@@ -134,22 +269,48 @@ async function main() {
       velocity: 40,
       sprintLengthDays: 14,
       members: [
-        { name: "Ana Lima",    role: "SM",  skills: ["Scrum", "Kanban", "SAFe Coaching"],         hoursPerWeek: 40 },
-        { name: "Bruno Melo",  role: "PO",  skills: ["Product Discovery", "SAFe", "BDD"],         hoursPerWeek: 40 },
-        { name: "Carla Nunes", role: "DEV", skills: ["TypeScript", "React", "Next.js"],           hoursPerWeek: 40 },
-        { name: "Diego Souza", role: "DEV", skills: ["Node.js", "PostgreSQL", "Prisma"],          hoursPerWeek: 40 },
-        { name: "Eva Costa",   role: "DEV", skills: ["TypeScript", "Testing", "Playwright"],      hoursPerWeek: 40 },
+        {
+          name: "Ana Lima",
+          role: "SM",
+          skills: ["Scrum", "Kanban", "SAFe Coaching"],
+          hoursPerWeek: 40,
+        },
+        {
+          name: "Bruno Melo",
+          role: "PO",
+          skills: ["Product Discovery", "SAFe", "BDD"],
+          hoursPerWeek: 40,
+        },
+        {
+          name: "Carla Nunes",
+          role: "DEV",
+          skills: ["TypeScript", "React", "Next.js"],
+          hoursPerWeek: 40,
+        },
+        {
+          name: "Diego Souza",
+          role: "DEV",
+          skills: ["Node.js", "PostgreSQL", "Prisma"],
+          hoursPerWeek: 40,
+        },
+        {
+          name: "Eva Costa",
+          role: "DEV",
+          skills: ["TypeScript", "Testing", "Playwright"],
+          hoursPerWeek: 40,
+        },
       ],
     },
   });
   console.log(`  ✓ Team "${team.name}" (5 membros)`);
 
-  // ─── 6. Sprints ────────────────────────────────────────────────────
+  // ─── 8. Sprints ────────────────────────────────────────────────────────────
   const now = new Date();
 
   const sprint1 = await db.sprint.create({
     data: {
-      tenantId: TENANT_ID, teamId: team.id,
+      tenantId: TENANT_ID,
+      teamId: team.id,
       name: "Sprint 1 — Foundation",
       goal: "Implementar infraestrutura base e auth multi-tenant",
       startDate: addWeeks(now, -4),
@@ -160,7 +321,8 @@ async function main() {
   });
   const sprint2 = await db.sprint.create({
     data: {
-      tenantId: TENANT_ID, teamId: team.id,
+      tenantId: TENANT_ID,
+      teamId: team.id,
       name: "Sprint 2 — Portfolio Core",
       goal: "Entregar temas estratégicos, épicos e OKRs funcionais",
       startDate: addWeeks(now, -2),
@@ -169,9 +331,10 @@ async function main() {
       capacity: 40,
     },
   });
-  const sprint3 = await db.sprint.create({
+  await db.sprint.create({
     data: {
-      tenantId: TENANT_ID, teamId: team.id,
+      tenantId: TENANT_ID,
+      teamId: team.id,
       name: "Sprint 3 — AI Features",
       goal: "Iniciar AI Risk Copilot e dependency detection",
       startDate: addWeeks(now, 0),
@@ -180,12 +343,53 @@ async function main() {
       capacity: 40,
     },
   });
-  console.log(`  ✓ 3 Sprints (COMPLETED, ACTIVE, PLANNING)`);
+  console.log("  ✓ 3 Sprints (COMPLETED, ACTIVE, PLANNING)");
 
-  // ─── 7. PI Plan ────────────────────────────────────────────────────
+  // ─── 9. SprintReview + Retrospectiva ───────────────────────────────────────
+  await db.sprintReview.create({
+    data: {
+      tenantId: TENANT_ID,
+      sprintId: sprint1.id,
+      velocity: 38,
+      goalMet: true,
+      demoNotes:
+        "Auth multi-tenant entregue. DnD do Kanban demonstrado com sucesso. Feedback positivo do PO.",
+    },
+  });
+  await db.retrospective.create({
+    data: {
+      tenantId: TENANT_ID,
+      sprintId: sprint1.id,
+      wentWell: [
+        "Pair programming acelerou resolução de bugs críticos",
+        "CI/CD zerou deploys manuais",
+        "Ambiente de staging estável durante toda a sprint",
+      ],
+      toImprove: [
+        "Refinamento de histórias precisa começar mais cedo",
+        "Testes E2E deixados para o final — integrar na DoD",
+      ],
+      actions: [
+        {
+          title: "Adicionar E2E à DoD",
+          owner: "Eva Costa",
+          dueDate: "sprint-2",
+        },
+        {
+          title: "Refinamento às terças a partir do sprint 3",
+          owner: "Bruno Melo",
+          dueDate: "sprint-3",
+        },
+      ],
+    },
+  });
+  console.log("  ✓ SprintReview + Retrospectiva (Sprint 1)");
+
+  // ─── 10. PI Plan ───────────────────────────────────────────────────────────
   const piPlan = await db.pIPlan.create({
     data: {
-      tenantId: TENANT_ID, artId: art.id,
+      tenantId: TENANT_ID,
+      artId: art.id,
       name: "PI 2026-Q2",
       startDate: addWeeks(now, -4),
       endDate: addWeeks(now, 6),
@@ -195,42 +399,92 @@ async function main() {
 
   await db.pIObjective.createMany({
     data: [
-      { tenantId: TENANT_ID, piPlanId: piPlan.id, teamId: team.id, title: "Lançar Portfolio Kanban em produção", businessValue: 9,  isStretch: false, status: "IN_PROGRESS" },
-      { tenantId: TENANT_ID, piPlanId: piPlan.id, teamId: team.id, title: "Implementar OKRs de portfolio",       businessValue: 8,  isStretch: false, status: "IN_PROGRESS" },
-      { tenantId: TENANT_ID, piPlanId: piPlan.id, teamId: team.id, title: "Zero erros críticos em produção",    businessValue: 10, isStretch: false, status: "IN_PROGRESS" },
-      { tenantId: TENANT_ID, piPlanId: piPlan.id, teamId: team.id, title: "AI Risk Copilot MVP",                businessValue: 7,  isStretch: true,  status: "NOT_STARTED" },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        teamId: team.id,
+        title: "Lançar Portfolio Kanban em produção",
+        businessValue: 9,
+        isStretch: false,
+        status: "IN_PROGRESS",
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        teamId: team.id,
+        title: "Implementar OKRs de portfolio",
+        businessValue: 8,
+        isStretch: false,
+        status: "IN_PROGRESS",
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        teamId: team.id,
+        title: "Zero erros críticos em produção",
+        businessValue: 10,
+        isStretch: false,
+        status: "IN_PROGRESS",
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        teamId: team.id,
+        title: "AI Risk Copilot MVP",
+        businessValue: 7,
+        isStretch: true,
+        status: "NOT_STARTED",
+      },
     ],
   });
-  console.log(`  ✓ 4 PI Objectives (3 committed + 1 stretch)`);
+  console.log("  ✓ 4 PI Objectives (3 committed + 1 stretch)");
 
-  // ─── 8. Temas Estratégicos + OKRs + Key Results ───────────────────
+  // ─── 11. Temas Estratégicos ────────────────────────────────────────────────
   console.log("\n  Criando temas estratégicos, OKRs e KRs...");
 
   const theme1 = await db.strategicTheme.create({
     data: {
-      tenantId: TENANT_ID, code: "THEME-001",
+      tenantId: TENANT_ID,
+      code: "THEME-001",
       title: "Acelerar time-to-market enterprise",
-      description: "Reduzir lead time de épicos críticos para clientes enterprise via SAFe + automação de fluxo.",
-      color: "#6366f1", horizon: "2026", themeType: "GROWTH", status: "ACTIVE",
-      budgetTotal: 2500000, order: 0,
+      description:
+        "Reduzir lead time de épicos críticos para clientes enterprise via SAFe + automação.",
+      color: "#6366f1",
+      horizon: "2026",
+      themeType: "GROWTH",
+      status: "ACTIVE",
+      budgetTotal: 2_500_000,
+      order: 0,
     },
   });
   const theme2 = await db.strategicTheme.create({
     data: {
-      tenantId: TENANT_ID, code: "THEME-002",
+      tenantId: TENANT_ID,
+      code: "THEME-002",
       title: "Inovação com IA aplicada ao SAFe",
-      description: "AI Copilots em PI Planning, risk scoring e dependency detection.",
-      color: "#8b5cf6", horizon: "H1 2026", themeType: "INNOVATION", status: "ACTIVE",
-      budgetTotal: 1800000, order: 1,
+      description:
+        "AI Copilots em PI Planning, risk scoring e dependency detection.",
+      color: "#8b5cf6",
+      horizon: "H1 2026",
+      themeType: "INNOVATION",
+      status: "ACTIVE",
+      budgetTotal: 1_800_000,
+      order: 1,
     },
   });
   const theme3 = await db.strategicTheme.create({
     data: {
-      tenantId: TENANT_ID, code: "THEME-003",
+      tenantId: TENANT_ID,
+      code: "THEME-003",
       title: "Compliance & Segurança Enterprise",
-      description: "LGPD, SOC2, multi-tenant RLS e auditoria completa para vendas enterprise.",
-      color: "#ef4444", horizon: "2026", themeType: "COMPLIANCE", status: "APPROVED",
-      budgetTotal: 1200000, order: 2,
+      description:
+        "LGPD, SOC2, multi-tenant RLS e auditoria completa para vendas enterprise.",
+      color: "#ef4444",
+      horizon: "2026",
+      themeType: "COMPLIANCE",
+      status: "APPROVED",
+      budgetTotal: 1_200_000,
+      order: 2,
     },
   });
 
@@ -242,30 +496,87 @@ async function main() {
     ],
   });
 
+  // ─── 12. OKRs + Key Results + Snapshots ───────────────────────────────────
   const okrDefs = [
     {
       theme: theme1,
       title: "Reduzir lead time de portfolio em 40%",
       krs: [
-        { title: "Lead time médio de épicos",          metric: "Lead time",      baseline: 90, current: 65, target: 54, unit: "dias",     measurementType: "absolute"   as const },
-        { title: "Predictability score do portfólio",  metric: "Predictability", baseline: 60, current: 72, target: 90, unit: "%",        measurementType: "percentage" as const },
-        { title: "Épicos entregues por PI",             metric: "Throughput",     baseline: 5,  current: 8,  target: 12, unit: "épicos",   measurementType: "absolute"   as const },
+        {
+          title: "Lead time médio de épicos",
+          metric: "Lead time",
+          baseline: 90,
+          current: 65,
+          target: 54,
+          unit: "dias",
+          measurementType: "absolute" as const,
+        },
+        {
+          title: "Predictability score do portfólio",
+          metric: "Predictability",
+          baseline: 60,
+          current: 72,
+          target: 90,
+          unit: "%",
+          measurementType: "percentage" as const,
+        },
+        {
+          title: "Épicos entregues por PI",
+          metric: "Throughput",
+          baseline: 5,
+          current: 8,
+          target: 12,
+          unit: "épicos",
+          measurementType: "absolute" as const,
+        },
       ],
     },
     {
       theme: theme2,
       title: "Lançar 3 features de IA em produção",
       krs: [
-        { title: "Features de IA em GA",               metric: "Features GA",    baseline: 0,  current: 1,  target: 3,  unit: "features", measurementType: "absolute"   as const },
-        { title: "Adoção de Risk Copilot por RTEs",    metric: "Adoção %",       baseline: 0,  current: 12, target: 50, unit: "%",        measurementType: "percentage" as const },
+        {
+          title: "Features de IA em GA",
+          metric: "Features GA",
+          baseline: 0,
+          current: 1,
+          target: 3,
+          unit: "features",
+          measurementType: "absolute" as const,
+        },
+        {
+          title: "Adoção de Risk Copilot por RTEs",
+          metric: "Adoção %",
+          baseline: 0,
+          current: 12,
+          target: 50,
+          unit: "%",
+          measurementType: "percentage" as const,
+        },
       ],
     },
     {
       theme: theme3,
       title: "Atingir SOC2 Type II + LGPD compliance pleno",
       krs: [
-        { title: "Controles SOC2 implementados",       metric: "Controles SOC2", baseline: 10, current: 18, target: 64, unit: "controles", measurementType: "absolute"  as const },
-        { title: "Cobertura de audit log",             metric: "% auditado",     baseline: 0,  current: 45, target: 100, unit: "%",        measurementType: "percentage" as const },
+        {
+          title: "Controles SOC2 implementados",
+          metric: "Controles SOC2",
+          baseline: 10,
+          current: 18,
+          target: 64,
+          unit: "controles",
+          measurementType: "absolute" as const,
+        },
+        {
+          title: "Cobertura de audit log",
+          metric: "% auditado",
+          baseline: 0,
+          current: 45,
+          target: 100,
+          unit: "%",
+          measurementType: "percentage" as const,
+        },
       ],
     },
   ];
@@ -273,7 +584,8 @@ async function main() {
   for (const def of okrDefs) {
     const okr = await db.oKR.create({
       data: {
-        tenantId: TENANT_ID, type: "portfolio_theme",
+        tenantId: TENANT_ID,
+        type: "portfolio_theme",
         strategicThemeId: def.theme.id,
         title: def.title,
         horizon: "2026",
@@ -281,15 +593,42 @@ async function main() {
       },
     });
     for (const kr of def.krs) {
-      await db.keyResult.create({
+      const keyResult = await db.keyResult.create({
         data: { tenantId: TENANT_ID, okrId: okr.id, ...kr },
+      });
+      await db.keyResultSnapshot.createMany({
+        data: [
+          {
+            tenantId: TENANT_ID,
+            keyResultId: keyResult.id,
+            value: kr.baseline,
+            note: "Baseline inicial",
+            recordedAt: addWeeks(now, -8),
+          },
+          {
+            tenantId: TENANT_ID,
+            keyResultId: keyResult.id,
+            value: kr.current * 0.6,
+            note: "Check-in mid-quarter",
+            recordedAt: addWeeks(now, -4),
+          },
+          {
+            tenantId: TENANT_ID,
+            keyResultId: keyResult.id,
+            value: kr.current,
+            note: "Check-in PI 2026-Q2",
+            recordedAt: addDays(now, -3),
+          },
+        ],
       });
     }
   }
-  console.log(`  ✓ 3 Temas + 3 OKRs + 7 Key Results + 3 ThemeART links`);
+  console.log(
+    "  ✓ 3 Temas + 3 OKRs + 7 Key Results + snapshots + 3 ThemeART links"
+  );
 
-  // ─── 9. Épicos ────────────────────────────────────────────────────
-  console.log("\n  Criando épicos...");
+  // ─── 13. Épicos ────────────────────────────────────────────────────────────
+  console.log("\n  Criando épicos, features e dependências...");
 
   const epicMain = await db.epic.create({
     data: {
@@ -318,17 +657,20 @@ async function main() {
       strategicThemeId: theme3.id,
     },
   });
-  console.log(`  ✓ 3 Épicos (IMPLEMENTING, ANALYSIS, BACKLOG)`);
+  console.log("  ✓ 3 Épicos (IMPLEMENTING, ANALYSIS, BACKLOG)");
 
-  // ─── 10. Features ─────────────────────────────────────────────────
-  console.log("\n  Criando features...");
-
+  // ─── 14. Features ──────────────────────────────────────────────────────────
   const featKanban = await db.feature.create({
     data: {
-      tenantId: TENANT_ID, epicId: epicMain.id, piPlanId: piPlan.id,
+      tenantId: TENANT_ID,
+      epicId: epicMain.id,
+      piPlanId: piPlan.id,
       title: "Portfolio Kanban Board (5 colunas SAFe)",
       statusId: "DONE",
-      bv: 20, tc: 13, rr: 5, js: 8,
+      bv: 20,
+      tc: 13,
+      rr: 5,
+      js: 8,
       wsjfScore: wsjf(20, 13, 5, 8),
       storyPoints: 13,
       assigneeUserId: userId,
@@ -337,10 +679,15 @@ async function main() {
   });
   const featOKR = await db.feature.create({
     data: {
-      tenantId: TENANT_ID, epicId: epicMain.id, piPlanId: piPlan.id,
+      tenantId: TENANT_ID,
+      epicId: epicMain.id,
+      piPlanId: piPlan.id,
       title: "OKR Dashboard com Key Results",
       statusId: "IMPLEMENTING",
-      bv: 13, tc: 8, rr: 5, js: 5,
+      bv: 13,
+      tc: 8,
+      rr: 5,
+      js: 5,
       wsjfScore: wsjf(13, 8, 5, 5),
       storyPoints: 8,
       assigneeUserId: userId,
@@ -348,180 +695,627 @@ async function main() {
   });
   const featRisk = await db.feature.create({
     data: {
-      tenantId: TENANT_ID, epicId: epicAI.id, piPlanId: piPlan.id,
+      tenantId: TENANT_ID,
+      epicId: epicAI.id,
+      piPlanId: piPlan.id,
       title: "Risk Score Engine baseado em histórico de entregas",
       statusId: "BACKLOG",
-      bv: 13, tc: 8, rr: 8, js: 3,
+      bv: 13,
+      tc: 8,
+      rr: 8,
+      js: 3,
       wsjfScore: wsjf(13, 8, 8, 3),
       storyPoints: 8,
     },
   });
   await db.feature.create({
     data: {
-      tenantId: TENANT_ID, epicId: epicSec.id,
+      tenantId: TENANT_ID,
+      epicId: epicSec.id,
       title: "SAML 2.0 IdP Integration (Okta, Azure AD)",
       statusId: "BACKLOG",
-      bv: 13, tc: 13, rr: 8, js: 5,
+      bv: 13,
+      tc: 13,
+      rr: 8,
+      js: 5,
       wsjfScore: wsjf(13, 13, 8, 5),
       storyPoints: 8,
     },
   });
-  console.log(`  ✓ 4 Features (DONE, IMPLEMENTING, BACKLOG x2)`);
+  console.log("  ✓ 4 Features (DONE, IMPLEMENTING, BACKLOG x2)");
 
-  // ─── 11. Stories em todos os status ───────────────────────────────
+  // ─── 15. DependencyLink ────────────────────────────────────────────────────
+  await db.dependencyLink.create({
+    data: {
+      tenantId: TENANT_ID,
+      blockingFeatureId: featKanban.id,
+      blockedFeatureId: featOKR.id,
+      type: "technical",
+      severity: "high",
+      status: "completed",
+      description:
+        "OKR Dashboard requer Kanban Board concluído para exibir épicos vinculados a OKRs.",
+    },
+  });
+  await db.dependencyLink.create({
+    data: {
+      tenantId: TENANT_ID,
+      blockingFeatureId: featOKR.id,
+      blockedFeatureId: featRisk.id,
+      type: "business",
+      severity: "medium",
+      status: "on-track",
+      description:
+        "Risk Score Engine depende dos dados de OKRs para calcular impacto de risco.",
+      dueDate: addWeeks(now, 4),
+    },
+  });
+  console.log("  ✓ 2 DependencyLinks entre features");
+
+  // ─── 16. Stories em todos os status ────────────────────────────────────────
   console.log("\n  Criando stories (todos os status)...");
 
   const storyDone = await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featKanban.id, sprintId: sprint1.id,
+      tenantId: TENANT_ID,
+      featureId: featKanban.id,
+      sprintId: sprint1.id,
       title: "Drag-and-drop entre colunas do Kanban",
-      description: "Arrastar épico entre colunas SAFe (Backlog → Review → Analysis → Implementing → Done).",
-      acceptanceCriteria: "- DnD funciona em mouse e touch\n- Persiste no banco via server action\n- Optimistic update sem flicker",
-      storyPoints: 8, status: "DONE", priority: "critical", order: 0,
+      description:
+        "Arrastar épico entre colunas SAFe (Backlog → Review → Analysis → Implementing → Done).",
+      acceptanceCriteria:
+        "- DnD funciona em mouse e touch\n- Persiste no banco via server action\n- Optimistic update sem flicker",
+      storyPoints: 8,
+      status: "DONE",
+      priority: "critical",
+      order: 0,
       assigneeUserId: userId,
       completedAt: addDays(now, -10),
     },
   });
   const storyReview = await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featOKR.id, sprintId: sprint2.id,
+      tenantId: TENANT_ID,
+      featureId: featOKR.id,
+      sprintId: sprint2.id,
       title: "Filtrar OKRs por horizonte (2026, H1, H2)",
-      description: "Dropdown para filtrar por horizonte com URL state (searchParams).",
-      acceptanceCriteria: "- URL reflete filtro selecionado\n- Reset limpa filtro\n- Funciona sem JS via searchParams",
-      storyPoints: 2, status: "REVIEW", priority: "medium", order: 0,
+      description:
+        "Dropdown para filtrar por horizonte com URL state (searchParams).",
+      acceptanceCriteria:
+        "- URL reflete filtro selecionado\n- Reset limpa filtro\n- Funciona sem JS via searchParams",
+      storyPoints: 2,
+      status: "REVIEW",
+      priority: "medium",
+      order: 0,
       assigneeUserId: userId,
     },
   });
   const storyInProgress = await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featOKR.id, sprintId: sprint2.id,
+      tenantId: TENANT_ID,
+      featureId: featOKR.id,
+      sprintId: sprint2.id,
       title: "Criar/editar OKR via modal",
-      description: "Formulário com campos: título, descrição, horizonte, status. Salva via server action.",
-      acceptanceCriteria: "- Form valida campos obrigatórios\n- Salva via server action\n- Toast de sucesso/erro\n- Fecha modal após salvar",
-      storyPoints: 5, status: "IN_PROGRESS", priority: "critical", order: 1,
+      description:
+        "Formulário com campos: título, descrição, horizonte, status. Salva via server action.",
+      acceptanceCriteria:
+        "- Form valida campos obrigatórios\n- Salva via server action\n- Toast de sucesso/erro\n- Fecha modal após salvar",
+      storyPoints: 5,
+      status: "IN_PROGRESS",
+      priority: "critical",
+      order: 1,
       assigneeUserId: userId,
     },
   });
   const storyTodo = await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featOKR.id, sprintId: sprint2.id,
+      tenantId: TENANT_ID,
+      featureId: featOKR.id,
+      sprintId: sprint2.id,
       title: "Gráfico de progresso por Key Result",
-      description: "Gauge/progress bar mostrando baseline → current → target para cada KR.",
-      acceptanceCriteria: "- Gauge visível para cada KR\n- Tooltip com valores numéricos\n- Cor muda com status (verde/amarelo/vermelho)",
-      storyPoints: 3, status: "TODO", priority: "high", order: 2,
+      description:
+        "Gauge/progress bar mostrando baseline → current → target para cada KR.",
+      acceptanceCriteria:
+        "- Gauge visível para cada KR\n- Tooltip com valores numéricos\n- Cor muda com status",
+      storyPoints: 3,
+      status: "TODO",
+      priority: "high",
+      order: 2,
       assigneeUserId: userId,
     },
   });
-  const storyBacklog = await db.story.create({
+  await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featOKR.id, sprintId: sprint2.id,
+      tenantId: TENANT_ID,
+      featureId: featOKR.id,
+      sprintId: sprint2.id,
       title: "Exibir lista de OKRs agrupados por tema",
-      description: "Como LPM, quero ver todos os OKRs agrupados por tema estratégico para priorizar investimentos.",
-      acceptanceCriteria: "- Lista carrega em < 2s\n- Agrupamento por tema correto\n- Sem erros de hidratação",
-      storyPoints: 3, status: "BACKLOG", priority: "high", order: 3,
+      description:
+        "Como LPM, quero ver todos os OKRs agrupados por tema estratégico.",
+      acceptanceCriteria:
+        "- Lista carrega em < 2s\n- Agrupamento por tema correto\n- Sem erros de hidratação",
+      storyPoints: 3,
+      status: "BACKLOG",
+      priority: "high",
+      order: 3,
     },
   });
-  const storyPlanning = await db.story.create({
+  const storyRisk = await db.story.create({
     data: {
-      tenantId: TENANT_ID, featureId: featRisk.id, sprintId: sprint3.id,
+      tenantId: TENANT_ID,
+      featureId: featRisk.id,
+      sprintId: sprint2.id,
       title: "Definir modelo de scoring de riscos SAFe",
-      description: "Pesquisar e definir algoritmo base para risk score baseado em histórico de PIs.",
-      acceptanceCriteria: "- Documento de decisão arquitetural (ADR) aprovado\n- Modelo validado com dados históricos",
-      storyPoints: 3, status: "TODO", priority: "medium", order: 0,
+      description:
+        "Pesquisar e definir algoritmo base para risk score baseado em histórico de PIs.",
+      acceptanceCriteria:
+        "- ADR aprovado\n- Modelo validado com dados históricos",
+      storyPoints: 3,
+      status: "TODO",
+      priority: "medium",
+      order: 0,
     },
   });
-  console.log(`  ✓ 6 Stories (DONE, REVIEW, IN_PROGRESS, TODO x2, BACKLOG)`);
+  console.log("  ✓ 6 Stories (DONE, REVIEW, IN_PROGRESS, TODO x2, BACKLOG)");
 
-  // ─── 12. Tasks em todos os status ─────────────────────────────────
+  // ─── 17. Tasks em todos os status ──────────────────────────────────────────
   console.log("\n  Criando tasks (todos os status)...");
 
-  // Tasks da story IN_PROGRESS — exercita os 3 status de task
   await db.task.createMany({
     data: [
       {
-        tenantId: TENANT_ID, storyId: storyInProgress.id,
+        tenantId: TENANT_ID,
+        storyId: storyInProgress.id,
         title: "Criar schema Zod para formulário de OKR",
-        status: "DONE", assigneeUserId: userId, estimateHours: 2,
+        status: "DONE",
+        assigneeUserId: userId,
+        estimateHours: 2,
         completedAt: addDays(now, -2),
       },
       {
-        tenantId: TENANT_ID, storyId: storyInProgress.id,
+        tenantId: TENANT_ID,
+        storyId: storyInProgress.id,
         title: "Implementar server action createOKR / updateOKR",
-        status: "IN_PROGRESS", assigneeUserId: userId, estimateHours: 3,
+        status: "IN_PROGRESS",
+        assigneeUserId: userId,
+        estimateHours: 3,
       },
       {
-        tenantId: TENANT_ID, storyId: storyInProgress.id,
+        tenantId: TENANT_ID,
+        storyId: storyInProgress.id,
         title: "Construir componente OKRFormModal",
-        status: "IN_PROGRESS", assigneeUserId: userId, estimateHours: 4,
+        status: "IN_PROGRESS",
+        assigneeUserId: userId,
+        estimateHours: 4,
       },
       {
-        tenantId: TENANT_ID, storyId: storyInProgress.id,
+        tenantId: TENANT_ID,
+        storyId: storyInProgress.id,
         title: "Adicionar toast de sucesso/erro com Sonner",
-        status: "TODO", estimateHours: 1,
+        status: "TODO",
+        estimateHours: 1,
       },
       {
-        tenantId: TENANT_ID, storyId: storyInProgress.id,
+        tenantId: TENANT_ID,
+        storyId: storyInProgress.id,
         title: "Escrever testes E2E do modal de OKR",
-        status: "TODO", estimateHours: 2,
+        status: "TODO",
+        estimateHours: 2,
       },
     ],
   });
-
-  // Tasks da story TODO
   await db.task.createMany({
     data: [
       {
-        tenantId: TENANT_ID, storyId: storyTodo.id,
+        tenantId: TENANT_ID,
+        storyId: storyTodo.id,
         title: "Pesquisar biblioteca de gauge/radial para Radix UI",
-        status: "DONE", assigneeUserId: userId, estimateHours: 1,
+        status: "DONE",
+        assigneeUserId: userId,
+        estimateHours: 1,
         completedAt: addDays(now, -1),
       },
       {
-        tenantId: TENANT_ID, storyId: storyTodo.id,
+        tenantId: TENANT_ID,
+        storyId: storyTodo.id,
         title: "Implementar componente KeyResultProgress",
-        status: "TODO", estimateHours: 3,
+        status: "TODO",
+        estimateHours: 3,
       },
     ],
   });
-
-  // Tasks da story DONE (sprint encerrado)
   await db.task.createMany({
     data: [
       {
-        tenantId: TENANT_ID, storyId: storyDone.id,
+        tenantId: TENANT_ID,
+        storyId: storyDone.id,
         title: "Integrar @dnd-kit/core no Portfolio Kanban",
-        status: "DONE", assigneeUserId: userId, estimateHours: 4,
+        status: "DONE",
+        assigneeUserId: userId,
+        estimateHours: 4,
         completedAt: addDays(now, -12),
       },
       {
-        tenantId: TENANT_ID, storyId: storyDone.id,
+        tenantId: TENANT_ID,
+        storyId: storyDone.id,
         title: "Server action updateEpicStatus com optimistic UI",
-        status: "DONE", assigneeUserId: userId, estimateHours: 3,
+        status: "DONE",
+        assigneeUserId: userId,
+        estimateHours: 3,
         completedAt: addDays(now, -11),
       },
     ],
   });
+  console.log("  ✓ 9 Tasks (2 TODO, 2 IN_PROGRESS, 5 DONE)");
 
-  console.log(`  ✓ 9 Tasks (2 TODO, 2 IN_PROGRESS, 5 DONE)`);
+  // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
+  console.log("\n  Criando riscos, impedimentos e defeitos...");
 
-  // ─── Resumo ────────────────────────────────────────────────────────
-  console.log("\n─────────────────────────────────────────────────────");
-  console.log("🎉 seed-e2e concluído!\n");
+  await db.risk.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        title: "Dependência de API externa sem SLA garantido",
+        status: "IDENTIFIED",
+        category: "technical",
+        impact: "high",
+        probability: "medium",
+        description:
+          "Serviço de autenticação terceiro sem SLA. Plano: implementar fallback local.",
+        ownerUserId: userId,
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        title: "Capacidade do team reduzida por 2 semanas (férias)",
+        status: "OWNED",
+        category: "organizational",
+        impact: "medium",
+        probability: "high",
+        description:
+          "2 devs em férias na semana 3. Plano: priorizar histórias menores e aumentar WIP.",
+        ownerUserId: userId,
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        title: "Dados históricos incompletos para treinamento do modelo IA",
+        status: "MITIGATED",
+        category: "technical",
+        impact: "high",
+        probability: "low",
+        description:
+          "Migração de dados concluída. Backfill de 6 meses de histórico realizado.",
+        ownerUserId: userId,
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        title: "Custo de infraestrutura acima do orçamento do PI",
+        status: "ACCEPTED",
+        category: "financial" as string,
+        impact: "medium",
+        probability: "medium",
+        description:
+          "Board aprovou aumento de 15% no budget de infra para o PI. Monitorar mensalmente.",
+        ownerUserId: userId,
+      },
+      {
+        tenantId: TENANT_ID,
+        piPlanId: piPlan.id,
+        title: "Certificação LGPD concluída antes do PI",
+        status: "RESOLVED",
+        category: "compliance",
+        impact: "critical",
+        probability: "low",
+        description:
+          "DPO confirmou conformidade. Auditoria externa aprovada em 2026-05.",
+        ownerUserId: userId,
+      },
+    ],
+  });
+  console.log("  ✓ 5 Risks (IDENTIFIED/OWNED/MITIGATED/ACCEPTED/RESOLVED)");
+
+  // ─── 19. Impediments ───────────────────────────────────────────────────────
+  await db.impediment.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        title:
+          "Acesso ao ambiente de staging bloqueado pelo firewall corporativo",
+        status: "RESOLVED",
+        ownerUserId: userId,
+        description:
+          "TI liberou acesso após ticket #4521. Resolvido em 2 dias.",
+        resolvedAt: addDays(now, -8),
+      },
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        title: "Licença do Playwright expirada no CI/CD",
+        status: "IN_PROGRESS",
+        ownerUserId: userId,
+        description: "DevOps atualizando pipeline. ETA: fim da semana.",
+      },
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        title: "PO indisponível para refinamento na próxima semana",
+        status: "OPEN",
+        ownerUserId: userId,
+        description:
+          "Impacta Sprint 3. SM buscando substituto para sessão de refinamento.",
+      },
+    ],
+  });
+  console.log("  ✓ 3 Impediments (RESOLVED/IN_PROGRESS/OPEN)");
+
+  // ─── 20. Defects ───────────────────────────────────────────────────────────
+  await db.defect.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        storyId: storyReview.id,
+        title: "Filtro de OKR por horizonte não persiste ao recarregar página",
+        severity: "high",
+        status: "IN_PROGRESS",
+        reporterUserId: userId,
+        assigneeUserId: userId,
+        description:
+          "searchParam correto na URL mas estado do componente não inicializa com o valor da URL.",
+      },
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        storyId: storyDone.id,
+        title: "Drop target não aceita épico quando coluna está vazia",
+        severity: "critical",
+        status: "RESOLVED",
+        reporterUserId: userId,
+        assigneeUserId: userId,
+        description:
+          "Race condition no useDroppable. Corrigido com isOver === true guard.",
+        resolvedAt: addDays(now, -9),
+      },
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        storyId: storyRisk.id,
+        title: "Tooltip do risk score aparece fora da viewport em telas small",
+        severity: "medium",
+        status: "OPEN",
+        reporterUserId: userId,
+        description:
+          "Reproduzível em viewport 375px. Radix Tooltip precisa de collisionPadding configurado.",
+      },
+    ],
+  });
+  console.log(
+    "  ✓ 3 Defects (critical RESOLVED / high IN_PROGRESS / medium OPEN)"
+  );
+
+  // ─── 21. StandupEntries ────────────────────────────────────────────────────
+  console.log("\n  Criando standups e flow metrics...");
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const yesterday = addDays(today, -1);
+
+  await db.standupEntry.upsert({
+    where: { teamId_userId_date: { teamId: team.id, userId, date: today } },
+    create: {
+      tenantId: TENANT_ID,
+      teamId: team.id,
+      userId,
+      date: today,
+      yesterday:
+        "Implementei server action createOKR com validação Zod e error handling",
+      today: "Vou construir OKRFormModal e integrar com server action",
+      blockers: null,
+    },
+    update: {},
+  });
+  await db.standupEntry.upsert({
+    where: { teamId_userId_date: { teamId: team.id, userId, date: yesterday } },
+    create: {
+      tenantId: TENANT_ID,
+      teamId: team.id,
+      userId,
+      date: yesterday,
+      yesterday: "Criei schema Zod para OKR e escrevi testes unitários",
+      today: "Implementar server action e começar o modal",
+      blockers: "Aguardando design final do modal — desbloqueado pelo PO",
+    },
+    update: {},
+  });
+  console.log("  ✓ 2 StandupEntries (hoje + ontem)");
+
+  // ─── 22. FlowMetricSnapshots ───────────────────────────────────────────────
+  await db.flowMetricSnapshot.create({
+    data: {
+      tenantId: TENANT_ID,
+      scope: "team",
+      scopeId: team.id,
+      period: "sprint",
+      periodRef: sprint1.id,
+      recordedAt: addWeeks(now, -2),
+      flowVelocityTotal: 38,
+      flowVelocityByType: { story: 28, defect: 5, feature: 5, enabler: 0 },
+      flowDistribution: {
+        story: 0.58,
+        defect: 0.16,
+        feature: 0.21,
+        enabler: 0.05,
+      },
+      flowTimeAvgHours: 52,
+      flowTimeMedianHours: 42,
+      flowTimeByType: { story: 48, defect: 20, feature: 80 },
+      flowLoadAvg: 5.2,
+      flowLoadCurrent: 5,
+      flowEfficiency: 0.68,
+      flowPredictability: 0.85,
+      plannedItems: 12,
+      deliveredItems: 11,
+      staleness: "FRESH",
+    },
+  });
+  await db.flowMetricSnapshot.create({
+    data: {
+      tenantId: TENANT_ID,
+      scope: "art",
+      scopeId: art.id,
+      period: "pi",
+      periodRef: piPlan.id,
+      recordedAt: addDays(now, -1),
+      flowVelocityTotal: 38,
+      flowVelocityByType: { story: 28, defect: 5, feature: 5, enabler: 0 },
+      flowDistribution: {
+        story: 0.6,
+        defect: 0.15,
+        feature: 0.2,
+        enabler: 0.05,
+      },
+      flowTimeAvgHours: 55,
+      flowTimeMedianHours: 44,
+      flowTimeByType: { story: 50, defect: 22, feature: 85 },
+      flowLoadAvg: 5.0,
+      flowLoadCurrent: 5,
+      flowEfficiency: 0.65,
+      flowPredictability: 0.8,
+      plannedItems: 12,
+      deliveredItems: 11,
+      staleness: "FRESH",
+    },
+  });
+  console.log("  ✓ 2 FlowMetricSnapshots (team/sprint + ART/PI)");
+
+  // ─── 23. CompetencyAssessment + ImprovementActions ─────────────────────────
+  const assessment = await db.competencyAssessment.create({
+    data: {
+      tenantId: TENANT_ID,
+      scope: "team",
+      scopeId: team.id,
+      competency: "TEAM_TECHNICAL_AGILITY",
+      score: 3.2,
+      assessedAt: addDays(now, -14),
+      assessedById: userId,
+      piPlanId: piPlan.id,
+      notes:
+        "Time demonstra boas práticas de CI/CD e TDD, mas pair programming ainda é ad-hoc. Testes E2E ausentes da DoD.",
+    },
+  });
+  await db.competencyAssessment.create({
+    data: {
+      tenantId: TENANT_ID,
+      scope: "art",
+      scopeId: art.id,
+      competency: "LEAN_AGILE_LEADERSHIP",
+      score: 3.8,
+      assessedAt: addDays(now, -14),
+      assessedById: userId,
+      piPlanId: piPlan.id,
+      notes:
+        "Liderança engajada com SAFe. OKRs visíveis mas não suficientemente conectados às métricas de time.",
+    },
+  });
+
+  await db.improvementAction.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        assessmentId: assessment.id,
+        title: "Institucionalizar pair programming — mínimo 2h/semana por dev",
+        description:
+          "Derivado da avaliação Team Technical Agility (3.2/5). Criar kanban de pairs no Slack com rotação semanal.",
+        scope: "team",
+        scopeId: team.id,
+        status: "IN_PROGRESS",
+        dueDate: addWeeks(now, 4),
+        assigneeId: userId,
+        source: "manual",
+      },
+      {
+        tenantId: TENANT_ID,
+        assessmentId: assessment.id,
+        title: "Adicionar testes E2E Playwright à Definition of Done",
+        description:
+          "Nenhuma story encerra sem ao menos 1 cenário E2E cobrindo o caminho feliz.",
+        scope: "team",
+        scopeId: team.id,
+        status: "OPEN",
+        dueDate: addWeeks(now, 2),
+        assigneeId: userId,
+        source: "manual",
+      },
+    ],
+  });
+  console.log(
+    "  ✓ 2 CompetencyAssessments (team + ART) + 2 ImprovementActions"
+  );
+
+  // ─── 24. PersonSkillProfile ────────────────────────────────────────────────
+  await db.personSkillProfile.create({
+    data: {
+      tenantId: TENANT_ID,
+      userId,
+      competency: "TEAM_TECHNICAL_AGILITY",
+      skillLevel: 4,
+      proficiency: 0.82,
+      assessedAt: addDays(now, -30),
+      assessedBy: userId,
+      confidence: 85,
+      isDraft: false,
+      isVerified: true,
+    },
+  });
+  console.log("  ✓ PersonSkillProfile (admin E2E)");
+
+  // ─── Resumo ─────────────────────────────────────────────────────────────────
+  console.log(
+    "\n─────────────────────────────────────────────────────────────────"
+  );
+  console.log("🎉 seed-e2e concluído! Todas as entidades Cosmos populadas.\n");
   console.log("  Credenciais E2E:");
   console.log(`  Email:    ${E2E_EMAIL}`);
   console.log(`  Senha:    ${E2E_PASSWORD}`);
   console.log(`  Tenant:   COSMOS Dev (${TENANT_SLUG}) — UNIVERSE`);
   console.log("\n  Dados criados:");
-  console.log("  • 1 ART  →  1 Time (5 membros dimensionados)");
-  console.log("  • 3 Sprints (COMPLETED / ACTIVE / PLANNING)");
-  console.log("  • 1 PI Plan  →  4 PI Objectives (3 committed + 1 stretch)");
-  console.log("  • 3 Temas Estratégicos  →  3 OKRs  →  7 Key Results");
-  console.log("  • 3 Épicos  →  4 Features");
-  console.log("  • 6 Stories (todos os status: DONE/REVIEW/IN_PROGRESS/TODO/BACKLOG)");
-  console.log("  • 9 Tasks (todos os status: DONE/IN_PROGRESS/TODO)");
-  console.log("\n  Variáveis de ambiente para E2E:");
+  console.log("  Auth & Org");
+  console.log("    • LACE (9 princípios SAFe)");
+  console.log("    • OnboardingProgress (company_setup concluído)");
+  console.log("  SAFe Delivery");
+  console.log("    • 1 ART → 1 Time (5 membros)");
+  console.log(
+    "    • 3 Sprints (COMPLETED/ACTIVE/PLANNING) + SprintReview + Retrospectiva"
+  );
+  console.log("    • 1 PI Plan → 4 PI Objectives (3 committed + 1 stretch)");
+  console.log("  Portfolio");
+  console.log(
+    "    • 3 Temas Estratégicos → 3 OKRs → 7 Key Results + 21 snapshots"
+  );
+  console.log("    • 3 Épicos → 4 Features → 2 DependencyLinks");
+  console.log("    • 6 Stories (todos os status) → 9 Tasks (todos os status)");
+  console.log("  Riscos & Qualidade");
+  console.log(
+    "    • 5 Risks (ROAM: IDENTIFIED/OWNED/MITIGATED/ACCEPTED/RESOLVED)"
+  );
+  console.log("    • 3 Impediments (OPEN/IN_PROGRESS/RESOLVED)");
+  console.log("    • 3 Defects (critical/high/medium)");
+  console.log("  Flow & Competências");
+  console.log("    • 2 FlowMetricSnapshots (team/sprint + ART/PI)");
+  console.log("    • 2 StandupEntries (hoje + ontem)");
+  console.log(
+    "    • 2 CompetencyAssessments (team + ART) + 2 ImprovementActions"
+  );
+  console.log("    • 1 PersonSkillProfile");
+  console.log("\n  Variáveis para E2E runners:");
   console.log(`  E2E_EMAIL="${E2E_EMAIL}" E2E_PASSWORD="${E2E_PASSWORD}"`);
-  console.log("─────────────────────────────────────────────────────\n");
+  console.log(
+    "─────────────────────────────────────────────────────────────────\n"
+  );
 
   await db.$disconnect();
 }

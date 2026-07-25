@@ -16,7 +16,10 @@ export const solutionTrain = createPlanFlag("solutionTrain", "NEBULA");
 export const samlSso = createPlanFlag("samlSso", "NEBULA");
 export const auditLogs = createPlanFlag("auditLogs", "NEBULA");
 export const advancedAnalytics = createPlanFlag("advancedAnalytics", "NEBULA");
-export const githubActionsIntegration = createPlanFlag("githubActionsIntegration", "NEBULA");
+export const githubActionsIntegration = createPlanFlag(
+  "githubActionsIntegration",
+  "NEBULA"
+);
 
 // ── Universe ──────────────────────────────────────────────────────
 export const onPremise = createPlanFlag("onPremise", "UNIVERSE");

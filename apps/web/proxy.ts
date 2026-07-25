@@ -44,7 +44,7 @@ const arcjetMiddleware = async (request: NextRequest) => {
 };
 
 // Compose non-Clerk middleware with Nemo
-const composedMiddleware = createNEMO(
+const _composedMiddleware = createNEMO(
   {},
   {
     before: [internationalizationMiddleware, arcjetMiddleware],

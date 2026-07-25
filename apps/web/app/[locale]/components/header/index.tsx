@@ -33,7 +33,7 @@ export const Header = ({ dictionary: _ }: HeaderProps) => {
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-20">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link className="flex items-center gap-2" href="/">
           <div
             className="flex h-7 w-7 items-center justify-center rounded"
             style={{
@@ -69,14 +69,9 @@ export const Header = ({ dictionary: _ }: HeaderProps) => {
         <nav className="hidden items-center gap-1 md:flex">
           {NAV_ITEMS.map((item) => (
             <Link
-              key={item.label}
-              href={item.href}
               className="rounded-md px-3 py-2 transition-colors"
-              style={{
-                fontFamily: "var(--font-plex)",
-                fontSize: 14,
-                color: "var(--cosmos-gray-60)",
-              }}
+              href={item.href}
+              key={item.label}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLAnchorElement).style.color =
                   "var(--cosmos-white)";
@@ -88,6 +83,11 @@ export const Header = ({ dictionary: _ }: HeaderProps) => {
                   "var(--cosmos-gray-60)";
                 (e.currentTarget as HTMLAnchorElement).style.background =
                   "transparent";
+              }}
+              style={{
+                fontFamily: "var(--font-plex)",
+                fontSize: 14,
+                color: "var(--cosmos-gray-60)",
               }}
             >
               {item.label}
@@ -127,16 +127,16 @@ export const Header = ({ dictionary: _ }: HeaderProps) => {
 
         {/* Mobile menu button */}
         <button
-          type="button"
+          aria-label="Toggle menu"
           className="flex items-center justify-center rounded md:hidden"
+          onClick={() => setOpen(!open)}
           style={{
             color: "var(--cosmos-gray-60)",
             padding: 8,
             background: "transparent",
             border: "none",
           }}
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
+          type="button"
         >
           {open ? <X size={20} /> : <Menu size={20} />}
         </button>
@@ -145,22 +145,22 @@ export const Header = ({ dictionary: _ }: HeaderProps) => {
       {/* Mobile menu */}
       {open && (
         <div
-          className="px-5 pb-5 pt-2 md:hidden"
+          className="px-5 pt-2 pb-5 md:hidden"
           style={{ borderTop: "1px solid var(--cosmos-deep)" }}
         >
           <nav className="flex flex-col gap-2">
             {NAV_ITEMS.map((item) => (
               <Link
-                key={item.label}
-                href={item.href}
                 className="rounded-md px-3 py-3"
+                href={item.href}
+                key={item.label}
+                onClick={() => setOpen(false)}
                 style={{
                   fontFamily: "var(--font-plex)",
                   fontSize: 16,
                   color: "var(--cosmos-white)",
                   borderBottom: "1px solid var(--cosmos-deep)",
                 }}
-                onClick={() => setOpen(false)}
               >
                 {item.label}
               </Link>

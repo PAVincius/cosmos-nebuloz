@@ -2,32 +2,24 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
-import { enforce } from "../permissions";
-import { dispatchEvent } from "../events";
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
   cuid,
+  isoDate,
   nnStr,
   optStr,
-  isoDate,
-  SprintStatus,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
-import {
-  UpdateSprintSchema,
-  SprintFiltersSchema,
-  type CreateSprintInput,
-  type UpdateSprintInput,
-  type SprintFiltersInput,
-} from "./schema";
-
-export type { CreateSprintInput, UpdateSprintInput, SprintFiltersInput };
+import { logAudit } from "../audit/index";
+import { dispatchEvent } from "../events";
+import { enforce } from "../permissions";
+import { SprintFiltersSchema, UpdateSprintSchema } from "./schema";
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 
@@ -42,7 +34,7 @@ const SprintBaseSchema = z.object({
 
 const CreateSprintSchema = SprintBaseSchema.refine(
   (d) => d.endDate > d.startDate,
-  { message: "endDate deve ser após startDate", path: ["endDate"] },
+  { message: "endDate deve ser após startDate", path: ["endDate"] }
 );
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -90,7 +82,9 @@ export async function getSprintById(id: string): Promise<Result<any>> {
       },
     });
 
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
     return sprint;
   });
 }
@@ -121,7 +115,9 @@ export async function createSprint(raw: unknown): Promise<Result<any>> {
       where: { id: data.teamId, tenantId: ctx.tenantId },
       select: { id: true },
     });
-    if (!team) throw new Error("Time não encontrado");
+    if (!team) {
+      throw new Error("Time não encontrado");
+    }
 
     // Business: check for existing active sprint (non-blocking warning)
     const activeSprint = await database.sprint.findFirst({
@@ -133,18 +129,29 @@ export async function createSprint(raw: unknown): Promise<Result<any>> {
       data: { ...data, tenantId: ctx.tenantId },
     });
 
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "Sprint",
+      entityId: sprint.id,
+      diff: { name: sprint.name, teamId: sprint.teamId },
+    });
+
     revalidatePath(`/teams/${data.teamId}/sprints`);
     revalidatePath("/teams");
 
     return activeSprint
-      ? { ...sprint, _warning: `Já existe um sprint ativo neste time: "${(activeSprint as any).name}"` }
+      ? {
+          ...sprint,
+          _warning: `Já existe um sprint ativo neste time: "${(activeSprint as any).name}"`,
+        }
       : sprint;
   });
 }
 
 export async function updateSprint(
   id: string,
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -154,9 +161,19 @@ export async function updateSprint(
     const sprint = await database.sprint.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     const updated = await database.sprint.update({ where: { id }, data });
+
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "Sprint",
+      entityId: id,
+      diff: data as Record<string, string>,
+    });
 
     revalidatePath(`/teams/${sprint.teamId}/sprints`);
     revalidatePath("/teams");
@@ -166,7 +183,7 @@ export async function updateSprint(
 }
 
 export async function deleteSprint(
-  id: string,
+  id: string
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -175,11 +192,21 @@ export async function deleteSprint(
     const sprint = await database.sprint.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
-    if (sprint.status === "ACTIVE")
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
+    if (sprint.status === "ACTIVE") {
       throw new Error("Não é possível excluir um sprint ativo");
+    }
 
     await database.sprint.delete({ where: { id } });
+
+    logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "deleted",
+      entityType: "Sprint",
+      entityId: id,
+    });
 
     revalidatePath(`/teams/${sprint.teamId}/sprints`);
     revalidatePath("/teams");
@@ -196,7 +223,9 @@ export async function activateSprint(id: string): Promise<Result<any>> {
     const sprint = await database.sprint.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     // Business rule: only one active sprint per team
     const activeSprint = await database.sprint.findFirst({
@@ -208,17 +237,25 @@ export async function activateSprint(id: string): Promise<Result<any>> {
       },
       select: { id: true, name: true },
     });
-    if (activeSprint)
+    if (activeSprint) {
       throw new Error(
-        `Já existe sprint ativo neste time: "${(activeSprint as any).name}"`,
+        `Já existe sprint ativo neste time: "${(activeSprint as any).name}"`
       );
+    }
 
     const updated = await database.sprint.update({
       where: { id },
       data: { status: "ACTIVE" },
     });
 
-    void dispatchEvent({ type: "sprint.activated", sprintId: id, sprintName: sprint.name, teamId: sprint.teamId, tenantId: ctx.tenantId, userId: ctx.userId });
+    void dispatchEvent({
+      type: "sprint.activated",
+      sprintId: id,
+      sprintName: sprint.name,
+      teamId: sprint.teamId,
+      tenantId: ctx.tenantId,
+      userId: ctx.userId,
+    });
 
     revalidatePath(`/teams/${sprint.teamId}/sprints`);
     revalidatePath("/teams");
@@ -235,15 +272,28 @@ export async function completeSprint(id: string): Promise<Result<any>> {
     const sprint = await database.sprint.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     const updated = await database.sprint.update({
       where: { id },
       data: { status: "COMPLETED" },
     });
 
-    const review = await database.sprintReview.findUnique({ where: { sprintId: id }, select: { velocity: true } });
-    void dispatchEvent({ type: "sprint.completed", sprintId: id, sprintName: sprint.name, teamId: sprint.teamId, velocity: review?.velocity ?? 0, tenantId: ctx.tenantId, userId: ctx.userId });
+    const review = await database.sprintReview.findUnique({
+      where: { sprintId: id },
+      select: { velocity: true },
+    });
+    void dispatchEvent({
+      type: "sprint.completed",
+      sprintId: id,
+      sprintName: sprint.name,
+      teamId: sprint.teamId,
+      velocity: review?.velocity ?? 0,
+      tenantId: ctx.tenantId,
+      userId: ctx.userId,
+    });
 
     revalidatePath(`/teams/${sprint.teamId}/sprints`);
     revalidatePath("/teams");

@@ -32,7 +32,7 @@ export const Footer = () => (
     <div className="mx-auto max-w-7xl px-5 py-16 md:px-20">
       <div className="grid grid-cols-2 gap-10 md:grid-cols-4">
         {/* Brand */}
-        <div className="col-span-2 md:col-span-1 flex flex-col gap-4">
+        <div className="col-span-2 flex flex-col gap-4 md:col-span-1">
           <div>
             <span
               style={{
@@ -67,30 +67,30 @@ export const Footer = () => (
           >
             Plataforma de portfolio ágil para empresas que rodam SAFe a sério.
           </p>
-          <div className="flex gap-3 mt-2">
+          <div className="mt-2 flex gap-3">
             <Link
-              href="https://linkedin.com/company/nebuloz"
-              target="_blank"
-              rel="noopener noreferrer"
               className="rounded px-2 py-1 text-xs transition-colors"
+              href="https://linkedin.com/company/nebuloz"
+              rel="noopener noreferrer"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "var(--cosmos-gray-60)",
                 border: "1px solid var(--cosmos-deep)",
               }}
+              target="_blank"
             >
               LinkedIn
             </Link>
             <Link
-              href="https://github.com/nebuloz"
-              target="_blank"
-              rel="noopener noreferrer"
               className="rounded px-2 py-1 text-xs transition-colors"
+              href="https://github.com/nebuloz"
+              rel="noopener noreferrer"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: "var(--cosmos-gray-60)",
                 border: "1px solid var(--cosmos-deep)",
               }}
+              target="_blank"
             >
               GitHub
             </Link>
@@ -113,8 +113,8 @@ export const Footer = () => (
           </p>
           {LINKS.produto.map((l) => (
             <Link
-              key={l.label}
               href={l.href}
+              key={l.label}
               style={{
                 fontFamily: "var(--font-plex)",
                 fontSize: 14,
@@ -142,8 +142,8 @@ export const Footer = () => (
           </p>
           {LINKS.empresa.map((l) => (
             <Link
-              key={l.label}
               href={l.href}
+              key={l.label}
               style={{
                 fontFamily: "var(--font-plex)",
                 fontSize: 14,
@@ -171,8 +171,8 @@ export const Footer = () => (
           </p>
           {LINKS.legal.map((l) => (
             <Link
-              key={l.label}
               href={l.href}
+              key={l.label}
               style={{
                 fontFamily: "var(--font-plex)",
                 fontSize: 14,

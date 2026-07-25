@@ -1,16 +1,28 @@
 import "server-only";
 
-import { prismaAdapter } from "better-auth/adapters/prisma";
+import { database } from "@repo/database";
+
+export type { MemberRole } from "@repo/database";
+
+import type { MemberRole } from "@repo/database";
+
+import { log } from "@repo/observability/log";
 import { betterAuth } from "better-auth";
+import { prismaAdapter } from "better-auth/adapters/prisma";
 import { twoFactor } from "better-auth/plugins";
 import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
-import { database } from "@repo/database";
-import { log } from "@repo/observability/log";
-import type { MemberRole } from "@repo/database";
 
-const SESSION_IDLE_SECONDS = 24 * 60 * 60;      // 24h idle timeout
+const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
+
+const _rawSecret = process.env.BETTER_AUTH_SECRET;
+if (!_rawSecret || _rawSecret.length < 32) {
+  throw new Error(
+    "BETTER_AUTH_SECRET must be set and at least 32 characters long"
+  );
+}
+const AUTH_SECRET: string = _rawSecret;
 
 export const auth = betterAuth({
   database: prismaAdapter(database, {
@@ -30,7 +42,6 @@ export const auth = betterAuth({
     additionalFields: {
       activeTenantId: {
         type: "string",
-        nullable: true,
         // Server-only: tenant changes go through POST /api/auth/switch-tenant (membership check).
         input: false,
       },
@@ -42,7 +53,7 @@ export const auth = betterAuth({
       otpOptions: { digits: 6 },
     }),
   ],
-  secret: process.env.BETTER_AUTH_SECRET!,
+  secret: AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
   databaseHooks: {
     session: {
@@ -71,7 +82,6 @@ export const auth = betterAuth({
 
 export type AuthSession = typeof auth.$Infer.Session;
 export type AuthUser = typeof auth.$Infer.Session.user;
-export type { MemberRole };
 
 export type TenantContext = {
   userId: string;
@@ -81,12 +91,15 @@ export type TenantContext = {
 };
 
 export class AuthError extends Error {
+  readonly code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION";
+
   constructor(
-    public readonly code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION",
+    code: "UNAUTHORIZED" | "FORBIDDEN" | "NO_ACTIVE_ORGANIZATION",
     message?: string
   ) {
     super(message ?? code);
     this.name = "AuthError";
+    this.code = code;
   }
 }
 
@@ -132,10 +145,24 @@ export async function requireTenantSession(
       throw new AuthError("NO_ACTIVE_ORGANIZATION");
     }
     tenantId = firstMember.tenantId;
-    await database.session.update({
-      where: { id: session.session.id },
-      data: { activeTenantId: tenantId },
-    });
+    try {
+      await database.session.update({
+        where: { id: session.session.id },
+        data: { activeTenantId: tenantId },
+      });
+    } catch (e: unknown) {
+      // P2025 = session row not found by id (stale better-auth cookie-cache id after a
+      // session rotation). Persisting activeTenantId here is best-effort — we already have
+      // a validated session and a confirmed membership, so proceed rather than deny access.
+      const isRecordNotFound =
+        typeof e === "object" &&
+        e !== null &&
+        "code" in e &&
+        (e as { code: string }).code === "P2025";
+      if (!isRecordNotFound) {
+        throw e;
+      }
+    }
     return {
       userId: session.user.id,
       tenantId,
@@ -185,9 +212,12 @@ const MFA_REQUIRED_ROLES: MemberRole[] = ["ADMIN", "STE"];
  * Throws FORBIDDEN with a redirect hint if MFA is not verified on this session.
  */
 export async function requireMfaForPrivilegedRoles(
-  ctx: TenantContext
+  ctx: TenantContext,
+  reqHeaders: Headers
 ): Promise<void> {
-  if (!MFA_REQUIRED_ROLES.includes(ctx.role)) return;
+  if (!MFA_REQUIRED_ROLES.includes(ctx.role)) {
+    return;
+  }
 
   const user = await database.user.findUnique({
     where: { id: ctx.userId },
@@ -198,6 +228,17 @@ export async function requireMfaForPrivilegedRoles(
     throw new AuthError(
       "FORBIDDEN",
       "MFA is required for your role. Please enable two-factor authentication."
+    );
+  }
+
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  const sessionData = session?.session as
+    | { twoFactorVerified?: boolean }
+    | undefined;
+  if (!sessionData?.twoFactorVerified) {
+    throw new AuthError(
+      "FORBIDDEN",
+      "MFA verification required. Please complete two-factor authentication."
     );
   }
 }

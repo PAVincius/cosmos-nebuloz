@@ -3,17 +3,19 @@
  */
 export const appDesign = {
   shell: "flex w-full min-w-0 flex-col",
-  pageHeader: "border-b border-border/80 px-6 py-4",
-  pageTitle: "text-2xl font-bold tracking-tight text-foreground",
-  pageSubtitle: "text-sm text-muted-foreground mt-0.5",
-  accentBar: "mt-2 h-0.5 w-10 rounded-full bg-[#5e6ad2]",
+  pageHeader: "border-b border-border/80 px-6 py-5",
+  pageTitle: "text-[1.625rem] font-bold tracking-[-0.025em] text-foreground",
+  pageSubtitle: "mt-1 text-sm text-muted-foreground",
+  accentBar: "mt-2.5 h-[3px] w-10 rounded-full bg-primary",
   bodyScroll: "min-w-0 flex-1 overflow-y-auto p-6",
-  section: "rounded-lg border border-border/80 bg-card shadow-sm",
-  sectionHeader: "border-b border-border/60 bg-muted/30 px-5 py-3",
+  section:
+    "rounded-xl border border-hairline bg-surface shadow-[var(--card-shadow)]",
+  sectionHeader: "border-b border-hairline bg-surface-2 px-5 py-3",
   sectionTitle: "text-sm font-semibold tracking-tight text-foreground",
   sectionDesc: "mt-1 text-xs text-muted-foreground",
-  statCard: "rounded-lg border border-border/80 bg-card p-4 shadow-sm transition-colors hover:border-[#5e6ad2]/40",
+  statCard:
+    "rounded-xl border border-hairline bg-surface p-4 shadow-[var(--card-shadow)] transition-[transform,box-shadow,border-color] duration-200 hover:border-primary/40 hover:shadow-[var(--hover-shadow)] hover:-translate-y-0.5",
   statValue: "text-3xl font-bold tracking-tight tabular-nums",
   quickLink:
-    "flex items-center gap-2 rounded-lg border border-border/80 bg-card px-4 py-3 text-sm font-medium transition-colors hover:border-[#5e6ad2]/50 hover:bg-muted/30",
+    "flex items-center gap-2.5 rounded-xl border border-hairline bg-surface px-4 py-3 text-sm font-medium transition-[border-color,background-color,box-shadow] duration-200 hover:border-primary/50 hover:bg-surface-2",
 } as const;

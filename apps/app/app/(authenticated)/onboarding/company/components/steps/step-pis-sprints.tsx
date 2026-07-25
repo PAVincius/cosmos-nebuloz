@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -11,21 +10,22 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { CalendarIcon } from "lucide-react";
+import { useState } from "react";
 
-export interface PISprintsFormData {
+export type PISprintsFormData = {
   piName: string;
   startDate: string;
   endDate: string;
   iterationCount: number;
   sprintLengthDays: number;
   artName: string;
-}
+};
 
-interface Props {
+type Props = {
   defaultValues?: Partial<PISprintsFormData>;
   artNames: string[];
   onChange: (data: PISprintsFormData) => void;
-}
+};
 
 export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
   const today = new Date().toISOString().slice(0, 10);
@@ -60,10 +60,8 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
       <div className="flex items-center gap-2">
         <CalendarIcon className="h-5 w-5 text-muted-foreground" />
         <div>
-          <h2 className="text-lg font-semibold">
-            Configuração do primeiro PI
-          </h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-lg">Configuração do primeiro PI</h2>
+          <p className="text-muted-foreground text-sm">
             Defina o horizonte do Program Increment e o comprimento das sprints.
           </p>
         </div>
@@ -75,10 +73,10 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
             Nome do PI <span className="text-destructive">*</span>
           </Label>
           <Input
-            value={data.piName}
+            autoFocus
             onChange={(e) => update({ piName: e.target.value })}
             placeholder="PI 2026-Q3"
-            autoFocus
+            value={data.piName}
           />
         </div>
 
@@ -88,8 +86,8 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
               ART <span className="text-destructive">*</span>
             </Label>
             <Select
-              value={data.artName}
               onValueChange={(v) => update({ artName: v })}
+              value={data.artName}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecione" />
@@ -108,17 +106,17 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
         <div className="flex flex-col gap-1.5">
           <Label>Data de início</Label>
           <Input
+            onChange={(e) => update({ startDate: e.target.value })}
             type="date"
             value={data.startDate}
-            onChange={(e) => update({ startDate: e.target.value })}
           />
         </div>
 
         <div className="flex flex-col gap-1.5">
           <Label>Nº de iterações</Label>
           <Select
-            value={String(data.iterationCount)}
             onValueChange={(v) => update({ iterationCount: Number(v) })}
+            value={String(data.iterationCount)}
           >
             <SelectTrigger>
               <SelectValue />
@@ -136,8 +134,8 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
         <div className="flex flex-col gap-1.5">
           <Label>Comprimento do sprint</Label>
           <Select
-            value={String(data.sprintLengthDays)}
             onValueChange={(v) => update({ sprintLengthDays: Number(v) })}
+            value={String(data.sprintLengthDays)}
           >
             <SelectTrigger>
               <SelectValue />
@@ -153,7 +151,7 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
         {estimatedEnd && (
           <div className="flex flex-col gap-1.5">
             <Label>Data de término estimada</Label>
-            <Input value={estimatedEnd} disabled />
+            <Input disabled value={estimatedEnd} />
           </div>
         )}
       </div>
@@ -162,8 +160,14 @@ export function StepPIsSprints({ defaultValues, artNames, onChange }: Props) {
 }
 
 export function validatePIsSprints(data: PISprintsFormData): string | null {
-  if (!data.piName.trim()) return "Nome do PI é obrigatório.";
-  if (!data.startDate) return "Data de início é obrigatória.";
-  if (!data.artName) return "Selecione o ART.";
+  if (!data.piName.trim()) {
+    return "Nome do PI é obrigatório.";
+  }
+  if (!data.startDate) {
+    return "Data de início é obrigatória.";
+  }
+  if (!data.artName) {
+    return "Selecione o ART.";
+  }
   return null;
 }

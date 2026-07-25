@@ -38,13 +38,14 @@ test.describe("LPM — Portfolio Kanban", () => {
           severity: "critical",
           category: "ui-error",
           route: "/portfolio",
-          story: "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
+          story:
+            "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
           description: `Portfolio page server error — HTTP ${status}`,
           actual: `Status ${status}`,
           expected: "HTTP 200 or 302 to sign-in",
-          suggestion: "Check getPortfolioEpics server action and requireTenantSession",
-          codeRef:
-            "apps/app/app/(authenticated)/portfolio/page.tsx",
+          suggestion:
+            "Check getPortfolioEpics server action and requireTenantSession",
+          codeRef: "apps/app/app/(authenticated)/portfolio/page.tsx",
         })
       );
     } else {
@@ -65,17 +66,17 @@ test.describe("LPM — Portfolio Kanban", () => {
     const errors: string[] = [];
     page.on("pageerror", (err) => errors.push(err.message));
 
-    await page.route("**/api/collaboration/auth**", (route) =>
-      route.abort()
-    );
+    await page.route("**/api/collaboration/auth**", (route) => route.abort());
     await page.goto("/portfolio");
     await page.waitForTimeout(2000);
 
     const critical = errors.filter(
       (e) =>
-        !e.includes("Liveblocks") &&
-        !e.includes("NEXT_NOT_FOUND") &&
-        !e.includes("ResizeObserver")
+        !(
+          e.includes("Liveblocks") ||
+          e.includes("NEXT_NOT_FOUND") ||
+          e.includes("ResizeObserver")
+        )
     );
 
     if (critical.length > 0) {
@@ -84,10 +85,12 @@ test.describe("LPM — Portfolio Kanban", () => {
           severity: "critical",
           category: "ui-error",
           route: "/portfolio",
-          story: "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
+          story:
+            "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
           description: `JS crash on portfolio load: ${critical[0]}`,
           actual: critical.join("; "),
-          suggestion: "Fix JavaScript error before users can interact with Kanban",
+          suggestion:
+            "Fix JavaScript error before users can interact with Kanban",
         })
       );
     } else {
@@ -114,7 +117,8 @@ test.describe("LPM — Portfolio Kanban", () => {
           severity: "medium",
           category: "route-missing",
           route: "/portfolio",
-          story: "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
+          story:
+            "Como LPM, quero criar e mover Épicos em um Kanban colaborativo.",
           description: "Portfolio Kanban route not found (404)",
           expected: "Route /portfolio should render Portfolio Kanban",
           actual: "HTTP 404",
@@ -189,8 +193,6 @@ test.describe("LPM — Portfolio Kanban", () => {
       !process.env.AUTH_TEST,
       "Auth tests disabled (set AUTH_TEST=true)"
     );
-    test.use({ storageState: "./e2e/fixtures/auth-session.json" });
-
     await page.goto("/portfolio");
     await page.waitForLoadState("networkidle");
 
@@ -254,7 +256,8 @@ test.describe("LPM — Portfolio Kanban", () => {
           severity: "info",
           category: "compliant",
           route: "/portfolio",
-          description: "Page background uses non-white color (dark mode active)",
+          description:
+            "Page background uses non-white color (dark mode active)",
         })
       );
     }

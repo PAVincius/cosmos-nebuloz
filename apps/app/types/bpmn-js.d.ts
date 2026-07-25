@@ -2,7 +2,9 @@ declare module "bpmn-js/lib/Modeler" {
   export default class Modeler {
     constructor(options?: any);
     importXML(xml: string): Promise<any>;
+    // biome-ignore lint/nursery/noShadow: module declaration — options param shadows constructor
     saveXML(options?: { format?: boolean }): Promise<{ xml: string }>;
+    // biome-ignore lint/nursery/noShadow: module declaration — options param shadows constructor
     saveSVG(options?: any): Promise<{ svg: string }>;
     attachTo(element: HTMLElement): void;
     detach(): void;

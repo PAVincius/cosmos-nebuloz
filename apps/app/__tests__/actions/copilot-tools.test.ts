@@ -33,6 +33,9 @@ vi.mock("ai", () => ({
 
 import { buildCopilotTools } from "../../app/actions/safe-copilot/tools";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyTools = Record<string, { execute: (...args: any[]) => Promise<any> }>;
+
 const TID = "tenant-1";
 
 beforeEach(() => {
@@ -48,7 +51,7 @@ beforeEach(() => {
 
 describe("queryARTs", () => {
   it("returns empty arts when no data", async () => {
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryARTs.execute(
       { includeMetrics: true },
       {} as never
@@ -63,7 +66,7 @@ describe("queryARTs", () => {
     ]);
     mocks.flowMetricSnapshotFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryARTs.execute(
       { includeMetrics: true },
       {} as never
@@ -99,7 +102,7 @@ describe("queryARTs", () => {
 
     mocks.flowMetricSnapshotFindMany.mockResolvedValue([snap1, snap2]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryARTs.execute(
       { includeMetrics: true },
       {} as never
@@ -118,7 +121,7 @@ describe("queryARTs", () => {
       { id: "art-1", name: "ART Alpha", cadence: "PI" },
     ]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryARTs.execute(
       { includeMetrics: false },
       {} as never
@@ -152,7 +155,7 @@ describe("queryTeams", () => {
       },
     ]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryTeams.execute({}, {} as never);
 
     expect(mocks.teamFindMany).toHaveBeenCalledWith(
@@ -172,7 +175,7 @@ describe("queryTeams", () => {
       },
     ]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryTeams.execute(
       { artId: "art-1" },
       {} as never
@@ -202,7 +205,7 @@ describe("queryEpics", () => {
       },
     ]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryEpics.execute({ take: 15 }, {} as never);
 
     expect(result).toEqual({
@@ -221,7 +224,7 @@ describe("queryEpics", () => {
   it("passes status filter when provided", async () => {
     mocks.epicFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     await tools.queryEpics.execute({ status: "DONE", take: 15 }, {} as never);
 
     expect(mocks.epicFindMany).toHaveBeenCalledWith(
@@ -236,7 +239,7 @@ describe("queryEpics", () => {
 
 describe("queryOKRs", () => {
   it("returns empty when no OKRs", async () => {
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryOKRs.execute({}, {} as never);
 
     expect(result).toEqual({ okrs: [] });
@@ -264,7 +267,7 @@ describe("queryOKRs", () => {
     };
     mocks.okrFindMany.mockResolvedValue([okr]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     const result = await tools.queryOKRs.execute({}, {} as never);
 
     expect(result).toEqual({ okrs: [okr] });
@@ -274,7 +277,7 @@ describe("queryOKRs", () => {
   it("passes status filter when provided", async () => {
     mocks.okrFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TID);
+    const tools = buildCopilotTools(TID) as unknown as AnyTools;
     await tools.queryOKRs.execute({ status: "AT_RISK" }, {} as never);
 
     expect(mocks.okrFindMany).toHaveBeenCalledWith(

@@ -1,19 +1,15 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { type Result, safeAction, IntegrationStatus, IntegrationType } from "../_base";
+import { headers } from "next/headers";
+import { IntegrationType, type Result, safeAction } from "../_base";
 import {
-  UpsertIntegrationSchema,
-  type UpsertIntegrationInput,
-  type IntegrationPublic,
   type IntegrationFull,
-  type Integration,
+  type IntegrationPublic,
+  UpsertIntegrationSchema,
 } from "./schema";
-
-export type { UpsertIntegrationInput, IntegrationPublic, IntegrationFull, Integration };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -33,7 +29,8 @@ function toPublic(row: {
     type: row.source, // map source → type for backward compat with existing UI
     name: row.name,
     status: row.status,
-    configured: row.config !== null && Object.keys(row.config as object).length > 0,
+    configured:
+      row.config !== null && Object.keys(row.config as object).length > 0,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   };
@@ -65,7 +62,9 @@ export async function getIntegrationByType(
       where: { tenantId: ctx.tenantId, source: type },
       orderBy: { createdAt: "desc" },
     });
-    if (!row) throw new Error(`Integração '${type}' não encontrada.`);
+    if (!row) {
+      throw new Error(`Integração '${type}' não encontrada.`);
+    }
 
     return {
       ...toPublic(row),
@@ -94,7 +93,7 @@ export async function upsertIntegration(
       ? await database.integration.update({
           where: { id: existing.id },
           data: {
-            name:   data.name,
+            name: data.name,
             config: data.config as Record<string, string>,
             status: "ACTIVE",
           },
@@ -102,10 +101,10 @@ export async function upsertIntegration(
       : await database.integration.create({
           data: {
             tenantId: ctx.tenantId,
-            source:   data.type,
-            name:     data.name,
-            config:   data.config as Record<string, string>,
-            status:   "ACTIVE",
+            source: data.type,
+            name: data.name,
+            config: data.config as Record<string, string>,
+            status: "ACTIVE",
           },
         });
 
@@ -124,7 +123,9 @@ export async function testIntegration(
     const row = await database.integration.findFirst({
       where: { tenantId: ctx.tenantId, source: type },
     });
-    if (!row) throw new Error(`Integração '${type}' não encontrada.`);
+    if (!row) {
+      throw new Error(`Integração '${type}' não encontrada.`);
+    }
 
     const config = (row.config as Record<string, string>) ?? {};
     let testOk = false;
@@ -133,29 +134,44 @@ export async function testIntegration(
     try {
       if (type === "jira") {
         const res = await fetch(`${config.baseUrl}/rest/api/3/myself`, {
-          headers: { Authorization: `Bearer ${config.apiToken}`, Accept: "application/json" },
+          headers: {
+            Authorization: `Bearer ${config.apiToken}`,
+            Accept: "application/json",
+          },
           signal: AbortSignal.timeout(5000),
         });
         testOk = res.ok;
-        message = res.ok ? "Conexão com Jira estabelecida." : `Jira retornou HTTP ${res.status}.`;
+        message = res.ok
+          ? "Conexão com Jira estabelecida."
+          : `Jira retornou HTTP ${res.status}.`;
       } else if (type === "github") {
         const res = await fetch(
           `https://api.github.com/repos/${config.owner}/${config.repo}`,
           {
-            headers: { Authorization: `Bearer ${config.token}`, Accept: "application/vnd.github+json" },
+            headers: {
+              Authorization: `Bearer ${config.token}`,
+              Accept: "application/vnd.github+json",
+            },
             signal: AbortSignal.timeout(5000),
           }
         );
         testOk = res.ok;
-        message = res.ok ? "Conexão com GitHub estabelecida." : `GitHub retornou HTTP ${res.status}.`;
+        message = res.ok
+          ? "Conexão com GitHub estabelecida."
+          : `GitHub retornou HTTP ${res.status}.`;
       } else if (type === "azure-devops") {
         const base64Pat = Buffer.from(`:${config.pat}`).toString("base64");
         const res = await fetch(
           `https://dev.azure.com/${config.organization}/${config.project}/_apis/build/builds?api-version=7.0&$top=1`,
-          { headers: { Authorization: `Basic ${base64Pat}` }, signal: AbortSignal.timeout(5000) }
+          {
+            headers: { Authorization: `Basic ${base64Pat}` },
+            signal: AbortSignal.timeout(5000),
+          }
         );
         testOk = res.ok;
-        message = res.ok ? "Conexão com Azure DevOps estabelecida." : `Azure DevOps retornou HTTP ${res.status}.`;
+        message = res.ok
+          ? "Conexão com Azure DevOps estabelecida."
+          : `Azure DevOps retornou HTTP ${res.status}.`;
       } else if (type === "slack") {
         const res = await fetch(config.webhookUrl, {
           method: "POST",
@@ -164,7 +180,9 @@ export async function testIntegration(
           signal: AbortSignal.timeout(5000),
         });
         testOk = res.ok;
-        message = res.ok ? "Mensagem de teste enviada ao Slack." : `Slack retornou HTTP ${res.status}.`;
+        message = res.ok
+          ? "Mensagem de teste enviada ao Slack."
+          : `Slack retornou HTTP ${res.status}.`;
       }
     } catch (e) {
       testOk = false;
@@ -173,7 +191,7 @@ export async function testIntegration(
 
     await database.integration.update({
       where: { id: row.id },
-      data:  { status: testOk ? "ACTIVE" : "ERROR" },
+      data: { status: testOk ? "ACTIVE" : "ERROR" },
     });
 
     revalidatePath("/settings/integrations");
@@ -191,7 +209,9 @@ export async function deleteIntegration(
     const row = await database.integration.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!row) throw new Error("Integração não encontrada.");
+    if (!row) {
+      throw new Error("Integração não encontrada.");
+    }
 
     await database.integration.delete({ where: { id } });
 

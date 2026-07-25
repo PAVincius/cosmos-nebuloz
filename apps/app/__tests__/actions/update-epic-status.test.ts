@@ -61,9 +61,7 @@ describe("updateEpicStatus", () => {
   });
 
   it("rejects invalid portfolio status", async () => {
-    await expect(
-      updateEpicStatus("epic-1", "FUNNEL", 0)
-    ).rejects.toThrow();
+    await expect(updateEpicStatus("epic-1", "FUNNEL", 0)).rejects.toThrow();
     expect(mocks.epicUpdateMany).not.toHaveBeenCalled();
   });
 });

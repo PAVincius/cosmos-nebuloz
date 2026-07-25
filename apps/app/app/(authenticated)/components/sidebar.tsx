@@ -31,17 +31,20 @@ import {
   BellIcon,
   ChevronRightIcon,
   ExternalLinkIcon,
+  HomeIcon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
   PlugZapIcon,
   SendIcon,
   Settings2Icon,
+  ShieldAlertIcon,
   TrainFrontIcon,
   UsersIcon,
   type VoteIcon,
   WorkflowIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { CopilotTriggerButton } from "./copilot/copilot-trigger-button";
 import { Search } from "./search";
@@ -64,46 +67,128 @@ type GlobalSidebarProperties = {
   readonly teams?: SidebarTeam[];
   readonly initialTenants?: SidebarTenant[];
   readonly initialActiveTenantId?: string | null;
+  readonly role?: string;
 };
 
 type NavItem = { title: string; url: string; isNested?: boolean };
 
+type NavGroup = {
+  title: string;
+  url: string;
+  icon: React.ElementType;
+  isActive: boolean;
+  items: NavItem[];
+};
+
+// Which top-level nav groups each role sees
+const NAV_GROUPS_BY_ROLE: Record<string, string[]> = {
+  RTE: [
+    "Home",
+    "Portfolio",
+    "ART Board",
+    "Analytics",
+    "Large Solution",
+    "Settings",
+  ],
+  STE: [
+    "Home",
+    "Portfolio",
+    "ART Board",
+    "Analytics",
+    "Large Solution",
+    "Settings",
+  ],
+  SM: ["Home", "Times", "ART Board", "Analytics", "Workflows", "Settings"],
+  PO: ["Home", "Portfolio", "ART Board", "Analytics", "Settings"],
+  ADMIN: [
+    "Home",
+    "Portfolio",
+    "ART Board",
+    "Times",
+    "Analytics",
+    "Workflows",
+    "Large Solution",
+    "Integrações",
+    "Settings",
+  ],
+  DEV: ["Home", "Times", "Analytics", "Settings"],
+  MEMBER: ["Home", "Portfolio", "Times", "Analytics", "Settings"],
+};
+
+// Portfolio sub-items per role
+const PORTFOLIO_ITEMS_BY_ROLE: Record<string, NavItem[]> = {
+  RTE: [
+    { title: "Kanban de Épicos", url: "/portfolio" },
+    { title: "WSJF Rankings", url: "/portfolio/wsjf" },
+    { title: "Governance Board", url: "/portfolio/governance" },
+    { title: "Riscos ROAM", url: "/risks" },
+  ],
+  PO: [
+    { title: "Kanban de Épicos", url: "/portfolio" },
+    { title: "WSJF Rankings", url: "/portfolio/wsjf" },
+    { title: "OKRs", url: "/portfolio/okrs" },
+    { title: "Roadmap", url: "/portfolio/roadmap" },
+  ],
+  ADMIN: [
+    { title: "Kanban de Épicos", url: "/portfolio" },
+    { title: "WSJF Rankings", url: "/portfolio/wsjf" },
+    { title: "Temas Estratégicos", url: "/portfolio/themes" },
+    { title: "Strategy Map", url: "/portfolio/strategy-map" },
+    { title: "OKRs", url: "/portfolio/okrs" },
+    { title: "Lean Budgets", url: "/portfolio/budgets" },
+    { title: "Anomalias", url: "/portfolio/budgets/anomalies" },
+    { title: "Roadmap", url: "/portfolio/roadmap" },
+    { title: "Governance Board", url: "/portfolio/governance" },
+    { title: "Decision Log", url: "/portfolio/governance/decision-log" },
+  ],
+  MEMBER: [
+    { title: "Kanban de Épicos", url: "/portfolio" },
+    { title: "OKRs", url: "/portfolio/okrs" },
+  ],
+};
+
 const buildNavData = (
   user: { name: string; email: string; avatar: string },
-  teams: SidebarTeam[] = []
-) => ({
-  user,
-  navMain: [
+  teams: SidebarTeam[] = [],
+  pathname = "",
+  role = "MEMBER"
+) => {
+  const allowedGroups = NAV_GROUPS_BY_ROLE[role] ?? NAV_GROUPS_BY_ROLE.MEMBER;
+  const portfolioItems =
+    PORTFOLIO_ITEMS_BY_ROLE[role] ?? PORTFOLIO_ITEMS_BY_ROLE.MEMBER;
+
+  const allGroups: NavGroup[] = [
+    {
+      title: "Home",
+      url: "/dashboard",
+      icon: HomeIcon,
+      isActive: pathname === "/dashboard" || pathname === "/",
+      items: [],
+    },
     {
       title: "Portfolio",
       url: "/portfolio",
       icon: LayoutDashboardIcon,
-      isActive: true,
-      items: [
-        { title: "Kanban de Épicos", url: "/portfolio" },
-        { title: "WSJF Rankings", url: "/portfolio/wsjf" },
-        { title: "Temas Estratégicos", url: "/portfolio/themes" },
-        { title: "Strategy Map", url: "/portfolio/strategy-map" },
-        { title: "OKRs", url: "/portfolio/okrs" },
-        { title: "Lean Budget", url: "/portfolio/budgets" },
-        { title: "Roadmap", url: "/portfolio/roadmap" },
-        { title: "Governance Board", url: "/portfolio/governance" },
-        { title: "Decision Log", url: "/portfolio/governance/decision-log" },
-      ] as NavItem[],
+      isActive: pathname.startsWith("/portfolio"),
+      items: portfolioItems,
     },
     {
       title: "ART Board",
       url: "/arts",
       icon: TrainFrontIcon,
+      isActive:
+        pathname.startsWith("/arts") || pathname.startsWith("/pi-planning"),
       items: [
         { title: "Todos os ARTs", url: "/arts" },
-        { title: "Votação de confiança", url: "/pi-planning" },
+        { title: "PI Planning", url: "/pi-planning" },
+        { title: "Dependências", url: "/dependencies" },
       ],
     },
     {
       title: "Times",
       url: "/teams",
       icon: UsersIcon,
+      isActive: pathname.startsWith("/teams"),
       items: [
         { title: "Todos os Times", url: "/teams" },
         ...teams.slice(0, 8).map((t) => ({
@@ -117,27 +202,37 @@ const buildNavData = (
       title: "Analytics",
       url: "/analytics",
       icon: BarChart3Icon,
-      items: [
-        { title: "Métricas SAFe", url: "/analytics" },
-        { title: "Flow Metrics", url: "/analytics/flow" },
-        { title: "Velocity", url: "/analytics/velocity" },
-        { title: "Measure & Grow", url: "/analytics/measure-grow" },
-        { title: "Riscos ROAM", url: "/risks" },
-      ],
+      isActive:
+        pathname.startsWith("/analytics") || pathname.startsWith("/risks"),
+      items:
+        role === "SM" || role === "DEV"
+          ? [
+              { title: "Flow Metrics", url: "/analytics/flow" },
+              { title: "Velocity", url: "/analytics/velocity" },
+            ]
+          : [
+              { title: "Métricas SAFe", url: "/analytics" },
+              { title: "Flow Metrics", url: "/analytics/flow" },
+              { title: "Velocity", url: "/analytics/velocity" },
+              { title: "Measure & Grow", url: "/analytics/measure-grow" },
+              { title: "Riscos ROAM", url: "/risks" },
+            ],
     },
     {
       title: "Workflows",
       url: "/workflows",
       icon: WorkflowIcon,
-      items: [
-        { title: "BPMN Canvas", url: "/workflows/team-demo/bpmn" },
-        { title: "Dependências", url: "/dependencies" },
-      ],
+      isActive: pathname.startsWith("/workflows"),
+      items: [{ title: "BPMN Canvas", url: "/workflows/team-demo/bpmn" }],
     },
     {
       title: "Large Solution",
       url: "/solution-trains",
       icon: AnchorIcon,
+      isActive:
+        pathname.startsWith("/solution-trains") ||
+        pathname.startsWith("/lace") ||
+        pathname.startsWith("/suppliers"),
       items: [
         { title: "Solution Trains", url: "/solution-trains" },
         { title: "LACE", url: "/lace" },
@@ -148,29 +243,44 @@ const buildNavData = (
       title: "Integrações",
       url: "/integrations",
       icon: PlugZapIcon,
+      isActive: pathname.startsWith("/integrations"),
       items: [{ title: "Integration Hub", url: "/integrations" }],
     },
     {
       title: "Settings",
       url: "/settings/workspace",
       icon: Settings2Icon,
-      items: [
-        { title: "Workspace", url: "/settings/workspace" },
-        { title: "Membros", url: "/settings/members" },
-        { title: "Integrações", url: "/settings/integrations" },
-        { title: "Audit Log", url: "/settings/audit" },
-      ],
+      isActive: pathname.startsWith("/settings"),
+      items:
+        role === "ADMIN" || role === "STE"
+          ? [
+              { title: "Workspace", url: "/settings/workspace" },
+              { title: "Membros", url: "/settings/members" },
+              { title: "Integrações", url: "/settings/integrations" },
+              { title: "Audit Log", url: "/settings/audit" },
+            ]
+          : [{ title: "Workspace", url: "/settings/workspace" }],
     },
-  ],
-  navSecondary: [
-    { title: "Webhooks", url: "/webhooks", icon: AnchorIcon },
-    { title: "Notificações", url: "/notifications", icon: BellIcon },
-    { title: "Perfil", url: "/profile", icon: UsersIcon },
-    { title: "Suporte", url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
-    { title: "Feedback", url: "/feedback", icon: SendIcon },
-  ],
-  projects: [] as { name: string; url: string; icon: typeof VoteIcon }[],
-});
+  ];
+
+  return {
+    user,
+    navMain: allGroups.filter((g) => allowedGroups.includes(g.title)),
+    navSecondary: [
+      { title: "Webhooks", url: "/webhooks", icon: AnchorIcon },
+      { title: "Notificações", url: "/notifications", icon: BellIcon },
+      {
+        title: "Exceções de Acesso",
+        url: "/access-exceptions",
+        icon: ShieldAlertIcon,
+      },
+      { title: "Perfil", url: "/profile", icon: UsersIcon },
+      { title: "Suporte", url: "https://docs.cosmos.app", icon: LifeBuoyIcon },
+      { title: "Feedback", url: "/feedback", icon: SendIcon },
+    ],
+    projects: [] as { name: string; url: string; icon: typeof VoteIcon }[],
+  };
+};
 
 export const GlobalSidebar = ({
   children,
@@ -178,14 +288,18 @@ export const GlobalSidebar = ({
   teams = [],
   initialTenants = [],
   initialActiveTenantId = null,
+  role = "MEMBER",
 }: GlobalSidebarProperties) => {
+  const pathname = usePathname();
   const data = buildNavData(
     userProp ?? { name: "Usuário", email: "", avatar: "" },
-    teams
+    teams,
+    pathname,
+    role
   );
   return (
     <>
-      <Sidebar variant="inset">
+      <Sidebar collapsible="icon" variant="inset">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
@@ -199,7 +313,9 @@ export const GlobalSidebar = ({
         <Search />
         <SidebarContent>
           <SidebarGroup>
-            <SidebarGroupLabel>Platform</SidebarGroupLabel>
+            <SidebarGroupLabel className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--ink-muted)]">
+              SAFe Workspace
+            </SidebarGroupLabel>
             <SidebarMenu>
               {data.navMain.map((item) => (
                 <Collapsible
@@ -207,8 +323,18 @@ export const GlobalSidebar = ({
                   defaultOpen={item.isActive}
                   key={item.title}
                 >
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild tooltip={item.title}>
+                  <SidebarMenuItem className="relative">
+                    {item.isActive && (
+                      <span
+                        aria-hidden
+                        className="-translate-y-1/2 pointer-events-none absolute top-1/2 left-0 h-4 w-[3px] rounded-full bg-[var(--accent-c)] shadow-[0_0_8px_var(--accent-c)]"
+                      />
+                    )}
+                    <SidebarMenuButton
+                      asChild
+                      isActive={item.isActive}
+                      tooltip={item.title}
+                    >
                       <Link href={item.url}>
                         <item.icon />
                         <span>{item.title}</span>

@@ -2,12 +2,12 @@
 import { useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-interface MorphNumberProps {
+type MorphNumberProps = {
   from?: number;
   to?: number;
   className?: string;
   style?: React.CSSProperties;
-}
+};
 
 export function MorphNumber({
   from = 21,
@@ -23,7 +23,9 @@ export function MorphNumber({
   const spring = useSpring(mv, { stiffness: 40, damping: 15, restDelta: 0.1 });
 
   useEffect(() => {
-    if (inView) mv.set(to);
+    if (inView) {
+      mv.set(to);
+    }
   }, [inView, mv, to]);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export function MorphNumber({
   }, [spring, from, to]);
 
   return (
-    <span ref={ref} className={className} style={style}>
+    <span className={className} ref={ref} style={style}>
       <span ref={spanRef} style={{ color: "var(--warning)" }}>
         {from}
       </span>

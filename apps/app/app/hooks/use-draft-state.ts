@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 
 export type DraftMeta = {
   savedAt: number; // unix ms
@@ -12,10 +12,14 @@ export function useDraftState<T>(
   initial: T
 ): [T, (patch: Partial<T> | ((prev: T) => T)) => void, () => void, DraftMeta] {
   const [state, _setState] = useState<T>(() => {
-    if (typeof window === "undefined") return initial;
+    if (typeof window === "undefined") {
+      return initial;
+    }
     try {
       const raw = localStorage.getItem(key);
-      if (!raw) return initial;
+      if (!raw) {
+        return initial;
+      }
       const parsed = JSON.parse(raw) as { data: T; savedAt: number };
       return parsed.data ?? initial;
     } catch {
@@ -24,10 +28,14 @@ export function useDraftState<T>(
   });
 
   const [meta, setMeta] = useState<DraftMeta>(() => {
-    if (typeof window === "undefined") return { savedAt: 0, hasDraft: false };
+    if (typeof window === "undefined") {
+      return { savedAt: 0, hasDraft: false };
+    }
     try {
       const raw = localStorage.getItem(key);
-      if (!raw) return { savedAt: 0, hasDraft: false };
+      if (!raw) {
+        return { savedAt: 0, hasDraft: false };
+      }
       const parsed = JSON.parse(raw) as { savedAt: number };
       return { savedAt: parsed.savedAt ?? 0, hasDraft: true };
     } catch {
@@ -41,8 +49,11 @@ export function useDraftState<T>(
   const setState = useCallback(
     (patch: Partial<T> | ((prev: T) => T)) => {
       _setState((prev) => {
-        const next = typeof patch === "function" ? patch(prev) : { ...prev, ...patch };
-        if (saveTimer.current) clearTimeout(saveTimer.current);
+        const next =
+          typeof patch === "function" ? patch(prev) : { ...prev, ...patch };
+        if (saveTimer.current) {
+          clearTimeout(saveTimer.current);
+        }
         saveTimer.current = setTimeout(() => {
           try {
             const savedAt = Date.now();
@@ -57,7 +68,9 @@ export function useDraftState<T>(
   );
 
   const clearDraft = useCallback(() => {
-    if (saveTimer.current) clearTimeout(saveTimer.current);
+    if (saveTimer.current) {
+      clearTimeout(saveTimer.current);
+    }
     try {
       localStorage.removeItem(key);
     } catch {}
@@ -68,10 +81,18 @@ export function useDraftState<T>(
 }
 
 export function formatDraftAge(savedAt: number): string {
-  if (!savedAt) return "";
+  if (!savedAt) {
+    return "";
+  }
   const diff = Math.floor((Date.now() - savedAt) / 1000);
-  if (diff < 60) return "agora mesmo";
-  if (diff < 3600) return `há ${Math.floor(diff / 60)}min`;
-  if (diff < 86400) return `há ${Math.floor(diff / 3600)}h`;
-  return `há ${Math.floor(diff / 86400)}d`;
+  if (diff < 60) {
+    return "agora mesmo";
+  }
+  if (diff < 3600) {
+    return `há ${Math.floor(diff / 60)}min`;
+  }
+  if (diff < 86_400) {
+    return `há ${Math.floor(diff / 3600)}h`;
+  }
+  return `há ${Math.floor(diff / 86_400)}d`;
 }

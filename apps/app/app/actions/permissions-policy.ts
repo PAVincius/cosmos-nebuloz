@@ -58,7 +58,9 @@ export type EntityType =
   | "AuditLog"
   | "Notification"
   | "Workspace"
-  | "Member";
+  | "Member"
+  | "ScheduledReport"
+  | "UserDashboardLayout";
 
 type Policy = Partial<Record<PolicyAction, readonly MemberRole[]>>;
 
@@ -167,6 +169,16 @@ export const POLICIES: Record<EntityType, Policy> = {
   Notification: {},
   Workspace: { update: [] },
   Member: { create: [], update: [], delete: [] },
+  ScheduledReport: {
+    create: ["ADMIN", "STE", "RTE"],
+    update: ["ADMIN", "STE", "RTE"],
+    delete: ["ADMIN", "STE", "RTE"],
+    read: ["ADMIN", "STE", "RTE", "PO", "SM", "DEV", "MEMBER"],
+  },
+  UserDashboardLayout: {
+    upsert: ["ADMIN", "STE", "RTE", "PO", "SM", "DEV", "MEMBER"],
+    read: ["ADMIN", "STE", "RTE", "PO", "SM", "DEV", "MEMBER"],
+  },
 };
 
 export function can(
@@ -174,17 +186,23 @@ export function can(
   entity: EntityType,
   action: PolicyAction
 ): boolean {
-  if (role === "ADMIN") return true;
+  if (role === "ADMIN") {
+    return true;
+  }
 
   const policy = POLICIES[entity];
 
   if (action === "read") {
     const allowed = policy.read;
-    if (!allowed) return true;
+    if (!allowed) {
+      return true;
+    }
     return allowed.includes(role);
   }
 
   const allowed = policy[action];
-  if (!allowed) return false;
+  if (!allowed) {
+    return false;
+  }
   return allowed.includes(role);
 }

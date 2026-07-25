@@ -32,7 +32,16 @@ test.describe("SM — Workspace & BPMN", () => {
     const status = res.status();
 
     const expected = [200, 401, 302, 307, 308];
-    if (!expected.includes(status)) {
+    if (expected.includes(status)) {
+      writeFinding(
+        finding({
+          severity: "info",
+          category: "compliant",
+          route: "/api/tenants",
+          description: `GET /api/tenants returns expected status ${status}`,
+        })
+      );
+    } else {
       writeFinding(
         finding({
           severity: "critical",
@@ -42,17 +51,9 @@ test.describe("SM — Workspace & BPMN", () => {
           description: `GET /api/tenants returned unexpected status ${status}`,
           expected: "200 (authenticated) or 401 (unauthenticated)",
           actual: `HTTP ${status}`,
-          suggestion: "Check route handler at apps/app/app/api/tenants/route.ts",
+          suggestion:
+            "Check route handler at apps/app/app/api/tenants/route.ts",
           codeRef: "apps/app/app/api/tenants/route.ts",
-        })
-      );
-    } else {
-      writeFinding(
-        finding({
-          severity: "info",
-          category: "compliant",
-          route: "/api/tenants",
-          description: `GET /api/tenants returns expected status ${status}`,
         })
       );
     }
@@ -67,7 +68,16 @@ test.describe("SM — Workspace & BPMN", () => {
     const status = res.status();
 
     const expected = [200, 401, 403, 302, 307, 308, 400];
-    if (!expected.includes(status)) {
+    if (expected.includes(status)) {
+      writeFinding(
+        finding({
+          severity: "info",
+          category: "compliant",
+          route: "/api/auth/switch-tenant",
+          description: `POST /api/auth/switch-tenant returns expected status ${status}`,
+        })
+      );
+    } else {
       writeFinding(
         finding({
           severity: "high",
@@ -83,26 +93,13 @@ test.describe("SM — Workspace & BPMN", () => {
           codeRef: "apps/app/app/api/auth/switch-tenant/route.ts",
         })
       );
-    } else {
-      writeFinding(
-        finding({
-          severity: "info",
-          category: "compliant",
-          route: "/api/auth/switch-tenant",
-          description: `POST /api/auth/switch-tenant returns expected status ${status}`,
-        })
-      );
     }
 
     expect(expected).toContain(status);
   });
 
   test("BPMN workflow canvas route exists", async ({ page }) => {
-    const routes = [
-      "/workflows/team-demo/bpmn",
-      "/workflows/bpmn",
-      "/bpmn",
-    ];
+    const routes = ["/workflows/team-demo/bpmn", "/workflows/bpmn", "/bpmn"];
 
     let found = false;
     let foundRoute = "";
@@ -123,8 +120,7 @@ test.describe("SM — Workspace & BPMN", () => {
           severity: "info",
           category: "compliant",
           route: foundRoute,
-          story:
-            "Como SM, quero desenhar fluxos BPMN no Workflow Canvas.",
+          story: "Como SM, quero desenhar fluxos BPMN no Workflow Canvas.",
           description: `BPMN canvas route reachable at ${foundRoute}`,
         })
       );
@@ -156,10 +152,14 @@ test.describe("SM — Workspace & BPMN", () => {
 
     // Check CSS animation class exists (from FullScreenLoader)
     const hasAnimateSpin = await page.evaluate(() => {
-      const styles = Array.from(document.querySelectorAll("style, link[rel=stylesheet]"));
+      const _styles = Array.from(
+        document.querySelectorAll("style, link[rel=stylesheet]")
+      );
       // Check if animate-spin is in the stylesheet
-      return document.querySelectorAll('[class*="animate-spin"]').length > 0
-        || document.querySelectorAll('[class*="FullScreenLoader"]').length > 0;
+      return (
+        document.querySelectorAll('[class*="animate-spin"]').length > 0 ||
+        document.querySelectorAll('[class*="FullScreenLoader"]').length > 0
+      );
     });
 
     if (!hasAnimateSpin) {
@@ -182,7 +182,16 @@ test.describe("SM — Workspace & BPMN", () => {
     await page.goto("/sign-in");
     const title = await page.title();
 
-    if (!title.toLowerCase().includes("cosmos")) {
+    if (title.toLowerCase().includes("cosmos")) {
+      writeFinding(
+        finding({
+          severity: "info",
+          category: "compliant",
+          route: "/sign-in",
+          description: "Page title includes COSMOS branding",
+        })
+      );
+    } else {
       writeFinding(
         finding({
           severity: "low",
@@ -195,15 +204,6 @@ test.describe("SM — Workspace & BPMN", () => {
             "Add proper metadata.title to sign-in page layout or page.tsx",
           codeRef:
             "apps/app/app/(unauthenticated)/sign-in/[[...sign-in]]/page.tsx",
-        })
-      );
-    } else {
-      writeFinding(
-        finding({
-          severity: "info",
-          category: "compliant",
-          route: "/sign-in",
-          description: "Page title includes COSMOS branding",
         })
       );
     }

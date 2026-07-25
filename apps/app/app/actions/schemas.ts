@@ -51,7 +51,9 @@ export type CreateARTInput = z.infer<typeof CreateARTSchema>;
 
 export const CreatePIPlanSchema = z.object({
   artId: id,
-  name: safeTitle,
+  // Name is server-generated (PI-{YYYY}-{Q}) inside createPIPlanWithDetails;
+  // kept optional here for the legacy createPIPlan() caller.
+  name: safeTitle.optional(),
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
 });

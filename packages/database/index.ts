@@ -1,14 +1,18 @@
 import "server-only";
 
-import { keys } from "./keys";
 import { PrismaClient } from "./generated/client";
+import { keys } from "./keys";
 
-const globalForPrisma = global as unknown as { prisma_cosmos_v10: PrismaClient };
+const globalForPrisma = global as unknown as {
+  prisma_cosmos_v10: PrismaClient;
+};
 
 const DATABASE_URL = keys().DATABASE_URL;
 
 function createPrismaClient(): PrismaClient {
-  const isNeon = DATABASE_URL.includes("neon.tech") || DATABASE_URL.includes("neon.database.azure.com");
+  const isNeon =
+    DATABASE_URL.includes("neon.tech") ||
+    DATABASE_URL.includes("neon.database.azure.com");
 
   if (isNeon) {
     const { neonConfig } = require("@neondatabase/serverless");
@@ -27,12 +31,19 @@ function createPrismaClient(): PrismaClient {
   return new PrismaClient({ adapter });
 }
 
-export const database = globalForPrisma.prisma_cosmos_v10 || createPrismaClient();
+export const database =
+  globalForPrisma.prisma_cosmos_v10 || createPrismaClient();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma_cosmos_v10 = database;
 }
 
-// biome-ignore lint/performance/noBarrelFile: re-exporting
+// TODO(NEB-115): Prevent auditLog.update/delete at the Prisma client layer via $extends
+// so that application code gets a type error if it attempts mutation on AuditLog.
+// The database trigger (migration 20260603000002_audit_log_immutable_trigger) already
+// blocks it at the DB level; the $extends guard adds a second layer and surfaces errors
+// earlier (compile-time). Do NOT add this extension until the trigger is deployed and
+// integration-tested against the staging DB.
+
 export * from "./generated/client";
 export * from "./vector-search";

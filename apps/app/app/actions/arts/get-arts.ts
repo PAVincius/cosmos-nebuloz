@@ -1,9 +1,9 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { CreateARTSchema } from "../schemas";
 
 export async function getARTs() {
@@ -27,7 +27,9 @@ export async function getARTById(artId: string) {
         include: {
           piSessions: {
             orderBy: { createdAt: "asc" },
-            include: { confidenceSessions: { orderBy: { roundNumber: "asc" } } },
+            include: {
+              confidenceSessions: { orderBy: { roundNumber: "asc" } },
+            },
           },
         },
       },

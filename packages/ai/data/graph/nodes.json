@@ -1,0 +1,322 @@
+{
+  "safe:art": {
+    "label": "ART",
+    "category": "structure",
+    "degree": 1874
+  },
+  "safe:retrospectiva": {
+    "label": "Retrospectiva",
+    "category": "ceremony",
+    "degree": 178
+  },
+  "safe:pi_planning": {
+    "label": "PI Planning",
+    "category": "ceremony",
+    "degree": 1423
+  },
+  "safe:pi": {
+    "label": "PI",
+    "category": "concept",
+    "degree": 2538
+  },
+  "safe:portfolio": {
+    "label": "Portfolio",
+    "category": "structure",
+    "degree": 515
+  },
+  "safe:product_owner": {
+    "label": "Product Owner",
+    "category": "role",
+    "degree": 457
+  },
+  "safe:adr": {
+    "label": "ADR",
+    "category": "artifact",
+    "degree": 26
+  },
+  "safe:feature": {
+    "label": "Feature",
+    "category": "concept",
+    "degree": 981
+  },
+  "safe:value_stream": {
+    "label": "Value Stream",
+    "category": "structure",
+    "degree": 85
+  },
+  "safe:wip": {
+    "label": "WIP",
+    "category": "concept",
+    "degree": 465
+  },
+  "safe:lean_agile_mindset": {
+    "label": "Lean-Agile Mindset",
+    "category": "concept",
+    "degree": 1
+  },
+  "safe:flow_efficiency": {
+    "label": "Flow Efficiency",
+    "category": "metric",
+    "degree": 122
+  },
+  "safe:devsecops": {
+    "label": "DevSecOps",
+    "category": "competency",
+    "degree": 327
+  },
+  "safe:lei_de_little": {
+    "label": "Lei de Little",
+    "category": "concept",
+    "degree": 80
+  },
+  "safe:flow_predictability": {
+    "label": "Flow Predictability",
+    "category": "metric",
+    "degree": 365
+  },
+  "safe:bar": {
+    "label": "BAR",
+    "category": "metric",
+    "degree": 10
+  },
+  "safe:ci_cd_pipeline": {
+    "label": "CI/CD Pipeline",
+    "category": "practice",
+    "degree": 226
+  },
+  "safe:wsjf": {
+    "label": "WSJF",
+    "category": "metric",
+    "degree": 1122
+  },
+  "safe:story": {
+    "label": "Story",
+    "category": "concept",
+    "degree": 979
+  },
+  "safe:d_vida_t_cnica": {
+    "label": "Dívida Técnica",
+    "category": "concept",
+    "degree": 165
+  },
+  "safe:tdd": {
+    "label": "TDD",
+    "category": "practice",
+    "degree": 51
+  },
+  "safe:epic": {
+    "label": "Epic",
+    "category": "concept",
+    "degree": 274
+  },
+  "safe:bdd": {
+    "label": "BDD",
+    "category": "practice",
+    "degree": 20
+  },
+  "safe:art_sync": {
+    "label": "ART Sync",
+    "category": "ceremony",
+    "degree": 76
+  },
+  "safe:dod": {
+    "label": "DoD",
+    "category": "artifact",
+    "degree": 80
+  },
+  "safe:mvp": {
+    "label": "MVP",
+    "category": "concept",
+    "degree": 55
+  },
+  "safe:built_in_quality": {
+    "label": "Built-In Quality",
+    "category": "concept",
+    "degree": 27
+  },
+  "safe:feature_flag": {
+    "label": "Feature Flag",
+    "category": "practice",
+    "degree": 38
+  },
+  "safe:product_manager": {
+    "label": "Product Manager",
+    "category": "role",
+    "degree": 238
+  },
+  "safe:inspect___adapt": {
+    "label": "Inspect & Adapt",
+    "category": "ceremony",
+    "degree": 168
+  },
+  "safe:enabler": {
+    "label": "Enabler",
+    "category": "concept",
+    "degree": 190
+  },
+  "safe:solution_train": {
+    "label": "Solution Train",
+    "category": "structure",
+    "degree": 202
+  },
+  "safe:pre_pi_planning": {
+    "label": "Pre-PI Planning",
+    "category": "ceremony",
+    "degree": 26
+  },
+  "safe:post_pi_planning": {
+    "label": "Post-PI Planning",
+    "category": "ceremony",
+    "degree": 10
+  },
+  "safe:pi_objectives": {
+    "label": "PI Objectives",
+    "category": "artifact",
+    "degree": 119
+  },
+  "safe:team_coach": {
+    "label": "Team Coach",
+    "category": "role",
+    "degree": 349
+  },
+  "safe:solution_demo": {
+    "label": "Solution Demo",
+    "category": "ceremony",
+    "degree": 18
+  },
+  "safe:rte": {
+    "label": "RTE",
+    "category": "role",
+    "degree": 229
+  },
+  "safe:ste": {
+    "label": "STE",
+    "category": "role",
+    "degree": 69
+  },
+  "safe:daily_standup": {
+    "label": "Daily Standup",
+    "category": "ceremony",
+    "degree": 43
+  },
+  "safe:portfolio_sync": {
+    "label": "Portfolio Sync",
+    "category": "ceremony",
+    "degree": 14
+  },
+  "safe:custo_do_atraso": {
+    "label": "Custo do Atraso",
+    "category": "metric",
+    "degree": 290
+  },
+  "safe:lpm": {
+    "label": "LPM",
+    "category": "competency",
+    "degree": 93
+  },
+  "safe:spc": {
+    "label": "SPC",
+    "category": "role",
+    "degree": 22
+  },
+  "safe:system_architect": {
+    "label": "System Architect",
+    "category": "role",
+    "degree": 65
+  },
+  "safe:lean_business_case": {
+    "label": "Lean Business Case",
+    "category": "artifact",
+    "degree": 14
+  },
+  "safe:portfolio_kanban": {
+    "label": "Portfolio Kanban",
+    "category": "artifact",
+    "degree": 90
+  },
+  "safe:strategic_theme": {
+    "label": "Strategic Theme",
+    "category": "concept",
+    "degree": 22
+  },
+  "safe:business_owners": {
+    "label": "Business Owners",
+    "category": "role",
+    "degree": 122
+  },
+  "safe:cop": {
+    "label": "CoP",
+    "category": "structure",
+    "degree": 10
+  },
+  "safe:system_demo": {
+    "label": "System Demo",
+    "category": "ceremony",
+    "degree": 34
+  },
+  "safe:ip_iteration": {
+    "label": "IP Iteration",
+    "category": "ceremony",
+    "degree": 25
+  },
+  "safe:flow_velocity": {
+    "label": "Flow Velocity",
+    "category": "metric",
+    "degree": 162
+  },
+  "safe:iteration_planning": {
+    "label": "Iteration Planning",
+    "category": "ceremony",
+    "degree": 5
+  },
+  "safe:flow_distribution": {
+    "label": "Flow Distribution",
+    "category": "metric",
+    "degree": 87
+  },
+  "safe:roam_board": {
+    "label": "ROAM Board",
+    "category": "artifact",
+    "degree": 105
+  },
+  "safe:roam": {
+    "label": "ROAM",
+    "category": "practice",
+    "degree": 105
+  },
+  "safe:flow_time": {
+    "label": "Flow Time",
+    "category": "metric",
+    "degree": 289
+  },
+  "safe:flow_load": {
+    "label": "Flow Load",
+    "category": "metric",
+    "degree": 67
+  },
+  "safe:art_planning_board": {
+    "label": "ART Planning Board",
+    "category": "artifact",
+    "degree": 74
+  },
+  "safe:art_backlog": {
+    "label": "ART Backlog",
+    "category": "artifact",
+    "degree": 32
+  },
+  "safe:agile_team": {
+    "label": "Agile Team",
+    "category": "structure",
+    "degree": 15
+  },
+  "safe:team_backlog": {
+    "label": "Team Backlog",
+    "category": "artifact",
+    "degree": 7
+  },
+  "safe:confidence_vote": {
+    "label": "Confidence Vote",
+    "category": "practice",
+    "degree": 68
+  }
+}

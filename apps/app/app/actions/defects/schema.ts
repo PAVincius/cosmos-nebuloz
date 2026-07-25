@@ -1,11 +1,11 @@
 import { z } from "zod";
 import {
-  PaginationSchema,
-  nnStr,
-  optStr,
-  optCuid,
-  Severity,
   DefectStatus,
+  nnStr,
+  optCuid,
+  optStr,
+  PaginationSchema,
+  Severity,
 } from "../_base";
 
 export const CreateDefectSchema = z.object({

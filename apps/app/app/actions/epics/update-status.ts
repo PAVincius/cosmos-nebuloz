@@ -2,8 +2,8 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidateTag } from "next/cache";
+import { headers } from "next/headers";
 import { UpdateEpicStatusSchema } from "../schemas";
 import { portfolioEpicsCacheTag } from "./portfolio-cache";
 
@@ -14,8 +14,11 @@ export const updateEpicStatus = async (
 ): Promise<void> => {
   const ctx = await requireTenantSession(await headers());
 
-  const { epicId: validEpicId, statusId: validStatus, order: validOrder } =
-    UpdateEpicStatusSchema.parse({ epicId, statusId, order });
+  const {
+    epicId: validEpicId,
+    statusId: validStatus,
+    order: validOrder,
+  } = UpdateEpicStatusSchema.parse({ epicId, statusId, order });
 
   const result = await database.epic.updateMany({
     where: { id: validEpicId, tenantId: ctx.tenantId },

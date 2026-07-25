@@ -50,18 +50,18 @@ model MemberSprintMetrics {
 // S2: Rolling baseline computed from last 6 completed sprints
 // Recomputed at sprint close. p10/p50/p90 = percentile estimates.
 model MemberThroughputBaseline {
-  id             String   @id @default(cuid())
+  id             String         @id @default(cuid())
   tenantId       String
   teamId         String
   userId         String
-  avgSpPerSprint Float    @default(0)
-  p10Estimate    Float    @default(0)
-  p50Estimate    Float    @default(0)
-  p90Estimate    Float    @default(0)
-  trend          String   @default("NEUTRAL")
-  volatility     Float    @default(0)
-  sprintCount    Int      @default(0)
-  lastComputedAt DateTime @default(now())
+  avgSpPerSprint Float          @default(0)
+  p10Estimate    Float          @default(0)
+  p50Estimate    Float          @default(0)
+  p90Estimate    Float          @default(0)
+  trend          TrendDirection @default(NEUTRAL)
+  volatility     Float          @default(0)
+  sprintCount    Int            @default(0)
+  lastComputedAt DateTime       @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -72,19 +72,19 @@ model MemberThroughputBaseline {
 
 // S2: Team-level capacity aggregate computed at sprint close
 model TeamCapacitySnapshot {
-  id                    String   @id @default(cuid())
+  id                    String         @id @default(cuid())
   tenantId              String
   sprintId              String
   teamId                String
-  totalMembersCommitted Int      @default(0)
-  totalCapacityFactor   Float    @default(0)
-  expectedSpNextSprint  Int      @default(0)
-  minCapacityEstimate   Int      @default(0)
-  maxCapacityEstimate   Int      @default(0)
-  actualSpDelivered     Int      @default(0)
-  actualCapacityUtil    Float    @default(0)
-  teamTrend             String   @default("NEUTRAL")
-  recordedAt            DateTime @default(now())
+  totalMembersCommitted Int            @default(0)
+  totalCapacityFactor   Float          @default(0)
+  expectedSpNextSprint  Int            @default(0)
+  minCapacityEstimate   Int            @default(0)
+  maxCapacityEstimate   Int            @default(0)
+  actualSpDelivered     Int            @default(0)
+  actualCapacityUtil    Float          @default(0)
+  teamTrend             TrendDirection @default(NEUTRAL)
+  recordedAt            DateTime       @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -138,4 +138,32 @@ model GroupSynergy {
 
   @@unique([tenantId, memberHash, taskType])
   @@index([tenantId])
+}
+
+enum TrendDirection {
+  UP
+  DOWN
+  NEUTRAL
+}
+
+// Free-text annotation explaining a sprint's capacity variance (training,
+// holiday, onboarding, hiring) — surfaced next to the per-team capacity grid
+// on the Capacity Planning screen. `teamId`/`sprintId` are plain app-layer
+// tenant-guarded references, not Prisma relations — matching the existing
+// TeamCapacitySnapshot.teamId precedent (see that model above).
+model CapacityAdjustmentNote {
+  id          String   @id @default(cuid())
+  tenantId    String
+  teamId      String
+  sprintId    String?
+  text        String   @db.Text
+  tone        String   @default("neutral") // green | amber | red | neutral — matches capacity.tsx utilTone()
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, teamId])
+  @@index([tenantId, sprintId])
 }

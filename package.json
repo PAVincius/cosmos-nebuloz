@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev",
+    "dev": "turbo dev --filter=!docs --continue",
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
     "test": "turbo test",
@@ -23,7 +23,7 @@
     "risk:score": "tsx scripts/risk-score.ts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
-    "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma db push",
+    "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma migrate deploy",
     "clean": "git clean -xdf node_modules"
   },
   "simple-git-hooks": {
@@ -67,7 +67,8 @@
   "pnpm": {
     "overrides": {
       "parse5": "^7.2.1",
-      "zod@4": "4.1.13"
+      "zod@4": "4.1.13",
+      "next": "16.2.9"
     }
   },
   "type": "module"

@@ -1,10 +1,10 @@
 import type { MigrationItem } from "./types";
 
-export interface AzureConfig {
+export type AzureConfig = {
   organization: string;
   project: string;
   pat: string;
-}
+};
 
 function authHeader(pat: string): string {
   return `Basic ${Buffer.from(`:${pat}`).toString("base64")}`;
@@ -57,17 +57,23 @@ export async function fetchAzureWorkItems(
       }),
     }
   );
-  if (!wiqlRes.ok) throw new Error("Failed to query Azure work items");
+  if (!wiqlRes.ok) {
+    throw new Error("Failed to query Azure work items");
+  }
 
   const wiql = (await wiqlRes.json()) as { workItems: { id: number }[] };
   const ids = wiql.workItems.slice(0, 200).map((w) => w.id);
-  if (!ids.length) return [];
+  if (!ids.length) {
+    return [];
+  }
 
   const detailRes = await fetch(
     `${baseUrl(config.organization)}/_apis/wit/workitems?ids=${ids.join(",")}&fields=System.Title,System.Description,System.WorkItemType,System.State,Microsoft.VSTS.Common.StoryPoints&api-version=7.0`,
     { headers: { Authorization: authHeader(config.pat) } }
   );
-  if (!detailRes.ok) throw new Error("Failed to fetch Azure work item details");
+  if (!detailRes.ok) {
+    throw new Error("Failed to fetch Azure work item details");
+  }
 
   const detail = (await detailRes.json()) as {
     value: { id: number; fields: Record<string, unknown> }[];

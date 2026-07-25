@@ -10,8 +10,10 @@ import { logAudit } from "../audit/index";
 import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
+import { indexEntity } from "../safe-copilot/indexer";
+import { syncEpicCounts, syncPIPlanCompletion } from "../_denorm";
 
-export type { FeatureDetail, FeatureRow } from "./schema";
+import type { FeatureDetail, FeatureRow } from "./schema";
 
 const CreateFeatureSchema = z.object({
   epicId: z.string().min(1),
@@ -102,9 +104,15 @@ export async function createFeature(raw: unknown) {
     entityId: created.id,
   });
 
+  queueMicrotask(() => {
+    indexEntity("feature", created.id, ctx.tenantId).catch(() => {});
+  });
+
   revalidatePath(`/epics/${data.epicId}/features`);
   revalidatePath(`/epics/${data.epicId}`);
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+
+  void syncEpicCounts(data.epicId, ctx.tenantId);
 }
 
 export async function updateFeatureStatus(
@@ -113,6 +121,12 @@ export async function updateFeatureStatus(
   epicId: string
 ) {
   const ctx = await requireTenantSession(await headers());
+
+  const feature = await database.feature.findFirst({
+    where: { id, tenantId: ctx.tenantId },
+    select: { piPlanId: true },
+  });
+
   await database.feature.updateMany({
     where: { id, tenantId: ctx.tenantId },
     data: {
@@ -122,6 +136,9 @@ export async function updateFeatureStatus(
   });
   revalidatePath(`/epics/${epicId}/features`);
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+
+  void syncEpicCounts(epicId, ctx.tenantId);
+  if (feature?.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
 }
 
 export async function updateFeatureStoryPoints(
@@ -141,6 +158,12 @@ export async function updateFeatureStoryPoints(
 export async function deleteFeature(id: string, epicId: string) {
   const ctx = await requireTenantSession(await headers());
   enforce(ctx.role, "Feature", "delete");
+
+  const feature = await database.feature.findFirst({
+    where: { id, tenantId: ctx.tenantId },
+    select: { piPlanId: true },
+  });
+
   await database.feature.deleteMany({ where: { id, tenantId: ctx.tenantId } });
   logAudit(ctx.tenantId, {
     userId: ctx.userId,
@@ -151,6 +174,9 @@ export async function deleteFeature(id: string, epicId: string) {
   revalidatePath(`/epics/${epicId}/features`);
   revalidatePath(`/epics/${epicId}`);
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+
+  void syncEpicCounts(epicId, ctx.tenantId);
+  if (feature?.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
 }
 
 // ─── Wave 2 additions ─────────────────────────────────────────────────────────
@@ -277,10 +303,19 @@ export async function updateFeature(id: string, raw: unknown) {
     userId: ctx.userId,
   });
 
+  queueMicrotask(() => {
+    indexEntity("feature", id, ctx.tenantId).catch(() => {});
+  });
+
   revalidatePath(`/features/${id}`);
   if (feature.epicId) {
     revalidatePath(`/epics/${feature.epicId}/features`);
     revalidatePath(`/epics/${feature.epicId}`);
   }
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+
+  if (data.statusId !== undefined && data.statusId !== feature.statusId) {
+    if (feature.epicId) void syncEpicCounts(feature.epicId, ctx.tenantId);
+    if (feature.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+  }
 }

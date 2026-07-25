@@ -49,7 +49,8 @@ describe("upsertPersonSkillProfile", () => {
       proficiency: 80,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(SKILL_LEVEL_RX);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(SKILL_LEVEL_RX);
   });
 
   it("rejects skillLevel below 1", async () => {
@@ -60,7 +61,8 @@ describe("upsertPersonSkillProfile", () => {
       proficiency: 80,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(SKILL_LEVEL_RX);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(SKILL_LEVEL_RX);
   });
 
   it("rejects proficiency outside 0-100", async () => {
@@ -71,7 +73,8 @@ describe("upsertPersonSkillProfile", () => {
       proficiency: 110,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(PROFICIENCY_RX);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(PROFICIENCY_RX);
   });
 
   it("rejects proficiency below 0", async () => {
@@ -82,7 +85,8 @@ describe("upsertPersonSkillProfile", () => {
       proficiency: -1,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toMatch(PROFICIENCY_RX);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toMatch(PROFICIENCY_RX);
   });
 
   it("calls upsert with correct data when isDraft=true", async () => {
@@ -96,7 +100,8 @@ describe("upsertPersonSkillProfile", () => {
       isDraft: true,
     });
     expect(result.ok).toBe(true);
-    expect(result.data?.id).toBe("p1");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.id).toBe("p1");
 
     const call = mocks.personSkillProfileUpsert.mock.calls[0][0];
     expect(call.create.userId).toBe("u1");
@@ -130,7 +135,8 @@ describe("verifyPersonSkillProfile", () => {
       "TEAM_TECHNICAL_AGILITY"
     );
     expect(result.ok).toBe(true);
-    expect(result.data?.id).toBe("p1");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data?.id).toBe("p1");
 
     const call = mocks.personSkillProfileUpdate.mock.calls[0][0];
     expect(call.data.isVerified).toBe(true);
@@ -169,7 +175,8 @@ describe("listPersonSkillProfiles", () => {
     mocks.personSkillProfileFindMany.mockResolvedValue(mockProfiles);
     const result = await listPersonSkillProfiles(["u1", "u2"]);
     expect(result.ok).toBe(true);
-    expect(result.data).toEqual(mockProfiles);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data).toEqual(mockProfiles);
 
     const call = mocks.personSkillProfileFindMany.mock.calls[0][0];
     expect(call.orderBy).toEqual([{ userId: "asc" }, { competency: "asc" }]);

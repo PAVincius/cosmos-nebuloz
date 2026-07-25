@@ -2,8 +2,10 @@ import { createCopilotTrace } from "@repo/ai/lib/copilot-trace";
 import { flushLangfuse, resolveModelName } from "@repo/ai/lib/langfuse";
 import { getActiveProvider, getAIModel } from "@repo/ai/lib/router";
 import { requireTenantSession } from "@repo/auth/server";
+import { log } from "@repo/observability/log";
 import { stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { saveCopilotMessages } from "@/app/actions/safe-copilot";
 import { buildCopilotContext } from "@/app/actions/safe-copilot/context";
 import { getModeMessages } from "@/app/actions/safe-copilot/prompts";
@@ -11,19 +13,50 @@ import {
   checkCopilotQuota,
   incrementCopilotUsage,
 } from "@/app/actions/safe-copilot/quota";
+import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
+import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-prompts";
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
+
+const BodySchema = z.object({
+  messages: z
+    .array(z.object({ role: z.string(), content: z.string().max(10_000) }))
+    .min(1),
+  mode: z.string().optional(),
+  surface: z.string().optional(),
+  contextRef: z.record(z.string(), z.string()).optional(),
+  sessionId: z.string().optional(),
+});
+
+async function checkIpRateLimit(ip: string): Promise<boolean> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return true;
+  }
+  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const limiter = createRateLimiter({
+    limiter: slidingWindow(30, "1 m"),
+    prefix: "copilot",
+  });
+  const { success } = await limiter.limit(ip);
+  return success;
+}
 
 export async function POST(req: Request) {
   try {
-    const ctx = await requireTenantSession(await headers());
+    const headerStore = await headers();
+    const ctx = await requireTenantSession(headerStore);
 
-    const body = (await req.json()) as {
-      messages: { role: string; content: string }[];
-      mode?: string;
-      surface?: string;
-      contextRef?: Record<string, string>;
-      sessionId?: string;
-    };
+    const ip =
+      headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
+    if (!(await checkIpRateLimit(ip))) {
+      return Response.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+
+    const raw = await req.json();
+    const parseResult = BodySchema.safeParse(raw);
+    if (!parseResult.success) {
+      return Response.json({ error: "Invalid request body" }, { status: 400 });
+    }
+    const body = parseResult.data;
 
     const mode = body.mode ?? "global";
     const surface = body.surface ?? "global";
@@ -75,11 +108,12 @@ export async function POST(req: Request) {
       },
     });
 
+    const rolePrompt = buildRoleSystemPrompt(detectPrimaryRole([ctx.role]));
     const modeMessages = getModeMessages(
       mode,
       copilotContext,
-      // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
-      body.messages as any
+      body.messages as any,
+      rolePrompt
     );
 
     const modelName = resolveModelName(provider);
@@ -92,7 +126,6 @@ export async function POST(req: Request) {
 
     const result = streamText({
       model,
-      // biome-ignore lint/suspicious/noExplicitAny: AI SDK v5 CoreMessage type compat
       messages: modeMessages as any,
       tools: buildCopilotTools(ctx.tenantId),
       stopWhen: stepCountIs(5),
@@ -131,7 +164,7 @@ export async function POST(req: Request) {
 
     return result.toUIMessageStreamResponse();
   } catch (error: unknown) {
-    const msg = error instanceof Error ? error.message : "Erro interno";
-    return Response.json({ error: msg }, { status: 500 });
+    log.error("[copilot/chat]", { error: String(error) });
+    return Response.json({ error: "Erro interno" }, { status: 500 });
   }
 }

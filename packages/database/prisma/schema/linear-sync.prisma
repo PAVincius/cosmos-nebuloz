@@ -2,13 +2,139 @@ model LinearSync {
   id           String   @id @default(cuid())
   tenantId     String
   linearId     String
-  linearType   String   // team | project | issue | milestone | cycle
+  linearType   String // team | project | issue | milestone | cycle
   cosmosId     String
-  cosmosType   String   // Art | Epic | Feature | PIPlan | Sprint
+  cosmosType   String // Art | Epic | Feature | PIPlan | Sprint
   lastSyncedAt DateTime @default(now()) @updatedAt
   metadata     Json?
 
   @@unique([tenantId, linearId, linearType])
   @@index([tenantId])
   @@map("linear_syncs")
+}
+
+// Per-field/entity sync event log for conflict resolution UI (AC-008)
+model LinearSyncEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  integrationId String
+  direction     String // INBOUND | OUTBOUND
+  source        String // LINEAR | COSMOS
+  action        String // CREATED | UPDATED | SKIPPED | FAILED
+  entityType    String
+  entityId      String
+  externalId    String?
+  field         String? // field name for SKIPPED events (AC-008)
+  linearValue   Json? // incoming Linear value (AC-008)
+  cosmosValue   Json? // current Cosmos value (AC-008)
+  cursor        String?
+  createdAt     DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, integrationId, createdAt])
+  @@index([tenantId, entityType, entityId])
+  @@map("linear_sync_events")
+}
+
+// Dead-letter queue for webhooks received while integration is PAUSED (AC-004)
+model WebhookDlq {
+  id            String    @id @default(cuid())
+  tenantId      String
+  integrationId String
+  source        String // LINEAR | GITHUB
+  webhookId     String? // idempotency key from payload
+  payload       Json
+  receivedAt    DateTime  @default(now())
+  retryCount    Int       @default(0)
+  lastRetryAt   DateTime?
+  processedAt   DateTime?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, source, processedAt])
+  @@index([tenantId, integrationId])
+  @@map("webhook_dlq")
+}
+
+model GitHubSync {
+  id           String   @id @default(cuid())
+  tenantId     String
+  githubRepo   String // "owner/repo"
+  githubNumber Int
+  githubType   String // issue | pull_request | milestone
+  cosmosId     String
+  cosmosType   String // Epic | Feature | Story | PIPlan
+  lastSyncedAt DateTime @default(now()) @updatedAt
+  metadata     Json?
+
+  @@unique([tenantId, githubRepo, githubNumber, githubType])
+  @@index([tenantId])
+  @@map("github_syncs")
+}
+
+// Story-025: Per-entity GitHub sync event log
+model GitHubSyncEvent {
+  id            String   @id @default(cuid())
+  tenantId      String
+  integrationId String
+  direction     String // INBOUND | OUTBOUND
+  source        String   @default("GITHUB")
+  action        String // CREATED | UPDATED | SKIPPED | FAILED
+  entityType    String
+  entityId      String
+  externalId    String?
+  field         String?
+  payload       Json?
+  createdAt     DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, integrationId, createdAt])
+  @@index([tenantId, entityType, entityId])
+  @@map("github_sync_events")
+}
+
+// Story-025: Merged PRs with no Cosmos link — visible in Unlinked PRs panel (AC-004)
+model GitHubUnlinkedPR {
+  id           String    @id @default(cuid())
+  tenantId     String
+  githubRepo   String
+  prNumber     Int
+  prTitle      String
+  prUrl        String
+  prStatus     String // OPEN | MERGED | CLOSED
+  headBranch   String?
+  mergedAt     DateTime?
+  receivedAt   DateTime  @default(now())
+  linkedAt     DateTime? // set when RTE manually links it
+  linkedToId   String?
+  linkedToType String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, prStatus, linkedAt])
+  @@map("github_unlinked_prs")
+}
+
+// Story-025: Raw deployment events for DORA computation (AC-005)
+model GitHubDeploymentEvent {
+  id            String    @id @default(cuid())
+  tenantId      String
+  integrationId String
+  githubRepo    String
+  deploymentId  String
+  environment   String // production | staging | preview
+  state         String // success | failure | error | pending
+  sha           String?
+  prNumber      Int?
+  firstCommitAt DateTime? // for lead time calculation
+  deployedAt    DateTime
+  createdAt     DateTime  @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, environment, deployedAt])
+  @@index([tenantId, githubRepo, deploymentId])
+  @@map("github_deployment_events")
 }

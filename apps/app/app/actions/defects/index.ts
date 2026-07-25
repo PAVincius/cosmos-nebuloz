@@ -2,31 +2,24 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import {
-  type Result,
-  type Page,
-  safeAction,
-  paginationArgs,
   buildPage,
+  type Page,
+  paginationArgs,
+  type Result,
+  safeAction,
 } from "../_base";
 import {
   CreateDefectSchema,
-  UpdateDefectSchema,
   DefectFiltersSchema,
-  type CreateDefectInput,
-  type UpdateDefectInput,
-  type DefectFiltersInput,
+  UpdateDefectSchema,
 } from "./schema";
-
-export type { CreateDefectInput, UpdateDefectInput, DefectFiltersInput };
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listDefects(
-  raw: unknown,
-): Promise<Result<Page<any>>> {
+export async function listDefects(raw: unknown): Promise<Result<Page<any>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const { page, limit, teamId, status, severity } =
@@ -60,7 +53,9 @@ export async function getDefectById(id: string): Promise<Result<any>> {
       where: { id, tenantId: ctx.tenantId },
     });
 
-    if (!defect) throw new Error("Defect não encontrado");
+    if (!defect) {
+      throw new Error("Defect não encontrado");
+    }
     return defect;
   });
 }
@@ -87,7 +82,7 @@ export async function createDefect(raw: unknown): Promise<Result<any>> {
 
 export async function updateDefect(
   id: string,
-  raw: unknown,
+  raw: unknown
 ): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -96,7 +91,9 @@ export async function updateDefect(
     const defect = await database.defect.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!defect) throw new Error("Defect não encontrado");
+    if (!defect) {
+      throw new Error("Defect não encontrado");
+    }
 
     const resolvedAt =
       data.status === "RESOLVED" && defect.status !== "RESOLVED"
@@ -126,7 +123,9 @@ export async function resolveDefect(id: string): Promise<Result<any>> {
     const defect = await database.defect.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!defect) throw new Error("Defect não encontrado");
+    if (!defect) {
+      throw new Error("Defect não encontrado");
+    }
 
     const updated = await database.defect.update({
       where: { id },
@@ -149,7 +148,9 @@ export async function closeDefect(id: string): Promise<Result<any>> {
     const defect = await database.defect.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!defect) throw new Error("Defect não encontrado");
+    if (!defect) {
+      throw new Error("Defect não encontrado");
+    }
 
     const updated = await database.defect.update({
       where: { id },
@@ -166,7 +167,7 @@ export async function closeDefect(id: string): Promise<Result<any>> {
 }
 
 export async function deleteDefect(
-  id: string,
+  id: string
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
@@ -174,7 +175,9 @@ export async function deleteDefect(
     const defect = await database.defect.findFirst({
       where: { id, tenantId: ctx.tenantId },
     });
-    if (!defect) throw new Error("Defect não encontrado");
+    if (!defect) {
+      throw new Error("Defect não encontrado");
+    }
 
     await database.defect.delete({ where: { id } });
 

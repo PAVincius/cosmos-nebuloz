@@ -1,29 +1,40 @@
 // Wave 1 — Team Level delivery entities
 
 model Sprint {
-  id          String    @id @default(cuid())
-  tenantId    String
-  teamId      String
-  name        String
-  goal        String?
-  startDate   DateTime
-  endDate     DateTime
-  status      String    @default("PLANNING") // PLANNING/ACTIVE/COMPLETED
-  capacity    Int?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id                          String    @id @default(cuid())
+  tenantId                    String
+  teamId                      String
+  piPlanId                    String?
+  name                        String
+  goal                        String?
+  startDate                   DateTime
+  endDate                     DateTime
+  status                      String    @default("PLANNING") // PLANNING/ACTIVE/REVIEW/CLOSED
+  isIPSprint                  Boolean   @default(false)
+  capacity                    Int?
+  velocity                    Int? // computed at sprint close
+  closedAt                    DateTime?
+  // Story-022 overcommitment fields
+  overcommitmentOverride      Boolean   @default(false)
+  overcommitmentJustification String?   @db.Text
+  // Layout denorm — daily burndown snapshots [{date, remaining, ideal}]; appended each day
+  burndownSnapshots           Json      @default("[]")
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
 
-  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  team   Team          @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  stories Story[]
-  review  SprintReview?
-  retro   Retrospective?
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  team              Team                   @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  piPlan            PIPlan?                @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  stories           Story[]
+  review            SprintReview?
+  retro             Retrospective?
   memberAssignments TeamMemberAssignment[]
   memberMetrics     MemberSprintMetrics[]
   capacitySnapshots TeamCapacitySnapshot[]
 
   @@index([tenantId])
   @@index([teamId])
+  @@index([piPlanId])
   @@index([tenantId, status])
 }
 
@@ -36,20 +47,33 @@ model Story {
   description        String?   @db.Text
   acceptanceCriteria String?   @db.Text
   storyPoints        Int       @default(1)
-  status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE
-  priority           String    @default("medium")  // critical/high/medium/low
+  status             String    @default("BACKLOG") // BACKLOG/TODO/IN_PROGRESS/REVIEW/DONE/SPLIT_INTO
+  priority           String    @default("medium") // critical/high/medium/low
   assigneeUserId     String?
   order              Int       @default(0)
   startedAt          DateTime? // set when status transitions to IN_PROGRESS
   completedAt        DateTime?
+  // Story-021 split + decomposition fields
+  origin             String    @default("MANUAL") // MANUAL/COPILOT_SUGGESTION
+  originStoryId      String?
+  splitIntoStoryIds  Json      @default("[]")
 
   // External integration fields
   externalId     String?
-  externalSource String?  // linear | github | asana | gitlab
+  externalSource String? // linear | github | asana | gitlab
   externalUrl    String?
 
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  // Story-025 GitHub PR linking
+  prStatus String? // OPEN | MERGED | CLOSED
+  prUrl    String?
+
+  // Story-028 BPMN workflow runtime
+  workflowState   String? // current state name from active BpmnDefinition
+  workflowContext Json? // guard context (assignees, etc.)
+  workflowVersion Int? // BpmnDefinition.version when activated
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sprint  Sprint?  @relation(fields: [sprintId], references: [id], onDelete: SetNull)
@@ -75,13 +99,13 @@ model Task {
   completedAt    DateTime?
 
   // S3: Synergy detection — task classification
-  taskType    String?  // backend | frontend | ml | infra | qa | data | design
-  complexity  String?  // low | medium | high
+  taskType    String? // backend | frontend | ml | infra | qa | data | design
+  complexity  String? // low | medium | high
   estimatedSp Int?
   actualSp    Int?
 
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant    Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   story     Story          @relation(fields: [storyId], references: [id], onDelete: Cascade)
@@ -95,14 +119,20 @@ model Defect {
   id             String    @id @default(cuid())
   tenantId       String
   teamId         String?
+  sprintId       String?
   storyId        String?
   title          String
   description    String?   @db.Text
   severity       String    @default("medium") // critical/high/medium/low
-  status         String    @default("OPEN")   // OPEN/IN_PROGRESS/RESOLVED/CLOSED
+  status         String    @default("OPEN") // OPEN/IN_PROGRESS/IN_REVIEW/CLOSED
   reporterUserId String?
   assigneeUserId String?
   resolvedAt     DateTime?
+  // Story-024 fields
+  originSprintId String?
+  reopenReason   String?   @db.Text
+  isStale        Boolean   @default(false)
+  staleAt        DateTime?
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
@@ -111,36 +141,50 @@ model Defect {
   @@index([tenantId])
   @@index([teamId])
   @@index([tenantId, status])
+  @@index([sprintId])
 }
 
 model Impediment {
-  id          String    @id @default(cuid())
-  tenantId    String
-  teamId      String?
-  title       String
-  description String?   @db.Text
-  status      String    @default("OPEN") // OPEN/IN_PROGRESS/RESOLVED
-  ownerUserId String?
-  resolvedAt  DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  tenantId         String
+  teamId           String?
+  artId            String?
+  title            String
+  description      String?   @db.Text
+  status           String    @default("OPEN") // OPEN/ESCALATED/RESOLVED
+  ownerUserId      String?
+  resolvedAt       DateTime?
+  // Story-024 escalation fields
+  linkedRiskId     String?
+  resolutionNote   String?   @db.Text
+  resolutionTime   Float? // hours from createdAt to resolvedAt
+  severity         Int       @default(3) // 1-5
+  // Layout denorm — sprint IDs blocked by this impediment; set at creation/escalation
+  blockedSprintIds String[]  @default([])
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([teamId])
+  @@index([tenantId, status])
 }
 
 model StandupEntry {
-  id        String   @id @default(cuid())
-  tenantId  String
-  teamId    String
-  userId    String
-  date      DateTime @db.Date
-  yesterday String?  @db.Text
-  today     String?  @db.Text
-  blockers  String?  @db.Text
-  createdAt DateTime @default(now())
+  id                 String   @id @default(cuid())
+  tenantId           String
+  teamId             String
+  userId             String
+  date               DateTime @db.Date
+  yesterday          String?  @db.Text
+  today              String?  @db.Text
+  blockers           String?  @db.Text
+  // Story-022 blocker→impediment link
+  linkedImpedimentId String?
+  // AI sentiment — POSITIVE/NEUTRAL/NEGATIVE; set by standup AI analysis pipeline
+  sentiment          String?
+  createdAt          DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -150,14 +194,19 @@ model StandupEntry {
 }
 
 model SprintReview {
-  id        String   @id @default(cuid())
-  tenantId  String
-  sprintId  String   @unique
-  velocity  Int?
-  demoNotes String?  @db.Text
-  goalMet   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id              String   @id @default(cuid())
+  tenantId        String
+  sprintId        String   @unique
+  velocity        Int?
+  // Story-023 accepted vs completed guard (AC-001)
+  completedPoints Int?
+  acceptedPoints  Int?
+  // Story-024 defect swimlane excluded from velocity (AC-007)
+  defectCount     Int      @default(0)
+  demoNotes       String?  @db.Text
+  goalMet         Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
@@ -166,19 +215,80 @@ model SprintReview {
 }
 
 model Retrospective {
-  id        String   @id @default(cuid())
-  tenantId  String
-  sprintId  String   @unique
-  wentWell  Json     @default("[]")
-  toImprove Json     @default("[]")
-  actions   Json     @default("[]")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String    @id @default(cuid())
+  tenantId       String
+  sprintId       String    @unique
+  teamId         String?
+  wentWell       Json      @default("[]")
+  toImprove      Json      @default("[]")
+  actions        Json      @default("[]")
+  // Story-023 phase tracking
+  phase          String    @default("INPUT") // INPUT/VOTING/ACTION_PLANNING/CLOSED
+  status         String    @default("DRAFT") // DRAFT/ACTIVE/CLOSED
+  anonymousInput Boolean   @default(true)
+  votesPerMember Int       @default(3)
+  closedAt       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sprint      Sprint            @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+  items       RetroItem[]
+  actionItems RetroActionItem[]
 
   @@index([tenantId])
+  @@index([teamId])
+}
+
+// Story-023 retro item with anonymous author support
+model RetroItem {
+  id        String   @id @default(cuid())
+  tenantId  String
+  retroId   String
+  category  String   @default("WENT_WELL") // WENT_WELL/TO_IMPROVE
+  text      String   @db.Text
+  authorId  String?
+  voteCount Int      @default(0)
+  createdAt DateTime @default(now())
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  retro  Retrospective @relation(fields: [retroId], references: [id], onDelete: Cascade)
+  votes  RetroVote[]
+
+  @@index([tenantId])
+  @@index([retroId])
+}
+
+// Story-023 per-member vote tracking for dot voting
+model RetroVote {
+  itemId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  item RetroItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, userId])
+  @@index([userId])
+}
+
+// Story-023 action items with carry-forward lineage
+model RetroActionItem {
+  id                 String   @id @default(cuid())
+  tenantId           String
+  retroId            String
+  title              String
+  ownerId            String
+  dueDate            DateTime
+  status             String   @default("OPEN") // OPEN/COMPLETE
+  carriedFromRetroId String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  retro  Retrospective @relation(fields: [retroId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([retroId])
 }
 
 // S3: Multi-assignee support for synergy detection
@@ -186,7 +296,7 @@ model Retrospective {
 model TaskAssignee {
   taskId   String
   userId   String
-  role     String?  // primary | reviewer | pair
+  role     String? // primary | reviewer | pair
   joinedAt DateTime @default(now())
 
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)

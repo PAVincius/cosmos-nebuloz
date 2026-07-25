@@ -59,7 +59,8 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
           story:
             "Como PO, quero refinar o backlog de Stories com critérios de aceitação.",
           description: "No backlog/stories route implemented yet (epic-005)",
-          expected: "Backlog page with stories list, story scoring, acceptance criteria",
+          expected:
+            "Backlog page with stories list, story scoring, acceptance criteria",
           actual: "All backlog routes return 404",
           suggestion:
             "Implement epic-005 Team Level Management — create Story list page",
@@ -84,7 +85,8 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
           severity: "medium",
           category: "route-missing",
           route: "/api/features",
-          story: "Como PO, quero visualizar WSJF de Features e reordenar backlog.",
+          story:
+            "Como PO, quero visualizar WSJF de Features e reordenar backlog.",
           description:
             "No GET /api/features endpoint — WSJF only accessible via server actions",
           expected: "REST API or tRPC router for Feature CRUD",
@@ -152,7 +154,16 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
     const passwordVisible = await passwordInput.isVisible().catch(() => false);
     const submitVisible = await submitBtn.isVisible().catch(() => false);
 
-    if (!emailVisible || !passwordVisible || !submitVisible) {
+    if (emailVisible && passwordVisible && submitVisible) {
+      writeFinding(
+        finding({
+          severity: "info",
+          category: "compliant",
+          route: "/sign-in",
+          description: "Sign-in form has all required elements",
+        })
+      );
+    } else {
       writeFinding(
         finding({
           severity: "high",
@@ -165,15 +176,6 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
           suggestion:
             "Check SignIn component in packages/auth/components/sign-in.tsx",
           codeRef: "packages/auth/components/sign-in.tsx",
-        })
-      );
-    } else {
-      writeFinding(
-        finding({
-          severity: "info",
-          category: "compliant",
-          route: "/sign-in",
-          description: "Sign-in form has all required elements",
         })
       );
     }
@@ -191,12 +193,13 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
     const visible = await btn.isVisible().catch(() => false);
 
     if (visible) {
-      const bgColor = await btn.evaluate((el) => {
-        return getComputedStyle(el).backgroundColor;
-      });
+      const bgColor = await btn.evaluate(
+        (el) => getComputedStyle(el).backgroundColor
+      );
 
       // primary = oklch(0.58 0.22 264) ≈ RGB around 67-100, 80-120, 220-255 range
-      const isLavender = bgColor.includes("rgb") &&
+      const isLavender =
+        bgColor.includes("rgb") &&
         !bgColor.includes("255, 255, 255") &&
         !bgColor.includes("0, 0, 0");
 
@@ -206,7 +209,8 @@ test.describe("PO — Backlog & Multi-Tenancy", () => {
             severity: "low",
             category: "design-violation",
             route: "/sign-in",
-            description: "Submit button may not use primary lavender-blue token",
+            description:
+              "Submit button may not use primary lavender-blue token",
             expected: "Button bg = var(--color-primary) ≈ lavender-blue",
             actual: `Computed bg: ${bgColor}`,
             suggestion:

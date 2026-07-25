@@ -25,13 +25,13 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     integration: {
-      findMany:   mocks.integrationFindMany,
+      findMany: mocks.integrationFindMany,
       findUnique: mocks.integrationFindUnique,
-      findFirst:  mocks.integrationFindFirst,
-      create:     mocks.integrationCreate,
-      upsert:     mocks.integrationUpsert,
-      update:     mocks.integrationUpdate,
-      delete:     mocks.integrationDelete,
+      findFirst: mocks.integrationFindFirst,
+      create: mocks.integrationCreate,
+      upsert: mocks.integrationUpsert,
+      update: mocks.integrationUpdate,
+      delete: mocks.integrationDelete,
     },
   },
 }));
@@ -49,7 +49,7 @@ const adminCtx = { ...tenantCtx, role: "ADMIN" as const };
 const ROW = {
   id: "int-1",
   tenantId: adminCtx.tenantId,
-  source: "jira",   // renamed from type → source
+  source: "jira", // renamed from type → source
   name: "Jira",
   status: "ACTIVE",
   config: { baseUrl: "https://acme.atlassian.net", apiToken: "tok" },
@@ -156,7 +156,11 @@ describe("upsertIntegration", () => {
     const result = await upsertIntegration({
       type: "jira",
       name: "Jira Updated",
-      config: { baseUrl: "https://acme.atlassian.net", apiToken: "tok2", projectKey: "COSMOS" },
+      config: {
+        baseUrl: "https://acme.atlassian.net",
+        apiToken: "tok2",
+        projectKey: "COSMOS",
+      },
     });
     expect(result.ok).toBe(true);
     expect(mocks.integrationUpdate).toHaveBeenCalled();
@@ -194,7 +198,10 @@ describe("testIntegration", () => {
       expect(result.data.message).toMatch(/sucesso|estabelecida/i);
     }
     expect(mocks.integrationUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: ROW.id }, data: { status: "ACTIVE" } })
+      expect.objectContaining({
+        where: { id: ROW.id },
+        data: { status: "ACTIVE" },
+      })
     );
     vi.unstubAllGlobals();
   });
@@ -209,7 +216,10 @@ describe("testIntegration", () => {
       expect(result.data.ok).toBe(false);
     }
     expect(mocks.integrationUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: ROW.id }, data: { status: "ERROR" } })
+      expect.objectContaining({
+        where: { id: ROW.id },
+        data: { status: "ERROR" },
+      })
     );
     vi.unstubAllGlobals();
   });

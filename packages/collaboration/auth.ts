@@ -8,6 +8,14 @@ type AuthenticateOptions = {
   userInfo: Liveblocks["UserMeta"]["info"];
 };
 
+// Story-031: room-scoped auth with per-room access control
+type AuthenticateRoomOptions = {
+  userId: string;
+  room: string;
+  canWrite: boolean;
+  userInfo: Liveblocks["UserMeta"]["info"];
+};
+
 const secret = keys().LIVEBLOCKS_SECRET;
 
 export const authenticate = async ({
@@ -19,18 +27,36 @@ export const authenticate = async ({
     throw new Error("LIVEBLOCKS_SECRET is not set");
   }
 
+  if (!orgId) {
+    throw new Error("orgId is required for room scoping");
+  }
+
   const liveblocks = new LiveblocksNode({ secret });
 
-  // Start an auth session inside your endpoint
   const session = liveblocks.prepareSession(userId, { userInfo });
 
-  // Use a naming pattern to allow access to rooms with wildcards
-  // Giving the user write access on their organization
   session.allow(`${orgId}:*`, session.FULL_ACCESS);
-  session.allow("*", session.FULL_ACCESS);
 
-  // Authorize the user and return the result
   const { status, body } = await session.authorize();
 
+  return new Response(body, { status });
+};
+
+export const authenticateRoom = async ({
+  userId,
+  room,
+  canWrite,
+  userInfo,
+}: AuthenticateRoomOptions): Promise<Response> => {
+  if (!secret) {
+    throw new Error("LIVEBLOCKS_SECRET is not set");
+  }
+
+  const liveblocks = new LiveblocksNode({ secret });
+  const session = liveblocks.prepareSession(userId, { userInfo });
+
+  session.allow(room, canWrite ? session.FULL_ACCESS : session.READ_ACCESS);
+
+  const { status, body } = await session.authorize();
   return new Response(body, { status });
 };

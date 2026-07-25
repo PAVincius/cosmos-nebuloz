@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: slm-pipeline
+Version: 0.1.0
+Requires-Python: >=3.11
+Requires-Dist: mlx>=0.16.0
+Requires-Dist: mlx-lm>=0.16.0
+Requires-Dist: lancedb>=0.8.0
+Requires-Dist: pandas>=2.0.0
+Requires-Dist: transformers>=4.40.0
+Requires-Dist: google-cloud-aiplatform>=1.50.0
+Requires-Dist: google-cloud-documentai>=2.24.0
+Requires-Dist: pyarrow>=15.0.0
+Requires-Dist: numpy>=1.26.0
+Requires-Dist: pyyaml>=6.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=5.0.0; extra == "dev"
+Requires-Dist: ruff>=0.4.0; extra == "dev"

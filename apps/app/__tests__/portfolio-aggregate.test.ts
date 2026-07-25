@@ -19,6 +19,36 @@ describe("effectiveFeatureWsjf", () => {
   });
 });
 
+describe("aggregateEpicRow — invest fields", () => {
+  it("includes investScore and descriptionMd from Epic", () => {
+    const row = aggregateEpicRow({
+      id: "epic-1",
+      title: "Test Epic",
+      statusId: "BACKLOG",
+      order: 0,
+      features: [],
+      featureCount: 0,
+      investScore: 72,
+      investBreakdown: { I: 80, N: 70, V: 75, E: 65, S: 60, T: 85 },
+      descriptionMd: "# Epic Description",
+    });
+    expect(row.investScore).toBe(72);
+    expect(row.descriptionMd).toBe("# Epic Description");
+  });
+
+  it("defaults investScore to null when not set", () => {
+    const row = aggregateEpicRow({
+      id: "epic-2",
+      title: "No Score",
+      statusId: "BACKLOG",
+      order: 0,
+      features: [],
+      featureCount: 0,
+    });
+    expect(row.investScore).toBeNull();
+  });
+});
+
 describe("aggregateEpicRow", () => {
   it("averages effective WSJF across features", () => {
     const row = aggregateEpicRow({

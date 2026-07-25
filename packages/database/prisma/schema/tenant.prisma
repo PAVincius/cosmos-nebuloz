@@ -23,101 +23,172 @@ enum InvitationStatus {
 }
 
 model Tenant {
-  id        String           @id @default(cuid())
-  name      String
-  slug      String           @unique
-  logo      String?
-  plan      SubscriptionPlan @default(ORBIT)
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  metadata  Json?
+  id              String           @id @default(cuid())
+  name            String
+  slug            String           @unique
+  logo            String?
+  plan            SubscriptionPlan @default(ORBIT)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  metadata        Json?
+  // Strategy Map — cosmos.html screen-strategy vision statement
+  visionStatement String?          @db.Text
 
-  members              TenantMember[]
-  invitations          TenantInvitation[]
-  arts                 ART[]
-  piPlans              PIPlan[]
-  piParticipants       PIParticipant[]
-  epics                Epic[]
-  features             Feature[]
-  workflowNodes        TeamWorkflowNode[]
-  workflowEdges        TeamWorkflowEdge[]
-  dependencyLinks      DependencyLink[]
-  risks                Risk[]
-  piObjectives         PIObjective[]
-  bpmnDefinitions      BpmnDefinition[]
-  piSessions           PISession[]
-  confidenceSessions   ConfidenceVoteSession[]
-  knowledgeVectors     PIKnowledgeVector[]
-  teams                Team[]
+  members                   TenantMember[]
+  invitations               TenantInvitation[]
+  arts                      ART[]
+  piPlans                   PIPlan[]
+  piParticipants            PIParticipant[]
+  epics                     Epic[]
+  features                  Feature[]
+  workflowNodes             TeamWorkflowNode[]
+  workflowEdges             TeamWorkflowEdge[]
+  dependencyLinks           DependencyLink[]
+  risks                     Risk[]
+  piObjectives              PIObjective[]
+  bpmnDefinitions           BpmnDefinition[]
+  piSessions                PISession[]
+  confidenceSessions        ConfidenceVoteSession[]
+  confidenceVoteTallies     ConfidenceVoteTally[]
+  artSequenceCounters       ArtSequenceCounter[]
+  knowledgeVectors          PIKnowledgeVector[]
+  teams                     Team[]
   // Wave 1 — Team delivery
-  sprints              Sprint[]
-  stories              Story[]
-  tasks                Task[]
-  defects              Defect[]
-  impediments          Impediment[]
-  standupEntries       StandupEntry[]
-  sprintReviews        SprintReview[]
-  retrospectives       Retrospective[]
+  sprints                   Sprint[]
+  stories                   Story[]
+  tasks                     Task[]
+  defects                   Defect[]
+  impediments               Impediment[]
+  standupEntries            StandupEntry[]
+  sprintReviews             SprintReview[]
+  retrospectives            Retrospective[]
+  retroItems                RetroItem[]
+  retroActionItems          RetroActionItem[]
   // Wave 3 — System
-  notifications        Notification[]
-  auditLogs            AuditLog[]
-  integrations         Integration[]
+  notifications             Notification[]
+  auditLogs                 AuditLog[]
+  integrations              Integration[]
   // Wave 4 — Portfolio
-  strategicThemes      StrategicTheme[]
-  okrs                 OKR[]
-  keyResults           KeyResult[]
-  keyResultSnapshots   KeyResultSnapshot[]
-  leanBudgets          LeanBudget[]
-  roadmapItems         RoadmapItem[]
-  governedEpics        GovernedEpic[]
-  approvalWorkflows    ApprovalWorkflow[]
-  approvalRequests     ApprovalRequest[]
-  approvalSteps        ApprovalStepInstance[]
-  decisionLogEntries   DecisionLogEntry[]
+  strategicThemes           StrategicTheme[]
+  okrs                      OKR[]
+  keyResults                KeyResult[]
+  keyResultSnapshots        KeyResultSnapshot[]
+  leanBudgets               LeanBudget[]
+  roadmapItems              RoadmapItem[]
+  strategyPillars           StrategyPillar[]
+  investmentHorizons        InvestmentHorizon[]
+  epicValueMetrics          EpicValueMetric[]
+  governedEpics             GovernedEpic[]
+  approvalWorkflows         ApprovalWorkflow[]
+  approvalRequests          ApprovalRequest[]
+  approvalSteps             ApprovalStepInstance[]
+  decisionLogEntries        DecisionLogEntry[]
   // Wave 5 — Large Solution
-  solutionTrains       SolutionTrain[]
-  capabilities         Capability[]
-  solutionEpics        SolutionEpic[]
-  lace                 LACE?
-  suppliers            Supplier[]
+  solutionTrains            SolutionTrain[]
+  capabilities              Capability[]
+  solutionEpics             SolutionEpic[]
+  lace                      LACE?
+  suppliers                 Supplier[]
+  solutionRisks             SolutionRisk[]
+  crossArtDependencies      CrossArtDependency[]
   // Onboarding
-  onboardingProgress   OnboardingProgress[]
-  migrationConnections MigrationConnection[]
+  onboardingProgress        OnboardingProgress[]
+  migrationConnections      MigrationConnection[]
   // Flow Metrics & Measure-and-Grow
-  stateTransitions       StateTransitionHistory[]
-  flowMetricSnapshots    FlowMetricSnapshot[]
-  competencyAssessments  CompetencyAssessment[]
-  improvementActions     ImprovementAction[]
-  stalenessAuditLogs     StalenessAuditLog[]
-  personSkillProfiles    PersonSkillProfile[]
+  stateTransitions          StateTransitionHistory[]
+  flowMetricSnapshots       FlowMetricSnapshot[]
+  competencyAssessments     CompetencyAssessment[]
+  improvementActions        ImprovementAction[]
+  stalenessAuditLogs        StalenessAuditLog[]
+  personSkillProfiles       PersonSkillProfile[]
   // S2: Team capacity
-  memberAssignments     TeamMemberAssignment[]
-  memberMetrics         MemberSprintMetrics[]
-  memberBaselines       MemberThroughputBaseline[]
-  capacitySnapshots     TeamCapacitySnapshot[]
-  pairSynergies         PairSynergy[]
-  groupSynergies        GroupSynergy[]
+  memberAssignments         TeamMemberAssignment[]
+  memberMetrics             MemberSprintMetrics[]
+  memberBaselines           MemberThroughputBaseline[]
+  capacitySnapshots         TeamCapacitySnapshot[]
+  pairSynergies             PairSynergy[]
+  groupSynergies            GroupSynergy[]
+  capacityAdjustmentNotes   CapacityAdjustmentNote[]
   // S1: AI Copilot
-  copilotSessions       CopilotSession[]
-  copilotMessages       CopilotMessage[]
-  anomalyDetectionRuns  AnomalyDetectionRun[]
-  anomalies             Anomaly[]
+  copilotSessions           CopilotSession[]
+  copilotMessages           CopilotMessage[]
+  anomalyDetectionRuns      AnomalyDetectionRun[]
+  anomalies                 Anomaly[]
+  // FinOps
+  billingEntries            BillingEntry[]
+  billingEntryAllocations   BillingEntryAllocation[]
+  costSnapshots             CostSnapshot[]
+  tagRules                  TagRule[]
+  unmappedCostBuckets       UnmappedCostBucket[]
+  billingSyncRuns           BillingSyncRun[]
+  costAnomalies             CostAnomaly[]
+  budgetPlans               BudgetPlan[]
+  commitmentDiscounts       CommitmentDiscount[]
+  personCosts               PersonCost[]
+  billingEntryStaging       BillingEntryStaging[]
+  activeSessions            Session[]                  @relation("SessionActiveTenant")
+  scoringEvents             ScoringEvent[]
+  wsjfSettings              WsjfSettings?
+  // Story-025 portfolio health
+  leanBudgetReallocations   LeanBudgetReallocation[]
+  portfolioAnalysisReports  PortfolioAnalysisReport[]
+  // Story-021 rule configs
+  anomalyRuleConfigs        AnomalyRuleConfig[]
+  // Story-024 Linear SAFe sync
+  linearSyncEvents          LinearSyncEvent[]
+  webhookDlqEntries         WebhookDlq[]
+  // Story-025 GitHub DORA sync
+  githubSyncEvents          GitHubSyncEvent[]
+  githubUnlinkedPRs         GitHubUnlinkedPR[]
+  githubDeploymentEvents    GitHubDeploymentEvent[]
+  // Story-031 Liveblocks CRDT board
+  piPlanFeatureAssignments  PIPlanFeatureAssignment[]
+  boardReconciliationLogs   BoardReconciliationLog[]
+  // Story-033 Tenant security policy
+  securityPolicy            TenantSecurityPolicy?
+  // RBAC-01 SSO config
+  ssoConfig                 TenantSSOConfig?
+  // Story-034 LGPD compliance
+  dataSubjectRequests       DataSubjectRequest[]
+  // Story-036 notifications
+  notificationPreferences   NotificationPreference[]
+  // Story-036 feature flags
+  featureFlagOverrides      FeatureFlagOverride[]
+  // Story-037 API keys & webhooks
+  apiKeys                   ApiKey[]
+  webhookEndpoints          WebhookEndpoint[]
+  // Story-038 RBAC
+  artMemberships            ARTMembership[]
+  customRoles               CustomRole[]
+  customRoleAssignments     CustomRoleAssignment[]
+  // Story-040 governance escalations
+  governanceEscalations     GovernanceEscalation[]
+  // Story-045 reporting
+  scheduledReports          ScheduledReport[]
+  scheduledReportExecutions ScheduledReportExecution[]
+  userDashboardLayouts      UserDashboardLayout[]
+  // epic-009 Meeting Intelligence
+  meetingIntegrations       MeetingIntegration[]
+  meetingTranscripts        MeetingTranscript[]
+  meetingInsights           MeetingInsight[]
+  // PAE — Personal Access Exception
+  accessExceptionRequests   AccessExceptionRequest[]
 }
 
 model User {
-  id                 String    @id @default(cuid())
-  email              String    @unique
-  name               String?
-  emailVerified      Boolean   @default(false)
-  image              String?
-  twoFactorEnabled   Boolean   @default(false)
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  id               String   @id @default(cuid())
+  email            String   @unique
+  name             String?
+  emailVerified    Boolean  @default(false)
+  image            String?
+  twoFactorEnabled Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
-  sessions      Session[]
-  accounts      Account[]
-  memberships   TenantMember[]
-  twoFactor     TwoFactor?
+  sessions    Session[]
+  accounts    Account[]
+  memberships TenantMember[]
+  twoFactor   TwoFactor?
 }
 
 model TwoFactor {
@@ -138,11 +209,13 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  activeTenantId String? // Better Auth Organization plugin field
+
+  activeTenantId String?
+  activeTenant   Tenant? @relation("SessionActiveTenant", fields: [activeTenantId], references: [id], onDelete: SetNull)
 
   @@unique([token])
   @@index([userId])
+  @@index([activeTenantId])
 }
 
 model Account {
@@ -165,12 +238,12 @@ model Account {
 }
 
 model Verification {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   identifier String
   value      String
   expiresAt  DateTime
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
 
 model TenantMember {

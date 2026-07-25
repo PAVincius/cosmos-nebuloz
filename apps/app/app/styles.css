@@ -27,3 +27,82 @@
   pointer-events: none;
   height: 0;
 }
+
+/* ─── Bento cell — hover managed in CSS, not JS ──────────────────────── */
+.bento-cell {
+  border: 1px solid #23252a;
+  transition: border-color 150ms ease;
+}
+
+.bento-cell:hover {
+  border-color: #34343a;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bento-cell {
+    transition: none;
+  }
+}
+
+/* ─── COSMOS re-skin — Vega / Cosmos Black brand override ───────────────────
+   Scoped to `.cosmos-shell` (applied only to the authenticated app's
+   SidebarProvider) so apps/web (marketing) and the sign-in/sign-up screens,
+   which sit outside SidebarProvider, keep the stock design-system dark theme.
+   Values are the brand-override deltas from DESIGN.md; anything not listed
+   here (green/red/amber/purple, radii, shadows) is intentionally left as the
+   shared design-system default. ─────────────────────────────────────────── */
+[data-theme="dark"] .cosmos-shell {
+  /* Cosmos Black canvas + elevation ladder */
+  --canvas: #0a0e27;
+  --surface: #0e1330;
+  --surface-2: #141a3d;
+  --surface-3: #1a2150;
+  --surface-4: #212865;
+  --sidebar: #080b20;
+
+  /* Vega — brand accent (replaces the prototype's indigo) */
+  --accent-c: #00d4ff;
+  --accent-rgb: 0, 212, 255;
+  --accent-soft: rgba(0, 212, 255, 0.14);
+  --accent-text: #7fe8ff;
+  /* Foreground for text/icons on top of a solid --accent-c background — canvas
+     gives ~10.6:1 contrast vs. #00d4ff, white gives only 1.77:1 (WCAG AA fail) */
+  --on-accent: var(--canvas);
+  /* Same problem as --on-accent above, for solid fills of --green/--red/--blue
+     (design-system dark theme): those tokens are light/saturated enough that
+     white text/icons on top drop to ~2:1 contrast. Use for any solid --green,
+     --red, or --blue fill instead of a hardcoded white. */
+  --on-solid: var(--canvas);
+  --sidebar-primary: #00d4ff;
+  --sidebar-ring: rgba(0, 212, 255, 0.5);
+
+  /* ART#1 blue — detuned so it never reads as the Vega brand accent */
+  --blue: #5b8def;
+  --blue-rgb: 91, 141, 239;
+  --blue-text: #a9c4f5;
+
+  background: var(--canvas);
+}
+
+/* Sangria + Sinal Vivo — dotted texture utility, reusable outside kpi-card */
+.cosmos-dot-texture {
+  background-image: radial-gradient(currentColor 1.1px, transparent 1.5px);
+  background-size: 11px 11px;
+}
+
+/* Live-signal sweep — CSS keyframe counterpart to the KpiCard ECG motif */
+@keyframes ecg-sweep {
+  from {
+    stroke-dashoffset: 760;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-shell * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

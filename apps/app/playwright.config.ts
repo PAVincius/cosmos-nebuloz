@@ -1,5 +1,5 @@
-import { defineConfig, devices } from "@playwright/test";
 import path from "node:path";
+import { defineConfig, devices } from "@playwright/test";
 
 /**
  * Cosmos Enterprise — Playwright E2E Configuration
@@ -7,7 +7,7 @@ import path from "node:path";
  * Runs against the Next.js dev server (localhost:3000).
  * For Docker/CI: set PLAYWRIGHT_BASE_URL env var.
  */
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3000";
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL ?? "http://localhost:3012";
 
 export default defineConfig({
   testDir: "./e2e",
@@ -34,8 +34,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
     /* Video on retry */
     video: "on-first-retry",
-    /* Reasonable navigation timeout */
-    navigationTimeout: 30_000,
+    /* Reasonable navigation timeout — bumped for Next dev cold-compile on first hit per route */
+    navigationTimeout: 60_000,
     actionTimeout: 10_000,
   },
   /* Test projects — Chromium only for speed */

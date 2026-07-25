@@ -34,7 +34,24 @@ export type ThemeNode = {
   epics: EpicNode[];
 };
 
+export type PillarThemeSummary = {
+  id: string;
+  title: string;
+};
+
+export type PillarNode = {
+  id: string;
+  code: string;
+  name: string;
+  tone: string;
+  progress: number;
+  totalEpics: number;
+  themes: PillarThemeSummary[];
+};
+
 export type StrategyMapData = {
+  vision: string | null;
+  pillars: PillarNode[];
   themes: ThemeNode[];
   unlinkedOKRs: OKRNode[];
 };
@@ -42,7 +59,9 @@ export type StrategyMapData = {
 // ─── Internal helpers ─────────────────────────────────────────────────────────
 
 function calcProgress(krs: { current: number; target: number }[]): number {
-  if (krs.length === 0) return 0;
+  if (krs.length === 0) {
+    return 0;
+  }
   const avg =
     krs.reduce((s, kr) => s + Math.min(kr.current / (kr.target || 1), 1), 0) /
     krs.length;
@@ -73,8 +92,8 @@ export async function getStrategyMapData(): Promise<StrategyMapData> {
   const ctx = await requireTenantSession(await headers());
   const { tenantId } = ctx;
 
-  // Run all three queries in parallel for performance
-  const [themes, epicOKRs, unlinkedRaw] = await Promise.all([
+  // Run all queries in parallel for performance
+  const [themes, epicOKRs, unlinkedRaw, pillars, tenant] = await Promise.all([
     // 1. All strategic themes with their linked epics and theme-level OKRs
     database.strategicTheme.findMany({
       where: { tenantId },
@@ -104,12 +123,27 @@ export async function getStrategyMapData(): Promise<StrategyMapData> {
       include: { keyResults: { select: { current: true, target: true } } },
       orderBy: { createdAt: "asc" },
     }),
+
+    // 4. Strategy Pillars (cosmos.html screen-strategy top-level grouping)
+    database.strategyPillar.findMany({
+      where: { tenantId },
+      orderBy: { order: "asc" },
+      select: { id: true, name: true, tone: true },
+    }),
+
+    // 5. Tenant vision statement (cosmos.html vision banner)
+    database.tenant.findUnique({
+      where: { id: tenantId },
+      select: { visionStatement: true },
+    }),
   ]);
 
   // Build epicId → OKRNode[] lookup
   const epicOKRMap = new Map<string, OKRNode[]>();
   for (const okr of epicOKRs) {
-    if (!okr.epicId) continue;
+    if (!okr.epicId) {
+      continue;
+    }
     const node = toOKRNode(okr);
     const list = epicOKRMap.get(okr.epicId) ?? [];
     list.push(node);
@@ -149,5 +183,43 @@ export async function getStrategyMapData(): Promise<StrategyMapData> {
 
   const unlinkedOKRs = unlinkedRaw.map(toOKRNode);
 
-  return { themes: themeNodes, unlinkedOKRs };
+  // Group themes by pillar (grid overview in the Strategy Map header)
+  const pillarThemeMap = new Map<string, ThemeNode[]>();
+  themes.forEach((t, i) => {
+    if (!t.pillarId) {
+      return;
+    }
+    const list = pillarThemeMap.get(t.pillarId) ?? [];
+    list.push(themeNodes[i]);
+    pillarThemeMap.set(t.pillarId, list);
+  });
+
+  const pillarNodes: PillarNode[] = pillars.map((p, i) => {
+    const pillarThemes = pillarThemeMap.get(p.id) ?? [];
+    const totalEpics = pillarThemes.reduce((s, t) => s + t.epics.length, 0);
+    const progress =
+      pillarThemes.length > 0
+        ? Math.round(
+            pillarThemes.reduce((s, t) => s + t.progress, 0) /
+              pillarThemes.length
+          )
+        : 0;
+
+    return {
+      id: p.id,
+      code: `P${i + 1}`,
+      name: p.name,
+      tone: p.tone,
+      progress,
+      totalEpics,
+      themes: pillarThemes.map((t) => ({ id: t.id, title: t.title })),
+    };
+  });
+
+  return {
+    vision: tenant?.visionStatement ?? null,
+    pillars: pillarNodes,
+    themes: themeNodes,
+    unlinkedOKRs,
+  };
 }

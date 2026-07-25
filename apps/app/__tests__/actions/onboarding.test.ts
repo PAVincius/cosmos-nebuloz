@@ -32,9 +32,9 @@ vi.mock("@repo/database", () => ({
 }));
 
 import {
+  completeFlow,
   getOrCreateProgress,
   saveStep,
-  completeFlow,
 } from "../../app/actions/onboarding/index";
 
 const tenantCtx = { tenantId: "t1", userId: "u1", role: "RTE" as const };
@@ -82,7 +82,10 @@ describe("getOrCreateProgress", () => {
     expect(result.id).toBe("p2");
     expect(mocks.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ tenantId: "t1", flowType: "company_setup" }),
+        data: expect.objectContaining({
+          tenantId: "t1",
+          flowType: "company_setup",
+        }),
       })
     );
   });

@@ -1,17 +1,32 @@
 model ART {
-  id        String   @id @default(cuid())
-  tenantId  String
-  name      String
-  cadence   Int      @default(10) // PI iteration length in weeks
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String   @id @default(cuid())
+  tenantId          String
+  name              String
+  cadence           Int      @default(10) // PI iteration length in weeks
+  // Story-017 lifecycle fields
+  status            String   @default("INACTIVE") // INACTIVE/ACTIVE/RETIRED
+  piCadenceWeeks    Int      @default(10)
+  sprintLengthWeeks Int      @default(2)
+  ipSprintEnabled   Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  tenant  Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  piPlans PIPlan[]
-  teams   Team[]
-  themes  ThemeART[]
+  // Story-039 Solution Train linkage
+  solutionTrainId String?
+
+  // Layout denorm — active PI for quick dashboard reads (no FK; app layer keeps in sync)
+  currentPiPlanId String?
+
+  tenant           Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlans          PIPlan[]
+  teams            Team[]
+  themes           ThemeART[]
+  sequenceCounters ArtSequenceCounter[]
+  artMemberships   ARTMembership[]
+  solutionTrain    SolutionTrain?       @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
+  @@index([solutionTrainId])
 }
 
 model Team {
@@ -19,15 +34,22 @@ model Team {
   tenantId         String
   artId            String?
   name             String
-  velocity         Int?     // story points por sprint (referência histórica)
+  velocity         Int? // story points por sprint (referência histórica)
   sprintLengthDays Int      @default(14)
-  members          Json?    // [{name, role, skills: string[], hoursPerWeek}]
+  members          Json? // [{name, role, skills: string[], hoursPerWeek}]
+  // cosmos.html screen-teams directory fields
+  leadUserId       String?
+  focusArea        String?  @db.Text
+  // Layout denorm — visual identity + WIP counter for dashboards/program board
+  avatarUrl        String?
+  color            String?  @default("#6366f1")
+  wip              Int      @default(0) // current WIP; recomputed when stories change status
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  art     ART?     @relation(fields: [artId], references: [id], onDelete: SetNull)
-  sprints Sprint[]
+  tenant            Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art               ART?                   @relation(fields: [artId], references: [id], onDelete: SetNull)
+  sprints           Sprint[]
   memberAssignments TeamMemberAssignment[]
 
   @@index([tenantId])
@@ -35,22 +57,36 @@ model Team {
 }
 
 model PIPlan {
-  id        String    @id @default(cuid())
-  tenantId  String
-  artId     String
-  name      String
-  startDate DateTime?
-  endDate   DateTime?
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id                       String    @id @default(cuid())
+  tenantId                 String
+  artId                    String
+  name                     String
+  startDate                DateTime?
+  endDate                  DateTime?
+  // Story-017 lifecycle fields
+  status                   String    @default("DRAFT") // DRAFT/PLANNING/COMMITTED/EXECUTING/CLOSED
+  velocity                 Int?
+  confidenceThreshold      Float     @default(3.0)
+  commitmentOverride       Boolean   @default(false)
+  commitmentOverrideReason String?   @db.Text
+  closedAt                 DateTime?
+  // Story-023 PPM
+  ppm                      Float?
+  // INT-01 Miro embed
+  miroBoardUrl             String?   @db.Text
+  // Layout denorm — completion % for PI cards; recomputed at story/feature state changes
+  completionPct            Float     @default(0)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
-  tenant             Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  art                ART                     @relation(fields: [artId], references: [id], onDelete: Cascade)
-  piSessions         PISession[]
-  risks              Risk[]
-  piObjectives       PIObjective[]
-  features           Feature[]
-  participants       PIParticipant[]
+  tenant       Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art          ART             @relation(fields: [artId], references: [id], onDelete: Cascade)
+  piSessions   PISession[]
+  risks        Risk[]
+  piObjectives PIObjective[]
+  features     Feature[]
+  participants PIParticipant[]
+  sprints      Sprint[]
 
   @@index([tenantId])
   @@index([artId])
@@ -61,7 +97,7 @@ model PIParticipant {
   id        String   @id @default(cuid())
   tenantId  String
   piPlanId  String
-  userId    String   // must be a TenantMember userId
+  userId    String // must be a TenantMember userId
   role      String   @default("INVITED") // RTE | PO | SM | BUSINESS_OWNER | OBSERVER | INVITED
   confirmed Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -76,20 +112,24 @@ model PIParticipant {
 
 // PI Objectives — committed ou stretch, com business value 1-10 (SAFe 6.0)
 model PIObjective {
-  id            String   @id @default(cuid())
-  tenantId      String
-  piPlanId      String
-  teamId        String?
-  title         String
-  description   String?
-  businessValue Int      @default(5)   // 1-10
-  isStretch     Boolean  @default(false)
-  status        String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  tenantId            String
+  piPlanId            String
+  teamId              String?
+  title               String
+  description         String?
+  businessValue       Int      @default(5) // 1-10
+  isStretch           Boolean  @default(false)
+  status              String   @default("NOT_STARTED") // NOT_STARTED/IN_PROGRESS/ACHIEVED/MISSED
+  // Story-023 PPM fields
+  plannedValue        Float    @default(0)
+  achievedValue       Float    @default(0)
+  sprintContributions Json     @default("{}") // {sprintId: points} for idempotency
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  tenant Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  piPlan PIPlan  @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlan PIPlan @relation(fields: [piPlanId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([tenantId, piPlanId])
@@ -97,21 +137,37 @@ model PIObjective {
 
 // ROAM Risk tracking (Resolved/Owned/Accepted/Mitigated)
 model Risk {
-  id          String   @id @default(cuid())
-  tenantId    String
-  piPlanId    String?
-  title       String
-  description String?
-  status      String   @default("IDENTIFIED") // ROAM: RESOLVED/OWNED/ACCEPTED/MITIGATED + IDENTIFIED
-  category    String?  // technical/business/organizational/external
-  impact      String   @default("medium")     // low/medium/high/critical
-  probability String   @default("medium")     // low/medium/high
-  ownerUserId String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  tenantId             String
+  piPlanId             String?
+  title                String
+  description          String?
+  status               String    @default("IDENTIFIED") // ROAM: RESOLVED/OWNED/ACCEPTED/MITIGATED + IDENTIFIED
+  // Story-019 ROAM fields
+  roamStatus           String    @default("UNCLASSIFIED") // UNCLASSIFIED/RESOLVED/OWNED/ACCEPTED/MITIGATED
+  severity             Int       @default(3) // 1-5
+  category             String? // TECHNICAL/BUSINESS/DEPENDENCY/EXTERNAL/COMPLIANCE/CAPACITY/IMPEDIMENT
+  // Story-024 bidirectional impediment link (AC-004)
+  impedimentId         String?
+  impact               String    @default("medium")
+  probability          String    @default("medium")
+  ownerUserId          String?
+  ownerId              String?
+  ownedAt              DateTime?
+  mitigationPlan       String?   @db.Text
+  resolutionNote       String?   @db.Text
+  resolvedAt           DateTime?
+  source               String    @default("MANUAL") // MANUAL/AI_SUGGESTED
+  aiConfidence         Float?
+  aiJustification      String?   @db.Text
+  overdue              Boolean   @default(false)
+  escalatedToPortfolio Boolean   @default(false)
+  dueDate              DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  piPlan    PIPlan?   @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  tenant     Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  piPlan     PIPlan?   @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
   linkedOkrs RiskOKR[]
 
   @@index([tenantId])
@@ -135,59 +191,173 @@ model RiskOKR {
 }
 
 model Epic {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   tenantId         String
   title            String
-  statusId         String   @default("BACKLOG")
-  order            Int      @default(0)
-  yjsDocumentState String?  // CRDT document state para sync Yjs
+  statusId         String    @default("BACKLOG")
+  order            Int       @default(0) // position within statusId (legacy portfolio ordering — see lifecycleOrder below)
+  yjsDocumentState String? // CRDT document state para sync Yjs
+  epicType         String    @default("EPIC") // EPIC | FEATURE | STORY
+  dueDate          DateTime?
+  transcription    String? // Raw meeting notes pasted by user
   strategicThemeId String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+
+  // SAFe Lifecycle state machine (separate from kanban statusId)
+  lifecycleStatus String @default("FUNNEL") // FUNNEL/ANALYZING/PORTFOLIO_BACKLOG/IMPLEMENTING/DONE/REJECTED
+  // Position within lifecycleStatus — the Kanban de Épicos board's own
+  // ordering (drag-and-drop via moveEpic, WSJF rebalance). Deliberately a
+  // separate column from `order`: `order` is scoped by `statusId`, which is
+  // an independent, unsynced field (not 1:1 with lifecycleStatus — verified
+  // by grep, no code path writes both together). Reusing `order` here would
+  // let a lifecycleStatus-scoped bulk rewrite (WSJF rebalance) corrupt the
+  // statusId-scoped readers/writers (app/actions/wsjf/index.ts,
+  // app/actions/strategic-themes/index.ts, app/actions/epics/*.ts) and
+  // vice versa. See the WSJF rebalance H1 fix commit body.
+  lifecycleOrder Int @default(0)
+
+  // AI INVEST scoring (cached — recomputed when title/description changes)
+  investScore           Float? // 0-100 composite
+  investBreakdown       Json? // { I, N, V, E, S, T } each 0-100 with rationale
+  investHash            String? // sha256(title + descriptionMd) for cache invalidation
+  investScoreOverridden Boolean @default(false)
+  investScoreOutdated   Boolean @default(false)
+
+  // Portfolio lifecycle metadata
+  hypothesis           String? @db.Text
+  rejectionReason      String? @db.Text
+  hypothesisResolution String? @db.Text
+  leanBudgetAllocation Float? // USD or story points allocated for implementation
+
+  // Lean Business Case fields (Story-013)
+  businessOutcomes    Json? // array max 5 items: [{id, text}]
+  leadingIndicators   Json? // array max 5 items: [{id, text}]
+  nfrs                String? @db.Text
+  mvp                 String? @db.Text
+  sizeEstimate        String? // XS|S|M|L|XL
+  descriptionVersions Json? // ring buffer last 50: [{field, prev, next, savedAt, savedBy}]
+
+  // Description content
+  descriptionMd String? // Markdown source (saved by TipTap)
+
+  // Layout denorm — feature counts for kanban cards; recomputed when features change
+  featureCount     Int @default(0)
+  doneFeatureCount Int @default(0)
+
+  // Kanban board read-model denorm — kept in sync on write + backfilled by a
+  // recompute job. Lets the whole board render from one tenant-scoped, indexed
+  // query (no per-card ScoringEvent / Feature→Team→ART joins).
+  wsjf       Float?
+  sizePoints Int?
+  hot        Boolean @default(false)
+  ownerId    String?
+  ownerName  String? // denormalized for card render
+  artId      String?
+  artTone    String? // green|red|amber|blue|purple|accent — card accent color
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Story-036 full-text search
+  searchVector Unsupported("tsvector")?
+
+  // Story-039 Solution Train linkage
+  solutionEpicId String?
 
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   features       Feature[]
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
   governedEpic   GovernedEpic?
+  solutionEpic   SolutionEpic?   @relation(fields: [solutionEpicId], references: [id], onDelete: SetNull)
 
   @@index([tenantId])
   @@index([strategicThemeId])
+  @@index([solutionEpicId])
+  // Board query: one tenant scan ordered by lifecycle column + position
+  @@index([tenantId, lifecycleStatus, lifecycleOrder])
+}
+
+model ArtSequenceCounter {
+  id       String @id @default(cuid())
+  tenantId String
+  artId    String
+  type     String @default("FEATURE") // FEATURE/ENABLER
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  art    ART    @relation(fields: [artId], references: [id], onDelete: Cascade)
+
+  @@unique([artId, type])
+  @@index([tenantId])
 }
 
 model Feature {
-  id        String   @id @default(cuid())
-  tenantId  String
-  epicId    String?
-  piPlanId  String?  // PI Planning this feature is committed to
-  title     String
-  statusId  String   @default("BACKLOG")
-  
+  id                    String    @id @default(cuid())
+  tenantId              String
+  epicId                String?
+  piPlanId              String? // PI Planning this feature is committed to
+  title                 String
+  statusId              String    @default("BACKLOG")
+  // Story-021 readiness fields
+  artScopedId           String?
+  assignedTeamId        String?
+  acceptanceCriteria    Json      @default("[]") // array of AC strings
+  readinessOverridden   Boolean   @default(false)
+  readinessOverrideNote String?   @db.Text
+  readinessOverrideBy   String?
+  readinessOverrideAt   DateTime?
+  milestone             Boolean   @default(false) // cosmos.html screen-program milestone flag
+
   // WSJF Parameters
-  bv        Float    @default(0) // Business Value
-  tc        Float    @default(0) // Time Criticality
-  rr        Float    @default(0) // Risk Reduction / Opportunity Enablement
-  js        Float    @default(1) // Job Size
-  wsjfScore Float    @default(0) // (bv + tc + rr) / js
+  bv        Float @default(0) // Business Value
+  tc        Float @default(0) // Time Criticality
+  rr        Float @default(0) // Risk Reduction / Opportunity Enablement
+  js        Float @default(1) // Job Size
+  wsjfScore Float @default(0) // (bv + tc + rr) / js
+
+  // Extended WSJF metadata (story-015)
+  wsjfCostOfDelay     Float? // bv + tc + rr (explicit stored value)
+  wsjfNormalizedScore Float? // wsjfScore / maxInBacklog * 100
+  wsjfConfidence      String? // LOW|MEDIUM|HIGH
+  wsjfScoredBy        String?
+  wsjfScoredAt        DateTime?
+  wsjfJobSizeLockedBy String?
+  wsjfJobSizeLockedAt DateTime?
 
   storyPoints    Int       @default(1) // SP estimate for this feature
-  assigneeUserId String?              // User responsible (links to User.id logically; no FK to keep it simple)
-  startedAt      DateTime?            // When statusId first moved to IN_PROGRESS
-  completedAt    DateTime?            // When statusId was set to DONE
+  assigneeUserId String? // User responsible (links to User.id logically; no FK to keep it simple)
+  // Layout denorm — % stories done; recomputed when child stories change status
+  progressPct    Float     @default(0)
+  startedAt      DateTime? // When statusId first moved to IN_PROGRESS
+  completedAt    DateTime? // When statusId was set to DONE
+  deployedAt     DateTime? // Story-025: set when all Stories under feature are DEPLOYED
 
   // External integration fields
-  externalId     String?  // ID in external tool (Linear issue ID, GitHub issue #, etc.)
-  externalSource String?  // linear | github | asana | gitlab
-  externalUrl    String?  // Direct URL to item in external tool
+  externalId     String? // ID in external tool (Linear issue ID, GitHub issue #, etc.)
+  externalSource String? // linear | github | asana | gitlab
+  externalUrl    String? // Direct URL to item in external tool
+
+  // Story-028 BPMN workflow runtime
+  workflowState   String?
+  workflowContext Json?
+  workflowVersion Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant          Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  epic            Epic?            @relation(fields: [epicId], references: [id], onDelete: SetNull)
-  piPlan          PIPlan?          @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
-  blocks          DependencyLink[] @relation("BlockingFeature")
-  blockedBy       DependencyLink[] @relation("BlockedFeature")
-  stories         Story[]
+  // Story-036 full-text search
+  searchVector Unsupported("tsvector")?
+
+  // Story-039 Capability linkage
+  capabilityId String?
+
+  tenant               Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epic                 Epic?                 @relation(fields: [epicId], references: [id], onDelete: SetNull)
+  piPlan               PIPlan?               @relation(fields: [piPlanId], references: [id], onDelete: SetNull)
+  blocks               DependencyLink[]      @relation("BlockingFeature")
+  blockedBy            DependencyLink[]      @relation("BlockedFeature")
+  stories              Story[]
+  capability           Capability?           @relation(fields: [capabilityId], references: [id], onDelete: SetNull)
+  supplierDeliverables SupplierDeliverable[]
 
   @@index([tenantId])
   @@index([epicId])
@@ -195,4 +365,56 @@ model Feature {
   @@index([assigneeUserId])
   @@index([tenantId, assigneeUserId])
   @@index([externalSource, externalId])
+  @@index([capabilityId])
+}
+
+model ScoringEvent {
+  id              String   @id @default(cuid())
+  tenantId        String
+  epicId          String?
+  featureId       String?
+  prevBv          Float?
+  prevTc          Float?
+  prevRr          Float?
+  prevJs          Float?
+  prevScore       Float?
+  bv              Float?
+  tc              Float?
+  rr              Float?
+  js              Float?
+  wsjfScore       Float?
+  normalizedScore Float?
+  confidence      String? // LOW|MEDIUM|HIGH
+  source          String   @default("MANUAL") // MANUAL|COPILOT
+  userId          String?
+  justification   String?  @db.Text
+  createdAt       DateTime @default(now())
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([featureId])
+  @@index([epicId])
+}
+
+// Tenant-wide WSJF calculation parameters (Task 16 — WsjfSettingsModal).
+// One row per tenant. Only weightBv/weightTc/weightRr are consumed by
+// scoreWsjfAction today; scale/autoRecalc/rebalanceApprover/staleDays are
+// persisted and editable but not yet wired to any enforcement (see commit).
+model WsjfSettings {
+  id                String   @id @default(cuid())
+  tenantId          String   @unique
+  weightBv          Float    @default(1)
+  weightTc          Float    @default(1)
+  weightRr          Float    @default(1)
+  scale             String   @default("fibonacci") // fibonacci|linear
+  autoRecalc        String   @default("daily") // realtime|daily|weekly|manual
+  rebalanceApprover String   @default("rte") // rte|lpm|po|any
+  staleDays         Int      @default(14)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
 }

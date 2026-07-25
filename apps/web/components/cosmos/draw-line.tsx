@@ -3,8 +3,8 @@
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 
-interface DrawLineProps {
-  d: string;           // SVG path d attribute
+type DrawLineProps = {
+  d: string; // SVG path d attribute
   color?: string;
   strokeWidth?: number;
   duration?: number;
@@ -12,7 +12,7 @@ interface DrawLineProps {
   /** Show a traveling dot along the path */
   dot?: boolean;
   dotColor?: string;
-}
+};
 
 /**
  * Animates an SVG path drawing itself left-to-right on scroll into view.
@@ -30,17 +30,17 @@ export function DrawLine({
   return (
     <motion.path
       d={d}
-      stroke={color}
-      strokeWidth={strokeWidth}
       fill="none"
-      strokeLinecap="round"
       initial={{ pathLength: 0, opacity: 0 }}
-      whileInView={{ pathLength: 1, opacity: 1 }}
-      viewport={{ once: true, margin: "-60px" }}
+      stroke={color}
+      strokeLinecap="round"
+      strokeWidth={strokeWidth}
       transition={{
         pathLength: { duration, delay, ease: [0.25, 0, 0, 1] },
         opacity: { duration: 0.2, delay },
       }}
+      viewport={{ once: true, margin: "-60px" }}
+      whileInView={{ pathLength: 1, opacity: 1 }}
     />
   );
 }
@@ -66,29 +66,29 @@ export function GraphNode({
   return (
     <motion.g
       initial={{ scale: 0, opacity: 0 }}
-      whileInView={{ scale: 1, opacity: 1 }}
-      viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.35, delay, ease: [0.25, 0, 0, 1] }}
       style={{ originX: cx, originY: cy, transformOrigin: `${cx}px ${cy}px` }}
+      transition={{ duration: 0.35, delay, ease: [0.25, 0, 0, 1] }}
+      viewport={{ once: true, margin: "-40px" }}
+      whileInView={{ scale: 1, opacity: 1 }}
     >
       <circle
         cx={cx}
         cy={cy}
-        r={r}
         fill={`${color}20`}
+        r={r}
         stroke={color}
         strokeWidth={1.5}
       />
       <text
-        x={cx}
-        y={cy + 4}
-        textAnchor="middle"
         style={{
           fontSize: 9,
           fill: color,
           fontFamily: "monospace",
           fontWeight: 600,
         }}
+        textAnchor="middle"
+        x={cx}
+        y={cy + 4}
       >
         {label}
       </text>
@@ -104,12 +104,16 @@ export function PulseDot({ color = "var(--success)" }: { color?: string }) {
   const inView = useInView(ref, { once: false });
 
   return (
-    <span ref={ref} className="relative inline-flex h-2 w-2">
+    <span className="relative inline-flex h-2 w-2" ref={ref}>
       <motion.span
+        animate={inView ? { scale: [1, 2.2, 1], opacity: [0.6, 0, 0.6] } : {}}
         className="absolute inline-flex h-full w-full rounded-full"
         style={{ background: color }}
-        animate={inView ? { scale: [1, 2.2, 1], opacity: [0.6, 0, 0.6] } : {}}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+        transition={{
+          duration: 2,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
       />
       <span
         className="relative inline-flex h-2 w-2 rounded-full"

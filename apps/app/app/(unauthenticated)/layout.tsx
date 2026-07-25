@@ -1,4 +1,5 @@
 import { ModeToggle } from "@repo/design-system/components/mode-toggle";
+import { Link2, Map, ShieldAlert, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 
 type AuthLayoutProps = {
@@ -12,15 +13,20 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
       <div className="absolute inset-0 bg-[#0f1011]" />
       {/* Accent bar */}
       <div
-        className="absolute top-0 left-0 right-0 h-[3px]"
-        style={{ background: "linear-gradient(90deg, #5e6ad2 0%, #828fff 60%, #5e6ad2 100%)" }}
+        className="absolute top-0 right-0 left-0 h-[3px]"
+        style={{
+          background:
+            "linear-gradient(90deg, #5e6ad2 0%, #828fff 60%, #5e6ad2 100%)",
+        }}
       />
 
       {/* Logo */}
       <div className="relative z-20 flex items-center gap-2">
-        <span className="text-[#5e6ad2] text-xl">◆</span>
-        <span className="font-bold text-lg tracking-tight text-white">Cosmos</span>
-        <span className="ml-2 rounded-full border border-[#34343a] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-[#62666d]">
+        <span className="text-[#818cf8] text-xl">◆</span>
+        <span className="font-bold text-lg text-white tracking-tight">
+          Cosmos
+        </span>
+        <span className="ml-2 rounded-full border border-[#818cf8]/40 px-2 py-0.5 font-semibold text-[#818cf8] text-[10px] uppercase tracking-widest">
           Beta
         </span>
       </div>
@@ -34,39 +40,61 @@ const AuthLayout = ({ children }: AuthLayoutProps) => (
         {/* Feature list */}
         <div className="space-y-3">
           {[
-            { icon: "🗺️", label: "PI Planning SAFe", desc: "Planeje incrementos com ARTs e times" },
-            { icon: "🔗", label: "Dependências visuais", desc: "Mapeie e resolva bloqueios em tempo real" },
-            { icon: "📊", label: "OKRs + Lean Budget", desc: "Alinhe estratégia e investimento" },
-            { icon: "🤖", label: "IA para riscos", desc: "Detecção preditiva de impedimentos" },
-          ].map(({ icon, label, desc }) => (
-            <div key={label} className="flex items-start gap-3">
-              <span className="mt-0.5 text-base">{icon}</span>
+            {
+              icon: Map,
+              label: "PI Planning SAFe",
+              desc: "Planeje incrementos com ARTs e times",
+            },
+            {
+              icon: Link2,
+              label: "Dependências visuais",
+              desc: "Mapeie e resolva bloqueios em tempo real",
+            },
+            {
+              icon: TrendingUp,
+              label: "OKRs + Lean Budget",
+              desc: "Alinhe estratégia e investimento",
+            },
+            {
+              icon: ShieldAlert,
+              label: "IA para riscos",
+              desc: "Detecção preditiva de impedimentos",
+            },
+          ].map(({ icon: Icon, label, desc }) => (
+            <div className="flex items-start gap-3" key={label}>
+              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#5e6ad2]" />
               <div>
-                <p className="text-sm font-semibold text-[#f7f8f8]">{label}</p>
-                <p className="text-xs text-[#62666d]">{desc}</p>
+                <p className="font-semibold text-[#f7f8f8] text-sm">{label}</p>
+                <p className="text-[#62666d] text-xs">{desc}</p>
               </div>
             </div>
           ))}
         </div>
 
         {/* Quote */}
-        <blockquote className="border-l-2 border-[#5e6ad2] pl-4">
-          <p className="text-sm text-[#8a8f98] leading-relaxed">
-            "Transformamos PI Planning de uma cerimônia anual em inteligência contínua."
+        <blockquote className="border-[#5e6ad2] border-l-2 pl-4">
+          <p className="text-[#8a8f98] text-sm leading-relaxed">
+            "Transformamos PI Planning de uma cerimônia anual em inteligência
+            contínua."
           </p>
-          <footer className="mt-1 text-xs text-[#62666d]">— Equipe Nebuloz</footer>
+          <footer className="mt-1 text-[#62666d] text-xs">
+            — Equipe Nebuloz
+          </footer>
         </blockquote>
       </div>
 
       {/* Footer */}
       <div className="relative z-20 mt-6 flex items-center gap-3">
-        <p className="text-xs text-[#3e3e44]">© {new Date().getFullYear()} Nebuloz · nebuloz.com</p>
+        <p className="text-[#3e3e44] text-xs">
+          © {new Date().getFullYear()} Nebuloz · nebuloz.com
+        </p>
       </div>
     </div>
 
     {/* Form area */}
-    <div className="lg:p-8">
-      <div className="mx-auto flex w-full max-w-[400px] flex-col justify-center space-y-6">
+    <div className="relative flex h-full items-center justify-center lg:p-8">
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#5e6ad2]/[0.06]" />
+      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-6">
         {children}
       </div>
     </div>

@@ -4,8 +4,8 @@ declare global {
   interface Liveblocks {
     // Each user's Presence, for useMyPresence, useOthers, etc.
     Presence: {
-      // Example, real-time cursor coordinates
       cursor: { x: number; y: number } | null;
+      dragging: string | null; // epicId being dragged
     };
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
@@ -15,9 +15,13 @@ declare global {
         import("@liveblocks/client").LiveObject<{
           id: string;
           title: string;
-          statusId: string;
+          lifecycleStatus: string;
           order: number;
           wsjfScore: number;
+          bv: number;
+          tc: number;
+          rr: number;
+          js: number;
         }>
       >;
       

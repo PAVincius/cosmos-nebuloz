@@ -3,12 +3,14 @@
 model StateTransitionHistory {
   id             String   @id @default(cuid())
   tenantId       String
-  entityType     String   // Story/Feature/Epic/Task/Defect
+  entityType     String // Story/Feature/Epic/Task/Defect
   entityId       String
   fromStatus     String
   toStatus       String
   transitionedAt DateTime @default(now())
-  userId         String?
+  userId         String? // null for system/AI-initiated transitions
+  reason         String?  @db.Text // required for REJECTED; "AUTO: ..." for system
+  externalRef    String? // Inngest job ID or external trigger reference
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
@@ -18,12 +20,12 @@ model StateTransitionHistory {
 }
 
 model FlowMetricSnapshot {
-  id        String   @id @default(cuid())
-  tenantId  String
-  scope     String   // team / art / value_stream
-  scopeId   String
-  period    String   // sprint / pi / quarter
-  periodRef String   // sprintId, piPlanId, or "2026-Q2"
+  id         String   @id @default(cuid())
+  tenantId   String
+  scope      String // team / art / value_stream
+  scopeId    String
+  period     String // sprint / pi / quarter
+  periodRef  String // sprintId, piPlanId, or "2026-Q2"
   recordedAt DateTime @default(now())
 
   // Flow Distribution — JSON { story: N, defect: N, feature: N, enabler: N }
@@ -51,18 +53,19 @@ model FlowMetricSnapshot {
   deliveredItems     Int   @default(0)
 
   // S4: Staleness tracking
-  staleness            String    @default("FRESH")  // FRESH / AGING / STALE / CRITICAL
-  stalenessReasons     Json      @default("[]")      // string[] of rule names that fired
-  lastStalenessCheck   DateTime?
-  versionOf            String?   // self-referential FK to predecessor snapshot id
-  isArchived           Boolean   @default(false)
-  archivedAt           DateTime?
-  reevaluatedBy        String?   // userId who triggered re-evaluation
-  reevaluatedAt        DateTime?
-  teamCompositionHash  String?   // SHA-256 of sorted member userId array at snapshot time
+  staleness           String    @default("FRESH") // FRESH / AGING / STALE / CRITICAL
+  stalenessReasons    Json      @default("[]") // string[] of rule names that fired
+  lastStalenessCheck  DateTime?
+  versionOf           String? // self-referential FK to predecessor snapshot id
+  isArchived          Boolean   @default(false)
+  archivedAt          DateTime?
+  reevaluatedBy       String? // userId who triggered re-evaluation
+  reevaluatedAt       DateTime?
+  teamCompositionHash String? // SHA-256 of sorted member userId array at snapshot time
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
+  @@unique([tenantId, scope, scopeId, period, periodRef])
   @@index([tenantId])
   @@index([tenantId, scope, scopeId])
   @@index([tenantId, periodRef])
@@ -70,19 +73,19 @@ model FlowMetricSnapshot {
 }
 
 model CompetencyAssessment {
-  id          String    @id @default(cuid())
-  tenantId    String
-  scope       String    // team / art / value_stream / portfolio
-  scopeId     String
+  id           String   @id @default(cuid())
+  tenantId     String
+  scope        String // team / art / value_stream / portfolio
+  scopeId      String
   // SAFe core competencies
-  competency  String    // TEAM_TECHNICAL_AGILITY / AGILE_PRODUCT_DELIVERY /
-                        // LEAN_PORTFOLIO_MANAGEMENT / ORGANIZATIONAL_AGILITY /
-                        // ENTERPRISE_SOLUTION_DELIVERY / LEAN_AGILE_LEADERSHIP /
-                        // CONTINUOUS_LEARNING_CULTURE
-  score       Float     // 1–5
-  assessedAt  DateTime  @default(now())
+  competency   String // TEAM_TECHNICAL_AGILITY / AGILE_PRODUCT_DELIVERY /
+  // LEAN_PORTFOLIO_MANAGEMENT / ORGANIZATIONAL_AGILITY /
+  // ENTERPRISE_SOLUTION_DELIVERY / LEAN_AGILE_LEADERSHIP /
+  // CONTINUOUS_LEARNING_CULTURE
+  score        Float // 1–5
+  assessedAt   DateTime @default(now())
   assessedById String?
-  respondents  Json?    // string[] userIds
+  respondents  Json? // string[] userIds
   notes        String?  @db.Text
   piPlanId     String?
 
@@ -99,21 +102,21 @@ model ImprovementAction {
   tenantId      String
   title         String
   description   String?   @db.Text
-  scope         String    // team / art / value_stream
+  scope         String // team / art / value_stream
   scopeId       String
-  relatedMetric String?   // flow_velocity / flow_time / flow_load /
-                          // flow_efficiency / flow_predictability / flow_distribution
+  relatedMetric String? // flow_velocity / flow_time / flow_load /
+  // flow_efficiency / flow_predictability / flow_distribution
   status        String    @default("OPEN") // OPEN / IN_PROGRESS / DONE / CANCELLED
   dueDate       DateTime?
   assigneeId    String?
   assessmentId  String?
 
   // S1: AI Copilot source tracking
-  source        String?   // "manual" | "ai_copilot"
-  sourceRunId   String?   // FK → AnomalyDetectionRun.id (set when source = "ai_copilot")
+  source      String? // "manual" | "ai_copilot"
+  sourceRunId String? // FK → AnomalyDetectionRun.id (set when source = "ai_copilot")
 
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   tenant     Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   assessment CompetencyAssessment? @relation(fields: [assessmentId], references: [id], onDelete: SetNull)
@@ -128,11 +131,11 @@ model ImprovementAction {
 model StalenessAuditLog {
   id             String   @id @default(cuid())
   tenantId       String
-  snapshotId     String   // FlowMetricSnapshot.id
-  oldState       String   // FRESH / AGING / STALE / CRITICAL
+  snapshotId     String // FlowMetricSnapshot.id
+  oldState       String // FRESH / AGING / STALE / CRITICAL
   newState       String
-  triggeredRules Json     // string[] — which staleness rules fired
-  triggeredBy    String   // "system" | userId
+  triggeredRules Json // string[] — which staleness rules fired
+  triggeredBy    String // "system" | userId
   checkedAt      DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
@@ -149,8 +152,8 @@ model PersonSkillProfile {
   id          String   @id @default(cuid())
   tenantId    String
   userId      String
-  competency  String   // same values as CompetencyAssessment.competency enum
-  skillLevel  Int      // 1–5 (SAFe maturity scale)
+  competency  String // same values as CompetencyAssessment.competency enum
+  skillLevel  Int // 1–5 (SAFe maturity scale)
   proficiency Float    @default(0)
   assessedAt  DateTime @default(now())
   assessedBy  String?

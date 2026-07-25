@@ -2,20 +2,17 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 import {
-  type Result,
-  safeAction,
   cuid,
   nnStr,
   optCuid,
   optDate,
+  type Result,
+  safeAction,
 } from "../_base";
-import type { RetroAction, UpsertRetroInput } from "./schema";
-
-export type { RetroAction, UpsertRetroInput };
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 
@@ -34,9 +31,7 @@ const UpsertRetroSchema = z.object({
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function getRetrospective(
-  sprintId: string,
-): Promise<Result<any>> {
+export async function getRetrospective(sprintId: string): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -45,7 +40,9 @@ export async function getRetrospective(
       where: { id: sprintId, tenantId: ctx.tenantId },
       select: { id: true },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     return database.retrospective.findUnique({
       where: { sprintId },
@@ -65,7 +62,9 @@ export async function upsertRetrospective(raw: unknown): Promise<Result<any>> {
       where: { id: data.sprintId, tenantId: ctx.tenantId },
       select: { id: true, teamId: true },
     });
-    if (!sprint) throw new Error("Sprint não encontrado");
+    if (!sprint) {
+      throw new Error("Sprint não encontrado");
+    }
 
     const result = await database.retrospective.upsert({
       where: { sprintId: data.sprintId },

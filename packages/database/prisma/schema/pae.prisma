@@ -1,0 +1,24 @@
+// packages/database/prisma/schema/pae.prisma
+
+model AccessExceptionRequest {
+  id             String    @id @default(cuid())
+  tenantId       String
+  requesterId    String
+  entityType     String
+  action         String
+  targetEntityId String?
+  justification  String?   @db.Text
+  duration       String // "1h" | "4h" | "8h" | "24h"
+  status         String    @default("PENDING") // PENDING | APPROVED | DENIED | REVOKED
+  approverId     String?
+  approvedAt     DateTime?
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, requesterId, status])
+  @@index([tenantId, status, expiresAt])
+  @@index([tenantId])
+}

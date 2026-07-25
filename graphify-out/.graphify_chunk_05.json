@@ -1,0 +1,702 @@
+{
+  "nodes": [
+    {
+      "id": "app_apple_icon",
+      "label": "Apple Icon (app)",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/apple-icon.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "app_icon",
+      "label": "App Icon",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/icon.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "app_opengraph_image",
+      "label": "OpenGraph Image (app)",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/opengraph-image.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "playwright_report_index",
+      "label": "Playwright Test Report",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/playwright-report/index.html",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_development",
+      "label": "Mintlify Development Guide",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_development_mintlify",
+      "label": "Mintlify CLI",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 11",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_development_nodejs_prereq",
+      "label": "Node.js v18.10.0+ Prerequisite",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 7",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_development_localhost3000",
+      "label": "Mintlify Local Server (localhost:3000)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 31",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_introduction",
+      "label": "Docs Introduction",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_introduction_mintlify_platform",
+      "label": "Mintlify Documentation Platform",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 22",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_quickstart",
+      "label": "Docs Quickstart Guide",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/quickstart.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_quickstart_github_app",
+      "label": "Mintlify GitHub App (auto-deploy)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/quickstart.mdx",
+      "source_location": "line 35",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_favicon",
+      "label": "Docs Favicon SVG",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/favicon.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_reference_introduction",
+      "label": "API Reference Introduction",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_reference_bearer_auth",
+      "label": "Bearer Token Authentication",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 25",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_api_reference_openapi",
+      "label": "OpenAPI Specification (Plant Store)",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 13",
+      "source_url": "https://github.com/mintlify/starter/blob/main/api-reference/openapi.json",
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_endpoint_create",
+      "label": "POST /plants - Create Plant Endpoint",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/create.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_endpoint_delete",
+      "label": "DELETE /plants/{id} - Delete Plant Endpoint",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/delete.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_endpoint_get",
+      "label": "GET /plants - Get Plants Endpoint",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/get.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_code",
+      "label": "Essentials: Code Blocks",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/code.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_images",
+      "label": "Essentials: Images and Embeds",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/images.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_markdown",
+      "label": "Essentials: Markdown Syntax",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/markdown.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_navigation",
+      "label": "Essentials: Navigation",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/navigation.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_navigation_mintjson",
+      "label": "mint.json Navigation Config",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/navigation.mdx",
+      "source_location": "line 9",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_reusable_snippets",
+      "label": "Essentials: Reusable Snippets",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/reusable-snippets.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_settings",
+      "label": "Essentials: Global Settings (mint.json)",
+      "file_type": "document",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_settings_mintjson",
+      "label": "mint.json Configuration File",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": "line 3",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_images_checks_passed",
+      "label": "Deploy Checks Passed Screenshot",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/images/checks-passed.png",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_images_hero_dark",
+      "label": "Hero Image Dark Mode",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/images/hero-dark.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_images_hero_light",
+      "label": "Hero Image Light Mode",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/images/hero-light.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_logo_dark",
+      "label": "Docs Logo Dark Mode SVG",
+      "file_type": "image",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/logo/dark.svg",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_snippets_dir",
+      "label": "snippets/ Directory Convention",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/reusable-snippets.mdx",
+      "source_location": "line 13",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_essentials_markdown_latex",
+      "label": "LaTeX Support in Mintlify",
+      "file_type": "concept",
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/markdown.mdx",
+      "source_location": "line 82",
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    }
+  ],
+  "edges": [
+    {
+      "source": "docs_development",
+      "target": "docs_development_mintlify",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 11",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_development",
+      "target": "docs_development_nodejs_prereq",
+      "relation": "requires",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 7",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_development_mintlify",
+      "target": "docs_development_localhost3000",
+      "relation": "serves",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 31",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_development",
+      "target": "docs_images_checks_passed",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/development.mdx",
+      "source_location": "line 73",
+      "weight": 0.8
+    },
+    {
+      "source": "docs_introduction",
+      "target": "docs_introduction_mintlify_platform",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 22",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_introduction",
+      "target": "docs_images_hero_light",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 8",
+      "weight": 0.8
+    },
+    {
+      "source": "docs_introduction",
+      "target": "docs_images_hero_dark",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 12",
+      "weight": 0.8
+    },
+    {
+      "source": "docs_introduction",
+      "target": "docs_quickstart",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 24",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_introduction",
+      "target": "docs_development",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 29",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_quickstart",
+      "target": "docs_development_mintlify",
+      "relation": "uses",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/quickstart.mdx",
+      "source_location": "line 25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_quickstart",
+      "target": "docs_quickstart_github_app",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/quickstart.mdx",
+      "source_location": "line 35",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_reference_introduction",
+      "target": "docs_api_reference_bearer_auth",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 25",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_api_reference_introduction",
+      "target": "docs_api_reference_openapi",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 13",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_endpoint_create",
+      "target": "docs_api_reference_openapi",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/create.mdx",
+      "source_location": "line 3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_endpoint_delete",
+      "target": "docs_api_reference_openapi",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/delete.mdx",
+      "source_location": "line 3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_endpoint_get",
+      "target": "docs_api_reference_openapi",
+      "relation": "implements",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/endpoint/get.mdx",
+      "source_location": "line 3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_endpoint_create",
+      "target": "docs_api_reference_bearer_auth",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 25",
+      "weight": 0.85
+    },
+    {
+      "source": "docs_endpoint_delete",
+      "target": "docs_api_reference_bearer_auth",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 25",
+      "weight": 0.85
+    },
+    {
+      "source": "docs_endpoint_get",
+      "target": "docs_api_reference_bearer_auth",
+      "relation": "requires",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": "line 25",
+      "weight": 0.85
+    },
+    {
+      "source": "docs_essentials_navigation",
+      "target": "docs_essentials_navigation_mintjson",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/navigation.mdx",
+      "source_location": "line 9",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_essentials_settings",
+      "target": "docs_essentials_settings_mintjson",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": "line 3",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_essentials_navigation_mintjson",
+      "target": "docs_essentials_settings_mintjson",
+      "relation": "part_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/navigation.mdx",
+      "source_location": "line 9",
+      "weight": 0.9
+    },
+    {
+      "source": "docs_essentials_reusable_snippets",
+      "target": "docs_essentials_snippets_dir",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/reusable-snippets.mdx",
+      "source_location": "line 13",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_essentials_markdown",
+      "target": "docs_essentials_markdown_latex",
+      "relation": "documents",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/markdown.mdx",
+      "source_location": "line 82",
+      "weight": 0.9
+    },
+    {
+      "source": "app_apple_icon",
+      "target": "app_icon",
+      "relation": "variant_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/apple-icon.png",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_images_hero_light",
+      "target": "docs_images_hero_dark",
+      "relation": "variant_of",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/introduction.mdx",
+      "source_location": "line 8",
+      "weight": 0.8
+    },
+    {
+      "source": "playwright_report_index",
+      "target": "app_icon",
+      "relation": "tests",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/playwright-report/index.html",
+      "source_location": null,
+      "weight": 0.5
+    },
+    {
+      "source": "docs_essentials_settings",
+      "target": "docs_essentials_navigation",
+      "relation": "related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": "line 18",
+      "weight": 0.8
+    },
+    {
+      "source": "docs_api_reference_introduction",
+      "target": "docs_endpoint_create",
+      "relation": "contains",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "docs_api_reference_introduction",
+      "target": "docs_endpoint_delete",
+      "relation": "contains",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "docs_api_reference_introduction",
+      "target": "docs_endpoint_get",
+      "relation": "contains",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/api-reference/introduction.mdx",
+      "source_location": null,
+      "weight": 0.9
+    },
+    {
+      "source": "docs_essentials_settings",
+      "target": "docs_favicon",
+      "relation": "configures",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": "line 53",
+      "weight": 0.8
+    },
+    {
+      "source": "docs_essentials_settings",
+      "target": "docs_logo_dark",
+      "relation": "configures",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/docs/essentials/settings.mdx",
+      "source_location": "line 41",
+      "weight": 0.8
+    }
+  ],
+  "hyperedges": [],
+  "input_tokens": 4200,
+  "output_tokens": 1800
+}

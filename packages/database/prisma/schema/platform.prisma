@@ -1,0 +1,31 @@
+// Story-036: Feature flags with org/user overrides
+
+model FeatureFlag {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  description  String?
+  defaultValue Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  overrides FeatureFlagOverride[]
+}
+
+model FeatureFlagOverride {
+  id        String    @id @default(cuid())
+  tenantId  String
+  userId    String? // null = org-level override
+  flagKey   String
+  value     Boolean
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  tenant Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  flag   FeatureFlag @relation(fields: [flagKey], references: [key], onDelete: Cascade)
+
+  @@unique([tenantId, userId, flagKey])
+  @@index([tenantId])
+  @@index([flagKey])
+  @@index([expiresAt])
+}

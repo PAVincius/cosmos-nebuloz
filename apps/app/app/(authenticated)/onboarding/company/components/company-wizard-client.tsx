@@ -1,45 +1,42 @@
 "use client";
 
-import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import {
+  createPIsFromOnboarding,
+  createSAFeStructureFromOnboarding,
+} from "@/app/actions/onboarding/company";
+import { completeFlow, saveStep } from "@/app/actions/onboarding/index";
 import {
   OnboardingWizardShell,
   type WizardStepMeta,
 } from "./onboarding-wizard-shell";
 import {
+  type CompanyProfileFormData,
   StepCompanyProfile,
   validateCompanyProfile,
-  type CompanyProfileFormData,
 } from "./steps/step-company-profile";
 import {
-  StepSafeStructure,
-  validateSafeStructure,
-  type SafeStructureFormData,
-} from "./steps/step-safe-structure";
-import { StepSectors, type SectorsFormData } from "./steps/step-sectors";
-import { StepOrgChart, type OrgChartFormData } from "./steps/step-org-chart";
+  type HealthCheckData,
+  StepHealthCheck,
+} from "./steps/step-health-check";
+import { type OrgChartFormData, StepOrgChart } from "./steps/step-org-chart";
 import {
-  StepUsersTeams,
-  validateUsersTeams,
-  type UsersTeamsFormData,
-} from "./steps/step-users-teams";
-import {
+  type PISprintsFormData,
   StepPIsSprints,
   validatePIsSprints,
-  type PISprintsFormData,
 } from "./steps/step-pis-sprints";
 import {
-  StepHealthCheck,
-  type HealthCheckData,
-} from "./steps/step-health-check";
+  type SafeStructureFormData,
+  StepSafeStructure,
+  validateSafeStructure,
+} from "./steps/step-safe-structure";
+import { type SectorsFormData, StepSectors } from "./steps/step-sectors";
 import {
-  saveStep,
-  completeFlow,
-} from "@/app/actions/onboarding/index";
-import {
-  createSAFeStructureFromOnboarding,
-  createPIsFromOnboarding,
-} from "@/app/actions/onboarding/company";
+  StepUsersTeams,
+  type UsersTeamsFormData,
+  validateUsersTeams,
+} from "./steps/step-users-teams";
 
 const STEPS: WizardStepMeta[] = [
   { key: "company_profile", label: "Perfil" },
@@ -51,12 +48,12 @@ const STEPS: WizardStepMeta[] = [
   { key: "health_check", label: "Revisão" },
 ];
 
-interface Props {
+type Props = {
   initialStep: number;
   completedSteps: string[];
   savedData: Record<string, unknown>;
   artNames: string[];
-}
+};
 
 export function CompanyWizardClient({
   initialStep,
@@ -68,7 +65,8 @@ export function CompanyWizardClient({
   const [currentStep, setCurrentStep] = useState(
     Math.min(initialStep, STEPS.length - 1)
   );
-  const [completedSteps, setCompletedSteps] = useState<string[]>(initialCompleted);
+  const [completedSteps, setCompletedSteps] =
+    useState<string[]>(initialCompleted);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -216,7 +214,9 @@ export function CompanyWizardClient({
         }
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "Erro ao salvar. Tente novamente."
+          err instanceof Error
+            ? err.message
+            : "Erro ao salvar. Tente novamente."
         );
       }
     });
@@ -241,9 +241,7 @@ export function CompanyWizardClient({
         await completeFlow("company_setup");
         router.push("/onboarding/company/complete");
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Erro ao finalizar."
-        );
+        setError(err instanceof Error ? err.message : "Erro ao finalizar.");
       }
     });
   }
@@ -253,20 +251,20 @@ export function CompanyWizardClient({
 
   return (
     <OnboardingWizardShell
-      steps={STEPS}
-      currentStep={currentStep}
       completedSteps={completedSteps}
+      currentStep={currentStep}
+      isSaving={isPending}
+      nextLabel={isLastStep ? "Concluir setup" : undefined}
       onBack={() => {
         setError(null);
         setCurrentStep((s) => Math.max(s - 1, 0));
       }}
       onNext={isLastStep ? handleComplete : handleNext}
       onSkip={isOptional ? handleSkip : undefined}
-      isSaving={isPending}
-      nextLabel={isLastStep ? "Concluir setup" : undefined}
+      steps={STEPS}
     >
       {error && (
-        <div className="mb-4 rounded-md bg-destructive/10 border border-destructive/30 px-3 py-2 text-sm text-destructive">
+        <div className="mb-4 rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-destructive text-sm">
           {error}
         </div>
       )}
@@ -291,15 +289,15 @@ export function CompanyWizardClient({
       )}
       {stepKey === "users_teams" && (
         <StepUsersTeams
-          defaultValues={usersTeams}
           artNames={artNamesForSteps}
+          defaultValues={usersTeams}
           onChange={setUsersTeams}
         />
       )}
       {stepKey === "pis_sprints" && (
         <StepPIsSprints
-          defaultValues={pisSprints}
           artNames={artNamesForSteps}
+          defaultValues={pisSprints}
           onChange={setPisSprints}
         />
       )}

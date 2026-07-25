@@ -1,5 +1,6 @@
 import { AuthError, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { log } from "@repo/observability/log";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest) {
     if (getErrorCode(error) === "UNAUTHORIZED") {
       return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
     }
-    const message = error instanceof Error ? error.message : "Erro interno";
-    return NextResponse.json({ error: message }, { status: 500 });
+    log.error("[api/features]", { error: String(error) });
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
 }

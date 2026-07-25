@@ -1,12 +1,12 @@
+import type { Capability, SolutionTrain } from "@repo/database";
 import { z } from "zod";
-import { type Capability, type SolutionTrain } from "@repo/database";
 import {
-  PaginationSchema,
-  nnStr,
-  optStr,
-  optCuid,
   CapabilityStatus,
   cuid,
+  nnStr,
+  optCuid,
+  optStr,
+  PaginationSchema,
 } from "../_base";
 
 export const CreateCapabilitySchema = z.object({
@@ -33,7 +33,9 @@ export const ReorderCapabilitiesSchema = z.object({
 export type CreateCapabilityInput = z.infer<typeof CreateCapabilitySchema>;
 export type UpdateCapabilityInput = z.infer<typeof UpdateCapabilitySchema>;
 export type CapabilityFilters = z.infer<typeof CapabilityFiltersSchema>;
-export type ReorderCapabilitiesInput = z.infer<typeof ReorderCapabilitiesSchema>;
+export type ReorderCapabilitiesInput = z.infer<
+  typeof ReorderCapabilitiesSchema
+>;
 
 export type CapabilityWithSolutionTrain = Capability & {
   solutionTrain: SolutionTrain | null;

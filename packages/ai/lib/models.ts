@@ -14,5 +14,5 @@ export const models: {
   embeddings: openai.textEmbeddingModel("text-embedding-3-small"),
 };
 
-export { getAIModel, getActiveProvider } from "./router";
 export type { AIProvider } from "./router";
+export { getActiveProvider, getAIModel } from "./router";

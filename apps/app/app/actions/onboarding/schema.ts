@@ -100,8 +100,8 @@ export const PISprintsSchema = z
     sprintLengthDays: z.number().int().min(7).max(21).default(14),
     artName: z.string().min(1),
   })
-  .refine(
-    (d) => !d.endDate || d.endDate > d.startDate,
-    { message: "endDate must be after startDate", path: ["endDate"] }
-  );
+  .refine((d) => !d.endDate || d.endDate > d.startDate, {
+    message: "endDate must be after startDate",
+    path: ["endDate"],
+  });
 export type PISprintsData = z.infer<typeof PISprintsSchema>;

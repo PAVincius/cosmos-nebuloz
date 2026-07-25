@@ -1,11 +1,10 @@
 "use client";
 
-import { FadeIn } from "@/components/cosmos/fade-in";
 import { Button } from "@repo/design-system/components/ui/button";
 import type { Dictionary } from "@repo/internationalization";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { env } from "@/env";
+import { FadeIn } from "@/components/cosmos/fade-in";
 
 type CTAProps = {
   dictionary: Dictionary;
@@ -59,8 +58,8 @@ export const CTA = ({ dictionary: _ }: CTAProps) => (
             lineHeight: 1.6,
           }}
         >
-          45 minutos com um RTE. Dataset real do seu PI.
-          Saímos com um plano de implementação.
+          45 minutos com um RTE. Dataset real do seu PI. Saímos com um plano de
+          implementação.
         </p>
 
         <div className="mt-10 flex flex-col items-center gap-4">
@@ -108,7 +107,7 @@ export const CTA = ({ dictionary: _ }: CTAProps) => (
             { value: "R$800K+", label: "economizados por PI" },
             { value: "100%", label: "dados no seu perímetro" },
           ].map((item) => (
-            <div key={item.label} className="text-center">
+            <div className="text-center" key={item.label}>
               <div
                 style={{
                   fontFamily: "var(--font-mono)",

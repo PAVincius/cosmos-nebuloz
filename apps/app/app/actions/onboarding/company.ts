@@ -2,13 +2,13 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import {
-  SafeStructureSchema,
+  type PISprintsData,
   PISprintsSchema,
   type SafeStructureData,
-  type PISprintsData,
+  SafeStructureSchema,
 } from "./schema";
 
 /**
@@ -30,7 +30,9 @@ export async function createSAFeStructureFromOnboarding(
   await database.$transaction(async (tx) => {
     for (const vs of input.valueStreams) {
       for (const art of vs.arts) {
-        if (!art.name.trim()) continue;
+        if (!art.name.trim()) {
+          continue;
+        }
         const artRecord = await tx.aRT.create({
           data: {
             tenantId: ctx.tenantId,
@@ -62,7 +64,9 @@ export async function createPIsFromOnboarding(raw: PISprintsData) {
   const art = await database.aRT.findFirst({
     where: { name: input.artName, tenantId: ctx.tenantId },
   });
-  if (!art) throw new Error(`ART "${input.artName}" não encontrado.`);
+  if (!art) {
+    throw new Error(`ART "${input.artName}" não encontrado.`);
+  }
 
   const pi = await database.pIPlan.create({
     data: {

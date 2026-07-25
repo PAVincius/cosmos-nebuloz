@@ -15,35 +15,7 @@ import {
   UpdateImprovementActionSchema,
 } from "./schema";
 
-export type {
-  ActionStatusValue,
-  CompetencyKey,
-  CreateAssessmentInput,
-  CreateImprovementActionInput,
-  UpdateImprovementActionInput,
-} from "./schema";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-export type AssessmentAction = {
-  id: string;
-  title: string;
-  status: ActionStatusValue;
-  relatedMetric: string | null;
-  dueDate: Date | null;
-};
-
-export type AssessmentWithActions = {
-  id: string;
-  scope: string;
-  scopeId: string;
-  competency: string;
-  competencyLabel: string;
-  score: number;
-  assessedAt: Date;
-  notes: string | null;
-  actions: AssessmentAction[];
-};
+import type { AssessmentWithActions } from "./types";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
@@ -229,11 +201,32 @@ export async function updateImprovementActionResult(
 
 // ─── Spec-required aliases ────────────────────────────────────────────────────
 
-export const listAssessments = listAllAssessments;
-export const listImprovementActions = listAllImprovementActions;
-export const createAssessment = createAssessmentAction;
-export const createImprovementAction = createImprovementActionResult;
-export const updateImprovementAction = updateImprovementActionResult;
+export async function listAssessments(): Promise<AssessmentWithActions[]> {
+  return listAllAssessments();
+}
+
+export async function listImprovementActions() {
+  return listAllImprovementActions();
+}
+
+export async function createAssessment(
+  raw: unknown
+): Promise<Result<{ id: string }>> {
+  return createAssessmentAction(raw);
+}
+
+export async function createImprovementAction(
+  raw: unknown
+): Promise<Result<{ id: string }>> {
+  return createImprovementActionResult(raw);
+}
+
+export async function updateImprovementAction(
+  id: string,
+  raw: unknown
+): Promise<Result<void>> {
+  return updateImprovementActionResult(id, raw);
+}
 
 export async function updateActionStatus(
   id: string,

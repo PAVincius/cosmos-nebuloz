@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
 
-interface SplitTextProps {
+type SplitTextProps = {
   children: string;
   className?: string;
   /** Applied to each individual word/char span (for gradient text etc.) */
@@ -17,7 +17,7 @@ interface SplitTextProps {
   by?: "words" | "chars";
   /** Use blur + y reveal (premium) or just y reveal */
   blur?: boolean;
-}
+};
 
 const WORD_VARIANTS = (blur: boolean) => ({
   hidden: {
@@ -50,10 +50,10 @@ export function SplitText({
 
   return (
     <motion.span
-      className={`inline ${className}`}
-      style={style}
-      initial="hidden"
       animate="visible"
+      className={`inline ${className}`}
+      initial="hidden"
+      style={style}
       variants={{
         visible: {
           transition: {
@@ -65,10 +65,10 @@ export function SplitText({
     >
       {units.map((unit, i) => (
         <motion.span
-          key={i}
           className={`inline-block ${childClassName}`}
-          variants={WORD_VARIANTS(blur)}
+          key={i}
           style={{ marginRight: by === "words" ? "0.25em" : 0 }}
+          variants={WORD_VARIANTS(blur)}
         >
           {unit}
         </motion.span>
@@ -91,13 +91,17 @@ export function RevealBlock({
 }) {
   return (
     <motion.div
-      className={className}
-      style={style}
-      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
       animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.5, ease: [0.25, 0, 0, 1] as [number, number, number, number], delay }}
+      className={className}
+      initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+      style={style}
+      transition={{
+        duration: 0.5,
+        ease: [0.25, 0, 0, 1] as [number, number, number, number],
+        delay,
+      }}
     >
-      <>{children}</>
+      {children}
     </motion.div>
   );
 }

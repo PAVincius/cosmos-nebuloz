@@ -159,7 +159,8 @@ describe("computeMemberBaseline", () => {
 
     const result = await computeMemberBaseline("team-1", "u1");
     expect(result.ok).toBe(true);
-    expect(result.data.sprintCount).toBe(0);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).data.sprintCount).toBe(0);
   });
 
   it("computes p10, p50, p90 percentiles", async () => {
@@ -249,7 +250,8 @@ describe("upsertMemberAssignment", () => {
       capacityFactor: 1.5,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toContain("capacityFactor");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toContain("capacityFactor");
   });
 
   it("rejects capacityFactor < 0", async () => {
@@ -257,7 +259,8 @@ describe("upsertMemberAssignment", () => {
       capacityFactor: -0.1,
     });
     expect(result.ok).toBe(false);
-    expect(result.error).toContain("capacityFactor");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expect((result as any).error).toContain("capacityFactor");
   });
 
   it("accepts capacityFactor in range [0, 1]", async () => {

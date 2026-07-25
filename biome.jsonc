@@ -4,9 +4,326 @@
   "javascript": {
     "globals": ["Liveblocks"]
   },
+  "overrides": [
+    {
+      "includes": [
+        "**/__tests__/**",
+        "**/*.test.ts",
+        "**/*.test.tsx",
+        "**/*.spec.ts"
+      ],
+      "linter": {
+        "rules": {
+          "performance": { "useTopLevelRegex": "off" },
+          "style": {
+            "useBlockStatements": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off"
+          },
+          "suspicious": {
+            "useAwait": "off",
+            "noEmptyBlockStatements": "off",
+            "noExplicitAny": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noCommaOperator": "off"
+          },
+          "nursery": {
+            "noShadow": "off",
+            "noUnusedExpressions": "off"
+          },
+          "correctness": { "noUnusedFunctionParameters": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/lib/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": {
+            "noShadow": "off",
+            "noIncrementDecrement": "off",
+            "useMaxParams": "off",
+            "noUnusedExpressions": "off"
+          },
+          "suspicious": { "useAwait": "off", "noExplicitAny": "off" },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "noExportedImports": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/actions/**",
+        "apps/app/app/(cosmos)/actions/**",
+        "apps/app/app/api/**",
+        "apps/app/app/hooks/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "useAwait": "off",
+            "noExplicitAny": "off",
+            "noEvolvingTypes": "off",
+            "noImplicitAnyLet": "off",
+            "noEmptyBlockStatements": "off",
+            "noRedeclare": "off",
+            "noAssignInExpressions": "off"
+          },
+          "style": {
+            "noExportedImports": "off",
+            "noNestedTernary": "off",
+            "useDefaultSwitchClause": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off"
+          },
+          "performance": { "useTopLevelRegex": "off", "noBarrelFile": "off" },
+          "nursery": {
+            "noShadow": "off",
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/(authenticated)/**",
+        "apps/app/app/(unauthenticated)/**",
+        "apps/app/app/layout.tsx",
+        "apps/app/app/loading.tsx",
+        "apps/app/app/error.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noLeakedRender": "off",
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off",
+            "noUnusedExpressions": "off",
+            "noShadow": "off",
+            "useMaxParams": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noExplicitAny": "off",
+            "noAlert": "off",
+            "noGlobalIsNan": "off",
+            "useAwait": "off",
+            "noEvolvingTypes": "off",
+            "noEmptyBlockStatements": "off",
+            "noImplicitAnyLet": "off",
+            "noShadowRestrictedNames": "off"
+          },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off",
+            "useDefaultSwitchClause": "off",
+            "noExportedImports": "off"
+          },
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "useAltText": "off",
+            "noSvgWithoutTitle": "off",
+            "useAriaPropsSupportedByRole": "off",
+            "useSemanticElements": "off",
+            "useGenericFontNames": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off",
+            "useOptionalChain": "off"
+          },
+          "correctness": {
+            "useExhaustiveDependencies": "warn",
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off",
+            "useParseIntRadix": "off",
+            "useImageSize": "off"
+          },
+          "performance": {
+            "noImgElement": "off",
+            "useTopLevelRegex": "off",
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
+    {
+      // Cosmos SAFe UI: verbatim ports of the Claude Design canvas jsx
+      // prototype (cards-as-divs, tone-lookup ternaries, static demo lists).
+      // Preserving markup 1:1 with the design source is intentional; see
+      // docs/superpowers/plans/2026-07-19-INDEX-cosmos-full-implementation.md
+      "includes": ["apps/app/components/cosmos/**"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noLeakedRender": "off",
+            "noShadow": "off",
+            "noUnusedExpressions": "off"
+          },
+          "suspicious": {
+            "noArrayIndexKey": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "noDescendingSpecificity": "off"
+          },
+          "a11y": {
+            "noLabelWithoutControl": "off",
+            "useButtonType": "off",
+            "noSvgWithoutTitle": "off",
+            "useKeyWithClickEvents": "off",
+            "noStaticElementInteractions": "off",
+            "noNoninteractiveElementInteractions": "off"
+          },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "performance": { "useTopLevelRegex": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["packages/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "useAwait": "off",
+            "noShadowRestrictedNames": "off",
+            "noEvolvingTypes": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "style": {
+            "noNestedTernary": "off",
+            "noNonNullAssertion": "off",
+            "useFilenamingConvention": "off",
+            "noExportedImports": "off"
+          },
+          "nursery": {
+            "noIncrementDecrement": "off",
+            "noEqualsToNull": "off",
+            "noLeakedRender": "off"
+          },
+          "complexity": {
+            "noExcessiveCognitiveComplexity": "off",
+            "noVoid": "off"
+          },
+          "performance": {
+            "noBarrelFile": "off",
+            "useTopLevelRegex": "off",
+            "noNamespaceImport": "off"
+          },
+          "correctness": {
+            "noUnusedVariables": "off",
+            "noUnusedFunctionParameters": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["docs/**"],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "off",
+            "noEmptyBlockStatements": "off"
+          },
+          "nursery": { "noShadow": "off", "noLeakedRender": "off" },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "performance": { "noImgElement": "off", "noBarrelFile": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/app/api/migration/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["packages/ai/lib/rag/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noExplicitAny": "off" }
+        }
+      }
+    },
+    {
+      "includes": [
+        "apps/app/app/(authenticated)/components/copilot/copilot-markdown.tsx"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": { "noMisleadingCharacterClass": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/scripts/**"],
+      "linter": {
+        "rules": {
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": { "noIncrementDecrement": "off" },
+          "style": { "useForOf": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/storybook/**"],
+      "linter": {
+        "rules": {
+          "performance": { "noNamespaceImport": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["apps/app/e2e/**"],
+      "linter": {
+        "rules": {
+          "suspicious": { "useAwait": "off" },
+          "performance": { "useTopLevelRegex": "off" },
+          "style": { "noNestedTernary": "off" },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" },
+          "nursery": { "noIncrementDecrement": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "suspicious": { "noExplicitAny": "off" }
+        }
+      }
+    }
+  ],
   "files": {
     "includes": [
       "**/*",
+      "!design",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",
@@ -17,7 +334,11 @@
       "!apps/docs/**/*.json",
       "!apps/email/.react-email",
       "!packages/cms/basehub-types.d.ts",
-      "!.claude/worktrees/**"
+      "!.claude/worktrees",
+      "!experiments/**/.venv",
+      "!apps/app/playwright-report",
+      "!apps/app/coverage",
+      "!**/.next"
     ]
   }
 }

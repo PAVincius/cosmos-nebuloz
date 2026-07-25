@@ -52,8 +52,10 @@ test.describe("RTE — ART Board & PI Planning", () => {
           severity: "high",
           category: "route-missing",
           route: "/art",
-          story: "Como RTE, quero visualizar o board ART com features e dependências.",
-          description: "ART Board route not found (epic-004 not yet implemented)",
+          story:
+            "Como RTE, quero visualizar o board ART com features e dependências.",
+          description:
+            "ART Board route not found (epic-004 not yet implemented)",
           expected: "Route /art or /arts renders ART Kanban board",
           actual: "All ART routes return 404",
           suggestion:
@@ -84,7 +86,8 @@ test.describe("RTE — ART Board & PI Planning", () => {
           severity: "info",
           category: "compliant",
           route: "/arts",
-          description: "PI Planning accessible at /arts → /arts/[artId]/pi-planning",
+          description:
+            "PI Planning accessible at /arts → /arts/[artId]/pi-planning",
         })
       );
     } else if (isAuthRedirect) {
@@ -162,7 +165,8 @@ test.describe("RTE — ART Board & PI Planning", () => {
             "Confidence Vote UI not yet implemented — XState machine exists but no route/component",
           expected:
             "ConfidenceVotePanel at /arts/[artId]/pi-planning with XState state machine",
-          actual: "confidenceVoteMachine exists in safe-engine but no UI accessible",
+          actual:
+            "confidenceVoteMachine exists in safe-engine but no UI accessible",
           suggestion:
             "Create ART + PI plans first, then navigate to /arts/[artId]/pi-planning",
           codeRef:
@@ -203,7 +207,16 @@ test.describe("RTE — ART Board & PI Planning", () => {
     const hasForm =
       (await page.locator('form, input[type="email"]').count()) > 0;
 
-    if (!hasForm) {
+    if (hasForm) {
+      writeFinding(
+        finding({
+          severity: "info",
+          category: "compliant",
+          route: "/sign-in",
+          description: "Sign-in form rendered correctly",
+        })
+      );
+    } else {
       writeFinding(
         finding({
           severity: "high",
@@ -217,15 +230,6 @@ test.describe("RTE — ART Board & PI Planning", () => {
             "Check (unauthenticated)/sign-in route and SignIn component rendering",
           codeRef:
             "apps/app/app/(unauthenticated)/sign-in/[[...sign-in]]/page.tsx",
-        })
-      );
-    } else {
-      writeFinding(
-        finding({
-          severity: "info",
-          category: "compliant",
-          route: "/sign-in",
-          description: "Sign-in form rendered correctly",
         })
       );
     }

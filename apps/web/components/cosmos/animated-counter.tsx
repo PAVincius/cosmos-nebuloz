@@ -1,21 +1,16 @@
 "use client";
 
-import {
-  motion,
-  useInView,
-  useMotionValue,
-  useSpring,
-} from "framer-motion";
+import { motion, useInView, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-interface AnimatedCounterProps {
+type AnimatedCounterProps = {
   value: number;
   prefix?: string;
   suffix?: string;
   className?: string;
   style?: React.CSSProperties;
   duration?: number;
-}
+};
 
 export function AnimatedCounter({
   value,
@@ -42,16 +37,18 @@ export function AnimatedCounter({
     }
   }, [inView, mv, value]);
 
-  useEffect(() => {
-    return spring.on("change", (v) => {
-      if (spanRef.current) {
-        spanRef.current.textContent = `${prefix}${Math.round(v)}${suffix}`;
-      }
-    });
-  }, [spring, prefix, suffix]);
+  useEffect(
+    () =>
+      spring.on("change", (v) => {
+        if (spanRef.current) {
+          spanRef.current.textContent = `${prefix}${Math.round(v)}${suffix}`;
+        }
+      }),
+    [spring, prefix, suffix]
+  );
 
   return (
-    <span ref={ref} className={className} style={style}>
+    <span className={className} ref={ref} style={style}>
       <span ref={spanRef}>
         {prefix}0{suffix}
       </span>
@@ -76,14 +73,14 @@ export function AnimatedBar({
 
   return (
     <div
-      ref={ref}
       className="w-full overflow-hidden rounded-full"
+      ref={ref}
       style={{ height, background: "var(--surface-3)" }}
     >
       <motion.div
-        style={{ height: "100%", background: color, borderRadius: 9999 }}
-        initial={{ width: 0 }}
         animate={inView ? { width: `${value}%` } : { width: 0 }}
+        initial={{ width: 0 }}
+        style={{ height: "100%", background: color, borderRadius: 9999 }}
         transition={{
           duration: 0.9,
           ease: [0.25, 0, 0, 1],

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { nnStr, optStr, optCuid, cuid } from "@/app/actions/_base";
+import { cuid, optCuid, optStr } from "@/app/actions/_base";
 
 export const GovernanceStatusSchema = z.enum([
   "draft",
@@ -95,6 +95,9 @@ export type GovernedEpicWithDetails = {
   updatedAt: Date;
 };
 
+export const SlaStatusSchema = z.enum(["ON_TRACK", "BREACHED"]);
+export type SlaStatus = z.infer<typeof SlaStatusSchema>;
+
 export type ApprovalStepInstancePublic = {
   id: string;
   etapaOrdem: number;
@@ -103,6 +106,8 @@ export type ApprovalStepInstancePublic = {
   estado: StepEstado;
   comentario: string | null;
   timestamp: Date | null;
+  slaDeadline: Date | null;
+  slaStatus: SlaStatus;
 };
 
 export type ApprovalRequestWithSteps = {

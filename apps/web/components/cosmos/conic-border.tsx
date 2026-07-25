@@ -28,7 +28,9 @@ export function ConicBorderCard({
     let raf: number;
 
     const animate = (ts: number) => {
-      if (!start) start = ts;
+      if (!start) {
+        start = ts;
+      }
       const progress = (ts - start) / 1600; // 1.6s
       angle.set(progress * 360);
       if (progress < 1) {
@@ -44,18 +46,20 @@ export function ConicBorderCard({
 
   const handleMouseLeave = () => {
     const rafId = ref.current?.getAttribute("data-raf");
-    if (rafId) cancelAnimationFrame(Number(rafId));
+    if (rafId) {
+      cancelAnimationFrame(Number(rafId));
+    }
     // Fade angle back to 0
     angle.set(0);
   };
 
   return (
     <div
-      ref={ref}
       className={`relative ${className}`}
-      style={{ ...style, borderRadius: radius }}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
+      ref={ref}
+      style={{ ...style, borderRadius: radius }}
     >
       {/* Animated conic border (pseudo via wrapper) */}
       <motion.div
@@ -70,10 +74,10 @@ export function ConicBorderCard({
           maskComposite: "exclude",
           opacity: 0,
         }}
-        whileHover={{ opacity: 1 }}
         transition={{ opacity: { duration: 0.2 } }}
+        whileHover={{ opacity: 1 }}
       />
-      <>{children}</>
+      {children}
     </div>
   );
 }

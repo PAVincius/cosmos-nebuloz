@@ -1,17 +1,36 @@
 import { calculateWSJF } from "@repo/safe-engine";
 
+export type EpicType = "EPIC" | "FEATURE" | "STORY";
+
 export type FeatureWsjfFields = {
   bv: number;
   tc: number;
   rr: number;
   js: number;
   wsjfScore: number;
+  title?: string;
+  completedAt?: Date | null;
+};
+
+export type EpicTopFeature = {
+  title: string;
+  wsjfScore: number;
+};
+
+export type InvestBreakdown = {
+  I: number;
+  N: number;
+  V: number;
+  E: number;
+  S: number;
+  T: number;
 };
 
 export type AggregatedPortfolioEpic = {
   id: string;
   title: string;
   statusId: string;
+  lifecycleStatus: string;
   order: number;
   wsjfScore: number;
   bv: number;
@@ -19,9 +38,18 @@ export type AggregatedPortfolioEpic = {
   rr: number;
   js: number;
   featureCount: number;
+  completedFeatureCount: number;
+  topFeatures: EpicTopFeature[];
   strategicThemeId: string | null;
   themeTitle: string | null;
   themeColor: string | null;
+  linkedOKRCount: number;
+  governanceStatus: string | null;
+  investScore: number | null;
+  investBreakdown: InvestBreakdown | null;
+  descriptionMd: string | null;
+  epicType: EpicType;
+  dueDate: string | null;
 };
 
 /** WSJF efetivo: score persistido ou recalculado a partir dos parâmetros. */
@@ -31,19 +59,25 @@ export function effectiveFeatureWsjf(f: FeatureWsjfFields): number {
     : calculateWSJF({ bv: f.bv, tc: f.tc, rr: f.rr, js: f.js });
 }
 
-export function aggregateEpicRow(
-  epic: {
-    id: string;
-    title: string;
-    statusId: string;
-    order: number;
-    features: FeatureWsjfFields[];
-    featureCount: number;
-    strategicThemeId?: string | null;
-    themeTitle?: string | null;
-    themeColor?: string | null;
-  }
-): AggregatedPortfolioEpic {
+export function aggregateEpicRow(epic: {
+  id: string;
+  title: string;
+  statusId: string;
+  lifecycleStatus?: string;
+  order: number;
+  features: FeatureWsjfFields[];
+  featureCount: number;
+  strategicThemeId?: string | null;
+  themeTitle?: string | null;
+  themeColor?: string | null;
+  linkedOKRCount?: number;
+  governanceStatus?: string | null;
+  investScore?: number | null;
+  investBreakdown?: InvestBreakdown | null;
+  descriptionMd?: string | null;
+  epicType?: EpicType | null;
+  dueDate?: Date | null;
+}): AggregatedPortfolioEpic {
   const { features } = epic;
   const n = features.length;
   const sumBv = features.reduce((s, f) => s + f.bv, 0);
@@ -54,10 +88,23 @@ export function aggregateEpicRow(
   const wsjfSum = features.reduce((s, f) => s + effectiveFeatureWsjf(f), 0);
   const wsjfAvg = n > 0 ? Math.round((wsjfSum / n) * 100) / 100 : 0;
 
+  const completedFeatureCount = features.filter(
+    (f) => f.completedAt !== null
+  ).length;
+  const topFeatures: EpicTopFeature[] = features
+    .filter((f) => f.title)
+    .sort((a, b) => effectiveFeatureWsjf(b) - effectiveFeatureWsjf(a))
+    .slice(0, 4)
+    .map((f) => ({
+      title: f.title as string,
+      wsjfScore: effectiveFeatureWsjf(f),
+    }));
+
   return {
     id: epic.id,
     title: epic.title,
     statusId: epic.statusId,
+    lifecycleStatus: epic.lifecycleStatus ?? "FUNNEL",
     order: epic.order,
     wsjfScore: wsjfAvg,
     bv: sumBv,
@@ -65,8 +112,17 @@ export function aggregateEpicRow(
     rr: sumRr,
     js: sumJs > 0 ? sumJs : 1,
     featureCount: epic.featureCount,
+    completedFeatureCount,
+    topFeatures,
     strategicThemeId: epic.strategicThemeId ?? null,
-    themeTitle:       epic.themeTitle ?? null,
-    themeColor:       epic.themeColor ?? null,
+    themeTitle: epic.themeTitle ?? null,
+    themeColor: epic.themeColor ?? null,
+    linkedOKRCount: epic.linkedOKRCount ?? 0,
+    governanceStatus: epic.governanceStatus ?? null,
+    investScore: epic.investScore ?? null,
+    investBreakdown: epic.investBreakdown ?? null,
+    descriptionMd: epic.descriptionMd ?? null,
+    epicType: epic.epicType ?? "EPIC",
+    dueDate: epic.dueDate ? (epic.dueDate as Date).toISOString() : null,
   };
 }

@@ -277,3 +277,17 @@ packages/database/generated
 .contentlayer
 .content-collections
 .source
+
+# Python / experiments
+.venv/
+__pycache__/
+*.coverage
+.coverage
+experiments/**/data/raw/*.jsonl
+experiments/**/data/raw/.gen_checkpoint.json
+experiments/**/data/graph/
+
+# Tooling scratch
+.playwright-mcp/
+.superpowers/brainstorm/
+.claude/worktrees/

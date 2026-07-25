@@ -1,33 +1,57 @@
 // Wave 4 — Portfolio Level entities
 
 model StrategicTheme {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   tenantId    String
   code        String? // e.g. THEME-001 (unique per tenant)
   title       String
   description String?
-  color       String   @default("#6366f1")
-  order       Int      @default(0)
+  color       String  @default("#6366f1")
+  order       Int     @default(0)
 
   // SAFe 6.0 metadata
   horizon     String? // e.g. "2026", "H1 2026"
-  status      String   @default("DRAFT") // DRAFT/ANALYSIS/APPROVED/ACTIVE/CLOSING/ARCHIVED
+  status      String  @default("DRAFT") // DRAFT/ANALYSIS/APPROVED/ACTIVE/CLOSING/ARCHIVED
   themeType   String? // GROWTH/EFFICIENCY/INNOVATION/COMPLIANCE/CUSTOMER_EXPERIENCE
   ownerUserId String?
   budgetTotal Float?
 
+  // cosmos.html screen-themes — Strategy Map health + allocation target
+  healthStatus        String  @default("on") // on/watch/behind
+  targetAllocationPct Float? // desired % of portfolio lean budget
+  pillarId            String? // Strategy Map pillar grouping
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  tenant      Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  epics       Epic[]
-  okrs        OKR[]
-  arts        ThemeART[]
-  leanBudgets LeanBudget[]
+  tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  epics          Epic[]
+  okrs           OKR[]
+  arts           ThemeART[]
+  leanBudgets    LeanBudget[]
+  billingEntries BillingEntry[]
+  pillar         StrategyPillar? @relation(fields: [pillarId], references: [id], onDelete: SetNull)
 
   @@unique([tenantId, code])
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([pillarId])
+}
+
+// cosmos.html screen-strategy — Strategy Map pillars grouping strategic themes
+model StrategyPillar {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  tone      String   @default("accent")
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  themes StrategicTheme[]
+
+  @@index([tenantId])
 }
 
 // M:N junction StrategicTheme <-> ART
@@ -45,10 +69,10 @@ model ThemeART {
 }
 
 model OKR {
-  id               String   @id @default(cuid())
+  id               String    @id @default(cuid())
   tenantId         String
   // SAFe OKR typing — drives template + required links
-  type             String   @default("portfolio_theme") // portfolio_theme/portfolio_epic/pi_art/team_pi/improvement
+  type             String    @default("portfolio_theme") // portfolio_theme/portfolio_epic/pi_art/team_pi/improvement
   // Contextual links (one of these is required depending on type)
   piPlanId         String?
   strategicThemeId String?
@@ -61,9 +85,13 @@ model OKR {
   ownerId          String?
   horizon          String? // e.g. "2026", "PI-2026-Q1"
   scope            String? // for improvement type: portfolio/art/team
-  status           String   @default("ON_TRACK") // ON_TRACK/AT_RISK/BEHIND/ACHIEVED
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  status           String    @default("ON_TRACK") // ON_TRACK/AT_RISK/BEHIND/ACHIEVED
+  quarter          Int? // 1-4 (structured quarter for ART OKRs)
+  year             Int? // e.g. 2026
+  finalAchievement Json? // snapshot of KR values at quarter-close
+  archivedAt       DateTime? // null = active; set on quarter-close
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   tenant         Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
@@ -74,6 +102,7 @@ model OKR {
   @@index([tenantId, piPlanId])
   @@index([strategicThemeId])
   @@index([tenantId, type])
+  @@index([tenantId, artId, year, quarter])
 }
 
 model KeyResult {
@@ -90,11 +119,13 @@ model KeyResult {
   dueDate         DateTime?
   ownerId         String?
   dataSource      String? // where measurement comes from
+  confidence      String    @default("ON_TRACK") // ON_TRACK|AT_RISK|ACHIEVED
+  metricRuleId    String? // links to metric rule for automated snapshots
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
-  tenant    Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  okr       OKR                   @relation(fields: [okrId], references: [id], onDelete: Cascade)
+  tenant    Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  okr       OKR                 @relation(fields: [okrId], references: [id], onDelete: Cascade)
   snapshots KeyResultSnapshot[]
 
   @@index([tenantId])
@@ -103,13 +134,14 @@ model KeyResult {
 
 // Check-in history — snapshots periódicos do valor de cada KR
 model KeyResultSnapshot {
-  id            String   @id @default(cuid())
-  tenantId      String
-  keyResultId   String
-  value         Float
-  note          String?
-  recordedById  String?
-  recordedAt    DateTime @default(now())
+  id           String   @id @default(cuid())
+  tenantId     String
+  keyResultId  String
+  value        Float
+  note         String?
+  source       String   @default("MANUAL") // MANUAL|AUTOMATED
+  recordedById String?
+  recordedAt   DateTime @default(now())
 
   tenant    Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   keyResult KeyResult @relation(fields: [keyResultId], references: [id], onDelete: Cascade)
@@ -120,42 +152,144 @@ model KeyResultSnapshot {
 }
 
 model LeanBudget {
-  id              String   @id @default(cuid())
-  tenantId        String
-  artId           String?
-  themeId         String?  // optional link to a Strategic Theme
-  name            String
-  amount          Float
-  spent           Float    @default(0)
-  period          String   // e.g. "PI-2025-Q2"
-  guardrails      Json?    // {capex: number, opex: number}
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id                   String    @id @default(cuid())
+  tenantId             String
+  artId                String?
+  piPlanId             String?
+  themeId              String?
+  // Investment Horizon classification (e.g. Emerging/Growth/Core) this
+  // value stream's budget is bucketed under — see InvestmentHorizon below.
+  horizonId            String?
+  name                 String
+  amount               Float
+  // Story-025 CapEx/OpEx split fields (AC-002)
+  capexPct             Float? // 0-100
+  opexPct              Float? // 0-100; capexPct + opexPct must = 100
+  // Task 10: guardrail spend fields (2026-07-23)
+  spendLimitUsd        Float? // hard spend limit in USD
+  approvalThresholdUsd Float? // spend above this requires approval
+  immutableAt          DateTime? // set when PI closes (AC-005)
+  spent                Decimal?  @db.Decimal(18, 6)
+  period               String // e.g. "PI-2025-Q2"
+  guardrails           Json? // {capex: number, opex: number}
+  spentSource          String    @default("MANUAL") // MANUAL | BILLING_AGGREGATE | FORECAST
+  spentManualOverride  Decimal?  @db.Decimal(18, 6)
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 
-  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  strategicTheme  StrategicTheme? @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  tenant         Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  strategicTheme StrategicTheme?          @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  reallocations  LeanBudgetReallocation[]
 
+  @@unique([artId, piPlanId])
   @@index([tenantId])
   @@index([tenantId, artId])
   @@index([tenantId, themeId])
+  @@index([tenantId, horizonId])
+}
+
+// cosmos.html screen-budgets HorizonDetailScreen — an investment horizon
+// (e.g. Emerging/Growth/Core) groups value streams (LeanBudget.horizonId)
+// by maturity/risk bet, target % of portfolio investment vs. actual (derived
+// from real LeanBudget rows, never stored). New persistent domain concept —
+// minimal shape for the screen, not a full investment-horizon subsystem.
+model InvestmentHorizon {
+  id        String   @id @default(cuid())
+  tenantId  String
+  name      String
+  label     String
+  targetPct Float
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}
+
+// Story-025: immutable audit trail for budget reallocations (AC-003)
+model LeanBudgetReallocation {
+  id           String   @id @default(cuid())
+  tenantId     String
+  leanBudgetId String
+  fromAmount   Float
+  toAmount     Float
+  reason       String   @db.Text
+  authorUserId String
+  createdAt    DateTime @default(now())
+
+  tenant     Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leanBudget LeanBudget @relation(fields: [leanBudgetId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([leanBudgetId])
+}
+
+// Story-025: Portfolio health batch analysis report (AC-006/007/008)
+model PortfolioAnalysisReport {
+  id               String    @id @default(cuid())
+  tenantId         String
+  artId            String
+  jobId            String?   @unique // Inngest job/function run ID
+  completionStatus String    @default("QUEUED") // QUEUED/RUNNING/COMPLETE/PARTIAL_SUCCESS/FAILED
+  epicCount        Int       @default(0)
+  skippedCount     Int       @default(0)
+  reportJson       Json?
+  expiresAt        DateTime? // 90-day TTL
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, artId])
+  @@index([tenantId, artId, createdAt])
 }
 
 model RoadmapItem {
-  id          String    @id @default(cuid())
+  id          String   @id @default(cuid())
   tenantId    String
   epicId      String?
   title       String
   description String?
   startDate   DateTime
   endDate     DateTime
-  color       String    @default("#6366f1")
+  color       String   @default("#6366f1")
   artId       String?
-  status      String    @default("PLANNED") // PLANNED/IN_PROGRESS/DONE
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  status      String   @default("PLANNED") // PLANNED/IN_PROGRESS/DONE
+  milestone   Boolean  @default(false) // cosmos.html screen-roadmap milestone flag
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
   @@index([tenantId, startDate, endDate])
+}
+
+// EpicValueMetric — links a delivered epic to a business-value metric with
+// planned vs. actual realization (Value Realization screen, design handoff
+// screen-bundle-1.jsx:1283). Genuinely new sub-domain: zero backing existed
+// anywhere before this model (see docs/superpowers/plans/
+// 2026-07-23-PROGRAM-cosmos-remaining-work.md §2). epicId is a plain
+// app-layer tenant-guarded reference, no DB relation to Epic — same
+// precedent as RoadmapItem.epicId / LeanBudget.artId above.
+model EpicValueMetric {
+  id           String    @id @default(cuid())
+  tenantId     String
+  epicId       String
+  metricLabel  String
+  unit         String?
+  plannedValue Float
+  actualValue  Float?
+  status       String    @default("pending") // pending/tracking/at-risk/done
+  measuredAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, epicId])
 }

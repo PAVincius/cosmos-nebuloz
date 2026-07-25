@@ -1,11 +1,12 @@
 "use server";
 
-import { requireTenantSession, requireRole } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
+import type { MemberRole } from "@repo/database";
 import { database } from "@repo/database";
 import { renderInviteEmail, resend } from "@repo/email";
-import { headers } from "next/headers";
+import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
-import type { MemberRole } from "@repo/database";
+import { headers } from "next/headers";
 import { logAudit } from "../audit";
 
 export async function getWorkspaceSettings() {
@@ -14,7 +15,14 @@ export async function getWorkspaceSettings() {
   const [tenant, membersCount, members, invitations] = await Promise.all([
     database.tenant.findUnique({
       where: { id: ctx.tenantId },
-      select: { id: true, name: true, slug: true, logo: true, plan: true, createdAt: true },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        plan: true,
+        createdAt: true,
+      },
     }),
     database.tenantMember.count({ where: { tenantId: ctx.tenantId } }),
     database.tenantMember.findMany({
@@ -30,9 +38,17 @@ export async function getWorkspaceSettings() {
     }),
   ]);
 
-  if (!tenant) throw new Error("Workspace não encontrado.");
+  if (!tenant) {
+    throw new Error("Workspace não encontrado.");
+  }
 
-  return { tenant, membersCount, members, invitations, currentUserRole: ctx.role };
+  return {
+    tenant,
+    membersCount,
+    members,
+    invitations,
+    currentUserRole: ctx.role,
+  };
 }
 
 export async function updateWorkspace(input: {
@@ -47,9 +63,19 @@ export async function updateWorkspace(input: {
     where: { id: ctx.tenantId },
     data: {
       ...(input.name !== undefined && { name: input.name.trim() }),
-      ...(input.slug !== undefined && { slug: input.slug.trim().toLowerCase() }),
+      ...(input.slug !== undefined && {
+        slug: input.slug.trim().toLowerCase(),
+      }),
       ...(input.logo !== undefined && { logo: input.logo || null }),
     },
+  });
+
+  void logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "TENANT",
+    entityId: ctx.tenantId,
+    diff: input,
   });
 
   revalidatePath("/settings/workspace");
@@ -59,7 +85,9 @@ export async function inviteMember(email: string, role: MemberRole) {
   const ctx = await requireTenantSession(await headers());
   requireRole(["ADMIN"], ctx);
 
-  if (!email?.trim()) throw new Error("Email é obrigatório.");
+  if (!email?.trim()) {
+    throw new Error("Email é obrigatório.");
+  }
 
   // Check if already a member
   const existingUser = await database.user.findUnique({
@@ -71,7 +99,9 @@ export async function inviteMember(email: string, role: MemberRole) {
     const existingMember = await database.tenantMember.findFirst({
       where: { tenantId: ctx.tenantId, userId: existingUser.id },
     });
-    if (existingMember) throw new Error("Usuário já é membro deste workspace.");
+    if (existingMember) {
+      throw new Error("Usuário já é membro deste workspace.");
+    }
   }
 
   // Cancel existing pending invitations for this email
@@ -127,7 +157,7 @@ export async function inviteMember(email: string, role: MemberRole) {
       html,
     });
   } catch (emailError: unknown) {
-    console.error("inviteMember: falha ao enviar email", {
+    log.error("inviteMember: falha ao enviar email", {
       tenant_id: ctx.tenantId,
       inviter_id: ctx.userId,
       recipient: email,
@@ -155,15 +185,21 @@ export async function removeMember(memberId: string) {
     select: { id: true, role: true, userId: true },
   });
 
-  if (!member) throw new Error("Membro não encontrado.");
-  if (member.userId === ctx.userId) throw new Error("Você não pode remover a si mesmo.");
+  if (!member) {
+    throw new Error("Membro não encontrado.");
+  }
+  if (member.userId === ctx.userId) {
+    throw new Error("Você não pode remover a si mesmo.");
+  }
 
   // Prevent removing last ADMIN
   if (member.role === "ADMIN") {
     const adminCount = await database.tenantMember.count({
       where: { tenantId: ctx.tenantId, role: "ADMIN" },
     });
-    if (adminCount <= 1) throw new Error("Não é possível remover o último administrador.");
+    if (adminCount <= 1) {
+      throw new Error("Não é possível remover o último administrador.");
+    }
   }
 
   await database.tenantMember.delete({ where: { id: memberId } });
@@ -189,14 +225,18 @@ export async function updateMemberRole(memberId: string, role: MemberRole) {
     select: { id: true, role: true },
   });
 
-  if (!member) throw new Error("Membro não encontrado.");
+  if (!member) {
+    throw new Error("Membro não encontrado.");
+  }
 
   // Prevent downgrading if last admin
   if (member.role === "ADMIN" && role !== "ADMIN") {
     const adminCount = await database.tenantMember.count({
       where: { tenantId: ctx.tenantId, role: "ADMIN" },
     });
-    if (adminCount <= 1) throw new Error("Não é possível rebaixar o último administrador.");
+    if (adminCount <= 1) {
+      throw new Error("Não é possível rebaixar o último administrador.");
+    }
   }
 
   await database.tenantMember.update({

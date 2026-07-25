@@ -1,20 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Button } from "@repo/design-system/components/ui/button";
-import { PlusIcon, Trash2Icon, BuildingIcon } from "lucide-react";
+import { BuildingIcon, PlusIcon, Trash2Icon } from "lucide-react";
+import { useState } from "react";
 
-export interface SectorsFormData {
+export type SectorsFormData = {
   departments: { name: string }[];
   businessUnits: { name: string }[];
-}
+};
 
-interface Props {
+type Props = {
   defaultValues?: Partial<SectorsFormData>;
   onChange: (data: SectorsFormData) => void;
-}
+};
 
 export function StepSectors({ defaultValues, onChange }: Props) {
   const [data, setData] = useState<SectorsFormData>({
@@ -33,8 +33,10 @@ export function StepSectors({ defaultValues, onChange }: Props) {
       <div className="flex items-center gap-2">
         <BuildingIcon className="h-5 w-5 text-muted-foreground" />
         <div>
-          <h2 className="text-lg font-semibold">Setores e Unidades de Negócio</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-lg">
+            Setores e Unidades de Negócio
+          </h2>
+          <p className="text-muted-foreground text-sm">
             Opcional. Pode ser configurado depois.
           </p>
         </div>
@@ -45,19 +47,18 @@ export function StepSectors({ defaultValues, onChange }: Props) {
           <div className="flex items-center justify-between">
             <Label>Departamentos</Label>
             <Button
-              size="sm"
-              variant="outline"
               onClick={() =>
                 update({ departments: [...data.departments, { name: "" }] })
               }
+              size="sm"
+              variant="outline"
             >
               <PlusIcon className="mr-1 h-3.5 w-3.5" /> Adicionar
             </Button>
           </div>
           {data.departments.map((d, i) => (
-            <div key={i} className="flex gap-2">
+            <div className="flex gap-2" key={i}>
               <Input
-                value={d.name}
                 onChange={(e) =>
                   update({
                     departments: data.departments.map((x, j) =>
@@ -66,16 +67,17 @@ export function StepSectors({ defaultValues, onChange }: Props) {
                   })
                 }
                 placeholder="ex: Engenharia, Produto, Marketing"
+                value={d.name}
               />
               {data.departments.length > 1 && (
                 <Button
-                  size="sm"
-                  variant="ghost"
                   onClick={() =>
                     update({
                       departments: data.departments.filter((_, j) => j !== i),
                     })
                   }
+                  size="sm"
+                  variant="ghost"
                 >
                   <Trash2Icon className="h-3.5 w-3.5" />
                 </Button>
@@ -88,19 +90,18 @@ export function StepSectors({ defaultValues, onChange }: Props) {
           <div className="flex items-center justify-between">
             <Label>Unidades de Negócio</Label>
             <Button
-              size="sm"
-              variant="outline"
               onClick={() =>
                 update({ businessUnits: [...data.businessUnits, { name: "" }] })
               }
+              size="sm"
+              variant="outline"
             >
               <PlusIcon className="mr-1 h-3.5 w-3.5" /> Adicionar
             </Button>
           </div>
           {data.businessUnits.map((bu, i) => (
-            <div key={i} className="flex gap-2">
+            <div className="flex gap-2" key={i}>
               <Input
-                value={bu.name}
                 onChange={(e) =>
                   update({
                     businessUnits: data.businessUnits.map((x, j) =>
@@ -109,22 +110,23 @@ export function StepSectors({ defaultValues, onChange }: Props) {
                   })
                 }
                 placeholder="ex: Varejo, B2B, Fintech"
+                value={bu.name}
               />
               <Button
-                size="sm"
-                variant="ghost"
                 onClick={() =>
                   update({
                     businessUnits: data.businessUnits.filter((_, j) => j !== i),
                   })
                 }
+                size="sm"
+                variant="ghost"
               >
                 <Trash2Icon className="h-3.5 w-3.5" />
               </Button>
             </div>
           ))}
           {data.businessUnits.length === 0 && (
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Nenhuma unidade adicionada.
             </p>
           )}

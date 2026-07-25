@@ -1,0 +1,506 @@
+"use client";
+
+// dependencies.tsx — Dependências, wired to listDependencies(). Lists real
+// DependencyLink rows (blocking → blocked feature) with status + critical-path
+// flag, now with team attribution (Feature.assignedTeamId → Team, resolved
+// tenant-scoped by the action), a portfolio KPI row, and a "Por time" filter.
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import {
+  createDependency,
+  type DependencyView,
+  listDependencies,
+} from "@/app/(cosmos)/actions/dependencies";
+import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { EmptyState } from "../empty-state";
+import { EntityLinkField } from "../entity-link-field";
+import { Icon } from "../icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  useThemeName,
+} from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
+
+const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
+  "not-started": "neutral",
+  "on-track": "green",
+  "at-risk": "amber",
+  blocked: "red",
+  completed: "green",
+};
+
+function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
+  const { close } = useModal();
+  const [blocking, setBlocking] = useState<EntityOption | null>(null);
+  const [blocked, setBlocked] = useState<EntityOption | null>(null);
+  const [description, setDescription] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    if (!(blocking && blocked) || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createDependency({
+          blockingFeatureId: blocking.id,
+          blockedFeatureId: blocked.id,
+          description: description.trim() || undefined,
+        }),
+      {
+        loading: "Registrando dependência...",
+        success: "Dependência registrada.",
+        error: (err: string) =>
+          `Não foi possível registrar a dependência: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onCreated?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
+      subtitle="Vincular uma feature bloqueadora a uma feature bloqueada"
+      title="Nova dependência"
+      width={480}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <EntityLinkField
+          kind="feature"
+          label="Feature bloqueadora"
+          onChange={setBlocking}
+          value={blocking}
+        />
+        <EntityLinkField
+          kind="feature"
+          label="Feature bloqueada"
+          onChange={setBlocked}
+          value={blocked}
+        />
+
+        <div>
+          <label
+            htmlFor="dependency-description"
+            style={{
+              display: "block",
+              fontSize: 11.5,
+              fontWeight: 700,
+              letterSpacing: ".04em",
+              textTransform: "uppercase",
+              color: "var(--ink-faint)",
+              marginBottom: 6,
+            }}
+          >
+            Descrição
+          </label>
+          <textarea
+            id="dependency-description"
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Contexto da dependência…"
+            rows={3}
+            style={{
+              width: "100%",
+              padding: "10px 12px",
+              fontSize: 14,
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--hairline-strong)",
+              background: "var(--surface)",
+              color: "var(--ink)",
+              fontFamily: "inherit",
+              outline: "none",
+              resize: "vertical",
+            }}
+            value={description}
+          />
+        </div>
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Registrar dependência
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function TeamPill({ name, color }: { name: string; color: string | null }) {
+  return (
+    <span
+      style={{
+        alignItems: "center",
+        background: "var(--chip-bg)",
+        border: "1px solid var(--hairline)",
+        borderRadius: "var(--r-sm)",
+        display: "inline-flex",
+        gap: 6,
+        padding: "5px 10px",
+      }}
+    >
+      <span
+        style={{
+          background: color ?? "var(--ink-faint)",
+          borderRadius: 99,
+          flexShrink: 0,
+          height: 7,
+          width: 7,
+        }}
+      />
+      <span style={{ color: "var(--ink)", fontSize: 11.5, fontWeight: 700 }}>
+        {name}
+      </span>
+    </span>
+  );
+}
+
+function DepCard({ d }: { d: DependencyView }) {
+  const tone = STATUS_TONE[d.status] ?? "neutral";
+  return (
+    <div
+      style={{
+        background: "var(--surface)",
+        border: "1px solid var(--hairline)",
+        borderRadius: "var(--r-md)",
+        boxShadow: "var(--card-shadow)",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: "14px 16px",
+      }}
+    >
+      <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
+        <Badge tone={tone}>{d.status}</Badge>
+        {d.criticalPath && <Badge tone="red">Caminho crítico</Badge>}
+      </div>
+      <div style={{ color: "var(--ink)", fontSize: 13.5, fontWeight: 600 }}>
+        {d.title}
+      </div>
+      <div style={{ alignItems: "center", display: "flex", gap: 10 }}>
+        <TeamPill color={d.fromTeamColor} name={d.fromTeamName ?? "Sem time"} />
+        <Icon
+          name="arrowRight"
+          size={14}
+          strokeWidth={2.4}
+          style={{ color: "var(--ink-faint)", flexShrink: 0 }}
+        />
+        <TeamPill color={d.toTeamColor} name={d.toTeamName ?? "Sem time"} />
+      </div>
+      <div
+        style={{
+          borderTop: "1px solid var(--hairline)",
+          color: "var(--ink-faint)",
+          fontSize: 11.5,
+          paddingTop: 8,
+        }}
+      >
+        {d.blockingTitle} → {d.blockedTitle}
+      </div>
+    </div>
+  );
+}
+
+const chipStyle = (on: boolean) => ({
+  background: on ? "var(--accent-soft)" : "var(--surface)",
+  border: `1px solid ${on ? "rgba(var(--accent-rgb),.4)" : "var(--hairline-strong)"}`,
+  borderRadius: 99,
+  color: on ? "var(--accent-text)" : "var(--ink-muted)",
+  cursor: "pointer",
+  fontSize: 11.5,
+  fontWeight: 600,
+  padding: "5px 10px",
+});
+
+function TeamFilterPopover({
+  options,
+  selected,
+  onChange,
+  btnRect,
+}: {
+  options: { id: string; name: string }[];
+  selected: Set<string>;
+  onChange: (next: Set<string>) => void;
+  btnRect: DOMRect;
+}) {
+  const themeName = useThemeName();
+  const toggle = (id: string) => {
+    const next = new Set(selected);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    onChange(next);
+  };
+  return createPortal(
+    <div
+      data-dependency-team-filter
+      data-theme={themeName}
+      style={{
+        background: "var(--surface-3)",
+        border: "1px solid var(--hairline-strong)",
+        borderRadius: "var(--r-md)",
+        boxShadow: "0 16px 40px -12px rgba(0,0,0,.45)",
+        left: Math.max(8, btnRect.right - 240),
+        padding: 14,
+        position: "fixed",
+        top: btnRect.bottom + 8,
+        width: 240,
+        zIndex: 400,
+      }}
+    >
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 10,
+        }}
+      >
+        <span style={{ color: "var(--ink)", fontSize: 12.5, fontWeight: 700 }}>
+          Filtrar por time
+        </span>
+        {selected.size > 0 && (
+          <button
+            onClick={() => onChange(new Set())}
+            style={{
+              background: "none",
+              border: "none",
+              color: "var(--accent)",
+              cursor: "pointer",
+              fontSize: 11,
+              fontWeight: 700,
+            }}
+            type="button"
+          >
+            Limpar
+          </button>
+        )}
+      </div>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        {options.map((o) => (
+          <button
+            key={o.id}
+            onClick={() => toggle(o.id)}
+            style={chipStyle(selected.has(o.id))}
+            type="button"
+          >
+            {o.name}
+          </button>
+        ))}
+      </div>
+    </div>,
+    document.body
+  );
+}
+
+function DependenciesBody() {
+  const modal = useModal();
+  const [deps, setDeps] = useState<DependencyView[]>([]);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [teamFilter, setTeamFilter] = useState<Set<string>>(() => new Set());
+  const [filterOpen, setFilterOpen] = useState(false);
+  const btnRef = useRef<HTMLSpanElement>(null);
+
+  const load = useCallback(() => {
+    setLoading(true);
+    listDependencies().then((r) => {
+      if (r.ok) {
+        setDeps(r.data);
+      } else {
+        setError(true);
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  useEffect(() => {
+    if (!filterOpen) {
+      return;
+    }
+    const close = (e: MouseEvent) => {
+      const t = e.target as HTMLElement;
+      if (
+        !(
+          t.closest("[data-dependency-team-filter]") ||
+          t.closest("[data-dependency-filter-trigger]")
+        )
+      ) {
+        setFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", close);
+    return () => document.removeEventListener("mousedown", close);
+  }, [filterOpen]);
+
+  // "Acordadas" (agreed-with-a-date) isn't a real dependency status — the
+  // schema only tracks not-started/on-track/at-risk/blocked/completed with
+  // no agreed-date concept — so that KPI from the handoff is honestly
+  // omitted rather than approximated.
+  const emRisco = deps.filter(
+    (d) => d.status === "at-risk" || d.criticalPath
+  ).length;
+  const timesEnvolvidos = new Set(
+    deps.flatMap((d) => [d.fromTeamId, d.toTeamId].filter((id) => id !== null))
+  ).size;
+
+  const teamOptions = Array.from(
+    new Map(
+      deps
+        .flatMap((d) => [
+          d.fromTeamId
+            ? { id: d.fromTeamId, name: d.fromTeamName as string }
+            : null,
+          d.toTeamId ? { id: d.toTeamId, name: d.toTeamName as string } : null,
+        ])
+        .filter((t): t is { id: string; name: string } => t !== null)
+        .map((t) => [t.id, t])
+    ).values()
+  );
+  const visibleDeps = deps.filter(
+    (d) =>
+      teamFilter.size === 0 ||
+      (d.fromTeamId && teamFilter.has(d.fromTeamId)) ||
+      (d.toTeamId && teamFilter.has(d.toTeamId))
+  );
+
+  return (
+    <div className="fade-in">
+      <PageHeader
+        eyebrow="ART Board"
+        meta={
+          <>
+            <Badge tone="accent">{deps.length} dependências</Badge>
+            {teamFilter.size > 0 && (
+              <Badge dot tone="amber">
+                {visibleDeps.length} visíveis
+              </Badge>
+            )}
+          </>
+        }
+        subtitle="Vínculos entre features de times diferentes, com status e caminho crítico."
+        title="Dependências"
+      >
+        {teamOptions.length > 0 && (
+          <span
+            data-dependency-filter-trigger
+            ref={btnRef}
+            style={{ display: "inline-flex" }}
+          >
+            <Button
+              icon="filter"
+              onClick={() => setFilterOpen((o) => !o)}
+              size="md"
+              variant={teamFilter.size > 0 ? "primary" : "secondary"}
+            >
+              Por time{teamFilter.size > 0 ? ` (${teamFilter.size})` : ""}
+            </Button>
+          </span>
+        )}
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewDependencyModal onCreated={load} />)}
+          size="md"
+          variant="primary"
+        >
+          Nova dependência
+        </Button>
+      </PageHeader>
+
+      {filterOpen && btnRef.current && (
+        <TeamFilterPopover
+          btnRect={btnRef.current.getBoundingClientRect()}
+          onChange={setTeamFilter}
+          options={teamOptions}
+          selected={teamFilter}
+        />
+      )}
+
+      {error && <ErrorState />}
+
+      {!(error || loading) && deps.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gap: "var(--gap)",
+            gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+            marginBottom: "var(--gap)",
+          }}
+        >
+          <KpiCard
+            icon="gitBranch"
+            label="Dependências mapeadas"
+            tone="accent"
+            value={deps.length}
+          />
+          <KpiCard
+            icon="alert"
+            label="Em risco de bloqueio"
+            tone={emRisco > 0 ? "red" : "green"}
+            value={emRisco}
+          />
+          <KpiCard
+            icon="users"
+            label="Times envolvidos"
+            tone="purple"
+            value={timesEnvolvidos}
+          />
+        </div>
+      )}
+
+      {!(loading || error) && deps.length === 0 && (
+        <EmptyState
+          description="Registre a primeira dependência entre features de times diferentes."
+          icon="gitBranch"
+          title="Nenhuma dependência registrada"
+        />
+      )}
+      {!(loading || error) && deps.length > 0 && visibleDeps.length === 0 && (
+        <EmptyState
+          description="Ajuste o filtro por time para ver as dependências mapeadas."
+          icon="filter"
+          title="Nenhuma dependência corresponde ao filtro"
+        />
+      )}
+      {!(loading || error) && visibleDeps.length > 0 && (
+        <div
+          style={{
+            display: "grid",
+            gap: "var(--gap)",
+            gridTemplateColumns: "repeat(2, minmax(0,1fr))",
+          }}
+        >
+          {visibleDeps.map((d) => (
+            <DepCard d={d} key={d.id} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function DependenciesScreen() {
+  return (
+    <ModalProvider>
+      <DependenciesBody />
+    </ModalProvider>
+  );
+}

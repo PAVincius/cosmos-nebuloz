@@ -18,12 +18,14 @@
  */
 
 import dotenv from "dotenv";
+
 dotenv.config({ path: ".env.local" });
-import { PrismaClient } from "@repo/database/generated/client";
+
 import { PrismaPg } from "@prisma/adapter-pg";
-import { Pool } from "pg";
+import { PrismaClient } from "@repo/database/generated/client";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { Pool } from "pg";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -37,7 +39,9 @@ const auth = betterAuth({
       activeTenantId: { type: "string", nullable: true, input: false },
     },
   },
-  secret: process.env.BETTER_AUTH_SECRET ?? "cosmos-dev-secret-key-min-32-chars-placeholder",
+  secret:
+    process.env.BETTER_AUTH_SECRET ??
+    "cosmos-dev-secret-key-min-32-chars-placeholder",
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
 });
 
@@ -66,7 +70,8 @@ type PIDef = {
 };
 
 const now = new Date();
-const addWeeks = (d: Date, w: number) => new Date(d.getTime() + w * 7 * 24 * 60 * 60 * 1000);
+const addWeeks = (d: Date, w: number) =>
+  new Date(d.getTime() + w * 7 * 24 * 60 * 60 * 1000);
 
 const TENANTS: TenantDef[] = [
   {
@@ -81,25 +86,49 @@ const TENANTS: TenantDef[] = [
         name: "Platform ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Foundation", startDate: addWeeks(now, -20), endDate: addWeeks(now, -10) },
+          {
+            name: "PI-1 · Foundation",
+            startDate: addWeeks(now, -20),
+            endDate: addWeeks(now, -10),
+          },
           { name: "PI-2 · Scale", startDate: addWeeks(now, -10), endDate: now },
-          { name: "PI-3 · AI Layer", startDate: now, endDate: addWeeks(now, 10) },
+          {
+            name: "PI-3 · AI Layer",
+            startDate: now,
+            endDate: addWeeks(now, 10),
+          },
         ],
       },
       {
         name: "Product ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · MVP", startDate: addWeeks(now, -20), endDate: addWeeks(now, -10) },
-          { name: "PI-2 · Growth", startDate: addWeeks(now, -10), endDate: now },
+          {
+            name: "PI-1 · MVP",
+            startDate: addWeeks(now, -20),
+            endDate: addWeeks(now, -10),
+          },
+          {
+            name: "PI-2 · Growth",
+            startDate: addWeeks(now, -10),
+            endDate: now,
+          },
         ],
       },
       {
         name: "DevOps ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Pipeline", startDate: addWeeks(now, -15), endDate: addWeeks(now, -5) },
-          { name: "PI-2 · Observability", startDate: addWeeks(now, -5), endDate: addWeeks(now, 5) },
+          {
+            name: "PI-1 · Pipeline",
+            startDate: addWeeks(now, -15),
+            endDate: addWeeks(now, -5),
+          },
+          {
+            name: "PI-2 · Observability",
+            startDate: addWeeks(now, -5),
+            endDate: addWeeks(now, 5),
+          },
         ],
       },
     ],
@@ -116,22 +145,38 @@ const TENANTS: TenantDef[] = [
         name: "Digital Transformation ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Discovery", startDate: addWeeks(now, -10), endDate: now },
-          { name: "PI-2 · Delivery", startDate: now, endDate: addWeeks(now, 10) },
+          {
+            name: "PI-1 · Discovery",
+            startDate: addWeeks(now, -10),
+            endDate: now,
+          },
+          {
+            name: "PI-2 · Delivery",
+            startDate: now,
+            endDate: addWeeks(now, 10),
+          },
         ],
       },
       {
         name: "Data Platform ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Ingestion", startDate: addWeeks(now, -10), endDate: now },
+          {
+            name: "PI-1 · Ingestion",
+            startDate: addWeeks(now, -10),
+            endDate: now,
+          },
         ],
       },
       {
         name: "Mobile ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Beta", startDate: addWeeks(now, -8), endDate: addWeeks(now, 2) },
+          {
+            name: "PI-1 · Beta",
+            startDate: addWeeks(now, -8),
+            endDate: addWeeks(now, 2),
+          },
         ],
       },
     ],
@@ -148,7 +193,11 @@ const TENANTS: TenantDef[] = [
         name: "Core ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Launch", startDate: addWeeks(now, -5), endDate: addWeeks(now, 5) },
+          {
+            name: "PI-1 · Launch",
+            startDate: addWeeks(now, -5),
+            endDate: addWeeks(now, 5),
+          },
         ],
       },
     ],
@@ -165,7 +214,11 @@ const TENANTS: TenantDef[] = [
         name: "Engineering ART",
         cadence: 10,
         pis: [
-          { name: "PI-1 · Kickoff", startDate: now, endDate: addWeeks(now, 10) },
+          {
+            name: "PI-1 · Kickoff",
+            startDate: now,
+            endDate: addWeeks(now, 10),
+          },
         ],
       },
     ],
@@ -195,43 +248,134 @@ const EPIC_DATA: Record<string, EpicSeed[]> = {
       title: "AI-Powered Risk Management",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "pgvector semantic search for risks", statusId: "DONE", bv: 9, tc: 8, rr: 7, js: 3 },
-        { title: "Risk recommendation copilot UI", statusId: "IN_PROGRESS", bv: 8, tc: 7, rr: 9, js: 5 },
-        { title: "Historical embedding pipeline", statusId: "BACKLOG", bv: 7, tc: 5, rr: 8, js: 4 },
+        {
+          title: "pgvector semantic search for risks",
+          statusId: "DONE",
+          bv: 9,
+          tc: 8,
+          rr: 7,
+          js: 3,
+        },
+        {
+          title: "Risk recommendation copilot UI",
+          statusId: "IN_PROGRESS",
+          bv: 8,
+          tc: 7,
+          rr: 9,
+          js: 5,
+        },
+        {
+          title: "Historical embedding pipeline",
+          statusId: "BACKLOG",
+          bv: 7,
+          tc: 5,
+          rr: 8,
+          js: 4,
+        },
       ],
     },
     {
       title: "Real-time Portfolio Collaboration",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "Yjs CRDT Kanban sync", statusId: "DONE", bv: 10, tc: 9, rr: 5, js: 8 },
-        { title: "Presence indicators", statusId: "IN_PROGRESS", bv: 7, tc: 6, rr: 3, js: 2 },
-        { title: "Conflict resolution UI", statusId: "BACKLOG", bv: 6, tc: 5, rr: 4, js: 3 },
+        {
+          title: "Yjs CRDT Kanban sync",
+          statusId: "DONE",
+          bv: 10,
+          tc: 9,
+          rr: 5,
+          js: 8,
+        },
+        {
+          title: "Presence indicators",
+          statusId: "IN_PROGRESS",
+          bv: 7,
+          tc: 6,
+          rr: 3,
+          js: 2,
+        },
+        {
+          title: "Conflict resolution UI",
+          statusId: "BACKLOG",
+          bv: 6,
+          tc: 5,
+          rr: 4,
+          js: 3,
+        },
       ],
     },
     {
       title: "Solution Train Coordination",
       statusId: "BACKLOG",
       features: [
-        { title: "STE dashboard", statusId: "BACKLOG", bv: 8, tc: 4, rr: 6, js: 6 },
-        { title: "Cross-ART dependency map", statusId: "BACKLOG", bv: 9, tc: 7, rr: 8, js: 7 },
+        {
+          title: "STE dashboard",
+          statusId: "BACKLOG",
+          bv: 8,
+          tc: 4,
+          rr: 6,
+          js: 6,
+        },
+        {
+          title: "Cross-ART dependency map",
+          statusId: "BACKLOG",
+          bv: 9,
+          tc: 7,
+          rr: 8,
+          js: 7,
+        },
       ],
     },
     {
       title: "DevOps Integration Hub",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "GitHub Actions webhook listener", statusId: "IN_PROGRESS", bv: 8, tc: 8, rr: 5, js: 4 },
-        { title: "Deployment frequency dashboard", statusId: "BACKLOG", bv: 7, tc: 6, rr: 4, js: 3 },
+        {
+          title: "GitHub Actions webhook listener",
+          statusId: "IN_PROGRESS",
+          bv: 8,
+          tc: 8,
+          rr: 5,
+          js: 4,
+        },
+        {
+          title: "Deployment frequency dashboard",
+          statusId: "BACKLOG",
+          bv: 7,
+          tc: 6,
+          rr: 4,
+          js: 3,
+        },
       ],
     },
     {
       title: "Enterprise Security",
       statusId: "DONE",
       features: [
-        { title: "SAML SSO integration", statusId: "DONE", bv: 9, tc: 9, rr: 8, js: 5 },
-        { title: "SCIM provisioning", statusId: "DONE", bv: 8, tc: 8, rr: 7, js: 4 },
-        { title: "Audit log export", statusId: "IN_PROGRESS", bv: 7, tc: 7, rr: 9, js: 3 },
+        {
+          title: "SAML SSO integration",
+          statusId: "DONE",
+          bv: 9,
+          tc: 9,
+          rr: 8,
+          js: 5,
+        },
+        {
+          title: "SCIM provisioning",
+          statusId: "DONE",
+          bv: 8,
+          tc: 8,
+          rr: 7,
+          js: 4,
+        },
+        {
+          title: "Audit log export",
+          statusId: "IN_PROGRESS",
+          bv: 7,
+          tc: 7,
+          rr: 9,
+          js: 3,
+        },
       ],
     },
   ],
@@ -240,25 +384,74 @@ const EPIC_DATA: Record<string, EpicSeed[]> = {
       title: "PI Planning Automation",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "Automated ART capacity calculation", statusId: "DONE", bv: 9, tc: 8, rr: 6, js: 4 },
-        { title: "Program board digital twin", statusId: "IN_PROGRESS", bv: 8, tc: 7, rr: 5, js: 5 },
-        { title: "PI objectives tracker", statusId: "BACKLOG", bv: 7, tc: 6, rr: 4, js: 3 },
+        {
+          title: "Automated ART capacity calculation",
+          statusId: "DONE",
+          bv: 9,
+          tc: 8,
+          rr: 6,
+          js: 4,
+        },
+        {
+          title: "Program board digital twin",
+          statusId: "IN_PROGRESS",
+          bv: 8,
+          tc: 7,
+          rr: 5,
+          js: 5,
+        },
+        {
+          title: "PI objectives tracker",
+          statusId: "BACKLOG",
+          bv: 7,
+          tc: 6,
+          rr: 4,
+          js: 3,
+        },
       ],
     },
     {
       title: "BPMN Workflow Designer",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "BPMN canvas with bpmn-js", statusId: "IN_PROGRESS", bv: 8, tc: 7, rr: 6, js: 6 },
-        { title: "XML persistence API", statusId: "BACKLOG", bv: 7, tc: 6, rr: 5, js: 3 },
+        {
+          title: "BPMN canvas with bpmn-js",
+          statusId: "IN_PROGRESS",
+          bv: 8,
+          tc: 7,
+          rr: 6,
+          js: 6,
+        },
+        {
+          title: "XML persistence API",
+          statusId: "BACKLOG",
+          bv: 7,
+          tc: 6,
+          rr: 5,
+          js: 3,
+        },
       ],
     },
     {
       title: "Advanced Analytics",
       statusId: "BACKLOG",
       features: [
-        { title: "Flow metrics dashboard", statusId: "BACKLOG", bv: 8, tc: 5, rr: 6, js: 5 },
-        { title: "Predictive PI delivery score", statusId: "BACKLOG", bv: 9, tc: 6, rr: 7, js: 7 },
+        {
+          title: "Flow metrics dashboard",
+          statusId: "BACKLOG",
+          bv: 8,
+          tc: 5,
+          rr: 6,
+          js: 5,
+        },
+        {
+          title: "Predictive PI delivery score",
+          statusId: "BACKLOG",
+          bv: 9,
+          tc: 6,
+          rr: 7,
+          js: 7,
+        },
       ],
     },
   ],
@@ -267,16 +460,44 @@ const EPIC_DATA: Record<string, EpicSeed[]> = {
       title: "WSJF Prioritization Engine",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "WSJF calculator UI", statusId: "DONE", bv: 8, tc: 7, rr: 6, js: 3 },
-        { title: "Auto-sort backlog by WSJF", statusId: "IN_PROGRESS", bv: 7, tc: 6, rr: 5, js: 2 },
+        {
+          title: "WSJF calculator UI",
+          statusId: "DONE",
+          bv: 8,
+          tc: 7,
+          rr: 6,
+          js: 3,
+        },
+        {
+          title: "Auto-sort backlog by WSJF",
+          statusId: "IN_PROGRESS",
+          bv: 7,
+          tc: 6,
+          rr: 5,
+          js: 2,
+        },
       ],
     },
     {
       title: "Agile Team Workspace",
       statusId: "BACKLOG",
       features: [
-        { title: "Sprint board", statusId: "BACKLOG", bv: 7, tc: 5, rr: 4, js: 3 },
-        { title: "Retrospective templates", statusId: "BACKLOG", bv: 5, tc: 4, rr: 3, js: 2 },
+        {
+          title: "Sprint board",
+          statusId: "BACKLOG",
+          bv: 7,
+          tc: 5,
+          rr: 4,
+          js: 3,
+        },
+        {
+          title: "Retrospective templates",
+          statusId: "BACKLOG",
+          bv: 5,
+          tc: 4,
+          rr: 3,
+          js: 2,
+        },
       ],
     },
   ],
@@ -285,8 +506,22 @@ const EPIC_DATA: Record<string, EpicSeed[]> = {
       title: "Core SAFe Setup",
       statusId: "IN_PROGRESS",
       features: [
-        { title: "ART configuration wizard", statusId: "IN_PROGRESS", bv: 7, tc: 6, rr: 5, js: 3 },
-        { title: "Basic PI Planning board", statusId: "BACKLOG", bv: 6, tc: 5, rr: 4, js: 3 },
+        {
+          title: "ART configuration wizard",
+          statusId: "IN_PROGRESS",
+          bv: 7,
+          tc: 6,
+          rr: 5,
+          js: 3,
+        },
+        {
+          title: "Basic PI Planning board",
+          statusId: "BACKLOG",
+          bv: 6,
+          tc: 5,
+          rr: 4,
+          js: 3,
+        },
       ],
     },
   ],
@@ -296,7 +531,9 @@ const EPIC_DATA: Record<string, EpicSeed[]> = {
 
 async function upsertUser(email: string, name: string, password: string) {
   const existing = await db.user.findUnique({ where: { email } });
-  if (existing) return existing.id;
+  if (existing) {
+    return existing.id;
+  }
 
   const ctx = await auth.$context;
   const hashedPassword = await ctx.password.hash(password);
@@ -307,7 +544,11 @@ async function upsertUser(email: string, name: string, password: string) {
       name,
       emailVerified: true,
       accounts: {
-        create: { accountId: email, providerId: "credential", password: hashedPassword },
+        create: {
+          accountId: email,
+          providerId: "credential",
+          password: hashedPassword,
+        },
       },
     },
   });
@@ -319,7 +560,10 @@ async function upsertTenant(def: TenantDef) {
   const existing = await db.tenant.findUnique({ where: { slug: def.slug } });
   if (existing) {
     // Update plan in case it changed
-    await db.tenant.update({ where: { id: existing.id }, data: { plan: def.plan } });
+    await db.tenant.update({
+      where: { id: existing.id },
+      data: { plan: def.plan },
+    });
     return existing.id;
   }
 
@@ -345,15 +589,19 @@ async function seedTenant(def: TenantDef) {
   console.log(`  ✓ tenant ${def.slug} (${tenantId})`);
 
   // Membership
-  const existing = await db.tenantMember.findFirst({ where: { userId, tenantId } });
+  const existing = await db.tenantMember.findFirst({
+    where: { userId, tenantId },
+  });
   if (!existing) {
     await db.tenantMember.create({ data: { userId, tenantId, role: "ADMIN" } });
   }
-  console.log(`  ✓ membership ADMIN`);
+  console.log("  ✓ membership ADMIN");
 
   // ARTs + PIs
   for (const artDef of def.arts) {
-    let art = await db.aRT.findFirst({ where: { tenantId, name: artDef.name } });
+    let art = await db.aRT.findFirst({
+      where: { tenantId, name: artDef.name },
+    });
     if (!art) {
       art = await db.aRT.create({
         data: { tenantId, name: artDef.name, cadence: artDef.cadence },
@@ -361,7 +609,9 @@ async function seedTenant(def: TenantDef) {
     }
 
     for (const piDef of artDef.pis) {
-      const piExists = await db.pIPlan.findFirst({ where: { artId: art.id, name: piDef.name } });
+      const piExists = await db.pIPlan.findFirst({
+        where: { artId: art.id, name: piDef.name },
+      });
       if (!piExists) {
         await db.pIPlan.create({
           data: {
@@ -380,7 +630,9 @@ async function seedTenant(def: TenantDef) {
   // Epics + Features
   const epicSeeds = EPIC_DATA[def.plan] ?? [];
   for (const epicDef of epicSeeds) {
-    let epic = await db.epic.findFirst({ where: { tenantId, title: epicDef.title } });
+    let epic = await db.epic.findFirst({
+      where: { tenantId, title: epicDef.title },
+    });
     if (!epic) {
       epic = await db.epic.create({
         data: { tenantId, title: epicDef.title, statusId: epicDef.statusId },
@@ -408,7 +660,9 @@ async function seedTenant(def: TenantDef) {
         });
       }
     }
-    console.log(`  ✓ Epic "${epicDef.title}" + ${epicDef.features.length} features`);
+    console.log(
+      `  ✓ Epic "${epicDef.title}" + ${epicDef.features.length} features`
+    );
   }
 }
 
@@ -423,11 +677,13 @@ async function main() {
     await seedTenant(def);
   }
 
-  console.log("\n" + "─".repeat(50));
+  console.log(`\n${"─".repeat(50)}`);
   console.log("🎉 Seed concluído!\n");
   console.log("Credenciais:");
   for (const def of TENANTS) {
-    console.log(`  [${def.plan.padEnd(8)}] ${def.adminEmail.padEnd(28)} ${def.password}`);
+    console.log(
+      `  [${def.plan.padEnd(8)}] ${def.adminEmail.padEnd(28)} ${def.password}`
+    );
   }
   console.log();
 }

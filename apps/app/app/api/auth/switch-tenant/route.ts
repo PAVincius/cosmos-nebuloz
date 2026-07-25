@@ -1,8 +1,8 @@
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { type NextRequest, NextResponse } from "next/server";
-import { SwitchTenantSchema } from "../../../actions/schemas";
 import { ZodError } from "zod";
+import { SwitchTenantSchema } from "../../../actions/schemas";
 
 export const POST = async (request: NextRequest) => {
   const session = await auth.api.getSession({ headers: request.headers });
@@ -44,5 +44,12 @@ export const POST = async (request: NextRequest) => {
     data: { activeTenantId: tenantId },
   });
 
-  return NextResponse.json({ success: true, activeTenantId: tenantId });
+  // Better Auth caches session data (including activeTenantId) in a signed
+  // cookie. Delete it so the next getSession() re-reads the updated row from DB.
+  const response = NextResponse.json({
+    success: true,
+    activeTenantId: tenantId,
+  });
+  response.cookies.delete("better-auth.session_data");
+  return response;
 };

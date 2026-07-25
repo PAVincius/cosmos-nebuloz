@@ -1,0 +1,17 @@
+{
+  "name": "COSMOS — SAFe Platform",
+  "short_name": "COSMOS",
+  "description": "SAFe 6.0 project management platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0b",
+  "theme_color": "#5e6ad2",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "48x48",
+      "type": "image/x-icon"
+    }
+  ]
+}

@@ -1,60 +1,73 @@
 "use server";
 
-import { type Result, safeAction, buildPage, paginationArgs } from "@/app/actions/_base";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import type { Page } from "@/app/actions/_base";
 import {
-  SubmitEpicForApprovalSchema,
-  ReviewStepSchema,
-  GovernedEpicFiltersSchema,
-  DecisionLogFiltersSchema,
+  buildPage,
+  paginationArgs,
+  type Result,
+  safeAction,
+} from "@/app/actions/_base";
+import {
   ApprovalEstadoSchema,
-  type SubmitEpicForApprovalInput,
-  type ReviewStepInput,
-  type GovernedEpicFilters,
-  type DecisionLogFilters,
-  type GovernedEpicWithDetails,
   type ApprovalRequestWithSteps,
   type DecisionLogEntryPublic,
+  DecisionLogFiltersSchema,
+  GovernedEpicFiltersSchema,
+  type GovernedEpicWithDetails,
+  ReviewStepSchema,
+  SubmitEpicForApprovalSchema,
   type WorkflowEtapa,
 } from "./schema";
-import type { Page } from "@/app/actions/_base";
-
-export type {
-  GovernedEpicWithDetails,
-  ApprovalRequestWithSteps,
-  DecisionLogEntryPublic,
-};
 
 // ─── Governance role map ──────────────────────────────────────────────────────
 
 // Maps governance roleRequired strings to the MemberRole values that can approve them
 const GOVERNANCE_ROLE_MAP: Record<string, string[]> = {
-  lpm:                   ["ADMIN", "STE"],
-  finance:               ["ADMIN", "STE"],
-  enterprise_architect:  ["ADMIN", "STE"],
-  cfo:                   ["ADMIN"],
+  lpm: ["ADMIN", "STE"],
+  finance: ["ADMIN", "STE"],
+  enterprise_architect: ["ADMIN", "STE"],
+  cfo: ["ADMIN"],
 };
 
 // ─── Default workflows ────────────────────────────────────────────────────────
 
+// etapaOrdem is 0-based — matches the other workflow writer
+// ((cosmos)/actions/governance.ts's GateStepSchema, whose `order` is the
+// 0-based array index of the step in the editor UI). gate-detail-client.tsx
+// and governance.tsx render `etapaOrdem + 1` for a 1-based display label, so
+// both writers must agree on this base or the same screen numbers a gate
+// differently depending on which one authored it.
 const DEFAULT_WORKFLOWS = [
   {
     tipo: "epic_investment",
     nome: "Aprovação de Épico de Portfólio",
     etapas: [
-      { order: 1, roleRequired: "lpm", criteria: "Validar alinhamento estratégico e ROI estimado" },
-      { order: 2, roleRequired: "finance", criteria: "Validar viabilidade orçamentária" },
+      {
+        order: 0,
+        roleRequired: "lpm",
+        criteria: "Validar alinhamento estratégico e ROI estimado",
+      },
+      {
+        order: 1,
+        roleRequired: "finance",
+        criteria: "Validar viabilidade orçamentária",
+      },
     ],
   },
   {
     tipo: "budget_guardrail_change",
     nome: "Mudança de Guardrail de Budget",
     etapas: [
-      { order: 1, roleRequired: "lpm", criteria: "Validar impacto nos value streams" },
-      { order: 2, roleRequired: "finance", criteria: "Aprovação financeira" },
+      {
+        order: 0,
+        roleRequired: "lpm",
+        criteria: "Validar impacto nos value streams",
+      },
+      { order: 1, roleRequired: "finance", criteria: "Aprovação financeira" },
     ],
   },
 ] as const;
@@ -63,7 +76,13 @@ async function ensureDefaultWorkflows(tenantId: string): Promise<void> {
   for (const wf of DEFAULT_WORKFLOWS) {
     await database.approvalWorkflow.upsert({
       where: { tenantId_tipo: { tenantId, tipo: wf.tipo } },
-      create: { tenantId, tipo: wf.tipo, nome: wf.nome, etapas: wf.etapas, ativo: true },
+      create: {
+        tenantId,
+        tipo: wf.tipo,
+        nome: wf.nome,
+        etapas: wf.etapas,
+        ativo: true,
+      },
       update: {},
     });
   }
@@ -81,7 +100,9 @@ export async function listGovernedEpics(
     const where = {
       tenantId: ctx.tenantId,
       ...(filters.status ? { governanceStatus: filters.status } : {}),
-      ...(filters.valueStreamId ? { valueStreamId: filters.valueStreamId } : {}),
+      ...(filters.valueStreamId
+        ? { valueStreamId: filters.valueStreamId }
+        : {}),
       ...(filters.themeId ? { themeId: filters.themeId } : {}),
     };
 
@@ -96,7 +117,8 @@ export async function listGovernedEpics(
       tenantId: ge.tenantId,
       epicId: ge.epicId,
       epicTitle: ge.epic.title,
-      governanceStatus: ge.governanceStatus as GovernedEpicWithDetails["governanceStatus"],
+      governanceStatus:
+        ge.governanceStatus as GovernedEpicWithDetails["governanceStatus"],
       guardrailFlags: (ge.guardrailFlags as string[]) ?? [],
       investmentEstimate: ge.investmentEstimate,
       valueStreamId: ge.valueStreamId,
@@ -123,7 +145,9 @@ export async function getApprovalRequest(
       },
     });
 
-    if (!req) throw new Error("Request de aprovação não encontrado.");
+    if (!req) {
+      throw new Error("Request de aprovação não encontrado.");
+    }
 
     return {
       id: req.id,
@@ -144,6 +168,9 @@ export async function getApprovalRequest(
         estado: s.estado as ApprovalRequestWithSteps["steps"][number]["estado"],
         comentario: s.comentario,
         timestamp: s.timestamp,
+        slaDeadline: s.slaDeadline,
+        slaStatus:
+          s.slaStatus as ApprovalRequestWithSteps["steps"][number]["slaStatus"],
       })),
       createdAt: req.createdAt,
       updatedAt: req.updatedAt,
@@ -191,6 +218,9 @@ export async function listApprovalRequests(
         estado: s.estado as ApprovalRequestWithSteps["steps"][number]["estado"],
         comentario: s.comentario,
         timestamp: s.timestamp,
+        slaDeadline: s.slaDeadline,
+        slaStatus:
+          s.slaStatus as ApprovalRequestWithSteps["steps"][number]["slaStatus"],
       })),
       createdAt: req.createdAt,
       updatedAt: req.updatedAt,
@@ -209,7 +239,9 @@ export async function listDecisionLog(
     const where = {
       tenantId: ctx.tenantId,
       ...(filters.tipo ? { tipo: filters.tipo } : {}),
-      ...(filters.valueStreamId ? { valueStreamId: filters.valueStreamId } : {}),
+      ...(filters.valueStreamId
+        ? { valueStreamId: filters.valueStreamId }
+        : {}),
     };
 
     const [items, total] = await Promise.all([
@@ -254,7 +286,9 @@ export async function submitEpicForApproval(
     const epic = await database.epic.findFirst({
       where: { id: input.epicId, tenantId: ctx.tenantId },
     });
-    if (!epic) throw new Error("Épico não encontrado.");
+    if (!epic) {
+      throw new Error("Épico não encontrado.");
+    }
 
     await ensureDefaultWorkflows(ctx.tenantId);
 
@@ -267,13 +301,17 @@ export async function submitEpicForApproval(
       },
     });
     if (existingOpen) {
-      throw new Error("Já existe um request de aprovação em aberto para este épico.");
+      throw new Error(
+        "Já existe um request de aprovação em aberto para este épico."
+      );
     }
 
     const workflow = await database.approvalWorkflow.findFirst({
       where: { tenantId: ctx.tenantId, tipo: "epic_investment", ativo: true },
     });
-    if (!workflow) throw new Error("Workflow de aprovação não configurado.");
+    if (!workflow) {
+      throw new Error("Workflow de aprovação não configurado.");
+    }
 
     const etapas = workflow.etapas as WorkflowEtapa[];
 
@@ -333,7 +371,9 @@ export async function submitEpicForApproval(
   });
 }
 
-export async function reviewStep(raw: unknown): Promise<Result<{ requestId: string }>> {
+export async function reviewStep(
+  raw: unknown
+): Promise<Result<{ requestId: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = ReviewStepSchema.parse(raw);
@@ -349,21 +389,36 @@ export async function reviewStep(raw: unknown): Promise<Result<{ requestId: stri
         },
       },
     });
-    if (!step) throw new Error("Step não encontrado ou já processado.");
+    if (!step) {
+      throw new Error("Step não encontrado ou já processado.");
+    }
 
     // Enforce role requirement
     const member = await database.tenantMember.findFirst({
       where: { tenantId: ctx.tenantId, userId: ctx.userId },
     });
     const allowedRoles = GOVERNANCE_ROLE_MAP[step.roleRequired] ?? ["ADMIN"];
-    if (!member || !allowedRoles.includes(member.role)) {
-      throw new Error(`Você não tem permissão para revisar esta etapa. Papel requerido: ${step.roleRequired}.`);
+    if (!(member && allowedRoles.includes(member.role))) {
+      throw new Error(
+        `Você não tem permissão para revisar esta etapa. Papel requerido: ${step.roleRequired}.`
+      );
     }
 
     const requestId = step.approvalRequestId;
     const ge = step.approvalRequest.governedEpic;
 
     await database.$transaction(async (tx) => {
+      // Lock the parent request row for the duration of this decision.
+      // Without this, two concurrent reviewStep calls on sibling steps of
+      // the same request (READ COMMITTED) can each re-read the other's
+      // step as still "pending" before either commits, both concluding
+      // "not done yet" and leaving the request stuck in in_review even
+      // though every step ends up decided. Locking here forces the second
+      // transaction to wait and then re-read the first's committed step
+      // update, so the aggregate state below is always computed from a
+      // fully up-to-date view.
+      await tx.$queryRaw`SELECT id FROM "ApprovalRequest" WHERE id = ${requestId} FOR UPDATE`;
+
       await tx.approvalStepInstance.update({
         where: { id: step.id },
         data: {
@@ -391,6 +446,22 @@ export async function reviewStep(raw: unknown): Promise<Result<{ requestId: stri
       );
 
       if (anyRejected) {
+        // Cancel any still-pending sibling steps so this request can never
+        // again present an active decision control (client) or accept a
+        // further decision (reviewStep's own `estado: "pending"` guard on
+        // the initial lookup refuses it once no step is left pending) —
+        // otherwise a later decision on a sibling would re-terminate an
+        // already-rejected request and log a second, contradictory
+        // decision entry. Mirrors multi-step.ts's cancel-siblings-on-reject.
+        const pendingSiblingIds = finalSteps
+          .filter((s) => s.estado === "pending")
+          .map((s) => s.id);
+        if (pendingSiblingIds.length > 0) {
+          await tx.approvalStepInstance.updateMany({
+            where: { id: { in: pendingSiblingIds } },
+            data: { estado: "skipped" },
+          });
+        }
         await tx.approvalRequest.update({
           where: { id: requestId },
           data: { estado: "rejected" },
@@ -433,7 +504,8 @@ export async function reviewStep(raw: unknown): Promise<Result<{ requestId: stri
             targetId: step.approvalRequest.targetId,
             valueStreamId: ge?.valueStreamId ?? null,
             decisao: "approved",
-            justificativa: input.comentario ?? "Aprovado por todos os revisores.",
+            justificativa:
+              input.comentario ?? "Aprovado por todos os revisores.",
             dadosSuporte: {},
             decisorId: ctx.userId,
           },
@@ -462,10 +534,14 @@ export async function cancelApprovalRequest(
       where: { id: requestId, tenantId: ctx.tenantId, initiatorId: ctx.userId },
       include: { governedEpic: true },
     });
-    if (!req) throw new Error("Request não encontrado ou sem permissão.");
+    if (!req) {
+      throw new Error("Request não encontrado ou sem permissão.");
+    }
 
     if (!["open", "in_review"].includes(req.estado)) {
-      throw new Error("Apenas requests em aberto ou em revisão podem ser cancelados.");
+      throw new Error(
+        "Apenas requests em aberto ou em revisão podem ser cancelados."
+      );
     }
 
     await database.$transaction(async (tx) => {

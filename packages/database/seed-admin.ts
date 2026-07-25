@@ -11,9 +11,10 @@
  * OU via pnpm na raiz:
  *   pnpm seed:admin
  */
-import { PrismaClient } from "./generated/index.js";
+
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { PrismaClient } from "./generated/index.js";
 
 const ADMIN_EMAIL = process.env.E2E_EMAIL ?? "admin@cosmos.local";
 const ADMIN_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
@@ -74,7 +75,14 @@ async function main() {
   const existingAccount = await db.account.findFirst({
     where: { userId: user.id, providerId: "credential" },
   });
-  if (!existingAccount) {
+  if (existingAccount) {
+    // Atualiza o hash (em caso de rotação de senha)
+    await db.account.update({
+      where: { id: existingAccount.id },
+      data: { password: hashedPassword },
+    });
+    console.log("   → Account credential atualizada");
+  } else {
     await db.account.create({
       data: {
         accountId: ADMIN_EMAIL,
@@ -84,13 +92,6 @@ async function main() {
       },
     });
     console.log("   → Account credential criada");
-  } else {
-    // Atualiza o hash (em caso de rotação de senha)
-    await db.account.update({
-      where: { id: existingAccount.id },
-      data: { password: hashedPassword },
-    });
-    console.log("   → Account credential atualizada");
   }
 
   // 4. Upsert do Tenant
@@ -109,13 +110,13 @@ async function main() {
   const existing = await db.tenantMember.findFirst({
     where: { userId: user.id, tenantId: tenant.id },
   });
-  if (!existing) {
+  if (existing) {
+    console.log(`ℹ️  Membership já existe (role: ${existing.role})`);
+  } else {
     await db.tenantMember.create({
       data: { userId: user.id, tenantId: tenant.id, role: "ADMIN" },
     });
     console.log(`✅ Membership: ${ADMIN_EMAIL} → ${TENANT_NAME} (ADMIN)`);
-  } else {
-    console.log(`ℹ️  Membership já existe (role: ${existing.role})`);
   }
 
   console.log("\n─────────────────────────────────────────");

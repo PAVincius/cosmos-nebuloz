@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Button } from "@repo/design-system/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -12,6 +11,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { PlusIcon, Trash2Icon, UsersIcon } from "lucide-react";
+import { useState } from "react";
 
 const SAFE_ROLES = [
   "RTE",
@@ -26,36 +26,34 @@ const SAFE_ROLES = [
 
 type SAFeRole = (typeof SAFE_ROLES)[number];
 
-export interface InviteDraft {
+export type InviteDraft = {
   email: string;
   name: string;
   safeRole: SAFeRole;
-}
+};
 
-export interface TeamDraft {
+export type TeamDraft = {
   name: string;
   artName: string;
-}
+};
 
-export interface UsersTeamsFormData {
+export type UsersTeamsFormData = {
   invites: InviteDraft[];
   teams: TeamDraft[];
-}
+};
 
-interface Props {
+type Props = {
   defaultValues?: Partial<UsersTeamsFormData>;
   artNames: string[];
   onChange: (data: UsersTeamsFormData) => void;
-}
+};
 
 export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
   const [data, setData] = useState<UsersTeamsFormData>({
     invites: defaultValues?.invites ?? [
       { email: "", name: "", safeRole: "DEVELOPER" },
     ],
-    teams: defaultValues?.teams ?? [
-      { name: "", artName: artNames[0] ?? "" },
-    ],
+    teams: defaultValues?.teams ?? [{ name: "", artName: artNames[0] ?? "" }],
   });
 
   function update(patch: Partial<UsersTeamsFormData>) {
@@ -83,8 +81,10 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
       <div className="flex items-center gap-2">
         <UsersIcon className="h-5 w-5 text-muted-foreground" />
         <div>
-          <h2 className="text-lg font-semibold">Usuários, times e papéis SAFe</h2>
-          <p className="text-sm text-muted-foreground">
+          <h2 className="font-semibold text-lg">
+            Usuários, times e papéis SAFe
+          </h2>
+          <p className="text-muted-foreground text-sm">
             Convide as lideranças-chave e crie os times do ART.
           </p>
         </div>
@@ -95,8 +95,6 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
         <div className="flex items-center justify-between">
           <Label>Convidar usuários</Label>
           <Button
-            size="sm"
-            variant="outline"
             onClick={() =>
               update({
                 invites: [
@@ -105,36 +103,38 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
                 ],
               })
             }
+            size="sm"
+            variant="outline"
           >
             <PlusIcon className="mr-1 h-3.5 w-3.5" /> Convidar
           </Button>
         </div>
         {data.invites.map((inv, i) => (
-          <div key={i} className="grid grid-cols-3 gap-2 items-center">
+          <div className="grid grid-cols-3 items-center gap-2" key={i}>
             <Input
-              value={inv.email}
               onChange={(e) => updateInvite(i, { email: e.target.value })}
               placeholder="email@empresa.com"
               type="email"
+              value={inv.email}
             />
             <Input
-              value={inv.name}
               onChange={(e) => updateInvite(i, { name: e.target.value })}
               placeholder="Nome"
+              value={inv.name}
             />
             <div className="flex gap-1">
               <Select
-                value={inv.safeRole}
                 onValueChange={(v) =>
                   updateInvite(i, { safeRole: v as SAFeRole })
                 }
+                value={inv.safeRole}
               >
                 <SelectTrigger className="flex-1 text-xs">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {SAFE_ROLES.map((r) => (
-                    <SelectItem key={r} value={r} className="text-xs">
+                    <SelectItem className="text-xs" key={r} value={r}>
                       {r}
                     </SelectItem>
                   ))}
@@ -142,13 +142,13 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
               </Select>
               {data.invites.length > 1 && (
                 <Button
-                  size="sm"
-                  variant="ghost"
                   onClick={() =>
                     update({
                       invites: data.invites.filter((_, j) => j !== i),
                     })
                   }
+                  size="sm"
+                  variant="ghost"
                 >
                   <Trash2Icon className="h-3.5 w-3.5" />
                 </Button>
@@ -163,8 +163,6 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
         <div className="flex items-center justify-between">
           <Label>Times do ART</Label>
           <Button
-            size="sm"
-            variant="outline"
             onClick={() =>
               update({
                 teams: [
@@ -173,29 +171,31 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
                 ],
               })
             }
+            size="sm"
+            variant="outline"
           >
             <PlusIcon className="mr-1 h-3.5 w-3.5" /> Time
           </Button>
         </div>
         {data.teams.map((team, i) => (
-          <div key={i} className="flex gap-2 items-center">
+          <div className="flex items-center gap-2" key={i}>
             <Input
-              value={team.name}
+              className="flex-1"
               onChange={(e) => updateTeam(i, { name: e.target.value })}
               placeholder="Nome do time"
-              className="flex-1"
+              value={team.name}
             />
             {artNames.length > 0 && (
               <Select
-                value={team.artName}
                 onValueChange={(v) => updateTeam(i, { artName: v })}
+                value={team.artName}
               >
                 <SelectTrigger className="w-40 text-xs">
                   <SelectValue placeholder="ART" />
                 </SelectTrigger>
                 <SelectContent>
                   {artNames.map((a) => (
-                    <SelectItem key={a} value={a} className="text-xs">
+                    <SelectItem className="text-xs" key={a} value={a}>
                       {a}
                     </SelectItem>
                   ))}
@@ -204,13 +204,13 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
             )}
             {data.teams.length > 1 && (
               <Button
-                size="sm"
-                variant="ghost"
                 onClick={() =>
                   update({
                     teams: data.teams.filter((_, j) => j !== i),
                   })
                 }
+                size="sm"
+                variant="ghost"
               >
                 <Trash2Icon className="h-3.5 w-3.5" />
               </Button>
@@ -224,11 +224,14 @@ export function StepUsersTeams({ defaultValues, artNames, onChange }: Props) {
 
 export function validateUsersTeams(data: UsersTeamsFormData): string | null {
   for (const inv of data.invites) {
-    if (inv.email && !inv.name.trim())
+    if (inv.email && !inv.name.trim()) {
       return "Informe o nome de cada usuário convidado.";
+    }
   }
   for (const team of data.teams) {
-    if (!team.name.trim()) return "Todos os times precisam de nome.";
+    if (!team.name.trim()) {
+      return "Todos os times precisam de nome.";
+    }
   }
   return null;
 }

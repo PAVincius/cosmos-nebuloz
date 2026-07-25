@@ -1,0 +1,17 @@
+{
+  "name": "Cosmos",
+  "uri": "https://cosmos-nebuloz.io/bpmn/schema",
+  "prefix": "cosmos",
+  "xml": { "tagAlias": "lowerCase" },
+  "types": [
+    {
+      "name": "WaitEvent",
+      "extends": ["bpmn:Task"],
+      "properties": [
+        { "name": "waitEvent", "type": "String" },
+        { "name": "slaHours", "type": "Integer" },
+        { "name": "locked", "type": "Boolean", "default": false }
+      ]
+    }
+  ]
+}

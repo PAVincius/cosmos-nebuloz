@@ -1,15 +1,6 @@
-import { showBetaFeature } from "@repo/feature-flags";
-import { getDictionary } from "@repo/internationalization";
 import { createMetadata } from "@repo/seo/metadata";
 import type { Metadata } from "next";
-import { Cases } from "./components/cases";
-import { ChaosOrder } from "./components/chaos-order";
-import { CTA } from "./components/cta";
-import { FAQ } from "./components/faq";
-import { Features } from "./components/features";
-import { Hero } from "./components/hero";
-import { Stats } from "./components/stats";
-import { Testimonials } from "./components/testimonials";
+import NebulozClient from "./nebuloz-client";
 
 type HomeProps = {
   params: Promise<{
@@ -20,34 +11,14 @@ type HomeProps = {
 export const generateMetadata = async ({
   params,
 }: HomeProps): Promise<Metadata> => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-
-  return createMetadata(dictionary.web.home.meta);
+  const { locale: _locale } = await params;
+  return createMetadata({
+    title: "Nebuloz — AI-native SAFe Platform",
+    description:
+      "The platform that brings Flow, OKRs, and AI intelligence together for high-performing enterprise teams.",
+  });
 };
 
-const Home = async ({ params }: HomeProps) => {
-  const { locale } = await params;
-  const dictionary = await getDictionary(locale);
-  const betaFeature = await showBetaFeature();
-
-  return (
-    <>
-      {betaFeature && (
-        <div className="w-full bg-black py-2 text-center text-white">
-          Beta feature now available
-        </div>
-      )}
-      <Hero dictionary={dictionary} />
-      <ChaosOrder dictionary={dictionary} />
-      <Cases dictionary={dictionary} />
-      <Features dictionary={dictionary} />
-      <Stats dictionary={dictionary} />
-      <Testimonials dictionary={dictionary} />
-      <FAQ dictionary={dictionary} />
-      <CTA dictionary={dictionary} />
-    </>
-  );
-};
+const Home = async () => <NebulozClient />;
 
 export default Home;

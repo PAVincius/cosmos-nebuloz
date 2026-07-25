@@ -1,18 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ShieldCheckIcon } from "lucide-react";
-import { WizardStepHeader } from "../../../../components/wizard-ui";
+import { useEffect, useState } from "react";
 import type { DryRunResult, MappingRule } from "@/lib/migration/types";
+import { WizardStepHeader } from "../../../../components/wizard-ui";
 
-interface Props {
+type Props = {
   connectionId: string;
   source: string;
   mappingData: MappingRule[];
   onResult: (result: DryRunResult) => void;
-}
+};
 
-export function StepDryRun({ connectionId, source, mappingData, onResult }: Props) {
+export function StepDryRun({
+  connectionId,
+  source,
+  mappingData,
+  onResult,
+}: Props) {
   const [result, setResult] = useState<DryRunResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,21 +52,23 @@ export function StepDryRun({ connectionId, source, mappingData, onResult }: Prop
       }
     }
     void run();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [connectionId, mappingData, onResult, source]);
 
   return (
     <div className="flex flex-col gap-6">
       <WizardStepHeader
+        description="Veja o impacto antes de confirmar. Nada é criado nesta etapa."
         icon={<ShieldCheckIcon className="h-5 w-5" />}
         title="Simulação de importação"
-        description="Veja o impacto antes de confirmar. Nada é criado nesta etapa."
       />
       {loading ? (
-        <p className="text-sm text-muted-foreground">Simulando...</p>
+        <p className="text-muted-foreground text-sm">Simulando...</p>
       ) : !loading && error ? (
-        <p className="text-sm text-destructive">{error}</p>
+        <p className="text-destructive text-sm">{error}</p>
       ) : (
         result && (
           <div className="flex flex-col gap-4">
@@ -73,22 +80,22 @@ export function StepDryRun({ connectionId, source, mappingData, onResult }: Prop
                   ["Teams", result.counts.teams],
                 ] as [string, number][]
               ).map(([label, count]) => (
-                <div key={label} className="rounded-lg border p-3 text-center">
-                  <p className="text-2xl font-bold">{count}</p>
-                  <p className="text-xs text-muted-foreground">{label}</p>
+                <div className="rounded-lg border p-3 text-center" key={label}>
+                  <p className="font-bold text-2xl">{count}</p>
+                  <p className="text-muted-foreground text-xs">{label}</p>
                 </div>
               ))}
             </div>
             {result.conflicts.length > 0 ? (
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium text-amber-600">
+                <p className="font-medium text-amber-600 text-sm">
                   ⚠️ {result.conflicts.length} conflito(s)
                 </p>
-                <div className="max-h-40 overflow-y-auto flex flex-col gap-1">
+                <div className="flex max-h-40 flex-col gap-1 overflow-y-auto">
                   {result.conflicts.map((c, i) => (
                     <div
+                      className="flex gap-2 text-muted-foreground text-xs"
                       key={i}
-                      className="text-xs text-muted-foreground flex gap-2"
                     >
                       <span className="truncate">{c.item}</span>
                       <span className="shrink-0 text-amber-600">
@@ -99,7 +106,7 @@ export function StepDryRun({ connectionId, source, mappingData, onResult }: Prop
                 </div>
               </div>
             ) : (
-              <p className="text-sm text-green-600">
+              <p className="text-green-600 text-sm">
                 ✅ Nenhum conflito detectado. Pronto para importar.
               </p>
             )}

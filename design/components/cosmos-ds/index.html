@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Foundations · COSMOS Design System</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+.p-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+.p-card{padding:22px;border-radius:var(--r-lg);border:1px solid var(--hairline);background:var(--surface);box-shadow:var(--card-shadow);}
+.p-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent-text);margin-bottom:10px;}
+.p-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:6px;}
+.p-desc{font-size:13px;color:var(--ink-muted);line-height:1.55;text-wrap:pretty;}
+.p-desc b{color:var(--ink);font-weight:700;}
+
+.sw-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(124px,1fr));gap:8px;}
+.sw{border-radius:var(--r-md);border:1px solid var(--hairline);overflow:hidden;}
+.sw-color{height:44px;}
+.sw-info{padding:8px 10px;background:var(--surface);}
+.sw-name{font-size:11px;font-weight:700;display:block;}
+.sw-var{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-faint);display:block;margin-top:2px;}
+
+.tone-row{display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--hairline);}
+.tone-row:last-child{border-bottom:none;}
+.tone-label{display:flex;align-items:center;gap:10px;}
+.tone-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tone-name{font-size:13px;font-weight:600;}
+.tone-sub{font-size:10.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;}
+.tone-chips{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.tone-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:var(--r-pill);font-size:11.5px;font-weight:700;border:1px solid transparent;}
+
+.art-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.art-card{padding:18px;border-radius:var(--r-lg);border:1px solid var(--hairline);background:var(--surface);}
+.art-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--r-pill);font-size:11.5px;font-weight:700;margin-bottom:10px;}
+.art-dot{width:7px;height:7px;border-radius:50%;}
+.art-name{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:2px;}
+.art-team{font-size:12px;color:var(--ink-muted);margin-bottom:8px;}
+.art-token{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);line-height:1.6;}
+
+.type-table{width:100%;border-collapse:collapse;}
+.type-table th{text-align:left;padding:10px 14px;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;border-bottom:1px solid var(--hairline);}
+.type-table td{padding:14px;border-bottom:1px solid var(--hairline);vertical-align:middle;}
+.type-table tr:last-child td{border-bottom:none;}
+.t-token{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);display:block;}
+.t-spec{font-size:10.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;display:block;margin-top:2px;}
+
+.sp-rows{display:flex;flex-direction:column;}
+.sp-row{display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--hairline);}
+.sp-row:last-child{border-bottom:none;}
+.sp-bar{background:var(--accent);border-radius:3px;height:13px;flex-shrink:0;}
+.sp-token{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);min-width:90px;}
+.sp-val{font-size:12px;color:var(--ink-muted);min-width:36px;}
+.sp-desc{font-size:12px;color:var(--ink-faint);}
+
+.r-rows{display:flex;flex-direction:column;}
+.r-row{display:flex;align-items:center;gap:14px;padding:9px 0;border-bottom:1px solid var(--hairline);}
+.r-row:last-child{border-bottom:none;}
+.r-box{width:52px;height:30px;background:var(--accent-soft);border:1.5px solid var(--accent);flex-shrink:0;}
+.r-token{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);min-width:90px;}
+.r-val{font-size:12px;color:var(--ink-muted);min-width:36px;}
+.r-desc{font-size:12px;color:var(--ink-faint);}
+
+.mo-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.mo-card{padding:18px;border-radius:var(--r-lg);border:1px solid var(--hairline);background:var(--surface);}
+.mo-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;margin-bottom:3px;}
+.mo-spec{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);margin-bottom:14px;}
+.mo-demo{height:36px;display:flex;align-items:center;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo"><div class="logo-mark">C</div><span class="logo-name">COSMOS</span></div>
+  <span class="tsep"></span>
+  <span class="tpage">Design System · <b>Foundations</b></span>
+  <div class="tright">
+    <button class="tbtn" onclick="setTheme('light')" id="btn-light">Light</button>
+    <button class="tbtn on" onclick="setTheme('dark')" id="btn-dark">Dark</button>
+    <button class="tbtn" onclick="setTheme('marketing')" id="btn-mkt">Marketing</button>
+    <span class="tsep"></span>
+    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">v1.0</span>
+  </div>
+</header>
+<nav class="sidebar">
+  <div class="ng">
+    <div class="ng-label">Foundations</div>
+    <a class="nl active" href="index.html">Visão Geral</a>
+    <a class="nl" href="#colors">Cores</a>
+    <a class="nl" href="#arts">ARTs</a>
+    <a class="nl" href="#type">Tipografia</a>
+    <a class="nl" href="#spacing">Espaçamento</a>
+    <a class="nl" href="#motion">Motion</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Componentes</div>
+    <a class="nl" href="components.html">Biblioteca</a>
+  </div>
+  <div class="ng">
+    <div class="ng-label">Padrões</div>
+    <a class="nl" href="patterns.html">Telas &amp; Padrões</a>
+  </div>
+</nav>
+<main>
+  <div class="ph">
+    <div class="ph-eyebrow">COSMOS · SAFe Platform</div>
+    <h1 class="ph-title">Design System — Foundations</h1>
+    <p class="ph-sub">Sistema visual para a plataforma Cosmos SAFe. Dois temas operacionais (light / dark tecno-UI) + canvas marketing Linear. Troque o tema no topo para ver os tokens em ação.</p>
+  </div>
+
+  <!-- PHILOSOPHY -->
+  <div class="blk">
+    <div class="blk-eyebrow">Princípios</div>
+    <h2 class="blk-title">Filosofia</h2>
+    <div class="p-grid">
+      <div class="p-card"><div class="p-num">01</div><div class="p-title">Densidade enterprise</div><p class="p-desc">Tabelas, kanbans e formulários legíveis sem <b>marketing fluff</b>. Cada pixel de espaço vale dados reais.</p></div>
+      <div class="p-card"><div class="p-num">02</div><div class="p-title">Um accent, muitos estados</div><p class="p-desc"><b>--accent</b> (lavanda) só para CTA primário, nav ativo e foco. Estados usam 6 tones semânticos — nunca inventados.</p></div>
+      <div class="p-card"><div class="p-num">03</div><div class="p-title">Superfícies em camadas</div><p class="p-desc"><b>canvas → surface → surface-2 → surface-3.</b> Hierarquia via elevação, nunca sombra decorativa.</p></div>
+    </div>
+    <div class="panel">
+      <div class="phead">// regras globais</div>
+      <div class="pbody" style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--green-text);margin-bottom:10px;">✓ Fazer</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;">
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--green);font-weight:700;">+</span>Mono em todo número, %, ms, US$, ID, timestamp</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--green);font-weight:700;">+</span>flex/grid + gap para layout — nunca inline-flow</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--green);font-weight:700;">+</span>Cores via --var; nunca hex hardcoded no componente</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--green);font-weight:700;">+</span>Estado = cor + texto (badge sempre carrega palavra)</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--green);font-weight:700;">+</span>Ícones 16–17px, stroke 1.9–2.1, Lucide</li>
+          </ul>
+        </div>
+        <div>
+          <div style="font-size:11.5px;font-weight:700;color:var(--red-text);margin-bottom:10px;">✕ Não fazer</div>
+          <ul style="list-style:none;display:flex;flex-direction:column;gap:7px;">
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">×</span>Gradiente no canvas, emoji, barra colorida lateral</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">×</span>Inventar cor fora da escala (use oklch se necessário)</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">×</span>Canvas marketing #010102 em páginas operacionais</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">×</span>Accordion para config sempre visível (usar seção fixa)</li>
+            <li style="font-size:13px;color:var(--ink-muted);padding-left:14px;position:relative;"><span style="position:absolute;left:0;color:var(--red);font-weight:700;">×</span>Mais de um accent ou segundo tom cromático</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- COLORS -->
+  <div class="blk" id="colors">
+    <div class="blk-eyebrow">Cores</div>
+    <h2 class="blk-title">Canvas &amp; Superfícies</h2>
+    <p class="blk-sub">Escada de 5 superfícies. Hierarquia via lift, não sombra. Os swatches abaixo refletem o tema atual.</p>
+    <div class="sw-grid" style="margin-bottom:24px;">
+      <div class="sw"><div class="sw-color" style="background:var(--canvas);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Canvas</span><span class="sw-var">--canvas</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--surface);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Surface</span><span class="sw-var">--surface</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--surface-2);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Surface 2</span><span class="sw-var">--surface-2</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--surface-3);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Surface 3</span><span class="sw-var">--surface-3</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--sidebar);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Sidebar</span><span class="sw-var">--sidebar</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--hairline);border-bottom:1px solid var(--hairline);"></div><div class="sw-info"><span class="sw-name">Hairline</span><span class="sw-var">--hairline</span></div></div>
+    </div>
+    <h3 style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:12px;">Hierarquia de Texto</h3>
+    <div class="sw-grid" style="margin-bottom:24px;">
+      <div class="sw"><div class="sw-color" style="background:var(--ink);"></div><div class="sw-info"><span class="sw-name" style="color:var(--ink-subtle);">Ink</span><span class="sw-var">--ink · títulos</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--ink-muted);"></div><div class="sw-info"><span class="sw-name" style="color:var(--ink-subtle);">Muted</span><span class="sw-var">--ink-muted · corpo</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--ink-subtle);"></div><div class="sw-info"><span class="sw-name" style="color:var(--ink-subtle);">Subtle</span><span class="sw-var">--ink-subtle · hints</span></div></div>
+      <div class="sw"><div class="sw-color" style="background:var(--ink-faint);"></div><div class="sw-info"><span class="sw-name" style="color:var(--ink-subtle);">Faint</span><span class="sw-var">--ink-faint · meta</span></div></div>
+    </div>
+    <h3 style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;margin-bottom:12px;">Accent + 5 States</h3>
+    <div class="panel">
+      <div class="pbody" style="padding:0;">
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--accent);box-shadow:0 0 8px rgba(var(--accent-rgb),.5);"></div><div><div class="tone-name">Accent</div><div class="tone-sub">--accent / --accent-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--accent);color:var(--accent-fg);">solid</span><span class="tone-chip" style="background:var(--accent-soft);color:var(--accent-text);border-color:rgba(var(--accent-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--accent-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">CTA · nav ativo · foco</span></div></div>
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--green);"></div><div><div class="tone-name">Green</div><div class="tone-sub">--green / --green-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--green);color:#fff;">solid</span><span class="tone-chip" style="background:var(--green-soft);color:var(--green-text);border-color:rgba(var(--green-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--green-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">saudável · sucesso · ART Growth</span></div></div>
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--red);"></div><div><div class="tone-name">Red</div><div class="tone-sub">--red / --red-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--red);color:#fff;">solid</span><span class="tone-chip" style="background:var(--red-soft);color:var(--red-text);border-color:rgba(var(--red-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--red-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">crítico · bloqueado · alerta</span></div></div>
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--amber);"></div><div><div class="tone-name">Amber</div><div class="tone-sub">--amber / --amber-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--amber);color:#fff;">solid</span><span class="tone-chip" style="background:var(--amber-soft);color:var(--amber-text);border-color:rgba(var(--amber-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--amber-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">atenção · risco · ART Data&amp;AI</span></div></div>
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--blue);"></div><div><div class="tone-name">Blue</div><div class="tone-sub">--blue / --blue-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--blue);color:#fff;">solid</span><span class="tone-chip" style="background:var(--blue-soft);color:var(--blue-text);border-color:rgba(var(--blue-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--blue-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">info · neutro · ART Payments</span></div></div>
+        <div class="tone-row"><div class="tone-label"><div class="tone-dot" style="background:var(--purple);"></div><div><div class="tone-name">Purple</div><div class="tone-sub">--purple / --purple-rgb</div></div></div><div class="tone-chips"><span class="tone-chip" style="background:var(--purple);color:#fff;">solid</span><span class="tone-chip" style="background:var(--purple-soft);color:var(--purple-text);border-color:rgba(var(--purple-rgb),.2);">soft</span><span style="font-size:13px;font-weight:700;color:var(--purple-text);">text</span><span style="font-size:11.5px;color:var(--ink-faint);font-family:'JetBrains Mono',monospace;">ênfase · IA · ART Platform</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- ARTs -->
+  <div class="blk" id="arts">
+    <div class="blk-eyebrow">Identidade</div>
+    <h2 class="blk-title">ARTs — Trem de Releases</h2>
+    <p class="blk-sub">Cada ART tem um tone fixo. Componentes dinâmicos usam <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-text);">bg-[var(--${tone}-soft)]</code> — um componente renderiza qualquer ART.</p>
+    <div class="art-grid">
+      <div class="art-card"><div class="art-badge" style="background:var(--blue-soft);color:var(--blue-text);border:1px solid rgba(var(--blue-rgb),.2);"><div class="art-dot" style="background:var(--blue);"></div>Blue</div><div class="art-name">Payments</div><div class="art-team">ART de Pagamentos</div><div class="art-token">tone="blue"<br/>--blue / --blue-rgb<br/>--blue-soft / --blue-text</div></div>
+      <div class="art-card"><div class="art-badge" style="background:var(--purple-soft);color:var(--purple-text);border:1px solid rgba(var(--purple-rgb),.2);"><div class="art-dot" style="background:var(--purple);"></div>Purple</div><div class="art-name">Platform</div><div class="art-team">ART de Plataforma</div><div class="art-token">tone="purple"<br/>--purple / --purple-rgb<br/>--purple-soft / --purple-text</div></div>
+      <div class="art-card"><div class="art-badge" style="background:var(--green-soft);color:var(--green-text);border:1px solid rgba(var(--green-rgb),.2);"><div class="art-dot" style="background:var(--green);"></div>Green</div><div class="art-name">Growth</div><div class="art-team">ART de Crescimento</div><div class="art-token">tone="green"<br/>--green / --green-rgb<br/>--green-soft / --green-text</div></div>
+      <div class="art-card"><div class="art-badge" style="background:var(--amber-soft);color:var(--amber-text);border:1px solid rgba(var(--amber-rgb),.2);"><div class="art-dot" style="background:var(--amber);"></div>Amber</div><div class="art-name">Data &amp; AI</div><div class="art-team">ART de Dados e IA</div><div class="art-token">tone="amber"<br/>--amber / --amber-rgb<br/>--amber-soft / --amber-text</div></div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- TYPOGRAPHY -->
+  <div class="blk" id="type">
+    <div class="blk-eyebrow">Tipografia</div>
+    <h2 class="blk-title">Escala Tipográfica</h2>
+    <p class="blk-sub">3 famílias: <strong>Space Grotesk</strong> (headings), <strong>Manrope</strong> (body/UI), <strong>JetBrains Mono</strong> (números, IDs, código).</p>
+    <div class="panel">
+      <table class="type-table">
+        <thead><tr><th>Token / Papel</th><th>Spec</th><th>Exemplo</th></tr></thead>
+        <tbody>
+          <tr><td><span class="t-token">display · título de página</span><span class="t-spec">Space Grotesk · 26px · 700 · -0.025em</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-display text-2xl font-bold tracking-tight</code></td><td><span style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;letter-spacing:-.025em;">Portfolio SAFe</span></td></tr>
+          <tr><td><span class="t-token">section-title · card header</span><span class="t-spec">Space Grotesk · 14.5px · 600 · -0.01em</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-display text-sm font-semibold</code></td><td><span style="font-family:'Space Grotesk',sans-serif;font-size:14.5px;font-weight:600;letter-spacing:-.01em;">Throughput por Sprint</span></td></tr>
+          <tr><td><span class="t-token">eyebrow · label de seção</span><span class="t-spec">JetBrains Mono · 10px · 700 · +0.12em · uppercase</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-mono text-[10px] font-bold tracking-[.12em]</code></td><td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);">PRIORIZAÇÃO WSJF</span></td></tr>
+          <tr><td><span class="t-token">body · UI default</span><span class="t-spec">Manrope · 13.5px · 500–600</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-sans text-sm font-medium</code></td><td><span style="font-size:13.5px;font-weight:500;">Gerenciamento de épicos e features por ART</span></td></tr>
+          <tr><td><span class="t-token">caption · meta · hint</span><span class="t-spec">Manrope · 11.5px · 500 · ink-muted</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">text-xs text-muted-foreground</code></td><td><span style="font-size:11.5px;font-weight:500;color:var(--ink-muted);">Atualizado · 5 min atrás · PI 2026-Q2</span></td></tr>
+          <tr><td><span class="t-token">kpi-value · número destaque</span><span class="t-spec">JetBrains Mono · 37px · 700 · -0.02em</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-mono text-[37px] font-bold leading-none</code></td><td><span style="font-family:'JetBrains Mono',monospace;font-size:37px;font-weight:700;letter-spacing:-.02em;color:var(--green);line-height:1;">162<span style="font-size:22px;opacity:.75;margin-left:4px;">SP</span></span></td></tr>
+          <tr><td><span class="t-token">mono · IDs · timestamps</span><span class="t-spec">JetBrains Mono · 12.5px · 400–600</span></td><td><code style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-faint);">font-mono text-xs</code></td><td><span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;">EP-0042 · US$ 2,840.00 · 2026-06-05</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- SPACING + RADII -->
+  <div class="blk" id="spacing">
+    <div class="blk-eyebrow">Espaçamento &amp; Formas</div>
+    <h2 class="blk-title">Escala de Espaço &amp; Raios</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+      <div>
+        <p style="font-size:13px;color:var(--ink-muted);margin-bottom:14px;">Base 4px. Densidade via <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">--pad</code> / <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">--gap</code>.</p>
+        <div class="panel"><div class="pbody" style="padding:14px 16px;">
+          <div class="sp-rows">
+            <div class="sp-row"><div class="sp-bar" style="width:4px;"></div><span class="sp-token">4px</span><span class="sp-val">4px</span><span class="sp-desc">gap ícone inline</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:8px;"></div><span class="sp-token">8px · xs</span><span class="sp-val">8px</span><span class="sp-desc">gap label+chip</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:12px;"></div><span class="sp-token">12px · sm</span><span class="sp-val">12px</span><span class="sp-desc">padding compact</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:16px;"></div><span class="sp-token">--gap · 16px</span><span class="sp-val">16px</span><span class="sp-desc">gap entre cards</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:20px;"></div><span class="sp-token">--pad · 20px</span><span class="sp-val">20px</span><span class="sp-desc">padding card regular</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:24px;"></div><span class="sp-token">24px · xl</span><span class="sp-val">24px</span><span class="sp-desc">padding comfy</span></div>
+            <div class="sp-row"><div class="sp-bar" style="width:44px;"></div><span class="sp-token">section</span><span class="sp-val">40–80px</span><span class="sp-desc">separação de seções</span></div>
+          </div>
+        </div></div>
+      </div>
+      <div>
+        <p style="font-size:13px;color:var(--ink-muted);margin-bottom:14px;">Chips <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">sm</code>, botões <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">md</code>, cards <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">lg</code>, KPI <code style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent-text);">xl</code>.</p>
+        <div class="panel"><div class="pbody" style="padding:14px 16px;">
+          <div class="r-rows">
+            <div class="r-row"><div class="r-box" style="border-radius:6px;"></div><span class="r-token">--r-xs · 6px</span><span class="r-val">6px</span><span class="r-desc">badges inline</span></div>
+            <div class="r-row"><div class="r-box" style="border-radius:8px;"></div><span class="r-token">--r-sm · 8px</span><span class="r-val">8px</span><span class="r-desc">ibtn · nav · dropdown</span></div>
+            <div class="r-row"><div class="r-box" style="border-radius:10px;"></div><span class="r-token">--r-md · 10px</span><span class="r-val">10px</span><span class="r-desc">botões · inputs · chips</span></div>
+            <div class="r-row"><div class="r-box" style="border-radius:14px;"></div><span class="r-token">--r-lg · 14px</span><span class="r-val">14px</span><span class="r-desc">cards · panels · modal</span></div>
+            <div class="r-row"><div class="r-box" style="border-radius:18px;"></div><span class="r-token">--r-xl · 18px</span><span class="r-val">18px</span><span class="r-desc">KPI cards · hero</span></div>
+            <div class="r-row"><div class="r-box" style="border-radius:9999px;"></div><span class="r-token">--r-pill</span><span class="r-val">9999px</span><span class="r-desc">badges · pills · switch</span></div>
+          </div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divhr"></div>
+
+  <!-- MOTION -->
+  <div class="blk" id="motion">
+    <div class="blk-eyebrow">Motion</div>
+    <h2 class="blk-title">Animações &amp; Transições</h2>
+    <p class="blk-sub">Curva-casa: <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-text);">cubic-bezier(.2,.7,.3,1)</code> para transforms. Fade usa <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-text);">ease</code>. Sempre gate em <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent-text);">prefers-reduced-motion</code>.</p>
+    <div class="mo-grid">
+      <div class="mo-card">
+        <div class="mo-name">Screen Enter</div>
+        <div class="mo-spec">translateY(6px) + opacity · 450ms ease · @keyframes fadeIn</div>
+        <div class="mo-demo">
+          <div style="width:70px;height:28px;border-radius:var(--r-md);background:var(--accent-soft);border:1px solid rgba(var(--accent-rgb),.3);animation:fadeIn .45s ease;" onclick="this.style.animation='none';void this.offsetWidth;this.style.animation='fadeIn .45s ease';"></div>
+        </div>
+      </div>
+      <div class="mo-card">
+        <div class="mo-name">Card Lift (hover)</div>
+        <div class="mo-spec">translateY(-3px) · 300ms ease-spring · shadow</div>
+        <div class="mo-demo">
+          <div style="padding:7px 14px;border-radius:var(--r-md);background:var(--surface);border:1px solid var(--hairline);font-size:12.5px;font-weight:600;cursor:pointer;transition:transform .3s cubic-bezier(.2,.7,.3,1),box-shadow .3s,border-color .3s;" onmouseover="this.style.transform='translateY(-3px)';this.style.borderColor='var(--hairline-strong)';this.style.boxShadow='0 8px 20px -8px rgba(0,0,0,.3)'" onmouseout="this.style.transform='';this.style.borderColor='';this.style.boxShadow=''">passe o mouse</div>
+        </div>
+      </div>
+      <div class="mo-card">
+        <div class="mo-name">ECG Sweep (KPI dark)</div>
+        <div class="mo-spec">stroke-dasharray:360 · 3s linear infinite · @keyframes ecgsweep</div>
+        <div class="mo-demo">
+          <svg width="100%" height="36" viewBox="0 0 200 36" aria-hidden="true">
+            <defs><linearGradient id="g1" x1="0" y1="0" x2="200" y2="0"><stop offset="0" stop-color="var(--accent)" stop-opacity="0"/><stop offset=".5" stop-color="var(--accent)" stop-opacity=".9"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+            <path fill="none" stroke="url(#g1)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="200 200" style="animation:ecgsweep 2s linear infinite;" d="M0 20 H40 l5-12 l6 22 l5-16 l4 8 H120 l5-10 l5 16 l5-10 H200"/>
+          </svg>
+        </div>
+      </div>
+      <div class="mo-card">
+        <div class="mo-name">AI Shimmer</div>
+        <div class="mo-spec">220% gradient · 2.6s linear infinite · @keyframes shimmer</div>
+        <div class="mo-demo" style="flex-direction:column;gap:6px;align-items:stretch;width:100%;">
+          <div style="height:10px;border-radius:6px;background:linear-gradient(90deg,var(--surface-2) 20%,var(--accent-soft) 50%,var(--surface-2) 80%);background-size:220% 100%;animation:shimmer 2.6s linear infinite;"></div>
+          <div style="height:8px;width:58%;border-radius:6px;background:linear-gradient(90deg,var(--surface-2) 20%,var(--accent-soft) 50%,var(--surface-2) 80%);background-size:220% 100%;animation:shimmer 2.6s linear infinite 0.3s;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+<script>
+function setTheme(t){
+  document.documentElement.dataset.theme=t;
+  ['light','dark','mkt'].forEach(k=>document.getElementById('btn-'+k)?.classList.remove('on'));
+  document.getElementById('btn-'+({'light':'light','dark':'dark','marketing':'mkt'}[t]))?.classList.add('on');
+  localStorage.setItem('cosmos-theme',t);
+}
+const s=localStorage.getItem('cosmos-theme'); if(s)setTheme(s);
+</script>
+</body>
+</html>

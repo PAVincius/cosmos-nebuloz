@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { SidebarMenuButton } from "@repo/design-system/components/ui/sidebar";
-import { ChevronsUpDownIcon, PlusCircleIcon, BuildingIcon } from "lucide-react";
+import { BuildingIcon, ChevronsUpDownIcon, PlusCircleIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { FullScreenLoader } from "./full-screen-loader";
@@ -38,12 +38,16 @@ export const WorkspaceSwitcher = ({
 }: WorkspaceSwitcherProps) => {
   const router = useRouter();
   const [tenants, setTenants] = useState<Tenant[]>(initialTenants);
-  const [activeTenantId, setActiveTenantId] = useState<string | null>(initialActiveTenantId);
+  const [activeTenantId, setActiveTenantId] = useState<string | null>(
+    initialActiveTenantId
+  );
   const [switching, setSwitching] = useState(false);
 
   // Refresh if server didn't provide initial data
   useEffect(() => {
-    if (initialTenants.length > 0) return;
+    if (initialTenants.length > 0) {
+      return;
+    }
     fetch("/api/tenants")
       .then((r) => r.json())
       .then((data: TenantsResponse) => {
@@ -53,11 +57,14 @@ export const WorkspaceSwitcher = ({
       .catch(() => null);
   }, [initialTenants.length]);
 
-  const activeTenant = tenants.find((t) => t.id === activeTenantId) ?? tenants[0];
+  const activeTenant =
+    tenants.find((t) => t.id === activeTenantId) ?? tenants[0];
 
   const switchTenant = useCallback(
     async (tenantId: string) => {
-      if (tenantId === activeTenantId) return;
+      if (tenantId === activeTenantId) {
+        return;
+      }
       setSwitching(true);
       try {
         await fetch("/api/auth/switch-tenant", {
@@ -80,17 +87,18 @@ export const WorkspaceSwitcher = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <SidebarMenuButton
-            size="lg"
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            data-testid="workspace-switcher"
+            size="lg"
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-primary text-primary-foreground text-xs font-semibold shrink-0">
+            <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-md bg-primary/90 font-semibold text-white text-xs">
               {activeTenant?.name?.slice(0, 2).toUpperCase() ?? "??"}
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">
                 {activeTenant?.name ?? "Select workspace"}
               </span>
-              <span className="truncate text-xs text-muted-foreground capitalize">
+              <span className="truncate text-muted-foreground text-xs capitalize">
                 {activeTenant?.role?.toLowerCase() ?? ""}
               </span>
             </div>
@@ -98,21 +106,21 @@ export const WorkspaceSwitcher = ({
           </SidebarMenuButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           align="start"
+          className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
           side="bottom"
           sideOffset={4}
         >
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
+          <DropdownMenuLabel className="text-muted-foreground text-xs">
             Workspaces
           </DropdownMenuLabel>
           {tenants.map((tenant) => (
             <DropdownMenuItem
+              className="gap-2 p-2"
               key={tenant.id}
               onSelect={() => switchTenant(tenant.id)}
-              className="gap-2 p-2"
             >
-              <div className="flex size-6 items-center justify-center rounded-sm bg-primary/10 text-primary text-xs font-semibold shrink-0">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-sm bg-primary/10 font-semibold text-[oklch(0.72_0.16_264)] text-xs">
                 {tenant.name.slice(0, 2).toUpperCase()}
               </div>
               <span className="flex-1 truncate">{tenant.name}</span>
@@ -122,7 +130,10 @@ export const WorkspaceSwitcher = ({
             </DropdownMenuItem>
           ))}
           {tenants.length > 0 && <DropdownMenuSeparator />}
-          <DropdownMenuItem className="gap-2 p-2 text-muted-foreground" disabled>
+          <DropdownMenuItem
+            className="gap-2 p-2 text-muted-foreground"
+            disabled
+          >
             <PlusCircleIcon className="size-4" />
             <span className="text-sm">New workspace</span>
           </DropdownMenuItem>

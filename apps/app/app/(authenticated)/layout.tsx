@@ -12,11 +12,24 @@ import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { isOnboardingComplete } from "@/app/actions/onboarding/index";
+import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
 import { env } from "@/env";
+import { CommandPalette } from "./components/command-palette";
 import { CopilotProvider } from "./components/copilot/copilot-provider";
+import type { CosmosPersona } from "./components/cosmos-topbar";
+import { CosmosTopbarShell } from "./components/cosmos-topbar-shell";
+import { KeyboardProvider } from "./components/keyboard-provider";
 import { NotificationsProvider } from "./components/notifications-provider";
 import { GlobalSidebar } from "./components/sidebar";
 import { getTeams } from "./teams/actions";
+
+const TOPBAR_PERSONAS: CosmosPersona[] = [
+  { key: "RTE", full: "Release Train Engineer" },
+  { key: "LPM", full: "Lean Portfolio Manager" },
+  { key: "PO", full: "Product Owner" },
+  { key: "SM", full: "Scrum Master" },
+  { key: "DEV", full: "Team Member" },
+];
 
 type AppLayoutProperties = {
   readonly children: ReactNode;
@@ -64,6 +77,11 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
     (session?.session as unknown as { activeTenantId?: string })
       ?.activeTenantId ?? null;
 
+  const activeMembership =
+    memberships.find((m) => m.tenant.id === initialActiveTenantId) ??
+    memberships[0];
+  const memberRole = activeMembership?.role ?? "MEMBER";
+
   // Auto-redirect new tenants to onboarding if company_setup is not complete
   const pathname = (await headers()).get("x-pathname") ?? "";
   const skipOnboarding = [
@@ -97,11 +115,12 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
 
   return (
     <NotificationsProvider userId={user.id}>
-      <SidebarProvider defaultOpen={defaultSidebarOpen}>
-        <CopilotProvider>
+      <SidebarProvider className="cosmos-shell" defaultOpen={defaultSidebarOpen}>
+        <CopilotProvider role={memberRole}>
           <GlobalSidebar
             initialActiveTenantId={initialActiveTenantId}
             initialTenants={initialTenants}
+            role={memberRole}
             teams={teams}
             user={{
               name: user.name ?? user.email,
@@ -109,6 +128,15 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
               avatar: user.image ?? "",
             }}
           >
+            <CommandPalette />
+            <KeyboardProvider />
+            <CosmosTopbarShell
+              initialPersona={detectPrimaryRole([memberRole])}
+              personas={TOPBAR_PERSONAS}
+              tenantName={activeMembership?.tenant.name ?? "Cosmos"}
+              userEmail={user.email}
+              userName={user.name ?? user.email}
+            />
             {!!betaFeature && (
               <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
                 Beta feature now available

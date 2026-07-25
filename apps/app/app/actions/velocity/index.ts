@@ -4,14 +4,13 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import type {
-  SprintWindow,
-  MemberVelocityStats,
-  TeamVelocityStats,
   BurndownEntry,
   BurndownPoint,
+  MemberVelocityStats,
+  SprintWindow,
+  TeamVelocityStats,
 } from "./schema";
-
-export type { SprintWindow, MemberVelocityStats, TeamVelocityStats, BurndownEntry, BurndownPoint };
+import type { TeamVelocitySummary } from "./types";
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -107,7 +106,11 @@ export async function getMemberVelocityStats(
 
   // Build sprint windows and assign features to each window
   const now = new Date();
-  const windows = buildSprintWindows(now, TOTAL_SPRINT_WINDOWS, SPRINT_LENGTH_DAYS);
+  const windows = buildSprintWindows(
+    now,
+    TOTAL_SPRINT_WINDOWS,
+    SPRINT_LENGTH_DAYS
+  );
 
   for (const feature of completedFeatures) {
     const completedAt = feature.completedAt as Date;
@@ -279,30 +282,77 @@ export async function getSprintBurndownData(
   const ctx = await requireTenantSession(await headers());
 
   const now = new Date();
-  const sprintStart = addDays(now, -sprintLengthDays);
 
-  // If teamId provided, resolve team member ids for filtering
-  let memberUserIds: string[] | null = null;
-
+  // Prefer active sprint stories when teamId is provided
   if (teamId) {
-    const team = await database.team.findFirst({
-      where: { id: teamId, tenantId: ctx.tenantId },
+    const activeSprint = await database.sprint.findFirst({
+      where: { teamId, tenantId: ctx.tenantId, status: "ACTIVE" },
+      include: {
+        stories: {
+          select: {
+            storyPoints: true,
+            status: true,
+            completedAt: true,
+            updatedAt: true,
+          },
+        },
+      },
     });
 
-    if (team && Array.isArray(team.members)) {
-      const rawMembers = team.members as TeamMemberEntry[];
-      memberUserIds = rawMembers.map((m) => m.id).filter(Boolean);
+    if (activeSprint && activeSprint.stories.length > 0) {
+      const sprintStart = activeSprint.startDate;
+      const totalDays = Math.max(
+        1,
+        Math.round(
+          (activeSprint.endDate.getTime() - sprintStart.getTime()) / 86_400_000
+        )
+      );
+      const totalSP = activeSprint.stories.reduce(
+        (s, r) => s + r.storyPoints,
+        0
+      );
+      const points: BurndownPoint[] = [];
+
+      for (let day = 1; day <= totalDays; day++) {
+        const dayEnd = addDays(startOfDay(addDays(sprintStart, day - 1)), 1);
+        const isFuture = dayEnd > now;
+        let completed = 0;
+        let inProgress = 0;
+
+        for (const story of activeSprint.stories) {
+          const resolvedAt =
+            story.completedAt ??
+            (story.status === "DONE" ? story.updatedAt : null);
+          if (resolvedAt !== null && resolvedAt < dayEnd) {
+            completed += story.storyPoints;
+          } else if (
+            story.status === "IN_PROGRESS" ||
+            story.status === "REVIEW"
+          ) {
+            inProgress += story.storyPoints;
+          }
+        }
+
+        const ideal = Math.round(totalSP * (1 - day / totalDays));
+        points.push({
+          day,
+          label: `Dia ${day}`,
+          ideal,
+          actual: isFuture ? null : Math.max(0, totalSP - completed),
+          completed,
+          inProgress,
+        });
+      }
+
+      return points;
     }
   }
 
-  // Build feature query — filter by team members if provided
+  // Fallback: feature-based burndown (no active sprint)
+  const sprintStart = addDays(now, -sprintLengthDays);
+
   const features = await database.feature.findMany({
-    where: {
-      tenantId: ctx.tenantId,
-      ...(memberUserIds !== null
-        ? { assigneeUserId: { in: memberUserIds } }
-        : {}),
-    },
+    where: { tenantId: ctx.tenantId },
     select: {
       id: true,
       storyPoints: true,
@@ -313,33 +363,26 @@ export async function getSprintBurndownData(
   });
 
   const totalSP = features.reduce((sum, f) => sum + f.storyPoints, 0);
-
-  // Build one burndown point per sprint day
   const points: BurndownPoint[] = [];
 
   for (let day = 1; day <= sprintLengthDays; day++) {
-    const dayStart = startOfDay(addDays(sprintStart, day - 1));
-    const dayEnd = addDays(dayStart, 1);
+    const dayEnd = addDays(startOfDay(addDays(sprintStart, day - 1)), 1);
     const isFuture = dayEnd > now;
-
     let completed = 0;
     let inProgress = 0;
 
     for (const feature of features) {
-      const resolvedCompletedAt =
+      const resolvedAt =
         feature.completedAt ??
         (feature.statusId === "DONE" ? feature.updatedAt : null);
-
-      if (resolvedCompletedAt !== null && resolvedCompletedAt < dayEnd) {
+      if (resolvedAt !== null && resolvedAt < dayEnd) {
         completed += feature.storyPoints;
       } else if (feature.statusId === "IMPLEMENTING") {
         inProgress += feature.storyPoints;
       }
     }
 
-    // ideal: linear decrease from totalSP (day 0) to 0 (day N)
     const ideal = Math.round(totalSP * (1 - day / sprintLengthDays));
-
     points.push({
       day,
       label: `Dia ${day}`,
@@ -357,18 +400,9 @@ export async function getSprintBurndownData(
 // Function 4: getVelocityOverview — ART/tenant-level summary
 // ---------------------------------------------------------------------------
 
-export type TeamVelocitySummary = {
-  teamId: string;
-  teamName: string;
-  artId: string | null;
-  artName: string | null;
-  avgSPPerSprint: number;
-  lastSprintSP: number;
-  trend: "up" | "down" | "neutral";
-  sprints: { label: string; sp: number }[];
-};
-
-export async function getVelocityOverview(artId?: string): Promise<TeamVelocitySummary[]> {
+export async function getVelocityOverview(
+  artId?: string
+): Promise<TeamVelocitySummary[]> {
   const ctx = await requireTenantSession(await headers());
 
   const teams = await database.team.findMany({
@@ -384,34 +418,45 @@ export async function getVelocityOverview(artId?: string): Promise<TeamVelocityS
   const numSprints = 6;
 
   const DONE_STATUSES = ["done", "DONE", "completed", "COMPLETED"];
-  const windowStart = new Date(now.getTime() - numSprints * SPRINT_LENGTH_DAYS * 86_400_000);
+  const windowStart = new Date(
+    now.getTime() - numSprints * SPRINT_LENGTH_DAYS * 86_400_000
+  );
 
   const allMemberIds = teams.flatMap((t) => {
     const raw = (t.members ?? []) as { id: string }[];
     return Array.isArray(raw) ? raw.map((m) => m.id).filter(Boolean) : [];
   });
 
-  const completedFeatures = allMemberIds.length > 0
-    ? await database.feature.findMany({
-        where: {
-          tenantId: ctx.tenantId,
-          assigneeUserId: { in: allMemberIds },
-          statusId: { in: DONE_STATUSES },
-          completedAt: { gte: windowStart, not: null },
-        },
-        select: { assigneeUserId: true, completedAt: true },
-      })
-    : [];
+  const completedFeatures =
+    allMemberIds.length > 0
+      ? await database.feature.findMany({
+          where: {
+            tenantId: ctx.tenantId,
+            assigneeUserId: { in: allMemberIds },
+            statusId: { in: DONE_STATUSES },
+            completedAt: { gte: windowStart, not: null },
+          },
+          select: { assigneeUserId: true, completedAt: true },
+        })
+      : [];
 
   const result: TeamVelocitySummary[] = teams.map((team) => {
     const rawMembers = (team.members ?? []) as { id: string }[];
-    const memberIds = new Set(Array.isArray(rawMembers) ? rawMembers.map((m) => m.id).filter(Boolean) : []);
+    const memberIds = new Set(
+      Array.isArray(rawMembers)
+        ? rawMembers.map((m) => m.id).filter(Boolean)
+        : []
+    );
 
-    const teamFeatures = completedFeatures.filter((f) => f.assigneeUserId && memberIds.has(f.assigneeUserId));
+    const teamFeatures = completedFeatures.filter(
+      (f) => f.assigneeUserId && memberIds.has(f.assigneeUserId)
+    );
 
     const sprints: { label: string; sp: number }[] = [];
     for (let i = numSprints; i >= 1; i--) {
-      const end   = new Date(now.getTime() - (i - 1) * SPRINT_LENGTH_DAYS * 86_400_000);
+      const end = new Date(
+        now.getTime() - (i - 1) * SPRINT_LENGTH_DAYS * 86_400_000
+      );
       const start = new Date(end.getTime() - SPRINT_LENGTH_DAYS * 86_400_000);
       const completed = teamFeatures.filter(
         (f) => f.completedAt && f.completedAt >= start && f.completedAt < end
@@ -419,26 +464,31 @@ export async function getVelocityOverview(artId?: string): Promise<TeamVelocityS
       sprints.push({ label: `S-${i}`, sp: completed });
     }
 
-      const nonZero = sprints.filter((s) => s.sp > 0);
-      const avgSPPerSprint = nonZero.length > 0
+    const nonZero = sprints.filter((s) => s.sp > 0);
+    const avgSPPerSprint =
+      nonZero.length > 0
         ? Math.round(nonZero.reduce((s, x) => s + x.sp, 0) / nonZero.length)
         : 0;
-      const lastSprintSP = sprints[sprints.length - 1]?.sp ?? 0;
-      const prevSprintSP = sprints[sprints.length - 2]?.sp ?? 0;
-      const trend: "up" | "down" | "neutral" =
-        lastSprintSP > prevSprintSP ? "up" : lastSprintSP < prevSprintSP ? "down" : "neutral";
+    const lastSprintSP = sprints.at(-1)?.sp ?? 0;
+    const prevSprintSP = sprints.at(-2)?.sp ?? 0;
+    const trend: "up" | "down" | "neutral" =
+      lastSprintSP > prevSprintSP
+        ? "up"
+        : lastSprintSP < prevSprintSP
+          ? "down"
+          : "neutral";
 
-      return {
-        teamId:       team.id,
-        teamName:     team.name,
-        artId:        team.artId,
-        artName:      team.art?.name ?? null,
-        avgSPPerSprint,
-        lastSprintSP,
-        trend,
-        sprints,
-      };
-    });
+    return {
+      teamId: team.id,
+      teamName: team.name,
+      artId: team.artId,
+      artName: team.art?.name ?? null,
+      avgSPPerSprint,
+      lastSprintSP,
+      trend,
+      sprints,
+    };
+  });
 
   return result.sort((a, b) => b.avgSPPerSprint - a.avgSPPerSprint);
 }

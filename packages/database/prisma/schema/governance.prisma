@@ -1,17 +1,25 @@
 // Wave 4 — Portfolio Governance (LPM)
 
 model GovernedEpic {
-  id                       String   @id @default(cuid())
+  id                       String    @id @default(cuid())
   tenantId                 String
-  epicId                   String   @unique
-  valueStreamId            String?  // artId of the ART/value stream
-  themeId                  String?  // strategicThemeId
-  investmentEstimate        Float?
-  governanceStatus         String   @default("draft") // draft/review/approved/rejected/on_hold/deferred
-  guardrailFlags           Json     @default("[]")    // string[]
+  epicId                   String    @unique
+  valueStreamId            String? // artId of the ART/value stream
+  themeId                  String? // strategicThemeId
+  investmentEstimate       Float?
+  governanceStatus         String    @default("draft") // draft/review/approved/rejected/on_hold/deferred
+  guardrailFlags           Json      @default("[]") // string[]
   currentApprovalRequestId String?
-  createdAt                DateTime @default(now())
-  updatedAt                DateTime @updatedAt
+  // Multi-step workflow fields (story-016)
+  currentStepIndex         Int       @default(0)
+  submittedBy              String?
+  submittedAt              DateTime?
+  bypassedAt               DateTime?
+  bypassedBy               String?
+  slaBreachAt              DateTime?
+  allowApprovalBypass      Boolean   @default(false)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
 
   tenant           Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   epic             Epic              @relation(fields: [epicId], references: [id], onDelete: Cascade)
@@ -24,9 +32,9 @@ model GovernedEpic {
 model ApprovalWorkflow {
   id        String   @id @default(cuid())
   tenantId  String
-  tipo      String   // epic_investment / budget_guardrail_change / theme_creation
+  tipo      String // epic_investment / budget_guardrail_change / theme_creation
   nome      String
-  etapas    Json     // [{order: number, roleRequired: string, criteria?: string}]
+  etapas    Json // [{order: number, roleRequired: string, criteria?: string}]
   ativo     Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -39,16 +47,23 @@ model ApprovalWorkflow {
 }
 
 model ApprovalRequest {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   tenantId       String
   workflowId     String
-  targetType     String   // epic / guardrail / theme
+  targetType     String // epic / guardrail / theme
   targetId       String
-  estado         String   @default("open") // open / in_review / approved / rejected / cancelled
+  estado         String    @default("open") // open / in_review / approved / rejected / cancelled
   initiatorId    String
   governedEpicId String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  // Multi-step fields (story-016)
+  stepIndex      Int       @default(0)
+  assignedTo     String?
+  decision       String?
+  reason         String?   @db.Text
+  decidedAt      DateTime?
+  slaBreachedAt  DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   tenant       Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   workflow     ApprovalWorkflow       @relation(fields: [workflowId], references: [id])
@@ -65,32 +80,58 @@ model ApprovalStepInstance {
   tenantId          String
   approvalRequestId String
   etapaOrdem        Int
-  roleRequired      String    // lpm / enterprise_architect / cfo / finance
+  roleRequired      String // lpm / enterprise_architect / cfo / finance
   approverId        String?
+  backupApproverId  String?
   estado            String    @default("pending") // pending / approved / rejected / skipped
   comentario        String?   @db.Text
   timestamp         DateTime?
+  // Story-040 SLA tracking
+  slaDeadline       DateTime?
+  slaStatus         String    @default("ON_TRACK") // ON_TRACK / BREACHED
+  isParallel        Boolean   @default(false)
   createdAt         DateTime  @default(now())
 
-  tenant          Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  approvalRequest ApprovalRequest @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  tenant                Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalRequest       ApprovalRequest        @relation(fields: [approvalRequestId], references: [id], onDelete: Cascade)
+  governanceEscalations GovernanceEscalation[]
 
   @@index([tenantId])
   @@index([approvalRequestId])
+  @@index([slaDeadline])
+}
+
+model GovernanceEscalation {
+  id               String    @id @default(cuid())
+  tenantId         String
+  approvalStepId   String
+  epicId           String?
+  escalatedAt      DateTime  @default(now())
+  backupNotified   Boolean   @default(false)
+  backupNotifiedAt DateTime?
+
+  tenant       Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  approvalStep ApprovalStepInstance @relation(fields: [approvalStepId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([approvalStepId])
 }
 
 model DecisionLogEntry {
   id            String   @id @default(cuid())
   tenantId      String
-  tipo          String   // epic_decision / budget_decision / theme_decision
-  targetType    String   // epic / guardrail / theme
+  tipo          String // epic_decision / budget_decision / theme_decision
+  targetType    String // epic / guardrail / theme
   targetId      String
   valueStreamId String?
-  decisao       String   // approved / rejected / deferred / changed
+  decisao       String // approved / rejected / deferred / changed
   justificativa String   @db.Text
-  dadosSuporte  Json     @default("{}")  // { flowMetrics?, okrs?, budgetInfo? }
+  dadosSuporte  Json     @default("{}") // { flowMetrics?, okrs?, budgetInfo? }
   decisorId     String
   dataDecisao   DateTime @default(now())
+  // cosmos.html screen-governance DecisionsScreen
+  titulo        String?
+  tags          String[] @default([])
   createdAt     DateTime @default(now())
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)

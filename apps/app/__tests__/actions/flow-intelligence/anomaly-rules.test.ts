@@ -135,4 +135,188 @@ describe("ImprovementActionOverdue R8", () => {
       runAllRules(input).find((r) => r.rule === "ImprovementActionOverdue")
     ).toBeUndefined();
   });
+
+  it("does not count actions with null dueDate as overdue", () => {
+    const input = makeInput({
+      openActions: [{ id: "a1", dueDate: null, status: "OPEN" }],
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "ImprovementActionOverdue")
+    ).toBeUndefined();
+  });
+
+  it("does not count DONE actions as overdue", () => {
+    const input = makeInput({
+      openActions: [
+        { id: "a1", dueDate: new Date("2026-05-01"), status: "DONE" },
+      ],
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "ImprovementActionOverdue")
+    ).toBeUndefined();
+  });
+
+  it("fires when IN_PROGRESS action is overdue", () => {
+    const input = makeInput({
+      openActions: [
+        { id: "a1", dueDate: new Date("2026-05-01"), status: "IN_PROGRESS" },
+      ],
+    });
+    const rule = runAllRules(input).find(
+      (r) => r.rule === "ImprovementActionOverdue"
+    );
+    expect(rule?.severity).toBe("MEDIUM");
+  });
+});
+
+describe("VelocityCliff R1 — edge cases", () => {
+  it("does not fire when historical avg is zero", () => {
+    const history = [
+      { flowVelocityTotal: 0 },
+      { flowVelocityTotal: 0 },
+      { flowVelocityTotal: 0 },
+      { flowVelocityTotal: 0 },
+    ];
+    const input = makeInput({
+      current: { ...makeInput().current, flowVelocityTotal: 5 },
+      history,
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "VelocityCliff")
+    ).toBeUndefined();
+  });
+
+  it("does not fire when ratio >= 0.7 (only mild drop)", () => {
+    const history = [
+      { flowVelocityTotal: 40 },
+      { flowVelocityTotal: 40 },
+      { flowVelocityTotal: 40 },
+      { flowVelocityTotal: 40 },
+    ];
+    const input = makeInput({
+      current: { ...makeInput().current, flowVelocityTotal: 30 },
+      history,
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "VelocityCliff")
+    ).toBeUndefined();
+  });
+});
+
+describe("WIPOverload R2 — edge cases", () => {
+  it("does not fire when velocity is zero", () => {
+    const input = makeInput({
+      current: {
+        ...makeInput().current,
+        flowVelocityTotal: 0,
+        flowLoadCurrent: 100,
+      },
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "WIPOverload")
+    ).toBeUndefined();
+  });
+
+  it("does not fire when load <= 2x velocity", () => {
+    const input = makeInput({
+      current: {
+        ...makeInput().current,
+        flowVelocityTotal: 10,
+        flowLoadCurrent: 20,
+      },
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "WIPOverload")
+    ).toBeUndefined();
+  });
+});
+
+describe("CycleTimeDegradation R4", () => {
+  it("does not fire with fewer than 2 history items with flowTimeAvgDays", () => {
+    const input = makeInput({
+      history: [{ flowVelocityTotal: 40, flowTimeAvgDays: 5 }],
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "CycleTimeDegradation")
+    ).toBeUndefined();
+  });
+
+  it("does not fire when current cycle time is not 1.5x historical avg", () => {
+    const input = makeInput({
+      current: { ...makeInput().current, flowTimeAvgDays: 6 },
+      history: [
+        { flowVelocityTotal: 40, flowTimeAvgDays: 5 },
+        { flowVelocityTotal: 38, flowTimeAvgDays: 5 },
+      ],
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "CycleTimeDegradation")
+    ).toBeUndefined();
+  });
+
+  it("fires MEDIUM when current cycle time > 1.5x historical avg", () => {
+    const input = makeInput({
+      current: { ...makeInput().current, flowTimeAvgDays: 12 },
+      history: [
+        { flowVelocityTotal: 40, flowTimeAvgDays: 5 },
+        { flowVelocityTotal: 38, flowTimeAvgDays: 5 },
+      ],
+    });
+    const rule = runAllRules(input).find(
+      (r) => r.rule === "CycleTimeDegradation"
+    );
+    expect(rule?.severity).toBe("MEDIUM");
+    expect(rule?.rule).toBe("CycleTimeDegradation");
+  });
+});
+
+describe("StaleCompetencyAssessment R7", () => {
+  it("does not fire when latestAssessmentAt is null", () => {
+    const input = makeInput({ latestAssessmentAt: null });
+    expect(
+      runAllRules(input).find((r) => r.rule === "StaleCompetencyAssessment")
+    ).toBeUndefined();
+  });
+
+  it("does not fire when assessment is within 180 days", () => {
+    const now = new Date("2026-05-22T10:00:00Z");
+    const recent = new Date(now.getTime() - 90 * 86_400_000);
+    const input = makeInput({ latestAssessmentAt: recent, now });
+    expect(
+      runAllRules(input).find((r) => r.rule === "StaleCompetencyAssessment")
+    ).toBeUndefined();
+  });
+
+  it("fires LOW when assessment is older than 180 days", () => {
+    const now = new Date("2026-05-22T10:00:00Z");
+    const old = new Date(now.getTime() - 200 * 86_400_000);
+    const input = makeInput({ latestAssessmentAt: old, now });
+    const rule = runAllRules(input).find(
+      (r) => r.rule === "StaleCompetencyAssessment"
+    );
+    expect(rule?.severity).toBe("LOW");
+  });
+});
+
+describe("WorkTypeImbalance R6 — edge cases", () => {
+  it("does not fire when total distribution is zero", () => {
+    const input = makeInput({
+      current: { ...makeInput().current, flowDistribution: {} },
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "WorkTypeImbalance")
+    ).toBeUndefined();
+  });
+
+  it("does not fire when defect percentage is exactly 40%", () => {
+    const input = makeInput({
+      current: {
+        ...makeInput().current,
+        flowDistribution: { story: 60, defect: 40 },
+      },
+    });
+    expect(
+      runAllRules(input).find((r) => r.rule === "WorkTypeImbalance")
+    ).toBeUndefined();
+  });
 });

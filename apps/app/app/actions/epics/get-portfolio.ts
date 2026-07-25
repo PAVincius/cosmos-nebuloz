@@ -4,7 +4,10 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { unstable_cache } from "next/cache";
 import { headers } from "next/headers";
-import { aggregateEpicRow } from "@/lib/portfolio-aggregate";
+import {
+  aggregateEpicRow,
+  type InvestBreakdown,
+} from "@/lib/portfolio-aggregate";
 import { portfolioEpicsCacheTag } from "./portfolio-cache";
 import { PORTFOLIO_EPICS_PAGE_SIZE } from "./portfolio-constants";
 
@@ -23,6 +26,7 @@ type EpicWithRelations = Awaited<
   ReturnType<typeof database.epic.findMany>
 >[number] & {
   features: {
+    title: string;
     bv: number;
     tc: number;
     rr: number;
@@ -35,6 +39,9 @@ type EpicWithRelations = Awaited<
   _count: { features: number };
   strategicTheme: { id: string; title: string; color: string } | null;
   governedEpic: { governanceStatus: string } | null;
+  investScore: number | null;
+  investBreakdown: InvestBreakdown | null;
+  descriptionMd: string | null;
 };
 
 async function loadOkrCountMap(tenantId: string): Promise<Map<string, number>> {
@@ -54,6 +61,7 @@ function mapEpicRow(
     id: e.id,
     title: e.title,
     statusId: e.statusId,
+    lifecycleStatus: e.lifecycleStatus,
     order: e.order,
     features: e.features.map((f) => ({
       ...f,
@@ -65,12 +73,19 @@ function mapEpicRow(
     themeColor: e.strategicTheme?.color ?? null,
     linkedOKRCount: okrCountMap.get(e.id) ?? 0,
     governanceStatus: e.governedEpic?.governanceStatus ?? null,
+    investScore: e.investScore ?? null,
+    investBreakdown: e.investBreakdown ?? null,
+    descriptionMd: e.descriptionMd ?? null,
+    epicType: (e.epicType ??
+      "EPIC") as import("@/lib/portfolio-aggregate").EpicType,
+    dueDate: e.dueDate ?? null,
   });
 }
 
 const epicInclude = {
   features: {
     select: {
+      title: true,
       bv: true,
       tc: true,
       rr: true,

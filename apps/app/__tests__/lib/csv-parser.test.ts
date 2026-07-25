@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { parseMigrationCSV } from "../../lib/migration/csv-parser";
 
 describe("parseMigrationCSV", () => {
@@ -7,7 +7,11 @@ describe("parseMigrationCSV", () => {
 epic,My Epic,desc,BACKLOG,,,0,`;
     const items = parseMigrationCSV(csv);
     expect(items).toHaveLength(1);
-    expect(items[0]).toMatchObject({ type: "epic", title: "My Epic", status: "BACKLOG" });
+    expect(items[0]).toMatchObject({
+      type: "epic",
+      title: "My Epic",
+      status: "BACKLOG",
+    });
   });
 
   it("parses story rows with parent", () => {
@@ -29,7 +33,7 @@ story,,,,,,0,`;
   });
 
   it("throws on missing required columns", () => {
-    const csv = `name,description\nFoo,Bar`;
+    const csv = "name,description\nFoo,Bar";
     expect(() => parseMigrationCSV(csv)).toThrow("Missing required columns");
   });
 

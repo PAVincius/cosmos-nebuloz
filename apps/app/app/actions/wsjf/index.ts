@@ -5,12 +5,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
-export type {
-  EpicWithFeatures,
-  FeatureWSJF,
-  WSJFConfig,
-  WSJFLabels,
-} from "./schema";
+import type { EpicWithFeatures, FeatureWSJF, WSJFConfig } from "./schema";
 
 // ─── Defaults ────────────────────────────────────────────────────────────────
 

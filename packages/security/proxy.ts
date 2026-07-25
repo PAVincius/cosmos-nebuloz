@@ -1,6 +1,5 @@
 import { defaults, type Options, withVercelToolbar } from "@nosecone/next";
 
-// biome-ignore lint/performance/noBarrelFile: "re-exporting"
 export { createMiddleware as securityMiddleware } from "@nosecone/next";
 
 /**
@@ -29,10 +28,7 @@ export const noseconeOptions: Options = {
         ...defaults.contentSecurityPolicy.directives.connectSrc,
         ...CSP_CONNECT_SRC_EXTRAS,
       ],
-      imgSrc: [
-        ...defaults.contentSecurityPolicy.directives.imgSrc,
-        "https:",
-      ],
+      imgSrc: [...defaults.contentSecurityPolicy.directives.imgSrc, "https:"],
     },
   },
 };

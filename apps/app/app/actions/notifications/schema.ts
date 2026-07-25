@@ -1,10 +1,5 @@
 import { z } from "zod";
-import {
-  PaginationSchema,
-  cuid,
-  nnStr,
-  optStr,
-} from "../_base";
+import { cuid, nnStr, optStr, PaginationSchema } from "../_base";
 
 export const NotificationTypeSchema = z.enum([
   "mention",
@@ -12,6 +7,10 @@ export const NotificationTypeSchema = z.enum([
   "risk",
   "deadline",
   "system",
+  "pae_request",
+  "pae_approved",
+  "pae_denied",
+  "pae_revoked",
 ]);
 export type NotificationType = z.infer<typeof NotificationTypeSchema>;
 

@@ -1,6 +1,10 @@
 const LINEAR_GQL = "https://api.linear.app/graphql";
 
-async function linearQuery<T>(apiKey: string, query: string, variables?: Record<string, unknown>): Promise<T> {
+async function linearQuery<T>(
+  apiKey: string,
+  query: string,
+  variables?: Record<string, unknown>
+): Promise<T> {
   const res = await fetch(LINEAR_GQL, {
     method: "POST",
     headers: {
@@ -10,9 +14,16 @@ async function linearQuery<T>(apiKey: string, query: string, variables?: Record<
     body: JSON.stringify({ query, variables }),
   });
 
-  if (!res.ok) throw new Error(`Linear API ${res.status}: ${await res.text()}`);
-  const json = await res.json() as { data?: T; errors?: { message: string }[] };
-  if (json.errors?.length) throw new Error(json.errors.map((e) => e.message).join("; "));
+  if (!res.ok) {
+    throw new Error(`Linear API ${res.status}: ${await res.text()}`);
+  }
+  const json = (await res.json()) as {
+    data?: T;
+    errors?: { message: string }[];
+  };
+  if (json.errors?.length) {
+    throw new Error(json.errors.map((e) => e.message).join("; "));
+  }
   return json.data as T;
 }
 
@@ -21,41 +32,48 @@ async function linearQuery<T>(apiKey: string, query: string, variables?: Record<
 export type LinearTeam = { id: string; name: string; key: string };
 
 export type LinearIssue = {
-  id:          string;
-  title:       string;
+  id: string;
+  title: string;
   description: string | null;
-  url:         string;
-  state:       { name: string; type: string };
-  priority:    number;
-  estimate:    number | null;
-  assignee:    { id: string; name: string; email: string } | null;
-  team:        { id: string; name: string };
-  labels:      { nodes: { name: string }[] };
-  parent:      { id: string; title: string } | null;
-  createdAt:   string;
-  updatedAt:   string;
+  url: string;
+  state: { name: string; type: string };
+  priority: number;
+  estimate: number | null;
+  assignee: { id: string; name: string; email: string } | null;
+  team: { id: string; name: string };
+  labels: { nodes: { name: string }[] };
+  parent: { id: string; title: string } | null;
+  createdAt: string;
+  updatedAt: string;
 };
 
 // ─── testConnection ───────────────────────────────────────────────────────────
 
-export async function linearTestConnection(apiKey: string): Promise<{ ok: boolean; name?: string; error?: string }> {
+export async function linearTestConnection(
+  apiKey: string
+): Promise<{ ok: boolean; name?: string; error?: string }> {
   try {
     const data = await linearQuery<{ viewer: { id: string; name: string } }>(
       apiKey,
-      `{ viewer { id name } }`
+      "{ viewer { id name } }"
     );
     return { ok: true, name: data.viewer.name };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Connection failed" };
+    return {
+      ok: false,
+      error: e instanceof Error ? e.message : "Connection failed",
+    };
   }
 }
 
 // ─── discoverProjects (teams in Linear) ──────────────────────────────────────
 
-export async function linearDiscoverTeams(apiKey: string): Promise<LinearTeam[]> {
+export async function linearDiscoverTeams(
+  apiKey: string
+): Promise<LinearTeam[]> {
   const data = await linearQuery<{ teams: { nodes: LinearTeam[] } }>(
     apiKey,
-    `{ teams { nodes { id name key } } }`
+    "{ teams { nodes { id name key } } }"
   );
   return data.teams.nodes;
 }
@@ -100,7 +118,7 @@ export async function linearImportTeamIssues(
 
   const { nodes, pageInfo } = data.team.issues;
   return {
-    issues:     nodes,
+    issues: nodes,
     nextCursor: pageInfo.hasNextPage ? pageInfo.endCursor : null,
   };
 }
@@ -108,11 +126,11 @@ export async function linearImportTeamIssues(
 // ─── Map Linear state → Cosmos statusId ──────────────────────────────────────
 
 const STATE_TYPE_MAP: Record<string, string> = {
-  backlog:    "BACKLOG",
-  unstarted:  "TODO",
-  started:    "IN_PROGRESS",
-  completed:  "DONE",
-  cancelled:  "CANCELLED",
+  backlog: "BACKLOG",
+  unstarted: "TODO",
+  started: "IN_PROGRESS",
+  completed: "DONE",
+  cancelled: "CANCELLED",
 };
 
 export function linearStateToStatus(stateType: string): string {
@@ -122,5 +140,8 @@ export function linearStateToStatus(stateType: string): string {
 // ─── Map Linear priority → Cosmos type hint ──────────────────────────────────
 
 export function linearPriorityLabel(priority: number): string {
-  return ["No priority", "Urgent", "High", "Medium", "Low"][priority] ?? "No priority";
+  return (
+    ["No priority", "Urgent", "High", "Medium", "Low"][priority] ??
+    "No priority"
+  );
 }

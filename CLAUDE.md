@@ -1,69 +1,107 @@
 # CLAUDE.md
 
-**Quick-start guide for Claude Code - Complete details in linked docs**
+**cosmos-nebuloz** — SAFe project management platform (Next Forge 5.3.2)
 
 ---
 
-## Project Overview
+## Tech Stack
 
-read -p "Tech Stack (e.g., Express, PostgreSQL, Prisma): " TECH_STACK application for echo ""
-
-**Tech Stack**: 
+| Layer | Tech |
+|-------|------|
+| Framework | Next.js 15 App Router |
+| Language | TypeScript 5.9 |
+| Monorepo | pnpm + Turborepo |
+| Database | Prisma + PostgreSQL |
+| Auth | `@repo/auth` (multi-tenant) |
+| UI | shadcn/ui + Tailwind |
+| Linter | Biome (via ultracite) |
+| Tests | Vitest (unit) + Playwright (E2E) |
+| Realtime | Liveblocks |
+| State | XState |
+| Rich text | Tiptap |
+| Observability | Sentry |
 
 ---
 
-## Session Start Protocol ⚡
+## Session Start Protocol
 
-**MANDATORY** at start of each session:
+Read these on session start:
 
-```bash
-# 1. Load essential docs (~800 tokens - 2 min read)
-✓ .claude/COMMON_MISTAKES.md      # ⚠️ CRITICAL - Read FIRST
-✓ .claude/QUICK_START.md          # Essential commands
-✓ .claude/ARCHITECTURE_MAP.md     # File locations
+```
+.claude/COMMON_MISTAKES.md   ← read FIRST
+.claude/QUICK_START.md
+.claude/ARCHITECTURE_MAP.md
 ```
 
-**At task completion:**
-- Create completion doc in `.claude/completions/YYYY-MM-DD-task-name.md`
-- Use template: `.claude/templates/completion-template.md`
-- Move session file to `.claude/sessions/archive/` (if created)
-- Update docs as needed (see `.claude/DOCUMENTATION_MAINTENANCE.md`)
+Never auto-load: `.claude/completions/`, `.claude/sessions/`, `docs/archive/`
 
-**Then load task-specific docs** (~500-1500 tokens):
-- See `docs/INDEX.md` for navigation guide
-
-**⚠️ NEVER auto-load:**
-- Files in `.claude/completions/` (0 token cost)
-- Files in `.claude/sessions/` (0 token cost)
-- Files in `docs/archive/` (0 token cost)
-- Only load when user explicitly requests
+At task completion → create `.claude/completions/YYYY-MM-DD-task-name.md`
 
 ---
 
-## Quick Start Commands
+## Quick Start
 
 ```bash
-# Add your common commands here
-# npm run dev
-# npm test
-# npm run build
+pnpm dev          # all apps (app on :3012)
+pnpm test         # vitest all packages
+pnpm build        # turbo build
+pnpm migrate      # prisma format + generate + db push
+pnpm check        # biome lint/format check
+pnpm fix          # biome lint/format autofix
+pnpm typecheck    # tsc --noEmit (run inside apps/app)
 ```
 
-**See**: `.claude/QUICK_START.md` for complete command reference
+**See**: `.claude/QUICK_START.md` for complete reference
 
 ---
 
-## Documentation Navigation
+## Core References
 
-**📋 Master Index**: `docs/INDEX.md` - Complete navigation with token costs
-
-### Core References
-- **Common Mistakes**: `.claude/COMMON_MISTAKES.md` ⚠️ **MANDATORY**
-- **Quick Start**: `.claude/QUICK_START.md`
-- **Architecture Map**: `.claude/ARCHITECTURE_MAP.md`
-- **Maintenance**: `.claude/DOCUMENTATION_MAINTENANCE.md`
+- **Mistakes**: `.claude/COMMON_MISTAKES.md`
+- **Commands**: `.claude/QUICK_START.md`
+- **Architecture**: `.claude/ARCHITECTURE_MAP.md`
+- **PRD/SRD**: `docs/superpowers/plans/`
 
 ---
 
-**Last Updated**: 2026-05-10
-**Optimized with**: [Claude Token Optimizer](https://github.com/nadimtuhin/claude-token-optimizer)
+## Knowledge Graph (graphify-out/)
+
+Graph built from full repo: 10.189 nodes · 15.392 edges · 871 communities.
+
+**When to query instead of reading files:**
+
+| Task | Use graph |
+|------|-----------|
+| "What calls X?" | Yes — BFS from node X |
+| "Impact of changing Y?" | Yes — neighbors + community |
+| "Where is Z defined?" | No — `grep`/LSP faster |
+| "How does feature F flow end-to-end?" | Yes — DFS path query |
+| Understanding unfamiliar module | Yes — community context |
+| Adding a new file | No — just read adjacent files |
+
+**God nodes** (highest connectivity — touch with care):
+- `auth_server_requiretenantsession` — multi-tenant session guard
+- `actions_base_safeaction` — server action HOF wrapper
+- `actions_base_result` — Result<T> pattern, used everywhere
+- `lib_app_design_appdesign` — central design system
+- `auth_server_requirerole` — RBAC enforcement
+
+**Query commands:**
+```bash
+# Broad context (BFS)
+/graphify query "how does PI Planning confidence vote work?"
+
+# Trace specific path (DFS)
+/graphify path "actions_base_safeaction" "audit_index_logaudit"
+
+# Explain a node
+/graphify explain "auth_server_requiretenantsession"
+```
+
+**Rebuild** (after significant new files): `/graphify --update`
+
+**Visualize**: open `graphify-out/graph.html` in browser.
+
+---
+
+**Last Updated**: 2026-06-20

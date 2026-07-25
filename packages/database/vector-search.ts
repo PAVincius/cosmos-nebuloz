@@ -1,3 +1,4 @@
+import { Prisma } from "./generated/client";
 import { database } from "./index";
 
 export type KnowledgeHit = {
@@ -31,17 +32,21 @@ export async function searchKnowledge(
   } = {}
 ): Promise<KnowledgeHit[]> {
   const { sourceTypes, limit = 8, threshold = 0.65 } = options;
-  const embeddingLiteral = `[${embedding.join(",")}]`;
+
+  if (!embedding.every((v) => typeof v === "number" && Number.isFinite(v))) {
+    throw new Error("embedding contains non-finite values");
+  }
+  const embeddingLiteral = Prisma.raw(`'[${embedding.join(",")}]'::vector`);
 
   const sourceFilter =
     sourceTypes && sourceTypes.length > 0
-      ? `AND "sourceType" = ANY(ARRAY[${sourceTypes.map((t) => `'${t.replace(/'/g, "''")}'`).join(",")}])`
-      : "";
+      ? Prisma.sql`AND "sourceType" = ANY(ARRAY[${Prisma.join(sourceTypes)}])`
+      : Prisma.empty;
 
   // Vector-only search (pgvector cosine similarity)
   // We do two ranked lists then merge with RRF at application level.
   // The SQL below returns cosine similarity hits + FTS rank in one pass.
-  const hits = await database.$queryRawUnsafe<
+  const hits = await database.$queryRaw<
     Array<{
       id: string;
       sourceType: string;
@@ -51,33 +56,28 @@ export async function searchKnowledge(
       sim: number;
       tsRank: number;
     }>
-  >(
-    `
+  >`
     SELECT
       id,
       "sourceType",
       "sourceId",
       title,
       "textContent",
-      1 - (embedding <=> '${embeddingLiteral}'::vector) AS sim,
+      1 - (embedding <=> ${embeddingLiteral}) AS sim,
       COALESCE(
         ts_rank(
           to_tsvector('portuguese', COALESCE(title, '') || ' ' || "textContent"),
-          plainto_tsquery('portuguese', $1)
+          plainto_tsquery('portuguese', ${query})
         ),
         0
       ) AS "tsRank"
     FROM "PIKnowledgeVector"
-    WHERE "tenantId" = $2
-      AND 1 - (embedding <=> '${embeddingLiteral}'::vector) > $3
+    WHERE "tenantId" = ${tenantId}
+      AND 1 - (embedding <=> ${embeddingLiteral}) > ${threshold}
       ${sourceFilter}
     ORDER BY sim DESC
     LIMIT ${limit * 2}
-    `,
-    query,
-    tenantId,
-    threshold
-  );
+  `;
 
   // RRF: score = 1/(k + rank_vector) + 1/(k + rank_fts)
   // rank by sim descending, rank by tsRank descending separately, then fuse
