@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit";
+import { CAPACITY_NOTE_TONES } from "./capacity.constants";
 
 export type CapacityView = {
   teamId: string;
@@ -187,14 +188,6 @@ export async function listTeamCapacityAcrossPI(): Promise<
 // ── Capacity adjustment notes ──
 // Free-text annotations explaining a sprint's capacity variance (training,
 // holiday, onboarding, hiring), surfaced next to the per-team capacity grid.
-
-export const CAPACITY_NOTE_TONES = [
-  "green",
-  "amber",
-  "red",
-  "neutral",
-] as const;
-export type CapacityNoteTone = (typeof CAPACITY_NOTE_TONES)[number];
 
 export type CapacityAdjustmentNoteView = {
   id: string;

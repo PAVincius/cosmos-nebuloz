@@ -13,9 +13,9 @@ import {
   createValueMetric,
   listValueRealizations,
   recordActualValue,
-  type ValueMetricStatus,
   type ValueRealizationView,
 } from "@/app/(cosmos)/actions/value-realization";
+import type { ValueMetricStatus } from "@/app/(cosmos)/actions/value-realization.constants";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon, type IconName } from "../icons";

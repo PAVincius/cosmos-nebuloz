@@ -10,10 +10,8 @@
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
-  CAPACITY_NOTE_TONES,
   type CapacityAdjustmentNoteView,
   type CapacityGridView,
-  type CapacityNoteTone,
   type CapacityView,
   createCapacityAdjustmentNote,
   listCapacityAdjustmentNotes,
@@ -22,6 +20,10 @@ import {
   listTeamSprints,
   type TeamSprintOption,
 } from "@/app/(cosmos)/actions/capacity";
+import {
+  CAPACITY_NOTE_TONES,
+  type CapacityNoteTone,
+} from "@/app/(cosmos)/actions/capacity.constants";
 import { EmptyState } from "../empty-state";
 import {
   Badge,

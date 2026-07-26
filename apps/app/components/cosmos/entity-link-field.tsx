@@ -7,10 +7,10 @@
 // manage any modal stack.
 import { useEffect, useRef, useState } from "react";
 import {
-  type EntityKind,
   type EntityOption,
   searchEntities,
 } from "@/app/(cosmos)/actions/entity-search";
+import type { EntityKind } from "@/app/(cosmos)/actions/entity-search.constants";
 import { Icon } from "./icons";
 
 type EntityLinkFieldProps = {

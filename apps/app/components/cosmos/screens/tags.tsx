@@ -11,10 +11,10 @@ import { useCallback, useEffect, useState } from "react";
 import {
   createTagRule,
   listTagRules,
-  TAG_RULE_OUTPUT_TONES,
   type TagRuleCondition,
   updateTagRule,
 } from "@/app/actions/billing/tag-rules";
+import { TAG_RULE_OUTPUT_TONES } from "@/app/actions/billing/tag-rules.constants";
 import { EmptyState } from "../empty-state";
 import { Icon } from "../icons";
 import {

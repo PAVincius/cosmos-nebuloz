@@ -9,6 +9,7 @@ import { z } from "zod";
 import { type Result, safeAction } from "@/app/actions/_base";
 import { logAudit } from "@/app/actions/audit";
 import { inngest } from "@/lib/inngest/client";
+import { TAG_RULE_OUTPUT_TONES } from "./tag-rules.constants";
 
 // Condition operand used by the portfolio "Tag Rules" screen
 // (cosmos.html screen-tags) to render "SE <field> <operator> <value>".
@@ -19,15 +20,6 @@ const TagRuleConditionSchema = z.object({
 });
 
 export type TagRuleCondition = z.infer<typeof TagRuleConditionSchema>;
-
-export const TAG_RULE_OUTPUT_TONES = [
-  "green",
-  "red",
-  "amber",
-  "blue",
-  "purple",
-  "accent",
-] as const;
 
 const TagRuleSchema = z.object({
   name: z.string().max(255).optional(),
