@@ -11,6 +11,10 @@ export const SHOTS_DIR = path.resolve(__dirname, "screenshots");
 
 const ERROR_BOUNDARY = "Oops, something went wrong";
 const NOT_PORTED = "Tela ainda não portada";
+// Screens render this when their server action rejects — most commonly an
+// expired session after a reseed. Without this check a beat still "passes" on
+// the page header alone while every panel below it is an error state.
+const LOAD_FAILED = /Não foi possível carregar/i;
 
 export type BeatOpts = {
   // Screen id (e.g. "kanban") or an absolute /cosmos/... path.
@@ -60,7 +64,10 @@ async function settle(page: Page) {
       .first()
       .waitFor({ state: "detached", timeout: 8000 })
   );
-  await page.waitForTimeout(400); // let the final layout paint before the shot
+  // Past KpiCard's count-up animation (900ms + its 150ms fallback timer).
+  // Shooting earlier captures eased mid-flight numbers — a 13 SP KPI photographs
+  // as 11 — which is worse than useless in a screenshot meant for review.
+  await page.waitForTimeout(1200);
 }
 
 async function shoot(page: Page, testInfo: TestInfo, slug: string) {
@@ -81,6 +88,11 @@ async function assertHealthy(
   await expect(
     page.getByText(ERROR_BOUNDARY),
     `Screen "${route}" hit the error boundary`
+  ).toHaveCount(0);
+
+  await expect(
+    page.getByText(LOAD_FAILED),
+    `Screen "${route}" rendered a load-failure state — usually an expired auth fixture (re-run with AUTH_TEST=1) or a failing server action`
   ).toHaveCount(0);
 
   const notPorted = await page
