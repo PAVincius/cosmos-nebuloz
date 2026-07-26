@@ -12,7 +12,7 @@
  * SAFe Delivery
  *   - LACE (Large Solution)
  *   - 1 ART → 1 Time (5 membros)
- *   - 3 Sprints (COMPLETED / ACTIVE / PLANNING)
+ *   - 5 Sprints (3 CLOSED com velocity / 1 ACTIVE / 1 PLANNING)
  *   - 1 SprintReview + 1 Retrospective (sprint COMPLETED)
  *   - 1 PI Plan → 4 PI Objectives
  *
@@ -216,6 +216,7 @@ async function main() {
   await db.story.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.retrospective.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.sprintReview.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.teamCapacitySnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.sprint.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.feature.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -225,6 +226,9 @@ async function main() {
   await db.themeART.deleteMany({ where: { theme: { tenantId: TENANT_ID } } });
   await db.strategicTheme.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pIObjective.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.confidenceVoteTally.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.confidenceVoteSession.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.pISession.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pIPlan.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.team.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.aRT.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -324,6 +328,39 @@ async function main() {
   // ─── 8. Sprints ────────────────────────────────────────────────────────────
   const now = new Date();
 
+  // Two sprints closed before the current PI, so velocity and predictability
+  // have a trend instead of a single point. Closed sprints must carry both
+  // capacity and velocity: the team console derives its velocity chart and
+  // predictability ratio from that pair, and skips any sprint missing either.
+  await db.sprint.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        name: "Sprint -1 — Discovery",
+        goal: "Descobrir domínio SAFe e desenhar o modelo de dados",
+        startDate: addWeeks(now, -8),
+        endDate: addWeeks(now, -6),
+        status: "CLOSED",
+        capacity: 40,
+        velocity: 30,
+        closedAt: addWeeks(now, -6),
+      },
+      {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        name: "Sprint 0 — Setup",
+        goal: "Preparar pipeline, ambientes e observabilidade",
+        startDate: addWeeks(now, -6),
+        endDate: addWeeks(now, -4),
+        status: "CLOSED",
+        capacity: 40,
+        velocity: 36,
+        closedAt: addWeeks(now, -4),
+      },
+    ],
+  });
+
   const sprint1 = await db.sprint.create({
     data: {
       tenantId: TENANT_ID,
@@ -332,8 +369,14 @@ async function main() {
       goal: "Implementar infraestrutura base e auth multi-tenant",
       startDate: addWeeks(now, -4),
       endDate: addWeeks(now, -2),
-      status: "COMPLETED",
+      // "CLOSED", not "COMPLETED": every reader of a finished sprint
+      // (getTeamDetail, closeSprint's history query, the snapshot backfill)
+      // matches on "CLOSED", so the old value made this sprint invisible to
+      // all of them — the team console reported "nenhuma sprint fechada".
+      status: "CLOSED",
       capacity: 40,
+      velocity: 34,
+      closedAt: addWeeks(now, -2),
     },
   });
   const sprint2 = await db.sprint.create({
@@ -360,7 +403,7 @@ async function main() {
       capacity: 40,
     },
   });
-  console.log("  ✓ 3 Sprints (COMPLETED, ACTIVE, PLANNING)");
+  console.log("  ✓ 5 Sprints (3 CLOSED com velocity, 1 ACTIVE, 1 PLANNING)");
 
   // ─── 9. SprintReview + Retrospectiva ───────────────────────────────────────
   await db.sprintReview.create({
@@ -418,6 +461,94 @@ async function main() {
     },
   });
   console.log(`  ✓ PI Plan "${piPlan.name}"`);
+
+  // Sprints are created before the PI exists, so the link is set here. The
+  // capacity grid (listTeamCapacityAcrossPI) selects sprints by piPlanId —
+  // unlinked sprints leave it with no columns even when snapshots exist.
+  await db.sprint.updateMany({
+    where: { tenantId: TENANT_ID, teamId: team.id },
+    data: { piPlanId: piPlan.id },
+  });
+
+  // One capacity snapshot per started sprint — backs the "Capacidade" KPI on
+  // the team console (latest snapshot) and the per-sprint capacity grid. The
+  // PLANNING sprint is excluded on purpose: a snapshot carries delivered story
+  // points, which a sprint that has not started cannot have.
+  const sprintsForCapacity = await db.sprint.findMany({
+    where: {
+      tenantId: TENANT_ID,
+      teamId: team.id,
+      status: { in: ["CLOSED", "ACTIVE"] },
+    },
+    orderBy: { startDate: "asc" },
+    select: { id: true, capacity: true, velocity: true },
+  });
+  await db.teamCapacitySnapshot.createMany({
+    data: sprintsForCapacity.map((s, i) => {
+      const expected = s.capacity ?? 40;
+      // Closed sprints report what they actually delivered; the in-flight one
+      // is still tracking against plan.
+      const actual = s.velocity ?? Math.round(expected * 0.8);
+      return {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        sprintId: s.id,
+        totalMembersCommitted: 5,
+        totalCapacityFactor: 0.8,
+        expectedSpNextSprint: expected,
+        minCapacityEstimate: Math.round(expected * 0.85),
+        maxCapacityEstimate: Math.round(expected * 1.15),
+        actualSpDelivered: actual,
+        actualCapacityUtil: actual / expected,
+        recordedAt: addWeeks(now, -8 + i * 2),
+      };
+    }),
+  });
+  console.log(
+    `  ✓ ${sprintsForCapacity.length} TeamCapacitySnapshots (1 por sprint iniciada)`
+  );
+
+  // Confidence vote (fist-of-five) — the PI Planning "Confiança média" KPI
+  // reads ConfidenceVoteTally.aggregateScore for the plan, which requires the
+  // PISession → ConfidenceVoteSession → tally chain to exist.
+  const piSession = await db.pISession.create({
+    data: {
+      tenantId: TENANT_ID,
+      piPlanId: piPlan.id,
+      type: "PLANNING",
+      scheduledAt: addWeeks(now, -4),
+      notes: "PI Planning presencial — 1 ART, 1 time.",
+    },
+  });
+  const voteSession = await db.confidenceVoteSession.create({
+    data: {
+      tenantId: TENANT_ID,
+      piSessionId: piSession.id,
+      roundNumber: 1,
+      xStateStatus: "CLOSED",
+      votes: [4, 4, 5, 3, 4],
+      averageScore: 4,
+    },
+  });
+  await db.confidenceVoteTally.create({
+    data: {
+      tenantId: TENANT_ID,
+      voteSessionId: voteSession.id,
+      piPlanId: piPlan.id,
+      round: 1,
+      score3Count: 1,
+      score4Count: 3,
+      score5Count: 1,
+      totalVotes: 5,
+      participantCount: 5,
+      participationRate: 1,
+      aggregateScore: 4,
+      revealedAt: addWeeks(now, -4),
+      closedAt: addWeeks(now, -4),
+      facilitatorNote: "Confiança acima do threshold — PI comprometido.",
+    },
+  });
+  console.log("  ✓ PISession + ConfidenceVote (fist-of-five, média 4.0)");
 
   await db.pIObjective.createMany({
     data: [
@@ -1048,6 +1179,10 @@ async function main() {
         tenantId: TENANT_ID,
         piPlanId: piPlan.id,
         title: "Dependência de API externa sem SLA garantido",
+        // roamStatus is a field of its own, separate from status — the PI
+        // Planning ROAM panel reads it, so risks classified only via `status`
+        // showed up as UNCLASSIFIED. Left unset here on purpose: this one is
+        // identified but not yet ROAMed, which is what the board should show.
         status: "IDENTIFIED",
         category: "technical",
         impact: "high",
@@ -1061,6 +1196,7 @@ async function main() {
         piPlanId: piPlan.id,
         title: "Capacidade do team reduzida por 2 semanas (férias)",
         status: "OWNED",
+        roamStatus: "OWNED",
         category: "organizational",
         impact: "medium",
         probability: "high",
@@ -1073,6 +1209,7 @@ async function main() {
         piPlanId: piPlan.id,
         title: "Dados históricos incompletos para treinamento do modelo IA",
         status: "MITIGATED",
+        roamStatus: "MITIGATED",
         category: "technical",
         impact: "high",
         probability: "low",
@@ -1085,6 +1222,7 @@ async function main() {
         piPlanId: piPlan.id,
         title: "Custo de infraestrutura acima do orçamento do PI",
         status: "ACCEPTED",
+        roamStatus: "ACCEPTED",
         category: "financial" as string,
         impact: "medium",
         probability: "medium",
@@ -1097,6 +1235,7 @@ async function main() {
         piPlanId: piPlan.id,
         title: "Certificação LGPD concluída antes do PI",
         status: "RESOLVED",
+        roamStatus: "RESOLVED",
         category: "compliance",
         impact: "critical",
         probability: "low",
@@ -1380,7 +1519,7 @@ async function main() {
   console.log("  SAFe Delivery");
   console.log("    • 1 ART → 1 Time (5 membros)");
   console.log(
-    "    • 3 Sprints (COMPLETED/ACTIVE/PLANNING) + SprintReview + Retrospectiva"
+    "    • 5 Sprints (3 CLOSED/1 ACTIVE/1 PLANNING) + SprintReview + Retrospectiva"
   );
   console.log("    • 1 PI Plan → 4 PI Objectives (3 committed + 1 stretch)");
   console.log("  Portfolio");
