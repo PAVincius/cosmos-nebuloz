@@ -10,7 +10,6 @@ import {
   getDoraMetrics,
 } from "@/app/(cosmos)/actions/dora";
 import {
-  AGING_WIP_SLA_DAYS,
   type AgingWipItem,
   type FlowMetricsSeriesPoint,
   type FlowMetricsView,
@@ -18,6 +17,7 @@ import {
   getFlowMetricsSeries,
   getLatestFlowMetrics,
 } from "@/app/(cosmos)/actions/flow";
+import { AGING_WIP_SLA_DAYS } from "@/app/(cosmos)/actions/flow.constants";
 import { EmptyState } from "../empty-state";
 import {
   Badge,

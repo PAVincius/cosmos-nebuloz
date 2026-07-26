@@ -4,6 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
+import { AGING_WIP_SLA_DAYS } from "./flow.constants";
 
 export type FlowMetricsView = {
   flowDistribution: Record<string, number>;
@@ -14,11 +15,6 @@ export type FlowMetricsView = {
   flowPredictability: number;
   recordedAt: string;
 };
-
-// Aging WIP / SLA — handoff default threshold. Per-tenant SLA configuration
-// is a genuine follow-up (RF-26) that belongs with a settings surface; a
-// config model with no settings UI to edit it would be dead config.
-export const AGING_WIP_SLA_DAYS = 14;
 
 // Real status values written by the entities' own transition writers — see
 // moveStoryOnBoard (Story.status: TODO/IN_PROGRESS/IN_REVIEW/DONE),
