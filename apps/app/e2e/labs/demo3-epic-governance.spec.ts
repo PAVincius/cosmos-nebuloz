@@ -21,6 +21,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "kanban",
       slug: "demo3-portfolio-kanban",
       expectText: "Kanban de Épicos",
+      expectData: ["Portfolio Kanban & OKR Dashboard"],
     });
 
     // 2. Epic detail — Lean Business Case (hipótese, outcomes, leading indicators, INVEST/WSJF).
@@ -28,6 +29,10 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       cardSelector: ".card-in",
       urlFragment: /\/cosmos\/epic\//,
       slug: "demo3-epic-lean-business-case",
+      // "Independent" is the first INVEST dimension row — it only renders when
+      // the epic carries a per-letter breakdown, so it proves the Lean Business
+      // Case is populated rather than showing "—" across every KPI.
+      expectData: ["Independent"],
     });
 
     // 3. WSJF Rankings — priorização gerada a partir de valor/tempo/risco.
@@ -35,6 +40,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "wsjf",
       slug: "demo3-wsjf",
       expectText: "WSJF Rankings",
+      expectData: ["Portfolio Kanban Board (5 colunas SAFe)"],
     });
 
     // 4. LACE copilot — sugestões de texto e score INVEST.
@@ -42,6 +48,8 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "copilot",
       slug: "demo3-lace-copilot",
       expectText: "Copilot",
+      // No expectData: the copilot is a chat surface, and an empty thread list
+      // is its correct first-visit state, not missing data.
     });
 
     // 5. Governance Board — ApprovalWorkflow nas transições de estágio.
@@ -49,6 +57,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "governance",
       slug: "demo3-governance-gates",
       expectText: "Governance Board",
+      forbidText: ["0 épicos"],
     });
 
     // 6. Decision Log — cada transição vira um DecisionLogEntry (quem, por quê, com quais dados).
@@ -56,6 +65,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "decisions",
       slug: "demo3-decision-log",
       expectText: "Decision Log",
+      forbidText: ["Nenhuma decisão registrada."],
     });
 
     // 7. Strategic Themes — contexto estratégico do épico.
@@ -63,6 +73,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "themes",
       slug: "demo3-strategic-themes",
       expectText: "Temas Estratégicos",
+      expectData: ["Acelerar time-to-market enterprise"],
     });
 
     // 8. Lean Budgets — quanto o épico consome de orçamento.
@@ -70,6 +81,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "budgets",
       slug: "demo3-lean-budget",
       expectText: "Lean Budgets",
+      forbidText: ["0 orçamentos"],
     });
 
     // 9. OKRs — quais objetivos o épico impacta.
@@ -77,6 +89,7 @@ test.describe("Lab · Demo 3 — Epic → plano governado (PO→LPM)", () => {
       screen: "okrs",
       slug: "demo3-okrs-impact",
       expectText: "OKRs",
+      expectData: ["Reduzir lead time de portfolio em 40%"],
     });
 
     expect(testInfo.annotations.filter((a) => a.type === "not-ported")).toEqual(

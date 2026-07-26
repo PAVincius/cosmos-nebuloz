@@ -21,6 +21,7 @@ test.describe("Lab · Demo 1 — PI Planning (RTE→PO→BO)", () => {
       screen: "piplanning",
       slug: "demo1-pi-planning",
       expectText: "PI Planning",
+      expectData: ["PI 2026-Q2", "Lançar Portfolio Kanban em produção"],
     });
 
     // 2. Capacity por time visível no painel.
@@ -28,6 +29,7 @@ test.describe("Lab · Demo 1 — PI Planning (RTE→PO→BO)", () => {
       screen: "capacity",
       slug: "demo1-capacity",
       expectText: "Capacity Planning",
+      expectData: ["Team Nebula"],
     });
 
     // 3. Program Board se monta: features por sprint, dependências, ROAM.
@@ -35,6 +37,7 @@ test.describe("Lab · Demo 1 — PI Planning (RTE→PO→BO)", () => {
       screen: "program",
       slug: "demo1-program-board",
       expectText: "Program Board",
+      expectData: ["Team Nebula", "Portfolio Kanban Board (5 colunas SAFe)"],
     });
 
     // 4. Riscos ROAM em view dedicada.
@@ -42,6 +45,7 @@ test.describe("Lab · Demo 1 — PI Planning (RTE→PO→BO)", () => {
       screen: "risks",
       slug: "demo1-roam-risks",
       expectText: "Riscos",
+      expectData: ["Capacidade do team reduzida por 2 semanas (férias)"],
     });
 
     // 5. Business Owners atribuem business value às PI Objectives (OKRs).
@@ -49,6 +53,7 @@ test.describe("Lab · Demo 1 — PI Planning (RTE→PO→BO)", () => {
       screen: "okrs",
       slug: "demo1-pi-objectives",
       expectText: "OKRs",
+      expectData: ["Reduzir lead time de portfolio em 40%"],
     });
 
     // Surface any not-ported screens as a soft signal in the report.

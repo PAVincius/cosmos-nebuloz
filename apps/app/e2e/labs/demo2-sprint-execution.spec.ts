@@ -21,6 +21,7 @@ test.describe("Lab · Demo 2 — Sprint execution (SM→Dev)", () => {
       screen: "teams",
       slug: "demo2-teams",
       expectText: "Times",
+      expectData: ["Team Nebula"],
     });
 
     // 2. Abre o Team Sprint console (board, impediments, standup, retro num só lugar).
@@ -28,6 +29,7 @@ test.describe("Lab · Demo 2 — Sprint execution (SM→Dev)", () => {
       cardSelector: "button.lift",
       urlFragment: /\/cosmos\/team\//,
       slug: "demo2-team-console",
+      expectData: ["Team Nebula", "Sprint 1 — Foundation"],
     });
 
     // 3. Velocity capturada automaticamente das stories concluídas.
@@ -35,6 +37,7 @@ test.describe("Lab · Demo 2 — Sprint execution (SM→Dev)", () => {
       screen: "velocity",
       slug: "demo2-velocity",
       expectText: "Velocity",
+      expectData: ["Team Nebula"],
     });
 
     // 4. Measure & Grow — ações de retro rastreadas ciclo a ciclo.
@@ -42,6 +45,7 @@ test.describe("Lab · Demo 2 — Sprint execution (SM→Dev)", () => {
       screen: "measure",
       slug: "demo2-measure-grow",
       expectText: "Measure & Grow",
+      expectData: [/competências/],
     });
 
     expect(testInfo.annotations.filter((a) => a.type === "not-ported")).toEqual(

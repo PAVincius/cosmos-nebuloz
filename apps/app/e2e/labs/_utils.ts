@@ -21,9 +21,18 @@ export type BeatOpts = {
   screen: string;
   // Screenshot filename stem; the step number is appended automatically.
   slug: string;
-  // Text expected somewhere on the loaded screen (page header, KPI label…).
-  // Asserted visible when provided — makes the beat meaningful, not just "no crash".
+  // Identity check — the page header. Proves we landed on the right screen.
   expectText?: string | RegExp;
+  // Proof the screen rendered actual records, not just its chrome. Headers,
+  // KPI labels and section titles render even when every query returns zero
+  // rows, so a beat asserting only expectText photographs an empty screen and
+  // still passes. These come from seeded content (a team name, an epic title,
+  // an objective) and are the difference between "the route loaded" and "the
+  // tour has something to show".
+  expectData?: (string | RegExp)[];
+  // The inverse proof, for screens whose populated rows have no predictable
+  // text to match: assert the screen's own "nothing here" copy is absent.
+  forbidText?: (string | RegExp)[];
 };
 
 export type CardBeatOpts = {
@@ -33,6 +42,7 @@ export type CardBeatOpts = {
   urlFragment: RegExp;
   slug: string;
   expectText?: string | RegExp;
+  expectData?: (string | RegExp)[];
 };
 
 let counter = 0;
@@ -83,7 +93,11 @@ async function assertHealthy(
   page: Page,
   testInfo: TestInfo,
   route: string,
-  expectText?: string | RegExp
+  opts: {
+    expectText?: string | RegExp;
+    expectData?: (string | RegExp)[];
+    forbidText?: (string | RegExp)[];
+  }
 ) {
   await expect(
     page.getByText(ERROR_BOUNDARY),
@@ -107,8 +121,22 @@ async function assertHealthy(
     });
     return;
   }
-  if (expectText) {
-    await expect(page.getByText(expectText).first()).toBeVisible();
+  if (opts.expectText) {
+    await expect(page.getByText(opts.expectText).first()).toBeVisible();
+  }
+
+  for (const proof of opts.expectData ?? []) {
+    await expect(
+      page.getByText(proof).first(),
+      `Screen "${route}" loaded but shows no seeded content matching ${proof} — the tour beat would be photographed empty`
+    ).toBeVisible();
+  }
+
+  for (const empty of opts.forbidText ?? []) {
+    await expect(
+      page.getByText(empty),
+      `Screen "${route}" still shows its empty-state copy ${empty} — nothing seeded for this beat`
+    ).toHaveCount(0);
   }
 }
 
@@ -125,7 +153,7 @@ export async function beat(page: Page, testInfo: TestInfo, opts: BeatOpts) {
   // Capture first, assert second: the screenshot is the deliverable and must
   // exist even when a screen crashed or stayed on its loading state.
   const file = await shoot(page, testInfo, opts.slug);
-  await assertHealthy(page, testInfo, route, opts.expectText);
+  await assertHealthy(page, testInfo, route, opts);
   return file;
 }
 
@@ -146,6 +174,6 @@ export async function openFirstCard(
   await settle(page);
 
   const file = await shoot(page, testInfo, opts.slug);
-  await assertHealthy(page, testInfo, page.url(), opts.expectText);
+  await assertHealthy(page, testInfo, page.url(), opts);
   return file;
 }
