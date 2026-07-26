@@ -39,6 +39,13 @@ async function globalSetup(config: FullConfig) {
     await page.goto(`${baseURL}/dashboard`);
     await page.waitForLoadState("networkidle");
 
+    // Drop better-auth's cached session snapshot cookie. It is written at login
+    // time — before the first authenticated request sets activeTenantId — so it
+    // still carries activeTenantId: null. Left in, tests inherit a tenant-less
+    // session and every tenant-scoped query returns empty. Removing it forces
+    // the app to read the (correct) active tenant from the DB session row.
+    await page.context().clearCookies({ name: "better-auth.session_data" });
+
     await page.context().storageState({
       path: "./e2e/fixtures/auth-session.json",
     });
