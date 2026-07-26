@@ -78,9 +78,35 @@ function toKanbanEpic(row: EpicRow): KanbanEpic {
   };
 }
 
-// Cache keyed by tenant — headers are read outside the cache (dynamic), the query
-// inside is cached and invalidated by revalidateTag('epics:<tenantId>').
-const cachedEpics = (tenantId: string) =>
+// A cheap fingerprint of the tenant's epic rows: any insert changes the count,
+// any update moves the max updatedAt, any delete changes the count. Folding it
+// into the cache key means a write produces a different key and therefore a
+// fresh board — without the writer knowing this cache exists.
+//
+// This matters because invalidation-by-convention does not hold here. Epics and
+// features are written from ~20 places, and only a handful call revalidateTag:
+// the Jira/Azure/Trello/CSV importer (app/api/migration/[source]/import), the
+// Linear import, the GitHub sync and the copilot tools all write straight to the
+// database. Under a plain tenant-keyed cache with no TTL, a user who imported a
+// portfolio from Jira would keep seeing the pre-import board indefinitely, and
+// clicking a card would open an epic id that no longer resolves.
+//
+// One aggregate over the ([tenantId]) index per request is a deliberate trade:
+// the board renders every epic anyway, so the query it guards was never the
+// expensive part of this screen — correctness was.
+async function epicsFingerprint(tenantId: string): Promise<string> {
+  const agg = await database.epic.aggregate({
+    where: { tenantId },
+    _count: { _all: true },
+    _max: { updatedAt: true },
+  });
+  return `${agg._count._all}:${agg._max.updatedAt?.getTime() ?? 0}`;
+}
+
+// Cache keyed by tenant + fingerprint. The tag is kept so the writers that do
+// call revalidateTag still flush immediately, and the TTL bounds the one input
+// the fingerprint cannot see: strategicTheme.title, which lives on another row.
+const cachedEpics = (tenantId: string, fingerprint: string) =>
   unstable_cache(
     async () => {
       const rows = await database.epic.findMany({
@@ -90,14 +116,15 @@ const cachedEpics = (tenantId: string) =>
       });
       return rows.map(toKanbanEpic);
     },
-    ["kanban-epics", tenantId],
-    { tags: [portfolioEpicsCacheTag(tenantId)] }
+    ["kanban-epics", tenantId, fingerprint],
+    { tags: [portfolioEpicsCacheTag(tenantId)], revalidate: 60 }
   )();
 
 export async function listEpics(): Promise<Result<KanbanEpic[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    return cachedEpics(ctx.tenantId);
+    const fingerprint = await epicsFingerprint(ctx.tenantId);
+    return cachedEpics(ctx.tenantId, fingerprint);
   });
 }
 

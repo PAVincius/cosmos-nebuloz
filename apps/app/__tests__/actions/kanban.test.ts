@@ -9,6 +9,7 @@ const h = vi.hoisted(() => ({
   epicFindFirst: vi.fn(),
   epicUpdate: vi.fn(),
   epicCreate: vi.fn(),
+  epicAggregate: vi.fn(),
   tenantFindUnique: vi.fn(),
   themeFindFirst: vi.fn(),
   logAudit: vi.fn(),
@@ -34,6 +35,7 @@ vi.mock("@repo/database", () => ({
       findFirst: h.epicFindFirst,
       update: h.epicUpdate,
       create: h.epicCreate,
+      aggregate: h.epicAggregate,
     },
     tenant: { findUnique: h.tenantFindUnique },
     strategicTheme: { findFirst: h.themeFindFirst },
@@ -67,6 +69,11 @@ beforeEach(() => {
   vi.clearAllMocks();
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  // listEpics fingerprints the tenant's epic rows to build its cache key.
+  h.epicAggregate.mockResolvedValue({
+    _count: { _all: 1 },
+    _max: { updatedAt: new Date("2026-01-01T00:00:00.000Z") },
+  });
 });
 
 describe("listEpics", () => {
