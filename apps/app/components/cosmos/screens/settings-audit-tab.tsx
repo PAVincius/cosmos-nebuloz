@@ -27,11 +27,21 @@ const ACTION_TONE: Record<string, "green" | "red" | "amber" | "blue"> = {
   status_changed: "amber",
 };
 
-function toCsv(rows: AuditLogRow[]): string {
+// Spreadsheet apps (Excel/Sheets) treat a cell starting with =, +, -, @, tab
+// or CR as a formula — a user-set field like actorName (User.name) could
+// otherwise inject one (e.g. =HYPERLINK(...)) into anyone's export. Prefix
+// with a leading apostrophe to force it back to plain text.
+const FORMULA_INJECTION_RE = /^[=+\-@\t\r]/;
+
+function sanitizeCsvField(value: string): string {
+  return FORMULA_INJECTION_RE.test(value) ? `'${value}` : value;
+}
+
+export function toCsv(rows: AuditLogRow[]): string {
   const header = "id,actor,action,entityType,entityId,createdAt";
   const lines = rows.map((r) =>
     [r.id, r.actorName, r.action, r.entityType, r.entityId, r.createdAt]
-      .map((v) => `"${String(v).replaceAll('"', '""')}"`)
+      .map((v) => `"${sanitizeCsvField(String(v)).replaceAll('"', '""')}"`)
       .join(",")
   );
   return [header, ...lines].join("\n");
