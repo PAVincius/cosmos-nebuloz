@@ -219,11 +219,19 @@ async function main() {
   await db.teamCapacitySnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.sprint.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.feature.deleteMany({ where: { tenantId: TENANT_ID } });
+  // Governance chain, innermost first (GovernedEpic would cascade from Epic,
+  // but the workflow and the decision log would not).
+  await db.approvalStepInstance.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.approvalRequest.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.approvalWorkflow.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.governedEpic.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResultSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResult.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.oKR.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.themeART.deleteMany({ where: { theme: { tenantId: TENANT_ID } } });
+  await db.leanBudget.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.strategicTheme.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pIObjective.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.confidenceVoteTally.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -973,6 +981,193 @@ async function main() {
     },
   });
   console.log("  ✓ 2 DependencyLinks entre features");
+
+  // ─── 15b. Governança de portfólio ──────────────────────────────────────────
+  // Backs three screens that render entirely from these tables and were
+  // otherwise empty: Governance Board (GovernedEpic + the approval chain),
+  // Decision Log (DecisionLogEntry) and Lean Budgets (LeanBudget).
+  const gateWorkflow = await db.approvalWorkflow.create({
+    data: {
+      tenantId: TENANT_ID,
+      tipo: "epic_investment",
+      nome: "Aprovação de Épico de Portfólio",
+      etapas: [
+        {
+          order: 1,
+          roleRequired: "lpm",
+          criteria: "Aderência ao tema e ao WSJF",
+        },
+        {
+          order: 2,
+          roleRequired: "enterprise_architect",
+          criteria: "Viabilidade técnica e impacto arquitetural",
+        },
+        {
+          order: 3,
+          roleRequired: "cfo",
+          criteria: "Investimento dentro do guardrail",
+        },
+      ],
+    },
+  });
+
+  // Approved: already through every gate.
+  await db.governedEpic.create({
+    data: {
+      tenantId: TENANT_ID,
+      epicId: epicMain.id,
+      valueStreamId: art.id,
+      themeId: theme1.id,
+      investmentEstimate: 850_000,
+      governanceStatus: "approved",
+      submittedBy: userId,
+      submittedAt: addWeeks(now, -5),
+    },
+  });
+
+  // In review: the gate pipeline mid-flight — step 1 approved, step 2 with the
+  // enterprise architect, step 3 still queued. This is the row the board's
+  // "aguardando decisão" KPI counts.
+  const governedAI = await db.governedEpic.create({
+    data: {
+      tenantId: TENANT_ID,
+      epicId: epicAI.id,
+      valueStreamId: art.id,
+      themeId: theme2.id,
+      investmentEstimate: 420_000,
+      governanceStatus: "review",
+      submittedBy: userId,
+      submittedAt: addWeeks(now, -1),
+      currentStepIndex: 1,
+    },
+  });
+  const aiRequest = await db.approvalRequest.create({
+    data: {
+      tenantId: TENANT_ID,
+      workflowId: gateWorkflow.id,
+      targetType: "epic",
+      targetId: epicAI.id,
+      governedEpicId: governedAI.id,
+      estado: "in_review",
+      initiatorId: userId,
+      stepIndex: 1,
+      steps: {
+        create: [
+          {
+            tenantId: TENANT_ID,
+            etapaOrdem: 1,
+            roleRequired: "lpm",
+            estado: "approved",
+            approverId: userId,
+            comentario:
+              "WSJF alto e alinhado ao tema de IA. Segue para arquitetura.",
+            timestamp: addDays(now, -5),
+          },
+          {
+            tenantId: TENANT_ID,
+            etapaOrdem: 2,
+            roleRequired: "enterprise_architect",
+            estado: "pending",
+            slaDeadline: addDays(now, 2),
+          },
+          {
+            tenantId: TENANT_ID,
+            etapaOrdem: 3,
+            roleRequired: "cfo",
+            estado: "pending",
+            slaDeadline: addDays(now, 5),
+          },
+        ],
+      },
+    },
+  });
+  await db.governedEpic.update({
+    where: { id: governedAI.id },
+    data: { currentApprovalRequestId: aiRequest.id },
+  });
+
+  // Draft: entered governance but not yet submitted to the gate.
+  await db.governedEpic.create({
+    data: {
+      tenantId: TENANT_ID,
+      epicId: epicSec.id,
+      valueStreamId: art.id,
+      themeId: theme3.id,
+      investmentEstimate: 300_000,
+      governanceStatus: "draft",
+    },
+  });
+  console.log(
+    "  ✓ ApprovalWorkflow + 3 GovernedEpics (approved / review com gate / draft)"
+  );
+
+  await db.decisionLogEntry.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        tipo: "epic_decision",
+        targetType: "epic",
+        targetId: epicMain.id,
+        valueStreamId: art.id,
+        decisao: "approved",
+        titulo: "Aprovar Portfolio Kanban & OKR Dashboard",
+        justificativa:
+          "WSJF mais alto do funil e dependência direta do OKR de lead time. Investimento dentro do guardrail do tema.",
+        decisorId: userId,
+        dataDecisao: addWeeks(now, -5),
+        tags: ["portfolio", "wsjf"],
+      },
+      {
+        tenantId: TENANT_ID,
+        tipo: "epic_decision",
+        targetType: "epic",
+        targetId: epicSec.id,
+        valueStreamId: art.id,
+        decisao: "deferred",
+        titulo: "Adiar SAML SSO & SCIM para o próximo PI",
+        justificativa:
+          "Job size alto e hipótese ainda vaga. Refinar o Lean Business Case antes de consumir orçamento.",
+        decisorId: userId,
+        dataDecisao: addWeeks(now, -2),
+        tags: ["compliance"],
+      },
+      {
+        tenantId: TENANT_ID,
+        tipo: "budget_decision",
+        targetType: "theme",
+        targetId: theme2.id,
+        decisao: "changed",
+        titulo: "Realocar orçamento para Inovação com IA",
+        justificativa:
+          "Realocação de 8% do tema de compliance para IA aplicada, acompanhando a demanda do board.",
+        decisorId: userId,
+        dataDecisao: addWeeks(now, -1),
+        tags: ["budget", "realocação"],
+      },
+    ],
+  });
+  console.log("  ✓ 3 DecisionLogEntries (approved / deferred / changed)");
+
+  // One budget, not one per theme: LeanBudget is @@unique([artId, piPlanId]),
+  // i.e. it models the ART's budget for a given PI. Per-theme allocation is
+  // already carried by StrategicTheme.budgetTotal / targetAllocationPct.
+  await db.leanBudget.create({
+    data: {
+      tenantId: TENANT_ID,
+      artId: art.id,
+      piPlanId: piPlan.id,
+      themeId: theme1.id,
+      name: "Plataforma COSMOS · PI 2026-Q2",
+      amount: 5_500_000,
+      spent: 2_120_000,
+      capexPct: 55,
+      opexPct: 45,
+      spendLimitUsd: 6_000_000,
+      approvalThresholdUsd: 500_000,
+      period: "PI 2026-Q2",
+    },
+  });
+  console.log("  ✓ 1 LeanBudget do ART no PI (alocado vs. consumido)");
 
   // ─── 16. Stories em todos os status ────────────────────────────────────────
   console.log("\n  Criando stories (todos os status)...");
