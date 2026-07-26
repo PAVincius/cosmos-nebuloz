@@ -79,6 +79,23 @@ function wsjf(bv: number, tc: number, rr: number, js: number) {
   return Math.round(((bv + tc + rr) / js) * 10) / 10;
 }
 
+// Per-letter INVEST decomposition in the shape the analyze-invest route
+// persists ({ I: { score, rationale }, … }); getEpicDetailFull parses it into
+// the per-dimension bars on the epic screen. Without it the epic detail shows
+// "ainda não recebeu uma análise INVEST" no matter what investScore says.
+function investBreakdown(
+  scores: [number, number, number, number, number, number],
+  rationale: string
+) {
+  const letters = ["I", "N", "V", "E", "S", "T"] as const;
+  return Object.fromEntries(
+    letters.map((letter, i) => [letter, { score: scores[i], rationale }])
+  );
+}
+
+const lbc = (...texts: string[]) =>
+  texts.map((text, i) => ({ id: `lbc-${i + 1}`, text }));
+
 const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
 const addWeeks = (d: Date, w: number) => addDays(d, w * 7);
 
@@ -393,6 +410,11 @@ async function main() {
       name: "PI 2026-Q2",
       startDate: addWeeks(now, -4),
       endDate: addWeeks(now, 6),
+      // Mid-flight, matching the dates above. Not the "DRAFT" default: the PI
+      // Planning and Program Board screens both resolve the *active* PI via
+      // status in (PLANNING, COMMITTED, EXECUTING), so a DRAFT plan leaves
+      // both rendering "Nenhum PI ativo" no matter how much else is seeded.
+      status: "EXECUTING",
     },
   });
   console.log(`  ✓ PI Plan "${piPlan.name}"`);
@@ -630,13 +652,39 @@ async function main() {
   // ─── 13. Épicos ────────────────────────────────────────────────────────────
   console.log("\n  Criando épicos, features e dependências...");
 
+  // lifecycleStatus is what the Kanban de Épicos board columns read — it is a
+  // separate field from statusId, so setting only statusId (as this seed used
+  // to) left all three epics stacked in Funnel. The Lean Business Case fields
+  // below (wsjf/sizePoints/INVEST/hypothesis/outcomes/budget) are what the epic
+  // detail screen renders; unset, every KPI on it reads "—".
   const epicMain = await db.epic.create({
     data: {
       tenantId: TENANT_ID,
       title: "Portfolio Kanban & OKR Dashboard",
       statusId: "IMPLEMENTING",
+      lifecycleStatus: "IMPLEMENTING",
       order: 0,
+      lifecycleOrder: 0,
       strategicThemeId: theme1.id,
+      wsjf: wsjf(20, 13, 8, 8),
+      sizePoints: 8,
+      hot: true,
+      leanBudgetAllocation: 850_000,
+      investScore: 82,
+      investBreakdown: investBreakdown(
+        [85, 75, 95, 80, 70, 85],
+        "Escopo fechado, valor de negócio claro e fatiável por sprint."
+      ),
+      hypothesis:
+        "Acreditamos que consolidar portfólio e OKRs em um board único reduz o tempo de preparação de review de portfólio de 2 dias para menos de 2 horas.",
+      businessOutcomes: lbc(
+        "Reduzir o tempo de consolidação de status de portfólio em 80%",
+        "Elevar a taxa de OKRs com progresso atualizado para 90%"
+      ),
+      leadingIndicators: lbc(
+        "Épicos com WSJF calculado nos últimos 30 dias",
+        "Key results atualizados por ciclo"
+      ),
     },
   });
   const epicAI = await db.epic.create({
@@ -644,8 +692,28 @@ async function main() {
       tenantId: TENANT_ID,
       title: "AI-Powered Risk Copilot",
       statusId: "ANALYSIS",
+      lifecycleStatus: "ANALYZING",
       order: 1,
+      lifecycleOrder: 0,
       strategicThemeId: theme2.id,
+      wsjf: wsjf(13, 8, 13, 5),
+      sizePoints: 5,
+      leanBudgetAllocation: 420_000,
+      investScore: 64,
+      investBreakdown: investBreakdown(
+        [60, 70, 80, 45, 65, 65],
+        "Valor claro, mas a estimativa depende de validar o custo de inferência."
+      ),
+      hypothesis:
+        "Acreditamos que sugerir mitigação de riscos a partir do histórico do ART aumenta a proporção de riscos movidos de Identified para Owned na mesma sprint.",
+      businessOutcomes: lbc(
+        "Aumentar a taxa de riscos com dono definido em 40%",
+        "Reduzir riscos que chegam ao fim do PI sem mitigação"
+      ),
+      leadingIndicators: lbc(
+        "Sugestões de mitigação aceitas por sprint",
+        "Tempo médio entre identificação e ROAM do risco"
+      ),
     },
   });
   const epicSec = await db.epic.create({
@@ -653,11 +721,29 @@ async function main() {
       tenantId: TENANT_ID,
       title: "SAML SSO & SCIM Provisioning",
       statusId: "BACKLOG",
+      lifecycleStatus: "FUNNEL",
       order: 2,
+      lifecycleOrder: 0,
       strategicThemeId: theme3.id,
+      wsjf: wsjf(8, 5, 13, 13),
+      sizePoints: 13,
+      leanBudgetAllocation: 300_000,
+      investScore: 48,
+      investBreakdown: investBreakdown(
+        [40, 55, 70, 35, 40, 50],
+        "Hipótese ainda vaga e job size alto — precisa de refinamento antes do gate."
+      ),
+      hypothesis:
+        "Acreditamos que SSO corporativo e provisionamento automático removem o bloqueio de segurança citado em negociações enterprise.",
+      businessOutcomes: lbc(
+        "Destravar contas enterprise bloqueadas por requisito de SSO"
+      ),
+      leadingIndicators: lbc("Contas enterprise com SSO configurado"),
     },
   });
-  console.log("  ✓ 3 Épicos (IMPLEMENTING, ANALYSIS, BACKLOG)");
+  console.log(
+    "  ✓ 3 Épicos (IMPLEMENTING, ANALYZING, FUNNEL) com LBC completo"
+  );
 
   // ─── 14. Features ──────────────────────────────────────────────────────────
   const featKanban = await db.feature.create({
@@ -665,6 +751,9 @@ async function main() {
       tenantId: TENANT_ID,
       epicId: epicMain.id,
       piPlanId: piPlan.id,
+      // The Program Board derives its swimlanes from feature.assignedTeamId —
+      // features in the PI with no assigned team leave the board at "0 times".
+      assignedTeamId: team.id,
       title: "Portfolio Kanban Board (5 colunas SAFe)",
       statusId: "DONE",
       bv: 20,
@@ -682,6 +771,7 @@ async function main() {
       tenantId: TENANT_ID,
       epicId: epicMain.id,
       piPlanId: piPlan.id,
+      assignedTeamId: team.id,
       title: "OKR Dashboard com Key Results",
       statusId: "IMPLEMENTING",
       bv: 13,
@@ -698,6 +788,7 @@ async function main() {
       tenantId: TENANT_ID,
       epicId: epicAI.id,
       piPlanId: piPlan.id,
+      assignedTeamId: team.id,
       title: "Risk Score Engine baseado em histórico de entregas",
       statusId: "BACKLOG",
       bv: 13,
@@ -1313,6 +1404,14 @@ async function main() {
   console.log("    • 1 PersonSkillProfile");
   console.log("\n  Variáveis para E2E runners:");
   console.log(`  E2E_EMAIL="${E2E_EMAIL}" E2E_PASSWORD="${E2E_PASSWORD}"`);
+  // Screens backed by unstable_cache (e.g. listEpics) are only invalidated by
+  // revalidateTag from inside a request — a direct DB seed can't call it, so
+  // the board keeps serving pre-seed rows (and their now-dead ids) until the
+  // on-disk data cache is dropped.
+  console.log("\n  ⚠️  Rode antes de abrir o app:");
+  console.log(
+    "  rm -rf apps/app/.next/dev/cache   # senão telas em cache servem dados do seed anterior"
+  );
   console.log(
     "─────────────────────────────────────────────────────────────────\n"
   );
