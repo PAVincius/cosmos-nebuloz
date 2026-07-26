@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { err, ok, type Result } from "../_base";
+import { logAudit } from "../audit";
 
 const SaveSSOConfigSchema = z.object({
   enabled: z.boolean(),
@@ -77,6 +78,15 @@ export async function saveSSOConfig(
         idpCertificate: true,
         spEntityId: true,
       },
+    });
+
+    // Non-sensitive diff only — never idpMetadataUrl/idpEntityId/idpCertificate.
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "TenantSSOConfig",
+      entityId: ctx.tenantId,
+      diff: { enabled: input.enabled },
     });
 
     revalidatePath("/settings/sso");
