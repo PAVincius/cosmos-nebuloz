@@ -287,8 +287,8 @@
   --hairline-strong: rgba(255, 255, 255, 0.15);
   --ink: #eef2f8;
   --ink-muted: #93a1b3;
-  --ink-subtle: #65748b;
-  --ink-faint: #46566d;
+  --ink-subtle: #8fa0ba;
+  --ink-faint: #7f8ea8;
   --chip-bg: rgba(255, 255, 255, 0.05);
   --card-shadow:
     0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
@@ -353,8 +353,8 @@
 
   --cosmos-ink: #eef2f8;
   --cosmos-ink-muted: #93a1b3;
-  --cosmos-ink-subtle: #65748b;
-  --cosmos-ink-faint: #46566d;
+  --cosmos-ink-subtle: #8fa0ba;
+  --cosmos-ink-faint: #7f8ea8;
   --cosmos-chip-bg: rgba(255, 255, 255, 0.05);
 
   --cosmos-card-shadow:

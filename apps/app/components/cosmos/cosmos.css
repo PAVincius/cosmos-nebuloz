@@ -70,7 +70,7 @@
   --hairline-strong: #d8dbe2;
   --ink: #11151f;
   --ink-muted: #586173;
-  --ink-subtle: #8b94a4;
+  --ink-subtle: #65748b;
   --ink-faint: #aeb6c2;
   --chip-bg: #f1f3f7;
   --card-shadow:
@@ -104,7 +104,7 @@
   --hairline-strong: rgba(255, 255, 255, 0.15);
   --ink: #eef2f8;
   --ink-muted: #93a1b3;
-  --ink-subtle: #65748b;
+  --ink-subtle: #8b94a4;
   --ink-faint: #46566d;
   --chip-bg: rgba(255, 255, 255, 0.05);
   --card-shadow:
