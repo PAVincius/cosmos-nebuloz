@@ -41,8 +41,10 @@ vi.mock("next/headers", () => ({
 
 import { describe, expect, it } from "vitest";
 import {
+  createNativeTask,
   listFeatureStories,
   listStoryTasks,
+  updateNativeTask,
 } from "../../app/(cosmos)/actions/epic-tree";
 import {
   DEFAULT_NOTE_BLOCKS,
@@ -256,5 +258,141 @@ describe("listStoryTasks", () => {
     const res = await listStoryTasks("story-1");
 
     expect(res.ok && res.data.tasks[0].assigneeName).toBe("Ana Souza");
+  });
+});
+
+describe("createNativeTask", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    h.userFindManyMock.mockResolvedValue([]);
+  });
+
+  it("enforces the write roles", async () => {
+    h.taskCreateMock.mockResolvedValue({
+      id: "task-1",
+      title: "Nova",
+      status: "TODO",
+      estimateHours: null,
+      assigneeUserId: null,
+      externalSource: null,
+      externalId: null,
+      externalUrl: null,
+      noteBlocks: [],
+    });
+
+    await createNativeTask({ storyId: "story-1", title: "Nova" });
+
+    expect(h.requireRoleMock).toHaveBeenCalledWith(
+      ["ADMIN", "RTE", "SM", "PO", "DEV"],
+      expect.objectContaining({ tenantId: "tenant-1" })
+    );
+  });
+
+  it("creates the task tenant-scoped, native, and seeded with default blocks", async () => {
+    h.taskCreateMock.mockResolvedValue({
+      id: "task-1",
+      title: "Nova",
+      status: "TODO",
+      estimateHours: null,
+      assigneeUserId: null,
+      externalSource: null,
+      externalId: null,
+      externalUrl: null,
+      noteBlocks: [],
+    });
+
+    await createNativeTask({ storyId: "story-1", title: "Nova" });
+
+    const arg = h.taskCreateMock.mock.calls[0][0];
+    expect(arg.data.tenantId).toBe("tenant-1");
+    expect(arg.data.storyId).toBe("story-1");
+    expect(arg.data.externalSource).toBeNull();
+    expect(arg.data.noteBlocks).toEqual(DEFAULT_NOTE_BLOCKS);
+  });
+
+  it("rejects an empty title", async () => {
+    const res = await createNativeTask({ storyId: "story-1", title: "  " });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskCreateMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("updateNativeTask", () => {
+  const nativeRow = {
+    id: "task-1",
+    tenantId: "tenant-1",
+    title: "Task",
+    status: "TODO",
+    estimateHours: null,
+    assigneeUserId: null,
+    externalSource: null,
+    externalId: null,
+    externalUrl: null,
+    noteBlocks: [],
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    h.userFindManyMock.mockResolvedValue([]);
+    h.taskFindFirstMock.mockResolvedValue(nativeRow);
+    h.taskUpdateMock.mockResolvedValue(nativeRow);
+  });
+
+  it("refuses to edit a task that came from an external tool", async () => {
+    h.taskFindFirstMock.mockResolvedValue({
+      ...nativeRow,
+      externalSource: "jira",
+      externalId: "COS-142",
+    });
+
+    const res = await updateNativeTask({ taskId: "task-1", title: "Hack" });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses a task from another tenant", async () => {
+    h.taskFindFirstMock.mockResolvedValue(null);
+
+    const res = await updateNativeTask({ taskId: "task-1", title: "X" });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects a status outside the closed list", async () => {
+    const res = await updateNativeTask({ taskId: "task-1", status: "SHIPPED" });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("rejects blocks that do not match the schema", async () => {
+    const res = await updateNativeTask({
+      taskId: "task-1",
+      blocks: [{ id: "b1", kind: "video" }] as never,
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it("persists title, status and blocks together", async () => {
+    const blocks = [{ id: "b1", kind: "heading" as const, text: "Novo" }];
+
+    await updateNativeTask({
+      taskId: "task-1",
+      title: "Editado",
+      status: "REVIEW",
+      blocks,
+    });
+
+    expect(h.taskUpdateMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "task-1" },
+        data: { title: "Editado", status: "REVIEW", noteBlocks: blocks },
+      })
+    );
   });
 });
