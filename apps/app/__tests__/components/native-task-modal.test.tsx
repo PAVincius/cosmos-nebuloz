@@ -133,4 +133,28 @@ describe("NativeTaskModal", () => {
     await waitFor(() => expect(h.updateNativeTaskMock).toHaveBeenCalled());
     expect(h.updateNativeTaskMock.mock.calls[0][0].blocks).toHaveLength(1);
   });
+
+  test("gives unnamed sub-tasks distinct accessible names by position", async () => {
+    const taskWithEmptyChecklist: TaskNode = {
+      ...nativeTask,
+      blocks: [
+        { id: "b1", kind: "heading", text: "Resultado" },
+        { id: "b2", kind: "checklist", items: [] },
+      ],
+    };
+    renderModal(vi.fn(), taskWithEmptyChecklist);
+
+    fireEvent.click(screen.getByRole("button", { name: "+ item" }));
+    await waitFor(() =>
+      expect(h.updateNativeTaskMock).toHaveBeenCalledTimes(1)
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "+ item" }));
+    await waitFor(() =>
+      expect(h.updateNativeTaskMock).toHaveBeenCalledTimes(2)
+    );
+
+    expect(screen.getByRole("checkbox", { name: "Sub-task 1" })).toBeTruthy();
+    expect(screen.getByRole("checkbox", { name: "Sub-task 2" })).toBeTruthy();
+  });
 });

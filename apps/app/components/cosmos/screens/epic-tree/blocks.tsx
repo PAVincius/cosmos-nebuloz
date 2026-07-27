@@ -170,7 +170,7 @@ function ChecklistBlock({
         </span>
       </div>
 
-      {block.items.map((item) => (
+      {block.items.map((item, index) => (
         <div
           key={item.id}
           style={{
@@ -180,10 +180,10 @@ function ChecklistBlock({
             padding: "3px 0",
           }}
         >
-          {/* biome-ignore lint/a11y/useSemanticElements: a native <input type="checkbox"> can't render the custom circular fill styling; role/aria-checked keeps it a real checkbox for assistive tech */}
+          {/* biome-ignore lint/a11y/useSemanticElements: custom circular toggle kept as a button with explicit checkbox role and aria-checked; a restyled native input would also work and is the better long-term option */}
           <button
             aria-checked={item.done}
-            aria-label={item.text || "Sub-task"}
+            aria-label={item.text || `Sub-task ${index + 1}`}
             onClick={() => replaceItem(item.id, { done: !item.done })}
             role="checkbox"
             style={{
