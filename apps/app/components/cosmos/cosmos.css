@@ -507,3 +507,19 @@
   background: var(--accent-soft);
   color: var(--accent-text);
 }
+
+/* Editor de blocos da nota nativa: o botão remover só aparece no hover ou
+   quando o próprio botão recebe foco por teclado. */
+.block-remove {
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.block-hover:hover .block-remove,
+.block-remove:focus-visible {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .block-remove {
+    transition: none;
+  }
+}
