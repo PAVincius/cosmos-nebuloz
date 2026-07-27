@@ -144,6 +144,45 @@ const ART_PALETTE = ["91,141,239", "167,139,250", "52,211,153", "251,191,36"];
 
 // ─── Capital Allocation Flow (simplified two-tier proportional flow) ───────
 
+/**
+ * Segment colours arrive as data, so no fixed foreground clears AA on all of
+ * them. White works on dark fills, near-black on light ones — but a fill in the
+ * middle of the luminance range (the indigo here measured 4.46:1 against white
+ * and 4.23:1 against black) clears neither. For those the fill itself is
+ * darkened, hue intact, until white passes.
+ */
+function segmentColors(rgb: string): { fill: string; fg: string } {
+  const channel = (c: number) =>
+    c <= 0.039_28 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  const parts = rgb.split(",").map((v) => Number(v.trim()));
+  let [r, g, b] = parts;
+  const luminance = () =>
+    0.2126 * channel(r / 255) +
+    0.7152 * channel(g / 255) +
+    0.0722 * channel(b / 255);
+  // Measured against the foregrounds actually painted, not against pure black:
+  // #0b1020 has real luminance, and testing against 0 overstated the contrast.
+  const INK_LUMINANCE =
+    0.2126 * channel(0x0b / 255) +
+    0.7152 * channel(0x10 / 255) +
+    0.0722 * channel(0x20 / 255);
+  const vsWhite = () => 1.05 / (luminance() + 0.05);
+  const vsInk = () => (luminance() + 0.05) / (INK_LUMINANCE + 0.05);
+
+  if (vsWhite() >= 4.5) {
+    return { fill: `rgb(${r}, ${g}, ${b})`, fg: "#ffffff" };
+  }
+  if (vsInk() >= 4.5) {
+    return { fill: `rgb(${r}, ${g}, ${b})`, fg: "#0b1020" };
+  }
+  for (let i = 0; i < 12 && vsWhite() < 4.5; i++) {
+    r = Math.round(r * 0.9);
+    g = Math.round(g * 0.9);
+    b = Math.round(b * 0.9);
+  }
+  return { fill: `rgb(${r}, ${g}, ${b})`, fg: "#ffffff" };
+}
+
 function CapitalFlowBar({
   segments,
 }: {
@@ -157,11 +196,12 @@ function CapitalFlowBar({
     <div className="flex h-7 w-full overflow-hidden rounded-md border border-hairline">
       {segments.map((seg) => (
         <div
-          className="flex items-center justify-center overflow-hidden whitespace-nowrap px-1.5 font-bold font-mono text-[9.5px] text-white"
+          className="flex items-center justify-center overflow-hidden whitespace-nowrap px-1.5 font-bold font-mono text-[9.5px]"
           key={seg.id}
           style={{
             width: `${(seg.value / total) * 100}%`,
-            background: `rgb(${seg.rgb})`,
+            background: segmentColors(seg.rgb).fill,
+            color: segmentColors(seg.rgb).fg,
           }}
           title={`${seg.label}: ${formatCurrency(seg.value)}`}
         >

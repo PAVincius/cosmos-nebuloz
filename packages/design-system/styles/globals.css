@@ -389,12 +389,12 @@
   --card-foreground: oklch(0.91 0.002 280);
   --popover: oklch(0.18 0.007 280); /* surface-2 ~#222228 */
   --popover-foreground: oklch(0.91 0.002 280);
-  --primary: oklch(0.58 0.22 264); /* lavender-blue accent */
+  --primary: oklch(0.55 0.22 264); /* lavender-blue accent */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.18 0.007 280); /* surface-2 */
   --secondary-foreground: oklch(0.91 0.002 280);
   --muted: oklch(0.18 0.007 280); /* surface-2 */
-  --muted-foreground: oklch(0.6 0.005 280); /* ink-subtle ~#8b8b94 */
+  --muted-foreground: oklch(0.68 0.005 280); /* raised from 0.6: at 0.6 it measured 4.08:1 on --chip-bg, under AA */
   --accent: oklch(0.23 0.009 280); /* surface-3 ~#2a2a32 */
   --accent-foreground: oklch(0.91 0.002 280);
   --destructive: oklch(0.5 0.22 27);

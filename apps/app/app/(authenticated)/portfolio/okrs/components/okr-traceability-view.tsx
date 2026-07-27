@@ -12,11 +12,17 @@ import Link from "next/link";
 import { useState } from "react";
 import type { OKRTraceabilityNode } from "@/app/actions/okrs";
 
+// The -700 text shades are built for a light surface. Over the 10% tint on
+// this app's dark canvas they composite to ~3.8:1, under AA — hence the dark:
+// variants, matching what epic-chip.tsx already does.
 const STATUS_COLOR: Record<string, string> = {
-  ON_TRACK: "bg-green-500/10 text-green-700 border-green-400/30",
-  AT_RISK: "bg-amber-500/10 text-amber-700 border-amber-400/30",
-  BEHIND: "bg-red-500/10 text-red-700 border-red-400/30",
-  ACHIEVED: "bg-blue-500/10 text-blue-700 border-blue-400/30",
+  ON_TRACK:
+    "bg-green-500/10 text-green-700 border-green-400/30 dark:text-green-300",
+  AT_RISK:
+    "bg-amber-500/10 text-amber-700 border-amber-400/30 dark:text-amber-300",
+  BEHIND: "bg-red-500/10 text-red-700 border-red-400/30 dark:text-red-300",
+  ACHIEVED:
+    "bg-blue-500/10 text-blue-700 border-blue-400/30 dark:text-blue-300",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -125,13 +131,15 @@ export function OKRTraceabilityView({ nodes }: Props) {
                       </span>
                       {node.themeTitle && (
                         <span
-                          className="inline-flex rounded-full border px-1.5 py-0.5 font-medium text-xs"
+                          // Theme colour tints the fill and border only. As
+                          // the text colour it sat at 4.39:1 on this surface;
+                          // the tint still carries the signal.
+                          className="inline-flex rounded-full border px-1.5 py-0.5 font-medium text-foreground text-xs"
                           style={
                             node.themeColor
                               ? {
                                   background: `${node.themeColor}15`,
                                   borderColor: `${node.themeColor}50`,
-                                  color: node.themeColor,
                                 }
                               : undefined
                           }

@@ -231,12 +231,14 @@ export function ThemeCard({ theme, allEpics }: ThemeCardProps) {
               />
             ) : (
               <button
-                className="cursor-text text-left font-semibold text-sm"
+                // The colour swatch to the left already carries the theme
+                // colour. Painting the title in it put a mid-tone hex on the
+                // dark surface at 4.45:1, just under AA.
+                className="cursor-text text-left font-semibold text-ink text-sm"
                 onClick={() => {
                   setNameDraft(theme.title);
                   setEditing(true);
                 }}
-                style={{ color: theme.color }}
                 title="Clique para renomear"
                 type="button"
               >
