@@ -1738,14 +1738,6 @@ async function main() {
   console.log("    • 1 PersonSkillProfile");
   console.log("\n  Variáveis para E2E runners:");
   console.log(`  E2E_EMAIL="${E2E_EMAIL}" E2E_PASSWORD="${E2E_PASSWORD}"`);
-  // Screens backed by unstable_cache (e.g. listEpics) are only invalidated by
-  // revalidateTag from inside a request — a direct DB seed can't call it, so
-  // the board keeps serving pre-seed rows (and their now-dead ids) until the
-  // on-disk data cache is dropped.
-  console.log("\n  ⚠️  Rode antes de abrir o app:");
-  console.log(
-    "  rm -rf apps/app/.next/dev/cache   # senão telas em cache servem dados do seed anterior"
-  );
   console.log(
     "─────────────────────────────────────────────────────────────────\n"
   );
