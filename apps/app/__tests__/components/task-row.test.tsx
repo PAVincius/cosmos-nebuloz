@@ -49,6 +49,8 @@ describe("TaskRow", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Abrir nota/i }));
     expect(onOpenNative).toHaveBeenCalledWith(nativeTask);
+    expect(screen.queryByRole("button", { name: /COS-142/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Conectar/i })).toBeNull();
   });
 
   test("a connected external task opens the read-only detail modal", () => {
@@ -64,6 +66,8 @@ describe("TaskRow", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /COS-142/ }));
     expect(onOpenExternal).toHaveBeenCalledWith(jiraTask);
+    expect(screen.queryByRole("button", { name: /Abrir nota/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Conectar/i })).toBeNull();
   });
 
   test("a disconnected external task routes to integrations instead", () => {
@@ -82,6 +86,30 @@ describe("TaskRow", () => {
     fireEvent.click(screen.getByRole("button", { name: /Conectar/i }));
     expect(navigate).toHaveBeenCalledWith("integrations");
     expect(onOpenExternal).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: /Abrir nota/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /COS-142/ })).toBeNull();
+  });
+
+  test("an external task from an unknown provider falls through to the disconnected state even when connected", () => {
+    const unknownProviderTask: TaskNode = {
+      ...jiraTask,
+      id: "task-3",
+      externalSource: "bitbucket",
+      externalId: "BB-9",
+    };
+    const onOpenExternal = vi.fn();
+    renderRow(
+      <TaskRow
+        connected
+        onOpenExternal={onOpenExternal}
+        onOpenNative={vi.fn()}
+        task={unknownProviderTask}
+      />
+    );
+
+    expect(screen.getByRole("button", { name: /Conectar/i })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /Abrir nota/i })).toBeNull();
+    expect(screen.queryByRole("button", { name: /BB-9/ })).toBeNull();
   });
 
   test("names the origin in text, not only by colour and letter", () => {
