@@ -40,7 +40,10 @@ vi.mock("next/headers", () => ({
 }));
 
 import { describe, expect, it } from "vitest";
-import { listFeatureStories } from "../../app/(cosmos)/actions/epic-tree";
+import {
+  listFeatureStories,
+  listStoryTasks,
+} from "../../app/(cosmos)/actions/epic-tree";
 import {
   DEFAULT_NOTE_BLOCKS,
   PROVIDERS,
@@ -148,5 +151,110 @@ describe("listFeatureStories", () => {
     const res = await listFeatureStories("feature-1");
 
     expect(res).toEqual({ ok: true, data: [] });
+  });
+});
+
+describe("listStoryTasks", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    h.integrationFindManyMock.mockResolvedValue([]);
+    h.userFindManyMock.mockResolvedValue([]);
+  });
+
+  it("scopes the task lookup to the tenant and the story", async () => {
+    h.taskFindManyMock.mockResolvedValue([]);
+
+    await listStoryTasks("story-1");
+
+    expect(h.taskFindManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tenant-1", storyId: "story-1" },
+      })
+    );
+  });
+
+  it("reports only ACTIVE integrations as connected sources", async () => {
+    h.taskFindManyMock.mockResolvedValue([]);
+    h.integrationFindManyMock.mockResolvedValue([{ source: "jira" }]);
+
+    const res = await listStoryTasks("story-1");
+
+    expect(res.ok && res.data.connectedSources).toEqual(["jira"]);
+    expect(h.integrationFindManyMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: "tenant-1", status: "ACTIVE" },
+      })
+    );
+  });
+
+  it("exposes a native task with its parsed blocks and no external source", async () => {
+    h.taskFindManyMock.mockResolvedValue([
+      {
+        id: "task-1",
+        title: "Escrever migration",
+        status: "TODO",
+        estimateHours: 2,
+        assigneeUserId: null,
+        externalSource: null,
+        externalId: null,
+        externalUrl: null,
+        noteBlocks: [{ id: "b1", kind: "heading", text: "Resultado" }],
+      },
+    ]);
+
+    const res = await listStoryTasks("story-1");
+
+    expect(res.ok && res.data.tasks[0]).toEqual({
+      id: "task-1",
+      title: "Escrever migration",
+      status: "TODO",
+      estimateHours: 2,
+      assigneeName: null,
+      externalSource: null,
+      externalId: null,
+      externalUrl: null,
+      blocks: [{ id: "b1", kind: "heading", text: "Resultado" }],
+    });
+  });
+
+  it("nulls out blocks that do not match the block schema", async () => {
+    h.taskFindManyMock.mockResolvedValue([
+      {
+        id: "task-1",
+        title: "Legado",
+        status: "TODO",
+        estimateHours: null,
+        assigneeUserId: null,
+        externalSource: null,
+        externalId: null,
+        externalUrl: null,
+        noteBlocks: { corrupted: true },
+      },
+    ]);
+
+    const res = await listStoryTasks("story-1");
+
+    expect(res.ok && res.data.tasks[0].blocks).toBeNull();
+  });
+
+  it("resolves the assignee display name", async () => {
+    h.taskFindManyMock.mockResolvedValue([
+      {
+        id: "task-1",
+        title: "Revisar PR",
+        status: "REVIEW",
+        estimateHours: null,
+        assigneeUserId: "user-9",
+        externalSource: "jira",
+        externalId: "COS-142",
+        externalUrl: null,
+        noteBlocks: null,
+      },
+    ]);
+    h.userFindManyMock.mockResolvedValue([{ id: "user-9", name: "Ana Souza" }]);
+
+    const res = await listStoryTasks("story-1");
+
+    expect(res.ok && res.data.tasks[0].assigneeName).toBe("Ana Souza");
   });
 });
