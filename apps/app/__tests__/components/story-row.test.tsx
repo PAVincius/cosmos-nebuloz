@@ -67,15 +67,10 @@ describe("StoryRow", () => {
     expect(row.getAttribute("aria-expanded")).toBe("true");
   });
 
-  test("expands with the keyboard", async () => {
+  test("the row is a native button, so Enter and Space activate it without custom key handling", () => {
     renderRow();
     const row = screen.getByRole("button", { name: /Login com SSO/ });
-
-    fireEvent.keyDown(row, { key: "Enter" });
-
-    await waitFor(() =>
-      expect(h.listStoryTasksMock).toHaveBeenCalledWith("story-1")
-    );
+    expect(row.tagName).toBe("BUTTON");
   });
 
   test("keeps the row expanded and offers a retry when the fetch fails", async () => {
@@ -87,6 +82,38 @@ describe("StoryRow", () => {
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /Tentar novamente/ })
+      ).toBeTruthy()
+    );
+  });
+
+  test("recovers on collapse-then-re-expand and on retry after a failed load", async () => {
+    h.listStoryTasksMock.mockResolvedValueOnce({ ok: false, error: "boom" });
+    renderRow();
+    const row = screen.getByRole("button", { name: /Login com SSO/ });
+
+    fireEvent.click(row);
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /Tentar novamente/ })
+      ).toBeTruthy()
+    );
+    expect(h.listStoryTasksMock).toHaveBeenCalledTimes(1);
+
+    h.listStoryTasksMock.mockResolvedValue({
+      ok: true,
+      data: { tasks: [], connectedSources: [] },
+    });
+
+    // Collapse then re-expand: since tasks is still null after the failure,
+    // this must retry the fetch — not silently stay broken.
+    fireEvent.click(row);
+    expect(row.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(row);
+
+    await waitFor(() => expect(h.listStoryTasksMock).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /Nova task nativa/ })
       ).toBeTruthy()
     );
   });
