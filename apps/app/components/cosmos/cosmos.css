@@ -523,3 +523,13 @@
     transition: none;
   }
 }
+
+/* Chevron das linhas expansíveis da árvore do épico. */
+.tree-chevron {
+  transition: transform 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tree-chevron {
+    transition: none;
+  }
+}
