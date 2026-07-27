@@ -199,7 +199,9 @@ function DoraSection() {
             label="Deployment Frequency"
             tone="green"
             unit="/dia"
-            value={doraKpiValue(data.deploymentFrequency, (n) => n.toFixed(2))}
+            value={doraKpiValue(data.deploymentFrequency, (n) =>
+              n.toFixed(2).replace(".", ",")
+            )}
           />
           <KpiCard
             hint={doraKpiHint(data.leadTimeHours, "commit → produção")}
@@ -207,7 +209,9 @@ function DoraSection() {
             label="Lead Time"
             tone="blue"
             unit={data.leadTimeHours.status === "measured" ? "d" : undefined}
-            value={doraKpiValue(data.leadTimeHours, (n) => (n / 24).toFixed(1))}
+            value={doraKpiValue(data.leadTimeHours, (n) =>
+              (n / 24).toFixed(1).replace(".", ",")
+            )}
           />
           <KpiCard
             hint={data.changeFailureRate.reason}
@@ -471,7 +475,7 @@ export default function FlowScreen() {
               label="Flow Time"
               tone="amber"
               unit="d"
-              value={(data.flowTimeAvgHours / 24).toFixed(1)}
+              value={(data.flowTimeAvgHours / 24).toFixed(1).replace(".", ",")}
             />
             <KpiCard
               hint="ativo vs. espera"

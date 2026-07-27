@@ -6,8 +6,18 @@
 .cosmos-root {
   /* lavender accent — tweakable */
   --accent: #5e6ad2;
+  /* Foreground for text/icons on a solid --accent or tone fill. White clears
+     AA on the light accent (4.70:1). It does NOT clear it on the light green
+     (#16a34a, 3.3:1) or amber (#d97706, 3.2:1) fills — and neither does a dark
+     foreground, because those two tones sit mid-luminance. Fixing that needs a
+     palette adjustment, not a foreground swap; left as a known gap. */
+  --on-accent: #ffffff;
+  --on-solid: #ffffff;
   --accent-rgb: 94, 106, 210;
-  --accent-fg: #ffffff;
+  /* Resolves per theme via --on-accent: white on the light accent (4.70:1),
+     canvas on the dark one (6.34:1). A single #ffffff here left the dark theme
+     at 3.10:1, since only the light block ever defined it. */
+  --accent-fg: var(--on-accent);
   /* effect intensity 0..1.6 (tweakable in dark) */
   --fx: 1;
 
@@ -71,7 +81,7 @@
   --ink: #11151f;
   --ink-muted: #586173;
   --ink-subtle: #65748b;
-  --ink-faint: #aeb6c2;
+  --ink-faint: #656d7d;
   --chip-bg: #f1f3f7;
   --card-shadow:
     0 1px 2px rgba(16, 22, 40, 0.05), 0 4px 14px -8px rgba(16, 22, 40, 0.1);
@@ -105,7 +115,7 @@
   --ink: #eef2f8;
   --ink-muted: #93a1b3;
   --ink-subtle: #8b94a4;
-  --ink-faint: #46566d;
+  --ink-faint: #8593ac;
   --chip-bg: rgba(255, 255, 255, 0.05);
   --card-shadow:
     0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
@@ -115,6 +125,10 @@
     rgba(var(--accent-rgb), 0.5);
   /* brighter accent on dark */
   --accent: #7c87ff;
+  /* Canvas on a solid accent or tone fill: 6.34:1 on the accent and 7.2:1 or
+     better on every tone. White would drop the accent to 3.10:1. */
+  --on-accent: var(--canvas);
+  --on-solid: var(--canvas);
   --accent-rgb: 124, 135, 255;
   --green: #34d399;
   --green-rgb: 52, 211, 153;

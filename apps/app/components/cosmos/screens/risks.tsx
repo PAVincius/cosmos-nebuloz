@@ -147,7 +147,7 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
                       style={{
                         fontSize: 10,
                         fontWeight: 700,
-                        color: "#fff",
+                        color: "var(--on-solid)",
                         background: `var(--${tone})`,
                         borderRadius: 5,
                         padding: "2px 5px",
@@ -208,7 +208,7 @@ function RiskRow({ r }: { r: RiskView }) {
           height: 36,
           borderRadius: "var(--r-sm)",
           background: `var(--${sevTone})`,
-          color: "#fff",
+          color: "var(--on-solid)",
           fontFamily: "'JetBrains Mono',monospace",
           fontSize: 14,
           fontWeight: 800,

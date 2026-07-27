@@ -222,13 +222,16 @@ export function IconButton({
 }: {
   name: IconName;
   onClick?: () => void;
-  title?: string;
+  /** Required: this button renders an icon and nothing else, so without a
+   *  label it reaches screen readers unnamed (axe button-name, critical). */
+  title: string;
   size?: number;
   active?: boolean;
   style?: CSSProperties;
 }) {
   return (
     <button
+      aria-label={title}
       className="btn navitem"
       onClick={onClick}
       style={{
@@ -243,8 +246,9 @@ export function IconButton({
         ...style,
       }}
       title={title}
+      type="button"
     >
-      <Icon name={name} size={17} strokeWidth={2} />
+      <Icon aria-hidden name={name} size={17} strokeWidth={2} />
     </button>
   );
 }

@@ -289,7 +289,7 @@ function Sidebar({ activeId }: { activeId: string }) {
               display: "grid",
               placeItems: "center",
               background: "var(--accent)",
-              color: "#fff",
+              color: "var(--on-accent)",
               fontWeight: 700,
               fontSize: 13,
               letterSpacing: ".02em",
@@ -504,7 +504,7 @@ function Sidebar({ activeId }: { activeId: string }) {
             admin@cosmos.local
           </div>
         </div>
-        <IconButton name="more" size={30} />
+        <IconButton name="more" size={30} title="Mais opções da conta" />
       </div>
     </aside>
   );
@@ -602,7 +602,7 @@ function Topbar({
             />
           </span>
         </button>
-        <IconButton name="bell" size={34} />
+        <IconButton name="bell" size={34} title="Notificações" />
         <div style={{ width: 1, height: 20, background: "var(--hairline)" }} />
         <Button icon="sparkles" size="sm" variant="soft">
           Copilot
@@ -730,12 +730,18 @@ export function CosmosShell({
             onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
             theme={theme}
           />
-          <div
+          {/* Scrollable regions need a tab stop, or keyboard-only users cannot
+              scroll the screen content at all. Labelled so the stop announces
+              what it is rather than landing on an anonymous group. */}
+          <section
+            aria-label="Conteúdo da tela"
             className="scroll"
             style={{ flex: 1, overflowY: "auto", padding: "24px 28px 40px" }}
+            // biome-ignore lint/a11y/noNoninteractiveTabindex: axe's scrollable-region-focusable requires a focusable scroll container
+            tabIndex={0}
           >
             {children}
-          </div>
+          </section>
         </div>
       </div>
       <CommandPalette />
