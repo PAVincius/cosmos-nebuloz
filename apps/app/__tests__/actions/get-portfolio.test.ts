@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   unstable_cache: vi.fn(),
   epicFindMany: vi.fn(),
   epicCount: vi.fn(),
+  epicAggregate: vi.fn(),
   oKRGroupBy: vi.fn(),
 }));
 
@@ -31,6 +32,7 @@ vi.mock("@repo/database", () => ({
     epic: {
       findMany: mocks.epicFindMany,
       count: mocks.epicCount,
+      aggregate: mocks.epicAggregate,
     },
     oKR: {
       groupBy: mocks.oKRGroupBy,
@@ -84,6 +86,11 @@ describe("getPortfolioEpics", () => {
     mocks.oKRGroupBy.mockResolvedValue([]);
     mocks.epicFindMany.mockResolvedValue([sampleEpic]);
     mocks.epicCount.mockResolvedValue(1);
+    // Both readers fingerprint the tenant's epic rows to build their cache key.
+    mocks.epicAggregate.mockResolvedValue({
+      _count: { _all: 1 },
+      _max: { updatedAt: new Date("2026-01-01T00:00:00.000Z") },
+    });
   });
 
   it("loads epics for the session tenant and aggregates WSJF", async () => {
