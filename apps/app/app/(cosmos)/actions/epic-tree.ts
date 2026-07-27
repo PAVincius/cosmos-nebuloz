@@ -157,6 +157,17 @@ export async function createNativeTask(input: {
       throw new Error("Título da task é obrigatório.");
     }
 
+    // storyId vem do cliente. Sem esta checagem, um caller do tenant B pode
+    // criar uma task com tenantId B pendurada numa story do tenant A —
+    // escrita cross-tenant. O tenantId da linha nova não protege o pai.
+    const story = await database.story.findFirst({
+      where: { id: input.storyId, tenantId: ctx.tenantId },
+      select: { id: true },
+    });
+    if (!story) {
+      throw new Error("Story não encontrada.");
+    }
+
     const created = await database.task.create({
       data: {
         tenantId: ctx.tenantId,
@@ -229,7 +240,10 @@ export async function updateNativeTask(input: {
     }
 
     const updated = await database.task.update({
-      where: { id: input.taskId },
+      // Re-escopar por tenant aqui é redundante com o findFirst acima hoje,
+      // mas não depende da ordem do código: se alguém inserir um await entre
+      // as duas chamadas, esta linha continua protegendo a escrita.
+      where: { id: input.taskId, tenantId: ctx.tenantId },
       data,
       select: TASK_SELECT,
     });

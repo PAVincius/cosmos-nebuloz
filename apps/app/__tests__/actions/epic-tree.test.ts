@@ -2,6 +2,7 @@ import { beforeEach, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   storyFindManyMock: vi.fn(),
+  storyFindFirstMock: vi.fn(),
   taskFindManyMock: vi.fn(),
   taskFindFirstMock: vi.fn(),
   taskCreateMock: vi.fn(),
@@ -18,7 +19,7 @@ const h = vi.hoisted(() => ({
 
 vi.mock("@repo/database", () => ({
   database: {
-    story: { findMany: h.storyFindManyMock },
+    story: { findMany: h.storyFindManyMock, findFirst: h.storyFindFirstMock },
     task: {
       findMany: h.taskFindManyMock,
       findFirst: h.taskFindFirstMock,
@@ -265,6 +266,7 @@ describe("createNativeTask", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     h.userFindManyMock.mockResolvedValue([]);
+    h.storyFindFirstMock.mockResolvedValue({ id: "story-1" });
   });
 
   it("enforces the write roles", async () => {
@@ -303,6 +305,12 @@ describe("createNativeTask", () => {
 
     await createNativeTask({ storyId: "story-1", title: "Nova" });
 
+    expect(h.storyFindFirstMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "story-1", tenantId: "tenant-1" },
+      })
+    );
+
     const arg = h.taskCreateMock.mock.calls[0][0];
     expect(arg.data.tenantId).toBe("tenant-1");
     expect(arg.data.storyId).toBe("story-1");
@@ -312,6 +320,15 @@ describe("createNativeTask", () => {
 
   it("rejects an empty title", async () => {
     const res = await createNativeTask({ storyId: "story-1", title: "  " });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskCreateMock).not.toHaveBeenCalled();
+  });
+
+  it("refuses to create a task under a story from another tenant", async () => {
+    h.storyFindFirstMock.mockResolvedValue(null);
+
+    const res = await createNativeTask({ storyId: "story-1", title: "Nova" });
 
     expect(res.ok).toBe(false);
     expect(h.taskCreateMock).not.toHaveBeenCalled();
@@ -390,7 +407,7 @@ describe("updateNativeTask", () => {
 
     expect(h.taskUpdateMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: { id: "task-1" },
+        where: { id: "task-1", tenantId: "tenant-1" },
         data: { title: "Editado", status: "REVIEW", noteBlocks: blocks },
       })
     );
