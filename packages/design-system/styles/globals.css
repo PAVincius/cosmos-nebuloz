@@ -461,6 +461,11 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  /* Cosmos brand accent. The portfolio screens ship `bg-accent-c` markup, but
+     nothing mapped the token into Tailwind's colour space, so those utilities
+     emitted nothing and the buttons rendered with no fill at all. */
+  --color-accent-c: var(--accent-c);
+  --color-on-accent: var(--on-accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);
