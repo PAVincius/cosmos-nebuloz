@@ -201,6 +201,81 @@ async function main() {
     `  ✓ ${deletedSessions.count} sessão(ões) deletada(s) — relogin necessário`
   );
 
+  // ─── 2b. Um login por papel ────────────────────────────────────────────────
+  // Until now this tenant had exactly one account, an ADMIN. That made two
+  // things untestable: the persona specs (named after RTE/PO/SM/LPM but
+  // probing routes signed out, because there was nobody to sign in as) and
+  // RBAC itself — requireRole gates 130+ call sites on ADMIN/STE/RTE/PO/SM,
+  // and none of it was exercised.
+  //
+  // Team.members stays as it is: that JSON is roster metadata (skills, hours)
+  // for capacity maths, not identities. These are real User rows with
+  // credentials, which is what signing in requires.
+  //
+  // DEV is seeded on purpose despite never appearing in a requireRole list —
+  // it is the negative case, the role that proves a gate actually closes.
+  const ROLE_USERS = [
+    { role: "STE" as const, name: "Sofia Torres (STE)" },
+    { role: "RTE" as const, name: "Rafael Teixeira (RTE)" },
+    { role: "PO" as const, name: "Paula Oliveira (PO)" },
+    { role: "SM" as const, name: "Samuel Moreira (SM)" },
+    { role: "DEV" as const, name: "Diego Vieira (DEV)" },
+  ];
+
+  for (const { role, name } of ROLE_USERS) {
+    const email = `${role.toLowerCase()}@cosmos.local`;
+    const roleUser = await db.user.upsert({
+      where: { email },
+      update: { name, emailVerified: true },
+      create: { email, name, emailVerified: true },
+      select: { id: true },
+    });
+
+    // Same password as the admin — these are fixtures, and one constant keeps
+    // the runner's env surface to a single E2E_PASSWORD.
+    const account = await db.account.findFirst({
+      where: { userId: roleUser.id, providerId: "credential" },
+      select: { id: true },
+    });
+    if (account) {
+      await db.account.update({
+        where: { id: account.id },
+        data: { password: hashedPassword },
+      });
+    } else {
+      await db.account.create({
+        data: {
+          userId: roleUser.id,
+          accountId: email,
+          providerId: "credential",
+          password: hashedPassword,
+        },
+      });
+    }
+
+    const roleMembership = await db.tenantMember.findFirst({
+      where: { userId: roleUser.id, tenantId: TENANT_ID },
+      select: { id: true },
+    });
+    if (roleMembership) {
+      await db.tenantMember.update({
+        where: { id: roleMembership.id },
+        data: { role },
+      });
+    } else {
+      await db.tenantMember.create({
+        data: { userId: roleUser.id, tenantId: TENANT_ID, role },
+      });
+    }
+
+    // Same reason as the admin above: a stale session would keep the previous
+    // role in its cookie cache.
+    await db.session.deleteMany({ where: { userId: roleUser.id } });
+  }
+  console.log(
+    `  ✓ ${ROLE_USERS.length} logins por papel (${ROLE_USERS.map((r) => r.role).join(", ")}) + ADMIN`
+  );
+
   // ─── 3. Cleanup ────────────────────────────────────────────────────────────
   console.log("\n  Limpando dados existentes...");
   await db.flowMetricSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
