@@ -1567,20 +1567,24 @@ async function main(): Promise<SeedContext> {
   await db.approvalRequest.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.approvalWorkflow.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.governedEpic.deleteMany({ where: { tenantId: TENANT_ID } });
-  // DecisionLogEntry é append-only no banco (trigger decision_log_immutable).
-  // A limpeza do seed é o único caminho legítimo de apagar log de decisão, e
-  // roda como owner da tabela — desabilita o trigger só nesta transação e
-  // religa no finally, para que uma falha no meio não deixe a trava desarmada.
-  await db.$executeRawUnsafe(
-    'ALTER TABLE "DecisionLogEntry" DISABLE TRIGGER decision_log_immutable'
-  );
-  try {
-    await db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } });
-  } finally {
-    await db.$executeRawUnsafe(
+  // DecisionLogEntry é append-only no banco (trigger decision_log_immutable,
+  // reinstalado por uma sessão concorrente que está auditando migrations com
+  // SQL raw que nunca rodou — não existia neste banco antes de hoje). A
+  // limpeza do seed é o único caminho legítimo de apagar log de decisão.
+  // ALTER TABLE ... DISABLE/ENABLE TRIGGER é DDL de Postgres, válido dentro
+  // de uma transação — o array-form de $transaction roda os três passos em
+  // um único BEGIN/COMMIT (verificado: um erro no meio faz ROLLBACK e
+  // restaura o trigger atomicamente, sem depender de um `finally` em JS que
+  // não cobre um crash do processo entre statements).
+  await db.$transaction([
+    db.$executeRawUnsafe(
+      'ALTER TABLE "DecisionLogEntry" DISABLE TRIGGER decision_log_immutable'
+    ),
+    db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } }),
+    db.$executeRawUnsafe(
       'ALTER TABLE "DecisionLogEntry" ENABLE TRIGGER decision_log_immutable'
-    );
-  }
+    ),
+  ]);
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResultSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResult.deleteMany({ where: { tenantId: TENANT_ID } });
