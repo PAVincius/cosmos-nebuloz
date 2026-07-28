@@ -100,17 +100,25 @@ describe.skipIf(!RLS_ENFORCED)(
         const db = database as Database;
         const runAsTenantA = withTenantDb as WithTenantDb;
 
-        const controlCount = await db.epic.count({
+        const controlCountB = await db.epic.count({
           where: { tenantId: pair.b.id },
         });
-        expect(controlCount).toBeGreaterThan(0);
+        expect(controlCountB).toBeGreaterThan(0);
+
+        const controlCountA = await db.epic.count({
+          where: { tenantId: pair.a.id },
+        });
+        expect(controlCountA).toBeGreaterThan(0);
 
         const rowsSeenByA = await runAsTenantA(pair.a.id, (tx) =>
           tx.epic.findMany({ select: { tenantId: true } })
         );
-        expect(rowsSeenByA.some((row) => row.tenantId === pair.b.id)).toBe(
-          false
-        );
+        // Both halves matter: length must match A's own unscoped count (so
+        // an over-restrictive policy — deny-all, a broken current_setting
+        // call, a pooler resetting SET LOCAL — can't pass by returning too
+        // few rows), and every returned row must belong to A (so an
+        // under-restrictive policy can't pass by leaking B's rows in).
+        expect(rowsSeenByA.length).toBe(controlCountA);
         expect(rowsSeenByA.every((row) => row.tenantId === pair.a.id)).toBe(
           true
         );
@@ -124,17 +132,20 @@ describe.skipIf(!RLS_ENFORCED)(
         const db = database as Database;
         const runAsTenantA = withTenantDb as WithTenantDb;
 
-        const controlCount = await db.feature.count({
+        const controlCountB = await db.feature.count({
           where: { tenantId: pair.b.id },
         });
-        expect(controlCount).toBeGreaterThan(0);
+        expect(controlCountB).toBeGreaterThan(0);
+
+        const controlCountA = await db.feature.count({
+          where: { tenantId: pair.a.id },
+        });
+        expect(controlCountA).toBeGreaterThan(0);
 
         const rowsSeenByA = await runAsTenantA(pair.a.id, (tx) =>
           tx.feature.findMany({ select: { tenantId: true } })
         );
-        expect(rowsSeenByA.some((row) => row.tenantId === pair.b.id)).toBe(
-          false
-        );
+        expect(rowsSeenByA.length).toBe(controlCountA);
         expect(rowsSeenByA.every((row) => row.tenantId === pair.a.id)).toBe(
           true
         );
@@ -148,17 +159,20 @@ describe.skipIf(!RLS_ENFORCED)(
         const db = database as Database;
         const runAsTenantA = withTenantDb as WithTenantDb;
 
-        const controlCount = await db.story.count({
+        const controlCountB = await db.story.count({
           where: { tenantId: pair.b.id },
         });
-        expect(controlCount).toBeGreaterThan(0);
+        expect(controlCountB).toBeGreaterThan(0);
+
+        const controlCountA = await db.story.count({
+          where: { tenantId: pair.a.id },
+        });
+        expect(controlCountA).toBeGreaterThan(0);
 
         const rowsSeenByA = await runAsTenantA(pair.a.id, (tx) =>
           tx.story.findMany({ select: { tenantId: true } })
         );
-        expect(rowsSeenByA.some((row) => row.tenantId === pair.b.id)).toBe(
-          false
-        );
+        expect(rowsSeenByA.length).toBe(controlCountA);
         expect(rowsSeenByA.every((row) => row.tenantId === pair.a.id)).toBe(
           true
         );
@@ -172,17 +186,20 @@ describe.skipIf(!RLS_ENFORCED)(
         const db = database as Database;
         const runAsTenantA = withTenantDb as WithTenantDb;
 
-        const controlCount = await db.task.count({
+        const controlCountB = await db.task.count({
           where: { tenantId: pair.b.id },
         });
-        expect(controlCount).toBeGreaterThan(0);
+        expect(controlCountB).toBeGreaterThan(0);
+
+        const controlCountA = await db.task.count({
+          where: { tenantId: pair.a.id },
+        });
+        expect(controlCountA).toBeGreaterThan(0);
 
         const rowsSeenByA = await runAsTenantA(pair.a.id, (tx) =>
           tx.task.findMany({ select: { tenantId: true } })
         );
-        expect(rowsSeenByA.some((row) => row.tenantId === pair.b.id)).toBe(
-          false
-        );
+        expect(rowsSeenByA.length).toBe(controlCountA);
         expect(rowsSeenByA.every((row) => row.tenantId === pair.a.id)).toBe(
           true
         );
