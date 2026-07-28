@@ -250,10 +250,25 @@ const [row] = await prisma.$queryRawUnsafe<
    FROM pg_roles WHERE rolname = current_user`);
 ```
 
-Confirme também que as políticas passam a filtrar de fato: rode
-`apps/app/__tests__/security/rls-effective.test.ts` com `RLS_ENFORCED=1`. Antes desta
-troca ele falha (não há isolamento); depois dela, com a Task 5 aplicando as migrations de
-RLS, ele deve passar.
+Confirme também que as políticas passam a filtrar de fato — rodando o teste com **duas**
+connection strings, nunca uma só. Ele usa `DATABASE_URL` (o role privilegiado atual) só
+para descoberta/contagens de controle, e `RLS_TEST_DATABASE_URL` (o role recém-criado,
+`cosmos_app`) para toda query cuja visibilidade está sendo testada. Rodar com uma única
+conexão restrita cobrindo os dois papéis faz o teste pular silenciosamente assim que RLS
+funciona — a descoberta deixa de enxergar tenants pela mesma razão que a política nega
+acesso — então não simplifique para uma variável só.
+
+```bash
+RLS_ENFORCED=1 \
+RLS_TEST_DATABASE_URL="postgresql://cosmos_app:<senha>@<host>:<porta>/<database>" \
+npx vitest run __tests__/security/rls-effective.test.ts --reporter=verbose
+```
+
+(rodar a partir de `apps/app`; `DATABASE_URL` já deve estar definida no ambiente ou em
+`apps/app/.env.local`, apontando para o role privilegiado). Antes da troca da Seção 3 ele
+falha (não há isolamento); depois dela, com a Task 5 aplicando as migrations de RLS, ele
+deve passar — 8 asserções (deny-by-default + escopo exato/sem vazamento, para
+Epic/Feature/Story/Task).
 
 ## 5. Rollback
 
