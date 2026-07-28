@@ -100,6 +100,57 @@ pnpm migrate
 
 Se isso aplicar sem erro, a baseline está recuperada.
 
+### "Already recorded as applied" durante o laço de resolve
+
+Se o banco já teve uma recuperação parcial anterior, alguma migration do laço pode já estar
+marcada como aplicada. Nesse caso `migrate resolve --applied <nome>` falha com:
+
+```
+Error: P3008
+The migration `<nome>` is already recorded as applied in the database.
+```
+
+Isto **não é uma falha real** — é o Prisma dizendo que aquele item específico não precisa de
+ação. Continue o laço normalmente para as demais migrations; não é motivo para abortar a
+recuperação. Só pare de verdade se o erro for outro (schema divergente, statement SQL
+inválido, etc.).
+
+### Removendo a migration de prova (probe) do Step 4
+
+Se você criou uma migration no-op temporária para provar o caminho (porque a migration real
+ainda não existia), saiba de antemão:
+
+- **O caminho mais barato e recomendado é não remover nada.** Uma migration no-op aplicada
+  com sucesso (ex.: `SELECT 1;`) não custa nada para permanecer — não altera schema, não
+  altera dados, e sua linha em `_prisma_migrations` é só mais uma entrada legítima no
+  histórico. **Prefira deixar a migration de prova e sua linha no ledger para sempre**, em vez
+  de tentar limpá-la. Isso evita qualquer edição manual do ledger.
+- **Por que `migrate resolve --rolled-back` não funciona aqui:** esse comando só reverte
+  migrations que estão em **estado de falha**. Uma migration de prova que aplicou com sucesso
+  (`finished_at` preenchido, sem erro) não está falhada, então o comando recusa com:
+
+  ```
+  Error: P3012
+  Migration `<nome>` cannot be rolled back because it is not in a failed state.
+  ```
+
+  Isso é esperado, não um bug. Não insista tentando `--rolled-back` em uma migration que
+  aplicou com sucesso.
+- **Se a remoção for genuinamente necessária** (ex.: política do projeto de não deixar
+  migrations de prova no histórico), o único caminho é apagar a pasta em
+  `prisma/migrations/<nome>/` **e** a linha correspondente em `_prisma_migrations`
+  diretamente. Trate isso como uma **exceção documentada**, não como um passo de rotina — é
+  exatamente o tipo de edição manual do ledger que causou o incidente original:
+  - A instrução SQL deve ser um `DELETE` de **uma única linha**, filtrado por
+    `migration_name` (nunca por intervalo de data, nunca sem WHERE).
+  - Registre a instrução exata executada e a confirmação de quantas linhas foram afetadas
+    (deve ser exatamente 1) em qualquer relatório/log da operação.
+  - Exemplo do formato mínimo aceitável:
+    ```sql
+    DELETE FROM "_prisma_migrations" WHERE migration_name = '<nome-exato-da-probe>';
+    ```
+    seguido da confirmação (`rows deleted: 1`) capturada da execução real.
+
 ## Como evitar a recorrência
 
 - **Nunca rode `prisma db push` neste projeto**, nem em dev. O fluxo oficial é sempre
