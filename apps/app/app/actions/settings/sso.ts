@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { err, ok, type Result } from "../_base";
-import { logAudit } from "../audit";
+import { logAudit } from "../audit/log-audit";
 
 const SaveSSOConfigSchema = z.object({
   enabled: z.boolean(),

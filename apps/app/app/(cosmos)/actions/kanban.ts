@@ -11,7 +11,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import type { Tone } from "@/lib/cosmos-data";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 import { epicsFingerprint } from "../../actions/epics/epics-fingerprint";
 import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
 

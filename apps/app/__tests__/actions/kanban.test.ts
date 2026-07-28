@@ -41,7 +41,7 @@ vi.mock("@repo/database", () => ({
     strategicTheme: { findFirst: h.themeFindFirst },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import {
   createEpic,

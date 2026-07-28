@@ -1,5 +1,3 @@
-"use server";
-
 import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { database } from "@repo/database";
 import { generateObject } from "ai";

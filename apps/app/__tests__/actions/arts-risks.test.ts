@@ -27,7 +27,7 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
-vi.mock("../../app/actions/safe-copilot/indexer", () => ({
+vi.mock("../../app/actions/safe-copilot/index-entity", () => ({
   indexEntity: vi.fn().mockResolvedValue(undefined),
 }));
 

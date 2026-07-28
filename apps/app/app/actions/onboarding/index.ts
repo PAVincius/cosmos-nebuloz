@@ -86,19 +86,3 @@ export async function completeFlow(flowType: FlowType) {
   revalidatePath("/");
   return updated;
 }
-
-/**
- * Called only from server-side layout/middleware where tenantId comes from
- * the authenticated session. Never expose this to client-side callers.
- */
-export async function isOnboardingComplete(tenantId: string): Promise<boolean> {
-  if (!tenantId) {
-    return false;
-  }
-  const progress = await database.onboardingProgress.findFirst({
-    where: { tenantId, flowType: "company_setup" },
-  });
-  // No record = pre-existing/seeded tenant, treat as complete.
-  // Only block if a record explicitly exists with non-completed status.
-  return !progress || progress.status === "completed";
-}

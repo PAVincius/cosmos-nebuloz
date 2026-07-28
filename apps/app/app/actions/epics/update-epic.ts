@@ -5,7 +5,7 @@ import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { indexEntity } from "@/app/actions/safe-copilot/indexer";
+import { indexEntity } from "@/app/actions/safe-copilot/index-entity";
 import { type Result, safeAction } from "../_base";
 import { type UpdateEpicInput, UpdateEpicSchema } from "./schema";
 

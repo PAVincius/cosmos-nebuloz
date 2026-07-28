@@ -42,7 +42,7 @@ vi.mock("../../../app/actions/permissions", () => ({ enforce: mocks.enforce }));
 vi.mock("../../../app/actions/events", () => ({
   dispatchEvent: mocks.dispatchEvent,
 }));
-vi.mock("../../../app/actions/audit/index", () => ({
+vi.mock("../../../app/actions/audit/log-audit", () => ({
   logAudit: mocks.logAudit,
 }));
 

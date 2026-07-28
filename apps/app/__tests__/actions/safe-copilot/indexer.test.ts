@@ -75,9 +75,9 @@ vi.mock("@/app/actions/safe-copilot/chunk-text", () => ({
   chunkText: mocks.chunkText,
 }));
 
+import { indexEntity } from "@/app/actions/safe-copilot/index-entity";
 import {
   indexDocumentChunk,
-  indexEntity,
   syncTenantKnowledge,
 } from "@/app/actions/safe-copilot/indexer";
 

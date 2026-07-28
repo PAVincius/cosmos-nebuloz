@@ -4,7 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { indexEntity } from "../safe-copilot/indexer";
+import { indexEntity } from "../safe-copilot/index-entity";
 
 export type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
 

@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { err, ok, type Result } from "../_base";
 import { logDecision } from "../governance/decision-log";
-import { indexEntity } from "../safe-copilot/indexer";
+import { indexEntity } from "../safe-copilot/index-entity";
 
 const SearchMeetingsSchema = z.object({
   query: z.string().optional(),

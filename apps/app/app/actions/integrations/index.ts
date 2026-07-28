@@ -13,7 +13,7 @@ import {
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { err, ok, type Result } from "../_base";
-import { logAudit } from "../audit";
+import { logAudit } from "../audit/log-audit";
 import {
   type GitHubProject,
   githubDiscoverProjects,

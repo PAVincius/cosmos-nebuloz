@@ -6,7 +6,7 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 
 // Multi-PI cadence timeline (handoff's MultiPiTimeline, screen-bundle-4.jsx)
 // is NOT built here. It needs a PI axis with each ART's current/past PI

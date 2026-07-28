@@ -7,7 +7,7 @@ import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { logAudit } from "../audit";
+import { logAudit } from "../audit/log-audit";
 
 // ─── Last-admin guard ─────────────────────────────────────────────────────────
 

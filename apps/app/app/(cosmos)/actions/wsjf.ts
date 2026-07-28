@@ -12,7 +12,7 @@ import {
   type WsjfRebalanceResult,
 } from "@/lib/wsjf-rebalance";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
 
 // Re-exported (type-only, erased at compile time — allowed in a "use

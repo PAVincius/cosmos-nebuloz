@@ -29,7 +29,7 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 process.env.ENCRYPTION_KEY = "0".repeat(32);
 

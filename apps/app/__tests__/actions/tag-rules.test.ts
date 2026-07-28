@@ -49,7 +49,7 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 vi.mock("@/lib/inngest/client", () => ({
   inngest: { send: h.inngestSend },
 }));

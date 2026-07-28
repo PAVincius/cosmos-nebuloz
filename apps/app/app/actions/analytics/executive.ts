@@ -63,18 +63,3 @@ export async function getExecutiveDashboard(
     return result;
   });
 }
-
-// AC-007: invalidate cache when new FlowMetricSnapshot is computed
-export async function invalidateExecutiveDashboardCache(
-  tenantId: string
-): Promise<void> {
-  try {
-    const { redis } = await import("@repo/rate-limit");
-    await redis.del(executiveCacheKey(tenantId));
-    log.info("[executive-dashboard] cache invalidated", { tenantId });
-  } catch (e) {
-    log.error("[executive-dashboard] cache invalidation failed", {
-      error: String(e),
-    });
-  }
-}

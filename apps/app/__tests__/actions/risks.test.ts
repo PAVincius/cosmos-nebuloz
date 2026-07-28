@@ -30,7 +30,7 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import { createRisk, listRisks } from "../../app/(cosmos)/actions/risks";

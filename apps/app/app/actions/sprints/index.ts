@@ -16,7 +16,7 @@ import {
   type Result,
   safeAction,
 } from "../_base";
-import { logAudit } from "../audit/index";
+import { logAudit } from "../audit/log-audit";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 import { SprintFiltersSchema, UpdateSprintSchema } from "./schema";

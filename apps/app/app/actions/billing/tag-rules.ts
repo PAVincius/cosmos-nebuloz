@@ -7,7 +7,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "@/app/actions/_base";
-import { logAudit } from "@/app/actions/audit";
+import { logAudit } from "@/app/actions/audit/log-audit";
 import { inngest } from "@/lib/inngest/client";
 import { TAG_RULE_OUTPUT_TONES } from "./tag-rules.constants";
 

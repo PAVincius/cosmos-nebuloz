@@ -26,7 +26,7 @@ vi.mock("@repo/auth/server", () => ({
   }),
 }));
 
-vi.mock("@/app/actions/notifications/index", () => ({
+vi.mock("@/app/actions/notifications/push-notification", () => ({
   pushNotification: vi.fn().mockResolvedValue(undefined),
 }));
 
@@ -35,7 +35,7 @@ vi.mock("@/app/actions/permissions", () => ({
 }));
 
 import { database } from "@repo/database";
-import { pushNotification } from "@/app/actions/notifications/index";
+import { pushNotification } from "@/app/actions/notifications/push-notification";
 import {
   approvePAERequest,
   createPAERequest,

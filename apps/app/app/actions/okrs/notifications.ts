@@ -1,5 +1,3 @@
-"use server";
-
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { crossedThresholds } from "./threshold-logic";

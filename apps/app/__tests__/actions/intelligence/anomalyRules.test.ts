@@ -29,10 +29,10 @@ vi.mock("@repo/database", () => ({
 
 import {
   disableRule,
-  findExistingOpenAnomaly,
   resetRuleThreshold,
   setRuleThreshold,
 } from "../../../app/actions/intelligence/anomalyRules";
+import { findExistingOpenAnomaly } from "../../../app/actions/intelligence/find-existing-open-anomaly";
 
 // ─── Rule catalogue (pure) ────────────────────────────────────────────────────
 

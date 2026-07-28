@@ -32,7 +32,7 @@ vi.mock("@repo/database", () => ({
     feature: { create: h.featureCreate },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {

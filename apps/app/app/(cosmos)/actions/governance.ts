@@ -6,7 +6,7 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 
 // Compact per-row gate-stage step summary — mirrors the estado shape read
 // by getApprovalRequest (apps/app/app/actions/governance), just the fields

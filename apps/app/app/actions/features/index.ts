@@ -6,12 +6,12 @@ import { calculateWSJF } from "@repo/safe-engine";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { logAudit } from "../audit/index";
+import { syncEpicCounts, syncPIPlanCompletion } from "../_denorm";
+import { logAudit } from "../audit/log-audit";
 import { portfolioEpicsCacheTag } from "../epics/portfolio-cache";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
-import { indexEntity } from "../safe-copilot/indexer";
-import { syncEpicCounts, syncPIPlanCompletion } from "../_denorm";
+import { indexEntity } from "../safe-copilot/index-entity";
 
 import type { FeatureDetail, FeatureRow } from "./schema";
 
@@ -138,7 +138,9 @@ export async function updateFeatureStatus(
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
 
   void syncEpicCounts(epicId, ctx.tenantId);
-  if (feature?.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+  if (feature?.piPlanId) {
+    void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+  }
 }
 
 export async function updateFeatureStoryPoints(
@@ -176,7 +178,9 @@ export async function deleteFeature(id: string, epicId: string) {
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
 
   void syncEpicCounts(epicId, ctx.tenantId);
-  if (feature?.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+  if (feature?.piPlanId) {
+    void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+  }
 }
 
 // ─── Wave 2 additions ─────────────────────────────────────────────────────────
@@ -315,7 +319,11 @@ export async function updateFeature(id: string, raw: unknown) {
   revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
 
   if (data.statusId !== undefined && data.statusId !== feature.statusId) {
-    if (feature.epicId) void syncEpicCounts(feature.epicId, ctx.tenantId);
-    if (feature.piPlanId) void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+    if (feature.epicId) {
+      void syncEpicCounts(feature.epicId, ctx.tenantId);
+    }
+    if (feature.piPlanId) {
+      void syncPIPlanCompletion(feature.piPlanId, ctx.tenantId);
+    }
   }
 }

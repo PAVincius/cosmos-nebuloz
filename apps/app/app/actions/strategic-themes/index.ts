@@ -12,7 +12,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "@/app/actions/_base";
-import { logAudit } from "@/app/actions/audit";
+import { logAudit } from "@/app/actions/audit/log-audit";
 import {
   ChangeStatusSchema,
   CreateKeyResultSchema,
