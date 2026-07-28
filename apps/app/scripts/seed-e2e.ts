@@ -291,6 +291,275 @@ async function seedIntegrations(ctx: SeedContext): Promise<void> {
   );
 }
 
+/**
+ * Semeia o nível Large Solution do SAFe (SolutionTrain, Capability, LACE
+ * members, Supplier/SupplierDeliverable, SolutionRisk, CrossArtDependency).
+ * Sem isto a tela `solution` fica permanentemente vazia.
+ *
+ * O LACE em si já é criado na seção 5 de main() (LACE.tenantId é @unique),
+ * então esta função só acrescenta membros a ele — não cria um segundo.
+ *
+ * O seed até aqui só produz 1 ART (ctx.artIds tem um único id), mas
+ * CrossArtDependency só é demonstrável entre dois ARTs distintos. Por isso
+ * esta função cria um segundo ART, já vinculado ao SolutionTrain — o que é
+ * o modelo natural da SAFe: um Solution Train coordena vários ARTs.
+ */
+async function seedLargeSolution(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, featureIds, users } = ctx;
+  const [artId] = ctx.artIds;
+
+  console.log(
+    "\n  Criando Large Solution (SolutionTrain, Capabilities, LACE members, Suppliers, Risks, CrossArtDependency)..."
+  );
+
+  // ─── SolutionTrain ─────────────────────────────────────────────────────
+  let solutionTrain = await prisma.solutionTrain.findFirst({
+    where: { tenantId, name: "Solution Train COSMOS" },
+  });
+  if (!solutionTrain) {
+    solutionTrain = await prisma.solutionTrain.create({
+      data: {
+        tenantId,
+        name: "Solution Train COSMOS",
+        description:
+          "Coordena os ARTs da plataforma COSMOS na entrega de valor de solução ponta a ponta.",
+      },
+    });
+  }
+
+  // Segundo ART, para o CrossArtDependency ter dois lados reais.
+  let art2 = await prisma.aRT.findFirst({
+    where: { tenantId, name: "Plataforma COSMOS — Mobile" },
+  });
+  if (!art2) {
+    art2 = await prisma.aRT.create({
+      data: {
+        tenantId,
+        name: "Plataforma COSMOS — Mobile",
+        cadence: 10,
+        solutionTrainId: solutionTrain.id,
+      },
+    });
+  }
+
+  // ─── Capability (2, cada uma ligada a >= 1 Feature existente) ──────────
+  const capabilityDefs = [
+    {
+      title: "Portfolio Management Platform",
+      description:
+        "Capacidade de solução para consolidar Kanban, OKRs e governança de portfólio num único produto.",
+      milestone: "Marco Q2 2026",
+      featureId: featureIds[0],
+    },
+    {
+      title: "AI Risk Intelligence",
+      description:
+        "Capacidade de solução para scoring e mitigação de riscos assistidos por IA através dos ARTs.",
+      milestone: "Marco Q3 2026",
+      featureId: featureIds[2],
+    },
+  ];
+
+  for (const def of capabilityDefs) {
+    let capability = await prisma.capability.findFirst({
+      where: { tenantId, title: def.title },
+    });
+    if (!capability) {
+      capability = await prisma.capability.create({
+        data: {
+          tenantId,
+          solutionTrainId: solutionTrain.id,
+          title: def.title,
+          description: def.description,
+          status: "IMPLEMENTING",
+          milestone: def.milestone,
+        },
+      });
+    }
+    await prisma.feature.updateMany({
+      where: { id: def.featureId, tenantId, capabilityId: null },
+      data: { capabilityId: capability.id },
+    });
+  }
+  console.log(
+    "  ✓ 1 SolutionTrain + 2 ARTs + 2 Capabilities ligadas a Feature"
+  );
+
+  // ─── LACE members (o LACE em si já existe, criado na seção 5) ─────────
+  const lace = await prisma.lACE.findUnique({ where: { tenantId } });
+  if (lace) {
+    const laceMemberDefs = [
+      { userId: users.STE, laceRole: "SOLUTION_TRAIN_ENGINEER" as const },
+      { userId: users.ADMIN, laceRole: "BUSINESS_OWNER" as const },
+      { userId: users.PO, laceRole: "PRODUCT_MANAGER" as const },
+    ];
+    for (const def of laceMemberDefs) {
+      await prisma.lACEMember.upsert({
+        where: { laceId_userId: { laceId: lace.id, userId: def.userId } },
+        update: { laceRole: def.laceRole },
+        create: {
+          tenantId,
+          laceId: lace.id,
+          userId: def.userId,
+          laceRole: def.laceRole,
+        },
+      });
+    }
+    console.log("  ✓ 3 LACEMembers (STE, BUSINESS_OWNER, PRODUCT_MANAGER)");
+  }
+
+  // ─── Supplier + SupplierDeliverable (2 suppliers, 1 deliverable cada) ──
+  const supplierDefs = [
+    {
+      name: "Acme Cloud Services",
+      contact: "contas@acmecloud.example",
+      description:
+        "Fornecedor de infraestrutura cloud para a plataforma COSMOS.",
+      artId,
+      featureId: featureIds[0],
+      status: "DELIVERED" as const,
+    },
+    {
+      name: "DataSecure LGPD Consultoria",
+      contact: "contato@datasecure.example",
+      description: "Consultoria de compliance LGPD para o épico de SSO/SCIM.",
+      artId: art2.id,
+      featureId: featureIds[3],
+      status: "IN_PROGRESS" as const,
+    },
+  ];
+
+  for (const def of supplierDefs) {
+    let supplier = await prisma.supplier.findFirst({
+      where: { tenantId, name: def.name },
+    });
+    if (supplier) {
+      // artId aponta para um ART recriado a cada seed (cleanup do main() faz
+      // aRT.deleteMany do tenant inteiro) — reatualiza para não deixar um id
+      // órfão apontando para um ART já apagado.
+      supplier = await prisma.supplier.update({
+        where: { id: supplier.id },
+        data: { artId: def.artId },
+      });
+    } else {
+      supplier = await prisma.supplier.create({
+        data: {
+          tenantId,
+          solutionTrainId: solutionTrain.id,
+          artId: def.artId,
+          name: def.name,
+          contact: def.contact,
+          description: def.description,
+          status: "ACTIVE",
+        },
+      });
+    }
+    const existingDeliverable = await prisma.supplierDeliverable.findFirst({
+      where: { tenantId, supplierId: supplier.id, featureId: def.featureId },
+    });
+    if (!existingDeliverable) {
+      await prisma.supplierDeliverable.create({
+        data: {
+          tenantId,
+          supplierId: supplier.id,
+          featureId: def.featureId,
+          expectedDate: addWeeks(new Date(), 2),
+          actualDate:
+            def.status === "DELIVERED" ? addWeeks(new Date(), -1) : null,
+          status: def.status,
+        },
+      });
+    }
+  }
+  console.log("  ✓ 2 Suppliers com 1 SupplierDeliverable cada");
+
+  // ─── SolutionRisk (2, com roamStatus diferente — o model não tem campo de
+  // "severidade"; roamStatus é o que a tela de solução usa para cor/filtro) ─
+  const solutionRiskDefs = [
+    {
+      title: "Fornecedor de cloud sem SLA de disponibilidade multi-região",
+      description:
+        "Acme Cloud Services ainda não formalizou SLA de failover entre regiões para a plataforma COSMOS.",
+      roamStatus: "OWNED" as const,
+      owner: "Sofia Torres (STE)",
+      affectedArtIds: [artId],
+    },
+    {
+      title: "Certificação LGPD pode atrasar o go-live do SSO enterprise",
+      description:
+        "DataSecure LGPD Consultoria estimou 6 semanas para o parecer final de compliance.",
+      roamStatus: "MITIGATED" as const,
+      owner: "Rafael Teixeira (RTE)",
+      affectedArtIds: [artId, art2.id],
+    },
+  ];
+
+  for (const def of solutionRiskDefs) {
+    const existing = await prisma.solutionRisk.findFirst({
+      where: { tenantId, solutionTrainId: solutionTrain.id, title: def.title },
+    });
+    if (existing) {
+      // affectedArtIds referencia ARTs recriados a cada seed — reatualiza
+      // pelo mesmo motivo do artId do Supplier acima.
+      await prisma.solutionRisk.update({
+        where: { id: existing.id },
+        data: { affectedArtIds: def.affectedArtIds },
+      });
+    } else {
+      await prisma.solutionRisk.create({
+        data: {
+          tenantId,
+          solutionTrainId: solutionTrain.id,
+          title: def.title,
+          description: def.description,
+          roamStatus: def.roamStatus,
+          owner: def.owner,
+          affectedArtIds: def.affectedArtIds,
+        },
+      });
+    }
+  }
+  console.log("  ✓ 2 SolutionRisks (roamStatus OWNED e MITIGATED)");
+
+  // ─── CrossArtDependency (entre os dois ARTs) ───────────────────────────
+  // Chave natural = o próprio SolutionTrain (o seed produz exatamente 1
+  // CrossArtDependency): nem as Features nem os ARTs são estáveis entre runs
+  // — o cleanup do main() apaga ART.deleteMany e Feature.deleteMany do
+  // tenant inteiro a cada seed, então sourceArtId/targetArtId/
+  // sourceFeatureId/targetFeatureId mudam de id a cada execução. Chavear por
+  // qualquer um deles deixaria uma linha nova por run, com a antiga
+  // apontando para linhas já apagadas.
+  const sourceFeatureId = featureIds[0];
+  const targetFeatureId = featureIds[3];
+  const existingDependency = await prisma.crossArtDependency.findFirst({
+    where: { tenantId, solutionTrainId: solutionTrain.id },
+  });
+  if (existingDependency) {
+    await prisma.crossArtDependency.update({
+      where: { id: existingDependency.id },
+      data: {
+        sourceFeatureId,
+        targetFeatureId,
+        sourceArtId: artId,
+        targetArtId: art2.id,
+      },
+    });
+  } else {
+    await prisma.crossArtDependency.create({
+      data: {
+        tenantId,
+        solutionTrainId: solutionTrain.id,
+        sourceFeatureId,
+        targetFeatureId,
+        sourceArtId: artId,
+        targetArtId: art2.id,
+        type: "NEEDS",
+      },
+    });
+  }
+  console.log("  ✓ 1 CrossArtDependency entre os dois ARTs");
+}
+
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
@@ -1711,6 +1980,10 @@ async function main(): Promise<SeedContext> {
 
   // ─── 17b. Integrations e tasks importadas/nativas ──────────────────────────
   await seedIntegrations(context);
+
+  // ─── 17c. Large Solution (SolutionTrain, Capability, LACE members, ────────
+  //          Supplier, SolutionRisk, CrossArtDependency) ─────────────────────
+  await seedLargeSolution(context);
 
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");

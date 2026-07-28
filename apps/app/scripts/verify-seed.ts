@@ -179,6 +179,31 @@ async function main() {
     )
   );
 
+  // ─── Task 4: Large Solution ────────────────────────────────────────────
+  for (const [label, count] of [
+    [
+      "SolutionTrain",
+      () => prisma.solutionTrain.count({ where: { tenantId: t } }),
+    ],
+    ["Capability", () => prisma.capability.count({ where: { tenantId: t } })],
+    ["LACE", () => prisma.lACE.count({ where: { tenantId: t } })],
+    ["Supplier", () => prisma.supplier.count({ where: { tenantId: t } })],
+    [
+      "SolutionRisk",
+      () => prisma.solutionRisk.count({ where: { tenantId: t } }),
+    ],
+  ] as const) {
+    await check(`${label} semeado`, () => expectRows(label, count));
+  }
+
+  await check("Capability ligada a Feature", () =>
+    expectRows("Feature com capabilityId", () =>
+      prisma.feature.count({
+        where: { tenantId: t, capabilityId: { not: null } },
+      })
+    )
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {
