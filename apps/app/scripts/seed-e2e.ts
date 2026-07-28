@@ -51,7 +51,26 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";
+import type { MemberRole } from "../../../packages/database/generated";
 import { PrismaClient } from "../../../packages/database/generated";
+
+/**
+ * Contexto acumulado pelo seed — ids e o client Prisma que as tasks
+ * seguintes do plano de seed reutilizam em vez de refazer lookups.
+ */
+export type SeedContext = {
+  prisma: PrismaClient;
+  tenantId: string;
+  tenantSlug: string;
+  users: Record<MemberRole, string>;
+  artIds: string[];
+  teamIds: string[];
+  epicIds: string[];
+  featureIds: string[];
+  storyIds: string[];
+  piPlanIds: string[];
+  themeIds: string[];
+};
 
 const E2E_EMAIL = process.env.E2E_EMAIL ?? "admin@cosmos.local";
 const E2E_PASSWORD = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
@@ -99,7 +118,7 @@ const lbc = (...texts: string[]) =>
 const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
 const addWeeks = (d: Date, w: number) => addDays(d, w * 7);
 
-async function main() {
+async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
   // ─── 1. Usuário ────────────────────────────────────────────────────────────
@@ -220,7 +239,12 @@ async function main() {
     { role: "PO" as const, name: "Paula Oliveira (PO)" },
     { role: "SM" as const, name: "Samuel Moreira (SM)" },
     { role: "DEV" as const, name: "Diego Vieira (DEV)" },
+    // MEMBER is the plain, no-elevated-permission role — the negative case
+    // for default-deny RBAC checks that don't map to any of the roles above.
+    { role: "MEMBER" as const, name: "Marina Alves (MEMBER)" },
   ];
+
+  const roleUserIds: Partial<Record<MemberRole, string>> = { ADMIN: userId };
 
   for (const { role, name } of ROLE_USERS) {
     const email = `${role.toLowerCase()}@cosmos.local`;
@@ -271,6 +295,8 @@ async function main() {
     // Same reason as the admin above: a stale session would keep the previous
     // role in its cookie cache.
     await db.session.deleteMany({ where: { userId: roleUser.id } });
+
+    roleUserIds[role] = roleUser.id;
   }
   console.log(
     `  ✓ ${ROLE_USERS.length} logins por papel (${ROLE_USERS.map((r) => r.role).join(", ")}) + ADMIN`
@@ -1013,7 +1039,7 @@ async function main() {
       storyPoints: 8,
     },
   });
-  await db.feature.create({
+  const featSaml = await db.feature.create({
     data: {
       tenantId: TENANT_ID,
       epicId: epicSec.id,
@@ -1316,7 +1342,7 @@ async function main() {
       assigneeUserId: userId,
     },
   });
-  await db.story.create({
+  const storyBacklog = await db.story.create({
     data: {
       tenantId: TENANT_ID,
       featureId: featOKR.id,
@@ -1773,6 +1799,31 @@ async function main() {
   });
   console.log("  ✓ PersonSkillProfile (admin E2E)");
 
+  // ─── SeedContext ────────────────────────────────────────────────────────────
+  // Fields cast with `as MemberRole` are keys that ROLE_USERS always
+  // populates (ADMIN above the loop, the six ROLE_USERS entries inside it) —
+  // Partial<Record<...>> is only needed to build the map incrementally.
+  const context: SeedContext = {
+    prisma: db,
+    tenantId: TENANT_ID,
+    tenantSlug: TENANT_SLUG,
+    users: roleUserIds as Record<MemberRole, string>,
+    artIds: [art.id],
+    teamIds: [team.id],
+    epicIds: [epicMain.id, epicAI.id, epicSec.id],
+    featureIds: [featKanban.id, featOKR.id, featRisk.id, featSaml.id],
+    storyIds: [
+      storyDone.id,
+      storyReview.id,
+      storyInProgress.id,
+      storyTodo.id,
+      storyBacklog.id,
+      storyRisk.id,
+    ],
+    piPlanIds: [piPlan.id],
+    themeIds: [theme1.id, theme2.id, theme3.id],
+  };
+
   // ─── Resumo ─────────────────────────────────────────────────────────────────
   console.log(
     "\n─────────────────────────────────────────────────────────────────"
@@ -1818,6 +1869,7 @@ async function main() {
   );
 
   await db.$disconnect();
+  return context;
 }
 
 main().catch((err) => {

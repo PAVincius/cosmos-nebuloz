@@ -18,6 +18,7 @@
     "seed:tenants": "tsx scripts/seed-tenants.ts",
     "seed:portfolio": "tsx scripts/seed-portfolio.ts",
     "seed:e2e": "tsx scripts/seed-e2e.ts",
+    "verify:seed": "tsx scripts/verify-seed.ts",
     "swarm": "tsx scripts/ux-swarm.ts",
     "swarm:report": "tsx scripts/ux-swarm.ts --report-only",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
