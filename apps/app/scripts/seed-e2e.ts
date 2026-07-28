@@ -778,6 +778,420 @@ async function seedLargeSolution(ctx: SeedContext): Promise<void> {
   console.log("  ✓ 1 CrossArtDependency entre os dois ARTs");
 }
 
+/**
+ * Semeia FinOps: TagRule, BillingEntry (+ Allocation), CostSnapshot,
+ * CostAnomaly, UnmappedCostBucket e o AnomalyRuleConfig de sensibilidade de
+ * custo. Sem isto as telas `anomalies` e `tags` ficam sempre vazias, e os
+ * gráficos de alocação de custo em `value`/`themes` também.
+ *
+ * Nota sobre os dois modelos "Anomaly": Anomaly / AnomalyDetectionRun
+ * (schema/flow-intelligence.prisma) são o pipeline de anomalias de FLUXO
+ * (velocity/WIP/impediments) — não têm relação com FinOps e não são
+ * semeados aqui. A tela `anomalies` do portfólio é lida a partir de
+ * CostAnomaly (finops.prisma) — ver comentário em
+ * app/(cosmos)/actions/anomalies.ts, que documenta explicitamente essa
+ * distinção. AnomalyRuleConfig (também em flow-intelligence.prisma) É
+ * reaproveitada pelo FinOps para o limiar de sensibilidade de detecção de
+ * custo (getAnomalySensitivity/setAnomalySensitivity, artId="" como
+ * sentinel tenant-wide, ruleId="R-COST-01") — essa linha entra aqui.
+ *
+ * Classificação de colunas id (relation real vs. String solta):
+ *   - BillingEntry.integrationId  → @relation real (Integration, Cascade)
+ *   - BillingEntry.themeId        → @relation real (StrategicTheme, SetNull)
+ *   - BillingEntryAllocation.billingEntryId → @relation real (Cascade)
+ *   - BillingEntryAllocation.themeId/epicId/artId → String solta, sem relation
+ *   - CostSnapshot.themeId/artId/epicId/okrId → String solta, sem relation
+ *   - CostAnomaly.themeId/artId    → String solta, sem relation
+ *   - UnmappedCostBucket.integrationId → String solta, sem relation (comentário
+ *     no próprio schema: "not a formal FK relation" já se aplica ao padrão)
+ *   - TagRule.integrationId/themeId/artId/epicId → String solta, sem relation
+ * Como Theme/Epic/ART são recriados a cada run (cleanup do main() os apaga),
+ * e nenhuma dessas colunas tem @relation para cascatear, este seed evita o
+ * problema pela raiz: main() agora dá deleteMany tenant-scoped em TODAS as
+ * tabelas de FinOps no cleanup, então cada run recria as linhas do zero
+ * apontando só para ids frescos — nunca há refresh via update, só recriação.
+ */
+async function seedFinOps(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, themeIds, epicIds, artIds } = ctx;
+  const [theme1, theme2, theme3] = themeIds;
+  const [epic1, epic2, epic3] = epicIds;
+  const [artId] = artIds;
+  const now = new Date();
+
+  console.log(
+    "\n  Criando FinOps (TagRule, BillingEntry, CostSnapshot, CostAnomaly, UnmappedCostBucket)..."
+  );
+
+  // ─── Integration de billing (billing_aws) ──────────────────────────────
+  // Não reaproveita as Integrations de seedIntegrations (jira/linear/github)
+  // — nenhuma delas é um provider de billing. Idempotente via
+  // findFirst+create, igual ao padrão de seedIntegrations: esta Integration
+  // não é apagada no cleanup do main() (nenhuma Integration é), então não
+  // duplicaria numa segunda execução.
+  let billingIntegration = await prisma.integration.findFirst({
+    where: { tenantId, source: "billing_aws" },
+  });
+  if (!billingIntegration) {
+    billingIntegration = await prisma.integration.create({
+      data: {
+        tenantId,
+        source: "billing_aws",
+        name: "AWS Cost & Usage Report (seed)",
+        status: "ACTIVE",
+        config: { apiKey: "seed-fake-not-a-real-key", bucket: "cosmos-cur" },
+        lastSyncAt: addDays(now, -1),
+      },
+    });
+  }
+  const integrationId = billingIntegration.id;
+
+  const monthStart = (offsetMonths: number) =>
+    new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + offsetMonths, 1)
+    );
+  const prevMonth = monthStart(-1);
+  const curMonth = monthStart(0);
+  const dayOf = (base: Date, day: number) =>
+    new Date(
+      Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), day, 12, 0, 0)
+    );
+
+  // ─── BillingEntry — 2 meses distintos, 2 contas AWS, 1 serviço sem tema ──
+  const accountA = "111122223333";
+  const accountB = "444455556666";
+  const billingDefs = [
+    {
+      externalId: "seed-cur-prev-ec2",
+      usageStartDate: dayOf(prevMonth, 5),
+      usageEndDate: dayOf(prevMonth, 6),
+      service: "Amazon EC2",
+      accountId: accountA,
+      themeId: theme1,
+      cost: "12000.00",
+      mappingConf: "ACCOUNT_RULE",
+    },
+    {
+      externalId: "seed-cur-prev-s3",
+      usageStartDate: dayOf(prevMonth, 20),
+      usageEndDate: dayOf(prevMonth, 21),
+      service: "Amazon S3",
+      accountId: accountA,
+      themeId: theme2,
+      cost: "3400.00",
+      mappingConf: "EXACT_TAG",
+    },
+    {
+      externalId: "seed-cur-prev-rds",
+      usageStartDate: dayOf(prevMonth, 12),
+      usageEndDate: dayOf(prevMonth, 13),
+      service: "Amazon RDS",
+      accountId: accountB,
+      themeId: theme1,
+      cost: "5200.00",
+      mappingConf: "ACCOUNT_RULE",
+    },
+    {
+      externalId: "seed-cur-prev-transfer",
+      usageStartDate: dayOf(prevMonth, 18),
+      usageEndDate: dayOf(prevMonth, 19),
+      service: "Data Transfer",
+      accountId: accountA,
+      themeId: null,
+      cost: "800.00",
+      mappingConf: "UNMAPPED",
+    },
+    {
+      externalId: "seed-cur-cur-ec2",
+      usageStartDate: dayOf(curMonth, 3),
+      usageEndDate: dayOf(curMonth, 4),
+      service: "Amazon EC2",
+      accountId: accountA,
+      themeId: theme1,
+      cost: "15500.00",
+      mappingConf: "ACCOUNT_RULE",
+    },
+    {
+      externalId: "seed-cur-cur-s3",
+      usageStartDate: dayOf(curMonth, 10),
+      usageEndDate: dayOf(curMonth, 11),
+      service: "Amazon S3",
+      accountId: accountA,
+      themeId: theme2,
+      cost: "3600.00",
+      mappingConf: "EXACT_TAG",
+    },
+    {
+      externalId: "seed-cur-cur-rds",
+      usageStartDate: dayOf(curMonth, 12),
+      usageEndDate: dayOf(curMonth, 13),
+      service: "Amazon RDS",
+      accountId: accountB,
+      themeId: theme1,
+      cost: "5400.00",
+      mappingConf: "ACCOUNT_RULE",
+    },
+    {
+      externalId: "seed-cur-cur-lambda",
+      usageStartDate: dayOf(curMonth, 15),
+      usageEndDate: dayOf(curMonth, 16),
+      service: "AWS Lambda",
+      accountId: accountA,
+      themeId: theme3,
+      cost: "900.00",
+      mappingConf: "EXACT_TAG",
+    },
+    {
+      externalId: "seed-cur-cur-transfer",
+      usageStartDate: dayOf(curMonth, 15),
+      usageEndDate: dayOf(curMonth, 16),
+      service: "Data Transfer",
+      accountId: accountA,
+      themeId: null,
+      cost: "950.00",
+      mappingConf: "UNMAPPED",
+    },
+  ];
+
+  const billingEntries: { id: string; def: (typeof billingDefs)[number] }[] =
+    [];
+  for (const def of billingDefs) {
+    const entry = await prisma.billingEntry.create({
+      data: {
+        tenantId,
+        integrationId,
+        provider: "AWS",
+        accountId: def.accountId,
+        externalId: def.externalId,
+        usageStartDate: def.usageStartDate,
+        usageEndDate: def.usageEndDate,
+        service: def.service,
+        chargeCategory: "Usage",
+        billedCost: def.cost,
+        effectiveCost: def.cost,
+        unblendedAmount: def.cost,
+        amortizedAmount: def.cost,
+        currency: "USD",
+        tenantCurrency: "USD",
+        tenantAmount: def.cost,
+        themeId: def.themeId,
+        mappingConf: def.mappingConf,
+      },
+    });
+    billingEntries.push({ id: entry.id, def });
+  }
+  console.log(
+    `  ✓ ${billingEntries.length} BillingEntry em 2 meses (${billingDefs.filter((d) => !d.themeId).length} não mapeadas)`
+  );
+
+  // ─── BillingEntryAllocation — liga custo a Tema E Épico na mesma linha ──
+  const allocationDefs = [
+    { externalId: "seed-cur-prev-ec2", themeId: theme1, epicId: epic1 },
+    { externalId: "seed-cur-prev-s3", themeId: theme2, epicId: epic2 },
+    { externalId: "seed-cur-cur-ec2", themeId: theme1, epicId: epic1 },
+    { externalId: "seed-cur-cur-lambda", themeId: theme3, epicId: epic3 },
+  ];
+  for (const def of allocationDefs) {
+    const entry = billingEntries.find(
+      (e) => e.def.externalId === def.externalId
+    );
+    if (!entry) {
+      continue;
+    }
+    await prisma.billingEntryAllocation.create({
+      data: {
+        tenantId,
+        billingEntryId: entry.id,
+        themeId: def.themeId,
+        epicId: def.epicId,
+        artId,
+        percentage: "100.00",
+        allocationType: "DIRECT",
+      },
+    });
+  }
+  console.log(
+    `  ✓ ${allocationDefs.length} BillingEntryAllocation ligando custo a StrategicTheme e Epic`
+  );
+
+  // ─── CostSnapshot — granularidade DAILY, 2 meses (mesmo padrão do job de
+  // sync real em lib/inngest/billing-sync.ts) ─────────────────────────────
+  const snapshotDefs = [
+    {
+      themeId: theme1,
+      period: dayOf(prevMonth, 5),
+      cloudCost: "12000.00",
+      unmappedAmount: "0",
+    },
+    {
+      themeId: theme2,
+      period: dayOf(prevMonth, 20),
+      cloudCost: "3400.00",
+      unmappedAmount: "800.00",
+    },
+    {
+      themeId: theme1,
+      period: dayOf(curMonth, 3),
+      cloudCost: "15500.00",
+      unmappedAmount: "0",
+    },
+    {
+      themeId: theme3,
+      period: dayOf(curMonth, 15),
+      cloudCost: "900.00",
+      unmappedAmount: "950.00",
+    },
+  ];
+  for (const def of snapshotDefs) {
+    await prisma.costSnapshot.create({
+      data: {
+        tenantId,
+        themeId: def.themeId,
+        period: def.period,
+        granularity: "DAILY",
+        cloudCost: def.cloudCost,
+        actualCost: def.cloudCost,
+        unmappedAmount: def.unmappedAmount,
+        currency: "USD",
+      },
+    });
+  }
+  console.log(`  ✓ ${snapshotDefs.length} CostSnapshot (granularity DAILY)`);
+
+  // ─── CostAnomaly — um estado OPEN (não reconhecida) e um ACKNOWLEDGED ──
+  // (reconhecida), para os dois estados da tela `anomalies` existirem.
+  await prisma.costAnomaly.create({
+    data: {
+      tenantId,
+      themeId: theme1,
+      artId,
+      integrationId,
+      period: curMonth,
+      service: "Amazon EC2",
+      accountId: accountA,
+      baselineMedian: "12000.00",
+      baselineMAD: "500.00",
+      actualAmount: "15500.00",
+      modifiedZScore: "6.2000",
+      deltaAbs: "3500.00",
+      deltaPct: "29.17",
+      severity: "HIGH",
+      status: "OPEN",
+    },
+  });
+  await prisma.costAnomaly.create({
+    data: {
+      tenantId,
+      themeId: theme2,
+      artId,
+      integrationId,
+      period: curMonth,
+      service: "Amazon S3",
+      accountId: accountA,
+      baselineMedian: "3400.00",
+      baselineMAD: "100.00",
+      actualAmount: "3600.00",
+      modifiedZScore: "4.1000",
+      deltaAbs: "200.00",
+      deltaPct: "5.88",
+      severity: "MEDIUM",
+      status: "ACKNOWLEDGED",
+      acknowledgedBy: ctx.users.ADMIN,
+      acknowledgedAt: now,
+    },
+  });
+  console.log("  ✓ 2 CostAnomaly (1 OPEN, 1 ACKNOWLEDGED)");
+
+  // ─── UnmappedCostBucket — um por mês, casando com as entries UNMAPPED ──
+  await prisma.unmappedCostBucket.create({
+    data: {
+      tenantId,
+      integrationId,
+      period: prevMonth,
+      amount: "800.00",
+      currency: "USD",
+      entryCount: 1,
+    },
+  });
+  await prisma.unmappedCostBucket.create({
+    data: {
+      tenantId,
+      integrationId,
+      period: curMonth,
+      amount: "950.00",
+      currency: "USD",
+      entryCount: 1,
+    },
+  });
+  console.log("  ✓ 2 UnmappedCostBucket (1 por mês)");
+
+  // ─── TagRule — telas de automação de tags (2 ativas, 1 desabilitada) ───
+  await prisma.tagRule.create({
+    data: {
+      tenantId,
+      integrationId,
+      name: "EC2 conta produção → Tema Growth",
+      matchType: "ACCOUNT",
+      themeId: theme1,
+      epicId: epic1,
+      scope: "Épicos e Features",
+      outputTag: "growth-cost",
+      outputTagTone: "green",
+      priority: 10,
+      enabled: true,
+      matchCount: 42,
+      lastMatchedAt: now,
+    },
+  });
+  await prisma.tagRule.create({
+    data: {
+      tenantId,
+      integrationId,
+      name: "Tag cost-center:core → Tema Core",
+      tagKey: "cost-center",
+      tagValue: "core",
+      matchType: "EXACT",
+      themeId: theme2,
+      scope: "Contas AWS",
+      outputTag: "core-cost",
+      outputTagTone: "blue",
+      priority: 5,
+      enabled: true,
+      matchCount: 18,
+      lastMatchedAt: now,
+    },
+  });
+  await prisma.tagRule.create({
+    data: {
+      tenantId,
+      integrationId,
+      name: "Tag env:staging (desabilitada)",
+      tagKey: "env",
+      tagValue: "staging",
+      matchType: "EXACT",
+      priority: 1,
+      enabled: false,
+      matchCount: 0,
+    },
+  });
+  console.log("  ✓ 3 TagRule (2 ativas, 1 desabilitada)");
+
+  // ─── AnomalyRuleConfig — sensibilidade de detecção de custo (reaproveitado
+  // do schema flow-intelligence.prisma; artId="" é o sentinel tenant-wide
+  // usado por getAnomalySensitivity/setAnomalySensitivity, ver
+  // app/(cosmos)/actions/anomalies.ts e lib/cost/detect-cost-anomalies.ts) ─
+  await prisma.anomalyRuleConfig.create({
+    data: {
+      tenantId,
+      artId: "",
+      ruleId: "R-COST-01",
+      threshold: 4,
+    },
+  });
+  console.log(
+    "  ✓ 1 AnomalyRuleConfig (R-COST-01, sensibilidade de custo customizada)"
+  );
+}
+
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
@@ -995,6 +1409,21 @@ async function main(): Promise<SeedContext> {
   await db.leanBudget.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.roadmapItem.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.epicValueMetric.deleteMany({ where: { tenantId: TENANT_ID } });
+  // FinOps (Task 6) — themeId/epicId/artId/integrationId nessas tabelas de
+  // custo são String simples, sem @relation (billingEntry.themeId é a única
+  // exceção real). Sem este cleanup, cada novo seed deixaria linhas antigas
+  // apontando para Theme/Epic/ART já apagados pelas linhas acima.
+  // billingEntryAllocation.deleteMany é redundante com o cascade de
+  // billingEntry (onDelete: Cascade), mas explícito por clareza.
+  await db.billingEntryAllocation.deleteMany({
+    where: { tenantId: TENANT_ID },
+  });
+  await db.billingEntry.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.costSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.costAnomaly.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.unmappedCostBucket.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.tagRule.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.anomalyRuleConfig.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.strategicTheme.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.strategyPillar.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.investmentHorizon.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -2210,6 +2639,10 @@ async function main(): Promise<SeedContext> {
   // ─── 17d. Estratégia, horizontes e roadmap (StrategyPillar, ───────────────
   //          InvestmentHorizon, RoadmapItem, EpicValueMetric) ────────────────
   await seedStrategy(context);
+
+  // ─── 17e. FinOps (TagRule, BillingEntry, CostSnapshot, CostAnomaly, ──────
+  //          UnmappedCostBucket, AnomalyRuleConfig de custo) ────────────────
+  await seedFinOps(context);
 
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");

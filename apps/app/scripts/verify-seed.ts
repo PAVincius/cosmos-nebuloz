@@ -270,6 +270,82 @@ async function main() {
     )
   );
 
+  // ─── Task 6: FinOps ─────────────────────────────────────────────────────
+  // Nota: Anomaly/AnomalyDetectionRun/AnomalyRuleConfig (schema
+  // flow-intelligence.prisma) formam um pipeline de anomalias de FLUXO
+  // (velocity/WIP), não de custo. A tela `anomalies` do portfólio é lida a
+  // partir de CostAnomaly (finops.prisma) — ver comentário em
+  // app/(cosmos)/actions/anomalies.ts. AnomalyRuleConfig É reaproveitada
+  // pelo FinOps (getAnomalySensitivity/setAnomalySensitivity), então entra
+  // aqui; Anomaly e AnomalyDetectionRun não têm relação com FinOps e não são
+  // semeadas nesta task.
+  for (const [label, count] of [
+    ["TagRule", () => prisma.tagRule.count({ where: { tenantId: t } })],
+    [
+      "BillingEntry",
+      () => prisma.billingEntry.count({ where: { tenantId: t } }),
+    ],
+    [
+      "BillingEntryAllocation",
+      () => prisma.billingEntryAllocation.count({ where: { tenantId: t } }),
+    ],
+    [
+      "CostSnapshot",
+      () => prisma.costSnapshot.count({ where: { tenantId: t } }),
+    ],
+    ["CostAnomaly", () => prisma.costAnomaly.count({ where: { tenantId: t } })],
+    [
+      "UnmappedCostBucket",
+      () => prisma.unmappedCostBucket.count({ where: { tenantId: t } }),
+    ],
+    [
+      "AnomalyRuleConfig (sensibilidade de custo)",
+      () => prisma.anomalyRuleConfig.count({ where: { tenantId: t } }),
+    ],
+  ] as const) {
+    await check(`${label} semeado`, () => expectRows(label, count));
+  }
+
+  await check(
+    "BillingEntry cobre pelo menos dois meses distintos",
+    async () => {
+      const rows = await prisma.billingEntry.findMany({
+        where: { tenantId: t },
+        select: { usageStartDate: true },
+      });
+      const months = new Set(
+        rows.map((r) => r.usageStartDate.toISOString().slice(0, 7))
+      );
+      return months.size >= 2
+        ? null
+        : `apenas ${months.size} mês(es) distinto(s) em BillingEntry`;
+    }
+  );
+
+  await check(
+    "existe BillingEntryAllocation ligando custo a StrategicTheme e a Epic",
+    () =>
+      expectRows("BillingEntryAllocation com themeId e epicId", () =>
+        prisma.billingEntryAllocation.count({
+          where: { tenantId: t, themeId: { not: null }, epicId: { not: null } },
+        })
+      )
+  );
+
+  await check("existe CostAnomaly NÃO reconhecida (aberta)", () =>
+    expectRows("CostAnomaly status OPEN", () =>
+      prisma.costAnomaly.count({ where: { tenantId: t, status: "OPEN" } })
+    )
+  );
+
+  await check("existe CostAnomaly já reconhecida", () =>
+    expectRows("CostAnomaly com acknowledgedAt", () =>
+      prisma.costAnomaly.count({
+        where: { tenantId: t, acknowledgedAt: { not: null } },
+      })
+    )
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {
