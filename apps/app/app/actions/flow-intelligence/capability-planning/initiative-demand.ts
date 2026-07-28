@@ -8,6 +8,11 @@ const DemandSchema = z.object({
   demand: z.record(z.enum(TASK_TYPES), z.number().min(0).max(1)),
 });
 
+/**
+ * Not a server action — no "use server" directive, so it is not RPC-reachable.
+ * Callers must pass a tenantId they already trust, never a caller-supplied
+ * value.
+ */
 export async function estimateInitiativeDemand(args: {
   tenantId: string;
   initiativeId: string;
