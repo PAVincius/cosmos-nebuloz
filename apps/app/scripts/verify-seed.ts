@@ -726,6 +726,179 @@ async function main() {
     }
   );
 
+  // ─── Task 10: isolamento multi-tenant ──────────────────────────────────
+  // Estas asserções rodam INCONDICIONALMENTE — não dependem de um segundo
+  // tenant existir — porque são baratas e detectam o defeito mais caro que
+  // este seed pode introduzir: um FK cruzando fronteira de tenant. Cobrem
+  // toda a espinha do drill-down (Epic → Feature → Story → Task, o mesmo
+  // caminho onde createNativeTask criou uma Task no tenant do chamador
+  // pendurada numa Story de outro tenant) mais três pares tocados nas
+  // tasks de governança/PI Planning anteriores. Nenhuma delas filtra por
+  // tenantId: t — varrem TODOS os tenants do banco, porque um vazamento
+  // pode aparecer entre quaisquer dois. O tenant `system` (isSystem=true)
+  // não grava linha nenhuma nessas tabelas (só na tabela do relatório de
+  // auditoria — ver lib/inngest/isolation-audit.ts), então não precisa
+  // ser excluído aqui; a exclusão relevante fica na checagem "há pelo
+  // menos dois tenants de cliente com dados" abaixo.
+  function leaksOf<T extends { id: string; tenantId: string }>(
+    rows: readonly (T & { parentTenantId: string | null })[]
+  ): T[] {
+    return rows.filter(
+      (r) => r.parentTenantId !== null && r.parentTenantId !== r.tenantId
+    );
+  }
+  function leakDetail(label: string, leaks: { id: string }[]): string | null {
+    return leaks.length === 0
+      ? null
+      : `${leaks.length} ${label} cruzam tenant: ${leaks
+          .slice(0, 3)
+          .map((r) => r.id)
+          .join(", ")}`;
+  }
+
+  await check("nenhuma Feature referencia Epic de outro tenant", async () => {
+    const rows = await prisma.feature.findMany({
+      where: { epicId: { not: null } },
+      select: {
+        id: true,
+        tenantId: true,
+        epic: { select: { tenantId: true } },
+      },
+    });
+    const leaks = leaksOf(
+      rows.map((r) => ({ ...r, parentTenantId: r.epic?.tenantId ?? null }))
+    );
+    return leakDetail("Feature(s)", leaks);
+  });
+
+  await check("nenhuma Story referencia Feature de outro tenant", async () => {
+    const rows = await prisma.story.findMany({
+      where: { featureId: { not: null } },
+      select: {
+        id: true,
+        tenantId: true,
+        feature: { select: { tenantId: true } },
+      },
+    });
+    const leaks = leaksOf(
+      rows.map((r) => ({ ...r, parentTenantId: r.feature?.tenantId ?? null }))
+    );
+    return leakDetail("Story(ies)", leaks);
+  });
+
+  await check("nenhuma Task referencia Story de outro tenant", async () => {
+    const rows = await prisma.task.findMany({
+      select: {
+        id: true,
+        tenantId: true,
+        story: { select: { tenantId: true } },
+      },
+    });
+    const leaks = leaksOf(
+      rows.map((r) => ({ ...r, parentTenantId: r.story?.tenantId ?? null }))
+    );
+    return leakDetail("Task(s)", leaks);
+  });
+
+  await check(
+    "nenhuma Feature referencia Capability de outro tenant",
+    async () => {
+      const rows = await prisma.feature.findMany({
+        where: { capabilityId: { not: null } },
+        select: {
+          id: true,
+          tenantId: true,
+          capability: { select: { tenantId: true } },
+        },
+      });
+      const leaks = leaksOf(
+        rows.map((r) => ({
+          ...r,
+          parentTenantId: r.capability?.tenantId ?? null,
+        }))
+      );
+      return leakDetail("Feature(s)", leaks);
+    }
+  );
+
+  await check(
+    "nenhum GovernedEpic referencia Epic de outro tenant",
+    async () => {
+      const rows = await prisma.governedEpic.findMany({
+        select: {
+          id: true,
+          tenantId: true,
+          epic: { select: { tenantId: true } },
+        },
+      });
+      const leaks = leaksOf(
+        rows.map((r) => ({ ...r, parentTenantId: r.epic?.tenantId ?? null }))
+      );
+      return leakDetail("GovernedEpic(s)", leaks);
+    }
+  );
+
+  await check(
+    "nenhum ApprovalStepInstance referencia ApprovalRequest de outro tenant",
+    async () => {
+      const rows = await prisma.approvalStepInstance.findMany({
+        select: {
+          id: true,
+          tenantId: true,
+          approvalRequest: { select: { tenantId: true } },
+        },
+      });
+      const leaks = leaksOf(
+        rows.map((r) => ({
+          ...r,
+          parentTenantId: r.approvalRequest?.tenantId ?? null,
+        }))
+      );
+      return leakDetail("ApprovalStepInstance(s)", leaks);
+    }
+  );
+
+  await check(
+    "nenhuma PIPlanFeatureAssignment referencia Feature de outro tenant",
+    async () => {
+      // PIPlanFeatureAssignment.featureId não é uma relação Prisma (só a
+      // coluna) — join manual em vez de `include`.
+      const assignments = await prisma.pIPlanFeatureAssignment.findMany({
+        select: { id: true, tenantId: true, featureId: true },
+      });
+      if (assignments.length === 0) {
+        return null;
+      }
+      const features = await prisma.feature.findMany({
+        where: { id: { in: assignments.map((a) => a.featureId) } },
+        select: { id: true, tenantId: true },
+      });
+      const featureTenantById = new Map(
+        features.map((f) => [f.id, f.tenantId])
+      );
+      const leaks = leaksOf(
+        assignments.map((a) => ({
+          ...a,
+          parentTenantId: featureTenantById.get(a.featureId) ?? null,
+        }))
+      );
+      return leakDetail("PIPlanFeatureAssignment(s)", leaks);
+    }
+  );
+
+  await check(
+    "há pelo menos dois tenants de cliente (isSystem=false) com Epic próprio",
+    async () => {
+      const tenants = await prisma.tenant.findMany({
+        where: { isSystem: false, epics: { some: {} } },
+        select: { id: true },
+      });
+      return tenants.length >= 2
+        ? null
+        : `apenas ${tenants.length} tenant(s) de cliente com Epic — isolamento não é demonstrável na UI sem um segundo tenant povoado (rode pnpm seed:tenants)`;
+    }
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {
