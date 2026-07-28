@@ -346,6 +346,75 @@ async function main() {
     )
   );
 
+  // ─── Task 7: governança e PI Planning ──────────────────────────────────
+  // Campos reais (packages/database/prisma/schema/governance.prisma): tanto
+  // ApprovalRequest quanto ApprovalStepInstance usam `estado` (não `status`).
+  await check(
+    "existe ApprovalRequest aberta com pelo menos um step pendente",
+    async () => {
+      const req = await prisma.approvalRequest.findFirst({
+        where: {
+          tenantId: t,
+          estado: { in: ["open", "in_review"] },
+          steps: { some: { estado: "pending" } },
+        },
+        select: { id: true },
+      });
+      return req
+        ? null
+        : "nenhuma ApprovalRequest aberta com step pendente — nada para aprovar na UI";
+    }
+  );
+
+  await check(
+    "existe ApprovalRequest aprovada com todos os steps decididos",
+    async () => {
+      const req = await prisma.approvalRequest.findFirst({
+        where: {
+          tenantId: t,
+          estado: "approved",
+          steps: { none: { estado: "pending" } },
+        },
+        select: { id: true, steps: { select: { id: true } } },
+      });
+      if (!req) {
+        return "nenhuma ApprovalRequest aprovada com steps todos decididos";
+      }
+      return req.steps.length > 0
+        ? null
+        : "ApprovalRequest aprovada não tem nenhum step";
+    }
+  );
+
+  await check("PIPlan tem participantes cobrindo os sete papéis", async () => {
+    const rows = await prisma.pIParticipant.findMany({
+      where: { tenantId: t },
+      select: { userId: true },
+    });
+    const distinctUsers = new Set(rows.map((r) => r.userId));
+    return distinctUsers.size >= 7
+      ? null
+      : `PIParticipant: esperado >= 7 usuários distintos, encontrado ${distinctUsers.size}`;
+  });
+
+  await check(
+    "existe Feature atribuída a um PI, e outra ainda livre",
+    async () => {
+      const totalFeatures = await prisma.feature.count({
+        where: { tenantId: t },
+      });
+      const assigned = await prisma.pIPlanFeatureAssignment.count({
+        where: { tenantId: t },
+      });
+      if (assigned === 0) {
+        return "nenhuma PIPlanFeatureAssignment — nada para reatribuir";
+      }
+      return assigned < totalFeatures
+        ? null
+        : `todas as ${totalFeatures} Features já estão atribuídas — fluxo de "atribuir" não é demonstrável`;
+    }
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {

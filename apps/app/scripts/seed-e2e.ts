@@ -1192,6 +1192,167 @@ async function seedFinOps(ctx: SeedContext): Promise<void> {
   );
 }
 
+/**
+ * Governança (segunda ApprovalRequest, já concluída — a primeira, com um
+ * step `pending`, já é semeada em main() junto com os GovernedEpics) e PI
+ * Planning (PIParticipant, PIPlanFeatureAssignment). Sem isto, a tela de
+ * histórico de aprovações não tem nenhuma decisão concluída para mostrar, o
+ * roster do PI Planning aparece vazio, e nenhuma Feature está pré-atribuída
+ * a um PI — o fluxo de "reatribuir" fica impossível de demonstrar porque
+ * não há nada para reatribuir.
+ */
+async function seedGovernance(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, users, piPlanIds, teamIds, featureIds, themeIds } =
+    ctx;
+  const [piPlanId] = piPlanIds;
+  const [teamId] = teamIds;
+  const [themeId] = themeIds;
+  const now = new Date();
+
+  console.log(
+    "\n  Criando governança (ApprovalRequest aprovada) e PI Planning (participantes, atribuições)..."
+  );
+
+  // ─── ApprovalRequest já concluída (histórico) ──────────────────────────
+  // targetType "theme" (diferente do "epic" da ApprovalRequest em revisão
+  // criada em main()) para exercitar outro branch da UI de governança.
+  const budgetWorkflow = await prisma.approvalWorkflow.create({
+    data: {
+      tenantId,
+      tipo: "budget_guardrail_change",
+      nome: "Aprovação de Guardrail de Orçamento",
+      etapas: [
+        { order: 1, roleRequired: "lpm", criteria: "Aderência ao tema" },
+        {
+          order: 2,
+          roleRequired: "cfo",
+          criteria: "Investimento dentro do guardrail",
+        },
+      ],
+    },
+  });
+
+  await prisma.approvalRequest.create({
+    data: {
+      tenantId,
+      workflowId: budgetWorkflow.id,
+      targetType: "theme",
+      targetId: themeId,
+      estado: "approved",
+      initiatorId: users.RTE,
+      stepIndex: 2,
+      decision: "approved",
+      reason:
+        "Guardrail revisado pelo LPM e validado pelo CFO dentro do orçamento do tema.",
+      decidedAt: addDays(now, -2),
+      steps: {
+        create: [
+          {
+            tenantId,
+            etapaOrdem: 1,
+            roleRequired: "lpm",
+            estado: "approved",
+            approverId: users.PO,
+            comentario: "Guardrail aderente ao tema estratégico.",
+            timestamp: addDays(now, -4),
+          },
+          {
+            tenantId,
+            etapaOrdem: 2,
+            roleRequired: "cfo",
+            estado: "approved",
+            approverId: users.STE,
+            comentario: "Investimento dentro do guardrail aprovado.",
+            timestamp: addDays(now, -2),
+          },
+        ],
+      },
+    },
+  });
+  console.log(
+    "  ✓ ApprovalWorkflow + ApprovalRequest aprovada (2 steps decididos)"
+  );
+
+  // ─── PIParticipant — cobre os sete papéis ──────────────────────────────
+  // MemberRole (ADMIN/STE/RTE/SM/PO/DEV/MEMBER) não é o mesmo enum de
+  // PIParticipant.role (RTE/PO/SM/BUSINESS_OWNER/OBSERVER/INVITED) — mapeia
+  // pelo papel funcional mais próximo em vez de reusar o literal.
+  await prisma.pIParticipant.createMany({
+    data: [
+      {
+        tenantId,
+        piPlanId,
+        userId: users.RTE,
+        role: "RTE",
+        confirmed: true,
+      },
+      { tenantId, piPlanId, userId: users.PO, role: "PO", confirmed: true },
+      { tenantId, piPlanId, userId: users.SM, role: "SM", confirmed: true },
+      {
+        tenantId,
+        piPlanId,
+        userId: users.ADMIN,
+        role: "BUSINESS_OWNER",
+        confirmed: true,
+      },
+      {
+        tenantId,
+        piPlanId,
+        userId: users.STE,
+        role: "BUSINESS_OWNER",
+        confirmed: false,
+      },
+      {
+        tenantId,
+        piPlanId,
+        userId: users.DEV,
+        role: "OBSERVER",
+        confirmed: false,
+      },
+      {
+        tenantId,
+        piPlanId,
+        userId: users.MEMBER,
+        role: "INVITED",
+        confirmed: false,
+      },
+    ],
+  });
+  console.log("  ✓ 7 PIParticipant (um por MemberRole)");
+
+  // ─── PIPlanFeatureAssignment — só parte das Features ───────────────────
+  // Deixa o restante livre de propósito: metade pré-atribuída demonstra
+  // "reatribuir", a outra metade demonstra "atribuir" pela primeira vez.
+  const sprints = await prisma.sprint.findMany({
+    where: { tenantId, piPlanId },
+    select: { id: true },
+    orderBy: { startDate: "asc" },
+  });
+  if (sprints.length === 0) {
+    throw new Error(
+      "seedGovernance: nenhum Sprint ligado ao PI Plan — rode depois do PI Plan e dos Sprints serem criados"
+    );
+  }
+  const assignedFeatureIds = featureIds.slice(
+    0,
+    Math.max(1, Math.floor(featureIds.length / 2))
+  );
+  await prisma.pIPlanFeatureAssignment.createMany({
+    data: assignedFeatureIds.map((featureId, i) => ({
+      tenantId,
+      piPlanId,
+      featureId,
+      teamId,
+      sprintId: sprints[i % sprints.length].id,
+      rank: i,
+      updatedBy: users.RTE,
+    })),
+  });
+  console.log(
+    `  ✓ ${assignedFeatureIds.length}/${featureIds.length} Feature(s) atribuída(s) ao PI (restante livre)`
+  );
+}
+
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
@@ -1392,6 +1553,12 @@ async function main(): Promise<SeedContext> {
   await db.retrospective.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.sprintReview.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.teamCapacitySnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
+  // piPlanId/featureId/teamId/sprintId nesta tabela são String simples, sem
+  // @relation (só tenantId é FK real) — sem este delete, um segundo run
+  // deixaria linhas apontando para Feature/Sprint/Team já apagados abaixo.
+  await db.pIPlanFeatureAssignment.deleteMany({
+    where: { tenantId: TENANT_ID },
+  });
   await db.sprint.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.feature.deleteMany({ where: { tenantId: TENANT_ID } });
   // Governance chain, innermost first (GovernedEpic would cascade from Epic,
@@ -1400,7 +1567,20 @@ async function main(): Promise<SeedContext> {
   await db.approvalRequest.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.approvalWorkflow.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.governedEpic.deleteMany({ where: { tenantId: TENANT_ID } });
-  await db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } });
+  // DecisionLogEntry é append-only no banco (trigger decision_log_immutable).
+  // A limpeza do seed é o único caminho legítimo de apagar log de decisão, e
+  // roda como owner da tabela — desabilita o trigger só nesta transação e
+  // religa no finally, para que uma falha no meio não deixe a trava desarmada.
+  await db.$executeRawUnsafe(
+    'ALTER TABLE "DecisionLogEntry" DISABLE TRIGGER decision_log_immutable'
+  );
+  try {
+    await db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } });
+  } finally {
+    await db.$executeRawUnsafe(
+      'ALTER TABLE "DecisionLogEntry" ENABLE TRIGGER decision_log_immutable'
+    );
+  }
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResultSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResult.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -2643,6 +2823,10 @@ async function main(): Promise<SeedContext> {
   // ─── 17e. FinOps (TagRule, BillingEntry, CostSnapshot, CostAnomaly, ──────
   //          UnmappedCostBucket, AnomalyRuleConfig de custo) ────────────────
   await seedFinOps(context);
+
+  // ─── 17f. Governança (ApprovalRequest aprovada) e PI Planning ─────────────
+  //          (PIParticipant, PIPlanFeatureAssignment) ────────────────────────
+  await seedGovernance(context);
 
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");
