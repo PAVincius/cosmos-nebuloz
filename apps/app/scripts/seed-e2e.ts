@@ -19,7 +19,7 @@
  * Portfolio
  *   - 3 Temas Estratégicos → 3 OKRs → 7 Key Results + snapshots
  *   - 3 Épicos → 4 Features → DependencyLink entre features
- *   - 6 Stories em todos os status → 9 Tasks em todos os status
+ *   - 7 Stories em todos os status → 12 Tasks em todos os status
  *
  * Gestão de Riscos & Qualidade
  *   - 5 Risks (ROAM completo: IDENTIFIED/OWNED/ACCEPTED/MITIGATED/RESOLVED)
@@ -1547,7 +1547,24 @@ async function main(): Promise<SeedContext> {
       order: 0,
     },
   });
-  console.log("  ✓ 6 Stories (DONE, REVIEW, IN_PROGRESS, TODO x2, BACKLOG)");
+  // featSaml (BACKLOG, sem sprint) é a única feature sem story antes desta —
+  // sem ela o drill-down do épico de segurança fica sem ramo para expandir.
+  const storySaml = await db.story.create({
+    data: {
+      tenantId: TENANT_ID,
+      featureId: featSaml.id,
+      title: "Configurar metadata SAML do IdP (Okta)",
+      description:
+        "Cadastrar Entity ID, ACS URL e certificado do IdP Okta para o primeiro tenant piloto.",
+      acceptanceCriteria:
+        "- Metadata XML do Okta importado e validado\n- Login SAML redireciona corretamente para o ACS URL\n- Certificado expirado é rejeitado com erro claro",
+      storyPoints: 5,
+      status: "BACKLOG",
+      priority: "high",
+      order: 0,
+    },
+  });
+  console.log("  ✓ 7 Stories (DONE, REVIEW, IN_PROGRESS, TODO x2, BACKLOG x2)");
 
   // ─── 17. Tasks em todos os status ──────────────────────────────────────────
   console.log("\n  Criando tasks (todos os status)...");
@@ -1637,7 +1654,34 @@ async function main(): Promise<SeedContext> {
       },
     ],
   });
-  console.log("  ✓ 9 Tasks (2 TODO, 2 IN_PROGRESS, 5 DONE)");
+  // storyBacklog, storyRisk e storySaml eram os únicos ramos do drill-down
+  // que paravam na Story: sem task aqui, "toda Story tem Task" falha.
+  await db.task.createMany({
+    data: [
+      {
+        tenantId: TENANT_ID,
+        storyId: storyBacklog.id,
+        title: "Mapear campos de agrupamento por tema estratégico",
+        status: "TODO",
+        estimateHours: 2,
+      },
+      {
+        tenantId: TENANT_ID,
+        storyId: storyRisk.id,
+        title: "Levantar histórico de PIs para calibrar o modelo de scoring",
+        status: "TODO",
+        estimateHours: 3,
+      },
+      {
+        tenantId: TENANT_ID,
+        storyId: storySaml.id,
+        title: "Importar e validar metadata XML do IdP Okta",
+        status: "TODO",
+        estimateHours: 3,
+      },
+    ],
+  });
+  console.log("  ✓ 12 Tasks (5 TODO, 2 IN_PROGRESS, 5 DONE)");
 
   // ─── SeedContext (montado aqui, não só no final) ───────────────────────────
   // Fields cast with `as MemberRole` are keys that ROLE_USERS always
@@ -1659,6 +1703,7 @@ async function main(): Promise<SeedContext> {
       storyTodo.id,
       storyBacklog.id,
       storyRisk.id,
+      storySaml.id,
     ],
     piPlanIds: [piPlan.id],
     themeIds: [theme1.id, theme2.id, theme3.id],
@@ -2027,7 +2072,7 @@ async function main(): Promise<SeedContext> {
     "    • 3 Temas Estratégicos → 3 OKRs → 7 Key Results + 21 snapshots"
   );
   console.log("    • 3 Épicos → 4 Features → 2 DependencyLinks");
-  console.log("    • 6 Stories (todos os status) → 9 Tasks (todos os status)");
+  console.log("    • 7 Stories (todos os status) → 12 Tasks (todos os status)");
   console.log("  Riscos & Qualidade");
   console.log(
     "    • 5 Risks (ROAM: IDENTIFIED/OWNED/MITIGATED/ACCEPTED/RESOLVED)"

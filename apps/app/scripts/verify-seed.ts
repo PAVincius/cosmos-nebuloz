@@ -138,6 +138,40 @@ async function main() {
     )
   );
 
+  // ─── Task 3: cadeia completa do drill-down ─────────────────────────────
+  await check("existe Epic → Feature → Story → Task completa", async () => {
+    const epic = await prisma.epic.findFirst({
+      where: {
+        tenantId: t,
+        features: { some: { stories: { some: { tasks: { some: {} } } } } },
+      },
+      select: { id: true, title: true },
+    });
+    return epic ? null : "nenhum Epic tem Feature com Story com Task";
+  });
+
+  await check("toda Feature semeada tem pelo menos uma Story", async () => {
+    const n = await prisma.feature.count({
+      where: { tenantId: t, stories: { none: {} } },
+    });
+    return n === 0 ? null : `${n} Feature(s) sem Story`;
+  });
+
+  await check("toda Story semeada tem pelo menos uma Task", async () => {
+    const n = await prisma.story.count({
+      where: { tenantId: t, tasks: { none: {} } },
+    });
+    return n === 0 ? null : `${n} Story(ies) sem Task`;
+  });
+
+  await check("existe Story com acceptanceCriteria preenchido", () =>
+    expectRows("Story com AC", () =>
+      prisma.story.count({
+        where: { tenantId: t, acceptanceCriteria: { not: null } },
+      })
+    )
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {
