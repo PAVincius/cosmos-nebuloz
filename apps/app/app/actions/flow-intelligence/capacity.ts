@@ -189,7 +189,7 @@ export async function upsertMemberAssignment(
   }
 
   const result = await database.teamMemberAssignment.upsert({
-    where: { sprintId_userId: { sprintId, userId } },
+    where: { tenantId_sprintId_userId: { tenantId, sprintId, userId } },
     create: {
       tenantId,
       sprintId,

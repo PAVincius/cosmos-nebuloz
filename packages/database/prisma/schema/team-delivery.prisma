@@ -200,7 +200,7 @@ model StandupEntry {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([teamId, userId, date])
+  @@unique([tenantId, teamId, userId, date])
   @@index([tenantId])
   @@index([teamId, date])
 }

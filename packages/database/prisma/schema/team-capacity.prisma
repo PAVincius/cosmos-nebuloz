@@ -20,7 +20,7 @@ model TeamMemberAssignment {
   sprint Sprint @relation(fields: [sprintId], references: [id], onDelete: Cascade)
   team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
-  @@unique([sprintId, userId])
+  @@unique([tenantId, sprintId, userId])
   @@index([tenantId])
   @@index([teamId])
   @@index([userId])

@@ -2809,7 +2809,14 @@ async function main(): Promise<SeedContext> {
   const yesterday = addDays(today, -1);
 
   await db.standupEntry.upsert({
-    where: { teamId_userId_date: { teamId: team.id, userId, date: today } },
+    where: {
+      tenantId_teamId_userId_date: {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        userId,
+        date: today,
+      },
+    },
     create: {
       tenantId: TENANT_ID,
       teamId: team.id,
@@ -2823,7 +2830,14 @@ async function main(): Promise<SeedContext> {
     update: {},
   });
   await db.standupEntry.upsert({
-    where: { teamId_userId_date: { teamId: team.id, userId, date: yesterday } },
+    where: {
+      tenantId_teamId_userId_date: {
+        tenantId: TENANT_ID,
+        teamId: team.id,
+        userId,
+        date: yesterday,
+      },
+    },
     create: {
       tenantId: TENANT_ID,
       teamId: team.id,
