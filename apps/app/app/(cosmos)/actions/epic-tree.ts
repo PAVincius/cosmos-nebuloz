@@ -1,9 +1,10 @@
 "use server";
 
-import { requireRole, requireTenantSession } from "@repo/auth/server";
+import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
+import { enforce } from "../../actions/permissions";
 import {
   DEFAULT_NOTE_BLOCKS,
   parseTaskBlocks,
@@ -13,7 +14,6 @@ import {
   type TaskBlock,
   TaskBlocksSchema,
   type TaskNode,
-  WRITE_ROLES,
 } from "./epic-tree.constants";
 
 // Nível 3 da árvore. Carregado sob demanda quando o usuário expande uma
@@ -150,7 +150,7 @@ export async function createNativeTask(input: {
 }): Promise<Result<TaskNode>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    requireRole(WRITE_ROLES, ctx);
+    enforce(ctx.role, "Task", "create");
 
     const title = input.title.trim();
     if (!title) {
@@ -195,13 +195,13 @@ export async function updateNativeTask(input: {
 }): Promise<Result<TaskNode>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    requireRole(WRITE_ROLES, ctx);
+    enforce(ctx.role, "Task", "update");
 
     // A checagem de tenant e a de origem acontecem na mesma leitura: uma task
     // importada é read-only aqui — a edição pertence à ferramenta de origem.
     const existing = await database.task.findFirst({
       where: { id: input.taskId, tenantId: ctx.tenantId },
-      select: { id: true, externalSource: true },
+      select: { id: true, externalSource: true, status: true },
     });
     if (!existing) {
       throw new Error("Task não encontrada.");
@@ -215,6 +215,7 @@ export async function updateNativeTask(input: {
     const data: {
       title?: string;
       status?: string;
+      completedAt?: Date | null;
       noteBlocks?: TaskBlock[];
     } = {};
 
@@ -230,6 +231,14 @@ export async function updateNativeTask(input: {
         throw new Error(`Status inválido: ${input.status}`);
       }
       data.status = input.status;
+      // Mesma regra do caminho canônico (app/actions/tasks/index.ts): DONE
+      // carimba completedAt, sair de DONE limpa. Sem isto, reabrir uma task
+      // aqui deixa completedAt órfão, ou marcar DONE aqui nunca o carimba.
+      if (input.status === "DONE" && existing.status !== "DONE") {
+        data.completedAt = new Date();
+      } else if (input.status !== "DONE" && existing.status === "DONE") {
+        data.completedAt = null;
+      }
     }
     if (input.blocks !== undefined) {
       const parsed = TaskBlocksSchema.safeParse(input.blocks);

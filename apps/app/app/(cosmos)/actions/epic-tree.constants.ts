@@ -2,8 +2,8 @@
 // Vive fora de epic-tree.ts porque arquivos "use server" só podem exportar
 // funções async — mapas, schemas Zod e tipos ficam aqui e são importados
 // tanto pelas actions quanto pelos client components.
-import type { MemberRole } from "@repo/auth/server";
 import { z } from "zod";
+import { TaskStatus } from "@/app/actions/_base";
 import type { Tone } from "@/components/cosmos/kit";
 
 // ─── Blocos da nota nativa ────────────────────────────────────────────────
@@ -159,18 +159,24 @@ export const PROVIDERS: Record<string, ProviderMeta> = {
 // ─── Status ───────────────────────────────────────────────────────────────
 
 // Task.status é String no schema (comentário do model lista TODO/IN_PROGRESS/
-// DONE). REVIEW é o quarto estado pedido pelo handoff — nenhuma migração
-// necessária, mas mantido nesta lista fechada para não virar campo livre.
+// REVIEW/DONE). O conjunto de ids vem do TaskStatus (app/actions/_base.ts) —
+// única fonte — para que esta lista e o Zod enum usado por updateTaskStatus
+// nunca fiquem fora de sincronia de novo. Só label/tone são locais.
+const TASK_STATUS_META: Record<
+  (typeof TaskStatus.options)[number],
+  { label: string; tone: Tone }
+> = {
+  TODO: { label: "A Fazer", tone: "neutral" },
+  IN_PROGRESS: { label: "Em andamento", tone: "blue" },
+  REVIEW: { label: "Em revisão", tone: "amber" },
+  DONE: { label: "Concluído", tone: "green" },
+};
+
 export const TASK_STATUSES: readonly {
   id: string;
   label: string;
   tone: Tone;
-}[] = [
-  { id: "TODO", label: "A Fazer", tone: "neutral" },
-  { id: "IN_PROGRESS", label: "Em andamento", tone: "blue" },
-  { id: "REVIEW", label: "Em revisão", tone: "amber" },
-  { id: "DONE", label: "Concluído", tone: "green" },
-] as const;
+}[] = TaskStatus.options.map((id) => ({ id, ...TASK_STATUS_META[id] }));
 
 export const TASK_STATUS_IDS = TASK_STATUSES.map((s) => s.id);
 
@@ -183,5 +189,3 @@ export const STORY_STATUS_TONE: Record<string, Tone> = {
   DONE: "green",
   SPLIT_INTO: "purple",
 };
-
-export const WRITE_ROLES: MemberRole[] = ["ADMIN", "RTE", "SM", "PO", "DEV"];

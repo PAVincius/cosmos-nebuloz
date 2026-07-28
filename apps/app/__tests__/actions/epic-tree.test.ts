@@ -1,21 +1,34 @@
 import { beforeEach, vi } from "vitest";
 
-const h = vi.hoisted(() => ({
-  storyFindManyMock: vi.fn(),
-  storyFindFirstMock: vi.fn(),
-  taskFindManyMock: vi.fn(),
-  taskFindFirstMock: vi.fn(),
-  taskCreateMock: vi.fn(),
-  taskUpdateMock: vi.fn(),
-  integrationFindManyMock: vi.fn(),
-  userFindManyMock: vi.fn(),
-  requireTenantSessionMock: vi.fn(async () => ({
-    tenantId: "tenant-1",
-    userId: "user-1",
-    role: "PO",
-  })),
-  requireRoleMock: vi.fn(),
-}));
+// AuthError não é mockado como no-op: enforce() (app/actions/permissions.ts,
+// não mockado) precisa lançar de verdade para os testes de RBAC provarem
+// bloqueio, não apenas invocação.
+const h = vi.hoisted(() => {
+  class FakeAuthError extends Error {
+    code: string;
+    constructor(code: string, message?: string) {
+      super(message ?? code);
+      this.code = code;
+      this.name = "AuthError";
+    }
+  }
+  return {
+    storyFindManyMock: vi.fn(),
+    storyFindFirstMock: vi.fn(),
+    taskFindManyMock: vi.fn(),
+    taskFindFirstMock: vi.fn(),
+    taskCreateMock: vi.fn(),
+    taskUpdateMock: vi.fn(),
+    integrationFindManyMock: vi.fn(),
+    userFindManyMock: vi.fn(),
+    requireTenantSessionMock: vi.fn(async () => ({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role: "PO",
+    })),
+    FakeAuthError,
+  };
+});
 
 vi.mock("@repo/database", () => ({
   database: {
@@ -33,7 +46,7 @@ vi.mock("@repo/database", () => ({
 
 vi.mock("@repo/auth/server", () => ({
   requireTenantSession: h.requireTenantSessionMock,
-  requireRole: h.requireRoleMock,
+  AuthError: h.FakeAuthError,
 }));
 
 vi.mock("next/headers", () => ({
@@ -267,9 +280,41 @@ describe("createNativeTask", () => {
     vi.clearAllMocks();
     h.userFindManyMock.mockResolvedValue([]);
     h.storyFindFirstMock.mockResolvedValue({ id: "story-1" });
+    // Papel padrão para os testes de comportamento abaixo: a política real
+    // (app/actions/permissions-policy.ts) permite Task:create só a SM/DEV
+    // (ADMIN passa por bypass). Os testes de RBAC abaixo sobrescrevem isto.
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role: "SM",
+    });
   });
 
-  it("enforces the write roles", async () => {
+  it.each([
+    "MEMBER",
+    "PO",
+  ] as const)("blocks %s — the policy is the sole authority, not a local role list", async (role) => {
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role,
+    });
+
+    const res = await createNativeTask({ storyId: "story-1", title: "Nova" });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskCreateMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "SM",
+    "DEV",
+  ] as const)("allows %s to create a native task", async (role) => {
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role,
+    });
     h.taskCreateMock.mockResolvedValue({
       id: "task-1",
       title: "Nova",
@@ -282,12 +327,10 @@ describe("createNativeTask", () => {
       noteBlocks: [],
     });
 
-    await createNativeTask({ storyId: "story-1", title: "Nova" });
+    const res = await createNativeTask({ storyId: "story-1", title: "Nova" });
 
-    expect(h.requireRoleMock).toHaveBeenCalledWith(
-      ["ADMIN", "RTE", "SM", "PO", "DEV"],
-      expect.objectContaining({ tenantId: "tenant-1" })
-    );
+    expect(res.ok).toBe(true);
+    expect(h.taskCreateMock).toHaveBeenCalled();
   });
 
   it("creates the task tenant-scoped, native, and seeded with default blocks", async () => {
@@ -354,6 +397,43 @@ describe("updateNativeTask", () => {
     h.userFindManyMock.mockResolvedValue([]);
     h.taskFindFirstMock.mockResolvedValue(nativeRow);
     h.taskUpdateMock.mockResolvedValue(nativeRow);
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role: "SM",
+    });
+  });
+
+  it.each([
+    "MEMBER",
+    "PO",
+  ] as const)("blocks %s — the policy is the sole authority, not a local role list", async (role) => {
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role,
+    });
+
+    const res = await updateNativeTask({ taskId: "task-1", title: "X" });
+
+    expect(res.ok).toBe(false);
+    expect(h.taskUpdateMock).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    "SM",
+    "DEV",
+  ] as const)("allows %s to update a native task", async (role) => {
+    h.requireTenantSessionMock.mockResolvedValue({
+      tenantId: "tenant-1",
+      userId: "user-1",
+      role,
+    });
+
+    const res = await updateNativeTask({ taskId: "task-1", title: "X" });
+
+    expect(res.ok).toBe(true);
+    expect(h.taskUpdateMock).toHaveBeenCalled();
   });
 
   it("refuses to edit a task that came from an external tool", async () => {
@@ -411,5 +491,35 @@ describe("updateNativeTask", () => {
         data: { title: "Editado", status: "REVIEW", noteBlocks: blocks },
       })
     );
+  });
+
+  it("sets completedAt when the transition lands on DONE", async () => {
+    h.taskFindFirstMock.mockResolvedValue({ ...nativeRow, status: "TODO" });
+
+    await updateNativeTask({ taskId: "task-1", status: "DONE" });
+
+    const arg = h.taskUpdateMock.mock.calls[0][0];
+    expect(arg.data.status).toBe("DONE");
+    expect(arg.data.completedAt).toBeInstanceOf(Date);
+  });
+
+  it("clears completedAt when the transition leaves DONE", async () => {
+    h.taskFindFirstMock.mockResolvedValue({ ...nativeRow, status: "DONE" });
+
+    await updateNativeTask({ taskId: "task-1", status: "TODO" });
+
+    const arg = h.taskUpdateMock.mock.calls[0][0];
+    expect(arg.data.status).toBe("TODO");
+    expect(arg.data.completedAt).toBeNull();
+  });
+
+  it("does not touch completedAt when the status does not change DONE-ness", async () => {
+    h.taskFindFirstMock.mockResolvedValue({ ...nativeRow, status: "TODO" });
+
+    await updateNativeTask({ taskId: "task-1", status: "IN_PROGRESS" });
+
+    const arg = h.taskUpdateMock.mock.calls[0][0];
+    expect(arg.data.status).toBe("IN_PROGRESS");
+    expect(arg.data.completedAt).toBeUndefined();
   });
 });

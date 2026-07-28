@@ -195,10 +195,10 @@ test.describe("Epic drill-down @auth", () => {
       .getByRole("button", { name: `Abrir feature ${FEAT_KANBAN_TITLE}` })
       .click();
 
-    // Checked right after the click, before the client-side navigation
-    // (a network round trip) has had time to complete: if stopPropagation
-    // were missing, the row's own toggle() would have already flipped this
-    // synchronously in the same event.
+    // The guarantee here is stopPropagation() on the ↗ button in
+    // feature-table.tsx, not timing: it stops the click from ever reaching
+    // the row's own onClick, so toggle() never runs. If stopPropagation were
+    // missing, this would fail regardless of how long we waited.
     await expect(featureRow).toHaveAttribute("aria-expanded", "false");
 
     await page.waitForURL(/\/cosmos\/feature\//);

@@ -163,7 +163,7 @@ export function StoryRow({ story }: { story: StoryNode }) {
             Tasks operacionais
           </span>
           <button
-            disabled={creating}
+            disabled={creating || tasks === null || error !== null}
             onClick={addNativeTask}
             style={{
               fontSize: 11.5,

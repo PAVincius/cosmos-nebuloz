@@ -11,7 +11,8 @@ dotenv.config({ path: ".env.local" });
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
-import { Prisma, PrismaClient } from "../../../packages/database/generated";
+import { PrismaClient } from "../../../packages/database/generated";
+import { parseTaskBlocks } from "../app/(cosmos)/actions/epic-tree.constants";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -39,7 +40,6 @@ async function check(name: string, fn: () => Promise<string | null>) {
 }
 
 // Helper: falha com contagem quando não há linha alguma.
-// biome-ignore lint/correctness/noUnusedVariables: usado pelas asserções que as próximas tasks do plano de seed acrescentam a este arquivo.
 async function expectRows(
   label: string,
   count: () => Promise<number>,
@@ -126,16 +126,23 @@ async function main() {
     return n > 0 ? null : "nenhuma Task importada de provider desconectado";
   });
 
-  await check("existe Task nativa com noteBlocks", () =>
-    expectRows("Task nativa com nota", () =>
-      prisma.task.count({
-        where: {
-          tenantId: t,
-          externalSource: null,
-          noteBlocks: { not: Prisma.DbNull },
-        },
-      })
-    )
+  // Contrato real é o da UI (parseTaskBlocks), não "coluna não é SQL NULL":
+  // um noteBlocks presente mas corrompido passaria numa checagem de nulidade
+  // e a UI abriria a nota mostrando os blocos padrão em silêncio.
+  await check(
+    "existe Task nativa com noteBlocks que a UI consegue ler",
+    async () => {
+      const rows = await prisma.task.findMany({
+        where: { tenantId: t, externalSource: null },
+        select: { noteBlocks: true },
+      });
+      const n = rows.filter(
+        (r) => parseTaskBlocks(r.noteBlocks) !== null
+      ).length;
+      return n > 0
+        ? null
+        : "nenhuma Task nativa tem noteBlocks que passe em parseTaskBlocks";
+    }
   );
 
   // ─── Task 3: cadeia completa do drill-down ─────────────────────────────

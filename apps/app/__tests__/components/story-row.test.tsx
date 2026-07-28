@@ -118,6 +118,31 @@ describe("StoryRow", () => {
     );
   });
 
+  test("disables the create CTA during a failed load so it cannot fabricate a lone task", async () => {
+    h.listStoryTasksMock.mockResolvedValueOnce({ ok: false, error: "boom" });
+    renderRow();
+    const row = screen.getByRole("button", { name: /Login com SSO/ });
+
+    fireEvent.click(row);
+
+    const createButton = await screen.findByRole("button", {
+      name: /Nova task nativa/,
+    });
+    expect(createButton).toHaveProperty("disabled", true);
+
+    fireEvent.click(createButton);
+    expect(h.createNativeTaskMock).not.toHaveBeenCalled();
+
+    // Retry succeeds — the CTA must recover, not stay stuck disabled forever.
+    h.listStoryTasksMock.mockResolvedValueOnce({
+      ok: true,
+      data: { tasks: [], connectedSources: [] },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Tentar novamente/ }));
+
+    await waitFor(() => expect(createButton).toHaveProperty("disabled", false));
+  });
+
   test("offers the native-task CTA when the story has no tasks", async () => {
     renderRow();
     fireEvent.click(screen.getByRole("button", { name: /Login com SSO/ }));
