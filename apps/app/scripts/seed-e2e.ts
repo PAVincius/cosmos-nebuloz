@@ -2066,22 +2066,43 @@ async function main(): Promise<SeedContext> {
   await db.approvalWorkflow.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.governedEpic.deleteMany({ where: { tenantId: TENANT_ID } });
   // DecisionLogEntry é append-only no banco (trigger decision_log_immutable,
-  // reinstalado por uma sessão concorrente que está auditando migrations com
-  // SQL raw que nunca rodou — não existia neste banco antes de hoje). A
+  // instalada por migration SQL — nunca pelo `prisma db push`, então um
+  // banco criado por `db push` em vez de `migrate deploy` não a tem). A
   // limpeza do seed é o único caminho legítimo de apagar log de decisão.
   // ALTER TABLE ... DISABLE/ENABLE TRIGGER é DDL de Postgres, válido dentro
   // de uma transação — o array-form de $transaction roda os três passos em
   // um único BEGIN/COMMIT (verificado: um erro no meio faz ROLLBACK e
   // restaura o trigger atomicamente, sem depender de um `finally` em JS que
-  // não cobre um crash do processo entre statements).
+  // não cobre um crash do processo entre statements). Os DO blocks checam
+  // pg_trigger antes de (des)ativar — sem isso, um banco sem a trigger
+  // abortaria aqui com erro 42704 no meio do wipe, deixando o tenant
+  // parcialmente apagado e sem o log de decisão recriado.
   await db.$transaction([
-    db.$executeRawUnsafe(
-      'ALTER TABLE "DecisionLogEntry" DISABLE TRIGGER decision_log_immutable'
-    ),
+    db.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM pg_trigger
+          WHERE tgname = 'decision_log_immutable'
+            AND tgrelid = '"DecisionLogEntry"'::regclass
+        ) THEN
+          EXECUTE 'ALTER TABLE "DecisionLogEntry" DISABLE TRIGGER decision_log_immutable';
+        END IF;
+      END $$;
+    `),
     db.decisionLogEntry.deleteMany({ where: { tenantId: TENANT_ID } }),
-    db.$executeRawUnsafe(
-      'ALTER TABLE "DecisionLogEntry" ENABLE TRIGGER decision_log_immutable'
-    ),
+    db.$executeRawUnsafe(`
+      DO $$
+      BEGIN
+        IF EXISTS (
+          SELECT 1 FROM pg_trigger
+          WHERE tgname = 'decision_log_immutable'
+            AND tgrelid = '"DecisionLogEntry"'::regclass
+        ) THEN
+          EXECUTE 'ALTER TABLE "DecisionLogEntry" ENABLE TRIGGER decision_log_immutable';
+        END IF;
+      END $$;
+    `),
   ]);
   await db.epic.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.keyResultSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -2113,6 +2134,9 @@ async function main(): Promise<SeedContext> {
   await db.confidenceVoteTally.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.confidenceVoteSession.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pISession.deleteMany({ where: { tenantId: TENANT_ID } });
+  // pIParticipant cascateia de PIPlan (onDelete: Cascade) — sem delete
+  // explícito aqui, mesmo padrão avaliado e aceito para aRTMembership/
+  // customRoleAssignment abaixo.
   await db.pIPlan.deleteMany({ where: { tenantId: TENANT_ID } });
   // Config de tenant (Task 8) — teamId/artId em TeamWorkflowNode/Edge e
   // BpmnDefinition.ownerId são String simples, sem @relation; limpos antes

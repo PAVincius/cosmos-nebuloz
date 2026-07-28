@@ -22,6 +22,7 @@ const TENANT_SLUG = process.env.SEED_TENANT_SLUG ?? "cosmos-dev";
 
 type Failure = { name: string; detail: string };
 const failures: Failure[] = [];
+const warnings: Failure[] = [];
 let passed = 0;
 
 async function check(name: string, fn: () => Promise<string | null>) {
@@ -34,6 +35,27 @@ async function check(name: string, fn: () => Promise<string | null>) {
     }
   } catch (error) {
     failures.push({
+      name,
+      detail: `lançou: ${error instanceof Error ? error.message : String(error)}`,
+    });
+  }
+}
+
+// Como `check`, mas uma falha vira um aviso informativo em vez de fazer
+// `verify:seed` sair com 1. Reservado para pré-condições que `seed:e2e`
+// deliberadamente não garante sozinho (ex.: um segundo tenant, que só
+// `seed:tenants` cria) — nunca para os leak checks de cross-tenant, que
+// devem continuar incondicionais.
+async function checkOrWarn(name: string, fn: () => Promise<string | null>) {
+  try {
+    const detail = await fn();
+    if (detail === null) {
+      passed++;
+    } else {
+      warnings.push({ name, detail });
+    }
+  } catch (error) {
+    warnings.push({
       name,
       detail: `lançou: ${error instanceof Error ? error.message : String(error)}`,
     });
@@ -886,7 +908,13 @@ async function main() {
     }
   );
 
-  await check(
+  // `seed:e2e` sozinho só povoa um tenant de cliente — um segundo tenant
+  // só existe depois de `pnpm seed:tenants` (Seed 10, deliberado: ver
+  // README-seed.md). Por isso esta é a única asserção condicional do
+  // arquivo: em vez de falhar `verify:seed` num banco onde só `seed:e2e`
+  // rodou, ela avisa. Os sete leak checks de cross-tenant logo abaixo
+  // continuam incondicionais — não fazem parte desta exceção.
+  await checkOrWarn(
     "há pelo menos dois tenants de cliente (isSystem=false) com Epic próprio",
     async () => {
       const tenants = await prisma.tenant.findMany({
@@ -895,12 +923,18 @@ async function main() {
       });
       return tenants.length >= 2
         ? null
-        : `apenas ${tenants.length} tenant(s) de cliente com Epic — isolamento não é demonstrável na UI sem um segundo tenant povoado (rode pnpm seed:tenants)`;
+        : `apenas ${tenants.length} tenant de cliente com Epic; rode \`pnpm seed:tenants\` para verificar isolamento`;
     }
   );
 
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
+  if (warnings.length) {
+    process.stdout.write(`${warnings.length} aviso(s):\n`);
+    for (const w of warnings) {
+      process.stdout.write(`  ⚠ ${w.name}\n    ${w.detail}\n`);
+    }
+  }
   if (failures.length) {
     process.stdout.write(`${failures.length} FALHARAM:\n`);
     for (const f of failures) {
