@@ -55,6 +55,7 @@ import { Pool } from "pg";
 import type { MemberRole } from "../../../packages/database/generated";
 import { Prisma, PrismaClient } from "../../../packages/database/generated";
 import { TaskBlocksSchema } from "../app/(cosmos)/actions/epic-tree.constants";
+import { STATUS_CHAINS } from "./flow-status-chains";
 
 /**
  * Contexto acumulado pelo seed — ids e o client Prisma que as tasks
@@ -1700,45 +1701,12 @@ async function seedTenantConfig(ctx: SeedContext): Promise<void> {
 // o cleanup em main() agora limpa StateTransitionHistory antes de recriar
 // Story, não sobra referência solta entre runs.
 //
-// A cadeia por status é a garantia de coerência pedida na task: cada story
-// recebe a caminhada real, de trás para frente a partir do seu status atual,
-// e não uma transição solta. DONE sempre passa por IN_PROGRESS antes; BACKLOG
+// A cadeia por status (STATUS_CHAINS, em ./flow-status-chains — compartilhada
+// com verify-seed.ts para o verificador poder checar contra a mesma fonte de
+// verdade) é a garantia de coerência pedida na task: cada story recebe a
+// caminhada real, de trás para frente a partir do seu status atual, e não
+// uma transição solta. DONE sempre passa por IN_PROGRESS antes; BACKLOG
 // nunca tem uma linha para DONE porque sua cadeia para no primeiro passo.
-type TransitionStep = { from: string; to: string; daysAgo: number };
-
-const STATUS_CHAINS: Record<string, TransitionStep[]> = {
-  BACKLOG: [{ from: "CREATED", to: "BACKLOG", daysAgo: 18 }],
-  TODO: [
-    { from: "CREATED", to: "BACKLOG", daysAgo: 16 },
-    { from: "BACKLOG", to: "TODO", daysAgo: 9 },
-  ],
-  IN_PROGRESS: [
-    { from: "CREATED", to: "BACKLOG", daysAgo: 19 },
-    { from: "BACKLOG", to: "TODO", daysAgo: 13 },
-    { from: "TODO", to: "IN_PROGRESS", daysAgo: 4 },
-  ],
-  REVIEW: [
-    { from: "CREATED", to: "BACKLOG", daysAgo: 20 },
-    { from: "BACKLOG", to: "TODO", daysAgo: 15 },
-    { from: "TODO", to: "IN_PROGRESS", daysAgo: 8 },
-    { from: "IN_PROGRESS", to: "REVIEW", daysAgo: 2 },
-  ],
-  DONE: [
-    { from: "CREATED", to: "BACKLOG", daysAgo: 20 },
-    { from: "BACKLOG", to: "TODO", daysAgo: 17 },
-    { from: "TODO", to: "IN_PROGRESS", daysAgo: 13 },
-    { from: "IN_PROGRESS", to: "REVIEW", daysAgo: 11 },
-    { from: "REVIEW", to: "DONE", daysAgo: 10 },
-  ],
-  // Split pode acontecer direto do refinamento, sem passar por
-  // IN_PROGRESS/REVIEW — a história nunca chegou a ser trabalhada.
-  SPLIT_INTO: [
-    { from: "CREATED", to: "BACKLOG", daysAgo: 12 },
-    { from: "BACKLOG", to: "TODO", daysAgo: 7 },
-    { from: "TODO", to: "SPLIT_INTO", daysAgo: 3 },
-  ],
-};
-
 async function seedFlowHistory(ctx: SeedContext): Promise<void> {
   const { prisma, tenantId, users, featureIds, storyIds } = ctx;
   const now = new Date();

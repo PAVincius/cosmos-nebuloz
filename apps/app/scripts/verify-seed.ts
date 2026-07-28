@@ -13,6 +13,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../../../packages/database/generated";
 import { parseTaskBlocks } from "../app/(cosmos)/actions/epic-tree.constants";
+import { STATUS_CHAINS } from "./flow-status-chains";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -559,34 +560,90 @@ async function main() {
       : `span de ${days.toFixed(1)} dias, esperado >= 14`;
   });
 
+  // Generaliza a checagem de ordem: em vez de só testar "está ordenado"
+  // (que, lido na própria ordem de inserção, só pega erro de digitação nos
+  // daysAgo da tabela — não pegaria, por ex., uma story REVIEW semeada com
+  // uma única transição fabricada CREATED→REVIEW, que passaria por count,
+  // span, e pelas checagens nomeadas de DONE/BACKLOG abaixo sem detecção),
+  // comparamos a sequência de (fromStatus,toStatus) TAL COMO ARMAZENADA
+  // contra a cadeia completa que STATUS_CHAINS prevê para o status atual
+  // da story — a mesma fonte de verdade usada por seedFlowHistory, importada
+  // de ./flow-status-chains em vez de duplicada aqui. Isso cobre todo status
+  // presente em STATUS_CHAINS (incluindo TODO, REVIEW, SPLIT_INTO, que as
+  // checagens nomeadas abaixo não tocam), e ainda pega ordem cronológica
+  // fora de linha, porque a cadeia esperada é ela própria não-decrescente
+  // em daysAgo.
   await check(
-    "transições de cada story estão em ordem cronológica não decrescente",
+    "cada story segue exatamente a cadeia de transições esperada para seu status atual",
     async () => {
-      // orderBy id (cuid, cresce com a ordem de criação) em vez de
-      // transitionedAt — senão a checagem de ordem fica tautológica.
+      // orderBy id (cuid, cresce com a ordem de criação) preserva a ordem
+      // em que as linhas foram de fato gravadas — comparar contra isso, e
+      // não contra um re-sort por transitionedAt, é o que evita a checagem
+      // virar tautológica.
       const rows = await prisma.stateTransitionHistory.findMany({
         where: { tenantId: t, entityType: "Story" },
         orderBy: { id: "asc" },
-        select: { entityId: true, transitionedAt: true },
+        select: {
+          entityId: true,
+          fromStatus: true,
+          toStatus: true,
+          transitionedAt: true,
+        },
       });
-      const byStory = new Map<string, Date[]>();
+      const byStory = new Map<
+        string,
+        { fromStatus: string; toStatus: string; transitionedAt: Date }[]
+      >();
       for (const r of rows) {
-        const dates = byStory.get(r.entityId) ?? [];
-        dates.push(r.transitionedAt);
-        byStory.set(r.entityId, dates);
+        const steps = byStory.get(r.entityId) ?? [];
+        steps.push(r);
+        byStory.set(r.entityId, steps);
       }
+
+      const stories = await prisma.story.findMany({
+        where: { tenantId: t, id: { in: [...byStory.keys()] } },
+        select: { id: true, status: true },
+      });
+
       const offenders: string[] = [];
-      for (const [storyId, dates] of byStory) {
-        for (let i = 1; i < dates.length; i++) {
-          if (dates[i].getTime() < dates[i - 1].getTime()) {
-            offenders.push(storyId);
+      for (const story of stories) {
+        const expected = STATUS_CHAINS[story.status];
+        const actual = byStory.get(story.id) ?? [];
+        if (!expected) {
+          offenders.push(
+            `${story.id}: status "${story.status}" sem cadeia definida em STATUS_CHAINS`
+          );
+          continue;
+        }
+        if (actual.length !== expected.length) {
+          offenders.push(
+            `${story.id}: ${actual.length} transição(ões) armazenada(s), esperado ${expected.length} para status ${story.status}`
+          );
+          continue;
+        }
+        let mismatch: string | null = null;
+        for (let i = 0; i < expected.length; i++) {
+          if (
+            actual[i].fromStatus !== expected[i].from ||
+            actual[i].toStatus !== expected[i].to
+          ) {
+            mismatch = `passo ${i}: armazenado ${actual[i].fromStatus}→${actual[i].toStatus}, esperado ${expected[i].from}→${expected[i].to}`;
+            break;
+          }
+          if (
+            i > 0 &&
+            actual[i].transitionedAt.getTime() <
+              actual[i - 1].transitionedAt.getTime()
+          ) {
+            mismatch = `passo ${i}: transitionedAt anterior ao passo ${i - 1}`;
             break;
           }
         }
+        if (mismatch) {
+          offenders.push(`${story.id}: ${mismatch}`);
+        }
       }
-      return offenders.length
-        ? `stories com transições fora de ordem cronológica: ${offenders.join(", ")}`
-        : null;
+      return offenders.length ? offenders.join("; ") : null;
     }
   );
 
