@@ -1,9 +1,4 @@
-import {
-  AuthError,
-  auth,
-  currentUser,
-  redirectToSignIn,
-} from "@repo/auth/server";
+import { auth, currentUser, redirectToSignIn } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { SidebarProvider } from "@repo/design-system/components/ui/sidebar";
 import { showBetaFeature } from "@repo/feature-flags";
@@ -11,25 +6,9 @@ import { secure } from "@repo/security";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { isOnboardingComplete } from "@/app/actions/onboarding/index";
-import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
+import { isOnboardingComplete } from "@/app/actions/onboarding/is-onboarding-complete";
 import { env } from "@/env";
-import { CommandPalette } from "./components/command-palette";
-import { CopilotProvider } from "./components/copilot/copilot-provider";
-import type { CosmosPersona } from "./components/cosmos-topbar";
-import { CosmosTopbarShell } from "./components/cosmos-topbar-shell";
-import { KeyboardProvider } from "./components/keyboard-provider";
-import { NotificationsProvider } from "./components/notifications-provider";
 import { GlobalSidebar } from "./components/sidebar";
-import { getTeams } from "./teams/actions";
-
-const TOPBAR_PERSONAS: CosmosPersona[] = [
-  { key: "RTE", full: "Release Train Engineer" },
-  { key: "LPM", full: "Lean Portfolio Manager" },
-  { key: "PO", full: "Product Owner" },
-  { key: "SM", full: "Scrum Master" },
-  { key: "DEV", full: "Team Member" },
-];
 
 type AppLayoutProperties = {
   readonly children: ReactNode;
@@ -47,15 +26,7 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
     return redirectToSignIn();
   }
 
-  const [teams, session, memberships] = await Promise.all([
-    getTeams()
-      .then((list) => list.map((t) => ({ id: t.id, name: t.name })))
-      .catch((err) => {
-        if (err instanceof AuthError && err.code === "NO_ACTIVE_ORGANIZATION") {
-          return [];
-        }
-        throw err;
-      }),
+  const [session, memberships] = await Promise.all([
     auth.api.getSession({ headers: await headers() }),
     database.tenantMember.findMany({
       where: { userId: user.id },
@@ -76,11 +47,6 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
   const initialActiveTenantId =
     (session?.session as unknown as { activeTenantId?: string })
       ?.activeTenantId ?? null;
-
-  const activeMembership =
-    memberships.find((m) => m.tenant.id === initialActiveTenantId) ??
-    memberships[0];
-  const memberRole = activeMembership?.role ?? "MEMBER";
 
   // Auto-redirect new tenants to onboarding if company_setup is not complete
   const pathname = (await headers()).get("x-pathname") ?? "";
@@ -114,39 +80,24 @@ const AppLayout = async ({ children }: AppLayoutProperties) => {
     cookieStore.get("sidebar_state")?.value !== "false";
 
   return (
-    <NotificationsProvider userId={user.id}>
-      <SidebarProvider className="cosmos-shell" defaultOpen={defaultSidebarOpen}>
-        <CopilotProvider role={memberRole}>
-          <GlobalSidebar
-            initialActiveTenantId={initialActiveTenantId}
-            initialTenants={initialTenants}
-            role={memberRole}
-            teams={teams}
-            user={{
-              name: user.name ?? user.email,
-              email: user.email,
-              avatar: user.image ?? "",
-            }}
-          >
-            <CommandPalette />
-            <KeyboardProvider />
-            <CosmosTopbarShell
-              initialPersona={detectPrimaryRole([memberRole])}
-              personas={TOPBAR_PERSONAS}
-              tenantName={activeMembership?.tenant.name ?? "Cosmos"}
-              userEmail={user.email}
-              userName={user.name ?? user.email}
-            />
-            {!!betaFeature && (
-              <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
-                Beta feature now available
-              </div>
-            )}
-            {children}
-          </GlobalSidebar>
-        </CopilotProvider>
-      </SidebarProvider>
-    </NotificationsProvider>
+    <SidebarProvider className="cosmos-shell" defaultOpen={defaultSidebarOpen}>
+      <GlobalSidebar
+        initialActiveTenantId={initialActiveTenantId}
+        initialTenants={initialTenants}
+        user={{
+          name: user.name ?? user.email,
+          email: user.email,
+          avatar: user.image ?? "",
+        }}
+      >
+        {!!betaFeature && (
+          <div className="m-4 rounded-full bg-blue-500 p-1.5 text-center text-sm text-white">
+            Beta feature now available
+          </div>
+        )}
+        {children}
+      </GlobalSidebar>
+    </SidebarProvider>
   );
 };
 
