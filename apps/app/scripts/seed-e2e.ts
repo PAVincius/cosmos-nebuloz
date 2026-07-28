@@ -52,7 +52,8 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";
 import type { MemberRole } from "../../../packages/database/generated";
-import { PrismaClient } from "../../../packages/database/generated";
+import { Prisma, PrismaClient } from "../../../packages/database/generated";
+import { TaskBlocksSchema } from "../app/(cosmos)/actions/epic-tree.constants";
 
 /**
  * Contexto acumulado pelo seed — ids e o client Prisma que as tasks
@@ -117,6 +118,178 @@ const lbc = (...texts: string[]) =>
 
 const addDays = (d: Date, n: number) => new Date(d.getTime() + n * 86_400_000);
 const addWeeks = (d: Date, w: number) => addDays(d, w * 7);
+
+/**
+ * Semeia Integration (provider connections) e as Task importadas/nativas que
+ * dependem delas. Sem isto a tela `integrations` fica vazia e os estados
+ * "importado de provider conectado" / "importado de provider não conectado"
+ * do drill-down Epic→Feature→Story→Task ficam inalcançáveis.
+ */
+async function seedIntegrations(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, storyIds } = ctx;
+  const now = new Date();
+
+  console.log("\n  Criando integrations e tasks importadas/nativas...");
+
+  // jira e linear ficam ACTIVE (sincronizadas); github fica INACTIVE — é o
+  // provider "não conectado" que torna demonstrável o estado "Conectar" da
+  // UI. Os valores de config/mapping são obviamente falsos: nunca algo que
+  // se pareça com uma credencial real.
+  const integrationDefs = [
+    {
+      source: "jira",
+      name: "Jira Software (seed)",
+      status: "ACTIVE",
+      config: { apiKey: "seed-fake-not-a-real-key", org: "cosmos-seed" },
+      mapping: { statusMap: { TODO: "To Do", DONE: "Done" } },
+      lastSyncAt: addDays(now, -1),
+    },
+    {
+      source: "linear",
+      name: "Linear (seed)",
+      status: "ACTIVE",
+      config: { apiKey: "seed-fake-not-a-real-key", teamId: "seed-team" },
+      mapping: { statusMap: { TODO: "Todo", DONE: "Done" } },
+      lastSyncAt: addDays(now, -2),
+    },
+    {
+      source: "github",
+      name: "GitHub Issues (seed, desconectado)",
+      status: "INACTIVE",
+      config: { apiKey: "seed-fake-not-a-real-key", repo: "cosmos/cosmos" },
+      mapping: Prisma.DbNull,
+      lastSyncAt: null,
+    },
+  ];
+
+  for (const def of integrationDefs) {
+    const existing = await prisma.integration.findFirst({
+      where: { tenantId, source: def.source },
+      select: { id: true },
+    });
+    const data = {
+      tenantId,
+      source: def.source,
+      name: def.name,
+      status: def.status,
+      config: def.config,
+      mapping: def.mapping,
+      lastSyncAt: def.lastSyncAt,
+    };
+    if (existing) {
+      await prisma.integration.update({ where: { id: existing.id }, data });
+    } else {
+      await prisma.integration.create({ data });
+    }
+  }
+  console.log(
+    "  ✓ 3 Integrations (jira ACTIVE, linear ACTIVE, github INACTIVE)"
+  );
+
+  // Nota nativa validada contra o mesmo schema que a UI usa para ler
+  // noteBlocks — um payload que não bata é lido como null pela UI, então o
+  // seed mentiria sobre a tela mostrar conteúdo.
+  const validatedNoteBlocks = TaskBlocksSchema.parse([
+    { id: "seed-native-heading", kind: "heading", text: "Contexto da task" },
+    {
+      id: "seed-native-paragraph",
+      kind: "paragraph",
+      text: "Nota nativa criada pelo seed para validar o editor de blocos.",
+    },
+    {
+      id: "seed-native-checklist",
+      kind: "checklist",
+      items: [
+        {
+          id: "seed-native-item-1",
+          text: "Levantar critérios de aceite",
+          done: true,
+        },
+        { id: "seed-native-item-2", text: "Validar com o PO", done: false },
+      ],
+    },
+  ]);
+
+  const [storyA, storyB, storyC] = storyIds;
+
+  // Três feitios: importada de provider ativo (jira/linear), importada de
+  // provider inativo (github) e nativa. externalUrl varia entre preenchido e
+  // nulo — a UI cai para buildUrl(provider, externalId) quando é nulo, e os
+  // dois ramos precisam de dado para serem exercitados.
+  const taskDefs: {
+    storyId: string;
+    title: string;
+    externalSource: string | null;
+    externalId: string | null;
+    externalUrl: string | null;
+    noteBlocks: Prisma.InputJsonValue | typeof Prisma.DbNull;
+  }[] = [
+    {
+      storyId: storyA,
+      title: "[Jira] Corrigir paginação do board de riscos",
+      externalSource: "jira",
+      externalId: "COS-142",
+      externalUrl: "https://cosmos.atlassian.net/browse/COS-142",
+      noteBlocks: Prisma.DbNull,
+    },
+    {
+      storyId: storyA,
+      title: "[Linear] Revisar copy do onboarding",
+      externalSource: "linear",
+      externalId: "COS-77",
+      externalUrl: null,
+      noteBlocks: Prisma.DbNull,
+    },
+    {
+      storyId: storyB,
+      title: "[GitHub] Corrigir flake no pipeline de E2E",
+      externalSource: "github",
+      externalId: "#418",
+      externalUrl: "https://github.com/cosmos/cosmos/issues/418",
+      noteBlocks: Prisma.DbNull,
+    },
+    {
+      storyId: storyB,
+      title: "[GitHub] Atualizar dependências do worker de sync",
+      externalSource: "github",
+      externalId: "#421",
+      externalUrl: null,
+      noteBlocks: Prisma.DbNull,
+    },
+    {
+      storyId: storyC,
+      title: "Detalhar critérios de aceite da task nativa",
+      externalSource: null,
+      externalId: null,
+      externalUrl: null,
+      noteBlocks: validatedNoteBlocks,
+    },
+  ];
+
+  for (const def of taskDefs) {
+    const existing = await prisma.task.findFirst({
+      where: { tenantId, storyId: def.storyId, title: def.title },
+      select: { id: true },
+    });
+    const data = {
+      tenantId,
+      storyId: def.storyId,
+      title: def.title,
+      externalSource: def.externalSource,
+      externalId: def.externalId,
+      externalUrl: def.externalUrl,
+      noteBlocks: def.noteBlocks,
+    };
+    if (existing) {
+      await prisma.task.update({ where: { id: existing.id }, data });
+    } else {
+      await prisma.task.create({ data });
+    }
+  }
+  console.log(
+    "  ✓ 5 Tasks (2 importadas de provider ACTIVE, 2 de provider INACTIVE, 1 nativa com noteBlocks)"
+  );
+}
 
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
@@ -1466,6 +1639,34 @@ async function main(): Promise<SeedContext> {
   });
   console.log("  ✓ 9 Tasks (2 TODO, 2 IN_PROGRESS, 5 DONE)");
 
+  // ─── SeedContext (montado aqui, não só no final) ───────────────────────────
+  // Fields cast with `as MemberRole` are keys that ROLE_USERS always
+  // populates (ADMIN above the loop, the six ROLE_USERS entries inside it) —
+  // Partial<Record<...>> is only needed to build the map incrementally.
+  const context: SeedContext = {
+    prisma: db,
+    tenantId: TENANT_ID,
+    tenantSlug: TENANT_SLUG,
+    users: roleUserIds as Record<MemberRole, string>,
+    artIds: [art.id],
+    teamIds: [team.id],
+    epicIds: [epicMain.id, epicAI.id, epicSec.id],
+    featureIds: [featKanban.id, featOKR.id, featRisk.id, featSaml.id],
+    storyIds: [
+      storyDone.id,
+      storyReview.id,
+      storyInProgress.id,
+      storyTodo.id,
+      storyBacklog.id,
+      storyRisk.id,
+    ],
+    piPlanIds: [piPlan.id],
+    themeIds: [theme1.id, theme2.id, theme3.id],
+  };
+
+  // ─── 17b. Integrations e tasks importadas/nativas ──────────────────────────
+  await seedIntegrations(context);
+
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");
 
@@ -1799,30 +2000,8 @@ async function main(): Promise<SeedContext> {
   });
   console.log("  ✓ PersonSkillProfile (admin E2E)");
 
-  // ─── SeedContext ────────────────────────────────────────────────────────────
-  // Fields cast with `as MemberRole` are keys that ROLE_USERS always
-  // populates (ADMIN above the loop, the six ROLE_USERS entries inside it) —
-  // Partial<Record<...>> is only needed to build the map incrementally.
-  const context: SeedContext = {
-    prisma: db,
-    tenantId: TENANT_ID,
-    tenantSlug: TENANT_SLUG,
-    users: roleUserIds as Record<MemberRole, string>,
-    artIds: [art.id],
-    teamIds: [team.id],
-    epicIds: [epicMain.id, epicAI.id, epicSec.id],
-    featureIds: [featKanban.id, featOKR.id, featRisk.id, featSaml.id],
-    storyIds: [
-      storyDone.id,
-      storyReview.id,
-      storyInProgress.id,
-      storyTodo.id,
-      storyBacklog.id,
-      storyRisk.id,
-    ],
-    piPlanIds: [piPlan.id],
-    themeIds: [theme1.id, theme2.id, theme3.id],
-  };
+  // context (SeedContext) já foi montado logo após a criação de Stories/Tasks,
+  // acima, para que seedIntegrations pudesse consumi-lo.
 
   // ─── Resumo ─────────────────────────────────────────────────────────────────
   console.log(

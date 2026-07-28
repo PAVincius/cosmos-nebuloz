@@ -11,7 +11,7 @@ dotenv.config({ path: ".env.local" });
 
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
-import { PrismaClient } from "../../../packages/database/generated";
+import { Prisma, PrismaClient } from "../../../packages/database/generated";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const adapter = new PrismaPg(pool);
@@ -75,6 +75,68 @@ async function main() {
   });
 
   // As tasks seguintes acrescentam blocos aqui, na mesma forma.
+
+  // ─── Task 2: integrations e tasks importadas ───────────────────────────
+  await check("existe Integration ACTIVE", () =>
+    expectRows("Integration ACTIVE", () =>
+      prisma.integration.count({ where: { tenantId: t, status: "ACTIVE" } })
+    )
+  );
+
+  await check("existe Integration não-ACTIVE", () =>
+    expectRows("Integration inativa", () =>
+      prisma.integration.count({
+        where: { tenantId: t, status: { not: "ACTIVE" } },
+      })
+    )
+  );
+
+  await check("existe Task importada de provider conectado", async () => {
+    const active = await prisma.integration.findMany({
+      where: { tenantId: t, status: "ACTIVE" },
+      select: { source: true },
+    });
+    const sources = active.map((i) => i.source);
+    if (!sources.length) {
+      return "nenhuma Integration ACTIVE para casar com Task";
+    }
+    const n = await prisma.task.count({
+      where: { tenantId: t, externalSource: { in: sources } },
+    });
+    return n > 0
+      ? null
+      : `nenhuma Task com externalSource em ${sources.join("/")}`;
+  });
+
+  await check("existe Task importada de provider NÃO conectado", async () => {
+    const active = await prisma.integration.findMany({
+      where: { tenantId: t, status: "ACTIVE" },
+      select: { source: true },
+    });
+    const sources = active.map((i) => i.source);
+    const n = await prisma.task.count({
+      where: {
+        tenantId: t,
+        externalSource: {
+          not: null,
+          notIn: sources.length ? sources : ["__none__"],
+        },
+      },
+    });
+    return n > 0 ? null : "nenhuma Task importada de provider desconectado";
+  });
+
+  await check("existe Task nativa com noteBlocks", () =>
+    expectRows("Task nativa com nota", () =>
+      prisma.task.count({
+        where: {
+          tenantId: t,
+          externalSource: null,
+          noteBlocks: { not: Prisma.DbNull },
+        },
+      })
+    )
+  );
 
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
