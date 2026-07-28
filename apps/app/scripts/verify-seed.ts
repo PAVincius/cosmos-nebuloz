@@ -415,6 +415,118 @@ async function main() {
     }
   );
 
+  // ─── Task 8: config de tenant, webhooks e workflows ────────────────────
+  for (const [label, count] of [
+    [
+      "WebhookEndpoint",
+      () => prisma.webhookEndpoint.count({ where: { tenantId: t } }),
+    ],
+    [
+      "BpmnDefinition",
+      () => prisma.bpmnDefinition.count({ where: { tenantId: t } }),
+    ],
+    [
+      "TeamWorkflowNode",
+      () => prisma.teamWorkflowNode.count({ where: { tenantId: t } }),
+    ],
+    [
+      "TeamWorkflowEdge",
+      () => prisma.teamWorkflowEdge.count({ where: { tenantId: t } }),
+    ],
+    [
+      "TenantSSOConfig",
+      () => prisma.tenantSSOConfig.count({ where: { tenantId: t } }),
+    ],
+    [
+      "TenantSecurityPolicy",
+      () => prisma.tenantSecurityPolicy.count({ where: { tenantId: t } }),
+    ],
+    [
+      "TenantInvitation",
+      () => prisma.tenantInvitation.count({ where: { tenantId: t } }),
+    ],
+    [
+      "WsjfSettings",
+      () => prisma.wsjfSettings.count({ where: { tenantId: t } }),
+    ],
+    ["CustomRole", () => prisma.customRole.count({ where: { tenantId: t } })],
+    [
+      "CustomRoleAssignment",
+      () => prisma.customRoleAssignment.count({ where: { tenantId: t } }),
+    ],
+    [
+      "ARTMembership",
+      () => prisma.aRTMembership.count({ where: { tenantId: t } }),
+    ],
+    [
+      "MeetingIntegration",
+      () => prisma.meetingIntegration.count({ where: { tenantId: t } }),
+    ],
+    [
+      "MeetingTranscript",
+      () => prisma.meetingTranscript.count({ where: { tenantId: t } }),
+    ],
+    [
+      "MeetingInsight",
+      () => prisma.meetingInsight.count({ where: { tenantId: t } }),
+    ],
+    [
+      "ScheduledReport",
+      () => prisma.scheduledReport.count({ where: { tenantId: t } }),
+    ],
+  ] as const) {
+    await check(`${label} semeado`, () => expectRows(label, count));
+  }
+
+  await check(
+    "existe TenantInvitation PENDING (alvo para reenviar/revogar)",
+    () =>
+      expectRows("TenantInvitation PENDING", () =>
+        prisma.tenantInvitation.count({
+          where: { tenantId: t, status: "PENDING" },
+        })
+      )
+  );
+
+  await check(
+    "WsjfSettings tem pesos diferentes do default (bv=1/tc=1/rr=1)",
+    async () => {
+      const settings = await prisma.wsjfSettings.findUnique({
+        where: { tenantId: t },
+        select: { weightBv: true, weightTc: true, weightRr: true },
+      });
+      if (!settings) {
+        return "nenhuma WsjfSettings semeada";
+      }
+      const differs =
+        settings.weightBv !== 1 ||
+        settings.weightTc !== 1 ||
+        settings.weightRr !== 1;
+      return differs
+        ? null
+        : `pesos iguais ao default (bv=${settings.weightBv}, tc=${settings.weightTc}, rr=${settings.weightRr})`;
+    }
+  );
+
+  await check(
+    "TenantSSOConfig está configurado (metadados) mas desligado (enabled=false)",
+    async () => {
+      const sso = await prisma.tenantSSOConfig.findUnique({
+        where: { tenantId: t },
+        select: { enabled: true, idpMetadataUrl: true, idpCertificate: true },
+      });
+      if (!sso) {
+        return "nenhuma TenantSSOConfig semeada";
+      }
+      if (sso.enabled) {
+        return "TenantSSOConfig.enabled deveria ser false (configurado, não ativado)";
+      }
+      return sso.idpMetadataUrl && sso.idpCertificate
+        ? null
+        : "TenantSSOConfig sem idpMetadataUrl/idpCertificate preenchidos";
+    }
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {

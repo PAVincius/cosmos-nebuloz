@@ -47,6 +47,7 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+import { gzipSync } from "node:zlib";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -1353,6 +1354,343 @@ async function seedGovernance(ctx: SeedContext): Promise<void> {
   );
 }
 
+// Minimal BPMN 2.0 XML, just enough to exercise the compiler's start→task→end
+// shape — the workflows list screen only reads triggerLabel/actionCount/
+// runCount/active (see (cosmos)/actions/workflows.ts), so the XML content
+// itself doesn't need to model anything real.
+function seedBpmnXml(
+  processId: string,
+  taskName: string
+): Uint8Array<ArrayBuffer> {
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  <process id="${processId}" isExecutable="true">
+    <startEvent id="start" />
+    <task id="review" name="${taskName}" />
+    <endEvent id="end" />
+    <sequenceFlow id="f1" sourceRef="start" targetRef="review" />
+    <sequenceFlow id="f2" sourceRef="review" targetRef="end" />
+  </process>
+</definitions>`;
+  const gz = gzipSync(Buffer.from(xml, "utf-8"));
+  // Prisma's Bytes field wants Uint8Array<ArrayBuffer>; Buffer's backing
+  // store is typed ArrayBufferLike (it could in principle be a
+  // SharedArrayBuffer), so a plain view over it doesn't satisfy the
+  // narrower type — copy into a fresh, plain ArrayBuffer instead.
+  const buffer = new ArrayBuffer(gz.byteLength);
+  new Uint8Array(buffer).set(gz);
+  return new Uint8Array(buffer);
+}
+
+async function seedTenantConfig(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, users, artIds, teamIds, piPlanIds } = ctx;
+  const [artId] = artIds;
+  const [teamId] = teamIds;
+  const [piPlanId] = piPlanIds;
+  const now = new Date();
+
+  console.log(
+    "\n  Criando config de tenant (webhooks, workflows, SSO, segurança, WSJF, RBAC custom, meeting intelligence, relatórios agendados)..."
+  );
+
+  // ─── WebhookEndpoint — tela `webhooks` ─────────────────────────────────
+  // secretHash/secretEnc são placeholders óbvios — nunca um valor que
+  // pareça um segredo real, mesmo hasheado/cifrado (mesma disciplina do
+  // Integration.config em seedIntegrations).
+  await prisma.webhookEndpoint.createMany({
+    data: [
+      {
+        tenantId,
+        url: "https://example.com/hooks/cosmos-epics",
+        secretHash: "seed-fake-not-a-real-hash",
+        secretEnc: "seed-fake-not-a-real-encrypted-secret",
+        eventTypes: ["epic.status_changed", "feature.completed"],
+        active: true,
+        createdBy: users.ADMIN,
+      },
+      {
+        tenantId,
+        url: "https://example.com/hooks/cosmos-risks",
+        secretHash: "seed-fake-not-a-real-hash-2",
+        secretEnc: "seed-fake-not-a-real-encrypted-secret-2",
+        eventTypes: ["risk.created"],
+        active: false,
+        createdBy: users.RTE,
+      },
+    ],
+  });
+  console.log("  ✓ 2 WebhookEndpoint (1 ativo, 1 inativo)");
+
+  // ─── BpmnDefinition — tela `workflows` ──────────────────────────────────
+  // Uma ativa (compiledMachine presente, como fica após ativar pela UI) e
+  // uma inativa (nunca ativada — compiledMachine null), para exercitar o
+  // toggle em toggleWorkflowActive.
+  await prisma.bpmnDefinition.createMany({
+    data: [
+      {
+        tenantId,
+        name: "Aprovação de Feature Crítica",
+        entityType: "FEATURE",
+        ownerType: "ART",
+        ownerId: artId,
+        xmlGzip: seedBpmnXml("approve-critical-feature", "Revisão do RTE"),
+        compiledMachine: {
+          id: "approve-critical-feature",
+          initial: "start",
+          states: {
+            start: { on: { review: { target: "review" } } },
+            review: { on: { approve: { target: "end" } } },
+            end: { type: "final" },
+          },
+        } satisfies Prisma.InputJsonValue,
+        version: 1,
+        active: true,
+        activatedAt: now,
+        activatedBy: users.RTE,
+        triggerLabel: "Ao mover para Review",
+        actionCount: 3,
+        runCount: 12,
+      },
+      {
+        tenantId,
+        name: "Escalonamento de Story Bloqueada",
+        entityType: "STORY",
+        ownerType: "TEAM",
+        ownerId: teamId,
+        xmlGzip: seedBpmnXml("escalate-blocked-story", "Escalar para SM"),
+        version: 1,
+        active: false,
+        triggerLabel: "Ao ficar bloqueada por 3 dias",
+        actionCount: 1,
+        runCount: 0,
+      },
+    ],
+  });
+  console.log("  ✓ 2 BpmnDefinition (1 ativa, 1 inativa)");
+
+  // ─── TeamWorkflowNode/Edge — quadro React Flow do time ──────────────────
+  // sourceNodeId/targetNodeId em TeamWorkflowEdge são String simples, sem
+  // @relation para TeamWorkflowNode — só ficam corretos porque node e edge
+  // são criados e limpos juntos, nesta mesma função, a cada run.
+  const [nodeBacklog, nodeProgress, nodeDone] = await Promise.all([
+    prisma.teamWorkflowNode.create({
+      data: {
+        tenantId,
+        teamId,
+        type: "station",
+        position: { x: 0, y: 0 },
+        data: { label: "Backlog", status: "idle" },
+      },
+    }),
+    prisma.teamWorkflowNode.create({
+      data: {
+        tenantId,
+        teamId,
+        type: "station",
+        position: { x: 260, y: 0 },
+        data: { label: "Em Progresso", status: "active" },
+      },
+    }),
+    prisma.teamWorkflowNode.create({
+      data: {
+        tenantId,
+        teamId,
+        type: "station",
+        position: { x: 520, y: 0 },
+        data: { label: "Concluído", status: "done" },
+      },
+    }),
+  ]);
+  await prisma.teamWorkflowEdge.createMany({
+    data: [
+      {
+        tenantId,
+        teamId,
+        sourceNodeId: nodeBacklog.id,
+        targetNodeId: nodeProgress.id,
+      },
+      {
+        tenantId,
+        teamId,
+        sourceNodeId: nodeProgress.id,
+        targetNodeId: nodeDone.id,
+      },
+    ],
+  });
+  console.log("  ✓ 3 TeamWorkflowNode + 2 TeamWorkflowEdge");
+
+  // ─── TenantSSOConfig — Settings→Security ────────────────────────────────
+  // enabled: false com metadados preenchidos — configurado mas desligado é
+  // o estado que permite demonstrar a ativação. Domínio .example (RFC 2606)
+  // e certificado com corpo literal "SEED-FAKE..." — nada que passe por
+  // real num print de bug report.
+  await prisma.tenantSSOConfig.create({
+    data: {
+      tenantId,
+      enabled: false,
+      idpMetadataUrl: "https://sso.seed-fake.example/saml/metadata",
+      idpEntityId: "urn:seed-fake:idp:not-real",
+      idpCertificate:
+        "-----BEGIN CERTIFICATE-----\nSEED-FAKE-NOT-A-REAL-CERTIFICATE\n-----END CERTIFICATE-----",
+      spEntityId: "urn:cosmos:seed-fake:not-real",
+      updatedBy: users.ADMIN,
+    },
+  });
+  console.log("  ✓ TenantSSOConfig (configurado, enabled=false)");
+
+  // ─── TenantSecurityPolicy — Settings→Security ───────────────────────────
+  // allowedIpRanges usa TEST-NET-3 (203.0.113.0/24, RFC 5737) — reservado
+  // para documentação, nunca roteável de verdade.
+  await prisma.tenantSecurityPolicy.create({
+    data: {
+      tenantId,
+      require2FA: true,
+      gracePeriodDays: 14,
+      allowedIpRanges: ["203.0.113.0/24", "198.51.100.0/24"],
+      terminologyMap: { Story: "User Story", Epic: "Iniciativa" },
+      updatedBy: users.ADMIN,
+    },
+  });
+  console.log("  ✓ TenantSecurityPolicy (require2FA=true, 2 IP ranges)");
+
+  // ─── TenantInvitation — Settings→Members ────────────────────────────────
+  // Uma PENDING (alvo do fluxo reenviar/revogar) e uma ACCEPTED (histórico).
+  await prisma.tenantInvitation.createMany({
+    data: [
+      {
+        tenantId,
+        email: "convidado.pendente@seed-fake.example",
+        role: "MEMBER",
+        status: "PENDING",
+        expiresAt: addDays(now, 7),
+        inviterId: users.ADMIN,
+      },
+      {
+        tenantId,
+        email: "novo.membro@seed-fake.example",
+        role: "DEV",
+        status: "ACCEPTED",
+        expiresAt: addDays(now, 7),
+        inviterId: users.RTE,
+      },
+    ],
+  });
+  console.log("  ✓ 2 TenantInvitation (1 PENDING, 1 ACCEPTED)");
+
+  // ─── WsjfSettings — pesos diferentes do default (bv=tc=rr=1, fibonacci, ─
+  // daily, rte, 14 dias), para demonstrar "customizei e re-scorei".
+  await prisma.wsjfSettings.create({
+    data: {
+      tenantId,
+      weightBv: 2,
+      weightTc: 1.5,
+      weightRr: 0.5,
+      scale: "linear",
+      autoRecalc: "weekly",
+      rebalanceApprover: "lpm",
+      staleDays: 21,
+    },
+  });
+  console.log("  ✓ WsjfSettings (pesos e config diferentes do default)");
+
+  // ─── CustomRole / CustomRoleAssignment ──────────────────────────────────
+  const auditorRole = await prisma.customRole.create({
+    data: {
+      tenantId,
+      name: "Auditor Financeiro",
+      permissions: ["finops:read", "budget:read", "reports:read"],
+    },
+  });
+  await prisma.customRoleAssignment.create({
+    data: { tenantId, userId: users.STE, customRoleId: auditorRole.id },
+  });
+  console.log("  ✓ CustomRole + 1 CustomRoleAssignment");
+
+  // ─── ARTMembership — um por MemberRole, mesmo vocabulário do SaFeRole ──
+  await prisma.aRTMembership.createMany({
+    data: (["ADMIN", "STE", "RTE", "PO", "SM", "DEV", "MEMBER"] as const).map(
+      (role) => ({
+        tenantId,
+        artId,
+        userId: users[role],
+        role,
+      })
+    ),
+  });
+  console.log("  ✓ 7 ARTMembership (um por MemberRole)");
+
+  // ─── MeetingIntegration → MeetingTranscript → MeetingInsight ───────────
+  const meetingIntegration = await prisma.meetingIntegration.create({
+    data: {
+      tenantId,
+      provider: "fireflies",
+      name: "Fireflies — Cerimônias SAFe",
+      config: { apiKey: "seed-fake-not-a-real-key", workspace: "cosmos-seed" },
+      webhookSecret: "seed-fake-not-a-real-secret",
+      status: "ACTIVE",
+      lastEventAt: now,
+    },
+  });
+  const meetingTranscript = await prisma.meetingTranscript.create({
+    data: {
+      tenantId,
+      integrationId: meetingIntegration.id,
+      meetingId: "seed-fake-meeting-001",
+      title: "PI Planning Day 1 — Revisão de Objetivos",
+      rawSummary: {
+        overview: "Revisão dos objetivos do PI e riscos identificados.",
+        action_items: ["Confirmar capacidade do time para a sprint 3"],
+        keywords: ["PI Planning", "capacidade", "risco"],
+        outline: ["Abertura", "Revisão de objetivos", "Riscos", "Encerramento"],
+      } satisfies Prisma.InputJsonValue,
+      piPlanId,
+      status: "MAPPED",
+    },
+  });
+  await prisma.meetingInsight.createMany({
+    data: [
+      {
+        tenantId,
+        transcriptId: meetingTranscript.id,
+        type: "ACTION",
+        text: "Confirmar capacidade do time para a sprint 3",
+        proposedTarget: "Task",
+        status: "PENDING",
+      },
+      {
+        tenantId,
+        transcriptId: meetingTranscript.id,
+        type: "RISK",
+        text: "Dependência externa sem SLA pode atrasar a entrega",
+        proposedTarget: "Risk",
+        status: "DISMISSED",
+      },
+    ],
+  });
+  console.log(
+    "  ✓ MeetingIntegration + MeetingTranscript + 2 MeetingInsight (1 PENDING, 1 DISMISSED)"
+  );
+
+  // ─── ScheduledReport ─────────────────────────────────────────────────────
+  // artId fica de fora de propósito: é String simples sem @relation, e este
+  // relatório não precisa estar ligado a um ART específico para a tela
+  // funcionar — evita mais uma referência solta para gerenciar no cleanup.
+  await prisma.scheduledReport.create({
+    data: {
+      tenantId,
+      name: "Resumo Executivo Mensal",
+      type: "EXECUTIVE_SUMMARY",
+      cadence: "MONTHLY",
+      cronExpression: "0 8 1 * *",
+      timezone: "America/Sao_Paulo",
+      recipients: ["cio@seed-fake.example", "rte@seed-fake.example"],
+      createdBy: users.ADMIN,
+      enabled: true,
+    },
+  });
+  console.log("  ✓ ScheduledReport (EXECUTIVE_SUMMARY, MONTHLY)");
+}
+
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
@@ -1616,6 +1954,26 @@ async function main(): Promise<SeedContext> {
   await db.confidenceVoteSession.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pISession.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pIPlan.deleteMany({ where: { tenantId: TENANT_ID } });
+  // Config de tenant (Task 8) — teamId/artId em TeamWorkflowNode/Edge e
+  // BpmnDefinition.ownerId são String simples, sem @relation; limpos antes
+  // de Team/ART abaixo para não deixar linha apontando para id já apagado.
+  // aRTMembership/customRoleAssignment cascateiam de ART/CustomRole, mas
+  // explícitos aqui por clareza (mesmo padrão de billingEntryAllocation).
+  await db.teamWorkflowEdge.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.teamWorkflowNode.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.webhookEndpoint.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.bpmnDefinition.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.meetingInsight.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.meetingTranscript.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.meetingIntegration.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.customRoleAssignment.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.customRole.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.aRTMembership.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.scheduledReport.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.tenantInvitation.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.wsjfSettings.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.tenantSecurityPolicy.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.tenantSSOConfig.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.team.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.aRT.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.lACE.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -2831,6 +3189,10 @@ async function main(): Promise<SeedContext> {
   // ─── 17f. Governança (ApprovalRequest aprovada) e PI Planning ─────────────
   //          (PIParticipant, PIPlanFeatureAssignment) ────────────────────────
   await seedGovernance(context);
+
+  // ─── 17g. Config de tenant (webhooks, workflows, SSO, segurança, WSJF, ───
+  //          RBAC custom, meeting intelligence, relatórios agendados) ───────
+  await seedTenantConfig(context);
 
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");
