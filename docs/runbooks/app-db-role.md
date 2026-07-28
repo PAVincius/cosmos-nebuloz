@@ -86,10 +86,15 @@ precisar ver todos os tenants, veja a seção "Escape hatch" no relatório da Ta
 ## 2.5. Checklist de pré-requisitos antes do flip
 
 RLS passa a valer de verdade no momento em que a Seção 3 troca `DATABASE_URL` para
-`cosmos_app`. Os três itens abaixo foram encontrados durante a revisão da Task 5/6 do
+`cosmos_app`. Os quatro itens abaixo foram encontrados durante a revisão da Task 5/6 do
 plano de isolamento e **não têm dono nem prazo ainda** — resolvê-los (ou decidir
 explicitamente adiar, com um plano de rollback) é pré-requisito para a Seção 3, não um
 nice-to-have para depois.
+
+Lembre-se também que `monthlyIsolationAudit` roda uma vez por mês (`0 0 1 * *`,
+`lib/inngest/isolation-audit.ts`) — uma regressão de RLS pode ficar até 30 dias sem ser
+detectada por ele. Não trate "o cron está verde" como sinal de segurança em tempo real;
+para janelas menores que isso, dependa da suíte de CI e de revisão de PR, não do cron.
 
 - [ ] **`JobFallbackQueue.tenantId` é nullable e é a única tabela policiada com essa
   característica.** `lib/inngest/send-safe.ts` grava `tenantId: tenantId ?? null` quando
@@ -155,18 +160,53 @@ nice-to-have para depois.
   ambiente específico** e trate o número que ela retornar como a verdade daquele ambiente —
   não copie o número medido em dev/staging para produção sem checar de novo:
   ```sql
-  SELECT c.relname, c.relrowsecurity, c.relforcerowsecurity
+  WITH candidates AS (
+    SELECT DISTINCT c.relname
+    FROM pg_class c
+    JOIN pg_attribute a ON a.attrelid = c.oid
+    WHERE c.relnamespace = 'public'::regnamespace
+      AND c.relkind = 'r'
+      AND a.attname = 'tenantId'
+      AND a.attnum > 0
+      AND NOT a.attisdropped
+    -- Tables scoped through a parent FK instead of their own tenantId
+    -- column (subquery-based policy) — keep this list in sync with
+    -- INDIRECTLY_SCOPED_TABLES in lib/inngest/isolation-audit.ts.
+    UNION
+    SELECT unnest(ARRAY['BillingSyncCursor','RiskOKR','ThemeART',
+                         'TaskAssignee','RetroVote','SyncLog'])
+  )
+  SELECT c.relname
   FROM pg_class c
-  JOIN pg_attribute a ON a.attrelid = c.oid
+  JOIN candidates cd ON cd.relname = c.relname
   WHERE c.relnamespace = 'public'::regnamespace
     AND c.relkind = 'r'
-    AND a.attname = 'tenantId'
-    AND a.attnum > 0
-    AND NOT a.attisdropped
-    AND (c.relrowsecurity = false OR c.relforcerowsecurity = false)
+    AND (
+      c.relrowsecurity = false
+      OR c.relforcerowsecurity = false
+      OR NOT EXISTS (
+        SELECT 1 FROM pg_policies p
+        WHERE p.schemaname = 'public' AND p.tablename = c.relname
+      )
+    )
   ORDER BY c.relname;
   ```
   Uma lista vazia é o único resultado aceitável antes de prosseguir para a Seção 3.
+
+- [ ] **A tenant "system" (id `'system'`, migration `20260728020000_system_tenant`)
+  existe no banco e precisa ser tratada como infraestrutura, não como cliente.** Ela existe
+  para que `lib/inngest/isolation-audit.ts` (e outros escritores de `AuditLog` com ator do
+  tipo sistema) tenham um `tenantId` válido para gravar — sem ela, toda escrita de auditoria
+  do sistema falha com violação de FK (era exatamente o bug que esta task consertou). A
+  migration `20260728030000_system_tenant_marker` adicionou `Tenant.isSystem` (boolean,
+  default `false`, `true` só nesta linha) e trocou o `slug` de `'system'` para
+  `'__system__'` para não reservar permanentemente uma palavra comum contra um cliente
+  real. **Todo código que lista tenants para exibição externa — admin org list, export de
+  billing, CSV de clientes — deve filtrar `isSystem = false`.** Hoje nenhum código de
+  produção chama `tenant.findMany()` sem esse filtro (verificado em 2026-07-28), então não
+  há vazamento ativo, mas nada impede que o próximo relatório adicionado inclua "System /
+  plano ORBIT" como se fosse um tenant pagante. Se o flip revelar um consumidor de
+  `tenant.findMany()`/`tenant.findFirst()` sem esse filtro, corrija-o antes de prosseguir.
 
 ## 3. Trocar `DATABASE_URL` por ambiente
 
