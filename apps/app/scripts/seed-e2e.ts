@@ -1691,6 +1691,192 @@ async function seedTenantConfig(ctx: SeedContext): Promise<void> {
   console.log("  ✓ ScheduledReport (EXECUTIVE_SUMMARY, MONTHLY)");
 }
 
+// ─── StateTransitionHistory — série bruta que alimenta o CFD da tela flow ───
+//
+// entityType/entityId é um ponteiro polimórfico genérico (Story/Feature/
+// Epic/Task/Defect), sem @relation no schema — entityId é string solta.
+// Aqui só apontamos para Story, então cada linha usa um id que existe no
+// momento do insert (as 7 stories de ctx.storyIds + 3 criadas abaixo); como
+// o cleanup em main() agora limpa StateTransitionHistory antes de recriar
+// Story, não sobra referência solta entre runs.
+//
+// A cadeia por status é a garantia de coerência pedida na task: cada story
+// recebe a caminhada real, de trás para frente a partir do seu status atual,
+// e não uma transição solta. DONE sempre passa por IN_PROGRESS antes; BACKLOG
+// nunca tem uma linha para DONE porque sua cadeia para no primeiro passo.
+type TransitionStep = { from: string; to: string; daysAgo: number };
+
+const STATUS_CHAINS: Record<string, TransitionStep[]> = {
+  BACKLOG: [{ from: "CREATED", to: "BACKLOG", daysAgo: 18 }],
+  TODO: [
+    { from: "CREATED", to: "BACKLOG", daysAgo: 16 },
+    { from: "BACKLOG", to: "TODO", daysAgo: 9 },
+  ],
+  IN_PROGRESS: [
+    { from: "CREATED", to: "BACKLOG", daysAgo: 19 },
+    { from: "BACKLOG", to: "TODO", daysAgo: 13 },
+    { from: "TODO", to: "IN_PROGRESS", daysAgo: 4 },
+  ],
+  REVIEW: [
+    { from: "CREATED", to: "BACKLOG", daysAgo: 20 },
+    { from: "BACKLOG", to: "TODO", daysAgo: 15 },
+    { from: "TODO", to: "IN_PROGRESS", daysAgo: 8 },
+    { from: "IN_PROGRESS", to: "REVIEW", daysAgo: 2 },
+  ],
+  DONE: [
+    { from: "CREATED", to: "BACKLOG", daysAgo: 20 },
+    { from: "BACKLOG", to: "TODO", daysAgo: 17 },
+    { from: "TODO", to: "IN_PROGRESS", daysAgo: 13 },
+    { from: "IN_PROGRESS", to: "REVIEW", daysAgo: 11 },
+    { from: "REVIEW", to: "DONE", daysAgo: 10 },
+  ],
+  // Split pode acontecer direto do refinamento, sem passar por
+  // IN_PROGRESS/REVIEW — a história nunca chegou a ser trabalhada.
+  SPLIT_INTO: [
+    { from: "CREATED", to: "BACKLOG", daysAgo: 12 },
+    { from: "BACKLOG", to: "TODO", daysAgo: 7 },
+    { from: "TODO", to: "SPLIT_INTO", daysAgo: 3 },
+  ],
+};
+
+async function seedFlowHistory(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, users, featureIds, storyIds } = ctx;
+  const now = new Date();
+
+  console.log(
+    "\n  Criando StateTransitionHistory (série bruta do CFD da tela flow)..."
+  );
+
+  // As 7 stories já existentes: lê o status REAL do banco em vez de assumir
+  // — é o status atual que determina a cadeia, não o que o seed lembra de
+  // ter escrito lá atrás.
+  const existingStories = await prisma.story.findMany({
+    where: { id: { in: storyIds } },
+    select: { id: true, status: true },
+  });
+
+  // +3 stories só para este bounded context, para cobrir os status que as 7
+  // originais não têm sozinhas (2 DONE, 2 TODO, 2 IN_PROGRESS, 2 BACKLOG, 1
+  // REVIEW já existem — faltam um segundo DONE, um segundo IN_PROGRESS e um
+  // SPLIT_INTO para chegar a 10 stories com boa diversidade de status).
+  const extraDone = await prisma.story.create({
+    data: {
+      tenantId,
+      featureId: featureIds[0],
+      title: "Undo/redo no board Kanban",
+      description: "Ctrl+Z desfaz o último drag-and-drop entre colunas.",
+      storyPoints: 3,
+      status: "DONE",
+      priority: "medium",
+      order: 1,
+      assigneeUserId: users.ADMIN,
+      completedAt: addDays(now, -10),
+    },
+  });
+  const extraInProgress = await prisma.story.create({
+    data: {
+      tenantId,
+      featureId: featureIds[1],
+      title: "Exportar OKRs para CSV",
+      description: "Botão de exportação na lista de OKRs agrupados por tema.",
+      storyPoints: 2,
+      status: "IN_PROGRESS",
+      priority: "low",
+      order: 2,
+      assigneeUserId: users.ADMIN,
+      startedAt: addDays(now, -4),
+    },
+  });
+  const extraSplit = await prisma.story.create({
+    data: {
+      tenantId,
+      featureId: featureIds[2],
+      title: "Painel de riscos com scoring e mitigação",
+      description:
+        "Escopo grande demais para uma sprint — dividida em duas stories menores no refinamento.",
+      storyPoints: 8,
+      status: "SPLIT_INTO",
+      priority: "medium",
+      order: 1,
+    },
+  });
+  console.log(
+    "  ✓ 3 Stories extras (DONE, IN_PROGRESS, SPLIT_INTO) para diversidade de status no CFD"
+  );
+
+  // verify-seed.ts exige que toda Story tenha >= 1 Task — sem isto as 3
+  // stories extras acima quebrariam esse invariante pré-existente.
+  await prisma.task.createMany({
+    data: [
+      {
+        tenantId,
+        storyId: extraDone.id,
+        title: "Adicionar atalho Ctrl+Z ao board",
+        status: "DONE",
+        assigneeUserId: users.ADMIN,
+        completedAt: addDays(now, -10),
+      },
+      {
+        tenantId,
+        storyId: extraInProgress.id,
+        title: "Gerar CSV a partir da lista de OKRs",
+        status: "IN_PROGRESS",
+        assigneeUserId: users.ADMIN,
+      },
+      {
+        tenantId,
+        storyId: extraSplit.id,
+        title: "Documentar critério de divisão no ADR",
+        status: "TODO",
+      },
+    ],
+  });
+
+  const allStories: { id: string; status: string }[] = [
+    ...existingStories,
+    { id: extraDone.id, status: extraDone.status },
+    { id: extraInProgress.id, status: extraInProgress.status },
+    { id: extraSplit.id, status: extraSplit.status },
+  ];
+
+  // Jitter de +0/+1 dia por ocorrência repetida do mesmo status, só para as
+  // datas não caírem todas no mesmo instante entre as duas stories BACKLOG,
+  // as duas TODO, etc. Não afeta a coerência: cada story mantém sua própria
+  // cadeia em ordem crescente de data.
+  const seenStatusCount = new Map<string, number>();
+  const rows: Prisma.StateTransitionHistoryCreateManyInput[] = [];
+
+  for (const story of allStories) {
+    const chain = STATUS_CHAINS[story.status];
+    if (!chain) {
+      throw new Error(
+        `seedFlowHistory: sem cadeia de transição definida para o status "${story.status}" (story ${story.id})`
+      );
+    }
+    const occurrence = seenStatusCount.get(story.status) ?? 0;
+    seenStatusCount.set(story.status, occurrence + 1);
+
+    for (const step of chain) {
+      rows.push({
+        tenantId,
+        entityType: "Story",
+        entityId: story.id,
+        fromStatus: step.from,
+        toStatus: step.to,
+        transitionedAt: addDays(now, -(step.daysAgo + occurrence)),
+        userId: step.from === "CREATED" ? null : users.ADMIN,
+        reason:
+          step.from === "CREATED" ? "AUTO: story criada no backlog" : null,
+      });
+    }
+  }
+
+  await prisma.stateTransitionHistory.createMany({ data: rows });
+  console.log(
+    `  ✓ ${rows.length} StateTransitionHistory cobrindo ${allStories.length} stories distintas (span ~20 dias)`
+  );
+}
+
 async function main(): Promise<SeedContext> {
   console.log("🌱 seed-e2e: Iniciando seed completo para E2E...\n");
 
@@ -1878,6 +2064,12 @@ async function main(): Promise<SeedContext> {
   // ─── 3. Cleanup ────────────────────────────────────────────────────────────
   console.log("\n  Limpando dados existentes...");
   await db.flowMetricSnapshot.deleteMany({ where: { tenantId: TENANT_ID } });
+  // entityId is a plain string (no @relation — entityType/entityId is a
+  // generic polymorphic pointer to Story/Feature/Epic/Task/Defect), so it
+  // would silently dangle against a re-created Story otherwise.
+  await db.stateTransitionHistory.deleteMany({
+    where: { tenantId: TENANT_ID },
+  });
   await db.standupEntry.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.improvementAction.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.competencyAssessment.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -3459,6 +3651,9 @@ async function main(): Promise<SeedContext> {
     },
   });
   console.log("  ✓ 2 FlowMetricSnapshots (team/sprint + ART/PI)");
+
+  // ─── 22b. StateTransitionHistory (série bruta do CFD) ─────────────────────
+  await seedFlowHistory(context);
 
   // ─── 23. CompetencyAssessment + ImprovementActions ─────────────────────────
   const assessment = await db.competencyAssessment.create({

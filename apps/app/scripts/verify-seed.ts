@@ -527,6 +527,148 @@ async function main() {
     }
   );
 
+  // ─── Task 9: StateTransitionHistory (série bruta do CFD da tela flow) ────
+  await check(
+    "StateTransitionHistory cobre pelo menos 10 stories distintas",
+    async () => {
+      const rows = await prisma.stateTransitionHistory.findMany({
+        where: { tenantId: t, entityType: "Story" },
+        select: { entityId: true },
+      });
+      const distinct = new Set(rows.map((r) => r.entityId));
+      return distinct.size >= 10
+        ? null
+        : `apenas ${distinct.size} stories distintas, esperado >= 10`;
+    }
+  );
+
+  await check("StateTransitionHistory cobre pelo menos 14 dias", async () => {
+    const agg = await prisma.stateTransitionHistory.aggregate({
+      where: { tenantId: t, entityType: "Story" },
+      _min: { transitionedAt: true },
+      _max: { transitionedAt: true },
+    });
+    if (!(agg._min.transitionedAt && agg._max.transitionedAt)) {
+      return "nenhuma StateTransitionHistory semeada";
+    }
+    const days =
+      (agg._max.transitionedAt.getTime() - agg._min.transitionedAt.getTime()) /
+      86_400_000;
+    return days >= 14
+      ? null
+      : `span de ${days.toFixed(1)} dias, esperado >= 14`;
+  });
+
+  await check(
+    "transições de cada story estão em ordem cronológica não decrescente",
+    async () => {
+      // orderBy id (cuid, cresce com a ordem de criação) em vez de
+      // transitionedAt — senão a checagem de ordem fica tautológica.
+      const rows = await prisma.stateTransitionHistory.findMany({
+        where: { tenantId: t, entityType: "Story" },
+        orderBy: { id: "asc" },
+        select: { entityId: true, transitionedAt: true },
+      });
+      const byStory = new Map<string, Date[]>();
+      for (const r of rows) {
+        const dates = byStory.get(r.entityId) ?? [];
+        dates.push(r.transitionedAt);
+        byStory.set(r.entityId, dates);
+      }
+      const offenders: string[] = [];
+      for (const [storyId, dates] of byStory) {
+        for (let i = 1; i < dates.length; i++) {
+          if (dates[i].getTime() < dates[i - 1].getTime()) {
+            offenders.push(storyId);
+            break;
+          }
+        }
+      }
+      return offenders.length
+        ? `stories com transições fora de ordem cronológica: ${offenders.join(", ")}`
+        : null;
+    }
+  );
+
+  await check(
+    "toda story DONE passou por uma transição para IN_PROGRESS antes de DONE",
+    async () => {
+      const doneStories = await prisma.story.findMany({
+        where: { tenantId: t, status: "DONE" },
+        select: { id: true },
+      });
+      const missing: string[] = [];
+      for (const s of doneStories) {
+        const count = await prisma.stateTransitionHistory.count({
+          where: {
+            tenantId: t,
+            entityType: "Story",
+            entityId: s.id,
+            toStatus: "IN_PROGRESS",
+          },
+        });
+        if (count === 0) {
+          missing.push(s.id);
+        }
+      }
+      return missing.length
+        ? `stories DONE sem transição prévia para IN_PROGRESS: ${missing.join(", ")}`
+        : null;
+    }
+  );
+
+  await check(
+    "nenhuma story em BACKLOG tem transição para DONE no histórico",
+    async () => {
+      const backlogStories = await prisma.story.findMany({
+        where: { tenantId: t, status: "BACKLOG" },
+        select: { id: true },
+      });
+      const offenders: string[] = [];
+      for (const s of backlogStories) {
+        const count = await prisma.stateTransitionHistory.count({
+          where: {
+            tenantId: t,
+            entityType: "Story",
+            entityId: s.id,
+            toStatus: "DONE",
+          },
+        });
+        if (count > 0) {
+          offenders.push(s.id);
+        }
+      }
+      return offenders.length
+        ? `stories em BACKLOG com transição para DONE registrada: ${offenders.join(", ")}`
+        : null;
+    }
+  );
+
+  await check(
+    "a última transição de cada story bate com o status atual da story",
+    async () => {
+      const rows = await prisma.stateTransitionHistory.findMany({
+        where: { tenantId: t, entityType: "Story" },
+        orderBy: { id: "asc" },
+        select: { entityId: true, toStatus: true },
+      });
+      const lastByStory = new Map<string, string>();
+      for (const r of rows) {
+        lastByStory.set(r.entityId, r.toStatus);
+      }
+      const stories = await prisma.story.findMany({
+        where: { tenantId: t, id: { in: [...lastByStory.keys()] } },
+        select: { id: true, status: true },
+      });
+      const mismatches = stories
+        .filter((s) => lastByStory.get(s.id) !== s.status)
+        .map((s) => s.id);
+      return mismatches.length
+        ? `stories cujo status atual diverge da última transição registrada: ${mismatches.join(", ")}`
+        : null;
+    }
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {
