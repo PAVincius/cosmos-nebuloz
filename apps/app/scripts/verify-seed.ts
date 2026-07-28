@@ -204,6 +204,72 @@ async function main() {
     )
   );
 
+  // ─── Task 5: Estratégia, horizontes e roadmap ──────────────────────────
+  for (const [label, count] of [
+    [
+      "StrategyPillar",
+      () => prisma.strategyPillar.count({ where: { tenantId: t } }),
+    ],
+    [
+      "InvestmentHorizon",
+      () => prisma.investmentHorizon.count({ where: { tenantId: t } }),
+    ],
+    ["RoadmapItem", () => prisma.roadmapItem.count({ where: { tenantId: t } })],
+    [
+      "EpicValueMetric",
+      () => prisma.epicValueMetric.count({ where: { tenantId: t } }),
+    ],
+  ] as const) {
+    await check(`${label} semeado`, () => expectRows(label, count));
+  }
+
+  await check("StrategicTheme ligada a StrategyPillar", () =>
+    expectRows("StrategicTheme com pillarId", () =>
+      prisma.strategicTheme.count({
+        where: { tenantId: t, pillarId: { not: null } },
+      })
+    )
+  );
+
+  await check("existe Epic com EpicValueMetric", async () => {
+    const metrics = await prisma.epicValueMetric.findMany({
+      where: { tenantId: t },
+      select: { epicId: true },
+    });
+    if (!metrics.length) {
+      return "nenhuma EpicValueMetric semeada";
+    }
+    const epicIds = metrics.map((m) => m.epicId);
+    const n = await prisma.epic.count({
+      where: { tenantId: t, id: { in: epicIds } },
+    });
+    return n > 0 ? null : "nenhum Epic corresponde a epicId de EpicValueMetric";
+  });
+
+  await check(
+    "existe EpicValueMetric com plannedValue e actualValue divergentes",
+    async () => {
+      // Prisma não compara duas colunas diretamente em `where`; busca em
+      // memória para a divergência real.
+      const rows = await prisma.epicValueMetric.findMany({
+        where: { tenantId: t, actualValue: { not: null } },
+        select: { plannedValue: true, actualValue: true },
+      });
+      const diverges = rows.some((r) => r.actualValue !== r.plannedValue);
+      return diverges
+        ? null
+        : `nenhuma EpicValueMetric com actualValue != plannedValue (checadas ${rows.length})`;
+    }
+  );
+
+  await check("LeanBudget referencia InvestmentHorizon", () =>
+    expectRows("LeanBudget com horizonId", () =>
+      prisma.leanBudget.count({
+        where: { tenantId: t, horizonId: { not: null } },
+      })
+    )
+  );
+
   // ─── Relatório ─────────────────────────────────────────────────────────
   process.stdout.write(`\n${passed} asserções passaram\n`);
   if (failures.length) {

@@ -292,6 +292,224 @@ async function seedIntegrations(ctx: SeedContext): Promise<void> {
 }
 
 /**
+ * Semeia StrategyPillar, InvestmentHorizon, RoadmapItem e EpicValueMetric —
+ * sem isto as telas `strategy`, `pillar`, `horizon` e `roadmap` ficam
+ * permanentemente vazias, e o gráfico de realização de valor em `value`/
+ * `themes` não tem o que mostrar (EpicValueMetric sem linhas).
+ *
+ * StrategyPillar <-> StrategicTheme: a FK real vive em
+ * StrategicTheme.pillarId (onDelete: SetNull) — um pillar agrupa temas, não
+ * o contrário. ThemeART já é populado em main() (seção 11), então não é
+ * duplicado aqui.
+ *
+ * RoadmapItem.epicId/artId e EpicValueMetric.epicId são Strings simples sem
+ * @relation (documentado no schema/portfolio.prisma). Epic é recriado a cada
+ * run (cleanup do main() faz epic.deleteMany) e ART também — por isso essas
+ * colunas são reatualizadas a cada execução via findFirst+update, o mesmo
+ * padrão do artId do Supplier em seedLargeSolution.
+ */
+async function seedStrategy(ctx: SeedContext): Promise<void> {
+  const { prisma, tenantId, themeIds, epicIds, artIds } = ctx;
+  const now = new Date();
+
+  console.log(
+    "\n  Criando StrategyPillars, InvestmentHorizons, RoadmapItems e EpicValueMetrics..."
+  );
+
+  // ─── StrategyPillar (3, cobrindo os 3 StrategicTheme já criados) ───────
+  const pillarDefs = [
+    { name: "Crescimento & Time-to-Market", tone: "accent", order: 0 },
+    { name: "Inovação com IA", tone: "violet", order: 1 },
+    { name: "Confiança & Compliance", tone: "rose", order: 2 },
+  ];
+  const pillarIds: string[] = [];
+  for (const def of pillarDefs) {
+    let pillar = await prisma.strategyPillar.findFirst({
+      where: { tenantId, name: def.name },
+    });
+    if (!pillar) {
+      pillar = await prisma.strategyPillar.create({
+        data: { tenantId, name: def.name, tone: def.tone, order: def.order },
+      });
+    }
+    pillarIds.push(pillar.id);
+  }
+  // Cada tema criado em main() (seção 11) recebe um pillar — themeIds e
+  // pillarIds mantêm sempre a mesma ordem (theme1/2/3, pillar1/2/3), então
+  // este update reatribui o par correto mesmo com ids novos a cada run.
+  for (let i = 0; i < themeIds.length; i++) {
+    await prisma.strategicTheme.update({
+      where: { id: themeIds[i] },
+      data: { pillarId: pillarIds[i] },
+    });
+  }
+  console.log(`  ✓ ${pillarDefs.length} StrategyPillars ligados aos temas`);
+
+  // ─── InvestmentHorizon (3, horizonte 1/2/3 do SAFe) ─────────────────────
+  const horizonDefs = [
+    {
+      name: "horizon-1",
+      label: "Horizonte 1 — Core",
+      targetPct: 60,
+      order: 0,
+    },
+    {
+      name: "horizon-2",
+      label: "Horizonte 2 — Crescimento",
+      targetPct: 30,
+      order: 1,
+    },
+    {
+      name: "horizon-3",
+      label: "Horizonte 3 — Emergente",
+      targetPct: 10,
+      order: 2,
+    },
+  ];
+  const horizonIds: string[] = [];
+  for (const def of horizonDefs) {
+    let horizon = await prisma.investmentHorizon.findFirst({
+      where: { tenantId, name: def.name },
+    });
+    if (!horizon) {
+      horizon = await prisma.investmentHorizon.create({
+        data: { tenantId, ...def },
+      });
+    }
+    horizonIds.push(horizon.id);
+  }
+  console.log(`  ✓ ${horizonDefs.length} InvestmentHorizons (H1/H2/H3 SAFe)`);
+
+  // LeanBudget.horizonId é String simples sem @relation — o LeanBudget é
+  // recriado a cada run (cleanup do main() faz leanBudget.deleteMany), então
+  // buscamos pelo period (chave natural estável) e religamos ao horizonte.
+  const leanBudget = await prisma.leanBudget.findFirst({
+    where: { tenantId, period: "PI 2026-Q2" },
+  });
+  if (leanBudget) {
+    await prisma.leanBudget.update({
+      where: { id: leanBudget.id },
+      data: { horizonId: horizonIds[0] },
+    });
+    console.log("  ✓ 1 LeanBudget ligado ao Horizonte 1");
+  }
+
+  // ─── RoadmapItem (para os épicos existentes, espalhados ao longo de PIs) ─
+  const [epicMainId, epicAiId, epicSecId] = epicIds;
+  const [artId] = artIds;
+  const roadmapDefs = [
+    {
+      title: "Portfolio Kanban em produção",
+      description:
+        "Entrega do board de épicos com drag-and-drop entre fases SAFe.",
+      epicId: epicMainId,
+      startDate: addWeeks(now, -6),
+      endDate: addWeeks(now, 2),
+      status: "IN_PROGRESS",
+      milestone: false,
+      color: "#6366f1",
+    },
+    {
+      title: "AI Risk Copilot — GA",
+      description:
+        "Disponibilização em produção do copiloto de risco com scoring automático.",
+      epicId: epicAiId,
+      startDate: addWeeks(now, 2),
+      endDate: addWeeks(now, 10),
+      status: "PLANNED",
+      milestone: false,
+      color: "#8b5cf6",
+    },
+    {
+      title: "SAML SSO & SCIM — go-live",
+      description: "Go-live do SSO enterprise com provisionamento SCIM.",
+      epicId: epicSecId,
+      startDate: addWeeks(now, 10),
+      endDate: addWeeks(now, 18),
+      status: "PLANNED",
+      milestone: true,
+      color: "#ef4444",
+    },
+  ];
+  for (const def of roadmapDefs) {
+    const existing = await prisma.roadmapItem.findFirst({
+      where: { tenantId, title: def.title },
+    });
+    const data = {
+      tenantId,
+      title: def.title,
+      description: def.description,
+      epicId: def.epicId,
+      artId,
+      startDate: def.startDate,
+      endDate: def.endDate,
+      status: def.status,
+      milestone: def.milestone,
+      color: def.color,
+    };
+    if (existing) {
+      await prisma.roadmapItem.update({ where: { id: existing.id }, data });
+    } else {
+      await prisma.roadmapItem.create({ data });
+    }
+  }
+  console.log(
+    `  ✓ ${roadmapDefs.length} RoadmapItems espalhados ao longo de PIs`
+  );
+
+  // ─── EpicValueMetric (previsto x realizado, ao menos um divergente) ────
+  const metricDefs = [
+    {
+      epicId: epicMainId,
+      metricLabel: "Lead time de épicos críticos",
+      unit: "dias",
+      plannedValue: 54,
+      actualValue: 61,
+      status: "at-risk",
+    },
+    {
+      epicId: epicAiId,
+      metricLabel: "Adoção do AI Risk Copilot",
+      unit: "%",
+      plannedValue: 50,
+      actualValue: 32,
+      status: "tracking",
+    },
+    {
+      epicId: epicSecId,
+      metricLabel: "Cobertura de auditoria LGPD",
+      unit: "%",
+      plannedValue: 100,
+      actualValue: null as number | null,
+      status: "pending",
+    },
+  ];
+  for (const def of metricDefs) {
+    const existing = await prisma.epicValueMetric.findFirst({
+      where: { tenantId, metricLabel: def.metricLabel },
+    });
+    const data = {
+      tenantId,
+      epicId: def.epicId,
+      metricLabel: def.metricLabel,
+      unit: def.unit,
+      plannedValue: def.plannedValue,
+      actualValue: def.actualValue,
+      status: def.status,
+      measuredAt: def.actualValue === null ? null : now,
+    };
+    if (existing) {
+      await prisma.epicValueMetric.update({ where: { id: existing.id }, data });
+    } else {
+      await prisma.epicValueMetric.create({ data });
+    }
+  }
+  console.log(
+    `  ✓ ${metricDefs.length} EpicValueMetrics (previsto x realizado, com divergência)`
+  );
+}
+
+/**
  * Semeia o nível Large Solution do SAFe (SolutionTrain, Capability, LACE
  * members, Supplier/SupplierDeliverable, SolutionRisk, CrossArtDependency).
  * Sem isto a tela `solution` fica permanentemente vazia.
@@ -775,7 +993,11 @@ async function main(): Promise<SeedContext> {
   await db.oKR.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.themeART.deleteMany({ where: { theme: { tenantId: TENANT_ID } } });
   await db.leanBudget.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.roadmapItem.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.epicValueMetric.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.strategicTheme.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.strategyPillar.deleteMany({ where: { tenantId: TENANT_ID } });
+  await db.investmentHorizon.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.pIObjective.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.confidenceVoteTally.deleteMany({ where: { tenantId: TENANT_ID } });
   await db.confidenceVoteSession.deleteMany({ where: { tenantId: TENANT_ID } });
@@ -1984,6 +2206,10 @@ async function main(): Promise<SeedContext> {
   // ─── 17c. Large Solution (SolutionTrain, Capability, LACE members, ────────
   //          Supplier, SolutionRisk, CrossArtDependency) ─────────────────────
   await seedLargeSolution(context);
+
+  // ─── 17d. Estratégia, horizontes e roadmap (StrategyPillar, ───────────────
+  //          InvestmentHorizon, RoadmapItem, EpicValueMetric) ────────────────
+  await seedStrategy(context);
 
   // ─── 18. Risks (ROAM completo) ─────────────────────────────────────────────
   console.log("\n  Criando riscos, impedimentos e defeitos...");
