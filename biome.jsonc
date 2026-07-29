@@ -361,6 +361,9 @@
       "!experiments/**/.venv",
       "!apps/app/playwright-report",
       "!apps/app/coverage",
+      // Protótipo de design: fonte de verdade visual do port, copiada como
+      // veio do projeto de design. Lintar quebraria a fidelidade da referência.
+      "!docs/design-handoff",
       "!**/.next"
     ]
   }
