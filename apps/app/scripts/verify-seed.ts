@@ -9,6 +9,8 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../../../packages/database/generated";
@@ -946,8 +948,16 @@ async function main() {
   await prisma.$disconnect();
 }
 
-main().catch(async (error) => {
-  process.stdout.write(`erro fatal: ${String(error)}\n`);
-  await prisma.$disconnect();
-  process.exit(1);
-});
+// Guarda de entrypoint: sem ela, um `import` deste módulo roda a verificação
+// inteira (e chama process.exit) no meio do processo importador.
+const isEntrypoint =
+  !!process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+
+if (isEntrypoint) {
+  main().catch(async (error) => {
+    process.stdout.write(`erro fatal: ${String(error)}\n`);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+}

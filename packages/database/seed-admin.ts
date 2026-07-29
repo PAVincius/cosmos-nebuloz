@@ -12,6 +12,8 @@
  *   pnpm seed:admin
  */
 
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "./generated/index.js";
@@ -133,7 +135,14 @@ async function main() {
   await db.$disconnect();
 }
 
-main().catch((err) => {
-  console.error("❌ Seed falhou:", err);
-  process.exit(1);
-});
+// Guarda de entrypoint: sem ela, um `import` deste módulo roda o seed.
+const isEntrypoint =
+  !!process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+
+if (isEntrypoint) {
+  main().catch((err) => {
+    console.error("❌ Seed falhou:", err);
+    process.exit(1);
+  });
+}

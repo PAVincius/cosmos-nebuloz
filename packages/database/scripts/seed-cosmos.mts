@@ -3,6 +3,8 @@
 // Run with: pnpm exec tsx --env-file=.env scripts/seed-cosmos.mts
 // Instantiate the client directly (the package index imports "server-only",
 // which throws under plain tsx) using the same pg driver adapter Prisma 7 needs.
+import { realpathSync } from 'node:fs';
+import { pathToFileURL } from 'node:url';
 import { PrismaPg } from '@prisma/adapter-pg';
 import { Pool } from 'pg';
 import { PrismaClient } from '../generated/client';
@@ -112,10 +114,18 @@ async function main() {
   });
 }
 
-main()
-  .then(() => db.$disconnect())
-  .catch(async (err) => {
-    console.error(err);
-    await db.$disconnect();
-    process.exit(1);
-  });
+// Guarda de entrypoint: __tests__/seed-cosmos.test.ts importa seedDevMembership
+// deste módulo — sem a guarda, `pnpm test` roda o seed no banco real.
+const isEntrypoint =
+  !!process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+
+if (isEntrypoint) {
+  main()
+    .then(() => db.$disconnect())
+    .catch(async (err) => {
+      console.error(err);
+      await db.$disconnect();
+      process.exit(1);
+    });
+}
