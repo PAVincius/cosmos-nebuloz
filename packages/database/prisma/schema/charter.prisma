@@ -1,0 +1,487 @@
+// Charter — governança de IA.
+//
+// Mapeamento de `design_handoff_charter/DATA-MODEL.md §1` para Prisma.
+// Convenções desta camada:
+//   • Fórmula não vira coluna. `severity`/`likelihood`/`score` do caso e
+//     `done`/`overdue` da trilha são derivados na leitura — persistir cria
+//     drift silencioso. As exceções são cache com invalidação explícita
+//     (`CharterVendor.maxClass`) e contrato firmado no momento da submissão
+//     (`approvalPath`/`slaTotal`/`hitl` do caso: mudar a regra depois não pode
+//     reescrever o SLA de um caso em curso).
+//   • Auditoria reusa o `AuditLog` existente (system.prisma), append-only.
+//     entityType = "charter.<entidade>", diff = Array<[campo, antes, depois]>.
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// Papéis de governança. Ortogonais ao MemberRole (SAFe): a mesma pessoa pode
+/// ser DEV no Cosmos e AUDITOR no Charter. Ausência de CharterMembership = sem
+/// acesso, mesmo com o módulo contratado.
+enum CharterRole {
+  COMPLIANCE
+  LEGAL
+  SECURITY
+  HR
+  REQUESTER
+  EXEC
+  AUDITOR
+}
+
+/// Espinha de toda decisão de risco. O peso (1/2/4/5) vive no código
+/// (lib/charter/rules.ts), não aqui — é constante de regra, não dado do tenant.
+enum CharterDataClass {
+  PUBLIC
+  INTERNAL
+  CONFIDENTIAL
+  RESTRICTED
+}
+
+enum CharterExposure {
+  INTERNAL
+  EXTERNAL
+}
+
+enum CharterCriticality {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// Nível de human-in-the-loop derivado por recommendPath().
+enum CharterHitl {
+  FULL_REVIEW
+  SAMPLING
+  PASSIVE
+}
+
+/// draft → submitted → review → (approved | restricted | changes | blocked) → archived
+/// `changes` volta para `review` após reenvio.
+enum CharterUseCaseStatus {
+  DRAFT
+  SUBMITTED
+  REVIEW
+  APPROVED
+  RESTRICTED
+  CHANGES
+  BLOCKED
+  ARCHIVED
+}
+
+enum CharterSectionStatus {
+  PUBLISHED
+  REVIEW
+  DRAFT
+}
+
+enum CharterVersionStatus {
+  PUBLISHED
+  SUPERSEDED
+}
+
+enum CharterVendorTier {
+  APPROVED
+  RESTRICTED
+  REVIEW
+  BLOCKED
+}
+
+/// OVERDUE não entra aqui: é derivado de `dueDate < now() && status != DONE`.
+/// Persistir exigiria um job só para envelhecer linhas.
+enum CharterMitigationStatus {
+  OPEN
+  PROGRESS
+  DONE
+}
+
+/// 7 categorias fixas. O tom de cada uma é fixo por gravidade intrínseca
+/// (DESIGN.md §3) — privacidade/regulatório em red, segurança/viés em amber,
+/// IP/operacional/reputacional em accent. Não recolorir por dado.
+enum CharterRiskCategory {
+  PRIVACY
+  REGULATORY
+  SECURITY
+  BIAS
+  IP
+  OPERATIONAL
+  REPUTATIONAL
+}
+
+enum CharterDecisionOutcome {
+  APPROVED
+  RESTRICTED
+  CHANGES
+  BLOCKED
+}
+
+enum CharterRecertCadence {
+  ANNUAL
+  SEMIANNUAL
+}
+
+enum CharterPosture {
+  CONSERVATIVE
+  MODERATE
+  AGGRESSIVE
+}
+
+enum CharterAckStatus {
+  PENDING
+  ACKNOWLEDGED
+}
+
+// ── Configuração e acesso ─────────────────────────────────────────────────────
+
+/// Perfil da organização usado pelo Policy Builder (FR-12.1). Fica separado do
+/// Tenant porque só existe quando o módulo Charter é contratado.
+model CharterSettings {
+  id                   String         @id @default(cuid())
+  tenantId             String         @unique
+  industry             String?
+  geo                  String?
+  posture              CharterPosture @default(MODERATE)
+  employees            Int?
+  /// Retenção de log em dias (NFR-1.6): 30 | 90 | 365.
+  logRetentionDays     Int            @default(365)
+  /// Gatilhos de notificação ligados/desligados (FR-12.3), chaveado por trigger id.
+  notificationTriggers Json?
+  createdAt            DateTime       @default(now())
+  updatedAt            DateTime       @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model CharterMembership {
+  id        String      @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      CharterRole @default(REQUESTER)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  updatedBy String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+}
+
+/// Contador por tenant para códigos legíveis (UC-118, MIT-04). Sequência global
+/// vazaria volume entre tenants.
+model CharterSequence {
+  id       String @id @default(cuid())
+  tenantId String
+  /// "usecase" | "mitigation" | "vendor" | "clause" | "track"
+  kind     String
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, kind])
+}
+
+// ── Política ──────────────────────────────────────────────────────────────────
+
+model CharterPolicy {
+  id          String    @id @default(cuid())
+  tenantId    String
+  name        String
+  /// Versão publicada corrente, ex. "3.2". Null enquanto nunca publicada.
+  version     String?
+  publishedAt DateTime?
+  approverId  String?
+  /// Data da próxima revisão obrigatória; `daysToReview` é derivado na leitura.
+  nextReview  DateTime?
+  scope       String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  tenant   Tenant                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  sections CharterPolicySection[]
+  versions CharterPolicyVersion[]
+  tracks   CharterTrack[]
+
+  @@index([tenantId])
+}
+
+model CharterPolicySection {
+  id        String               @id @default(cuid())
+  tenantId  String
+  policyId  String
+  /// Número de ordem exibido (1..9).
+  ordinal   Int
+  name      String
+  status    CharterSectionStatus @default(DRAFT)
+  ownerId   String?
+  body      String               @db.Text
+  /// True quando o corpo veio de geração assistida (FR-2.7). Rascunho gerado
+  /// entra sempre como DRAFT, nunca PUBLISHED.
+  generated Boolean              @default(false)
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@unique([policyId, ordinal])
+  @@index([tenantId])
+  @@index([policyId, status])
+}
+
+model CharterPolicyVersion {
+  id            String               @id @default(cuid())
+  tenantId      String
+  policyId      String
+  version       String
+  status        CharterVersionStatus @default(PUBLISHED)
+  /// Resumo de mudanças — obrigatório para publicar (FR-2.4).
+  summary       String               @db.Text
+  publishedById String?
+  publishedAt   DateTime             @default(now())
+  /// Snapshot das seções no momento da publicação, para diff campo-a-campo
+  /// (FR-2.6). A trilha de auditoria não pode depender do estado atual.
+  snapshot      Json
+  changeCount   Int                  @default(0)
+
+  tenant          Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy          CharterPolicy           @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  acknowledgments CharterAcknowledgment[]
+  tracks          CharterTrack[]
+
+  @@unique([policyId, version])
+  @@index([tenantId])
+}
+
+// ── Fornecedores e cláusulas ──────────────────────────────────────────────────
+
+model CharterVendor {
+  id            String            @id @default(cuid())
+  tenantId      String
+  /// Código legível, ex. "V-05".
+  code          String
+  name          String
+  category      String?
+  tier          CharterVendorTier @default(REVIEW)
+  region        String?
+  dpa           Boolean           @default(false)
+  /// Texto livre da política de retenção, ex. "30 dias" | "zero".
+  retention     String?
+  subprocessors Int               @default(0)
+  renewalAt     DateTime?
+  /// Score 0..100, MAIOR = PIOR. Rotular explicitamente na UI (FR-8.3) para
+  /// não inverter a leitura.
+  score         Int               @default(50)
+  /// Classe máxima que a postura contratual permite. Cache derivado das
+  /// cláusulas (DATA-MODEL §4.2) — recomputado em toda mudança de cláusula ou
+  /// tier. Null = nenhuma (bloqueado).
+  maxClass      CharterDataClass?
+  /// Motivo contratual concreto lido na mensagem de bloqueio do intake
+  /// (FR-4.4): "DPA ausente", "retenção incompatível", "sem BAA".
+  notes         String?           @db.Text
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  tenant   Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  clauses  CharterVendorClause[]
+  useCases CharterUseCase[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, tier])
+}
+
+model CharterClause {
+  id          String   @id @default(cuid())
+  tenantId    String
+  code        String
+  name        String
+  /// Cláusula crítica: ausência derruba a classe máxima do fornecedor.
+  critical    Boolean  @default(false)
+  description String?  @db.Text
+  createdAt   DateTime @default(now())
+
+  tenant  Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vendors CharterVendorClause[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model CharterVendorClause {
+  id        String   @id @default(cuid())
+  tenantId  String
+  vendorId  String
+  clauseId  String
+  createdAt DateTime @default(now())
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vendor CharterVendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  clause CharterClause @relation(fields: [clauseId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, clauseId])
+  @@index([tenantId])
+}
+
+// ── Caso de uso ───────────────────────────────────────────────────────────────
+
+model CharterUseCase {
+  id         String  @id @default(cuid())
+  tenantId   String
+  /// Código legível por tenant, ex. "UC-118".
+  code       String
+  title      String
+  department String?
+  ownerId    String?
+  /// Nome livre do dono quando ele não é usuário da plataforma.
+  ownerName  String?
+  objective  String  @db.Text
+  vendorId   String?
+
+  dataClass   CharterDataClass
+  exposure    CharterExposure
+  criticality CharterCriticality
+  status      CharterUseCaseStatus @default(DRAFT)
+
+  /// Contrato firmado na submissão por recommendPath(). Congelado de propósito:
+  /// alterar a regra depois não pode reescrever o SLA de um caso em curso.
+  approvalPath String?
+  slaTotal     Int?
+  hitl         CharterHitl?
+  submittedAt  DateTime?
+  reviewerId   String?
+  launchTarget DateTime?
+
+  /// Perfil de risco — 7 categorias, 1..5 cada (FR-5.3). severity/likelihood/
+  /// score são derivados na leitura (riskScore()), nunca persistidos.
+  riskPrivacy      Int @default(1)
+  riskRegulatory   Int @default(1)
+  riskSecurity     Int @default(1)
+  riskBias         Int @default(1)
+  riskIp           Int @default(1)
+  riskOperational  Int @default(1)
+  riskReputational Int @default(1)
+
+  /// Obrigatório quando status = RESTRICTED (≥ 1 condição — FR-6.3).
+  restrictions     String[]
+  /// Obrigatório quando status = BLOCKED.
+  blockReason      String?  @db.Text
+  /// Obrigatório quando status = CHANGES.
+  changeRequest    String?  @db.Text
+  /// Marcado quando uma mudança de tier de fornecedor tornou o caso inelegível
+  /// (DATA-MODEL §6). É sinalização para revisão humana, não bloqueio silencioso.
+  vendorIneligible Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  vendor      CharterVendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
+  decisions   CharterDecision[]
+  mitigations CharterMitigation[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, dataClass])
+  @@index([vendorId])
+}
+
+model CharterDecision {
+  id             String                 @id @default(cuid())
+  tenantId       String
+  useCaseId      String
+  outcome        CharterDecisionOutcome
+  /// Obrigatório sem exceção, inclusive em aprovação limpa (FR-6.2). É o
+  /// registro que a auditoria lê.
+  rationale      String                 @db.Text
+  /// ≥ 1 quando outcome = RESTRICTED.
+  conditions     String[]
+  deciderId      String?
+  /// Papel de governança do decisor no momento. O papel muda; o registro não.
+  deciderRole    CharterRole
+  /// Status anterior, para reconstruir a trajetória sem depender do AuditLog.
+  previousStatus CharterUseCaseStatus
+  createdAt      DateTime               @default(now())
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  useCase CharterUseCase @relation(fields: [useCaseId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([useCaseId])
+}
+
+model CharterMitigation {
+  id        String                  @id @default(cuid())
+  tenantId  String
+  code      String
+  useCaseId String
+  category  CharterRiskCategory
+  action    String                  @db.Text
+  ownerId   String?
+  ownerName String?
+  dueDate   DateTime?
+  status    CharterMitigationStatus @default(OPEN)
+  createdAt DateTime                @default(now())
+  updatedAt DateTime                @updatedAt
+
+  tenant  Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  useCase CharterUseCase @relation(fields: [useCaseId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([useCaseId])
+  @@index([tenantId, status])
+}
+
+// ── Onboarding ────────────────────────────────────────────────────────────────
+
+model CharterTrack {
+  id                String               @id @default(cuid())
+  tenantId          String
+  code              String
+  name              String
+  audience          String
+  modules           Int                  @default(1)
+  minutes           Int                  @default(15)
+  recert            CharterRecertCadence @default(ANNUAL)
+  policyId          String?
+  /// Versão de política vinculada. Publicar nova versão marca a trilha como
+  /// exigindo reatribuição (FR-2.5 / FR-10.5).
+  policyVersionId   String?
+  needsReassignment Boolean              @default(false)
+  publishedAt       DateTime?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+
+  tenant          Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy          CharterPolicy?          @relation(fields: [policyId], references: [id], onDelete: SetNull)
+  policyVersion   CharterPolicyVersion?   @relation(fields: [policyVersionId], references: [id], onDelete: SetNull)
+  acknowledgments CharterAcknowledgment[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+model CharterAcknowledgment {
+  id              String           @id @default(cuid())
+  tenantId        String
+  trackId         String
+  userId          String?
+  /// Nome/área livres para pessoas ainda não provisionadas na plataforma.
+  personName      String
+  department      String?
+  status          CharterAckStatus @default(PENDING)
+  assignedAt      DateTime         @default(now())
+  dueAt           DateTime?
+  acknowledgedAt  DateTime?
+  /// Versão de política aceita. Publicar nova versão invalida o aceite
+  /// (volta para PENDING) — o aceite é sempre de uma versão concreta.
+  policyVersionId String?
+
+  tenant        Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  track         CharterTrack          @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  policyVersion CharterPolicyVersion? @relation(fields: [policyVersionId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([trackId, status])
+}

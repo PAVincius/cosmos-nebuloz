@@ -16,6 +16,9 @@ const PROTECTED_PREFIXES = [
   "/search",
   "/webhooks",
   "/onboarding",
+  // Charter — o layout do route group também guarda (sessão + módulo + papel),
+  // mas o redirect antecipado evita renderizar RSC para quem nem tem sessão.
+  "/charter",
 ];
 
 type MiddlewareFn = (

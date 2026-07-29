@@ -1,0 +1,38 @@
+// Contratação modular da plataforma Nebuloz.
+//
+// Um tenant contrata Cosmos, Charter, Signal ou qualquer combinação. Isto não é
+// feature flag: `contractedAt`/`expiresAt` são rastro comercial, não toggle de
+// rollout. Ausência de linha = módulo não contratado (default deny) — a
+// migration inicial semeia COSMOS para os tenants existentes.
+
+enum ProductModule {
+  COSMOS
+  CHARTER
+  SIGNAL
+}
+
+enum ModuleStatus {
+  ACTIVE
+  TRIAL
+  SUSPENDED
+  CANCELED
+}
+
+model TenantModule {
+  id           String        @id @default(cuid())
+  tenantId     String
+  module       ProductModule
+  status       ModuleStatus  @default(ACTIVE)
+  contractedAt DateTime      @default(now())
+  expiresAt    DateTime?
+  seats        Int?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  updatedBy    String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, module])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}

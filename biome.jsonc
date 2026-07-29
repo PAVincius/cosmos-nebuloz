@@ -65,6 +65,7 @@
       "includes": [
         "apps/app/app/actions/**",
         "apps/app/app/(cosmos)/actions/**",
+        "apps/app/app/(charter)/actions/**",
         "apps/app/app/api/**",
         "apps/app/app/hooks/**"
       ],
@@ -200,6 +201,28 @@
           },
           "complexity": { "noExcessiveCognitiveComplexity": "off" },
           "performance": { "useTopLevelRegex": "off" }
+        }
+      }
+    },
+    {
+      // Charter (governança de IA): mesma natureza do bloco do Cosmos acima —
+      // port fiel do protótipo de design, com markup mantido 1:1 com a fonte
+      // (ver docs/superpowers/plans/2026-07-28-charter-srd-implementacao.md).
+      //
+      // Diferença deliberada em relação ao bloco do Cosmos: NENHUMA regra de
+      // a11y é desligada aqui. WCAG AA nos dois temas é requisito de contrato
+      // do Charter (SRD-Charter.md NFR-2), não meta — então linha clicável é
+      // <button> de verdade, grupo de filtro é <fieldset> com <legend>, e o
+      // backdrop de modal tem controle de fechar anunciável.
+      "includes": ["apps/app/components/charter/**"],
+      "linter": {
+        "rules": {
+          "nursery": { "noLeakedRender": "off", "noShadow": "off" },
+          "style": {
+            "noNestedTernary": "off",
+            "noDescendingSpecificity": "off"
+          },
+          "complexity": { "noExcessiveCognitiveComplexity": "off" }
         }
       }
     },

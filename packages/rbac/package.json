@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "@repo/database": "workspace:*",
-    "@repo/rate-limit": "workspace:*"
+    "@repo/rate-limit": "workspace:*",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
