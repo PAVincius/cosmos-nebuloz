@@ -11,15 +11,8 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
-
-export const ValueMetricStatus = z.enum([
-  "pending",
-  "tracking",
-  "at-risk",
-  "done",
-]);
-export type ValueMetricStatus = z.infer<typeof ValueMetricStatus>;
+import { logAudit } from "../../actions/audit/log-audit";
+import { ValueMetricStatus } from "./value-realization.constants";
 
 export type ValueRealizationView = {
   id: string;

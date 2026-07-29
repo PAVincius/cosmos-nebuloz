@@ -5,7 +5,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { logAudit } from "../audit/index";
+import { logAudit } from "../audit/log-audit";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 import type { RiskWithPI } from "./schema";

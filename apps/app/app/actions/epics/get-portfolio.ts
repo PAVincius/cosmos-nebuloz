@@ -8,6 +8,7 @@ import {
   aggregateEpicRow,
   type InvestBreakdown,
 } from "@/lib/portfolio-aggregate";
+import { epicsFingerprint } from "./epics-fingerprint";
 import { portfolioEpicsCacheTag } from "./portfolio-cache";
 import { PORTFOLIO_EPICS_PAGE_SIZE } from "./portfolio-constants";
 
@@ -153,9 +154,15 @@ export const getPortfolioEpics = async (): Promise<PortfolioEpic[]> => {
   const ctx = await requireTenantSession(await headers());
   const { tenantId } = ctx;
 
+  // Fingerprint in the key so writes that never call revalidateTag (the Jira
+  // importer, the Linear/GitHub syncs, the copilot tools) are visible at once
+  // instead of waiting out the TTL. The TTL stays to bound relation-sourced
+  // fields the fingerprint cannot see.
+  const fingerprint = await epicsFingerprint(tenantId);
+
   return unstable_cache(
     async () => loadPortfolioEpics(tenantId),
-    ["portfolio-epics", tenantId],
+    ["portfolio-epics", tenantId, fingerprint],
     {
       revalidate: 45,
       tags: [portfolioEpicsCacheTag(tenantId)],
@@ -174,6 +181,8 @@ export const getPortfolioEpicsPage = async (
   const safePage = Math.max(1, page);
   const safeLimit = Math.min(Math.max(1, limit), 50);
 
+  const fingerprint = await epicsFingerprint(tenantId);
+
   return unstable_cache(
     async () => loadPortfolioEpicsPage(tenantId, statusId, safePage, safeLimit),
     [
@@ -182,6 +191,7 @@ export const getPortfolioEpicsPage = async (
       statusId,
       String(safePage),
       String(safeLimit),
+      fingerprint,
     ],
     {
       revalidate: 45,

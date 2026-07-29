@@ -45,10 +45,12 @@ import {
 
 const MEMBERS_DB = [
   {
+    id: "mem-1",
     role: "PO",
     user: { id: "u1", name: "Alice", email: "alice@x.com", image: null },
   },
   {
+    id: "mem-2",
     role: "DEV",
     user: { id: "u2", name: null, email: "bob@x.com", image: "http://img" },
   },
@@ -92,6 +94,13 @@ describe("getTenantMembersForSearch", () => {
         where: { tenantId: tenantCtx.tenantId },
       })
     );
+  });
+
+  it("returns the TenantMember row id (membership id), distinct from the User id — RBAC actions (updateMemberRoleSafe/removeMemberSafe) look up by this id, not userId", async () => {
+    const result = await getTenantMembersForSearch();
+    expect(result[0].id).toBe("mem-1");
+    expect(result[0].userId).toBe("u1");
+    expect(result[0].id).not.toBe(result[0].userId);
   });
 });
 

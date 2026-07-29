@@ -18,7 +18,7 @@ const sizeMap: Record<Size, string> = {
 
 // Accent-based variants use inline style (--accent conflicts with shadcn surface-3)
 const variantClass: Record<Variant, string> = {
-  primary: "text-white border",
+  primary: "border",
   secondary: "bg-surface text-ink border-hairline-strong hover:bg-surface-2",
   ghost:
     "bg-transparent text-ink-muted border-transparent hover:bg-surface-2 hover:text-ink",
@@ -29,6 +29,10 @@ const variantClass: Record<Variant, string> = {
 const variantStyle: Record<Variant, React.CSSProperties> = {
   primary: {
     background: "var(--accent-c)",
+    // Not white: on the cyan brand accent that is 1.77:1. --on-accent is the
+    // per-theme foreground app/styles.css already defines for solid accent
+    // fills (canvas on dark, white on light).
+    color: "var(--on-accent, #fff)",
     borderColor: "var(--accent-c)",
     boxShadow:
       "0 1px 2px rgba(var(--accent-rgb),.4), 0 4px 12px -6px rgba(var(--accent-rgb),.5)",

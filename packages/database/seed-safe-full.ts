@@ -1620,7 +1620,12 @@ async function main() {
       date.setHours(0, 0, 0, 0);
       await db.standupEntry.upsert({
         where: {
-          teamId_userId_date: { teamId: teams[t].id, userId: devId, date },
+          tenantId_teamId_userId_date: {
+            tenantId: tid,
+            teamId: teams[t].id,
+            userId: devId,
+            date,
+          },
         },
         create: {
           tenantId: tid,

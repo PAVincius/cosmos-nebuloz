@@ -165,6 +165,28 @@ describe("updateMemberRoleSafe (AC-003)", () => {
     expect(result.ok).toBe(true);
     expect(dbMocks.memberUpdate).toHaveBeenCalled();
   });
+
+  it("writes an audit log entry recording the role change — a silent ADMIN promotion must never happen", async () => {
+    dbMocks.memberFindFirst.mockResolvedValue({ id: "m-1", role: "PO" });
+    dbMocks.memberCount.mockResolvedValue(2);
+    dbMocks.auditLogCreate.mockResolvedValue({});
+
+    const result = await updateMemberRoleSafe("m-1", "ADMIN");
+
+    expect(result.ok).toBe(true);
+    expect(dbMocks.auditLogCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId: "tenant-1",
+          userId: "admin-1",
+          action: "updated",
+          entityType: "TenantMember",
+          entityId: "m-1",
+          diff: { previousRole: "PO", newRole: "ADMIN" },
+        }),
+      })
+    );
+  });
 });
 
 describe("bulkInviteMembers (AC-004)", () => {

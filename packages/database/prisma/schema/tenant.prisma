@@ -28,6 +28,12 @@ model Tenant {
   slug            String           @unique
   logo            String?
   plan            SubscriptionPlan @default(ORBIT)
+  // True only for the single internal row (id "system") that owns
+  // system-generated audit rows (see lib/inngest/isolation-audit.ts and the
+  // 20260728020000_system_tenant / 20260728030000_system_tenant_marker
+  // migrations). Any tenant-facing listing (admin org list, billing export,
+  // customer CSV) must filter isSystem = false — this row is not a customer.
+  isSystem        Boolean          @default(false)
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   metadata        Json?

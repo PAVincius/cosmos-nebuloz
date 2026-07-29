@@ -4,7 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../_base";
-import { pushNotification } from "../notifications/index";
+import { pushNotification } from "../notifications/push-notification";
 import { can } from "../permissions";
 import {
   CreatePAERequestSchema,

@@ -8,11 +8,16 @@
 // getApprovalRequest actions (no new mutation — see epic-detail-client.tsx's
 // decide() for the reference flow this mirrors). The per-epic Gate Detail
 // page (RF-2.18) is now wired at screens/gate.tsx — each row below links to
-// it via navigate("gate", g.epicId).
+// it via navigate("gate", g.epicId). The KPI row (3 of the handoff's 4 —
+// see listGovernedEpics's comment on the omitted "tempo médio no gate") and
+// the per-row gate-stage dots are computed server-side from the same
+// listGovernedEpics query, no extra fetch per row.
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
+  type GovernanceGateStepView,
   type GovernedEpicView,
+  type ListGovernedEpicsResult,
   listGovernedEpics,
   upsertApprovalWorkflow,
 } from "@/app/(cosmos)/actions/governance";
@@ -24,8 +29,10 @@ import {
   Button,
   ErrorState,
   IconButton,
+  KpiCard,
   PageHeader,
   SectionCard,
+  type Tone,
   useNav,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
@@ -492,10 +499,55 @@ function GateReviewModal({
   );
 }
 
+const GATE_STEP_TONE: Record<string, Tone> = {
+  pending: "accent",
+  approved: "green",
+  rejected: "red",
+  skipped: "neutral",
+};
+
+// Compact per-row gate-stage indicator — one dot per ApprovalStepInstance
+// of the epic's current gate, tone-coded by estado. Reuses the same
+// estado→tone vocabulary as gate-detail-client.tsx's StepRow, just
+// collapsed to a dot instead of a full stepper card.
+function GateStageDots({ steps }: { steps: GovernanceGateStepView[] }) {
+  if (steps.length === 0) {
+    return (
+      <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+        Sem gate ativo
+      </span>
+    );
+  }
+  return (
+    <div
+      style={{ display: "flex", alignItems: "center", gap: 4 }}
+      title={steps.map((s) => `${s.roleRequired}: ${s.estado}`).join(" · ")}
+    >
+      {steps.map((s) => (
+        <span
+          key={s.etapaOrdem}
+          style={{
+            width: 9,
+            height: 9,
+            borderRadius: 99,
+            flexShrink: 0,
+            background: `var(--${GATE_STEP_TONE[s.estado] ?? "neutral"})`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+const EMPTY_RESULT: ListGovernedEpicsResult = {
+  epics: [],
+  kpis: { totalUnderGovernance: 0, awaitingDecision: 0, investmentInReview: 0 },
+};
+
 function GovernanceBody() {
   const modal = useModal();
   const { navigate } = useNav();
-  const [rows, setRows] = useState<GovernedEpicView[]>([]);
+  const [result, setResult] = useState<ListGovernedEpicsResult>(EMPTY_RESULT);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -503,7 +555,7 @@ function GovernanceBody() {
     setLoading(true);
     listGovernedEpics().then((r) => {
       if (r.ok) {
-        setRows(r.data);
+        setResult(r.data);
       } else {
         setError(true);
       }
@@ -515,11 +567,13 @@ function GovernanceBody() {
     load();
   }, [load]);
 
+  const { epics, kpis } = result;
+
   return (
     <div className="fade-in">
       <PageHeader
         eyebrow="Portfolio · Governança"
-        meta={<Badge tone="accent">{rows.length} épicos</Badge>}
+        meta={<Badge tone="accent">{epics.length} épicos</Badge>}
         subtitle="Pipeline de gates de governança por épico."
         title="Governance Board"
       >
@@ -533,6 +587,41 @@ function GovernanceBody() {
         </Button>
       </PageHeader>
       {error && <ErrorState />}
+      {/* KPI row — 3 of the handoff's 4 KPIs. "Tempo médio no gate" is
+          omitted: GovernedEpic.submittedAt is never written by any action
+          in this codebase, so a submittedAt→decision average would be an
+          average over nulls, not a real metric. */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(3, minmax(0,1fr))",
+          gap: "var(--gap)",
+          marginBottom: "var(--gap)",
+        }}
+      >
+        <KpiCard
+          hint="lean portfolio mgmt"
+          icon="shield"
+          label="Épicos sob governança"
+          tone="accent"
+          value={kpis.totalUnderGovernance}
+        />
+        <KpiCard
+          hint="em gate de revisão"
+          icon="clock"
+          label="Aguardando decisão"
+          tone="amber"
+          value={kpis.awaitingDecision}
+        />
+        <KpiCard
+          hint="épicos em revisão"
+          icon="dollar"
+          label="Investimento em revisão"
+          tone="blue"
+          unit="USD"
+          value={kpis.investmentInReview}
+        />
+      </div>
       <SectionCard
         bodyStyle={{ padding: "12px 16px" }}
         icon="shield"
@@ -540,12 +629,12 @@ function GovernanceBody() {
         tone="accent"
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {!(loading || error) && rows.length === 0 && (
+          {!(loading || error) && epics.length === 0 && (
             <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
               Nenhum épico em governança.
             </span>
           )}
-          {rows.map((g) => (
+          {epics.map((g) => (
             <div
               key={g.id}
               style={{
@@ -573,6 +662,7 @@ function GovernanceBody() {
                   </div>
                 )}
               </div>
+              <GateStageDots steps={g.gateSteps} />
               <Badge tone={STATUS_TONE[g.governanceStatus] ?? "neutral"}>
                 {g.governanceStatus}
               </Badge>

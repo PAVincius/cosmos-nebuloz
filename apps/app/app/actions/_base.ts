@@ -107,7 +107,7 @@ export const StoryStatus = z.enum([
   "REVIEW",
   "DONE",
 ]);
-export const TaskStatus = z.enum(["TODO", "IN_PROGRESS", "DONE"]);
+export const TaskStatus = z.enum(["TODO", "IN_PROGRESS", "REVIEW", "DONE"]);
 export const Severity = z.enum(["critical", "high", "medium", "low"]);
 export const ImpedimentStatus = z.enum(["OPEN", "IN_PROGRESS", "RESOLVED"]);
 export const DefectStatus = z.enum([

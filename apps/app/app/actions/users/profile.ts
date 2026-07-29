@@ -64,13 +64,19 @@ export async function updateNotificationPreferences(
 
   const currentMetadata = (tenant?.metadata ?? {}) as Record<string, unknown>;
   const notifKey = `notif_prefs_${ctx.userId}`;
+  const existingPrefs = (currentMetadata[notifKey] ?? {}) as Record<
+    string,
+    boolean
+  >;
 
   await database.tenant.update({
     where: { id: ctx.tenantId },
     data: {
       metadata: {
         ...currentMetadata,
-        [notifKey]: prefs,
+        // Merge, don't overwrite — the caller may send only the toggled
+        // key, and a full overwrite would silently wipe every sibling pref.
+        [notifKey]: { ...existingPrefs, ...prefs },
       } as Record<string, string>,
     },
   });

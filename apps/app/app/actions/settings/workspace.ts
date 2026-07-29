@@ -7,7 +7,7 @@ import { renderInviteEmail, resend } from "@repo/email";
 import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { logAudit } from "../audit";
+import { logAudit } from "../audit/log-audit";
 
 export async function getWorkspaceSettings() {
   const ctx = await requireTenantSession(await headers());

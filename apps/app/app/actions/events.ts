@@ -9,8 +9,8 @@
  */
 import "server-only";
 import { webhooks } from "@repo/webhooks";
-import { logAudit } from "./audit/index";
-import { pushNotification } from "./notifications/index";
+import { logAudit } from "./audit/log-audit";
+import { pushNotification } from "./notifications/push-notification";
 import { findRecipientsByRole } from "./notify-recipients";
 
 // ─── Event union ──────────────────────────────────────────────────────────────

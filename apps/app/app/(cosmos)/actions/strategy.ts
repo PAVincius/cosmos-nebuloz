@@ -6,7 +6,7 @@ import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 
 export type PillarView = {
   id: string;
@@ -18,6 +18,10 @@ export type PillarView = {
     healthStatus: string;
     targetAllocationPct: number | null;
   }[];
+  // Rollup through themes[].epics — same aggregation getStrategyPillar()
+  // computes for a single pillar, applied here to every pillar in the list.
+  epicCount: number;
+  avgProgress: number;
 };
 
 export async function listStrategyPillars(): Promise<Result<PillarView[]>> {
@@ -36,11 +40,37 @@ export async function listStrategyPillars(): Promise<Result<PillarView[]>> {
             title: true,
             healthStatus: true,
             targetAllocationPct: true,
+            epics: { select: { featureCount: true, doneFeatureCount: true } },
           },
         },
       },
     });
-    return rows;
+
+    return rows.map((p) => {
+      const epics = p.themes.flatMap((t) => t.epics);
+      const withFeatures = epics.filter((e) => e.featureCount > 0);
+      const avgProgress = withFeatures.length
+        ? Math.round(
+            withFeatures.reduce(
+              (s, e) => s + (e.doneFeatureCount / e.featureCount) * 100,
+              0
+            ) / withFeatures.length
+          )
+        : 0;
+      return {
+        id: p.id,
+        name: p.name,
+        tone: p.tone,
+        themes: p.themes.map((t) => ({
+          id: t.id,
+          title: t.title,
+          healthStatus: t.healthStatus,
+          targetAllocationPct: t.targetAllocationPct,
+        })),
+        epicCount: epics.length,
+        avgProgress,
+      };
+    });
   });
 }
 

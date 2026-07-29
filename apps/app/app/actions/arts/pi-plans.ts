@@ -4,7 +4,7 @@ import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { logAudit } from "../audit/index";
+import { logAudit } from "../audit/log-audit";
 import { CreatePIPlanSchema } from "../schemas";
 import type { CreatePIPlanDetailsInput } from "./schema";
 

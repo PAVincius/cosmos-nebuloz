@@ -22,7 +22,7 @@ vi.mock("@repo/database", () => ({
     epic: { update: mocks.epicUpdate },
   },
 }));
-vi.mock("@/app/actions/safe-copilot/indexer", () => ({
+vi.mock("@/app/actions/safe-copilot/index-entity", () => ({
   indexEntity: mocks.indexEntity,
 }));
 

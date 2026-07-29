@@ -1,10 +1,14 @@
-"use server";
-
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { crossedThresholds } from "./threshold-logic";
 
-/** Fires deduped notifications for all newly crossed KR thresholds. */
+/**
+ * Fires deduped notifications for all newly crossed KR thresholds.
+ *
+ * Not a server action — no "use server" directive, so it is not RPC-reachable.
+ * Callers must pass a tenantId they already trust, never a caller-supplied
+ * value.
+ */
 export async function checkKRThresholds(opts: {
   tenantId: string;
   krId: string;

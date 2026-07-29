@@ -15,7 +15,6 @@ import {
   CreateNotificationSchema,
   type Notification,
   NotificationFiltersSchema,
-  type NotificationType,
 } from "./schema";
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
@@ -132,37 +131,6 @@ export async function createNotification(
     revalidatePath("/notifications");
     return notification as Notification;
   });
-}
-
-/**
- * Fire-and-forget helper for other actions to create notifications without
- * requiring a full session context (e.g., system events, risk alerts).
- */
-export async function pushNotification(
-  tenantId: string,
-  payload: {
-    userId: string;
-    type: NotificationType;
-    title: string;
-    body?: string;
-    metadata?: Record<string, unknown>;
-  }
-): Promise<void> {
-  database.notification
-    .create({
-      data: {
-        tenantId,
-        userId: payload.userId,
-        type: payload.type,
-        title: payload.title,
-        body: payload.body ?? null,
-        metadata: payload.metadata
-          ? (payload.metadata as Record<string, string>)
-          : undefined,
-        read: false,
-      },
-    })
-    .catch(() => null);
 }
 
 export async function deleteNotification(

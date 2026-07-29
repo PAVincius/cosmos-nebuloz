@@ -34,6 +34,9 @@ export function EmptyState({
 }) {
   return (
     <div
+      // Lets tests assert "this screen actually rendered data" without knowing
+      // each screen's own empty copy (e2e/labs/_utils.ts).
+      data-testid="empty-state"
       style={{
         display: "flex",
         flexDirection: "column",

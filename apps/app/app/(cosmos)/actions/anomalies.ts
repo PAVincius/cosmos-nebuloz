@@ -24,7 +24,7 @@ import {
   detectCostAnomaliesForTenant,
 } from "@/lib/cost/detect-cost-anomalies";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
 
 const TENANT_WIDE_ART_SENTINEL = "";
 

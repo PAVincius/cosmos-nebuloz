@@ -4,47 +4,10 @@ import { models } from "@repo/ai/lib/models";
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { upsertKnowledgeChunk } from "@repo/database/vector-search";
-import { embed, embedMany } from "ai";
+import { embed } from "ai";
 import { headers } from "next/headers";
 import { sanitizeForPrompt } from "@/lib/prompt-sanitize";
-import { chunkText } from "./chunk-text";
-
-const BATCH_SIZE = 20;
-
-type Chunk = {
-  tenantId: string;
-  sourceType: string;
-  sourceId: string;
-  chunkIndex: number;
-  title: string;
-  textContent: string;
-  metadata?: Record<string, unknown>;
-};
-
-async function embedAndUpsertBatch(chunks: Chunk[]): Promise<void> {
-  if (chunks.length === 0) {
-    return;
-  }
-  const texts = chunks.map((c) => `${c.title}\n${c.textContent}`);
-  const { embeddings } = await embedMany({
-    model: models.embeddings,
-    values: texts,
-  });
-  await Promise.all(
-    chunks.map((c, i) =>
-      upsertKnowledgeChunk({ ...c, embedding: embeddings[i] ?? [] })
-    )
-  );
-}
-
-async function runInBatches(chunks: Chunk[]): Promise<number> {
-  let indexed = 0;
-  for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
-    await embedAndUpsertBatch(chunks.slice(i, i + BATCH_SIZE));
-    indexed += Math.min(BATCH_SIZE, chunks.length - i);
-  }
-  return indexed;
-}
+import { type Chunk, runInBatches } from "./batch-index";
 
 /**
  * Full re-index of tenant knowledge into PIKnowledgeVector.
@@ -218,98 +181,6 @@ export async function syncTenantKnowledge(): Promise<{
 
   const total = Object.values(counts).reduce((a, b) => a + b, 0);
   return { indexed: counts, total };
-}
-
-type SourceType =
-  | "risk"
-  | "pi_objective"
-  | "feature"
-  | "epic"
-  | "okr"
-  | "meeting_insight";
-
-type EntityContent = { title: string; body: string };
-
-async function fetchEntityContent(
-  sourceType: SourceType,
-  sourceId: string,
-  tenantId: string
-): Promise<EntityContent | null> {
-  switch (sourceType) {
-    case "epic": {
-      const e = await database.epic.findFirst({
-        where: { id: sourceId, tenantId },
-        select: { title: true, descriptionMd: true },
-      });
-      return e ? { title: e.title, body: e.descriptionMd ?? "" } : null;
-    }
-    case "feature": {
-      const f = await database.feature.findFirst({
-        where: { id: sourceId, tenantId },
-        select: { title: true },
-      });
-      return f ? { title: f.title, body: "" } : null;
-    }
-    case "risk": {
-      const r = await database.risk.findFirst({
-        where: { id: sourceId, tenantId },
-        select: { title: true, description: true },
-      });
-      return r
-        ? {
-            title: r.title,
-            body: r.description ?? "",
-          }
-        : null;
-    }
-    case "pi_objective": {
-      const o = await database.pIObjective.findFirst({
-        where: { id: sourceId, tenantId },
-        select: { title: true },
-      });
-      return o ? { title: o.title, body: "" } : null;
-    }
-    case "meeting_insight": {
-      const ins = await database.meetingInsight.findFirst({
-        where: { id: sourceId, tenantId },
-        select: { type: true, text: true },
-      });
-      return ins
-        ? { title: `Insight de Meeting (${ins.type})`, body: ins.text }
-        : null;
-    }
-    default:
-      return null;
-  }
-}
-
-/**
- * Re-index a single entity after create/update.
- * Takes tenantId directly — safe for fire-and-forget via queueMicrotask.
- */
-export async function indexEntity(
-  sourceType: SourceType,
-  sourceId: string,
-  tenantId: string
-): Promise<void> {
-  const content = await fetchEntityContent(sourceType, sourceId, tenantId);
-  if (!content) {
-    return;
-  }
-
-  const fullText = [content.title, content.body].filter(Boolean).join("\n\n");
-  const chunks = chunkText(fullText);
-
-  const chunkObjs: Chunk[] = chunks.map((text, i) => ({
-    tenantId,
-    sourceType,
-    sourceId,
-    chunkIndex: i,
-    title: content.title,
-    textContent: text,
-  }));
-
-  await runInBatches(chunkObjs);
 }
 
 /**

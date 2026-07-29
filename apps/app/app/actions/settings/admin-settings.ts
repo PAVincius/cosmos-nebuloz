@@ -7,6 +7,7 @@ import { log } from "@repo/observability/log";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { logAudit } from "../audit/log-audit";
 
 // ─── Last-admin guard ─────────────────────────────────────────────────────────
 
@@ -156,6 +157,15 @@ export async function updateMemberRoleSafe(
     },
   });
 
+  // Promotions (including to ADMIN) and demotions must be traceable.
+  await logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "TenantMember",
+    entityId: memberId,
+    diff: { previousRole: member.role, newRole },
+  });
+
   revalidatePath("/settings/workspace");
   return { ok: true };
 }
@@ -265,6 +275,25 @@ export async function upsertSecurityPolicy(
         terminologyMap: parsed.terminologyMap as Prisma.InputJsonValue,
       }),
       updatedBy: ctx.userId,
+    },
+  });
+
+  // Non-sensitive diff only — never the raw IP list (network topology info).
+  await logAudit(ctx.tenantId, {
+    userId: ctx.userId,
+    action: "updated",
+    entityType: "TenantSecurityPolicy",
+    entityId: ctx.tenantId,
+    diff: {
+      ...(parsed.require2FA !== undefined && {
+        require2FA: parsed.require2FA,
+      }),
+      ...(parsed.gracePeriodDays !== undefined && {
+        gracePeriodDays: parsed.gracePeriodDays,
+      }),
+      ...(parsed.allowedIpRanges !== undefined && {
+        allowedIpRangesCount: parsed.allowedIpRanges.length,
+      }),
     },
   });
 

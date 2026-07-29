@@ -7,11 +7,11 @@ const mocks = vi.hoisted(() => ({
   findRecipientsByRole: vi.fn().mockResolvedValue(["user-sm"]),
 }));
 
-vi.mock("../../app/actions/notifications/index", () => ({
+vi.mock("../../app/actions/notifications/push-notification", () => ({
   pushNotification: mocks.pushNotification,
 }));
 
-vi.mock("../../app/actions/audit/index", () => ({
+vi.mock("../../app/actions/audit/log-audit", () => ({
   logAudit: mocks.logAudit,
 }));
 

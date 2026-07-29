@@ -287,8 +287,8 @@
   --hairline-strong: rgba(255, 255, 255, 0.15);
   --ink: #eef2f8;
   --ink-muted: #93a1b3;
-  --ink-subtle: #65748b;
-  --ink-faint: #46566d;
+  --ink-subtle: #8fa0ba;
+  --ink-faint: #7f8ea8;
   --chip-bg: rgba(255, 255, 255, 0.05);
   --card-shadow:
     0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
@@ -353,8 +353,8 @@
 
   --cosmos-ink: #eef2f8;
   --cosmos-ink-muted: #93a1b3;
-  --cosmos-ink-subtle: #65748b;
-  --cosmos-ink-faint: #46566d;
+  --cosmos-ink-subtle: #8fa0ba;
+  --cosmos-ink-faint: #7f8ea8;
   --cosmos-chip-bg: rgba(255, 255, 255, 0.05);
 
   --cosmos-card-shadow:
@@ -389,12 +389,12 @@
   --card-foreground: oklch(0.91 0.002 280);
   --popover: oklch(0.18 0.007 280); /* surface-2 ~#222228 */
   --popover-foreground: oklch(0.91 0.002 280);
-  --primary: oklch(0.58 0.22 264); /* lavender-blue accent */
+  --primary: oklch(0.55 0.22 264); /* lavender-blue accent */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.18 0.007 280); /* surface-2 */
   --secondary-foreground: oklch(0.91 0.002 280);
   --muted: oklch(0.18 0.007 280); /* surface-2 */
-  --muted-foreground: oklch(0.6 0.005 280); /* ink-subtle ~#8b8b94 */
+  --muted-foreground: oklch(0.68 0.005 280); /* raised from 0.6: at 0.6 it measured 4.08:1 on --chip-bg, under AA */
   --accent: oklch(0.23 0.009 280); /* surface-3 ~#2a2a32 */
   --accent-foreground: oklch(0.91 0.002 280);
   --destructive: oklch(0.5 0.22 27);
@@ -461,6 +461,11 @@
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
+  /* Cosmos brand accent. The portfolio screens ship `bg-accent-c` markup, but
+     nothing mapped the token into Tailwind's colour space, so those utilities
+     emitted nothing and the buttons rendered with no fill at all. */
+  --color-accent-c: var(--accent-c);
+  --color-on-accent: var(--on-accent);
   --color-muted-foreground: var(--muted-foreground);
   --color-muted: var(--muted);
   --color-secondary-foreground: var(--secondary-foreground);

@@ -54,7 +54,7 @@ vi.mock("@repo/database", () => ({
 vi.mock("@/app/actions/governance/decision-log", () => ({
   logDecision: mocks.logDecision,
 }));
-vi.mock("@/app/actions/safe-copilot/indexer", () => ({
+vi.mock("@/app/actions/safe-copilot/index-entity", () => ({
   indexEntity: mocks.indexEntity,
 }));
 

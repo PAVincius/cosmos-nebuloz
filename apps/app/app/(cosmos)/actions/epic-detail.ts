@@ -7,6 +7,21 @@ import { type Result, safeAction } from "../../actions/_base";
 
 export type LbcItem = { id: string; text: string };
 
+// The epic's single investScore aggregate is always present when scored.
+// A per-letter decomposition is only available when investBreakdown was
+// written by the INVEST AI analysis (analyzeInvest / the analyze-invest
+// route) — two different writers persist two different JSON shapes into
+// that column (see parseInvestBreakdown below), and older/never-analyzed
+// epics have neither. Never fabricated: null means "show the aggregate only."
+export type InvestBreakdown = {
+  I: number;
+  N: number;
+  V: number;
+  E: number;
+  S: number;
+  T: number;
+};
+
 export type EpicDetailFull = {
   id: string;
   title: string;
@@ -14,6 +29,7 @@ export type EpicDetailFull = {
   wsjf: number | null;
   sizePoints: number | null;
   investScore: number | null;
+  investBreakdown: InvestBreakdown | null;
   hypothesis: string | null;
   hypothesisResolution: string | null;
   businessOutcomes: LbcItem[];
@@ -22,6 +38,11 @@ export type EpicDetailFull = {
   mvp: string | null;
   sizeEstimate: string | null;
   leanBudgetAllocation: number | null;
+  // Portfolio context — ART/theme resolved tenant-scoped, owner is the
+  // denormalized name already stored on Epic (same field kanban cards read).
+  art: { id: string; name: string } | null;
+  theme: { id: string; title: string; color: string } | null;
+  owner: string | null;
   features: {
     id: string;
     title: string;
@@ -44,6 +65,61 @@ export type EpicDetailFull = {
   };
 };
 
+const INVEST_KEYS = ["I", "N", "V", "E", "S", "T"] as const;
+
+function isRecord(v: unknown): v is Record<string, unknown> {
+  return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+function readBreakdownShape(
+  breakdown: Record<string, unknown>
+): InvestBreakdown | null {
+  const ok = INVEST_KEYS.every((k) => typeof breakdown[k] === "number");
+  if (!ok) {
+    return null;
+  }
+  return {
+    I: breakdown.I as number,
+    N: breakdown.N as number,
+    V: breakdown.V as number,
+    E: breakdown.E as number,
+    S: breakdown.S as number,
+    T: breakdown.T as number,
+  };
+}
+
+function readPerKeyScoreShape(
+  raw: Record<string, unknown>
+): InvestBreakdown | null {
+  const scores: Partial<InvestBreakdown> = {};
+  for (const k of INVEST_KEYS) {
+    const entry = raw[k];
+    if (!isRecord(entry) || typeof entry.score !== "number") {
+      return null;
+    }
+    scores[k] = entry.score;
+  }
+  return scores as InvestBreakdown;
+}
+
+// Parses whichever of the two known persisted investBreakdown shapes is
+// present: analyzeInvest's `{ breakdown: {I..T: number}, rationale, ... }`
+// or the analyze-invest API route's `{ I: {score, ...}, N: {...}, ... }`.
+// Returns null (never a guessed/partial decomposition) for anything else —
+// including the empty/legacy shape some epics still carry.
+function parseInvestBreakdown(raw: unknown): InvestBreakdown | null {
+  if (!isRecord(raw)) {
+    return null;
+  }
+  if (isRecord(raw.breakdown)) {
+    const shapeA = readBreakdownShape(raw.breakdown);
+    if (shapeA) {
+      return shapeA;
+    }
+  }
+  return readPerKeyScoreShape(raw);
+}
+
 export async function getEpicDetailFull(
   epicId: string
 ): Promise<Result<EpicDetailFull | null>> {
@@ -59,6 +135,7 @@ export async function getEpicDetailFull(
         wsjf: true,
         sizePoints: true,
         investScore: true,
+        investBreakdown: true,
         hypothesis: true,
         hypothesisResolution: true,
         businessOutcomes: true,
@@ -72,6 +149,13 @@ export async function getEpicDetailFull(
         // schema. Only the allocation itself is returned below, no burn
         // calculation.
         leanBudgetAllocation: true,
+        // Portfolio context (header + Overview SectionCard). artId has no
+        // FK relation on Epic (see kanban.ts's toKanbanEpic for the same
+        // pattern) — resolved via a separate tenant-scoped ART lookup
+        // below. ownerName is already denormalized on Epic, no join needed.
+        artId: true,
+        ownerName: true,
+        strategicTheme: { select: { id: true, title: true, color: true } },
         features: {
           select: {
             id: true,
@@ -121,6 +205,16 @@ export async function getEpicDetailFull(
       },
     });
 
+    // No FK relation from Epic to ART (artId is a plain denormalized string
+    // — see kanban.ts's toKanbanEpic for the same pattern), so it's resolved
+    // as its own tenant-scoped lookup rather than a Prisma include.
+    const art = epic.artId
+      ? await database.aRT.findFirst({
+          where: { id: epic.artId, tenantId: ctx.tenantId },
+          select: { id: true, name: true },
+        })
+      : null;
+
     return {
       id: epic.id,
       title: epic.title,
@@ -128,8 +222,18 @@ export async function getEpicDetailFull(
       wsjf: epic.wsjf,
       sizePoints: epic.sizePoints,
       investScore: epic.investScore,
+      investBreakdown: parseInvestBreakdown(epic.investBreakdown),
       hypothesis: epic.hypothesis,
       hypothesisResolution: epic.hypothesisResolution,
+      art: art ? { id: art.id, name: art.name } : null,
+      theme: epic.strategicTheme
+        ? {
+            id: epic.strategicTheme.id,
+            title: epic.strategicTheme.title,
+            color: epic.strategicTheme.color,
+          }
+        : null,
+      owner: epic.ownerName || null,
       businessOutcomes: Array.isArray(epic.businessOutcomes)
         ? (epic.businessOutcomes as LbcItem[])
         : [],

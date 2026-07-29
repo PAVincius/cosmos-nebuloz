@@ -9,9 +9,11 @@ const h = vi.hoisted(() => ({
   epicFindFirst: vi.fn(),
   epicUpdate: vi.fn(),
   epicCreate: vi.fn(),
+  epicAggregate: vi.fn(),
   tenantFindUnique: vi.fn(),
   themeFindFirst: vi.fn(),
   logAudit: vi.fn(),
+  transitionEpicStatus: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -34,12 +36,16 @@ vi.mock("@repo/database", () => ({
       findFirst: h.epicFindFirst,
       update: h.epicUpdate,
       create: h.epicCreate,
+      aggregate: h.epicAggregate,
     },
     tenant: { findUnique: h.tenantFindUnique },
     strategicTheme: { findFirst: h.themeFindFirst },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/epics/transition-status", () => ({
+  transitionEpicStatus: h.transitionEpicStatus,
+}));
 
 import {
   createEpic,
@@ -67,6 +73,11 @@ beforeEach(() => {
   vi.clearAllMocks();
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  // listEpics fingerprints the tenant's epic rows to build its cache key.
+  h.epicAggregate.mockResolvedValue({
+    _count: { _all: 1 },
+    _max: { updatedAt: new Date("2026-01-01T00:00:00.000Z") },
+  });
 });
 
 describe("listEpics", () => {
@@ -128,20 +139,33 @@ describe("moveEpic", () => {
     expect(h.epicUpdate).not.toHaveBeenCalled();
   });
 
-  it("updates lifecycle, audits, and revalidates on success", async () => {
+  it("routes a column change through the lifecycle machine, audits, and revalidates", async () => {
     h.epicFindFirst.mockResolvedValue({
       id: "ep-1",
       lifecycleStatus: "ANALYZING",
     });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: true,
+      data: {
+        epicId: "ep-1",
+        fromStatus: "ANALYZING",
+        toStatus: "PORTFOLIO_BACKLOG",
+      },
+    });
     h.epicUpdate.mockResolvedValue({ id: "ep-1" });
-    const res = await moveEpic({ id: "ep-1", column: "done", order: 3 });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 3 });
+
     expect(res.ok).toBe(true);
-    expect(h.epicUpdate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        where: { id: "ep-1" },
-        data: { lifecycleStatus: "DONE", lifecycleOrder: 3 },
-      })
-    );
+    expect(h.transitionEpicStatus).toHaveBeenCalledWith({
+      epicId: "ep-1",
+      event: "MOVE_TO_BACKLOG",
+    });
+    // o board só persiste a posição — o status é da máquina
+    expect(h.epicUpdate).toHaveBeenCalledWith({
+      where: { id: "ep-1" },
+      data: { lifecycleOrder: 3 },
+    });
     expect(h.logAudit).toHaveBeenCalledWith(
       tenantCtx.tenantId,
       expect.objectContaining({
@@ -151,6 +175,56 @@ describe("moveEpic", () => {
       })
     );
     expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  it("propagates a lifecycle machine rejection instead of writing the status", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "GUARD_FAILED",
+    });
+
+    const res = await moveEpic({
+      id: "ep-1",
+      column: "implementing",
+      order: 0,
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.epicUpdate).not.toHaveBeenCalled();
+  });
+
+  it("refuses to drag a card back to the funnel", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+
+    const res = await moveEpic({ id: "ep-1", column: "funnel", order: 0 });
+
+    expect(res.ok).toBe(false);
+    expect(h.transitionEpicStatus).not.toHaveBeenCalled();
+    expect(h.epicUpdate).not.toHaveBeenCalled();
+  });
+
+  it("reorders within the same column without touching the lifecycle", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.epicUpdate.mockResolvedValue({ id: "ep-1" });
+
+    const res = await moveEpic({ id: "ep-1", column: "analyzing", order: 5 });
+
+    expect(res.ok).toBe(true);
+    expect(h.transitionEpicStatus).not.toHaveBeenCalled();
+    expect(h.epicUpdate).toHaveBeenCalledWith({
+      where: { id: "ep-1" },
+      data: { lifecycleOrder: 5 },
+    });
   });
 });
 

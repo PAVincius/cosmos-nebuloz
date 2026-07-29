@@ -41,7 +41,7 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 vi.mock("@/lib/cost/detect-cost-anomalies", () => ({
   COST_ANOMALY_RULE_ID: "R-COST-01",
   detectCostAnomaliesForTenant: h.detectCostAnomaliesForTenant,

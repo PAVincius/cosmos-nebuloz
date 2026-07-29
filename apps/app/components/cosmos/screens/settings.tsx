@@ -1,78 +1,79 @@
 "use client";
 
-// settings.tsx — Settings, wired to getWorkspaceSettings(). Read-only
-// "Users & Roles" (RF-84) list + SSO enabled/disabled status (RF-85).
-// Custom-role editing, SSO config, MFA, audit-log export (RF-86), and
-// feature-flag toggling (RF-87) are NOT wired — write/config flows,
-// out of scope for a read-data tier.
-import { getWorkspaceSettings } from "@/app/(cosmos)/actions/settings";
-import { Badge, ErrorState, PageHeader, SectionCard, useAction } from "../kit";
+// settings.tsx — Settings tab shell (RF-84..RF-87). Was a SHELL screen (1 of
+// 7 tabs, no tab shell at all — a flat "Users & Roles" list). This is the
+// tab shell plus all 7 tabs, each wired to the mature action layer
+// (apps/app/app/actions/*) via thin (cosmos)/actions/settings*.ts adapters:
+//   1. Workspace       — settings-workspace-tab.tsx (real, ADMIN-editable)
+//   2. Membros / RBAC  — settings-members-tab.tsx (real, ADMIN-editable)
+//   3. Segurança / SSO — settings-security-tab.tsx (real; SSO status
+//                        read-only by design, security policy ADMIN-editable)
+//   4. Auditoria       — settings-audit-tab.tsx (real, tenant-scoped, capped)
+//   5. Notificações    — settings-notifications-tab.tsx (real, self-scoped)
+//   6. Configuração SAFe — settings-safe-tab.tsx (real, ADMIN/RTE-editable)
+//   7. Plano & faturamento — honest "Em breve": no payment-provider
+//      integration exists, so no invoices/seats/card are rendered — only
+//      the real Tenant.plan tier, read-only.
+// Tabs are client-side state, not routes, per the parity spec.
+import { useState } from "react";
+import { getWorkspaceTab } from "@/app/(cosmos)/actions/settings";
+import { Badge, PageHeader, Tabs, useAction } from "../kit";
+import { ModalProvider } from "../modal";
+import SettingsAuditTab from "./settings-audit-tab";
+import SettingsBillingTab from "./settings-billing-tab";
+import SettingsMembersTab from "./settings-members-tab";
+import SettingsNotificationsTab from "./settings-notifications-tab";
+import SettingsSafeTab from "./settings-safe-tab";
+import SettingsSecurityTab from "./settings-security-tab";
+import SettingsWorkspaceTab from "./settings-workspace-tab";
 
-export default function SettingsScreen() {
-  const { data, loading, error } = useAction(getWorkspaceSettings);
+const TABS = [
+  { id: "workspace", label: "Workspace" },
+  { id: "members", label: "Membros" },
+  { id: "security", label: "Segurança" },
+  { id: "audit", label: "Auditoria" },
+  { id: "notifications", label: "Notificações" },
+  { id: "safe", label: "SAFe" },
+  { id: "billing", label: "Faturamento" },
+];
+
+// Auditoria (full admin audit trail) and Segurança (2FA/grace/IP posture)
+// expose admin-only information — getAuditTab/getSecurityTab now enforce
+// this server-side (requireRole ADMIN); hide the tab buttons too so a
+// non-ADMIN never sees controls that only bounce off a 403.
+const ADMIN_ONLY_TAB_IDS = new Set(["security", "audit"]);
+
+function SettingsBody() {
+  const [active, setActive] = useState("workspace");
+  const { data } = useAction(getWorkspaceTab);
+  const isAdmin = data?.currentUserRole === "ADMIN";
+  const tabs = TABS.filter((t) => isAdmin || !ADMIN_ONLY_TAB_IDS.has(t.id));
 
   return (
     <div className="fade-in">
       <PageHeader
         eyebrow="Plataforma"
-        meta={
-          <Badge dot tone={data?.ssoEnabled ? "green" : "neutral"}>
-            {data?.ssoEnabled ? "SSO ativo" : "SSO desativado"}
-          </Badge>
-        }
-        subtitle="Membros, papéis e status de SSO do workspace."
+        meta={<Badge tone="accent">{tabs.length} abas</Badge>}
+        subtitle="Workspace, membros, segurança, auditoria, notificações, SAFe e faturamento."
         title="Settings"
       />
-      {error && <ErrorState />}
-      <SectionCard
-        bodyStyle={{ padding: "12px 16px" }}
-        icon="users"
-        title="Users & Roles"
-        tone="accent"
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-          {!(loading || error) && data?.members.length === 0 && (
-            <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
-              Nenhum membro no workspace.
-            </span>
-          )}
-          {data?.members.map((m) => (
-            <div
-              key={m.id}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                padding: "10px 16px",
-                borderRadius: 10,
-                border: "1px solid var(--hairline)",
-                background: "var(--surface)",
-              }}
-            >
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: "var(--ink)",
-                  }}
-                >
-                  {m.userName}
-                </div>
-                <div
-                  style={{
-                    fontSize: 11.5,
-                    color: "var(--ink-faint)",
-                  }}
-                >
-                  {m.userEmail}
-                </div>
-              </div>
-              <Badge tone="accent">{m.role}</Badge>
-            </div>
-          ))}
-        </div>
-      </SectionCard>
+      <Tabs active={active} onChange={setActive} tabs={tabs} />
+
+      {active === "workspace" && <SettingsWorkspaceTab />}
+      {active === "members" && <SettingsMembersTab />}
+      {active === "security" && isAdmin && <SettingsSecurityTab />}
+      {active === "audit" && isAdmin && <SettingsAuditTab />}
+      {active === "notifications" && <SettingsNotificationsTab />}
+      {active === "safe" && <SettingsSafeTab />}
+      {active === "billing" && <SettingsBillingTab />}
     </div>
+  );
+}
+
+export default function SettingsScreen() {
+  return (
+    <ModalProvider>
+      <SettingsBody />
+    </ModalProvider>
   );
 }

@@ -17,11 +17,11 @@ import {
   StoryStatus,
   safeAction,
 } from "../_base";
-import { logAudit } from "../audit/index";
+import { syncFeatureProgress, syncTeamWip } from "../_denorm";
+import { logAudit } from "../audit/log-audit";
 import { dispatchEvent } from "../events";
 import { enforce } from "../permissions";
 import { evaluateStoryInvest } from "./invest-utils";
-import { syncFeatureProgress, syncTeamWip } from "../_denorm";
 
 // ─── Internal schemas (not exported from "use server") ────────────────────────
 
@@ -159,8 +159,12 @@ export async function createStory(raw: unknown): Promise<Result<any>> {
     }
     revalidatePath("/teams");
 
-    if (data.featureId) void syncFeatureProgress(data.featureId, ctx.tenantId);
-    if (teamId) void syncTeamWip(teamId, ctx.tenantId);
+    if (data.featureId) {
+      void syncFeatureProgress(data.featureId, ctx.tenantId);
+    }
+    if (teamId) {
+      void syncTeamWip(teamId, ctx.tenantId);
+    }
 
     return story;
   });
@@ -254,8 +258,12 @@ export async function updateStory(
     revalidatePath("/teams");
 
     if (data.status !== undefined && data.status !== story.status) {
-      if (story.featureId) void syncFeatureProgress(story.featureId, ctx.tenantId);
-      if (teamId) void syncTeamWip(teamId, ctx.tenantId);
+      if (story.featureId) {
+        void syncFeatureProgress(story.featureId, ctx.tenantId);
+      }
+      if (teamId) {
+        void syncTeamWip(teamId, ctx.tenantId);
+      }
     }
 
     return updated;
@@ -314,8 +322,12 @@ export async function updateStoryStatus(
     }
     revalidatePath("/teams");
 
-    if (story.featureId) void syncFeatureProgress(story.featureId, ctx.tenantId);
-    if (teamId) void syncTeamWip(teamId, ctx.tenantId);
+    if (story.featureId) {
+      void syncFeatureProgress(story.featureId, ctx.tenantId);
+    }
+    if (teamId) {
+      void syncTeamWip(teamId, ctx.tenantId);
+    }
 
     return updated;
   });
@@ -371,7 +383,9 @@ export async function moveStoryToSprint(
     revalidatePath("/teams");
 
     const oldTeamId = story.sprint?.teamId;
-    if (oldTeamId) void syncTeamWip(oldTeamId, ctx.tenantId);
+    if (oldTeamId) {
+      void syncTeamWip(oldTeamId, ctx.tenantId);
+    }
 
     return updated;
   });
@@ -411,8 +425,12 @@ export async function deleteStory(id: string): Promise<Result<{ id: string }>> {
     }
     revalidatePath("/teams");
 
-    if (story.featureId) void syncFeatureProgress(story.featureId, ctx.tenantId);
-    if (teamId) void syncTeamWip(teamId, ctx.tenantId);
+    if (story.featureId) {
+      void syncFeatureProgress(story.featureId, ctx.tenantId);
+    }
+    if (teamId) {
+      void syncTeamWip(teamId, ctx.tenantId);
+    }
 
     return { id };
   });

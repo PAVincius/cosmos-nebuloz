@@ -36,7 +36,7 @@ vi.mock("@repo/database", () => ({
     $transaction: h.transaction,
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
@@ -54,6 +54,10 @@ beforeEach(() => {
 });
 
 describe("listThemes", () => {
+  beforeEach(() => {
+    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+  });
+
   it("returns tenant-scoped themes with computed epic count and avg progress", async () => {
     h.strategicThemeFindMany.mockResolvedValue([
       {
@@ -81,6 +85,125 @@ describe("listThemes", () => {
     if (r.ok) {
       expect(r.data[0].epicCount).toBe(2);
       expect(r.data[0].avgProgress).toBe(75); // (50 + 100) / 2
+    }
+  });
+
+  it("queries BillingEntryAllocation tenant-scoped, restricted to themed rows", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([]);
+
+    await listThemes();
+
+    expect(h.billingEntryAllocationFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, themeId: { not: null } },
+      })
+    );
+  });
+
+  it("computes actualAllocationPct per theme, normalized against all themed allocations tenant-wide", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      {
+        id: "th1",
+        title: "A",
+        description: null,
+        color: "#6366f1",
+        healthStatus: "on",
+        targetAllocationPct: 25,
+        horizon: null,
+        epics: [],
+      },
+      {
+        id: "th2",
+        title: "B",
+        description: null,
+        color: "#6366f1",
+        healthStatus: "on",
+        targetAllocationPct: 75,
+        horizon: null,
+        epics: [],
+      },
+    ]);
+    h.billingEntryAllocationFindMany.mockResolvedValue([
+      {
+        themeId: "th1",
+        percentage: 100,
+        billingEntry: { effectiveCost: 300 },
+      },
+      {
+        themeId: "th2",
+        percentage: 100,
+        billingEntry: { effectiveCost: 700 },
+      },
+    ]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.find((t) => t.id === "th1")?.actualAllocationPct).toBe(30);
+      expect(r.data.find((t) => t.id === "th2")?.actualAllocationPct).toBe(70);
+    }
+  });
+
+  it("returns actualAllocationPct 0 (not null) for a theme with no cost while other themes have data", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      {
+        id: "th1",
+        title: "A",
+        description: null,
+        color: "#6366f1",
+        healthStatus: "on",
+        targetAllocationPct: 50,
+        horizon: null,
+        epics: [],
+      },
+      {
+        id: "th2",
+        title: "B",
+        description: null,
+        color: "#6366f1",
+        healthStatus: "on",
+        targetAllocationPct: 50,
+        horizon: null,
+        epics: [],
+      },
+    ]);
+    h.billingEntryAllocationFindMany.mockResolvedValue([
+      {
+        themeId: "th2",
+        percentage: 100,
+        billingEntry: { effectiveCost: 500 },
+      },
+    ]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.find((t) => t.id === "th1")?.actualAllocationPct).toBe(0);
+    }
+  });
+
+  it("returns null actualAllocationPct for every theme when the tenant has no allocation data (never fabricates)", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      {
+        id: "th1",
+        title: "A",
+        description: null,
+        color: "#6366f1",
+        healthStatus: "on",
+        targetAllocationPct: 100,
+        horizon: null,
+        epics: [],
+      },
+    ]);
+    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].actualAllocationPct).toBeNull();
     }
   });
 });

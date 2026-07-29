@@ -14,7 +14,6 @@ import {
 import {
   AuditFiltersSchema,
   type AuditLog,
-  type WriteAuditLogInput,
   WriteAuditLogSchema,
 } from "./schema";
 
@@ -121,28 +120,4 @@ export async function writeAuditLog(raw: unknown): Promise<Result<AuditLog>> {
     revalidatePath("/settings/audit");
     return log as AuditLog;
   });
-}
-
-/**
- * Fire-and-forget helper for other actions to log audit entries without
- * blocking the main operation. Errors are swallowed intentionally.
- *
- * Usage: logAudit(ctx.tenantId, { userId: ctx.userId, action: "created", ... })
- */
-export async function logAudit(
-  tenantId: string,
-  payload: WriteAuditLogInput & { userId?: string }
-): Promise<void> {
-  await database.auditLog
-    .create({
-      data: {
-        tenantId,
-        userId: payload.userId ?? null,
-        action: payload.action,
-        entityType: payload.entityType,
-        entityId: payload.entityId,
-        diff: (payload.diff as Record<string, string>) ?? undefined,
-      },
-    })
-    .catch(() => null);
 }

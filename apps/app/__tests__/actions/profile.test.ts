@@ -108,6 +108,21 @@ describe("updateNotificationPreferences", () => {
     expect(call.data.metadata[key]).toEqual(prefs);
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/profile");
   });
+
+  it("merges a partial update, preserving sibling prefs (no silent wipe)", async () => {
+    const key = `notif_prefs_${tenantCtx.userId}`;
+    // The user already had team_changes=true; the toggle sends only weekly_digest.
+    mocks.tenantFindUnique.mockResolvedValue({
+      metadata: { [key]: { team_changes: true } },
+    });
+    await updateNotificationPreferences({ weekly_digest: false });
+    const call = mocks.tenantUpdate.mock.calls[0][0];
+    // Without the merge, team_changes would be wiped by the overwrite.
+    expect(call.data.metadata[key]).toEqual({
+      team_changes: true,
+      weekly_digest: false,
+    });
+  });
 });
 
 describe("getNotificationPreferences", () => {

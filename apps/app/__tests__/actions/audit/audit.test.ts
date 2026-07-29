@@ -29,9 +29,9 @@ vi.mock("@repo/database", () => ({
 import {
   getAuditLogsByEntity,
   listAuditLogs,
-  logAudit,
   writeAuditLog,
 } from "../../../app/actions/audit/index";
+import { logAudit } from "../../../app/actions/audit/log-audit";
 
 // ─── Fixtures ─────────────────────────────────────────────────────────────────
 

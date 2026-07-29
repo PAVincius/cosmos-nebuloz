@@ -28,7 +28,7 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
-vi.mock("../../app/actions/audit", () => ({ logAudit: h.logAudit }));
+vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
@@ -57,6 +57,7 @@ describe("listStrategyPillars", () => {
             title: "Expansão LATAM",
             healthStatus: "on",
             targetAllocationPct: 25,
+            epics: [],
           },
         ],
       },
@@ -72,6 +73,54 @@ describe("listStrategyPillars", () => {
     if (r.ok) {
       expect(r.data[0].themes[0].title).toBe("Expansão LATAM");
     }
+  });
+
+  it("computes the epic rollup (through themes[].epics) per pillar, same as getStrategyPillar", async () => {
+    h.strategyPillarFindMany.mockResolvedValue([
+      {
+        id: "p1",
+        name: "Crescimento",
+        tone: "accent",
+        themes: [
+          {
+            id: "th1",
+            title: "Expansão LATAM",
+            healthStatus: "on",
+            targetAllocationPct: 25,
+            epics: [
+              { featureCount: 4, doneFeatureCount: 2 },
+              { featureCount: 4, doneFeatureCount: 4 },
+            ],
+          },
+          {
+            id: "th2",
+            title: "Tema sem épicos",
+            healthStatus: "watch",
+            targetAllocationPct: null,
+            epics: [],
+          },
+        ],
+      },
+      {
+        id: "p2",
+        name: "Sem temas",
+        tone: "neutral",
+        themes: [],
+      },
+    ]);
+
+    const r = await listStrategyPillars();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(r.data[0].epicCount).toBe(2);
+    expect(r.data[0].avgProgress).toBe(75); // (50 + 100) / 2
+    expect(r.data[1].epicCount).toBe(0);
+    expect(r.data[1].avgProgress).toBe(0);
+    // themes[] in the response never leaks the raw epics rows.
+    expect(r.data[0].themes[0]).not.toHaveProperty("epics");
   });
 });
 

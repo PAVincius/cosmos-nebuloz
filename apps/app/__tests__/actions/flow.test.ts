@@ -32,11 +32,11 @@ vi.mock("@repo/database", () => ({
 
 import { database } from "@repo/database";
 import {
-  AGING_WIP_SLA_DAYS,
   getAgingWip,
   getFlowMetricsSeries,
   getLatestFlowMetrics,
 } from "../../app/(cosmos)/actions/flow";
+import { AGING_WIP_SLA_DAYS } from "../../app/(cosmos)/actions/flow.constants";
 
 beforeEach(() => {
   vi.clearAllMocks();

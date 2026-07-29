@@ -9,16 +9,7 @@ import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
-
-export const EntityKind = z.enum([
-  "epic",
-  "feature",
-  "team",
-  "theme",
-  "art",
-  "solutionTrain",
-]);
-export type EntityKind = z.infer<typeof EntityKind>;
+import { EntityKind } from "./entity-search.constants";
 
 export type EntityOption = { id: string; label: string };
 

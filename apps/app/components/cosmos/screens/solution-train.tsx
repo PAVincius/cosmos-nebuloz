@@ -1,16 +1,21 @@
 "use client";
 
 // solution-train.tsx — Solution Train, wired to listSolutionTrains() +
-// createCapability(). Rollup counts only — aggregated Program Board/ROAM/
-// flow-metrics at Solution level (RF-80) are NOT wired; that's a follow-up
-// plan, not this tier.
+// createCapability(). Per-ART progress (epic/feature completion), the
+// consolidated ROAM rollup (SolutionRisk) and cross-ART dependency links
+// (CrossArtDependency) are wired to real, tenant-scoped data. The handoff's
+// multi-PI cadence timeline is NOT wired — see the comment on
+// listSolutionTrains in actions/solution-train.ts for why.
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import {
   createCapability,
   listSolutionTrains,
+  type SolutionTrainArtView,
   type SolutionTrainCapabilityView,
+  type SolutionTrainCrossArtDependencyView,
+  type SolutionTrainRoamView,
 } from "@/app/(cosmos)/actions/solution-train";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
@@ -20,7 +25,9 @@ import {
   ErrorState,
   KpiCard,
   PageHeader,
+  Progress,
   SectionCard,
+  type Tone,
   useAction,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
@@ -263,6 +270,224 @@ function CapabilityList({
   );
 }
 
+const sectionLabelStyle: CSSProperties = {
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 8,
+};
+
+const subsectionStyle: CSSProperties = {
+  marginTop: 12,
+  paddingTop: 10,
+  borderTop: "1px solid var(--hairline)",
+};
+
+const ROAM_ORDER = ["RESOLVED", "OWNED", "ACCEPTED", "MITIGATED"] as const;
+
+const ROAM_TONE: Record<(typeof ROAM_ORDER)[number], Tone> = {
+  RESOLVED: "green",
+  OWNED: "blue",
+  ACCEPTED: "amber",
+  MITIGATED: "purple",
+};
+
+const ROAM_LABEL: Record<(typeof ROAM_ORDER)[number], string> = {
+  RESOLVED: "Resolvido",
+  OWNED: "Atribuído",
+  ACCEPTED: "Aceito",
+  MITIGATED: "Mitigado",
+};
+
+const CROSS_ART_TYPE_LABEL: Record<
+  SolutionTrainCrossArtDependencyView["type"],
+  string
+> = {
+  PROVIDES: "Fornece",
+  NEEDS: "Precisa",
+  BLOCKS: "Bloqueia",
+};
+
+function ArtProgressList({ arts }: { arts: SolutionTrainArtView[] }) {
+  if (arts.length === 0) {
+    return null;
+  }
+  return (
+    <div style={subsectionStyle}>
+      <div style={sectionLabelStyle}>Progresso por ART</div>
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {arts.map((a) => {
+          const pct =
+            a.featureCount > 0
+              ? Math.round((a.doneFeatureCount / a.featureCount) * 100)
+              : a.epicCount > 0
+                ? Math.round((a.epicDoneCount / a.epicCount) * 100)
+                : 0;
+          return (
+            <div key={a.id}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  fontSize: 12,
+                  marginBottom: 4,
+                }}
+              >
+                <span style={{ fontWeight: 600, color: "var(--ink)" }}>
+                  {a.name}
+                </span>
+                <span
+                  className="mono"
+                  style={{ fontWeight: 700, color: "var(--ink-muted)" }}
+                >
+                  {pct}%
+                </span>
+              </div>
+              <Progress height={5} tone="blue" value={pct} />
+              <div
+                style={{
+                  fontSize: 11,
+                  color: "var(--ink-faint)",
+                  marginTop: 4,
+                }}
+              >
+                {a.epicDoneCount}/{a.epicCount} épicos · {a.doneFeatureCount}/
+                {a.featureCount} features
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function RoamRollup({ roam }: { roam: SolutionTrainRoamView }) {
+  return (
+    <div style={subsectionStyle}>
+      <div style={sectionLabelStyle}>ROAM consolidado</div>
+      <div style={{ display: "flex", gap: 6, marginBottom: 10 }}>
+        {ROAM_ORDER.map((status) => (
+          <div
+            key={status}
+            style={{
+              flex: 1,
+              textAlign: "center",
+              padding: "8px 4px",
+              borderRadius: "var(--r-md)",
+              background: `var(--${ROAM_TONE[status]}-soft)`,
+              border: `1px solid rgba(var(--${ROAM_TONE[status]}-rgb),.25)`,
+            }}
+          >
+            <div
+              className="mono"
+              style={{
+                fontSize: 16,
+                fontWeight: 800,
+                color: `var(--${ROAM_TONE[status]}-text)`,
+              }}
+            >
+              {roam.counts[status]}
+            </div>
+            <div
+              style={{
+                fontSize: 9.5,
+                fontWeight: 700,
+                color: "var(--ink-subtle)",
+              }}
+            >
+              {ROAM_LABEL[status]}
+            </div>
+          </div>
+        ))}
+      </div>
+      {roam.risks.length === 0 ? (
+        <div style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+          Nenhum risco de solução registrado.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {roam.risks.map((r) => (
+            <div
+              key={r.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 12,
+              }}
+            >
+              <span
+                style={{
+                  flex: 1,
+                  minWidth: 0,
+                  color: "var(--ink)",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {r.title}
+              </span>
+              {r.owner && (
+                <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                  {r.owner}
+                </span>
+              )}
+              <Badge tone={ROAM_TONE[r.roamStatus]}>
+                {ROAM_LABEL[r.roamStatus]}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CrossArtDependencyList({
+  deps,
+}: {
+  deps: SolutionTrainCrossArtDependencyView[];
+}) {
+  return (
+    <div style={subsectionStyle}>
+      <div style={sectionLabelStyle}>Dependências cross-ART</div>
+      {deps.length === 0 ? (
+        <div style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+          Nenhuma dependência cross-ART registrada.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {deps.map((d) => (
+            <div
+              key={d.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                color: "var(--ink-muted)",
+              }}
+            >
+              <span style={{ fontWeight: 600, color: "var(--ink)" }}>
+                {d.sourceArtName}
+              </span>
+              <Icon name="arrowRight" size={12} />
+              <span style={{ fontWeight: 600, color: "var(--ink)" }}>
+                {d.targetArtName}
+              </span>
+              <Badge tone="neutral">{CROSS_ART_TYPE_LABEL[d.type]}</Badge>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SolutionTrainBody() {
   const modal = useModal();
   const [refreshKey, setRefreshKey] = useState(0);
@@ -301,7 +526,7 @@ function SolutionTrainBody() {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
           gap: 16,
         }}
       >
@@ -344,6 +569,9 @@ function SolutionTrainBody() {
               />
             </div>
             <CapabilityList capabilities={t.capabilities} />
+            <ArtProgressList arts={t.arts} />
+            <RoamRollup roam={t.roam} />
+            <CrossArtDependencyList deps={t.crossArtDependencies} />
           </SectionCard>
         ))}
       </div>

@@ -11,8 +11,13 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import type { Tone } from "@/lib/cosmos-data";
 import { type Result, safeAction } from "../../actions/_base";
-import { logAudit } from "../../actions/audit";
+import { logAudit } from "../../actions/audit/log-audit";
+import { epicsFingerprint } from "../../actions/epics/epics-fingerprint";
 import { portfolioEpicsCacheTag } from "../../actions/epics/portfolio-cache";
+import {
+  type TransitionEpicInput,
+  transitionEpicStatus,
+} from "../../actions/epics/transition-status";
 
 // ── column ↔ SAFe lifecycle mapping ──
 const COLUMN_TO_LIFECYCLE = {
@@ -78,9 +83,10 @@ function toKanbanEpic(row: EpicRow): KanbanEpic {
   };
 }
 
-// Cache keyed by tenant — headers are read outside the cache (dynamic), the query
-// inside is cached and invalidated by revalidateTag('epics:<tenantId>').
-const cachedEpics = (tenantId: string) =>
+// Cache keyed by tenant + fingerprint. The tag is kept so the writers that do
+// call revalidateTag still flush immediately, and the TTL bounds the one input
+// the fingerprint cannot see: strategicTheme.title, which lives on another row.
+const cachedEpics = (tenantId: string, fingerprint: string) =>
   unstable_cache(
     async () => {
       const rows = await database.epic.findMany({
@@ -90,14 +96,15 @@ const cachedEpics = (tenantId: string) =>
       });
       return rows.map(toKanbanEpic);
     },
-    ["kanban-epics", tenantId],
-    { tags: [portfolioEpicsCacheTag(tenantId)] }
+    ["kanban-epics", tenantId, fingerprint],
+    { tags: [portfolioEpicsCacheTag(tenantId)], revalidate: 60 }
   )();
 
 export async function listEpics(): Promise<Result<KanbanEpic[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    return cachedEpics(ctx.tenantId);
+    const fingerprint = await epicsFingerprint(ctx.tenantId);
+    return cachedEpics(ctx.tenantId, fingerprint);
   });
 }
 
@@ -106,6 +113,16 @@ const MoveEpicSchema = z.object({
   column: z.enum(["funnel", "analyzing", "backlog", "implementing", "done"]),
   order: z.number().int().min(0),
 });
+
+// Evento da máquina de ciclo de vida que leva a cada coluna do board. FUNNEL não
+// aparece: é o estado inicial e nenhum evento retorna a ele — arrastar um card
+// de volta pro Funil não é uma transição SAFe válida.
+const LIFECYCLE_TO_EVENT: Record<string, TransitionEpicInput["event"]> = {
+  ANALYZING: "ANALYZE",
+  PORTFOLIO_BACKLOG: "MOVE_TO_BACKLOG",
+  IMPLEMENTING: "START_IMPLEMENTING",
+  DONE: "COMPLETE",
+};
 
 export async function moveEpic(
   input: z.infer<typeof MoveEpicSchema>
@@ -125,20 +142,51 @@ export async function moveEpic(
     }
 
     const lifecycleStatus = COLUMN_TO_LIFECYCLE[column];
+
+    // Reordenar dentro da mesma coluna não é transição de ciclo de vida.
+    if (lifecycleStatus === existing.lifecycleStatus) {
+      await database.epic.update({
+        where: { id },
+        // DB column is lifecycleOrder — see art-core.prisma / H1 fix commit
+        // body for why this is deliberately not the legacy `order` field.
+        data: { lifecycleOrder: order },
+      });
+      revalidateTag(portfolioEpicsCacheTag(ctx.tenantId), "max");
+      return { id };
+    }
+
+    // Mudança de coluna passa pela máquina XState — mesma porta de
+    // transitionEpicStatus (guards INVEST/hipótese/orçamento/governança, RBAC
+    // por evento elevado, StateTransitionHistory, evento Inngest). Antes daqui
+    // o board gravava lifecycleStatus direto, o que tornava o Kanban uma
+    // segunda fonte de verdade discordante da máquina e do trigger
+    // epic_lifecycle_guard no banco.
+    const event = LIFECYCLE_TO_EVENT[lifecycleStatus];
+    if (!event) {
+      throw new Error(
+        "Voltar um épico para o Funil não é uma transição válida do ciclo de vida SAFe."
+      );
+    }
+
+    const transition = await transitionEpicStatus({ epicId: id, event });
+    if (!transition.ok) {
+      throw new Error(transition.error);
+    }
+
     await database.epic.update({
       where: { id },
-      // DB column is lifecycleOrder — see art-core.prisma / H1 fix commit
-      // body for why this is deliberately not the legacy `order` field.
-      data: { lifecycleStatus, lifecycleOrder: order },
+      data: { lifecycleOrder: order },
     });
 
+    // transitionEpicStatus já grava StateTransitionHistory; o audit aqui é o
+    // registro da ação de board (quem arrastou, para onde, em que posição).
     await logAudit(ctx.tenantId, {
       userId: ctx.userId,
       action: "status_changed",
       entityType: "epic",
       entityId: id,
       diff: {
-        lifecycleStatus: `${existing.lifecycleStatus}→${lifecycleStatus}`,
+        lifecycleStatus: `${transition.data.fromStatus}→${transition.data.toStatus}`,
         order: String(order),
       },
     });

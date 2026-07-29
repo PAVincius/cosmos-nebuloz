@@ -104,6 +104,17 @@ model Task {
   estimatedSp Int?
   actualSp    Int?
 
+  // External integration fields — mesma convenção de Story/Feature.
+  // externalSource == null  ⇒  task nativa Cosmos (editável aqui).
+  // externalSource != null  ⇒  task importada, read-only nesta UI.
+  externalId     String?
+  externalSource String? // jira | linear | github | notion | trello | asana | gitlab
+  externalUrl    String?
+
+  // Conteúdo da nota nativa (block editor). Array de TaskBlock serializado.
+  // Sempre null para tasks externas.
+  noteBlocks Json?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -113,6 +124,7 @@ model Task {
 
   @@index([tenantId])
   @@index([storyId])
+  @@index([externalSource, externalId])
 }
 
 model Defect {
@@ -188,7 +200,7 @@ model StandupEntry {
 
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
-  @@unique([teamId, userId, date])
+  @@unique([tenantId, teamId, userId, date])
   @@index([tenantId])
   @@index([teamId, date])
 }

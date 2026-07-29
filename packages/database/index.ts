@@ -46,4 +46,5 @@ if (process.env.NODE_ENV !== "production") {
 // integration-tested against the staging DB.
 
 export * from "./generated/client";
+export { withTenantDb } from "./tenant-db";
 export * from "./vector-search";

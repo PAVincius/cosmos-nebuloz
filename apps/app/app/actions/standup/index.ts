@@ -77,7 +77,8 @@ export async function upsertStandupEntry(raw: unknown): Promise<Result<any>> {
 
     const result = await database.standupEntry.upsert({
       where: {
-        teamId_userId_date: {
+        tenantId_teamId_userId_date: {
+          tenantId: ctx.tenantId,
           teamId: data.teamId,
           userId: ctx.userId,
           date,
