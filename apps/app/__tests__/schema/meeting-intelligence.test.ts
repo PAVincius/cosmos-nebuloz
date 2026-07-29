@@ -19,12 +19,18 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/cosmos_dev";
 
-const hasExplicitDb = Boolean(process.env.DATABASE_URL);
+// Same placeholder guard as flow-intelligence.test.ts — the Vercel build env
+// sets DATABASE_URL to a localhost value with no Postgres behind it.
+const LOCAL_HOST_RE = /@(localhost|127\.0\.0\.1)[:/]/;
+const rawDbUrl = process.env.DATABASE_URL;
+const hasExplicitDb = Boolean(
+  rawDbUrl && (!LOCAL_HOST_RE.test(rawDbUrl) || process.env.RUN_DB_TESTS)
+);
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
   console.log(
-    "[meeting-intelligence] DATABASE_URL not set — skipping DB integration suite."
+    "[meeting-intelligence] no reachable DATABASE_URL — skipping DB integration suite."
   );
 }
 

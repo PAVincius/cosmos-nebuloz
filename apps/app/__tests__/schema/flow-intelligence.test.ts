@@ -27,12 +27,19 @@ const DATABASE_URL =
 // The default fallback URL points to localhost which does not exist in CI.
 // Treat any URL that contains "localhost" without an explicit opt-in env var
 // as a placeholder so CI/local runs without a DB skip cleanly.
-const hasExplicitDb = Boolean(process.env.DATABASE_URL);
+// A localhost URL is a placeholder unless RUN_DB_TESTS opts in: the Vercel build
+// env sets DATABASE_URL to a localhost value with no Postgres behind it, so
+// presence alone is not proof of a reachable database.
+const LOCAL_HOST_RE = /@(localhost|127\.0\.0\.1)[:/]/;
+const rawDbUrl = process.env.DATABASE_URL;
+const hasExplicitDb = Boolean(
+  rawDbUrl && (!LOCAL_HOST_RE.test(rawDbUrl) || process.env.RUN_DB_TESTS)
+);
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
   console.log(
-    "[flow-intelligence] DATABASE_URL not set — skipping DB integration suite."
+    "[flow-intelligence] no reachable DATABASE_URL — skipping DB integration suite."
   );
 }
 
