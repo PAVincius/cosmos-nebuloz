@@ -1,34 +1,47 @@
 "use client";
 
-// Caso — detalhe (FR-5) + Decisão (FR-6).
+// Caso — detalhe (FR-5) + Decisão (FR-6). Port de `charter-screens-2.jsx`.
 
-import { type ReactNode, useCallback, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
 import { listAuditForEntity } from "@/app/(charter)/actions/audit";
 import { decideCase, getCase } from "@/app/(charter)/actions/cases";
-import { createMitigation } from "@/app/(charter)/actions/risk";
+import {
+  createMitigation,
+  type MitigationRow as MitigationTableRow,
+} from "@/app/(charter)/actions/risk";
 import { getSettings } from "@/app/(charter)/actions/settings";
 import {
   DATA_CLASS_LABEL,
+  DATA_CLASS_RULE,
   DATA_CLASS_TONE,
+  dataClassWeight,
   HITL_LABEL,
+  RISK_CATEGORY_DESC,
   RISK_CATEGORY_LABEL,
-  RISK_CATEGORY_TONE,
-  slaTone,
+  recommendPath,
   type Tone,
 } from "@/lib/charter/rules";
-import { Badge, Button, PageHeader, SectionCard } from "../../cosmos/kit";
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
+  BackLink,
   BarRow,
-  Eyebrow,
   MetaCell,
   ScreenError,
   SmartEmptyState,
-  StatusDot,
   Tabs,
 } from "../base";
+import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DecisionModal, MitigationModal } from "../modals";
+import { AuditList, MitigationTable, RiskMiniMatrix } from "../parts";
 import { useCharterData } from "../use-charter-data";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
@@ -52,77 +65,26 @@ const CRIT_LABEL: Record<string, string> = {
   HIGH: "Alta",
 };
 
-/** Heatmap 5×5 com a posição do caso plotada. */
-function RiskPlot({
-  severity,
-  likelihood,
-}: {
-  severity: number;
-  likelihood: number;
-}) {
-  const cells: ReactNode[] = [];
-  for (let sev = 5; sev >= 1; sev--) {
-    for (let like = 1; like <= 5; like++) {
-      const score = sev * like;
-      const tone = score >= 16 ? "red" : score >= 9 ? "amber" : "green";
-      const here = sev === severity && like === likelihood;
-      cells.push(
-        <div
-          key={`${sev}-${like}`}
-          style={{
-            aspectRatio: "1",
-            borderRadius: "var(--r-xs)",
-            display: "grid",
-            placeItems: "center",
-            fontSize: 10.5,
-            fontWeight: 700,
-            fontFamily: "var(--font-jetbrains-mono), monospace",
-            background: here ? `var(--${tone})` : `var(--${tone}-soft)`,
-            color: here ? "var(--accent-fg)" : `var(--${tone}-text)`,
-            border: here
-              ? `2px solid var(--${tone})`
-              : "1px solid var(--hairline)",
-            boxShadow: here
-              ? `0 0 14px rgba(var(--${tone}-rgb),.6)`
-              : undefined,
-          }}
-        >
-          {here ? score : ""}
-        </div>
-      );
-    }
+const DECIDABLE = ["SUBMITTED", "REVIEW", "CHANGES"];
+const HAS_TRAIL_SHORTCUT = ["APPROVED", "RESTRICTED", "BLOCKED"];
+
+/** Tom por severidade declarada da própria categoria — não o tom fixo da
+ *  categoria (esse é para comparar entre casos, este é para ler este caso). */
+function riskValueTone(value: number): Tone {
+  if (value >= 4) {
+    return "red";
   }
-  return (
-    <div>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(5,1fr)",
-          gap: 4,
-        }}
-      >
-        {cells}
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginTop: 7,
-          fontSize: 10,
-          color: "var(--ink-faint)",
-        }}
-      >
-        <span>← probabilidade</span>
-        <span>severidade ↑</span>
-      </div>
-    </div>
-  );
+  if (value >= 3) {
+    return "amber";
+  }
+  return "green";
 }
 
 function CaseDetailInner({ param }: { param?: string }) {
+  const router = useRouter();
   const { open, close } = useModal();
   const [pending, startTransition] = useTransition();
-  const [tab, setTab] = useState("risco");
+  const [tab, setTab] = useState("overview");
 
   const code = param ?? "";
   const { data, loading, error, reload } = useCharterData(
@@ -144,26 +106,36 @@ function CaseDetailInner({ param }: { param?: string }) {
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
   }
-  if (loading) {
+  if (loading || !data) {
     return (
       <div className="fade-in">
         <div className="skeleton" style={{ height: 96, borderRadius: 14 }} />
       </div>
     );
   }
-  if (!data) {
-    return (
-      <SmartEmptyState
-        icon="inbox"
-        subtitle={`Nenhum caso com o código ${code} nesta organização.`}
-        title="Caso não encontrado"
-      />
-    );
-  }
 
   const meta = STATUS_META[data.status] ?? STATUS_META.DRAFT;
-  const tone = slaTone(data.slaRemaining);
-  const overdue = data.slaRemaining !== null && data.slaRemaining < 0;
+  const rec = recommendPath(
+    data.dataClass,
+    data.exposure as never,
+    data.criticality as never
+  );
+  const eligible =
+    data.vendorMaxClass !== null &&
+    dataClassWeight(data.vendorMaxClass) >= dataClassWeight(data.dataClass);
+  const lastDecider = data.decisions[0]?.deciderRole ?? "—";
+  const mitigationRows: MitigationTableRow[] = data.mitigations.map((m) => ({
+    id: m.id,
+    code: m.code,
+    useCaseCode: data.code,
+    useCaseTitle: data.title,
+    category: m.category,
+    action: m.action,
+    ownerName: m.ownerName,
+    dueDate: m.dueDate,
+    status: m.status,
+    overdue: m.overdue,
+  }));
 
   const openDecision = () =>
     open(
@@ -225,436 +197,523 @@ function CaseDetailInner({ param }: { param?: string }) {
       />
     );
 
-  const risks = Object.entries(RISK_CATEGORY_LABEL) as [
-    keyof typeof RISK_CATEGORY_LABEL,
-    string,
-  ][];
-  const riskKey: Record<string, string> = {
-    PRIVACY: "privacy",
-    REGULATORY: "regulatory",
-    SECURITY: "security",
-    BIAS: "bias",
-    IP: "ip",
-    OPERATIONAL: "operational",
-    REPUTATIONAL: "reputational",
-  };
-
   return (
     <div className="fade-in">
+      <BackLink
+        label="Casos de Uso"
+        onClick={() => router.push("/charter/cases")}
+      />
+
       <PageHeader
-        eyebrow={data.code}
+        eyebrow={
+          <>
+            {data.department ?? "—"} · caso de uso ·{" "}
+            {EXPOSURE_LABEL[data.exposure]?.toLowerCase() ?? "—"}
+            {data.submittedAt &&
+              ` · submetido ${new Date(data.submittedAt).toLocaleDateString("pt-BR")}`}
+          </>
+        }
         meta={
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-            <StatusDot label={meta.label} tone={meta.tone} />
+          <>
+            <Badge
+              dot={["REVIEW", "SUBMITTED"].includes(data.status)}
+              tone={meta.tone}
+            >
+              {meta.label}
+            </Badge>
             <Badge tone={DATA_CLASS_TONE[data.dataClass]}>
               {DATA_CLASS_LABEL[data.dataClass]}
             </Badge>
             <Badge tone={data.riskTone as Tone}>
-              {data.riskLabel} · {data.score}
+              Risco {data.score} · {data.riskLabel}
             </Badge>
-            <span
-              className="mono"
-              style={{
-                fontSize: 11.5,
-                fontWeight: 700,
-                color: `var(--${tone}-text)`,
-              }}
-            >
-              SLA{" "}
-              {data.slaRemaining === null
-                ? "—"
-                : overdue
-                  ? "vencido"
-                  : `${data.slaRemaining}/${data.slaTotal}`}
-            </span>
-          </div>
+            {data.hitl && (
+              <Badge tone="accent">
+                {HITL_LABEL[data.hitl as keyof typeof HITL_LABEL]}
+              </Badge>
+            )}
+          </>
         }
         subtitle={data.objective}
         title={data.title}
         tone={meta.tone}
       >
-        <Button icon="plus" onClick={openMitigation} variant="secondary">
-          Nova mitigação
-        </Button>
-        <Button icon="gavel" onClick={openDecision}>
-          Registrar decisão
-        </Button>
+        {DECIDABLE.includes(data.status) && (
+          <span
+            style={{
+              opacity: data.can.decide ? 1 : 0.45,
+              pointerEvents: data.can.decide ? "auto" : "none",
+            }}
+            title={
+              data.can.decide
+                ? undefined
+                : "Seu papel de governança não decide caso de uso"
+            }
+          >
+            <Button icon="gavel" onClick={openDecision}>
+              Registrar decisão
+            </Button>
+          </span>
+        )}
+        {HAS_TRAIL_SHORTCUT.includes(data.status) && (
+          <Button
+            icon="history"
+            onClick={() => setTab("trail")}
+            variant="secondary"
+          >
+            Ver trilha
+          </Button>
+        )}
       </PageHeader>
 
-      {/* MetaCell em vez de sopa de badges: seis badges lado a lado não dizem
-          qual campo é qual. */}
-      <SectionCard bodyStyle={{ padding: 16 }} title="Contexto">
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(214px,1fr))",
+          gap: "var(--gap)",
+          marginBottom: "var(--gap)",
+        }}
+      >
+        <KpiCard
+          hint={`sev ${data.severity} × prob ${data.likelihood}`}
+          icon="target"
+          label="Risco composto"
+          tone={data.riskTone as Tone}
+          value={data.score}
+        />
+        <KpiCard
+          hint={DATA_CLASS_RULE[data.dataClass]}
+          icon="shield"
+          label="Classe de dado"
+          tone={DATA_CLASS_TONE[data.dataClass]}
+          value={DATA_CLASS_LABEL[data.dataClass].split(" ")[0]}
+        />
+        <KpiCard
+          hint={`prazo ${rec.slaDays} dias úteis`}
+          icon="clock"
+          label="SLA restante"
+          tone={
+            data.slaRemaining === null
+              ? "accent"
+              : data.slaRemaining <= 2
+                ? "red"
+                : "amber"
+          }
+          unit={data.slaRemaining === null ? "" : "d"}
+          value={data.slaRemaining === null ? "—" : data.slaRemaining}
+        />
+        <KpiCard
+          hint={`${data.mitigations.filter((m) => m.status === "DONE").length} concluídas`}
+          icon="users"
+          label="Mitigações vinculadas"
+          tone="accent"
+          value={data.mitigations.length}
+        />
+      </div>
+
+      <Tabs
+        onChange={setTab}
+        tabs={[
+          { id: "overview", label: "Visão geral" },
+          { id: "risk", label: "Risco" },
+          {
+            id: "mitigations",
+            label: "Mitigações",
+            count: data.mitigations.length,
+          },
+          { id: "trail", label: "Trilha", count: audit.data?.length ?? 0 },
+        ]}
+        value={tab}
+      />
+
+      {tab === "overview" && (
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))",
-            gap: 16,
+            gridTemplateColumns: "1fr 1fr",
+            gap: "var(--gap)",
+            alignItems: "start",
           }}
         >
-          <MetaCell label="Área" value={data.department ?? "—"} />
-          <MetaCell label="Dono" value={data.ownerName ?? "—"} />
-          <MetaCell label="Fornecedor" value={data.vendorName ?? "—"} />
-          <MetaCell
-            label="Exposição"
-            value={EXPOSURE_LABEL[data.exposure] ?? data.exposure}
-          />
-          <MetaCell
-            label="Criticidade"
-            value={CRIT_LABEL[data.criticality] ?? data.criticality}
-          />
-          <MetaCell
-            label="Human-in-the-loop"
-            value={data.hitl ? HITL_LABEL[data.hitl as never] : "—"}
-          />
-          <MetaCell
-            label="Caminho de aprovação"
-            value={data.approvalPath ?? "—"}
-          />
-          <MetaCell
-            label="Submetido em"
-            mono
-            value={
-              data.submittedAt
-                ? new Date(data.submittedAt).toLocaleDateString("pt-BR")
-                : "—"
-            }
-          />
-        </div>
-      </SectionCard>
-
-      {/* Estado condicional: restrições, bloqueio ou ajuste pedido. */}
-      {data.status === "RESTRICTED" && data.restrictions.length > 0 && (
-        <div style={{ marginTop: "var(--gap)" }}>
           <SectionCard
-            icon="lock"
-            subtitle="Válidas até serem levantadas ou o caso arquivado"
-            title="Condições aceitas"
-            tone="amber"
+            icon="fileText"
+            subtitle="O que foi declarado no intake — base de toda a decisão"
+            title="Declaração do caso"
           >
-            <ol
+            <p
               style={{
-                margin: 0,
-                paddingLeft: 18,
-                fontSize: 12.5,
+                fontSize: 13,
                 lineHeight: 1.7,
                 color: "var(--ink)",
+                marginBottom: 16,
               }}
             >
-              {data.restrictions.map((r) => (
-                <li key={r}>{r}</li>
+              {data.objective}
+            </p>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: 12,
+              }}
+            >
+              {[
+                ["Área", data.department ?? "—"],
+                ["Responsável", data.ownerName ?? "—"],
+                ["Exposição", EXPOSURE_LABEL[data.exposure] ?? data.exposure],
+                [
+                  "Criticidade",
+                  CRIT_LABEL[data.criticality] ?? data.criticality,
+                ],
+                [
+                  "Revisão humana",
+                  data.hitl
+                    ? HITL_LABEL[data.hitl as keyof typeof HITL_LABEL]
+                    : "—",
+                ],
+                ["Revisor", lastDecider],
+              ].map(([l, val]) => (
+                <div
+                  key={l}
+                  style={{
+                    padding: "10px 12px",
+                    borderRadius: 9,
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--hairline)",
+                  }}
+                >
+                  <MetaCell label={l} value={val} />
+                </div>
               ))}
-            </ol>
+            </div>
           </SectionCard>
-        </div>
-      )}
-      {data.status === "BLOCKED" && data.blockReason && (
-        <div style={{ marginTop: "var(--gap)" }}>
-          <SectionCard icon="ban" title="Motivo do bloqueio" tone="red">
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65 }}>
-              {data.blockReason}
-            </p>
-          </SectionCard>
-        </div>
-      )}
-      {data.status === "CHANGES" && data.changeRequest && (
-        <div style={{ marginTop: "var(--gap)" }}>
-          <SectionCard icon="arrowLeft" title="Ajustes pedidos" tone="amber">
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65 }}>
-              {data.changeRequest}
-            </p>
-          </SectionCard>
-        </div>
-      )}
-      {data.vendorIneligible && (
-        <div role="alert" style={{ marginTop: "var(--gap)" }}>
-          <SectionCard
-            icon="alert"
-            title="Fornecedor ficou inelegível"
-            tone="red"
-          >
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65 }}>
-              A postura contratual do fornecedor mudou e não cobre mais a classe
-              de dado deste caso. Exige revisão humana antes de continuar.
-            </p>
-          </SectionCard>
-        </div>
-      )}
 
-      <div style={{ marginTop: "var(--gap)" }}>
-        <Tabs
-          onChange={setTab}
-          tabs={[
-            { id: "risco", label: "Perfil de risco" },
-            {
-              id: "mitigacoes",
-              label: "Mitigações",
-              count: data.mitigations.length,
-            },
-            { id: "decisoes", label: "Decisões", count: data.decisions.length },
-            { id: "auditoria", label: "Auditoria" },
-          ]}
-          value={tab}
-        />
-
-        {tab === "risco" && (
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(0,1.3fr) minmax(0,1fr)",
+              display: "flex",
+              flexDirection: "column",
               gap: "var(--gap)",
-              alignItems: "start",
             }}
           >
             <SectionCard
-              subtitle="Sete categorias, 1 a 5 cada"
-              title="Categorias"
+              icon="route"
+              subtitle="Calculado pela política — não escolhido pelo requester"
+              title="Caminho de aprovação derivado"
+              tone={rec.tone}
             >
-              {risks.map(([id, label]) => (
-                <BarRow
-                  key={id}
-                  label={label}
-                  max={5}
-                  tone={RISK_CATEGORY_TONE[id]}
-                  value={data.risks[riskKey[id]] ?? 1}
-                />
-              ))}
-            </SectionCard>
-            <SectionCard
-              subtitle={`Severidade ${data.severity} × probabilidade ${data.likelihood} = ${data.score}`}
-              title="Posição na matriz"
-            >
-              <RiskPlot likelihood={data.likelihood} severity={data.severity} />
-              <p
-                style={{
-                  fontSize: 11.5,
-                  color: "var(--ink-muted)",
-                  lineHeight: 1.6,
-                  marginTop: 12,
-                  marginBottom: 0,
-                }}
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 11 }}
               >
-                Severidade é o <strong>máximo</strong> das sete categorias, não
-                a média: um risco de privacidade 5 não é diluído por seis
-                categorias em 1.
-              </p>
-            </SectionCard>
-          </div>
-        )}
-
-        {tab === "mitigacoes" && (
-          <SectionCard bodyStyle={{ padding: 0 }} title="Mitigações do caso">
-            {data.mitigations.length === 0 ? (
-              <SmartEmptyState
-                onPrimary={openMitigation}
-                primaryLabel="Criar mitigação"
-                subtitle="Nenhuma ação de mitigação registrada para este caso."
-                title="Sem mitigações"
-              />
-            ) : (
-              data.mitigations.map((m, i) => (
                 <div
-                  key={m.id}
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "84px minmax(0,1fr) 140px 110px 110px",
-                    gap: 12,
-                    padding: "11px 16px",
+                    display: "flex",
                     alignItems: "center",
-                    borderBottom:
-                      i === data.mitigations.length - 1
-                        ? "none"
-                        : "1px solid var(--hairline)",
+                    gap: 10,
+                    padding: "12px 14px",
+                    borderRadius: 9,
+                    background: `rgba(var(--${rec.tone}-rgb),.08)`,
+                    border: `1px solid rgba(var(--${rec.tone}-rgb),.22)`,
                   }}
                 >
-                  <span
-                    className="mono"
-                    style={{ fontSize: 11.5, color: "var(--ink-faint)" }}
-                  >
-                    {m.code}
-                  </span>
-                  <span style={{ fontSize: 12.5, color: "var(--ink)" }}>
-                    {m.action}
-                  </span>
-                  <Badge
-                    tone={
-                      RISK_CATEGORY_TONE[
-                        m.category as keyof typeof RISK_CATEGORY_TONE
-                      ]
-                    }
-                  >
-                    {
-                      RISK_CATEGORY_LABEL[
-                        m.category as keyof typeof RISK_CATEGORY_LABEL
-                      ]
-                    }
-                  </Badge>
-                  <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
-                    {m.ownerName ?? "—"}
-                  </span>
-                  <span
-                    className="mono"
-                    style={{
-                      fontSize: 11.5,
-                      fontWeight: 700,
-                      color: m.overdue ? "var(--red-text)" : "var(--ink-muted)",
-                    }}
-                  >
-                    {m.overdue
-                      ? "atrasada"
-                      : m.dueDate
-                        ? new Date(m.dueDate).toLocaleDateString("pt-BR")
-                        : "—"}
-                  </span>
-                </div>
-              ))
-            )}
-          </SectionCard>
-        )}
-
-        {tab === "decisoes" && (
-          <SectionCard title="Histórico de decisões">
-            {data.decisions.length === 0 ? (
-              <SmartEmptyState
-                icon="gavel"
-                subtitle="Este caso ainda não recebeu decisão de revisor."
-                title="Sem decisões"
-              />
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 14 }}
-              >
-                {data.decisions.map((d) => (
-                  <div
-                    key={d.id}
-                    style={{
-                      padding: 13,
-                      borderRadius: "var(--r-md)",
-                      background: "var(--surface-2)",
-                      border: "1px solid var(--hairline)",
-                    }}
-                  >
+                  <div style={{ minWidth: 0 }}>
                     <div
                       style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        gap: 10,
-                        marginBottom: 7,
+                        fontSize: 13,
+                        fontWeight: 700,
+                        color: `var(--${rec.tone}-text)`,
                       }}
                     >
-                      <Badge tone={STATUS_META[d.outcome]?.tone ?? "accent"}>
-                        {STATUS_META[d.outcome]?.label ?? d.outcome}
-                      </Badge>
-                      <span
-                        className="mono"
-                        style={{ fontSize: 11, color: "var(--ink-faint)" }}
-                      >
-                        {new Date(d.createdAt).toLocaleString("pt-BR")} ·{" "}
-                        {d.deciderRole}
-                      </span>
+                      {rec.path}
                     </div>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: 12.5,
-                        lineHeight: 1.6,
-                        color: "var(--ink-muted)",
-                      }}
-                    >
-                      {d.rationale}
-                    </p>
-                    {d.conditions.length > 0 && (
-                      <ol
-                        style={{
-                          margin: "8px 0 0",
-                          paddingLeft: 18,
-                          fontSize: 12,
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {d.conditions.map((c) => (
-                          <li key={c}>{c}</li>
-                        ))}
-                      </ol>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </SectionCard>
-        )}
-
-        {tab === "auditoria" && (
-          <SectionCard
-            subtitle="Do mais recente ao mais antigo · append-only"
-            title="Trilha de auditoria"
-          >
-            {(audit.data ?? []).length === 0 ? (
-              <SmartEmptyState
-                icon="history"
-                subtitle="Nenhuma ação registrada para este caso ainda."
-                title="Trilha vazia"
-              />
-            ) : (
-              <div
-                style={{ display: "flex", flexDirection: "column", gap: 10 }}
-              >
-                {(audit.data ?? []).map((a) => (
-                  <div
-                    key={a.id}
-                    style={{
-                      paddingLeft: 12,
-                      borderLeft: "2px solid var(--hairline-strong)",
-                    }}
-                  >
-                    <Eyebrow>
-                      {new Date(a.when).toLocaleString("pt-BR")} · {a.actor} ·{" "}
-                      {a.role}
-                    </Eyebrow>
                     <div
                       style={{
-                        fontSize: 12.5,
+                        fontSize: 11.5,
+                        color: "var(--ink-muted)",
+                        marginTop: 2,
+                      }}
+                    >
+                      SLA de {rec.slaDays} dias úteis · exige{" "}
+                      {HITL_LABEL[rec.hitl].toLowerCase()}
+                    </div>
+                  </div>
+                </div>
+                <Callout icon="shield" tone={DATA_CLASS_TONE[data.dataClass]}>
+                  {DATA_CLASS_RULE[data.dataClass]}
+                </Callout>
+              </div>
+            </SectionCard>
+
+            {data.vendorId && (
+              <SectionCard
+                action={
+                  <Button
+                    icon="arrowRight"
+                    onClick={() =>
+                      router.push(`/charter/vendor/${data.vendorCode}`)
+                    }
+                    size="sm"
+                    variant="soft"
+                  >
+                    Abrir
+                  </Button>
+                }
+                icon="plug"
+                subtitle={`${data.vendorCategory ?? "sem categoria"} · ${data.vendorRegion ?? "região não declarada"}`}
+                title="Fornecedor"
+                tone={eligible ? "blue" : "red"}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 11,
+                    marginBottom: 13,
+                  }}
+                >
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div
+                      style={{
+                        fontSize: 13.5,
                         fontWeight: 700,
                         color: "var(--ink)",
-                        marginTop: 3,
                       }}
                     >
-                      {a.action}
+                      {data.vendorName}
                     </div>
-                    {a.note && (
-                      <div
-                        style={{
-                          fontSize: 11.5,
-                          color: "var(--ink-muted)",
-                          marginTop: 2,
-                          lineHeight: 1.5,
-                        }}
-                      >
-                        {a.note}
-                      </div>
-                    )}
-                    {a.diff && a.diff.length > 0 && (
-                      <div style={{ marginTop: 6 }}>
-                        {a.diff.map(([field, before, after]) => (
-                          <div
-                            className="mono"
-                            key={field}
-                            style={{
-                              fontSize: 11,
-                              color: "var(--ink-faint)",
-                            }}
-                          >
-                            {field}: {before} → {after}
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <div style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
+                      {data.vendorDpa ? "DPA assinado" : "sem DPA"} · retenção{" "}
+                      {data.vendorRetention?.toLowerCase() ?? "não declarada"}
+                    </div>
                   </div>
-                ))}
-              </div>
+                </div>
+                {!eligible && (
+                  <Callout icon="ban" tone="red">
+                    Este fornecedor não é elegível a dado{" "}
+                    <strong>{DATA_CLASS_LABEL[data.dataClass]}</strong> — classe
+                    máxima permitida é{" "}
+                    {data.vendorMaxClass
+                      ? DATA_CLASS_LABEL[data.vendorMaxClass]
+                      : "nenhuma"}
+                    . Aprovar exige troca de fornecedor ou exceção formal com
+                    mitigação compensatória.
+                  </Callout>
+                )}
+              </SectionCard>
             )}
+
+            {data.status === "RESTRICTED" && data.restrictions.length > 0 && (
+              <SectionCard
+                icon="lock"
+                subtitle="Condições que acompanham o caso até serem levantadas"
+                title="Restrições ativas"
+                tone="green"
+              >
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 2 }}
+                >
+                  {data.restrictions.map((r) => (
+                    <CheckRow
+                      checked
+                      disabled
+                      key={r}
+                      label={r}
+                      onToggle={() => {
+                        // Somente leitura: restrição é levantada via nova decisão.
+                      }}
+                      tone="green"
+                    />
+                  ))}
+                </div>
+              </SectionCard>
+            )}
+            {data.status === "BLOCKED" && data.blockReason && (
+              <SectionCard icon="ban" title="Motivo do bloqueio" tone="red">
+                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.65 }}>
+                  {data.blockReason}
+                </p>
+              </SectionCard>
+            )}
+            {data.status === "CHANGES" && data.changeRequest && (
+              <SectionCard
+                icon="arrowLeft"
+                title="Ajustes solicitados"
+                tone="amber"
+              >
+                <p style={{ margin: 0, fontSize: 13, lineHeight: 1.65 }}>
+                  {data.changeRequest}
+                </p>
+              </SectionCard>
+            )}
+            {data.vendorIneligible && (
+              <SectionCard
+                icon="alert"
+                title="Fornecedor ficou inelegível"
+                tone="red"
+              >
+                <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65 }}>
+                  A postura contratual do fornecedor mudou e não cobre mais a
+                  classe de dado deste caso. Exige revisão humana antes de
+                  continuar.
+                </p>
+              </SectionCard>
+            )}
+          </div>
+        </div>
+      )}
+
+      {tab === "risk" && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "1.3fr 1fr",
+            gap: "var(--gap)",
+            alignItems: "start",
+          }}
+        >
+          <SectionCard
+            icon="target"
+            subtitle="Severidade declarada de 1 a 5 · o composto usa a maior severidade"
+            title="Perfil de risco por categoria"
+            tone="red"
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+              {(
+                Object.entries(RISK_CATEGORY_LABEL) as [
+                  keyof typeof RISK_CATEGORY_LABEL,
+                  string,
+                ][]
+              ).map(([id, label]) => {
+                const key = id.toLowerCase() as keyof typeof data.risks;
+                const val = data.risks[key] ?? 1;
+                return (
+                  <BarRow
+                    hint={RISK_CATEGORY_DESC[id]}
+                    key={id}
+                    label={label}
+                    max={5}
+                    suffix="/5"
+                    tone={riskValueTone(val)}
+                    value={val}
+                  />
+                );
+              })}
+            </div>
           </SectionCard>
-        )}
-      </div>
+          <SectionCard
+            icon="gauge"
+            subtitle="Severidade × probabilidade"
+            title="Posição na matriz"
+            tone={data.riskTone as Tone}
+          >
+            <RiskMiniMatrix lik={data.likelihood} sev={data.severity} />
+            <div
+              style={{
+                marginTop: 16,
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr 1fr",
+                gap: 10,
+              }}
+            >
+              <div
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 9,
+                  background: "var(--surface-2)",
+                  border: "1px solid var(--hairline)",
+                }}
+              >
+                <MetaCell
+                  label="Severidade"
+                  mono
+                  value={`${data.severity}/5`}
+                />
+              </div>
+              <div
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 9,
+                  background: "var(--surface-2)",
+                  border: "1px solid var(--hairline)",
+                }}
+              >
+                <MetaCell
+                  label="Probabilidade"
+                  mono
+                  value={`${data.likelihood}/5`}
+                />
+              </div>
+              <div
+                style={{
+                  padding: "10px 12px",
+                  borderRadius: 9,
+                  background: `rgba(var(--${data.riskTone}-rgb),.09)`,
+                  border: `1px solid rgba(var(--${data.riskTone}-rgb),.22)`,
+                }}
+              >
+                <MetaCell
+                  label="Composto"
+                  mono
+                  tone={data.riskTone as Tone}
+                  value={data.score}
+                />
+              </div>
+            </div>
+          </SectionCard>
+        </div>
+      )}
+
+      {tab === "mitigations" && (
+        <SectionCard
+          action={
+            <Button
+              icon="plus"
+              onClick={openMitigation}
+              size="sm"
+              variant="soft"
+            >
+              Nova mitigação
+            </Button>
+          }
+          bodyStyle={{ padding: 0 }}
+          icon="shield"
+          subtitle="Cada risco alto exige dono e prazo — sem isso a aprovação não sustenta auditoria"
+          title="Mitigações deste caso"
+          tone="amber"
+        >
+          {mitigationRows.length === 0 ? (
+            <SmartEmptyState
+              icon="shield"
+              onPrimary={openMitigation}
+              primaryIcon="plus"
+              primaryLabel="Nova mitigação"
+              subtitle="Casos com severidade 4 ou 5 precisam de pelo menos uma mitigação com dono e prazo."
+              title="Nenhuma mitigação registrada"
+              tone="amber"
+            />
+          ) : (
+            <MitigationTable rows={mitigationRows} />
+          )}
+        </SectionCard>
+      )}
+
+      {tab === "trail" && (
+        <SectionCard
+          bodyStyle={{ padding: 0 }}
+          icon="history"
+          subtitle="Append-only — nenhuma entrada é editada ou removida"
+          title="Trilha de auditoria do caso"
+        >
+          {(audit.data ?? []).length === 0 ? (
+            <SmartEmptyState
+              icon="history"
+              subtitle="A trilha começa na submissão do caso."
+              title="Sem entradas ainda"
+            />
+          ) : (
+            <AuditList rows={audit.data ?? []} />
+          )}
+        </SectionCard>
+      )}
     </div>
   );
 }

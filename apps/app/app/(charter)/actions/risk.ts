@@ -1,6 +1,6 @@
 "use server";
 
-import { withTenantDb } from "@repo/database";
+import { type CharterDataClass, withTenantDb } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -42,6 +42,7 @@ export type RiskBoard = {
   cases: {
     code: string;
     title: string;
+    dataClass: CharterDataClass;
     severity: number;
     likelihood: number;
     score: number;
@@ -66,6 +67,7 @@ export async function getRiskBoard(): Promise<Result<RiskBoard>> {
           code: true,
           title: true,
           status: true,
+          dataClass: true,
           riskPrivacy: true,
           riskRegulatory: true,
           riskSecurity: true,
@@ -149,6 +151,7 @@ export async function getRiskBoard(): Promise<Result<RiskBoard>> {
         cases: scored.map((s) => ({
           code: s.code,
           title: s.title,
+          dataClass: s.dataClass,
           severity: s.severity,
           likelihood: s.likelihood,
           score: s.score,

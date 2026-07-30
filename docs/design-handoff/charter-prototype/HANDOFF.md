@@ -1,12 +1,16 @@
 # Charter — handoff de continuação do port de UI
 
-**Estado em 2026-07-29.** Build verde: `tsc` 0 erros, `biome` 0 erros, 31/31 testes.
+**Estado em 2026-07-30.** Build verde: `tsc` 0 erros, `biome` 0 erros, 31/31 testes,
+`verify:charter` 33/35 (2 falhas de propósito — ADR-0012), 6/6 E2E dos fluxos
+prioritários (§6).
 
 Este documento existe porque a UI foi construída **na ordem errada** na primeira
 tentativa: a partir do `SRD-Charter.md` (que descreve comportamento) em vez do
 JSX do protótipo (que define a anatomia visual). O resultado compilava e passava
-nos testes, mas não era o produto desenhado. Oito telas já foram refeitas contra
-o JSX; duas faltam — e as duas dependem de um JSX que não está neste diretório.
+nos testes, mas não era o produto desenhado. **As 10 telas já foram refeitas
+contra o JSX** — `case-detail.tsx` e `risk.tsx` foram as últimas, portadas contra
+`charter-screens-2.jsx` (baixado do projeto de design via MCP `claude_design` e
+agora arquivado neste diretório).
 
 **Regra para quem continuar: abra o JSX do protótipo antes de escrever a tela.**
 O SRD diz o que a tela precisa fazer; o JSX diz como ela é.
@@ -15,8 +19,9 @@ O SRD diz o que a tela precisa fazer; o JSX diz como ela é.
 
 ## 1. Como recuperar o protótipo
 
-`charter-screens-3.jsx` está neste diretório. Os outros vêm do projeto de design
-via MCP `claude_design` (auth por `/design-login`):
+`charter-screens-2.jsx` e `charter-screens-3.jsx` estão neste diretório. Os
+outros, se precisar, vêm do projeto de design via MCP `claude_design` (auth por
+`/design-login`):
 
 ```
 projectId: 691f7fe5-e623-458e-aa9f-92b8c46dbbd9
@@ -25,7 +30,7 @@ projectId: 691f7fe5-e623-458e-aa9f-92b8c46dbbd9
 | Arquivo | Caminho no projeto | Cobre |
 |---|---|---|
 | `charter-screens-1.jsx` | `design_handoff_charter/prototype/charter-screens-1.jsx` | Dashboard ✅, Policy ✅ |
-| `charter-screens-2.jsx` | `design_handoff_charter/prototype/charter-screens-2.jsx` | Cases ✅, **CaseDetail**, **Risk** |
+| `charter-screens-2.jsx` | *(neste diretório)* | Cases ✅, CaseDetail ✅, Risk ✅ |
 | `charter-screens-3.jsx` | *(neste diretório)* | Vendors ✅, VendorDetail ✅, Onboarding ✅, Audit ✅, Settings ✅ |
 | `charter-modal.jsx` | `design_handoff_charter/prototype/charter-modal.jsx` | kit de form ✅ (já portado) |
 | `charter-data.jsx` | `design_handoff_charter/prototype/charter-data.jsx` | dados de referência (já no seed) |
@@ -57,38 +62,31 @@ Docs normativos do mesmo projeto: `SRD-Charter.md`, `DATA-MODEL.md`, `DESIGN.md`
 
 ### Telas já portadas
 
-`dashboard.tsx`, `cases.tsx`, `policy.tsx`, `vendors.tsx`, `vendor-detail.tsx`,
-`onboarding.tsx`, `audit.tsx`, `settings.tsx` — usar como **referência de
-estilo** para as duas restantes.
+`dashboard.tsx`, `cases.tsx`, `case-detail.tsx`, `policy.tsx`, `risk.tsx`,
+`vendors.tsx`, `vendor-detail.tsx`, `onboarding.tsx`, `audit.tsx`,
+`settings.tsx` — as 10 telas do V1, todas contra o JSX.
 
-`BackLink` (em `base.tsx`) é o botão de voltar do protótipo; `case-detail.tsx`
-deve usar o mesmo, não reimplementar.
+`case-detail.tsx` usa `BackLink` (em `base.tsx`) para o botão de voltar,
+`RiskMiniMatrix`/`MitigationTable`/`AuditList` de `parts.tsx`, e ganhou
+`can.decide` em `getCase()` (mesmo padrão de `PolicyView.can` em `policy.ts`) —
+o cliente não pode importar `@repo/rbac`, então o gate do botão "Registrar
+decisão" vem resolvido do servidor. `getCase()` também passou a trazer
+`vendorCode/vendorCategory/vendorRegion/vendorDpa/vendorRetention` para o card
+de Fornecedor — antes só existiam em `getVendor()`.
+
+`risk.tsx` usa o `Heatmap` de `parts.tsx`; o painel direito **alterna** entre
+"Exposição por categoria" (padrão) e "Casos na célula" (com seleção), fiel ao
+JSX — a versão anterior mostrava as duas coisas sempre e ainda tinha uma tabela
+"N casos" e filtro de mitigação que não existem no protótipo; ambos saíram.
+`getRiskBoard()` ganhou `dataClass` em cada `cases[]` — faltava para o badge de
+classe de dado na lista da célula selecionada.
 
 `VendorRow` ganhou `criticalMissing` (cláusulas críticas do tenant ausentes no
 fornecedor) — é o que alimenta o KPI e o aviso na linha da lista.
 
 ---
 
-## 3. As duas telas que faltam
-
-Ambas compilam e carregam hoje, mas com a estrutura antiga. **As duas dependem
-de `charter-screens-2.jsx`, que não está neste diretório** — baixar do projeto
-de design antes de começar (§1). O padrão do protótipo, presente em toda tela e
-ausente nestas:
-
-1. `PageHeader` com `eyebrow` (contagem + contexto) e `meta` (2–3 `Badge`)
-2. Linha de **4 `KpiCard`** logo abaixo, com `SkeletonKpi` no loading
-3. Grid assimétrico (`1.5fr 1fr`, `1.1fr 1fr`, `1.3fr 1fr`) — não colunas iguais
-4. `SectionCard` com `icon`, `subtitle` e `action` (botão `variant="soft"`)
-
-| Tela | O que falta |
-|---|---|
-| `case-detail.tsx` | `BackLink`; header com 4 badges; 4 KPIs (risco composto / classe / SLA / mitigações); abas **Visão geral · Risco · Mitigações · Trilha**; `RiskMiniMatrix` (já em `parts.tsx`); card de fornecedor com `Callout` de inelegibilidade; Declaração do caso em 6 `MetaCell` |
-| `risk.tsx` | 4 KPIs; `Heatmap` de `parts.tsx`; painel direito que **alterna** entre "Exposição por categoria" e "Casos na célula" conforme a seleção; `MitigationTable` |
-
----
-
-## 4. Armadilhas já pagas — não repetir
+## 3. Armadilhas já pagas — não repetir
 
 **Nunca rodar `biome check --write --unsafe` neste código.** Duas vezes ele
 introduziu bug de comportamento:
@@ -114,7 +112,7 @@ Permissão vem resolvida do servidor (ver `PolicyView.can`).
 
 ---
 
-## 5. Divergências deliberadas do protótipo
+## 4. Divergências deliberadas do protótipo
 
 Não "corrigir" sem ler o ADR:
 
@@ -134,7 +132,7 @@ Não "corrigir" sem ler o ADR:
 
 ---
 
-## 6. Comandos
+## 5. Comandos
 
 ```bash
 pnpm --filter app dev              # :3012
@@ -150,18 +148,31 @@ npx biome check apps/app/components/charter apps/app/app/\(charter\)
 
 ---
 
-## 7. Só depois: E2E
+## 6. E2E
 
-Não existe nenhum teste E2E do Charter (`e2e/` não tem spec). **Escrever só
-depois das duas telas restantes** — seletores mudariam junto com a estrutura.
+Os 5 fluxos prioritários estão cobertos, 6/6 testes verdes:
 
-Fluxos que valem cobertura, por ordem de valor:
+| Spec | Fluxo |
+|---|---|
+| `e2e/charter-intake.spec.ts` | Gate do intake (FR-4.4) + reavaliação ao vivo (FR-4.2) |
+| `e2e/charter-policy-publish.spec.ts` | Bloqueio de publicação por nome (FR-2.3) |
+| `e2e/charter-decision.spec.ts` | Decisão com restrições, zero condições não submete (FR-6.3) |
+| `e2e/charter-default-deny.spec.ts` | Tenant sem `TenantModule CHARTER` cai em `/charter-indisponivel` |
 
-1. **Gate do intake** — classe Restrito + fornecedor de teto Interno deve barrar
-   a submissão nomeando o motivo contratual (FR-4.4). Já verificado à mão.
-2. **Reavaliação ao vivo** — trocar classe de dado muda caminho, SLA e HITL no
-   trilho (FR-4.2)
-3. **Bloqueio de publicação** — modal lista bloqueadores por nome (FR-2.3)
-4. **Decisão com restrições** — zero condições não submete (FR-6.3)
-5. **Default deny** — tenant sem `TenantModule CHARTER` cai em
-   `/charter-indisponivel`
+Personas do Charter (`marina.alves@`/Compliance, `diego.prado@`/Security,
+`ana.beatriz@`/HR, `rafael.lima@`/Requester) ganharam sessão própria em
+`e2e/setup/auth.setup.ts`, mesmo padrão dos papéis SAFe — `pnpm seed:charter`
+roda antes do login e o storageState de cada uma fica em
+`e2e/fixtures/charter/{compliance,security,hr,requester}.json` (gitignored).
+Rodar: `AUTH_TEST=1 pnpm exec playwright test e2e/charter-*.spec.ts` na
+primeira vez (gera as sessões); depois, sem `AUTH_TEST`, reusa o que já está
+em `e2e/fixtures/`.
+
+**Armadilha paga**: `IntakeModal` recebe a lista de fornecedores como prop no
+momento em que o modal abre — se o teste clica em "Novo caso de uso" antes de
+`listVendors()` resolver, o modal congela com o select vazio pro resto do
+teste. `page.waitForLoadState("networkidle")` antes de abrir o modal, não
+depois.
+
+Ainda fora: a11y (axe) sobre as 10 rotas do Charter, dark e light — mesmo
+padrão de `a11y-screens.spec.ts`, não escrito ainda.

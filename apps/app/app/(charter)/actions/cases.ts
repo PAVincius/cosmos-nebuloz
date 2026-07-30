@@ -6,6 +6,7 @@ import {
   type CharterUseCaseStatus,
   withTenantDb,
 } from "@repo/database";
+import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -54,6 +55,11 @@ export type UseCaseDetail = UseCaseRow & {
   hitl: string | null;
   approvalPath: string | null;
   vendorId: string | null;
+  vendorCode: string | null;
+  vendorCategory: string | null;
+  vendorRegion: string | null;
+  vendorDpa: boolean | null;
+  vendorRetention: string | null;
   vendorMaxClass: CharterDataClass | null;
   vendorIneligible: boolean;
   submittedAt: string | null;
@@ -81,6 +87,9 @@ export type UseCaseDetail = UseCaseRow & {
     deciderRole: string;
     createdAt: string;
   }[];
+  /** Permissão do papel da sessão. O cliente não pode importar @repo/rbac
+   *  (server-only), então a matriz é resolvida aqui. */
+  can: { decide: boolean };
 };
 
 function riskProfile(uc: CharterUseCase) {
@@ -198,7 +207,17 @@ export async function getCase(
       const uc = await db.charterUseCase.findUnique({
         where: { tenantId_code: { tenantId: ctx.tenantId, code } },
         include: {
-          vendor: { select: { name: true, maxClass: true } },
+          vendor: {
+            select: {
+              name: true,
+              code: true,
+              category: true,
+              region: true,
+              dpa: true,
+              retention: true,
+              maxClass: true,
+            },
+          },
           mitigations: { orderBy: { dueDate: "asc" } },
           decisions: { orderBy: { createdAt: "desc" } },
         },
@@ -216,9 +235,15 @@ export async function getCase(
         hitl: uc.hitl,
         approvalPath: uc.approvalPath,
         vendorId: uc.vendorId,
+        vendorCode: uc.vendor?.code ?? null,
+        vendorCategory: uc.vendor?.category ?? null,
+        vendorRegion: uc.vendor?.region ?? null,
+        vendorDpa: uc.vendor?.dpa ?? null,
+        vendorRetention: uc.vendor?.retention ?? null,
         vendorMaxClass: uc.vendor?.maxClass ?? null,
         vendorIneligible: uc.vendorIneligible,
         submittedAt: uc.submittedAt?.toISOString() ?? null,
+        can: { decide: hasCharterPermission(ctx.charterRole, "case.decide") },
         severity: r.severity,
         likelihood: r.likelihood,
         risks: riskProfile(uc),
