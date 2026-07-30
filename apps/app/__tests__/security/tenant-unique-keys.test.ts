@@ -32,6 +32,12 @@ const ALLOWED_UNSCOPED_UNIQUE_KEYS = new Set([
   "ARTMembership:artId,userId",
   "MemberSprintMetrics:sprintId,userId",
   "TeamCapacitySnapshot:sprintId,teamId",
+  // Charter (2026-07-30): policyId/vendorId/clauseId each already belong to
+  // exactly one tenant (CharterPolicy/CharterVendor/CharterClause all carry
+  // tenantId), same transitive-scoping argument as the entries above.
+  "CharterPolicySection:policyId,ordinal",
+  "CharterPolicyVersion:policyId,version",
+  "CharterVendorClause:vendorId,clauseId",
 ]);
 
 type ModelUniqueKey = { model: string; fields: string[]; file: string };
