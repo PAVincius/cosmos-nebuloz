@@ -21,6 +21,8 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@repo/database/generated/client";
 import { betterAuth } from "better-auth";
@@ -688,9 +690,16 @@ async function main() {
   console.log();
 }
 
-main()
-  .catch((err) => {
-    console.error("❌ Seed falhou:", err);
-    process.exit(1);
-  })
-  .finally(() => db.$disconnect());
+// Guarda de entrypoint: sem ela, um `import` deste módulo roda o seed.
+const isEntrypoint =
+  !!process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+
+if (isEntrypoint) {
+  main()
+    .catch((err) => {
+      console.error("❌ Seed falhou:", err);
+      process.exit(1);
+    })
+    .finally(() => db.$disconnect());
+}

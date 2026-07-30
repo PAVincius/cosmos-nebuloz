@@ -1,0 +1,354 @@
+"use client";
+
+// Matriz de Risco — FR-7. Port de `charter-screens-2.jsx`.
+
+import { useRouter } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
+import { createMitigation, getRiskBoard } from "@/app/(charter)/actions/risk";
+import {
+  DATA_CLASS_LABEL,
+  DATA_CLASS_TONE,
+  RISK_CATEGORY_LABEL,
+  RISK_CATEGORY_TONE,
+  type Tone,
+} from "@/lib/charter/rules";
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  SkeletonKpi,
+} from "../../cosmos/kit";
+import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
+import {
+  BarRow,
+  ScreenError,
+  SkeletonCard,
+  SmartEmptyState,
+  TableRow,
+} from "../base";
+import { ModalProvider, useModal } from "../modal";
+import { MitigationModal } from "../modals";
+import { Heatmap, MitigationTable } from "../parts";
+import { useCharterData } from "../use-charter-data";
+
+const CASE_COLS = "minmax(0,1fr) 108px 70px";
+
+function scoreTone(score: number): Tone {
+  if (score >= 16) {
+    return "red";
+  }
+  if (score >= 9) {
+    return "amber";
+  }
+  return "green";
+}
+
+function RiskInner() {
+  const router = useRouter();
+  const { open, close } = useModal();
+  const [pending, startTransition] = useTransition();
+  const [cell, setCell] = useState<[number, number] | null>(null);
+
+  const { data, loading, error, reload } = useCharterData(
+    useCallback(() => getRiskBoard(), [])
+  );
+
+  if (error) {
+    return <ScreenError message={error} onRetry={reload} />;
+  }
+
+  const cases = data?.cases ?? [];
+  const critical = cases.filter((c) => c.score >= 16);
+  const elevated = cases.filter((c) => c.score >= 9 && c.score < 16);
+  const mitigations = data?.mitigations ?? [];
+  const openMits = mitigations.filter((m) => m.status !== "DONE");
+  const overdue = mitigations.filter((m) => m.overdue);
+  const inCell = cell
+    ? cases.filter((c) => c.severity === cell[0] && c.likelihood === cell[1])
+    : null;
+  const maxCat = Math.max(1, ...(data?.categories.map((c) => c.max) ?? [1]));
+
+  const openMitigation = () =>
+    open(
+      <MitigationModal
+        cases={cases.map((c) => ({ code: c.code, title: c.title }))}
+        onClose={close}
+        onSubmit={(input) =>
+          startTransition(async () => {
+            const res = await runWithToast(() => createMitigation(input), {
+              loading: "Criando mitigação…",
+              success: (d) => `Mitigação ${d.code} criada`,
+            });
+            if (res.ok) {
+              close();
+              reload();
+            }
+          })
+        }
+        pending={pending}
+      />
+    );
+
+  return (
+    <div className="fade-in">
+      <PageHeader
+        eyebrow={`${cases.length} casos ativos · 7 categorias de risco`}
+        meta={
+          <>
+            <Badge dot tone="red">
+              {critical.length} críticos
+            </Badge>
+            <Badge tone="amber">{elevated.length} elevados</Badge>
+            <Badge tone={overdue.length ? "red" : "green"}>
+              {overdue.length} mitigação atrasada
+            </Badge>
+          </>
+        }
+        subtitle="Uma escala para todos os casos. Sem matriz comum, cada área classifica risco do seu jeito e a comparação some."
+        title="Matriz de Risco de IA"
+        tone="red"
+      >
+        <Button icon="download" variant="secondary">
+          Exportar matriz
+        </Button>
+        <Button icon="plus" onClick={openMitigation}>
+          Nova mitigação
+        </Button>
+      </PageHeader>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(214px,1fr))",
+          gap: "var(--gap)",
+          marginBottom: "var(--gap)",
+        }}
+      >
+        {loading ? (
+          <>
+            <SkeletonKpi />
+            <SkeletonKpi />
+            <SkeletonKpi />
+            <SkeletonKpi />
+          </>
+        ) : (
+          <>
+            <KpiCard
+              hint="score ≥ 16"
+              icon="alert"
+              label="Casos críticos"
+              tone="red"
+              value={critical.length}
+            />
+            <KpiCard
+              hint="entre 9 e 15"
+              icon="target"
+              label="Casos elevados"
+              tone="amber"
+              value={elevated.length}
+            />
+            <KpiCard
+              hint={`de ${mitigations.length} registradas`}
+              icon="shield"
+              label="Mitigações abertas"
+              tone="accent"
+              value={openMits.length}
+            />
+            <KpiCard
+              delta={overdue.length ? "ação imediata" : "em dia"}
+              deltaTone={overdue.length ? "red" : "green"}
+              icon="clock"
+              label="Mitigações atrasadas"
+              tone={overdue.length ? "red" : "green"}
+              value={overdue.length}
+            />
+          </>
+        )}
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.1fr 1fr",
+          gap: "var(--gap)",
+          marginBottom: "var(--gap)",
+          alignItems: "start",
+        }}
+      >
+        <SectionCard
+          action={
+            cell && (
+              <Button
+                icon="x"
+                onClick={() => setCell(null)}
+                size="sm"
+                variant="ghost"
+              >
+                Limpar
+              </Button>
+            )
+          }
+          icon="grid"
+          subtitle="Clique numa célula para ver os casos nela"
+          title="Mapa de calor"
+          tone="red"
+        >
+          {loading || !data ? (
+            <div
+              className="skeleton"
+              style={{ height: 220, borderRadius: 10 }}
+            />
+          ) : (
+            <Heatmap cells={data.heatmap} onSelect={setCell} selected={cell} />
+          )}
+        </SectionCard>
+
+        <SectionCard
+          bodyStyle={inCell ? { padding: 0 } : undefined}
+          icon="target"
+          subtitle={
+            inCell
+              ? `${inCell.length} caso(s) nesta célula`
+              : "Casos ativos com severidade 4 ou 5"
+          }
+          title={
+            inCell && cell
+              ? `Casos em severidade ${cell[0]} × probabilidade ${cell[1]}`
+              : "Exposição por categoria"
+          }
+          tone="amber"
+        >
+          {inCell ? (
+            inCell.length === 0 ? (
+              <SmartEmptyState
+                icon="check"
+                onSecondary={() => setCell(null)}
+                secondaryLabel="Limpar seleção"
+                subtitle="Nenhum caso ativo nesta combinação de severidade e probabilidade."
+                title="Célula vazia"
+                tone="green"
+              />
+            ) : (
+              inCell.map((c, i) => (
+                <TableRow
+                  cols={CASE_COLS}
+                  key={c.code}
+                  label={`Abrir ${c.code}`}
+                  last={i === inCell.length - 1}
+                  onClick={() => router.push(`/charter/case/${c.code}`)}
+                >
+                  <div style={{ minWidth: 0 }}>
+                    <span
+                      className="mono"
+                      style={{
+                        fontSize: 10.5,
+                        fontWeight: 700,
+                        color: "var(--ink-faint)",
+                      }}
+                    >
+                      {c.code}
+                    </span>
+                    <div
+                      style={{
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                        marginTop: 2,
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                      }}
+                    >
+                      {c.title}
+                    </div>
+                  </div>
+                  <Badge tone={DATA_CLASS_TONE[c.dataClass]}>
+                    {DATA_CLASS_LABEL[c.dataClass]}
+                  </Badge>
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: 12.5,
+                      fontWeight: 800,
+                      color: `var(--${scoreTone(c.score)}-text)`,
+                      textAlign: "right",
+                    }}
+                  >
+                    {c.score}
+                  </span>
+                </TableRow>
+              ))
+            )
+          ) : loading || !data ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          ) : (
+            data.categories.map((c) => (
+              <BarRow
+                hint={`pico ${c.max}`}
+                key={c.id}
+                label={
+                  RISK_CATEGORY_LABEL[c.id as keyof typeof RISK_CATEGORY_LABEL]
+                }
+                max={maxCat}
+                tone={
+                  RISK_CATEGORY_TONE[c.id as keyof typeof RISK_CATEGORY_TONE]
+                }
+                value={c.total}
+              />
+            ))
+          )}
+        </SectionCard>
+      </div>
+
+      <SectionCard
+        action={
+          <Badge tone={overdue.length ? "red" : "green"}>
+            {mitigations.filter((m) => m.status === "DONE").length}/
+            {mitigations.length} concluídas
+          </Badge>
+        }
+        bodyStyle={{ padding: 0 }}
+        icon="shield"
+        subtitle="Toda mitigação tem dono, prazo e status — risco sem dono é risco aceito por omissão"
+        title="Rastreador de mitigações"
+        tone="accent"
+      >
+        {loading ? (
+          <div
+            style={{
+              padding: 16,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+            <SkeletonCard />
+          </div>
+        ) : (
+          <MitigationTable
+            onOpen={(useCaseCode) =>
+              router.push(`/charter/case/${useCaseCode}`)
+            }
+            rows={mitigations}
+          />
+        )}
+      </SectionCard>
+    </div>
+  );
+}
+
+export default function RiskScreen() {
+  return (
+    <ModalProvider>
+      <RiskInner />
+    </ModalProvider>
+  );
+}

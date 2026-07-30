@@ -179,6 +179,23 @@ model Tenant {
   meetingInsights           MeetingInsight[]
   // PAE — Personal Access Exception
   accessExceptionRequests   AccessExceptionRequest[]
+  // Contratação modular — Cosmos / Charter / Signal
+  modules                   TenantModule[]
+  // Charter — governança de IA
+  charterMemberships        CharterMembership[]
+  charterSettings           CharterSettings?
+  charterPolicies           CharterPolicy[]
+  charterPolicySections     CharterPolicySection[]
+  charterPolicyVersions     CharterPolicyVersion[]
+  charterUseCases           CharterUseCase[]
+  charterDecisions          CharterDecision[]
+  charterMitigations        CharterMitigation[]
+  charterVendors            CharterVendor[]
+  charterClauses            CharterClause[]
+  charterVendorClauses      CharterVendorClause[]
+  charterTracks             CharterTrack[]
+  charterAcknowledgments    CharterAcknowledgment[]
+  charterSequences          CharterSequence[]
 }
 
 model User {
@@ -191,10 +208,12 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  sessions    Session[]
-  accounts    Account[]
-  memberships TenantMember[]
-  twoFactor   TwoFactor?
+  sessions           Session[]
+  accounts           Account[]
+  memberships        TenantMember[]
+  twoFactor          TwoFactor?
+  // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
+  charterMemberships CharterMembership[]
 }
 
 model TwoFactor {

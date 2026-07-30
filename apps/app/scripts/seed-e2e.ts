@@ -47,6 +47,8 @@ import dotenv from "dotenv";
 
 dotenv.config({ path: ".env.local" });
 
+import { realpathSync } from "node:fs";
+import { pathToFileURL } from "node:url";
 import { gzipSync } from "node:zlib";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { betterAuth } from "better-auth";
@@ -3779,7 +3781,18 @@ async function main(): Promise<SeedContext> {
   return context;
 }
 
-main().catch((err) => {
-  console.error("❌ seed-e2e falhou:", err);
-  process.exit(1);
-});
+/**
+ * Guarda de entrypoint: `main()` apaga (deleteMany) e recria dezenas de tabelas
+ * tenant-scoped. Sem esta guarda, qualquer `import` deste módulo — inclusive
+ * para reusar um tipo ou constante — dispararia o seed destrutivo.
+ */
+const isEntrypoint =
+  !!process.argv[1] &&
+  import.meta.url === pathToFileURL(realpathSync(process.argv[1])).href;
+
+if (isEntrypoint) {
+  main().catch((err) => {
+    console.error("❌ seed-e2e falhou:", err);
+    process.exit(1);
+  });
+}
