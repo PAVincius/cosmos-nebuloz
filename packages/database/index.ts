@@ -23,10 +23,19 @@ function createPrismaClient(): PrismaClient {
     return new PrismaClient({ adapter });
   }
 
-  // Local Postgres — pg driver adapter (Prisma v7 client engine)
+  // Local/managed Postgres — pg driver adapter (Prisma v7 client engine).
+  // Managed poolers (Supabase's Supavisor/PgBouncer, etc.) present a cert
+  // chain Node's default trust store doesn't carry, so plain TLS validation
+  // fails with "self-signed certificate in certificate chain". A local
+  // Postgres (CI service container, `localhost`) has no TLS at all — passing
+  // an `ssl` object there breaks the handshake instead of fixing it.
   const { Pool } = require("pg");
   const { PrismaPg } = require("@prisma/adapter-pg");
-  const pool = new Pool({ connectionString: DATABASE_URL });
+  const isLocalDb = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
+  const pool = new Pool({
+    connectionString: DATABASE_URL,
+    ssl: isLocalDb ? undefined : { rejectUnauthorized: false },
+  });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
 }

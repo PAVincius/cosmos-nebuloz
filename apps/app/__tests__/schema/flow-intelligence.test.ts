@@ -23,6 +23,12 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/cosmos_dev";
 
+// Managed Postgres (Supabase/Neon/etc.) sits behind a pooler whose cert chain
+// Node's default trust store doesn't carry — local/CI Postgres has no TLS at
+// all, and forcing `ssl` there breaks the handshake instead of fixing it.
+const IS_LOCAL_DB = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
+const POOL_SSL = IS_LOCAL_DB ? undefined : { rejectUnauthorized: false };
+
 // Guard: skip the entire suite when no real Postgres is available.
 // The default fallback URL points to localhost which does not exist in CI.
 // Treat any URL that contains "localhost" without an explicit opt-in env var
@@ -59,7 +65,7 @@ maybDescribe("Flow Intelligence schema constraints", () => {
   // ── Setup / teardown ──────────────────────────────────────────────────
 
   beforeAll(async () => {
-    pool = new Pool({ connectionString: DATABASE_URL });
+    pool = new Pool({ connectionString: DATABASE_URL, ssl: POOL_SSL });
 
     const now = new Date().toISOString();
     const twoWeeks = new Date(

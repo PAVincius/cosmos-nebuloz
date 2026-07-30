@@ -19,6 +19,12 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/cosmos_dev";
 
+// Managed Postgres (Supabase/Neon/etc.) sits behind a pooler whose cert chain
+// Node's default trust store doesn't carry — local/CI Postgres has no TLS at
+// all, and forcing `ssl` there breaks the handshake instead of fixing it.
+const IS_LOCAL_DB = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
+const POOL_SSL = IS_LOCAL_DB ? undefined : { rejectUnauthorized: false };
+
 const hasExplicitDb = Boolean(process.env.DATABASE_URL);
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
@@ -38,7 +44,7 @@ maybDescribe("Meeting Intelligence schema constraints", () => {
   const INTEGRATION_ID = `mi-integration-${TS}`;
 
   beforeAll(async () => {
-    pool = new Pool({ connectionString: DATABASE_URL });
+    pool = new Pool({ connectionString: DATABASE_URL, ssl: POOL_SSL });
 
     await pool.query(
       `INSERT INTO "Tenant" (id, name, slug, "updatedAt")
