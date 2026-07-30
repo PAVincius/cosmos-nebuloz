@@ -19,13 +19,13 @@ const DATABASE_URL =
   process.env.DATABASE_URL ??
   "postgresql://postgres:postgres@localhost:5432/cosmos_dev";
 
-// Same placeholder guard as flow-intelligence.test.ts — the Vercel build env
-// sets DATABASE_URL to a localhost value with no Postgres behind it.
-const LOCAL_HOST_RE = /@(localhost|127\.0\.0\.1)[:/]/;
-const rawDbUrl = process.env.DATABASE_URL;
-const hasExplicitDb = Boolean(
-  rawDbUrl && (!LOCAL_HOST_RE.test(rawDbUrl) || process.env.RUN_DB_TESTS)
-);
+// Managed Postgres (Supabase/Neon/etc.) sits behind a pooler whose cert chain
+// Node's default trust store doesn't carry — local/CI Postgres has no TLS at
+// all, and forcing `ssl` there breaks the handshake instead of fixing it.
+const IS_LOCAL_DB = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
+const POOL_SSL = IS_LOCAL_DB ? undefined : { rejectUnauthorized: false };
+
+const hasExplicitDb = Boolean(process.env.DATABASE_URL);
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
@@ -44,7 +44,7 @@ maybDescribe("Meeting Intelligence schema constraints", () => {
   const INTEGRATION_ID = `mi-integration-${TS}`;
 
   beforeAll(async () => {
-    pool = new Pool({ connectionString: DATABASE_URL });
+    pool = new Pool({ connectionString: DATABASE_URL, ssl: POOL_SSL });
 
     await pool.query(
       `INSERT INTO "Tenant" (id, name, slug, "updatedAt")

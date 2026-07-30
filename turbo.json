@@ -20,6 +20,9 @@
     "test": {
       "dependsOn": ["^test"]
     },
+    "app#test": {
+      "dependsOn": ["@repo/database#build", "^test"]
+    },
     "test:coverage": {
       "dependsOn": ["^test:coverage"],
       "outputs": ["coverage/**"]
