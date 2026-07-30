@@ -30,7 +30,7 @@ const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
   console.log(
-    "[meeting-intelligence] DATABASE_URL not set — skipping DB integration suite."
+    "[meeting-intelligence] no reachable DATABASE_URL — skipping DB integration suite."
   );
 }
 

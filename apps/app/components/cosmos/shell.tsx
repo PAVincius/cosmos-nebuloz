@@ -243,7 +243,25 @@ function NavRow({
   );
 }
 
-function Sidebar({ activeId }: { activeId: string }) {
+// Identity shown in the sidebar (tenant switcher + user footer). Resolved
+// server-side in the (cosmos) layout and passed down — shell.tsx is a client
+// component and has no access to the session.
+export type ShellIdentity = {
+  userName: string;
+  userEmail: string;
+  tenantName: string;
+  tenantInitials: string;
+  planLabel: string;
+  role: string;
+};
+
+function Sidebar({
+  activeId,
+  identity,
+}: {
+  activeId: string;
+  identity: ShellIdentity;
+}) {
   const { isComingSoon } = useNav();
   const childActive = (item: NavItem) =>
     !!item.children?.some((c) => c.id === activeId);
@@ -296,7 +314,7 @@ function Sidebar({ activeId }: { activeId: string }) {
               boxShadow: "0 4px 12px -4px rgba(var(--accent-rgb),.7)",
             }}
           >
-            CO
+            {identity.tenantInitials}
           </span>
           <span style={{ flex: 1, textAlign: "left", minWidth: 0 }}>
             <span
@@ -307,7 +325,7 @@ function Sidebar({ activeId }: { activeId: string }) {
                 letterSpacing: "-.01em",
               }}
             >
-              COSMOS Dev
+              {identity.tenantName}
             </span>
             <span
               style={{
@@ -317,7 +335,7 @@ function Sidebar({ activeId }: { activeId: string }) {
                 fontWeight: 500,
               }}
             >
-              Plano Orbit · Admin
+              Plano {identity.planLabel} · {identity.role}
             </span>
           </span>
           <Icon
@@ -479,7 +497,7 @@ function Sidebar({ activeId }: { activeId: string }) {
           gap: 10,
         }}
       >
-        <Avatar name="Admin Cosmos" size={32} />
+        <Avatar name={identity.userName} size={32} />
         <div style={{ flex: 1, minWidth: 0 }}>
           <div
             style={{
@@ -490,7 +508,7 @@ function Sidebar({ activeId }: { activeId: string }) {
               textOverflow: "ellipsis",
             }}
           >
-            Admin Cosmos
+            {identity.userName}
           </div>
           <div
             style={{
@@ -501,7 +519,7 @@ function Sidebar({ activeId }: { activeId: string }) {
               textOverflow: "ellipsis",
             }}
           >
-            admin@cosmos.local
+            {identity.userEmail}
           </div>
         </div>
         <IconButton name="more" size={30} title="Mais opções da conta" />
@@ -687,8 +705,11 @@ function activeIdFromPath(pathname: string) {
 export function CosmosShell({
   children,
   screenIds,
+  identity,
 }: {
   children?: ReactNode;
+  // Real session identity, resolved in the (cosmos) server layout.
+  identity: ShellIdentity;
   // Keys of SCREENS (screens/registry.tsx), passed down from the (server)
   // layout — a screen id not in this list has no ported component yet, so
   // nav renders it "coming soon" instead of a dead-end link. Computed from
@@ -716,7 +737,7 @@ export function CosmosShell({
     <NavCtx.Provider value={{ navigate, isComingSoon }}>
       {/* theme comes from next-themes (data-theme on <html>); toggling is CSS-only, no tree re-render */}
       <div className="cosmos-root" style={{ display: "flex" } as CSSProperties}>
-        <Sidebar activeId={activeId} />
+        <Sidebar activeId={activeId} identity={identity} />
         <div
           style={{
             flex: 1,
