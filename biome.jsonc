@@ -1,6 +1,15 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/core", "ultracite/react", "ultracite/next"],
+  // Sem `defaultBranch`, o `biome check --changed` do CI não tem contra o que
+  // diferenciar: ele processa zero arquivos e sai com erro em todo PR, o que
+  // fazia o job de lint falhar sem nunca ter olhado uma linha de código.
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true,
+    "defaultBranch": "main"
+  },
   "javascript": {
     "globals": ["Liveblocks"]
   },
