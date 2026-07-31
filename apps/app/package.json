@@ -48,6 +48,7 @@
     "@repo/next-config": "workspace:*",
     "@repo/notifications": "workspace:*",
     "@repo/observability": "workspace:*",
+    "@repo/provisioning": "workspace:*",
     "@repo/rate-limit": "workspace:*",
     "@repo/rbac": "workspace:*",
     "@repo/safe-engine": "workspace:*",
