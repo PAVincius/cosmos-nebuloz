@@ -17,6 +17,7 @@ export type ModuleDb = {
     }): Promise<{ id: string; slug: string } | null>;
   };
   tenantModule: {
+    findUnique(args: unknown): Promise<{ id: string } | null>;
     upsert(args: unknown): Promise<{ id: string }>;
     update(args: unknown): Promise<{ id: string }>;
   };
@@ -111,6 +112,22 @@ export async function setModuleStatus(
   input: SetModuleStatusInput
 ): Promise<{ id: string }> {
   const tenant = await requireTenant(db, input.tenantId);
+
+  // Sem isto, mudar a situação de um módulo nunca contratado estoura o erro
+  // nativo do Prisma (P2025) em vez de uma causa nomeada — e quem chama, na
+  // tela ou no gatilho de cobrança, não tem como distinguir "não contratado"
+  // de "banco fora do ar".
+  const existing = await db.tenantModule.findUnique({
+    where: {
+      tenantId_module: { tenantId: input.tenantId, module: input.module },
+    },
+  });
+  if (!existing) {
+    throw new ProvisioningError(
+      "MODULE_NOT_CONTRACTED",
+      `O módulo ${input.module} não está contratado para este cliente.`
+    );
+  }
 
   const row = await db.tenantModule.update({
     where: {

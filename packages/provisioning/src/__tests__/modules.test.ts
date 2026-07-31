@@ -9,6 +9,7 @@ function makeDb() {
         .mockResolvedValue({ id: "tenant-abc", slug: "vanta-saude" }),
     },
     tenantModule: {
+      findUnique: vi.fn().mockResolvedValue({ id: "tm-1" }),
       upsert: vi.fn().mockResolvedValue({ id: "tm-1" }),
       update: vi.fn().mockResolvedValue({ id: "tm-1" }),
     },
@@ -137,5 +138,30 @@ describe("setModuleStatus", () => {
 
     const { data } = db.auditLog.create.mock.calls[0][0];
     expect(data.action).toBe("module.status_changed");
+  });
+
+  it("falha com MODULE_NOT_CONTRACTED em vez do erro nativo do Prisma", async () => {
+    const db = makeDb();
+    db.tenantModule.findUnique.mockResolvedValue(null);
+    const invalidateModuleCache = vi.fn().mockResolvedValue(undefined) as (
+      tenantId: string
+    ) => Promise<void>;
+
+    await expect(
+      setModuleStatus(
+        db,
+        { invalidateModuleCache },
+        {
+          tenantId: "tenant-abc",
+          module: "CHARTER",
+          status: "SUSPENDED",
+          actorUserId: "user-staff",
+        }
+      )
+    ).rejects.toMatchObject({ code: "MODULE_NOT_CONTRACTED" });
+
+    // Nada foi escrito e nada foi invalidado no caminho de erro.
+    expect(db.tenantModule.update).not.toHaveBeenCalled();
+    expect(invalidateModuleCache).not.toHaveBeenCalled();
   });
 });
