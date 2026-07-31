@@ -24,6 +24,18 @@ if (!_rawSecret || _rawSecret.length < 32) {
 }
 const AUTH_SECRET: string = _rawSecret;
 
+/** Origens aceitas nas requisições de auth, montadas a partir do ambiente.
+ *  `VERCEL_URL` é a URL única daquele deploy — é o que faz preview funcionar
+ *  sem ninguém cadastrar variável a cada branch. */
+const TRUSTED_ORIGINS: string[] = [
+  process.env.BETTER_AUTH_URL,
+  process.env.NEXT_PUBLIC_APP_URL,
+  process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+  process.env.VERCEL_BRANCH_URL && `https://${process.env.VERCEL_BRANCH_URL}`,
+  process.env.VERCEL_PROJECT_PRODUCTION_URL &&
+    `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
+].filter((origin): origin is string => Boolean(origin));
+
 export const auth = betterAuth({
   database: prismaAdapter(database, {
     provider: "postgresql",
@@ -55,6 +67,13 @@ export const auth = betterAuth({
   ],
   secret: AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL ?? "http://localhost:3000",
+  // Toda requisição de auth é recusada com "Invalid origin" quando a origem não
+  // bate com o baseURL. Isso quebra os previews da Vercel por construção: cada
+  // deploy nasce com uma URL própria, que nenhuma variável fixa pode antecipar.
+  //
+  // As origens saem do ambiente, uma a uma — nada de curinga `*.vercel.app`,
+  // que abriria o fluxo de auth para qualquer página hospedada no domínio.
+  trustedOrigins: TRUSTED_ORIGINS,
   databaseHooks: {
     session: {
       create: {
