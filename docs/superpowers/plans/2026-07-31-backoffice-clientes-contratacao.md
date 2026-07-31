@@ -389,11 +389,13 @@ const MAX_ATTEMPTS = 10;
 
 import { ProvisioningError } from "./errors";
 
+/** Declarado com sintaxe de método (`findUnique(args): …`), não de propriedade
+ *  com seta. Sob `strictFunctionTypes`, propriedade-com-seta é checada de forma
+ *  contravariante e o client real do Prisma deixaria de ser atribuível a este
+ *  tipo; método é bivariante e aceita o client real e o objeto falso do teste. */
 export type SlugChecker = {
   tenant: {
-    findUnique: (args: {
-      where: { slug: string };
-    }) => Promise<{ id: string } | null>;
+    findUnique(args: { where: { slug: string } }): Promise<{ id: string } | null>;
   };
 };
 
@@ -555,8 +557,10 @@ export type PlatformAuditEntry = {
   diff?: AuditDiff;
 };
 
-type AuditWriter = {
-  auditLog: { create: (args: { data: unknown }) => Promise<unknown> };
+/** Sintaxe de método pelo mesmo motivo do `ModuleDb`: bivariância deixa o
+ *  client real do Prisma e o objeto falso do teste caberem no mesmo tipo. */
+export type AuditWriter = {
+  auditLog: { create(args: { data: unknown }): Promise<unknown> };
 };
 
 /** Ato de staff registrado no tenant do CLIENTE, não no tenant interno: quem
@@ -771,18 +775,21 @@ export type ModuleDeps = {
   invalidateModuleCache: (tenantId: string) => Promise<void>;
 };
 
-type ModuleDb = {
+/** Só o que estas funções usam do client. Sintaxe de método em todos os campos:
+ *  sob `strictFunctionTypes` a forma propriedade-com-seta é contravariante e o
+ *  client real do Prisma não seria atribuível a este tipo. */
+export type ModuleDb = {
   tenant: {
-    findUnique: (args: {
+    findUnique(args: {
       where: { id: string };
       select?: unknown;
-    }) => Promise<{ id: string; slug: string } | null>;
+    }): Promise<{ id: string; slug: string } | null>;
   };
   tenantModule: {
-    upsert: (args: unknown) => Promise<{ id: string }>;
-    update: (args: unknown) => Promise<{ id: string }>;
+    upsert(args: unknown): Promise<{ id: string }>;
+    update(args: unknown): Promise<{ id: string }>;
   };
-  auditLog: { create: (args: { data: unknown }) => Promise<unknown> };
+  auditLog: { create(args: { data: unknown }): Promise<unknown> };
 };
 
 export type ContractModuleInput = {
@@ -1108,8 +1115,8 @@ Esperado: FAIL — `Failed to resolve import "../tenant"`.
 ```typescript
 import type { ModuleStatus, ProductModule } from "@repo/database";
 import { logPlatformAudit } from "./audit";
-import { contractModule, type ModuleDeps } from "./modules";
-import { uniqueSlug } from "./slug";
+import { contractModule, type ModuleDb, type ModuleDeps } from "./modules";
+import { type SlugChecker, uniqueSlug } from "./slug";
 
 const INVITE_TTL_DAYS = 14;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -1134,23 +1141,41 @@ export type ProvisionTenantResult = {
   ownerLinked: boolean;
 };
 
-type TransactionalDb = {
-  $transaction: <T>(fn: (tx: never) => Promise<T>) => Promise<T>;
+/** O que `provisionTenant` usa de dentro da transação. Estende `ModuleDb` e
+ *  `SlugChecker` porque delega a eles. Sintaxe de método em tudo, pelo mesmo
+ *  motivo dos outros: bivariância deixa o client real do Prisma caber. */
+export type ProvisionTx = ModuleDb &
+  SlugChecker & {
+    tenant: {
+      create(args: {
+        data: { name: string; slug: string };
+      }): Promise<{ id: string; slug: string }>;
+    };
+    user: {
+      findUnique(args: {
+        where: { email: string };
+        select?: unknown;
+      }): Promise<{ id: string } | null>;
+    };
+    tenantMember: { create(args: { data: unknown }): Promise<{ id: string }> };
+    tenantInvitation: {
+      create(args: { data: unknown }): Promise<{ id: string }>;
+    };
+  };
+
+export type ProvisionDb = {
+  $transaction<T>(fn: (tx: ProvisionTx) => Promise<T>): Promise<T>;
 };
 
 export async function provisionTenant(
-  db: TransactionalDb & Record<string, unknown>,
+  db: ProvisionDb,
   deps: ModuleDeps,
   input: ProvisionTenantInput
 ): Promise<ProvisionTenantResult> {
   const name = input.name.trim();
   const email = input.ownerEmail.trim().toLowerCase();
 
-  return await db.$transaction(async (tx: never) => {
-    // biome-ignore lint/suspicious/noExplicitAny: o cliente de transação do Prisma
-    // não é tipável aqui sem arrastar o generated client para dentro do package.
-    const t = tx as any;
-
+  return await db.$transaction(async (t) => {
     const slug = await uniqueSlug(t, name);
     const tenant = await t.tenant.create({ data: { name, slug } });
 
@@ -1392,7 +1417,7 @@ Esperado: FAIL — `Failed to resolve import "../charter"`.
 `packages/provisioning/src/charter.ts`:
 
 ```typescript
-import { logPlatformAudit } from "./audit";
+import { type AuditWriter, logPlatformAudit } from "./audit";
 import { ProvisioningError } from "./errors";
 
 /** As nove seções do Charter, na ordem do SRD. Só a estrutura: o corpo nasce
@@ -1409,8 +1434,33 @@ export const POLICY_SECTIONS: { ordinal: number; name: string }[] = [
   { ordinal: 9, name: "Escalonamento e exceções" },
 ];
 
+/** O que o bootstrap usa do client com contexto de tenant. Sintaxe de método em
+ *  tudo: sob `strictFunctionTypes` a forma com seta seria contravariante e o
+ *  `withTenantDb` real deixaria de ser atribuível a `BootstrapCharterDeps`. */
+export type CharterDb = AuditWriter & {
+  tenant: {
+    findUnique(args: {
+      where: { id: string };
+      select?: unknown;
+    }): Promise<{ id: string; slug: string } | null>;
+  };
+  user: {
+    findUnique(args: {
+      where: { email: string };
+      select?: unknown;
+    }): Promise<{ id: string } | null>;
+  };
+  charterMembership: { upsert(args: unknown): Promise<{ id: string }> };
+  charterSettings: { upsert(args: unknown): Promise<{ id: string }> };
+  charterPolicy: {
+    findFirst(args: unknown): Promise<{ id: string } | null>;
+    create(args: unknown): Promise<{ id: string }>;
+  };
+  charterPolicySection: { createMany(args: unknown): Promise<{ count: number }> };
+};
+
 export type BootstrapCharterDeps = {
-  withTenantDb: <T>(tenantId: string, fn: (db: never) => Promise<T>) => Promise<T>;
+  withTenantDb<T>(tenantId: string, fn: (db: CharterDb) => Promise<T>): Promise<T>;
 };
 
 export type BootstrapCharterInput = {
@@ -1435,11 +1485,7 @@ export async function bootstrapCharter(
   deps: BootstrapCharterDeps,
   input: BootstrapCharterInput
 ): Promise<{ policyId: string; created: boolean }> {
-  return await deps.withTenantDb(input.tenantId, async (client) => {
-    // biome-ignore lint/suspicious/noExplicitAny: o cliente com contexto de tenant
-    // não é tipável aqui sem arrastar o generated client para dentro do package.
-    const db = client as any;
-
+  return await deps.withTenantDb(input.tenantId, async (db) => {
     const tenant = await db.tenant.findUnique({
       where: { id: input.tenantId },
       select: { id: true, slug: true },
@@ -2535,24 +2581,31 @@ export type ClientDetail = ClientRow & {
   };
 };
 
+/** Separado da action pelo mesmo motivo do `clientListArgs`: o filtro
+ *  `isSystem` precisa ser testável sem banco. Slug do tenant interno não abre
+ *  tela de cliente. */
+export function clientDetailArgs(slug: string) {
+  return {
+    where: { slug, isSystem: false },
+    select: {
+      ...clientListArgs().select,
+      members: {
+        select: {
+          role: true,
+          user: { select: { name: true, email: true } },
+        },
+      },
+      charterMemberships: { select: { role: true } },
+      charterPolicies: { select: { id: true }, take: 1 },
+    },
+  };
+}
+
 export async function getClient(slug: string): Promise<Result<ClientDetail>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
 
-    const tenant = await platformDb.tenant.findFirst({
-      where: { slug, isSystem: false },
-      select: {
-        ...clientListArgs().select,
-        members: {
-          select: {
-            role: true,
-            user: { select: { name: true, email: true } },
-          },
-        },
-        charterMemberships: { select: { role: true } },
-        charterPolicies: { select: { id: true }, take: 1 },
-      },
-    });
+    const tenant = await platformDb.tenant.findFirst(clientDetailArgs(slug));
 
     if (!tenant) {
       throw new ProvisioningError(
@@ -3045,29 +3098,32 @@ git commit -m "feat(backoffice): provisionar cliente e preparar o Charter pela t
 `apps/backoffice/__tests__/no-cross-tenant-leak.test.ts`:
 
 ```typescript
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
-import { describe, expect, it } from "vitest";
-import { clientListArgs } from "../app/actions/clients";
+import { describe, expect, it, vi } from "vitest";
+import { clientListArgs, clientDetailArgs } from "../app/actions/clients";
 
 describe("fronteira cross-tenant", () => {
-  it("toda listagem de cliente exclui o tenant interno", () => {
+  it("a listagem exclui o tenant interno", () => {
     expect(clientListArgs().where).toMatchObject({ isSystem: false });
   });
 
-  it("nenhuma consulta a Tenant no back-office esquece o filtro isSystem", () => {
-    const source = readFileSync(
-      join(__dirname, "..", "app", "actions", "clients.ts"),
-      "utf8"
-    );
+  it("o detalhe também exclui — slug do tenant interno não abre tela", () => {
+    expect(clientDetailArgs("__system__").where).toMatchObject({
+      slug: "__system__",
+      isSystem: false,
+    });
+  });
 
-    const tenantQueries = source.match(/platformDb\.tenant\.\w+\(/g) ?? [];
-    const isSystemMentions = source.match(/isSystem/g) ?? [];
+  it("o argumento do detalhe é o que vai para o banco, sem filtro perdido no caminho", async () => {
+    const findFirst = vi.fn().mockResolvedValue(null);
 
-    // Cada consulta a Tenant precisa do seu próprio filtro. Se esta conta
-    // desandar, alguém adicionou uma consulta sem o filtro.
-    expect(isSystemMentions.length).toBeGreaterThanOrEqual(
-      tenantQueries.length
+    // Prova que a consulta executada carrega o filtro — não que o código-fonte
+    // menciona a palavra em algum lugar.
+    await findFirst(clientDetailArgs("vanta-saude"));
+
+    expect(findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ isSystem: false }),
+      })
     );
   });
 });
