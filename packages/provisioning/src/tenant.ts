@@ -27,20 +27,18 @@ export type ProvisionTenantResult = {
 };
 
 /** O que `provisionTenant` usa de dentro da transação. Estende `ModuleDb` e
- *  `SlugChecker` porque delega a eles. Sintaxe de método em tudo, pelo mesmo
- *  motivo dos outros: bivariância deixa o client real do Prisma caber. */
+ *  `SlugChecker` porque delega a eles. Argumento `unknown` nos campos próprios
+ *  pelo mesmo motivo dos outros dois: o client real do Prisma tem argumentos
+ *  genéricos que não encaixam numa forma descrita à mão, e o retorno — o que a
+ *  lógica de fato consome — segue checado. Sintaxe de método em tudo, pelo
+ *  mesmo motivo: bivariância deixa o client real do Prisma caber. */
 export type ProvisionTx = ModuleDb &
   SlugChecker & {
     tenant: {
-      create(args: {
-        data: { name: string; slug: string };
-      }): Promise<{ id: string; slug: string }>;
+      create(args: unknown): Promise<{ id: string; slug: string }>;
     };
     user: {
-      findUnique(args: {
-        where: { email: string };
-        select?: unknown;
-      }): Promise<{ id: string } | null>;
+      findUnique(args: unknown): Promise<{ id: string } | null>;
     };
     tenantMember: { create(args: { data: unknown }): Promise<{ id: string }> };
     tenantInvitation: {

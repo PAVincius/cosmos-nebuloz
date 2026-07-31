@@ -6,15 +6,14 @@ export type ModuleDeps = {
   invalidateModuleCache: (tenantId: string) => Promise<void>;
 };
 
-/** Só o que estas funções usam do client. Sintaxe de método em todos os campos:
- *  sob `strictFunctionTypes` a forma propriedade-com-seta é contravariante e o
- *  client real do Prisma não seria atribuível a este tipo. */
+/** Só o que estas funções usam do client, com argumento `unknown`: o client real
+ *  do Prisma tem argumentos genéricos que não encaixam numa forma descrita à mão,
+ *  e o retorno — que é o que a lógica consome — segue checado. Sintaxe de método
+ *  em todos os campos: sob `strictFunctionTypes` a forma propriedade-com-seta é
+ *  contravariante e o client real deixaria de ser atribuível. */
 export type ModuleDb = {
   tenant: {
-    findUnique(args: {
-      where: { id: string };
-      select?: unknown;
-    }): Promise<{ id: string; slug: string } | null>;
+    findUnique(args: unknown): Promise<{ id: string; slug: string } | null>;
   };
   tenantModule: {
     findUnique(args: unknown): Promise<{ id: string } | null>;

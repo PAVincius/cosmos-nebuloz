@@ -15,21 +15,18 @@ export const POLICY_SECTIONS: { ordinal: number; name: string }[] = [
   { ordinal: 9, name: "Escalonamento e exceções" },
 ];
 
-/** O que o bootstrap usa do client com contexto de tenant. Sintaxe de método em
- *  tudo: sob `strictFunctionTypes` a forma com seta seria contravariante e o
- *  `withTenantDb` real deixaria de ser atribuível a `BootstrapCharterDeps`. */
+/** O que o bootstrap usa do client com contexto de tenant, com argumento
+ *  `unknown`: o client real do Prisma tem argumentos genéricos que não
+ *  encaixam numa forma descrita à mão, e o retorno — o que a lógica de fato
+ *  consome — segue checado. Sintaxe de método em tudo: sob `strictFunctionTypes`
+ *  a forma com seta seria contravariante e o `withTenantDb` real deixaria de
+ *  ser atribuível a `BootstrapCharterDeps`. */
 export type CharterDb = AuditWriter & {
   tenant: {
-    findUnique(args: {
-      where: { id: string };
-      select?: unknown;
-    }): Promise<{ id: string; slug: string } | null>;
+    findUnique(args: unknown): Promise<{ id: string; slug: string } | null>;
   };
   user: {
-    findUnique(args: {
-      where: { email: string };
-      select?: unknown;
-    }): Promise<{ id: string } | null>;
+    findUnique(args: unknown): Promise<{ id: string } | null>;
   };
   charterMembership: { upsert(args: unknown): Promise<{ id: string }> };
   charterSettings: { upsert(args: unknown): Promise<{ id: string }> };

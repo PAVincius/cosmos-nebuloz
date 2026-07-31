@@ -6,15 +6,16 @@ const MAX_ATTEMPTS = 10;
 
 import { ProvisioningError } from "./errors";
 
-/** Declarado com sintaxe de método (`findUnique(args): …`), não de propriedade
- *  com seta. Sob `strictFunctionTypes`, propriedade-com-seta é checada de forma
- *  contravariante e o client real do Prisma deixaria de ser atribuível a este
- *  tipo; método é bivariante e aceita o client real e o objeto falso do teste. */
+/** Só o que esta função usa do client, com argumento `unknown`: o client real
+ *  do Prisma tem argumentos genéricos que não encaixam numa forma descrita à mão,
+ *  e o retorno — que é o que a lógica consome — segue checado. Sintaxe de método
+ *  (`findUnique(args): …`), não de propriedade com seta: sob `strictFunctionTypes`
+ *  propriedade-com-seta é checada de forma contravariante e o client real do
+ *  Prisma deixaria de ser atribuível a este tipo; método é bivariante e aceita o
+ *  client real e o objeto falso do teste. */
 export type SlugChecker = {
   tenant: {
-    findUnique(args: {
-      where: { slug: string };
-    }): Promise<{ id: string } | null>;
+    findUnique(args: unknown): Promise<{ id: string } | null>;
   };
 };
 
