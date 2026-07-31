@@ -152,15 +152,17 @@ export async function listStaffActivity(
     });
 
     return rows.map((row) => {
-      const meta = (row.metadata ?? {}) as {
-        target?: string;
-        actorName?: string | null;
-      };
+      // Sem checagem de forma: JSON de `metadata` não tem schema garantido
+      // pelo Prisma, só o que `logPlatformAudit` escreveu convencionalmente.
+      const meta = (row.metadata ?? {}) as Record<string, unknown>;
+      const target = typeof meta.target === "string" ? meta.target : "—";
+      const actorName =
+        typeof meta.actorName === "string" ? meta.actorName : null;
       return {
         id: row.id,
         action: row.action,
-        target: meta.target ?? "—",
-        actorName: meta.actorName ?? null,
+        target,
+        actorName,
         createdAt: row.createdAt.toISOString(),
       };
     });
