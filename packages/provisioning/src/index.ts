@@ -9,3 +9,8 @@ export {
 } from "./modules";
 export { platformDb } from "./platform-db";
 export { type SlugChecker, slugify, uniqueSlug } from "./slug";
+export {
+  type ProvisionTenantInput,
+  type ProvisionTenantResult,
+  provisionTenant,
+} from "./tenant";
