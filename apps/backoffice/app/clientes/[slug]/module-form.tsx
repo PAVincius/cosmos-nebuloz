@@ -33,7 +33,11 @@ export function ModuleForm({
 
   return (
     <div className="space-y-3">
-      {error ? <p className="text-destructive text-sm">{error}</p> : null}
+      {error ? (
+        <p className="text-destructive text-sm" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <table className="w-full text-sm">
         <tbody>
@@ -48,6 +52,7 @@ export function ModuleForm({
                 <td className="space-x-2 py-2 text-right">
                   {STATUSES.map((status) => (
                     <Button
+                      aria-label={`Definir ${module} para ${status}`}
                       disabled={pending || current?.status === status}
                       key={status}
                       onClick={() => apply(module, status)}
