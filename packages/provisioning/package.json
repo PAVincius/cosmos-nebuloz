@@ -2,10 +2,8 @@
   "name": "@repo/provisioning",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",

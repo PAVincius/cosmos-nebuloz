@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ProvisioningError } from "../errors.js";
+import { ProvisioningError } from "../errors";
 
 describe("ProvisioningError", () => {
   it("carrega o código para quem trata o erro decidir sem ler a mensagem", () => {
