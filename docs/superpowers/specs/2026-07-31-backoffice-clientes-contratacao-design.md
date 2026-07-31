@@ -12,18 +12,20 @@ a política do Charter à mão porque não existe caminho de UI para isso
 
 Isso não escala para o segundo cliente e não sobrevive a férias.
 
-Esta spec cobre a **fatia A** de três:
+Esta spec cobre a **fatia A**:
 
 | Fatia | O que é | Estado |
 |---|---|---|
 | **A — clientes e contratação** | quem é cliente, o que contratou, provisionar | **esta spec** |
+| Gerador de proposta | proposta comercial no timbrado, guardada e emitida em PDF | [spec própria](./2026-07-31-gerador-proposta-comercial-design.md) |
 | B — cobrança | Stripe ↔ `TenantModule.status` | depois |
 | C — pipeline comercial | lead → proposta → fechado | depois |
 
-A ordem é essa porque A destrava operação que hoje é SQL na mão, B fecha o ciclo
+A ordem é essa porque A destrava operação que hoje é SQL na mão, o gerador de
+proposta é independente de tudo e tira trabalho manual imediato, B fecha o ciclo
 do dinheiro reusando o `status` que A consolida, e C é o que mais aguenta viver
-numa planilha — feito por último, já nasce sabendo em que forma o cliente e o
-contrato aterrissam.
+numa planilha — feito por último, já nasce sabendo em que forma o cliente, a
+proposta e o contrato aterrissam.
 
 ## O que já existe
 
