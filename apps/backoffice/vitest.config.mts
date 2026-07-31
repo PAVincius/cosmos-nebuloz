@@ -8,6 +8,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      // Espelha o "@/*": ["./*"] do tsconfig.json — sem isso o vitest não
+      // resolve os imports "@/lib/..." usados pelas actions.
+      "@": path.resolve(__dirname, "./"),
       // O pacote real lança em qualquer import fora do bundler do Next (que
       // troca "server-only" por um módulo vazio em build de servidor). Sob
       // vitest não há esse bundler, então precisa do mesmo stub que
