@@ -73,7 +73,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        # pgvector, não postgres puro: as migrations criam `extension "vector"`
+        # e a imagem oficial não a carrega — o passo de migration morre com
+        # 0A000 antes de qualquer teste rodar.
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -87,6 +90,10 @@ jobs:
           --health-retries 10
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cosmos_dev
+      # Opt-in das suítes que escrevem no banco. Só este job tem um Postgres
+      # descartável — no build da Vercel a DATABASE_URL é a de produção, e lá a
+      # variável fica ausente de propósito.
+      RUN_DB_TESTS: "1"
     steps:
       - uses: actions/checkout@v4
 

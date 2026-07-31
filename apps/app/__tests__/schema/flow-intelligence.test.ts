@@ -29,23 +29,20 @@ const DATABASE_URL =
 const IS_LOCAL_DB = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
 const POOL_SSL = IS_LOCAL_DB ? undefined : { rejectUnauthorized: false };
 
-// Guard: skip the entire suite when no real Postgres is available.
-// The default fallback URL points to localhost which does not exist in CI.
-// Treat any URL that contains "localhost" without an explicit opt-in env var
-// as a placeholder so CI/local runs without a DB skip cleanly.
-// A localhost URL is a placeholder unless RUN_DB_TESTS opts in: the Vercel build
-// env sets DATABASE_URL to a localhost value with no Postgres behind it, so
-// presence alone is not proof of a reachable database.
-const LOCAL_HOST_RE = /@(localhost|127\.0\.0\.1)[:/]/;
-const rawDbUrl = process.env.DATABASE_URL;
+// Guard: esta suíte escreve de verdade — INSERT e DELETE em Tenant, Team,
+// Sprint. Por isso só roda com opt-in explícito (RUN_DB_TESTS), nunca por
+// inferência a partir da DATABASE_URL: o build da Vercel recebe a URL do banco
+// de PRODUÇÃO, e "tem URL logo posso escrever" transforma cada deploy em uma
+// escrita no banco do cliente. Quem liga o opt-in é o job de CI, que sobe um
+// Postgres efêmero só para isso.
 const hasExplicitDb = Boolean(
-  rawDbUrl && (!LOCAL_HOST_RE.test(rawDbUrl) || process.env.RUN_DB_TESTS)
+  process.env.DATABASE_URL && process.env.RUN_DB_TESTS
 );
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
   console.log(
-    "[flow-intelligence] no reachable DATABASE_URL — skipping DB integration suite."
+    "[flow-intelligence] RUN_DB_TESTS não setado — pulando suíte de integração com banco."
   );
 }
 
