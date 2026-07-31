@@ -125,3 +125,44 @@ export async function getClient(slug: string): Promise<Result<ClientDetail>> {
     };
   });
 }
+
+export type ActivityRow = {
+  id: string;
+  action: string;
+  target: string;
+  actorName: string | null;
+  createdAt: string;
+};
+
+const ACTIVITY_LIMIT = 100;
+
+/** `platformStaff` é o campo que `logPlatformAudit` grava em todo ato de
+ *  staff — é o que separa trilha de staff de ato do próprio cliente. */
+export async function listStaffActivity(
+  limit = ACTIVITY_LIMIT
+): Promise<Result<ActivityRow[]>> {
+  return await safeAction(async () => {
+    await requirePlatformStaff();
+
+    const rows = await platformDb.auditLog.findMany({
+      where: { metadata: { path: ["platformStaff"], equals: true } },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+      select: { id: true, action: true, metadata: true, createdAt: true },
+    });
+
+    return rows.map((row) => {
+      const meta = (row.metadata ?? {}) as {
+        target?: string;
+        actorName?: string | null;
+      };
+      return {
+        id: row.id,
+        action: row.action,
+        target: meta.target ?? "—",
+        actorName: meta.actorName ?? null,
+        createdAt: row.createdAt.toISOString(),
+      };
+    });
+  });
+}
