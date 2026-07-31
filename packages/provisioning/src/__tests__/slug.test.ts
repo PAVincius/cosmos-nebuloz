@@ -23,6 +23,16 @@ describe("slugify", () => {
   it("corta em 48 caracteres para caber no limite de slug", () => {
     expect(slugify("a".repeat(80))).toHaveLength(48);
   });
+
+  it("não deixa hífen pendurado quando o corte cai em cima de um separador", () => {
+    // 47 caracteres, um separador, e mais texto: o corte cai logo depois do "-".
+    const name = `${"a".repeat(47)} silva`;
+
+    const slug = slugify(name);
+
+    expect(slug).toHaveLength(47);
+    expect(slug.endsWith("-")).toBe(false);
+  });
 });
 
 describe("uniqueSlug", () => {

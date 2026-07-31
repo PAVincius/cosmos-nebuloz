@@ -24,8 +24,8 @@ export function slugify(name: string): string {
     .normalize("NFD")
     .replace(DIACRITICS, "")
     .replace(NON_ALPHANUM, "-")
-    .replace(EDGE_DASHES, "")
-    .slice(0, MAX_SLUG_LENGTH);
+    .slice(0, MAX_SLUG_LENGTH)
+    .replace(EDGE_DASHES, "");
 }
 
 /** Slug livre para o nome dado. O desempate é numérico e limitado: dez tentativas
@@ -48,6 +48,6 @@ export async function uniqueSlug(
 
   throw new ProvisioningError(
     "SLUG_EXHAUSTED",
-    `Nenhum slug livre para "${name}" após ${MAX_ATTEMPTS} tentativas.`
+    `Nenhum slug livre para "${name}" após a base e ${MAX_ATTEMPTS} sufixos.`
   );
 }
