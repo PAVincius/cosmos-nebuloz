@@ -3,8 +3,14 @@
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
-import type { TrendPoint } from "@/app/(authenticated)/analytics/executive/components/trend-charts";
 import { type Result, safeAction } from "../_base";
+
+type TrendPoint = {
+  pi: string;
+  predictabilityPct: number;
+  cycleTimeDays: number;
+  costPerPoint: number | null;
+};
 
 export async function getExecutiveTrends(
   artIds?: string[]
