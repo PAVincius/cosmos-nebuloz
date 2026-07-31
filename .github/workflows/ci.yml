@@ -35,6 +35,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # O checkout de PR fica em HEAD destacado e não cria ref local de `main`.
+      # O biome procura o branch base pelo nome configurado em vcs.defaultBranch,
+      # não por `origin/main` — sem a ref local ele não encontra nada para
+      # comparar, processa zero arquivos e sai com erro.
+      - name: Materializar a ref do branch base
+        run: git fetch --no-tags origin main:refs/heads/main || true
+
       - name: Biome check
         run: pnpm exec biome check --changed --vcs-client-kind=git --vcs-use-ignore-file=true
 
