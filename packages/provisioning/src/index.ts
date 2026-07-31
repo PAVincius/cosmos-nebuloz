@@ -1,4 +1,10 @@
 export { logPlatformAudit, type PlatformAuditEntry } from "./audit";
+export {
+  type BootstrapCharterDeps,
+  type BootstrapCharterInput,
+  bootstrapCharter,
+  POLICY_SECTIONS,
+} from "./charter";
 export { ProvisioningError, type ProvisioningErrorCode } from "./errors";
 export {
   type ContractModuleInput,
