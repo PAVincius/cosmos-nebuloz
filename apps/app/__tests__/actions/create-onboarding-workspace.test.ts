@@ -1,13 +1,18 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+// A partir da Task 7, `createOnboardingWorkspace` delega criação de tenant e
+// slug para `provisionTenant` (pacote `@repo/provisioning`) — geração de slug
+// e resolução de colisão são responsabilidade dele e já têm cobertura própria
+// em packages/provisioning/src/__tests__/tenant.test.ts. Este arquivo testa
+// só o contrato observável de createOnboardingWorkspace.
 const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   getSession: vi.fn(),
   userFindUnique: vi.fn(),
-  tenantFindUnique: vi.fn(),
-  tenantCreate: vi.fn(),
   sessionUpdateMany: vi.fn(),
   onboardingProgressUpsert: vi.fn(),
+  provisionTenant: vi.fn(),
+  invalidateModuleCache: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
@@ -23,10 +28,6 @@ vi.mock("@repo/database", () => ({
     user: {
       findUnique: mocks.userFindUnique,
     },
-    tenant: {
-      findUnique: mocks.tenantFindUnique,
-      create: mocks.tenantCreate,
-    },
     session: {
       updateMany: mocks.sessionUpdateMany,
     },
@@ -35,6 +36,12 @@ vi.mock("@repo/database", () => ({
     },
   },
 }));
+vi.mock("@repo/provisioning", () => ({
+  provisionTenant: mocks.provisionTenant,
+}));
+vi.mock("@repo/rbac", () => ({
+  invalidateModuleCache: mocks.invalidateModuleCache,
+}));
 
 import { createOnboardingWorkspace } from "../../app/actions/onboarding";
 
@@ -42,10 +49,16 @@ const defaultSession = {
   user: { id: "user-1", email: "user@example.com" },
 };
 
-const defaultTenant = {
-  id: "tenant-new",
+const defaultDbUser = {
+  id: "user-1",
+  email: "user@example.com",
+  name: "User One",
+};
+
+const defaultProvisionResult = {
+  tenantId: "tenant-new",
   slug: "acme-corp",
-  name: "Acme Corp",
+  ownerLinked: true,
 };
 
 describe("createOnboardingWorkspace", () => {
@@ -53,9 +66,8 @@ describe("createOnboardingWorkspace", () => {
     vi.clearAllMocks();
     mocks.headers.mockResolvedValue(new Headers());
     mocks.getSession.mockResolvedValue(defaultSession);
-    mocks.userFindUnique.mockResolvedValue({ id: "user-1" });
-    mocks.tenantFindUnique.mockResolvedValue(null); // slug is available
-    mocks.tenantCreate.mockResolvedValue(defaultTenant);
+    mocks.userFindUnique.mockResolvedValue(defaultDbUser);
+    mocks.provisionTenant.mockResolvedValue(defaultProvisionResult);
     mocks.sessionUpdateMany.mockResolvedValue({ count: 1 });
     mocks.onboardingProgressUpsert.mockResolvedValue({});
   });
@@ -64,7 +76,7 @@ describe("createOnboardingWorkspace", () => {
     const result = await createOnboardingWorkspace("Acme Corp");
 
     expect(result).toEqual({ tenantId: "tenant-new", slug: "acme-corp" });
-    expect(mocks.tenantCreate).toHaveBeenCalledOnce();
+    expect(mocks.provisionTenant).toHaveBeenCalledOnce();
   });
 
   it("throws UNAUTHORIZED when session has no user", async () => {
@@ -87,18 +99,20 @@ describe("createOnboardingWorkspace", () => {
     );
   });
 
-  it("appends numeric suffix on slug collision and retries", async () => {
-    // First call: slug taken; second call: slug available
-    mocks.tenantFindUnique
-      .mockResolvedValueOnce({ id: "existing-tenant" }) // "acme-corp" taken
-      .mockResolvedValueOnce(null); // "acme-corp-1" available
-
+  it("provisiona COSMOS em TRIAL — decisão do cadastro self-service", async () => {
     await createOnboardingWorkspace("Acme Corp");
 
-    // tenant.create should receive slug with -1 suffix
-    expect(mocks.tenantCreate).toHaveBeenCalledWith(
+    expect(mocks.provisionTenant).toHaveBeenCalledWith(
+      expect.anything(),
+      { invalidateModuleCache: mocks.invalidateModuleCache },
       expect.objectContaining({
-        data: expect.objectContaining({ slug: "acme-corp-1" }),
+        name: "Acme Corp",
+        ownerEmail: "user@example.com",
+        actorUserId: "user-1",
+        actorName: "User One",
+        modules: [
+          expect.objectContaining({ module: "COSMOS", status: "TRIAL" }),
+        ],
       })
     );
   });
