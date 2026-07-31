@@ -90,10 +90,11 @@ describe("computeDORAMetrics (AC-005)", () => {
     firstCommitHoursAgo?: number
   ) => ({
     deployedAt: new Date(now.getTime() - hoursAgo * 3_600_000),
-    firstCommitAt:
-      firstCommitHoursAgo !== null
-        ? new Date(now.getTime() - firstCommitHoursAgo * 3_600_000)
-        : undefined,
+    // `firstCommitHoursAgo` é opcional (undefined quando omitido, nunca null);
+    // `?? Number.NaN` preserva o resultado original (Invalid Date) sem o erro de tipo.
+    firstCommitAt: new Date(
+      now.getTime() - (firstCommitHoursAgo ?? Number.NaN) * 3_600_000
+    ),
     state,
   });
 

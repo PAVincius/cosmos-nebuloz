@@ -55,8 +55,8 @@ beforeEach(() => {
 
 describe("createPAERequest", () => {
   it("creates request when no duplicate pending exists", async () => {
-    db.accessExceptionRequest.findFirst.mockResolvedValue(null);
-    db.accessExceptionRequest.create.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findFirst).mockResolvedValue(null);
+    vi.mocked(db.accessExceptionRequest.create).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0001qzrmn831i7rn",
@@ -72,7 +72,7 @@ describe("createPAERequest", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    db.tenantMember.findMany.mockResolvedValue([]);
+    vi.mocked(db.tenantMember.findMany).mockResolvedValue([]);
 
     const result = await createPAERequest({
       entityType: "Epic",
@@ -85,8 +85,21 @@ describe("createPAERequest", () => {
   });
 
   it("rejects duplicate pending request for same entity+action", async () => {
-    db.accessExceptionRequest.findFirst.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findFirst).mockResolvedValue({
       id: "existing-cjld2cjxh0000",
+      tenantId: "cjld2cjxh0000qzrmn831i7rn",
+      requesterId: "cjld2cjxh0001qzrmn831i7rn",
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "PENDING",
+      approverId: null,
+      approvedAt: null,
+      expiresAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const result = await createPAERequest({
@@ -113,8 +126,8 @@ describe("createPAERequest", () => {
   });
 
   it("notifies approvers when can() returns true for a member", async () => {
-    db.accessExceptionRequest.findFirst.mockResolvedValue(null);
-    db.accessExceptionRequest.create.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findFirst).mockResolvedValue(null);
+    vi.mocked(db.accessExceptionRequest.create).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0001qzrmn831i7rn",
@@ -131,8 +144,14 @@ describe("createPAERequest", () => {
       updatedAt: new Date(),
     });
     // One member qualifies as approver
-    db.tenantMember.findMany.mockResolvedValue([
-      { userId: "cjld2cjxh0003qzrmn831i7rn", role: "PO" },
+    vi.mocked(db.tenantMember.findMany).mockResolvedValue([
+      {
+        id: "cjld2cjxh0005qzrmn831i7rn",
+        tenantId: "cjld2cjxh0000qzrmn831i7rn",
+        userId: "cjld2cjxh0003qzrmn831i7rn",
+        role: "PO",
+        createdAt: new Date(),
+      },
     ]);
     mockCan.mockReturnValue(true);
 
@@ -154,7 +173,7 @@ describe("createPAERequest", () => {
 
 describe("listPAERequests", () => {
   it("returns requests without error", async () => {
-    db.accessExceptionRequest.findMany.mockResolvedValue([]);
+    vi.mocked(db.accessExceptionRequest.findMany).mockResolvedValue([]);
     const result = await listPAERequests();
     expect(result.ok).toBe(true);
     if (result.ok) {
@@ -166,7 +185,7 @@ describe("listPAERequests", () => {
 describe("approvePAERequest", () => {
   it("sets status APPROVED and computes expiresAt for PENDING request", async () => {
     mockCan.mockReturnValue(true); // caller has permission to approve
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -182,7 +201,7 @@ describe("approvePAERequest", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    db.accessExceptionRequest.update.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.update).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -214,7 +233,7 @@ describe("approvePAERequest", () => {
   });
 
   it("rejects approval of non-PENDING request", async () => {
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       status: "APPROVED",
@@ -238,7 +257,7 @@ describe("approvePAERequest", () => {
   });
 
   it("rejects self-approval (requester === approver)", async () => {
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0001qzrmn831i7rn", // same as ctx.userId
@@ -268,7 +287,7 @@ describe("approvePAERequest", () => {
 
 describe("denyPAERequest", () => {
   it("rejects denial of non-PENDING request", async () => {
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -293,7 +312,7 @@ describe("denyPAERequest", () => {
 
   it("sets status DENIED on PENDING request", async () => {
     mockCan.mockReturnValue(true); // caller has permission to deny
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -309,7 +328,7 @@ describe("denyPAERequest", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    db.accessExceptionRequest.update.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.update).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -339,7 +358,7 @@ describe("denyPAERequest", () => {
 
 describe("revokePAEGrant", () => {
   it("sets status REVOKED on APPROVED grant when caller is approver", async () => {
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -355,7 +374,7 @@ describe("revokePAEGrant", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    db.accessExceptionRequest.update.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.update).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -383,7 +402,7 @@ describe("revokePAEGrant", () => {
   });
 
   it("rejects revoke of non-APPROVED grant", async () => {
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -413,9 +432,19 @@ describe("revokePAEGrant", () => {
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       userId: "cjld2cjxh0099qzrmn831i7rn", // different user
       role: "ADMIN",
+      user: {
+        id: "cjld2cjxh0099qzrmn831i7rn",
+        email: "admin@example.com",
+        emailVerified: true,
+        name: "Admin",
+        image: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        twoFactorEnabled: false,
+      },
     });
 
-    db.accessExceptionRequest.findUnique.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.findUnique).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",
@@ -431,7 +460,7 @@ describe("revokePAEGrant", () => {
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    db.accessExceptionRequest.update.mockResolvedValue({
+    vi.mocked(db.accessExceptionRequest.update).mockResolvedValue({
       id: "cjld2cjxh0002qzrmn831i7rn",
       tenantId: "cjld2cjxh0000qzrmn831i7rn",
       requesterId: "cjld2cjxh0004qzrmn831i7rn",

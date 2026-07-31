@@ -44,7 +44,22 @@ describe("enforceWithPAE", () => {
 
   it("passes when can() fails but active PAE grant exists", async () => {
     // DEV cannot create Epic by role — but has an active grant
-    db.accessExceptionRequest.findFirst.mockResolvedValue({ id: "grant-1" });
+    vi.mocked(db.accessExceptionRequest.findFirst).mockResolvedValue({
+      id: "grant-1",
+      tenantId: "tenant-1",
+      requesterId: "user-1",
+      entityType: "Epic",
+      action: "create",
+      targetEntityId: null,
+      justification: null,
+      duration: "4h",
+      status: "APPROVED",
+      approverId: "approver-1",
+      approvedAt: new Date(),
+      expiresAt: new Date(Date.now() + 3_600_000),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
 
     await expect(
       enforceWithPAE({
@@ -59,7 +74,7 @@ describe("enforceWithPAE", () => {
   });
 
   it("throws AuthError when can() fails and no active grant", async () => {
-    db.accessExceptionRequest.findFirst.mockResolvedValue(null);
+    vi.mocked(db.accessExceptionRequest.findFirst).mockResolvedValue(null);
 
     await expect(
       enforceWithPAE({
