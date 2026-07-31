@@ -46,6 +46,7 @@ vi.mock("@repo/provisioning", () => ({
   contractModule: vi.fn(),
   setModuleStatus: vi.fn(),
   bootstrapCharter: vi.fn(),
+  provisionTenant: vi.fn(),
 }));
 
 const {
@@ -53,11 +54,11 @@ const {
   contractModuleAction,
   setModuleStatusAction,
   bootstrapCharterAction,
+  provisionTenantAction,
 } = await import("../app/actions/provisioning");
 const { StaffAuthError } = await import("../lib/guard");
-const { contractModule, setModuleStatus, bootstrapCharter } = await import(
-  "@repo/provisioning"
-);
+const { contractModule, setModuleStatus, bootstrapCharter, provisionTenant } =
+  await import("@repo/provisioning");
 
 describe("assertCanWrite", () => {
   it("deixa passar quem é ADMIN no tenant interno", () => {
@@ -117,5 +118,19 @@ describe("as actions de escrita barram staff de leitura", () => {
 
     expect(result.ok).toBe(false);
     expect(bootstrapCharter).not.toHaveBeenCalled();
+  });
+
+  it("provisionTenantAction não escreve quando canWrite é false", async () => {
+    const result = await provisionTenantAction({
+      name: "Vanta Saúde",
+      ownerEmail: "ana@vanta.exemplo",
+      modules: [{ module: "COSMOS", status: "ACTIVE" }],
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.code).toBe("FORBIDDEN");
+    }
+    expect(provisionTenant).not.toHaveBeenCalled();
   });
 });

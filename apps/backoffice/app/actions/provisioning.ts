@@ -6,6 +6,7 @@ import {
   contractModule,
   ProvisioningError,
   platformDb,
+  provisionTenant,
   setModuleStatus,
 } from "@repo/provisioning";
 import { invalidateModuleCache } from "@repo/rbac";
@@ -119,5 +120,34 @@ export async function bootstrapCharterAction(input: {
 
     revalidatePath(`/clientes/${input.slug}`);
     return { created: result.created };
+  });
+}
+
+export async function provisionTenantAction(input: {
+  name: string;
+  ownerEmail: string;
+  modules: {
+    module: "COSMOS" | "CHARTER" | "SIGNAL";
+    status: "ACTIVE" | "TRIAL";
+  }[];
+}): Promise<Result<{ slug: string; ownerLinked: boolean }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+
+    const result = await provisionTenant(
+      platformDb,
+      { invalidateModuleCache },
+      {
+        name: input.name,
+        ownerEmail: input.ownerEmail,
+        modules: input.modules,
+        actorUserId: staff.userId,
+        actorName: staff.name,
+      }
+    );
+
+    revalidatePath("/");
+    return { slug: result.slug, ownerLinked: result.ownerLinked };
   });
 }

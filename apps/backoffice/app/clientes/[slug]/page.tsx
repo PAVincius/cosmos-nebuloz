@@ -1,6 +1,7 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
+import { CharterBootstrap } from "./charter-bootstrap";
 import { ModuleForm } from "./module-form";
 
 export default async function ClientDetailPage({
@@ -19,6 +20,11 @@ export default async function ClientDetailPage({
   }
 
   const client = result.data;
+  // Cliente com tudo pronto não vê ação que não faz nada: só aparece quando
+  // o módulo está contratado e falta papel ou política.
+  const needsCharterBootstrap: boolean =
+    client.charter.moduleContracted &&
+    !(client.charter.hasCompliance && client.charter.hasPolicy);
 
   return (
     <div className="space-y-8">
@@ -63,6 +69,7 @@ export default async function ClientDetailPage({
             </Badge>
           </li>
         </ul>
+        {needsCharterBootstrap ? <CharterBootstrap slug={client.slug} /> : null}
       </section>
 
       <section className="space-y-3">
