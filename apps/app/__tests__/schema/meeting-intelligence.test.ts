@@ -25,12 +25,17 @@ const DATABASE_URL =
 const IS_LOCAL_DB = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
 const POOL_SSL = IS_LOCAL_DB ? undefined : { rejectUnauthorized: false };
 
-const hasExplicitDb = Boolean(process.env.DATABASE_URL);
+// Mesmo opt-in de flow-intelligence: a suíte escreve em Tenant e Integration,
+// e a DATABASE_URL do build da Vercel aponta para produção. Só RUN_DB_TESTS
+// libera a escrita.
+const hasExplicitDb = Boolean(
+  process.env.DATABASE_URL && process.env.RUN_DB_TESTS
+);
 const maybDescribe = hasExplicitDb ? describe : describe.skip;
 
 if (!hasExplicitDb) {
   console.log(
-    "[meeting-intelligence] no reachable DATABASE_URL — skipping DB integration suite."
+    "[meeting-intelligence] RUN_DB_TESTS não setado — pulando suíte de integração com banco."
   );
 }
 
