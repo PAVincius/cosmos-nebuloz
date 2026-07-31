@@ -476,18 +476,27 @@ importers:
         specifier: 4.1.13
         version: 4.1.13
     devDependencies:
+      '@prisma/adapter-pg':
+        specifier: 7.1.0
+        version: 7.1.0
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
         specifier: 24.10.1
         version: 24.10.1
+      '@types/pg':
+        specifier: ^8.11.14
+        version: 8.15.6
       '@types/react':
         specifier: 19.2.7
         version: 19.2.7
       '@types/react-dom':
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.7)
+      pg:
+        specifier: ^8.16.0
+        version: 8.20.0
       tailwindcss:
         specifier: ^4.1.17
         version: 4.1.17
