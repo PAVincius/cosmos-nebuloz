@@ -291,16 +291,64 @@ sem envelope. Enviar para assinatura é ação separada e repetível.
 - **Assinatura da proposta** — proposta se aceita por e-mail; quem vai para a
   Clicksign é o contrato.
 
-## O texto do contrato não é entregável desta spec
+## O texto do contrato — o que já existe e o que falta
 
-O sistema monta, versiona, emite e coleta assinatura. **As cláusulas em si
-precisam ser escritas e revisadas por advogado**: vigência e renovação,
-reajuste, rescisão e aviso prévio, SLA e crédito por indisponibilidade,
-tratamento de dados pessoais (LGPD, com o DPA que o próprio Charter exige que
-seus clientes cobrem dos fornecedores deles), propriedade intelectual e foro.
+**Correção de uma versão anterior desta spec**, que dizia que a biblioteca
+nasceria vazia e que vigência, reajuste, rescisão, foro e LGPD precisariam ser
+escritos do zero. Errado: existe um contrato de prestação de serviços de TI em
+uso, com 14 cláusulas, e ele cobre boa parte disso.
 
-A biblioteca nasce vazia. Sem esse texto, a fase 1 entrega um editor sem o que
-editar.
+**O que o contrato atual já tem** (vira a primeira leva da biblioteca, template
+"prestação de serviços por projeto"):
+
+| Cláusula | Assunto |
+|---|---|
+| 1, 1.1 | Objeto e habilitação |
+| 2–2.2 | Escopo, prazo e execução remota |
+| 3–3.3 | Preço, multa de 2% e juros de 1% ao mês, correção e reajuste por IPCA, nota fiscal |
+| 4–4.6 | Obrigações do contratado, incluindo prazo de resposta técnica |
+| 5–5.5 | Obrigações do contratante, incluindo backup e acesso ao sistema |
+| 6 | Vigência de 1 ano, renovável por concordância expressa |
+| 7 | Cessão e transferência |
+| 8–9.1 | Distrato com aviso de 5 dias, multa de 10% por descumprimento, força maior |
+| 10–11 | Ausência de vínculo societário, responsabilidade, sucessores |
+| 12, 12.2 | LGPD (declaratória) e propriedade intelectual |
+| 13 | Comunicações por e-mail |
+| 14 | Foro |
+
+**O que falta para vender assinatura recorrente** — este é o trabalho jurídico
+real, e ele é menor do que a versão anterior desta spec sugeria:
+
+1. **Modelo de cobrança.** O contrato é de projeto: escopo fechado, prazo em
+   dias úteis, pagamento único. Assinatura precisa de mensalidade, ciclo,
+   e o efeito da inadimplência sobre o **acesso** — hoje só há multa e juros,
+   nada que suspenda o serviço, que é justamente o que `setModuleStatus`
+   implementa do lado do sistema.
+2. **Renovação.** Hoje exige concordância expressa; assinatura normalmente
+   renova sozinha com aviso prévio de não renovação.
+3. **SLA.** Não existe: nem disponibilidade, nem janela de suporte, nem crédito
+   por indisponibilidade.
+4. **DPA de verdade.** A cláusula 12 é declaratória — diz que os dados seguirão
+   a Lei 13.709 e para por aí. Falta o que o próprio Charter exige que os
+   clientes cobrem dos fornecedores deles: papéis de controlador e operador,
+   subprocessadores, transferência internacional, prazo de eliminação e
+   notificação de incidente.
+5. **Saída.** Nada sobre devolução ou eliminação dos dados do cliente ao fim do
+   contrato.
+6. **Licença de uso.** A cláusula 12.2 diz que cada parte mantém sua
+   propriedade intelectual e que nada se transfere — o que não é o mesmo que
+   conceder ao cliente o direito de usar a plataforma.
+
+Um detalhe de formatação a corrigir junto: a numeração salta de 12 para 12.2,
+sem 12.1.
+
+**Consequência para a fase 1:** a biblioteca nasce com as 14 cláusulas do
+contrato de projeto, e o template de assinatura é derivado delas com os seis
+deltas acima. O editor tem o que editar desde o primeiro dia.
+
+**O PDF do contrato não entra no repositório** — traz CNPJ do cliente, RG e CPF
+do representante e dados bancários da Nebuloz. Na biblioteca, dado da Nebuloz
+vira constante da empresa e dado do cliente vira variável.
 
 ## Fontes
 
