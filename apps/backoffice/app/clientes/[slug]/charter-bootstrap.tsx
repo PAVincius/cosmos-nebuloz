@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
 import { useState, useTransition } from "react";
 import { bootstrapCharterAction } from "@/app/actions/provisioning";
 
@@ -45,7 +46,11 @@ export function CharterBootstrap({ slug }: { slug: string }) {
       ) : null}
       {message ? <p className="text-sm">{message}</p> : null}
       <div className="flex gap-2">
+        <Label className="sr-only" htmlFor="compliance-email">
+          E-mail do responsável pelo Compliance
+        </Label>
         <Input
+          id="compliance-email"
           onChange={(e) => setEmail(e.target.value)}
           placeholder="e-mail do responsável pelo Compliance"
           type="email"

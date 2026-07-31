@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
@@ -16,6 +17,10 @@ export function NewClientForm() {
   const [name, setName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
   const [selected, setSelected] = useState<string[]>(["COSMOS"]);
+  const [pendingOwner, setPendingOwner] = useState<{
+    slug: string;
+    email: string;
+  } | null>(null);
 
   const toggle = (module: string) =>
     setSelected((prev) =>
@@ -37,7 +42,14 @@ export function NewClientForm() {
       });
 
       if (result.ok) {
-        router.push(`/clientes/${result.data.slug}`);
+        if (result.data.ownerLinked) {
+          router.push(`/clientes/${result.data.slug}`);
+          return;
+        }
+        // Sem conta no e-mail informado, o cliente nasce sem dono e só o convite
+        // espera. Redirecionar em silêncio faria quem provisionou acreditar que
+        // já tem alguém capaz de entrar.
+        setPendingOwner({ slug: result.data.slug, email: ownerEmail.trim() });
         return;
       }
       setError(result.error);
@@ -49,6 +61,22 @@ export function NewClientForm() {
         <p className="text-destructive text-sm" role="alert">
           {error}
         </p>
+      ) : null}
+
+      {pendingOwner ? (
+        <output className="block rounded-lg border p-4">
+          <p className="font-medium text-sm">Cliente criado sem dono</p>
+          <p className="mt-1 text-muted-foreground text-sm">
+            {pendingOwner.email} ainda não tem conta. O convite ficou pendente:
+            ninguém consegue entrar neste cliente até alguém aceitá-lo.
+          </p>
+          <Link
+            className="mt-2 inline-block text-sm underline"
+            href={`/clientes/${pendingOwner.slug}`}
+          >
+            Abrir {pendingOwner.slug}
+          </Link>
+        </output>
       ) : null}
 
       <div className="space-y-2">
