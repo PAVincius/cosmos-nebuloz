@@ -9,6 +9,25 @@ const globalForPrisma = global as unknown as {
 
 const DATABASE_URL = keys().DATABASE_URL;
 
+/** Remove `sslmode` da connection string.
+ *
+ *  O `pg` lê esse parâmetro da própria URL e sobrepõe o objeto `ssl` montado
+ *  abaixo — com `sslmode=require` ele volta a exigir validação da cadeia e a
+ *  primeira consulta morre em "self-signed certificate in certificate chain",
+ *  que chega no usuário como 500 no login. Quem manda no TLS aqui é o objeto
+ *  `ssl`, não a env: assim o valor cadastrado no painel não derruba produção.
+ */
+function withoutSslMode(url: string): string {
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.delete("sslmode");
+    return parsed.toString();
+  } catch {
+    // URL malformada: devolve como veio e deixa o `pg` reclamar com a mensagem dele.
+    return url;
+  }
+}
+
 function createPrismaClient(): PrismaClient {
   const isNeon =
     DATABASE_URL.includes("neon.tech") ||
@@ -33,7 +52,7 @@ function createPrismaClient(): PrismaClient {
   const { PrismaPg } = require("@prisma/adapter-pg");
   const isLocalDb = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
   const pool = new Pool({
-    connectionString: DATABASE_URL,
+    connectionString: isLocalDb ? DATABASE_URL : withoutSslMode(DATABASE_URL),
     ssl: isLocalDb ? undefined : { rejectUnauthorized: false },
   });
   const adapter = new PrismaPg(pool);
