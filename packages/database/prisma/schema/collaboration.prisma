@@ -14,6 +14,7 @@ model PIPlanFeatureAssignment {
 
   @@unique([piPlanId, featureId])
   @@index([tenantId, piPlanId, teamId, sprintId])
+  @@map("pi_plan_feature_assignments")
 }
 
 model BoardReconciliationLog {
@@ -30,4 +31,5 @@ model BoardReconciliationLog {
   tenant          Tenant   @relation(fields: [tenantId], references: [id])
 
   @@index([tenantId, surface, entityId])
+  @@map("board_reconciliation_logs")
 }

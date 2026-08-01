@@ -30,4 +30,5 @@ model TenantSecurityPolicy {
   tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   @@index([tenantId])
+  @@map("tenant_security_policies")
 }
