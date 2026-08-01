@@ -1,103 +1,111 @@
 import { ModeToggle } from "@repo/design-system/components/mode-toggle";
-import { Link2, Map, ShieldAlert, TrendingUp } from "lucide-react";
 import type { ReactNode } from "react";
 
 type AuthLayoutProps = {
   readonly children: ReactNode;
 };
 
+/** A cadência de um PI: cinco iterações de execução e a janela de IP que fecha
+ *  o incremento. É a estrutura que o Cosmos organiza — desenhá-la diz mais
+ *  sobre o produto do que ilustrar o "cosmos" do nome. */
+const CADENCE = [
+  { id: "I1", ip: false },
+  { id: "I2", ip: false },
+  { id: "I3", ip: false },
+  { id: "I4", ip: false },
+  { id: "I5", ip: false },
+  { id: "IP", ip: true },
+] as const;
+
+const CadenceRail = () => (
+  <div aria-hidden="true" className="select-none">
+    <div className="h-px w-full bg-white/15" />
+    <ol className="flex items-stretch">
+      {CADENCE.map((segment, index) => (
+        <li
+          className={`motion-safe:fade-in motion-safe:slide-in-from-top-1 relative flex-1 pt-3 pb-2 motion-safe:animate-in motion-safe:fill-mode-backwards motion-safe:duration-500 ${
+            segment.ip ? "bg-[#5e6ad2]/12" : ""
+          }`}
+          key={segment.id}
+          style={{ animationDelay: `${180 + index * 70}ms` }}
+        >
+          <span
+            className={`absolute top-0 left-0 w-px ${
+              segment.ip ? "h-3 bg-[#8b95f0]" : "h-2 bg-white/30"
+            }`}
+          />
+          <span
+            className={`pl-2 font-mono text-[11px] tracking-[0.12em] ${
+              segment.ip ? "text-[#a5aef7]" : "text-[#6f7689]"
+            }`}
+          >
+            {segment.id}
+          </span>
+        </li>
+      ))}
+      <li className="relative w-px">
+        <span className="absolute top-0 left-0 h-2 w-px bg-white/30" />
+      </li>
+    </ol>
+    <div className="mt-1 flex justify-between font-mono text-[#565c6d] text-[10px] uppercase tracking-[0.18em]">
+      <span>Execução</span>
+      <span>Inovação e planejamento</span>
+    </div>
+  </div>
+);
+
 const AuthLayout = ({ children }: AuthLayoutProps) => (
-  <div className="container relative grid h-dvh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
-    {/* Sidebar */}
-    <div className="relative hidden h-full flex-col bg-[#0f1011] p-10 text-white lg:flex">
-      <div className="absolute inset-0 bg-[#0f1011]" />
-      {/* Accent bar */}
+  <div className="grid h-dvh grid-cols-1 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)]">
+    {/* Painel de marca — escuro nos dois temas, por decisão. */}
+    <aside className="relative hidden flex-col justify-between overflow-hidden border-white/8 border-r bg-[#0b0e17] p-12 lg:flex xl:p-16">
+      {/* Grade de fundo no mesmo ritmo das iterações do rail. */}
       <div
-        className="absolute top-0 right-0 left-0 h-[3px]"
+        className="pointer-events-none absolute inset-0"
         style={{
-          background:
-            "linear-gradient(90deg, #5e6ad2 0%, #828fff 60%, #5e6ad2 100%)",
+          backgroundImage:
+            "repeating-linear-gradient(90deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 96px)",
         }}
       />
 
-      {/* Logo */}
-      <div className="relative z-20 flex items-center gap-2">
-        <span className="text-[#818cf8] text-xl">◆</span>
-        <span className="font-bold text-lg text-white tracking-tight">
+      <div className="relative z-10 flex items-center gap-2.5">
+        <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] bg-[#5e6ad2]" />
+        <span className="font-mono text-[#e7e9f5] text-[13px] uppercase tracking-[0.32em]">
           Cosmos
-        </span>
-        <span className="ml-2 rounded-full border border-[#818cf8]/40 px-2 py-0.5 font-semibold text-[#818cf8] text-[10px] uppercase tracking-widest">
-          Beta
         </span>
       </div>
 
-      <div className="absolute top-4 right-4">
+      <h2 className="relative z-10 font-display font-semibold text-[#f2f3fa] text-[2.1rem] leading-[1.08] tracking-[-0.03em] xl:text-[2.5rem] 2xl:text-[3rem]">
+        Cinco iterações.
+        <br />
+        Uma janela de IP.
+        <br />
+        <span className="text-[#8b95f0]">Nenhuma decisão perdida.</span>
+      </h2>
+
+      <div className="relative z-10 space-y-10">
+        <CadenceRail />
+        <p className="font-mono text-[#454b5c] text-[10px] uppercase tracking-[0.2em]">
+          Nebuloz · {new Date().getFullYear()}
+        </p>
+      </div>
+    </aside>
+
+    {/* Coluna do formulário */}
+    <main className="relative flex items-center justify-center px-6 py-12 sm:px-10">
+      <div className="absolute top-5 right-5">
         <ModeToggle />
       </div>
 
-      {/* Middle content */}
-      <div className="relative z-20 mt-auto space-y-8">
-        {/* Feature list */}
-        <div className="space-y-3">
-          {[
-            {
-              icon: Map,
-              label: "PI Planning SAFe",
-              desc: "Planeje incrementos com ARTs e times",
-            },
-            {
-              icon: Link2,
-              label: "Dependências visuais",
-              desc: "Mapeie e resolva bloqueios em tempo real",
-            },
-            {
-              icon: TrendingUp,
-              label: "OKRs + Lean Budget",
-              desc: "Alinhe estratégia e investimento",
-            },
-            {
-              icon: ShieldAlert,
-              label: "IA para riscos",
-              desc: "Detecção preditiva de impedimentos",
-            },
-          ].map(({ icon: Icon, label, desc }) => (
-            <div className="flex items-start gap-3" key={label}>
-              <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[#5e6ad2]" />
-              <div>
-                <p className="font-semibold text-[#f7f8f8] text-sm">{label}</p>
-                <p className="text-[#62666d] text-xs">{desc}</p>
-              </div>
-            </div>
-          ))}
+      <div className="flex w-full max-w-[380px] flex-col">
+        <div className="mb-10 flex items-center gap-2.5 lg:hidden">
+          <span className="h-2.5 w-2.5 rotate-45 rounded-[2px] bg-[#5e6ad2]" />
+          <span className="font-mono text-[13px] uppercase tracking-[0.32em]">
+            Cosmos
+          </span>
         </div>
-
-        {/* Quote */}
-        <blockquote className="border-[#5e6ad2] border-l-2 pl-4">
-          <p className="text-[#8a8f98] text-sm leading-relaxed">
-            "Transformamos PI Planning de uma cerimônia anual em inteligência
-            contínua."
-          </p>
-          <footer className="mt-1 text-[#62666d] text-xs">
-            — Equipe Nebuloz
-          </footer>
-        </blockquote>
-      </div>
-
-      {/* Footer */}
-      <div className="relative z-20 mt-6 flex items-center gap-3">
-        <p className="text-[#3e3e44] text-xs">
-          © {new Date().getFullYear()} Nebuloz · nebuloz.com
-        </p>
-      </div>
-    </div>
-
-    {/* Form area */}
-    <div className="relative flex h-full items-center justify-center lg:p-8">
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-[#5e6ad2]/[0.06]" />
-      <div className="relative mx-auto flex w-full max-w-[400px] flex-col space-y-6">
         {children}
       </div>
-    </div>
+    </main>
   </div>
 );
 

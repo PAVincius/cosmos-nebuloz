@@ -11,7 +11,14 @@ import {
 import { authClient } from "../client";
 
 const inputClass =
-  "w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-[#5e6ad2]/40 focus:border-[#5e6ad2]/60 transition-colors";
+  "h-11 w-full rounded-lg border border-border bg-background px-3.5 text-[15px] text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-4 focus:ring-[#5e6ad2]/15 focus:border-[#5e6ad2] transition-colors";
+
+/** Micro-label em mono: mesma família dos rótulos do rail de cadência no painel. */
+const labelClass =
+  "font-mono text-[11px] uppercase tracking-[0.14em] text-muted-foreground";
+
+const buttonClass =
+  "h-11 w-full rounded-lg bg-[#5e6ad2] font-semibold text-sm text-white transition-colors hover:bg-[#4f59c0] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#5e6ad2]/25 disabled:cursor-not-allowed disabled:opacity-45";
 
 export const SignIn = () => {
   const [email, setEmail] = useState("");
@@ -68,22 +75,24 @@ export const SignIn = () => {
 
   if (step === "totp") {
     return (
-      <div className="space-y-6">
-        <div className="space-y-1">
-          <h1 className="font-bold text-2xl tracking-tight">Verificação 2FA</h1>
+      <div className="space-y-8">
+        <div className="space-y-2">
+          <h1 className="font-display font-semibold text-3xl tracking-[-0.02em]">
+            Verificação em duas etapas
+          </h1>
           <p className="text-muted-foreground text-sm">
-            Insira o código de 6 dígitos do seu aplicativo autenticador.
+            Digite o código de 6 dígitos do seu aplicativo autenticador.
           </p>
         </div>
 
-        <form className="space-y-4" onSubmit={handleTotp}>
-          <div className="space-y-1.5">
-            <label className="font-medium text-sm" htmlFor="totp">
-              Código de verificação
+        <form className="space-y-5" onSubmit={handleTotp}>
+          <div className="space-y-2">
+            <label className={labelClass} htmlFor="totp">
+              Código do autenticador
             </label>
             <input
               autoFocus
-              className={`${inputClass} text-center font-mono text-xl tracking-[0.5em]`}
+              className={`${inputClass} h-14 text-center font-mono text-2xl tracking-[0.4em]`}
               id="totp"
               inputMode="numeric"
               maxLength={6}
@@ -103,7 +112,7 @@ export const SignIn = () => {
           )}
 
           <button
-            className="w-full rounded-lg bg-[#5e6ad2] px-4 py-2.5 font-semibold text-sm text-white transition-all hover:bg-[#4f59c0] disabled:cursor-not-allowed disabled:opacity-50"
+            className={buttonClass}
             disabled={totpCode.length !== 6 || loading}
             type="submit"
           >
@@ -126,18 +135,20 @@ export const SignIn = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-1">
-        <h1 className="font-bold text-2xl tracking-tight">Entrar</h1>
+    <div className="space-y-8">
+      <div className="space-y-2">
+        <h1 className="font-display font-semibold text-3xl tracking-[-0.02em]">
+          Entrar
+        </h1>
         <p className="text-muted-foreground text-sm">
-          Acesse seu workspace no Cosmos.
+          Use o e-mail da sua organização.
         </p>
       </div>
 
-      <form className="space-y-4" onSubmit={handleCredentials}>
-        <div className="space-y-1.5">
-          <label className="font-medium text-sm" htmlFor="email">
-            Email
+      <form className="space-y-5" onSubmit={handleCredentials}>
+        <div className="space-y-2">
+          <label className={labelClass} htmlFor="email">
+            E-mail
           </label>
           <input
             autoComplete="email"
@@ -151,13 +162,13 @@ export const SignIn = () => {
           />
         </div>
 
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <label className="font-medium text-sm" htmlFor="password">
+        <div className="space-y-2">
+          <div className="flex items-baseline justify-between">
+            <label className={labelClass} htmlFor="password">
               Senha
             </label>
             <Link
-              className="text-muted-foreground text-xs transition-colors hover:text-primary"
+              className="text-[#5e6ad2] text-xs underline-offset-4 transition-colors hover:underline"
               href="/forgot-password"
             >
               Esqueci minha senha
@@ -182,7 +193,7 @@ export const SignIn = () => {
         )}
 
         <button
-          className="w-full rounded-lg bg-[#5e6ad2] px-4 py-2.5 font-semibold text-sm text-white transition-all hover:bg-[#4f59c0] disabled:cursor-not-allowed disabled:opacity-50"
+          className={buttonClass}
           disabled={!(email && password) || loading}
           type="submit"
         >
@@ -190,13 +201,13 @@ export const SignIn = () => {
         </button>
       </form>
 
-      <p className="text-center text-muted-foreground text-sm">
+      <p className="border-border border-t pt-6 text-muted-foreground text-sm">
         Não tem conta?{" "}
         <Link
-          className="font-medium text-primary underline-offset-4 hover:underline"
+          className="font-medium text-foreground underline-offset-4 hover:underline"
           href="/sign-up"
         >
-          Criar conta grátis
+          Criar conta
         </Link>
       </p>
     </div>
