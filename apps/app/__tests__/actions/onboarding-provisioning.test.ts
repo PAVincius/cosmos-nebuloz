@@ -11,7 +11,7 @@ vi.mock("@repo/auth/server", () => ({
 }));
 vi.mock("@repo/database", () => ({ database: {} }));
 
-import { SELF_SERVICE_MODULES } from "@/app/actions/onboarding";
+import { SELF_SERVICE_MODULES } from "@/app/actions/onboarding-modules";
 
 describe("provisionamento do cadastro self-service", () => {
   it("dá COSMOS em TRIAL — cadastro sozinho não é venda fechada", () => {
