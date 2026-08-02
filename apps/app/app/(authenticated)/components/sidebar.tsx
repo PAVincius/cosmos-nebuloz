@@ -18,6 +18,7 @@ import {
   HomeIcon,
   LayersIcon,
   SettingsIcon,
+  SparklesIcon,
   UserIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -33,6 +34,7 @@ const NAV = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
   { href: "/portfolio", label: "Portfólio", icon: LayersIcon },
   { href: "/portfolio/wsjf", label: "WSJF", icon: BarChart3Icon },
+  { href: "/telas", label: "Telas portadas", icon: SparklesIcon },
   { href: "/settings/workspace", label: "Configurações", icon: SettingsIcon },
   { href: "/profile", label: "Perfil", icon: UserIcon },
 ] as const;

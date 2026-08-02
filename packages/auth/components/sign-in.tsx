@@ -155,7 +155,7 @@ export const SignIn = () => {
             className={inputClass}
             id="email"
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="ana@empresa.com"
+            placeholder="bia@empresa.com"
             required
             type="email"
             value={email}
