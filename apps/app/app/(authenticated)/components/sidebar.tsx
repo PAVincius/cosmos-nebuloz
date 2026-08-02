@@ -13,12 +13,29 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/design-system/components/ui/sidebar";
-import { HomeIcon } from "lucide-react";
+import {
+  BarChart3Icon,
+  HomeIcon,
+  LayersIcon,
+  SettingsIcon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { UserButton } from "./user-button";
 import { WorkspaceSwitcher } from "./workspace-switcher";
+
+/** Só entra aqui rota que existe. A navegação anterior listava 30 destinos e
+ *  metade tinha sido apagada do repo — link para tela inexistente é pior que
+ *  ausência de link, porque promete e dá 404. */
+const NAV = [
+  { href: "/dashboard", label: "Home", icon: HomeIcon },
+  { href: "/portfolio", label: "Portfólio", icon: LayersIcon },
+  { href: "/portfolio/wsjf", label: "WSJF", icon: BarChart3Icon },
+  { href: "/settings/workspace", label: "Configurações", icon: SettingsIcon },
+  { href: "/profile", label: "Perfil", icon: UserIcon },
+] as const;
 
 type SidebarTenant = {
   id: string;
@@ -42,7 +59,6 @@ export const GlobalSidebar = ({
   initialActiveTenantId = null,
 }: GlobalSidebarProperties) => {
   const pathname = usePathname();
-  const isActive = pathname === "/dashboard";
 
   return (
     <>
@@ -61,14 +77,20 @@ export const GlobalSidebar = ({
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild isActive={isActive} tooltip="Home">
-                    <Link href="/dashboard">
-                      <HomeIcon />
-                      <span>Home</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                {NAV.map(({ href, label, icon: Icon }) => (
+                  <SidebarMenuItem key={href}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === href}
+                      tooltip={label}
+                    >
+                      <Link href={href}>
+                        <Icon />
+                        <span>{label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
