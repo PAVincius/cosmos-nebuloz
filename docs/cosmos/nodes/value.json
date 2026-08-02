@@ -1,0 +1,21 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "value",
+  "kind": "tela",
+  "titulo": "value",
+  "rota": "/cosmos/value",
+  "componente": "apps/app/components/cosmos/screens/value.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": null,
+  "profundidade": null,
+  "trilha": null,
+  "dono": null,
+  "estado": "pendente",
+  "actions": [],
+  "models": [],
+  "lacunas": [],
+  "depende_de": [],
+  "seed": [],
+  "verifica": [],
+  "commits": []
+}

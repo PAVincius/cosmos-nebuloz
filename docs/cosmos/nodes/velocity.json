@@ -1,0 +1,21 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "velocity",
+  "kind": "tela",
+  "titulo": "velocity",
+  "rota": "/cosmos/velocity",
+  "componente": "apps/app/components/cosmos/screens/velocity.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": null,
+  "profundidade": null,
+  "trilha": null,
+  "dono": null,
+  "estado": "pendente",
+  "actions": [],
+  "models": [],
+  "lacunas": [],
+  "depende_de": [],
+  "seed": [],
+  "verifica": [],
+  "commits": []
+}
