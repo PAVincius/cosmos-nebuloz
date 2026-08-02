@@ -5,20 +5,10 @@ import { database } from "@repo/database";
 import { provisionTenant } from "@repo/provisioning";
 import { invalidateModuleCache } from "@repo/rbac";
 import { headers } from "next/headers";
+import { SELF_SERVICE_MODULES } from "./onboarding-modules";
 
-const TRIAL_DAYS = 14;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const MIN_NAME_LENGTH = 2;
-
-/** O que um cadastro self-service ganha. TRIAL com prazo, não ACTIVE: quem se
- *  cadastra sozinho não fechou venda. Trocar aqui muda o produto inteiro. */
-export const SELF_SERVICE_MODULES = [
-  {
-    module: "COSMOS" as const,
-    status: "TRIAL" as const,
-    trialDays: TRIAL_DAYS,
-  },
-];
 
 export async function createOnboardingWorkspace(name: string) {
   const session = await auth.api.getSession({ headers: await headers() });
