@@ -231,7 +231,7 @@
     "apps/app/__tests__/actions/settings-notifications.test.ts",
     "apps/app/__tests__/screens/settings.test.tsx"
   ],
-  "commits": [],
+  "commits": ["501a769"],
   "notas": "Balde B e não A por causa de uma aba só: 'Plano & faturamento' é balde C isolado (não há nada de invoice/seat/assinatura no schema) e fica em leitura de Tenant.plan mais contato comercial, com a ausência registrada na lacuna settings-5. As outras seis abas já estavam ligadas ao layer maduro de actions com RBAC no servidor; a profundidade que faltava era de regra, não de leitura — o toggle de SSO ligava autenticação federada sem IdP nenhum configurado, e nada no repo impedia. As guardas de papel não foram afrouxadas: os testes provam que getSecurityTab e getAuditTab recusam não-ADMIN antes de qualquer leitura.",
   "atualizado_em": "2026-08-03"
 }
