@@ -2,14 +2,17 @@
 // real items render into ART lanes with period columns, milestone flags and
 // the status legend survive, and the empty state is honest (no items → no
 // fabricated grid).
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { RoadmapItemView } from "../../app/(cosmos)/actions/roadmap";
 
 const listRoadmapItemsMock = vi.fn();
+const moveRoadmapItemToQuarterMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/roadmap", () => ({
   listRoadmapItems: (...args: unknown[]) => listRoadmapItemsMock(...args),
+  moveRoadmapItemToQuarter: (...args: unknown[]) =>
+    moveRoadmapItemToQuarterMock(...args),
 }));
 
 import RoadmapScreen from "../../components/cosmos/screens/roadmap";
@@ -40,6 +43,14 @@ const ITEMS: RoadmapItemView[] = [
 ];
 
 describe("RoadmapScreen", () => {
+  beforeEach(() => {
+    // mockReset e não clearAllMocks: só o reset esvazia a fila de
+    // mockResolvedValueOnce, e a contagem de chamadas precisa começar do zero
+    // em cada teste porque um deles conta recarregamentos.
+    listRoadmapItemsMock.mockReset();
+    moveRoadmapItemToQuarterMock.mockReset();
+  });
+
   it("renders ART lanes, item bars and the status legend from real data", async () => {
     listRoadmapItemsMock.mockResolvedValueOnce({ ok: true, data: ITEMS });
     render(<RoadmapScreen />);
@@ -79,5 +90,54 @@ describe("RoadmapScreen", () => {
     expect(
       await screen.findByText("Não foi possível carregar os dados.")
     ).toBeTruthy();
+  });
+
+  it("adia o item para o trimestre seguinte ao do seu início e recarrega (story-061 AC-005)", async () => {
+    listRoadmapItemsMock.mockResolvedValue({ ok: true, data: ITEMS });
+    moveRoadmapItemToQuarterMock.mockResolvedValue({
+      ok: true,
+      data: { id: "ri1" },
+    });
+    render(<RoadmapScreen />);
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Adiar Migração multi-tenant um trimestre",
+      })
+    );
+
+    // o item começa em 05/01/2026 → Q1 2026; adiar leva a Q2 2026
+    await waitFor(() =>
+      expect(moveRoadmapItemToQuarterMock).toHaveBeenCalledWith({
+        id: "ri1",
+        year: 2026,
+        quarter: 2,
+      })
+    );
+    await waitFor(() => expect(listRoadmapItemsMock).toHaveBeenCalledTimes(2));
+  });
+
+  it("antecipa o item para o trimestre anterior, virando o ano (story-061 AC-005)", async () => {
+    listRoadmapItemsMock.mockResolvedValue({ ok: true, data: ITEMS });
+    moveRoadmapItemToQuarterMock.mockResolvedValue({
+      ok: true,
+      data: { id: "ri1" },
+    });
+    render(<RoadmapScreen />);
+
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: "Antecipar Migração multi-tenant um trimestre",
+      })
+    );
+
+    // Q1 2026 → Q4 2025
+    await waitFor(() =>
+      expect(moveRoadmapItemToQuarterMock).toHaveBeenCalledWith({
+        id: "ri1",
+        year: 2025,
+        quarter: 4,
+      })
+    );
   });
 });

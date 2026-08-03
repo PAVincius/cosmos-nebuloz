@@ -2,20 +2,123 @@
   "$schema": "../schema/no.schema.json",
   "id": "roadmap",
   "kind": "tela",
-  "titulo": "roadmap",
+  "titulo": "Roadmap (horizonte multi-PI por ART)",
   "rota": "/cosmos/roadmap",
   "componente": "apps/app/components/cosmos/screens/roadmap.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/roadmap.ts",
+      "export": "listRoadmapItems",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/roadmap.ts",
+      "export": "moveRoadmapItemToQuarter",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["RoadmapItem", "ART", "Epic"],
+  "safe": {
+    "pratica": "Roadmap — compromisso de entrega por trimestre e por ART, replanejável sem perder o que o item é",
+    "nivel": "Portfolio",
+    "faz": "Mostra à Portfolio Manager o horizonte do portfólio como grade Gantt: faixas por ART, colunas de trimestre derivadas das datas reais dos itens, e o trimestre corrente destacado. Deixa antecipar ou adiar um item um trimestre por vez, preservando a duração dele e respeitando o teto de itens por ART/trimestre.",
+    "invariantes": [
+      "mover preserva a duração do item; gravar só o novo início deixaria o fim onde estava e poderia inverter o intervalo",
+      "item cujo intervalo já está invertido no banco sai do movimento com fim igual ao início — o movimento corrige a inversão em vez de propagá-la, e não inventa duração que ninguém registrou",
+      "teto de 25 itens por ART por trimestre (FR-028); o próprio item não conta contra si mesmo, senão o 25º ficaria preso onde está",
+      "'sem ART' é uma faixa da grade como outra qualquer e tem o mesmo teto — não é a ausência de faixa",
+      "trimestre fora de 1–4 e ano fora da faixa de planejamento são recusados no zod, antes de qualquer consulta",
+      "o id vindo do cliente é reconferido por (id, tenantId) antes de qualquer escrita",
+      "escrita passa por requireRole(ADMIN|RTE|PO), grava logAudit com trimestre de origem→destino e revalida a rota da tela",
+      "o eixo de trimestres é derivado das datas reais dos itens, nunca um eixo de PI fabricado: RoadmapItem não tem FK de PI e as janelas de PIPlan não são alinhadas entre ARTs",
+      "artId de RoadmapItem não é relação Prisma; o nome do ART é resolvido por consulta tenant-escopada e vira null quando o id não pertence ao tenant, nunca o nome de outro tenant"
+    ],
+    "fonte": [
+      "docs/stories/epic-007/story-061-tela-roadmap-mover-item.md",
+      "docs/srd-epic-007.md",
+      "docs/stories/epic-007/story-031.md",
+      "SAFe 6.0 — Portfolio Roadmap / Solution Roadmap"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/roadmap.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "roadmap-1",
+      "tipo": "action",
+      "alvo": "moveRoadmapItemToQuarter",
+      "hoje": "a tela era somente leitura — o próprio cabeçalho do componente registrava que 'drag-to-edit needs a mutation this screen doesn't wire'; replanejar acontecia fora e voltava como leitura",
+      "desejado": "mover o item para outro trimestre preservando a duração, com RBAC, guarda de tenant, teto por ART/trimestre, audit e revalidação da rota certa",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "roadmap-2",
+      "tipo": "seed",
+      "alvo": "RoadmapItem do tenant demo",
+      "hoje": "nenhum item — a tela abria no estado vazio e o eixo de trimestres não tinha de onde nascer",
+      "desejado": "quatro itens amarrados a épicos semeados, em trimestres relativos ao corrente (não datas fixas, que envelhecem), incluindo um marco e um item sem ART para a faixa 'Sem ART atribuído'",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "roadmap-3",
+      "tipo": "campo",
+      "alvo": "RoadmapItem.confidence",
+      "hoje": "a FR-028 pede confiança 0–100 com codificação visual (contorno quando cai abaixo do limiar) e notificação ao Business Owner na queda; o model não tem o campo",
+      "desejado": "campo de confiança no RoadmapItem, exibido na barra e observado por notificação",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "roadmap-4",
+      "tipo": "action",
+      "alvo": "UpdateRoadmapItemSchema não valida a ordem das datas",
+      "hoje": "em app/actions/roadmap/schema.ts, UpdateRoadmapItemSchema é RoadmapItemBaseSchema.partial(), e .partial() é aplicado ao schema ANTES do .refine(endDate >= startDate) — o update genérico aceita fim menor que início. updateRoadmapItem não tem consumidor de produção hoje, então a falha é latente",
+      "desejado": "validar a ordem das datas contra a linha armazenada quando só uma das datas vem no payload; é decisão da camada CRUD genérica, que tem outro consumidor",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "roadmap-5",
+      "tipo": "action",
+      "alvo": "escrita sem RBAC nem audit em app/actions/roadmap/index.ts",
+      "hoje": "createRoadmapItem, updateRoadmapItem e deleteRoadmapItem não chamam requireRole nem logAudit, e revalidam /portfolio/roadmap; qualquer membro do tenant apaga item de roadmap sem deixar rastro",
+      "desejado": "RBAC e audit na camada genérica; endurecê-la muda o contrato de /portfolio/roadmap, que é o outro consumidor, então é decisão fora desta tela",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "roadmap-6",
+      "tipo": "campo",
+      "alvo": "planejamento por cenário",
+      "hoje": "a FR-028 e a story-031 AC-003/004/005 pedem deep-copy de cenário, diff contra a base e promote-to-base com rollback por arquivamento (máx. 5/ART/ano); RoadmapItem não tem scenarioName nem archived",
+      "desejado": "campos de cenário no RoadmapItem e as três operações",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/roadmap.test.ts",
+    "apps/app/__tests__/screens/roadmap.test.tsx",
+    "apps/app/__tests__/screens/roadmap-grid.test.ts"
+  ],
+  "commits": ["9eb0d7db"],
+  "notas": "Balde B: RoadmapItem já é completo para o horizonte base (datas, ART, status, marco, cor) — a lacuna era de escrita, não de schema, e nenhuma migration foi criada. A action nova mora em (cosmos)/actions/roadmap.ts e NÃO substitui app/actions/roadmap/index.ts: aquela é CRUD genérico com outro consumidor (/portfolio/roadmap), e endurecê-la com RBAC mudaria o contrato de quem já a usa — mesma precedência de (cosmos)/actions/kanban.ts. As lacunas roadmap-4 e roadmap-5 são dessa camada genérica e ficam registradas aqui porque foram encontradas ao decidir se dava para reusá-la; roadmap-3 e roadmap-6 exigem migration e não foram aproximadas por outro campo. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }

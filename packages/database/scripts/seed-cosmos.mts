@@ -86,6 +86,64 @@ const THEME_META: Record<
   },
 };
 
+// Pilares do Strategy Map. Pilar é o agrupamento grosso acima do tema: sem
+// eles /cosmos/strategy abre vazia, e um pilar sem tema vinculado tem rollup 0
+// para sempre, o que faz a tela parecer quebrada em vez de vazia.
+//
+// "Eficiência de Custo" fica de fora de propósito: a tela agora mostra tema sem
+// pilar como lacuna de alinhamento (story-060 AC-002), e um seed em que tudo
+// está alinhado esconderia esse caminho. Portfólio real tem tema órfão.
+const PILLARS = [
+  {
+    name: "Crescimento",
+    tone: "green",
+    themes: ["Expansão LATAM", "Enterprise Ready"],
+  },
+  {
+    name: "Plataforma & Confiança",
+    tone: "purple",
+    themes: ["Modernização da Plataforma", "Confiança & Risco"],
+  },
+  { name: "Inteligência de Dados", tone: "amber", themes: ["Data & AI"] },
+];
+
+// Contexto de ciclo de vida coerente com o estado gravado do épico.
+//
+// transitionEpicStatus não hidrata o ator no estado persistido: reconstrói a
+// máquina do zero e reproduz o caminho canônico até o estado atual
+// (fastForwardToState), passando pelos MESMOS guards. Um épico gravado em
+// PORTFOLIO_BACKLOG sem investScore/hipótese nunca chega lá no replay — o ator
+// trava em ANALYZING e o arraste no board falha com uma mensagem sobre o estado
+// errado. Estado não alcançável não é dado ruim, é dado impossível.
+//
+// A regra, provada em apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts:
+//  - ANALYZING ou além: investScore >= 40 e hypothesis com >= 50 caracteres
+//    (canTransitionToBacklog);
+//  - IMPLEMENTING ou além: também leanBudgetAllocation > 0 e GovernedEpic
+//    aprovado (canTransitionToImplementing).
+// FUNNEL fica sem nada de propósito: é o estado inicial, ANALYZE não tem guard,
+// e um épico de funil sem hipótese é o caso realista.
+const GATED_FROM_ANALYZING = new Set([
+  "ANALYZING",
+  "PORTFOLIO_BACKLOG",
+  "IMPLEMENTING",
+  "DONE",
+]);
+const GATED_FROM_IMPLEMENTING = new Set(["IMPLEMENTING", "DONE"]);
+
+function lifecycleContext(lifecycleStatus: string, title: string) {
+  const analyzed = GATED_FROM_ANALYZING.has(lifecycleStatus);
+  const funded = GATED_FROM_IMPLEMENTING.has(lifecycleStatus);
+  return {
+    investScore: analyzed ? 72 : null,
+    hypothesis: analyzed
+      ? `Acreditamos que "${title}" reduz atrito para o cliente e sustenta a meta de receita do PI; validaremos pelos indicadores de valor do épico.`
+      : null,
+    leanBudgetAllocation: funded ? 250_000 : null,
+    needsGovernanceApproval: funded,
+  };
+}
+
 const EPICS = [
   {
     id: "EP-104",
@@ -720,6 +778,106 @@ const DECISIONS = [
   },
 ];
 
+// Custo de nuvem do tenant demo — o INSUMO da detecção de anomalia, não a
+// anomalia. Cada grupo é um par (serviço, conta) com seis meses de baseline e o
+// mês corrente. O baseline precisa variar: com MAD zero o modified z-score é
+// indefinido e detectCostAnomaly se recusa a sinalizar (é o comportamento
+// correto — não se inventa desvio a partir de série constante).
+//
+// O seed NÃO grava CostAnomaly. Essa linha é produto de
+// apps/app/lib/cost/detect-cost-anomalies.ts; escrevê-la aqui exigiria
+// reimplementar mediana/MAD num segundo lugar e chamar o resultado de dado.
+// Com o insumo semeado, "Detectar agora" em /cosmos/anomalies produz a anomalia
+// pelo caminho real — e o grupo `rds`, estável, prova que o detector não
+// sinaliza tudo.
+const BILLING_ACCOUNT = "111122223333";
+const BILLING_GROUPS = [
+  {
+    service: "AmazonEC2",
+    serviceCategory: "Compute",
+    region: "sa-east-1",
+    baseline: [1180, 1240, 1205, 1310, 1225, 1268],
+    current: 2480,
+  },
+  {
+    service: "AmazonRDS",
+    serviceCategory: "Databases",
+    region: "sa-east-1",
+    baseline: [640, 655, 648, 662, 651, 658],
+    current: 659,
+  },
+  {
+    service: "AmazonS3",
+    serviceCategory: "Storage",
+    region: "sa-east-1",
+    baseline: [88, 95, 91, 103, 97, 92],
+    current: 112,
+  },
+];
+
+// Itens do roadmap do tenant demo. `quarterOffset` é relativo ao trimestre
+// corrente, não a uma data fixa: a grade de /cosmos/roadmap deriva o eixo das
+// datas dos próprios itens e destaca o trimestre de agora, então um seed com
+// datas fixas envelhece e empurra o "agora" para fora do horizonte.
+//
+// `epic` é o título de um épico semeado acima; serve para amarrar o item ao
+// épico real em vez de inventar um trabalho que não existe no portfólio.
+const ROADMAP_ITEMS = [
+  {
+    title: "Migração core para multi-tenant",
+    epic: "Migração core para multi-tenant",
+    quarterOffset: -1,
+    weeks: 10,
+    status: "IN_PROGRESS",
+    color: "#6366f1",
+    milestone: false,
+    withArt: true,
+  },
+  {
+    title: "Open Finance · agregação",
+    epic: "Open Finance · agregação",
+    quarterOffset: 0,
+    weeks: 8,
+    status: "IN_PROGRESS",
+    color: "#22c55e",
+    milestone: false,
+    withArt: true,
+  },
+  {
+    title: "GA da carteira multi-moeda",
+    epic: "Carteira digital multi-moeda",
+    quarterOffset: 1,
+    weeks: 1,
+    status: "PLANNED",
+    color: "#f59e0b",
+    milestone: true,
+    withArt: true,
+  },
+  {
+    title: "Programa de fidelidade B2B",
+    epic: "Programa de fidelidade B2B",
+    quarterOffset: 2,
+    weeks: 6,
+    status: "PLANNED",
+    color: "#a855f7",
+    milestone: false,
+    // Sem ART: a grade tem uma faixa "Sem ART atribuído" e ela precisa de
+    // conteúdo real para não parecer um bug de layout.
+    withArt: false,
+  },
+];
+
+function quarterStart(base: Date, offset: number): Date {
+  const q = Math.floor(base.getUTCMonth() / 3) + offset;
+  return new Date(Date.UTC(base.getUTCFullYear(), q * 3, 1));
+}
+
+function monthStart(base: Date, offset: number): Date {
+  return new Date(
+    Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + offset, 1)
+  );
+}
+
 type DevDb = typeof db;
 
 export async function seedDevMembership(devDb: DevDb, tenantId: string) {
@@ -784,12 +942,55 @@ async function main() {
   }
   console.log("themes:", themeByName.size);
 
+  // Pilares e o vínculo tema → pilar. O vínculo é reaplicado a cada re-seed:
+  // um tema criado por seed antigo nasceu com pillarId nulo e ficaria órfão
+  // para sempre.
+  let p = 0;
+  for (const [i, pillarDef] of PILLARS.entries()) {
+    const existingPillar = await db.strategyPillar.findFirst({
+      where: { tenantId: tenant.id, name: pillarDef.name },
+      select: { id: true },
+    });
+    const pillarData = {
+      tenantId: tenant.id,
+      name: pillarDef.name,
+      tone: pillarDef.tone,
+      order: i,
+    };
+    const pillarRow = existingPillar
+      ? await db.strategyPillar.update({
+          where: { id: existingPillar.id },
+          data: pillarData,
+          select: { id: true },
+        })
+      : await db.strategyPillar.create({
+          data: pillarData,
+          select: { id: true },
+        });
+
+    for (const themeName of pillarDef.themes) {
+      const themeId = themeByName.get(themeName);
+      if (!themeId) {
+        continue;
+      }
+      await db.strategicTheme.update({
+        where: { id: themeId },
+        data: { pillarId: pillarRow.id },
+      });
+    }
+    p++;
+  }
+  console.log("pillars upserted:", p);
+
   let n = 0;
+  const needsGovernance: string[] = [];
   for (const [i, e] of EPICS.entries()) {
+    const lifecycleStatus = LIFECYCLE[e.col] as string;
+    const gate = lifecycleContext(lifecycleStatus, e.title);
     const data = {
       tenantId: tenant.id,
       title: e.title,
-      lifecycleStatus: LIFECYCLE[e.col],
+      lifecycleStatus,
       order: i,
       strategicThemeId: themeByName.get(e.theme) ?? null,
       wsjf: e.wsjf,
@@ -800,6 +1001,9 @@ async function main() {
       artTone: ART_TONE[e.art] ?? "accent",
       featureCount: 100,
       doneFeatureCount: e.progress, // progress% = done/total
+      investScore: gate.investScore,
+      hypothesis: gate.hypothesis,
+      leanBudgetAllocation: gate.leanBudgetAllocation,
     };
     const existing = await db.epic.findFirst({
       where: { tenantId: tenant.id, title: e.title },
@@ -813,9 +1017,31 @@ async function main() {
         })
       : await db.epic.create({ data, select: { id: true } });
     epicIdByTitle.set(e.title, epicRow.id);
+    if (gate.needsGovernanceApproval) {
+      needsGovernance.push(epicRow.id);
+    }
     n++;
   }
   console.log("epics upserted:", n);
+
+  // A aprovação de governança é o outro guard de START_IMPLEMENTING, e ela mora
+  // em GovernedEpic, não no Epic. Sem esta linha, arrastar um card do Portfolio
+  // Backlog para Implementando falha mesmo com orçamento alocado.
+  let ge = 0;
+  for (const epicId of needsGovernance) {
+    await db.governedEpic.upsert({
+      where: { epicId },
+      update: { governanceStatus: "approved" },
+      create: {
+        tenantId: tenant.id,
+        epicId,
+        valueStreamId: null,
+        governanceStatus: "approved",
+      },
+    });
+    ge++;
+  }
+  console.log("governed epics approved:", ge);
 
   // Decision Log. Sem entrada, /cosmos/decisions do tenant demo abre no estado
   // vazio e o export de auditoria não tem o que provar. Cada linha aponta para

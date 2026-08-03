@@ -6,44 +6,335 @@
       "$schema": "../schema/no.schema.json",
       "id": "anomalies",
       "kind": "tela",
-      "titulo": "anomalies",
+      "titulo": "Anomalias de Custo (FinOps do portfólio)",
       "rota": "/cosmos/anomalies",
       "componente": "apps/app/components/cosmos/screens/anomalies.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "listCostAnomalies",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "getAnomalySensitivity",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "setAnomalySensitivity",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "resetAnomalySensitivity",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "acknowledgeCostAnomaly",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "detectCostAnomaliesNow",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "export": "generateCostAnomalyNarrativeAction",
+          "tipo": "read",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "CostAnomaly",
+        "BillingEntry",
+        "AnomalyRuleConfig",
+        "Integration"
+      ],
+      "safe": {
+        "pratica": "Lean Budgets & FinOps — guardrails de gasto do portfólio; desvio de custo é exceção tratada, não surpresa de fim de mês",
+        "nivel": "Portfolio",
+        "faz": "Mostra ao Business Owner cada desvio de custo de nuvem já detectado com a conta na mão (valor real, mediana de baseline, Δ% e z-score), deixa disparar a detecção fora do cron, calibrar a sensibilidade da regra R-COST-01 dentro dos limites da plataforma — e voltar ao padrão da plataforma —, e reconhecer a anomalia sem apagar o registro.",
+        "invariantes": [
+          "restaurar o padrão APAGA a linha de AnomalyRuleConfig; regravar 3.5 fixaria o padrão de hoje como escolha do tenant e o tornaria surdo a qualquer mudança futura do padrão da plataforma",
+          "restaurar sem override é no-op bem-sucedido, não erro: deleteMany devolve count 0 em vez do P2025 de delete, e nada é auditado porque nada mudou",
+          "gravação e leitura e restauração usam a MESMA sentinela artId ('') da chave única (tenantId, artId, ruleId) — sentinela divergente apaga linha inexistente e o override sobrevive",
+          "limiar fora de 2–8 é recusado com a faixa citada na mensagem e nada é persistido",
+          "reconhecer filtra por (id, tenantId) juntos via updateMany — id de outro tenant não altera linha alguma",
+          "escrita passa por requireRole (ADMIN|STE para sensibilidade, ADMIN|STE|RTE para reconhecer, ADMIN para detectar) e grava logAudit",
+          "a tela formata o número da linha e não o recalcula; com lista vazia o Δ% médio é '—' e nunca 0%, porque média de conjunto vazio não é zero",
+          "o vazio distingue 'nenhum BillingEntry sincronizado' de 'nenhuma anomalia nos dados atuais' — hasBillingData é lido do banco, não presumido",
+          "o detector se recusa a sinalizar com menos de 4 pontos de histórico ou com MAD zero; baseline sem variação não produz z-score fabricado"
+        ],
+        "fonte": [
+          "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+          "docs/stories/epic-007/story-030.md",
+          "docs/stories/epic-007/story-021.md",
+          "docs/srd-epic-007.md",
+          "SAFe 6.0 — Lean Budgets / Guardrails (Lean Portfolio Management)",
+          "Iglewicz & Hoaglin (1993) — modified z-score, corte 3.5"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/anomalies.ts",
+          "apps/app/lib/cost/anomaly-detection.ts",
+          "apps/app/lib/cost/detect-cost-anomalies.ts",
+          "apps/app/lib/cost/anomaly-narrative.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "anomalies-1",
+          "tipo": "action",
+          "alvo": "resetAnomalySensitivity",
+          "hoje": "inexistente — dava para sair do padrão da plataforma e não dava para voltar; regravar 3.5 produz uma linha que diz 'este tenant escolheu 3.5', diferente de 'este tenant segue a plataforma'",
+          "desejado": "apagar a linha de AnomalyRuleConfig sob a sentinela tenant-wide, com RBAC, no-op bem-sucedido quando não há override, e audit só quando algo mudou (story-021 AC-008)",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "anomalies-2",
+          "tipo": "ui",
+          "alvo": "botão de restaurar padrão no modal de sensibilidade",
+          "hoje": "o modal só sabia gravar; a tela sabia distinguir override de padrão (isDefault) e não oferecia caminho de volta",
+          "desejado": "botão que só aparece com override, chama a action e recarrega a sensibilidade",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "anomalies-3",
+          "tipo": "seed",
+          "alvo": "BillingEntry do tenant demo",
+          "hoje": "nenhuma linha de custo — a tela abria dizendo que não havia dado de billing sincronizado e 'Detectar agora' não tinha o que avaliar",
+          "desejado": "sete meses de custo por (serviço, conta) com baseline variável e salto no mês corrente, mais a Integration de procedência; o seed não grava CostAnomaly — a anomalia sai do detector real",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "anomalies-4",
+          "tipo": "campo",
+          "alvo": "notificação de anomalia HIGH ao RTE e ao dono do épico",
+          "hoje": "story-030 AC-002 exige notificar em até 5 min; a detecção grava CostAnomaly e não dispara notificação — a tela é hoje o único canal",
+          "desejado": "gatilho de notificação na criação da anomalia, com destinatário derivado do épico atribuído",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "anomalies-5",
+          "tipo": "campo",
+          "alvo": "atribuição da anomalia a épico/tema",
+          "hoje": "CostAnomaly tem themeId e artId, mas o detector agrupa por (serviço, conta) e os deixa nulos; a tela não consegue dizer de qual iniciativa é o desvio",
+          "desejado": "resolver tema/ART a partir de BillingEntryAllocation na detecção, ou registrar explicitamente que o desvio é não-atribuído",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/anomalies.test.ts",
+        "apps/app/__tests__/screens/anomalies.test.tsx"
+      ],
+      "commits": [
+        "f1ee13da"
+      ],
+      "notas": "Balde A: CostAnomaly, BillingEntry e AnomalyRuleConfig já existiam e bastavam — nenhuma migration. A lacuna real era a metade reversível do controle de sensibilidade (story-021 AC-008), não a leitura. Cuidado de nomenclatura: este é o pipeline de CUSTO (CostAnomaly + lib/cost/*), distinto do pipeline de FLUXO (Anomaly/AnomalyDetectionRun + app/actions/flow-intelligence/*); os dois têm 'anomalia' no nome e não são a mesma coisa. As lacunas anomalies-4 e anomalies-5 são de comportamento do detector e da notificação, fora da superfície da tela; nenhuma trava a prática SAFe do nó. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
       "$schema": "../schema/no.schema.json",
       "id": "budgets",
       "kind": "tela",
-      "titulo": "budgets",
+      "titulo": "Lean Budgets (guardrails do value stream)",
       "rota": "/cosmos/budgets",
       "componente": "apps/app/components/cosmos/screens/budgets.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+          "export": "listLeanBudgets",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+          "export": "getValueStreamDetail",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+          "export": "updateLeanBudgetGuardrails",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "LeanBudget",
+        "ART",
+        "StrategicTheme",
+        "GovernedEpic",
+        "InvestmentHorizon"
+      ],
+      "safe": {
+        "pratica": "Lean Budgets & Guardrails — financiar value streams em vez de projetos, com limites de gasto e split CapEx/OpEx, e congelar o orçamento quando o PI fecha",
+        "nivel": "Portfolio",
+        "faz": "Mostra ao Business Owner quanto cada value stream tem alocado, quanto já consumiu, e se o consumo está dentro do guardrail. Deixa editar o split CapEx/OpEx e os limites de gasto e de aprovação enquanto o PI está aberto — e recusa a edição, na tela e no servidor, quando o PI já fechou.",
+        "invariantes": [
+          "o ART É o value stream neste schema: LeanBudget agrupa por artId e se descreve como 'this value stream's budget'; governance.prisma declara valueStreamId como 'artId of the ART/value stream'; o LEAN_BUDGET.md §3.2 tem UMA seção 'ValueStream / ART' com tipo value_stream|art. Não existe model ValueStream e criá-lo duplicaria o conceito",
+          "orçamento com immutableAt preenchido recusa qualquer escrita de guardrail (story-025 AC-005) e nada é gravado nem auditado",
+          "a guarda de imutabilidade é lida na MESMA consulta que já faz a guarda de tenant — uma coluna a mais no select, não uma ida a mais ao banco",
+          "a tela não oferece o editor na linha imutável: recusar no servidor e ainda convidar ao clique é armadilha, não proteção",
+          "capexPct + opexPct devem somar 100; a soma é validada no zod antes de qualquer consulta e nada é persistido quando falha",
+          "utilizationPct é null (nunca 0) sem valor alocado — sem denominador não há percentual",
+          "guardrailPct é null (nunca 0) quando nenhum orçamento do ART tem limite de gasto: não há guardrail contra o que medir",
+          "o horizonte só é mostrado quando todos os orçamentos do ART concordam num só; classificação mista não tem resposta honesta única",
+          "artId de LeanBudget não é relação Prisma; o nome do ART é resolvido por consulta tenant-escopada e vira null quando o id não pertence ao tenant",
+          "escrita passa por requireRole(ADMIN|STE), reconfere o budgetId dentro do tenant e grava logAudit",
+          "erro de leitura é distinto do vazio: a tela não diz 'nenhum orçamento encontrado' a um tenant que tem orçamentos"
+        ],
+        "fonte": [
+          "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+          "docs/stories/epic-006/story-025.md",
+          "docs/lean-budget/LEAN_BUDGET.md",
+          "packages/database/prisma/schema/governance.prisma:7",
+          "SAFe 6.0 — Lean Budgets and Guardrails (Lean Portfolio Management)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/budgets.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "budgets-1",
+          "tipo": "action",
+          "alvo": "guarda de imutabilidade em updateLeanBudgetGuardrails",
+          "hoje": "LeanBudget.immutableAt existe no schema comentado como 'set when PI closes (AC-005)' e nenhuma leitura ou escrita do repo olhava para ele; orçamento de PI encerrado aceitava alteração de split e de limites",
+          "desejado": "recusar a escrita quando immutableAt está preenchido, lendo o campo na mesma consulta da guarda de tenant",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "budgets-2",
+          "tipo": "ui",
+          "alvo": "linha de orçamento de PI encerrado",
+          "hoje": "toda linha oferecia o botão de guardrails, inclusive a de PI fechado — o clique levava a um modal que o servidor recusaria",
+          "desejado": "marcar a linha como final e não oferecer o editor",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "budgets-3",
+          "tipo": "ui",
+          "alvo": "utilização sem valor alocado",
+          "hoje": "orçamento com amount 0 exibia 0% de utilização, indistinguível de 'consumiu nada'",
+          "desejado": "null na leitura e '—' na tela, incluindo o percentual total do cabeçalho",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "budgets-4",
+          "tipo": "ui",
+          "alvo": "estado de erro de listLeanBudgets",
+          "hoje": "falha caía no mesmo texto do vazio: a tela dizia 'Nenhum orçamento encontrado' a um tenant que tem orçamentos",
+          "desejado": "erro distinto do vazio, sem renderizar orçamento algum",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "budgets-5",
+          "tipo": "seed",
+          "alvo": "LeanBudget do tenant demo",
+          "hoje": "nenhuma linha — a tela abria vazia e nem o editor de guardrails nem o caminho de PI encerrado tinham o que exercitar",
+          "desejado": "três orçamentos com chaves (artId, piPlanId) distintas: o PI corrente do ART (editável), o PI anterior com immutableAt preenchido, e um orçamento por tema sem ART",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "budgets-6",
+          "tipo": "action",
+          "alvo": "quem marca immutableAt no fechamento do PI",
+          "hoje": "nada no repo grava immutableAt; esta tela passa a respeitar a marca, mas em produção ela nunca é posta, então a proteção existe e não dispara",
+          "desejado": "o fluxo de encerramento de PI marcar immutableAt em todos os LeanBudget do PI, com o timestamp do fechamento (story-025 AC-005)",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "budgets-7",
+          "tipo": "ui",
+          "alvo": "procedência do valor consumido",
+          "hoje": "LeanBudget.spentSource (MANUAL | BILLING_AGGREGATE | FORECAST) e spentManualOverride existem e a tela mostra `spent` sem dizer de onde veio; gasto estimado e gasto faturado não são a mesma afirmação",
+          "desejado": "exibir a procedência ao lado do valor e distinguir override manual de agregado de billing",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "budgets-8",
+          "tipo": "action",
+          "alvo": "aviso suave de super-alocação",
+          "hoje": "a story-025 AC-004 pede aviso (não bloqueio) quando a alocação de épicos ultrapassa o orçamento do ART, com confirmação explícita e marca no painel; nada disso existe",
+          "desejado": "comparar alocação de épicos com o orçamento do ART e sinalizar a super-alocação sem bloquear",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "budgets-9",
+          "tipo": "action",
+          "alvo": "avaliação de BudgetGuardrail por categoria",
+          "hoje": "o LEAN_BUDGET.md §8 descreve reavaliação de guardrail a cada alteração de alocação de custo, com registro de violação e notificação ao LPM; o repo tem os limites gravados em LeanBudget e nenhuma avaliação automática",
+          "desejado": "rotina que recalcula o gasto acumulado por value stream e categoria e registra a violação",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/budgets.test.ts",
+        "apps/app/__tests__/screens/budgets.test.tsx"
+      ],
+      "commits": [
+        "d23dfe89"
+      ],
+      "notas": "Balde B: nenhuma migration foi criada e nenhum model ValueStream foi criado. O 'Value Stream' do design é o ART neste schema — LeanBudget agrupa por artId e se descreve como 'this value stream's budget', governance.prisma define valueStreamId como 'artId of the ART/value stream', e o LEAN_BUDGET.md §3.2 tem uma única seção 'ValueStream / ART' com um campo tipo que distingue os dois. Criar o model duplicaria o conceito e obrigaria toda leitura de orçamento a decidir qual dos dois é a verdade; o mapeamento fica documentado na ficha SAFe. A lacuna budgets-6 é a que impede a proteção de imutabilidade de valer em produção: a tela respeita a marca e ninguém a põe — está registrada aberta, não disfarçada de pronta. As lacunas budgets-7/8/9 são de comportamento fora da superfície desta tela. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -804,22 +1095,137 @@
       "$schema": "../schema/no.schema.json",
       "id": "kanban",
       "kind": "tela",
-      "titulo": "kanban",
+      "titulo": "Kanban de Épicos (Portfolio Kanban)",
       "rota": "/cosmos/kanban",
       "componente": "apps/app/components/cosmos/screens/kanban.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "REAL",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+          "export": "listEpics",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+          "export": "moveEpic",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+          "export": "createEpic",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Epic",
+        "GovernedEpic",
+        "StrategicTheme",
+        "StateTransitionHistory"
+      ],
+      "safe": {
+        "pratica": "Portfolio Kanban — funil de mão única do épico (Funil → Analisando → Portfolio Backlog → Implementando → Concluído), com portões de INVEST, hipótese, governança e orçamento entre as etapas",
+        "nivel": "Portfolio",
+        "faz": "Mostra à Portfolio Manager o portfólio como funil e deixa mover o épico de uma etapa para a seguinte arrastando o card. Quando a etapa de destino tem pré-requisito não cumprido, a recusa diz o que falta em vez de devolver o código da máquina.",
+        "invariantes": [
+          "o estado gravado de um épico precisa ser ALCANÇÁVEL pela máquina com os dados da própria linha: transitionEpicStatus não hidrata o ator no estado persistido, reproduz o caminho canônico passando pelos mesmos guards — épico em estado inalcançável faz todo arraste a partir dele falhar",
+          "ANALYZING ou além exige investScore >= 40 e hypothesis com pelo menos 50 caracteres (canTransitionToBacklog)",
+          "IMPLEMENTING ou além exige, além disso, leanBudgetAllocation > 0 e GovernedEpic com governanceStatus 'approved' (canTransitionToImplementing)",
+          "mudança de coluna passa por transitionEpicStatus e nunca grava lifecycleStatus direto — gravar direto faria do board uma segunda fonte de verdade discordante da máquina e do trigger epic_lifecycle_guard no banco",
+          "a recusa da máquina é traduzida para a frase que nomeia o pré-requisito da coluna de destino; o código cru (GUARD_FAILED, TERMINAL_STATE, INVALID_TRANSITION) não chega ao usuário, e falha que não é da máquina é repassada como veio, sem motivo inventado",
+          "a tradução mora na action do board, não em transitionEpicStatus: o código daquela action é contrato de API e quem consome a API continua vendo o código",
+          "voltar um card para o Funil é recusado antes de chamar a máquina — nenhum evento tem FUNNEL como destino, o funil é de mão única",
+          "reordenar dentro da mesma coluna grava só lifecycleOrder e não aciona a máquina",
+          "escrita passa por requireRole(ADMIN|RTE|PO); a máquina ainda exige PO|SM|RTE|STE|ADMIN nos eventos elevados, e o audit do board registra quem arrastou, para onde e em que posição",
+          "wsjf de criação é sempre recomputado no servidor e é null quando falta qualquer um dos quatro componentes — score parcial não é score",
+          "erro de leitura é distinto do vazio e nenhum épico de mock é renderizado em nenhum dos dois"
+        ],
+        "fonte": [
+          "docs/stories/epic-006/story-063-tela-kanban-coerencia-de-ciclo-de-vida.md",
+          "docs/stories/epic-006/story-011.md",
+          "docs/stories/epic-006/story-012.md",
+          "packages/safe-engine/src/machines/epic-lifecycle.ts",
+          "SAFe 6.0 — Portfolio Kanban (Lean Portfolio Management)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/kanban.ts",
+          "apps/app/app/actions/epics/transition-status.ts",
+          "packages/safe-engine/src/machines/epic-lifecycle.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "kanban-1",
+          "tipo": "seed",
+          "alvo": "contexto de ciclo de vida dos épicos do tenant demo",
+          "hoje": "o seed gravava lifecycleStatus em todas as colunas e nenhum dos campos que os guards leem; como transitionEpicStatus reproduz o caminho canônico até o estado atual, os épicos em PORTFOLIO_BACKLOG e além estavam em estados que a máquina não alcança — das quatro transições do board só FUNNEL→ANALYZING funcionava, e as outras três estouravam como se fosse bug de UI",
+          "desejado": "investScore, hypothesis e leanBudgetAllocation coerentes com o estado gravado, mais GovernedEpic aprovado para os épicos em IMPLEMENTING ou além",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "kanban-2",
+          "tipo": "ui",
+          "alvo": "mensagem de recusa do arraste",
+          "hoje": "a recusa da máquina chegava ao usuário como o código cru: 'Não foi possível mover: GUARD_FAILED', que não diz se falta aprovação de governança ou alocação de orçamento — coisas diferentes com donos diferentes",
+          "desejado": "frase que nomeia o pré-requisito da coluna de destino, como a story-011 AC-003 já previa com guard e message",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "kanban-3",
+          "tipo": "action",
+          "alvo": "fastForwardToState reconstrói o caminho em vez de hidratar o estado",
+          "hoje": "transitionEpicStatus reproduz o caminho canônico a cada chamada, passando pelos guards de novo; isso amarra o épico a um caminho histórico que ele pode ter percorrido antes de um guard mudar, e é o que torna 'estado alcançável' um requisito do dado em vez de só do fluxo",
+          "desejado": "hidratar o ator diretamente no estado persistido e avaliar só o evento pedido",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "kanban-4",
+          "tipo": "campo",
+          "alvo": "limite de WIP por coluna",
+          "hoje": "a story-012 é 'Portfolio Kanban Board with Real-Time Drag & WIP Limits' e não há limite de WIP algum: nada impede o Portfolio Backlog de acumular sem teto, que é o oposto do que um Kanban serve para mostrar",
+          "desejado": "limite por coluna, configurável por tenant, sinalizado no cabeçalho da coluna e checado no movimento",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "kanban-5",
+          "tipo": "ui",
+          "alvo": "rejeitar um épico pelo board",
+          "hoje": "REJECT é um evento da máquina, exige justificativa de pelo menos 20 caracteres (story-011 AC-005) e não tem caminho na tela; épico rejeitado só some do board porque a leitura filtra REJECTED",
+          "desejado": "ação de rejeitar com campo de justificativa, passando pela mesma máquina",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/kanban.test.ts",
+        "apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts",
+        "apps/app/__tests__/screens/kanban.test.tsx"
+      ],
+      "commits": [
+        "c86907e6"
+      ],
+      "notas": "Balde A: Epic e GovernedEpic já existiam e bastavam — nenhuma migration. Este nó é a referência do padrão (action tenant-escopada, RBAC, audit, delegação à máquina XState), e o que faltava não era escrita, era coerência: o seed produzia épicos em estados que a própria máquina não alcança. epic-lifecycle-reachability.test.ts passa desde a primeira execução de propósito — ele não testa código novo, fixa contra a máquina real a regra que o seed precisa honrar, porque o teste do seed (packages/database/scripts/__tests__/seed-cosmos.test.ts) nunca roda: @repo/database não tem script `test` e `turbo test` o ignora. Sem esse teste a regra ficaria só num comentário. A lacuna kanban-3 é a causa estrutural: se o ator fosse hidratado no estado persistido, estado inalcançável seria um problema de dado e não de fluxo. As lacunas kanban-4 e kanban-5 são superfície da story-012 e da 011 ainda não construída.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -1485,22 +1891,135 @@
       "$schema": "../schema/no.schema.json",
       "id": "roadmap",
       "kind": "tela",
-      "titulo": "roadmap",
+      "titulo": "Roadmap (horizonte multi-PI por ART)",
       "rota": "/cosmos/roadmap",
       "componente": "apps/app/components/cosmos/screens/roadmap.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/roadmap.ts",
+          "export": "listRoadmapItems",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/roadmap.ts",
+          "export": "moveRoadmapItemToQuarter",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "RoadmapItem",
+        "ART",
+        "Epic"
+      ],
+      "safe": {
+        "pratica": "Roadmap — compromisso de entrega por trimestre e por ART, replanejável sem perder o que o item é",
+        "nivel": "Portfolio",
+        "faz": "Mostra à Portfolio Manager o horizonte do portfólio como grade Gantt: faixas por ART, colunas de trimestre derivadas das datas reais dos itens, e o trimestre corrente destacado. Deixa antecipar ou adiar um item um trimestre por vez, preservando a duração dele e respeitando o teto de itens por ART/trimestre.",
+        "invariantes": [
+          "mover preserva a duração do item; gravar só o novo início deixaria o fim onde estava e poderia inverter o intervalo",
+          "item cujo intervalo já está invertido no banco sai do movimento com fim igual ao início — o movimento corrige a inversão em vez de propagá-la, e não inventa duração que ninguém registrou",
+          "teto de 25 itens por ART por trimestre (FR-028); o próprio item não conta contra si mesmo, senão o 25º ficaria preso onde está",
+          "'sem ART' é uma faixa da grade como outra qualquer e tem o mesmo teto — não é a ausência de faixa",
+          "trimestre fora de 1–4 e ano fora da faixa de planejamento são recusados no zod, antes de qualquer consulta",
+          "o id vindo do cliente é reconferido por (id, tenantId) antes de qualquer escrita",
+          "escrita passa por requireRole(ADMIN|RTE|PO), grava logAudit com trimestre de origem→destino e revalida a rota da tela",
+          "o eixo de trimestres é derivado das datas reais dos itens, nunca um eixo de PI fabricado: RoadmapItem não tem FK de PI e as janelas de PIPlan não são alinhadas entre ARTs",
+          "artId de RoadmapItem não é relação Prisma; o nome do ART é resolvido por consulta tenant-escopada e vira null quando o id não pertence ao tenant, nunca o nome de outro tenant"
+        ],
+        "fonte": [
+          "docs/stories/epic-007/story-061-tela-roadmap-mover-item.md",
+          "docs/srd-epic-007.md",
+          "docs/stories/epic-007/story-031.md",
+          "SAFe 6.0 — Portfolio Roadmap / Solution Roadmap"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/roadmap.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "roadmap-1",
+          "tipo": "action",
+          "alvo": "moveRoadmapItemToQuarter",
+          "hoje": "a tela era somente leitura — o próprio cabeçalho do componente registrava que 'drag-to-edit needs a mutation this screen doesn't wire'; replanejar acontecia fora e voltava como leitura",
+          "desejado": "mover o item para outro trimestre preservando a duração, com RBAC, guarda de tenant, teto por ART/trimestre, audit e revalidação da rota certa",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "roadmap-2",
+          "tipo": "seed",
+          "alvo": "RoadmapItem do tenant demo",
+          "hoje": "nenhum item — a tela abria no estado vazio e o eixo de trimestres não tinha de onde nascer",
+          "desejado": "quatro itens amarrados a épicos semeados, em trimestres relativos ao corrente (não datas fixas, que envelhecem), incluindo um marco e um item sem ART para a faixa 'Sem ART atribuído'",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "roadmap-3",
+          "tipo": "campo",
+          "alvo": "RoadmapItem.confidence",
+          "hoje": "a FR-028 pede confiança 0–100 com codificação visual (contorno quando cai abaixo do limiar) e notificação ao Business Owner na queda; o model não tem o campo",
+          "desejado": "campo de confiança no RoadmapItem, exibido na barra e observado por notificação",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "roadmap-4",
+          "tipo": "action",
+          "alvo": "UpdateRoadmapItemSchema não valida a ordem das datas",
+          "hoje": "em app/actions/roadmap/schema.ts, UpdateRoadmapItemSchema é RoadmapItemBaseSchema.partial(), e .partial() é aplicado ao schema ANTES do .refine(endDate >= startDate) — o update genérico aceita fim menor que início. updateRoadmapItem não tem consumidor de produção hoje, então a falha é latente",
+          "desejado": "validar a ordem das datas contra a linha armazenada quando só uma das datas vem no payload; é decisão da camada CRUD genérica, que tem outro consumidor",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "roadmap-5",
+          "tipo": "action",
+          "alvo": "escrita sem RBAC nem audit em app/actions/roadmap/index.ts",
+          "hoje": "createRoadmapItem, updateRoadmapItem e deleteRoadmapItem não chamam requireRole nem logAudit, e revalidam /portfolio/roadmap; qualquer membro do tenant apaga item de roadmap sem deixar rastro",
+          "desejado": "RBAC e audit na camada genérica; endurecê-la muda o contrato de /portfolio/roadmap, que é o outro consumidor, então é decisão fora desta tela",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "roadmap-6",
+          "tipo": "campo",
+          "alvo": "planejamento por cenário",
+          "hoje": "a FR-028 e a story-031 AC-003/004/005 pedem deep-copy de cenário, diff contra a base e promote-to-base com rollback por arquivamento (máx. 5/ART/ano); RoadmapItem não tem scenarioName nem archived",
+          "desejado": "campos de cenário no RoadmapItem e as três operações",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/roadmap.test.ts",
+        "apps/app/__tests__/screens/roadmap.test.tsx",
+        "apps/app/__tests__/screens/roadmap-grid.test.ts"
+      ],
+      "commits": [
+        "9eb0d7db"
+      ],
+      "notas": "Balde B: RoadmapItem já é completo para o horizonte base (datas, ART, status, marco, cor) — a lacuna era de escrita, não de schema, e nenhuma migration foi criada. A action nova mora em (cosmos)/actions/roadmap.ts e NÃO substitui app/actions/roadmap/index.ts: aquela é CRUD genérico com outro consumidor (/portfolio/roadmap), e endurecê-la com RBAC mudaria o contrato de quem já a usa — mesma precedência de (cosmos)/actions/kanban.ts. As lacunas roadmap-4 e roadmap-5 são dessa camada genérica e ficam registradas aqui porque foram encontradas ao decidir se dava para reusá-la; roadmap-3 e roadmap-6 exigem migration e não foram aproximadas por outro campo. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -1659,22 +2178,163 @@
       "$schema": "../schema/no.schema.json",
       "id": "strategy",
       "kind": "tela",
-      "titulo": "strategy",
+      "titulo": "Strategy Map (pilares agrupando temas)",
       "rota": "/cosmos/strategy",
       "componente": "apps/app/components/cosmos/screens/strategy.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+          "export": "listStrategyPillars",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+          "export": "listUnlinkedThemes",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+          "export": "getStrategyPillar",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+          "export": "createPillar",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+          "export": "assignThemeToPillar",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "StrategyPillar",
+        "StrategicTheme",
+        "Epic"
+      ],
+      "safe": {
+        "pratica": "Strategy Map — traduzir a estratégia do portfólio em apostas de investimento financiáveis, com rastro de pilar até épico",
+        "nivel": "Portfolio",
+        "faz": "Mostra à Portfolio Manager a estratégia em blocos: cada pilar agrupa temas estratégicos, e o rollup diz quantos épicos existem sob o pilar e quanto deles já foi entregue. Deixa pôr um tema dentro de um pilar e tirá-lo, e mostra em faixa própria os temas que não estão sob pilar algum, que são lacuna de alinhamento e não ausência de dado.",
+        "invariantes": [
+          "vincular reconfere os DOIS ids vindos do cliente dentro do tenant — themeId e pillarId, separadamente; um só guardado deixa o outro como vetor de IDOR",
+          "desvincular grava pillarId nulo e não consulta pilar algum: não há destino para reconferir",
+          "vincular não cascateia — nenhum Epic é tocado; o épico pertence ao tema, e é o tema que se move entre pilares",
+          "o audit registra origem→destino do pilar, não só o destino; sem o valor anterior, mover um tema entre pilares perde a origem",
+          "tema ativo sem pilar é devolvido como lacuna de alinhamento; tema ARQUIVADO não é, porque saiu do portfólio e cobrar alinhamento dele seria alarme que ninguém resolve",
+          "avgProgress é null (nunca 0) quando nenhum épico do pilar tem feature — média de conjunto vazio não é zero",
+          "épico sem feature conta em epicCount e fica fora do denominador da média: contá-lo como 0% afundaria o pilar por causa de épico que ninguém decompôs",
+          "escrita passa por requireRole(ADMIN|STE) e grava logAudit",
+          "erro de leitura é distinto do vazio: a tela não diz 'nenhum pilar cadastrado' para um tenant que tem pilares"
+        ],
+        "fonte": [
+          "docs/stories/epic-007/story-060-tela-strategy-map.md",
+          "docs/stories/epic-007/story-031.md",
+          "docs/srd-epic-007.md:296",
+          "docs/PRD-v1.0.md:3033",
+          "SAFe 6.0 — Strategic Themes / Portfolio Vision (Lean Portfolio Management)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/strategy.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "strategy-1",
+          "tipo": "action",
+          "alvo": "assignThemeToPillar",
+          "hoje": "inexistente — StrategicTheme.pillarId existia no schema e nenhuma escrita do repo gravava esse campo; um pilar criado pela tela nascia com 'Nenhum tema vinculado' e rollup 0 para sempre, o que tornava o mapa decorativo",
+          "desejado": "vincular e desvincular tema de pilar com RBAC, guarda de tenant nos dois FKs e audit de origem→destino",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "strategy-2",
+          "tipo": "action",
+          "alvo": "listUnlinkedThemes",
+          "hoje": "tema com pillarId nulo não aparecia em lugar nenhum da tela — nem como problema; a leitura só descia de pilar para tema",
+          "desejado": "leitura dos temas ativos sem pilar, para a faixa de desalinhados que a story-031 AC-001 pede",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "strategy-3",
+          "tipo": "ui",
+          "alvo": "rollup de pilar sem épico mensurável",
+          "hoje": "exibia 0%, indistinguível de 'nada concluído' — afirmava uma medição que não existe",
+          "desejado": "null na leitura e '—' na tela",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "strategy-4",
+          "tipo": "ui",
+          "alvo": "estado de erro de listStrategyPillars",
+          "hoje": "falha caía no mesmo texto do vazio: a tela dizia 'nenhum pilar cadastrado' para um tenant que tem pilares",
+          "desejado": "erro distinto do vazio, sem renderizar pilar algum",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "strategy-5",
+          "tipo": "seed",
+          "alvo": "StrategyPillar do tenant demo",
+          "hoje": "nenhum pilar — a tela abria vazia e o rollup não tinha o que somar",
+          "desejado": "três pilares com os temas semeados vinculados, e um tema deliberadamente fora de pilar para que o caminho de lacuna de alinhamento seja visível",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "strategy-6",
+          "tipo": "campo",
+          "alvo": "visão do portfólio no banner da tela",
+          "hoje": "o banner mostra texto de referência genérico sobre o que é um pilar SAFe; Tenant.visionStatement existe no schema e não é lido aqui, então a visão real do tenant não aparece no Strategy Map",
+          "desejado": "ler Tenant.visionStatement e mostrar a visão do tenant, degradando para o texto de referência quando não houver",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "strategy-7",
+          "tipo": "campo",
+          "alvo": "duas implementações de Strategy Map convivendo",
+          "hoje": "app/actions/strategy-map/index.ts monta o DAG completo (Theme→OKR→Epic→Feature, FR-027) e (cosmos)/actions/strategy.ts monta a grade de pilares; as duas derivam progresso por regras diferentes (a primeira pela média dos OKRs, a segunda pela média das features dos épicos) e podem discordar sobre o mesmo pilar",
+          "desejado": "decidir qual é a fonte de verdade do progresso de pilar e fazer a outra consumi-la",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/strategy.test.ts",
+        "apps/app/__tests__/screens/strategy.test.tsx"
+      ],
+      "commits": [
+        "fe319b9b"
+      ],
+      "notas": "Balde A: StrategyPillar e StrategicTheme.pillarId já existiam e bastavam — nenhuma migration. A lacuna real não era leitura, era que o campo de vínculo não tinha escritor nenhum: a hierarquia pilar→tema era legível e não era construível. listUnlinkedThemes ficou como action separada em vez de campo novo em listStrategyPillars porque o payload de pilares tem outro consumidor (pillar-detail) e alargá-lo espalharia a mudança sem necessidade. getStrategyPillar mantém avgProgress: number (coagido de null para 0 na borda) porque PillarDetailView é a superfície do nó `pillar`, não deste. A lacuna strategy-7 é de arquitetura e precisa de decisão, não de código. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
