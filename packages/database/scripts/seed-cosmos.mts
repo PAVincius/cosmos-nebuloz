@@ -555,6 +555,63 @@ const BILLING_GROUPS = [
   },
 ];
 
+// Itens do roadmap do tenant demo. `quarterOffset` é relativo ao trimestre
+// corrente, não a uma data fixa: a grade de /cosmos/roadmap deriva o eixo das
+// datas dos próprios itens e destaca o trimestre de agora, então um seed com
+// datas fixas envelhece e empurra o "agora" para fora do horizonte.
+//
+// `epic` é o título de um épico semeado acima; serve para amarrar o item ao
+// épico real em vez de inventar um trabalho que não existe no portfólio.
+const ROADMAP_ITEMS = [
+  {
+    title: "Migração core para multi-tenant",
+    epic: "Migração core para multi-tenant",
+    quarterOffset: -1,
+    weeks: 10,
+    status: "IN_PROGRESS",
+    color: "#6366f1",
+    milestone: false,
+    withArt: true,
+  },
+  {
+    title: "Open Finance · agregação",
+    epic: "Open Finance · agregação",
+    quarterOffset: 0,
+    weeks: 8,
+    status: "IN_PROGRESS",
+    color: "#22c55e",
+    milestone: false,
+    withArt: true,
+  },
+  {
+    title: "GA da carteira multi-moeda",
+    epic: "Carteira digital multi-moeda",
+    quarterOffset: 1,
+    weeks: 1,
+    status: "PLANNED",
+    color: "#f59e0b",
+    milestone: true,
+    withArt: true,
+  },
+  {
+    title: "Programa de fidelidade B2B",
+    epic: "Programa de fidelidade B2B",
+    quarterOffset: 2,
+    weeks: 6,
+    status: "PLANNED",
+    color: "#a855f7",
+    milestone: false,
+    // Sem ART: a grade tem uma faixa "Sem ART atribuído" e ela precisa de
+    // conteúdo real para não parecer um bug de layout.
+    withArt: false,
+  },
+];
+
+function quarterStart(base: Date, offset: number): Date {
+  const q = Math.floor(base.getUTCMonth() / 3) + offset;
+  return new Date(Date.UTC(base.getUTCFullYear(), q * 3, 1));
+}
+
 function monthStart(base: Date, offset: number): Date {
   return new Date(
     Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + offset, 1)
@@ -1182,6 +1239,36 @@ async function main() {
     }
   }
   console.log("billing entries upserted:", b);
+
+  // RoadmapItem — o horizonte de /cosmos/roadmap. Sem eles a tela abre no
+  // estado vazio e o eixo de trimestres não tem de onde nascer.
+  let ri = 0;
+  for (const item of ROADMAP_ITEMS) {
+    const startDate = quarterStart(now, item.quarterOffset);
+    const endDate = new Date(startDate.getTime() + item.weeks * 7 * 86_400_000);
+    const data = {
+      tenantId: tenant.id,
+      title: item.title,
+      epicId: epicIdByTitle.get(item.epic) ?? null,
+      artId: item.withArt ? art.id : null,
+      startDate,
+      endDate,
+      color: item.color,
+      status: item.status,
+      milestone: item.milestone,
+    };
+    const existingItem = await db.roadmapItem.findFirst({
+      where: { tenantId: tenant.id, title: item.title },
+      select: { id: true },
+    });
+    if (existingItem) {
+      await db.roadmapItem.update({ where: { id: existingItem.id }, data });
+    } else {
+      await db.roadmapItem.create({ data });
+    }
+    ri++;
+  }
+  console.log("roadmap items upserted:", ri);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
