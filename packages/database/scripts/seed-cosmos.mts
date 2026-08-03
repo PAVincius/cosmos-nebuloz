@@ -284,6 +284,27 @@ const VALUE_METRICS = [
   },
 ];
 
+// Sprints fechadas do tenant demo. Sem elas /cosmos/velocity abre com todo KPI
+// em "—" e o gráfico não tem o que comparar. `capacity` é o comprometido no
+// planejamento, `accepted` é o que o PO aceitou na review — a razão entre os
+// dois é predictability (FR-011). Atlas fecha acima do benchmark de 80% e Orion
+// abaixo, para que o aviso do AC-003 tenha em quem aparecer.
+const TEAMS = [
+  { name: "Squad Atlas", color: "#6366f1" },
+  { name: "Squad Orion", color: "#f59e0b" },
+];
+
+const SPRINTS = [
+  { team: "Squad Atlas", n: 10, capacity: 40, completed: 38, accepted: 36 },
+  { team: "Squad Atlas", n: 11, capacity: 42, completed: 40, accepted: 38 },
+  { team: "Squad Atlas", n: 12, capacity: 40, completed: 36, accepted: 34 },
+  { team: "Squad Atlas", n: 13, capacity: 40, completed: 39, accepted: 37 },
+  { team: "Squad Orion", n: 10, capacity: 30, completed: 24, accepted: 20 },
+  { team: "Squad Orion", n: 11, capacity: 32, completed: 26, accepted: 22 },
+  { team: "Squad Orion", n: 12, capacity: 30, completed: 25, accepted: 23 },
+  { team: "Squad Orion", n: 13, capacity: 30, completed: 28, accepted: 26 },
+];
+
 // Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
 // acima — resolvido para id na hora de gravar.
 const DECISIONS = [
@@ -501,6 +522,94 @@ async function main() {
     v++;
   }
   console.log("value metrics created:", v);
+
+  // ART, times e sprints fechadas com Sprint Review. /cosmos/velocity lê a
+  // capacidade comprometida da sprint e o ponto aceito da review; sem review
+  // não há numerador de predictability e a tela abre inteira em "—".
+  const existingArt = await db.aRT.findFirst({
+    where: { tenantId: tenant.id, name: "ART Plataforma" },
+    select: { id: true },
+  });
+  const art =
+    existingArt ??
+    (await db.aRT.create({
+      data: { tenantId: tenant.id, name: "ART Plataforma", status: "ACTIVE" },
+      select: { id: true },
+    }));
+
+  const teamIdByName = new Map<string, string>();
+  for (const t of TEAMS) {
+    const existing = await db.team.findFirst({
+      where: { tenantId: tenant.id, name: t.name },
+      select: { id: true },
+    });
+    const row = existing
+      ? await db.team.update({
+          where: { id: existing.id },
+          data: { artId: art.id, color: t.color },
+          select: { id: true },
+        })
+      : await db.team.create({
+          data: {
+            tenantId: tenant.id,
+            artId: art.id,
+            name: t.name,
+            color: t.color,
+          },
+          select: { id: true },
+        });
+    teamIdByName.set(t.name, row.id);
+  }
+  console.log("teams:", teamIdByName.size);
+
+  let sp = 0;
+  for (const s of SPRINTS) {
+    const teamId = teamIdByName.get(s.team);
+    if (!teamId) {
+      continue;
+    }
+    const name = `Sprint ${s.n}`;
+    // Sprints de 2 semanas já encerradas; a de maior número é a mais recente,
+    // que é a ordem que listRecentSprints (endDate desc) espera.
+    const endDate = new Date(Date.UTC(2026, 6, 3 + (s.n - 13) * 14));
+    const startDate = new Date(endDate.getTime() - 13 * 24 * 60 * 60 * 1000);
+    const data = {
+      tenantId: tenant.id,
+      teamId,
+      name,
+      startDate,
+      endDate,
+      status: "CLOSED",
+      capacity: s.capacity,
+      velocity: s.completed,
+      closedAt: endDate,
+    };
+    const existing = await db.sprint.findFirst({
+      where: { tenantId: tenant.id, teamId, name },
+      select: { id: true },
+    });
+    const sprintRow = existing
+      ? await db.sprint.update({
+          where: { id: existing.id },
+          data,
+          select: { id: true },
+        })
+      : await db.sprint.create({ data, select: { id: true } });
+
+    const review = {
+      completedPoints: s.completed,
+      acceptedPoints: s.accepted,
+      velocity: s.completed,
+      goalMet: s.accepted >= s.capacity * 0.8,
+    };
+    await db.sprintReview.upsert({
+      where: { sprintId: sprintRow.id },
+      update: review,
+      create: { tenantId: tenant.id, sprintId: sprintRow.id, ...review },
+    });
+    sp++;
+  }
+  console.log("closed sprints with review:", sp);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({

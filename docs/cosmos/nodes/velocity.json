@@ -2,20 +2,118 @@
   "$schema": "../schema/no.schema.json",
   "id": "velocity",
   "kind": "tela",
-  "titulo": "velocity",
+  "titulo": "Velocity & Capacity Analytics (predictability por sprint e por time)",
   "rota": "/cosmos/velocity",
   "componente": "apps/app/components/cosmos/screens/velocity.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "3-metricas-plataforma",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/velocity.ts",
+      "export": "listRecentSprints",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/velocity.ts",
+      "export": "listTeamPredictability",
+      "tipo": "read",
+      "estado": "existe"
+    }
+  ],
+  "models": ["Sprint", "SprintReview", "Team"],
+  "safe": {
+    "pratica": "PI Predictability Measure — aceito sobre comprometido, com benchmark de 80%",
+    "nivel": "Essential",
+    "faz": "Mostra, por sprint fechada, quanto foi comprometido no planejamento, quanto foi concluído e quanto o PO efetivamente aceitou na Sprint Review, calcula predictability como aceito/comprometido e avisa quando a média fica abaixo do benchmark SAFe de 80%, por sprint e por time.",
+    "invariantes": [
+      "predictability é aceito/comprometido (SprintReview.acceptedPoints sobre Sprint.capacity) e nunca entregue/capacidade — concluir sem aceite não é previsibilidade",
+      "predictability é null (nunca 0) quando o comprometido é zero ou ausente, ou quando não há ponto aceito registrado — é o 'N/A' do AC-001, e 0% leria como 'nada foi aceito'",
+      "sprint sem SprintReview não herda velocity como proxy de aceito: fica fora do gráfico e mostra '—' na lista, porque zero aceito e aceito desconhecido são leituras diferentes",
+      "o aviso de benchmark só aparece com média calculável e abaixo de 80%; sem sprint com predictability, a tela não afirma nada sobre o benchmark",
+      "predictability por time é a média das razões por sprint (não a razão das somas) e só conta sprint fechada com capacidade e ponto aceito registrados",
+      "toda leitura filtra por tenantId vindo da sessão"
+    ],
+    "fonte": [
+      "docs/srd-epic-007.md:129",
+      "docs/stories/epic-007/story-032.md",
+      "SAFe 6.0 — PI Predictability Measure (Measure and Grow)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/velocity.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "velocity-1",
+      "tipo": "action",
+      "alvo": "predictability calculada sobre ponto aceito",
+      "hoje": "a tela chamava de 'Predictability' a razão velocity/capacity (entregue sobre capacidade); SprintReview.acceptedPoints e completedPoints existiam e nunca eram lidos, então o número exibido superestimava a previsibilidade sempre que algo foi concluído e não aceito",
+      "desejado": "aceito/comprometido, com as três séries (comprometido, concluído, aceito) visíveis para a leitora conferir de onde o número sai",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "velocity-2",
+      "tipo": "ui",
+      "alvo": "benchmark SAFe de 80%",
+      "hoje": "o benchmark aparecia só no subtítulo da página, como texto; a leitora tinha que comparar o KPI de cabeça",
+      "desejado": "aviso explícito quando a média fica abaixo de 80%, com o valor citado",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "velocity-3",
+      "tipo": "seed",
+      "alvo": "Sprint e SprintReview do tenant demo",
+      "hoje": "o seed não criava ART, time, sprint nem review — /cosmos/velocity abria com todo KPI em '—' e nenhum gráfico",
+      "desejado": "um ART, dois times e quatro sprints fechadas por time com review, um time acima e outro abaixo do benchmark, reaplicados a cada re-seed",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "velocity-4",
+      "tipo": "campo",
+      "alvo": "SprintReview.committedPoints",
+      "hoje": "o FR-011 define predictability sobre 'committed points', mas SprintReview só tem completedPoints e acceptedPoints; o denominador usado é Sprint.capacity, que é a capacidade comprometida no planejamento — próximo do conceito, não idêntico a ele (capacidade replanejada no meio da sprint sobrescreve o comprometido original)",
+      "desejado": "committedPoints imutável na review, congelado no fechamento do planejamento",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "velocity-5",
+      "tipo": "ui",
+      "alvo": "média móvel e PI Predictability Measure",
+      "hoje": "o AC-001 pede sobreposição de média móvel (≥3 pontos) e o AC-003 pede o PPM do PI (business value planejado vs. real, excluindo objetivos stretch); nenhum dos dois existe na tela, e o PPM depende de agregar PIObjective, que não é model deste nó",
+      "desejado": "linha de média móvel sobre a série de predictability e um card de PPM por PI, com objetivo stretch fora da conta",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "velocity-6",
+      "tipo": "action",
+      "alvo": "anomalia LOW_PREDICTABILITY",
+      "hoje": "o AC-007 pede anomalia HIGH quando a predictability fica abaixo de 70% por 3 PIs seguidos; o motor de anomalias existe (Anomaly/AnomalyDetectionRun) mas não tem regra de predictability, e a tela não consulta anomalia alguma",
+      "desejado": "regra no motor de anomalias e badge na tela apontando para a anomalia aberta",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/velocity.test.ts",
+    "apps/app/__tests__/screens/velocity.test.tsx"
+  ],
+  "commits": [],
+  "notas": "profundidade THIN vem do audit de 2026-07-23 (velocity: 0 de 4 seções de handoff implementadas). A mudança central não é UI: era a definição da métrica. Chamar velocity/capacity de 'predictability' inflava o número toda vez que algo era concluído sem aceite, que é exatamente o caso que o PI Predictability Measure existe para pegar. As lacunas velocity-5 e velocity-6 dependem de PIObjective e do motor de anomalias, que são models de outros nós — nenhuma trava a prática SAFe deste. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda (o pacote @repo/database não tem script `test`), por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }
