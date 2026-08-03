@@ -7,7 +7,11 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
-import { CAPACITY_NOTE_TONES } from "./capacity.constants";
+import {
+  CAPACITY_NOTE_TONES,
+  type CapacityBand,
+  capacityBand,
+} from "./capacity.constants";
 
 export type CapacityView = {
   teamId: string;
@@ -16,6 +20,9 @@ export type CapacityView = {
   expectedSp: number | null;
   actualSp: number | null;
   utilizationPct: number | null;
+  // story-057 AC-002 — a faixa do AC-002 da story-032 é derivada aqui e só
+  // aqui; a tela pinta o que a leitura decidiu.
+  band: CapacityBand | null;
 };
 
 export async function listTeamCapacity(): Promise<Result<CapacityView[]>> {
@@ -51,13 +58,17 @@ export async function listTeamCapacity(): Promise<Result<CapacityView[]>> {
 
     return teams.map((t) => {
       const snap = latestByTeam.get(t.id);
+      const utilizationPct = snap
+        ? Math.round(snap.actualCapacityUtil * 100)
+        : null;
       return {
         teamId: t.id,
         teamName: t.name,
         velocity: t.velocity,
         expectedSp: snap?.expectedSpNextSprint ?? null,
         actualSp: snap?.actualSpDelivered ?? null,
-        utilizationPct: snap ? Math.round(snap.actualCapacityUtil * 100) : null,
+        utilizationPct,
+        band: capacityBand(utilizationPct),
       };
     });
   });
@@ -68,6 +79,7 @@ export type CapacityGridCell = {
   expectedSp: number | null;
   actualSp: number | null;
   utilizationPct: number | null;
+  band: CapacityBand | null;
 };
 
 export type CapacityGridRow = {
@@ -169,13 +181,15 @@ export async function listTeamCapacityAcrossPI(): Promise<
           continue;
         }
         const snap = snapByKey.get(`${sprint.id}:${t.id}`);
+        const utilizationPct = snap
+          ? Math.round(snap.actualCapacityUtil * 100)
+          : null;
         cells.push({
           sprintName: sprint.name,
           expectedSp: snap?.expectedSpNextSprint ?? null,
           actualSp: snap?.actualSpDelivered ?? null,
-          utilizationPct: snap
-            ? Math.round(snap.actualCapacityUtil * 100)
-            : null,
+          utilizationPct,
+          band: capacityBand(utilizationPct),
         });
       }
       return { teamId: t.id, teamName: t.name, cells };

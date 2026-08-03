@@ -22,7 +22,6 @@ function makeDb(overrides: Record<string, unknown> = {}) {
       create: vi.fn().mockResolvedValue({ id: "cap-1" }),
     },
     ...overrides,
-    // biome-ignore lint/suspicious/noExplicitAny: test double, structural subset of the Prisma client
   } as any;
 }
 
