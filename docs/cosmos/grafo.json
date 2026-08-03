@@ -2306,7 +2306,7 @@
         "apps/app/__tests__/screens/workflows.test.tsx"
       ],
       "commits": [
-        "56aba2e"
+        "95caa1e"
       ],
       "notas": "A tela já lia dado real antes desta rodada (listWorkflows/toggleWorkflowActive existiam e bastavam para a listagem, como o despacho antecipou). O que faltava era profundidade de regra, não de leitura: a invariante 'uma ativa por owner+entityType' do FR-030 não era imposta em lugar nenhum e o runtime já dependia dela; e o escopo, que dá sentido à palavra 'ativo', nunca chegava à tela. O builder BPMN fica de fora por decisão de escopo (lacuna workflows-4), não por falta de tempo.",
       "atualizado_em": "2026-08-03",
