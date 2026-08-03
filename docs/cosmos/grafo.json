@@ -1239,7 +1239,7 @@
       "profundidade": "THIN",
       "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
+      "estado": "em-revisao",
       "actions": [
         {
           "arquivo": "apps/app/app/(cosmos)/actions/risks.ts",
@@ -1257,7 +1257,7 @@
           "arquivo": "apps/app/app/(cosmos)/actions/risks.ts",
           "export": "roamTransition",
           "tipo": "mutation",
-          "estado": "ausente"
+          "estado": "existe"
         }
       ],
       "models": [
@@ -1267,16 +1267,23 @@
       "safe": {
         "pratica": "ROAM — Resolved, Owned, Accepted, Mitigated",
         "nivel": "Essential",
-        "faz": "Registra os riscos levantados no PI Planning e obriga cada um a receber um desfecho ROAM antes do time se comprometer com o PI.",
+        "faz": "Registra os riscos levantados no PI Planning, mostra onde cada um cai na matriz probabilidade × impacto e — o que faltava — deixa o RTE dar a cada risco um desfecho ROAM, com o compromisso que aquele desfecho exige, antes de o ART se comprometer com o PI.",
         "invariantes": [
-          "todo risco nasce com roamStatus UNCLASSIFIED e só sai dele por transição explícita, com autor registrado",
-          "transição de roamStatus grava logAudit com estado anterior e ator — a trilha é o que torna o commitment auditável",
-          "severidade é derivada de probabilidade x impacto na leitura, nunca persistida como terceiro campo divergente",
-          "toda leitura e escrita filtra por tenantId vindo da sessão, nunca do cliente"
+          "todo risco nasce com roamStatus UNCLASSIFIED e só sai dele por transição explícita; UNCLASSIFIED não é destino, porque a volta esvaziaria o gate de commitment depois do commit",
+          "desfecho ROAM carrega o compromisso que o define: OWNED exige dono, MITIGATED exige plano de ≥30 caracteres, RESOLVED exige nota de resolução — sem eles a transição é recusada e nada é gravado",
+          "transição de roamStatus grava logAudit com o estado anterior e o ator — a trilha é o que torna o commitment auditável",
+          "Risk.status (coluna legada de desfecho, ainda lida por arts/pi-plans e pelos exports) é escrita junto com roamStatus, para não existirem duas verdades sobre o mesmo risco",
+          "probabilidade e impacto usam um vocabulário de cinco níveis; os valores já gravados (low/medium/high) seguem válidos e caem exatamente nas células e cores que já tinham",
+          "severidade da célula é derivada de probabilidade × impacto na leitura, nunca persistida como terceiro campo divergente",
+          "escrita passa por requireRole(ADMIN|RTE): levantar risco é de qualquer papel da sessão, classificar é do facilitador",
+          "toda leitura e escrita filtra por tenantId vindo da sessão; o riskId vindo do cliente é reconferido dentro do tenant antes de qualquer escrita"
         ],
         "fonte": [
-          "docs/srd-epic-006.md",
-          "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+          "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+          "docs/stories/epic-006/story-019.md:30",
+          "docs/stories/epic-006/story-019.md:47",
+          "docs/PRD-v1.0.md:632",
+          "docs/srd-epic-006.md:213",
           "SAFe 6.0 — Risk Management no PI Planning (ROAM)"
         ],
         "codigo": [
@@ -1288,18 +1295,48 @@
           "id": "risks-1",
           "tipo": "action",
           "alvo": "roamTransition",
-          "hoje": "inexistente — a tela cria risco mas não muda o desfecho, então o registro nasce e congela em UNCLASSIFIED",
-          "desejado": "transição guardada, com logAudit e checagem de papel",
+          "hoje": "era inexistente — a tela criava risco mas não mudava o desfecho, então o registro nascia e congelava em UNCLASSIFIED e o gate de commitment nunca podia ser satisfeito pela tela que registra o risco",
+          "desejado": "transição guardada, com os três guards da story-019 AC-002, checagem de papel, guarda de tenant e logAudit com o desfecho anterior",
           "migration": false,
-          "bloqueio": true,
-          "fechada_em": null
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
         },
         {
           "id": "risks-2",
           "tipo": "campo",
           "alvo": "Risk.probability, Risk.impact",
-          "hoje": "String livre com default 'medium'; a tela monta matriz 3x3",
-          "desejado": "vocabulário de 5 níveis para a matriz 5x5 do desenho — as colunas são String livre, então cabe sem migration e os valores atuais seguem válidos",
+          "hoje": "era String livre com default 'medium' e vocabulário de três níveis; a tela montava matriz 3×3 e as pontas do desenho não tinham onde cair",
+          "desejado": "vocabulário de cinco níveis (very_low…very_high) e matriz 5×5 — as colunas são String livre, então coube sem migration e os valores anteriores seguem válidos com os mesmos pesos 2/3/4",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "risks-3",
+          "tipo": "campo",
+          "alvo": "Risk.ownerId (duplicata de Risk.ownerUserId)",
+          "hoje": "o modelo tem duas colunas de dono. listRisks resolve o nome por ownerUserId; ownerId só é escrito pela action órfã apps/app/app/actions/risks/roam-transition.ts, que não tem chamador na UI. roamTransition escreve ownerUserId, a coluna que a leitura usa",
+          "desejado": "uma coluna de dono só, para que 'dono do risco' não dependa de qual caminho de escrita gravou",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "risks-4",
+          "tipo": "campo",
+          "alvo": "Risk.status (duplicata de Risk.roamStatus)",
+          "hoje": "duas colunas guardam o mesmo desfecho, com vocabulários que já divergiram no repo (arts/risks.ts grava 'owned' minúsculo, roam-transition grava 'OWNED'). roamTransition e o seed escrevem as duas em sincronia para não piorar a divergência",
+          "desejado": "roamStatus como única fonte do desfecho, com os leitores de status migrados",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "risks-5",
+          "tipo": "action",
+          "alvo": "quick-poll de 60s, surfacing por IA e cron de staleness (story-019 AC-004/AC-005/AC-006/AC-007)",
+          "hoje": "inexistentes na tela. A quick-poll depende de PISession + Liveblocks, o surfacing depende de PIKnowledgeVector/pgvector com os blockers de standup indexados, e a escalação por staleness depende de agendador",
+          "desejado": "as três, quando as dependências existirem — nenhuma é aproximável sem fabricar dado",
           "migration": false,
           "bloqueio": false,
           "fechada_em": null
@@ -1313,11 +1350,16 @@
           "porque": "o gate de commitment precisa saber qual PI está aberto para exigir ROAM em todos os riscos dele"
         }
       ],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/risks.test.ts",
+        "apps/app/__tests__/screens/risks.test.tsx"
+      ],
       "commits": [],
-      "notas": "Nó de referência para os demais. A ficha SAFe é obrigatória antes do commit que fecha o nó, e o reviewer abre cada fonte.",
-      "atualizado_em": "2026-08-02",
+      "notas": "Nó de referência para os demais. A ficha SAFe é obrigatória antes do commit que fecha o nó, e o reviewer abre cada fonte. O seed passou a criar seis riscos no PI ativo, cobrindo os cinco níveis de probabilidade/impacto e os quatro desfechos ROAM, e deixando dois em UNCLASSIFIED de propósito: é o estado que o gate da story-019 AC-003 existe para barrar, e sem ele o contador 'sem classificação ROAM' da tela não teria em quem aparecer. As lacunas risks-3 e risks-4 são as duas duplicações de coluna que o modelo herdou (dono e desfecho); nenhuma trava a prática do nó, mas as duas cobram migration para deixar de existir.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

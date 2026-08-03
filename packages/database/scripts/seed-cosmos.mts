@@ -444,6 +444,90 @@ const DEPENDENCIES = [
   },
 ];
 
+// Registro ROAM do PI ativo (story-059). Sem ele /cosmos/risks abre com a
+// matriz 5×5 inteira vazia e o registro no estado vazio, e o gate de commitment
+// da story-019 AC-003 não tem em quem aparecer. Os cinco níveis de
+// probabilidade e de impacto aparecem de propósito, e dois riscos ficam
+// UNCLASSIFIED: é exatamente o estado que o RTE precisa enxergar antes de
+// comprometer o PI. Os desfechos respeitam os mesmos guards da action —
+// MITIGATED tem plano de ≥30 caracteres, RESOLVED tem nota, OWNED tem dono.
+const RISKS: {
+  title: string;
+  description: string;
+  category: string;
+  severity: number;
+  probability: string;
+  impact: string;
+  roamStatus: string;
+  mitigationPlan?: string;
+  resolutionNote?: string;
+}[] = [
+  {
+    title: "Provedor de antifraude sem SLA contratado",
+    description:
+      "O contrato com o provedor externo de antifraude vence no meio do PI e ainda não há SLA de latência assinado.",
+    category: "EXTERNAL",
+    severity: 5,
+    probability: "high",
+    impact: "very_high",
+    roamStatus: "OWNED",
+  },
+  {
+    title: "Migração multi-tenant sem janela de manutenção aprovada",
+    description:
+      "A virada do core multi-tenant precisa de janela noturna, e o comitê de mudança ainda não aprovou a data.",
+    category: "TECHNICAL",
+    severity: 4,
+    probability: "medium",
+    impact: "high",
+    roamStatus: "MITIGATED",
+    mitigationPlan:
+      "Plano B ensaiado: virada em duas etapas, com espelhamento de leitura por 48h e rollback por feature flag.",
+  },
+  {
+    title: "Homologação do Open Finance depende de terceiro",
+    description:
+      "A homologação da agregação depende do sandbox do regulador, cuja fila de agendamento não é controlada pelo ART.",
+    category: "COMPLIANCE",
+    severity: 4,
+    probability: "medium",
+    impact: "very_high",
+    roamStatus: "ACCEPTED",
+  },
+  {
+    title: "Rotatividade no squad de Dados",
+    description:
+      "Duas saídas no trimestre reduziram a capacidade do squad de Dados abaixo do planejado para o PI.",
+    category: "CAPACITY",
+    severity: 3,
+    probability: "low",
+    impact: "medium",
+    roamStatus: "RESOLVED",
+    resolutionNote:
+      "Duas contratações fecharam no início do PI e a capacidade voltou ao planejado.",
+  },
+  {
+    title: "Custo de infraestrutura acima do orçamento do PI",
+    description:
+      "A projeção de custo do cluster novo estoura o orçamento do PI se o tráfego crescer como previsto.",
+    category: "BUSINESS",
+    severity: 4,
+    probability: "very_high",
+    impact: "high",
+    roamStatus: "UNCLASSIFIED",
+  },
+  {
+    title: "Contrato de dados do parceiro LATAM ainda em revisão jurídica",
+    description:
+      "O aditivo de tratamento de dados do parceiro segue em revisão e trava o piloto na região.",
+    category: "DEPENDENCY",
+    severity: 2,
+    probability: "very_low",
+    impact: "low",
+    roamStatus: "UNCLASSIFIED",
+  },
+];
+
 // Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
 // acima — resolvido para id na hora de gravar.
 const DECISIONS = [
@@ -1011,6 +1095,42 @@ async function main() {
     dep++;
   }
   console.log("dependency links:", dep);
+
+  // Riscos ROAM do PI ativo. `status` é a coluna legada de desfecho que outros
+  // leitores ainda consultam; roamTransition mantém as duas em sincronia, então
+  // o seed já nasce sincronizado em vez de deixar o registro divergente.
+  const piMidpoint = new Date(Date.UTC(2026, 7, 3));
+  let rk = 0;
+  for (const r of RISKS) {
+    const riskData = {
+      tenantId: tenant.id,
+      piPlanId: piPlan.id,
+      title: r.title,
+      description: r.description,
+      category: r.category,
+      severity: r.severity,
+      probability: r.probability,
+      impact: r.impact,
+      roamStatus: r.roamStatus,
+      status: r.roamStatus === "UNCLASSIFIED" ? "IDENTIFIED" : r.roamStatus,
+      ownerUserId: r.roamStatus === "OWNED" ? devMember.userId : null,
+      ownedAt: r.roamStatus === "OWNED" ? piMidpoint : null,
+      mitigationPlan: r.mitigationPlan ?? null,
+      resolutionNote: r.resolutionNote ?? null,
+      resolvedAt: r.roamStatus === "RESOLVED" ? piMidpoint : null,
+    };
+    const existingRisk = await db.risk.findFirst({
+      where: { tenantId: tenant.id, title: r.title },
+      select: { id: true },
+    });
+    if (existingRisk) {
+      await db.risk.update({ where: { id: existingRisk.id }, data: riskData });
+    } else {
+      await db.risk.create({ data: riskData });
+    }
+    rk++;
+  }
+  console.log("ROAM risks:", rk);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
