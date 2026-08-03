@@ -49,6 +49,35 @@ const EPICS = [
   { id: 'EP-055', col: 'done', title: 'Migração para Design System v3', theme: 'Modernização da Plataforma', art: 'plat', owner: 'Helena Souza', wsjf: 7.5, size: 31, progress: 100 },
 ];
 
+// Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
+// acima — resolvido para id na hora de gravar.
+const DECISIONS = [
+  {
+    titulo: 'Aprovar migração core para multi-tenant', tipo: 'epic_decision', targetType: 'epic',
+    target: 'Migração core para multi-tenant', decisao: 'approved', data: '2026-01-15T14:00:00Z',
+    justificativa: 'Dívida arquitetural bloqueia três iniciativas de receita. Custo de adiar mais um PI supera o investimento.',
+    tags: ['tech-debt', 'arquitetura'], dadosSuporte: { wsjf: 22.4, sizePoints: 89 },
+  },
+  {
+    titulo: 'Adiar programa de fidelidade B2B', tipo: 'epic_decision', targetType: 'epic',
+    target: 'Programa de fidelidade B2B', decisao: 'deferred', data: '2026-02-03T10:30:00Z',
+    justificativa: 'Hipótese de valor ainda não validada com clientes. Reavaliar após a pesquisa de churn do trimestre.',
+    tags: ['descoberta'], dadosSuporte: { wsjf: 8.4 },
+  },
+  {
+    titulo: 'Elevar alocação de Confiança & Risco', tipo: 'theme_decision', targetType: 'theme',
+    target: 'Confiança & Risco', decisao: 'changed', data: '2026-03-11T09:00:00Z',
+    justificativa: 'Duas exigências regulatórias entraram no trimestre. Alvo sobe de 15% para 20%, saindo de Eficiência de Custo.',
+    tags: ['regulatorio', 'alocacao'], dadosSuporte: { targetAllocationPctFrom: 15, targetAllocationPctTo: 20 },
+  },
+  {
+    titulo: 'Rejeitar antecipação de Open Finance', tipo: 'epic_decision', targetType: 'epic',
+    target: 'Open Finance · agregação', decisao: 'rejected', data: '2026-04-22T16:45:00Z',
+    justificativa: 'Antecipar exigiria tirar time da migração multi-tenant, que é pré-requisito técnico deste mesmo épico.',
+    tags: ['dependencia'], dadosSuporte: { blockedBy: 'Migração core para multi-tenant' },
+  },
+];
+
 type DevDb = typeof db;
 
 export async function seedDevMembership(devDb: DevDb, tenantId: string) {
@@ -71,8 +100,9 @@ async function main() {
     create: { name: 'COSMOS Demo', slug: 'cosmos-demo' },
   });
   console.log('tenant:', tenant.id, tenant.slug);
-  await seedDevMembership(db, tenant.id);
+  const devMember = await seedDevMembership(db, tenant.id);
 
+  const epicIdByTitle = new Map<string, string>();
   const themeNames = [...new Set(EPICS.map((e) => e.theme))];
   const themeByName = new Map<string, string>();
   for (const name of themeNames) {
@@ -109,11 +139,34 @@ async function main() {
       doneFeatureCount: e.progress, // progress% = done/total
     };
     const existing = await db.epic.findFirst({ where: { tenantId: tenant.id, title: e.title }, select: { id: true } });
-    if (existing) await db.epic.update({ where: { id: existing.id }, data });
-    else await db.epic.create({ data });
+    const epicRow = existing
+      ? await db.epic.update({ where: { id: existing.id }, data, select: { id: true } })
+      : await db.epic.create({ data, select: { id: true } });
+    epicIdByTitle.set(e.title, epicRow.id);
     n++;
   }
   console.log('epics upserted:', n);
+
+  // Decision Log. Sem entrada, /cosmos/decisions do tenant demo abre no estado
+  // vazio e o export de auditoria não tem o que provar. Cada linha aponta para
+  // um épico ou tema realmente semeado acima — decisão órfã não é registro de
+  // governança, é ruído.
+  let d = 0;
+  for (const dec of DECISIONS) {
+    const targetId = dec.targetType === 'epic' ? epicIdByTitle.get(dec.target) : themeByName.get(dec.target);
+    if (!targetId) continue;
+    const already = await db.decisionLogEntry.findFirst({ where: { tenantId: tenant.id, titulo: dec.titulo }, select: { id: true } });
+    if (already) continue;
+    await db.decisionLogEntry.create({
+      data: {
+        tenantId: tenant.id, titulo: dec.titulo, tipo: dec.tipo, targetType: dec.targetType,
+        targetId, decisao: dec.decisao, justificativa: dec.justificativa, tags: dec.tags,
+        dataDecisao: new Date(dec.data), decisorId: devMember.userId, dadosSuporte: dec.dadosSuporte,
+      },
+    });
+    d++;
+  }
+  console.log('decisions created:', d);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({

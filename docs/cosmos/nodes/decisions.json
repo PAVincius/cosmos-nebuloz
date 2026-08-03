@@ -2,20 +2,131 @@
   "$schema": "../schema/no.schema.json",
   "id": "decisions",
   "kind": "tela",
-  "titulo": "decisions",
+  "titulo": "Decision Log (trilha de auditoria do portfólio)",
   "rota": "/cosmos/decisions",
   "componente": "apps/app/components/cosmos/screens/decisions.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/decisions.ts",
+      "export": "listDecisions",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/decisions.ts",
+      "export": "exportDecisionLog",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/decisions.ts",
+      "export": "createDecision",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["DecisionLogEntry", "Epic", "StrategicTheme", "User", "AuditLog"],
+  "safe": {
+    "pratica": "Decision Log & Audit Trail — registro imutável das decisões de investimento do portfólio (Lean Portfolio Management)",
+    "nivel": "Portfolio",
+    "faz": "Guarda, em ordem e com justificativa, toda decisão de portfólio — aprovada, rejeitada, adiada ou alterada — e entrega esse histórico a um auditor externo em um export que ele pode levar embora, sem que ninguém consiga editar ou apagar uma entrada pela aplicação.",
+    "invariantes": [
+      "leitura restrita a ADMIN/RTE/STE (ORG_ADMIN/RTE/PORTFOLIO_MANAGER no vocabulário do FR-010); papel fora disso nem chega a consultar o banco",
+      "a superfície do módulo é append-only: não existe export de action que atualize ou apague uma entrada — a ausência é o requisito, não há rota para retornar 405",
+      "o export é tenant-scoped e entrega as entradas em ordem cronológica ascendente, com id do decisor, timestamp, justificativa e dados de suporte",
+      "o export carrega rodapé de metadados — quem exportou, quando, e quantas entradas — porque o artefato precisa se identificar fora do sistema",
+      "o próprio export é auditado, e só depois de o payload existir: leitura que falha não gera registro de export",
+      "escrita é RBAC-gated e todo id de alvo vindo do cliente é reconferido dentro do tenant antes de gravar a decisão",
+      "a leitura tenant-scoped é a mesma de app/actions/governance/decision-log.ts — o export não repete a consulta"
+    ],
+    "fonte": [
+      "docs/srd-epic-006.md:126",
+      "docs/srd-epic-008.md:178",
+      "docs/PRD-v1.0.md:5103",
+      "docs/stories/epic-006/story-054-tela-decision-log.md",
+      "docs/stories/epic-006/story-016.md",
+      "SAFe 6.0 — Lean Portfolio Management (Portfolio Governance)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/decisions.ts",
+      "apps/app/app/actions/governance/decision-log.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "decisions-1",
+      "tipo": "action",
+      "alvo": "listDecisions — leitura restrita",
+      "hoje": "qualquer membro do tenant lia o Decision Log; o log era mais aberto para ler do que para escrever, contra o FR-010",
+      "desejado": "SELECT restrito a ADMIN/RTE/STE, negando antes de qualquer consulta",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "decisions-2",
+      "tipo": "action",
+      "alvo": "exportDecisionLog",
+      "hoje": "inexistente na tela — o auditor externo não tinha como levar o log embora, e o único export do repo (exportDecisionsCSV) recorta por janela e não se registra",
+      "desejado": "export JSON do log inteiro, cronológico, com rodapé de metadados e registro do próprio export",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "decisions-3",
+      "tipo": "seed",
+      "alvo": "DecisionLogEntry do tenant demo",
+      "hoje": "nenhuma decisão semeada; a tela do tenant demo abria no estado vazio e o caminho de export não era demonstrável",
+      "desejado": "decisões apontando para épicos e temas realmente semeados, cobrindo aprovada, adiada, alterada e rejeitada",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "decisions-4",
+      "tipo": "tabela",
+      "alvo": "trigger INSERT-only em DecisionLogEntry",
+      "hoje": "a imutabilidade é garantida só pela superfície da aplicação (nenhuma action de update/delete); o banco ainda aceitaria UPDATE/DELETE por outro caminho",
+      "desejado": "trigger BEFORE UPDATE OR DELETE que rejeita a operação, como a story-016 especifica",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "decisions-5",
+      "tipo": "action",
+      "alvo": "export em PDF",
+      "hoje": "só JSON; o FR-010 e o FR-816 pedem PDF + JSON, e o PDF exige biblioteca de renderização e layout próprio",
+      "desejado": "export PDF com título, ART/org, entradas em ordem e rodapé de export",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "decisions-6",
+      "tipo": "action",
+      "alvo": "app/actions/governance/export-decisions.ts::exportDecisionsCSV",
+      "hoje": "export CSV pré-existente sem exigência de papel e sem registrar o próprio export — o mesmo buraco de exfiltração silenciosa que o BR-7.4.4.2 descreve, num módulo fora deste nó",
+      "desejado": "mesmo par de guardas do export JSON: papel exigido e export auditado",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/decisions.test.ts",
+    "apps/app/__tests__/screens/decisions.test.tsx"
+  ],
+  "commits": [],
+  "notas": "A lacuna decisions-6 fica registrada aqui por ter sido descoberta ao evitar duplicar o export, mas o arquivo é de app/actions/governance — quem for fechá-la mexe fora deste nó. A imutabilidade em nível de banco (decisions-4) é da trilha de schema; aqui a garantia é de superfície e tem teste que fixa a lista de exports do módulo.",
+  "atualizado_em": "2026-08-03"
 }
