@@ -2,20 +2,151 @@
   "$schema": "../schema/no.schema.json",
   "id": "strategy",
   "kind": "tela",
-  "titulo": "strategy",
+  "titulo": "Strategy Map (pilares agrupando temas)",
   "rota": "/cosmos/strategy",
   "componente": "apps/app/components/cosmos/screens/strategy.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+      "export": "listStrategyPillars",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+      "export": "listUnlinkedThemes",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+      "export": "getStrategyPillar",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+      "export": "createPillar",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/strategy.ts",
+      "export": "assignThemeToPillar",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["StrategyPillar", "StrategicTheme", "Epic"],
+  "safe": {
+    "pratica": "Strategy Map — traduzir a estratégia do portfólio em apostas de investimento financiáveis, com rastro de pilar até épico",
+    "nivel": "Portfolio",
+    "faz": "Mostra à Portfolio Manager a estratégia em blocos: cada pilar agrupa temas estratégicos, e o rollup diz quantos épicos existem sob o pilar e quanto deles já foi entregue. Deixa pôr um tema dentro de um pilar e tirá-lo, e mostra em faixa própria os temas que não estão sob pilar algum, que são lacuna de alinhamento e não ausência de dado.",
+    "invariantes": [
+      "vincular reconfere os DOIS ids vindos do cliente dentro do tenant — themeId e pillarId, separadamente; um só guardado deixa o outro como vetor de IDOR",
+      "desvincular grava pillarId nulo e não consulta pilar algum: não há destino para reconferir",
+      "vincular não cascateia — nenhum Epic é tocado; o épico pertence ao tema, e é o tema que se move entre pilares",
+      "o audit registra origem→destino do pilar, não só o destino; sem o valor anterior, mover um tema entre pilares perde a origem",
+      "tema ativo sem pilar é devolvido como lacuna de alinhamento; tema ARQUIVADO não é, porque saiu do portfólio e cobrar alinhamento dele seria alarme que ninguém resolve",
+      "avgProgress é null (nunca 0) quando nenhum épico do pilar tem feature — média de conjunto vazio não é zero",
+      "épico sem feature conta em epicCount e fica fora do denominador da média: contá-lo como 0% afundaria o pilar por causa de épico que ninguém decompôs",
+      "escrita passa por requireRole(ADMIN|STE) e grava logAudit",
+      "erro de leitura é distinto do vazio: a tela não diz 'nenhum pilar cadastrado' para um tenant que tem pilares"
+    ],
+    "fonte": [
+      "docs/stories/epic-007/story-060-tela-strategy-map.md",
+      "docs/stories/epic-007/story-031.md",
+      "docs/srd-epic-007.md:296",
+      "docs/PRD-v1.0.md:3033",
+      "SAFe 6.0 — Strategic Themes / Portfolio Vision (Lean Portfolio Management)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/strategy.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "strategy-1",
+      "tipo": "action",
+      "alvo": "assignThemeToPillar",
+      "hoje": "inexistente — StrategicTheme.pillarId existia no schema e nenhuma escrita do repo gravava esse campo; um pilar criado pela tela nascia com 'Nenhum tema vinculado' e rollup 0 para sempre, o que tornava o mapa decorativo",
+      "desejado": "vincular e desvincular tema de pilar com RBAC, guarda de tenant nos dois FKs e audit de origem→destino",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "strategy-2",
+      "tipo": "action",
+      "alvo": "listUnlinkedThemes",
+      "hoje": "tema com pillarId nulo não aparecia em lugar nenhum da tela — nem como problema; a leitura só descia de pilar para tema",
+      "desejado": "leitura dos temas ativos sem pilar, para a faixa de desalinhados que a story-031 AC-001 pede",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "strategy-3",
+      "tipo": "ui",
+      "alvo": "rollup de pilar sem épico mensurável",
+      "hoje": "exibia 0%, indistinguível de 'nada concluído' — afirmava uma medição que não existe",
+      "desejado": "null na leitura e '—' na tela",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "strategy-4",
+      "tipo": "ui",
+      "alvo": "estado de erro de listStrategyPillars",
+      "hoje": "falha caía no mesmo texto do vazio: a tela dizia 'nenhum pilar cadastrado' para um tenant que tem pilares",
+      "desejado": "erro distinto do vazio, sem renderizar pilar algum",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "strategy-5",
+      "tipo": "seed",
+      "alvo": "StrategyPillar do tenant demo",
+      "hoje": "nenhum pilar — a tela abria vazia e o rollup não tinha o que somar",
+      "desejado": "três pilares com os temas semeados vinculados, e um tema deliberadamente fora de pilar para que o caminho de lacuna de alinhamento seja visível",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "strategy-6",
+      "tipo": "campo",
+      "alvo": "visão do portfólio no banner da tela",
+      "hoje": "o banner mostra texto de referência genérico sobre o que é um pilar SAFe; Tenant.visionStatement existe no schema e não é lido aqui, então a visão real do tenant não aparece no Strategy Map",
+      "desejado": "ler Tenant.visionStatement e mostrar a visão do tenant, degradando para o texto de referência quando não houver",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "strategy-7",
+      "tipo": "campo",
+      "alvo": "duas implementações de Strategy Map convivendo",
+      "hoje": "app/actions/strategy-map/index.ts monta o DAG completo (Theme→OKR→Epic→Feature, FR-027) e (cosmos)/actions/strategy.ts monta a grade de pilares; as duas derivam progresso por regras diferentes (a primeira pela média dos OKRs, a segunda pela média das features dos épicos) e podem discordar sobre o mesmo pilar",
+      "desejado": "decidir qual é a fonte de verdade do progresso de pilar e fazer a outra consumi-la",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/strategy.test.ts",
+    "apps/app/__tests__/screens/strategy.test.tsx"
+  ],
+  "commits": [],
+  "notas": "Balde A: StrategyPillar e StrategicTheme.pillarId já existiam e bastavam — nenhuma migration. A lacuna real não era leitura, era que o campo de vínculo não tinha escritor nenhum: a hierarquia pilar→tema era legível e não era construível. listUnlinkedThemes ficou como action separada em vez de campo novo em listStrategyPillars porque o payload de pilares tem outro consumidor (pillar-detail) e alargá-lo espalharia a mudança sem necessidade. getStrategyPillar mantém avgProgress: number (coagido de null para 0 na borda) porque PillarDetailView é a superfície do nó `pillar`, não deste. A lacuna strategy-7 é de arquitetura e precisa de decisão, não de código. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }

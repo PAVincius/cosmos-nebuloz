@@ -86,6 +86,27 @@ const THEME_META: Record<
   },
 };
 
+// Pilares do Strategy Map. Pilar é o agrupamento grosso acima do tema: sem
+// eles /cosmos/strategy abre vazia, e um pilar sem tema vinculado tem rollup 0
+// para sempre, o que faz a tela parecer quebrada em vez de vazia.
+//
+// "Eficiência de Custo" fica de fora de propósito: a tela agora mostra tema sem
+// pilar como lacuna de alinhamento (story-060 AC-002), e um seed em que tudo
+// está alinhado esconderia esse caminho. Portfólio real tem tema órfão.
+const PILLARS = [
+  {
+    name: "Crescimento",
+    tone: "green",
+    themes: ["Expansão LATAM", "Enterprise Ready"],
+  },
+  {
+    name: "Plataforma & Confiança",
+    tone: "purple",
+    themes: ["Modernização da Plataforma", "Confiança & Risco"],
+  },
+  { name: "Inteligência de Dados", tone: "amber", themes: ["Data & AI"] },
+];
+
 const EPICS = [
   {
     id: "EP-104",
@@ -603,6 +624,46 @@ async function main() {
     themeByName.set(name, row.id);
   }
   console.log("themes:", themeByName.size);
+
+  // Pilares e o vínculo tema → pilar. O vínculo é reaplicado a cada re-seed:
+  // um tema criado por seed antigo nasceu com pillarId nulo e ficaria órfão
+  // para sempre.
+  let p = 0;
+  for (const [i, pillarDef] of PILLARS.entries()) {
+    const existingPillar = await db.strategyPillar.findFirst({
+      where: { tenantId: tenant.id, name: pillarDef.name },
+      select: { id: true },
+    });
+    const pillarData = {
+      tenantId: tenant.id,
+      name: pillarDef.name,
+      tone: pillarDef.tone,
+      order: i,
+    };
+    const pillarRow = existingPillar
+      ? await db.strategyPillar.update({
+          where: { id: existingPillar.id },
+          data: pillarData,
+          select: { id: true },
+        })
+      : await db.strategyPillar.create({
+          data: pillarData,
+          select: { id: true },
+        });
+
+    for (const themeName of pillarDef.themes) {
+      const themeId = themeByName.get(themeName);
+      if (!themeId) {
+        continue;
+      }
+      await db.strategicTheme.update({
+        where: { id: themeId },
+        data: { pillarId: pillarRow.id },
+      });
+    }
+    p++;
+  }
+  console.log("pillars upserted:", p);
 
   let n = 0;
   for (const [i, e] of EPICS.entries()) {
