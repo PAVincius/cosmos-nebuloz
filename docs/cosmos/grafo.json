@@ -1680,7 +1680,9 @@
         "apps/app/__tests__/actions/strategy.test.ts",
         "apps/app/__tests__/screens/strategy.test.tsx"
       ],
-      "commits": [],
+      "commits": [
+        "fe319b9b"
+      ],
       "notas": "Balde A: StrategyPillar e StrategicTheme.pillarId já existiam e bastavam — nenhuma migration. A lacuna real não era leitura, era que o campo de vínculo não tinha escritor nenhum: a hierarquia pilar→tema era legível e não era construível. listUnlinkedThemes ficou como action separada em vez de campo novo em listStrategyPillars porque o payload de pilares tem outro consumidor (pillar-detail) e alargá-lo espalharia a mudança sem necessidade. getStrategyPillar mantém avgProgress: number (coagido de null para 0 na borda) porque PillarDetailView é a superfície do nó `pillar`, não deste. A lacuna strategy-7 é de arquitetura e precisa de decisão, não de código. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
