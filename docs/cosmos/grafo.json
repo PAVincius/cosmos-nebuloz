@@ -1648,7 +1648,9 @@
         "apps/app/__tests__/actions/solution-train.test.ts",
         "apps/app/__tests__/screens/solution-train.test.tsx"
       ],
-      "commits": [],
+      "commits": [
+        "48fe8082"
+      ],
       "notas": "Verificação antes de trabalho: a tela já cumpria a prática. listSolutionTrains e createCapability já estavam exportadas, os view types completos (capabilities, progresso por ART, ROAM consolidado, dependências cross-ART) e a action já tinha teste cobrindo isolamento de tenant, guarda de IDOR e o rollup sem N+1. O que faltava era prova de tela e dado semeado — foi isso que este nó entregou, mais a ficha SAFe. Nenhuma action nova foi inventada. O id do nó é `solution` porque é o id do registry (apps/app/components/cosmos/screens/registry.tsx), embora o componente e a action se chamem solution-train.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
