@@ -905,7 +905,7 @@
         "apps/app/__tests__/actions/themes.test.ts",
         "apps/app/__tests__/screens/themes.test.tsx"
       ],
-      "commits": ["650dc04"],
+      "commits": ["7cfd78d"],
       "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista themes entre as 14 telas NÃO medidas. As lacunas themes-6 e themes-7 são as duas partes do FR-014 que exigem modelagem nova (permissão granular e configuração de portfólio); nenhuma trava a prática SAFe do nó, que é equilibrar investimento com teto e alerta de concentração. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
