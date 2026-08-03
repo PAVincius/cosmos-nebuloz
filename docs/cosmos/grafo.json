@@ -1553,7 +1553,9 @@
         "apps/app/__tests__/actions/webhooks.test.ts",
         "apps/app/__tests__/screens/webhooks.test.tsx"
       ],
-      "commits": [],
+      "commits": [
+        "d4da1fe"
+      ],
       "notas": "profundidade THIN vem do audit de 2026-07-23 (webhooks: 4 de 11 seções de handoff, o melhor do grupo). As duas lacunas de action fechadas são do tipo que o audit chamou de 'UI barata sobre dado que já existe': `active` e `synthetic` estavam no schema, o worker de entrega estava escrito e testado, e nada no produto os alcançava. As lacunas webhooks-4 e webhooks-5 exigem modelagem nova e ficam registradas sem migration; nenhuma trava a prática do nó, que é ter integração de saída observável e controlável.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
