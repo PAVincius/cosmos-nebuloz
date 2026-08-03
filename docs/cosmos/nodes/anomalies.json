@@ -2,20 +2,149 @@
   "$schema": "../schema/no.schema.json",
   "id": "anomalies",
   "kind": "tela",
-  "titulo": "anomalies",
+  "titulo": "Anomalias de Custo (FinOps do portfólio)",
   "rota": "/cosmos/anomalies",
   "componente": "apps/app/components/cosmos/screens/anomalies.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "listCostAnomalies",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "getAnomalySensitivity",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "setAnomalySensitivity",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "resetAnomalySensitivity",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "acknowledgeCostAnomaly",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "detectCostAnomaliesNow",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "export": "generateCostAnomalyNarrativeAction",
+      "tipo": "read",
+      "estado": "existe"
+    }
+  ],
+  "models": ["CostAnomaly", "BillingEntry", "AnomalyRuleConfig", "Integration"],
+  "safe": {
+    "pratica": "Lean Budgets & FinOps — guardrails de gasto do portfólio; desvio de custo é exceção tratada, não surpresa de fim de mês",
+    "nivel": "Portfolio",
+    "faz": "Mostra ao Business Owner cada desvio de custo de nuvem já detectado com a conta na mão (valor real, mediana de baseline, Δ% e z-score), deixa disparar a detecção fora do cron, calibrar a sensibilidade da regra R-COST-01 dentro dos limites da plataforma — e voltar ao padrão da plataforma —, e reconhecer a anomalia sem apagar o registro.",
+    "invariantes": [
+      "restaurar o padrão APAGA a linha de AnomalyRuleConfig; regravar 3.5 fixaria o padrão de hoje como escolha do tenant e o tornaria surdo a qualquer mudança futura do padrão da plataforma",
+      "restaurar sem override é no-op bem-sucedido, não erro: deleteMany devolve count 0 em vez do P2025 de delete, e nada é auditado porque nada mudou",
+      "gravação e leitura e restauração usam a MESMA sentinela artId ('') da chave única (tenantId, artId, ruleId) — sentinela divergente apaga linha inexistente e o override sobrevive",
+      "limiar fora de 2–8 é recusado com a faixa citada na mensagem e nada é persistido",
+      "reconhecer filtra por (id, tenantId) juntos via updateMany — id de outro tenant não altera linha alguma",
+      "escrita passa por requireRole (ADMIN|STE para sensibilidade, ADMIN|STE|RTE para reconhecer, ADMIN para detectar) e grava logAudit",
+      "a tela formata o número da linha e não o recalcula; com lista vazia o Δ% médio é '—' e nunca 0%, porque média de conjunto vazio não é zero",
+      "o vazio distingue 'nenhum BillingEntry sincronizado' de 'nenhuma anomalia nos dados atuais' — hasBillingData é lido do banco, não presumido",
+      "o detector se recusa a sinalizar com menos de 4 pontos de histórico ou com MAD zero; baseline sem variação não produz z-score fabricado"
+    ],
+    "fonte": [
+      "docs/stories/epic-007/story-059-tela-anomalias-de-custo.md",
+      "docs/stories/epic-007/story-030.md",
+      "docs/stories/epic-007/story-021.md",
+      "docs/srd-epic-007.md",
+      "SAFe 6.0 — Lean Budgets / Guardrails (Lean Portfolio Management)",
+      "Iglewicz & Hoaglin (1993) — modified z-score, corte 3.5"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/anomalies.ts",
+      "apps/app/lib/cost/anomaly-detection.ts",
+      "apps/app/lib/cost/detect-cost-anomalies.ts",
+      "apps/app/lib/cost/anomaly-narrative.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "anomalies-1",
+      "tipo": "action",
+      "alvo": "resetAnomalySensitivity",
+      "hoje": "inexistente — dava para sair do padrão da plataforma e não dava para voltar; regravar 3.5 produz uma linha que diz 'este tenant escolheu 3.5', diferente de 'este tenant segue a plataforma'",
+      "desejado": "apagar a linha de AnomalyRuleConfig sob a sentinela tenant-wide, com RBAC, no-op bem-sucedido quando não há override, e audit só quando algo mudou (story-021 AC-008)",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "anomalies-2",
+      "tipo": "ui",
+      "alvo": "botão de restaurar padrão no modal de sensibilidade",
+      "hoje": "o modal só sabia gravar; a tela sabia distinguir override de padrão (isDefault) e não oferecia caminho de volta",
+      "desejado": "botão que só aparece com override, chama a action e recarrega a sensibilidade",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "anomalies-3",
+      "tipo": "seed",
+      "alvo": "BillingEntry do tenant demo",
+      "hoje": "nenhuma linha de custo — a tela abria dizendo que não havia dado de billing sincronizado e 'Detectar agora' não tinha o que avaliar",
+      "desejado": "sete meses de custo por (serviço, conta) com baseline variável e salto no mês corrente, mais a Integration de procedência; o seed não grava CostAnomaly — a anomalia sai do detector real",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "anomalies-4",
+      "tipo": "campo",
+      "alvo": "notificação de anomalia HIGH ao RTE e ao dono do épico",
+      "hoje": "story-030 AC-002 exige notificar em até 5 min; a detecção grava CostAnomaly e não dispara notificação — a tela é hoje o único canal",
+      "desejado": "gatilho de notificação na criação da anomalia, com destinatário derivado do épico atribuído",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "anomalies-5",
+      "tipo": "campo",
+      "alvo": "atribuição da anomalia a épico/tema",
+      "hoje": "CostAnomaly tem themeId e artId, mas o detector agrupa por (serviço, conta) e os deixa nulos; a tela não consegue dizer de qual iniciativa é o desvio",
+      "desejado": "resolver tema/ART a partir de BillingEntryAllocation na detecção, ou registrar explicitamente que o desvio é não-atribuído",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/anomalies.test.ts",
+    "apps/app/__tests__/screens/anomalies.test.tsx"
+  ],
+  "commits": [],
+  "notas": "Balde A: CostAnomaly, BillingEntry e AnomalyRuleConfig já existiam e bastavam — nenhuma migration. A lacuna real era a metade reversível do controle de sensibilidade (story-021 AC-008), não a leitura. Cuidado de nomenclatura: este é o pipeline de CUSTO (CostAnomaly + lib/cost/*), distinto do pipeline de FLUXO (Anomaly/AnomalyDetectionRun + app/actions/flow-intelligence/*); os dois têm 'anomalia' no nome e não são a mesma coisa. As lacunas anomalies-4 e anomalies-5 são de comportamento do detector e da notificação, fora da superfície da tela; nenhuma trava a prática SAFe do nó. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }

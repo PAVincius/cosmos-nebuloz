@@ -497,6 +497,49 @@ const DECISIONS = [
   },
 ];
 
+// Custo de nuvem do tenant demo — o INSUMO da detecção de anomalia, não a
+// anomalia. Cada grupo é um par (serviço, conta) com seis meses de baseline e o
+// mês corrente. O baseline precisa variar: com MAD zero o modified z-score é
+// indefinido e detectCostAnomaly se recusa a sinalizar (é o comportamento
+// correto — não se inventa desvio a partir de série constante).
+//
+// O seed NÃO grava CostAnomaly. Essa linha é produto de
+// apps/app/lib/cost/detect-cost-anomalies.ts; escrevê-la aqui exigiria
+// reimplementar mediana/MAD num segundo lugar e chamar o resultado de dado.
+// Com o insumo semeado, "Detectar agora" em /cosmos/anomalies produz a anomalia
+// pelo caminho real — e o grupo `rds`, estável, prova que o detector não
+// sinaliza tudo.
+const BILLING_ACCOUNT = "111122223333";
+const BILLING_GROUPS = [
+  {
+    service: "AmazonEC2",
+    serviceCategory: "Compute",
+    region: "sa-east-1",
+    baseline: [1180, 1240, 1205, 1310, 1225, 1268],
+    current: 2480,
+  },
+  {
+    service: "AmazonRDS",
+    serviceCategory: "Databases",
+    region: "sa-east-1",
+    baseline: [640, 655, 648, 662, 651, 658],
+    current: 659,
+  },
+  {
+    service: "AmazonS3",
+    serviceCategory: "Storage",
+    region: "sa-east-1",
+    baseline: [88, 95, 91, 103, 97, 92],
+    current: 112,
+  },
+];
+
+function monthStart(base: Date, offset: number): Date {
+  return new Date(
+    Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + offset, 1)
+  );
+}
+
 type DevDb = typeof db;
 
 export async function seedDevMembership(devDb: DevDb, tenantId: string) {
@@ -1011,6 +1054,73 @@ async function main() {
     dep++;
   }
   console.log("dependency links:", dep);
+
+  // BillingEntry — insumo de /cosmos/anomalies (ver BILLING_GROUPS acima).
+  // Precisa de uma Integration porque BillingEntry.integrationId é FK
+  // obrigatória: custo sem procedência não é dado de FinOps.
+  const existingBilling = await db.integration.findFirst({
+    where: { tenantId: tenant.id, source: "billing_aws" },
+    select: { id: true },
+  });
+  const billingIntegration =
+    existingBilling ??
+    (await db.integration.create({
+      data: {
+        tenantId: tenant.id,
+        source: "billing_aws",
+        name: "AWS Cost Explorer (demo)",
+        config: {},
+        status: "ACTIVE",
+      },
+      select: { id: true },
+    }));
+
+  // Os meses são relativos a agora: o detector compara o mês corrente com os
+  // anteriores, então uma data fixa faria o seed apodrecer em algumas semanas.
+  const now = new Date();
+  let b = 0;
+  for (const group of BILLING_GROUPS) {
+    const amounts = [...group.baseline, group.current];
+    for (const [i, amount] of amounts.entries()) {
+      const usageStartDate = monthStart(now, i - group.baseline.length);
+      const usageEndDate = monthStart(now, i - group.baseline.length + 1);
+      const externalId = `${group.service}-${BILLING_ACCOUNT}-${usageStartDate.toISOString().slice(0, 7)}`;
+      const data = {
+        provider: "aws",
+        accountId: BILLING_ACCOUNT,
+        usageStartDate,
+        usageEndDate,
+        billingPeriodStart: usageStartDate,
+        billingPeriodEnd: usageEndDate,
+        service: group.service,
+        serviceCategory: group.serviceCategory,
+        region: group.region,
+        billedCost: amount,
+        effectiveCost: amount,
+        unblendedAmount: amount,
+        amortizedAmount: amount,
+        tenantAmount: amount,
+      };
+      await db.billingEntry.upsert({
+        where: {
+          tenantId_integrationId_externalId: {
+            tenantId: tenant.id,
+            integrationId: billingIntegration.id,
+            externalId,
+          },
+        },
+        update: data,
+        create: {
+          tenantId: tenant.id,
+          integrationId: billingIntegration.id,
+          externalId,
+          ...data,
+        },
+      });
+      b++;
+    }
+  }
+  console.log("billing entries upserted:", b);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
