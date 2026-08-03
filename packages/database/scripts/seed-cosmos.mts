@@ -20,6 +20,18 @@ const LIFECYCLE: Record<string, string> = {
   backlog: 'PORTFOLIO_BACKLOG', implementing: 'IMPLEMENTING', done: 'DONE',
 };
 
+// Metadados de portfólio por tema. Sem eles a tela /cosmos/themes abre com todo
+// KPI em "—": alocação-alvo, saúde e horizonte são exatamente o que o Strategy
+// Map compara. Os alvos somam 100%, invariante que rebalanceThemeTargets impõe.
+const THEME_META: Record<string, { target: number; health: string; horizon: string; type: string; order: number }> = {
+  'Modernização da Plataforma': { target: 25, health: 'watch', horizon: 'H1 2026', type: 'INNOVATION', order: 0 },
+  'Expansão LATAM': { target: 20, health: 'on', horizon: 'H1 2026', type: 'GROWTH', order: 1 },
+  'Confiança & Risco': { target: 20, health: 'behind', horizon: 'H2 2026', type: 'COMPLIANCE', order: 2 },
+  'Data & AI': { target: 15, health: 'on', horizon: 'H2 2026', type: 'INNOVATION', order: 3 },
+  'Enterprise Ready': { target: 12, health: 'on', horizon: '2027', type: 'CUSTOMER_EXPERIENCE', order: 4 },
+  'Eficiência de Custo': { target: 8, health: 'watch', horizon: 'H1 2026', type: 'EFFICIENCY', order: 5 },
+};
+
 const EPICS = [
   { id: 'EP-104', col: 'funnel', title: 'Carteira digital multi-moeda', theme: 'Expansão LATAM', art: 'pay', owner: 'Marina Alves', wsjf: 11.2, size: 34, progress: 0 },
   { id: 'EP-118', col: 'funnel', title: 'Programa de fidelidade B2B', theme: 'Data & AI', art: 'growth', owner: 'Caio Nunes', wsjf: 8.4, size: 21, progress: 0 },
@@ -64,8 +76,17 @@ async function main() {
   const themeNames = [...new Set(EPICS.map((e) => e.theme))];
   const themeByName = new Map<string, string>();
   for (const name of themeNames) {
+    const meta = THEME_META[name];
+    // Re-seed atualiza os metadados: um tema criado por um seed antigo nasceu
+    // sem alvo/horizonte e deixaria o Strategy Map em branco para sempre.
+    const data = {
+      tenantId: tenant.id, title: name, status: 'ACTIVE',
+      ...(meta ? { targetAllocationPct: meta.target, healthStatus: meta.health, horizon: meta.horizon, themeType: meta.type, order: meta.order } : {}),
+    };
     const existing = await db.strategicTheme.findFirst({ where: { tenantId: tenant.id, title: name }, select: { id: true } });
-    const row = existing ?? (await db.strategicTheme.create({ data: { tenantId: tenant.id, title: name }, select: { id: true } }));
+    const row = existing
+      ? await db.strategicTheme.update({ where: { id: existing.id }, data, select: { id: true } })
+      : await db.strategicTheme.create({ data, select: { id: true } });
     themeByName.set(name, row.id);
   }
   console.log('themes:', themeByName.size);

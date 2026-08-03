@@ -754,22 +754,160 @@
       "$schema": "../schema/no.schema.json",
       "id": "themes",
       "kind": "tela",
-      "titulo": "themes",
+      "titulo": "Temas Estratégicos (Strategy Map de investimento)",
       "rota": "/cosmos/themes",
       "componente": "apps/app/components/cosmos/screens/themes.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "1-portfolio",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/themes.ts",
+          "export": "listThemes",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/themes.ts",
+          "export": "getTheme",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/themes.ts",
+          "export": "createTheme",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/themes.ts",
+          "export": "archiveTheme",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/themes.ts",
+          "export": "rebalanceThemeTargets",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "StrategicTheme",
+        "Epic",
+        "StrategyPillar",
+        "BillingEntryAllocation",
+        "BillingEntry"
+      ],
+      "safe": {
+        "pratica": "Strategic Themes — conexão entre a estratégia da empresa e o investimento do portfólio",
+        "nivel": "Portfolio",
+        "faz": "Mostra para onde o investimento do portfólio está indo por tema, compara o planejado (alocação-alvo) com o real (custo atribuído), avisa quando um único tema concentra o portfólio, e deixa a Portfolio Manager rebalancear ou aposentar um tema sem apagar o histórico.",
+        "invariantes": [
+          "no máximo 7 temas ativos por portfólio; o teto conta status e não linha, então tema arquivado não ocupa vaga",
+          "arquivar é transição de status e é não-cascateante: nenhum Epic é alterado, e o alvo de alocação é zerado porque alvo é atributo de tema ativo",
+          "alocação real é derivada de BillingEntryAllocation na leitura e é null (nunca 0) quando o tenant não tem dado de custo — número de investimento jamais é fabricado",
+          "concentração é derivada na leitura sobre temas ativos, nunca persistida; é null com denominador zero e só é sinalizada acima de 60% dos épicos",
+          "pesos-alvo somam 100% e só valem para tema ativo; id duplicado, id de outro tenant ou id arquivado recusa o lote inteiro — rebalanceamento parcial nunca persiste",
+          "toda leitura e escrita filtra por tenantId vindo da sessão, e todo id vindo do cliente é reconferido dentro do tenant antes de qualquer escrita",
+          "escrita passa por requireRole(ADMIN|STE) e grava logAudit com o estado anterior"
+        ],
+        "fonte": [
+          "docs/srd-epic-006.md:170",
+          "docs/PRD-v1.0.md:3029",
+          "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+          "docs/stories/epic-006/story-025.md",
+          "SAFe 6.0 — Strategic Themes (Lean Portfolio Management)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/themes.ts",
+          "apps/app/app/(cosmos)/actions/themes.constants.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "themes-1",
+          "tipo": "action",
+          "alvo": "archiveTheme",
+          "hoje": "inexistente — tema saía do portfólio só por exclusão, que levaria o histórico de investimento dos épicos junto",
+          "desejado": "transição para status ARCHIVED, sem tocar em Epic, zerando o alvo de alocação, com RBAC, guarda de tenant e logAudit",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "themes-2",
+          "tipo": "action",
+          "alvo": "createTheme — teto de temas ativos",
+          "hoje": "criação ilimitada; o portfólio podia acumular dezenas de temas e 'tema' deixava de ser critério de decisão de investimento",
+          "desejado": "teto de 7 temas ativos, contando status e não linha, recusando a criação com mensagem que cita o limite",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "themes-3",
+          "tipo": "ui",
+          "alvo": "alerta de concentração de portfólio",
+          "hoje": "a tela mostrava alocação por tema mas não dizia quando um tema concentrava o portfólio — a leitora tinha que derivar do grid",
+          "desejado": "fatia de épicos derivada na leitura sobre temas ativos e aviso explícito acima de 60%",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "themes-4",
+          "tipo": "ui",
+          "alvo": "estado de erro de listThemes",
+          "hoje": "falha na leitura caía silenciosamente no estado vazio — a tela dizia 'nenhum tema' para um tenant que tem temas",
+          "desejado": "erro distinto do vazio, sem renderizar tema algum",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "themes-5",
+          "tipo": "seed",
+          "alvo": "StrategicTheme do tenant demo",
+          "hoje": "os 6 temas nasciam só com título; a tela abria com todo KPI em '—' e o Strategy Map não tinha o que comparar",
+          "desejado": "alvo de alocação somando 100%, saúde, horizonte e tipo por tema, reaplicados a cada re-seed",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "themes-6",
+          "tipo": "campo",
+          "alvo": "permissão strategy:override",
+          "hoje": "a autorização do repo é por papel (MemberRole), sem permissão granular — não há como liberar o 8º tema para um perfil específico, como o FR-014 prevê",
+          "desejado": "modelo de permissão que permita o override do teto de 7, registrado em auditoria",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "themes-7",
+          "tipo": "campo",
+          "alvo": "limiar de concentração configurável por org",
+          "hoje": "constante de 60% em themes.constants.ts; o FR-014 pede que o limiar seja configurável e não há linha de configuração de portfólio para hospedá-lo",
+          "desejado": "limiar por tenant, com 60% de padrão, lido pela action",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": ["packages/database/scripts/seed-cosmos.mts"],
+      "verifica": [
+        "apps/app/__tests__/actions/themes.test.ts",
+        "apps/app/__tests__/screens/themes.test.tsx"
+      ],
+      "commits": ["650dc04"],
+      "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista themes entre as 14 telas NÃO medidas. As lacunas themes-6 e themes-7 são as duas partes do FR-014 que exigem modelagem nova (permissão granular e configuração de portfólio); nenhuma trava a prática SAFe do nó, que é equilibrar investimento com teto e alerta de concentração. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

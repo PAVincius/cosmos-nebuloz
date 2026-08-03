@@ -55,7 +55,7 @@ nunca pelo produtor.
 | `team` | /cosmos/team | — | — | pendente | — | 0 | 0 |
 | `teams` | /cosmos/teams | — | — | pendente | — | 0 | 0 |
 | `theme` | /cosmos/theme | — | — | pendente | — | 0 | 0 |
-| `themes` | /cosmos/themes | — | — | pendente | — | 0 | 0 |
+| `themes` | /cosmos/themes | B | THIN | em-revisao | 1-portfolio | 5 | 5 |
 | `value` | /cosmos/value | — | — | pendente | — | 0 | 0 |
 | `velocity` | /cosmos/velocity | — | — | pendente | — | 0 | 0 |
 | `vs` | /cosmos/vs | — | — | pendente | — | 0 | 0 |
@@ -68,3 +68,4 @@ nunca pelo produtor.
 | id | prática | nível | o que faz | fonte |
 |---|---|---|---|---|
 | `risks` | ROAM — Resolved, Owned, Accepted, Mitigated | Essential | Registra os riscos levantados no PI Planning e obriga cada um a receber um desfecho ROAM antes do time se comprometer com o PI. | docs/srd-epic-006.md<br>docs/pi-planning/PI_PLANNING_WORKSPACE.md<br>SAFe 6.0 — Risk Management no PI Planning (ROAM) ⚠ fonte externa |
+| `themes` | Strategic Themes — conexão entre a estratégia da empresa e o investimento do portfólio | Portfolio | Mostra para onde o investimento do portfólio está indo por tema, compara o planejado (alocação-alvo) com o real (custo atribuído), avisa quando um único tema concentra o portfólio, e deixa a Portfolio Manager rebalancear ou aposentar um tema sem apagar o histórico. | docs/srd-epic-006.md:170<br>docs/PRD-v1.0.md:3029<br>docs/stories/epic-006/story-053-tela-temas-estrategicos.md<br>docs/stories/epic-006/story-025.md<br>SAFe 6.0 — Strategic Themes (Lean Portfolio Management) ⚠ fonte externa |
