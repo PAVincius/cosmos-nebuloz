@@ -118,7 +118,7 @@
     "apps/app/__tests__/screens/roadmap.test.tsx",
     "apps/app/__tests__/screens/roadmap-grid.test.ts"
   ],
-  "commits": [],
+  "commits": ["9eb0d7db"],
   "notas": "Balde B: RoadmapItem já é completo para o horizonte base (datas, ART, status, marco, cor) — a lacuna era de escrita, não de schema, e nenhuma migration foi criada. A action nova mora em (cosmos)/actions/roadmap.ts e NÃO substitui app/actions/roadmap/index.ts: aquela é CRUD genérico com outro consumidor (/portfolio/roadmap), e endurecê-la com RBAC mudaria o contrato de quem já a usa — mesma precedência de (cosmos)/actions/kanban.ts. As lacunas roadmap-4 e roadmap-5 são dessa camada genérica e ficam registradas aqui porque foram encontradas ao decidir se dava para reusá-la; roadmap-3 e roadmap-6 exigem migration e não foram aproximadas por outro campo. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
   "atualizado_em": "2026-08-03"
 }
