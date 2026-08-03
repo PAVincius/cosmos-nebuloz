@@ -121,7 +121,7 @@
     "apps/app/__tests__/actions/risks.test.ts",
     "apps/app/__tests__/screens/risks.test.tsx"
   ],
-  "commits": [],
+  "commits": ["6dc63449"],
   "notas": "Nó de referência para os demais. A ficha SAFe é obrigatória antes do commit que fecha o nó, e o reviewer abre cada fonte. O seed passou a criar seis riscos no PI ativo, cobrindo os cinco níveis de probabilidade/impacto e os quatro desfechos ROAM, e deixando dois em UNCLASSIFIED de propósito: é o estado que o gate da story-019 AC-003 existe para barrar, e sem ele o contador 'sem classificação ROAM' da tela não teria em quem aparecer. As lacunas risks-3 e risks-4 são as duas duplicações de coluna que o modelo herdou (dono e desfecho); nenhuma trava a prática do nó, mas as duas cobram migration para deixar de existir.",
   "atualizado_em": "2026-08-03"
 }
