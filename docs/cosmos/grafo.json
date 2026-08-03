@@ -241,12 +241,16 @@
         }
       ],
       "depende_de": [],
-      "seed": ["packages/database/scripts/seed-cosmos.mts"],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
       "verifica": [
         "apps/app/__tests__/actions/decisions.test.ts",
         "apps/app/__tests__/screens/decisions.test.tsx"
       ],
-      "commits": ["4e6d44a"],
+      "commits": [
+        "4e6d44a"
+      ],
       "notas": "A lacuna decisions-6 fica registrada aqui por ter sido descoberta ao evitar duplicar o export, mas o arquivo é de app/actions/governance — quem for fechá-la mexe fora deste nó. A imutabilidade em nível de banco (decisions-4) é da trilha de schema; aqui a garantia é de superfície e tem teste que fixa a lista de exports do módulo.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
@@ -579,7 +583,9 @@
       "seed": [],
       "verifica": [],
       "commits": [],
-      "consumido_por": ["risks"]
+      "consumido_por": [
+        "risks"
+      ]
     },
     {
       "$schema": "../schema/no.schema.json",
@@ -636,7 +642,10 @@
           "estado": "ausente"
         }
       ],
-      "models": ["Risk", "PIPlan"],
+      "models": [
+        "Risk",
+        "PIPlan"
+      ],
       "safe": {
         "pratica": "ROAM — Resolved, Owned, Accepted, Mitigated",
         "nivel": "Essential",
@@ -652,7 +661,9 @@
           "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
           "SAFe 6.0 — Risk Management no PI Planning (ROAM)"
         ],
-        "codigo": ["apps/app/app/(cosmos)/actions/risks.ts"]
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/risks.ts"
+        ]
       },
       "lacunas": [
         {
@@ -1017,12 +1028,16 @@
         }
       ],
       "depende_de": [],
-      "seed": ["packages/database/scripts/seed-cosmos.mts"],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
       "verifica": [
         "apps/app/__tests__/actions/themes.test.ts",
         "apps/app/__tests__/screens/themes.test.tsx"
       ],
-      "commits": ["7cfd78d"],
+      "commits": [
+        "7cfd78d"
+      ],
       "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista themes entre as 14 telas NÃO medidas. As lacunas themes-6 e themes-7 são as duas partes do FR-014 que exigem modelagem nova (permissão granular e configuração de portfólio); nenhuma trava a prática SAFe do nó, que é equilibrar investimento com teto e alerta de concentração. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
@@ -1060,7 +1075,11 @@
           "estado": "existe"
         }
       ],
-      "models": ["EpicValueMetric", "Epic", "AuditLog"],
+      "models": [
+        "EpicValueMetric",
+        "Epic",
+        "AuditLog"
+      ],
       "safe": {
         "pratica": "Benefit Realization / Epic Hypothesis — validar a hipótese de valor do épico com dado real depois da entrega (Lean Portfolio Management)",
         "nivel": "Portfolio",
@@ -1128,12 +1147,16 @@
         }
       ],
       "depende_de": [],
-      "seed": ["packages/database/scripts/seed-cosmos.mts"],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
       "verifica": [
         "apps/app/__tests__/actions/value-realization.test.ts",
         "apps/app/__tests__/screens/value.test.tsx"
       ],
-      "commits": ["83d1cfb"],
+      "commits": [
+        "83d1cfb"
+      ],
       "notas": "value-3 é o único bloqueio da trilha 1: a seta de tendência é AC explícito do PRD (docs/PRD-v1.0.md:840) e não sai sem tabela de histórico, que é migration e portanto da trilha 0. Nenhum passo desse AC foi implementado e nada foi aproximado no lugar — a tela não finge tendência. O resto do UC-09 está fechado.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
