@@ -1168,6 +1168,85 @@ async function main() {
     wf++;
   }
   console.log("bpmn definitions upserted:", wf);
+
+  // Conectores externos (/cosmos/integrations). `config` vai VAZIO de
+  // propósito: inventar uma apiKey no seed seria gravar um segredo falso, e
+  // a consequência honesta disso é o teste de conexão dizer "sem credencial
+  // configurada" em vez de fingir que autenticou.
+  // O Linear nasce ACTIVE com histórico de SyncLog (um sucesso e um
+  // parcial — FR-020 diz que parcial não faz rollback, e a tela precisa
+  // distinguir os dois); o GitHub nasce PAUSED e sem histórico, que é o
+  // estado onde webhook de entrada vai para a fila de mortos sem tocar em
+  // dado do Cosmos.
+  const INTEGRATIONS = [
+    {
+      source: "linear",
+      name: "Linear — Squad Plataforma",
+      status: "ACTIVE",
+      lastSyncAt: new Date("2026-03-10T09:00:00Z"),
+      logs: [
+        {
+          type: "snapshot",
+          status: "success",
+          itemsCreated: 24,
+          itemsUpdated: 8,
+          itemsSkipped: 0,
+          createdAt: new Date("2026-03-03T09:00:00Z"),
+        },
+        {
+          type: "snapshot",
+          status: "partial",
+          itemsCreated: 5,
+          itemsUpdated: 11,
+          itemsSkipped: 3,
+          createdAt: new Date("2026-03-10T09:00:00Z"),
+        },
+      ],
+    },
+    {
+      source: "github",
+      name: "GitHub — nebuloz/cosmos",
+      status: "PAUSED",
+      lastSyncAt: null,
+      logs: [],
+    },
+  ];
+
+  let ig = 0;
+  for (const i of INTEGRATIONS) {
+    const existing = await db.integration.findFirst({
+      where: { tenantId: tenant.id, source: i.source, name: i.name },
+      select: { id: true },
+    });
+    const data = {
+      tenantId: tenant.id,
+      source: i.source,
+      name: i.name,
+      config: {},
+      status: i.status,
+      lastSyncAt: i.lastSyncAt,
+    };
+    const row = existing
+      ? await db.integration.update({
+          where: { id: existing.id },
+          data,
+          select: { id: true },
+        })
+      : await db.integration.create({ data, select: { id: true } });
+
+    // SyncLog é imutável (FR-020): re-seed não regrava histórico, só cria o
+    // que ainda não existe.
+    const already = await db.syncLog.count({
+      where: { integrationId: row.id },
+    });
+    if (already === 0 && i.logs.length > 0) {
+      await db.syncLog.createMany({
+        data: i.logs.map((l) => ({ integrationId: row.id, ...l })),
+      });
+    }
+    ig++;
+  }
+  console.log("integrations upserted:", ig);
 }
 
 // Guarda de entrypoint: __tests__/seed-cosmos.test.ts importa seedDevMembership

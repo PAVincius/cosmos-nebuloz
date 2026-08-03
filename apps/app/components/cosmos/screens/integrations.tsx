@@ -14,17 +14,22 @@
 // fabrication: no fake status, no invented sync timestamps. Catalog entries
 // with zero configured rows for this tenant render as "available" cards.
 //
-// Connect/manage flow: IntegrationDraft (the model the handoff's connect
-// wizard was meant to persist to) has zero callers anywhere in this
-// codebase — no action, no route. Wiring a draft-create mutation here would
-// be new mutation surface, not a thin parity change, so it's deferred.
-// "Conectar" and "Gerenciar" both open read-only modals that say exactly
-// that out loud; neither pretends to connect anything or synthesizes a
-// "Conectado" state or sync data.
-import type { CSSProperties } from "react";
+// Ciclo de vida (story-060, FR-018): pausar/retomar e testar a conexão são
+// escritas reais sobre Integration. `PAUSED` é o estado que as rotas de
+// ingestão (api/webhooks/linear|github) já liam para mandar o evento à
+// dead-letter queue sem tocar em dado do Cosmos — esta tela é o produtor que
+// faltava. Testar usa a credencial JÁ guardada, decifrada dentro da action:
+// nenhum campo de segredo existe nesta tela.
+//
+// "Conectar" segue diferido: conectar exige entrada de credencial ou OAuth
+// (outro subsistema, integrations-vault.prisma). O modal diz isso em voz
+// alta e não finge conectar nada nem sintetiza estado ou dado de sync.
+import { type CSSProperties, useState } from "react";
 import {
   type IntegrationView,
   listIntegrations,
+  setIntegrationPaused,
+  testIntegrationConnection,
 } from "@/app/(cosmos)/actions/integrations";
 import type { IconName } from "../icons";
 import {
@@ -32,23 +37,42 @@ import {
   Badge,
   Button,
   ErrorState,
+  IconButton,
   PageHeader,
   SectionCard,
   type Tone,
   useAction,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, Tone> = {
   ACTIVE: "green",
   INACTIVE: "amber",
+  PAUSED: "amber",
   ERROR: "red",
 };
 
 const STATUS_LABEL: Record<string, string> = {
   ACTIVE: "Ativo",
   INACTIVE: "Inativo",
+  PAUSED: "Pausado",
   ERROR: "Erro",
+};
+
+// FR-020: `partial` não faz rollback, então é um resultado distinto de
+// sucesso — arredondar os dois para "ok" esconderia itens que ficaram para
+// trás. O rótulo sai do valor gravado em SyncLog.status, sem tradução criativa.
+const SYNC_STATUS_LABEL: Record<string, string> = {
+  success: "sucesso",
+  partial: "parcial",
+  error: "erro",
+};
+
+const SYNC_STATUS_TONE: Record<string, Tone> = {
+  success: "green",
+  partial: "amber",
+  error: "red",
 };
 
 type CatalogEntry = {
@@ -173,6 +197,27 @@ function fieldRowStyle(): CSSProperties {
   };
 }
 
+/** Saúde da última sincronização, lida de SyncLog. Só renderiza quando existe
+ *  execução registrada — conector que nunca sincronizou não ganha contador
+ *  zerado, que seria indistinguível de "rodou e não trouxe nada" (AC-004). */
+function SyncHealth({ integration }: { integration: IntegrationView }) {
+  const last = integration.lastSync;
+  if (!last) {
+    return null;
+  }
+  const label = SYNC_STATUS_LABEL[last.status] ?? last.status;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <Badge dot tone={SYNC_STATUS_TONE[last.status] ?? "neutral"}>
+        {`Última sincronização: ${label}`}
+      </Badge>
+      <span
+        style={{ color: "var(--ink-faint)", fontSize: 11.5 }}
+      >{`${last.itemsCreated} criados · ${last.itemsUpdated} atualizados · ${last.itemsSkipped} pulado${last.itemsSkipped === 1 ? "" : "s"}`}</span>
+    </div>
+  );
+}
+
 function ManageIntegrationModal({
   integration,
   catalog,
@@ -210,6 +255,12 @@ function ManageIntegrationModal({
             {fmtSync(integration.lastSyncAt)}
           </span>
         </div>
+        {integration.lastSync && (
+          <div style={fieldRowStyle()}>
+            <span style={{ color: "var(--ink-faint)" }}>Última execução</span>
+            <SyncHealth integration={integration} />
+          </div>
+        )}
         <p
           style={{
             color: "var(--ink-faint)",
@@ -277,11 +328,61 @@ function ConnectIntegrationModal({ catalog }: { catalog: CatalogEntry }) {
 function ConnectorCard({
   integration,
   catalog,
+  onChanged,
 }: {
   integration?: IntegrationView;
   catalog: CatalogEntry;
+  onChanged: () => void;
 }) {
   const modal = useModal();
+  const [busy, setBusy] = useState(false);
+  const paused = integration?.status === "PAUSED";
+
+  const togglePaused = async () => {
+    if (!integration || busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => setIntegrationPaused({ id: integration.id, paused: !paused }),
+      {
+        loading: paused ? "Retomando conector..." : "Pausando conector...",
+        success: paused
+          ? "Conector retomado."
+          : "Conector pausado — eventos que chegarem vão para a fila de mortos.",
+        error: (err: string) => `Não foi possível atualizar o conector: ${err}`,
+      }
+    );
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
+  const testConnection = async () => {
+    if (!integration || busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => testIntegrationConnection({ id: integration.id }),
+      {
+        loading: "Testando conexão...",
+        success: (data: { account: string | null }) =>
+          data.account
+            ? `Conexão ok — autenticado como ${data.account}.`
+            : "Conexão ok.",
+        error: (err: string) => `Conexão recusada: ${err}`,
+      }
+    );
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
   return (
     <SectionCard
       action={
@@ -311,6 +412,7 @@ function ConnectorCard({
         >
           {catalog.description}
         </p>
+        {integration && <SyncHealth integration={integration} />}
         <div
           style={{
             alignItems: "center",
@@ -325,21 +427,34 @@ function ConnectorCard({
               <span style={{ color: "var(--ink-faint)", fontSize: 11.5 }}>
                 {fmtSync(integration.lastSyncAt)}
               </span>
-              <Button
-                onClick={() =>
-                  modal.open(
-                    <ManageIntegrationModal
-                      catalog={catalog}
-                      integration={integration}
-                    />
-                  )
-                }
-                size="sm"
-                style={{ marginLeft: "auto" }}
-                variant="secondary"
-              >
-                Gerenciar
-              </Button>
+              <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
+                <IconButton
+                  name="refresh"
+                  onClick={testConnection}
+                  size={30}
+                  title={`Testar conexão de ${integration.name}`}
+                />
+                <IconButton
+                  name={paused ? "play" : "pause"}
+                  onClick={togglePaused}
+                  size={30}
+                  title={`${paused ? "Retomar" : "Pausar"} ${integration.name}`}
+                />
+                <Button
+                  onClick={() =>
+                    modal.open(
+                      <ManageIntegrationModal
+                        catalog={catalog}
+                        integration={integration}
+                      />
+                    )
+                  }
+                  size="sm"
+                  variant="secondary"
+                >
+                  Gerenciar
+                </Button>
+              </div>
             </>
           ) : (
             <Button
@@ -361,13 +476,23 @@ function ConnectorCard({
 }
 
 function IntegrationsBody() {
-  const { data: items, loading, error } = useAction(listIntegrations);
+  // reloadKey força o useAction a refazer a leitura depois de pausar/testar —
+  // o estado do conector é escrito no servidor, então a tela recarrega em vez
+  // de otimizar otimisticamente um estado que pode não ter sido gravado.
+  const [reloadKey, setReloadKey] = useState(0);
+  const {
+    data: items,
+    loading,
+    error,
+  } = useAction(listIntegrations, [reloadKey]);
+  const reload = () => setReloadKey((k) => k + 1);
 
   const connectedSources = new Set((items ?? []).map((i) => i.source));
   const availableCatalog = CONNECTOR_CATALOG.filter(
     (entry) => !connectedSources.has(entry.source)
   );
   const errorCount = (items ?? []).filter((i) => i.status === "ERROR").length;
+  const pausedCount = (items ?? []).filter((i) => i.status === "PAUSED").length;
 
   return (
     <div className="fade-in">
@@ -379,6 +504,9 @@ function IntegrationsBody() {
               {items?.length ?? 0} conectadas
             </Badge>
             <Badge tone="neutral">{availableCatalog.length} disponíveis</Badge>
+            {pausedCount > 0 && (
+              <Badge tone="amber">{pausedCount} pausadas</Badge>
+            )}
             {errorCount > 0 && <Badge tone="red">{errorCount} com erro</Badge>}
           </>
         }
@@ -398,11 +526,16 @@ function IntegrationsBody() {
             catalog={catalogFor(i.source)}
             integration={i}
             key={i.id}
+            onChanged={reload}
           />
         ))}
         {!loading &&
           availableCatalog.map((entry) => (
-            <ConnectorCard catalog={entry} key={entry.source} />
+            <ConnectorCard
+              catalog={entry}
+              key={entry.source}
+              onChanged={reload}
+            />
           ))}
       </div>
     </div>

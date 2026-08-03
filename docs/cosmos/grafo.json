@@ -782,22 +782,149 @@
       "$schema": "../schema/no.schema.json",
       "id": "integrations",
       "kind": "tela",
-      "titulo": "integrations",
+      "titulo": "Integrações (ciclo de vida dos conectores e saúde de sincronização)",
       "rota": "/cosmos/integrations",
       "componente": "apps/app/components/cosmos/screens/integrations.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "listIntegrations",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "setIntegrationPaused",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "testIntegrationConnection",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Integration",
+        "SyncLog"
+      ],
+      "safe": {
+        "pratica": "Continuous Delivery Pipeline — Continuous Integration com sistemas externos: o fluxo de entrada é observável e pode ser contido sem perder evento (Release on Demand)",
+        "nivel": "Portfolio",
+        "faz": "Mostra os conectores externos do tenant com o estado real do ciclo de vida e a saúde da última sincronização lida de SyncLog, deixa o Org Admin pausar um conector que está estragando dado (o evento que chegar vai para a fila de mortos em vez de escrever) e verificar se a credencial guardada ainda vale — sem nunca pedir nem exibir segredo.",
+        "invariantes": [
+          "credencial nunca sai do servidor: `config` e `mapping` não são selecionados na leitura, nem para mascarar; o teste de conexão decifra a credencial dentro da action, passa ao conector e não a devolve nem grava em diff de auditoria; a tela não tem campo de entrada de segredo",
+          "pausar escreve status PAUSED e só isso — config, mapping e lastSyncAt ficam intactos, porque pausar não é desconectar; retomar devolve para ACTIVE",
+          "PAUSED é o estado que as rotas de ingestão (api/webhooks/linear|github) já liam para mandar o evento à dead-letter queue com HTTP 200 e sem alterar dado do Cosmos (FR-018 AC)",
+          "testar não retoma: integração PAUSED continua PAUSED mesmo com o teste passando — despausar como efeito colateral reabriria a ingestão sem decisão humana",
+          "teste sem credencial gravada é recusado antes de qualquer chamada externa, e fonte sem conector de teste é recusada sem gravar status",
+          "saúde de sincronização vem exclusivamente de SyncLog e `partial` é distinguido de `success` (FR-020: PARTIAL não faz rollback); conector sem SyncLog diz 'nunca sincronizado' e não mostra contador zerado",
+          "toda escrita passa por requireRole(['ADMIN','STE']), reconfere o id dentro do tenant antes de gravar e registra logAudit",
+          "toda leitura filtra por tenantId vindo da sessão"
+        ],
+        "fonte": [
+          "docs/srd-epic-007.md:201",
+          "docs/srd-epic-007.md:222",
+          "docs/srd-epic-007.md:372",
+          "docs/stories/epic-007/story-060-tela-integracoes.md",
+          "SAFe 6.0 — Continuous Delivery Pipeline (Continuous Integration / Release on Demand)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/integrations.ts",
+          "apps/app/app/api/webhooks/linear/route.ts",
+          "apps/app/app/api/webhooks/github/route.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "integrations-1",
+          "tipo": "action",
+          "alvo": "setIntegrationPaused",
+          "hoje": "as rotas de ingestão de Linear e GitHub já tratavam `status === 'PAUSED'` mandando o evento para a dead-letter queue e devolvendo 200 sem tocar em dado do Cosmos — exatamente o AC do FR-018. Nenhuma action deste app escrevia 'PAUSED': o caminho estava escrito, testado e inalcançável pelo produto, e conter um conector que estava estragando dado exigia UPDATE direto no banco",
+          "desejado": "pausar/retomar pela tela, com RBAC de ADMIN/STE, guarda de tenant e auditoria do estado anterior",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-2",
+          "tipo": "action",
+          "alvo": "testIntegrationConnection sobre a credencial guardada",
+          "hoje": "o único teste de conexão do repo (app/actions/integrations/index.ts) recebe a credencial no input — serve ao wizard de criação, não a um conector já configurado. Não havia como verificar uma credencial existente sem redigitá-la, e redigitar segredo numa tela de listagem é exatamente o que a NFR de credenciais proíbe",
+          "desejado": "teste que lê a credencial cifrada do próprio registro, chama o mesmo conector do wizard e devolve só o veredito, marcando ACTIVE/ERROR sem despausar integração pausada",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-3",
+          "tipo": "ui",
+          "alvo": "saúde de sincronização por conector",
+          "hoje": "o card mostrava só a data de lastSyncAt; SyncLog — que o FR-020 define como o registro imutável do que cada execução criou, atualizou e pulou — nunca chegava à tela, então uma sincronização parcial e uma bem-sucedida ficavam idênticas",
+          "desejado": "resultado da última execução e seus contadores, com parcial distinguido de sucesso, e 'nunca sincronizado' sem contador quando não há log",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-4",
+          "tipo": "seed",
+          "alvo": "Integration e SyncLog do tenant demo",
+          "hoje": "o seed do cosmos não criava conector algum: /cosmos/integrations abria com nove cards 'disponível' e nada em que pausar ou testar",
+          "desejado": "um conector ACTIVE com histórico de SyncLog (um sucesso e um parcial) e um PAUSED sem histórico; `config` fica vazio de propósito — inventar apiKey no seed seria gravar segredo falso, e a consequência honesta é o teste dizer 'sem credencial configurada'",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-5",
+          "tipo": "ui",
+          "alvo": "conectar (autenticação e mapeamento de campos)",
+          "hoje": "conectar exige entrada de credencial ou fluxo OAuth, que é outro subsistema (packages/database/prisma/schema/integrations-vault.prisma). Esta tela não coleta segredo e o modal 'Conectar' diz isso em voz alta em vez de fingir um estado conectado",
+          "desejado": "fluxo de conexão OAuth PKCE do FR-018, com mapeamento de campos versionado do FR-020",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "integrations-6",
+          "tipo": "action",
+          "alvo": "revogar/remover conector",
+          "hoje": "`Integration` tem billingEntries e billingSyncCursor com onDelete: Cascade — apagar o conector levaria junto o histórico de custo do FinOps. Pausar é reversível e não destrói nada, então é a operação que esta tela oferece; REVOKED do vocabulário do FR-018 não tem produtor",
+          "desejado": "revogação que preserve o histórico de custo (soft-delete ou desvinculação de billingEntries antes da remoção)",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "integrations-7",
+          "tipo": "campo",
+          "alvo": "catálogo de conectores (logo, categoria, descrição)",
+          "hoje": "`Integration` não tem colunas category/description/logo; o catálogo vive em CONNECTOR_CATALOG, uma tabela estática no componente, chaveada pelo `source` real",
+          "desejado": "decidido manter estático: é metadado de produto por tipo de conector, não dado de tenant — não vale migration e não é fabricação de dado, porque nenhum estado ou horário de sincronização sai dali",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/cosmos-integrations.test.ts",
+        "apps/app/__tests__/screens/integrations.test.tsx"
+      ],
       "commits": [],
+      "notas": "O achado que mudou o escopo: existem dois vocabulários de status de integração convivendo no repo. O pipeline de billing filtra por 'ACTIVE' e as rotas de webhook checam 'PAUSED', mas o comentário do schema e o enum IntegrationStatus de _base.ts falam ACTIVE|INACTIVE|ERROR. Quem escrevia status (createIntegration) só produzia 'ACTIVE'. A tela agora escreve PAUSED, que é o valor que a ingestão realmente lê — alinhar o enum de _base.ts é fora desta trilha (arquivo intocável) e não afeta a leitura, que trata status como String livre.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
