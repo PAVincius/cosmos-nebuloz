@@ -1,19 +1,37 @@
-// measure.test.tsx — mounts MeasureScreen with mocked
-// app/(cosmos)/actions/measure actions (no real DB), verifying the KPI
-// row, radar and per-competency delta column are driven by real action
-// data, and that a partial (not-yet-complete) previous cycle degrades the
-// radar to current-only instead of fabricating missing prior scores.
-import { render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+// measure.test.tsx — Measure & Grow (/cosmos/measure). Verifica que o KPI, o
+// radar e a coluna de delta saem de dado real, que um ciclo anterior parcial
+// degrada o radar para só-atual em vez de fabricar nota faltante, e que o
+// painel de ações de melhoria (FR-013) mostra a taxa de conclusão com
+// denominador e permite registrar avaliação e ação pela tela.
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listCompetencyScoresMock = vi.fn();
+const listImprovementActionsMock = vi.fn();
+const recordCompetencyAssessmentMock = vi.fn();
+const createImprovementActionMock = vi.fn();
+const listTeamsMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/measure", () => ({
   listCompetencyScores: (...args: unknown[]) =>
     listCompetencyScoresMock(...args),
+  listImprovementActions: (...args: unknown[]) =>
+    listImprovementActionsMock(...args),
+  recordCompetencyAssessment: (...args: unknown[]) =>
+    recordCompetencyAssessmentMock(...args),
+  createImprovementAction: (...args: unknown[]) =>
+    createImprovementActionMock(...args),
+}));
+vi.mock("@/app/(cosmos)/actions/teams", () => ({
+  listTeams: (...args: unknown[]) => listTeamsMock(...args),
 }));
 
 import MeasureScreen from "../../components/cosmos/screens/measure";
+
+const NO_ACTIONS = {
+  ok: true,
+  data: { items: [], total: 0, done: 0, completionPct: null },
+};
 
 const FULL_PREV_CYCLE = [
   {
@@ -43,6 +61,19 @@ const FULL_PREV_CYCLE = [
 ];
 
 describe("MeasureScreen", () => {
+  beforeEach(() => {
+    listCompetencyScoresMock.mockReset();
+    listImprovementActionsMock.mockReset();
+    recordCompetencyAssessmentMock.mockReset();
+    createImprovementActionMock.mockReset();
+    listTeamsMock.mockReset();
+    listImprovementActionsMock.mockResolvedValue(NO_ACTIONS);
+    listTeamsMock.mockResolvedValue({
+      ok: true,
+      data: [{ id: "team-atlas", name: "Squad Atlas" }],
+    });
+  });
+
   it("renders KPIs and the prev-cycle delta column from real data", async () => {
     listCompetencyScoresMock.mockResolvedValueOnce({
       ok: true,
@@ -134,5 +165,148 @@ describe("MeasureScreen", () => {
         screen.getAllByText("Nenhuma avaliação encontrada.").length
       ).toBeGreaterThan(0)
     );
+  });
+
+  it("mostra a taxa de conclusão das ações de melhoria com o denominador (FR-013)", async () => {
+    listCompetencyScoresMock.mockResolvedValueOnce({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    listImprovementActionsMock.mockResolvedValueOnce({
+      ok: true,
+      data: {
+        items: [
+          {
+            id: "a1",
+            title: "Dojo de testes de contrato",
+            status: "DONE",
+            competencyLabel: "Team & Technical Agility",
+            dueDate: null,
+          },
+          {
+            id: "a2",
+            title: "Revisar hipótese de valor no PI Planning",
+            status: "OPEN",
+            competencyLabel: null,
+            dueDate: null,
+          },
+        ],
+        total: 2,
+        done: 1,
+        completionPct: 50,
+      },
+    });
+
+    render(<MeasureScreen />);
+
+    expect(await screen.findByText("Dojo de testes de contrato")).toBeTruthy();
+    expect(screen.getByText("1 de 2 concluídas")).toBeTruthy();
+    expect(
+      screen.getByText("Revisar hipótese de valor no PI Planning")
+    ).toBeTruthy();
+  });
+
+  it("não mostra 0% de conclusão quando não há ação viva", async () => {
+    listCompetencyScoresMock.mockResolvedValueOnce({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    listImprovementActionsMock.mockResolvedValueOnce(NO_ACTIONS);
+
+    render(<MeasureScreen />);
+
+    await waitFor(() =>
+      expect(screen.getByText("Nenhuma ação de melhoria aberta.")).toBeTruthy()
+    );
+    expect(screen.queryByText("0% concluídas")).toBeNull();
+  });
+
+  it("registra uma avaliação pela tela e recarrega (caminho de escrita do FR-013)", async () => {
+    listCompetencyScoresMock.mockResolvedValue({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    recordCompetencyAssessmentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "ca-1" },
+    });
+
+    render(<MeasureScreen />);
+    await screen.findByText("Registrar avaliação");
+
+    fireEvent.click(screen.getByText("Registrar avaliação"));
+    fireEvent.change(await screen.findByLabelText("Competência"), {
+      target: { value: "AGILE_PRODUCT_DELIVERY" },
+    });
+    fireEvent.change(screen.getByLabelText("Nota (1–5)"), {
+      target: { value: "4" },
+    });
+    fireEvent.change(screen.getByLabelText("Time avaliado"), {
+      target: { value: "team-atlas" },
+    });
+    fireEvent.click(screen.getByText("Salvar avaliação"));
+
+    await waitFor(() =>
+      expect(recordCompetencyAssessmentMock).toHaveBeenCalledWith({
+        competency: "AGILE_PRODUCT_DELIVERY",
+        score: 4,
+        scope: "team",
+        scopeId: "team-atlas",
+      })
+    );
+    await waitFor(() =>
+      expect(listCompetencyScoresMock.mock.calls.length).toBeGreaterThan(1)
+    );
+  });
+
+  it("abre uma ação de melhoria pela tela", async () => {
+    listCompetencyScoresMock.mockResolvedValue({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    createImprovementActionMock.mockResolvedValue({
+      ok: true,
+      data: { id: "ia-1" },
+    });
+
+    render(<MeasureScreen />);
+    await screen.findByText("Nova ação");
+
+    fireEvent.click(screen.getByText("Nova ação"));
+    fireEvent.change(await screen.findByLabelText("Título"), {
+      target: { value: "Rodar dojo de testes de contrato" },
+    });
+    fireEvent.change(screen.getByLabelText("Time responsável"), {
+      target: { value: "team-atlas" },
+    });
+    fireEvent.click(screen.getByText("Criar ação"));
+
+    await waitFor(() =>
+      expect(createImprovementActionMock).toHaveBeenCalledWith({
+        title: "Rodar dojo de testes de contrato",
+        scope: "team",
+        scopeId: "team-atlas",
+      })
+    );
+  });
+
+  it("mostra o estado de erro do painel de ações sem inventar ação", async () => {
+    listCompetencyScoresMock.mockResolvedValueOnce({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    listImprovementActionsMock.mockResolvedValueOnce({
+      ok: false,
+      error: "boom",
+    });
+
+    render(<MeasureScreen />);
+
+    await waitFor(() =>
+      expect(
+        screen.getByText("Não foi possível carregar as ações de melhoria.")
+      ).toBeTruthy()
+    );
+    expect(screen.queryByText("Nenhuma ação de melhoria aberta.")).toBeNull();
   });
 });

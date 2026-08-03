@@ -305,6 +305,145 @@ const SPRINTS = [
   { team: "Squad Orion", n: 13, capacity: 30, completed: 28, accepted: 26 },
 ];
 
+// Measure & Grow do tenant demo. Dois ciclos por competência, ambos no mesmo
+// escopo (Squad Atlas) — é o que dá ciclo anterior comparável: avaliação de
+// times diferentes não forma delta. Sem isto /cosmos/measure abre sem radar e
+// sem nenhuma variação.
+const COMPETENCY_SCORES: { key: string; prev: number; current: number }[] = [
+  { key: "TEAM_TECHNICAL_AGILITY", prev: 3.4, current: 3.8 },
+  { key: "AGILE_PRODUCT_DELIVERY", prev: 3.5, current: 3.4 },
+  { key: "ENTERPRISE_SOLUTION_DELIVERY", prev: 2.6, current: 2.9 },
+  { key: "LEAN_PORTFOLIO_MANAGEMENT", prev: 3.2, current: 3.6 },
+  { key: "ORGANIZATIONAL_AGILITY", prev: 3.1, current: 3.1 },
+  { key: "CONTINUOUS_LEARNING_CULTURE", prev: 2.9, current: 2.6 },
+  { key: "LEAN_AGILE_LEADERSHIP", prev: 3.6, current: 3.9 },
+];
+
+const COMPETENCY_CYCLES = [
+  { at: "2026-02-02T00:00:00Z", field: "prev" as const },
+  { at: "2026-06-01T00:00:00Z", field: "current" as const },
+];
+
+// Ações de melhoria abertas a partir da avaliação mais recente — sem elas a
+// taxa de conclusão do FR-013 não tem denominador. Uma cancelada de propósito,
+// para provar que ação abandonada sai do denominador e não derruba a taxa.
+const IMPROVEMENT_ACTIONS = [
+  {
+    title: "Rodar dojo de testes de contrato com o ART Plataforma",
+    competency: "TEAM_TECHNICAL_AGILITY",
+    status: "IN_PROGRESS",
+  },
+  {
+    title: "Revisar hipótese de valor no PI Planning",
+    competency: "AGILE_PRODUCT_DELIVERY",
+    status: "OPEN",
+  },
+  {
+    title: "Publicar guia de aprendizagem contínua por trilha",
+    competency: "CONTINUOUS_LEARNING_CULTURE",
+    status: "DONE",
+  },
+  {
+    title: "Contratar consultoria externa de agilidade",
+    competency: "ORGANIZATIONAL_AGILITY",
+    status: "CANCELLED",
+  },
+];
+
+// PI em execução do tenant demo. /cosmos/capacity só desenha a grade time ×
+// sprint quando existe PI em PLANNING/COMMITTED/EXECUTING com sprints ligadas a
+// ele; sem isto a seção abre em "Sem PI ativo ou sem sprints ainda".
+const PI_PLAN = {
+  name: "PI 2026.3",
+  status: "EXECUTING",
+  startDate: "2026-07-06T00:00:00Z",
+  endDate: "2026-09-13T00:00:00Z",
+};
+
+// Capacidade por sprint do PI ativo. As três faixas do AC-002 da story-032
+// estão representadas para que a regra tenha em quem aparecer: <80% verde,
+// 80–100% âmbar, >100% vermelho. `actual/expected` é a utilização.
+const PI_CAPACITY = [
+  { team: "Squad Atlas", n: 14, expected: 40, actual: 30, status: "CLOSED" },
+  { team: "Squad Atlas", n: 15, expected: 40, actual: 40, status: "CLOSED" },
+  { team: "Squad Atlas", n: 16, expected: 40, actual: 44, status: "ACTIVE" },
+  { team: "Squad Orion", n: 14, expected: 30, actual: 21, status: "CLOSED" },
+  { team: "Squad Orion", n: 15, expected: 30, actual: 27, status: "CLOSED" },
+  { team: "Squad Orion", n: 16, expected: 30, actual: 33, status: "ACTIVE" },
+];
+
+// Features comprometidas no PI ativo. Sem elas /cosmos/program abre em "Nenhum
+// PI ativo" mesmo com PI Plan, e /cosmos/dependencies não tem o que ligar.
+// `epic` é o título de um épico semeado acima; resolvido para id na gravação.
+const FEATURES = [
+  {
+    title: "Isolamento de tenant no core",
+    epic: "Migração core para multi-tenant",
+    team: "Squad Atlas",
+    sprint: 14,
+    points: 13,
+    statusId: "DONE",
+    milestone: false,
+  },
+  {
+    title: "Fila de eventos por tenant",
+    epic: "Migração core para multi-tenant",
+    team: "Squad Atlas",
+    sprint: 15,
+    points: 8,
+    statusId: "IN_PROGRESS",
+    milestone: false,
+  },
+  {
+    title: "Agregação Open Finance",
+    epic: "Open Finance · agregação",
+    team: "Squad Orion",
+    sprint: 15,
+    points: 8,
+    statusId: "IN_PROGRESS",
+    milestone: true,
+  },
+  {
+    title: "Consentimento e revogação",
+    epic: "Open Finance · agregação",
+    team: "Squad Orion",
+    sprint: 16,
+    points: 5,
+    statusId: "BACKLOG",
+    milestone: false,
+  },
+];
+
+// Bloqueios entre features do PI. Os três estados de boardStatus aparecem para
+// que a cor-codificação da story-020 AC-006 tenha em quem aparecer. O grafo é
+// acíclico de propósito: createDependency recusa ciclo (story-058 AC-001).
+const DEPENDENCIES = [
+  {
+    blocking: "Isolamento de tenant no core",
+    blocked: "Fila de eventos por tenant",
+    description: "A fila só pode ser particionada depois do isolamento.",
+    boardStatus: "RESOLVED",
+    status: "completed",
+    criticalPath: false,
+  },
+  {
+    blocking: "Fila de eventos por tenant",
+    blocked: "Agregação Open Finance",
+    description: "Agregação consome os eventos por tenant.",
+    boardStatus: "IN_PROGRESS",
+    status: "on-track",
+    criticalPath: true,
+  },
+  {
+    blocking: "Agregação Open Finance",
+    blocked: "Consentimento e revogação",
+    description: "Revogação depende do contrato de agregação estar fechado.",
+    boardStatus: "IDENTIFIED",
+    status: "at-risk",
+    criticalPath: false,
+  },
+];
+
 // Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
 // acima — resolvido para id na hora de gravar.
 const DECISIONS = [
@@ -610,6 +749,268 @@ async function main() {
     sp++;
   }
   console.log("closed sprints with review:", sp);
+
+  // Measure & Grow: dois ciclos de avaliação no mesmo escopo, mais as ações de
+  // melhoria que saem deles. Escopo fixo em Squad Atlas de propósito — o
+  // "ciclo anterior" da tela só compara avaliações do mesmo escopo, e semear
+  // ciclos em times diferentes produziria um delta que não descreve ninguém.
+  const assessmentScopeId = teamIdByName.get("Squad Atlas");
+  const assessmentIdByCompetency = new Map<string, string>();
+  let ca = 0;
+  if (assessmentScopeId) {
+    for (const cycle of COMPETENCY_CYCLES) {
+      for (const c of COMPETENCY_SCORES) {
+        const assessedAt = new Date(cycle.at);
+        const existing = await db.competencyAssessment.findFirst({
+          where: {
+            tenantId: tenant.id,
+            competency: c.key,
+            scope: "team",
+            scopeId: assessmentScopeId,
+            assessedAt,
+          },
+          select: { id: true },
+        });
+        const data = {
+          tenantId: tenant.id,
+          competency: c.key,
+          score: c[cycle.field],
+          scope: "team",
+          scopeId: assessmentScopeId,
+          assessedAt,
+          assessedById: devMember.userId,
+        };
+        const row = existing
+          ? await db.competencyAssessment.update({
+              where: { id: existing.id },
+              data,
+              select: { id: true },
+            })
+          : await db.competencyAssessment.create({
+              data,
+              select: { id: true },
+            });
+        // O ciclo mais recente é o último do laço, então o mapa termina
+        // apontando para a avaliação atual — é nela que a ação se pendura.
+        assessmentIdByCompetency.set(c.key, row.id);
+        ca++;
+      }
+    }
+  }
+  console.log("competency assessments upserted:", ca);
+
+  let ia = 0;
+  if (assessmentScopeId) {
+    for (const a of IMPROVEMENT_ACTIONS) {
+      const already = await db.improvementAction.findFirst({
+        where: { tenantId: tenant.id, title: a.title },
+        select: { id: true },
+      });
+      if (already) {
+        continue;
+      }
+      await db.improvementAction.create({
+        data: {
+          tenantId: tenant.id,
+          title: a.title,
+          scope: "team",
+          scopeId: assessmentScopeId,
+          status: a.status,
+          source: "manual",
+          assessmentId: assessmentIdByCompetency.get(a.competency) ?? null,
+        },
+      });
+      ia++;
+    }
+  }
+  console.log("improvement actions created:", ia);
+
+  // Velocity de referência do time = média das sprints fechadas acima. Sem ela
+  // a coluna "Velocity" de /cosmos/capacity abre inteira em "—"; o número é
+  // derivado do que já foi semeado, não arbitrado.
+  for (const [teamName, teamId] of teamIdByName) {
+    const done = SPRINTS.filter((row) => row.team === teamName);
+    if (done.length === 0) {
+      continue;
+    }
+    const velocity = Math.round(
+      done.reduce((acc, row) => acc + row.completed, 0) / done.length
+    );
+    await db.team.update({ where: { id: teamId }, data: { velocity } });
+  }
+
+  // PI ativo + snapshots de capacidade. Sem isto /cosmos/capacity abre com a
+  // grade dizendo "Sem PI ativo" e a regra de faixa da story-032 AC-002 não tem
+  // em quem aparecer. As três faixas (verde <80%, âmbar 80–100%, vermelho
+  // >100%) estão representadas de propósito.
+  const existingPi = await db.pIPlan.findFirst({
+    where: { tenantId: tenant.id, artId: art.id, name: PI_PLAN.name },
+    select: { id: true },
+  });
+  const piData = {
+    tenantId: tenant.id,
+    artId: art.id,
+    name: PI_PLAN.name,
+    status: PI_PLAN.status,
+    startDate: new Date(PI_PLAN.startDate),
+    endDate: new Date(PI_PLAN.endDate),
+  };
+  const piPlan = existingPi
+    ? await db.pIPlan.update({
+        where: { id: existingPi.id },
+        data: piData,
+        select: { id: true },
+      })
+    : await db.pIPlan.create({ data: piData, select: { id: true } });
+
+  const piSprintIdByKey = new Map<string, string>();
+  let cap = 0;
+  for (const c of PI_CAPACITY) {
+    const teamId = teamIdByName.get(c.team);
+    if (!teamId) {
+      continue;
+    }
+    const name = `Sprint ${c.n}`;
+    const startDate = new Date(Date.UTC(2026, 6, 6 + (c.n - 14) * 14));
+    const endDate = new Date(startDate.getTime() + 13 * 24 * 60 * 60 * 1000);
+    const sprintData = {
+      tenantId: tenant.id,
+      teamId,
+      piPlanId: piPlan.id,
+      name,
+      startDate,
+      endDate,
+      status: c.status,
+      capacity: c.expected,
+    };
+    const existingSprint = await db.sprint.findFirst({
+      where: { tenantId: tenant.id, teamId, name },
+      select: { id: true },
+    });
+    const sprintRow = existingSprint
+      ? await db.sprint.update({
+          where: { id: existingSprint.id },
+          data: sprintData,
+          select: { id: true },
+        })
+      : await db.sprint.create({ data: sprintData, select: { id: true } });
+    piSprintIdByKey.set(`${c.team}:${c.n}`, sprintRow.id);
+
+    // actualCapacityUtil é entregue/planejado — a mesma razão que a tela
+    // mostra, para que número e faixa não possam divergir na origem.
+    const snapshot = {
+      expectedSpNextSprint: c.expected,
+      actualSpDelivered: c.actual,
+      actualCapacityUtil: c.actual / c.expected,
+      // Determinístico: a sprint de maior número é o snapshot mais recente, que
+      // é o que listTeamCapacity mostra na tabela por time (recordedAt desc).
+      recordedAt: endDate,
+    };
+    await db.teamCapacitySnapshot.upsert({
+      where: { sprintId_teamId: { sprintId: sprintRow.id, teamId } },
+      update: snapshot,
+      create: {
+        tenantId: tenant.id,
+        sprintId: sprintRow.id,
+        teamId,
+        ...snapshot,
+      },
+    });
+    cap++;
+  }
+  console.log("PI sprints with capacity snapshot:", cap);
+
+  // Features comprometidas no PI + a célula (time × sprint) de cada uma. A
+  // célula mora em PIPlanFeatureAssignment, que é o registro que o Program
+  // Board escreve; Feature.assignedTeamId sozinho não tem dimensão de sprint.
+  const featureIdByTitle = new Map<string, string>();
+  for (const f of FEATURES) {
+    const teamId = teamIdByName.get(f.team);
+    if (!teamId) {
+      continue;
+    }
+    const featureData = {
+      tenantId: tenant.id,
+      piPlanId: piPlan.id,
+      epicId: epicIdByTitle.get(f.epic) ?? null,
+      title: f.title,
+      statusId: f.statusId,
+      assignedTeamId: teamId,
+      storyPoints: f.points,
+      milestone: f.milestone,
+      progressPct: f.statusId === "DONE" ? 100 : 0,
+    };
+    const existingFeature = await db.feature.findFirst({
+      where: { tenantId: tenant.id, title: f.title },
+      select: { id: true },
+    });
+    const featureRow = existingFeature
+      ? await db.feature.update({
+          where: { id: existingFeature.id },
+          data: featureData,
+          select: { id: true },
+        })
+      : await db.feature.create({ data: featureData, select: { id: true } });
+    featureIdByTitle.set(f.title, featureRow.id);
+
+    const sprintId = piSprintIdByKey.get(`${f.team}:${f.sprint}`);
+    if (sprintId) {
+      await db.pIPlanFeatureAssignment.upsert({
+        where: {
+          piPlanId_featureId: {
+            piPlanId: piPlan.id,
+            featureId: featureRow.id,
+          },
+        },
+        update: { teamId, sprintId },
+        create: {
+          tenantId: tenant.id,
+          piPlanId: piPlan.id,
+          featureId: featureRow.id,
+          teamId,
+          sprintId,
+          rank: 0,
+        },
+      });
+    }
+  }
+  console.log("PI features with board cell:", featureIdByTitle.size);
+
+  let dep = 0;
+  for (const link of DEPENDENCIES) {
+    const blockingFeatureId = featureIdByTitle.get(link.blocking);
+    const blockedFeatureId = featureIdByTitle.get(link.blocked);
+    if (!(blockingFeatureId && blockedFeatureId)) {
+      continue;
+    }
+    const depData = {
+      description: link.description,
+      status: link.status,
+      boardStatus: link.boardStatus,
+      criticalPath: link.criticalPath,
+    };
+    const existingDep = await db.dependencyLink.findFirst({
+      where: { tenantId: tenant.id, blockingFeatureId, blockedFeatureId },
+      select: { id: true },
+    });
+    if (existingDep) {
+      await db.dependencyLink.update({
+        where: { id: existingDep.id },
+        data: depData,
+      });
+    } else {
+      await db.dependencyLink.create({
+        data: {
+          tenantId: tenant.id,
+          blockingFeatureId,
+          blockedFeatureId,
+          ...depData,
+        },
+      });
+    }
+    dep++;
+  }
+  console.log("dependency links:", dep);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({

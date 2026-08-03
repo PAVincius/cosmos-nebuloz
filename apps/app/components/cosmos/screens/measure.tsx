@@ -1,17 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import type { CSSProperties } from "react";
+import { useCallback, useState } from "react";
 import {
   type CompetencyScoreView,
+  createImprovementAction,
+  type ImprovementActionsView,
   listCompetencyScores,
+  listImprovementActions,
+  recordCompetencyAssessment,
 } from "@/app/(cosmos)/actions/measure";
-// measure.tsx — Measure & Grow, wired to listCompetencyScores(). Latest and
-// prior score per SAFe core competency (7 competencies, 1–5 scale), plus a
-// radar comparing the two cycles. DORA metrics (RF-78) have no corresponding
-// Prisma model yet — out of scope, not fabricated here.
+import { listTeams } from "@/app/(cosmos)/actions/teams";
+// measure.tsx — Measure & Grow, ligado a listCompetencyScores() +
+// listImprovementActions() + os dois caminhos de escrita. Nota atual e do ciclo
+// anterior por competência-chave SAFe (7 competências, escala 1–5), radar
+// comparando os dois ciclos, e as ações de melhoria que saem da avaliação —
+// medir sem registrar ação é termômetro, não Measure & Grow. Métricas DORA
+// vivem em /cosmos/flow, não aqui.
 import { EmptyState } from "../empty-state";
+import { Icon } from "../icons";
 import {
   Badge,
+  Button,
   ChartTip,
   ErrorState,
   KpiCard,
@@ -20,6 +30,8 @@ import {
   SectionCard,
   useAction,
 } from "../kit";
+import { ModalCard, ModalProvider, useModal } from "../modal";
+import { useActionToast } from "../use-action-toast";
 
 function scoreTone(
   score: number | null
@@ -197,6 +209,343 @@ function Radar({
   );
 }
 
+// ── escrita: avaliação de competência e ação de melhoria ──
+
+const fieldLabelStyle: CSSProperties = {
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+  marginBottom: 6,
+};
+
+const inputStyle: CSSProperties = {
+  width: "100%",
+  padding: "10px 12px",
+  fontSize: 14,
+  borderRadius: "var(--r-md)",
+  border: "1px solid var(--hairline-strong)",
+  background: "var(--surface)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  outline: "none",
+};
+
+type TeamOption = { id: string; name: string };
+
+function TeamSelect({
+  id,
+  label,
+  teams,
+  value,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  teams: TeamOption[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div>
+      <label htmlFor={id} style={fieldLabelStyle}>
+        {label}
+      </label>
+      <select
+        id={id}
+        onChange={(e) => onChange(e.target.value)}
+        style={inputStyle}
+        value={value}
+      >
+        <option value="">Selecione um time</option>
+        {teams.map((t) => (
+          <option key={t.id} value={t.id}>
+            {t.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+function NewAssessmentModal({
+  competencies,
+  teams,
+  onSaved,
+}: {
+  competencies: CompetencyScoreView[];
+  teams: TeamOption[];
+  onSaved: () => void;
+}) {
+  const { close } = useModal();
+  const [competency, setCompetency] = useState(
+    competencies[0]?.competency ?? ""
+  );
+  const [score, setScore] = useState("3");
+  const [scopeId, setScopeId] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    const parsed = Number(score);
+    if (!(competency && scopeId) || Number.isNaN(parsed) || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        recordCompetencyAssessment({
+          competency,
+          score: parsed,
+          scope: "team",
+          scopeId,
+        }),
+      {
+        loading: "Registrando avaliação...",
+        success: "Avaliação registrada.",
+        error: (err: string) => `Não foi possível registrar: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      onSaved();
+      close();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="award" size={16} />}
+      subtitle="Escala 1–5 do Measure & Grow, por time avaliado"
+      title="Registrar avaliação"
+      width={440}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="assessment-competency" style={fieldLabelStyle}>
+            Competência
+          </label>
+          <select
+            id="assessment-competency"
+            onChange={(e) => setCompetency(e.target.value)}
+            style={inputStyle}
+            value={competency}
+          >
+            {competencies.map((c) => (
+              <option key={c.competency} value={c.competency}>
+                {c.competencyLabel}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="assessment-score" style={fieldLabelStyle}>
+            Nota (1–5)
+          </label>
+          <input
+            id="assessment-score"
+            max={5}
+            min={1}
+            onChange={(e) => setScore(e.target.value)}
+            step={0.1}
+            style={inputStyle}
+            type="number"
+            value={score}
+          />
+        </div>
+        {/* O escopo é obrigatório no modelo e é o que dá sentido ao "ciclo
+            anterior": comparar a nota de um time com a de outro produziria um
+            delta que não descreve a evolução de ninguém. */}
+        <TeamSelect
+          id="assessment-scope"
+          label="Time avaliado"
+          onChange={setScopeId}
+          teams={teams}
+          value={scopeId}
+        />
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={save} size="sm" variant="primary">
+            Salvar avaliação
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+function NewImprovementActionModal({
+  teams,
+  onSaved,
+}: {
+  teams: TeamOption[];
+  onSaved: () => void;
+}) {
+  const { close } = useModal();
+  const [title, setTitle] = useState("");
+  const [scopeId, setScopeId] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const save = async () => {
+    if (!(title.trim() && scopeId) || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createImprovementAction({
+          title: title.trim(),
+          scope: "team",
+          scopeId,
+        }),
+      {
+        loading: "Criando ação...",
+        success: "Ação de melhoria criada.",
+        error: (err: string) => `Não foi possível criar a ação: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      onSaved();
+      close();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="target" size={16} />}
+      subtitle="O que muda a partir da avaliação"
+      title="Nova ação de melhoria"
+      width={440}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="action-title" style={fieldLabelStyle}>
+            Título
+          </label>
+          <input
+            id="action-title"
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Rodar dojo de testes de contrato"
+            style={inputStyle}
+            value={title}
+          />
+        </div>
+        <TeamSelect
+          id="action-scope"
+          label="Time responsável"
+          onChange={setScopeId}
+          teams={teams}
+          value={scopeId}
+        />
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={save} size="sm" variant="primary">
+            Criar ação
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+const ACTION_STATUS_TONE: Record<string, "green" | "amber" | "neutral"> = {
+  DONE: "green",
+  IN_PROGRESS: "amber",
+  OPEN: "neutral",
+  CANCELLED: "neutral",
+};
+
+function ImprovementActionsCard({
+  data,
+  loading,
+  error,
+  onNew,
+}: {
+  data: ImprovementActionsView | undefined;
+  loading: boolean;
+  error: boolean;
+  onNew: () => void;
+}) {
+  return (
+    <SectionCard
+      action={
+        <Button icon="plus" onClick={onNew} size="sm" variant="secondary">
+          Nova ação
+        </Button>
+      }
+      bodyStyle={{ padding: 12 }}
+      icon="target"
+      subtitle={
+        // Taxa sem denominador vira nota de rodapé; com denominador vira
+        // decisão. E sem ação viva a taxa é null, não 0%.
+        data && data.completionPct !== null
+          ? `${data.done} de ${data.total} concluídas`
+          : "O que muda a partir da avaliação"
+      }
+      title="Ações de melhoria"
+      tone="green"
+    >
+      {error && (
+        <ErrorState message="Não foi possível carregar as ações de melhoria." />
+      )}
+      {!error && loading && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Carregando...
+        </div>
+      )}
+      {!(error || loading) && (data?.items.length ?? 0) === 0 && (
+        <div style={{ padding: 16, color: "var(--ink-muted)", fontSize: 13 }}>
+          Nenhuma ação de melhoria aberta.
+        </div>
+      )}
+      {!(error || loading) && data && data.items.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+          {data.items.map((a) => (
+            <div
+              key={a.id}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "12px 14px",
+                borderRadius: "var(--r-md)",
+                border: "1px solid var(--hairline)",
+                background: "var(--surface)",
+              }}
+            >
+              <span
+                style={{
+                  flex: 1,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "var(--ink)",
+                  minWidth: 0,
+                }}
+              >
+                {a.title}
+              </span>
+              {a.competencyLabel && (
+                <Badge tone="neutral">{a.competencyLabel}</Badge>
+              )}
+              <Badge tone={ACTION_STATUS_TONE[a.status] ?? "neutral"}>
+                {a.status}
+              </Badge>
+            </div>
+          ))}
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
 function RadarCard({ rows }: { rows: CompetencyScoreView[] }) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
   const scored = rows.filter((c) => c.score !== null);
@@ -317,8 +666,20 @@ function RadarCard({ rows }: { rows: CompetencyScoreView[] }) {
   );
 }
 
-export default function MeasureScreen() {
-  const { data, loading, error } = useAction(listCompetencyScores);
+function MeasureBody() {
+  const modal = useModal();
+  // Chave de recarga: useAction refaz a chamada quando as deps mudam, e é
+  // assim que a tela reflete a avaliação que acabou de ser gravada.
+  const [reloadKey, setReloadKey] = useState(0);
+  const reload = useCallback(() => setReloadKey((k) => k + 1), []);
+
+  const { data, loading, error } = useAction(listCompetencyScores, [reloadKey]);
+  const actions = useAction(listImprovementActions, [reloadKey]);
+  const teams = useAction(listTeams);
+  const teamOptions = (teams.data ?? []).map((t) => ({
+    id: t.id,
+    name: t.name,
+  }));
   const rows = data ?? [];
   const scored = rows.filter(
     (c): c is CompetencyScoreView & { score: number } => c.score !== null
@@ -357,7 +718,24 @@ export default function MeasureScreen() {
         }
         subtitle="Avaliação por competência-chave SAFe vs. ciclo anterior (escala 1–5)."
         title="Measure & Grow"
-      />
+      >
+        <Button
+          icon="plus"
+          onClick={() =>
+            modal.open(
+              <NewAssessmentModal
+                competencies={rows}
+                onSaved={reload}
+                teams={teamOptions}
+              />
+            )
+          }
+          size="sm"
+          variant="primary"
+        >
+          Registrar avaliação
+        </Button>
+      </PageHeader>
       {error && <ErrorState />}
       {!error && (
         <>
@@ -573,8 +951,32 @@ export default function MeasureScreen() {
               )}
             </SectionCard>
           </div>
+
+          <div style={{ marginTop: 14 }}>
+            <ImprovementActionsCard
+              data={actions.data}
+              error={actions.error}
+              loading={actions.loading}
+              onNew={() =>
+                modal.open(
+                  <NewImprovementActionModal
+                    onSaved={reload}
+                    teams={teamOptions}
+                  />
+                )
+              }
+            />
+          </div>
         </>
       )}
     </div>
+  );
+}
+
+export default function MeasureScreen() {
+  return (
+    <ModalProvider>
+      <MeasureBody />
+    </ModalProvider>
   );
 }
