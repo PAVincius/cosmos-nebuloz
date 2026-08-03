@@ -143,7 +143,7 @@
     "apps/app/__tests__/actions/measure.test.ts",
     "apps/app/__tests__/screens/measure.test.tsx"
   ],
-  "commits": [],
+  "commits": ["7d58649"],
   "notas": "profundidade THIN vem do audit de 2026-07-23 (measure: 0 de 4 seções de handoff). O nó fecha o caminho de escrita que faltava e traz ImprovementAction — que estava no schema, ligado a CompetencyAssessment, e não aparecia em tela alguma — para o produto. O defeito mais silencioso encontrado aqui foi o delta entre escopos: a tela mostrava evolução comparando a nota de um time com a de outro. As lacunas measure-6 e measure-7 exigem modelagem nova (papel por time, vínculo com PI); measure-5 é UI e fica aberta porque um seletor de escopo muda a leitura de toda a tela e merece decisão de produto. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda, por isso a mudança de seed não é citada em verifica[].",
   "atualizado_em": "2026-08-03"
 }
