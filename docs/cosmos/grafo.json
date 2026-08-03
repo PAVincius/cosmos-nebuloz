@@ -1052,22 +1052,137 @@
       "$schema": "../schema/no.schema.json",
       "id": "piplanning",
       "kind": "tela",
-      "titulo": "piplanning",
+      "titulo": "PI Planning (confidence vote do ART)",
       "rota": "/cosmos/piplanning",
       "componente": "apps/app/components/cosmos/screens/piplanning.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "getActivePiPlanning",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "listRecentPiPredictability",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "getActiveArtCount",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "castConfidenceVote",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "revealTally",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "PIPlan",
+        "PIObjective",
+        "PISession",
+        "ConfidenceVoteSession",
+        "ConfidenceVoteTally",
+        "Risk",
+        "Sprint",
+        "Team"
+      ],
+      "safe": {
+        "pratica": "Confidence Vote (fist-of-five) no PI Planning",
+        "nivel": "Essential",
+        "faz": "Mostra o PI ativo — objetivos com business value, riscos ROAM e o placar de confiança — e deixa o ART votar de 1 a 5 na confiança do plano e o RTE revelar o resultado, que é o insumo do gate de commitment do PI.",
+        "invariantes": [
+          "o voto é do ART, não por time: ConfidenceVoteTally é uma linha de contagens por rodada e não tem coluna ligando voto a votante — um teamId quebraria ao mesmo tempo o @@unique([voteSessionId, round]) e o anonimato",
+          "votar grava exatamente duas contagens (a nota votada e o total) e nada mais; nenhum logAudit é emitido no voto, porque auditar guardaria ator e carimbo de tempo — o vínculo que a story-018 AC-002 proíbe",
+          "o que é legal em cada estado da rodada é decidido pela máquina do @repo/safe-engine, a mesma que o console de ART usa; a action persiste o resultado e não mantém uma segunda tabela de transições",
+          "distribuição por nota e placar só saem da leitura depois de revealedAt: resultado parcial visível muda o voto de quem ainda não votou",
+          "revelar exige participação de pelo menos 50% e papel ADMIN|RTE, e grava aggregateScore, participationRate, revealedAt e closedAt na mesma passada",
+          "a rodada é localizada pelo PI ativo do tenant da sessão, nunca por id vindo do cliente — não existe id de rodada para o cliente escolher",
+          "voto sem PI ativo, sem rodada ou fora de OPEN é recusado, e nenhuma contagem muda"
+        ],
+        "fonte": [
+          "docs/stories/epic-006/story-060-tela-pi-planning-confidence-vote.md",
+          "docs/stories/epic-006/story-018.md:30",
+          "docs/stories/epic-006/story-018.md:38",
+          "docs/stories/epic-006/story-018.md:82",
+          "docs/srd-epic-006.md:160",
+          "SAFe 6.0 — Confidence Vote no PI Planning (fist-of-five, nível de ART)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "packages/safe-engine/src/voteHelpers.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "piplanning-1",
+          "tipo": "action",
+          "alvo": "castConfidenceVote, revealTally",
+          "hoje": "inexistentes — a tela lia o placar da última rodada e não tinha caminho para produzi-lo, então 'Confiança média' era '—' em qualquer tenant onde ninguém tivesse usado o console de ART",
+          "desejado": "voto anônimo agregado na rodada aberta e revelação com gate de participação, ambos passando pela máquina de estados do safe-engine",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "piplanning-2",
+          "tipo": "campo",
+          "alvo": "ConfidenceVoteSession.votes (Json number[], marcado legacy no schema)",
+          "hoje": "guarda a lista crua de votos da rodada, em paralelo às contagens por nota do ConfidenceVoteTally da story-018. castConfidenceVote não escreve esta coluna: manter as duas seria manter duas contagens da mesma rodada livres para divergir",
+          "desejado": "a coluna removida, com sendVoteEvent (app/actions/arts/confidence-vote.ts) migrado para o tally",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "piplanning-3",
+          "tipo": "action",
+          "alvo": "abertura de rodada a partir desta tela",
+          "hoje": "a tela vota e revela na rodada que existir, mas quem abre a rodada é o console de ART (app/actions/arts/confidence-vote.ts::createNewVoteRound + tally-vote.ts::openNextVoteRound). Sem PI Session aberta, a tela diz que não há rodada em vez de criar uma por efeito colateral",
+          "desejado": "abrir rodada pela tela do Cosmos, quando a cerimônia for facilitada por aqui — depende de decidir qual dos dois modelos de rodada (ConfidenceVoteSession.roundNumber ou ConfidenceVoteTally.round) é a rodada canônica",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "piplanning-4",
+          "tipo": "ui",
+          "alvo": "overlay Liveblocks, timer de 60s e tendência cross-PI (story-018 AC-001/AC-007)",
+          "hoje": "inexistentes. O overlay depende de presença em sala, o timer de sessão sincronizada, e a tendência de PIs fechados com rodada final revelada",
+          "desejado": "as três, quando as dependências existirem — nenhuma é aproximável sem fabricar participação",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/piplanning.test.ts",
+        "apps/app/__tests__/actions/piplanning-confidence-vote.test.ts",
+        "apps/app/__tests__/screens/piplanning.test.tsx"
+      ],
       "commits": [],
+      "notas": "O confidence vote fica em nível de ART por decisão de modelagem, não por omissão: ConfidenceVoteTally é anônimo por desenho e num ART com um squad de quatro pessoas 'confiança do time X' seria praticamente voto nominal. O seed passou a criar os PI Objectives do PI ativo (PPM 18/24 = 75%, abaixo da meta SAFe de 80% de propósito, para a faixa ter o que dizer) e duas rodadas de confidence vote reveladas — a primeira abaixo do limiar levando a REWORK, a segunda aprovando —, que é a história da story-018 AC-005 num PI que já está EXECUTING. Nenhum PIParticipant falso é criado para 'representar' quem votou: participantCount é o denominador congelado no tally e o modelo não tem onde guardar votante.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": [
         "risks"
       ]

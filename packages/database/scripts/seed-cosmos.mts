@@ -444,6 +444,78 @@ const DEPENDENCIES = [
   },
 ];
 
+// PI Objectives do PI ativo (story-060). Sem eles /cosmos/piplanning abre com
+// "Nenhum objetivo cadastrado" nos dois painéis e o PPM fica sem numerador e
+// sem denominador. `plannedValue`/`achievedValue` somam 18/24 = 75%, abaixo da
+// meta SAFe de 80% de propósito: é o caso em que a faixa do PPM tem o que dizer.
+// O objetivo stretch nasce com plannedValue 0 — stretch não entra no
+// compromisso, é justamente o que a distinção significa.
+const PI_OBJECTIVES = [
+  {
+    team: "Squad Atlas",
+    title: "Concluir o isolamento de tenant no core",
+    businessValue: 9,
+    isStretch: false,
+    status: "IN_PROGRESS",
+    plannedValue: 9,
+    achievedValue: 7,
+  },
+  {
+    team: "Squad Atlas",
+    title: "Publicar a agregação Open Finance em sandbox do regulador",
+    businessValue: 8,
+    isStretch: false,
+    status: "IN_PROGRESS",
+    plannedValue: 8,
+    achievedValue: 4,
+  },
+  {
+    team: "Squad Orion",
+    title: "Reduzir o onboarding LATAM para três dias",
+    businessValue: 7,
+    isStretch: false,
+    status: "ACHIEVED",
+    plannedValue: 7,
+    achievedValue: 7,
+  },
+  {
+    team: "Squad Orion",
+    title: "Piloto de score antifraude em tempo real",
+    businessValue: 5,
+    isStretch: true,
+    status: "NOT_STARTED",
+    plannedValue: 0,
+    achievedValue: 0,
+  },
+];
+
+// Confidence vote do PI ativo (story-060). Duas rodadas, como a story-018
+// AC-005 descreve: a primeira fecha abaixo do limiar de 3.0 e manda o ART
+// replanejar (REWORK), a segunda passa e aprova o commitment. O PI está
+// EXECUTING, então as duas rodadas são história — é por isso que ambas nascem
+// reveladas e fechadas, e não como rodada aberta esperando voto.
+//
+// `participantCount` é o denominador congelado no tally, e as contagens por
+// nota são o próprio agregado anônimo: o modelo da story-018 não tem coluna que
+// ligue voto a votante, então nenhum usuário falso é criado aqui para
+// "representar" quem votou — não haveria onde guardá-lo.
+const CONFIDENCE_ROUNDS = [
+  {
+    roundNumber: 1,
+    xStateStatus: "REWORK",
+    counts: [1, 4, 4, 2, 0],
+    participantCount: 12,
+    revealedAt: "2026-07-03T18:20:00Z",
+  },
+  {
+    roundNumber: 2,
+    xStateStatus: "APPROVED",
+    counts: [0, 1, 2, 6, 3],
+    participantCount: 12,
+    revealedAt: "2026-07-03T20:05:00Z",
+  },
+];
+
 // Registro ROAM do PI ativo (story-059). Sem ele /cosmos/risks abre com a
 // matriz 5×5 inteira vazia e o registro no estado vazio, e o gate de commitment
 // da story-019 AC-003 não tem em quem aparecer. Os cinco níveis de
@@ -1131,6 +1203,109 @@ async function main() {
     rk++;
   }
   console.log("ROAM risks:", rk);
+
+  let obj = 0;
+  for (const o of PI_OBJECTIVES) {
+    const objectiveData = {
+      tenantId: tenant.id,
+      piPlanId: piPlan.id,
+      teamId: teamIdByName.get(o.team) ?? null,
+      title: o.title,
+      businessValue: o.businessValue,
+      isStretch: o.isStretch,
+      status: o.status,
+      plannedValue: o.plannedValue,
+      achievedValue: o.achievedValue,
+    };
+    const existingObjective = await db.pIObjective.findFirst({
+      where: { tenantId: tenant.id, piPlanId: piPlan.id, title: o.title },
+      select: { id: true },
+    });
+    if (existingObjective) {
+      await db.pIObjective.update({
+        where: { id: existingObjective.id },
+        data: objectiveData,
+      });
+    } else {
+      await db.pIObjective.create({ data: objectiveData });
+    }
+    obj++;
+  }
+  console.log("PI objectives:", obj);
+
+  // Cerimônia de PI Planning + rodadas de confidence vote. A PISession é a
+  // cerimônia; cada ConfidenceVoteSession é uma rodada dela.
+  const existingPiSession = await db.pISession.findFirst({
+    where: { tenantId: tenant.id, piPlanId: piPlan.id, type: "PLANNING" },
+    select: { id: true },
+  });
+  const piSession =
+    existingPiSession ??
+    (await db.pISession.create({
+      data: { tenantId: tenant.id, piPlanId: piPlan.id, type: "PLANNING" },
+      select: { id: true },
+    }));
+
+  let cv = 0;
+  for (const r of CONFIDENCE_ROUNDS) {
+    const totalVotes = r.counts.reduce((acc, count) => acc + count, 0);
+    const weighted = r.counts.reduce(
+      (acc, count, index) => acc + count * (index + 1),
+      0
+    );
+    const aggregateScore = totalVotes > 0 ? weighted / totalVotes : 0;
+    const revealedAt = new Date(r.revealedAt);
+
+    const voteSession = await db.confidenceVoteSession.upsert({
+      where: {
+        piSessionId_roundNumber: {
+          piSessionId: piSession.id,
+          roundNumber: r.roundNumber,
+        },
+      },
+      update: { xStateStatus: r.xStateStatus, averageScore: aggregateScore },
+      create: {
+        tenantId: tenant.id,
+        piSessionId: piSession.id,
+        roundNumber: r.roundNumber,
+        xStateStatus: r.xStateStatus,
+        averageScore: aggregateScore,
+      },
+      select: { id: true },
+    });
+
+    const tallyData = {
+      score1Count: r.counts[0],
+      score2Count: r.counts[1],
+      score3Count: r.counts[2],
+      score4Count: r.counts[3],
+      score5Count: r.counts[4],
+      totalVotes,
+      participantCount: r.participantCount,
+      participationRate: (totalVotes / r.participantCount) * 100,
+      aggregateScore,
+      revealedAt,
+      closedAt: revealedAt,
+    };
+    await db.confidenceVoteTally.upsert({
+      where: {
+        voteSessionId_round: {
+          voteSessionId: voteSession.id,
+          round: r.roundNumber,
+        },
+      },
+      update: tallyData,
+      create: {
+        tenantId: tenant.id,
+        voteSessionId: voteSession.id,
+        piPlanId: piPlan.id,
+        round: r.roundNumber,
+        ...tallyData,
+      },
+    });
+    cv++;
+  }
+  console.log("confidence vote rounds:", cv);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
