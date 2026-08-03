@@ -126,7 +126,7 @@
     "apps/app/__tests__/actions/decisions.test.ts",
     "apps/app/__tests__/screens/decisions.test.tsx"
   ],
-  "commits": [],
+  "commits": ["4e6d44a"],
   "notas": "A lacuna decisions-6 fica registrada aqui por ter sido descoberta ao evitar duplicar o export, mas o arquivo é de app/actions/governance — quem for fechá-la mexe fora deste nó. A imutabilidade em nível de banco (decisions-4) é da trilha de schema; aqui a garantia é de superfície e tem teste que fixa a lista de exports do módulo.",
   "atualizado_em": "2026-08-03"
 }
