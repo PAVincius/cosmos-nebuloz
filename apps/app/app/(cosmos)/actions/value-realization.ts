@@ -12,7 +12,10 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
-import { ValueMetricStatus } from "./value-realization.constants";
+import {
+  requiresHypothesisRationale,
+  ValueMetricStatus,
+} from "./value-realization.constants";
 
 export type ValueRealizationView = {
   id: string;
@@ -134,12 +137,22 @@ export async function createValueMetric(
   });
 }
 
-const RecordActualValueSchema = z.object({
-  id: z.string().min(1),
-  actualValue: z.number().finite(),
-  status: ValueMetricStatus,
-  measuredAt: z.coerce.date().optional(),
-});
+const RecordActualValueSchema = z
+  .object({
+    id: z.string().min(1),
+    actualValue: z.number().finite(),
+    status: ValueMetricStatus,
+    measuredAt: z.coerce.date().optional(),
+    // Não vira coluna: o UC-09 passo 6 manda a decisão para o AuditLog, e um
+    // campo em EpicValueMetric guardaria só a última justificativa — perdendo
+    // exatamente o histórico que a auditoria quer.
+    rationale: z.string().trim().max(2000).optional(),
+  })
+  .refine((v) => !requiresHypothesisRationale(v.status) || !!v.rationale, {
+    message:
+      "Confirmar a hipótese ou marcá-la abaixo da meta exige uma justificativa registrada.",
+    path: ["rationale"],
+  });
 
 // Records the realized outcome for an already-created metric (the LPM
 // coming back after measuring real results). No epicId is accepted here —
@@ -151,7 +164,7 @@ export async function recordActualValue(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "STE"], ctx);
-    const { id, actualValue, status, measuredAt } =
+    const { id, actualValue, status, measuredAt, rationale } =
       RecordActualValueSchema.parse(input);
 
     const { count } = await database.epicValueMetric.updateMany({
@@ -167,7 +180,7 @@ export async function recordActualValue(
       action: "updated",
       entityType: "EpicValueMetric",
       entityId: id,
-      diff: { actualValue, status },
+      diff: { actualValue, status, ...(rationale ? { rationale } : {}) },
     });
     revalidateTag(`value-realization:${ctx.tenantId}`, "max");
     return { id };

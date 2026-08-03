@@ -2,20 +2,109 @@
   "$schema": "../schema/no.schema.json",
   "id": "value",
   "kind": "tela",
-  "titulo": "value",
+  "titulo": "Value Realization (benefit tracking pós-entrega)",
   "rota": "/cosmos/value",
   "componente": "apps/app/components/cosmos/screens/value.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/value-realization.ts",
+      "export": "listValueRealizations",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/value-realization.ts",
+      "export": "createValueMetric",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/value-realization.ts",
+      "export": "recordActualValue",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["EpicValueMetric", "Epic", "AuditLog"],
+  "safe": {
+    "pratica": "Benefit Realization / Epic Hypothesis — validar a hipótese de valor do épico com dado real depois da entrega (Lean Portfolio Management)",
+    "nivel": "Portfolio",
+    "faz": "Liga cada épico entregue ao indicador de negócio que ele prometeu mover, compara o planejado com o realizado, e obriga quem encerra a hipótese — confirmando ou declarando abaixo da meta — a registrar por quê. É o antídoto do épico zumbi: entregue, em execução para sempre, sem ninguém dizer se a aposta se pagou.",
+    "invariantes": [
+      "encerrar a hipótese (status done ou at-risk) exige justificativa; sem ela nada é gravado nem auditado",
+      "status não-terminal (pending, tracking) grava sem justificativa — continuar medindo não é decisão, e exigir texto aí só ensina a escrever 'ok'",
+      "a justificativa vai para o diff de auditoria, não para coluna: coluna guardaria só a última e perderia o histórico que a auditoria quer",
+      "a realização é derivada na leitura (realizado / planejado) e nunca persistida; sem valor realizado a tela mostra 'sem dados', jamais 0%",
+      "toda leitura e escrita filtra por tenantId da sessão; o epicId vindo do cliente é reconferido dentro do tenant antes de criar a métrica",
+      "escrita passa por requireRole(ADMIN|STE) — a mesma faixa de LeanBudget e InvestmentHorizon"
+    ],
+    "fonte": [
+      "docs/PRD-v1.0.md:822",
+      "docs/PRD-v1.0.md:836",
+      "docs/stories/epic-006/story-055-tela-value-realization.md",
+      "docs/superpowers/plans/2026-07-23-AUDIT-cosmos-screen-depth.md",
+      "SAFe 6.0 — Epic Hypothesis Statement e Lean Business Case (benefit realization)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/value-realization.ts",
+      "apps/app/app/(cosmos)/actions/value-realization.constants.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "value-1",
+      "tipo": "action",
+      "alvo": "recordActualValue — justificativa da decisão",
+      "hoje": "a hipótese podia ser confirmada ou declarada abaixo da meta sem nenhum motivo registrado; o UC-09 passo 6 exige a decisão gravada com o texto do racional",
+      "desejado": "justificativa obrigatória nos status terminais, recusando a gravação sem ela e levando o texto para o diff de auditoria",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "value-2",
+      "tipo": "seed",
+      "alvo": "EpicValueMetric do tenant demo",
+      "hoje": "nenhuma métrica semeada; a tela abria no estado vazio e nenhum dos dois caminhos de leitura (com e sem medição) era demonstrável",
+      "desejado": "indicadores ligados a épicos realmente semeados, cobrindo em medição, validado, abaixo da meta e aguardando dados",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "value-3",
+      "tipo": "tabela",
+      "alvo": "histórico de medições de EpicValueMetric",
+      "hoje": "EpicValueMetric guarda só a última medição (actualValue + measuredAt): cada gravação sobrescreve a anterior e não existe histórico algum",
+      "desejado": "tabela de snapshot por métrica, para a seta de tendência sobre as últimas 3 medições que o AC de docs/PRD-v1.0.md:840 exige",
+      "migration": true,
+      "bloqueio": true,
+      "fechada_em": null
+    },
+    {
+      "id": "value-4",
+      "tipo": "campo",
+      "alvo": "EpicValueMetric — vínculo com leadingIndicator do Epic",
+      "hoje": "metricLabel é texto livre; o UC-09 fala em leadingIndicators definidos no épico, e não há relação entre os dois — nada impede o indicador rastreado divergir do que o Lean Business Case prometeu",
+      "desejado": "referência ao leading indicator do épico, para a hipótese medida ser a mesma que foi declarada",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/value-realization.test.ts",
+    "apps/app/__tests__/screens/value.test.tsx"
+  ],
+  "commits": [],
+  "notas": "value-3 é o único bloqueio da trilha 1: a seta de tendência é AC explícito do PRD (docs/PRD-v1.0.md:840) e não sai sem tabela de histórico, que é migration e portanto da trilha 0. Nenhum passo desse AC foi implementado e nada foi aproximado no lugar — a tela não finge tendência. O resto do UC-09 está fechado.",
+  "atualizado_em": "2026-08-03"
 }

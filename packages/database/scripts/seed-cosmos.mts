@@ -49,6 +49,16 @@ const EPICS = [
   { id: 'EP-055', col: 'done', title: 'Migração para Design System v3', theme: 'Modernização da Plataforma', art: 'plat', owner: 'Helena Souza', wsjf: 7.5, size: 31, progress: 100 },
 ];
 
+// Benefit tracking do tenant demo. Cobre os dois caminhos que a tela precisa
+// mostrar: indicador já medido (realização derivada) e indicador ainda sem
+// medição, que deve aparecer como "sem dados" e nunca como 0%.
+const VALUE_METRICS = [
+  { epicTitle: 'SSO & SCIM Enterprise', metricLabel: 'Contas enterprise ativadas', unit: 'contas', planned: 40, actual: 34, status: 'tracking' },
+  { epicTitle: 'Migração para Design System v3', metricLabel: 'Tempo de entrega de tela nova', unit: '%', planned: -30, actual: -34, status: 'done' },
+  { epicTitle: 'FinOps guardrails por ART', metricLabel: 'Desvio de orçamento por ART', unit: '%', planned: -15, actual: -4, status: 'at-risk' },
+  { epicTitle: 'Pix recorrente & agendado', metricLabel: 'MRR incremental', unit: 'BRL', planned: 250_000, actual: null, status: 'pending' },
+];
+
 // Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
 // acima — resolvido para id na hora de gravar.
 const DECISIONS = [
@@ -167,6 +177,23 @@ async function main() {
     d++;
   }
   console.log('decisions created:', d);
+
+  let v = 0;
+  for (const m of VALUE_METRICS) {
+    const epicId = epicIdByTitle.get(m.epicTitle);
+    if (!epicId) continue;
+    const already = await db.epicValueMetric.findFirst({ where: { tenantId: tenant.id, epicId, metricLabel: m.metricLabel }, select: { id: true } });
+    if (already) continue;
+    await db.epicValueMetric.create({
+      data: {
+        tenantId: tenant.id, epicId, metricLabel: m.metricLabel, unit: m.unit,
+        plannedValue: m.planned, actualValue: m.actual, status: m.status,
+        measuredAt: m.actual === null ? null : new Date('2026-07-01T00:00:00Z'),
+      },
+    });
+    v++;
+  }
+  console.log('value metrics created:', v);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
