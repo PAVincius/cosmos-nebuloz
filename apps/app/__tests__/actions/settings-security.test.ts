@@ -3,12 +3,16 @@ import { MockAuthError, tenantCtx } from "../helpers/action-mocks";
 
 const dbMocks = vi.hoisted(() => ({
   ssoFindUnique: vi.fn(),
+  ssoFindFirst: vi.fn(),
   policyFindUnique: vi.fn(),
 }));
 
 vi.mock("@repo/database", () => ({
   database: {
-    tenantSSOConfig: { findUnique: dbMocks.ssoFindUnique },
+    tenantSSOConfig: {
+      findUnique: dbMocks.ssoFindUnique,
+      findFirst: dbMocks.ssoFindFirst,
+    },
     tenantSecurityPolicy: { findUnique: dbMocks.policyFindUnique },
   },
 }));
@@ -106,6 +110,42 @@ describe("getSecurityTab", () => {
       expect(r.data.securityPolicy).toBeNull();
     }
   });
+
+  // ── AC-002/AC-003 (story-061): a tela precisa saber SE existe IdP para não
+  // oferecer um botão que o servidor vai recusar — mas continua sem poder ler
+  // o certificado. A existência é apurada por uma consulta que testa
+  // "não nulo" no where e devolve só o tenantId.
+  it("informa que existe IdP configurado sem selecionar nenhum campo sensível (AC-003)", async () => {
+    dbMocks.ssoFindUnique.mockResolvedValue({
+      enabled: false,
+      updatedAt: null,
+    });
+    dbMocks.policyFindUnique.mockResolvedValue(null);
+    dbMocks.ssoFindFirst.mockResolvedValue({ tenantId: tenantCtx.tenantId });
+
+    const r = await getSecurityTab();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.ssoConfigured).toBe(true);
+    }
+    const args = dbMocks.ssoFindFirst.mock.calls[0][0];
+    expect(args.select).toEqual({ tenantId: true });
+    expect(args.where.tenantId).toBe(tenantCtx.tenantId);
+  });
+
+  it("informa que não há IdP configurado quando nenhum campo está preenchido (AC-002)", async () => {
+    dbMocks.ssoFindUnique.mockResolvedValue(null);
+    dbMocks.policyFindUnique.mockResolvedValue(null);
+    dbMocks.ssoFindFirst.mockResolvedValue(null);
+
+    const r = await getSecurityTab();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data.ssoConfigured).toBe(false);
+    }
+  });
 });
 
 describe("toggleSsoEnabled", () => {
@@ -164,6 +204,50 @@ describe("toggleSsoEnabled", () => {
     const r = await toggleSsoEnabled(false);
 
     expect(r.ok).toBe(false);
+  });
+
+  // ── AC-002 (story-061): PRD UC-18 só habilita o SSO depois que os metadados
+  // do IdP existem. Ligar sem IdP publica um caminho de login que não
+  // autentica ninguém.
+  it("recusa ligar o SSO sem nenhum dado de IdP configurado, sem gravar (AC-002)", async () => {
+    authMocks.requireRole.mockReturnValue(undefined);
+    dbMocks.ssoFindUnique.mockResolvedValue(null);
+
+    const r = await toggleSsoEnabled(true);
+
+    expect(r.ok).toBe(false);
+    expect(matureMocks.saveSSOConfig).not.toHaveBeenCalled();
+  });
+
+  it("recusa ligar quando a linha existe mas os campos de IdP estão vazios (AC-002)", async () => {
+    authMocks.requireRole.mockReturnValue(undefined);
+    dbMocks.ssoFindUnique.mockResolvedValue({
+      idpMetadataUrl: null,
+      idpEntityId: "",
+      idpCertificate: null,
+      spEntityId: "urn:cosmos:sp",
+    });
+
+    const r = await toggleSsoEnabled(true);
+
+    expect(r.ok).toBe(false);
+    expect(matureMocks.saveSSOConfig).not.toHaveBeenCalled();
+  });
+
+  it("deixa desligar o SSO mesmo sem IdP configurado — travar isso trancaria o tenant fora (AC-002)", async () => {
+    authMocks.requireRole.mockReturnValue(undefined);
+    dbMocks.ssoFindUnique.mockResolvedValue(null);
+    matureMocks.saveSSOConfig.mockResolvedValue({
+      ok: true,
+      data: { enabled: false },
+    });
+
+    const r = await toggleSsoEnabled(false);
+
+    expect(r.ok).toBe(true);
+    expect(matureMocks.saveSSOConfig).toHaveBeenCalledWith(
+      expect.objectContaining({ enabled: false })
+    );
   });
 });
 

@@ -25,11 +25,16 @@ import { fieldLabelStyle, fmtDate, inputStyle } from "./settings-shared";
 
 function SsoCard({
   ssoEnabled,
+  ssoConfigured,
   ssoUpdatedAt,
   canEdit,
   onChanged,
 }: {
   ssoEnabled: boolean;
+  /** Existe IdP gravado. Sem ele, toggleSsoEnabled recusa a ativação (PRD
+   *  UC-18), então oferecer o botão só produziria um erro — a tela diz o que
+   *  falta em vez de convidar para um caminho fechado. */
+  ssoConfigured: boolean;
   ssoUpdatedAt: string | null;
   canEdit: boolean;
   onChanged: () => void;
@@ -66,13 +71,32 @@ function SsoCard({
       tone={ssoEnabled ? "green" : "neutral"}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        {canEdit && <Switch on={ssoEnabled} onClick={toggle} tone="green" />}
+        {canEdit &&
+          (ssoConfigured || ssoEnabled ? (
+            <Switch on={ssoEnabled} onClick={toggle} tone="green" />
+          ) : (
+            <Badge tone="amber">IdP não configurado</Badge>
+          ))}
         <span style={{ fontSize: 12.5, color: "var(--ink-faint)" }}>
           {ssoUpdatedAt
             ? `Última atualização em ${fmtDate(ssoUpdatedAt)}`
             : "Nunca configurado"}
         </span>
       </div>
+      {canEdit && !(ssoConfigured || ssoEnabled) && (
+        <p
+          style={{
+            color: "var(--ink-faint)",
+            fontSize: 12,
+            lineHeight: 1.5,
+            margin: "10px 0 0",
+          }}
+        >
+          Configure o provedor de identidade antes de ativar o SSO — entity ID,
+          metadata URL ou certificado. Ativar sem IdP publicaria um caminho de
+          login incapaz de autenticar alguém, então o servidor recusa.
+        </p>
+      )}
     </SectionCard>
   );
 }
@@ -238,6 +262,7 @@ export default function SettingsSecurityTab() {
           <SsoCard
             canEdit={canEdit}
             onChanged={reload}
+            ssoConfigured={data.ssoConfigured}
             ssoEnabled={data.ssoEnabled}
             ssoUpdatedAt={data.ssoUpdatedAt}
           />

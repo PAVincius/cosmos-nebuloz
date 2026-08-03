@@ -1475,22 +1475,240 @@
       "$schema": "../schema/no.schema.json",
       "id": "settings",
       "kind": "tela",
-      "titulo": "settings",
+      "titulo": "Settings (workspace, RBAC, SSO, auditoria, notificações, SAFe e plano)",
       "rota": "/cosmos/settings",
       "componente": "apps/app/components/cosmos/screens/settings.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings.ts",
+          "export": "getWorkspaceTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings.ts",
+          "export": "updateWorkspaceInfo",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "getMembersTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "inviteMemberAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "updateMemberRoleAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "removeMemberAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "getSecurityTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "toggleSsoEnabled",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "saveSecurityPolicyAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-audit.ts",
+          "export": "getAuditTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-notifications.ts",
+          "export": "getNotificationsTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-notifications.ts",
+          "export": "updateNotificationsAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "export": "getSafeConfigTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "export": "saveWsjfSettingsAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Tenant",
+        "TenantMember",
+        "TenantSSOConfig",
+        "TenantSecurityPolicy",
+        "AuditLog",
+        "ART",
+        "WsjfSettings"
+      ],
+      "safe": {
+        "pratica": "Lean-Agile Leadership — governança do workspace: quem decide o quê (RBAC), como as pessoas provam quem são (SSO/2FA) e o que a organização consegue demonstrar depois (trilha de auditoria)",
+        "nivel": "Portfolio",
+        "faz": "Reúne em sete abas as decisões de governança do workspace: identidade do tenant, papéis dos membros, política de autenticação, trilha de auditoria, preferências de notificação, cadência SAFe do ART e o plano contratado — cada uma escrita pelo papel que responde por ela e por nenhum outro.",
+        "invariantes": [
+          "as abas administrativas fecham no servidor, não só na UI: getSecurityTab e getAuditTab recusam papel diferente de ADMIN antes de qualquer leitura de linha de SSO, política ou log",
+          "SSO não pode ser ligado sem provedor de identidade configurado (PRD UC-18): sem idpEntityId, idpMetadataUrl e idpCertificate, a ativação é recusada e nada é gravado — ligar sem IdP publicaria um caminho de login incapaz de autenticar alguém",
+          "desligar o SSO nunca é bloqueado, em nenhum estado de configuração: um guard simétrico trancaria o tenant do lado de fora de um SSO quebrado",
+          "campos sensíveis de TenantSSOConfig (certificado, entity id, metadata url) nunca são selecionados para exibição, nem mascarados; a existência de IdP é apurada por consulta que testa 'não nulo' no where e devolve só o tenantId",
+          "o toggle de SSO regrava os campos sensíveis inalterados, porque o saveSSOConfig subjacente sobrescreve com `input.x || null` e apagaria um IdP configurado se recebesse só `{ enabled }`",
+          "a política de segurança e a identidade do workspace só são graváveis por ADMIN; todo papel abaixo vê exatamente os mesmos valores em modo leitura",
+          "RBAC de membros não deixa o workspace sem dono: rebaixar ou remover o último ADMIN é recusado com motivo explícito, e ninguém se remove sozinho",
+          "a trilha de auditoria é capada em 25 por página, escopada ao tenant pela própria action madura, e o nome do ator vem de join com a lista real de membros — userId sem membro cai para o id cru e log sem userId aparece como 'Sistema'",
+          "a aba de plano é leitura pura de Tenant.plan: nenhuma fatura, assento ou dado de cartão é renderizado, nem de exemplo"
+        ],
+        "fonte": [
+          "docs/PRD-v1.0.md:1974",
+          "docs/PRD-v1.0.md:1846",
+          "docs/PRD-v1.0.md:1441",
+          "docs/srd-epic-007.md:378",
+          "docs/stories/epic-006/story-061-tela-settings.md",
+          "SAFe 6.0 — Lean-Agile Leadership"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/settings.ts",
+          "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "apps/app/app/(cosmos)/actions/settings-audit.ts",
+          "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "apps/app/app/(cosmos)/actions/settings-notifications.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "settings-1",
+          "tipo": "action",
+          "alvo": "toggleSsoEnabled — guarda de IdP configurado",
+          "hoje": "o toggle escrevia `enabled: true` em qualquer tenant, inclusive sem nenhum dado de IdP gravado. O PRD UC-18 (passos 3–6 e o fluxo alternativo E-2) só habilita o SSO depois que metadados/certificado existem e o teste passa; ligar sem IdP publica um caminho de login que não autentica ninguém",
+          "desejado": "recusar a ativação quando idpEntityId, idpMetadataUrl e idpCertificate estão todos vazios, dizendo o que falta, e nunca bloquear a desativação",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-2",
+          "tipo": "ui",
+          "alvo": "aba Segurança — por que o SSO não pode ser ligado",
+          "hoje": "a aba oferecia o botão de ativar mesmo sem IdP, e o usuário só descobria pelo erro depois do clique; a tela não tinha como saber se havia IdP sem ler campo sensível",
+          "desejado": "booleano ssoConfigured derivado por consulta que não seleciona campo sensível, e a tela troca o botão por uma explicação do que falta",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-3",
+          "tipo": "ui",
+          "alvo": "aba Plano & faturamento — saída para quem quer mudar de plano",
+          "hoje": "a aba dizia honestamente que não há provedor de pagamento configurado, mas terminava sem caminho: o usuário que precisa mudar de plano ficava sem para onde ir",
+          "desejado": "indicação de contato comercial usando o endereço que o repo já usa no template de convite (packages/email/templates/invite.tsx), sem inventar contato novo",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-4",
+          "tipo": "seed",
+          "alvo": "membros do workspace demo",
+          "hoje": "o seed criava um único ADMIN (dev@cosmos.local), então a aba de Membros abria com uma linha só — a matriz de RBAC não tinha o que mostrar e as guardas de último-ADMIN e auto-remoção não tinham como ser demonstradas",
+          "desejado": "três membros adicionais com papéis distintos (RTE, PO, DEV) no tenant demo",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-5",
+          "tipo": "tabela",
+          "alvo": "faturamento (fatura, assento, assinatura, método de pagamento)",
+          "hoje": "não existe nada de cobrança neste schema: nenhum Invoice, Seat, Subscription ou método de pagamento, e nenhum cliente de provedor de pagamento no repo. A aba mostra somente Tenant.plan em leitura, mais o contato comercial — nenhuma fatura, assento ou cartão é desenhado, nem de exemplo",
+          "desejado": "subsistema de cobrança com integração de provedor de pagamento, faturas e assentos por plano",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-6",
+          "tipo": "action",
+          "alvo": "SSO restrito ao plano mais alto",
+          "hoje": "o PRD (docs/PRD-v1.0.md:1441) coloca SSO só no plano de topo, mas o vocabulário de plano do PRD (FREE/TEAM/BUSINESS/ENTERPRISE) não é o do schema (SubscriptionPlan = ORBIT/GALAXY/NEBULA/UNIVERSE), e a única ponte no repo é um rótulo de tela em settings/workspace/components/plan-labels.ts. Trancar autenticação com base numa correspondência inferida não é decisão desta trilha",
+          "desejado": "mapa plano↔recurso explícito e versionado, e a guarda de plano na ativação do SSO",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-7",
+          "tipo": "ui",
+          "alvo": "editor completo de SSO (metadados do IdP e teste de configuração)",
+          "hoje": "o UC-18 do PRD descreve entrada de metadados do IdP, exportação do metadata do SP e um botão 'Test Configuration' que valida a asserção antes de habilitar. Esta aba só liga e desliga; entrar com certificado é entrada de segredo e mora no editor de SSO fora do Cosmos",
+          "desejado": "editor de configuração de SSO com teste de asserção, conforme UC-18",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-8",
+          "tipo": "seed",
+          "alvo": "TenantSSOConfig, TenantSecurityPolicy e AuditLog do tenant demo",
+          "hoje": "nenhum dos três é semeado e a tela mostra 'Nunca configurado' / padrões / trilha vazia",
+          "desejado": "decidido não semear: os três são estado que só existe se alguém de fato configurou ou agiu. Semear um AuditLog seria fabricar prova de auditoria — exatamente o oposto do que a aba existe para fazer — e semear um IdP exigiria inventar certificado",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/settings.test.ts",
+        "apps/app/__tests__/actions/settings-security.test.ts",
+        "apps/app/__tests__/actions/settings-audit.test.ts",
+        "apps/app/__tests__/actions/settings-members.test.ts",
+        "apps/app/__tests__/actions/settings-safe.test.ts",
+        "apps/app/__tests__/actions/settings-notifications.test.ts",
+        "apps/app/__tests__/screens/settings.test.tsx"
+      ],
       "commits": [],
+      "notas": "Balde B e não A por causa de uma aba só: 'Plano & faturamento' é balde C isolado (não há nada de invoice/seat/assinatura no schema) e fica em leitura de Tenant.plan mais contato comercial, com a ausência registrada na lacuna settings-5. As outras seis abas já estavam ligadas ao layer maduro de actions com RBAC no servidor; a profundidade que faltava era de regra, não de leitura — o toggle de SSO ligava autenticação federada sem IdP nenhum configurado, e nada no repo impedia. As guardas de papel não foram afrouxadas: os testes provam que getSecurityTab e getAuditTab recusam não-ADMIN antes de qualquer leitura.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

@@ -56,6 +56,27 @@ export default function SettingsBillingTab() {
           ou dados de cartão simulados — apenas o tier de plano real do
           workspace, acima.
         </p>
+        {/* A saída honesta para quem quer trocar de plano é falar com gente. O
+            endereço é o mesmo já usado pelo template de convite
+            (packages/email/templates/invite.tsx) — nenhum contato inventado. */}
+        <p
+          style={{
+            fontSize: 13,
+            color: "var(--ink-muted)",
+            margin: "12px 0 0",
+            lineHeight: 1.6,
+          }}
+        >
+          Para mudar de plano, contratar assentos ou pedir uma proposta, fale
+          com o time comercial em{" "}
+          <a
+            href="mailto:suporte@nebuloz.com"
+            style={{ color: "var(--accent)", fontWeight: 600 }}
+          >
+            suporte@nebuloz.com
+          </a>
+          .
+        </p>
       </SectionCard>
     </div>
   );

@@ -1247,6 +1247,36 @@ async function main() {
     ig++;
   }
   console.log("integrations upserted:", ig);
+
+  // Membros do workspace (/cosmos/settings → aba Membros). O seed criava um
+  // único ADMIN (dev@cosmos.local), então a aba de RBAC abria com uma linha só
+  // e a matriz de papéis não tinha o que mostrar — nem dava para exercitar as
+  // guardas de "não remova o último ADMIN" e "não remova você mesmo".
+  // SSO, política de segurança e AuditLog NÃO são semeados de propósito: são
+  // estado que só existe se alguém configurou ou agiu, e semear AuditLog seria
+  // fabricar prova de auditoria, o oposto do que a aba existe para fazer.
+  const WORKSPACE_MEMBERS = [
+    { email: "rte@cosmos.local", name: "Marina Alves", role: "RTE" },
+    { email: "po@cosmos.local", name: "Bruno Silva", role: "PO" },
+    { email: "dev@cosmos.local.dev", name: "Carla Nunes", role: "DEV" },
+  ] as const;
+
+  let mem = 0;
+  for (const m of WORKSPACE_MEMBERS) {
+    const user = await db.user.upsert({
+      where: { email: m.email },
+      update: { name: m.name },
+      create: { email: m.email, name: m.name, emailVerified: true },
+      select: { id: true },
+    });
+    await db.tenantMember.upsert({
+      where: { tenantId_userId: { tenantId: tenant.id, userId: user.id } },
+      update: { role: m.role },
+      create: { tenantId: tenant.id, userId: user.id, role: m.role },
+    });
+    mem++;
+  }
+  console.log("workspace members upserted:", mem);
 }
 
 // Guarda de entrypoint: __tests__/seed-cosmos.test.ts importa seedDevMembership
