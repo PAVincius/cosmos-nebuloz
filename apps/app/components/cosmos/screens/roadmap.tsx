@@ -6,20 +6,22 @@
 // foreign key (only startDate/endDate — see RoadmapItem in portfolio.prisma),
 // and PIPlan windows aren't guaranteed aligned across ARTs, so the period
 // columns here are calendar quarters computed directly from the items' own
-// real dates, not a fabricated PI axis. Read-only: drag-to-edit / context-
-// menu date editing needs a mutation this screen doesn't wire — see
-// apps/app/app/actions/roadmap/index.ts for the full (unused-by-this-screen)
-// CRUD layer that already exists for that. The handoff's per-theme filter is
-// skipped: RoadmapItem has no theme linkage without an Epic→StrategicTheme
-// join this screen doesn't fetch.
-import { useEffect, useMemo, useState } from "react";
+// real dates, not a fabricated PI axis. Replanejamento por trimestre
+// (antecipar/adiar) passa por moveRoadmapItemToQuarter, que preserva a duração
+// do item e respeita o teto de 25 itens por ART/trimestre da FR-028. The
+// handoff's per-theme filter is skipped: RoadmapItem has no theme linkage
+// without an Epic→StrategicTheme join this screen doesn't fetch.
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   listRoadmapItems,
+  moveRoadmapItemToQuarter,
   type RoadmapItemView,
 } from "@/app/(cosmos)/actions/roadmap";
 import { EmptyState } from "../empty-state";
 import { Icon } from "../icons";
 import { Badge, ErrorState, PageHeader, type Tone } from "../kit";
+import { useActionToast } from "../use-action-toast";
 
 const STATUS_INFO: Record<string, { tone: Tone; label: string }> = {
   PLANNED: { tone: "neutral", label: "Planejado" },
@@ -132,6 +134,18 @@ function isCurrentPeriod(period: Period): boolean {
   return now >= period.startMs && now < period.endMs;
 }
 
+const quarterNudgeStyle: CSSProperties = {
+  alignItems: "center",
+  background: "transparent",
+  border: "none",
+  borderRadius: "var(--r-sm)",
+  color: "var(--ink-faint)",
+  cursor: "pointer",
+  display: "inline-flex",
+  flexShrink: 0,
+  padding: 2,
+};
+
 // ── ART lanes ──
 
 type Lane = { key: string; label: string; items: RoadmapItemView[] };
@@ -163,21 +177,59 @@ export function buildLanes(items: RoadmapItemView[]): Lane[] {
 
 // ── Screen ──
 
+// Trimestre vizinho ao de início do item. O deslocamento vira o ano sozinho:
+// Q1 antecipado é Q4 do ano anterior, Q4 adiado é Q1 do seguinte.
+function shiftQuarter(
+  startIso: string,
+  delta: 1 | -1
+): { year: number; quarter: number } {
+  const { year, q } = quarterOf(Date.parse(startIso));
+  const index = year * 4 + (q - 1) + delta;
+  return { year: Math.floor(index / 4), quarter: (index % 4) + 1 };
+}
+
 export default function RoadmapScreen() {
   const [items, setItems] = useState<RoadmapItemView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [moving, setMoving] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     listRoadmapItems().then((r) => {
       if (r.ok) {
         setItems(r.data);
+        setError(false);
       } else {
         setError(true);
       }
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const move = async (item: RoadmapItemView, delta: 1 | -1) => {
+    if (moving) {
+      return;
+    }
+    setMoving(item.id);
+    const target = shiftQuarter(item.startDate, delta);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => moveRoadmapItemToQuarter({ id: item.id, ...target }),
+      {
+        loading: "Movendo item do roadmap...",
+        success: `"${item.title}" movido para ${target.year}-Q${target.quarter}.`,
+        error: (err: string) => `Não foi possível mover: ${err}`,
+      }
+    );
+    setMoving(null);
+    if (res.ok) {
+      load();
+    }
+  };
 
   const periods = useMemo(() => computePeriods(items), [items]);
   const lanes = useMemo(() => buildLanes(items), [items]);
@@ -461,6 +513,22 @@ export default function RoadmapScreen() {
                             {item.title}
                           </span>
                           <Badge tone={info.tone}>{info.label}</Badge>
+                          <button
+                            aria-label={`Antecipar ${item.title} um trimestre`}
+                            onClick={() => move(item, -1)}
+                            style={quarterNudgeStyle}
+                            type="button"
+                          >
+                            <Icon name="arrowLeft" size={12} />
+                          </button>
+                          <button
+                            aria-label={`Adiar ${item.title} um trimestre`}
+                            onClick={() => move(item, 1)}
+                            style={quarterNudgeStyle}
+                            type="button"
+                          >
+                            <Icon name="arrowRight" size={12} />
+                          </button>
                         </div>
                       );
                     })}

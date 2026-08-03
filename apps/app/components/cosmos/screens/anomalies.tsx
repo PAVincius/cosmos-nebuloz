@@ -18,6 +18,7 @@ import {
   generateCostAnomalyNarrativeAction,
   getAnomalySensitivity,
   listCostAnomalies,
+  resetAnomalySensitivity,
   setAnomalySensitivity,
 } from "@/app/(cosmos)/actions/anomalies";
 import { EmptyState } from "../empty-state";
@@ -95,6 +96,7 @@ function SensitivityModal({
   const { close } = useModal();
   const [value, setValue] = useState(String(current.threshold));
   const [saving, setSaving] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   const num = Number(value);
   const valid =
@@ -123,6 +125,26 @@ function SensitivityModal({
     }
   };
 
+  // Só aparece quando há override. Voltar ao padrão apaga a linha de
+  // AnomalyRuleConfig — não regrava o padrão como escolha do tenant.
+  const restoreDefault = async () => {
+    if (resetting) {
+      return;
+    }
+    setResetting(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => resetAnomalySensitivity(), {
+      loading: "Restaurando o padrão da plataforma...",
+      success: "Sensibilidade de volta ao padrão da plataforma.",
+      error: (err: string) => `Não foi possível restaurar: ${err}`,
+    });
+    setResetting(false);
+    if (res.ok) {
+      close();
+      onSaved?.();
+    }
+  };
+
   return (
     <ModalCard
       icon={<Icon name="sliders" size={16} strokeWidth={2.4} />}
@@ -145,7 +167,24 @@ function SensitivityModal({
             value={value}
           />
         </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end",
+            alignItems: "center",
+          }}
+        >
+          {!current.isDefault && (
+            <Button
+              onClick={restoreDefault}
+              size="sm"
+              style={{ marginRight: "auto" }}
+              variant="ghost"
+            >
+              Restaurar padrão
+            </Button>
+          )}
           <Button onClick={close} size="sm" variant="secondary">
             Cancelar
           </Button>

@@ -87,6 +87,64 @@ const THEME_META: Record<
   },
 };
 
+// Pilares do Strategy Map. Pilar é o agrupamento grosso acima do tema: sem
+// eles /cosmos/strategy abre vazia, e um pilar sem tema vinculado tem rollup 0
+// para sempre, o que faz a tela parecer quebrada em vez de vazia.
+//
+// "Eficiência de Custo" fica de fora de propósito: a tela agora mostra tema sem
+// pilar como lacuna de alinhamento (story-060 AC-002), e um seed em que tudo
+// está alinhado esconderia esse caminho. Portfólio real tem tema órfão.
+const PILLARS = [
+  {
+    name: "Crescimento",
+    tone: "green",
+    themes: ["Expansão LATAM", "Enterprise Ready"],
+  },
+  {
+    name: "Plataforma & Confiança",
+    tone: "purple",
+    themes: ["Modernização da Plataforma", "Confiança & Risco"],
+  },
+  { name: "Inteligência de Dados", tone: "amber", themes: ["Data & AI"] },
+];
+
+// Contexto de ciclo de vida coerente com o estado gravado do épico.
+//
+// transitionEpicStatus não hidrata o ator no estado persistido: reconstrói a
+// máquina do zero e reproduz o caminho canônico até o estado atual
+// (fastForwardToState), passando pelos MESMOS guards. Um épico gravado em
+// PORTFOLIO_BACKLOG sem investScore/hipótese nunca chega lá no replay — o ator
+// trava em ANALYZING e o arraste no board falha com uma mensagem sobre o estado
+// errado. Estado não alcançável não é dado ruim, é dado impossível.
+//
+// A regra, provada em apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts:
+//  - ANALYZING ou além: investScore >= 40 e hypothesis com >= 50 caracteres
+//    (canTransitionToBacklog);
+//  - IMPLEMENTING ou além: também leanBudgetAllocation > 0 e GovernedEpic
+//    aprovado (canTransitionToImplementing).
+// FUNNEL fica sem nada de propósito: é o estado inicial, ANALYZE não tem guard,
+// e um épico de funil sem hipótese é o caso realista.
+const GATED_FROM_ANALYZING = new Set([
+  "ANALYZING",
+  "PORTFOLIO_BACKLOG",
+  "IMPLEMENTING",
+  "DONE",
+]);
+const GATED_FROM_IMPLEMENTING = new Set(["IMPLEMENTING", "DONE"]);
+
+function lifecycleContext(lifecycleStatus: string, title: string) {
+  const analyzed = GATED_FROM_ANALYZING.has(lifecycleStatus);
+  const funded = GATED_FROM_IMPLEMENTING.has(lifecycleStatus);
+  return {
+    investScore: analyzed ? 72 : null,
+    hypothesis: analyzed
+      ? `Acreditamos que "${title}" reduz atrito para o cliente e sustenta a meta de receita do PI; validaremos pelos indicadores de valor do épico.`
+      : null,
+    leanBudgetAllocation: funded ? 250_000 : null,
+    needsGovernanceApproval: funded,
+  };
+}
+
 const EPICS = [
   {
     id: "EP-104",
@@ -445,6 +503,229 @@ const DEPENDENCIES = [
   },
 ];
 
+// Large Solution do tenant demo. Sem isto /cosmos/solution abre em "Nenhum
+// solution train cadastrado" e o rollup multi-ART não tem o que consolidar.
+// O ART semeado abaixo é ligado a este trem — o tenant demo tem um ART só, e é
+// por isso que nenhuma dependência cross-ART é semeada: ela exige dois ARTs com
+// features próprias, e inventar o segundo mudaria a base de Times, Capacidade e
+// Program Board de outras trilhas. Fica registrado como lacuna no nó.
+const SOLUTION_TRAIN = {
+  name: "Solution Train Pagamentos",
+  description:
+    "Solução de pagamentos ponta a ponta: core multi-tenant, antifraude e Open Finance.",
+};
+
+const CAPABILITIES = [
+  {
+    title: "Liquidação em tempo real ponta a ponta",
+    description:
+      "Capacidade de liquidar transações em segundos, do core ao extrato do cliente.",
+    status: "IMPLEMENTING",
+    milestone: "Marco Q3",
+    order: 0,
+  },
+  {
+    title: "Antifraude compartilhado entre canais",
+    description:
+      "Motor de score único para app, web e parceiros, com decisão em tempo real.",
+    status: "ANALYZING",
+    milestone: "Marco Q4",
+    order: 1,
+  },
+  {
+    title: "Consentimento Open Finance ponta a ponta",
+    description:
+      "Concessão, uso e revogação de consentimento auditáveis em toda a solução.",
+    status: "BACKLOG",
+    milestone: "Marco Q1 2027",
+    order: 2,
+  },
+];
+
+// Riscos de nível de solução — os que nenhum ART resolve sozinho. Os quatro
+// desfechos ROAM aparecem porque SolutionROAMStatus é um enum com apenas eles:
+// não há UNCLASSIFIED neste modelo, ao contrário de Risk.roamStatus (lacuna
+// registrada no nó).
+const SOLUTION_RISKS = [
+  {
+    title: "Homologação do regulador fora do controle do trem",
+    description:
+      "A janela de homologação do Open Finance é definida pelo regulador e não pelo Solution Train.",
+    roamStatus: "ACCEPTED" as const,
+    owner: "Marina Alves",
+  },
+  {
+    title: "Antifraude compartilhado sem dono de arquitetura",
+    description:
+      "O motor de score atravessa dois ARTs e ainda não tem System Architect designado.",
+    roamStatus: "OWNED" as const,
+    owner: "Marina Alves",
+  },
+  {
+    title: "Contrato do provedor de liquidação renegociado",
+    description:
+      "O provedor aceitou o SLA de liquidação em segundos; o risco de prazo saiu do caminho crítico.",
+    roamStatus: "RESOLVED" as const,
+    owner: null,
+  },
+];
+
+// PI Objectives do PI ativo (story-060). Sem eles /cosmos/piplanning abre com
+// "Nenhum objetivo cadastrado" nos dois painéis e o PPM fica sem numerador e
+// sem denominador. `plannedValue`/`achievedValue` somam 18/24 = 75%, abaixo da
+// meta SAFe de 80% de propósito: é o caso em que a faixa do PPM tem o que dizer.
+// O objetivo stretch nasce com plannedValue 0 — stretch não entra no
+// compromisso, é justamente o que a distinção significa.
+const PI_OBJECTIVES = [
+  {
+    team: "Squad Atlas",
+    title: "Concluir o isolamento de tenant no core",
+    businessValue: 9,
+    isStretch: false,
+    status: "IN_PROGRESS",
+    plannedValue: 9,
+    achievedValue: 7,
+  },
+  {
+    team: "Squad Atlas",
+    title: "Publicar a agregação Open Finance em sandbox do regulador",
+    businessValue: 8,
+    isStretch: false,
+    status: "IN_PROGRESS",
+    plannedValue: 8,
+    achievedValue: 4,
+  },
+  {
+    team: "Squad Orion",
+    title: "Reduzir o onboarding LATAM para três dias",
+    businessValue: 7,
+    isStretch: false,
+    status: "ACHIEVED",
+    plannedValue: 7,
+    achievedValue: 7,
+  },
+  {
+    team: "Squad Orion",
+    title: "Piloto de score antifraude em tempo real",
+    businessValue: 5,
+    isStretch: true,
+    status: "NOT_STARTED",
+    plannedValue: 0,
+    achievedValue: 0,
+  },
+];
+
+// Confidence vote do PI ativo (story-060). Duas rodadas, como a story-018
+// AC-005 descreve: a primeira fecha abaixo do limiar de 3.0 e manda o ART
+// replanejar (REWORK), a segunda passa e aprova o commitment. O PI está
+// EXECUTING, então as duas rodadas são história — é por isso que ambas nascem
+// reveladas e fechadas, e não como rodada aberta esperando voto.
+//
+// `participantCount` é o denominador congelado no tally, e as contagens por
+// nota são o próprio agregado anônimo: o modelo da story-018 não tem coluna que
+// ligue voto a votante, então nenhum usuário falso é criado aqui para
+// "representar" quem votou — não haveria onde guardá-lo.
+const CONFIDENCE_ROUNDS = [
+  {
+    roundNumber: 1,
+    xStateStatus: "REWORK",
+    counts: [1, 4, 4, 2, 0],
+    participantCount: 12,
+    revealedAt: "2026-07-03T18:20:00Z",
+  },
+  {
+    roundNumber: 2,
+    xStateStatus: "APPROVED",
+    counts: [0, 1, 2, 6, 3],
+    participantCount: 12,
+    revealedAt: "2026-07-03T20:05:00Z",
+  },
+];
+
+// Registro ROAM do PI ativo (story-059). Sem ele /cosmos/risks abre com a
+// matriz 5×5 inteira vazia e o registro no estado vazio, e o gate de commitment
+// da story-019 AC-003 não tem em quem aparecer. Os cinco níveis de
+// probabilidade e de impacto aparecem de propósito, e dois riscos ficam
+// UNCLASSIFIED: é exatamente o estado que o RTE precisa enxergar antes de
+// comprometer o PI. Os desfechos respeitam os mesmos guards da action —
+// MITIGATED tem plano de ≥30 caracteres, RESOLVED tem nota, OWNED tem dono.
+const RISKS: {
+  title: string;
+  description: string;
+  category: string;
+  severity: number;
+  probability: string;
+  impact: string;
+  roamStatus: string;
+  mitigationPlan?: string;
+  resolutionNote?: string;
+}[] = [
+  {
+    title: "Provedor de antifraude sem SLA contratado",
+    description:
+      "O contrato com o provedor externo de antifraude vence no meio do PI e ainda não há SLA de latência assinado.",
+    category: "EXTERNAL",
+    severity: 5,
+    probability: "high",
+    impact: "very_high",
+    roamStatus: "OWNED",
+  },
+  {
+    title: "Migração multi-tenant sem janela de manutenção aprovada",
+    description:
+      "A virada do core multi-tenant precisa de janela noturna, e o comitê de mudança ainda não aprovou a data.",
+    category: "TECHNICAL",
+    severity: 4,
+    probability: "medium",
+    impact: "high",
+    roamStatus: "MITIGATED",
+    mitigationPlan:
+      "Plano B ensaiado: virada em duas etapas, com espelhamento de leitura por 48h e rollback por feature flag.",
+  },
+  {
+    title: "Homologação do Open Finance depende de terceiro",
+    description:
+      "A homologação da agregação depende do sandbox do regulador, cuja fila de agendamento não é controlada pelo ART.",
+    category: "COMPLIANCE",
+    severity: 4,
+    probability: "medium",
+    impact: "very_high",
+    roamStatus: "ACCEPTED",
+  },
+  {
+    title: "Rotatividade no squad de Dados",
+    description:
+      "Duas saídas no trimestre reduziram a capacidade do squad de Dados abaixo do planejado para o PI.",
+    category: "CAPACITY",
+    severity: 3,
+    probability: "low",
+    impact: "medium",
+    roamStatus: "RESOLVED",
+    resolutionNote:
+      "Duas contratações fecharam no início do PI e a capacidade voltou ao planejado.",
+  },
+  {
+    title: "Custo de infraestrutura acima do orçamento do PI",
+    description:
+      "A projeção de custo do cluster novo estoura o orçamento do PI se o tráfego crescer como previsto.",
+    category: "BUSINESS",
+    severity: 4,
+    probability: "very_high",
+    impact: "high",
+    roamStatus: "UNCLASSIFIED",
+  },
+  {
+    title: "Contrato de dados do parceiro LATAM ainda em revisão jurídica",
+    description:
+      "O aditivo de tratamento de dados do parceiro segue em revisão e trava o piloto na região.",
+    category: "DEPENDENCY",
+    severity: 2,
+    probability: "very_low",
+    impact: "low",
+    roamStatus: "UNCLASSIFIED",
+  },
+];
+
 // Decision Log do tenant demo. `target` é o título do épico ou do tema semeado
 // acima — resolvido para id na hora de gravar.
 const DECISIONS = [
@@ -588,12 +869,55 @@ async function main() {
   }
   console.log("themes:", themeByName.size);
 
+  // Pilares e o vínculo tema → pilar. O vínculo é reaplicado a cada re-seed:
+  // um tema criado por seed antigo nasceu com pillarId nulo e ficaria órfão
+  // para sempre.
+  let p = 0;
+  for (const [i, pillarDef] of PILLARS.entries()) {
+    const existingPillar = await db.strategyPillar.findFirst({
+      where: { tenantId: tenant.id, name: pillarDef.name },
+      select: { id: true },
+    });
+    const pillarData = {
+      tenantId: tenant.id,
+      name: pillarDef.name,
+      tone: pillarDef.tone,
+      order: i,
+    };
+    const pillarRow = existingPillar
+      ? await db.strategyPillar.update({
+          where: { id: existingPillar.id },
+          data: pillarData,
+          select: { id: true },
+        })
+      : await db.strategyPillar.create({
+          data: pillarData,
+          select: { id: true },
+        });
+
+    for (const themeName of pillarDef.themes) {
+      const themeId = themeByName.get(themeName);
+      if (!themeId) {
+        continue;
+      }
+      await db.strategicTheme.update({
+        where: { id: themeId },
+        data: { pillarId: pillarRow.id },
+      });
+    }
+    p++;
+  }
+  console.log("pillars upserted:", p);
+
   let n = 0;
+  const needsGovernance: string[] = [];
   for (const [i, e] of EPICS.entries()) {
+    const lifecycleStatus = LIFECYCLE[e.col] as string;
+    const gate = lifecycleContext(lifecycleStatus, e.title);
     const data = {
       tenantId: tenant.id,
       title: e.title,
-      lifecycleStatus: LIFECYCLE[e.col],
+      lifecycleStatus,
       order: i,
       strategicThemeId: themeByName.get(e.theme) ?? null,
       wsjf: e.wsjf,
@@ -604,6 +928,9 @@ async function main() {
       artTone: ART_TONE[e.art] ?? "accent",
       featureCount: 100,
       doneFeatureCount: e.progress, // progress% = done/total
+      investScore: gate.investScore,
+      hypothesis: gate.hypothesis,
+      leanBudgetAllocation: gate.leanBudgetAllocation,
     };
     const existing = await db.epic.findFirst({
       where: { tenantId: tenant.id, title: e.title },
@@ -617,9 +944,31 @@ async function main() {
         })
       : await db.epic.create({ data, select: { id: true } });
     epicIdByTitle.set(e.title, epicRow.id);
+    if (gate.needsGovernanceApproval) {
+      needsGovernance.push(epicRow.id);
+    }
     n++;
   }
   console.log("epics upserted:", n);
+
+  // A aprovação de governança é o outro guard de START_IMPLEMENTING, e ela mora
+  // em GovernedEpic, não no Epic. Sem esta linha, arrastar um card do Portfolio
+  // Backlog para Implementando falha mesmo com orçamento alocado.
+  let ge = 0;
+  for (const epicId of needsGovernance) {
+    await db.governedEpic.upsert({
+      where: { epicId },
+      update: { governanceStatus: "approved" },
+      create: {
+        tenantId: tenant.id,
+        epicId,
+        valueStreamId: null,
+        governanceStatus: "approved",
+      },
+    });
+    ge++;
+  }
+  console.log("governed epics approved:", ge);
 
   // Decision Log. Sem entrada, /cosmos/decisions do tenant demo abre no estado
   // vazio e o export de auditoria não tem o que provar. Cada linha aponta para
@@ -1038,6 +1387,221 @@ async function main() {
     dep++;
   }
   console.log("dependency links:", dep);
+
+  // Riscos ROAM do PI ativo. `status` é a coluna legada de desfecho que outros
+  // leitores ainda consultam; roamTransition mantém as duas em sincronia, então
+  // o seed já nasce sincronizado em vez de deixar o registro divergente.
+  const piMidpoint = new Date(Date.UTC(2026, 7, 3));
+  let rk = 0;
+  for (const r of RISKS) {
+    const riskData = {
+      tenantId: tenant.id,
+      piPlanId: piPlan.id,
+      title: r.title,
+      description: r.description,
+      category: r.category,
+      severity: r.severity,
+      probability: r.probability,
+      impact: r.impact,
+      roamStatus: r.roamStatus,
+      status: r.roamStatus === "UNCLASSIFIED" ? "IDENTIFIED" : r.roamStatus,
+      ownerUserId: r.roamStatus === "OWNED" ? devMember.userId : null,
+      ownedAt: r.roamStatus === "OWNED" ? piMidpoint : null,
+      mitigationPlan: r.mitigationPlan ?? null,
+      resolutionNote: r.resolutionNote ?? null,
+      resolvedAt: r.roamStatus === "RESOLVED" ? piMidpoint : null,
+    };
+    const existingRisk = await db.risk.findFirst({
+      where: { tenantId: tenant.id, title: r.title },
+      select: { id: true },
+    });
+    if (existingRisk) {
+      await db.risk.update({ where: { id: existingRisk.id }, data: riskData });
+    } else {
+      await db.risk.create({ data: riskData });
+    }
+    rk++;
+  }
+  console.log("ROAM risks:", rk);
+
+  let obj = 0;
+  for (const o of PI_OBJECTIVES) {
+    const objectiveData = {
+      tenantId: tenant.id,
+      piPlanId: piPlan.id,
+      teamId: teamIdByName.get(o.team) ?? null,
+      title: o.title,
+      businessValue: o.businessValue,
+      isStretch: o.isStretch,
+      status: o.status,
+      plannedValue: o.plannedValue,
+      achievedValue: o.achievedValue,
+    };
+    const existingObjective = await db.pIObjective.findFirst({
+      where: { tenantId: tenant.id, piPlanId: piPlan.id, title: o.title },
+      select: { id: true },
+    });
+    if (existingObjective) {
+      await db.pIObjective.update({
+        where: { id: existingObjective.id },
+        data: objectiveData,
+      });
+    } else {
+      await db.pIObjective.create({ data: objectiveData });
+    }
+    obj++;
+  }
+  console.log("PI objectives:", obj);
+
+  // Cerimônia de PI Planning + rodadas de confidence vote. A PISession é a
+  // cerimônia; cada ConfidenceVoteSession é uma rodada dela.
+  const existingPiSession = await db.pISession.findFirst({
+    where: { tenantId: tenant.id, piPlanId: piPlan.id, type: "PLANNING" },
+    select: { id: true },
+  });
+  const piSession =
+    existingPiSession ??
+    (await db.pISession.create({
+      data: { tenantId: tenant.id, piPlanId: piPlan.id, type: "PLANNING" },
+      select: { id: true },
+    }));
+
+  let cv = 0;
+  for (const r of CONFIDENCE_ROUNDS) {
+    const totalVotes = r.counts.reduce((acc, count) => acc + count, 0);
+    const weighted = r.counts.reduce(
+      (acc, count, index) => acc + count * (index + 1),
+      0
+    );
+    const aggregateScore = totalVotes > 0 ? weighted / totalVotes : 0;
+    const revealedAt = new Date(r.revealedAt);
+
+    const voteSession = await db.confidenceVoteSession.upsert({
+      where: {
+        piSessionId_roundNumber: {
+          piSessionId: piSession.id,
+          roundNumber: r.roundNumber,
+        },
+      },
+      update: { xStateStatus: r.xStateStatus, averageScore: aggregateScore },
+      create: {
+        tenantId: tenant.id,
+        piSessionId: piSession.id,
+        roundNumber: r.roundNumber,
+        xStateStatus: r.xStateStatus,
+        averageScore: aggregateScore,
+      },
+      select: { id: true },
+    });
+
+    const tallyData = {
+      score1Count: r.counts[0],
+      score2Count: r.counts[1],
+      score3Count: r.counts[2],
+      score4Count: r.counts[3],
+      score5Count: r.counts[4],
+      totalVotes,
+      participantCount: r.participantCount,
+      participationRate: (totalVotes / r.participantCount) * 100,
+      aggregateScore,
+      revealedAt,
+      closedAt: revealedAt,
+    };
+    await db.confidenceVoteTally.upsert({
+      where: {
+        voteSessionId_round: {
+          voteSessionId: voteSession.id,
+          round: r.roundNumber,
+        },
+      },
+      update: tallyData,
+      create: {
+        tenantId: tenant.id,
+        voteSessionId: voteSession.id,
+        piPlanId: piPlan.id,
+        round: r.roundNumber,
+        ...tallyData,
+      },
+    });
+    cv++;
+  }
+  console.log("confidence vote rounds:", cv);
+
+  // Large Solution: trem, capabilities e riscos de nível de solução. O ART
+  // semeado acima passa a pertencer ao trem — sem esse vínculo o rollup por ART
+  // de /cosmos/solution fica vazio mesmo com o trem cadastrado.
+  const existingTrain = await db.solutionTrain.findFirst({
+    where: { tenantId: tenant.id, name: SOLUTION_TRAIN.name },
+    select: { id: true },
+  });
+  const solutionTrain = existingTrain
+    ? await db.solutionTrain.update({
+        where: { id: existingTrain.id },
+        data: { description: SOLUTION_TRAIN.description },
+        select: { id: true },
+      })
+    : await db.solutionTrain.create({
+        data: { tenantId: tenant.id, ...SOLUTION_TRAIN },
+        select: { id: true },
+      });
+  await db.aRT.update({
+    where: { id: art.id },
+    data: { solutionTrainId: solutionTrain.id },
+  });
+
+  let capCount = 0;
+  for (const c of CAPABILITIES) {
+    const capabilityData = {
+      tenantId: tenant.id,
+      solutionTrainId: solutionTrain.id,
+      title: c.title,
+      description: c.description,
+      status: c.status,
+      milestone: c.milestone,
+      order: c.order,
+    };
+    const existingCapability = await db.capability.findFirst({
+      where: { tenantId: tenant.id, title: c.title },
+      select: { id: true },
+    });
+    if (existingCapability) {
+      await db.capability.update({
+        where: { id: existingCapability.id },
+        data: capabilityData,
+      });
+    } else {
+      await db.capability.create({ data: capabilityData });
+    }
+    capCount++;
+  }
+  console.log("capabilities:", capCount);
+
+  let sr = 0;
+  for (const r of SOLUTION_RISKS) {
+    const solutionRiskData = {
+      tenantId: tenant.id,
+      solutionTrainId: solutionTrain.id,
+      title: r.title,
+      description: r.description,
+      roamStatus: r.roamStatus,
+      owner: r.owner,
+      affectedArtIds: [art.id],
+    };
+    const existingSolutionRisk = await db.solutionRisk.findFirst({
+      where: { tenantId: tenant.id, title: r.title },
+      select: { id: true },
+    });
+    if (existingSolutionRisk) {
+      await db.solutionRisk.update({
+        where: { id: existingSolutionRisk.id },
+        data: solutionRiskData,
+      });
+    } else {
+      await db.solutionRisk.create({ data: solutionRiskData });
+    }
+    sr++;
+  }
+  console.log("solution risks:", sr);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({

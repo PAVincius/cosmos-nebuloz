@@ -7,14 +7,18 @@
 // via NewPillarModal.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
+  assignThemeToPillar,
   createPillar,
   listStrategyPillars,
+  listUnlinkedThemes,
   type PillarView,
+  type UnlinkedThemeView,
 } from "@/app/(cosmos)/actions/strategy";
 import { Icon } from "../icons";
 import {
   Badge,
   Button,
+  ErrorState,
   PageHeader,
   Progress,
   SectionCard,
@@ -185,10 +189,12 @@ function PillarCard({ pillar }: { pillar: PillarView }) {
             className="mono"
             style={{ fontWeight: 700, color: "var(--ink)" }}
           >
-            {pillar.avgProgress}%
+            {/* "—" e não "0%": pilar sem épico mensurável não tem média, e
+                afirmar 0% seria afirmar uma medição que não existe. */}
+            {pillar.avgProgress === null ? "—" : `${pillar.avgProgress}%`}
           </span>
         </div>
-        <Progress tone={tone} value={pillar.avgProgress} />
+        <Progress tone={tone} value={pillar.avgProgress ?? 0} />
       </div>
     </SectionCard>
   );
@@ -215,6 +221,83 @@ const fieldLabelStyle: CSSProperties = {
   color: "var(--ink-faint)",
   marginBottom: 6,
 };
+
+// story-031 AC-001: nó órfão aparece numa faixa de desalinhados em vez de
+// sumir do mapa. Cada linha traz o caminho de saída — o select que vincula.
+function UnalignedThemes({
+  themes,
+  pillars,
+  onLinked,
+}: {
+  themes: UnlinkedThemeView[];
+  pillars: PillarView[];
+  onLinked: () => void;
+}) {
+  const [linking, setLinking] = useState<string | null>(null);
+
+  const link = async (themeId: string, pillarId: string) => {
+    if (linking) {
+      return;
+    }
+    setLinking(themeId);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => assignThemeToPillar({ themeId, pillarId }),
+      {
+        loading: "Vinculando tema ao pilar...",
+        success: "Tema vinculado ao pilar.",
+        error: (err: string) => `Não foi possível vincular: ${err}`,
+      }
+    );
+    setLinking(null);
+    if (res.ok) {
+      onLinked();
+    }
+  };
+
+  return (
+    <SectionCard
+      icon="alert"
+      subtitle={`${themes.length} ${themes.length === 1 ? "tema" : "temas"} sem pilar`}
+      title="Fora de qualquer pilar"
+      tone="amber"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {themes.map((theme) => (
+          <div
+            key={theme.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              fontSize: 12.5,
+            }}
+          >
+            <span style={{ color: "var(--ink)" }}>{theme.title}</span>
+            <select
+              aria-label={`Vincular ${theme.title} a um pilar`}
+              onChange={(e) => {
+                if (e.target.value) {
+                  link(theme.id, e.target.value);
+                }
+              }}
+              style={{ ...selectStyle, width: 220 }}
+              value=""
+            >
+              <option value="">Vincular a um pilar…</option>
+              {pillars.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        ))}
+      </div>
+    </SectionCard>
+  );
+}
 
 function NewPillarModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
@@ -303,16 +386,28 @@ function NewPillarModal({ onCreated }: { onCreated?: () => void }) {
 function StrategyBody() {
   const modal = useModal();
   const [pillars, setPillars] = useState<PillarView[]>([]);
+  const [unaligned, setUnaligned] = useState<UnlinkedThemeView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
-    listStrategyPillars().then((r) => {
-      if (r.ok) {
-        setPillars(r.data);
+    Promise.all([listStrategyPillars(), listUnlinkedThemes()]).then(
+      ([pillarsRes, unalignedRes]) => {
+        if (pillarsRes.ok) {
+          setPillars(pillarsRes.data);
+          setError(false);
+        } else {
+          // Antes daqui a falha caía no mesmo texto do vazio e a tela dizia
+          // "nenhum pilar cadastrado" para um tenant que tem pilares.
+          setError(true);
+        }
+        if (unalignedRes.ok) {
+          setUnaligned(unalignedRes.data);
+        }
+        setLoading(false);
       }
-      setLoading(false);
-    });
+    );
   }, []);
 
   useEffect(() => {
@@ -338,14 +433,22 @@ function StrategyBody() {
       </PageHeader>
       <VisionBanner />
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {!loading && pillars.length === 0 && (
+        {error && (
+          <ErrorState message="Não foi possível carregar os pilares estratégicos." />
+        )}
+        {!(error || loading) && pillars.length === 0 && (
           <span style={{ fontSize: 13, color: "var(--ink-muted)" }}>
             Nenhum pilar estratégico cadastrado.
           </span>
         )}
-        {pillars.map((p) => (
-          <PillarCard key={p.id} pillar={p} />
-        ))}
+        {!error && pillars.map((p) => <PillarCard key={p.id} pillar={p} />)}
+        {!error && unaligned.length > 0 && (
+          <UnalignedThemes
+            onLinked={load}
+            pillars={pillars}
+            themes={unaligned}
+          />
+        )}
       </div>
     </div>
   );

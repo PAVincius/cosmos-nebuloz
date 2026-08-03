@@ -1,15 +1,21 @@
 "use client";
 
 // risks.tsx — Registro de riscos (ROAM) + matriz probabilidade × impacto,
-// wired to listRisks(). O modelo Risk real usa probability/impact em escala
-// string (low/medium/high), então a matriz é uma grade 3×3 (em vez da 5×5
-// numérica dos dados de demonstração).
+// wired to listRisks(). story-059 AC-004: probability/impact usam o vocabulário
+// de cinco níveis (very_low…very_high), então a matriz é a grade 5×5 do desenho
+// (apps/app/lib/cosmos-data.ts:833) e não mais a 3×3 provisória. Os valores
+// legados low/medium/high seguem válidos e caem nas mesmas células de antes.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   createRisk,
   listRisks,
   type RiskView,
+  roamTransition,
 } from "@/app/(cosmos)/actions/risks";
+import {
+  getMembersTab,
+  type MembersTabView,
+} from "@/app/(cosmos)/actions/settings-members";
 import { EmptyState } from "../empty-state";
 import { Icon } from "../icons";
 import {
@@ -23,18 +29,27 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-const LEVELS = ["low", "medium", "high"] as const;
+const LEVELS = ["very_low", "low", "medium", "high", "very_high"] as const;
 type Level = (typeof LEVELS)[number];
 
 const LEVEL_LABEL: Record<Level, string> = {
+  very_low: "Muito baixa",
   low: "Baixa",
   medium: "Média",
   high: "Alta",
+  very_high: "Muito alta",
 };
 
-// Mapeia low/medium/high para pontos ordinais 2/3/4 (não há escala 1-5 no
-// schema real) para reaproveitar a matemática de severidade prob × impact.
-const LEVEL_SCORE: Record<Level, number> = { low: 2, medium: 3, high: 4 };
+// Pontos ordinais 1-5. Os pesos de low/medium/high continuam 2/3/4: as duas
+// pontas novas ocupam exatamente as posições 1 e 5 que a escala anterior tinha
+// deixado vagas, então nenhum risco já gravado muda de célula nem de cor.
+const LEVEL_SCORE: Record<Level, number> = {
+  very_low: 1,
+  low: 2,
+  medium: 3,
+  high: 4,
+  very_high: 5,
+};
 
 const ROAM_TONE: Record<string, "green" | "amber" | "blue" | "neutral"> = {
   RESOLVED: "green",
@@ -52,11 +67,11 @@ function severityScore(probability: string, impact: string): number {
   return LEVEL_SCORE[toLevel(probability)] * LEVEL_SCORE[toLevel(impact)];
 }
 
-// Tom da CÉLULA da matriz probabilidade × impacto, com base no
-// severityScore derivado (range 4-16, produto de LEVEL_SCORE). Os 9
-// combos possíveis de (probabilidade, impacto) geram os scores
-// {4, 6, 8, 9, 12, 16}, então os limiares abaixo cobrem as 4 faixas:
-// green apenas no score 4 (low×low), blue em 6/8, amber em 9/12, red em 16.
+// Tom da CÉLULA da matriz probabilidade × impacto, com base no severityScore
+// derivado (range 1-25, produto de LEVEL_SCORE). Os limiares são os mesmos da
+// grade 3×3 anterior — é o que garante que um risco gravado antes da story-059
+// continue com a cor que já tinha; as células novas apenas se encaixam nas
+// faixas existentes.
 function matrixCellTone(s: number): "green" | "blue" | "amber" | "red" {
   if (s >= 16) {
     return "red";
@@ -113,10 +128,10 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gridTemplateRows: "repeat(3, 1fr)",
+            gridTemplateColumns: "repeat(5, 1fr)",
+            gridTemplateRows: "repeat(5, 1fr)",
             gap: 6,
-            aspectRatio: "3 / 2.4",
+            aspectRatio: "5 / 4",
           }}
         >
           {[...LEVELS].reverse().map((p) =>
@@ -126,6 +141,7 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
               const tone = matrixCellTone(s);
               return (
                 <div
+                  data-cell={`${p}-${i}`}
                   key={`${p}-${i}`}
                   style={{
                     position: "relative",
@@ -182,7 +198,7 @@ function RiskMatrix({ risks }: { risks: RiskView[] }) {
   );
 }
 
-function RiskRow({ r }: { r: RiskView }) {
+function RiskRow({ r, onClassify }: { r: RiskView; onClassify: () => void }) {
   const sevTone = severityTone(r.severity);
   const roamTone = ROAM_TONE[r.roamStatus] || "neutral";
 
@@ -191,7 +207,7 @@ function RiskRow({ r }: { r: RiskView }) {
       className="lift"
       style={{
         display: "grid",
-        gridTemplateColumns: "52px minmax(0,1fr) 96px 110px 132px",
+        gridTemplateColumns: "52px minmax(0,1fr) 96px 110px 132px auto",
         alignItems: "center",
         gap: 14,
         padding: "13px 16px",
@@ -296,6 +312,28 @@ function RiskRow({ r }: { r: RiskView }) {
           {r.ownerName}
         </span>
       </div>
+      {/* story-059 AC-001 — sem este botão o risco nasce UNCLASSIFIED e congela:
+          o gate de commitment do PI nunca pode ser satisfeito pela tela que
+          registra o risco. */}
+      <button
+        aria-label={`Classificar ROAM de ${r.title}`}
+        onClick={onClassify}
+        style={{
+          background: "var(--surface-2)",
+          border: "1px solid var(--hairline)",
+          borderRadius: "var(--r-sm)",
+          color: "var(--ink-muted)",
+          cursor: "pointer",
+          fontFamily: "inherit",
+          fontSize: 11.5,
+          fontWeight: 700,
+          letterSpacing: ".04em",
+          padding: "6px 10px",
+        }}
+        type="button"
+      >
+        ROAM
+      </button>
     </div>
   );
 }
@@ -520,6 +558,177 @@ function NewRiskModal({ onCreated }: { onCreated?: () => void }) {
   );
 }
 
+// story-059 AC-001/AC-002 — os quatro desfechos ROAM e o compromisso que cada
+// um exige. UNCLASSIFIED não aparece: é estado de nascimento, não destino.
+const ROAM_OUTCOMES = ["OWNED", "ACCEPTED", "MITIGATED", "RESOLVED"] as const;
+type RoamOutcome = (typeof ROAM_OUTCOMES)[number];
+
+const ROAM_LABEL: Record<RoamOutcome, string> = {
+  OWNED: "Owned — alguém assume",
+  ACCEPTED: "Accepted — conviver com ele",
+  MITIGATED: "Mitigated — há plano de mitigação",
+  RESOLVED: "Resolved — deixou de existir",
+};
+
+const MIN_MITIGATION_PLAN_LENGTH = 30;
+
+function RoamModal({
+  risk: r,
+  onClassified,
+}: {
+  risk: RiskView;
+  onClassified?: () => void;
+}) {
+  const { close } = useModal();
+  const [outcome, setOutcome] = useState<RoamOutcome>("OWNED");
+  const [ownerUserId, setOwnerUserId] = useState("");
+  const [mitigationPlan, setMitigationPlan] = useState("");
+  const [resolutionNote, setResolutionNote] = useState("");
+  const [members, setMembers] = useState<MembersTabView["members"]>([]);
+  const [saving, setSaving] = useState(false);
+
+  // O dono sai da lista real de membros do tenant — nenhum id é digitado à mão.
+  useEffect(() => {
+    getMembersTab().then((res) => {
+      if (res.ok) {
+        setMembers(res.data.members);
+      }
+    });
+  }, []);
+
+  // Mesmo guard do servidor, aplicado antes da chamada: o servidor continua
+  // sendo a autoridade (roamGuard em actions/risks.ts), isto só evita mandar
+  // uma transição que já se sabe inválida.
+  const missingCommitment =
+    (outcome === "OWNED" && !ownerUserId) ||
+    (outcome === "MITIGATED" &&
+      mitigationPlan.trim().length < MIN_MITIGATION_PLAN_LENGTH) ||
+    (outcome === "RESOLVED" && !resolutionNote.trim());
+
+  const classify = async () => {
+    if (missingCommitment || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        roamTransition({
+          riskId: r.id,
+          roamStatus: outcome,
+          ...(outcome === "OWNED" ? { ownerUserId } : {}),
+          ...(outcome === "MITIGATED"
+            ? { mitigationPlan: mitigationPlan.trim() }
+            : {}),
+          ...(outcome === "RESOLVED"
+            ? { resolutionNote: resolutionNote.trim() }
+            : {}),
+        }),
+      {
+        loading: "Gravando desfecho ROAM...",
+        success: "Desfecho ROAM gravado.",
+        error: (err: string) => `Não foi possível classificar o risco: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onClassified?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="shield" size={16} strokeWidth={2.4} />}
+      subtitle="Nenhum risco entra no commitment do PI sem desfecho"
+      title={`Classificar ${r.title}`}
+      width={480}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="roam-outcome" style={fieldLabelStyle}>
+            Desfecho ROAM
+          </label>
+          <select
+            id="roam-outcome"
+            onChange={(e) => setOutcome(e.target.value as RoamOutcome)}
+            style={selectStyle}
+            value={outcome}
+          >
+            {ROAM_OUTCOMES.map((o) => (
+              <option key={o} value={o}>
+                {ROAM_LABEL[o]}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {outcome === "OWNED" && (
+          <div>
+            <label htmlFor="roam-owner" style={fieldLabelStyle}>
+              Dono do risco
+            </label>
+            <select
+              id="roam-owner"
+              onChange={(e) => setOwnerUserId(e.target.value)}
+              style={selectStyle}
+              value={ownerUserId}
+            >
+              <option value="">Selecione um membro…</option>
+              {members.map((m) => (
+                <option key={m.userId} value={m.userId}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {outcome === "MITIGATED" && (
+          <div>
+            <label htmlFor="roam-plan" style={fieldLabelStyle}>
+              Plano de mitigação (mín. {MIN_MITIGATION_PLAN_LENGTH} caracteres)
+            </label>
+            <textarea
+              id="roam-plan"
+              onChange={(e) => setMitigationPlan(e.target.value)}
+              placeholder="O que será feito, por quem, até quando…"
+              rows={3}
+              style={{ ...selectStyle, resize: "vertical" }}
+              value={mitigationPlan}
+            />
+          </div>
+        )}
+
+        {outcome === "RESOLVED" && (
+          <div>
+            <label htmlFor="roam-note" style={fieldLabelStyle}>
+              Nota de resolução
+            </label>
+            <textarea
+              id="roam-note"
+              onChange={(e) => setResolutionNote(e.target.value)}
+              placeholder="O que fez o risco deixar de existir…"
+              rows={3}
+              style={{ ...selectStyle, resize: "vertical" }}
+              value={resolutionNote}
+            />
+          </div>
+        )}
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={classify} size="sm" variant="primary">
+            Gravar desfecho
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
 function RisksBody() {
   const modal = useModal();
   const [risks, setRisks] = useState<RiskView[]>([]);
@@ -550,6 +759,12 @@ function RisksBody() {
   const resolved = risks.filter(
     (r) => r.roamStatus === "RESOLVED" || r.roamStatus === "MITIGATED"
   ).length;
+  // story-019 AC-003 — PI com risco UNCLASSIFIED não comita. O contador põe o
+  // gate à vista de quem pode fechá-lo, em vez de deixá-lo aparecer só na hora
+  // do commit.
+  const unclassified = risks.filter(
+    (r) => r.roamStatus === "UNCLASSIFIED"
+  ).length;
 
   return (
     <div className="fade-in">
@@ -559,6 +774,11 @@ function RisksBody() {
             <Badge dot tone="red">
               {critical} críticos
             </Badge>
+            {unclassified > 0 && (
+              <Badge dot tone="neutral">
+                {unclassified} sem classificação ROAM
+              </Badge>
+            )}
             <Badge tone="amber">{open} em aberto (Owned)</Badge>
             <Badge icon="check" tone="green">
               {resolved} endereçados
@@ -658,7 +878,13 @@ function RisksBody() {
             ) : (
               <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
                 {sorted.map((r) => (
-                  <RiskRow key={r.id} r={r} />
+                  <RiskRow
+                    key={r.id}
+                    onClassify={() =>
+                      modal.open(<RoamModal onClassified={load} risk={r} />)
+                    }
+                    r={r}
+                  />
                 ))}
               </div>
             )}

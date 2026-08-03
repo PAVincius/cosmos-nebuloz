@@ -87,6 +87,60 @@ describe("listLeanBudgets", () => {
       expect(r.data[0].utilizationPct).toBe(62);
       expect(r.data[0].spendLimitUsd).toBe(500);
       expect(r.data[0].approvalThresholdUsd).toBe(300);
+      expect(r.data[0].immutableAt).toBeNull();
+    }
+  });
+
+  it("devolve utilização null (nunca 0) quando não há valor alocado (story-062 AC-003)", async () => {
+    h.leanBudgetFindMany.mockResolvedValue([
+      {
+        id: "b0",
+        name: "Sem alocação",
+        amount: 0,
+        spent: "0",
+        period: "PI-26",
+        capexPct: null,
+        opexPct: null,
+        spendLimitUsd: null,
+        approvalThresholdUsd: null,
+        artId: null,
+        immutableAt: null,
+        strategicTheme: null,
+      },
+    ]);
+
+    const r = await listLeanBudgets();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      // sem denominador não há percentual; 0% afirmaria consumo medido
+      expect(r.data[0].utilizationPct).toBeNull();
+    }
+  });
+
+  it("expõe immutableAt em ISO para a tela marcar o orçamento como final (AC-001)", async () => {
+    h.leanBudgetFindMany.mockResolvedValue([
+      {
+        id: "b2",
+        name: "PI encerrado",
+        amount: 100,
+        spent: "100",
+        period: "PI-25",
+        capexPct: 50,
+        opexPct: 50,
+        spendLimitUsd: null,
+        approvalThresholdUsd: null,
+        artId: null,
+        immutableAt: new Date("2026-06-30T00:00:00.000Z"),
+        strategicTheme: null,
+      },
+    ]);
+
+    const r = await listLeanBudgets();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].immutableAt).toBe("2026-06-30T00:00:00.000Z");
     }
   });
 
@@ -297,8 +351,34 @@ describe("updateLeanBudgetGuardrails", () => {
     expect(h.leanBudgetUpdate).not.toHaveBeenCalled();
   });
 
+  it("recusa a gravação quando o orçamento do PI já está encerrado (story-062 AC-001)", async () => {
+    h.leanBudgetFindFirst.mockResolvedValue({
+      id: "b1",
+      immutableAt: new Date("2026-06-30T00:00:00.000Z"),
+    });
+
+    const res = await updateLeanBudgetGuardrails(validInput);
+
+    expect(res.ok).toBe(false);
+    expect(h.leanBudgetUpdate).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+  });
+
+  it("lê immutableAt na mesma consulta que já guarda o tenant, sem ida extra ao banco (AC-001)", async () => {
+    h.leanBudgetFindFirst.mockResolvedValue({ id: "b1", immutableAt: null });
+    h.leanBudgetUpdate.mockResolvedValue({ id: "b1" });
+
+    await updateLeanBudgetGuardrails(validInput);
+
+    expect(h.leanBudgetFindFirst).toHaveBeenCalledTimes(1);
+    expect(h.leanBudgetFindFirst).toHaveBeenCalledWith({
+      where: { id: "b1", tenantId: tenantCtx.tenantId },
+      select: { id: true, immutableAt: true },
+    });
+  });
+
   it("updates, audits, and revalidates on success", async () => {
-    h.leanBudgetFindFirst.mockResolvedValue({ id: "b1" });
+    h.leanBudgetFindFirst.mockResolvedValue({ id: "b1", immutableAt: null });
     h.leanBudgetUpdate.mockResolvedValue({ id: "b1" });
 
     const res = await updateLeanBudgetGuardrails(validInput);

@@ -11,6 +11,7 @@ const h = vi.hoisted(() => ({
   billingEntryFindFirst: vi.fn(),
   anomalyRuleConfigFindUnique: vi.fn(),
   anomalyRuleConfigUpsert: vi.fn(),
+  anomalyRuleConfigDeleteMany: vi.fn(),
   logAudit: vi.fn(),
   detectCostAnomaliesForTenant: vi.fn(),
   generateCostAnomalyNarrative: vi.fn(),
@@ -38,6 +39,7 @@ vi.mock("@repo/database", () => ({
     anomalyRuleConfig: {
       findUnique: h.anomalyRuleConfigFindUnique,
       upsert: h.anomalyRuleConfigUpsert,
+      deleteMany: h.anomalyRuleConfigDeleteMany,
     },
   },
 }));
@@ -56,6 +58,7 @@ import {
   generateCostAnomalyNarrativeAction,
   getAnomalySensitivity,
   listCostAnomalies,
+  resetAnomalySensitivity,
   setAnomalySensitivity,
 } from "../../app/(cosmos)/actions/anomalies";
 
@@ -157,9 +160,15 @@ describe("setAnomalySensitivity — RBAC", () => {
     expect(h.anomalyRuleConfigUpsert).not.toHaveBeenCalled();
   });
 
-  it("rejects a threshold outside platform bounds", async () => {
+  it("rejects a threshold outside platform bounds, naming the allowed range", async () => {
     const res = await setAnomalySensitivity({ threshold: 99 });
     expect(res.ok).toBe(false);
+    // story-021 AC-005: the refusal must tell the caller the allowed range,
+    // not just say no.
+    if (!res.ok) {
+      expect(res.error).toContain("2");
+      expect(res.error).toContain("8");
+    }
     expect(h.anomalyRuleConfigUpsert).not.toHaveBeenCalled();
   });
 
@@ -237,6 +246,23 @@ describe("setAnomalySensitivity — persists under the tenant-wide sentinel so i
       }
     );
 
+    h.anomalyRuleConfigDeleteMany.mockImplementation(
+      async (args: { where: Omit<Row, "threshold"> }) => {
+        const before = rows.length;
+        for (let i = rows.length - 1; i >= 0; i--) {
+          const r = rows[i] as Row;
+          if (
+            r.tenantId === args.where.tenantId &&
+            r.artId === args.where.artId &&
+            r.ruleId === args.where.ruleId
+          ) {
+            rows.splice(i, 1);
+          }
+        }
+        return { count: before - rows.length };
+      }
+    );
+
     return rows;
   }
 
@@ -279,6 +305,68 @@ describe("setAnomalySensitivity — persists under the tenant-wide sentinel so i
 
     expect(rows).toHaveLength(1);
     expect(rows[0].threshold).toBe(4.5);
+  });
+
+  // story-021 AC-008: the override row is *deleted*, so the tenant goes back
+  // to following the platform default instead of pinning today's default as
+  // its own choice.
+  it("round-trips set -> reset -> get back to the platform default", async () => {
+    const rows = setupFakeAnomalyRuleConfigTable();
+
+    await setAnomalySensitivity({ threshold: 2.5 });
+    const overridden = await getAnomalySensitivity();
+    expect(overridden.ok && overridden.data.isDefault).toBe(false);
+
+    await resetAnomalySensitivity();
+
+    expect(rows).toHaveLength(0);
+    const restored = await getAnomalySensitivity();
+    expect(restored.ok).toBe(true);
+    if (restored.ok) {
+      expect(restored.data.threshold).toBe(3.5);
+      expect(restored.data.isDefault).toBe(true);
+    }
+  });
+});
+
+describe("resetAnomalySensitivity", () => {
+  it("is denied when the role is not ADMIN/STE", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+    const res = await resetAnomalySensitivity();
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "STE"], tenantCtx);
+    expect(h.anomalyRuleConfigDeleteMany).not.toHaveBeenCalled();
+  });
+
+  it("deletes the override under the tenant-wide sentinel, scoped to the tenant", async () => {
+    h.anomalyRuleConfigDeleteMany.mockResolvedValue({ count: 1 });
+
+    const res = await resetAnomalySensitivity();
+
+    expect(res.ok).toBe(true);
+    expect(h.anomalyRuleConfigDeleteMany).toHaveBeenCalledWith({
+      where: {
+        tenantId: tenantCtx.tenantId,
+        artId: "",
+        ruleId: "R-COST-01",
+      },
+    });
+    expect(h.logAudit).toHaveBeenCalledTimes(1);
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  it("succeeds as a no-op when no override exists, without auditing a change that did not happen", async () => {
+    h.anomalyRuleConfigDeleteMany.mockResolvedValue({ count: 0 });
+
+    const res = await resetAnomalySensitivity();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data).toEqual({ threshold: 3.5, wasOverridden: false });
+    }
+    expect(h.logAudit).not.toHaveBeenCalled();
   });
 });
 

@@ -35,8 +35,26 @@ vi.mock("@repo/database", () => ({
     team: {
       findMany: vi.fn().mockResolvedValue([{ id: "tm1", name: "Squad Alpha" }]),
     },
+    confidenceVoteSession: {
+      findFirst: vi.fn().mockResolvedValue({
+        id: "cvs1",
+        roundNumber: 2,
+        xStateStatus: "TALLYING",
+      }),
+    },
     confidenceVoteTally: {
-      findFirst: vi.fn().mockResolvedValue({ aggregateScore: 3.8 }),
+      findFirst: vi.fn().mockResolvedValue({
+        round: 2,
+        score1Count: 0,
+        score2Count: 1,
+        score3Count: 2,
+        score4Count: 3,
+        score5Count: 0,
+        totalVotes: 6,
+        participantCount: 10,
+        aggregateScore: 3.8,
+        revealedAt: new Date("2026-08-01"),
+      }),
     },
     aRT: {
       count: vi.fn().mockResolvedValue(3),
@@ -71,7 +89,10 @@ describe("getActivePiPlanning", () => {
     }
     expect(database.confidenceVoteTally.findFirst).toHaveBeenCalledWith(
       expect.objectContaining({
-        where: expect.objectContaining({ tenantId: "t1", piPlanId: "pi1" }),
+        where: expect.objectContaining({
+          tenantId: "t1",
+          voteSessionId: "cvs1",
+        }),
       })
     );
     expect(database.team.findMany).toHaveBeenCalledWith(
@@ -79,6 +100,64 @@ describe("getActivePiPlanning", () => {
         where: expect.objectContaining({ tenantId: "t1", id: { in: ["tm1"] } }),
       })
     );
+  });
+
+  it("surfaces the revealed round with its histogram", async () => {
+    const r = await getActivePiPlanning();
+
+    expect(r.ok).toBe(true);
+    if (r.ok && r.data) {
+      expect(r.data.confidenceVote).toEqual({
+        round: 2,
+        status: "TALLYING",
+        totalVotes: 6,
+        participantCount: 10,
+        revealed: true,
+        histogram: [0, 1, 2, 3, 0],
+        aggregateScore: 3.8,
+      });
+    }
+  });
+
+  // story-060 AC-004 — resultado parcial visível muda o voto de quem ainda não
+  // votou, então antes da revelação a leitura entrega participação e nada mais.
+  it("hides the histogram and the score of a round that was not revealed yet", async () => {
+    vi.mocked(database.confidenceVoteSession.findFirst).mockResolvedValueOnce({
+      id: "cvs1",
+      roundNumber: 3,
+      xStateStatus: "OPEN",
+      // biome-ignore lint/suspicious/noExplicitAny: partial row, only the selected columns matter
+    } as any);
+    vi.mocked(database.confidenceVoteTally.findFirst).mockResolvedValueOnce({
+      round: 3,
+      score1Count: 0,
+      score2Count: 1,
+      score3Count: 2,
+      score4Count: 3,
+      score5Count: 0,
+      totalVotes: 6,
+      participantCount: 10,
+      aggregateScore: null,
+      revealedAt: null,
+      // biome-ignore lint/suspicious/noExplicitAny: partial row, only the selected columns matter
+    } as any);
+
+    const r = await getActivePiPlanning();
+
+    expect(r.ok).toBe(true);
+    if (r.ok && r.data) {
+      expect(r.data.confidenceVote).toEqual({
+        round: 3,
+        status: "OPEN",
+        totalVotes: 6,
+        participantCount: 10,
+        revealed: false,
+        histogram: null,
+        aggregateScore: null,
+      });
+      // O KPI da tela também não pode antecipar o placar da rodada aberta.
+      expect(r.data.confidenceAvg).toBeNull();
+    }
   });
 });
 

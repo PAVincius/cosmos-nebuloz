@@ -7,7 +7,9 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   riskFindMany: vi.fn(),
+  riskFindFirst: vi.fn(),
   riskCreate: vi.fn(),
+  riskUpdate: vi.fn(),
   userFindMany: vi.fn(),
   logAudit: vi.fn(),
 }));
@@ -23,7 +25,9 @@ vi.mock("@repo/database", () => ({
   database: {
     risk: {
       findMany: h.riskFindMany,
+      findFirst: h.riskFindFirst,
       create: h.riskCreate,
+      update: h.riskUpdate,
     },
     user: {
       findMany: h.userFindMany,
@@ -33,7 +37,11 @@ vi.mock("@repo/database", () => ({
 vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
-import { createRisk, listRisks } from "../../app/(cosmos)/actions/risks";
+import {
+  createRisk,
+  listRisks,
+  roamTransition,
+} from "../../app/(cosmos)/actions/risks";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -189,6 +197,206 @@ describe("createRisk", () => {
           impact: "medium",
           category: null,
         }),
+      })
+    );
+  });
+
+  // story-059 AC-004 — o vocabulário estende low/medium/high com as duas pontas
+  // que faltavam; nenhum valor anterior deixa de ser aceito.
+  it("accepts the two new ends of the five-level scale (AC-004)", async () => {
+    h.riskCreate.mockResolvedValue({ id: "new-risk-3" });
+
+    const res = await createRisk({
+      title: "Fornecedor único de KYC",
+      probability: "very_low",
+      impact: "very_high",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.riskCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          probability: "very_low",
+          impact: "very_high",
+        }),
+      })
+    );
+  });
+});
+
+// story-059 AC-001/AC-002/AC-003 — sem transição o risco nasce UNCLASSIFIED e
+// congela, e o gate de commitment da story-019 AC-003 nunca pode ser satisfeito
+// pela tela que registra o risco.
+describe("roamTransition", () => {
+  const owned = {
+    riskId: "r1",
+    roamStatus: "OWNED" as const,
+    ownerUserId: "u1",
+  };
+
+  beforeEach(() => {
+    h.riskFindFirst.mockResolvedValue({ id: "r1", roamStatus: "UNCLASSIFIED" });
+    h.riskUpdate.mockResolvedValue({ id: "r1" });
+  });
+
+  it("is denied when the role is not permitted (RBAC) — AC-002", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await roamTransition(owned);
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "RTE"], tenantCtx);
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a risk that is not owned by the tenant (IDOR guard) — AC-002", async () => {
+    h.riskFindFirst.mockResolvedValue(null);
+
+    const res = await roamTransition(owned);
+
+    expect(res.ok).toBe(false);
+    expect(h.riskFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "r1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("refuses OWNED without an owner — AC-001", async () => {
+    const res = await roamTransition({ riskId: "r1", roamStatus: "OWNED" });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("ownerRequired");
+    }
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("stamps ownedAt and the owner on OWNED — AC-001", async () => {
+    const res = await roamTransition(owned);
+
+    expect(res.ok).toBe(true);
+    expect(h.riskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "r1" },
+        data: expect.objectContaining({
+          roamStatus: "OWNED",
+          ownerUserId: "u1",
+          ownedAt: expect.any(Date),
+        }),
+      })
+    );
+  });
+
+  it("refuses MITIGATED with a plan shorter than 30 chars — AC-001", async () => {
+    const res = await roamTransition({
+      riskId: "r1",
+      roamStatus: "MITIGATED",
+      mitigationPlan: "plano curto",
+    });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("mitigationPlanRequired");
+    }
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("accepts MITIGATED with a plan of at least 30 chars — AC-001", async () => {
+    const res = await roamTransition({
+      riskId: "r1",
+      roamStatus: "MITIGATED",
+      mitigationPlan:
+        "Antecipar o contrato do provedor secundário para a sprint 15.",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.riskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ roamStatus: "MITIGATED" }),
+      })
+    );
+  });
+
+  it("refuses RESOLVED without a resolution note — AC-001", async () => {
+    const res = await roamTransition({ riskId: "r1", roamStatus: "RESOLVED" });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("resolutionNoteRequired");
+    }
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("stamps resolvedAt on RESOLVED with a note — AC-001", async () => {
+    const res = await roamTransition({
+      riskId: "r1",
+      roamStatus: "RESOLVED",
+      resolutionNote: "Provedor secundário homologado.",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.riskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ resolvedAt: expect.any(Date) }),
+      })
+    );
+  });
+
+  it("takes ACCEPTED with no extra field — AC-001", async () => {
+    const res = await roamTransition({ riskId: "r1", roamStatus: "ACCEPTED" });
+
+    expect(res.ok).toBe(true);
+    expect(h.riskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ roamStatus: "ACCEPTED" }),
+      })
+    );
+  });
+
+  it("refuses UNCLASSIFIED as a destination — AC-003", async () => {
+    const res = await roamTransition({
+      riskId: "r1",
+      roamStatus: "UNCLASSIFIED" as unknown as "ACCEPTED",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.riskUpdate).not.toHaveBeenCalled();
+  });
+
+  it("audits the previous roamStatus and revalidates — AC-002", async () => {
+    h.riskFindFirst.mockResolvedValue({ id: "r1", roamStatus: "OWNED" });
+
+    const res = await roamTransition({
+      riskId: "r1",
+      roamStatus: "ACCEPTED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "status_changed",
+        entityType: "risk",
+        entityId: "r1",
+        diff: expect.objectContaining({ roamStatus: "OWNED→ACCEPTED" }),
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  // Risk.status é a coluna legada que outros leitores (arts/pi-plans, exports)
+  // ainda consultam. Não escrevê-la deixaria duas verdades sobre o mesmo risco.
+  it("keeps the legacy Risk.status column in sync — AC-002", async () => {
+    const res = await roamTransition({ riskId: "r1", roamStatus: "ACCEPTED" });
+
+    expect(res.ok).toBe(true);
+    expect(h.riskUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: "ACCEPTED" }),
       })
     );
   });

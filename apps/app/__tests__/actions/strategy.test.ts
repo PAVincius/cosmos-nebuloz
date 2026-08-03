@@ -9,6 +9,9 @@ const h = vi.hoisted(() => ({
   strategyPillarFindMany: vi.fn(),
   strategyPillarFindFirst: vi.fn(),
   strategyPillarCreate: vi.fn(),
+  strategicThemeFindMany: vi.fn(),
+  strategicThemeFindFirst: vi.fn(),
+  strategicThemeUpdate: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -26,15 +29,22 @@ vi.mock("@repo/database", () => ({
       findFirst: h.strategyPillarFindFirst,
       create: h.strategyPillarCreate,
     },
+    strategicTheme: {
+      findMany: h.strategicThemeFindMany,
+      findFirst: h.strategicThemeFindFirst,
+      update: h.strategicThemeUpdate,
+    },
   },
 }));
 vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  assignThemeToPillar,
   createPillar,
   getStrategyPillar,
   listStrategyPillars,
+  listUnlinkedThemes,
 } from "../../app/(cosmos)/actions/strategy";
 
 beforeEach(() => {
@@ -118,9 +128,184 @@ describe("listStrategyPillars", () => {
     expect(r.data[0].epicCount).toBe(2);
     expect(r.data[0].avgProgress).toBe(75); // (50 + 100) / 2
     expect(r.data[1].epicCount).toBe(0);
-    expect(r.data[1].avgProgress).toBe(0);
+    // story-060 AC-003: sem épico mensurável não há média. O 0 anterior era
+    // indistinguível de "nada concluído" — afirmava uma medição inexistente.
+    expect(r.data[1].avgProgress).toBeNull();
     // themes[] in the response never leaks the raw epics rows.
     expect(r.data[0].themes[0]).not.toHaveProperty("epics");
+  });
+
+  it("ignora épico sem feature no denominador em vez de contá-lo como 0% (AC-003)", async () => {
+    h.strategyPillarFindMany.mockResolvedValue([
+      {
+        id: "p1",
+        name: "Crescimento",
+        tone: "accent",
+        themes: [
+          {
+            id: "th1",
+            title: "Expansão LATAM",
+            healthStatus: "on",
+            targetAllocationPct: 25,
+            epics: [
+              { featureCount: 4, doneFeatureCount: 2 },
+              { featureCount: 0, doneFeatureCount: 0 },
+            ],
+          },
+        ],
+      },
+    ]);
+
+    const r = await listStrategyPillars();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    // o épico sem feature conta na contagem (ele existe) e não na média
+    expect(r.data[0].epicCount).toBe(2);
+    expect(r.data[0].avgProgress).toBe(50);
+  });
+});
+
+describe("listUnlinkedThemes", () => {
+  it("lê só tema ativo sem pilar, escopado ao tenant da sessão (AC-002)", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([]);
+
+    await listUnlinkedThemes();
+
+    expect(h.strategicThemeFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: tenantCtx.tenantId,
+          pillarId: null,
+          status: { not: "ARCHIVED" },
+        },
+      })
+    );
+  });
+
+  it("devolve os temas desalinhados com o que a tela precisa nomear", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      { id: "th9", title: "Tema órfão", healthStatus: "watch" },
+    ]);
+
+    const r = await listUnlinkedThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data).toEqual([
+        { id: "th9", title: "Tema órfão", healthStatus: "watch" },
+      ]);
+    }
+  });
+});
+
+describe("assignThemeToPillar", () => {
+  beforeEach(() => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "th1",
+      pillarId: null,
+      title: "Expansão LATAM",
+    });
+    h.strategyPillarFindFirst.mockResolvedValue({ id: "p1" });
+    h.strategicThemeUpdate.mockResolvedValue({ id: "th1" });
+  });
+
+  it("is denied when the role is not permitted (RBAC)", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await assignThemeToPillar({ themeId: "th1", pillarId: "p1" });
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "STE"], tenantCtx);
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+  });
+
+  it("recusa um themeId que não é do tenant (guarda IDOR)", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(null);
+
+    const res = await assignThemeToPillar({
+      themeId: "alheio",
+      pillarId: "p1",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "alheio", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+  });
+
+  it("recusa um pillarId que não é do tenant (guarda IDOR do segundo FK)", async () => {
+    h.strategyPillarFindFirst.mockResolvedValue(null);
+
+    const res = await assignThemeToPillar({
+      themeId: "th1",
+      pillarId: "alheio",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategyPillarFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "alheio", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+  });
+
+  it("vincula, audita com o pilar anterior e revalida", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "th1",
+      pillarId: "p0",
+      title: "Expansão LATAM",
+    });
+
+    const res = await assignThemeToPillar({ themeId: "th1", pillarId: "p1" });
+
+    expect(res.ok).toBe(true);
+    expect(h.strategicThemeUpdate).toHaveBeenCalledWith({
+      where: { id: "th1" },
+      data: { pillarId: "p1" },
+      select: { id: true },
+    });
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        entityType: "theme",
+        entityId: "th1",
+        diff: { pillarId: "p0→p1" },
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  it("desvincula gravando nulo, sem consultar pilar algum", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "th1",
+      pillarId: "p1",
+      title: "Expansão LATAM",
+    });
+
+    const res = await assignThemeToPillar({ themeId: "th1", pillarId: null });
+
+    expect(res.ok).toBe(true);
+    // não há pilar de destino para reconferir — consultar seria uma ida ao
+    // banco sem pergunta
+    expect(h.strategyPillarFindFirst).not.toHaveBeenCalled();
+    expect(h.strategicThemeUpdate).toHaveBeenCalledWith({
+      where: { id: "th1" },
+      data: { pillarId: null },
+      select: { id: true },
+    });
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({ diff: { pillarId: "p1→—" } })
+    );
   });
 });
 
