@@ -6,10 +6,39 @@ import {
 } from "../../lib/collaboration/confidence-vote";
 import {
   buildAdjacency,
+  findCyclePath,
   wouldCreateCycle,
 } from "../../lib/collaboration/dependency-cycle";
 
 // ─── DFS cycle detection (AC-003) ─────────────────────────────────────────────
+
+// story-058 AC-001 — a mensagem que a story-042 AC-003 exige precisa nomear o
+// ciclo, não só dizer que ele existe.
+describe("findCyclePath (story-042 AC-003)", () => {
+  it("returns the closing path in the order the cycle reads", () => {
+    const adj = new Map([
+      ["F-A", ["F-B"]],
+      ["F-B", ["F-C"]],
+    ]);
+
+    expect(findCyclePath(adj, "F-C", "F-A")).toEqual([
+      "F-A",
+      "F-B",
+      "F-C",
+      "F-A",
+    ]);
+  });
+
+  it("returns null when the new edge closes nothing", () => {
+    const adj = new Map([["F-A", ["F-B"]]]);
+
+    expect(findCyclePath(adj, "F-A", "F-D")).toBeNull();
+  });
+
+  it("treats a self-link as a cycle of one node", () => {
+    expect(findCyclePath(new Map(), "F-A", "F-A")).toEqual(["F-A", "F-A"]);
+  });
+});
 
 describe("wouldCreateCycle (AC-003)", () => {
   it("detects cycle: F-C → F-A would close A→B→C→A", () => {

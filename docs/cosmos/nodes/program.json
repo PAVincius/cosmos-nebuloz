@@ -2,20 +2,151 @@
   "$schema": "../schema/no.schema.json",
   "id": "program",
   "kind": "tela",
-  "titulo": "program",
+  "titulo": "Program Board (grade time × sprint do PI ativo)",
   "rota": "/cosmos/program",
   "componente": "apps/app/components/cosmos/screens/program.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "2-execucao",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
-  "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/program.ts",
+      "export": "getActiveProgramBoard",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/program.ts",
+      "export": "createFeature",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/program.ts",
+      "export": "assignFeatureToCell",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "PIPlan",
+    "PIPlanFeatureAssignment",
+    "Feature",
+    "Sprint",
+    "Team",
+    "TeamCapacitySnapshot",
+    "DependencyLink"
+  ],
+  "safe": {
+    "pratica": "Program Board — features do PI distribuídas em células time × sprint, com carga contra capacidade e congelamento após o commitment",
+    "nivel": "Essential",
+    "faz": "Desenha o quadro do PI ativo: cada time é uma linha, cada sprint do time uma coluna, e cada célula mostra as features alocadas, os pontos comprometidos contra a capacidade daquela sprint e o aviso de sobrecarga. O RTE aloca uma feature pendente numa célula enquanto o PI está aberto; depois do commitment o quadro vira somente leitura.",
+    "invariantes": [
+      "a célula é PIPlanFeatureAssignment (piPlanId/featureId/teamId/sprintId); o @@unique([piPlanId, featureId]) garante uma célula por feature por PI, então o upsert move e nunca duplica",
+      "sprintId é o id de um Sprint real, não um índice de coluna — é a semântica que o seed de e2e já assumia e a que a capacidade por sprint exige",
+      "a escrita é recusada quando o PI está COMMITTED ou CLOSED: depois do commitment o plano é compromisso do trem, não rascunho",
+      "a sprint alvo tem que ser do tenant, daquele PI e daquele time; fora disso a célula não existe no quadro e a atribuição ficaria órfã",
+      "carga acima da capacidade avisa e nunca bloqueia — a alocação completa com o aviso na célula",
+      "capacidade da célula vem de TeamCapacitySnapshot.expectedSpNextSprint e é null quando não há snapshot; sem capacidade não há percentual, nunca uma barra inventada",
+      "atribuição cuja sprint não pertence ao time indicado é descartada na leitura e a feature volta para a lista de pendentes — nada é renderizado numa célula que não existe",
+      "toda leitura e escrita filtra por tenantId vindo da sessão; escrita passa por requireRole(ADMIN|RTE|PO) e grava logAudit com a célula de destino"
+    ],
+    "fonte": [
+      "docs/stories/epic-006/story-020.md",
+      "docs/stories/epic-008/story-031.md:88",
+      "docs/srd-epic-008.md:53",
+      "SAFe 6.0 — PI Planning / Program Board"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/program.ts",
+      "apps/app/app/(cosmos)/actions/program.constants.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "program-1",
+      "tipo": "action",
+      "alvo": "assignFeatureToCell",
+      "hoje": "PIPlanFeatureAssignment tinha exatamente a forma da célula do Program Board e nenhuma tela do Cosmos a lia ou escrevia; a tela agrupava features por Feature.assignedTeamId, que não tem dimensão de sprint — não havia quadro, havia lista por time",
+      "desejado": "escrita da célula com guarda de PI somente-leitura, guarda de tenant nos três ids, sprint conferida contra PI e time, e auditoria",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "program-2",
+      "tipo": "ui",
+      "alvo": "grade time × sprint com carga contra capacidade",
+      "hoje": "a tela listava features por time, sem sprint, sem capacidade e sem aviso de sobrecarga; feature comprometida no PI mas sem time atribuído simplesmente não aparecia em lugar nenhum",
+      "desejado": "grade com coluna por sprint, carga/capacidade por célula, aviso acima de 100% e seção das features do PI ainda sem célula",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "program-3",
+      "tipo": "seed",
+      "alvo": "Feature, PIPlan e PIPlanFeatureAssignment do tenant demo",
+      "hoje": "o seed nunca criava Feature nem PIPlan; a tela abria em 'Nenhum PI ativo' e o quadro não tinha o que desenhar",
+      "desejado": "PI ativo com features comprometidas e a célula (time × sprint) de cada uma",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "program-4",
+      "tipo": "ui",
+      "alvo": "drag-and-drop e presença em tempo real (story-020 AC-003 e AC-008)",
+      "hoje": "esta tela não tem Liveblocks nem DND-Kit; a alocação é por escolha explícita de célula. O caminho CRDT existe no repo (webhook /api/webhooks/liveblocks e lib/collaboration/reconciliation.ts) mas não está ligado a esta superfície",
+      "desejado": "arrasto com atualização otimista e presença, sobre a mesma escrita de PIPlanFeatureAssignment que já existe",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "program-5",
+      "tipo": "campo",
+      "alvo": "toggle pontos ↔ dias úteis (story-020 AC-007)",
+      "hoje": "o AC-007 pede recalcular a barra com TeamCapacitySnapshot.availablePersonDays, campo que nunca existiu no schema; só há story points",
+      "desejado": "dias-pessoa disponíveis por time e sprint — mesma lacuna registrada em capacity-3",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "program-6",
+      "tipo": "ui",
+      "alvo": "linhas de dependência sobre a grade (story-020 AC-006)",
+      "hoje": "a célula marca que a feature tem dependência (ícone), mas não desenha o vínculo entre células nem cor-codifica por boardStatus; a lista de bloqueios vive na tela dependencies",
+      "desejado": "conector entre células com a cor-codificação do AC-006 e destaque de caminho crítico",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
+  "depende_de": [
+    {
+      "no": "capacity",
+      "tipo": "contrato",
+      "produz": "TeamCapacitySnapshot.expectedSpNextSprint por (sprintId, teamId), semeado para o PI ativo",
+      "porque": "a barra de carga da célula compara os pontos alocados com a capacidade daquela sprint; sem o snapshot a célula mostra pontos e nenhuma percentagem"
+    },
+    {
+      "no": "teams",
+      "tipo": "contrato",
+      "produz": "Team dentro de um ART, com sprints do PI",
+      "porque": "a linha do quadro é o time e a coluna é a sprint do próprio time; um time fora de ART não tem sprint de PI e não aparece no quadro"
+    }
+  ],
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/program.test.ts",
+    "apps/app/__tests__/screens/program.test.tsx"
+  ],
+  "commits": [],
+  "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista program entre as 14 telas NÃO medidas. PIPlanFeatureAssignment não estava literalmente sem chamador — apps/app/app/actions/program-board/index.ts, o webhook do Liveblocks, lib/collaboration/reconciliation.ts e o seed de e2e o tocam — mas nenhuma tela do Cosmos o lia ou escrevia, e o único escritor por action (program-board/index.ts) não tem chamador algum e grava sprintId como índice de coluna (String(sprintIndex)), semântica que diverge do seed de e2e e do resto do repo. Esta trilha adotou a semântica de Sprint.id real. O AC-002 da story-020 escreve '43/40 = 107%' truncando; a utilização aqui arredonda (107,5 → 108), como já faz a grade de capacidade — o que o AC decide é o aviso, não o dígito. O AC-002 da story-020 pinta a sobrecarga de âmbar enquanto o AC-002 da story-032 pinta acima de 100% de vermelho: são duas superfícies com regras de cor documentadas diferentes, então esta tela expõe overCapacity como fato e pinta âmbar como o AC-002 da 020 pede, sem reusar a faixa da tela de capacidade.",
+  "atualizado_em": "2026-08-03"
 }
