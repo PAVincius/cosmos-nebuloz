@@ -128,7 +128,7 @@
     "apps/app/__tests__/actions/piplanning-confidence-vote.test.ts",
     "apps/app/__tests__/screens/piplanning.test.tsx"
   ],
-  "commits": [],
+  "commits": ["c3f62537"],
   "notas": "O confidence vote fica em nível de ART por decisão de modelagem, não por omissão: ConfidenceVoteTally é anônimo por desenho e num ART com um squad de quatro pessoas 'confiança do time X' seria praticamente voto nominal. O seed passou a criar os PI Objectives do PI ativo (PPM 18/24 = 75%, abaixo da meta SAFe de 80% de propósito, para a faixa ter o que dizer) e duas rodadas de confidence vote reveladas — a primeira abaixo do limiar levando a REWORK, a segunda aprovando —, que é a história da story-018 AC-005 num PI que já está EXECUTING. Nenhum PIParticipant falso é criado para 'representar' quem votou: participantCount é o denominador congelado no tally e o modelo não tem onde guardar votante.",
   "atualizado_em": "2026-08-03"
 }
