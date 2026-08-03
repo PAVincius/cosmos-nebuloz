@@ -50,13 +50,12 @@ vi.mock("@repo/provisioning", () => ({
 }));
 
 const {
-  assertCanWrite,
   contractModuleAction,
   setModuleStatusAction,
   bootstrapCharterAction,
   provisionTenantAction,
 } = await import("../app/actions/provisioning");
-const { StaffAuthError } = await import("../lib/guard");
+const { assertCanWrite, StaffAuthError } = await import("../lib/guard");
 const { contractModule, setModuleStatus, bootstrapCharter, provisionTenant } =
   await import("@repo/provisioning");
 

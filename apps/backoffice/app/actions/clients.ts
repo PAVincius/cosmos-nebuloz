@@ -1,6 +1,7 @@
 "use server";
 
 import { ProvisioningError, platformDb } from "@repo/provisioning";
+import { clientDetailArgs, clientListArgs } from "@/lib/client-queries";
 import { requirePlatformStaff } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -12,26 +13,6 @@ export type ClientRow = {
   memberCount: number;
   modules: { module: string; status: string; expiresAt: string | null }[];
 };
-
-/** Separado da action para poder ser testado sem banco: o filtro `isSystem`
- *  é a regra que não pode ser esquecida em nenhuma listagem. */
-export function clientListArgs() {
-  return {
-    where: { isSystem: false },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      createdAt: true,
-      modules: {
-        select: { module: true, status: true, expiresAt: true },
-        orderBy: { module: "asc" as const },
-      },
-      _count: { select: { members: true } },
-    },
-    orderBy: { createdAt: "desc" as const },
-  };
-}
 
 export async function listClients(): Promise<Result<ClientRow[]>> {
   return await safeAction(async () => {
@@ -62,26 +43,6 @@ export type ClientDetail = ClientRow & {
     hasPolicy: boolean;
   };
 };
-
-/** Separado da action pelo mesmo motivo do `clientListArgs`: o filtro
- *  `isSystem` precisa ser testável sem banco. Slug do tenant interno não abre
- *  tela de cliente. */
-export function clientDetailArgs(slug: string) {
-  return {
-    where: { slug, isSystem: false },
-    select: {
-      ...clientListArgs().select,
-      members: {
-        select: {
-          role: true,
-          user: { select: { name: true, email: true } },
-        },
-      },
-      charterMemberships: { select: { role: true } },
-      charterPolicies: { select: { id: true }, take: 1 },
-    },
-  };
-}
 
 export async function getClient(slug: string): Promise<Result<ClientDetail>> {
   return await safeAction(async () => {
