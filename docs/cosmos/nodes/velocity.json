@@ -113,7 +113,7 @@
     "apps/app/__tests__/actions/velocity.test.ts",
     "apps/app/__tests__/screens/velocity.test.tsx"
   ],
-  "commits": [],
+  "commits": ["ab7aa51"],
   "notas": "profundidade THIN vem do audit de 2026-07-23 (velocity: 0 de 4 seções de handoff implementadas). A mudança central não é UI: era a definição da métrica. Chamar velocity/capacity de 'predictability' inflava o número toda vez que algo era concluído sem aceite, que é exatamente o caso que o PI Predictability Measure existe para pegar. As lacunas velocity-5 e velocity-6 dependem de PIObjective e do motor de anomalias, que são models de outros nós — nenhuma trava a prática SAFe deste. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda (o pacote @repo/database não tem script `test`), por isso a mudança de seed não é citada em verifica[].",
   "atualizado_em": "2026-08-03"
 }
