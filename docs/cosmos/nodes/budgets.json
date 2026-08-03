@@ -2,20 +2,167 @@
   "$schema": "../schema/no.schema.json",
   "id": "budgets",
   "kind": "tela",
-  "titulo": "budgets",
+  "titulo": "Lean Budgets (guardrails do value stream)",
   "rota": "/cosmos/budgets",
   "componente": "apps/app/components/cosmos/screens/budgets.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+      "export": "listLeanBudgets",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+      "export": "getValueStreamDetail",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/budgets.ts",
+      "export": "updateLeanBudgetGuardrails",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "LeanBudget",
+    "ART",
+    "StrategicTheme",
+    "GovernedEpic",
+    "InvestmentHorizon"
+  ],
+  "safe": {
+    "pratica": "Lean Budgets & Guardrails — financiar value streams em vez de projetos, com limites de gasto e split CapEx/OpEx, e congelar o orçamento quando o PI fecha",
+    "nivel": "Portfolio",
+    "faz": "Mostra ao Business Owner quanto cada value stream tem alocado, quanto já consumiu, e se o consumo está dentro do guardrail. Deixa editar o split CapEx/OpEx e os limites de gasto e de aprovação enquanto o PI está aberto — e recusa a edição, na tela e no servidor, quando o PI já fechou.",
+    "invariantes": [
+      "o ART É o value stream neste schema: LeanBudget agrupa por artId e se descreve como 'this value stream's budget'; governance.prisma declara valueStreamId como 'artId of the ART/value stream'; o LEAN_BUDGET.md §3.2 tem UMA seção 'ValueStream / ART' com tipo value_stream|art. Não existe model ValueStream e criá-lo duplicaria o conceito",
+      "orçamento com immutableAt preenchido recusa qualquer escrita de guardrail (story-025 AC-005) e nada é gravado nem auditado",
+      "a guarda de imutabilidade é lida na MESMA consulta que já faz a guarda de tenant — uma coluna a mais no select, não uma ida a mais ao banco",
+      "a tela não oferece o editor na linha imutável: recusar no servidor e ainda convidar ao clique é armadilha, não proteção",
+      "capexPct + opexPct devem somar 100; a soma é validada no zod antes de qualquer consulta e nada é persistido quando falha",
+      "utilizationPct é null (nunca 0) sem valor alocado — sem denominador não há percentual",
+      "guardrailPct é null (nunca 0) quando nenhum orçamento do ART tem limite de gasto: não há guardrail contra o que medir",
+      "o horizonte só é mostrado quando todos os orçamentos do ART concordam num só; classificação mista não tem resposta honesta única",
+      "artId de LeanBudget não é relação Prisma; o nome do ART é resolvido por consulta tenant-escopada e vira null quando o id não pertence ao tenant",
+      "escrita passa por requireRole(ADMIN|STE), reconfere o budgetId dentro do tenant e grava logAudit",
+      "erro de leitura é distinto do vazio: a tela não diz 'nenhum orçamento encontrado' a um tenant que tem orçamentos"
+    ],
+    "fonte": [
+      "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "docs/stories/epic-006/story-025.md",
+      "docs/lean-budget/LEAN_BUDGET.md",
+      "packages/database/prisma/schema/governance.prisma:7",
+      "SAFe 6.0 — Lean Budgets and Guardrails (Lean Portfolio Management)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/budgets.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "budgets-1",
+      "tipo": "action",
+      "alvo": "guarda de imutabilidade em updateLeanBudgetGuardrails",
+      "hoje": "LeanBudget.immutableAt existe no schema comentado como 'set when PI closes (AC-005)' e nenhuma leitura ou escrita do repo olhava para ele; orçamento de PI encerrado aceitava alteração de split e de limites",
+      "desejado": "recusar a escrita quando immutableAt está preenchido, lendo o campo na mesma consulta da guarda de tenant",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "budgets-2",
+      "tipo": "ui",
+      "alvo": "linha de orçamento de PI encerrado",
+      "hoje": "toda linha oferecia o botão de guardrails, inclusive a de PI fechado — o clique levava a um modal que o servidor recusaria",
+      "desejado": "marcar a linha como final e não oferecer o editor",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "budgets-3",
+      "tipo": "ui",
+      "alvo": "utilização sem valor alocado",
+      "hoje": "orçamento com amount 0 exibia 0% de utilização, indistinguível de 'consumiu nada'",
+      "desejado": "null na leitura e '—' na tela, incluindo o percentual total do cabeçalho",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "budgets-4",
+      "tipo": "ui",
+      "alvo": "estado de erro de listLeanBudgets",
+      "hoje": "falha caía no mesmo texto do vazio: a tela dizia 'Nenhum orçamento encontrado' a um tenant que tem orçamentos",
+      "desejado": "erro distinto do vazio, sem renderizar orçamento algum",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "budgets-5",
+      "tipo": "seed",
+      "alvo": "LeanBudget do tenant demo",
+      "hoje": "nenhuma linha — a tela abria vazia e nem o editor de guardrails nem o caminho de PI encerrado tinham o que exercitar",
+      "desejado": "três orçamentos com chaves (artId, piPlanId) distintas: o PI corrente do ART (editável), o PI anterior com immutableAt preenchido, e um orçamento por tema sem ART",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "budgets-6",
+      "tipo": "action",
+      "alvo": "quem marca immutableAt no fechamento do PI",
+      "hoje": "nada no repo grava immutableAt; esta tela passa a respeitar a marca, mas em produção ela nunca é posta, então a proteção existe e não dispara",
+      "desejado": "o fluxo de encerramento de PI marcar immutableAt em todos os LeanBudget do PI, com o timestamp do fechamento (story-025 AC-005)",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "budgets-7",
+      "tipo": "ui",
+      "alvo": "procedência do valor consumido",
+      "hoje": "LeanBudget.spentSource (MANUAL | BILLING_AGGREGATE | FORECAST) e spentManualOverride existem e a tela mostra `spent` sem dizer de onde veio; gasto estimado e gasto faturado não são a mesma afirmação",
+      "desejado": "exibir a procedência ao lado do valor e distinguir override manual de agregado de billing",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "budgets-8",
+      "tipo": "action",
+      "alvo": "aviso suave de super-alocação",
+      "hoje": "a story-025 AC-004 pede aviso (não bloqueio) quando a alocação de épicos ultrapassa o orçamento do ART, com confirmação explícita e marca no painel; nada disso existe",
+      "desejado": "comparar alocação de épicos com o orçamento do ART e sinalizar a super-alocação sem bloquear",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "budgets-9",
+      "tipo": "action",
+      "alvo": "avaliação de BudgetGuardrail por categoria",
+      "hoje": "o LEAN_BUDGET.md §8 descreve reavaliação de guardrail a cada alteração de alocação de custo, com registro de violação e notificação ao LPM; o repo tem os limites gravados em LeanBudget e nenhuma avaliação automática",
+      "desejado": "rotina que recalcula o gasto acumulado por value stream e categoria e registra a violação",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/budgets.test.ts",
+    "apps/app/__tests__/screens/budgets.test.tsx"
+  ],
+  "commits": [],
+  "notas": "Balde B: nenhuma migration foi criada e nenhum model ValueStream foi criado. O 'Value Stream' do design é o ART neste schema — LeanBudget agrupa por artId e se descreve como 'this value stream's budget', governance.prisma define valueStreamId como 'artId of the ART/value stream', e o LEAN_BUDGET.md §3.2 tem uma única seção 'ValueStream / ART' com um campo tipo que distingue os dois. Criar o model duplicaria o conceito e obrigaria toda leitura de orçamento a decidir qual dos dois é a verdade; o mapeamento fica documentado na ficha SAFe. A lacuna budgets-6 é a que impede a proteção de imutabilidade de valer em produção: a tela respeita a marca e ninguém a põe — está registrada aberta, não disfarçada de pronta. As lacunas budgets-7/8/9 são de comportamento fora da superfície desta tela. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }

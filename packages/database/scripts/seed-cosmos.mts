@@ -1270,6 +1270,88 @@ async function main() {
   }
   console.log("roadmap items upserted:", ri);
 
+  // LeanBudget — /cosmos/budgets. Três linhas com chaves (artId, piPlanId)
+  // distintas, que é a unique do model:
+  //  1. PI corrente do ART: editável, é onde o editor de guardrails funciona;
+  //  2. PI anterior do mesmo ART com `immutableAt` preenchido — orçamento de PI
+  //     encerrado é somente leitura (story-025 AC-005), e sem uma linha assim
+  //     esse caminho nunca aparece na tela;
+  //  3. orçamento por tema, sem ART, para a leitura que resolve themeName.
+  const LEAN_BUDGETS = [
+    {
+      name: "ART Plataforma · PI corrente",
+      artId: art.id,
+      piPlanId: piPlan.id,
+      themeName: "Modernização da Plataforma",
+      amount: 1_200_000,
+      spent: 742_000,
+      period: PI_PLAN.name,
+      capexPct: 60,
+      opexPct: 40,
+      spendLimitUsd: 1_000_000,
+      approvalThresholdUsd: 150_000,
+      immutableAt: null as Date | null,
+    },
+    {
+      name: "ART Plataforma · PI anterior",
+      artId: art.id,
+      piPlanId: null,
+      themeName: "Modernização da Plataforma",
+      amount: 980_000,
+      spent: 964_500,
+      period: "PI anterior",
+      capexPct: 55,
+      opexPct: 45,
+      spendLimitUsd: 950_000,
+      approvalThresholdUsd: 120_000,
+      immutableAt: monthStart(now, -3),
+    },
+    {
+      name: "Confiança & Risco · regulatório",
+      artId: null,
+      piPlanId: null,
+      themeName: "Confiança & Risco",
+      amount: 420_000,
+      spent: 118_000,
+      period: PI_PLAN.name,
+      capexPct: 30,
+      opexPct: 70,
+      spendLimitUsd: null,
+      approvalThresholdUsd: 80_000,
+      immutableAt: null as Date | null,
+    },
+  ];
+
+  let lb = 0;
+  for (const budgetDef of LEAN_BUDGETS) {
+    const data = {
+      tenantId: tenant.id,
+      artId: budgetDef.artId,
+      piPlanId: budgetDef.piPlanId,
+      themeId: themeByName.get(budgetDef.themeName) ?? null,
+      name: budgetDef.name,
+      amount: budgetDef.amount,
+      spent: budgetDef.spent,
+      period: budgetDef.period,
+      capexPct: budgetDef.capexPct,
+      opexPct: budgetDef.opexPct,
+      spendLimitUsd: budgetDef.spendLimitUsd,
+      approvalThresholdUsd: budgetDef.approvalThresholdUsd,
+      immutableAt: budgetDef.immutableAt,
+    };
+    const existingBudget = await db.leanBudget.findFirst({
+      where: { tenantId: tenant.id, name: budgetDef.name },
+      select: { id: true },
+    });
+    if (existingBudget) {
+      await db.leanBudget.update({ where: { id: existingBudget.id }, data });
+    } else {
+      await db.leanBudget.create({ data });
+    }
+    lb++;
+  }
+  console.log("lean budgets upserted:", lb);
+
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
     where: { tenantId: tenant.id, lifecycleStatus: { not: "REJECTED" } },
