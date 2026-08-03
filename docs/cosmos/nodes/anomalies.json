@@ -144,7 +144,7 @@
     "apps/app/__tests__/actions/anomalies.test.ts",
     "apps/app/__tests__/screens/anomalies.test.tsx"
   ],
-  "commits": [],
+  "commits": ["f1ee13da"],
   "notas": "Balde A: CostAnomaly, BillingEntry e AnomalyRuleConfig já existiam e bastavam — nenhuma migration. A lacuna real era a metade reversível do controle de sensibilidade (story-021 AC-008), não a leitura. Cuidado de nomenclatura: este é o pipeline de CUSTO (CostAnomaly + lib/cost/*), distinto do pipeline de FLUXO (Anomaly/AnomalyDetectionRun + app/actions/flow-intelligence/*); os dois têm 'anomalia' no nome e não são a mesma coisa. As lacunas anomalies-4 e anomalies-5 são de comportamento do detector e da notificação, fora da superfície da tela; nenhuma trava a prática SAFe do nó. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
   "atualizado_em": "2026-08-03"
 }
