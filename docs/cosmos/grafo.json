@@ -596,7 +596,9 @@
         "apps/app/__tests__/actions/flow.test.ts",
         "apps/app/__tests__/screens/flow.test.tsx"
       ],
-      "commits": [],
+      "commits": [
+        "4f696ee"
+      ],
       "notas": "profundidade THIN vem do audit de 2026-07-23 (flow: 1 de 7 seções de handoff). A decisão central deste nó é o que NÃO foi feito: MTTR continua indisponível, com o motivo na tela, porque não há fonte de incidente. Um painel que mostra quatro métricas DORA sendo que duas são chute é pior que um que mostra três e diz por que falta a quarta — porque alguém decide em cima do chute. O change failure rate foi aberto porque tem fonte parcial e real (estado do deployment), e a diferença para a definição canônica do DORA está declarada na tela, no cabeçalho de dora.ts e na invariante. As lacunas flow-2, flow-4 e flow-6 exigem modelagem nova; nenhuma trava a prática do nó.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
