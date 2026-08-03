@@ -2,20 +2,131 @@
   "$schema": "../schema/no.schema.json",
   "id": "kanban",
   "kind": "tela",
-  "titulo": "kanban",
+  "titulo": "Kanban de Épicos (Portfolio Kanban)",
   "rota": "/cosmos/kanban",
   "componente": "apps/app/components/cosmos/screens/kanban.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "REAL",
+  "trilha": "1-portfolio",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+      "export": "listEpics",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+      "export": "moveEpic",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/kanban.ts",
+      "export": "createEpic",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "Epic",
+    "GovernedEpic",
+    "StrategicTheme",
+    "StateTransitionHistory"
+  ],
+  "safe": {
+    "pratica": "Portfolio Kanban — funil de mão única do épico (Funil → Analisando → Portfolio Backlog → Implementando → Concluído), com portões de INVEST, hipótese, governança e orçamento entre as etapas",
+    "nivel": "Portfolio",
+    "faz": "Mostra à Portfolio Manager o portfólio como funil e deixa mover o épico de uma etapa para a seguinte arrastando o card. Quando a etapa de destino tem pré-requisito não cumprido, a recusa diz o que falta em vez de devolver o código da máquina.",
+    "invariantes": [
+      "o estado gravado de um épico precisa ser ALCANÇÁVEL pela máquina com os dados da própria linha: transitionEpicStatus não hidrata o ator no estado persistido, reproduz o caminho canônico passando pelos mesmos guards — épico em estado inalcançável faz todo arraste a partir dele falhar",
+      "ANALYZING ou além exige investScore >= 40 e hypothesis com pelo menos 50 caracteres (canTransitionToBacklog)",
+      "IMPLEMENTING ou além exige, além disso, leanBudgetAllocation > 0 e GovernedEpic com governanceStatus 'approved' (canTransitionToImplementing)",
+      "mudança de coluna passa por transitionEpicStatus e nunca grava lifecycleStatus direto — gravar direto faria do board uma segunda fonte de verdade discordante da máquina e do trigger epic_lifecycle_guard no banco",
+      "a recusa da máquina é traduzida para a frase que nomeia o pré-requisito da coluna de destino; o código cru (GUARD_FAILED, TERMINAL_STATE, INVALID_TRANSITION) não chega ao usuário, e falha que não é da máquina é repassada como veio, sem motivo inventado",
+      "a tradução mora na action do board, não em transitionEpicStatus: o código daquela action é contrato de API e quem consome a API continua vendo o código",
+      "voltar um card para o Funil é recusado antes de chamar a máquina — nenhum evento tem FUNNEL como destino, o funil é de mão única",
+      "reordenar dentro da mesma coluna grava só lifecycleOrder e não aciona a máquina",
+      "escrita passa por requireRole(ADMIN|RTE|PO); a máquina ainda exige PO|SM|RTE|STE|ADMIN nos eventos elevados, e o audit do board registra quem arrastou, para onde e em que posição",
+      "wsjf de criação é sempre recomputado no servidor e é null quando falta qualquer um dos quatro componentes — score parcial não é score",
+      "erro de leitura é distinto do vazio e nenhum épico de mock é renderizado em nenhum dos dois"
+    ],
+    "fonte": [
+      "docs/stories/epic-006/story-063-tela-kanban-coerencia-de-ciclo-de-vida.md",
+      "docs/stories/epic-006/story-011.md",
+      "docs/stories/epic-006/story-012.md",
+      "packages/safe-engine/src/machines/epic-lifecycle.ts",
+      "SAFe 6.0 — Portfolio Kanban (Lean Portfolio Management)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/kanban.ts",
+      "apps/app/app/actions/epics/transition-status.ts",
+      "packages/safe-engine/src/machines/epic-lifecycle.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "kanban-1",
+      "tipo": "seed",
+      "alvo": "contexto de ciclo de vida dos épicos do tenant demo",
+      "hoje": "o seed gravava lifecycleStatus em todas as colunas e nenhum dos campos que os guards leem; como transitionEpicStatus reproduz o caminho canônico até o estado atual, os épicos em PORTFOLIO_BACKLOG e além estavam em estados que a máquina não alcança — das quatro transições do board só FUNNEL→ANALYZING funcionava, e as outras três estouravam como se fosse bug de UI",
+      "desejado": "investScore, hypothesis e leanBudgetAllocation coerentes com o estado gravado, mais GovernedEpic aprovado para os épicos em IMPLEMENTING ou além",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "kanban-2",
+      "tipo": "ui",
+      "alvo": "mensagem de recusa do arraste",
+      "hoje": "a recusa da máquina chegava ao usuário como o código cru: 'Não foi possível mover: GUARD_FAILED', que não diz se falta aprovação de governança ou alocação de orçamento — coisas diferentes com donos diferentes",
+      "desejado": "frase que nomeia o pré-requisito da coluna de destino, como a story-011 AC-003 já previa com guard e message",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "kanban-3",
+      "tipo": "action",
+      "alvo": "fastForwardToState reconstrói o caminho em vez de hidratar o estado",
+      "hoje": "transitionEpicStatus reproduz o caminho canônico a cada chamada, passando pelos guards de novo; isso amarra o épico a um caminho histórico que ele pode ter percorrido antes de um guard mudar, e é o que torna 'estado alcançável' um requisito do dado em vez de só do fluxo",
+      "desejado": "hidratar o ator diretamente no estado persistido e avaliar só o evento pedido",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "kanban-4",
+      "tipo": "campo",
+      "alvo": "limite de WIP por coluna",
+      "hoje": "a story-012 é 'Portfolio Kanban Board with Real-Time Drag & WIP Limits' e não há limite de WIP algum: nada impede o Portfolio Backlog de acumular sem teto, que é o oposto do que um Kanban serve para mostrar",
+      "desejado": "limite por coluna, configurável por tenant, sinalizado no cabeçalho da coluna e checado no movimento",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "kanban-5",
+      "tipo": "ui",
+      "alvo": "rejeitar um épico pelo board",
+      "hoje": "REJECT é um evento da máquina, exige justificativa de pelo menos 20 caracteres (story-011 AC-005) e não tem caminho na tela; épico rejeitado só some do board porque a leitura filtra REJECTED",
+      "desejado": "ação de rejeitar com campo de justificativa, passando pela mesma máquina",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/kanban.test.ts",
+    "apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts",
+    "apps/app/__tests__/screens/kanban.test.tsx"
+  ],
+  "commits": [],
+  "notas": "Balde A: Epic e GovernedEpic já existiam e bastavam — nenhuma migration. Este nó é a referência do padrão (action tenant-escopada, RBAC, audit, delegação à máquina XState), e o que faltava não era escrita, era coerência: o seed produzia épicos em estados que a própria máquina não alcança. epic-lifecycle-reachability.test.ts passa desde a primeira execução de propósito — ele não testa código novo, fixa contra a máquina real a regra que o seed precisa honrar, porque o teste do seed (packages/database/scripts/__tests__/seed-cosmos.test.ts) nunca roda: @repo/database não tem script `test` e `turbo test` o ignora. Sem esse teste a regra ficaria só num comentário. A lacuna kanban-3 é a causa estrutural: se o ator fosse hidratado no estado persistido, estado inalcançável seria um problema de dado e não de fluxo. As lacunas kanban-4 e kanban-5 são superfície da story-012 e da 011 ainda não construída.",
+  "atualizado_em": "2026-08-03"
 }

@@ -107,6 +107,43 @@ const PILLARS = [
   { name: "Inteligência de Dados", tone: "amber", themes: ["Data & AI"] },
 ];
 
+// Contexto de ciclo de vida coerente com o estado gravado do épico.
+//
+// transitionEpicStatus não hidrata o ator no estado persistido: reconstrói a
+// máquina do zero e reproduz o caminho canônico até o estado atual
+// (fastForwardToState), passando pelos MESMOS guards. Um épico gravado em
+// PORTFOLIO_BACKLOG sem investScore/hipótese nunca chega lá no replay — o ator
+// trava em ANALYZING e o arraste no board falha com uma mensagem sobre o estado
+// errado. Estado não alcançável não é dado ruim, é dado impossível.
+//
+// A regra, provada em apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts:
+//  - ANALYZING ou além: investScore >= 40 e hypothesis com >= 50 caracteres
+//    (canTransitionToBacklog);
+//  - IMPLEMENTING ou além: também leanBudgetAllocation > 0 e GovernedEpic
+//    aprovado (canTransitionToImplementing).
+// FUNNEL fica sem nada de propósito: é o estado inicial, ANALYZE não tem guard,
+// e um épico de funil sem hipótese é o caso realista.
+const GATED_FROM_ANALYZING = new Set([
+  "ANALYZING",
+  "PORTFOLIO_BACKLOG",
+  "IMPLEMENTING",
+  "DONE",
+]);
+const GATED_FROM_IMPLEMENTING = new Set(["IMPLEMENTING", "DONE"]);
+
+function lifecycleContext(lifecycleStatus: string, title: string) {
+  const analyzed = GATED_FROM_ANALYZING.has(lifecycleStatus);
+  const funded = GATED_FROM_IMPLEMENTING.has(lifecycleStatus);
+  return {
+    investScore: analyzed ? 72 : null,
+    hypothesis: analyzed
+      ? `Acreditamos que "${title}" reduz atrito para o cliente e sustenta a meta de receita do PI; validaremos pelos indicadores de valor do épico.`
+      : null,
+    leanBudgetAllocation: funded ? 250_000 : null,
+    needsGovernanceApproval: funded,
+  };
+}
+
 const EPICS = [
   {
     id: "EP-104",
@@ -723,11 +760,14 @@ async function main() {
   console.log("pillars upserted:", p);
 
   let n = 0;
+  const needsGovernance: string[] = [];
   for (const [i, e] of EPICS.entries()) {
+    const lifecycleStatus = LIFECYCLE[e.col] as string;
+    const gate = lifecycleContext(lifecycleStatus, e.title);
     const data = {
       tenantId: tenant.id,
       title: e.title,
-      lifecycleStatus: LIFECYCLE[e.col],
+      lifecycleStatus,
       order: i,
       strategicThemeId: themeByName.get(e.theme) ?? null,
       wsjf: e.wsjf,
@@ -738,6 +778,9 @@ async function main() {
       artTone: ART_TONE[e.art] ?? "accent",
       featureCount: 100,
       doneFeatureCount: e.progress, // progress% = done/total
+      investScore: gate.investScore,
+      hypothesis: gate.hypothesis,
+      leanBudgetAllocation: gate.leanBudgetAllocation,
     };
     const existing = await db.epic.findFirst({
       where: { tenantId: tenant.id, title: e.title },
@@ -751,9 +794,31 @@ async function main() {
         })
       : await db.epic.create({ data, select: { id: true } });
     epicIdByTitle.set(e.title, epicRow.id);
+    if (gate.needsGovernanceApproval) {
+      needsGovernance.push(epicRow.id);
+    }
     n++;
   }
   console.log("epics upserted:", n);
+
+  // A aprovação de governança é o outro guard de START_IMPLEMENTING, e ela mora
+  // em GovernedEpic, não no Epic. Sem esta linha, arrastar um card do Portfolio
+  // Backlog para Implementando falha mesmo com orçamento alocado.
+  let ge = 0;
+  for (const epicId of needsGovernance) {
+    await db.governedEpic.upsert({
+      where: { epicId },
+      update: { governanceStatus: "approved" },
+      create: {
+        tenantId: tenant.id,
+        epicId,
+        valueStreamId: null,
+        governanceStatus: "approved",
+      },
+    });
+    ge++;
+  }
+  console.log("governed epics approved:", ge);
 
   // Decision Log. Sem entrada, /cosmos/decisions do tenant demo abre no estado
   // vazio e o export de auditoria não tem o que provar. Cada linha aponta para

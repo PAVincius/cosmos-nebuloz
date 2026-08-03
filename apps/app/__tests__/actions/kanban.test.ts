@@ -197,6 +197,113 @@ describe("moveEpic", () => {
     expect(h.epicUpdate).not.toHaveBeenCalled();
   });
 
+  // story-063 AC-002 / story-011 AC-003: a recusa carrega o guard e uma
+  // mensagem; o código cru não é resposta para quem arrastou o card.
+  it("nomeia os guards do Portfolio Backlog quando a máquina recusa (AC-002)", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "GUARD_FAILED",
+    });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 0 });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("INVEST");
+      expect(res.error).toContain("hipótese");
+      expect(res.error).not.toContain("GUARD_FAILED");
+    }
+  });
+
+  it("nomeia os guards de Implementando quando a máquina recusa (AC-002)", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "PORTFOLIO_BACKLOG",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "GUARD_FAILED",
+    });
+
+    const res = await moveEpic({
+      id: "ep-1",
+      column: "implementing",
+      order: 0,
+    });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("governança");
+      expect(res.error).toContain("orçamento");
+      expect(res.error).not.toContain("GUARD_FAILED");
+    }
+  });
+
+  it("diz que o épico está em estado final em vez de repetir TERMINAL_STATE (AC-002)", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "IMPLEMENTING",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "TERMINAL_STATE",
+    });
+
+    const res = await moveEpic({ id: "ep-1", column: "done", order: 0 });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("final");
+      expect(res.error).not.toContain("TERMINAL_STATE");
+    }
+  });
+
+  it("distingue salto inexistente de dado faltando (AC-002)", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "INVALID_TRANSITION",
+    });
+
+    const res = await moveEpic({
+      id: "ep-1",
+      column: "implementing",
+      order: 0,
+    });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      // salto que a máquina não define — não é falta de dado
+      expect(res.error).not.toContain("INVALID_TRANSITION");
+      expect(res.error).not.toContain("INVEST");
+    }
+  });
+
+  it("repassa uma falha que não é da máquina sem inventar um motivo (AC-002)", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: false,
+      error: "Epic not found",
+    });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 0 });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toBe("Epic not found");
+    }
+  });
+
   it("refuses to drag a card back to the funnel", async () => {
     h.epicFindFirst.mockResolvedValue({
       id: "ep-1",
