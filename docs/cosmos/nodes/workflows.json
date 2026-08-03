@@ -2,20 +2,123 @@
   "$schema": "../schema/no.schema.json",
   "id": "workflows",
   "kind": "tela",
-  "titulo": "workflows",
+  "titulo": "Workflows (console de ativação das automações BPMN do portfólio)",
   "rota": "/cosmos/workflows",
   "componente": "apps/app/components/cosmos/screens/workflows.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "3-metricas-plataforma",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/workflows.ts",
+      "export": "listWorkflows",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/workflows.ts",
+      "export": "toggleWorkflowActive",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["BpmnDefinition"],
+  "safe": {
+    "pratica": "Continuous Delivery Pipeline — automação do fluxo de trabalho como política explícita e reversível (Lean-Agile Leadership: a política do sistema é visível e trocável por quem responde por ela)",
+    "nivel": "Portfolio",
+    "faz": "Mostra as automações BPMN do tenant com o gatilho, o volume de ações, quantas vezes rodaram e — o que faltava — o escopo que cada uma governa; deixa RTE/ADMIN/STE ligar e desligar qual definição está no ar, sabendo antes do clique qual outra vai sair.",
+    "invariantes": [
+      "no máximo uma definição ativa por escopo (tenantId + entityType + ownerType + ownerId): ativar uma desativa as irmãs ativas do mesmo escopo, e as duas escritas acontecem dentro de um $transaction — fora dele existiria janela com zero ou duas ativas",
+      "a exclusividade é por escopo e não global: definição ativa com outro entityType ou outro ownerId nunca é tocada",
+      "desativar não cascateia e não apaga histórico: só `active` muda; activatedAt/activatedBy são o registro de quando foi ativada, não de estar ativa agora, e nenhuma substituta é escolhida sozinha (o runtime devolve NO_ACTIVE_WORKFLOW)",
+      "toda escrita passa por requireRole(['ADMIN','RTE','STE']), reconfere o id dentro do tenant antes de gravar e registra logAudit com a contagem de definições substituídas",
+      "toda leitura filtra por tenantId vindo da sessão",
+      "a tela não estima runCount/actionCount: mostra o valor persistido como está, mesmo quando ele está desatualizado"
+    ],
+    "fonte": [
+      "docs/srd-epic-007.md:326",
+      "docs/srd-epic-007.md:337",
+      "docs/stories/epic-007/story-028.md",
+      "docs/stories/epic-007/story-059-tela-workflows.md",
+      "SAFe 6.0 — Continuous Delivery Pipeline / Lean-Agile Leadership"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/workflows.ts",
+      "apps/app/app/actions/workflow/transition.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "workflows-1",
+      "tipo": "action",
+      "alvo": "toggleWorkflowActive — exclusividade por escopo",
+      "hoje": "a ativação só ligava a definição alvo. FR-030 exige 'one active per owner+entityType' e o runtime já dependia disso: transition.ts:82 carrega a máquina com findFirst({ ownerId, active: true }) e, com duas ativas, pegava uma qualquer — o comportamento do fluxo virava sorteio",
+      "desejado": "ativar desliga as irmãs ativas do mesmo escopo dentro da mesma transação, e a auditoria registra quantas foram substituídas",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "workflows-2",
+      "tipo": "ui",
+      "alvo": "escopo da automação e aviso de substituição",
+      "hoje": "entityType/ownerType/ownerId vinham de listWorkflows e não eram renderizados; a tela mostrava 'ativo' sem dizer sobre o quê, e o toggle não tinha nome acessível — ligar a v2 desligava a v1 sem qualquer aviso",
+      "desejado": "chip de escopo (entityType · ownerType) por linha e rótulo do controle anunciando a substituição só quando ela vai de fato acontecer",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "workflows-3",
+      "tipo": "seed",
+      "alvo": "BpmnDefinition do tenant demo",
+      "hoje": "o seed do cosmos não criava definição alguma e /cosmos/workflows abria vazia — a regra central da tela não tinha o que demonstrar",
+      "desejado": "duas definições no mesmo escopo (FEATURE · ART), uma ativa e uma parada, mais uma em escopo distinto (STORY · TEAM); xmlGzip com BPMN mínimo real gzipado e compiledMachine só na que foi ativada",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "workflows-4",
+      "tipo": "ui",
+      "alvo": "builder BPMN (criar/editar definição)",
+      "hoje": "criar automação é o canvas bpmn-js da story-028 (moddle cosmos:*, co-edição Liveblocks, diff contra a ativa, compilador BPMN→XState). apps/app/e2e/bpmn-canvas.spec.ts aponta para /workflows/[teamId]/bpmn, rota que não existe neste app. A tela não oferece 'criar workflow' — a ausência é deliberada, não esquecimento",
+      "desejado": "rota do canvas e fluxo de criação/fork/diff conforme FR-030",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "workflows-5",
+      "tipo": "campo",
+      "alvo": "runCount / actionCount",
+      "hoje": "o schema declara os dois como denorm 'recomputed on activate/run', mas nada neste app os recomputa — o runtime de transição (transition.ts) não incrementa runCount. A tela mostra o valor persistido como está e não estima nada",
+      "desejado": "incremento de runCount no runtime de transição e recomputo de actionCount na ativação, a partir da máquina compilada",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "workflows-6",
+      "tipo": "campo",
+      "alvo": "nome legível do dono (ownerId)",
+      "hoje": "BpmnDefinition.ownerId é polimórfico (ORG/TEAM/ART) e não tem relação Prisma; a tela mostra o ownerType, que é o que muda o significado da exclusividade, mas não consegue dizer 'ART Plataforma' sem três consultas condicionais por linha",
+      "desejado": "resolução do dono para nome legível, seja por relação no schema seja por um join único na leitura",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/workflows.test.ts",
+    "apps/app/__tests__/screens/workflows.test.tsx"
+  ],
+  "commits": ["56aba2e"],
+  "notas": "A tela já lia dado real antes desta rodada (listWorkflows/toggleWorkflowActive existiam e bastavam para a listagem, como o despacho antecipou). O que faltava era profundidade de regra, não de leitura: a invariante 'uma ativa por owner+entityType' do FR-030 não era imposta em lugar nenhum e o runtime já dependia dela; e o escopo, que dá sentido à palavra 'ativo', nunca chegava à tela. O builder BPMN fica de fora por decisão de escopo (lacuna workflows-4), não por falta de tempo.",
+  "atualizado_em": "2026-08-03"
 }

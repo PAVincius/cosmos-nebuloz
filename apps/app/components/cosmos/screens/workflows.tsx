@@ -29,11 +29,22 @@ import {
 } from "../kit";
 import { useActionToast } from "../use-action-toast";
 
+// FR-030: "one active per owner+entityType". O escopo de exclusividade é o
+// trio (entityType, ownerType, ownerId) — duas ativas em escopos diferentes é
+// o caso normal, duas no mesmo escopo é o defeito que toggleWorkflowActive
+// impede. A tela precisa mostrar o escopo, senão "ativo" não informa nada.
+function scopeKey(w: WorkflowView): string {
+  return `${w.entityType}|${w.ownerType}|${w.ownerId}`;
+}
+
 function WorkflowRow({
   workflow,
+  replaces,
   onToggled,
 }: {
   workflow: WorkflowView;
+  /** Automação ativa do mesmo escopo que esta ativação vai desligar. */
+  replaces: WorkflowView | null;
   onToggled: () => void;
 }) {
   const [toggling, setToggling] = useState(false);
@@ -60,11 +71,21 @@ function WorkflowRow({
     }
   };
 
+  const toggleLabel = (() => {
+    if (workflow.active) {
+      return `Desativar ${workflow.name}`;
+    }
+    return replaces
+      ? `Ativar ${workflow.name} (substitui ${replaces.name})`
+      : `Ativar ${workflow.name}`;
+  })();
+
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "minmax(0,1.5fr) minmax(0,1fr) 110px 90px 46px",
+        gridTemplateColumns:
+          "minmax(0,1.3fr) 132px minmax(0,1fr) 110px 90px 46px",
         alignItems: "center",
         gap: 16,
         padding: "14px 18px",
@@ -103,6 +124,27 @@ function WorkflowRow({
           }}
         >
           {workflow.name}
+        </span>
+      </div>
+      <div>
+        <span
+          className="mono"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            fontSize: 10.5,
+            fontWeight: 700,
+            letterSpacing: ".04em",
+            color: "var(--ink-muted)",
+            background: "var(--chip-bg)",
+            border: "1px solid var(--hairline)",
+            borderRadius: 6,
+            padding: "3px 8px",
+            whiteSpace: "nowrap",
+          }}
+          title="Escopo de exclusividade: só uma automação fica ativa por tipo de entidade e dono"
+        >
+          {workflow.entityType} · {workflow.ownerType}
         </span>
       </div>
       <div
@@ -162,7 +204,24 @@ function WorkflowRow({
         </div>
       </div>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Switch on={workflow.active} onClick={toggle} />
+        {/* O Switch do kit não recebe rótulo; envolvê-lo num button nativo dá
+            nome acessível (e teclado) sem tocar no kit compartilhado. O rótulo
+            é onde a substituição do AC-004 é anunciada antes do clique. */}
+        <button
+          aria-label={toggleLabel}
+          onClick={toggle}
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0,
+            display: "flex",
+            cursor: "pointer",
+          }}
+          title={toggleLabel}
+          type="button"
+        >
+          <Switch on={workflow.active} />
+        </button>
       </div>
     </div>
   );
@@ -192,6 +251,11 @@ function WorkflowsBody() {
   const active = workflows.filter((w) => w.active).length;
   const runs = workflows.reduce((sum, w) => sum + w.runCount, 0);
   const actions = workflows.reduce((sum, w) => sum + w.actionCount, 0);
+  // Qual automação está ativa em cada escopo — é ela que a ativação de uma
+  // irmã vai desligar (AC-001/AC-004). Derivado da lista, nunca persistido.
+  const activeByScope = new Map(
+    workflows.filter((w) => w.active).map((w) => [scopeKey(w), w])
+  );
 
   return (
     <div className="fade-in">
@@ -265,7 +329,14 @@ function WorkflowsBody() {
         {!(error || loading) && workflows.length > 0 && (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {workflows.map((w) => (
-              <WorkflowRow key={w.id} onToggled={load} workflow={w} />
+              <WorkflowRow
+                key={w.id}
+                onToggled={load}
+                replaces={
+                  w.active ? null : (activeByScope.get(scopeKey(w)) ?? null)
+                }
+                workflow={w}
+              />
             ))}
           </div>
         )}

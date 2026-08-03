@@ -9,6 +9,8 @@ const h = vi.hoisted(() => ({
   bpmnDefinitionFindMany: vi.fn(),
   bpmnDefinitionFindFirst: vi.fn(),
   bpmnDefinitionUpdate: vi.fn(),
+  bpmnDefinitionUpdateMany: vi.fn(),
+  transaction: vi.fn(),
   logAudit: vi.fn(),
 }));
 
@@ -25,7 +27,9 @@ vi.mock("@repo/database", () => ({
       findMany: h.bpmnDefinitionFindMany,
       findFirst: h.bpmnDefinitionFindFirst,
       update: h.bpmnDefinitionUpdate,
+      updateMany: h.bpmnDefinitionUpdateMany,
     },
+    $transaction: h.transaction,
   },
 }));
 vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
@@ -41,6 +45,17 @@ beforeEach(() => {
   h.headers.mockResolvedValue(new Headers());
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  h.bpmnDefinitionUpdateMany.mockResolvedValue({ count: 0 });
+  // $transaction interativo: a action recebe o client transacional e faz as
+  // duas escritas nele. O mock repassa o mesmo par de spies.
+  h.transaction.mockImplementation((fn: (tx: unknown) => unknown) =>
+    fn({
+      bpmnDefinition: {
+        updateMany: h.bpmnDefinitionUpdateMany,
+        update: h.bpmnDefinitionUpdate,
+      },
+    })
+  );
 });
 
 describe("listWorkflows", () => {
@@ -94,6 +109,12 @@ describe("listWorkflows", () => {
 
 describe("toggleWorkflowActive", () => {
   const validInput = { id: "clxxxxxxxxxxxxxxxxxxxxxxx", active: true };
+  const scoped = {
+    id: validInput.id,
+    entityType: "FEATURE",
+    ownerType: "ART",
+    ownerId: "art-1",
+  };
 
   it("is denied when the role is not permitted (RBAC)", async () => {
     h.requireRole.mockImplementation(() => {
@@ -125,7 +146,7 @@ describe("toggleWorkflowActive", () => {
   });
 
   it("activates, stamping activatedAt/activatedBy, audits, and revalidates", async () => {
-    h.bpmnDefinitionFindFirst.mockResolvedValue({ id: validInput.id });
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
     h.bpmnDefinitionUpdate.mockResolvedValue({
       id: validInput.id,
       active: true,
@@ -152,14 +173,14 @@ describe("toggleWorkflowActive", () => {
         action: "status_changed",
         entityType: "bpmn_definition",
         entityId: validInput.id,
-        diff: { active: true },
+        diff: expect.objectContaining({ active: true }),
       })
     );
     expect(h.revalidateTag).toHaveBeenCalled();
   });
 
   it("deactivates without touching activatedAt/activatedBy", async () => {
-    h.bpmnDefinitionFindFirst.mockResolvedValue({ id: validInput.id });
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
     h.bpmnDefinitionUpdate.mockResolvedValue({
       id: validInput.id,
       active: false,
@@ -176,7 +197,92 @@ describe("toggleWorkflowActive", () => {
     );
     expect(h.logAudit).toHaveBeenCalledWith(
       tenantCtx.tenantId,
-      expect.objectContaining({ diff: { active: false } })
+      expect.objectContaining({
+        diff: expect.objectContaining({ active: false }),
+      })
     );
+  });
+
+  // ── AC-001: uma ativa por escopo (owner + entityType), FR-030 ──────────────
+  it("desativa a irmã ativa do mesmo escopo na mesma transação ao ativar (AC-001)", async () => {
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
+    h.bpmnDefinitionUpdateMany.mockResolvedValue({ count: 1 });
+    h.bpmnDefinitionUpdate.mockResolvedValue({
+      id: validInput.id,
+      active: true,
+    });
+
+    const res = await toggleWorkflowActive(validInput);
+
+    expect(res.ok).toBe(true);
+    // as duas escritas acontecem dentro de $transaction, não soltas
+    expect(h.transaction).toHaveBeenCalledTimes(1);
+    expect(h.bpmnDefinitionUpdateMany).toHaveBeenCalledWith({
+      where: {
+        tenantId: tenantCtx.tenantId,
+        entityType: scoped.entityType,
+        ownerType: scoped.ownerType,
+        ownerId: scoped.ownerId,
+        active: true,
+        id: { not: validInput.id },
+      },
+      data: { active: false },
+    });
+    if (res.ok) {
+      expect(res.data.deactivated).toBe(1);
+    }
+  });
+
+  it("não desativa definição de outro escopo — a exclusividade é por escopo (AC-001)", async () => {
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
+    h.bpmnDefinitionUpdateMany.mockResolvedValue({ count: 0 });
+    h.bpmnDefinitionUpdate.mockResolvedValue({
+      id: validInput.id,
+      active: true,
+    });
+
+    await toggleWorkflowActive(validInput);
+
+    const where = h.bpmnDefinitionUpdateMany.mock.calls[0][0].where;
+    // o filtro é fechado nos três eixos do escopo: outro entityType ou outro
+    // ownerId não é alcançado pelo updateMany
+    expect(where.entityType).toBe("FEATURE");
+    expect(where.ownerType).toBe("ART");
+    expect(where.ownerId).toBe("art-1");
+    expect(where.tenantId).toBe(tenantCtx.tenantId);
+  });
+
+  it("audita qual definição foi substituída ao ativar (AC-003)", async () => {
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
+    h.bpmnDefinitionUpdateMany.mockResolvedValue({ count: 2 });
+    h.bpmnDefinitionUpdate.mockResolvedValue({
+      id: validInput.id,
+      active: true,
+    });
+
+    await toggleWorkflowActive(validInput);
+
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        diff: { active: true, deactivated: 2 },
+      })
+    );
+  });
+
+  it("não desativa nada ao apenas desativar (AC-002)", async () => {
+    h.bpmnDefinitionFindFirst.mockResolvedValue(scoped);
+    h.bpmnDefinitionUpdate.mockResolvedValue({
+      id: validInput.id,
+      active: false,
+    });
+
+    const res = await toggleWorkflowActive({ ...validInput, active: false });
+
+    expect(res.ok).toBe(true);
+    expect(h.bpmnDefinitionUpdateMany).not.toHaveBeenCalled();
+    if (res.ok) {
+      expect(res.data.deactivated).toBe(0);
+    }
   });
 });

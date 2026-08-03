@@ -5,6 +5,7 @@
 // which throws under plain tsx) using the same pg driver adapter Prisma 7 needs.
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { gzipSync } from "node:zlib";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../generated/client";
@@ -496,6 +497,32 @@ const DECISIONS = [
     dadosSuporte: { blockedBy: "Migração core para multi-tenant" },
   },
 ];
+
+// BpmnDefinition.xmlGzip é obrigatório e é o XML real da definição, gzipado
+// (FR-030, "gzip XML ≤2MB"). O seed grava um processo BPMN mínimo de verdade,
+// não bytes aleatórios: a tela não lê o XML, mas gravar lixo num campo que o
+// compilador um dia vai ler é plantar um defeito.
+function bpmnXmlGzip(
+  processId: string,
+  taskName: string
+): Uint8Array<ArrayBuffer> {
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  <process id="${processId}" isExecutable="true">
+    <startEvent id="start" />
+    <task id="review" name="${taskName}" />
+    <endEvent id="end" />
+    <sequenceFlow id="f1" sourceRef="start" targetRef="review" />
+    <sequenceFlow id="f2" sourceRef="review" targetRef="end" />
+  </process>
+</definitions>`;
+  const gz = gzipSync(Buffer.from(xml, "utf-8"));
+  // Prisma Bytes quer Uint8Array<ArrayBuffer>; o buffer do Node é
+  // ArrayBufferLike — copiar para um ArrayBuffer simples satisfaz o tipo.
+  const buffer = new ArrayBuffer(gz.byteLength);
+  new Uint8Array(buffer).set(gz);
+  return new Uint8Array(buffer);
+}
 
 type DevDb = typeof db;
 
@@ -1045,6 +1072,102 @@ async function main() {
     owner: s.ownerName,
     progress: Math.round((s.doneFeatureCount / s.featureCount) * 100),
   });
+
+  // Automações do portfólio (/cosmos/workflows). Sem definição alguma a tela
+  // abre vazia e a regra que ela existe para mostrar — FR-030, "uma ativa por
+  // owner+entityType" — não tem o que demonstrar. Por isso duas no MESMO
+  // escopo (FEATURE · ART): a v1 ativa e a v2 parada, que é o par onde ativar
+  // uma desliga a outra. A terceira fica em escopo distinto (STORY · TEAM)
+  // para provar que a exclusividade não é global.
+  // runCount só é diferente de zero em definição que já foi ativada: o campo
+  // é denorm "recomputed on run" e ninguém o recomputa neste app — dar
+  // execução a uma automação que nunca entrou no ar seria inventar histórico.
+  const platformTeamId = teamIdByName.values().next().value;
+  const WORKFLOWS = [
+    {
+      name: "Aprovação de Feature Crítica",
+      processId: "approve-critical-feature",
+      entityType: "FEATURE",
+      ownerType: "ART",
+      ownerId: art.id,
+      triggerLabel: "Feature → Review",
+      actionCount: 3,
+      runCount: 12,
+      active: true,
+      compiled: true,
+    },
+    {
+      name: "Aprovação de Feature Crítica v2",
+      processId: "approve-critical-feature-v2",
+      entityType: "FEATURE",
+      ownerType: "ART",
+      ownerId: art.id,
+      triggerLabel: "Feature → Review (com gate de segurança)",
+      actionCount: 4,
+      runCount: 0,
+      active: false,
+      compiled: false,
+    },
+    {
+      name: "Escalonamento de Story Bloqueada",
+      processId: "escalate-blocked-story",
+      entityType: "STORY",
+      ownerType: "TEAM",
+      ownerId: platformTeamId ?? art.id,
+      triggerLabel: "Story parada há 48h",
+      actionCount: 2,
+      runCount: 0,
+      active: false,
+      compiled: false,
+    },
+  ];
+
+  let wf = 0;
+  for (const w of WORKFLOWS) {
+    const processId = w.processId;
+    const data = {
+      tenantId: tenant.id,
+      name: w.name,
+      entityType: w.entityType,
+      ownerType: w.ownerType,
+      ownerId: w.ownerId,
+      xmlGzip: bpmnXmlGzip(processId, "Revisão"),
+      // compiledMachine só existe em definição ativada: FR-031 compila na
+      // ativação, e a v2 nunca foi ativada.
+      compiledMachine: w.compiled
+        ? {
+            id: processId,
+            initial: "start",
+            states: {
+              start: { on: { review: { target: "review" } } },
+              review: { on: { approve: { target: "end" } } },
+              end: { type: "final" },
+            },
+          }
+        : undefined,
+      triggerLabel: w.triggerLabel,
+      actionCount: w.actionCount,
+      runCount: w.runCount,
+      active: w.active,
+      ...(w.active
+        ? { activatedAt: new Date("2026-03-02"), activatedBy: devMember.userId }
+        : {}),
+    };
+    await db.bpmnDefinition.upsert({
+      where: {
+        tenantId_name_ownerType_ownerId: {
+          tenantId: tenant.id,
+          name: w.name,
+          ownerType: w.ownerType,
+          ownerId: w.ownerId,
+        },
+      },
+      update: data,
+      create: data,
+    });
+    wf++;
+  }
+  console.log("bpmn definitions upserted:", wf);
 }
 
 // Guarda de entrypoint: __tests__/seed-cosmos.test.ts importa seedDevMembership
