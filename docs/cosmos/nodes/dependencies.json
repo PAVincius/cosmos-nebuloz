@@ -2,20 +2,121 @@
   "$schema": "../schema/no.schema.json",
   "id": "dependencies",
   "kind": "tela",
-  "titulo": "dependencies",
+  "titulo": "Dependências (mapa de bloqueios entre times)",
   "rota": "/cosmos/dependencies",
   "componente": "apps/app/components/cosmos/screens/dependencies.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "2-execucao",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/dependencies.ts",
+      "export": "listDependencies",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/dependencies.ts",
+      "export": "createDependency",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/dependencies.ts",
+      "export": "updateDependencyBoardStatus",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["DependencyLink", "Feature", "Team"],
+  "safe": {
+    "pratica": "Dependency management do Program Board — bloqueios entre times mapeados, acíclicos e levados até a resolução",
+    "nivel": "Essential",
+    "faz": "Lista os bloqueios entre features de times diferentes com o time de origem e destino, recusa o registro de uma dependência que fecharia um ciclo (dizendo qual), e deixa o RTE avançar o bloqueio de identificado para em resolução e resolvido.",
+    "invariantes": [
+      "dependência que fecharia um ciclo é recusada na escrita, e a mensagem nomeia o ciclo pelos títulos das features na ordem em que ele se fecha",
+      "uma feature não pode bloquear a si mesma; o caso é recusado no schema, antes de qualquer consulta ao grafo",
+      "a varredura do ciclo lê apenas DependencyLink do tenant da sessão e ignora boardStatus RESOLVED — bloqueio resolvido não restringe mais a ordem do trabalho",
+      "o sentido da aresta é blockingFeatureId → blockedFeatureId ('A precisa terminar antes de B')",
+      "boardStatus avança IDENTIFIED → IN_PROGRESS → RESOLVED e RESOLVED é terminal: reabrir reescreveria a história do PI e nenhum AC autoriza",
+      "escrita de estado passa por requireRole(ADMIN|RTE), reconfere o id dentro do tenant e grava logAudit com o valor anterior",
+      "o time de cada ponta é resolvido por consulta tenant-escopada sobre Feature.assignedTeamId; time de outro tenant resolve para null, nunca vaza"
+    ],
+    "fonte": [
+      "docs/stories/epic-006/story-058-tela-dependencias.md",
+      "docs/stories/epic-006/story-020.md",
+      "docs/stories/epic-008/story-042.md",
+      "SAFe 6.0 — PI Planning / Program Board (cross-team dependency management)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/dependencies.ts",
+      "apps/app/app/(cosmos)/actions/dependencies.constants.ts",
+      "apps/app/lib/collaboration/dependency-cycle.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "dependencies-1",
+      "tipo": "action",
+      "alvo": "createDependency — detecção de ciclo",
+      "hoje": "a tela aceitava qualquer par de features; com A→B e B→C registrados, registrar C→A produzia um plano impossível (nenhuma das três podia começar) sem qualquer aviso",
+      "desejado": "recusa na escrita com o ciclo nomeado, reusando o dependency-cycle.ts que já existia puro e testado mas sem chamador de produção",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "dependencies-2",
+      "tipo": "action",
+      "alvo": "updateDependencyBoardStatus",
+      "hoje": "boardStatus vinha na leitura e não era mostrado nem avançável; toda dependência ficava IDENTIFIED para sempre e o quadro nunca dizia o que já tinha sido resolvido",
+      "desejado": "avanço IDENTIFIED → IN_PROGRESS → RESOLVED com RBAC, guarda de tenant e auditoria do valor anterior, e o estado visível em cor e em palavra na tela",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "dependencies-3",
+      "tipo": "seed",
+      "alvo": "Feature e DependencyLink do tenant demo",
+      "hoje": "o seed nunca criava Feature; a tela abria no estado vazio e nem a cor-codificação nem a guarda de ciclo tinham em quem aparecer",
+      "desejado": "features do PI ativo e uma cadeia acíclica de bloqueios cobrindo os três boardStatus",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "dependencies-4",
+      "tipo": "campo",
+      "alvo": "DependencyLink.status vs. DependencyLink.boardStatus",
+      "hoje": "dois campos de estado no mesmo registro com vocabulários diferentes (not-started/on-track/at-risk/blocked/completed contra IDENTIFIED/IN_PROGRESS/RESOLVED); a tela mostra os dois lado a lado porque escolher um sem migrar perderia dado",
+      "desejado": "um campo de estado só, com migração dos valores legados — decidir qual é a fonte de verdade é decisão de produto, não de implementação",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "dependencies-5",
+      "tipo": "campo",
+      "alvo": "tipo da dependência (PROVIDES/NEEDS/BLOCKS) da story-042 AC-004",
+      "hoje": "DependencyLink.type existe com o vocabulário technical/business/organizational/external, que é outro eixo — não há como cor-codificar por PROVIDES/NEEDS/BLOCKS como o AC-004 pede",
+      "desejado": "eixo de tipo alinhado ao AC-004, ou decisão explícita de que o eixo do repo substitui o da story",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/dependencies.test.ts",
+    "apps/app/__tests__/screens/dependencies.test.tsx",
+    "apps/app/__tests__/program-board/program-board.test.ts"
+  ],
+  "commits": [],
+  "notas": "profundidade THIN é o veredito medido do audit de 2026-07-23 (2 de 7 seções do handoff). A detecção de ciclo não é implementação nova: apps/app/lib/collaboration/dependency-cycle.ts já tinha buildAdjacency e wouldCreateCycle puros e testados, com zero chamadores de produção — wouldCreateCycle passou a ser expresso em termos de findCyclePath, que é o mesmo traversal devolvendo o caminho, então continua havendo uma implementação só. O DFS de app/actions/features/dependencies.ts segue existindo para o fluxo por PI Plan (uma consulta por nó); esta tela usa uma consulta só porque não filtra por PI. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda (@repo/database não tem script `test`), por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
 }

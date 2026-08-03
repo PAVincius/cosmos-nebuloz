@@ -10,7 +10,15 @@ import {
   createDependency,
   type DependencyView,
   listDependencies,
+  updateDependencyBoardStatus,
 } from "@/app/(cosmos)/actions/dependencies";
+import {
+  DEPENDENCY_BOARD_STATUS_LABEL,
+  DEPENDENCY_BOARD_STATUS_TONE,
+  DEPENDENCY_NEXT_STATUS_LABEL,
+  type DependencyBoardStatus,
+  nextBoardStatus,
+} from "@/app/(cosmos)/actions/dependencies.constants";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
@@ -167,8 +175,39 @@ function TeamPill({ name, color }: { name: string; color: string | null }) {
   );
 }
 
-function DepCard({ d }: { d: DependencyView }) {
+function DepCard({
+  d,
+  onAdvanced,
+}: {
+  d: DependencyView;
+  onAdvanced: () => void;
+}) {
   const tone = STATUS_TONE[d.status] ?? "neutral";
+  const board = d.boardStatus as DependencyBoardStatus;
+  const next = nextBoardStatus(d.boardStatus);
+  const [saving, setSaving] = useState(false);
+
+  const advance = async () => {
+    if (!next || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => updateDependencyBoardStatus({ id: d.id, boardStatus: next }),
+      {
+        loading: "Atualizando dependência...",
+        success: "Dependência atualizada.",
+        error: (err: string) =>
+          `Não foi possível atualizar a dependência: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      onAdvanced();
+    }
+  };
+
   return (
     <div
       style={{
@@ -183,8 +222,20 @@ function DepCard({ d }: { d: DependencyView }) {
       }}
     >
       <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
+        {/* story-020 AC-006 — o estado do bloqueio, que a tela recebia e não
+            mostrava. `status` é o campo textual legado e segue ao lado. */}
+        <Badge tone={DEPENDENCY_BOARD_STATUS_TONE[board] ?? "neutral"}>
+          {DEPENDENCY_BOARD_STATUS_LABEL[board] ?? d.boardStatus}
+        </Badge>
         <Badge tone={tone}>{d.status}</Badge>
         {d.criticalPath && <Badge tone="red">Caminho crítico</Badge>}
+        {next && (
+          <span style={{ marginLeft: "auto" }}>
+            <Button onClick={advance} size="sm" variant="secondary">
+              {DEPENDENCY_NEXT_STATUS_LABEL[board]}
+            </Button>
+          </span>
+        )}
       </div>
       <div style={{ color: "var(--ink)", fontSize: 13.5, fontWeight: 600 }}>
         {d.title}
@@ -489,7 +540,7 @@ function DependenciesBody() {
           }}
         >
           {visibleDeps.map((d) => (
-            <DepCard d={d} key={d.id} />
+            <DepCard d={d} key={d.id} onAdvanced={load} />
           ))}
         </div>
       )}
