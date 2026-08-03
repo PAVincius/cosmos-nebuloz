@@ -1458,22 +1458,139 @@
       "$schema": "../schema/no.schema.json",
       "id": "piplanning",
       "kind": "tela",
-      "titulo": "piplanning",
+      "titulo": "PI Planning (confidence vote do ART)",
       "rota": "/cosmos/piplanning",
       "componente": "apps/app/components/cosmos/screens/piplanning.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "getActivePiPlanning",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "listRecentPiPredictability",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "getActiveArtCount",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "castConfidenceVote",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "export": "revealTally",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "PIPlan",
+        "PIObjective",
+        "PISession",
+        "ConfidenceVoteSession",
+        "ConfidenceVoteTally",
+        "Risk",
+        "Sprint",
+        "Team"
+      ],
+      "safe": {
+        "pratica": "Confidence Vote (fist-of-five) no PI Planning",
+        "nivel": "Essential",
+        "faz": "Mostra o PI ativo — objetivos com business value, riscos ROAM e o placar de confiança — e deixa o ART votar de 1 a 5 na confiança do plano e o RTE revelar o resultado, que é o insumo do gate de commitment do PI.",
+        "invariantes": [
+          "o voto é do ART, não por time: ConfidenceVoteTally é uma linha de contagens por rodada e não tem coluna ligando voto a votante — um teamId quebraria ao mesmo tempo o @@unique([voteSessionId, round]) e o anonimato",
+          "votar grava exatamente duas contagens (a nota votada e o total) e nada mais; nenhum logAudit é emitido no voto, porque auditar guardaria ator e carimbo de tempo — o vínculo que a story-018 AC-002 proíbe",
+          "o que é legal em cada estado da rodada é decidido pela máquina do @repo/safe-engine, a mesma que o console de ART usa; a action persiste o resultado e não mantém uma segunda tabela de transições",
+          "distribuição por nota e placar só saem da leitura depois de revealedAt: resultado parcial visível muda o voto de quem ainda não votou",
+          "revelar exige participação de pelo menos 50% e papel ADMIN|RTE, e grava aggregateScore, participationRate, revealedAt e closedAt na mesma passada",
+          "a rodada é localizada pelo PI ativo do tenant da sessão, nunca por id vindo do cliente — não existe id de rodada para o cliente escolher",
+          "voto sem PI ativo, sem rodada ou fora de OPEN é recusado, e nenhuma contagem muda"
+        ],
+        "fonte": [
+          "docs/stories/epic-006/story-060-tela-pi-planning-confidence-vote.md",
+          "docs/stories/epic-006/story-018.md:30",
+          "docs/stories/epic-006/story-018.md:38",
+          "docs/stories/epic-006/story-018.md:82",
+          "docs/srd-epic-006.md:160",
+          "SAFe 6.0 — Confidence Vote no PI Planning (fist-of-five, nível de ART)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/piplanning.ts",
+          "packages/safe-engine/src/voteHelpers.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "piplanning-1",
+          "tipo": "action",
+          "alvo": "castConfidenceVote, revealTally",
+          "hoje": "inexistentes — a tela lia o placar da última rodada e não tinha caminho para produzi-lo, então 'Confiança média' era '—' em qualquer tenant onde ninguém tivesse usado o console de ART",
+          "desejado": "voto anônimo agregado na rodada aberta e revelação com gate de participação, ambos passando pela máquina de estados do safe-engine",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "piplanning-2",
+          "tipo": "campo",
+          "alvo": "ConfidenceVoteSession.votes (Json number[], marcado legacy no schema)",
+          "hoje": "guarda a lista crua de votos da rodada, em paralelo às contagens por nota do ConfidenceVoteTally da story-018. castConfidenceVote não escreve esta coluna: manter as duas seria manter duas contagens da mesma rodada livres para divergir",
+          "desejado": "a coluna removida, com sendVoteEvent (app/actions/arts/confidence-vote.ts) migrado para o tally",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "piplanning-3",
+          "tipo": "action",
+          "alvo": "abertura de rodada a partir desta tela",
+          "hoje": "a tela vota e revela na rodada que existir, mas quem abre a rodada é o console de ART (app/actions/arts/confidence-vote.ts::createNewVoteRound + tally-vote.ts::openNextVoteRound). Sem PI Session aberta, a tela diz que não há rodada em vez de criar uma por efeito colateral",
+          "desejado": "abrir rodada pela tela do Cosmos, quando a cerimônia for facilitada por aqui — depende de decidir qual dos dois modelos de rodada (ConfidenceVoteSession.roundNumber ou ConfidenceVoteTally.round) é a rodada canônica",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "piplanning-4",
+          "tipo": "ui",
+          "alvo": "overlay Liveblocks, timer de 60s e tendência cross-PI (story-018 AC-001/AC-007)",
+          "hoje": "inexistentes. O overlay depende de presença em sala, o timer de sessão sincronizada, e a tendência de PIs fechados com rodada final revelada",
+          "desejado": "as três, quando as dependências existirem — nenhuma é aproximável sem fabricar participação",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/piplanning.test.ts",
+        "apps/app/__tests__/actions/piplanning-confidence-vote.test.ts",
+        "apps/app/__tests__/screens/piplanning.test.tsx"
+      ],
+      "commits": [
+        "c3f62537"
+      ],
+      "notas": "O confidence vote fica em nível de ART por decisão de modelagem, não por omissão: ConfidenceVoteTally é anônimo por desenho e num ART com um squad de quatro pessoas 'confiança do time X' seria praticamente voto nominal. O seed passou a criar os PI Objectives do PI ativo (PPM 18/24 = 75%, abaixo da meta SAFe de 80% de propósito, para a faixa ter o que dizer) e duas rodadas de confidence vote reveladas — a primeira abaixo do limiar levando a REWORK, a segunda aprovando —, que é a história da story-018 AC-005 num PI que já está EXECUTING. Nenhum PIParticipant falso é criado para 'representar' quem votou: participantCount é o denominador congelado no tally e o modelo não tem onde guardar votante.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": [
         "risks"
       ]
@@ -1645,7 +1762,7 @@
       "profundidade": "THIN",
       "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
+      "estado": "em-revisao",
       "actions": [
         {
           "arquivo": "apps/app/app/(cosmos)/actions/risks.ts",
@@ -1663,7 +1780,7 @@
           "arquivo": "apps/app/app/(cosmos)/actions/risks.ts",
           "export": "roamTransition",
           "tipo": "mutation",
-          "estado": "ausente"
+          "estado": "existe"
         }
       ],
       "models": [
@@ -1673,16 +1790,23 @@
       "safe": {
         "pratica": "ROAM — Resolved, Owned, Accepted, Mitigated",
         "nivel": "Essential",
-        "faz": "Registra os riscos levantados no PI Planning e obriga cada um a receber um desfecho ROAM antes do time se comprometer com o PI.",
+        "faz": "Registra os riscos levantados no PI Planning, mostra onde cada um cai na matriz probabilidade × impacto e — o que faltava — deixa o RTE dar a cada risco um desfecho ROAM, com o compromisso que aquele desfecho exige, antes de o ART se comprometer com o PI.",
         "invariantes": [
-          "todo risco nasce com roamStatus UNCLASSIFIED e só sai dele por transição explícita, com autor registrado",
-          "transição de roamStatus grava logAudit com estado anterior e ator — a trilha é o que torna o commitment auditável",
-          "severidade é derivada de probabilidade x impacto na leitura, nunca persistida como terceiro campo divergente",
-          "toda leitura e escrita filtra por tenantId vindo da sessão, nunca do cliente"
+          "todo risco nasce com roamStatus UNCLASSIFIED e só sai dele por transição explícita; UNCLASSIFIED não é destino, porque a volta esvaziaria o gate de commitment depois do commit",
+          "desfecho ROAM carrega o compromisso que o define: OWNED exige dono, MITIGATED exige plano de ≥30 caracteres, RESOLVED exige nota de resolução — sem eles a transição é recusada e nada é gravado",
+          "transição de roamStatus grava logAudit com o estado anterior e o ator — a trilha é o que torna o commitment auditável",
+          "Risk.status (coluna legada de desfecho, ainda lida por arts/pi-plans e pelos exports) é escrita junto com roamStatus, para não existirem duas verdades sobre o mesmo risco",
+          "probabilidade e impacto usam um vocabulário de cinco níveis; os valores já gravados (low/medium/high) seguem válidos e caem exatamente nas células e cores que já tinham",
+          "severidade da célula é derivada de probabilidade × impacto na leitura, nunca persistida como terceiro campo divergente",
+          "escrita passa por requireRole(ADMIN|RTE): levantar risco é de qualquer papel da sessão, classificar é do facilitador",
+          "toda leitura e escrita filtra por tenantId vindo da sessão; o riskId vindo do cliente é reconferido dentro do tenant antes de qualquer escrita"
         ],
         "fonte": [
-          "docs/srd-epic-006.md",
-          "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+          "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+          "docs/stories/epic-006/story-019.md:30",
+          "docs/stories/epic-006/story-019.md:47",
+          "docs/PRD-v1.0.md:632",
+          "docs/srd-epic-006.md:213",
           "SAFe 6.0 — Risk Management no PI Planning (ROAM)"
         ],
         "codigo": [
@@ -1694,18 +1818,48 @@
           "id": "risks-1",
           "tipo": "action",
           "alvo": "roamTransition",
-          "hoje": "inexistente — a tela cria risco mas não muda o desfecho, então o registro nasce e congela em UNCLASSIFIED",
-          "desejado": "transição guardada, com logAudit e checagem de papel",
+          "hoje": "era inexistente — a tela criava risco mas não mudava o desfecho, então o registro nascia e congelava em UNCLASSIFIED e o gate de commitment nunca podia ser satisfeito pela tela que registra o risco",
+          "desejado": "transição guardada, com os três guards da story-019 AC-002, checagem de papel, guarda de tenant e logAudit com o desfecho anterior",
           "migration": false,
-          "bloqueio": true,
-          "fechada_em": null
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
         },
         {
           "id": "risks-2",
           "tipo": "campo",
           "alvo": "Risk.probability, Risk.impact",
-          "hoje": "String livre com default 'medium'; a tela monta matriz 3x3",
-          "desejado": "vocabulário de 5 níveis para a matriz 5x5 do desenho — as colunas são String livre, então cabe sem migration e os valores atuais seguem válidos",
+          "hoje": "era String livre com default 'medium' e vocabulário de três níveis; a tela montava matriz 3×3 e as pontas do desenho não tinham onde cair",
+          "desejado": "vocabulário de cinco níveis (very_low…very_high) e matriz 5×5 — as colunas são String livre, então coube sem migration e os valores anteriores seguem válidos com os mesmos pesos 2/3/4",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "risks-3",
+          "tipo": "campo",
+          "alvo": "Risk.ownerId (duplicata de Risk.ownerUserId)",
+          "hoje": "o modelo tem duas colunas de dono. listRisks resolve o nome por ownerUserId; ownerId só é escrito pela action órfã apps/app/app/actions/risks/roam-transition.ts, que não tem chamador na UI. roamTransition escreve ownerUserId, a coluna que a leitura usa",
+          "desejado": "uma coluna de dono só, para que 'dono do risco' não dependa de qual caminho de escrita gravou",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "risks-4",
+          "tipo": "campo",
+          "alvo": "Risk.status (duplicata de Risk.roamStatus)",
+          "hoje": "duas colunas guardam o mesmo desfecho, com vocabulários que já divergiram no repo (arts/risks.ts grava 'owned' minúsculo, roam-transition grava 'OWNED'). roamTransition e o seed escrevem as duas em sincronia para não piorar a divergência",
+          "desejado": "roamStatus como única fonte do desfecho, com os leitores de status migrados",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "risks-5",
+          "tipo": "action",
+          "alvo": "quick-poll de 60s, surfacing por IA e cron de staleness (story-019 AC-004/AC-005/AC-006/AC-007)",
+          "hoje": "inexistentes na tela. A quick-poll depende de PISession + Liveblocks, o surfacing depende de PIKnowledgeVector/pgvector com os blockers de standup indexados, e a escalação por staleness depende de agendador",
+          "desejado": "as três, quando as dependências existirem — nenhuma é aproximável sem fabricar dado",
           "migration": false,
           "bloqueio": false,
           "fechada_em": null
@@ -1719,11 +1873,18 @@
           "porque": "o gate de commitment precisa saber qual PI está aberto para exigir ROAM em todos os riscos dele"
         }
       ],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
-      "notas": "Nó de referência para os demais. A ficha SAFe é obrigatória antes do commit que fecha o nó, e o reviewer abre cada fonte.",
-      "atualizado_em": "2026-08-02",
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/risks.test.ts",
+        "apps/app/__tests__/screens/risks.test.tsx"
+      ],
+      "commits": [
+        "6dc63449"
+      ],
+      "notas": "Nó de referência para os demais. A ficha SAFe é obrigatória antes do commit que fecha o nó, e o reviewer abre cada fonte. O seed passou a criar seis riscos no PI ativo, cobrindo os cinco níveis de probabilidade/impacto e os quatro desfechos ROAM, e deixando dois em UNCLASSIFIED de propósito: é o estado que o gate da story-019 AC-003 existe para barrar, e sem ele o contador 'sem classificação ROAM' da tela não teria em quem aparecer. As lacunas risks-3 e risks-4 são as duas duplicações de coluna que o modelo herdou (dono e desfecho); nenhuma trava a prática do nó, mas as duas cobram migration para deixar de existir.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -1887,22 +2048,130 @@
       "$schema": "../schema/no.schema.json",
       "id": "solution",
       "kind": "tela",
-      "titulo": "solution",
+      "titulo": "Large Solution (rollup do Solution Train)",
       "rota": "/cosmos/solution",
-      "componente": null,
+      "componente": "apps/app/components/cosmos/screens/solution-train.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/solution-train.ts",
+          "export": "listSolutionTrains",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/solution-train.ts",
+          "export": "createCapability",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "SolutionTrain",
+        "Capability",
+        "SolutionEpic",
+        "SolutionRisk",
+        "CrossArtDependency",
+        "ART",
+        "Epic"
+      ],
+      "safe": {
+        "pratica": "Solution Train — coordenação de múltiplos ARTs em uma solução",
+        "nivel": "Large Solution",
+        "faz": "Consolida, por Solution Train, o que nenhum ART enxerga sozinho: as capabilities da solução, o progresso de cada ART, os riscos de nível de solução em ROAM e as dependências que atravessam ARTs — e deixa o STE registrar capability nova a partir dali.",
+        "invariantes": [
+          "progresso por ART é derivado de featureCount/doneFeatureCount reais dos épicos daquele ART, nunca de percentual arbitrado; ART sem épico mostra 0%, não um número inventado",
+          "os épicos de todos os ARTs de todos os trens são resolvidos numa única consulta por tenant, não uma por trem — o rollup não vira N+1 conforme o portfólio cresce",
+          "Epic.artId é escalar denormalizado sem relação Prisma, então a resolução é por consulta separada dentro do tenant, nunca por include",
+          "nomes de ART nas dependências cross-ART saem da lista de ARTs do próprio trem; ART fora do trem cai no id cru em vez de virar nome fabricado",
+          "rollup ROAM vazio é mostrado como vazio: contadores em zero e a frase de que não há risco de solução, nunca uma faixa colorida sem risco por trás",
+          "criar capability passa por requireRole(ADMIN|STE) — é operação de Solution Train, acima do RTE",
+          "solutionTrainId vindo do cliente é reconferido dentro do tenant antes da escrita, e toda leitura aninhada (riscos, dependências, épicos) filtra por ctx.tenantId",
+          "a linha do tempo multi-PI do handoff não é desenhada: ART carrega só currentPiPlanId, sem série histórica de janelas de PI — deferida, não aproximada"
+        ],
+        "fonte": [
+          "docs/stories/epic-008/story-039.md:22",
+          "docs/stories/epic-008/story-039.md:38",
+          "docs/stories/epic-008/story-039.md:62",
+          "docs/stories/epic-008/story-039.md:69",
+          "docs/stories/epic-008/story-043.md:39",
+          "docs/srd-epic-008.md:107",
+          "SAFe 6.0 — Solution Train (Enterprise Solution Delivery)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/solution-train.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "solution-1",
+          "tipo": "seed",
+          "alvo": "SolutionTrain, Capability, SolutionRisk",
+          "hoje": "o tenant demo não tinha nenhum Solution Train, então a tela abria em 'Nenhum solution train cadastrado' e todo o rollup era invisível",
+          "desejado": "um trem com capabilities e riscos de solução, com o ART semeado ligado a ele",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "solution-2",
+          "tipo": "seed",
+          "alvo": "CrossArtDependency",
+          "hoje": "não semeada. O tenant demo tem um ART só; uma dependência cross-ART exige dois ARTs com features próprias, e criar o segundo ART mudaria a base de Times, Capacidade e Program Board de outras trilhas",
+          "desejado": "segundo ART com time e features próprias no seed demo, decidido no nível do programa e não dentro deste nó",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "solution-3",
+          "tipo": "campo",
+          "alvo": "SolutionROAMStatus (enum de SolutionRisk.roamStatus)",
+          "hoje": "o enum tem apenas RESOLVED/OWNED/ACCEPTED/MITIGATED e o default é RESOLVED — um risco de solução nasce declarado resolvido, o oposto do que o ROAM significa. Risk.roamStatus (nível de ART) tem UNCLASSIFIED e default UNCLASSIFIED",
+          "desejado": "UNCLASSIFIED no enum e como default, para que o risco de solução também precise de decisão explícita para sair do estado inicial",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "solution-4",
+          "tipo": "action",
+          "alvo": "escrita de SolutionRisk e CrossArtDependency pela tela",
+          "hoje": "a tela lê os dois e não escreve nenhum: risco de solução e dependência cross-ART só entram por outra superfície. createCapability é a única mutation do nó",
+          "desejado": "registro e transição ROAM de risco de solução pela tela, no mesmo molde de roamTransition do nó risks — depende de solution-3 para o estado inicial fazer sentido",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "solution-5",
+          "tipo": "ui",
+          "alvo": "linha do tempo multi-PI (MultiPiTimeline do handoff)",
+          "hoje": "não desenhada. ART carrega um único currentPiPlanId, sem série histórica de janelas de PI por ART — desenhá-la exigiria arbitrar datas e rótulos de estágio",
+          "desejado": "eixo de PI por ART, quando existir a série histórica",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/solution-train.test.ts",
+        "apps/app/__tests__/screens/solution-train.test.tsx"
+      ],
+      "commits": [
+        "48fe8082"
+      ],
+      "notas": "Verificação antes de trabalho: a tela já cumpria a prática. listSolutionTrains e createCapability já estavam exportadas, os view types completos (capabilities, progresso por ART, ROAM consolidado, dependências cross-ART) e a action já tinha teste cobrindo isolamento de tenant, guarda de IDOR e o rollup sem N+1. O que faltava era prova de tela e dado semeado — foi isso que este nó entregou, mais a ficha SAFe. Nenhuma action nova foi inventada. O id do nó é `solution` porque é o id do registry (apps/app/components/cosmos/screens/registry.tsx), embora o componente e a action se chamem solution-train.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

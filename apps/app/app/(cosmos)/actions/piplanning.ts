@@ -3,10 +3,30 @@
 // piplanning.ts — getActivePiPlanning(): active PI's objectives, ROAM risks,
 // and latest confidence-vote average, all tenant-scoped.
 
-import { requireTenantSession } from "@repo/auth/server";
+import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { applyVoteEvent, canSendVoteEvent } from "@repo/safe-engine";
+import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
+import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
+import { logAudit } from "../../actions/audit/log-audit";
+
+// Rodada de confidence vote do ART (story-060). É do ART, não por time:
+// ConfidenceVoteTally é uma linha de contagens por rodada, com
+// @@unique([voteSessionId, round]) e nenhuma coluna ligando voto a votante —
+// um teamId quebraria a unicidade da rodada e o anonimato ao mesmo tempo.
+export type ConfidenceVoteView = {
+  round: number;
+  status: string;
+  totalVotes: number;
+  participantCount: number;
+  revealed: boolean;
+  // Distribuição e placar só existem depois da revelação: resultado parcial
+  // visível muda o voto de quem ainda não votou (story-018 AC-003).
+  histogram: number[] | null;
+  aggregateScore: number | null;
+};
 
 export type PiPlanningView = {
   piPlanName: string;
@@ -26,7 +46,69 @@ export type PiPlanningView = {
   }[];
   risks: { id: string; title: string; roamStatus: string }[];
   confidenceAvg: number | null;
+  confidenceVote: ConfidenceVoteView | null;
 };
+
+const TALLY_SELECT = {
+  id: true,
+  round: true,
+  score1Count: true,
+  score2Count: true,
+  score3Count: true,
+  score4Count: true,
+  score5Count: true,
+  totalVotes: true,
+  participantCount: true,
+  aggregateScore: true,
+  revealedAt: true,
+} as const;
+
+function histogramOf(t: {
+  score1Count: number;
+  score2Count: number;
+  score3Count: number;
+  score4Count: number;
+  score5Count: number;
+}): number[] {
+  return [
+    t.score1Count,
+    t.score2Count,
+    t.score3Count,
+    t.score4Count,
+    t.score5Count,
+  ];
+}
+
+// PI aberto do tenant — a mesma janela de status que a leitura usa. As escritas
+// do voto localizam a rodada por aqui, nunca por id vindo do cliente: o voto é
+// da cerimônia em curso, e não há id de rodada para o cliente escolher.
+async function findActivePiPlanId(tenantId: string): Promise<string | null> {
+  const plan = await database.pIPlan.findFirst({
+    where: {
+      tenantId,
+      status: { in: ["PLANNING", "COMMITTED", "EXECUTING"] },
+    },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true },
+  });
+  return plan?.id ?? null;
+}
+
+async function findCurrentVoteRound(tenantId: string, piPlanId: string) {
+  return database.confidenceVoteSession.findFirst({
+    where: { tenantId, piSession: { piPlanId } },
+    orderBy: { roundNumber: "desc" },
+    select: { id: true, roundNumber: true, xStateStatus: true },
+  });
+}
+
+async function findOpenTally(tenantId: string, voteSessionId: string) {
+  return database.confidenceVoteTally.findFirst({
+    where: { tenantId, voteSessionId, closedAt: null },
+    orderBy: { round: "desc" },
+    select: TALLY_SELECT,
+  });
+}
 
 export async function getActivePiPlanning(): Promise<
   Result<PiPlanningView | null>
@@ -68,11 +150,26 @@ export async function getActivePiPlanning(): Promise<
       return null;
     }
 
-    const tally = await database.confidenceVoteTally.findFirst({
-      where: { tenantId: ctx.tenantId, piPlanId: plan.id },
-      orderBy: { createdAt: "desc" },
-      select: { aggregateScore: true },
-    });
+    const round = await findCurrentVoteRound(ctx.tenantId, plan.id);
+    const tally = round
+      ? await database.confidenceVoteTally.findFirst({
+          where: { tenantId: ctx.tenantId, voteSessionId: round.id },
+          orderBy: { round: "desc" },
+          select: TALLY_SELECT,
+        })
+      : null;
+    const revealed = !!tally?.revealedAt;
+    const confidenceVote: ConfidenceVoteView | null = round
+      ? {
+          round: tally?.round ?? round.roundNumber,
+          status: round.xStateStatus,
+          totalVotes: tally?.totalVotes ?? 0,
+          participantCount: tally?.participantCount ?? 0,
+          revealed,
+          histogram: revealed && tally ? histogramOf(tally) : null,
+          aggregateScore: revealed ? (tally?.aggregateScore ?? null) : null,
+        }
+      : null;
 
     const teamIds = [
       ...new Set(
@@ -104,7 +201,167 @@ export async function getActivePiPlanning(): Promise<
         teamName: (o.teamId && teamNameById.get(o.teamId)) || null,
       })),
       risks: plan.risks,
-      confidenceAvg: tally?.aggregateScore ?? null,
+      // O KPI não pode antecipar o placar de uma rodada ainda não revelada.
+      confidenceAvg: confidenceVote?.aggregateScore ?? null,
+      confidenceVote,
+    };
+  });
+}
+
+// ── Confidence vote: caminho de escrita (story-060) ──────────────────────────
+
+const CastVoteSchema = z.object({
+  score: z.number().int().min(1).max(5),
+});
+
+const MIN_PARTICIPATION_PCT = 50;
+
+export async function castConfidenceVote(
+  input: z.infer<typeof CastVoteSchema>
+): Promise<Result<{ round: number; totalVotes: number }>> {
+  return safeAction(async () => {
+    // Sem requireRole: todo participante da cerimônia vota — é o ponto do
+    // fist-of-five. O gate de papel existe só para revelar o resultado.
+    const ctx = await requireTenantSession(await headers());
+    const { score } = CastVoteSchema.parse(input);
+
+    const piPlanId = await findActivePiPlanId(ctx.tenantId);
+    if (!piPlanId) {
+      throw new Error("Nenhum PI ativo para votar.");
+    }
+
+    const round = await findCurrentVoteRound(ctx.tenantId, piPlanId);
+    if (!round) {
+      throw new Error("Nenhuma rodada de confidence vote nesta PI.");
+    }
+
+    // Quem decide se SUBMIT_VOTE é legal neste estado é a máquina do
+    // @repo/safe-engine — o console de ART usa a mesma, então as duas telas não
+    // podem discordar sobre a mesma rodada. `votes` não participa do guard (a
+    // contagem por nota mora no tally da story-018), só da assinatura.
+    const legal = canSendVoteEvent(
+      { xStateStatus: round.xStateStatus, votes: [] },
+      { type: "SUBMIT_VOTE", vote: score }
+    );
+    if (!legal) {
+      throw new Error(
+        `A rodada não está aberta para voto (estado: ${round.xStateStatus}).`
+      );
+    }
+
+    const tally = await findOpenTally(ctx.tenantId, round.id);
+    if (!tally) {
+      throw new Error("Nenhuma rodada aberta para receber voto.");
+    }
+
+    // Incremento atômico e anônimo: nada além da contagem da nota é escrito.
+    // Nenhum logAudit aqui — auditar o voto guardaria ator e carimbo de tempo,
+    // que é exatamente o vínculo que a story-018 AC-002 proíbe.
+    const scoreField = `score${score}Count` as const;
+    const updated = await database.confidenceVoteTally.update({
+      where: { id: tally.id },
+      data: {
+        [scoreField]: { increment: 1 },
+        totalVotes: { increment: 1 },
+      },
+    });
+
+    revalidateTag(`piplanning:${ctx.tenantId}`, "max");
+    return { round: tally.round, totalVotes: updated.totalVotes };
+  });
+}
+
+export async function revealTally(): Promise<
+  Result<{
+    round: number;
+    aggregateScore: number;
+    participationRate: number;
+    histogram: number[];
+  }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    // Mesmo gate de facilitador que app/actions/arts/tally-vote.ts aplica.
+    requireRole(["ADMIN", "RTE"], ctx);
+
+    const piPlanId = await findActivePiPlanId(ctx.tenantId);
+    if (!piPlanId) {
+      throw new Error("Nenhum PI ativo.");
+    }
+
+    const round = await findCurrentVoteRound(ctx.tenantId, piPlanId);
+    if (!round) {
+      throw new Error("Nenhuma rodada de confidence vote nesta PI.");
+    }
+
+    const next = applyVoteEvent(
+      { xStateStatus: round.xStateStatus, votes: [] },
+      { type: "CLOSE_VOTING" }
+    );
+    if (!next) {
+      throw new Error(
+        `Não é possível fechar a votação a partir de "${round.xStateStatus}".`
+      );
+    }
+
+    const tally = await findOpenTally(ctx.tenantId, round.id);
+    if (!tally) {
+      throw new Error("Nenhuma rodada aberta para revelar.");
+    }
+
+    const participationRate =
+      tally.participantCount > 0
+        ? (tally.totalVotes / tally.participantCount) * 100
+        : 0;
+    if (participationRate < MIN_PARTICIPATION_PCT) {
+      throw new Error(
+        `Participação de ${Math.round(participationRate)}% abaixo do mínimo de ${MIN_PARTICIPATION_PCT}% para revelar o resultado.`
+      );
+    }
+
+    const histogram = histogramOf(tally);
+    const weightedSum = histogram.reduce(
+      (sum, count, index) => sum + count * (index + 1),
+      0
+    );
+    const aggregateScore =
+      tally.totalVotes > 0 ? weightedSum / tally.totalVotes : 0;
+
+    const now = new Date();
+    await database.confidenceVoteTally.update({
+      where: { id: tally.id },
+      data: {
+        aggregateScore,
+        participationRate,
+        revealedAt: now,
+        closedAt: now,
+      },
+    });
+    // Duas escritas em vez de uma transação: se esta falhar, o tally já está
+    // fechado e a próxima tentativa de voto não encontra rodada aberta — o
+    // estado degrada para "ninguém vota", nunca para contagem corrompida.
+    await database.confidenceVoteSession.update({
+      where: { id: round.id },
+      data: { xStateStatus: next.xStateStatus, averageScore: aggregateScore },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "status_changed",
+      entityType: "confidence_vote",
+      entityId: tally.id,
+      diff: {
+        round: String(tally.round),
+        aggregateScore: aggregateScore.toFixed(2),
+        participationRate: `${Math.round(participationRate)}%`,
+      },
+    });
+    revalidateTag(`piplanning:${ctx.tenantId}`, "max");
+    return {
+      round: tally.round,
+      aggregateScore,
+      participationRate,
+      histogram,
     };
   });
 }

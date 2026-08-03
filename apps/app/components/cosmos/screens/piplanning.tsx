@@ -1,22 +1,28 @@
 "use client";
 
 // piplanning.tsx — PI Planning (confidence vote, objectives, ROAM risks),
-// wired to getActivePiPlanning(). Team-level fist-of-five breakdown isn't in
-// scope for this read pass — shown as a single "Confiança média" KPI.
+// wired to getActivePiPlanning(). O fist-of-five é do ART inteiro, não por
+// time: ConfidenceVoteTally é uma linha de contagens por rodada, sem nenhuma
+// coluna que ligue voto a votante (story-060, "Jornada do usuário").
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  type ConfidenceVoteView,
+  castConfidenceVote,
   getActivePiPlanning,
   type PiPlanningView,
+  revealTally,
 } from "@/app/(cosmos)/actions/piplanning";
 import {
   Badge,
+  Button,
   ErrorState,
   KpiCard,
   PageHeader,
   Progress,
   SectionCard,
 } from "../kit";
+import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   NOT_STARTED: "neutral",
@@ -33,12 +39,177 @@ const ROAM_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   MITIGATED: "green",
 };
 
+const FIST_OF_FIVE = [1, 2, 3, 4, 5] as const;
+
+// story-060 AC-001/AC-003/AC-004 — o voto e a revelação a partir do painel do
+// PI ativo. A distribuição só aparece depois da revelação: resultado parcial
+// visível muda o voto de quem ainda não votou.
+function ConfidenceVoteCard({
+  vote,
+  onChanged,
+}: {
+  vote: ConfidenceVoteView | null;
+  onChanged: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+
+  const cast = async (score: number) => {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => castConfidenceVote({ score }), {
+      loading: "Registrando voto...",
+      success: "Voto registrado — anônimo, como manda a cerimônia.",
+      error: (err: string) => `Não foi possível votar: ${err}`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
+  const reveal = async () => {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => revealTally(), {
+      loading: "Revelando resultado...",
+      success: "Resultado revelado.",
+      error: (err: string) => `Não foi possível revelar: ${err}`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
+  return (
+    <SectionCard
+      action={vote && <Badge tone="neutral">Rodada {vote.round}</Badge>}
+      bodyStyle={{ padding: 14 }}
+      icon="gauge"
+      subtitle="Fist-of-five do ART · voto anônimo, agregado por rodada"
+      title="Confidence vote"
+    >
+      {vote === null ? (
+        <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+          Nenhuma rodada de confidence vote aberta.
+        </span>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              flexWrap: "wrap",
+            }}
+          >
+            <Badge dot tone={vote.revealed ? "green" : "amber"}>
+              {vote.totalVotes} de {vote.participantCount} já votaram
+            </Badge>
+            {vote.revealed ? (
+              <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                Placar {vote.aggregateScore?.toFixed(1) ?? "—"} de 5
+              </span>
+            ) : (
+              <span style={{ fontSize: 12, color: "var(--ink-subtle)" }}>
+                Resultado escondido até a revelação
+              </span>
+            )}
+          </div>
+
+          {vote.revealed && vote.histogram ? (
+            <div>
+              <div
+                style={{
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  letterSpacing: ".04em",
+                  textTransform: "uppercase",
+                  color: "var(--ink-faint)",
+                  marginBottom: 8,
+                }}
+              >
+                Distribuição dos votos
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {vote.histogram.map((count, index) => (
+                  <div
+                    key={FIST_OF_FIVE[index]}
+                    style={{ display: "flex", alignItems: "center", gap: 8 }}
+                  >
+                    <span
+                      className="mono"
+                      style={{
+                        fontSize: 12,
+                        fontWeight: 700,
+                        color: "var(--ink-muted)",
+                        width: 14,
+                      }}
+                    >
+                      {FIST_OF_FIVE[index]}
+                    </span>
+                    <div style={{ flex: 1 }}>
+                      <Progress
+                        tone={index >= 2 ? "green" : "amber"}
+                        value={
+                          vote.totalVotes > 0
+                            ? Math.round((count / vote.totalVotes) * 100)
+                            : 0
+                        }
+                      />
+                    </div>
+                    <span
+                      className="mono"
+                      style={{ fontSize: 12, color: "var(--ink-subtle)" }}
+                    >
+                      {count} voto{count === 1 ? "" : "s"}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                gap: 8,
+                alignItems: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              {FIST_OF_FIVE.map((score) => (
+                <Button
+                  key={score}
+                  onClick={() => cast(score)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Votar {score}
+                </Button>
+              ))}
+              <Button onClick={reveal} size="sm" variant="primary">
+                Revelar resultado
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+    </SectionCard>
+  );
+}
+
 export default function PiPlanningScreen() {
   const [plan, setPlan] = useState<PiPlanningView | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     getActivePiPlanning().then((r) => {
       if (r.ok) {
         setPlan(r.data);
@@ -48,6 +219,10 @@ export default function PiPlanningScreen() {
       setLoading(false);
     });
   }, []);
+
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const committedBV =
     plan?.objectives
@@ -137,6 +312,10 @@ export default function PiPlanningScreen() {
               tone="amber"
               value={openRisks}
             />
+          </div>
+
+          <div style={{ marginBottom: "var(--gap)" }}>
+            <ConfidenceVoteCard onChanged={load} vote={plan.confidenceVote} />
           </div>
 
           <div
