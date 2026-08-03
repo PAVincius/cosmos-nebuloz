@@ -126,7 +126,7 @@
     "apps/app/__tests__/actions/epic-lifecycle-reachability.test.ts",
     "apps/app/__tests__/screens/kanban.test.tsx"
   ],
-  "commits": [],
+  "commits": ["c86907e6"],
   "notas": "Balde A: Epic e GovernedEpic já existiam e bastavam — nenhuma migration. Este nó é a referência do padrão (action tenant-escopada, RBAC, audit, delegação à máquina XState), e o que faltava não era escrita, era coerência: o seed produzia épicos em estados que a própria máquina não alcança. epic-lifecycle-reachability.test.ts passa desde a primeira execução de propósito — ele não testa código novo, fixa contra a máquina real a regra que o seed precisa honrar, porque o teste do seed (packages/database/scripts/__tests__/seed-cosmos.test.ts) nunca roda: @repo/database não tem script `test` e `turbo test` o ignora. Sem esse teste a regra ficaria só num comentário. A lacuna kanban-3 é a causa estrutural: se o ator fosse hidratado no estado persistido, estado inalcançável seria um problema de dado e não de fluxo. As lacunas kanban-4 e kanban-5 são superfície da story-012 e da 011 ainda não construída.",
   "atualizado_em": "2026-08-03"
 }
