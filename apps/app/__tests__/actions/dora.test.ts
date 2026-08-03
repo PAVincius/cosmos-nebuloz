@@ -135,12 +135,27 @@ describe("getDoraMetrics", () => {
     expect(r.data.totalProductionDeployments).toBe(0);
   });
 
-  it("never reports change-failure-rate or MTTR as a measured 0 — always the unavailable marker", async () => {
+  it("deriva change failure rate do estado do deployment, com o denominador visível", async () => {
     h.gitHubDeploymentEventFindMany.mockResolvedValue([
       {
         deployedAt: new Date("2026-07-20T12:00:00.000Z"),
-        firstCommitAt: new Date("2026-07-20T10:00:00.000Z"),
+        firstCommitAt: null,
         state: "success",
+      },
+      {
+        deployedAt: new Date("2026-07-21T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "success",
+      },
+      {
+        deployedAt: new Date("2026-07-22T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "failure",
+      },
+      {
+        deployedAt: new Date("2026-07-23T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "error",
       },
     ]);
 
@@ -150,10 +165,103 @@ describe("getDoraMetrics", () => {
     if (!r.ok) {
       return;
     }
+    // failure + error = 2 de 4 deployments reconhecidos
     expect(r.data.changeFailureRate).toEqual({
-      status: "unavailable",
-      reason: "sem fonte de incidente",
+      status: "measured",
+      value: 0.5,
     });
+    expect(r.data.failedProductionDeployments).toBe(2);
+    // o denominador vai junto: 50% sobre 4 e 50% sobre 400 não se leem igual
+    expect(r.data.totalProductionDeployments).toBe(4);
+  });
+
+  it("não coloca deployment de estado não reconhecido no denominador do change failure rate", async () => {
+    h.gitHubDeploymentEventFindMany.mockResolvedValue([
+      {
+        deployedAt: new Date("2026-07-20T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "success",
+      },
+      {
+        deployedAt: new Date("2026-07-21T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "failure",
+      },
+      {
+        deployedAt: new Date("2026-07-22T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "pending",
+      },
+      {
+        deployedAt: new Date("2026-07-23T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "in_progress",
+      },
+    ]);
+
+    const r = await getDoraMetrics();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    // 1 de 2, não 1 de 4 — deployment em voo não é deployment concluído
+    expect(r.data.changeFailureRate).toEqual({
+      status: "measured",
+      value: 0.5,
+    });
+    expect(r.data.totalProductionDeployments).toBe(2);
+  });
+
+  it("marca change failure rate indisponível quando nenhum deployment tem estado reconhecido", async () => {
+    h.gitHubDeploymentEventFindMany.mockResolvedValue([
+      {
+        deployedAt: new Date("2026-07-20T12:00:00.000Z"),
+        firstCommitAt: null,
+        state: "pending",
+      },
+    ]);
+
+    const r = await getDoraMetrics();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(r.data.changeFailureRate.status).toBe("unavailable");
+    expect(r.data.failedProductionDeployments).toBe(0);
+  });
+
+  it("mantém change failure rate indisponível quando o tenant não tem deployment de produção", async () => {
+    h.gitHubDeploymentEventFindMany.mockResolvedValue([]);
+
+    const r = await getDoraMetrics();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    expect(r.data.changeFailureRate.status).toBe("unavailable");
+  });
+
+  it("nunca estima MTTR — sem fonte de incidente ele fica indisponível com o motivo", async () => {
+    h.gitHubDeploymentEventFindMany.mockResolvedValue([
+      {
+        deployedAt: new Date("2026-07-20T12:00:00.000Z"),
+        firstCommitAt: new Date("2026-07-20T10:00:00.000Z"),
+        state: "failure",
+      },
+    ]);
+
+    const r = await getDoraMetrics();
+
+    expect(r.ok).toBe(true);
+    if (!r.ok) {
+      return;
+    }
+    // deployment com falha existe, e ainda assim MTTR não é inferido dele:
+    // "tempo até restaurar" precisa de início e fim do incidente, que não têm
+    // fonte alguma no repo
     expect(r.data.mttrHours).toEqual({
       status: "unavailable",
       reason: "sem fonte de incidente",

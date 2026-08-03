@@ -50,22 +50,131 @@
       "$schema": "../schema/no.schema.json",
       "id": "capacity",
       "kind": "tela",
-      "titulo": "capacity",
+      "titulo": "Capacity Planning (heatmap de utilização do PI)",
       "rota": "/cosmos/capacity",
       "componente": "apps/app/components/cosmos/screens/capacity.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+          "export": "listTeamCapacity",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+          "export": "listTeamCapacityAcrossPI",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+          "export": "listCapacityAdjustmentNotes",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+          "export": "listTeamSprints",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+          "export": "createCapacityAdjustmentNote",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Team",
+        "TeamCapacitySnapshot",
+        "Sprint",
+        "PIPlan",
+        "CapacityAdjustmentNote"
+      ],
+      "safe": {
+        "pratica": "Capacity utilization heatmap — carga contra capacidade por time e sprint do PI",
+        "nivel": "Essential",
+        "faz": "Mostra, célula a célula do PI ativo, quanto o time planejou e quanto entregou, com a faixa de utilização em cor e em palavras, e o painel de ajustes que explica a variação (férias, treinamento, onboarding).",
+        "invariantes": [
+          "faixa de utilização segue exatamente o AC-002 da story-032: abaixo de 80% verde, de 80% a 100% âmbar, acima de 100% vermelho — 100% é o topo do âmbar, não o começo do vermelho",
+          "a faixa vermelha não é configurável por org (o AC diz 'always red, non-configurable'), então não há linha de configuração a criar",
+          "a faixa é derivada na leitura e consumida pela tela; não existe segundo limiar no componente que possa divergir em silêncio",
+          "célula sem snapshot tem utilização e faixa null (nunca 0 ou verde) e é renderizada como '—'",
+          "a grade só existe com PI em PLANNING/COMMITTED/EXECUTING e sprints ligadas a ele; sem PI a tela diz isso em vez de desenhar uma grade de zeros",
+          "toda leitura filtra por tenantId vindo da sessão; teamId e sprintId vindos do cliente são reconferidos dentro do tenant antes da escrita da nota",
+          "escrita de nota de ajuste passa por requireRole(ADMIN|RTE|SM) e grava logAudit"
+        ],
+        "fonte": [
+          "docs/stories/epic-007/story-057-tela-capacity-planning.md",
+          "docs/stories/epic-007/story-032.md",
+          "docs/srd-epic-007.md:120",
+          "SAFe 6.0 — Iteration Planning / PI Planning (team load vs. capacity)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/capacity.ts",
+          "apps/app/app/(cosmos)/actions/capacity.constants.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "capacity-1",
+          "tipo": "ui",
+          "alvo": "faixa de utilização do heatmap",
+          "hoje": "a tela tinha limiares próprios (>= 100 vermelho, >= 85 âmbar) que divergiam do AC-002 da story-032 em dois pontos, e eram um segundo lugar onde a regra podia mudar sozinha",
+          "desejado": "faixa única derivada na leitura com os limiares do AC-002, consumida pelas duas superfícies (tabela por time e grade por sprint)",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "capacity-2",
+          "tipo": "seed",
+          "alvo": "PI ativo com sprints e snapshots de capacidade",
+          "hoje": "o seed nunca criava PIPlan nem TeamCapacitySnapshot; a grade abria em 'Sem PI ativo' e a tabela por time abria com toda coluna em '—' — a regra de faixa não tinha em quem aparecer",
+          "desejado": "PI Plan EXECUTING com sprints por time e snapshots cobrindo as três faixas, reaplicados a cada re-seed",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "capacity-3",
+          "tipo": "campo",
+          "alvo": "utilização em horas / dias-pessoa (AC-002 'in both points and hours')",
+          "hoje": "TeamCapacitySnapshot só guarda story points e um fator adimensional (totalCapacityFactor); não há hora nem dia-pessoa — o availablePersonDays citado pela story-020 nunca existiu no schema",
+          "desejado": "dias-pessoa disponíveis por time e sprint, para o toggle pontos↔dias do AC-007 da story-020 e o hover em horas do AC-002 da story-032",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "capacity-4",
+          "tipo": "action",
+          "alvo": "declarar capacidade planejada de uma sprint futura",
+          "hoje": "TeamCapacitySnapshot só nasce em apps/app/app/actions/sprints/snapshot-origination.ts, no fechamento da sprint; logo o expectedSp de uma sprint futura do PI ativo é sempre null e a coluna do PI corrente fica vazia até a sprint fechar",
+          "desejado": "caminho de escrita da capacidade planejada no PI Planning, sem colidir com a origination do fechamento de sprint (que é quem calcula membros comprometidos e fator de capacidade)",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/capacity.test.ts",
+        "apps/app/__tests__/screens/capacity.test.tsx"
+      ],
       "commits": [],
+      "notas": "profundidade THIN é o veredito medido do audit de 2026-07-23 (0 de 5 seções do handoff). A lacuna capacity-4 é a mais estrutural: enquanto a capacidade planejada só nascer no fechamento da sprint, a coluna da sprint corrente do PI fica honestamente vazia — preferimos o buraco visível a uma estimativa. O comentário em capacity.ts que diz que 'teamCapacitySnapshot.create has zero production call sites' está desatualizado desde snapshot-origination.ts; não foi tocado por ser fora do escopo desta trilha. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda (@repo/database não tem script `test`), por isso a mudança de seed não é citada em verifica[].",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -347,22 +456,149 @@
       "$schema": "../schema/no.schema.json",
       "id": "flow",
       "kind": "tela",
-      "titulo": "flow",
+      "titulo": "Flow Metrics (6D SAFe, aging WIP e DORA)",
       "rota": "/cosmos/flow",
       "componente": "apps/app/components/cosmos/screens/flow.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/flow.ts",
+          "export": "getLatestFlowMetrics",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/flow.ts",
+          "export": "getFlowMetricsSeries",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/flow.ts",
+          "export": "getAgingWip",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/dora.ts",
+          "export": "getDoraMetrics",
+          "tipo": "read",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "FlowMetricSnapshot",
+        "StateTransitionHistory",
+        "GitHubDeploymentEvent",
+        "Story",
+        "Feature",
+        "Epic",
+        "Sprint"
+      ],
+      "safe": {
+        "pratica": "Measure and Grow — Flow Metrics (6D) e DORA no Continuous Delivery Pipeline",
+        "nivel": "Essential",
+        "faz": "Mostra o retrato mais recente das métricas de fluxo, quais itens estão envelhecendo em progresso além do SLA, e as métricas DORA que a fonte de dados do tenant realmente sustenta — dizendo, para cada métrica sem fonte, qual fonte falta.",
+        "invariantes": [
+          "métrica sem fonte devolve um marcador explícito de indisponibilidade com o motivo, nunca um número: um 0 em change failure rate leria como 'nenhum deploy jamais falhou' e um 0 em MTTR como 'restauração instantânea'",
+          "MTTR é permanentemente indisponível enquanto não houver fonte de incidente: nenhum proxy (duração de deployment, intervalo até o próximo deploy, estimativa) é aceitável, porque alguém decidiria em cima dele",
+          "change failure rate é falha de deployment sobre deployment de produção *concluído* (state em success|failure|error); deployment em voo (pending, in_progress, queued) não entra nem no numerador nem no denominador",
+          "o denominador do change failure rate é exposto junto com o número — 50% sobre 4 deploys e 50% sobre 400 não se leem igual",
+          "change failure rate aqui não é a definição canônica do DORA ('deployment que degradou o serviço e exigiu remediação'), e a tela declara isso: um deploy que sobe limpo e derruba a produção depois não aparece",
+          "deployment frequency e lead time são gateados por amostra real: sem deployment de estado reconhecido, ou sem commit inicial vinculado, ficam indisponíveis em vez de virarem 0",
+          "aging WIP descarta o candidato sem transição correspondente ao status atual em vez de datar por padrão — item sem histórico não vira item de 0 dia",
+          "toda leitura filtra por tenantId vindo da sessão"
+        ],
+        "fonte": [
+          "docs/srd-epic-007.md:119",
+          "docs/srd-epic-007.md:212",
+          "docs/stories/epic-007/story-022.md",
+          "docs/stories/epic-007/story-025.md",
+          "SAFe 6.0 — Flow Metrics e Continuous Delivery Pipeline"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/dora.ts",
+          "apps/app/app/(cosmos)/actions/flow.ts",
+          "apps/app/app/(cosmos)/actions/flow.constants.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "flow-1",
+          "tipo": "action",
+          "alvo": "change failure rate",
+          "hoje": "devolvia sempre {status:'unavailable', reason:'sem fonte de incidente'} — mas GitHubDeploymentEvent.state já distinguia success de failure|error, então a métrica tinha fonte parcial e ficava escondida junto com a que não tem fonte alguma",
+          "desejado": "derivar de state, com o denominador visível e a diferença para a definição canônica do DORA declarada na tela e aqui",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "flow-2",
+          "tipo": "tabela",
+          "alvo": "fonte de incidente para MTTR e para o change failure rate canônico",
+          "hoje": "não existe model Incident nem integração de on-call (PagerDuty, Opsgenie, incident.io) no repo. MTTR não tem numerador nem denominador; o change failure rate canônico do DORA — deployment que degradou o serviço — também depende desta fonte, e o que a tela mostra hoje é a aproximação por estado de deployment",
+          "desejado": "modelo de incidente com início, resolução e vínculo com deployment, alimentado por integração de on-call, fechando MTTR e permitindo o CFR canônico",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "flow-3",
+          "tipo": "campo",
+          "alvo": "GitHubDeploymentEvent.firstCommitAt",
+          "hoje": "o campo existe no schema mas o pipeline de ingestão do GitHub (lib/github/github-pull.ts, handleDeploymentStatus) nunca o escreve; por isso lead time fica indisponível em todo tenant real, gateado por leadTimeSampleSize",
+          "desejado": "preencher firstCommitAt na ingestão, a partir do primeiro commit do deployment",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "flow-4",
+          "tipo": "campo",
+          "alvo": "quebra de DORA por ART",
+          "hoje": "GitHubDeploymentEvent só tem githubRepo, sem artId; o escopo das métricas é o tenant inteiro, e não há como responder 'qual ART está entregando mais devagar'",
+          "desejado": "mapa repo→ART, para a quebra por trem que o FR-010 pede nas demais métricas de fluxo",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "flow-5",
+          "tipo": "seed",
+          "alvo": "GitHubDeploymentEvent do tenant demo",
+          "hoje": "o seed não cria deployment algum, então a seção DORA abre no estado vazio no tenant demo",
+          "desejado": "decidido não semear: um deployment semeado exigiria uma Integration de GitHub de mentira, e o histórico de deploy é justamente o dado cuja fabricação esta tela existe para recusar. O estado vazio com o motivo é a leitura honesta enquanto não houver integração conectada",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "flow-6",
+          "tipo": "tabela",
+          "alvo": "histórico de FlowMetricSnapshot e previsão Monte Carlo",
+          "hoje": "o FR-010 pede CFD, box plot de cycle time e previsão Monte Carlo de throughput; o tenant guarda snapshots pontuais e getFlowMetricsSeries expõe só flowVelocityTotal por período — flowDistribution é proporção e não recombina com deliveredItems num absoluto honesto por período",
+          "desejado": "série histórica com contagens absolutas por período, que sustente CFD, distribuição de cycle time e simulação",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
       "seed": [],
-      "verifica": [],
+      "verifica": [
+        "apps/app/__tests__/actions/dora.test.ts",
+        "apps/app/__tests__/actions/flow.test.ts",
+        "apps/app/__tests__/screens/flow.test.tsx"
+      ],
       "commits": [],
+      "notas": "profundidade THIN vem do audit de 2026-07-23 (flow: 1 de 7 seções de handoff). A decisão central deste nó é o que NÃO foi feito: MTTR continua indisponível, com o motivo na tela, porque não há fonte de incidente. Um painel que mostra quatro métricas DORA sendo que duas são chute é pior que um que mostra três e diz por que falta a quarta — porque alguém decide em cima do chute. O change failure rate foi aberto porque tem fonte parcial e real (estado do deployment), e a diferença para a definição canônica do DORA está declarada na tela, no cabeçalho de dora.ts e na invariante. As lacunas flow-2, flow-4 e flow-6 exigem modelagem nova; nenhuma trava a prática do nó.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

@@ -26,7 +26,7 @@ nunca pelo produtor.
 |---|---|---|---|---|---|---|---|
 | `anomalies` | /cosmos/anomalies | — | — | pendente | — | 0 | 0 |
 | `budgets` | /cosmos/budgets | — | — | pendente | — | 0 | 0 |
-| `capacity` | /cosmos/capacity | — | — | pendente | — | 0 | 0 |
+| `capacity` | /cosmos/capacity | A | THIN | em-revisao | 2-execucao | 5 | 5 |
 | `copilot` | /cosmos/copilot | — | — | pendente | — | 0 | 0 |
 | `dashboard` | /cosmos/dashboard | — | — | pendente | — | 0 | 0 |
 | `decisions` | /cosmos/decisions | B | THIN | em-revisao | 1-portfolio | 3 | 5 |
@@ -34,7 +34,7 @@ nunca pelo produtor.
 | `epic` | /cosmos/epic | — | — | pendente | — | 0 | 0 |
 | `executive` | /cosmos/executive | — | — | pendente | — | 0 | 0 |
 | `feature` | /cosmos/feature | — | — | pendente | — | 0 | 0 |
-| `flow` | /cosmos/flow | — | — | pendente | — | 0 | 0 |
+| `flow` | /cosmos/flow | B | THIN | em-revisao | 3-metricas-plataforma | 4 | 7 |
 | `gate` | /cosmos/gate | — | — | pendente | — | 0 | 0 |
 | `governance` | /cosmos/governance | — | — | pendente | — | 0 | 0 |
 | `horizon` | /cosmos/horizon | — | — | pendente | — | 0 | 0 |
@@ -67,7 +67,9 @@ nunca pelo produtor.
 
 | id | prática | nível | o que faz | fonte |
 |---|---|---|---|---|
+| `capacity` | Capacity utilization heatmap — carga contra capacidade por time e sprint do PI | Essential | Mostra, célula a célula do PI ativo, quanto o time planejou e quanto entregou, com a faixa de utilização em cor e em palavras, e o painel de ajustes que explica a variação (férias, treinamento, onboarding). | docs/stories/epic-007/story-057-tela-capacity-planning.md<br>docs/stories/epic-007/story-032.md<br>docs/srd-epic-007.md:120<br>SAFe 6.0 — Iteration Planning / PI Planning (team load vs. capacity) ⚠ fonte externa |
 | `decisions` | Decision Log & Audit Trail — registro imutável das decisões de investimento do portfólio (Lean Portfolio Management) | Portfolio | Guarda, em ordem e com justificativa, toda decisão de portfólio — aprovada, rejeitada, adiada ou alterada — e entrega esse histórico a um auditor externo em um export que ele pode levar embora, sem que ninguém consiga editar ou apagar uma entrada pela aplicação. | docs/srd-epic-006.md:126<br>docs/srd-epic-008.md:178<br>docs/PRD-v1.0.md:5103<br>docs/stories/epic-006/story-054-tela-decision-log.md<br>docs/stories/epic-006/story-016.md<br>SAFe 6.0 — Lean Portfolio Management (Portfolio Governance) ⚠ fonte externa |
+| `flow` | Measure and Grow — Flow Metrics (6D) e DORA no Continuous Delivery Pipeline | Essential | Mostra o retrato mais recente das métricas de fluxo, quais itens estão envelhecendo em progresso além do SLA, e as métricas DORA que a fonte de dados do tenant realmente sustenta — dizendo, para cada métrica sem fonte, qual fonte falta. | docs/srd-epic-007.md:119<br>docs/srd-epic-007.md:212<br>docs/stories/epic-007/story-022.md<br>docs/stories/epic-007/story-025.md<br>SAFe 6.0 — Flow Metrics e Continuous Delivery Pipeline ⚠ fonte externa |
 | `risks` | ROAM — Resolved, Owned, Accepted, Mitigated | Essential | Registra os riscos levantados no PI Planning e obriga cada um a receber um desfecho ROAM antes do time se comprometer com o PI. | docs/srd-epic-006.md<br>docs/pi-planning/PI_PLANNING_WORKSPACE.md<br>SAFe 6.0 — Risk Management no PI Planning (ROAM) ⚠ fonte externa |
 | `teams` | Agile Team — um time pertence a um, e somente um, ART (Team and Technical Agility) | Essential | Mostra os squads do portfólio com membros, WIP, velocity, capacidade e predictability, e — o que faltava — expõe os times que estão fora de qualquer ART e deixa o RTE vinculá-los antes de abrir o PI Planning. | docs/stories/epic-006/story-056-tela-times.md<br>docs/stories/epic-006/story-017.md:183<br>docs/stories/epic-006/story-017.md:41<br>docs/stories/epic-006/story-017.md:34<br>SAFe 6.0 — Agile Release Train (Agile Teams are part of one, and only one, ART) ⚠ fonte externa |
 | `themes` | Strategic Themes — conexão entre a estratégia da empresa e o investimento do portfólio | Portfolio | Mostra para onde o investimento do portfólio está indo por tema, compara o planejado (alocação-alvo) com o real (custo atribuído), avisa quando um único tema concentra o portfólio, e deixa a Portfolio Manager rebalancear ou aposentar um tema sem apagar o histórico. | docs/srd-epic-006.md:170<br>docs/PRD-v1.0.md:3029<br>docs/stories/epic-006/story-053-tela-temas-estrategicos.md<br>docs/stories/epic-006/story-025.md<br>SAFe 6.0 — Strategic Themes (Lean Portfolio Management) ⚠ fonte externa |
