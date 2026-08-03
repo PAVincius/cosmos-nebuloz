@@ -1133,7 +1133,7 @@
         "apps/app/__tests__/actions/value-realization.test.ts",
         "apps/app/__tests__/screens/value.test.tsx"
       ],
-      "commits": [],
+      "commits": ["83d1cfb"],
       "notas": "value-3 é o único bloqueio da trilha 1: a seta de tendência é AC explícito do PRD (docs/PRD-v1.0.md:840) e não sai sem tabela de histórico, que é migration e portanto da trilha 0. Nenhum passo desse AC foi implementado e nada foi aproximado no lugar — a tela não finge tendência. O resto do UC-09 está fechado.",
       "atualizado_em": "2026-08-03",
       "consumido_por": []
