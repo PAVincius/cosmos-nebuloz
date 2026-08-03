@@ -16,9 +16,12 @@ import { expect, type Page, test } from "@playwright/test";
 const WCAG_TAGS = ["wcag2a", "wcag2aa"];
 
 async function assertNoSeriousViolations(page: Page, label: string) {
-  await page.waitForLoadState("networkidle").catch(() => undefined);
+  await page.waitForLoadState("networkidle").catch(() => {});
 
-  const results = await new AxeBuilder({ page }).withTags(WCAG_TAGS).exclude("iframe").analyze();
+  const results = await new AxeBuilder({ page })
+    .withTags(WCAG_TAGS)
+    .exclude("iframe")
+    .analyze();
 
   const serious = results.violations.filter(
     (v) => v.impact === "critical" || v.impact === "serious"
@@ -30,7 +33,9 @@ async function assertNoSeriousViolations(page: Page, label: string) {
   ).toEqual([]);
 }
 
-const STATIC_ROUTES = [
+/** Rotas nativas de `(authenticated)` — cada uma tem `page.tsx` própria. */
+const APP_ROUTES = [
+  "/portfolio",
   "/portfolio/wsjf",
   "/portfolio/themes",
   "/portfolio/strategy-map",
@@ -41,16 +46,7 @@ const STATIC_ROUTES = [
   "/portfolio/roadmap",
   "/portfolio/governance",
   "/portfolio/governance/decision-log",
-  "/solution-trains",
-  "/dependencies",
-  "/risks",
-  "/analytics/flow",
-  "/analytics/velocity",
-  "/analytics/measure-grow",
-  "/teams",
-  "/copilot",
-  "/workflows",
-  "/integrations",
+  "/profile",
   "/settings/audit",
   "/settings/integrations",
   "/settings/members",
@@ -60,47 +56,82 @@ const STATIC_ROUTES = [
   "/settings/workspace",
 ];
 
-test.describe("a11y screens — static routes @auth", () => {
+/**
+ * Telas do Cosmos. Elas não têm `page.tsx` por tela: a rota é a catch-all
+ * `app/(cosmos)/cosmos/[[...seg]]/page.tsx`, que resolve o id contra
+ * `components/cosmos/screens/registry.tsx`.
+ *
+ * Esta lista apontava para `/risks`, `/teams`, `/copilot`, `/workflows`,
+ * `/integrations`, `/dependencies`, `/solution-trains` e `/analytics/*` — rotas
+ * de `(authenticated)` apagadas em 43afe6d. A suíte ficou vermelha e a falha
+ * parecia regressão de a11y, quando era 404. Só ids do registry entram aqui.
+ *
+ * Ficam de fora as telas de detalhe (`epic`, `feature`, `team`, `okr`, `theme`,
+ * `pillar`, `vs`, `horizon`, `gate`): sem o segundo segmento de rota elas
+ * renderizam <ComingSoon> por desenho, não por defeito. Auditá-las exige um id
+ * semeado — trabalho da trilha que cobrir cada uma.
+ */
+const COSMOS_SCREENS = [
+  "anomalies",
+  "budgets",
+  "capacity",
+  "copilot",
+  "decisions",
+  "dependencies",
+  "executive",
+  "flow",
+  "governance",
+  "integrations",
+  "kanban",
+  "measure",
+  "okrs",
+  "piplanning",
+  "program",
+  "risks",
+  "roadmap",
+  "settings",
+  "solution",
+  "strategy",
+  "tags",
+  "teams",
+  "themes",
+  "value",
+  "velocity",
+  "webhooks",
+  "workflows",
+  "wsjf",
+];
+
+test.describe("a11y screens — rotas nativas @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
-  for (const route of STATIC_ROUTES) {
+  for (const route of APP_ROUTES) {
     test(`${route} has no critical/serious violations`, async ({ page }) => {
-      await page.goto(route);
+      const response = await page.goto(route);
+      // 404 aqui é rota apagada, não violação de a11y. Sem esta asserção a
+      // suíte passa a auditar a página de erro e o sinal vira ruído.
+      expect(response?.status(), `[${route}] esperava 200`).toBeLessThan(400);
       await assertNoSeriousViolations(page, route);
     });
   }
 });
 
-test.describe("a11y screens — dynamic ART/Team routes @auth", () => {
+test.describe("a11y screens — telas do Cosmos @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
-  test("ART detail, Program Board and PI Planning have no critical/serious violations", async ({
-    page,
-  }) => {
-    await page.goto("/arts");
-    const artLink = page.locator('a[href^="/arts/"]').first();
-    await artLink.waitFor({ timeout: 15_000 });
-    const artUrl = await artLink.getAttribute("href");
-    if (!artUrl) {
-      throw new Error("No ART link found on /arts list");
-    }
-
-    await page.goto(artUrl);
-    await assertNoSeriousViolations(page, "/arts/[artId]");
-
-    await page.goto(`${artUrl}/program-board`);
-    await assertNoSeriousViolations(page, "/arts/[artId]/program-board");
-
-    await page.goto(`${artUrl}/pi-planning`);
-    await assertNoSeriousViolations(page, "/arts/[artId]/pi-planning");
-  });
-
-  test("Team standup has no critical/serious violations", async ({ page }) => {
-    await page.goto("/teams");
-    const standupLink = page.locator('a[href*="/standup"]').first();
-    await standupLink.waitFor({ timeout: 15_000 });
-    await standupLink.click();
-
-    await assertNoSeriousViolations(page, "/teams/[teamId]/standup");
-  });
+  for (const screen of COSMOS_SCREENS) {
+    test(`/cosmos/${screen} has no critical/serious violations`, async ({
+      page,
+    }) => {
+      const route = `/cosmos/${screen}`;
+      const response = await page.goto(route);
+      expect(response?.status(), `[${route}] esperava 200`).toBeLessThan(400);
+      // A catch-all responde 200 com <ComingSoon> quando o id não está no
+      // registry — checar o status não bastaria para pegar id renomeado.
+      await expect(
+        page.getByText("Tela ainda não portada", { exact: false })
+      ).toHaveCount(0);
+      await assertNoSeriousViolations(page, route);
+    });
+  }
 });

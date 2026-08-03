@@ -1,0 +1,136 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "webhooks",
+  "kind": "tela",
+  "titulo": "Webhooks (endpoints de saída, saúde de entrega e disparo de teste)",
+  "rota": "/cosmos/webhooks",
+  "componente": "apps/app/components/cosmos/screens/webhooks.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "3-metricas-plataforma",
+  "dono": null,
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+      "export": "listWebhooks",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+      "export": "createWebhook",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+      "export": "setWebhookActive",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+      "export": "sendTestWebhook",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["WebhookEndpoint", "WebhookDeliveryLog"],
+  "safe": {
+    "pratica": "Continuous Delivery Pipeline — integração de saída confiável e observável (Release on Demand)",
+    "nivel": "Portfolio",
+    "faz": "Mostra os endpoints de saída do tenant com a saúde real derivada do histórico de entrega, deixa o Org Admin pausar um endpoint que está quebrando sem apagá-lo, e disparar um evento sintético para provar a configuração antes de confiar nela em produção.",
+    "invariantes": [
+      "segredo de assinatura nunca sai do servidor: gerado com randomBytes, guardado só como hash e cifrado, devolvido uma única vez na criação e jamais selecionado por listWebhooks nem gravado em diff de auditoria",
+      "'degradado' exige falhas consecutivas contadas da entrega mais recente para trás (limiar 3, FR-020 AC-006); falha isolada é 'falhando', e falha antiga separada por uma entrega boa não conta",
+      "disparo de teste grava WebhookDeliveryLog com synthetic=true e passa pelo mesmo job de entrega dos eventos reais — tráfego de teste nunca se confunde com produção, e o teste exercita HMAC, timeout e retry de verdade",
+      "disparo de teste é recusado em endpoint pausado: o worker marcaria a entrega como FAILED_PERMANENTLY e sujaria o histórico com uma falha que não diz nada sobre o endpoint",
+      "toda escrita passa por requireRole(['ADMIN']), reconfere o id dentro do tenant antes de gravar e registra logAudit com o estado anterior",
+      "toda leitura filtra por tenantId vindo da sessão"
+    ],
+    "fonte": [
+      "docs/srd-epic-007.md:222",
+      "docs/stories/epic-007/story-035.md",
+      "docs/stories/epic-008/story-037.md",
+      "SAFe 6.0 — Continuous Delivery Pipeline (Release on Demand)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/webhooks.ts",
+      "apps/app/app/(cosmos)/actions/webhooks.constants.ts",
+      "apps/app/lib/inngest/webhook-delivery.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "webhooks-1",
+      "tipo": "action",
+      "alvo": "setWebhookActive",
+      "hoje": "WebhookEndpoint.active já era respeitado pelo worker de entrega, mas nada no produto escrevia o campo — um endpoint quebrado só podia ser desligado direto no banco",
+      "desejado": "pausar/retomar pela tela, com RBAC de ADMIN, guarda de tenant e auditoria do estado anterior",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "webhooks-2",
+      "tipo": "action",
+      "alvo": "sendTestWebhook",
+      "hoje": "o campo WebhookDeliveryLog.synthetic existia e nunca era escrito, e o pipeline de entrega (lib/inngest/webhook-delivery.ts) existia sem nenhum produtor — não havia como provar a configuração de um endpoint sem esperar um evento real de portfólio acontecer",
+      "desejado": "evento sintético `ping` marcado como synthetic, enfileirado no mesmo job de entrega dos eventos reais",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "webhooks-3",
+      "tipo": "ui",
+      "alvo": "saúde do endpoint",
+      "hoje": "a tela chamava de 'falhando' qualquer endpoint cuja última entrega falhou; uma queda de rede isolada e um endpoint morto há dias apareciam iguais, e o código HTTP da resposta nunca era mostrado",
+      "desejado": "falhas consecutivas contadas da entrega mais recente, rótulo 'degradado' no limiar de 3 do FR-020, e o código HTTP da última entrega visível",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "webhooks-4",
+      "tipo": "tabela",
+      "alvo": "fila de mortos (DLQ) de entrega, com retry e descarte",
+      "hoje": "os AC-002/AC-003 da story-035 pedem UI de DLQ com 'Retry All' e descarte auditado; não há model de DLQ para entrega de saída (o `webhookDlq` do schema é do sync de Linear/GitHub, que é fluxo de entrada), então evento que esgota as 5 tentativas some do produto",
+      "desejado": "modelo de DLQ para entrega de saída, com retry em lote e descarte registrado em AuditLog",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "webhooks-5",
+      "tipo": "campo",
+      "alvo": "saúde persistida e re-registro automático",
+      "hoje": "o AC-006 pede que o endpoint passe a DEGRADED por um monitor de 15 minutos e tente re-registro automático; hoje 'degradado' é derivado na leitura e não existe nem monitor periódico nem campo de saúde no endpoint",
+      "desejado": "campo de saúde escrito por monitor periódico, com notificação ao RTE quando o re-registro falha",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "webhooks-6",
+      "tipo": "seed",
+      "alvo": "WebhookEndpoint do tenant demo",
+      "hoje": "o seed não cria endpoint algum, então /cosmos/webhooks abre vazio no tenant demo",
+      "desejado": "decidido não semear: um endpoint semeado precisaria gerar e cifrar um segredo HMAC dentro do seed, e o histórico de entrega que dá sentido à tela teria de ser inventado — histórico de entrega fabricado é exatamente o que esta tela existe para não fazer. O caminho de criação pela UI está completo e é o jeito honesto de povoar",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
+  "depende_de": [],
+  "seed": [],
+  "verifica": [
+    "apps/app/__tests__/actions/webhooks.test.ts",
+    "apps/app/__tests__/screens/webhooks.test.tsx"
+  ],
+  "commits": ["d4da1fe"],
+  "notas": "profundidade THIN vem do audit de 2026-07-23 (webhooks: 4 de 11 seções de handoff, o melhor do grupo). As duas lacunas de action fechadas são do tipo que o audit chamou de 'UI barata sobre dado que já existe': `active` e `synthetic` estavam no schema, o worker de entrega estava escrito e testado, e nada no produto os alcançava. As lacunas webhooks-4 e webhooks-5 exigem modelagem nova e ficam registradas sem migration; nenhuma trava a prática do nó, que é ter integração de saída observável e controlável.",
+  "atualizado_em": "2026-08-03"
+}

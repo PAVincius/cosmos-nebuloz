@@ -9,6 +9,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import {
+  assignTeamToArt,
   createTeam,
   listTeams,
   type TeamListView,
@@ -22,6 +23,7 @@ import {
   KpiCard,
   PageHeader,
   Progress,
+  SectionCard,
   useNav,
   useThemeName,
 } from "../kit";
@@ -125,6 +127,122 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
         </div>
       </div>
     </ModalCard>
+  );
+}
+
+// story-056 AC-002 — o único caminho para corrigir um squad que nasceu fora de
+// um ART. `createTeam` aceita artId na criação e, até aqui, nada mais.
+function LinkArtModal({
+  team,
+  onLinked,
+}: {
+  team: TeamListView;
+  onLinked?: () => void;
+}) {
+  const { close } = useModal();
+  const [art, setArt] = useState<EntityOption | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  const link = async () => {
+    if (!art || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => assignTeamToArt({ teamId: team.id, artId: art.id }),
+      {
+        loading: "Vinculando time ao ART...",
+        success: "Time vinculado ao ART.",
+        error: (err: string) => `Não foi possível vincular o time: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onLinked?.();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="users" size={16} strokeWidth={2.4} />}
+      subtitle="Um Agile Team pertence a um, e somente um, ART"
+      title={`Vincular ${team.name} a um ART`}
+      width={440}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <EntityLinkField kind="art" label="ART" onChange={setArt} value={art} />
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={link} size="sm" variant="primary">
+            Vincular ao ART
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+// story-056 AC-001 — sem esta seção, a tela mostra o badge do ART quando ele
+// existe e silencia quando não existe: o buraco fica invisível exatamente para
+// quem precisa vê-lo antes de abrir o PI Planning.
+function UnassignedTeamsSection({
+  teams,
+  onLinked,
+}: {
+  teams: TeamListView[];
+  onLinked: () => void;
+}) {
+  const modal = useModal();
+  return (
+    <div style={{ marginBottom: "var(--gap)" }}>
+      <SectionCard
+        icon="alert"
+        subtitle="Um time sem ART não entra em PI Planning: não recebe sprint nem aparece no Program Board."
+        title="Times sem ART"
+        tone="amber"
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {teams.map((tm) => (
+            <div
+              key={tm.id}
+              style={{
+                alignItems: "center",
+                background: "var(--surface-2)",
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-md)",
+                display: "flex",
+                gap: 12,
+                padding: "11px 13px",
+              }}
+            >
+              <span
+                style={{
+                  color: "var(--ink)",
+                  flex: 1,
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
+                {tm.name}
+              </span>
+              <Button
+                onClick={() =>
+                  modal.open(<LinkArtModal onLinked={onLinked} team={tm} />)
+                }
+                size="sm"
+                variant="secondary"
+              >
+                Vincular {tm.name} a um ART
+              </Button>
+            </div>
+          ))}
+        </div>
+      </SectionCard>
+    </div>
   );
 }
 
@@ -451,6 +569,7 @@ function TeamsBody() {
   const visibleTeams = teams.filter(
     (t) => artFilter.size === 0 || (t.artId && artFilter.has(t.artId))
   );
+  const unassignedTeams = teams.filter((t) => t.artId === null);
 
   return (
     <div className="fade-in">
@@ -506,6 +625,9 @@ function TeamsBody() {
       )}
 
       {error && <ErrorState />}
+      {!(error || loading) && unassignedTeams.length > 0 && (
+        <UnassignedTeamsSection onLinked={load} teams={unassignedTeams} />
+      )}
       {!(error || loading) && teams.length > 0 && (
         <div
           style={{

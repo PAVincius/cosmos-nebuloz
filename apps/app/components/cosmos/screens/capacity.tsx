@@ -21,7 +21,9 @@ import {
   type TeamSprintOption,
 } from "@/app/(cosmos)/actions/capacity";
 import {
+  CAPACITY_BAND_LABEL,
   CAPACITY_NOTE_TONES,
+  type CapacityBand,
   type CapacityNoteTone,
 } from "@/app/(cosmos)/actions/capacity.constants";
 import { EmptyState } from "../empty-state";
@@ -45,17 +47,22 @@ const NOTE_TONE: Record<CapacityNoteTone, Tone> = {
   neutral: "neutral",
 };
 
-function utilTone(pct: number | null): "green" | "amber" | "red" | "neutral" {
-  if (pct === null) {
-    return "neutral";
-  }
-  if (pct >= 100) {
-    return "red";
-  }
-  if (pct >= 85) {
-    return "amber";
-  }
-  return "green";
+// A faixa vem da action (story-057 AC-002). Aqui só se escolhe o tom neutro
+// para o caso sem snapshot — nenhum limiar é redecidido na tela.
+function bandTone(band: CapacityBand | null): Tone {
+  return band ?? "neutral";
+}
+
+// story-032 AC-002 "Hover shows: planned/actual/capacity". Em story points: o
+// snapshot não guarda hora nem dia-pessoa (lacuna registrada no nó), e SP não
+// se converte em hora sem inventar um fator.
+function utilTitle(
+  expectedSp: number | null,
+  actualSp: number | null,
+  utilizationPct: number,
+  band: CapacityBand
+): string {
+  return `Planejado ${expectedSp ?? "—"} SP · Entregue ${actualSp ?? "—"} SP · Utilização ${utilizationPct}% — ${CAPACITY_BAND_LABEL[band]}`;
 }
 
 const fieldLabelStyle: CSSProperties = {
@@ -409,13 +416,23 @@ function CapacityGridSection() {
                             flexDirection: "column",
                             gap: 4,
                           }}
+                          title={
+                            cell.utilizationPct !== null && cell.band !== null
+                              ? utilTitle(
+                                  cell.expectedSp,
+                                  cell.actualSp,
+                                  cell.utilizationPct,
+                                  cell.band
+                                )
+                              : undefined
+                          }
                         >
                           <span className="mono" style={{ fontSize: 12.5 }}>
                             {cell.actualSp ?? "—"} / {cell.expectedSp ?? "—"} SP
                           </span>
                           {cell.utilizationPct !== null && (
                             <Progress
-                              tone={utilTone(cell.utilizationPct)}
+                              tone={bandTone(cell.band)}
                               value={cell.utilizationPct}
                             />
                           )}
@@ -532,14 +549,24 @@ export default function CapacityScreen() {
                                 alignItems: "center",
                                 gap: 8,
                               }}
+                              title={
+                                row.band
+                                  ? utilTitle(
+                                      row.expectedSp,
+                                      row.actualSp,
+                                      row.utilizationPct,
+                                      row.band
+                                    )
+                                  : undefined
+                              }
                             >
                               <div style={{ flex: 1 }}>
                                 <Progress
-                                  tone={utilTone(row.utilizationPct)}
+                                  tone={bandTone(row.band)}
                                   value={row.utilizationPct}
                                 />
                               </div>
-                              <Badge soft tone={utilTone(row.utilizationPct)}>
+                              <Badge soft tone={bandTone(row.band)}>
                                 {row.utilizationPct}%
                               </Badge>
                             </div>

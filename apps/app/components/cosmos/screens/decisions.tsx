@@ -7,7 +7,9 @@ import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   createDecision,
+  type DecisionLogExport,
   type DecisionView,
+  exportDecisionLog,
   listDecisions,
 } from "@/app/(cosmos)/actions/decisions";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
@@ -83,6 +85,21 @@ const inputStyle: CSSProperties = {
 };
 
 const selectStyle: CSSProperties = inputStyle;
+
+// O artefato que o auditor leva embora. O payload inteiro vem do servidor —
+// inclusive o rodapé de metadados —, então o navegador só o serializa: nada é
+// montado aqui que não tenha sido registrado no export auditado.
+function downloadDecisionLog(payload: DecisionLogExport) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {
+    type: "application/json;charset=utf-8;",
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `decision-log-${payload.exportedAt.slice(0, 10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
@@ -263,6 +280,7 @@ function DecisionsBody() {
   const [decisions, setDecisions] = useState<DecisionView[]>([]);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [exporting, setExporting] = useState(false);
 
   const load = useCallback(() => {
     setLoading(true);
@@ -280,6 +298,23 @@ function DecisionsBody() {
     load();
   }, [load]);
 
+  const exportLog = async () => {
+    if (exporting) {
+      return;
+    }
+    setExporting(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => exportDecisionLog(), {
+      loading: "Gerando export do Decision Log...",
+      success: "Export gerado — o download vai começar.",
+      error: (err: string) => `Não foi possível exportar o log: ${err}`,
+    });
+    setExporting(false);
+    if (res.ok) {
+      downloadDecisionLog(res.data);
+    }
+  };
+
   return (
     <div className="fade-in">
       <PageHeader
@@ -288,6 +323,18 @@ function DecisionsBody() {
         subtitle="Registro de decisões de portfólio com justificativa."
         title="Decision Log"
       >
+        {/* Exportar um log vazio produziria um artefato de auditoria sem
+            conteúdo e um registro de export inútil. */}
+        {!(error || loading) && decisions.length > 0 && (
+          <Button
+            icon="download"
+            onClick={exportLog}
+            size="md"
+            variant="secondary"
+          >
+            Exportar JSON
+          </Button>
+        )}
         <Button
           icon="plus"
           onClick={() => modal.open(<NewDecisionModal onCreated={load} />)}

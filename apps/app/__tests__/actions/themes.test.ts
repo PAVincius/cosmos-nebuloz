@@ -10,7 +10,9 @@ const h = vi.hoisted(() => ({
   strategicThemeFindFirst: vi.fn(),
   strategicThemeCreate: vi.fn(),
   strategicThemeUpdate: vi.fn(),
+  strategicThemeCount: vi.fn(),
   billingEntryAllocationFindMany: vi.fn(),
+  epicUpdateMany: vi.fn(),
   transaction: vi.fn(),
   logAudit: vi.fn(),
 }));
@@ -29,9 +31,13 @@ vi.mock("@repo/database", () => ({
       findFirst: h.strategicThemeFindFirst,
       create: h.strategicThemeCreate,
       update: h.strategicThemeUpdate,
+      count: h.strategicThemeCount,
     },
     billingEntryAllocation: {
       findMany: h.billingEntryAllocationFindMany,
+    },
+    epic: {
+      updateMany: h.epicUpdateMany,
     },
     $transaction: h.transaction,
   },
@@ -39,18 +45,27 @@ vi.mock("@repo/database", () => ({
 vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
+// Ambos os imports vêm depois de todo vi.mock() acima — é o que a regra 5 de
+// .claude/COMMON_MISTAKES.md exige. A ordem entre eles é a do organizador do
+// Biome.
 import {
+  archiveTheme,
   createTheme,
   getTheme,
   listThemes,
   rebalanceThemeTargets,
 } from "../../app/(cosmos)/actions/themes";
+import {
+  MAX_ACTIVE_THEMES,
+  THEME_CONCENTRATION_THRESHOLD_PCT,
+} from "../../app/(cosmos)/actions/themes.constants";
 
 beforeEach(() => {
   vi.clearAllMocks();
   h.headers.mockResolvedValue(new Headers());
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  h.strategicThemeCount.mockResolvedValue(0);
 });
 
 describe("listThemes", () => {
@@ -490,5 +505,211 @@ describe("rebalanceThemeTargets", () => {
       })
     );
     expect(h.revalidateTag).toHaveBeenCalledTimes(1);
+  });
+
+  // AC-005 — alvo de alocação é atributo de tema ativo. Aceitar um arquivado no
+  // rebalanceamento faria a soma de 100% cobrir tema que não recebe mais
+  // investimento, e o Strategy Map passaria a mentir sobre o portfólio.
+  it("recusa o lote inteiro quando um dos temas está arquivado", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      { id: "th1", targetAllocationPct: 60, status: "ACTIVE" },
+      { id: "th2", targetAllocationPct: 40, status: "ARCHIVED" },
+    ]);
+
+    const res = await rebalanceThemeTargets(validInput);
+
+    expect(res.ok).toBe(false);
+    expect(h.transaction).not.toHaveBeenCalled();
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+  });
+});
+
+// ── AC-004 — concentração de portfólio ────────────────────────────────────
+describe("listThemes — concentração de portfólio", () => {
+  const epics = (n: number) =>
+    Array.from({ length: n }, () => ({ featureCount: 0, doneFeatureCount: 0 }));
+
+  const row = (over: Record<string, unknown>) => ({
+    id: "th",
+    title: "T",
+    description: null,
+    color: "#6366f1",
+    healthStatus: "on",
+    targetAllocationPct: null,
+    horizon: null,
+    status: "ACTIVE",
+    epics: [],
+    ...over,
+  });
+
+  beforeEach(() => {
+    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+  });
+
+  it("sinaliza apenas o tema acima da diretriz de 60% dos épicos (8/2/2)", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      row({ id: "th1", title: "Segurança", epics: epics(8) }),
+      row({ id: "th2", title: "Plataforma", epics: epics(2) }),
+      row({ id: "th3", title: "Crescimento", epics: epics(2) }),
+    ]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const byId = new Map(r.data.map((t) => [t.id, t]));
+      expect(byId.get("th1")?.epicSharePct).toBe(66.7);
+      expect(byId.get("th1")?.overConcentrated).toBe(true);
+      expect(byId.get("th2")?.epicSharePct).toBe(16.7);
+      expect(byId.get("th2")?.overConcentrated).toBe(false);
+      expect(byId.get("th3")?.overConcentrated).toBe(false);
+    }
+    expect(THEME_CONCENTRATION_THRESHOLD_PCT).toBe(60);
+  });
+
+  it("ignora tema arquivado no denominador e nunca o sinaliza", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      row({ id: "th1", epics: epics(3) }),
+      row({ id: "th2", epics: epics(3) }),
+      row({ id: "arq", status: "ARCHIVED", epics: epics(20) }),
+    ]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const byId = new Map(r.data.map((t) => [t.id, t]));
+      // 3 de 6 entre ativos = 50%, e não 3 de 26
+      expect(byId.get("th1")?.epicSharePct).toBe(50);
+      expect(byId.get("arq")?.epicSharePct).toBeNull();
+      expect(byId.get("arq")?.overConcentrated).toBe(false);
+      expect(byId.get("arq")?.status).toBe("ARCHIVED");
+    }
+  });
+
+  it("retorna epicSharePct null (nunca 0) quando nenhum tema ativo tem épico", async () => {
+    h.strategicThemeFindMany.mockResolvedValue([
+      row({ id: "th1" }),
+      row({ id: "th2" }),
+    ]);
+
+    const r = await listThemes();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].epicSharePct).toBeNull();
+      expect(r.data[0].overConcentrated).toBe(false);
+    }
+  });
+});
+
+// ── AC-002 — teto SAFe de temas ativos ────────────────────────────────────
+describe("createTheme — teto de temas ativos", () => {
+  it("conta apenas temas não arquivados ao aplicar o teto", async () => {
+    h.strategicThemeCreate.mockResolvedValue({ id: "novo" });
+
+    await createTheme({ title: "Tema" });
+
+    expect(h.strategicThemeCount).toHaveBeenCalledWith({
+      where: { tenantId: tenantCtx.tenantId, status: { not: "ARCHIVED" } },
+    });
+  });
+
+  it(`recusa a criação com ${MAX_ACTIVE_THEMES} temas ativos, sem gravar nada`, async () => {
+    h.strategicThemeCount.mockResolvedValue(MAX_ACTIVE_THEMES);
+
+    const res = await createTheme({ title: "Oitavo tema" });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain(String(MAX_ACTIVE_THEMES));
+    }
+    expect(h.strategicThemeCreate).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+    expect(h.revalidateTag).not.toHaveBeenCalled();
+  });
+
+  it("permite criar quando o tenant está abaixo do teto", async () => {
+    h.strategicThemeCount.mockResolvedValue(MAX_ACTIVE_THEMES - 1);
+    h.strategicThemeCreate.mockResolvedValue({ id: "setimo" });
+
+    const res = await createTheme({ title: "Sétimo tema" });
+
+    expect(res.ok).toBe(true);
+    expect(h.strategicThemeCreate).toHaveBeenCalled();
+  });
+});
+
+// ── AC-003 — arquivamento não-cascateante ─────────────────────────────────
+describe("archiveTheme", () => {
+  it("é negado quando o papel não é permitido (RBAC)", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await archiveTheme({ id: "th1" });
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "STE"], tenantCtx);
+    expect(h.strategicThemeFindFirst).not.toHaveBeenCalled();
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+  });
+
+  it("busca o tema por id + tenantId e recusa o que não pertence ao tenant (IDOR)", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue(null);
+
+    const res = await archiveTheme({ id: "de-outro-tenant" });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "de-outro-tenant", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+  });
+
+  it("recusa arquivar um tema já arquivado", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "th1",
+      status: "ARCHIVED",
+      targetAllocationPct: null,
+    });
+
+    const res = await archiveTheme({ id: "th1" });
+
+    expect(res.ok).toBe(false);
+    expect(h.strategicThemeUpdate).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+  });
+
+  it("arquiva zerando o alvo, audita a transição e não toca em nenhum épico", async () => {
+    h.strategicThemeFindFirst.mockResolvedValue({
+      id: "th1",
+      status: "ACTIVE",
+      targetAllocationPct: 30,
+    });
+    h.strategicThemeUpdate.mockResolvedValue({ id: "th1" });
+
+    const res = await archiveTheme({ id: "th1" });
+
+    expect(res.ok).toBe(true);
+    expect(h.strategicThemeUpdate).toHaveBeenCalledWith({
+      where: { id: "th1" },
+      data: { status: "ARCHIVED", targetAllocationPct: null },
+    });
+    // não-cascateante: os épicos existentes continuam apontando para o tema
+    expect(h.epicUpdateMany).not.toHaveBeenCalled();
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "status_changed",
+        entityType: "theme",
+        entityId: "th1",
+        diff: { from: "ACTIVE", to: "ARCHIVED" },
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
   });
 });

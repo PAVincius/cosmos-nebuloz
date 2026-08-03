@@ -184,6 +184,50 @@ export async function setAnomalySensitivity(
   });
 }
 
+// story-021 AC-008 ("Threshold reset to default"): the override row is
+// DELETED, not rewritten with today's default. Rewriting would pin 3.5 as the
+// tenant's own choice — indistinguishable from "follows the platform" in the
+// data, and it would ignore any future change to the platform default.
+// deleteMany (not delete) because deleting a row that is not there is the
+// normal case, not an error: delete would throw P2025 and turn a legitimate
+// no-op into a failure the caller has to special-case.
+export async function resetAnomalySensitivity(): Promise<
+  Result<{ threshold: number; wasOverridden: boolean }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+
+    const { count } = await database.anomalyRuleConfig.deleteMany({
+      where: {
+        tenantId: ctx.tenantId,
+        artId: TENANT_WIDE_ART_SENTINEL,
+        ruleId: COST_ANOMALY_RULE_ID,
+      },
+    });
+
+    // Nothing was overridden — nothing changed, so nothing is audited. An
+    // audit entry for a no-op is a false record of a change.
+    if (count > 0) {
+      await logAudit(ctx.tenantId, {
+        userId: ctx.userId,
+        action: "deleted",
+        entityType: "AnomalyRuleConfig",
+        entityId: COST_ANOMALY_RULE_ID,
+        diff: {
+          threshold: `override→padrão (${DEFAULT_SENSITIVITY_THRESHOLD})`,
+        },
+      });
+      revalidateTag(cacheTag(ctx.tenantId), "max");
+    }
+
+    return {
+      threshold: DEFAULT_SENSITIVITY_THRESHOLD,
+      wasOverridden: count > 0,
+    };
+  });
+}
+
 const AcknowledgeSchema = z.object({
   id: z.string().min(1),
   status: z

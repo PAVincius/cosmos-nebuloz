@@ -43,6 +43,7 @@ vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 import { database } from "@repo/database";
 import {
   createDecision,
+  exportDecisionLog,
   listDecisions,
 } from "../../app/(cosmos)/actions/decisions";
 
@@ -51,6 +52,150 @@ beforeEach(() => {
   h.headers.mockResolvedValue(new Headers());
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+});
+
+// ── AC-001 — leitura restrita ─────────────────────────────────────────────
+describe("listDecisions — leitura restrita", () => {
+  it("nega a leitura para papel fora de ADMIN/RTE/STE, sem tocar no banco", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await listDecisions();
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(
+      ["ADMIN", "RTE", "STE"],
+      tenantCtx
+    );
+    expect(h.decisionLogEntryFindMany).not.toHaveBeenCalled();
+  });
+});
+
+// ── AC-002 — superfície append-only ───────────────────────────────────────
+describe("superfície do módulo de Decision Log", () => {
+  it("não expõe nenhuma action de atualização ou exclusão de entrada", async () => {
+    // import dinâmico: a superfície inteira do módulo é o objeto do teste, e o
+    // import de namespace estático é barrado pelo lint do repo.
+    const mod = await import("../../app/(cosmos)/actions/decisions");
+    const surface = Object.keys(mod).filter(
+      (k) => typeof (mod as Record<string, unknown>)[k] === "function"
+    );
+
+    expect(surface.sort()).toEqual([
+      "createDecision",
+      "exportDecisionLog",
+      "listDecisions",
+    ]);
+    for (const name of surface) {
+      expect(name).not.toMatch(/update|edit|patch|delete|remove|archive/i);
+    }
+  });
+});
+
+// ── AC-003 / AC-004 — export auditado ─────────────────────────────────────
+describe("exportDecisionLog", () => {
+  const rows = [
+    {
+      id: "d1",
+      titulo: "Aprovar migração multi-tenant",
+      decisao: "approved",
+      justificativa: "Reduz dívida técnica crítica",
+      tipo: "epic_decision",
+      targetType: "epic",
+      targetId: "epic-1",
+      dataDecisao: new Date("2026-02-10T12:00:00Z"),
+      tags: ["tech-debt"],
+      decisorId: "user-1",
+      dadosSuporte: { budgetInfo: { amount: 500_000 } },
+    },
+  ];
+
+  it("é negado quando o papel não é permitido (RBAC), sem consultar nem auditar", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await exportDecisionLog();
+
+    expect(res.ok).toBe(false);
+    expect(h.decisionLogEntryFindMany).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
+  });
+
+  it("lê tenant-scoped e entrega as entradas em ordem cronológica ascendente", async () => {
+    // O leitor reusado devolve do mais recente para o mais antigo; o export
+    // inverte, porque trilha de auditoria se lê do começo.
+    h.decisionLogEntryFindMany.mockResolvedValue([
+      { ...rows[0], id: "nova", dataDecisao: new Date("2026-03-01T00:00:00Z") },
+      {
+        ...rows[0],
+        id: "antiga",
+        dataDecisao: new Date("2026-01-01T00:00:00Z"),
+      },
+    ]);
+    h.userFindMany.mockResolvedValue([]);
+
+    const res = await exportDecisionLog();
+
+    expect(h.decisionLogEntryFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ tenantId: tenantCtx.tenantId }),
+      })
+    );
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.entries.map((e) => e.id)).toEqual(["antiga", "nova"]);
+    }
+  });
+
+  it("monta o payload com entradas completas e rodapé de metadados", async () => {
+    h.decisionLogEntryFindMany.mockResolvedValue(rows);
+    h.userFindMany.mockResolvedValue([{ id: "user-1", name: "Helena Souza" }]);
+
+    const res = await exportDecisionLog();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      expect(res.data.tenantId).toBe(tenantCtx.tenantId);
+      expect(res.data.totalEntries).toBe(1);
+      expect(res.data.exportedBy.id).toBe(tenantCtx.userId);
+      expect(typeof res.data.exportedAt).toBe("string");
+
+      const entry = res.data.entries[0];
+      expect(entry.id).toBe("d1");
+      expect(entry.decisorId).toBe("user-1");
+      expect(entry.decisorName).toBe("Helena Souza");
+      expect(entry.justificativa).toBe("Reduz dívida técnica crítica");
+      expect(entry.dataDecisao).toBe("2026-02-10T12:00:00.000Z");
+      expect(entry.dadosSuporte).toEqual({ budgetInfo: { amount: 500_000 } });
+    }
+  });
+
+  it("audita o próprio export com ator e total exportado", async () => {
+    h.decisionLogEntryFindMany.mockResolvedValue(rows);
+    h.userFindMany.mockResolvedValue([]);
+
+    await exportDecisionLog();
+
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        userId: tenantCtx.userId,
+        entityType: "decision_log_export",
+        diff: expect.objectContaining({ totalEntries: "1" }),
+      })
+    );
+  });
+
+  it("não audita export algum quando a leitura falha", async () => {
+    h.decisionLogEntryFindMany.mockRejectedValue(new Error("db down"));
+
+    const res = await exportDecisionLog();
+
+    expect(res.ok).toBe(false);
+    expect(h.logAudit).not.toHaveBeenCalled();
+  });
 });
 
 describe("listDecisions", () => {

@@ -1,0 +1,175 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nebuloz.com/cosmos/no.schema.json",
+  "title": "Nó do grafo de completude do Cosmos",
+  "description": "Uma unidade de trabalho do programa. Um arquivo por nó, um escritor por arquivo — é o que permite três trilhas em paralelo sem conflito de merge. Campos são divididos por papel: o controller escreve dono/trilha/estado no despacho e no merge; o implementer escreve o resto durante a execução.",
+  "type": "object",
+  "required": ["id", "kind", "titulo", "estado"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9-]*$",
+      "description": "Para kind=tela, é o id do registry (components/cosmos/screens/registry.tsx). Para kind=capacidade, prefixo cap-."
+    },
+    "kind": {
+      "enum": ["tela", "capacidade"],
+      "description": "capacidade é trabalho compartilhado que não é tela: migration, extensão de seed, primitivo de UI. Existe porque aresta só aponta para nó."
+    },
+    "titulo": { "type": "string", "minLength": 3 },
+    "rota": {
+      "type": ["string", "null"],
+      "description": "Rota servida. Telas do Cosmos usam /cosmos/<id> via catch-all; não há page.tsx por tela."
+    },
+    "componente": { "type": ["string", "null"] },
+    "registro": { "type": ["string", "null"] },
+
+    "balde": {
+      "enum": ["A", "B", "C", null],
+      "description": "A: modelo existe e basta. B: falta campo, tabela ou action. C: sem modelo."
+    },
+    "profundidade": {
+      "enum": ["REAL", "THIN", "SHELL", null],
+      "description": "Veredito do audit de 2026-07-23. THIN = a tela existe e lê dado, mas raso."
+    },
+    "trilha": {
+      "enum": [
+        "0-base",
+        "1-portfolio",
+        "2-execucao",
+        "3-metricas-plataforma",
+        "4-integracao",
+        "fora-de-escopo",
+        null
+      ]
+    },
+    "dono": {
+      "type": ["string", "null"],
+      "description": "Agente responsável. Escrito pelo controller no despacho."
+    },
+    "estado": {
+      "enum": [
+        "pendente",
+        "em-execucao",
+        "em-revisao",
+        "entregue",
+        "parado",
+        "fora-de-escopo"
+      ]
+    },
+
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["arquivo", "export", "tipo", "estado"],
+        "additionalProperties": false,
+        "properties": {
+          "arquivo": { "type": "string" },
+          "export": { "type": "string" },
+          "tipo": { "enum": ["read", "mutation"] },
+          "estado": { "enum": ["existe", "ausente"] }
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Nomes de model Prisma. O check confirma que cada um existe em packages/database/prisma/schema/."
+    },
+
+    "safe": {
+      "type": "object",
+      "required": ["pratica", "nivel", "faz", "invariantes", "fonte"],
+      "additionalProperties": false,
+      "description": "Ficha da regra de negócio. Mora no nó porque é o critério de aceite dele, e porque invariantes é o insumo direto do teste.",
+      "properties": {
+        "pratica": {
+          "type": "string",
+          "description": "Prática SAFe 6.0 que a tela cumpre."
+        },
+        "nivel": {
+          "enum": ["Team", "Essential", "Large Solution", "Portfolio"]
+        },
+        "faz": {
+          "type": "string",
+          "description": "Uma frase: o que a funcionalidade faz, do ponto de vista de quem usa."
+        },
+        "invariantes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "O que o backend garante. Cada uma deve ter teste correspondente em verifica[]."
+        },
+        "fonte": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" },
+          "description": "Doc do repo (arquivo ou arquivo:linha) ou referência externa ao corpo SAFe. Fonte do repo é checada em disco; externa é marcada no GRAFO.md para leitura humana."
+        },
+        "codigo": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+
+    "lacunas": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "tipo",
+          "alvo",
+          "hoje",
+          "desejado",
+          "migration",
+          "bloqueio"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "tipo": { "enum": ["campo", "tabela", "action", "seed", "ui"] },
+          "alvo": { "type": "string" },
+          "hoje": { "type": "string" },
+          "desejado": { "type": "string" },
+          "migration": { "type": "boolean" },
+          "bloqueio": {
+            "type": "boolean",
+            "description": "true = trava a entrega do nó. Implementer nunca cria migration fora da trilha 0: grava a lacuna, segue nos steps livres e reporta."
+          },
+          "fechada_em": { "type": ["string", "null"] }
+        }
+      }
+    },
+
+    "depende_de": {
+      "type": "array",
+      "description": "Aresta é sempre declarada pelo consumidor, nunca pelo produtor — é o que garante um escritor por aresta.",
+      "items": {
+        "type": "object",
+        "required": ["no", "tipo", "porque"],
+        "additionalProperties": false,
+        "properties": {
+          "no": { "type": "string" },
+          "tipo": { "enum": ["schema", "contrato", "seed", "ui"] },
+          "produz": {
+            "type": "string",
+            "description": "Assinatura acordada em tempo de plano. O consumidor escreve contra ela, não contra a implementação."
+          },
+          "porque": { "type": "string" }
+        }
+      }
+    },
+
+    "seed": { "type": "array", "items": { "type": "string" } },
+    "verifica": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Testes e comandos que provam o nó. Nó entregue sem isto é reprovado pelo check."
+    },
+    "commits": { "type": "array", "items": { "type": "string" } },
+    "notas": { "type": "string" },
+    "atualizado_em": { "type": "string" }
+  }
+}

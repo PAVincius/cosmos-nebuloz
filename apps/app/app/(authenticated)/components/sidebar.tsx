@@ -34,7 +34,10 @@ const NAV = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
   { href: "/portfolio", label: "Portfólio", icon: LayersIcon },
   { href: "/portfolio/wsjf", label: "WSJF", icon: BarChart3Icon },
-  { href: "/telas", label: "Telas portadas", icon: SparklesIcon },
+  // O Cosmos serve suas 38 telas por uma rota única, `/cosmos/[[...seg]]`, com
+  // navegação própria no CosmosShell. Um link só — replicar os ids aqui criaria
+  // um segundo mapa para divergir do registry.
+  { href: "/cosmos", label: "Cosmos", icon: SparklesIcon },
   { href: "/settings/workspace", label: "Configurações", icon: SettingsIcon },
   { href: "/profile", label: "Perfil", icon: UserIcon },
 ] as const;

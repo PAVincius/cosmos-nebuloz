@@ -5,14 +5,20 @@
 // (BillingEntryAllocation-derived, see actions/themes.ts), epic count.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
+  archiveTheme,
   createTheme,
   listThemes,
   rebalanceThemeTargets,
   type ThemeView,
 } from "@/app/(cosmos)/actions/themes";
 import {
+  ARCHIVED_THEME_STATUS,
+  THEME_CONCENTRATION_THRESHOLD_PCT,
+} from "@/app/(cosmos)/actions/themes.constants";
+import {
   Badge,
   Button,
+  IconButton,
   KpiCard,
   PageHeader,
   Progress,
@@ -68,8 +74,15 @@ function computeThemeKpis(themes: ThemeView[]) {
   return { mappedInvestmentPct, epicsUnderThemes, targetAdherencePct };
 }
 
-function ThemeCard({ theme }: { theme: ThemeView }) {
+function ThemeCard({
+  theme,
+  onArchived,
+}: {
+  theme: ThemeView;
+  onArchived: () => void;
+}) {
   const { navigate } = useNav();
+  const [archiving, setArchiving] = useState(false);
   const tone = HEALTH_TONE[theme.healthStatus] ?? "green";
   const hasDrift =
     theme.actualAllocationPct !== null && theme.targetAllocationPct !== null;
@@ -79,6 +92,24 @@ function ThemeCard({ theme }: { theme: ThemeView }) {
           (theme.targetAllocationPct as number)
       )
     : null;
+
+  const archive = async () => {
+    if (archiving) {
+      return;
+    }
+    setArchiving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => archiveTheme({ id: theme.id }), {
+      loading: "Arquivando tema estratégico...",
+      success: "Tema estratégico arquivado.",
+      error: (err: string) => `Não foi possível arquivar o tema: ${err}`,
+    });
+    setArchiving(false);
+    if (res.ok) {
+      onArchived();
+    }
+  };
+
   return (
     <SectionCard
       action={
@@ -151,16 +182,36 @@ function ThemeCard({ theme }: { theme: ThemeView }) {
               : `${drift}pp abaixo do alvo`}
           </span>
         )}
+        {theme.overConcentrated && (
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "var(--amber-text)",
+            }}
+          >
+            {`${theme.epicSharePct}% dos épicos — acima da diretriz de ${THEME_CONCENTRATION_THRESHOLD_PCT}%`}
+          </span>
+        )}
         <div
           style={{
             display: "flex",
+            alignItems: "center",
             justifyContent: "space-between",
             fontSize: 11.5,
             color: "var(--ink-faint)",
           }}
         >
           <span>{theme.epicCount} épicos</span>
-          <span>{theme.horizon ?? "—"}</span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span>{theme.horizon ?? "—"}</span>
+            <IconButton
+              name="inbox"
+              onClick={archive}
+              size={28}
+              title={`Arquivar ${theme.title}`}
+            />
+          </div>
         </div>
       </div>
     </SectionCard>
@@ -416,13 +467,15 @@ function ThemesBody() {
   const modal = useModal();
   const [themes, setThemes] = useState<ThemeView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const load = useCallback(() => {
     setLoading(true);
     listThemes().then((r) => {
-      if (r.ok) {
-        setThemes(r.data);
-      }
+      // Falha nunca degrada para lista vazia silenciosa: sem isto a tela
+      // dizia "nenhum tema" para um tenant que tem temas e um erro de leitura.
+      setThemes(r.ok ? r.data : []);
+      setError(r.ok ? null : r.error);
       setLoading(false);
     });
   }, []);
@@ -431,20 +484,36 @@ function ThemesBody() {
     load();
   }, [load]);
 
-  const kpis = computeThemeKpis(themes);
+  // Tema arquivado sai do portfólio ativo: não entra no grid, nos KPIs nem no
+  // rebalanceamento — mas a contagem fica visível para arquivar não parecer
+  // apagar (FR-014, UC-62).
+  const active = themes.filter((t) => t.status !== ARCHIVED_THEME_STATUS);
+  const archivedCount = themes.length - active.length;
+  const kpis = computeThemeKpis(active);
 
   return (
     <div className="fade-in">
       <PageHeader
         eyebrow="Portfolio · Estratégia"
-        meta={<Badge tone="accent">{themes.length} temas</Badge>}
+        meta={
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <Badge tone="accent">
+              {`${active.length} ${active.length === 1 ? "tema" : "temas"}`}
+            </Badge>
+            {archivedCount > 0 && (
+              <Badge>
+                {`${archivedCount} ${archivedCount === 1 ? "arquivado" : "arquivados"}`}
+              </Badge>
+            )}
+          </div>
+        }
         subtitle="Alocação de investimento por tema, alinhada à estratégia de portfólio."
         title="Temas Estratégicos"
       >
         <Button
           icon="scale"
           onClick={() =>
-            modal.open(<RebalanceTargetsModal onSaved={load} themes={themes} />)
+            modal.open(<RebalanceTargetsModal onSaved={load} themes={active} />)
           }
           size="md"
           variant="secondary"
@@ -499,7 +568,12 @@ function ThemesBody() {
           gap: 16,
         }}
       >
-        {!loading && themes.length === 0 && (
+        {error !== null && (
+          <span style={{ fontSize: 13, color: "var(--red-text)" }}>
+            Não foi possível carregar os temas estratégicos.
+          </span>
+        )}
+        {!(loading || error) && active.length === 0 && (
           <KpiCard
             hint="Crie um tema estratégico"
             icon="target"
@@ -508,8 +582,8 @@ function ThemesBody() {
             value="—"
           />
         )}
-        {themes.map((t) => (
-          <ThemeCard key={t.id} theme={t} />
+        {active.map((t) => (
+          <ThemeCard key={t.id} onArchived={load} theme={t} />
         ))}
       </div>
     </div>

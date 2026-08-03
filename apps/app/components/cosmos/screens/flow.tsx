@@ -144,11 +144,33 @@ function AgingWipPanel() {
 }
 
 // ── DORA metrics — driven by getDoraMetrics() ──
-// Only deployment frequency and lead time are wired: they're the two DORA
-// metrics GitHubDeploymentEvent can actually back today. Change failure
-// rate and MTTR need incident data with no source (no Incident model, no
-// PagerDuty/etc integration) — they render as "sem fonte de incidente",
-// never as a 0 (which would read as "zero failures ever").
+// Três das quatro têm fonte: deployment frequency, lead time e change failure
+// rate saem de GitHubDeploymentEvent. O CFR mostrado aqui é falha de
+// *deployment* sobre deployment concluído, que não é a definição canônica do
+// DORA (deployment que degradou o serviço) — por isso o denominador aparece ao
+// lado do número, para a leitora julgar o tamanho da amostra.
+//
+// MTTR não tem fonte alguma: não há model Incident nem integração de
+// on-call no repo. Fica com o marcador de indisponível e o motivo, nunca com um
+// 0 — um "MTTR de 0h" leria como "restauração instantânea", que nada sustenta.
+
+// Limiares DORA de change failure rate (lib/github/dora-metrics.ts): Elite < 5%,
+// High < 15%.
+const CFR_ELITE_MAX = 0.05;
+const CFR_HIGH_MAX = 0.15;
+
+function cfrTone(m: DoraMetricValue): Tone {
+  if (m.status !== "measured") {
+    return "neutral";
+  }
+  if (m.value < CFR_ELITE_MAX) {
+    return "green";
+  }
+  if (m.value < CFR_HIGH_MAX) {
+    return "amber";
+  }
+  return "red";
+}
 
 function doraKpiValue(m: DoraMetricValue, format: (n: number) => string) {
   return m.status === "measured" ? format(m.value) : "—";
@@ -164,7 +186,7 @@ function DoraSection() {
   return (
     <SectionCard
       icon="gitBranch"
-      subtitle="Frequência de deploy e lead time, últimos 30 dias de deployments de produção"
+      subtitle="Últimos 30 dias de deployments de produção. Change failure rate conta deployment que falhou, não incidente em produção — MTTR não tem fonte."
       title="DORA Metrics"
       tone="purple"
     >
@@ -214,11 +236,19 @@ function DoraSection() {
             )}
           />
           <KpiCard
-            hint={data.changeFailureRate.reason}
+            hint={doraKpiHint(
+              data.changeFailureRate,
+              `${data.failedProductionDeployments} de ${data.totalProductionDeployments} deploy(s) de produção concluídos`
+            )}
             icon="alert"
             label="Change Failure Rate"
-            tone="neutral"
-            value="—"
+            tone={cfrTone(data.changeFailureRate)}
+            unit={
+              data.changeFailureRate.status === "measured" ? "%" : undefined
+            }
+            value={doraKpiValue(data.changeFailureRate, (n) =>
+              Math.round(n * 100).toString()
+            )}
           />
           <KpiCard
             hint={data.mttrHours.reason}

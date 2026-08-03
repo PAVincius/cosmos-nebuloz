@@ -15,7 +15,10 @@ import {
   recordActualValue,
   type ValueRealizationView,
 } from "@/app/(cosmos)/actions/value-realization";
-import type { ValueMetricStatus } from "@/app/(cosmos)/actions/value-realization.constants";
+import {
+  requiresHypothesisRationale,
+  type ValueMetricStatus,
+} from "@/app/(cosmos)/actions/value-realization.constants";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon, type IconName } from "../icons";
@@ -198,15 +201,26 @@ function RecordActualValueModal({
       | ValueMetricStatus
       | undefined) ?? "tracking"
   );
+  const [rationale, setRationale] = useState("");
+  const [rationaleMissing, setRationaleMissing] = useState(false);
   const [saving, setSaving] = useState(false);
 
   const actualNum = Number(actualValue);
   const valid = actualValue.trim() !== "" && Number.isFinite(actualNum);
+  // Encerrar a hipótese — confirmá-la ou declará-la abaixo da meta — é uma
+  // decisão, e decisão sem motivo registrado é o que torna benefit tracking
+  // indefensável numa revisão de portfólio (UC-09 passos 5–6).
+  const rationaleRequired = requiresHypothesisRationale(status);
 
   const submit = async () => {
     if (!(valid && !saving)) {
       return;
     }
+    if (rationaleRequired && rationale.trim() === "") {
+      setRationaleMissing(true);
+      return;
+    }
+    setRationaleMissing(false);
     setSaving(true);
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(
@@ -215,6 +229,7 @@ function RecordActualValueModal({
           id: metric.id,
           actualValue: actualNum,
           status,
+          rationale: rationale.trim() || undefined,
         }),
       {
         loading: "Registrando resultado...",
@@ -266,6 +281,36 @@ function RecordActualValueModal({
               </option>
             ))}
           </select>
+        </div>
+        <div>
+          <label htmlFor="value-metric-rationale" style={fieldLabelStyle}>
+            {rationaleRequired
+              ? "Justificativa da decisão (obrigatória)"
+              : "Justificativa (opcional)"}
+          </label>
+          <textarea
+            id="value-metric-rationale"
+            onChange={(e) => {
+              setRationale(e.target.value);
+              setRationaleMissing(false);
+            }}
+            placeholder="Que evidência sustenta essa leitura da hipótese?"
+            rows={3}
+            style={{ ...inputStyle, resize: "vertical" }}
+            value={rationale}
+          />
+          {rationaleMissing && (
+            <span
+              style={{
+                display: "block",
+                marginTop: 6,
+                fontSize: 12,
+                color: "var(--red-text)",
+              }}
+            >
+              Encerrar a hipótese exige uma justificativa registrada.
+            </span>
+          )}
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <Button onClick={close} size="sm" variant="secondary">

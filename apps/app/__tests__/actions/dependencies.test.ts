@@ -7,7 +7,9 @@ const h = vi.hoisted(() => ({
   requireRole: vi.fn(),
   revalidateTag: vi.fn(),
   dependencyLinkFindMany: vi.fn(),
+  dependencyLinkFindFirst: vi.fn(),
   dependencyLinkCreate: vi.fn(),
+  dependencyLinkUpdateMany: vi.fn(),
   featureFindFirst: vi.fn(),
   teamFindMany: vi.fn(),
   logAudit: vi.fn(),
@@ -24,7 +26,9 @@ vi.mock("@repo/database", () => ({
   database: {
     dependencyLink: {
       findMany: h.dependencyLinkFindMany,
+      findFirst: h.dependencyLinkFindFirst,
       create: h.dependencyLinkCreate,
+      updateMany: h.dependencyLinkUpdateMany,
     },
     feature: {
       findFirst: h.featureFindFirst,
@@ -40,6 +44,7 @@ import { database } from "@repo/database";
 import {
   createDependency,
   listDependencies,
+  updateDependencyBoardStatus,
 } from "../../app/(cosmos)/actions/dependencies";
 
 beforeEach(() => {
@@ -47,6 +52,9 @@ beforeEach(() => {
   h.headers.mockResolvedValue(new Headers());
   h.requireTenantSession.mockResolvedValue(tenantCtx);
   h.requireRole.mockReturnValue(undefined);
+  // Grafo vazio por padrão: createDependency varre as dependências do tenant
+  // antes de gravar (story-058 AC-001).
+  h.dependencyLinkFindMany.mockResolvedValue([]);
 });
 
 describe("listDependencies", () => {
@@ -263,6 +271,158 @@ describe("createDependency", () => {
         action: "created",
         entityType: "dependency",
         entityId: "new-dep",
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  // story-058 AC-001/AC-002/AC-003 — dependência circular não é dado ruim, é
+  // plano impossível: nenhuma das features do ciclo pode começar.
+  it("refuses a link that would close a cycle, naming it (AC-001)", async () => {
+    h.featureFindFirst.mockResolvedValue({ id: "ok" });
+    // Já existe F-A → F-B → F-C. Registrar F-C → F-A fecha o ciclo.
+    h.dependencyLinkFindMany.mockResolvedValue([
+      {
+        blockingFeatureId: "fa",
+        blockedFeatureId: "fb",
+        blockingFeature: { id: "fa", title: "F-A" },
+        blockedFeature: { id: "fb", title: "F-B" },
+      },
+      {
+        blockingFeatureId: "fb",
+        blockedFeatureId: "fc",
+        blockingFeature: { id: "fb", title: "F-B" },
+        blockedFeature: { id: "fc", title: "F-C" },
+      },
+    ]);
+
+    const res = await createDependency({
+      blockingFeatureId: "fc",
+      blockedFeatureId: "fa",
+    });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("F-A → F-B → F-C → F-A");
+    }
+    expect(h.dependencyLinkCreate).not.toHaveBeenCalled();
+  });
+
+  it("allows a link that does not close a cycle (AC-001)", async () => {
+    h.featureFindFirst.mockResolvedValue({ id: "ok" });
+    h.dependencyLinkFindMany.mockResolvedValue([
+      {
+        blockingFeatureId: "fa",
+        blockedFeatureId: "fb",
+        blockingFeature: { id: "fa", title: "F-A" },
+        blockedFeature: { id: "fb", title: "F-B" },
+      },
+    ]);
+    h.dependencyLinkCreate.mockResolvedValue({ id: "new-dep" });
+
+    const res = await createDependency({
+      blockingFeatureId: "fa",
+      blockedFeatureId: "fd",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.dependencyLinkCreate).toHaveBeenCalled();
+  });
+
+  it("refuses a feature blocking itself before touching the graph (AC-002)", async () => {
+    const res = await createDependency({
+      blockingFeatureId: "fa",
+      blockedFeatureId: "fa",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.dependencyLinkFindMany).not.toHaveBeenCalled();
+    expect(h.dependencyLinkCreate).not.toHaveBeenCalled();
+  });
+
+  it("scans only this tenant's unresolved links when looking for a cycle (AC-003)", async () => {
+    h.featureFindFirst.mockResolvedValue({ id: "ok" });
+    h.dependencyLinkCreate.mockResolvedValue({ id: "new-dep" });
+
+    await createDependency(validInput);
+
+    expect(h.dependencyLinkFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          tenantId: tenantCtx.tenantId,
+          boardStatus: { not: "RESOLVED" },
+        },
+      })
+    );
+  });
+});
+
+// story-058 AC-004 — boardStatus vinha da action e nunca era mostrado nem
+// avançado: toda dependência ficava IDENTIFIED para sempre.
+describe("updateDependencyBoardStatus", () => {
+  const input = { id: "d1", boardStatus: "IN_PROGRESS" as const };
+
+  it("is denied when the role is not permitted (RBAC)", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await updateDependencyBoardStatus(input);
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "RTE"], tenantCtx);
+    expect(h.dependencyLinkUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects an unknown boardStatus", async () => {
+    const res = await updateDependencyBoardStatus({
+      id: "d1",
+      boardStatus: "DONE" as unknown as "RESOLVED",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.dependencyLinkUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("rejects a dependency that is not owned by the tenant (IDOR guard)", async () => {
+    h.dependencyLinkFindFirst.mockResolvedValue(null);
+
+    const res = await updateDependencyBoardStatus(input);
+
+    expect(res.ok).toBe(false);
+    expect(h.dependencyLinkFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "d1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.dependencyLinkUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("advances the board status and audits the previous value", async () => {
+    h.dependencyLinkFindFirst.mockResolvedValue({
+      id: "d1",
+      boardStatus: "IDENTIFIED",
+    });
+    h.dependencyLinkUpdateMany.mockResolvedValue({ count: 1 });
+
+    const res = await updateDependencyBoardStatus(input);
+
+    expect(res.ok).toBe(true);
+    expect(h.dependencyLinkUpdateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "d1", tenantId: tenantCtx.tenantId },
+        data: { boardStatus: "IN_PROGRESS" },
+      })
+    );
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "status_changed",
+        entityType: "dependency",
+        entityId: "d1",
+        diff: expect.objectContaining({
+          boardStatus: "IDENTIFIED→IN_PROGRESS",
+        }),
       })
     );
     expect(h.revalidateTag).toHaveBeenCalled();

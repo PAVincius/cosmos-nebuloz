@@ -16,6 +16,7 @@ import { Icon } from "../icons";
 import {
   Badge,
   Button,
+  ErrorState,
   KpiCard,
   PageHeader,
   Progress,
@@ -25,7 +26,10 @@ import {
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-function utilizationTone(pct: number): "green" | "amber" | "red" {
+function utilizationTone(pct: number | null): "green" | "amber" | "red" {
+  if (pct === null) {
+    return "green";
+  }
   if (pct >= 95) {
     return "red";
   }
@@ -254,20 +258,31 @@ function BudgetRow({
       >
         ${b.spent.toLocaleString()} / ${b.amount.toLocaleString()}
       </span>
-      <Progress tone={tone} value={b.utilizationPct} />
-      <Badge tone={tone}>{b.utilizationPct}%</Badge>
-      <Button
-        icon="shield"
-        onClick={() =>
-          modal.open(
-            <GuardrailsModal budget={b} onSuccess={onGuardrailsSaved} />
-          )
-        }
-        size="sm"
-        variant="secondary"
-      >
-        Guardrails
-      </Button>
+      <Progress tone={tone} value={b.utilizationPct ?? 0} />
+      <Badge tone={tone}>
+        {b.utilizationPct === null ? "—" : `${b.utilizationPct}%`}
+      </Badge>
+      {b.immutableAt ? (
+        // story-025 AC-005: PI encerrado deixa o orçamento somente leitura. A
+        // action recusa a escrita; oferecer o botão mesmo assim seria uma
+        // armadilha, não uma proteção.
+        <Badge icon="lock" tone="neutral">
+          Orçamento do PI encerrado — valores finais
+        </Badge>
+      ) : (
+        <Button
+          icon="shield"
+          onClick={() =>
+            modal.open(
+              <GuardrailsModal budget={b} onSuccess={onGuardrailsSaved} />
+            )
+          }
+          size="sm"
+          variant="secondary"
+        >
+          Guardrails
+        </Button>
+      )}
     </div>
   );
 }
@@ -275,11 +290,17 @@ function BudgetRow({
 function BudgetsBody() {
   const [budgets, setBudgets] = useState<LeanBudgetView[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const load = useCallback(() => {
     listLeanBudgets().then((r) => {
       if (r.ok) {
         setBudgets(r.data);
+        setError(false);
+      } else {
+        // Antes daqui a falha caía no mesmo texto do vazio, dizendo ao
+        // Business Owner que o portfólio dele não tem orçamento nenhum.
+        setError(true);
       }
       setLoading(false);
     });
@@ -292,7 +313,7 @@ function BudgetsBody() {
   const totalAmount = budgets.reduce((s, b) => s + b.amount, 0);
   const totalSpent = budgets.reduce((s, b) => s + b.spent, 0);
   const totalUtilizationPct =
-    totalAmount > 0 ? Math.round((totalSpent / totalAmount) * 100) : 0;
+    totalAmount > 0 ? Math.round((totalSpent / totalAmount) * 100) : null;
 
   return (
     <div className="fade-in">
@@ -325,14 +346,21 @@ function BudgetsBody() {
           value={totalSpent.toLocaleString()}
         />
       </div>
+      {error && (
+        <ErrorState message="Não foi possível carregar os orçamentos." />
+      )}
       <SectionCard
         icon="wallet"
-        subtitle={`${totalUtilizationPct}% do orçamento total consumido`}
+        subtitle={
+          totalUtilizationPct === null
+            ? "Sem orçamento alocado para medir consumo"
+            : `${totalUtilizationPct}% do orçamento total consumido`
+        }
         title="Orçamentos por período"
       >
-        {loading ? (
+        {loading || error ? (
           <div style={{ padding: 16, color: "var(--ink-faint)" }}>
-            Carregando…
+            {error ? "" : "Carregando…"}
           </div>
         ) : budgets.length === 0 ? (
           <div style={{ padding: 16, color: "var(--ink-faint)" }}>

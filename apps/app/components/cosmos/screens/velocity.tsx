@@ -1,8 +1,11 @@
 "use client";
 
-// velocity.tsx — Velocity, wired to listRecentSprints() + listTeamPredictability().
-// Committed (capacity) vs. delivered (velocity) per closed sprint, RF-77
-// benchmark line at 80%, plus per-team predictability.
+// velocity.tsx — Velocity & Capacity Analytics (FR-011, story-032), wired a
+// listRecentSprints() + listTeamPredictability(). Por sprint fechada: o
+// comprometido (capacidade de planejamento), o concluído e o aceito da Sprint
+// Review — três séries, porque predictability é aceito/comprometido e
+// "delivered" sozinho não distingue concluir de ser aceito. Benchmark SAFe de
+// 80% avisado explicitamente, mais predictability por time.
 import { useState } from "react";
 import {
   listRecentSprints,
@@ -23,11 +26,16 @@ import {
   useAction,
 } from "../kit";
 
+// Benchmark SAFe de predictability (FR-011 / story-032 AC-003). Abaixo disso o
+// PI é considerado não-previsível e a tela precisa dizer, não deixar a leitora
+// comparar de cabeça.
+const PREDICTABILITY_BENCHMARK_PCT = 80;
+
 function ratioTone(pct: number | null): Tone {
   if (pct === null) {
     return "neutral";
   }
-  if (pct >= 80) {
+  if (pct >= PREDICTABILITY_BENCHMARK_PCT) {
     return "green";
   }
   if (pct >= 60) {
@@ -36,14 +44,32 @@ function ratioTone(pct: number | null): Tone {
   return "red";
 }
 
-function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
+const SERIES_LEGEND: { label: string; swatch: React.CSSProperties }[] = [
+  {
+    label: "Committed",
+    swatch: {
+      border: "1.5px dashed var(--hairline-strong)",
+      background: "var(--surface-2)",
+    },
+  },
+  { label: "Completed", swatch: { background: "var(--blue)" } },
+  { label: "Accepted", swatch: { background: "var(--green)" } },
+];
+
+function CommittedCompletedAcceptedChart({
+  sprints,
+}: {
+  sprints: SprintView[];
+}) {
   const [hover, setHover] = useState<number | null>(null);
   // Sprints come newest-first from the action; a time series reads left-to-right.
   const ordered = [...sprints].reverse();
   const max =
     Math.max(
       1,
-      ...ordered.map((s) => Math.max(s.capacity ?? 0, s.velocity ?? 0))
+      ...ordered.map((s) =>
+        Math.max(s.capacity ?? 0, s.completedPoints ?? 0, s.acceptedPoints ?? 0)
+      )
     ) * 1.12;
 
   return (
@@ -58,9 +84,14 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
         }}
       >
         {ordered.map((s, i) => {
-          const c = s.capacity ?? 0;
-          const v = s.velocity ?? 0;
-          const hit = c > 0 ? v >= c * 0.95 : true;
+          const committed = s.capacity ?? 0;
+          // completedPoints pode faltar mesmo com review preenchida; a barra
+          // some, não vira zero silencioso.
+          const completed = s.completedPoints;
+          const accepted = s.acceptedPoints ?? 0;
+          const onBenchmark =
+            s.predictabilityPct !== null &&
+            s.predictabilityPct >= PREDICTABILITY_BENCHMARK_PCT;
           const hot = hover === i;
           return (
             <div
@@ -88,6 +119,7 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
                   display: "flex",
                   alignItems: "flex-end",
                   justifyContent: "center",
+                  gap: 3,
                 }}
               >
                 {/* committed (ghost) */}
@@ -96,21 +128,32 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
                     position: "absolute",
                     bottom: 0,
                     width: "100%",
-                    height: `${(c / max) * 100}%`,
+                    height: `${(committed / max) * 100}%`,
                     borderRadius: "6px 6px 0 0",
                     border: `1.5px dashed ${hot ? "var(--ink-muted)" : "var(--hairline-strong)"}`,
                     background: "var(--surface-2)",
                   }}
                 />
-                {/* delivered (solid) */}
+                {completed !== null && (
+                  <div
+                    style={{
+                      position: "relative",
+                      width: "34%",
+                      height: `${(completed / max) * 100}%`,
+                      borderRadius: "5px 5px 0 0",
+                      background: "var(--blue)",
+                    }}
+                  />
+                )}
+                {/* accepted (solid) — o numerador de predictability */}
                 <div
                   style={{
                     position: "relative",
-                    width: "70%",
-                    height: `${(v / max) * 100}%`,
+                    width: "34%",
+                    height: `${(accepted / max) * 100}%`,
                     borderRadius: "5px 5px 0 0",
-                    background: hit ? "var(--green)" : "var(--amber)",
-                    boxShadow: `0 0 ${hot ? 16 : 10}px rgba(var(--${hit ? "green" : "amber"}-rgb),.4)`,
+                    background: onBenchmark ? "var(--green)" : "var(--amber)",
+                    boxShadow: `0 0 ${hot ? 16 : 10}px rgba(var(--${onBenchmark ? "green" : "amber"}-rgb),.4)`,
                   }}
                 >
                   <span
@@ -122,10 +165,12 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
                       transform: "translateX(-50%)",
                       fontSize: 11,
                       fontWeight: 700,
-                      color: hit ? "var(--green-text)" : "var(--amber-text)",
+                      color: onBenchmark
+                        ? "var(--green-text)"
+                        : "var(--amber-text)",
                     }}
                   >
-                    {v}
+                    {accepted}
                   </span>
                 </div>
               </div>
@@ -153,7 +198,12 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
               Committed <b className="mono">{ordered[hover].capacity ?? "—"}</b>
             </span>
             <span>
-              Delivered <b className="mono">{ordered[hover].velocity ?? "—"}</b>
+              Completed{" "}
+              <b className="mono">{ordered[hover].completedPoints ?? "—"}</b>
+            </span>
+            <span>
+              Accepted{" "}
+              <b className="mono">{ordered[hover].acceptedPoints ?? "—"}</b>
             </span>
           </div>
         </ChartTip>
@@ -166,73 +216,30 @@ function CommittedVsDeliveredChart({ sprints }: { sprints: SprintView[] }) {
           justifyContent: "center",
         }}
       >
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            fontSize: 12,
-            color: "var(--ink-muted)",
-            fontWeight: 500,
-          }}
-        >
+        {SERIES_LEGEND.map((s) => (
           <span
+            key={s.label}
             style={{
-              width: 16,
-              height: 11,
-              borderRadius: 3,
-              border: "1.5px dashed var(--hairline-strong)",
-              background: "var(--surface-2)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 7,
+              fontSize: 12,
+              color: "var(--ink-muted)",
+              fontWeight: 500,
             }}
-          />
-          Committed
-        </span>
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            fontSize: 12,
-            color: "var(--ink-muted)",
-            fontWeight: 500,
-          }}
-        >
-          <span
-            style={{
-              width: 16,
-              height: 11,
-              borderRadius: 3,
-              background: "var(--green)",
-            }}
-          />
-          Delivered (no alvo)
-        </span>
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 7,
-            fontSize: 12,
-            color: "var(--ink-muted)",
-            fontWeight: 500,
-          }}
-        >
-          <span
-            style={{
-              width: 16,
-              height: 11,
-              borderRadius: 3,
-              background: "var(--amber)",
-            }}
-          />
-          Delivered (abaixo)
-        </span>
+          >
+            <span
+              style={{ width: 16, height: 11, borderRadius: 3, ...s.swatch }}
+            />
+            {s.label}
+          </span>
+        ))}
       </div>
     </div>
   );
 }
 
-function CommittedVsDeliveredCard({
+function CommittedCompletedAcceptedCard({
   sprints,
   loading,
   error,
@@ -241,14 +248,18 @@ function CommittedVsDeliveredCard({
   loading: boolean;
   error: boolean;
 }) {
+  // O gráfico só existe onde há denominador (capacidade comprometida) e
+  // numerador (ponto aceito na review). Sprint sem review fica de fora em vez
+  // de entrar com aceito zerado — zero aceito e aceito desconhecido são
+  // leituras diferentes.
   const withData = (sprints ?? []).filter(
-    (s) => s.capacity !== null && s.velocity !== null
+    (s) => s.capacity !== null && s.acceptedPoints !== null
   );
   return (
     <SectionCard
       icon="barChart"
-      subtitle="Story points por sprint"
-      title="Committed vs. Delivered"
+      subtitle="Story points por sprint — comprometido, concluído e aceito"
+      title="Committed vs. Accepted"
       tone="accent"
     >
       {error && <ErrorState />}
@@ -259,13 +270,13 @@ function CommittedVsDeliveredCard({
       )}
       {!(error || loading) && withData.length === 0 && (
         <EmptyState
-          description="O gráfico aparece assim que uma sprint for fechada com capacidade e velocity registradas."
+          description="O gráfico aparece assim que uma sprint for fechada com capacidade comprometida e pontos aceitos na Sprint Review."
           icon="barChart"
-          title="Nenhuma sprint fechada ainda"
+          title="Nenhuma sprint fechada com review registrada"
         />
       )}
       {!(error || loading) && withData.length > 0 && (
-        <CommittedVsDeliveredChart sprints={withData} />
+        <CommittedCompletedAcceptedChart sprints={withData} />
       )}
     </SectionCard>
   );
@@ -341,7 +352,7 @@ function TeamPredictabilityCard() {
 export default function VelocityScreen() {
   const { data: sprints, loading, error } = useAction(listRecentSprints);
   const closed = sprints ?? [];
-  const withRatio = closed.filter((s) => s.sayDoRatioPct !== null);
+  const withRatio = closed.filter((s) => s.predictabilityPct !== null);
   const velocities = closed
     .map((s) => s.velocity)
     .filter((v): v is number => v !== null);
@@ -356,10 +367,13 @@ export default function VelocityScreen() {
   const avgPredictability =
     withRatio.length > 0
       ? Math.round(
-          withRatio.reduce((sum, s) => sum + (s.sayDoRatioPct ?? 0), 0) /
+          withRatio.reduce((sum, s) => sum + (s.predictabilityPct ?? 0), 0) /
             withRatio.length
         )
       : null;
+  const belowBenchmark =
+    avgPredictability !== null &&
+    avgPredictability < PREDICTABILITY_BENCHMARK_PCT;
 
   // closed[0] is the most recent sprint (listRecentSprints orders endDate desc)
   const lastSprint = closed[0];
@@ -401,10 +415,10 @@ export default function VelocityScreen() {
               value={avgVelocity ?? "—"}
             />
             <KpiCard
-              hint="entregue vs. committed"
+              hint="aceito vs. committed"
               icon="gauge"
               label="Predictability"
-              tone="green"
+              tone={belowBenchmark ? "amber" : "green"}
               unit={avgPredictability !== null ? "%" : undefined}
               value={avgPredictability ?? "—"}
             />
@@ -434,6 +448,26 @@ export default function VelocityScreen() {
             />
           </div>
 
+          {belowBenchmark && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
+                marginBottom: 14,
+                padding: "10px 14px",
+                borderRadius: "var(--r-md)",
+                border: "1px solid rgba(var(--amber-rgb),.3)",
+                background: "var(--amber-soft)",
+                color: "var(--amber-text)",
+                fontSize: 13,
+              }}
+            >
+              <Badge tone="amber">{avgPredictability}%</Badge>
+              <span>Abaixo do benchmark SAFe de 80% de predictability</span>
+            </div>
+          )}
+
           <div
             style={{
               display: "grid",
@@ -441,7 +475,7 @@ export default function VelocityScreen() {
               gap: 14,
             }}
           >
-            <CommittedVsDeliveredCard
+            <CommittedCompletedAcceptedCard
               error={error}
               loading={loading}
               sprints={sprints}
@@ -466,7 +500,7 @@ export default function VelocityScreen() {
                 </span>
               )}
               {closed.map((s) => {
-                const tone = ratioTone(s.sayDoRatioPct);
+                const tone = ratioTone(s.predictabilityPct);
                 return (
                   <div
                     key={s.id}
@@ -494,11 +528,13 @@ export default function VelocityScreen() {
                       className="mono"
                       style={{ fontSize: 12.5, color: "var(--ink-muted)" }}
                     >
-                      {s.velocity ?? "—"} / {s.capacity ?? "—"} SP
+                      {s.acceptedPoints ?? "—"} / {s.capacity ?? "—"} SP
                     </span>
-                    <Progress tone={tone} value={s.sayDoRatioPct ?? 0} />
+                    <Progress tone={tone} value={s.predictabilityPct ?? 0} />
                     <Badge tone={tone}>
-                      {s.sayDoRatioPct !== null ? `${s.sayDoRatioPct}%` : "—"}
+                      {s.predictabilityPct !== null
+                        ? `${s.predictabilityPct}%`
+                        : "—"}
                     </Badge>
                   </div>
                 );

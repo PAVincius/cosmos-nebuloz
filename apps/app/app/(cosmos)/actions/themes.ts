@@ -7,6 +7,11 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
+import {
+  ARCHIVED_THEME_STATUS,
+  MAX_ACTIVE_THEMES,
+  THEME_CONCENTRATION_THRESHOLD_PCT,
+} from "./themes.constants";
 
 export type ThemeView = {
   id: string;
@@ -14,6 +19,7 @@ export type ThemeView = {
   description: string | null;
   color: string;
   healthStatus: string;
+  status: string;
   targetAllocationPct: number | null;
   // Derived from BillingEntryAllocation, same normalization getTheme() uses
   // for a single theme (see below) — null only when the tenant has no
@@ -22,6 +28,11 @@ export type ThemeView = {
   horizon: string | null;
   epicCount: number;
   avgProgress: number;
+  // Fatia dos épicos do portfólio ativo sob este tema. null (nunca 0) quando
+  // não há épico algum sob tema ativo, ou quando o próprio tema está
+  // arquivado — não se infere concentração de denominador zero.
+  epicSharePct: number | null;
+  overConcentrated: boolean;
 };
 
 export async function listThemes(): Promise<Result<ThemeView[]>> {
@@ -37,6 +48,7 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
           description: true,
           color: true,
           healthStatus: true,
+          status: true,
           targetAllocationPct: true,
           horizon: true,
           epics: { select: { featureCount: true, doneFeatureCount: true } },
@@ -67,6 +79,14 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
       }
     }
 
+    // Denominador da concentração: épicos sob temas ATIVOS. Um tema arquivado
+    // guarda seus épicos por fidelidade histórica, mas não disputa mais
+    // investimento — contá-lo diluiria a concentração e o alerta nunca
+    // dispararia depois de um arquivamento.
+    const activeEpicTotal = rows
+      .filter((t) => t.status !== ARCHIVED_THEME_STATUS)
+      .reduce((sum, t) => sum + t.epics.length, 0);
+
     return rows.map((t) => {
       const withFeatures = t.epics.filter((e) => e.featureCount > 0);
       const avgProgress = withFeatures.length
@@ -81,17 +101,26 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
         totalCost > 0
           ? Math.round(((costByTheme.get(t.id) ?? 0) / totalCost) * 1000) / 10
           : null;
+      const epicSharePct =
+        t.status === ARCHIVED_THEME_STATUS || activeEpicTotal === 0
+          ? null
+          : Math.round((t.epics.length / activeEpicTotal) * 1000) / 10;
       return {
         id: t.id,
         title: t.title,
         description: t.description,
         color: t.color,
         healthStatus: t.healthStatus,
+        status: t.status,
         targetAllocationPct: t.targetAllocationPct,
         actualAllocationPct,
         horizon: t.horizon,
         epicCount: t.epics.length,
         avgProgress,
+        epicSharePct,
+        overConcentrated:
+          epicSharePct !== null &&
+          epicSharePct > THEME_CONCENTRATION_THRESHOLD_PCT,
       };
     });
   });
@@ -239,6 +268,20 @@ export async function createTheme(
     requireRole(["ADMIN", "STE"], ctx);
     const { title, description, budgetTotal } = CreateThemeSchema.parse(input);
 
+    // Teto SAFe de temas ativos. Conta status, não linha: tema arquivado
+    // continua na tabela por fidelidade histórica e não ocupa vaga.
+    const activeCount = await database.strategicTheme.count({
+      where: {
+        tenantId: ctx.tenantId,
+        status: { not: ARCHIVED_THEME_STATUS },
+      },
+    });
+    if (activeCount >= MAX_ACTIVE_THEMES) {
+      throw new Error(
+        `Limite de ${MAX_ACTIVE_THEMES} temas estratégicos ativos atingido. Arquive um tema antes de criar outro.`
+      );
+    }
+
     const created = await database.strategicTheme.create({
       data: {
         tenantId: ctx.tenantId,
@@ -258,6 +301,53 @@ export async function createTheme(
     });
     revalidateTag(`themes:${ctx.tenantId}`, "max");
     return { id: created.id };
+  });
+}
+
+const ArchiveThemeSchema = z.object({ id: z.string().min(1) });
+
+/**
+ * Arquiva um tema estratégico. Não-cascateante por definição (FR-014, UC-62):
+ * nenhum Epic é tocado — os épicos que rodaram sob o tema continuam apontando
+ * para ele, senão o histórico de investimento do portfólio some junto.
+ * O alvo de alocação é zerado porque alvo é atributo de tema ativo: deixá-lo
+ * pendurado quebraria a soma de 100% do rebalanceamento.
+ */
+export async function archiveTheme(
+  input: z.input<typeof ArchiveThemeSchema>
+): Promise<Result<{ id: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { id } = ArchiveThemeSchema.parse(input);
+
+    // IDOR guard — id vem do cliente, então a existência é confirmada dentro
+    // do tenant antes de qualquer escrita.
+    const existing = await database.strategicTheme.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: { id: true, status: true },
+    });
+    if (!existing) {
+      throw new Error("Tema estratégico não encontrado.");
+    }
+    if (existing.status === ARCHIVED_THEME_STATUS) {
+      throw new Error("Este tema estratégico já está arquivado.");
+    }
+
+    await database.strategicTheme.update({
+      where: { id },
+      data: { status: ARCHIVED_THEME_STATUS, targetAllocationPct: null },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "status_changed",
+      entityType: "theme",
+      entityId: id,
+      diff: { from: existing.status, to: ARCHIVED_THEME_STATUS },
+    });
+    revalidateTag(`themes:${ctx.tenantId}`, "max");
+    return { id };
   });
 }
 
@@ -301,10 +391,17 @@ export async function rebalanceThemeTargets(
     // id alone: fetch by id+tenantId and assert the count matches.
     const owned = await database.strategicTheme.findMany({
       where: { id: { in: themeIds }, tenantId: ctx.tenantId },
-      select: { id: true, targetAllocationPct: true },
+      select: { id: true, targetAllocationPct: true, status: true },
     });
     if (owned.length !== themeIds.length) {
       throw new Error("Um ou mais temas não pertencem a este tenant.");
+    }
+    // Tema arquivado não recebe investimento. Aceitá-lo faria a soma de 100%
+    // cobrir tema fora do portfólio ativo, e o Strategy Map passaria a mentir.
+    if (owned.some((t) => t.status === ARCHIVED_THEME_STATUS)) {
+      throw new Error(
+        "Tema arquivado não recebe alocação-alvo. Remova-o do rebalanceamento."
+      );
     }
 
     const before = new Map(owned.map((t) => [t.id, t.targetAllocationPct]));

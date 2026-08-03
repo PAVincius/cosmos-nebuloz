@@ -42,6 +42,7 @@ import {
   listValueRealizations,
   recordActualValue,
 } from "../../app/(cosmos)/actions/value-realization";
+import { TERMINAL_VALUE_STATUSES } from "../../app/(cosmos)/actions/value-realization.constants";
 
 const validCreateInput = {
   epicId: "epic-1",
@@ -186,6 +187,7 @@ describe("recordActualValue", () => {
       id: "vm-1",
       actualValue: 12,
       status: "done",
+      rationale: "Churn caiu 12pp; hipótese confirmada.",
     });
     expect(res.ok).toBe(true);
     expect(h.logAudit).toHaveBeenCalledWith(
@@ -195,5 +197,66 @@ describe("recordActualValue", () => {
         action: "updated",
       })
     );
+  });
+
+  // ── AC-001/AC-002 — decidir sobre a hipótese exige motivo ───────────────
+  describe("justificativa da decisão sobre a hipótese", () => {
+    for (const status of TERMINAL_VALUE_STATUSES) {
+      it(`recusa status "${status}" sem justificativa, sem gravar nem auditar`, async () => {
+        const res = await recordActualValue({
+          id: "vm-1",
+          actualValue: 12,
+          status,
+        });
+
+        expect(res.ok).toBe(false);
+        expect(database.epicValueMetric.updateMany).not.toHaveBeenCalled();
+        expect(h.logAudit).not.toHaveBeenCalled();
+      });
+
+      it(`recusa status "${status}" com justificativa só de espaços`, async () => {
+        const res = await recordActualValue({
+          id: "vm-1",
+          actualValue: 12,
+          status,
+          rationale: "   ",
+        });
+
+        expect(res.ok).toBe(false);
+        expect(database.epicValueMetric.updateMany).not.toHaveBeenCalled();
+      });
+    }
+
+    it("aceita status não-terminal sem justificativa — continuar medindo não é decisão", async () => {
+      const res = await recordActualValue({
+        id: "vm-1",
+        actualValue: 12,
+        status: "tracking",
+      });
+
+      expect(res.ok).toBe(true);
+      expect(database.epicValueMetric.updateMany).toHaveBeenCalled();
+    });
+
+    it("leva a justificativa para o diff de auditoria", async () => {
+      await recordActualValue({
+        id: "vm-1",
+        actualValue: 4,
+        status: "at-risk",
+        rationale: "Só 4pp de 15; hipótese não se sustenta, pivotar o épico.",
+      });
+
+      expect(h.logAudit).toHaveBeenCalledWith(
+        tenantCtx.tenantId,
+        expect.objectContaining({
+          entityType: "EpicValueMetric",
+          action: "updated",
+          diff: expect.objectContaining({
+            rationale:
+              "Só 4pp de 15; hipótese não se sustenta, pivotar o épico.",
+          }),
+        })
+      );
+    });
   });
 });

@@ -1,0 +1,128 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "capacity",
+  "kind": "tela",
+  "titulo": "Capacity Planning (heatmap de utilização do PI)",
+  "rota": "/cosmos/capacity",
+  "componente": "apps/app/components/cosmos/screens/capacity.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "2-execucao",
+  "dono": null,
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+      "export": "listTeamCapacity",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+      "export": "listTeamCapacityAcrossPI",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+      "export": "listCapacityAdjustmentNotes",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+      "export": "listTeamSprints",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/capacity.ts",
+      "export": "createCapacityAdjustmentNote",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "Team",
+    "TeamCapacitySnapshot",
+    "Sprint",
+    "PIPlan",
+    "CapacityAdjustmentNote"
+  ],
+  "safe": {
+    "pratica": "Capacity utilization heatmap — carga contra capacidade por time e sprint do PI",
+    "nivel": "Essential",
+    "faz": "Mostra, célula a célula do PI ativo, quanto o time planejou e quanto entregou, com a faixa de utilização em cor e em palavras, e o painel de ajustes que explica a variação (férias, treinamento, onboarding).",
+    "invariantes": [
+      "faixa de utilização segue exatamente o AC-002 da story-032: abaixo de 80% verde, de 80% a 100% âmbar, acima de 100% vermelho — 100% é o topo do âmbar, não o começo do vermelho",
+      "a faixa vermelha não é configurável por org (o AC diz 'always red, non-configurable'), então não há linha de configuração a criar",
+      "a faixa é derivada na leitura e consumida pela tela; não existe segundo limiar no componente que possa divergir em silêncio",
+      "célula sem snapshot tem utilização e faixa null (nunca 0 ou verde) e é renderizada como '—'",
+      "a grade só existe com PI em PLANNING/COMMITTED/EXECUTING e sprints ligadas a ele; sem PI a tela diz isso em vez de desenhar uma grade de zeros",
+      "toda leitura filtra por tenantId vindo da sessão; teamId e sprintId vindos do cliente são reconferidos dentro do tenant antes da escrita da nota",
+      "escrita de nota de ajuste passa por requireRole(ADMIN|RTE|SM) e grava logAudit"
+    ],
+    "fonte": [
+      "docs/stories/epic-007/story-057-tela-capacity-planning.md",
+      "docs/stories/epic-007/story-032.md",
+      "docs/srd-epic-007.md:120",
+      "SAFe 6.0 — Iteration Planning / PI Planning (team load vs. capacity)"
+    ],
+    "codigo": [
+      "apps/app/app/(cosmos)/actions/capacity.ts",
+      "apps/app/app/(cosmos)/actions/capacity.constants.ts"
+    ]
+  },
+  "lacunas": [
+    {
+      "id": "capacity-1",
+      "tipo": "ui",
+      "alvo": "faixa de utilização do heatmap",
+      "hoje": "a tela tinha limiares próprios (>= 100 vermelho, >= 85 âmbar) que divergiam do AC-002 da story-032 em dois pontos, e eram um segundo lugar onde a regra podia mudar sozinha",
+      "desejado": "faixa única derivada na leitura com os limiares do AC-002, consumida pelas duas superfícies (tabela por time e grade por sprint)",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "capacity-2",
+      "tipo": "seed",
+      "alvo": "PI ativo com sprints e snapshots de capacidade",
+      "hoje": "o seed nunca criava PIPlan nem TeamCapacitySnapshot; a grade abria em 'Sem PI ativo' e a tabela por time abria com toda coluna em '—' — a regra de faixa não tinha em quem aparecer",
+      "desejado": "PI Plan EXECUTING com sprints por time e snapshots cobrindo as três faixas, reaplicados a cada re-seed",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "capacity-3",
+      "tipo": "campo",
+      "alvo": "utilização em horas / dias-pessoa (AC-002 'in both points and hours')",
+      "hoje": "TeamCapacitySnapshot só guarda story points e um fator adimensional (totalCapacityFactor); não há hora nem dia-pessoa — o availablePersonDays citado pela story-020 nunca existiu no schema",
+      "desejado": "dias-pessoa disponíveis por time e sprint, para o toggle pontos↔dias do AC-007 da story-020 e o hover em horas do AC-002 da story-032",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "capacity-4",
+      "tipo": "action",
+      "alvo": "declarar capacidade planejada de uma sprint futura",
+      "hoje": "TeamCapacitySnapshot só nasce em apps/app/app/actions/sprints/snapshot-origination.ts, no fechamento da sprint; logo o expectedSp de uma sprint futura do PI ativo é sempre null e a coluna do PI corrente fica vazia até a sprint fechar",
+      "desejado": "caminho de escrita da capacidade planejada no PI Planning, sem colidir com a origination do fechamento de sprint (que é quem calcula membros comprometidos e fator de capacidade)",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
+  "depende_de": [],
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/capacity.test.ts",
+    "apps/app/__tests__/screens/capacity.test.tsx"
+  ],
+  "commits": [],
+  "notas": "profundidade THIN é o veredito medido do audit de 2026-07-23 (0 de 5 seções do handoff). A lacuna capacity-4 é a mais estrutural: enquanto a capacidade planejada só nascer no fechamento da sprint, a coluna da sprint corrente do PI fica honestamente vazia — preferimos o buraco visível a uma estimativa. O comentário em capacity.ts que diz que 'teamCapacitySnapshot.create has zero production call sites' está desatualizado desde snapshot-origination.ts; não foi tocado por ser fora do escopo desta trilha. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda (@repo/database não tem script `test`), por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
+}

@@ -1,0 +1,122 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "teams",
+  "kind": "tela",
+  "titulo": "Times (diretório de squads do ART)",
+  "rota": "/cosmos/teams",
+  "componente": "apps/app/components/cosmos/screens/teams.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": "A",
+  "profundidade": "THIN",
+  "trilha": "2-execucao",
+  "dono": null,
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+      "export": "listTeams",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+      "export": "getTeam",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+      "export": "createTeam",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+      "export": "assignTeamToArt",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "Team",
+    "ART",
+    "Sprint",
+    "PIPlan",
+    "TeamCapacitySnapshot",
+    "Feature",
+    "PIObjective"
+  ],
+  "safe": {
+    "pratica": "Agile Team — um time pertence a um, e somente um, ART (Team and Technical Agility)",
+    "nivel": "Essential",
+    "faz": "Mostra os squads do portfólio com membros, WIP, velocity, capacidade e predictability, e — o que faltava — expõe os times que estão fora de qualquer ART e deixa o RTE vinculá-los antes de abrir o PI Planning.",
+    "invariantes": [
+      "um time pertence a um, e somente um, ART; a escrita substitui o vínculo, nunca acumula",
+      "time sem ART não entra em PI Planning (não recebe sprint nem célula no Program Board) e por isso é listado à parte, não silenciado",
+      "realinhar um time que já tem ART é recusado enquanto ele tiver sprint num PI Plan COMMITTED ou EXECUTING — mover deixaria sprint comprometido pendurado no plano do ART antigo",
+      "reafirmar o ART que o time já tem é idempotente: não grava, não audita e não consulta o guard de PI",
+      "toda leitura e escrita filtra por tenantId vindo da sessão; teamId e artId vindos do cliente são reconferidos dentro do tenant antes de qualquer escrita",
+      "escrita passa por requireRole(ADMIN|RTE) e grava logAudit com o artId anterior",
+      "capacidade e predictability por time são derivadas de TeamCapacitySnapshot na leitura e são null (nunca 0) quando não há snapshot"
+    ],
+    "fonte": [
+      "docs/stories/epic-006/story-056-tela-times.md",
+      "docs/stories/epic-006/story-017.md:183",
+      "docs/stories/epic-006/story-017.md:41",
+      "docs/stories/epic-006/story-017.md:34",
+      "SAFe 6.0 — Agile Release Train (Agile Teams are part of one, and only one, ART)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/teams.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "teams-1",
+      "tipo": "action",
+      "alvo": "assignTeamToArt",
+      "hoje": "inexistente — artId só podia ser definido na criação; um squad que nascesse fora de um ART ficava fora de todo PI Plan sem caminho de conserto na UI",
+      "desejado": "vínculo time→ART com RBAC, guarda de tenant nos dois ids, guarda de PI ativo no realinhamento e logAudit com o valor anterior",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "teams-2",
+      "tipo": "ui",
+      "alvo": "seção de times sem ART",
+      "hoje": "a tela mostrava o badge do ART quando ele existia e silenciava quando não existia — o buraco ficava invisível exatamente para quem precisa vê-lo antes do PI Planning",
+      "desejado": "seção própria listando os times sem ART, dizendo por que aquilo importa, e sumindo quando todos têm ART",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "teams-3",
+      "tipo": "campo",
+      "alvo": "remoção de time (\"add/remove\" da DoD da story-017)",
+      "hoje": "Sprint, TeamCapacitySnapshot e PIObjective apontam para Team; excluir levaria histórico de PI junto. O padrão do repo para saída de escopo é transição de status, e Team não tem coluna de status",
+      "desejado": "Team.status com ARCHIVED, para tirar um squad do quadro sem apagar o histórico de PI dele",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "teams-4",
+      "tipo": "campo",
+      "alvo": "atribuição de Scrum Master (\"SM assignment\" da DoD da story-017)",
+      "hoje": "Team.leadUserId existe, mas não há papel de SM materializado por time — a autorização do repo é por MemberRole no tenant, então gravar o id seria gravar um vínculo sem regra que o valide",
+      "desejado": "papel por time (ou validação de MemberRole=SM na atribuição) para que 'SM do time X' seja afirmação verificável",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
+  "depende_de": [],
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/teams.test.ts",
+    "apps/app/__tests__/screens/teams.test.tsx"
+  ],
+  "commits": [],
+  "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista teams entre as 14 telas NÃO medidas. O seed já cria ART Plataforma e amarra todo time a ele (seed-cosmos.mts), então a seção 'Times sem ART' corretamente não aparece no tenant demo — ela é o conserto de um estado alcançável pela UI (createTeam sem artId), não um estado semeado. As lacunas teams-3 e teams-4 são as duas partes da DoD da story-017 que exigem modelagem nova (status de time e papel por time); nenhuma trava a prática SAFe do nó, que é garantir que todo Agile Team esteja dentro de um ART.",
+  "atualizado_em": "2026-08-03"
+}

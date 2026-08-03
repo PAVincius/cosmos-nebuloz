@@ -373,6 +373,13 @@
       // Protótipo de design: fonte de verdade visual do port, copiada como
       // veio do projeto de design. Lintar quebraria a fidelidade da referência.
       "!docs/design-handoff",
+      // Gerados por scripts/cosmos-graph.mts. O `biome format` do pre-commit
+      // recolhe arrays curtos numa linha; o gerador sempre os expande. Com os
+      // dois formatos disputando o arquivo, `pnpm cosmos:graph check` — que
+      // regenera e compara byte a byte — reprovava todo commit que tocasse um
+      // nó do grafo.
+      "!docs/cosmos/grafo.json",
+      "!docs/cosmos/GRAFO.md",
       "!**/.next"
     ]
   }

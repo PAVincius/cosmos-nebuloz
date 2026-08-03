@@ -21,7 +21,13 @@ export type LeanBudgetView = {
   opexPct: number | null;
   spendLimitUsd: number | null;
   approvalThresholdUsd: number | null;
-  utilizationPct: number;
+  // null (nunca 0) quando não há valor alocado: sem denominador não há
+  // percentual, e 0% afirmaria um consumo medido que não existe.
+  utilizationPct: number | null;
+  // story-025 AC-005: preenchido no fechamento do PI, torna o orçamento
+  // somente leitura. A tela usa para marcar a linha como final e não oferecer
+  // o editor.
+  immutableAt: string | null;
 };
 
 export async function listLeanBudgets(): Promise<Result<LeanBudgetView[]>> {
@@ -41,6 +47,7 @@ export async function listLeanBudgets(): Promise<Result<LeanBudgetView[]>> {
         spendLimitUsd: true,
         approvalThresholdUsd: true,
         artId: true,
+        immutableAt: true,
         strategicTheme: { select: { title: true } },
       },
     });
@@ -73,7 +80,9 @@ export async function listLeanBudgets(): Promise<Result<LeanBudgetView[]>> {
         opexPct: b.opexPct,
         spendLimitUsd: b.spendLimitUsd,
         approvalThresholdUsd: b.approvalThresholdUsd,
-        utilizationPct: b.amount > 0 ? Math.round((spent / b.amount) * 100) : 0,
+        utilizationPct:
+          b.amount > 0 ? Math.round((spent / b.amount) * 100) : null,
+        immutableAt: b.immutableAt ? b.immutableAt.toISOString() : null,
       };
     });
   });
@@ -224,13 +233,25 @@ export async function updateLeanBudgetGuardrails(
     const { budgetId, capexPct, opexPct, spendLimitUsd, approvalThresholdUsd } =
       UpdateLeanBudgetGuardrailsSchema.parse(input);
 
-    // Cross-tenant IDOR guard — client-supplied budgetId must belong to this tenant.
+    // Cross-tenant IDOR guard — client-supplied budgetId must belong to this
+    // tenant. `immutableAt` vem na mesma consulta: é uma coluna a mais no
+    // select que já existe, não uma ida a mais ao banco.
     const budget = await database.leanBudget.findFirst({
       where: { id: budgetId, tenantId: ctx.tenantId },
-      select: { id: true },
+      select: { id: true, immutableAt: true },
     });
     if (!budget) {
       throw new Error("Orçamento inválido.");
+    }
+
+    // story-025 AC-005: PI fechado deixa o orçamento somente leitura. Um
+    // orçamento de PI encerrado que ainda aceita escrita é um número que muda
+    // depois da decisão tomada — é o que a imutabilidade de fechamento existe
+    // para impedir.
+    if (budget.immutableAt) {
+      throw new Error(
+        "O orçamento deste PI está encerrado e não aceita mais alteração."
+      );
     }
 
     const updated = await database.leanBudget.update({

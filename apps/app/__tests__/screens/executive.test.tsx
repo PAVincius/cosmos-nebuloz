@@ -189,6 +189,7 @@ describe("buildSnapshotCsv", () => {
           spendLimitUsd: null,
           approvalThresholdUsd: null,
           utilizationPct: 65,
+          immutableAt: null,
         },
       ],
     });

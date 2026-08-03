@@ -124,6 +124,40 @@ const LIFECYCLE_TO_EVENT: Record<string, TransitionEpicInput["event"]> = {
   DONE: "COMPLETE",
 };
 
+// story-011 AC-003: a recusa da máquina carrega `guard` e uma mensagem que diz
+// o que falta. O que chegava à tela era o código cru — "Não foi possível mover:
+// GUARD_FAILED" não diz se falta aprovação de governança ou alocação de
+// orçamento, que são coisas diferentes com donos diferentes.
+//
+// A tradução mora aqui e não em transitionEpicStatus porque aquela action é
+// compartilhada e o código dela é contrato de API (a 011 fala em códigos HTTP);
+// quem consome a API continua vendo o código. O board traduz para a frase que
+// faz sentido na coluna de destino.
+const GUARD_REASON_BY_TARGET: Record<string, string> = {
+  PORTFOLIO_BACKLOG:
+    "Para entrar no Portfolio Backlog o épico precisa de INVEST score a partir de 40 e de uma hipótese de valor escrita (mínimo 50 caracteres).",
+  IMPLEMENTING:
+    "Para começar a implementação o épico precisa de aprovação de governança e de alocação de orçamento enxuto maior que zero.",
+};
+
+function transitionErrorMessage(code: string, lifecycleStatus: string): string {
+  if (code === "GUARD_FAILED") {
+    return (
+      GUARD_REASON_BY_TARGET[lifecycleStatus] ??
+      "O épico não cumpre os pré-requisitos desta etapa do ciclo de vida."
+    );
+  }
+  if (code === "TERMINAL_STATE") {
+    return "O épico está em estado final do ciclo de vida e não aceita mais transição.";
+  }
+  if (code === "INVALID_TRANSITION") {
+    return "Esse salto não existe no ciclo de vida SAFe do épico — mova-o para a etapa seguinte.";
+  }
+  // Falha que não é da máquina (épico sumiu, erro de infra): repassa como veio
+  // em vez de inventar um motivo.
+  return code;
+}
+
 export async function moveEpic(
   input: z.infer<typeof MoveEpicSchema>
 ): Promise<Result<{ id: string }>> {
@@ -170,7 +204,9 @@ export async function moveEpic(
 
     const transition = await transitionEpicStatus({ epicId: id, event });
     if (!transition.ok) {
-      throw new Error(transition.error);
+      throw new Error(
+        transitionErrorMessage(transition.error, lifecycleStatus)
+      );
     }
 
     await database.epic.update({

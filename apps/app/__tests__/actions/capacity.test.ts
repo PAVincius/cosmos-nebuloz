@@ -56,6 +56,7 @@ import {
   listTeamCapacityAcrossPI,
   listTeamSprints,
 } from "../../app/(cosmos)/actions/capacity";
+import { capacityBand } from "../../app/(cosmos)/actions/capacity.constants";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -90,7 +91,38 @@ describe("listTeamCapacity", () => {
       expect(r.data[0].teamName).toBe("Squad Alpha");
       expect(r.data[0].actualSp).toBe(35);
       expect(r.data[0].utilizationPct).toBe(92);
+      // story-057 AC-002 — a faixa vem da leitura, não do componente.
+      expect(r.data[0].band).toBe("amber");
     }
+  });
+
+  it("returns a null band when the team has no snapshot (story-057 AC-001)", async () => {
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([]);
+
+    const r = await listTeamCapacity();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data[0].utilizationPct).toBeNull();
+      expect(r.data[0].band).toBeNull();
+    }
+  });
+});
+
+// story-057 AC-001 — as quatro bordas do AC-002 da story-032:
+// < 80% verde · 80–100% âmbar · > 100% vermelho.
+describe("capacityBand", () => {
+  it.each([
+    [79, "green"],
+    [80, "amber"],
+    [100, "amber"],
+    [101, "red"],
+  ])("maps utilization %i to the %s band", (pct, expected) => {
+    expect(capacityBand(pct)).toBe(expected);
+  });
+
+  it("returns null for a missing utilization (never a fabricated band)", () => {
+    expect(capacityBand(null)).toBeNull();
   });
 });
 
@@ -155,13 +187,42 @@ describe("listTeamCapacityAcrossPI", () => {
       expectedSp: 40,
       actualSp: 36,
       utilizationPct: 90,
+      band: "amber",
     });
+    // Sprint sem snapshot: nada é inferido, nem número nem faixa.
     expect(r.data?.rows[0].cells[1]).toEqual({
       sprintName: "Sprint 2",
       expectedSp: null,
       actualSp: null,
       utilizationPct: null,
+      band: null,
     });
+  });
+
+  it("uses the same band rule the per-team table uses (story-057 AC-002)", async () => {
+    h.pIPlanFindFirst.mockResolvedValue({ id: "pi1", name: "PI 2026.1" });
+    h.sprintFindMany.mockResolvedValue([
+      { id: "sp1", name: "Sprint 1", teamId: "tm1" },
+    ]);
+    h.teamFindMany.mockResolvedValue([{ id: "tm1", name: "Squad Alpha" }]);
+    // 100% é o topo da faixa âmbar, não o começo da vermelha.
+    h.teamCapacitySnapshotFindMany.mockResolvedValue([
+      {
+        sprintId: "sp1",
+        teamId: "tm1",
+        expectedSpNextSprint: 40,
+        actualSpDelivered: 40,
+        actualCapacityUtil: 1,
+      },
+    ]);
+
+    const r = await listTeamCapacityAcrossPI();
+
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.data?.rows[0].cells[0]?.utilizationPct).toBe(100);
+      expect(r.data?.rows[0].cells[0]?.band).toBe("amber");
+    }
   });
 });
 

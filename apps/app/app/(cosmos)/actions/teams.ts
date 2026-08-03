@@ -299,3 +299,83 @@ export async function createTeam(
     return { id: created.id };
   });
 }
+
+const AssignTeamToArtSchema = z.object({
+  teamId: z.string().min(1),
+  artId: z.string().min(1),
+});
+
+// PI Plan cujo compromisso já foi assumido. Mover um time entre ARTs enquanto
+// um destes está aberto deixaria os sprints do time pendurados no plano do ART
+// antigo — é a story-017 AC-002 ("mudança estrutural bloqueada com PI ativo")
+// aplicada ao outro lado da relação ART↔time.
+const ACTIVE_PI_STATUSES = ["COMMITTED", "EXECUTING"];
+
+// story-056 AC-002/AC-003 — "Team management" da DoD da story-017. Sem isto,
+// `artId` só pode ser definido na criação e um squad fora de ART fica fora de
+// todo PI Plan sem caminho de conserto.
+export async function assignTeamToArt(
+  input: z.input<typeof AssignTeamToArtSchema>
+): Promise<Result<{ id: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "RTE"], ctx);
+    const { teamId, artId } = AssignTeamToArtSchema.parse(input);
+
+    // Cross-tenant IDOR guards — os dois ids vêm do cliente e são reconferidos
+    // dentro do tenant antes de qualquer escrita.
+    const team = await database.team.findFirst({
+      where: { id: teamId, tenantId: ctx.tenantId },
+      select: { id: true, artId: true },
+    });
+    if (!team) {
+      throw new Error("Time inválido.");
+    }
+    const art = await database.aRT.findFirst({
+      where: { id: artId, tenantId: ctx.tenantId },
+      select: { id: true },
+    });
+    if (!art) {
+      throw new Error("ART inválido.");
+    }
+
+    // Reafirmar o vínculo existente não é mudança estrutural: nada a gravar e
+    // nenhum guard a consultar.
+    if (team.artId === artId) {
+      return { id: team.id };
+    }
+
+    // Só realinhamento pode estragar sprint comprometido — um time que nunca
+    // teve ART não tem sprint em PI Plan algum para deixar órfão.
+    if (team.artId !== null) {
+      const activeSprint = await database.sprint.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          teamId: team.id,
+          piPlan: { status: { in: ACTIVE_PI_STATUSES } },
+        },
+        select: { piPlan: { select: { name: true, status: true } } },
+      });
+      if (activeSprint?.piPlan) {
+        throw new Error(
+          `Não é possível mover o time enquanto o PI "${activeSprint.piPlan.name}" está ${activeSprint.piPlan.status}.`
+        );
+      }
+    }
+
+    await database.team.update({
+      where: { id: team.id },
+      data: { artId },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "art_linked",
+      entityType: "team",
+      entityId: team.id,
+      diff: { artId: `${team.artId ?? "—"}→${artId}` },
+    });
+    revalidateTag(`teams:${ctx.tenantId}`, "max");
+    return { id: team.id };
+  });
+}

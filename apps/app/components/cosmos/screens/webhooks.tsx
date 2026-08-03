@@ -1,45 +1,75 @@
 "use client";
 
-// webhooks.tsx — Webhooks, wired to listWebhooks() + createWebhook(). Lists
-// configured endpoints and registers new WebhookEndpoint rows via
-// NewWebhookModal. The signing secret is generated server-side and shown
-// exactly once, in the modal's post-creation view — it cannot be retrieved
-// again afterwards.
+// webhooks.tsx — Webhooks, wired a listWebhooks() + createWebhook() +
+// setWebhookActive() + sendTestWebhook(). Lista os endpoints com a saúde
+// derivada do histórico de entrega (falhas consecutivas, não só a última),
+// permite pausar/retomar um endpoint que está quebrando, e disparar um evento
+// sintético `ping` pelo mesmo pipeline de entrega dos eventos reais. O segredo
+// de assinatura é gerado no servidor e exibido uma única vez, na visão
+// pós-criação do modal — depois não é mais recuperável.
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   createWebhook,
   listWebhooks,
+  sendTestWebhook,
+  setWebhookActive,
   type WebhookView,
 } from "@/app/(cosmos)/actions/webhooks";
+import {
+  DEGRADED_AFTER_CONSECUTIVE_FAILURES,
+  FAILING_DELIVERY_STATUSES,
+} from "@/app/(cosmos)/actions/webhooks.constants";
 import { Icon } from "../icons";
 import {
   Badge,
   Button,
   CopyId,
   ErrorState,
+  IconButton,
   PageHeader,
   SectionCard,
+  type Tone,
 } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
-const FAILING_STATUSES = new Set(["FAILED", "FAILED_PERMANENTLY"]);
-
 function isFailing(status: string | null): boolean {
-  return status !== null && FAILING_STATUSES.has(status);
+  return status !== null && FAILING_DELIVERY_STATUSES.has(status);
 }
 
-function fmtLastDelivery(iso: string | null): string {
-  if (!iso) {
+// Rótulo de saúde: "Degradado" só a partir do limiar de falhas consecutivas do
+// FR-020 AC-006. Uma falha isolada continua sendo "Falhando" — é ruído de rede
+// até virar padrão, e chamar as duas coisas pelo mesmo nome faria a leitora
+// ignorar as duas.
+function healthLabel(h: WebhookView): { label: string; tone: Tone } {
+  if (h.degraded) {
+    return { label: "Degradado", tone: "red" };
+  }
+  if (!h.active) {
+    return { label: "Pausado", tone: "neutral" };
+  }
+  if (isFailing(h.lastDeliveryStatus)) {
+    return { label: "Falhando", tone: "amber" };
+  }
+  return { label: "Ativo", tone: "green" };
+}
+
+function fmtLastDelivery(h: WebhookView): string {
+  if (!h.lastDeliveryAt) {
     return "Sem entregas";
   }
-  return `Última entrega ${new Date(iso).toLocaleString("pt-BR", {
+  const when = new Date(h.lastDeliveryAt).toLocaleString("pt-BR", {
     day: "2-digit",
     month: "short",
     hour: "2-digit",
     minute: "2-digit",
-  })}`;
+  });
+  // O código HTTP é o que diz se a falha é do endpoint (5xx), do contrato
+  // (4xx) ou nem chegou a haver resposta.
+  const code =
+    h.lastDeliveryCode === null ? "sem resposta" : `HTTP ${h.lastDeliveryCode}`;
+  return `Última entrega ${when} · ${code}`;
 }
 
 const EVENT_TYPE_OPTIONS: { value: string; label: string }[] = [
@@ -267,10 +297,35 @@ function WebhooksBody() {
     load();
   }, [load]);
 
+  const toggleActive = async (h: WebhookView) => {
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => setWebhookActive({ id: h.id, active: !h.active }),
+      {
+        loading: h.active ? "Pausando webhook..." : "Retomando webhook...",
+        success: h.active ? "Webhook pausado." : "Webhook retomado.",
+        error: (err: string) => `Não foi possível alterar o webhook: ${err}`,
+      }
+    );
+    if (res.ok) {
+      load();
+    }
+  };
+
+  const sendTest = async (h: WebhookView) => {
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => sendTestWebhook({ id: h.id }), {
+      loading: "Disparando evento de teste...",
+      success: "Evento de teste enfileirado.",
+      error: (err: string) => `Não foi possível disparar o teste: ${err}`,
+    });
+    if (res.ok) {
+      load();
+    }
+  };
+
   const activeCount = hooks.filter((h) => h.active).length;
-  const failingCount = hooks.filter((h) =>
-    isFailing(h.lastDeliveryStatus)
-  ).length;
+  const degradedCount = hooks.filter((h) => h.degraded).length;
 
   return (
     <div className="fade-in">
@@ -282,8 +337,8 @@ function WebhooksBody() {
             <Badge dot tone="green">
               {activeCount} ativos
             </Badge>
-            {failingCount > 0 && (
-              <Badge tone="red">{failingCount} com falha</Badge>
+            {degradedCount > 0 && (
+              <Badge tone="red">{degradedCount} degradado</Badge>
             )}
           </>
         }
@@ -313,12 +368,14 @@ function WebhooksBody() {
             </span>
           )}
           {hooks.map((h) => {
-            const failing = isFailing(h.lastDeliveryStatus);
-            const leftBorderColor = failing
+            const health = healthLabel(h);
+            const leftBorderColor = h.degraded
               ? "var(--red)"
-              : h.active
-                ? "var(--green)"
-                : "var(--hairline-strong)";
+              : isFailing(h.lastDeliveryStatus)
+                ? "var(--amber)"
+                : h.active
+                  ? "var(--green)"
+                  : "var(--hairline-strong)";
             return (
               <div
                 key={h.id}
@@ -361,22 +418,49 @@ function WebhooksBody() {
                   </div>
                 </div>
                 <div style={{ textAlign: "right", flexShrink: 0 }}>
-                  <Badge
-                    dot
-                    tone={failing ? "red" : h.active ? "green" : "neutral"}
-                  >
-                    {failing ? "Falhando" : h.active ? "Ativo" : "Inativo"}
+                  <Badge dot tone={health.tone}>
+                    {health.label}
                   </Badge>
                   <div
                     className="mono"
                     style={{
                       marginTop: 5,
                       fontSize: 11,
-                      color: failing ? "var(--red-text)" : "var(--ink-subtle)",
+                      color: h.degraded
+                        ? "var(--red-text)"
+                        : "var(--ink-subtle)",
                     }}
                   >
-                    {fmtLastDelivery(h.lastDeliveryAt)}
+                    {fmtLastDelivery(h)}
                   </div>
+                  {h.consecutiveFailures >=
+                    DEGRADED_AFTER_CONSECUTIVE_FAILURES && (
+                    <div
+                      style={{
+                        marginTop: 3,
+                        fontSize: 11,
+                        color: "var(--red-text)",
+                      }}
+                    >
+                      {h.consecutiveFailures} falhas seguidas
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                  {h.active && (
+                    <IconButton
+                      name="send"
+                      onClick={() => sendTest(h)}
+                      size={30}
+                      title={`Disparar evento de teste em ${h.url}`}
+                    />
+                  )}
+                  <IconButton
+                    name={h.active ? "pause" : "play"}
+                    onClick={() => toggleActive(h)}
+                    size={30}
+                    title={`${h.active ? "Pausar" : "Retomar"} ${h.url}`}
+                  />
                 </div>
               </div>
             );

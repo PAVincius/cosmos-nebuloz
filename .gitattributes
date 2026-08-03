@@ -1,0 +1,12 @@
+# Arquivos gerados por scripts/cosmos-graph.mts. Não edite à mão: edite
+# docs/cosmos/nodes/<id>.json e rode `pnpm cosmos:graph build`.
+#
+# `-diff` some com eles do diff do PR, onde só poluiriam — a revisão acontece
+# nos nós. Conflito de merge aqui se resolve regenerando, nunca à mão.
+docs/cosmos/grafo.json   linguist-generated=true -diff
+docs/cosmos/GRAFO.md     linguist-generated=true -diff
+
+# Ledger append-only escrito por várias trilhas em sequência. `merge=union`
+# mantém as duas metades quando dois merges tocam o fim do arquivo, em vez de
+# marcar conflito numa linha que ninguém precisa resolver.
+.superpowers/sdd/**/progress.md merge=union

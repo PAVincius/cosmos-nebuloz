@@ -9,8 +9,10 @@ const h = vi.hoisted(() => ({
   teamFindMany: vi.fn(),
   teamFindFirst: vi.fn(),
   teamCreate: vi.fn(),
+  teamUpdate: vi.fn(),
   teamCapacitySnapshotFindMany: vi.fn(),
   sprintFindMany: vi.fn(),
+  sprintFindFirst: vi.fn(),
   featureFindMany: vi.fn(),
   pIObjectiveFindMany: vi.fn(),
   aRTFindFirst: vi.fn(),
@@ -30,12 +32,14 @@ vi.mock("@repo/database", () => ({
       findMany: h.teamFindMany,
       findFirst: h.teamFindFirst,
       create: h.teamCreate,
+      update: h.teamUpdate,
     },
     teamCapacitySnapshot: {
       findMany: h.teamCapacitySnapshotFindMany,
     },
     sprint: {
       findMany: h.sprintFindMany,
+      findFirst: h.sprintFindFirst,
     },
     feature: {
       findMany: h.featureFindMany,
@@ -52,6 +56,7 @@ vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 
 import { database } from "@repo/database";
 import {
+  assignTeamToArt,
   createTeam,
   getTeam,
   listTeams,
@@ -361,5 +366,139 @@ describe("createTeam", () => {
         data: expect.objectContaining({ artId: "art-ok" }),
       })
     );
+  });
+});
+
+// story-056 AC-002/AC-003 — vincular um squad a um ART é a linha "Team
+// management" da DoD da story-017 que nunca ganhou superfície.
+describe("assignTeamToArt", () => {
+  const input = { teamId: "tm1", artId: "art-1" };
+
+  it("is denied when the role is not permitted (RBAC) — AC-002", async () => {
+    h.requireRole.mockImplementation(() => {
+      throw new MockAuthError("FORBIDDEN", "nope");
+    });
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(false);
+    expect(h.requireRole).toHaveBeenCalledWith(["ADMIN", "RTE"], tenantCtx);
+    expect(h.teamUpdate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a team that is not owned by the tenant (IDOR guard) — AC-002", async () => {
+    h.teamFindFirst.mockResolvedValue(null);
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(false);
+    expect(h.teamFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "tm1", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.teamUpdate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an artId that is not owned by the tenant (IDOR guard) — AC-002", async () => {
+    h.teamFindFirst.mockResolvedValue({ id: "tm1", artId: null });
+    h.aRTFindFirst.mockResolvedValue(null);
+
+    const res = await assignTeamToArt({ ...input, artId: "foreign-art" });
+
+    expect(res.ok).toBe(false);
+    expect(h.aRTFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "foreign-art", tenantId: tenantCtx.tenantId },
+      })
+    );
+    expect(h.teamUpdate).not.toHaveBeenCalled();
+  });
+
+  it("links a team that had no ART, audits the previous value — AC-002", async () => {
+    h.teamFindFirst.mockResolvedValue({ id: "tm1", artId: null });
+    h.aRTFindFirst.mockResolvedValue({ id: "art-1" });
+    h.teamUpdate.mockResolvedValue({ id: "tm1" });
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(true);
+    expect(h.teamUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "tm1" },
+        data: { artId: "art-1" },
+      })
+    );
+    // Time sem ART não pode ter sprint órfão para proteger: o guard de PI
+    // ativo só faz sentido em realinhamento.
+    expect(h.sprintFindFirst).not.toHaveBeenCalled();
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        action: "art_linked",
+        entityType: "team",
+        entityId: "tm1",
+        diff: expect.objectContaining({ artId: "—→art-1" }),
+      })
+    );
+    expect(h.revalidateTag).toHaveBeenCalled();
+  });
+
+  it("refuses to realign a team that has a sprint in a COMMITTED PI — AC-003", async () => {
+    h.teamFindFirst.mockResolvedValue({ id: "tm1", artId: "art-old" });
+    h.aRTFindFirst.mockResolvedValue({ id: "art-1" });
+    h.sprintFindFirst.mockResolvedValue({
+      piPlan: { name: "PI 2026.1", status: "COMMITTED" },
+    });
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toContain("PI 2026.1");
+    }
+    expect(h.sprintFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          tenantId: tenantCtx.tenantId,
+          teamId: "tm1",
+          piPlan: { status: { in: ["COMMITTED", "EXECUTING"] } },
+        }),
+      })
+    );
+    expect(h.teamUpdate).not.toHaveBeenCalled();
+  });
+
+  it("realigns a team whose sprints are only in non-active PIs — AC-003", async () => {
+    h.teamFindFirst.mockResolvedValue({ id: "tm1", artId: "art-old" });
+    h.aRTFindFirst.mockResolvedValue({ id: "art-1" });
+    // O guard filtra COMMITTED/EXECUTING no banco; PLANNING não volta linha.
+    h.sprintFindFirst.mockResolvedValue(null);
+    h.teamUpdate.mockResolvedValue({ id: "tm1" });
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(true);
+    expect(h.teamUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ data: { artId: "art-1" } })
+    );
+    expect(h.logAudit).toHaveBeenCalledWith(
+      tenantCtx.tenantId,
+      expect.objectContaining({
+        diff: expect.objectContaining({ artId: "art-old→art-1" }),
+      })
+    );
+  });
+
+  it("is a no-op when the team is already in the requested ART — AC-003", async () => {
+    h.teamFindFirst.mockResolvedValue({ id: "tm1", artId: "art-1" });
+    h.aRTFindFirst.mockResolvedValue({ id: "art-1" });
+
+    const res = await assignTeamToArt(input);
+
+    expect(res.ok).toBe(true);
+    expect(h.sprintFindFirst).not.toHaveBeenCalled();
+    expect(h.teamUpdate).not.toHaveBeenCalled();
+    expect(h.logAudit).not.toHaveBeenCalled();
   });
 });

@@ -1,0 +1,149 @@
+{
+  "$schema": "../schema/no.schema.json",
+  "id": "measure",
+  "kind": "tela",
+  "titulo": "Measure & Grow (avaliação de competência SAFe e ações de melhoria)",
+  "rota": "/cosmos/measure",
+  "componente": "apps/app/components/cosmos/screens/measure.tsx",
+  "registro": "apps/app/components/cosmos/screens/registry.tsx",
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "3-metricas-plataforma",
+  "dono": null,
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/measure.ts",
+      "export": "listCompetencyScores",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/measure.ts",
+      "export": "listImprovementActions",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/measure.ts",
+      "export": "recordCompetencyAssessment",
+      "tipo": "mutation",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/measure.ts",
+      "export": "createImprovementAction",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": ["CompetencyAssessment", "ImprovementAction", "Team"],
+  "safe": {
+    "pratica": "Measure and Grow — avaliação das 7 competências centrais e o backlog de melhoria que sai dela",
+    "nivel": "Essential",
+    "faz": "Deixa o RTE ou o Scrum Master registrar a nota de cada competência-chave SAFe por time, ver a evolução contra o ciclo anterior do mesmo time, e abrir as ações de melhoria que a avaliação motivou, com a taxa de conclusão sobre um denominador visível.",
+    "invariantes": [
+      "competência é fechada nas 7 do SAFe e a nota é fechada na escala 1–5: nota de outra escala não é dado ruim, é dado de outra medição, e o radar da tela desenha sobre 5 fixo",
+      "'ciclo anterior' só existe dentro do mesmo escopo (scope + scopeId): a avaliação de um time e a de outro são medições distintas, e subtrair uma da outra produziria um delta que não descreve a evolução de ninguém",
+      "competência nunca avaliada fica fora dos eixos do radar em vez de ser plotada em 0, e a sobreposição do ciclo anterior só desenha quando todas as competências plotadas têm ciclo anterior real",
+      "taxa de conclusão de ações é null (nunca 0%) sem ação viva, e ação CANCELLED sai do denominador — ação abandonada não é pendente nem concluída, e mantê-la faria abandonar derrubar a taxa como se fosse atraso",
+      "o avaliador vem da sessão, nunca do cliente: a autoria do ciclo anterior é o que faz a avaliação valer como evidência",
+      "toda escrita passa por requireRole(['ADMIN','RTE','SM']), reconfere a avaliação vinculada dentro do tenant antes de gravar a ação, e registra logAudit",
+      "toda leitura filtra por tenantId vindo da sessão"
+    ],
+    "fonte": [
+      "docs/srd-epic-007.md:149",
+      "docs/stories/epic-007/story-032.md",
+      "SAFe 6.0 — Measure and Grow (Core Competency Assessments)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/measure.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "measure-1",
+      "tipo": "action",
+      "alvo": "recordCompetencyAssessment",
+      "hoje": "CompetencyAssessment só era lido pela tela do Cosmos; a nota tinha de chegar por outra superfície ou por seed. Medir sem poder registrar é termômetro, não Measure & Grow",
+      "desejado": "registro pela tela, com competência fechada nas 7 do SAFe, nota na escala 1–5, escopo obrigatório, RBAC e auditoria",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "measure-2",
+      "tipo": "action",
+      "alvo": "listImprovementActions / createImprovementAction",
+      "hoje": "o model ImprovementAction existia, tinha relação com CompetencyAssessment, e a tela não o mencionava — a avaliação terminava numa nota e não virava mudança, que é o passo 'Grow' da prática",
+      "desejado": "painel de ações com taxa de conclusão sobre denominador visível e criação da ação a partir da tela",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "measure-3",
+      "tipo": "action",
+      "alvo": "delta de ciclo entre escopos diferentes",
+      "hoje": "listCompetencyScores pegava as duas avaliações mais recentes da competência e chamava a segunda de 'ciclo anterior', mesmo quando eram de times diferentes — o delta exibido podia ser a diferença entre dois times, não a evolução de um",
+      "desejado": "ciclo anterior restrito ao mesmo scope + scopeId, e null quando não existe",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "measure-4",
+      "tipo": "seed",
+      "alvo": "CompetencyAssessment e ImprovementAction do tenant demo",
+      "hoje": "o seed não criava avaliação nem ação — /cosmos/measure abria sem radar, sem delta e sem denominador para a taxa de conclusão",
+      "desejado": "dois ciclos por competência no mesmo escopo, mais quatro ações incluindo uma cancelada, para provar que ação abandonada sai do denominador",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "measure-5",
+      "tipo": "ui",
+      "alvo": "seletor de escopo na leitura",
+      "hoje": "a escrita exige escopo, mas listCompetencyScores continua lendo o tenant inteiro e mostrando a avaliação mais recente por competência, venha do time que vier; com dois times avaliados, o radar mistura de quem é cada eixo. O delta já não é fabricado (measure-3), mas a nota atual ainda não diz de quem é",
+      "desejado": "seletor de time/ART na tela, com a leitura filtrada pelo escopo escolhido",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "measure-6",
+      "tipo": "campo",
+      "alvo": "métricas por membro (FR-013) e anonimização por papel",
+      "hoje": "o AC-006 pede estatística por contribuinte visível só para SM (403 para os demais) e o AC-008 pede heatmap de skill anonimizado para DEVELOPER; a autorização do repo é por papel de tenant (MemberRole), sem noção de 'SM deste time', e PersonSkillProfile/MemberSprintMetrics não são lidos por esta tela",
+      "desejado": "papel por time e leitura de métricas por membro com anonimização decidida no servidor, nunca no cliente",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "measure-7",
+      "tipo": "campo",
+      "alvo": "vínculo da ação com o ciclo de PI",
+      "hoje": "ImprovementAction não tem piPlanId; a taxa de conclusão é do tenant inteiro e não dá para responder 'quantas ações do PI passado fecharam', que é a pergunta do Inspect & Adapt",
+      "desejado": "ação vinculada ao PI em que foi aberta, e taxa de conclusão por PI",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
+  "depende_de": [
+    {
+      "no": "teams",
+      "tipo": "contrato",
+      "produz": "listTeams(): Promise<Result<TeamListView[]>>",
+      "porque": "escopo da avaliação e da ação é um time real do tenant; sem a lista, o campo viraria um id digitado à mão e o escopo — que é o que sustenta a comparação de ciclo — dependeria de o avaliador acertar o cuid"
+    }
+  ],
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/measure.test.ts",
+    "apps/app/__tests__/screens/measure.test.tsx"
+  ],
+  "commits": ["7d58649"],
+  "notas": "profundidade THIN vem do audit de 2026-07-23 (measure: 0 de 4 seções de handoff). O nó fecha o caminho de escrita que faltava e traz ImprovementAction — que estava no schema, ligado a CompetencyAssessment, e não aparecia em tela alguma — para o produto. O defeito mais silencioso encontrado aqui foi o delta entre escopos: a tela mostrava evolução comparando a nota de um time com a de outro. As lacunas measure-6 e measure-7 exigem modelagem nova (papel por time, vínculo com PI); measure-5 é UI e fica aberta porque um seletor de escopo muda a leitura de toda a tela e merece decisão de produto. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda, por isso a mudança de seed não é citada em verifica[].",
+  "atualizado_em": "2026-08-03"
+}
