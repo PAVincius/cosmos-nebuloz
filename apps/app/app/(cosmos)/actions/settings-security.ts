@@ -30,6 +30,11 @@ import { saveSSOConfig } from "../../actions/settings/sso";
 
 export type SecurityTabView = {
   ssoEnabled: boolean;
+  /** Existe algum dado de IdP gravado. Booleano derivado por uma consulta que
+   *  testa "não nulo" no `where` e devolve só o `tenantId` — nenhum campo
+   *  sensível é selecionado, nem aqui nem na leitura de status. A tela precisa
+   *  disto para não oferecer um botão de ativar que o servidor vai recusar. */
+  ssoConfigured: boolean;
   ssoUpdatedAt: string | null;
   securityPolicy: {
     require2FA: boolean;
@@ -44,11 +49,25 @@ export async function getSecurityTab(): Promise<Result<SecurityTabView>> {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN"], ctx);
 
-    const [sso, policy] = await Promise.all([
+    const [sso, configured, policy] = await Promise.all([
       // SECURITY: select only enabled/updatedAt — never idp*/certificate fields.
       database.tenantSSOConfig.findUnique({
         where: { tenantId: ctx.tenantId },
         select: { enabled: true, updatedAt: true },
+      }),
+      // SECURITY: o teste de "existe IdP" mora no `where`; o `select` devolve
+      // só o tenantId, então nenhum valor de certificado/metadata entra em
+      // variável nesta leitura.
+      database.tenantSSOConfig.findFirst({
+        where: {
+          tenantId: ctx.tenantId,
+          OR: [
+            { idpMetadataUrl: { not: null } },
+            { idpEntityId: { not: null } },
+            { idpCertificate: { not: null } },
+          ],
+        },
+        select: { tenantId: true },
       }),
       database.tenantSecurityPolicy.findUnique({
         where: { tenantId: ctx.tenantId },
@@ -62,6 +81,7 @@ export async function getSecurityTab(): Promise<Result<SecurityTabView>> {
 
     return {
       ssoEnabled: sso?.enabled ?? false,
+      ssoConfigured: configured !== null,
       ssoUpdatedAt: sso?.updatedAt?.toISOString() ?? null,
       securityPolicy: policy,
       currentUserRole: ctx.role,
@@ -87,6 +107,26 @@ export async function toggleSsoEnabled(
         spEntityId: true,
       },
     });
+
+    // PRD UC-18 (docs/PRD-v1.0.md:1974): o SSO só é habilitado depois que os
+    // metadados/certificado do IdP existem — e o E-2 diz que teste falho não
+    // habilita. Este toggle, por construção, não recebe metadado nenhum; se
+    // não houver IdP gravado, ligar publicaria um caminho de login incapaz de
+    // autenticar qualquer pessoa. Desligar nunca é bloqueado: um tenant tem
+    // que poder derrubar um SSO quebrado, e um guard simétrico aqui trancaria
+    // todo mundo do lado de fora.
+    if (
+      enabled &&
+      !(
+        current?.idpMetadataUrl ||
+        current?.idpEntityId ||
+        current?.idpCertificate
+      )
+    ) {
+      throw new Error(
+        "SSO não pode ser ativado sem um provedor de identidade configurado (entity ID, metadata URL ou certificado). Configure o IdP antes de ativar."
+      );
+    }
 
     const res = await saveSSOConfig({
       enabled,

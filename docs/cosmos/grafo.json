@@ -1073,22 +1073,151 @@
       "$schema": "../schema/no.schema.json",
       "id": "integrations",
       "kind": "tela",
-      "titulo": "integrations",
+      "titulo": "Integrações (ciclo de vida dos conectores e saúde de sincronização)",
       "rota": "/cosmos/integrations",
       "componente": "apps/app/components/cosmos/screens/integrations.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "listIntegrations",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "setIntegrationPaused",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/integrations.ts",
+          "export": "testIntegrationConnection",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Integration",
+        "SyncLog"
+      ],
+      "safe": {
+        "pratica": "Continuous Delivery Pipeline — Continuous Integration com sistemas externos: o fluxo de entrada é observável e pode ser contido sem perder evento (Release on Demand)",
+        "nivel": "Portfolio",
+        "faz": "Mostra os conectores externos do tenant com o estado real do ciclo de vida e a saúde da última sincronização lida de SyncLog, deixa o Org Admin pausar um conector que está estragando dado (o evento que chegar vai para a fila de mortos em vez de escrever) e verificar se a credencial guardada ainda vale — sem nunca pedir nem exibir segredo.",
+        "invariantes": [
+          "credencial nunca sai do servidor: `config` e `mapping` não são selecionados na leitura, nem para mascarar; o teste de conexão decifra a credencial dentro da action, passa ao conector e não a devolve nem grava em diff de auditoria; a tela não tem campo de entrada de segredo",
+          "pausar escreve status PAUSED e só isso — config, mapping e lastSyncAt ficam intactos, porque pausar não é desconectar; retomar devolve para ACTIVE",
+          "PAUSED é o estado que as rotas de ingestão (api/webhooks/linear|github) já liam para mandar o evento à dead-letter queue com HTTP 200 e sem alterar dado do Cosmos (FR-018 AC)",
+          "testar não retoma: integração PAUSED continua PAUSED mesmo com o teste passando — despausar como efeito colateral reabriria a ingestão sem decisão humana",
+          "teste sem credencial gravada é recusado antes de qualquer chamada externa, e fonte sem conector de teste é recusada sem gravar status",
+          "saúde de sincronização vem exclusivamente de SyncLog e `partial` é distinguido de `success` (FR-020: PARTIAL não faz rollback); conector sem SyncLog diz 'nunca sincronizado' e não mostra contador zerado",
+          "toda escrita passa por requireRole(['ADMIN','STE']), reconfere o id dentro do tenant antes de gravar e registra logAudit",
+          "toda leitura filtra por tenantId vindo da sessão"
+        ],
+        "fonte": [
+          "docs/srd-epic-007.md:201",
+          "docs/srd-epic-007.md:222",
+          "docs/srd-epic-007.md:372",
+          "docs/stories/epic-007/story-060-tela-integracoes.md",
+          "SAFe 6.0 — Continuous Delivery Pipeline (Continuous Integration / Release on Demand)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/integrations.ts",
+          "apps/app/app/api/webhooks/linear/route.ts",
+          "apps/app/app/api/webhooks/github/route.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "integrations-1",
+          "tipo": "action",
+          "alvo": "setIntegrationPaused",
+          "hoje": "as rotas de ingestão de Linear e GitHub já tratavam `status === 'PAUSED'` mandando o evento para a dead-letter queue e devolvendo 200 sem tocar em dado do Cosmos — exatamente o AC do FR-018. Nenhuma action deste app escrevia 'PAUSED': o caminho estava escrito, testado e inalcançável pelo produto, e conter um conector que estava estragando dado exigia UPDATE direto no banco",
+          "desejado": "pausar/retomar pela tela, com RBAC de ADMIN/STE, guarda de tenant e auditoria do estado anterior",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-2",
+          "tipo": "action",
+          "alvo": "testIntegrationConnection sobre a credencial guardada",
+          "hoje": "o único teste de conexão do repo (app/actions/integrations/index.ts) recebe a credencial no input — serve ao wizard de criação, não a um conector já configurado. Não havia como verificar uma credencial existente sem redigitá-la, e redigitar segredo numa tela de listagem é exatamente o que a NFR de credenciais proíbe",
+          "desejado": "teste que lê a credencial cifrada do próprio registro, chama o mesmo conector do wizard e devolve só o veredito, marcando ACTIVE/ERROR sem despausar integração pausada",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-3",
+          "tipo": "ui",
+          "alvo": "saúde de sincronização por conector",
+          "hoje": "o card mostrava só a data de lastSyncAt; SyncLog — que o FR-020 define como o registro imutável do que cada execução criou, atualizou e pulou — nunca chegava à tela, então uma sincronização parcial e uma bem-sucedida ficavam idênticas",
+          "desejado": "resultado da última execução e seus contadores, com parcial distinguido de sucesso, e 'nunca sincronizado' sem contador quando não há log",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-4",
+          "tipo": "seed",
+          "alvo": "Integration e SyncLog do tenant demo",
+          "hoje": "o seed do cosmos não criava conector algum: /cosmos/integrations abria com nove cards 'disponível' e nada em que pausar ou testar",
+          "desejado": "um conector ACTIVE com histórico de SyncLog (um sucesso e um parcial) e um PAUSED sem histórico; `config` fica vazio de propósito — inventar apiKey no seed seria gravar segredo falso, e a consequência honesta é o teste dizer 'sem credencial configurada'",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "integrations-5",
+          "tipo": "ui",
+          "alvo": "conectar (autenticação e mapeamento de campos)",
+          "hoje": "conectar exige entrada de credencial ou fluxo OAuth, que é outro subsistema (packages/database/prisma/schema/integrations-vault.prisma). Esta tela não coleta segredo e o modal 'Conectar' diz isso em voz alta em vez de fingir um estado conectado",
+          "desejado": "fluxo de conexão OAuth PKCE do FR-018, com mapeamento de campos versionado do FR-020",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "integrations-6",
+          "tipo": "action",
+          "alvo": "revogar/remover conector",
+          "hoje": "`Integration` tem billingEntries e billingSyncCursor com onDelete: Cascade — apagar o conector levaria junto o histórico de custo do FinOps. Pausar é reversível e não destrói nada, então é a operação que esta tela oferece; REVOKED do vocabulário do FR-018 não tem produtor",
+          "desejado": "revogação que preserve o histórico de custo (soft-delete ou desvinculação de billingEntries antes da remoção)",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "integrations-7",
+          "tipo": "campo",
+          "alvo": "catálogo de conectores (logo, categoria, descrição)",
+          "hoje": "`Integration` não tem colunas category/description/logo; o catálogo vive em CONNECTOR_CATALOG, uma tabela estática no componente, chaveada pelo `source` real",
+          "desejado": "decidido manter estático: é metadado de produto por tipo de conector, não dado de tenant — não vale migration e não é fabricação de dado, porque nenhum estado ou horário de sincronização sai dali",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/cosmos-integrations.test.ts",
+        "apps/app/__tests__/screens/integrations.test.tsx"
+      ],
+      "commits": [
+        "beb5d4f"
+      ],
+      "notas": "O achado que mudou o escopo: existem dois vocabulários de status de integração convivendo no repo. O pipeline de billing filtra por 'ACTIVE' e as rotas de webhook checam 'PAUSED', mas o comentário do schema e o enum IntegrationStatus de _base.ts falam ACTIVE|INACTIVE|ERROR. Quem escrevia status (createIntegration) só produzia 'ACTIVE'. A tela agora escreve PAUSED, que é o valor que a ingestão realmente lê — alinhar o enum de _base.ts é fora desta trilha (arquivo intocável) e não afeta a leitura, que trata status como String livre.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -2026,22 +2155,242 @@
       "$schema": "../schema/no.schema.json",
       "id": "settings",
       "kind": "tela",
-      "titulo": "settings",
+      "titulo": "Settings (workspace, RBAC, SSO, auditoria, notificações, SAFe e plano)",
       "rota": "/cosmos/settings",
       "componente": "apps/app/components/cosmos/screens/settings.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "B",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings.ts",
+          "export": "getWorkspaceTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings.ts",
+          "export": "updateWorkspaceInfo",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "getMembersTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "inviteMemberAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "updateMemberRoleAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "export": "removeMemberAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "getSecurityTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "toggleSsoEnabled",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "export": "saveSecurityPolicyAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-audit.ts",
+          "export": "getAuditTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-notifications.ts",
+          "export": "getNotificationsTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-notifications.ts",
+          "export": "updateNotificationsAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "export": "getSafeConfigTab",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "export": "saveWsjfSettingsAction",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Tenant",
+        "TenantMember",
+        "TenantSSOConfig",
+        "TenantSecurityPolicy",
+        "AuditLog",
+        "ART",
+        "WsjfSettings"
+      ],
+      "safe": {
+        "pratica": "Lean-Agile Leadership — governança do workspace: quem decide o quê (RBAC), como as pessoas provam quem são (SSO/2FA) e o que a organização consegue demonstrar depois (trilha de auditoria)",
+        "nivel": "Portfolio",
+        "faz": "Reúne em sete abas as decisões de governança do workspace: identidade do tenant, papéis dos membros, política de autenticação, trilha de auditoria, preferências de notificação, cadência SAFe do ART e o plano contratado — cada uma escrita pelo papel que responde por ela e por nenhum outro.",
+        "invariantes": [
+          "as abas administrativas fecham no servidor, não só na UI: getSecurityTab e getAuditTab recusam papel diferente de ADMIN antes de qualquer leitura de linha de SSO, política ou log",
+          "SSO não pode ser ligado sem provedor de identidade configurado (PRD UC-18): sem idpEntityId, idpMetadataUrl e idpCertificate, a ativação é recusada e nada é gravado — ligar sem IdP publicaria um caminho de login incapaz de autenticar alguém",
+          "desligar o SSO nunca é bloqueado, em nenhum estado de configuração: um guard simétrico trancaria o tenant do lado de fora de um SSO quebrado",
+          "campos sensíveis de TenantSSOConfig (certificado, entity id, metadata url) nunca são selecionados para exibição, nem mascarados; a existência de IdP é apurada por consulta que testa 'não nulo' no where e devolve só o tenantId",
+          "o toggle de SSO regrava os campos sensíveis inalterados, porque o saveSSOConfig subjacente sobrescreve com `input.x || null` e apagaria um IdP configurado se recebesse só `{ enabled }`",
+          "a política de segurança e a identidade do workspace só são graváveis por ADMIN; todo papel abaixo vê exatamente os mesmos valores em modo leitura",
+          "RBAC de membros não deixa o workspace sem dono: rebaixar ou remover o último ADMIN é recusado com motivo explícito, e ninguém se remove sozinho",
+          "a trilha de auditoria é capada em 25 por página, escopada ao tenant pela própria action madura, e o nome do ator vem de join com a lista real de membros — userId sem membro cai para o id cru e log sem userId aparece como 'Sistema'",
+          "a aba de plano é leitura pura de Tenant.plan: nenhuma fatura, assento ou dado de cartão é renderizado, nem de exemplo"
+        ],
+        "fonte": [
+          "docs/PRD-v1.0.md:1974",
+          "docs/PRD-v1.0.md:1846",
+          "docs/PRD-v1.0.md:1441",
+          "docs/srd-epic-007.md:378",
+          "docs/stories/epic-006/story-061-tela-settings.md",
+          "SAFe 6.0 — Lean-Agile Leadership"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/settings.ts",
+          "apps/app/app/(cosmos)/actions/settings-security.ts",
+          "apps/app/app/(cosmos)/actions/settings-audit.ts",
+          "apps/app/app/(cosmos)/actions/settings-members.ts",
+          "apps/app/app/(cosmos)/actions/settings-safe.ts",
+          "apps/app/app/(cosmos)/actions/settings-notifications.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "settings-1",
+          "tipo": "action",
+          "alvo": "toggleSsoEnabled — guarda de IdP configurado",
+          "hoje": "o toggle escrevia `enabled: true` em qualquer tenant, inclusive sem nenhum dado de IdP gravado. O PRD UC-18 (passos 3–6 e o fluxo alternativo E-2) só habilita o SSO depois que metadados/certificado existem e o teste passa; ligar sem IdP publica um caminho de login que não autentica ninguém",
+          "desejado": "recusar a ativação quando idpEntityId, idpMetadataUrl e idpCertificate estão todos vazios, dizendo o que falta, e nunca bloquear a desativação",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-2",
+          "tipo": "ui",
+          "alvo": "aba Segurança — por que o SSO não pode ser ligado",
+          "hoje": "a aba oferecia o botão de ativar mesmo sem IdP, e o usuário só descobria pelo erro depois do clique; a tela não tinha como saber se havia IdP sem ler campo sensível",
+          "desejado": "booleano ssoConfigured derivado por consulta que não seleciona campo sensível, e a tela troca o botão por uma explicação do que falta",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-3",
+          "tipo": "ui",
+          "alvo": "aba Plano & faturamento — saída para quem quer mudar de plano",
+          "hoje": "a aba dizia honestamente que não há provedor de pagamento configurado, mas terminava sem caminho: o usuário que precisa mudar de plano ficava sem para onde ir",
+          "desejado": "indicação de contato comercial usando o endereço que o repo já usa no template de convite (packages/email/templates/invite.tsx), sem inventar contato novo",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-4",
+          "tipo": "seed",
+          "alvo": "membros do workspace demo",
+          "hoje": "o seed criava um único ADMIN (dev@cosmos.local), então a aba de Membros abria com uma linha só — a matriz de RBAC não tinha o que mostrar e as guardas de último-ADMIN e auto-remoção não tinham como ser demonstradas",
+          "desejado": "três membros adicionais com papéis distintos (RTE, PO, DEV) no tenant demo",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "settings-5",
+          "tipo": "tabela",
+          "alvo": "faturamento (fatura, assento, assinatura, método de pagamento)",
+          "hoje": "não existe nada de cobrança neste schema: nenhum Invoice, Seat, Subscription ou método de pagamento, e nenhum cliente de provedor de pagamento no repo. A aba mostra somente Tenant.plan em leitura, mais o contato comercial — nenhuma fatura, assento ou cartão é desenhado, nem de exemplo",
+          "desejado": "subsistema de cobrança com integração de provedor de pagamento, faturas e assentos por plano",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-6",
+          "tipo": "action",
+          "alvo": "SSO restrito ao plano mais alto",
+          "hoje": "o PRD (docs/PRD-v1.0.md:1441) coloca SSO só no plano de topo, mas o vocabulário de plano do PRD (FREE/TEAM/BUSINESS/ENTERPRISE) não é o do schema (SubscriptionPlan = ORBIT/GALAXY/NEBULA/UNIVERSE), e a única ponte no repo é um rótulo de tela em settings/workspace/components/plan-labels.ts. Trancar autenticação com base numa correspondência inferida não é decisão desta trilha",
+          "desejado": "mapa plano↔recurso explícito e versionado, e a guarda de plano na ativação do SSO",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-7",
+          "tipo": "ui",
+          "alvo": "editor completo de SSO (metadados do IdP e teste de configuração)",
+          "hoje": "o UC-18 do PRD descreve entrada de metadados do IdP, exportação do metadata do SP e um botão 'Test Configuration' que valida a asserção antes de habilitar. Esta aba só liga e desliga; entrar com certificado é entrada de segredo e mora no editor de SSO fora do Cosmos",
+          "desejado": "editor de configuração de SSO com teste de asserção, conforme UC-18",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "settings-8",
+          "tipo": "seed",
+          "alvo": "TenantSSOConfig, TenantSecurityPolicy e AuditLog do tenant demo",
+          "hoje": "nenhum dos três é semeado e a tela mostra 'Nunca configurado' / padrões / trilha vazia",
+          "desejado": "decidido não semear: os três são estado que só existe se alguém de fato configurou ou agiu. Semear um AuditLog seria fabricar prova de auditoria — exatamente o oposto do que a aba existe para fazer — e semear um IdP exigiria inventar certificado",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/settings.test.ts",
+        "apps/app/__tests__/actions/settings-security.test.ts",
+        "apps/app/__tests__/actions/settings-audit.test.ts",
+        "apps/app/__tests__/actions/settings-members.test.ts",
+        "apps/app/__tests__/actions/settings-safe.test.ts",
+        "apps/app/__tests__/actions/settings-notifications.test.ts",
+        "apps/app/__tests__/screens/settings.test.tsx"
+      ],
+      "commits": [
+        "501a769"
+      ],
+      "notas": "Balde B e não A por causa de uma aba só: 'Plano & faturamento' é balde C isolado (não há nada de invoice/seat/assinatura no schema) e fica em leitura de Tenant.plan mais contato comercial, com a ausência registrada na lacuna settings-5. As outras seis abas já estavam ligadas ao layer maduro de actions com RBAC no servidor; a profundidade que faltava era de regra, não de leitura — o toggle de SSO ligava autenticação federada sem IdP nenhum configurado, e nada no repo impedia. As guardas de papel não foram afrouxadas: os testes provam que getSecurityTab e getAuditTab recusam não-ADMIN antes de qualquer leitura.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -3114,22 +3463,131 @@
       "$schema": "../schema/no.schema.json",
       "id": "workflows",
       "kind": "tela",
-      "titulo": "workflows",
+      "titulo": "Workflows (console de ativação das automações BPMN do portfólio)",
       "rota": "/cosmos/workflows",
       "componente": "apps/app/components/cosmos/screens/workflows.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/workflows.ts",
+          "export": "listWorkflows",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/workflows.ts",
+          "export": "toggleWorkflowActive",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "BpmnDefinition"
+      ],
+      "safe": {
+        "pratica": "Continuous Delivery Pipeline — automação do fluxo de trabalho como política explícita e reversível (Lean-Agile Leadership: a política do sistema é visível e trocável por quem responde por ela)",
+        "nivel": "Portfolio",
+        "faz": "Mostra as automações BPMN do tenant com o gatilho, o volume de ações, quantas vezes rodaram e — o que faltava — o escopo que cada uma governa; deixa RTE/ADMIN/STE ligar e desligar qual definição está no ar, sabendo antes do clique qual outra vai sair.",
+        "invariantes": [
+          "no máximo uma definição ativa por escopo (tenantId + entityType + ownerType + ownerId): ativar uma desativa as irmãs ativas do mesmo escopo, e as duas escritas acontecem dentro de um $transaction — fora dele existiria janela com zero ou duas ativas",
+          "a exclusividade é por escopo e não global: definição ativa com outro entityType ou outro ownerId nunca é tocada",
+          "desativar não cascateia e não apaga histórico: só `active` muda; activatedAt/activatedBy são o registro de quando foi ativada, não de estar ativa agora, e nenhuma substituta é escolhida sozinha (o runtime devolve NO_ACTIVE_WORKFLOW)",
+          "toda escrita passa por requireRole(['ADMIN','RTE','STE']), reconfere o id dentro do tenant antes de gravar e registra logAudit com a contagem de definições substituídas",
+          "toda leitura filtra por tenantId vindo da sessão",
+          "a tela não estima runCount/actionCount: mostra o valor persistido como está, mesmo quando ele está desatualizado"
+        ],
+        "fonte": [
+          "docs/srd-epic-007.md:326",
+          "docs/srd-epic-007.md:337",
+          "docs/stories/epic-007/story-028.md",
+          "docs/stories/epic-007/story-059-tela-workflows.md",
+          "SAFe 6.0 — Continuous Delivery Pipeline / Lean-Agile Leadership"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/workflows.ts",
+          "apps/app/app/actions/workflow/transition.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "workflows-1",
+          "tipo": "action",
+          "alvo": "toggleWorkflowActive — exclusividade por escopo",
+          "hoje": "a ativação só ligava a definição alvo. FR-030 exige 'one active per owner+entityType' e o runtime já dependia disso: transition.ts:82 carrega a máquina com findFirst({ ownerId, active: true }) e, com duas ativas, pegava uma qualquer — o comportamento do fluxo virava sorteio",
+          "desejado": "ativar desliga as irmãs ativas do mesmo escopo dentro da mesma transação, e a auditoria registra quantas foram substituídas",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "workflows-2",
+          "tipo": "ui",
+          "alvo": "escopo da automação e aviso de substituição",
+          "hoje": "entityType/ownerType/ownerId vinham de listWorkflows e não eram renderizados; a tela mostrava 'ativo' sem dizer sobre o quê, e o toggle não tinha nome acessível — ligar a v2 desligava a v1 sem qualquer aviso",
+          "desejado": "chip de escopo (entityType · ownerType) por linha e rótulo do controle anunciando a substituição só quando ela vai de fato acontecer",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "workflows-3",
+          "tipo": "seed",
+          "alvo": "BpmnDefinition do tenant demo",
+          "hoje": "o seed do cosmos não criava definição alguma e /cosmos/workflows abria vazia — a regra central da tela não tinha o que demonstrar",
+          "desejado": "duas definições no mesmo escopo (FEATURE · ART), uma ativa e uma parada, mais uma em escopo distinto (STORY · TEAM); xmlGzip com BPMN mínimo real gzipado e compiledMachine só na que foi ativada",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "workflows-4",
+          "tipo": "ui",
+          "alvo": "builder BPMN (criar/editar definição)",
+          "hoje": "criar automação é o canvas bpmn-js da story-028 (moddle cosmos:*, co-edição Liveblocks, diff contra a ativa, compilador BPMN→XState). apps/app/e2e/bpmn-canvas.spec.ts aponta para /workflows/[teamId]/bpmn, rota que não existe neste app. A tela não oferece 'criar workflow' — a ausência é deliberada, não esquecimento",
+          "desejado": "rota do canvas e fluxo de criação/fork/diff conforme FR-030",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "workflows-5",
+          "tipo": "campo",
+          "alvo": "runCount / actionCount",
+          "hoje": "o schema declara os dois como denorm 'recomputed on activate/run', mas nada neste app os recomputa — o runtime de transição (transition.ts) não incrementa runCount. A tela mostra o valor persistido como está e não estima nada",
+          "desejado": "incremento de runCount no runtime de transição e recomputo de actionCount na ativação, a partir da máquina compilada",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "workflows-6",
+          "tipo": "campo",
+          "alvo": "nome legível do dono (ownerId)",
+          "hoje": "BpmnDefinition.ownerId é polimórfico (ORG/TEAM/ART) e não tem relação Prisma; a tela mostra o ownerType, que é o que muda o significado da exclusividade, mas não consegue dizer 'ART Plataforma' sem três consultas condicionais por linha",
+          "desejado": "resolução do dono para nome legível, seja por relação no schema seja por um join único na leitura",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
-      "commits": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/workflows.test.ts",
+        "apps/app/__tests__/screens/workflows.test.tsx"
+      ],
+      "commits": [
+        "95caa1e"
+      ],
+      "notas": "A tela já lia dado real antes desta rodada (listWorkflows/toggleWorkflowActive existiam e bastavam para a listagem, como o despacho antecipou). O que faltava era profundidade de regra, não de leitura: a invariante 'uma ativa por owner+entityType' do FR-030 não era imposta em lugar nenhum e o runtime já dependia dela; e o escopo, que dá sentido à palavra 'ativo', nunca chegava à tela. O builder BPMN fica de fora por decisão de escopo (lacuna workflows-4), não por falta de tempo.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

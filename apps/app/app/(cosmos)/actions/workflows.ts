@@ -74,7 +74,7 @@ const ToggleWorkflowActiveSchema = z.object({
 
 export async function toggleWorkflowActive(
   input: z.input<typeof ToggleWorkflowActiveSchema>
-): Promise<Result<{ id: string; active: boolean }>> {
+): Promise<Result<{ id: string; active: boolean; deactivated: number }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "RTE", "STE"], ctx);
@@ -82,18 +82,45 @@ export async function toggleWorkflowActive(
 
     const existing = await database.bpmnDefinition.findFirst({
       where: { id, tenantId: ctx.tenantId },
-      select: { id: true },
+      select: { id: true, entityType: true, ownerType: true, ownerId: true },
     });
     if (!existing) {
       throw new Error("Workflow não encontrado.");
     }
 
-    const updated = await database.bpmnDefinition.update({
-      where: { id },
-      data: active
-        ? { active: true, activatedAt: new Date(), activatedBy: ctx.userId }
-        : { active: false },
-      select: { id: true, active: true },
+    // FR-030: "one active per owner+entityType". O runtime depende disso —
+    // app/actions/workflow/transition.ts carrega a máquina com
+    // findFirst({ ownerId, active: true }) e, com duas ativas, pega uma
+    // qualquer. Desativar a irmã e ativar a nova é uma escrita só: fora da
+    // transação existiria uma janela com zero (ou duas) ativas no escopo.
+    // Não vira @@unique no schema porque o par (escopo, active=false) é
+    // legitimamente repetido — a invariante só vale para active=true.
+    const { updated, deactivated } = await database.$transaction(async (tx) => {
+      const swept = active
+        ? await tx.bpmnDefinition.updateMany({
+            where: {
+              tenantId: ctx.tenantId,
+              entityType: existing.entityType,
+              ownerType: existing.ownerType,
+              ownerId: existing.ownerId,
+              active: true,
+              id: { not: id },
+            },
+            data: { active: false },
+          })
+        : { count: 0 };
+
+      const row = await tx.bpmnDefinition.update({
+        where: { id },
+        data: active
+          ? { active: true, activatedAt: new Date(), activatedBy: ctx.userId }
+          : // AC-002: activatedAt/activatedBy são registro histórico de quando
+            // foi ativada, não de "está ativa agora" — desativar não os apaga.
+            { active: false },
+        select: { id: true, active: true },
+      });
+
+      return { updated: row, deactivated: swept.count };
     });
 
     await logAudit(ctx.tenantId, {
@@ -101,9 +128,9 @@ export async function toggleWorkflowActive(
       action: "status_changed",
       entityType: "bpmn_definition",
       entityId: updated.id,
-      diff: { active },
+      diff: { active, deactivated },
     });
     revalidateTag(`workflows:${ctx.tenantId}`, "max");
-    return { id: updated.id, active: updated.active };
+    return { id: updated.id, active: updated.active, deactivated };
   });
 }

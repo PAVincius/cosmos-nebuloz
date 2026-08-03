@@ -5,6 +5,7 @@
 // which throws under plain tsx) using the same pg driver adapter Prisma 7 needs.
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
+import { gzipSync } from "node:zlib";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "../generated/client";
@@ -778,104 +779,30 @@ const DECISIONS = [
   },
 ];
 
-// Custo de nuvem do tenant demo — o INSUMO da detecção de anomalia, não a
-// anomalia. Cada grupo é um par (serviço, conta) com seis meses de baseline e o
-// mês corrente. O baseline precisa variar: com MAD zero o modified z-score é
-// indefinido e detectCostAnomaly se recusa a sinalizar (é o comportamento
-// correto — não se inventa desvio a partir de série constante).
-//
-// O seed NÃO grava CostAnomaly. Essa linha é produto de
-// apps/app/lib/cost/detect-cost-anomalies.ts; escrevê-la aqui exigiria
-// reimplementar mediana/MAD num segundo lugar e chamar o resultado de dado.
-// Com o insumo semeado, "Detectar agora" em /cosmos/anomalies produz a anomalia
-// pelo caminho real — e o grupo `rds`, estável, prova que o detector não
-// sinaliza tudo.
-const BILLING_ACCOUNT = "111122223333";
-const BILLING_GROUPS = [
-  {
-    service: "AmazonEC2",
-    serviceCategory: "Compute",
-    region: "sa-east-1",
-    baseline: [1180, 1240, 1205, 1310, 1225, 1268],
-    current: 2480,
-  },
-  {
-    service: "AmazonRDS",
-    serviceCategory: "Databases",
-    region: "sa-east-1",
-    baseline: [640, 655, 648, 662, 651, 658],
-    current: 659,
-  },
-  {
-    service: "AmazonS3",
-    serviceCategory: "Storage",
-    region: "sa-east-1",
-    baseline: [88, 95, 91, 103, 97, 92],
-    current: 112,
-  },
-];
-
-// Itens do roadmap do tenant demo. `quarterOffset` é relativo ao trimestre
-// corrente, não a uma data fixa: a grade de /cosmos/roadmap deriva o eixo das
-// datas dos próprios itens e destaca o trimestre de agora, então um seed com
-// datas fixas envelhece e empurra o "agora" para fora do horizonte.
-//
-// `epic` é o título de um épico semeado acima; serve para amarrar o item ao
-// épico real em vez de inventar um trabalho que não existe no portfólio.
-const ROADMAP_ITEMS = [
-  {
-    title: "Migração core para multi-tenant",
-    epic: "Migração core para multi-tenant",
-    quarterOffset: -1,
-    weeks: 10,
-    status: "IN_PROGRESS",
-    color: "#6366f1",
-    milestone: false,
-    withArt: true,
-  },
-  {
-    title: "Open Finance · agregação",
-    epic: "Open Finance · agregação",
-    quarterOffset: 0,
-    weeks: 8,
-    status: "IN_PROGRESS",
-    color: "#22c55e",
-    milestone: false,
-    withArt: true,
-  },
-  {
-    title: "GA da carteira multi-moeda",
-    epic: "Carteira digital multi-moeda",
-    quarterOffset: 1,
-    weeks: 1,
-    status: "PLANNED",
-    color: "#f59e0b",
-    milestone: true,
-    withArt: true,
-  },
-  {
-    title: "Programa de fidelidade B2B",
-    epic: "Programa de fidelidade B2B",
-    quarterOffset: 2,
-    weeks: 6,
-    status: "PLANNED",
-    color: "#a855f7",
-    milestone: false,
-    // Sem ART: a grade tem uma faixa "Sem ART atribuído" e ela precisa de
-    // conteúdo real para não parecer um bug de layout.
-    withArt: false,
-  },
-];
-
-function quarterStart(base: Date, offset: number): Date {
-  const q = Math.floor(base.getUTCMonth() / 3) + offset;
-  return new Date(Date.UTC(base.getUTCFullYear(), q * 3, 1));
-}
-
-function monthStart(base: Date, offset: number): Date {
-  return new Date(
-    Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + offset, 1)
-  );
+// BpmnDefinition.xmlGzip é obrigatório e é o XML real da definição, gzipado
+// (FR-030, "gzip XML ≤2MB"). O seed grava um processo BPMN mínimo de verdade,
+// não bytes aleatórios: a tela não lê o XML, mas gravar lixo num campo que o
+// compilador um dia vai ler é plantar um defeito.
+function bpmnXmlGzip(
+  processId: string,
+  taskName: string
+): Uint8Array<ArrayBuffer> {
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL">
+  <process id="${processId}" isExecutable="true">
+    <startEvent id="start" />
+    <task id="review" name="${taskName}" />
+    <endEvent id="end" />
+    <sequenceFlow id="f1" sourceRef="start" targetRef="review" />
+    <sequenceFlow id="f2" sourceRef="review" targetRef="end" />
+  </process>
+</definitions>`;
+  const gz = gzipSync(Buffer.from(xml, "utf-8"));
+  // Prisma Bytes quer Uint8Array<ArrayBuffer>; o buffer do Node é
+  // ArrayBufferLike — copiar para um ArrayBuffer simples satisfaz o tipo.
+  const buffer = new ArrayBuffer(gz.byteLength);
+  new Uint8Array(buffer).set(gz);
+  return new Uint8Array(buffer);
 }
 
 type DevDb = typeof db;
@@ -1709,6 +1636,211 @@ async function main() {
     owner: s.ownerName,
     progress: Math.round((s.doneFeatureCount / s.featureCount) * 100),
   });
+
+  // Automações do portfólio (/cosmos/workflows). Sem definição alguma a tela
+  // abre vazia e a regra que ela existe para mostrar — FR-030, "uma ativa por
+  // owner+entityType" — não tem o que demonstrar. Por isso duas no MESMO
+  // escopo (FEATURE · ART): a v1 ativa e a v2 parada, que é o par onde ativar
+  // uma desliga a outra. A terceira fica em escopo distinto (STORY · TEAM)
+  // para provar que a exclusividade não é global.
+  // runCount só é diferente de zero em definição que já foi ativada: o campo
+  // é denorm "recomputed on run" e ninguém o recomputa neste app — dar
+  // execução a uma automação que nunca entrou no ar seria inventar histórico.
+  const platformTeamId = teamIdByName.values().next().value;
+  const WORKFLOWS = [
+    {
+      name: "Aprovação de Feature Crítica",
+      processId: "approve-critical-feature",
+      entityType: "FEATURE",
+      ownerType: "ART",
+      ownerId: art.id,
+      triggerLabel: "Feature → Review",
+      actionCount: 3,
+      runCount: 12,
+      active: true,
+      compiled: true,
+    },
+    {
+      name: "Aprovação de Feature Crítica v2",
+      processId: "approve-critical-feature-v2",
+      entityType: "FEATURE",
+      ownerType: "ART",
+      ownerId: art.id,
+      triggerLabel: "Feature → Review (com gate de segurança)",
+      actionCount: 4,
+      runCount: 0,
+      active: false,
+      compiled: false,
+    },
+    {
+      name: "Escalonamento de Story Bloqueada",
+      processId: "escalate-blocked-story",
+      entityType: "STORY",
+      ownerType: "TEAM",
+      ownerId: platformTeamId ?? art.id,
+      triggerLabel: "Story parada há 48h",
+      actionCount: 2,
+      runCount: 0,
+      active: false,
+      compiled: false,
+    },
+  ];
+
+  let wf = 0;
+  for (const w of WORKFLOWS) {
+    const processId = w.processId;
+    const data = {
+      tenantId: tenant.id,
+      name: w.name,
+      entityType: w.entityType,
+      ownerType: w.ownerType,
+      ownerId: w.ownerId,
+      xmlGzip: bpmnXmlGzip(processId, "Revisão"),
+      // compiledMachine só existe em definição ativada: FR-031 compila na
+      // ativação, e a v2 nunca foi ativada.
+      compiledMachine: w.compiled
+        ? {
+            id: processId,
+            initial: "start",
+            states: {
+              start: { on: { review: { target: "review" } } },
+              review: { on: { approve: { target: "end" } } },
+              end: { type: "final" },
+            },
+          }
+        : undefined,
+      triggerLabel: w.triggerLabel,
+      actionCount: w.actionCount,
+      runCount: w.runCount,
+      active: w.active,
+      ...(w.active
+        ? { activatedAt: new Date("2026-03-02"), activatedBy: devMember.userId }
+        : {}),
+    };
+    await db.bpmnDefinition.upsert({
+      where: {
+        tenantId_name_ownerType_ownerId: {
+          tenantId: tenant.id,
+          name: w.name,
+          ownerType: w.ownerType,
+          ownerId: w.ownerId,
+        },
+      },
+      update: data,
+      create: data,
+    });
+    wf++;
+  }
+  console.log("bpmn definitions upserted:", wf);
+
+  // Conectores externos (/cosmos/integrations). `config` vai VAZIO de
+  // propósito: inventar uma apiKey no seed seria gravar um segredo falso, e
+  // a consequência honesta disso é o teste de conexão dizer "sem credencial
+  // configurada" em vez de fingir que autenticou.
+  // O Linear nasce ACTIVE com histórico de SyncLog (um sucesso e um
+  // parcial — FR-020 diz que parcial não faz rollback, e a tela precisa
+  // distinguir os dois); o GitHub nasce PAUSED e sem histórico, que é o
+  // estado onde webhook de entrada vai para a fila de mortos sem tocar em
+  // dado do Cosmos.
+  const INTEGRATIONS = [
+    {
+      source: "linear",
+      name: "Linear — Squad Plataforma",
+      status: "ACTIVE",
+      lastSyncAt: new Date("2026-03-10T09:00:00Z"),
+      logs: [
+        {
+          type: "snapshot",
+          status: "success",
+          itemsCreated: 24,
+          itemsUpdated: 8,
+          itemsSkipped: 0,
+          createdAt: new Date("2026-03-03T09:00:00Z"),
+        },
+        {
+          type: "snapshot",
+          status: "partial",
+          itemsCreated: 5,
+          itemsUpdated: 11,
+          itemsSkipped: 3,
+          createdAt: new Date("2026-03-10T09:00:00Z"),
+        },
+      ],
+    },
+    {
+      source: "github",
+      name: "GitHub — nebuloz/cosmos",
+      status: "PAUSED",
+      lastSyncAt: null,
+      logs: [],
+    },
+  ];
+
+  let ig = 0;
+  for (const i of INTEGRATIONS) {
+    const existing = await db.integration.findFirst({
+      where: { tenantId: tenant.id, source: i.source, name: i.name },
+      select: { id: true },
+    });
+    const data = {
+      tenantId: tenant.id,
+      source: i.source,
+      name: i.name,
+      config: {},
+      status: i.status,
+      lastSyncAt: i.lastSyncAt,
+    };
+    const row = existing
+      ? await db.integration.update({
+          where: { id: existing.id },
+          data,
+          select: { id: true },
+        })
+      : await db.integration.create({ data, select: { id: true } });
+
+    // SyncLog é imutável (FR-020): re-seed não regrava histórico, só cria o
+    // que ainda não existe.
+    const already = await db.syncLog.count({
+      where: { integrationId: row.id },
+    });
+    if (already === 0 && i.logs.length > 0) {
+      await db.syncLog.createMany({
+        data: i.logs.map((l) => ({ integrationId: row.id, ...l })),
+      });
+    }
+    ig++;
+  }
+  console.log("integrations upserted:", ig);
+
+  // Membros do workspace (/cosmos/settings → aba Membros). O seed criava um
+  // único ADMIN (dev@cosmos.local), então a aba de RBAC abria com uma linha só
+  // e a matriz de papéis não tinha o que mostrar — nem dava para exercitar as
+  // guardas de "não remova o último ADMIN" e "não remova você mesmo".
+  // SSO, política de segurança e AuditLog NÃO são semeados de propósito: são
+  // estado que só existe se alguém configurou ou agiu, e semear AuditLog seria
+  // fabricar prova de auditoria, o oposto do que a aba existe para fazer.
+  const WORKSPACE_MEMBERS = [
+    { email: "rte@cosmos.local", name: "Marina Alves", role: "RTE" },
+    { email: "po@cosmos.local", name: "Bruno Silva", role: "PO" },
+    { email: "dev@cosmos.local.dev", name: "Carla Nunes", role: "DEV" },
+  ] as const;
+
+  let mem = 0;
+  for (const m of WORKSPACE_MEMBERS) {
+    const user = await db.user.upsert({
+      where: { email: m.email },
+      update: { name: m.name },
+      create: { email: m.email, name: m.name, emailVerified: true },
+      select: { id: true },
+    });
+    await db.tenantMember.upsert({
+      where: { tenantId_userId: { tenantId: tenant.id, userId: user.id } },
+      update: { role: m.role },
+      create: { tenantId: tenant.id, userId: user.id, role: m.role },
+    });
+    mem++;
+  }
+  console.log("workspace members upserted:", mem);
 }
 
 // Guarda de entrypoint: __tests__/seed-cosmos.test.ts importa seedDevMembership

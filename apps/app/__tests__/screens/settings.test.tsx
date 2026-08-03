@@ -308,6 +308,7 @@ describe("SettingsScreen", () => {
       data: {
         ssoEnabled: true,
         ssoUpdatedAt: "2026-01-01T00:00:00.000Z",
+        ssoConfigured: true,
         securityPolicy: {
           require2FA: true,
           gracePeriodDays: 14,
@@ -341,6 +342,7 @@ describe("SettingsScreen", () => {
       ok: true,
       data: {
         ssoEnabled: false,
+        ssoConfigured: true,
         ssoUpdatedAt: null,
         securityPolicy: null,
         currentUserRole: "ADMIN",
@@ -354,6 +356,37 @@ describe("SettingsScreen", () => {
 
     await screen.findByText("SSO desativado");
     expect(screen.getAllByRole("switch").length).toBeGreaterThan(0);
+  });
+
+  it("não oferece o botão de ativar SSO quando não há IdP configurado, e diz por quê (AC-002)", async () => {
+    getWorkspaceTabMock.mockResolvedValue({
+      ok: true,
+      data: { ...WORKSPACE_DATA, currentUserRole: "ADMIN" },
+    });
+    getSecurityTabMock.mockResolvedValueOnce({
+      ok: true,
+      data: {
+        ssoEnabled: false,
+        ssoConfigured: false,
+        ssoUpdatedAt: null,
+        securityPolicy: null,
+        currentUserRole: "ADMIN",
+      },
+    });
+    render(<SettingsScreen />);
+
+    await screen.findByDisplayValue("Acme");
+    fireEvent.click(screen.getByRole("button", { name: "Segurança" }));
+
+    expect(await screen.findByText("IdP não configurado")).toBeTruthy();
+    expect(
+      screen.getByText(
+        /Configure o provedor de identidade antes de ativar o SSO/
+      )
+    ).toBeTruthy();
+    // o único switch restante é o de 2FA da política — o de SSO não é
+    // renderizado, porque o servidor recusaria a ativação de qualquer forma
+    expect(screen.getAllByRole("switch")).toHaveLength(1);
   });
 
   it("switches to the Notificações tab and shows real, self-scoped preferences", async () => {
@@ -397,5 +430,11 @@ describe("SettingsScreen", () => {
     expect(
       screen.queryByText(/R\$|cartão de crédito|\d+ assentos/i)
     ).toBeNull();
+    // A saída honesta para quem quer mudar de plano é falar com gente, não um
+    // formulário de cobrança que não existe (AC-006). O endereço é o mesmo já
+    // usado pelo template de convite do repo — nenhum contato é inventado.
+    expect(
+      screen.getByRole("link", { name: "suporte@nebuloz.com" })
+    ).toBeTruthy();
   });
 });
