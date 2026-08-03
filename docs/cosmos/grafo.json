@@ -838,22 +838,127 @@
       "$schema": "../schema/no.schema.json",
       "id": "teams",
       "kind": "tela",
-      "titulo": "teams",
+      "titulo": "Times (diretório de squads do ART)",
       "rota": "/cosmos/teams",
       "componente": "apps/app/components/cosmos/screens/teams.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "2-execucao",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+          "export": "listTeams",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+          "export": "getTeam",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+          "export": "createTeam",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/teams.ts",
+          "export": "assignTeamToArt",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "Team",
+        "ART",
+        "Sprint",
+        "PIPlan",
+        "TeamCapacitySnapshot",
+        "Feature",
+        "PIObjective"
+      ],
+      "safe": {
+        "pratica": "Agile Team — um time pertence a um, e somente um, ART (Team and Technical Agility)",
+        "nivel": "Essential",
+        "faz": "Mostra os squads do portfólio com membros, WIP, velocity, capacidade e predictability, e — o que faltava — expõe os times que estão fora de qualquer ART e deixa o RTE vinculá-los antes de abrir o PI Planning.",
+        "invariantes": [
+          "um time pertence a um, e somente um, ART; a escrita substitui o vínculo, nunca acumula",
+          "time sem ART não entra em PI Planning (não recebe sprint nem célula no Program Board) e por isso é listado à parte, não silenciado",
+          "realinhar um time que já tem ART é recusado enquanto ele tiver sprint num PI Plan COMMITTED ou EXECUTING — mover deixaria sprint comprometido pendurado no plano do ART antigo",
+          "reafirmar o ART que o time já tem é idempotente: não grava, não audita e não consulta o guard de PI",
+          "toda leitura e escrita filtra por tenantId vindo da sessão; teamId e artId vindos do cliente são reconferidos dentro do tenant antes de qualquer escrita",
+          "escrita passa por requireRole(ADMIN|RTE) e grava logAudit com o artId anterior",
+          "capacidade e predictability por time são derivadas de TeamCapacitySnapshot na leitura e são null (nunca 0) quando não há snapshot"
+        ],
+        "fonte": [
+          "docs/stories/epic-006/story-056-tela-times.md",
+          "docs/stories/epic-006/story-017.md:183",
+          "docs/stories/epic-006/story-017.md:41",
+          "docs/stories/epic-006/story-017.md:34",
+          "SAFe 6.0 — Agile Release Train (Agile Teams are part of one, and only one, ART)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/teams.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "teams-1",
+          "tipo": "action",
+          "alvo": "assignTeamToArt",
+          "hoje": "inexistente — artId só podia ser definido na criação; um squad que nascesse fora de um ART ficava fora de todo PI Plan sem caminho de conserto na UI",
+          "desejado": "vínculo time→ART com RBAC, guarda de tenant nos dois ids, guarda de PI ativo no realinhamento e logAudit com o valor anterior",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "teams-2",
+          "tipo": "ui",
+          "alvo": "seção de times sem ART",
+          "hoje": "a tela mostrava o badge do ART quando ele existia e silenciava quando não existia — o buraco ficava invisível exatamente para quem precisa vê-lo antes do PI Planning",
+          "desejado": "seção própria listando os times sem ART, dizendo por que aquilo importa, e sumindo quando todos têm ART",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "teams-3",
+          "tipo": "campo",
+          "alvo": "remoção de time (\"add/remove\" da DoD da story-017)",
+          "hoje": "Sprint, TeamCapacitySnapshot e PIObjective apontam para Team; excluir levaria histórico de PI junto. O padrão do repo para saída de escopo é transição de status, e Team não tem coluna de status",
+          "desejado": "Team.status com ARCHIVED, para tirar um squad do quadro sem apagar o histórico de PI dele",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "teams-4",
+          "tipo": "campo",
+          "alvo": "atribuição de Scrum Master (\"SM assignment\" da DoD da story-017)",
+          "hoje": "Team.leadUserId existe, mas não há papel de SM materializado por time — a autorização do repo é por MemberRole no tenant, então gravar o id seria gravar um vínculo sem regra que o valide",
+          "desejado": "papel por time (ou validação de MemberRole=SM na atribuição) para que 'SM do time X' seja afirmação verificável",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
-      "seed": [],
-      "verifica": [],
+      "seed": [
+        "packages/database/scripts/seed-cosmos.mts"
+      ],
+      "verifica": [
+        "apps/app/__tests__/actions/teams.test.ts",
+        "apps/app/__tests__/screens/teams.test.tsx"
+      ],
       "commits": [],
+      "notas": "profundidade THIN vem do brief do programa, não de medição: o audit de 2026-07-23 lista teams entre as 14 telas NÃO medidas. O seed já cria ART Plataforma e amarra todo time a ele (seed-cosmos.mts), então a seção 'Times sem ART' corretamente não aparece no tenant demo — ela é o conserto de um estado alcançável pela UI (createTeam sem artId), não um estado semeado. As lacunas teams-3 e teams-4 são as duas partes da DoD da story-017 que exigem modelagem nova (status de time e papel por time); nenhuma trava a prática SAFe do nó, que é garantir que todo Agile Team esteja dentro de um ART.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {
@@ -1317,22 +1422,140 @@
       "$schema": "../schema/no.schema.json",
       "id": "webhooks",
       "kind": "tela",
-      "titulo": "webhooks",
+      "titulo": "Webhooks (endpoints de saída, saúde de entrega e disparo de teste)",
       "rota": "/cosmos/webhooks",
       "componente": "apps/app/components/cosmos/screens/webhooks.tsx",
       "registro": "apps/app/components/cosmos/screens/registry.tsx",
-      "balde": null,
-      "profundidade": null,
-      "trilha": null,
+      "balde": "A",
+      "profundidade": "THIN",
+      "trilha": "3-metricas-plataforma",
       "dono": null,
-      "estado": "pendente",
-      "actions": [],
-      "models": [],
-      "lacunas": [],
+      "estado": "em-revisao",
+      "actions": [
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+          "export": "listWebhooks",
+          "tipo": "read",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+          "export": "createWebhook",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+          "export": "setWebhookActive",
+          "tipo": "mutation",
+          "estado": "existe"
+        },
+        {
+          "arquivo": "apps/app/app/(cosmos)/actions/webhooks.ts",
+          "export": "sendTestWebhook",
+          "tipo": "mutation",
+          "estado": "existe"
+        }
+      ],
+      "models": [
+        "WebhookEndpoint",
+        "WebhookDeliveryLog"
+      ],
+      "safe": {
+        "pratica": "Continuous Delivery Pipeline — integração de saída confiável e observável (Release on Demand)",
+        "nivel": "Portfolio",
+        "faz": "Mostra os endpoints de saída do tenant com a saúde real derivada do histórico de entrega, deixa o Org Admin pausar um endpoint que está quebrando sem apagá-lo, e disparar um evento sintético para provar a configuração antes de confiar nela em produção.",
+        "invariantes": [
+          "segredo de assinatura nunca sai do servidor: gerado com randomBytes, guardado só como hash e cifrado, devolvido uma única vez na criação e jamais selecionado por listWebhooks nem gravado em diff de auditoria",
+          "'degradado' exige falhas consecutivas contadas da entrega mais recente para trás (limiar 3, FR-020 AC-006); falha isolada é 'falhando', e falha antiga separada por uma entrega boa não conta",
+          "disparo de teste grava WebhookDeliveryLog com synthetic=true e passa pelo mesmo job de entrega dos eventos reais — tráfego de teste nunca se confunde com produção, e o teste exercita HMAC, timeout e retry de verdade",
+          "disparo de teste é recusado em endpoint pausado: o worker marcaria a entrega como FAILED_PERMANENTLY e sujaria o histórico com uma falha que não diz nada sobre o endpoint",
+          "toda escrita passa por requireRole(['ADMIN']), reconfere o id dentro do tenant antes de gravar e registra logAudit com o estado anterior",
+          "toda leitura filtra por tenantId vindo da sessão"
+        ],
+        "fonte": [
+          "docs/srd-epic-007.md:222",
+          "docs/stories/epic-007/story-035.md",
+          "docs/stories/epic-008/story-037.md",
+          "SAFe 6.0 — Continuous Delivery Pipeline (Release on Demand)"
+        ],
+        "codigo": [
+          "apps/app/app/(cosmos)/actions/webhooks.ts",
+          "apps/app/app/(cosmos)/actions/webhooks.constants.ts",
+          "apps/app/lib/inngest/webhook-delivery.ts"
+        ]
+      },
+      "lacunas": [
+        {
+          "id": "webhooks-1",
+          "tipo": "action",
+          "alvo": "setWebhookActive",
+          "hoje": "WebhookEndpoint.active já era respeitado pelo worker de entrega, mas nada no produto escrevia o campo — um endpoint quebrado só podia ser desligado direto no banco",
+          "desejado": "pausar/retomar pela tela, com RBAC de ADMIN, guarda de tenant e auditoria do estado anterior",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "webhooks-2",
+          "tipo": "action",
+          "alvo": "sendTestWebhook",
+          "hoje": "o campo WebhookDeliveryLog.synthetic existia e nunca era escrito, e o pipeline de entrega (lib/inngest/webhook-delivery.ts) existia sem nenhum produtor — não havia como provar a configuração de um endpoint sem esperar um evento real de portfólio acontecer",
+          "desejado": "evento sintético `ping` marcado como synthetic, enfileirado no mesmo job de entrega dos eventos reais",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "webhooks-3",
+          "tipo": "ui",
+          "alvo": "saúde do endpoint",
+          "hoje": "a tela chamava de 'falhando' qualquer endpoint cuja última entrega falhou; uma queda de rede isolada e um endpoint morto há dias apareciam iguais, e o código HTTP da resposta nunca era mostrado",
+          "desejado": "falhas consecutivas contadas da entrega mais recente, rótulo 'degradado' no limiar de 3 do FR-020, e o código HTTP da última entrega visível",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": "2026-08-03"
+        },
+        {
+          "id": "webhooks-4",
+          "tipo": "tabela",
+          "alvo": "fila de mortos (DLQ) de entrega, com retry e descarte",
+          "hoje": "os AC-002/AC-003 da story-035 pedem UI de DLQ com 'Retry All' e descarte auditado; não há model de DLQ para entrega de saída (o `webhookDlq` do schema é do sync de Linear/GitHub, que é fluxo de entrada), então evento que esgota as 5 tentativas some do produto",
+          "desejado": "modelo de DLQ para entrega de saída, com retry em lote e descarte registrado em AuditLog",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "webhooks-5",
+          "tipo": "campo",
+          "alvo": "saúde persistida e re-registro automático",
+          "hoje": "o AC-006 pede que o endpoint passe a DEGRADED por um monitor de 15 minutos e tente re-registro automático; hoje 'degradado' é derivado na leitura e não existe nem monitor periódico nem campo de saúde no endpoint",
+          "desejado": "campo de saúde escrito por monitor periódico, com notificação ao RTE quando o re-registro falha",
+          "migration": true,
+          "bloqueio": false,
+          "fechada_em": null
+        },
+        {
+          "id": "webhooks-6",
+          "tipo": "seed",
+          "alvo": "WebhookEndpoint do tenant demo",
+          "hoje": "o seed não cria endpoint algum, então /cosmos/webhooks abre vazio no tenant demo",
+          "desejado": "decidido não semear: um endpoint semeado precisaria gerar e cifrar um segredo HMAC dentro do seed, e o histórico de entrega que dá sentido à tela teria de ser inventado — histórico de entrega fabricado é exatamente o que esta tela existe para não fazer. O caminho de criação pela UI está completo e é o jeito honesto de povoar",
+          "migration": false,
+          "bloqueio": false,
+          "fechada_em": null
+        }
+      ],
       "depende_de": [],
       "seed": [],
-      "verifica": [],
+      "verifica": [
+        "apps/app/__tests__/actions/webhooks.test.ts",
+        "apps/app/__tests__/screens/webhooks.test.tsx"
+      ],
       "commits": [],
+      "notas": "profundidade THIN vem do audit de 2026-07-23 (webhooks: 4 de 11 seções de handoff, o melhor do grupo). As duas lacunas de action fechadas são do tipo que o audit chamou de 'UI barata sobre dado que já existe': `active` e `synthetic` estavam no schema, o worker de entrega estava escrito e testado, e nada no produto os alcançava. As lacunas webhooks-4 e webhooks-5 exigem modelagem nova e ficam registradas sem migration; nenhuma trava a prática do nó, que é ter integração de saída observável e controlável.",
+      "atualizado_em": "2026-08-03",
       "consumido_por": []
     },
     {

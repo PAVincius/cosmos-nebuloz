@@ -7,8 +7,15 @@ import { encryptSecret } from "@repo/security/encrypt";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { inngest } from "@/lib/inngest/client";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
+import {
+  DEGRADED_AFTER_CONSECUTIVE_FAILURES,
+  DELIVERY_HEALTH_WINDOW,
+  FAILING_DELIVERY_STATUSES,
+  TEST_EVENT_TYPE,
+} from "./webhooks.constants";
 
 export type WebhookView = {
   id: string;
@@ -16,8 +23,27 @@ export type WebhookView = {
   eventTypes: string[];
   active: boolean;
   lastDeliveryStatus: string | null;
+  lastDeliveryCode: number | null;
   lastDeliveryAt: string | null;
+  /** falhas seguidas contadas da entrega mais recente para trás */
+  consecutiveFailures: number;
+  degraded: boolean;
 };
+
+// Uma falha isolada é ruído de rede; três seguidas são um endpoint quebrado.
+// O FR-020 AC-006 usa exatamente esse limiar para marcar a integração como
+// DEGRADED, e contar da entrega mais recente para trás é o que distingue "está
+// falhando agora" de "já falhou algum dia".
+function countConsecutiveFailures(logs: { status: string }[]): number {
+  let n = 0;
+  for (const log of logs) {
+    if (!FAILING_DELIVERY_STATUSES.has(log.status)) {
+      break;
+    }
+    n++;
+  }
+  return n;
+}
 
 export async function listWebhooks(): Promise<Result<WebhookView[]>> {
   return safeAction(async () => {
@@ -33,19 +59,25 @@ export async function listWebhooks(): Promise<Result<WebhookView[]>> {
         active: true,
         deliveryLogs: {
           orderBy: { createdAt: "desc" },
-          take: 1,
-          select: { status: true, createdAt: true },
+          take: DELIVERY_HEALTH_WINDOW,
+          select: { status: true, responseCode: true, createdAt: true },
         },
       },
     });
-    return rows.map((r) => ({
-      id: r.id,
-      url: r.url,
-      eventTypes: r.eventTypes,
-      active: r.active,
-      lastDeliveryStatus: r.deliveryLogs[0]?.status ?? null,
-      lastDeliveryAt: r.deliveryLogs[0]?.createdAt.toISOString() ?? null,
-    }));
+    return rows.map((r) => {
+      const consecutiveFailures = countConsecutiveFailures(r.deliveryLogs);
+      return {
+        id: r.id,
+        url: r.url,
+        eventTypes: r.eventTypes,
+        active: r.active,
+        lastDeliveryStatus: r.deliveryLogs[0]?.status ?? null,
+        lastDeliveryCode: r.deliveryLogs[0]?.responseCode ?? null,
+        lastDeliveryAt: r.deliveryLogs[0]?.createdAt.toISOString() ?? null,
+        consecutiveFailures,
+        degraded: consecutiveFailures >= DEGRADED_AFTER_CONSECUTIVE_FAILURES,
+      };
+    });
   });
 }
 
@@ -104,5 +136,127 @@ export async function createWebhook(
     revalidateTag(`webhooks:${ctx.tenantId}`, "max");
 
     return { id: created.id, secret };
+  });
+}
+
+const SetWebhookActiveSchema = z.object({
+  id: z.string().min(1),
+  active: z.boolean(),
+});
+
+/**
+ * Pausa/retoma um endpoint. `WebhookEndpoint.active` já era respeitado pelo
+ * worker de entrega (`lib/inngest/webhook-delivery.ts` marca a entrega como
+ * FAILED_PERMANENTLY quando o endpoint está inativo), mas nada no produto
+ * escrevia o campo: um endpoint quebrado só podia ser desligado no banco.
+ */
+export async function setWebhookActive(
+  input: z.infer<typeof SetWebhookActiveSchema>
+): Promise<Result<{ id: string; active: boolean }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN"], ctx);
+    const { id, active } = SetWebhookActiveSchema.parse(input);
+
+    // Guarda IDOR — id vindo do cliente é reconferido dentro do tenant.
+    const existing = await database.webhookEndpoint.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: { id: true, active: true },
+    });
+    if (!existing) {
+      throw new Error("Webhook não encontrado.");
+    }
+
+    await database.webhookEndpoint.update({
+      where: { id },
+      data: { active },
+      select: { id: true },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "status_changed",
+      entityType: "webhook",
+      entityId: id,
+      diff: { active: `${existing.active}→${active}` },
+    });
+    revalidateTag(`webhooks:${ctx.tenantId}`, "max");
+
+    return { id, active };
+  });
+}
+
+const SendTestWebhookSchema = z.object({ id: z.string().min(1) });
+
+/**
+ * Dispara um evento sintético `ping` no endpoint (story-037 AC-004). Grava o
+ * WebhookDeliveryLog com `synthetic: true` — sem essa marca um teste manual
+ * entraria na saúde do endpoint como tráfego de produção — e enfileira o mesmo
+ * job de entrega usado pelos eventos reais, para o teste exercitar assinatura
+ * HMAC, timeout e política de retry de verdade, e não um caminho paralelo.
+ */
+export async function sendTestWebhook(
+  input: z.infer<typeof SendTestWebhookSchema>
+): Promise<Result<{ deliveryLogId: string }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN"], ctx);
+    const { id } = SendTestWebhookSchema.parse(input);
+
+    const endpoint = await database.webhookEndpoint.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: { id: true, active: true },
+    });
+    if (!endpoint) {
+      throw new Error("Webhook não encontrado.");
+    }
+    // O worker recusa endpoint inativo e marca a entrega como
+    // FAILED_PERMANENTLY. Enfileirar assim sujaria o histórico com uma falha
+    // que não diz nada sobre o endpoint.
+    if (!endpoint.active) {
+      throw new Error(
+        "Webhook pausado — retome o endpoint antes de disparar um teste."
+      );
+    }
+
+    const payload = {
+      test: true,
+      sentAt: new Date().toISOString(),
+      tenantId: ctx.tenantId,
+    };
+
+    const deliveryLog = await database.webhookDeliveryLog.create({
+      data: {
+        endpointId: endpoint.id,
+        tenantId: ctx.tenantId,
+        eventType: TEST_EVENT_TYPE,
+        requestBody: payload,
+        synthetic: true,
+        status: "PENDING",
+      },
+      select: { id: true },
+    });
+
+    await inngest.send({
+      name: "webhook/event.dispatch",
+      data: {
+        endpointId: endpoint.id,
+        tenantId: ctx.tenantId,
+        eventType: TEST_EVENT_TYPE,
+        payload,
+        deliveryLogId: deliveryLog.id,
+      },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "webhook",
+      entityId: endpoint.id,
+      diff: { testDelivery: deliveryLog.id, eventType: TEST_EVENT_TYPE },
+    });
+    revalidateTag(`webhooks:${ctx.tenantId}`, "max");
+
+    return { deliveryLogId: deliveryLog.id };
   });
 }
