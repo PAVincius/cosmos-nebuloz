@@ -162,7 +162,7 @@
     "apps/app/__tests__/actions/budgets.test.ts",
     "apps/app/__tests__/screens/budgets.test.tsx"
   ],
-  "commits": [],
+  "commits": ["d23dfe89"],
   "notas": "Balde B: nenhuma migration foi criada e nenhum model ValueStream foi criado. O 'Value Stream' do design é o ART neste schema — LeanBudget agrupa por artId e se descreve como 'this value stream's budget', governance.prisma define valueStreamId como 'artId of the ART/value stream', e o LEAN_BUDGET.md §3.2 tem uma única seção 'ValueStream / ART' com um campo tipo que distingue os dois. Criar o model duplicaria o conceito e obrigaria toda leitura de orçamento a decidir qual dos dois é a verdade; o mapeamento fica documentado na ficha SAFe. A lacuna budgets-6 é a que impede a proteção de imutabilidade de valer em produção: a tela respeita a marca e ninguém a põe — está registrada aberta, não disfarçada de pronta. As lacunas budgets-7/8/9 são de comportamento fora da superfície desta tela. O seed test em packages/database/scripts/__tests__/seed-cosmos.test.ts existe mas nunca roda — o pacote @repo/database não tem script `test`, então `turbo test` o ignora; por isso a mudança de seed não é citada em verifica[].",
   "atualizado_em": "2026-08-03"
 }
