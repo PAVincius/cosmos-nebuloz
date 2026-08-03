@@ -2,20 +2,122 @@
   "$schema": "../schema/no.schema.json",
   "id": "solution",
   "kind": "tela",
-  "titulo": "solution",
+  "titulo": "Large Solution (rollup do Solution Train)",
   "rota": "/cosmos/solution",
-  "componente": null,
+  "componente": "apps/app/components/cosmos/screens/solution-train.tsx",
   "registro": "apps/app/components/cosmos/screens/registry.tsx",
-  "balde": null,
-  "profundidade": null,
-  "trilha": null,
+  "balde": "B",
+  "profundidade": "THIN",
+  "trilha": "2-execucao",
   "dono": null,
-  "estado": "pendente",
-  "actions": [],
-  "models": [],
-  "lacunas": [],
+  "estado": "em-revisao",
+  "actions": [
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/solution-train.ts",
+      "export": "listSolutionTrains",
+      "tipo": "read",
+      "estado": "existe"
+    },
+    {
+      "arquivo": "apps/app/app/(cosmos)/actions/solution-train.ts",
+      "export": "createCapability",
+      "tipo": "mutation",
+      "estado": "existe"
+    }
+  ],
+  "models": [
+    "SolutionTrain",
+    "Capability",
+    "SolutionEpic",
+    "SolutionRisk",
+    "CrossArtDependency",
+    "ART",
+    "Epic"
+  ],
+  "safe": {
+    "pratica": "Solution Train — coordenação de múltiplos ARTs em uma solução",
+    "nivel": "Large Solution",
+    "faz": "Consolida, por Solution Train, o que nenhum ART enxerga sozinho: as capabilities da solução, o progresso de cada ART, os riscos de nível de solução em ROAM e as dependências que atravessam ARTs — e deixa o STE registrar capability nova a partir dali.",
+    "invariantes": [
+      "progresso por ART é derivado de featureCount/doneFeatureCount reais dos épicos daquele ART, nunca de percentual arbitrado; ART sem épico mostra 0%, não um número inventado",
+      "os épicos de todos os ARTs de todos os trens são resolvidos numa única consulta por tenant, não uma por trem — o rollup não vira N+1 conforme o portfólio cresce",
+      "Epic.artId é escalar denormalizado sem relação Prisma, então a resolução é por consulta separada dentro do tenant, nunca por include",
+      "nomes de ART nas dependências cross-ART saem da lista de ARTs do próprio trem; ART fora do trem cai no id cru em vez de virar nome fabricado",
+      "rollup ROAM vazio é mostrado como vazio: contadores em zero e a frase de que não há risco de solução, nunca uma faixa colorida sem risco por trás",
+      "criar capability passa por requireRole(ADMIN|STE) — é operação de Solution Train, acima do RTE",
+      "solutionTrainId vindo do cliente é reconferido dentro do tenant antes da escrita, e toda leitura aninhada (riscos, dependências, épicos) filtra por ctx.tenantId",
+      "a linha do tempo multi-PI do handoff não é desenhada: ART carrega só currentPiPlanId, sem série histórica de janelas de PI — deferida, não aproximada"
+    ],
+    "fonte": [
+      "docs/stories/epic-008/story-039.md:22",
+      "docs/stories/epic-008/story-039.md:38",
+      "docs/stories/epic-008/story-039.md:62",
+      "docs/stories/epic-008/story-039.md:69",
+      "docs/stories/epic-008/story-043.md:39",
+      "docs/srd-epic-008.md:107",
+      "SAFe 6.0 — Solution Train (Enterprise Solution Delivery)"
+    ],
+    "codigo": ["apps/app/app/(cosmos)/actions/solution-train.ts"]
+  },
+  "lacunas": [
+    {
+      "id": "solution-1",
+      "tipo": "seed",
+      "alvo": "SolutionTrain, Capability, SolutionRisk",
+      "hoje": "o tenant demo não tinha nenhum Solution Train, então a tela abria em 'Nenhum solution train cadastrado' e todo o rollup era invisível",
+      "desejado": "um trem com capabilities e riscos de solução, com o ART semeado ligado a ele",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": "2026-08-03"
+    },
+    {
+      "id": "solution-2",
+      "tipo": "seed",
+      "alvo": "CrossArtDependency",
+      "hoje": "não semeada. O tenant demo tem um ART só; uma dependência cross-ART exige dois ARTs com features próprias, e criar o segundo ART mudaria a base de Times, Capacidade e Program Board de outras trilhas",
+      "desejado": "segundo ART com time e features próprias no seed demo, decidido no nível do programa e não dentro deste nó",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "solution-3",
+      "tipo": "campo",
+      "alvo": "SolutionROAMStatus (enum de SolutionRisk.roamStatus)",
+      "hoje": "o enum tem apenas RESOLVED/OWNED/ACCEPTED/MITIGATED e o default é RESOLVED — um risco de solução nasce declarado resolvido, o oposto do que o ROAM significa. Risk.roamStatus (nível de ART) tem UNCLASSIFIED e default UNCLASSIFIED",
+      "desejado": "UNCLASSIFIED no enum e como default, para que o risco de solução também precise de decisão explícita para sair do estado inicial",
+      "migration": true,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "solution-4",
+      "tipo": "action",
+      "alvo": "escrita de SolutionRisk e CrossArtDependency pela tela",
+      "hoje": "a tela lê os dois e não escreve nenhum: risco de solução e dependência cross-ART só entram por outra superfície. createCapability é a única mutation do nó",
+      "desejado": "registro e transição ROAM de risco de solução pela tela, no mesmo molde de roamTransition do nó risks — depende de solution-3 para o estado inicial fazer sentido",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    },
+    {
+      "id": "solution-5",
+      "tipo": "ui",
+      "alvo": "linha do tempo multi-PI (MultiPiTimeline do handoff)",
+      "hoje": "não desenhada. ART carrega um único currentPiPlanId, sem série histórica de janelas de PI por ART — desenhá-la exigiria arbitrar datas e rótulos de estágio",
+      "desejado": "eixo de PI por ART, quando existir a série histórica",
+      "migration": false,
+      "bloqueio": false,
+      "fechada_em": null
+    }
+  ],
   "depende_de": [],
-  "seed": [],
-  "verifica": [],
-  "commits": []
+  "seed": ["packages/database/scripts/seed-cosmos.mts"],
+  "verifica": [
+    "apps/app/__tests__/actions/solution-train.test.ts",
+    "apps/app/__tests__/screens/solution-train.test.tsx"
+  ],
+  "commits": [],
+  "notas": "Verificação antes de trabalho: a tela já cumpria a prática. listSolutionTrains e createCapability já estavam exportadas, os view types completos (capabilities, progresso por ART, ROAM consolidado, dependências cross-ART) e a action já tinha teste cobrindo isolamento de tenant, guarda de IDOR e o rollup sem N+1. O que faltava era prova de tela e dado semeado — foi isso que este nó entregou, mais a ficha SAFe. Nenhuma action nova foi inventada. O id do nó é `solution` porque é o id do registry (apps/app/components/cosmos/screens/registry.tsx), embora o componente e a action se chamem solution-train.",
+  "atualizado_em": "2026-08-03"
 }

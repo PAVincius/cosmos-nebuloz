@@ -444,6 +444,73 @@ const DEPENDENCIES = [
   },
 ];
 
+// Large Solution do tenant demo. Sem isto /cosmos/solution abre em "Nenhum
+// solution train cadastrado" e o rollup multi-ART não tem o que consolidar.
+// O ART semeado abaixo é ligado a este trem — o tenant demo tem um ART só, e é
+// por isso que nenhuma dependência cross-ART é semeada: ela exige dois ARTs com
+// features próprias, e inventar o segundo mudaria a base de Times, Capacidade e
+// Program Board de outras trilhas. Fica registrado como lacuna no nó.
+const SOLUTION_TRAIN = {
+  name: "Solution Train Pagamentos",
+  description:
+    "Solução de pagamentos ponta a ponta: core multi-tenant, antifraude e Open Finance.",
+};
+
+const CAPABILITIES = [
+  {
+    title: "Liquidação em tempo real ponta a ponta",
+    description:
+      "Capacidade de liquidar transações em segundos, do core ao extrato do cliente.",
+    status: "IMPLEMENTING",
+    milestone: "Marco Q3",
+    order: 0,
+  },
+  {
+    title: "Antifraude compartilhado entre canais",
+    description:
+      "Motor de score único para app, web e parceiros, com decisão em tempo real.",
+    status: "ANALYZING",
+    milestone: "Marco Q4",
+    order: 1,
+  },
+  {
+    title: "Consentimento Open Finance ponta a ponta",
+    description:
+      "Concessão, uso e revogação de consentimento auditáveis em toda a solução.",
+    status: "BACKLOG",
+    milestone: "Marco Q1 2027",
+    order: 2,
+  },
+];
+
+// Riscos de nível de solução — os que nenhum ART resolve sozinho. Os quatro
+// desfechos ROAM aparecem porque SolutionROAMStatus é um enum com apenas eles:
+// não há UNCLASSIFIED neste modelo, ao contrário de Risk.roamStatus (lacuna
+// registrada no nó).
+const SOLUTION_RISKS = [
+  {
+    title: "Homologação do regulador fora do controle do trem",
+    description:
+      "A janela de homologação do Open Finance é definida pelo regulador e não pelo Solution Train.",
+    roamStatus: "ACCEPTED" as const,
+    owner: "Marina Alves",
+  },
+  {
+    title: "Antifraude compartilhado sem dono de arquitetura",
+    description:
+      "O motor de score atravessa dois ARTs e ainda não tem System Architect designado.",
+    roamStatus: "OWNED" as const,
+    owner: "Marina Alves",
+  },
+  {
+    title: "Contrato do provedor de liquidação renegociado",
+    description:
+      "O provedor aceitou o SLA de liquidação em segundos; o risco de prazo saiu do caminho crítico.",
+    roamStatus: "RESOLVED" as const,
+    owner: null,
+  },
+];
+
 // PI Objectives do PI ativo (story-060). Sem eles /cosmos/piplanning abre com
 // "Nenhum objetivo cadastrado" nos dois painéis e o PPM fica sem numerador e
 // sem denominador. `plannedValue`/`achievedValue` somam 18/24 = 75%, abaixo da
@@ -1306,6 +1373,82 @@ async function main() {
     cv++;
   }
   console.log("confidence vote rounds:", cv);
+
+  // Large Solution: trem, capabilities e riscos de nível de solução. O ART
+  // semeado acima passa a pertencer ao trem — sem esse vínculo o rollup por ART
+  // de /cosmos/solution fica vazio mesmo com o trem cadastrado.
+  const existingTrain = await db.solutionTrain.findFirst({
+    where: { tenantId: tenant.id, name: SOLUTION_TRAIN.name },
+    select: { id: true },
+  });
+  const solutionTrain = existingTrain
+    ? await db.solutionTrain.update({
+        where: { id: existingTrain.id },
+        data: { description: SOLUTION_TRAIN.description },
+        select: { id: true },
+      })
+    : await db.solutionTrain.create({
+        data: { tenantId: tenant.id, ...SOLUTION_TRAIN },
+        select: { id: true },
+      });
+  await db.aRT.update({
+    where: { id: art.id },
+    data: { solutionTrainId: solutionTrain.id },
+  });
+
+  let capCount = 0;
+  for (const c of CAPABILITIES) {
+    const capabilityData = {
+      tenantId: tenant.id,
+      solutionTrainId: solutionTrain.id,
+      title: c.title,
+      description: c.description,
+      status: c.status,
+      milestone: c.milestone,
+      order: c.order,
+    };
+    const existingCapability = await db.capability.findFirst({
+      where: { tenantId: tenant.id, title: c.title },
+      select: { id: true },
+    });
+    if (existingCapability) {
+      await db.capability.update({
+        where: { id: existingCapability.id },
+        data: capabilityData,
+      });
+    } else {
+      await db.capability.create({ data: capabilityData });
+    }
+    capCount++;
+  }
+  console.log("capabilities:", capCount);
+
+  let sr = 0;
+  for (const r of SOLUTION_RISKS) {
+    const solutionRiskData = {
+      tenantId: tenant.id,
+      solutionTrainId: solutionTrain.id,
+      title: r.title,
+      description: r.description,
+      roamStatus: r.roamStatus,
+      owner: r.owner,
+      affectedArtIds: [art.id],
+    };
+    const existingSolutionRisk = await db.solutionRisk.findFirst({
+      where: { tenantId: tenant.id, title: r.title },
+      select: { id: true },
+    });
+    if (existingSolutionRisk) {
+      await db.solutionRisk.update({
+        where: { id: existingSolutionRisk.id },
+        data: solutionRiskData,
+      });
+    } else {
+      await db.solutionRisk.create({ data: solutionRiskData });
+    }
+    sr++;
+  }
+  console.log("solution risks:", sr);
 
   // Verify the real listEpics query path returns the seeded board.
   const rows = await db.epic.findMany({
