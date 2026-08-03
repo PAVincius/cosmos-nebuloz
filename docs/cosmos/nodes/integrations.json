@@ -137,7 +137,7 @@
     "apps/app/__tests__/actions/cosmos-integrations.test.ts",
     "apps/app/__tests__/screens/integrations.test.tsx"
   ],
-  "commits": [],
+  "commits": ["beb5d4f"],
   "notas": "O achado que mudou o escopo: existem dois vocabulários de status de integração convivendo no repo. O pipeline de billing filtra por 'ACTIVE' e as rotas de webhook checam 'PAUSED', mas o comentário do schema e o enum IntegrationStatus de _base.ts falam ACTIVE|INACTIVE|ERROR. Quem escrevia status (createIntegration) só produzia 'ACTIVE'. A tela agora escreve PAUSED, que é o valor que a ingestão realmente lê — alinhar o enum de _base.ts é fora desta trilha (arquivo intocável) e não afeta a leitura, que trata status como String livre.",
   "atualizado_em": "2026-08-03"
 }
