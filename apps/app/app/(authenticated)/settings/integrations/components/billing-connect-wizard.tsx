@@ -148,8 +148,8 @@ export function BillingConnectWizard({ open, provider, onClose }: Props) {
         <div className="py-8 text-center text-muted-foreground text-sm">
           <p>
             Regras de tag configuradas em{" "}
-            <a className="underline" href="/portfolio/budgets/tag-rules">
-              Portfolio → Tag Rules
+            <a className="underline" href="/cosmos/tags">
+              Cosmos → Tag Rules
             </a>{" "}
             após o primeiro sync.
           </p>

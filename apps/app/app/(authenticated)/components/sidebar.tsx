@@ -13,14 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/design-system/components/ui/sidebar";
-import {
-  BarChart3Icon,
-  HomeIcon,
-  LayersIcon,
-  SettingsIcon,
-  SparklesIcon,
-  UserIcon,
-} from "lucide-react";
+import { HomeIcon, SettingsIcon, SparklesIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -29,11 +22,14 @@ import { WorkspaceSwitcher } from "./workspace-switcher";
 
 /** Só entra aqui rota que existe. A navegação anterior listava 30 destinos e
  *  metade tinha sido apagada do repo — link para tela inexistente é pior que
- *  ausência de link, porque promete e dá 404. */
+ *  ausência de link, porque promete e dá 404.
+ *
+ *  `/portfolio` e `/portfolio/wsjf` saíram daqui: são a UI anterior ao Cosmos e
+ *  cada uma tem equivalente no registry (`/cosmos/kanban`, `/cosmos/wsjf`). Duas
+ *  portas para a mesma prática divergem, e a antiga é a que não recebe trabalho.
+ *  As páginas seguem no repo — o que se removeu foi o caminho até elas. */
 const NAV = [
   { href: "/dashboard", label: "Home", icon: HomeIcon },
-  { href: "/portfolio", label: "Portfólio", icon: LayersIcon },
-  { href: "/portfolio/wsjf", label: "WSJF", icon: BarChart3Icon },
   // O Cosmos serve suas 38 telas por uma rota única, `/cosmos/[[...seg]]`, com
   // navegação própria no CosmosShell. Um link só — replicar os ids aqui criaria
   // um segundo mapa para divergir do registry.

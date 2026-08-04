@@ -33,19 +33,15 @@ async function assertNoSeriousViolations(page: Page, label: string) {
   ).toEqual([]);
 }
 
-/** Rotas nativas de `(authenticated)` — cada uma tem `page.tsx` própria. */
+/**
+ * Rotas nativas de `(authenticated)` — cada uma tem `page.tsx` própria.
+ *
+ * As 11 rotas `/portfolio/*` saíram daqui junto com a árvore que as servia: era
+ * a UI anterior ao Cosmos, duplicada 1:1 pelo registry (`/cosmos/kanban`,
+ * `/cosmos/wsjf`, `/cosmos/themes`…). A cobertura não caiu — mudou de endereço,
+ * e está em COSMOS_SCREENS abaixo.
+ */
 const APP_ROUTES = [
-  "/portfolio",
-  "/portfolio/wsjf",
-  "/portfolio/themes",
-  "/portfolio/strategy-map",
-  "/portfolio/okrs",
-  "/portfolio/budgets",
-  "/portfolio/budgets/anomalies",
-  "/portfolio/tags",
-  "/portfolio/roadmap",
-  "/portfolio/governance",
-  "/portfolio/governance/decision-log",
   "/profile",
   "/settings/audit",
   "/settings/integrations",
@@ -73,6 +69,8 @@ const APP_ROUTES = [
  */
 const COSMOS_SCREENS = [
   "anomalies",
+  "arts",
+  "board",
   "budgets",
   "capacity",
   "copilot",
