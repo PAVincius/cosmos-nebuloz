@@ -13,6 +13,15 @@ vi.mock("@/app/(cosmos)/actions/budgets", () => ({
   updateLeanBudgetGuardrails: vi.fn(),
 }));
 
+// A tela ganhou a criação de orçamento (story-062, NovoBudgetModal) e passou a
+// importar createLeanBudget de app/actions/lean-budget — módulo "use server".
+// Sem este mock a cadeia de import chega em @repo/database e estoura o guard de
+// env de servidor sob o ambiente de cliente, derrubando a suíte inteira deste
+// arquivo. A criação em si é coberta por budgets-create.test.tsx.
+vi.mock("@/app/actions/lean-budget", () => ({
+  createLeanBudget: vi.fn(),
+}));
+
 import BudgetsScreen from "../../components/cosmos/screens/budgets";
 
 const budget = (over: Record<string, unknown>) => ({
