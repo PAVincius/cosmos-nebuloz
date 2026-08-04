@@ -17,6 +17,19 @@ vi.mock("@/app/(cosmos)/actions/entity-search", () => ({
   searchEntities: vi.fn().mockResolvedValue({ ok: true, data: [] }),
 }));
 
+// Mesma razão: o board passou a ler a config de limite de WIP (story-061), e
+// esse módulo é "use server" — sem o mock a cadeia de import chega em
+// @repo/database e estoura o guard de env de servidor no ambiente de cliente.
+// A config em si é coberta por kanban-wip.test.tsx.
+vi.mock("@/app/actions/portfolio-kanban", () => ({
+  getPortfolioKanbanConfig: vi
+    .fn()
+    .mockResolvedValue({ ok: true, data: { columns: [] } }),
+  getViewerRole: vi.fn().mockResolvedValue({ ok: true, data: "DEV" }),
+  updateWipLimitAction: vi.fn(),
+  resetKanbanColumns: vi.fn(),
+}));
+
 import KanbanScreen from "../../components/cosmos/screens/kanban";
 
 const FAKE_MOCK_TITLES = [
