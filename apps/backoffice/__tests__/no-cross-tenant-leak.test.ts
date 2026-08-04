@@ -14,7 +14,7 @@ vi.mock("next/headers", () => ({
 }));
 
 const { clientListArgs, clientDetailArgs } = await import(
-  "../app/actions/clients"
+  "../lib/client-queries"
 );
 
 describe("fronteira cross-tenant", () => {

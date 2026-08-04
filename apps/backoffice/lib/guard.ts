@@ -54,3 +54,16 @@ export async function requirePlatformStaff(): Promise<PlatformStaff> {
     canWrite: membership.role === "ADMIN",
   };
 }
+
+/** Leitura é para todo staff; escrita é só de quem é ADMIN no tenant interno.
+ *
+ *  Mora aqui, e não em `app/actions/provisioning.ts`, porque um módulo
+ *  `"use server"` só pode exportar função async. */
+export function assertCanWrite(staff: PlatformStaff): void {
+  if (!staff.canWrite) {
+    throw new StaffAuthError(
+      "FORBIDDEN",
+      "Seu papel no back-office permite apenas leitura."
+    );
+  }
+}

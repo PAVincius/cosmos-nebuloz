@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
-import { listClients } from "./actions/clients";
+import { listClients } from "@/app/actions/clients";
 
 const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> =
   {

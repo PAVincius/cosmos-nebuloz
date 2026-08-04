@@ -11,22 +11,8 @@ import {
 } from "@repo/provisioning";
 import { invalidateModuleCache } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
-import {
-  type PlatformStaff,
-  requirePlatformStaff,
-  StaffAuthError,
-} from "@/lib/guard";
+import { assertCanWrite, requirePlatformStaff } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
-
-/** Leitura é para todo staff; escrita é só de quem é ADMIN no tenant interno. */
-export function assertCanWrite(staff: PlatformStaff): void {
-  if (!staff.canWrite) {
-    throw new StaffAuthError(
-      "FORBIDDEN",
-      "Seu papel no back-office permite apenas leitura."
-    );
-  }
-}
 
 async function tenantIdBySlug(slug: string): Promise<string> {
   const tenant = await platformDb.tenant.findUnique({

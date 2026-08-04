@@ -14,7 +14,7 @@ vi.mock("next/headers", () => ({
   headers: () => Promise.resolve(new Headers()),
 }));
 
-const { clientListArgs } = await import("../app/actions/clients");
+const { clientListArgs } = await import("../lib/client-queries");
 
 describe("clientListArgs", () => {
   it("exclui o tenant interno — ele não é cliente", () => {
