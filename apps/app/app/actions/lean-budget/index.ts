@@ -6,6 +6,8 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "@/app/actions/_base";
+import { logAudit } from "@/app/actions/audit/log-audit";
+import { enforce } from "@/app/actions/permissions";
 import {
   CreateBudgetSchema,
   type LeanBudgetWithStats,
@@ -15,6 +17,34 @@ import {
 } from "./schema";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
+
+/**
+ * Porta única de escrita: confirma o tenant e recusa orçamento já congelado.
+ *
+ * `immutableAt` passou a ser gravado no fecho do PI (story-017 AC-005,
+ * `lockLeanBudgets` em app/actions/arts/lifecycle.ts). Sem esta checagem o
+ * carimbo seria decorativo — o PI fecharia "congelando" o orçamento e qualquer
+ * mutação seguiria escrevendo por cima, que é justamente o que o Lean Budget
+ * Guardrail do SAFe existe para impedir: o gasto de um PI encerrado não se
+ * reescreve depois do fato.
+ *
+ * Devolve o registro para quem chamou poder auditar o estado anterior.
+ */
+async function carregarEditavel(tenantId: string, id: string) {
+  const budget = await database.leanBudget.findFirst({
+    where: { id, tenantId },
+    select: { id: true, name: true, immutableAt: true },
+  });
+  if (!budget) {
+    throw new Error("Orçamento não encontrado.");
+  }
+  if (budget.immutableAt) {
+    throw new Error(
+      `BUDGET_IMMUTABLE: congelado no fecho do PI em ${budget.immutableAt.toISOString()}.`
+    );
+  }
+  return budget;
+}
 
 function withStats(b: LeanBudget): LeanBudgetWithStats {
   const spentDecimal = b.spent !== null ? Number(b.spent) : null;
@@ -58,6 +88,20 @@ export async function linkBudgetToTheme(
 ): Promise<Result<LeanBudget>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "LeanBudget", "update");
+    await carregarEditavel(ctx.tenantId, budgetId);
+
+    // themeId vem do cliente. null é desvincular — não há FK para conferir.
+    if (themeId) {
+      const theme = await database.strategicTheme.findFirst({
+        where: { id: themeId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!theme) {
+        throw new Error("Tema estratégico inválido.");
+      }
+    }
+
     const { count } = await database.leanBudget.updateMany({
       where: { id: budgetId, tenantId: ctx.tenantId },
       data: { themeId: themeId ?? null },
@@ -68,9 +112,17 @@ export async function linkBudgetToTheme(
     const updated = await database.leanBudget.findFirstOrThrow({
       where: { id: budgetId, tenantId: ctx.tenantId },
     });
-    revalidatePath("/portfolio/budgets");
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "lean_budget",
+      entityId: budgetId,
+      diff: { themeId: themeId ?? "(desvinculado)" },
+    });
+
+    revalidatePath("/cosmos/budgets");
     if (themeId) {
-      revalidatePath(`/portfolio/themes/${themeId}`);
+      revalidatePath(`/cosmos/theme/${themeId}`);
     }
     return updated;
   });
@@ -145,7 +197,33 @@ export async function createLeanBudget(
 ): Promise<Result<LeanBudget>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    // Esta ação nasceu sem guard nenhum e sobreviveu assim porque não tinha
+    // chamador. Ao virar superfície de escrita na tela de budgets (story-062)
+    // ela passa a precisar do mesmo trio do resto do repo: papel, IDOR nos FKs
+    // que vêm do cliente, e auditoria — orçamento é dinheiro.
+    enforce(ctx.role, "LeanBudget", "create");
     const input = CreateBudgetSchema.parse(raw);
+
+    // artId e themeId chegam do cliente: sem esta confirmação um tenant
+    // penduraria seu orçamento no ART ou no tema de outro.
+    if (input.artId) {
+      const art = await database.aRT.findFirst({
+        where: { id: input.artId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!art) {
+        throw new Error("ART inválido.");
+      }
+    }
+    if (input.themeId) {
+      const theme = await database.strategicTheme.findFirst({
+        where: { id: input.themeId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!theme) {
+        throw new Error("Tema estratégico inválido.");
+      }
+    }
 
     const budget = await database.leanBudget.create({
       data: {
@@ -160,10 +238,21 @@ export async function createLeanBudget(
       },
     });
 
-    revalidatePath("/portfolio/budgets");
-    revalidatePath("/portfolio");
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "lean_budget",
+      entityId: budget.id,
+      diff: {
+        name: input.name,
+        amount: String(input.amount),
+        period: input.period,
+      },
+    });
+
+    revalidatePath("/cosmos/budgets");
     if (input.themeId) {
-      revalidatePath(`/portfolio/themes/${input.themeId}`);
+      revalidatePath(`/cosmos/theme/${input.themeId}`);
     }
     return budget;
   });
@@ -175,7 +264,9 @@ export async function updateLeanBudget(
 ): Promise<Result<LeanBudget>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "LeanBudget", "update");
     const input = UpdateBudgetSchema.parse(raw);
+    await carregarEditavel(ctx.tenantId, id);
 
     const { count } = await database.leanBudget.updateMany({
       where: { id, tenantId: ctx.tenantId },
@@ -200,8 +291,17 @@ export async function updateLeanBudget(
       where: { id, tenantId: ctx.tenantId },
     });
 
-    revalidatePath("/portfolio/budgets");
-    revalidatePath("/portfolio");
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "lean_budget",
+      entityId: id,
+      diff: Object.fromEntries(
+        Object.entries(input).map(([k, v]) => [k, String(v)])
+      ),
+    });
+
+    revalidatePath("/cosmos/budgets");
     return updated;
   });
 }
@@ -212,7 +312,9 @@ export async function updateSpent(
 ): Promise<Result<LeanBudget>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "LeanBudget", "update");
     const input = UpdateSpentSchema.parse(raw);
+    await carregarEditavel(ctx.tenantId, id);
 
     const { count } = await database.leanBudget.updateMany({
       where: { id, tenantId: ctx.tenantId },
@@ -227,8 +329,15 @@ export async function updateSpent(
       where: { id, tenantId: ctx.tenantId },
     });
 
-    revalidatePath("/portfolio/budgets");
-    revalidatePath("/portfolio");
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "lean_budget",
+      entityId: id,
+      diff: { spent: String(input.spent) },
+    });
+
+    revalidatePath("/cosmos/budgets");
     return updated;
   });
 }
@@ -238,6 +347,8 @@ export async function deleteLeanBudget(
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
+    enforce(ctx.role, "LeanBudget", "delete");
+    const budget = await carregarEditavel(ctx.tenantId, id);
 
     const { count } = await database.leanBudget.deleteMany({
       where: { id, tenantId: ctx.tenantId },
@@ -247,8 +358,15 @@ export async function deleteLeanBudget(
       throw new Error("Orçamento não encontrado ou sem permissão.");
     }
 
-    revalidatePath("/portfolio/budgets");
-    revalidatePath("/portfolio");
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "deleted",
+      entityType: "lean_budget",
+      entityId: id,
+      diff: { name: budget.name },
+    });
+
+    revalidatePath("/cosmos/budgets");
     return { id };
   });
 }

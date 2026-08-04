@@ -12,6 +12,7 @@ import {
   listLeanBudgets,
   updateLeanBudgetGuardrails,
 } from "@/app/(cosmos)/actions/budgets";
+import { createLeanBudget } from "@/app/actions/lean-budget";
 import { Icon } from "../icons";
 import {
   Badge,
@@ -287,7 +288,111 @@ function BudgetRow({
   );
 }
 
+// story-062 — não existia caminho nenhum, em tela nenhuma, para criar um Lean
+// Budget: (cosmos)/actions/budgets só lista e ajusta guardrails, e
+// createLeanBudget morava em app/actions/lean-budget sem chamador. Orçamento só
+// nascia por seed ou SQL. ART e tema ficam de fora deste formulário de
+// propósito — a ação já os aceita e valida, mas vincular pede o seletor de
+// entidade, que é outra história.
+function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
+  const { close } = useModal();
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const [period, setPeriod] = useState("");
+  const [saving, setSaving] = useState(false);
+
+  const create = async () => {
+    const valor = Number(amount);
+    if (!(name.trim() && period.trim() && valor > 0) || saving) {
+      return;
+    }
+    setSaving(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        createLeanBudget({
+          name: name.trim(),
+          amount: valor,
+          period: period.trim(),
+        }),
+      {
+        loading: "Criando orçamento...",
+        success: "Orçamento criado.",
+        error: (err: string) =>
+          err === "FORBIDDEN"
+            ? "Só ADMIN ou RTE cria Lean Budget."
+            : `Não foi possível criar o orçamento: ${err}`,
+      }
+    );
+    setSaving(false);
+    if (res.ok) {
+      close();
+      onCreated();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Icon name="wallet" size={16} strokeWidth={2.4} />}
+      subtitle="Lean Budget é o envelope de gasto de um PI — depois de fechado ele congela"
+      title="Novo orçamento"
+      width={440}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="budget-name" style={fieldLabelStyle}>
+            Nome do orçamento
+          </label>
+          <input
+            autoFocus
+            id="budget-name"
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex: Budget Pagamentos"
+            style={inputStyle}
+            value={name}
+          />
+        </div>
+        <div>
+          <label htmlFor="budget-amount" style={fieldLabelStyle}>
+            Valor alocado
+          </label>
+          <input
+            id="budget-amount"
+            min={1}
+            onChange={(e) => setAmount(e.target.value)}
+            placeholder="1000000"
+            style={inputStyle}
+            type="number"
+            value={amount}
+          />
+        </div>
+        <div>
+          <label htmlFor="budget-period" style={fieldLabelStyle}>
+            Período
+          </label>
+          <input
+            id="budget-period"
+            onChange={(e) => setPeriod(e.target.value)}
+            placeholder="Ex: PI-2026-Q1"
+            style={inputStyle}
+            value={period}
+          />
+        </div>
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          <Button onClick={create} size="sm" variant="primary">
+            Criar orçamento
+          </Button>
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
 function BudgetsBody() {
+  const modal = useModal();
   const [budgets, setBudgets] = useState<LeanBudgetView[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -322,7 +427,15 @@ function BudgetsBody() {
         meta={<Badge tone="accent">{budgets.length} orçamentos</Badge>}
         subtitle="Orçamentos por PI/ART, consumo vs. alocado."
         title="Lean Budgets"
-      />
+      >
+        <Button
+          onClick={() => modal.open(<NovoBudgetModal onCreated={load} />)}
+          size="sm"
+          variant="primary"
+        >
+          Novo orçamento
+        </Button>
+      </PageHeader>
       <div
         style={{
           display: "grid",

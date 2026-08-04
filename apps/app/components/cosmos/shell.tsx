@@ -57,6 +57,9 @@ export const NAV: NavItem[] = [
     icon: "target",
     expandable: true,
     children: [
+      // Primeiro da lista porque é o primeiro da cadeia: sem ART não há PI
+      // Plan, e sem PI Plan aberto o Program Board abaixo fica vazio.
+      { id: "arts", label: "ARTs" },
       { id: "program", label: "Program Board" },
       { id: "piplanning", label: "PI Planning" },
       { id: "dependencies", label: "Dependências" },
@@ -65,6 +68,9 @@ export const NAV: NavItem[] = [
     ],
   },
   { id: "teams", label: "Times", icon: "users" },
+  // Nível Team. Era o único nível do SAFe sem nenhuma tela no Cosmos: as
+  // outras 38 param no ART, e o trabalho do dia acontece aqui.
+  { id: "board", label: "Board do Time", icon: "kanban" },
   {
     key: "analytics",
     label: "Analytics",
@@ -93,6 +99,8 @@ export const TITLES: Record<string, [string, string]> = {
   budgets: ["Lean Budgets", "Portfolio"],
   roadmap: ["Roadmap", "Portfolio"],
   anomalies: ["Anomalias", "Portfolio"],
+  arts: ["ARTs", "ART Board"],
+  board: ["Board do Time", "Time"],
   program: ["Program Board", "ART Board"],
   piplanning: ["PI Planning", "ART Board"],
   dependencies: ["Dependências", "ART Board"],

@@ -2,6 +2,8 @@
 // here fall back to <ComingSoon> in the route. Add entries as screens land.
 import type { ComponentType } from "react";
 import AnomaliesScreen from "./anomalies";
+import ArtsScreen from "./arts";
+import BoardScreen from "./board";
 import BudgetsScreen from "./budgets";
 import CapacityScreen from "./capacity";
 import CopilotScreen from "./copilot";
@@ -44,6 +46,8 @@ export type ScreenProps = { param?: string };
 
 export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   anomalies: AnomaliesScreen,
+  arts: ArtsScreen,
+  board: BoardScreen,
   executive: ExecutiveScreen,
   dashboard: DashboardScreen,
   copilot: CopilotScreen,

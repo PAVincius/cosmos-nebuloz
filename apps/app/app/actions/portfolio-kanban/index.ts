@@ -7,47 +7,19 @@ import { headers } from "next/headers";
 import { transitionEpicStatus } from "@/app/actions/epics/transition-status";
 import { type Result, safeAction } from "../_base";
 import {
+  loadKanbanConfig,
+  METADATA_KEY,
+  type TenantMetadata,
+  WIP_OVERRIDE_ROLES,
+} from "./config";
+import {
   DEFAULT_PORTFOLIO_COLUMNS,
-  type KanbanColumnConfig,
   type KanbanConfig,
-  KanbanConfigSchema,
   MoveEpicSchema,
   UpdateColumnColorSchema,
   UpdateColumnLabelSchema,
   UpdateWipLimitSchema,
 } from "./schema";
-
-const METADATA_KEY = "portfolioKanban";
-
-type TenantMetadata = {
-  [METADATA_KEY]?: KanbanConfig;
-  [k: string]: unknown;
-};
-
-function mergeWithDefaults(
-  stored?: KanbanColumnConfig[]
-): KanbanColumnConfig[] {
-  if (!stored || stored.length === 0) {
-    return DEFAULT_PORTFOLIO_COLUMNS;
-  }
-  const byId = new Map(stored.map((c) => [c.id, c]));
-  return DEFAULT_PORTFOLIO_COLUMNS.map((d) => byId.get(d.id) ?? d);
-}
-
-async function loadKanbanConfig(tenantId: string): Promise<KanbanConfig> {
-  const tenant = await database.tenant.findFirst({
-    where: { id: tenantId },
-    select: { metadata: true },
-  });
-  const meta = (tenant?.metadata as TenantMetadata | null) ?? {};
-  const stored = meta[METADATA_KEY];
-  const parsed = stored ? KanbanConfigSchema.safeParse(stored) : null;
-  return {
-    columns: parsed?.success
-      ? mergeWithDefaults(parsed.data.columns)
-      : DEFAULT_PORTFOLIO_COLUMNS,
-  };
-}
 
 export async function getPortfolioKanbanConfig(): Promise<
   Result<KanbanConfig>
@@ -79,9 +51,6 @@ async function persistConfig(
   revalidatePath("/dashboard/portfolio");
   return next;
 }
-
-// Roles that can override WIP limits
-const WIP_OVERRIDE_ROLES = new Set(["ADMIN", "STE", "RTE", "PO", "SM"]);
 
 // Maps lifecycle column → state machine event
 const COLUMN_TO_TRANSITION_EVENT: Record<string, string> = {

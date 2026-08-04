@@ -38,6 +38,7 @@ const mocks = vi.hoisted(() => ({
   sprintFindMany: vi.fn(),
   stateTransitionHistoryCreate: vi.fn(),
   sprintCreateMany: vi.fn(),
+  leanBudgetUpdateMany: vi.fn(),
   transaction: vi.fn(),
 }));
 
@@ -66,6 +67,7 @@ vi.mock("@repo/database", () => ({
     pISession: { findFirst: mocks.piSessionFindFirst },
     sprint: { findMany: mocks.sprintFindMany },
     stateTransitionHistory: { create: mocks.stateTransitionHistoryCreate },
+    leanBudget: { updateMany: mocks.leanBudgetUpdateMany },
     $transaction: mocks.transaction,
   },
 }));
@@ -246,6 +248,7 @@ describe("transitionPIPlan", () => {
     mocks.sprintFindMany.mockResolvedValue([]);
     mocks.piPlanUpdate.mockResolvedValue({});
     mocks.stateTransitionHistoryCreate.mockResolvedValue({});
+    mocks.leanBudgetUpdateMany.mockResolvedValue({ count: 0 });
     mocks.transaction.mockImplementation((fn: (tx: unknown) => unknown) => {
       if (typeof fn === "function") {
         return fn({
@@ -254,6 +257,7 @@ describe("transitionPIPlan", () => {
             create: mocks.stateTransitionHistoryCreate,
           },
           sprint: { findMany: mocks.sprintFindMany },
+          leanBudget: { updateMany: mocks.leanBudgetUpdateMany },
         });
       }
       return Promise.all(fn as Promise<unknown>[]);
@@ -271,6 +275,43 @@ describe("transitionPIPlan", () => {
       return;
     }
     expect(result.data.status).toBe("PLANNING");
+  });
+
+  // story-017 AC-005 / AC-008 — `immutableAt` é comentado no schema como "set
+  // when PI closes" e nunca era gravado: lockBudgetOnPIClose existia em
+  // app/actions/portfolio/leanBudget.ts sem um único chamador. Travar aqui, e
+  // não numa ação separada, é o que torna o congelamento atômico com o fecho:
+  // ou o PI fecha com os orçamentos travados, ou nenhum dos dois acontece.
+  it("CLOSE trava os Lean Budgets do PI na mesma transação", async () => {
+    mocks.piPlanFindFirstOrThrow.mockResolvedValue({
+      ...piBase,
+      status: "EXECUTING",
+    });
+    mocks.leanBudgetUpdateMany.mockResolvedValue({ count: 2 });
+
+    const result = await transitionPIPlan({ piPlanId: "pi-1", event: "CLOSE" });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.leanBudgetUpdateMany).toHaveBeenCalledTimes(1);
+    const arg = mocks.leanBudgetUpdateMany.mock.calls[0][0];
+    expect(arg.where).toEqual({
+      tenantId: tenantCtx.tenantId,
+      piPlanId: "pi-1",
+      // Só os ainda destravados: reabrir e fechar de novo não pode reescrever
+      // o carimbo do primeiro fecho.
+      immutableAt: null,
+    });
+    expect(arg.data.immutableAt).toBeInstanceOf(Date);
+  });
+
+  it("transição que não é CLOSE não encosta nos Lean Budgets", async () => {
+    const result = await transitionPIPlan({
+      piPlanId: "pi-1",
+      event: "OPEN_PLANNING",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.leanBudgetUpdateMany).not.toHaveBeenCalled();
   });
 
   it("rejects invalid transition (DRAFT→COMMIT)", async () => {
