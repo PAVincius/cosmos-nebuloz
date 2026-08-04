@@ -22,6 +22,13 @@ import {
   listEpics,
   moveEpic,
 } from "@/app/(cosmos)/actions/kanban";
+import {
+  getPortfolioKanbanConfig,
+  getViewerRole,
+  resetKanbanColumns,
+  updateWipLimitAction,
+} from "@/app/actions/portfolio-kanban";
+import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
 import { Icon } from "../icons";
@@ -61,6 +68,20 @@ const BOARD_COLUMNS: BoardColumnDef[] = [
   },
   { id: "done", label: "Done", tone: "green", hex: "22,163,74" },
 ];
+
+/**
+ * A config de WIP é indexada pelo id de ciclo de vida (`PORTFOLIO_BACKLOG`); o
+ * board usa o id curto (`backlog`). Sem esta ponte o limite seria lido para uma
+ * coluna que não existe no quadro e sumiria em silêncio.
+ * REJECTED não tem coluna no board do Cosmos — fica de fora de propósito.
+ */
+const LIFECYCLE_TO_BOARD_COLUMN: Record<string, string> = {
+  FUNNEL: "funnel",
+  ANALYZING: "analyzing",
+  PORTFOLIO_BACKLOG: "backlog",
+  IMPLEMENTING: "implementing",
+  DONE: "done",
+};
 
 // ── helpers ──
 type Priority = "high" | "med" | "low";
@@ -174,6 +195,156 @@ const fieldInputStyle: CSSProperties = {
   fontFamily: "inherit",
   outline: "none",
 };
+
+/** Papéis que updateWipLimitAction aceita. Espelha o guard da ação. */
+const WIP_CONFIG_ROLES = new Set(["ADMIN", "STE", "RTE"]);
+
+// story-061 — sem esta tela valiam apenas os DEFAULT_PORTFOLIO_COLUMNS:
+// updateWipLimitAction e resetKanbanColumns existiam sem chamador, então o
+// limite era o mesmo para todo tenant e não havia como afrouxá-lo nem apertá-lo.
+function WipConfigModal({
+  colunas,
+  onSaved,
+}: {
+  colunas: KanbanColumnConfig[];
+  onSaved: () => void;
+}) {
+  const { close } = useModal();
+  // Guarda o texto, não o número: campo vazio precisa ser distinguível de zero.
+  const [rascunho, setRascunho] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      colunas.map((c) => [c.id, c.wipLimit ? String(c.wipLimit) : ""])
+    )
+  );
+  const [saving, setSaving] = useState(false);
+
+  const salvar = async () => {
+    if (saving) {
+      return;
+    }
+    setSaving(true);
+    // Só as colunas que mudaram: mandar as cinco a cada save gravaria quatro
+    // vezes a mesma config e daria quatro toasts.
+    const alteradas = colunas.filter((c) => {
+      const atual = c.wipLimit ? String(c.wipLimit) : "";
+      return (rascunho[c.id] ?? "") !== atual;
+    });
+
+    for (const c of alteradas) {
+      const texto = (rascunho[c.id] ?? "").trim();
+      const valor = Number(texto);
+      // Vazio é "sem limite" (null). Zero seria coluna que não aceita nada —
+      // por isso o schema recusa e o campo vazio nunca vira 0.
+      const wipLimit = texto === "" || !(valor > 0) ? null : Math.trunc(valor);
+      // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+      const res = await useActionToast(
+        () => updateWipLimitAction({ columnId: c.id, wipLimit }),
+        {
+          loading: `Salvando limite de ${c.label}...`,
+          success: `Limite de ${c.label} atualizado.`,
+          error: (err: string) => `Não foi possível salvar: ${err}`,
+        }
+      );
+      if (!res.ok) {
+        setSaving(false);
+        return;
+      }
+    }
+
+    setSaving(false);
+    close();
+    onSaved();
+  };
+
+  const restaurar = async () => {
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => resetKanbanColumns(), {
+      loading: "Restaurando limites padrão...",
+      success: "Limites restaurados.",
+      error: (err: string) => `Não foi possível restaurar: ${err}`,
+    });
+    if (res.ok) {
+      close();
+      onSaved();
+    }
+  };
+
+  return (
+    <div
+      style={{
+        width: 420,
+        maxWidth: "92vw",
+        background: "var(--surface-2)",
+        border: "1px solid var(--hairline-strong)",
+        borderRadius: 18,
+        boxShadow: "0 48px 96px -24px rgba(0,0,0,.7)",
+        overflow: "hidden",
+        padding: 18,
+      }}
+    >
+      <div
+        className="display"
+        style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)" }}
+      >
+        Limites de WIP
+      </div>
+      <div style={{ fontSize: 12.5, color: "var(--ink-faint)", marginTop: 4 }}>
+        Coluna no limite para de aceitar épico. Deixe vazio para não limitar.
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          marginTop: 14,
+        }}
+      >
+        {colunas.map((c) => (
+          <div
+            key={c.id}
+            style={{ display: "flex", alignItems: "center", gap: 10 }}
+          >
+            <label
+              htmlFor={`wip-${c.id}`}
+              style={{ ...fieldLabelStyle, flex: 1, textTransform: "none" }}
+            >
+              {c.label}
+            </label>
+            <input
+              aria-label={`Limite de ${c.label}`}
+              id={`wip-${c.id}`}
+              min={1}
+              onChange={(e) =>
+                setRascunho((prev) => ({ ...prev, [c.id]: e.target.value }))
+              }
+              placeholder="sem limite"
+              style={{ ...fieldInputStyle, width: 110 }}
+              type="number"
+              value={rascunho[c.id] ?? ""}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div
+        style={{
+          display: "flex",
+          gap: 8,
+          justifyContent: "flex-end",
+          marginTop: 16,
+        }}
+      >
+        <Button onClick={restaurar} size="sm" variant="secondary">
+          Restaurar padrão
+        </Button>
+        <Button onClick={salvar} size="sm" variant="primary">
+          Salvar limites
+        </Button>
+      </div>
+    </div>
+  );
+}
 
 function NewEpicModal({
   col,
@@ -737,19 +908,30 @@ function AddEpicRow({ onAdd }: { onAdd: () => void }) {
 function KanbanColumn({
   col,
   items,
+  wipLimit,
   onDragStart,
   onDropEpic,
   onCreated,
 }: {
   col: BoardColumnDef;
   items: KanbanEpic[];
+  /** null = coluna sem limite configurado. */
+  wipLimit: number | null;
   onDragStart: (id: string) => void;
   onDropEpic: (col: KanbanEpic["column"]) => void;
   onCreated: () => void;
 }) {
   const modal = useModal();
   const [over, setOver] = useState(false);
-  const colTone = col.tone === "neutral" ? "accent" : col.tone;
+  // story-061 — no Portfolio Kanban do SAFe, coluna no limite é sinal de parar
+  // de puxar. O servidor recusa a movimentação (enforceWipLimit); aqui o número
+  // aparece antes de alguém tentar, para o limite ser um sinal e não um erro.
+  const noLimite = wipLimit !== null && items.length >= wipLimit;
+  const colTone = noLimite
+    ? "red"
+    : col.tone === "neutral"
+      ? "accent"
+      : col.tone;
   return (
     <div
       onDragLeave={() => setOver(false)}
@@ -816,8 +998,13 @@ function KanbanColumn({
             padding: "1px 8px",
             border: `1px solid rgba(var(--${colTone}-rgb),.25)`,
           }}
+          title={
+            wipLimit === null
+              ? undefined
+              : `Limite de WIP: ${items.length} de ${wipLimit}`
+          }
         >
-          {items.length}
+          {wipLimit === null ? items.length : `${items.length}/${wipLimit}`}
         </span>
         <div style={{ marginLeft: "auto", display: "flex", gap: 2 }}>
           <button
@@ -1129,6 +1316,14 @@ function KanbanFilterPopover({
 export default function KanbanScreen() {
   const { navigate } = useNav();
   const [epics, setEpics] = useState<KanbanEpic[]>([]);
+  const [colunas, setColunas] = useState<KanbanColumnConfig[]>([]);
+  const [viewerRole, setViewerRole] = useState<string | null>(null);
+  const wipLimits: Record<string, number | null> = Object.fromEntries(
+    colunas.flatMap((c) => {
+      const board = LIFECYCLE_TO_BOARD_COLUMN[c.id];
+      return board ? [[board, c.wipLimit ?? null]] : [];
+    })
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const { filters, setFilters, activeCount, matches } = useKanbanFilters();
@@ -1177,6 +1372,31 @@ export default function KanbanScreen() {
   useEffect(() => {
     load();
   }, [load]);
+
+  // story-061 — a config vive em Tenant.metadata e é a MESMA que o servidor lê
+  // em enforceWipLimit. Ler aqui é o que evita a tela prometer um movimento que
+  // a ação vai recusar. Falha na leitura ⇒ board sem limite exibido, nunca com
+  // limite inventado: o servidor segue sendo a autoridade.
+  const loadConfig = useCallback(async () => {
+    const res = await getPortfolioKanbanConfig();
+    if (res.ok) {
+      setColunas(res.data.columns);
+    }
+  }, []);
+  useEffect(() => {
+    loadConfig();
+  }, [loadConfig]);
+
+  // O papel vem do servidor, não de palpite do cliente: updateWipLimitAction já
+  // exige ADMIN/STE/RTE, e oferecer o controle a quem ela recusaria seria
+  // prometer um FORBIDDEN.
+  useEffect(() => {
+    getViewerRole().then((res) => {
+      if (res.ok) {
+        setViewerRole(res.data);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if (!filterOpen) {
@@ -1227,6 +1447,19 @@ export default function KanbanScreen() {
           subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
           title="Kanban de Épicos"
         >
+          {viewerRole !== null && WIP_CONFIG_ROLES.has(viewerRole) && (
+            <Button
+              onClick={() =>
+                modal.open(
+                  <WipConfigModal colunas={colunas} onSaved={loadConfig} />
+                )
+              }
+              size="sm"
+              variant="secondary"
+            >
+              Configurar limites de WIP
+            </Button>
+          )}
           <button
             className="btn"
             data-kanban-filter-trigger
@@ -1366,6 +1599,7 @@ export default function KanbanScreen() {
                       dragId.current = id;
                     }}
                     onDropEpic={moveTo}
+                    wipLimit={wipLimits[col.id] ?? null}
                   />
                 ))}
           </div>

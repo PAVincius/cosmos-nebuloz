@@ -326,6 +326,7 @@ export async function transitionPIPlan(
 
       if (isClosed) {
         await computeAchievedValues(tx, input.piPlanId, ctx.tenantId);
+        await lockLeanBudgets(tx, input.piPlanId, ctx.tenantId);
       }
     });
 
@@ -402,6 +403,29 @@ async function validateCommitmentGate(opts: CommitGateOpts) {
   if (errors.length > 0) {
     throw new Error(`COMMITMENT_GATE_FAILED:${errors.join("|")}`);
   }
+}
+
+/**
+ * story-017 AC-005 — `LeanBudget.immutableAt` é comentado no schema como "set
+ * when PI closes" e, até aqui, nunca era gravado por ninguém: a lógica existia
+ * em `lockBudgetOnPIClose` (app/actions/portfolio/leanBudget.ts) sem um único
+ * chamador, e o orçamento de um PI fechado seguia editável para sempre.
+ *
+ * Mora dentro da transação do fecho, e não numa ação avulsa, porque o
+ * congelamento tem de ser atômico com ele: ou o PI fecha com os orçamentos
+ * travados, ou nada acontece. `immutableAt: null` no filtro garante que
+ * reabrir e fechar de novo não reescreva o carimbo do primeiro fecho — a data
+ * que vale é a do congelamento original.
+ */
+async function lockLeanBudgets(
+  tx: Parameters<Parameters<typeof database.$transaction>[0]>[0],
+  piPlanId: string,
+  tenantId: string
+) {
+  await tx.leanBudget.updateMany({
+    where: { tenantId, piPlanId, immutableAt: null },
+    data: { immutableAt: new Date() },
+  });
 }
 
 async function computeAchievedValues(

@@ -18,6 +18,10 @@ import {
   type TransitionEpicInput,
   transitionEpicStatus,
 } from "../../actions/epics/transition-status";
+import {
+  loadKanbanConfig,
+  WIP_OVERRIDE_ROLES,
+} from "../../actions/portfolio-kanban/config";
 
 // ── column ↔ SAFe lifecycle mapping ──
 const COLUMN_TO_LIFECYCLE = {
@@ -112,7 +116,69 @@ const MoveEpicSchema = z.object({
   id: z.string().min(1),
   column: z.enum(["funnel", "analyzing", "backlog", "implementing", "done"]),
   order: z.number().int().min(0),
+  // Só é lido quando a coluna de destino está no limite. Mínimo de 5 para o
+  // campo não virar um "ok" digitado às pressas.
+  wipOverrideReason: z.string().min(5).optional(),
 });
+
+type WipCheck = {
+  tenantId: string;
+  userId: string;
+  role: string;
+  epicId: string;
+  lifecycleStatus: string;
+  wipOverrideReason?: string;
+};
+
+/**
+ * Porta do limite de WIP do Portfolio Kanban. Coluna sem `wipLimit` não tem
+ * porta; coluna no limite só deixa passar quem tem papel para estourar **e**
+ * escreve o porquê. O override vira `DecisionLogEntry`: estourar sem deixar
+ * rastro é o mesmo que não ter limite, e a retrospectiva precisa poder
+ * perguntar por que a coluna encheu.
+ */
+async function enforceWipLimit(check: WipCheck): Promise<void> {
+  const config = await loadKanbanConfig(check.tenantId);
+  const target = config.columns.find((c) => c.id === check.lifecycleStatus);
+  if (!target?.wipLimit) {
+    return;
+  }
+
+  const count = await database.epic.count({
+    where: { tenantId: check.tenantId, lifecycleStatus: check.lifecycleStatus },
+  });
+  if (count < target.wipLimit) {
+    return;
+  }
+
+  if (!WIP_OVERRIDE_ROLES.has(check.role)) {
+    throw new Error(
+      `WIP_LIMIT_EXCEEDED: ${target.label} está em ${count}/${target.wipLimit}.`
+    );
+  }
+  if (!check.wipOverrideReason) {
+    throw new Error(
+      `WIP_OVERRIDE_REASON_REQUIRED: ${target.label} está em ${count}/${target.wipLimit}.`
+    );
+  }
+
+  await database.decisionLogEntry.create({
+    data: {
+      tenantId: check.tenantId,
+      tipo: "epic_decision",
+      targetType: "epic",
+      targetId: check.epicId,
+      decisao: "wip_override",
+      justificativa: check.wipOverrideReason,
+      dadosSuporte: {
+        toColumn: check.lifecycleStatus,
+        wipLimit: target.wipLimit,
+        currentCount: count,
+      },
+      decisorId: check.userId,
+    },
+  });
+}
 
 // Evento da máquina de ciclo de vida que leva a cada coluna do board. FUNNEL não
 // aparece: é o estado inicial e nenhum evento retorna a ele — arrastar um card
@@ -130,7 +196,8 @@ export async function moveEpic(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "RTE", "PO"], ctx);
-    const { id, column, order } = MoveEpicSchema.parse(input);
+    const { id, column, order, wipOverrideReason } =
+      MoveEpicSchema.parse(input);
 
     // ownership re-check by tenant — never trust the client id
     const existing = await database.epic.findFirst({
@@ -161,6 +228,19 @@ export async function moveEpic(
     // o board gravava lifecycleStatus direto, o que tornava o Kanban uma
     // segunda fonte de verdade discordante da máquina e do trigger
     // epic_lifecycle_guard no banco.
+    // Limite de WIP (story-061). Vem antes da máquina de estados de propósito:
+    // coluna cheia significa parar de puxar, então a transição nem deve ser
+    // tentada. A config e esta regra existiam em app/actions/portfolio-kanban
+    // sem nenhum chamador — o board movia épico sem olhar limite algum.
+    await enforceWipLimit({
+      tenantId: ctx.tenantId,
+      userId: ctx.userId,
+      role: ctx.role,
+      epicId: id,
+      lifecycleStatus,
+      wipOverrideReason,
+    });
+
     const event = LIFECYCLE_TO_EVENT[lifecycleStatus];
     if (!event) {
       throw new Error(

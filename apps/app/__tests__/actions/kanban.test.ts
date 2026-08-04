@@ -14,6 +14,9 @@ const h = vi.hoisted(() => ({
   themeFindFirst: vi.fn(),
   logAudit: vi.fn(),
   transitionEpicStatus: vi.fn(),
+  epicCount: vi.fn(),
+  tenantFindFirst: vi.fn(),
+  decisionLogCreate: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({
@@ -37,8 +40,10 @@ vi.mock("@repo/database", () => ({
       update: h.epicUpdate,
       create: h.epicCreate,
       aggregate: h.epicAggregate,
+      count: h.epicCount,
     },
-    tenant: { findUnique: h.tenantFindUnique },
+    decisionLogEntry: { create: h.decisionLogCreate },
+    tenant: { findUnique: h.tenantFindUnique, findFirst: h.tenantFindFirst },
     strategicTheme: { findFirst: h.themeFindFirst },
   },
 }));
@@ -78,6 +83,10 @@ beforeEach(() => {
     _count: { _all: 1 },
     _max: { updatedAt: new Date("2026-01-01T00:00:00.000Z") },
   });
+  // Tenant sem config salva ⇒ DEFAULT_PORTFOLIO_COLUMNS. Coluna vazia por
+  // padrão, para o gate de WIP não interferir nos testes que não são sobre ele.
+  h.tenantFindFirst.mockResolvedValue({ metadata: null });
+  h.epicCount.mockResolvedValue(0);
 });
 
 describe("listEpics", () => {
@@ -103,6 +112,126 @@ describe("listEpics", () => {
         hot: true,
       });
     }
+  });
+});
+
+// story-061 — o limite de WIP é a regra central do Portfolio Kanban no SAFe:
+// coluna cheia significa parar de puxar, não puxar mais devagar. A config e a
+// checagem existiam em app/actions/portfolio-kanban sem nenhum chamador, e o
+// board do Cosmos movia épico sem olhar limite algum.
+describe("moveEpic — limite de WIP", () => {
+  // DEFAULT_PORTFOLIO_COLUMNS dá wipLimit 5 a PORTFOLIO_BACKLOG.
+  const colunaCheia = () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "ANALYZING",
+    });
+    h.epicCount.mockResolvedValue(5);
+  };
+
+  it("bloqueia quem não pode estourar o limite", async () => {
+    colunaCheia();
+    h.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "DEV" });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 0 });
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toContain("WIP_LIMIT_EXCEEDED");
+    // A máquina de estados nem chega a ser consultada: o limite é anterior.
+    expect(h.transitionEpicStatus).not.toHaveBeenCalled();
+  });
+
+  it("exige justificativa de quem pode estourar", async () => {
+    colunaCheia();
+    h.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "RTE" });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 0 });
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toContain("WIP_OVERRIDE_REASON_REQUIRED");
+    expect(h.transitionEpicStatus).not.toHaveBeenCalled();
+  });
+
+  it("deixa passar com justificativa e registra no Decision Log", async () => {
+    colunaCheia();
+    h.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "RTE" });
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: true,
+      data: {
+        epicId: "ep-1",
+        fromStatus: "ANALYZING",
+        toStatus: "PORTFOLIO_BACKLOG",
+      },
+    });
+    h.epicUpdate.mockResolvedValue({ id: "ep-1" });
+    h.decisionLogCreate.mockResolvedValue({ id: "dl-1" });
+
+    const res = await moveEpic({
+      id: "ep-1",
+      column: "backlog",
+      order: 0,
+      wipOverrideReason: "Épico regulatório com prazo legal em 30 dias",
+    });
+
+    expect(res.ok).toBe(true);
+    // Estourar WIP sem deixar rastro é o mesmo que não ter limite: o registro
+    // é o que permite a retrospectiva perguntar por que a coluna encheu.
+    expect(h.decisionLogCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          tenantId: tenantCtx.tenantId,
+          decisao: "wip_override",
+          justificativa: "Épico regulatório com prazo legal em 30 dias",
+        }),
+      })
+    );
+    expect(h.transitionEpicStatus).toHaveBeenCalled();
+  });
+
+  it("não checa WIP ao reordenar dentro da mesma coluna", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "PORTFOLIO_BACKLOG",
+    });
+    h.epicCount.mockResolvedValue(99);
+    h.epicUpdate.mockResolvedValue({ id: "ep-1" });
+
+    const res = await moveEpic({ id: "ep-1", column: "backlog", order: 2 });
+
+    expect(res.ok).toBe(true);
+    expect(h.decisionLogCreate).not.toHaveBeenCalled();
+  });
+
+  it("coluna sem limite configurado não bloqueia", async () => {
+    h.epicFindFirst.mockResolvedValue({
+      id: "ep-1",
+      lifecycleStatus: "IMPLEMENTING",
+    });
+    // Config salva zerando o limite de DONE.
+    h.tenantFindFirst.mockResolvedValue({
+      metadata: {
+        portfolioKanban: {
+          columns: [{ id: "DONE", label: "Done", color: "#10b981" }],
+        },
+      },
+    });
+    h.epicCount.mockResolvedValue(999);
+    h.transitionEpicStatus.mockResolvedValue({
+      ok: true,
+      data: { epicId: "ep-1", fromStatus: "IMPLEMENTING", toStatus: "DONE" },
+    });
+    h.epicUpdate.mockResolvedValue({ id: "ep-1" });
+
+    const res = await moveEpic({ id: "ep-1", column: "done", order: 0 });
+
+    expect(res.ok).toBe(true);
+    expect(h.decisionLogCreate).not.toHaveBeenCalled();
   });
 });
 
