@@ -31,6 +31,29 @@ export type CharterEntity =
   | "charter.coverage";
 
 /**
+ * Erro de regra de governança violada → 422 com a regra nomeada. Distinto de
+ * FORBIDDEN (403, falta permissão) e de conflito de estado (409).
+ *
+ * Duplicado de propósito do `GovernanceError` de `@/lib/charter/guards`: os
+ * testes de action mockam aquele módulo até `requireCharterPermissionContext`
+ * (`vi.mock` com factory parcial), e qualquer outro nome importado de lá —
+ * inclusive por um re-export daqui — vira um proxy que lança ao ser acessado
+ * ("No X export is defined on the mock"). Só uma classe definida num módulo
+ * que os testes não mockam garante que a mensagem da regra sobrevive até
+ * `res.error`.
+ */
+export class GovernanceError extends Error {
+  readonly rule: string;
+  readonly status = 422;
+
+  constructor(rule: string, message: string) {
+    super(message);
+    this.name = "GovernanceError";
+    this.rule = rule;
+  }
+}
+
+/**
  * Grava entrada de auditoria do Charter.
  *
  * Escreve direto na tabela em vez de usar `logAudit()` do Cosmos por dois

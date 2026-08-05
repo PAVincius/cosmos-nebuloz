@@ -382,6 +382,7 @@ export const AUDIT_TYPE_META: Record<
   onboarding: { label: "Onboarding", tone: "purple", icon: "userCheck" },
   export: { label: "Exportação", tone: "accent", icon: "download" },
   settings: { label: "Configuração", tone: "accent", icon: "settings" },
+  compliance: { label: "Conformidade", tone: "accent", icon: "scale" },
 };
 
 /** Lista expansível. O diff campo-a-campo fica colapsado por padrão: a trilha
