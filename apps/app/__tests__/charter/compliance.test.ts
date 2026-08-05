@@ -6,8 +6,10 @@ const h = vi.hoisted(() => ({
   setFindFirst: vi.fn(),
   reqCreateMany: vi.fn(),
   reqFindMany: vi.fn(),
+  reqFindFirst: vi.fn(),
   covUpsert: vi.fn(),
   covFindMany: vi.fn(),
+  covFindUnique: vi.fn(),
   auditCreate: vi.fn(),
 }));
 
@@ -21,8 +23,13 @@ vi.mock("@repo/database", () => ({
       charterRequirement: {
         createMany: h.reqCreateMany,
         findMany: h.reqFindMany,
+        findFirst: h.reqFindFirst,
       },
-      charterCoverage: { upsert: h.covUpsert, findMany: h.covFindMany },
+      charterCoverage: {
+        upsert: h.covUpsert,
+        findMany: h.covFindMany,
+        findUnique: h.covFindUnique,
+      },
       auditLog: { create: h.auditCreate },
     }),
 }));
@@ -129,6 +136,10 @@ describe("setCoverage", () => {
       m.mockReset();
     }
     h.requireCtx.mockResolvedValue(ctx);
+    // Requisito existe e é visível ao tenant, e não há veredito prévio —
+    // testes que precisam do caso contrário sobrescrevem por cima.
+    h.reqFindFirst.mockResolvedValue({ id: "r-1" });
+    h.covFindUnique.mockResolvedValue(null);
     h.covUpsert.mockResolvedValue({ id: "c-1" });
   });
 
@@ -177,6 +188,56 @@ describe("setCoverage", () => {
     });
 
     expect(res.ok).toBe(true);
+  });
+
+  it("requisito de outro tenant é recusado, sem distinguir de inexistente", async () => {
+    // Mesmo raciocínio do teste análogo de getComplianceMap: sem este guard,
+    // requirementId de outro tenant vira oráculo de existência (sucesso vs
+    // erro denuncia se o id existe em algum lugar), mesmo que a linha de
+    // CharterCoverage em si tenha RLS e carregue o tenantId de quem chamou.
+    h.reqFindFirst.mockResolvedValue(null);
+
+    const res = await setCoverage({
+      requirementId: "r-de-outro-tenant",
+      status: "NAO_ATENDE",
+    });
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toContain("não encontrada");
+    expect(h.covUpsert).not.toHaveBeenCalled();
+  });
+
+  it("audita traço como veredito anterior no primeiro registro", async () => {
+    // h.covFindUnique já resolve null pelo beforeEach — nenhuma cobertura
+    // prévia para este requisito.
+    await setCoverage({ requirementId: "r-1", status: "NAO_ATENDE" });
+
+    expect(h.auditCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          diff: [["Status", "—", "NAO_ATENDE"]],
+        }),
+      })
+    );
+  });
+
+  it("audita o veredito anterior real quando já existe cobertura — não só um traço", async () => {
+    // ATENDE → NAO_ATENDE é o fato mais relevante que esta tabela registra;
+    // um "—" aqui esconderia justamente essa mudança.
+    h.covFindUnique.mockResolvedValue({ status: "ATENDE" });
+
+    await setCoverage({ requirementId: "r-1", status: "NAO_ATENDE" });
+
+    expect(h.auditCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          diff: [["Status", "ATENDE", "NAO_ATENDE"]],
+        }),
+      })
+    );
   });
 });
 

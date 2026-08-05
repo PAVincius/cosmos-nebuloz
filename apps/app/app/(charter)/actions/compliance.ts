@@ -176,6 +176,38 @@ export async function setCoverage(
     }
 
     return withTenantDb(ctx.tenantId, async (db) => {
+      // Do tenant OU global — mesmo filtro de getComplianceMap. Sem ele,
+      // requirementId de outro tenant vira oráculo de existência: sucesso vs
+      // violação de FK denuncia se o id existe em algum lugar do sistema,
+      // ainda que CharterCoverage tenha RLS e a linha gravada carregue o
+      // tenantId de quem chamou.
+      const requirement = await db.charterRequirement.findFirst({
+        where: {
+          id: data.requirementId,
+          set: { OR: [{ tenantId: ctx.tenantId }, { tenantId: null }] },
+        },
+      });
+      if (!requirement) {
+        throw new GovernanceError(
+          "requirement.unknown",
+          "Exigência não encontrada."
+        );
+      }
+
+      // Pré-leitura pontual pela própria chave composta do upsert (indexada;
+      // este é um caminho de escrita pouco frequente e disparado por
+      // humano). Sem ela o diff de auditoria nunca saberia o veredito
+      // anterior — e ATENDE → NAO_ATENDE é justamente o fato mais relevante
+      // que esta tabela pode registrar.
+      const anterior = await db.charterCoverage.findUnique({
+        where: {
+          tenantId_requirementId: {
+            tenantId: ctx.tenantId,
+            requirementId: data.requirementId,
+          },
+        },
+      });
+
       // Chave composta: uma exigência de regulação é UMA linha global
       // compartilhada por todos os tenants (DATA-MODEL). `where: {
       // requirementId }` faria o upsert do segundo tenant a opinar
@@ -206,12 +238,7 @@ export async function setCoverage(
         entityType: "charter.coverage",
         entityId: data.requirementId,
         target: `${data.requirementId} · ${data.status}`,
-        // "Antes" fica "—": o upsert é de mão única (sem pré-leitura) de
-        // propósito, para não gastar um round-trip extra num caminho que
-        // roda a cada veredito. A linha prova quem registrou o quê e quando;
-        // o valor anterior, quando existe, já está na entrada de auditoria
-        // que este registro sucede.
-        diff: [["Status", "—", data.status]],
+        diff: [["Status", anterior?.status ?? "—", data.status]],
       });
 
       return null;
@@ -227,90 +254,111 @@ export async function getComplianceMap(
   return await safeAction(async () => {
     const ctx = await requireCharterPermissionContext("compliance.map");
 
-    return withTenantDb(ctx.tenantId, async (db) => {
-      // Do tenant OU global (tenantId null = regulação, vale para todos) —
-      // nunca uma busca sem esse filtro, a única tabela sem RLS por baixo.
-      const set = await db.charterRequirementSet.findFirst({
-        where: {
-          id: setId,
-          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
-        },
-      });
-      if (!set) {
-        // Mesma mensagem para "não existe" e "não é seu": distinguir
-        // confirma ao curioso que o id existe em algum lugar.
-        throw new GovernanceError(
-          "set.unknown",
-          "Conjunto de exigências não encontrado."
-        );
-      }
-
-      const requisitos = await db.charterRequirement.findMany({
-        where: { setId: set.id },
-        orderBy: { codigo: "asc" },
-      });
-
-      const coberturas = await db.charterCoverage.findMany({
-        where: {
-          tenantId: ctx.tenantId,
-          requirementId: { in: requisitos.map((r) => r.id) },
-        },
-      });
-      const coberturaPorRequisito = new Map(
-        coberturas.map((c) => [c.requirementId, c])
-      );
-
-      let semVeredito = 0;
-      const linhas: MapRow[] = [];
-      for (const r of requisitos) {
-        const cobertura = coberturaPorRequisito.get(r.id);
-        const status = cobertura?.status ?? "SEM_VEREDITO";
-        if (status === "SEM_VEREDITO") {
-          semVeredito += 1;
-        }
-
-        let evidencia: MapRow["evidencia"] = null;
-        let evidenciaErro: string | null = null;
-        let capabilityLabel: string | null = null;
-
-        if (cobertura?.capabilityId) {
-          const capability = getCapability(cobertura.capabilityId);
-          if (capability) {
-            capabilityLabel = capability.label;
-            try {
-              evidencia = await capability.evidencia(ctx.tenantId);
-            } catch (e) {
-              // O mapa nunca pode seguir mostrando "atende" limpo sem
-              // conseguir provar: uma linha que afirma sem provar vai para o
-              // comprador com a chancela do produto.
-              evidenciaErro =
-                e instanceof Error
-                  ? `Falha ao buscar evidência: ${e.message}`
-                  : "Falha ao buscar evidência.";
-            }
-          } else {
-            evidenciaErro =
-              "Capacidade removida do catálogo — revise esta cobertura.";
-          }
-        }
-
-        linhas.push({
-          requirementId: r.id,
-          codigo: r.codigo,
-          citacao: r.citacao,
-          resumo: r.resumo,
-          peso: r.peso,
-          status,
-          comentario: cobertura?.comentario ?? null,
-          capabilityId: cobertura?.capabilityId ?? null,
-          capabilityLabel,
-          evidencia,
-          evidenciaErro,
+    // Só as três leituras aqui dentro — set, requisitos, coberturas do
+    // tenant. `withTenantDb` é um `$transaction`, e cada capacidade do
+    // catálogo (`lib/charter/capabilities.ts`) abre seu **próprio**
+    // `withTenantDb` para buscar a evidência. Resolver evidência aqui dentro
+    // seguraria a conexão desta transação enquanto espera por uma segunda
+    // conexão do mesmo pool para a transação interna — sob pool pequeno ou
+    // serverless isso é a forma clássica de deadlock, e dispara em qualquer
+    // mapa com pelo menos uma linha com capacidade. A leitura fecha (commit)
+    // antes de qualquer `capability.evidencia()` ser chamada.
+    const { set, requisitos, coberturas } = await withTenantDb(
+      ctx.tenantId,
+      async (db) => {
+        // Do tenant OU global (tenantId null = regulação, vale para todos) —
+        // nunca uma busca sem esse filtro, a única tabela sem RLS por baixo.
+        const foundSet = await db.charterRequirementSet.findFirst({
+          where: {
+            id: setId,
+            OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+          },
         });
+        if (!foundSet) {
+          // Mesma mensagem para "não existe" e "não é seu": distinguir
+          // confirma ao curioso que o id existe em algum lugar.
+          throw new GovernanceError(
+            "set.unknown",
+            "Conjunto de exigências não encontrado."
+          );
+        }
+
+        const foundRequisitos = await db.charterRequirement.findMany({
+          where: { setId: foundSet.id },
+          orderBy: { codigo: "asc" },
+        });
+
+        const foundCoberturas = await db.charterCoverage.findMany({
+          where: {
+            tenantId: ctx.tenantId,
+            requirementId: { in: foundRequisitos.map((r) => r.id) },
+          },
+        });
+
+        return {
+          set: foundSet,
+          requisitos: foundRequisitos,
+          coberturas: foundCoberturas,
+        };
+      }
+    );
+
+    const coberturaPorRequisito = new Map(
+      coberturas.map((c) => [c.requirementId, c])
+    );
+
+    let semVeredito = 0;
+    const linhas: MapRow[] = [];
+    for (const r of requisitos) {
+      const cobertura = coberturaPorRequisito.get(r.id);
+      const status = cobertura?.status ?? "SEM_VEREDITO";
+      if (status === "SEM_VEREDITO") {
+        semVeredito += 1;
       }
 
-      return { setId: set.id, nome: set.nome, linhas, semVeredito };
-    });
+      let evidencia: MapRow["evidencia"] = null;
+      let evidenciaErro: string | null = null;
+      let capabilityLabel: string | null = null;
+
+      if (cobertura?.capabilityId) {
+        const capability = getCapability(cobertura.capabilityId);
+        if (capability) {
+          capabilityLabel = capability.label;
+          try {
+            // Fora da transação de leitura acima, de propósito — ver o
+            // comentário no topo da função.
+            evidencia = await capability.evidencia(ctx.tenantId);
+          } catch (e) {
+            // O mapa nunca pode seguir mostrando "atende" limpo sem
+            // conseguir provar: uma linha que afirma sem provar vai para o
+            // comprador com a chancela do produto.
+            evidenciaErro =
+              e instanceof Error
+                ? `Falha ao buscar evidência: ${e.message}`
+                : "Falha ao buscar evidência.";
+          }
+        } else {
+          evidenciaErro =
+            "Capacidade removida do catálogo — revise esta cobertura.";
+        }
+      }
+
+      linhas.push({
+        requirementId: r.id,
+        codigo: r.codigo,
+        citacao: r.citacao,
+        resumo: r.resumo,
+        peso: r.peso,
+        status,
+        comentario: cobertura?.comentario ?? null,
+        capabilityId: cobertura?.capabilityId ?? null,
+        capabilityLabel,
+        evidencia,
+        evidenciaErro,
+      });
+    }
+
+    return { setId: set.id, nome: set.nome, linhas, semVeredito };
   });
 }
 
