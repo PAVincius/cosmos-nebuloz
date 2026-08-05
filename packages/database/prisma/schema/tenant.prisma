@@ -196,6 +196,8 @@ model Tenant {
   charterTracks             CharterTrack[]
   charterAcknowledgments    CharterAcknowledgment[]
   charterSequences          CharterSequence[]
+  // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
+  platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
 }
 
 model User {

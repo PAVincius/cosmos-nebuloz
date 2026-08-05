@@ -26,12 +26,7 @@ export const BO_NAV: NavSection[] = [
     section: "Plataforma",
     items: [
       { href: "/", label: "Tenants" },
-      {
-        href: "/aprovacoes",
-        label: "Aprovações",
-        pendente:
-          "Depende da entidade Approval, que ainda não existe no schema. É pré-requisito de deleção de tenant, MCP writes avançadas, desconto acima de 15%, export sensível e mudança grande de plano.",
-      },
+      { href: "/aprovacoes", label: "Aprovações" },
       {
         href: "/observabilidade",
         label: "Observabilidade",
