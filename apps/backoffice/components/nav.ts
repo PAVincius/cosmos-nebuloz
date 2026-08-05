@@ -12,9 +12,13 @@
  * `/clientes` porque é a que existe, é a que os `revalidatePath` das actions
  * apontam, e renomear seria quebra sem ganho.
  */
+import type { IconName } from "@repo/design-system/cosmos/icons";
+
 export type NavItem = {
   href: string;
   label: string;
+  /** Glifo do set compartilhado — os mesmos nomes que o protótipo usa. */
+  icon: IconName;
   /** Motivo pelo qual a tela ainda não existe. Ausente = implementada. */
   pendente?: string;
 };
@@ -25,10 +29,11 @@ export const BO_NAV: NavSection[] = [
   {
     section: "Plataforma",
     items: [
-      { href: "/", label: "Tenants" },
-      { href: "/aprovacoes", label: "Aprovações" },
+      { href: "/", icon: "building", label: "Tenants" },
+      { href: "/aprovacoes", icon: "approve", label: "Aprovações" },
       {
         href: "/observabilidade",
+        icon: "eye",
         label: "Observabilidade",
         pendente:
           "Falha de integração já aparece por tenant, em Clientes › o cliente › Integrações. Falta a visão cruzada de todos os tenants e o log de acesso ao painel, que depende da entidade AccessLog — ela não existe.",
@@ -40,6 +45,7 @@ export const BO_NAV: NavSection[] = [
     items: [
       {
         href: "/propostas",
+        icon: "tag",
         label: "Propostas",
         pendente:
           "Depende da entidade Proposal e da função priceProposal(). O gate de desconto acima de 15% também depende de Approval.",
@@ -51,12 +57,14 @@ export const BO_NAV: NavSection[] = [
     items: [
       {
         href: "/ferramentas/bpmn",
+        icon: "fileCode",
         label: "Modelagem BPMN",
         pendente:
           "Editor BPMN 2.0 versionado por tenant. Em produção monta bpmn-js, não o canvas SVG do protótipo.",
       },
       {
         href: "/ferramentas/diagramas",
+        icon: "server",
         label: "Diagramas",
         pendente:
           "Diagrama-como-código: a DSL é a fonte da verdade e é versionável em git; o canvas reflete a estrutura.",
@@ -68,16 +76,17 @@ export const BO_NAV: NavSection[] = [
     items: [
       {
         href: "/audit",
+        icon: "history",
         label: "Audit Explorer",
         pendente:
           "A timeline de UM tenant já existe, em Clientes › o cliente › Auditoria, com o diff campo-a-campo. Falta o explorer agregado do FR-10.3: busca e filtro sobre o AuditLog de todos os tenants ao mesmo tempo.",
       },
-      { href: "/atividade", label: "Atividade do staff" },
+      { href: "/atividade", icon: "userCheck", label: "Atividade do staff" },
     ],
   },
   {
     section: "Operações",
-    items: [{ href: "/clientes/novo", label: "Criar tenant" }],
+    items: [{ href: "/clientes/novo", icon: "plus", label: "Criar tenant" }],
   },
 ];
 

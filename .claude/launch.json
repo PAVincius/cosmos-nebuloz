@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cosmos-app",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "app", "dev"],
+      "port": 3012
+    },
+    {
+      "name": "backoffice",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "backoffice", "dev"],
+      "port": 3013
+    }
+  ]
+}

@@ -1,0 +1,145 @@
+/* backoffice-theme.css — a paleta do `backoffice.html` do handoff.
+ *
+ * Por que existe: o `cosmos.css` que o back-office importa carrega os tokens do
+ * `cosmos.html`, que é outro protótipo — accent lavanda #5e6ad2, canvas
+ * #070b14. O Big Bang re-tematizou para o azul-céu da marca Nebuloz
+ * (sky #5CB4E4 → baby #89CFF0 → butter #F6F2C3) sobre canvas #07080c. Importar
+ * o cosmos.css e parar por aí deixa o back-office parecido com o produto, que
+ * é exatamente o que o handoff não pede.
+ *
+ * Só os TOKENS são redefinidos. As primitivas (.kpi, .lift, .navitem, .btn,
+ * .skeleton, .display, .mono, animações) continuam vindo do cosmos.css: elas
+ * leem estas variáveis, então re-tematizar aqui re-tematiza tudo, sem uma
+ * segunda cópia de 500 linhas de CSS para divergir depois.
+ *
+ * Mesmo seletor e mesma especificidade do cosmos.css, importado depois — é o
+ * que faz estes valores vencerem. Trocar a ordem no layout.tsx desfaz isto em
+ * silêncio.
+ */
+
+.cosmos-root {
+  --accent: #2a86bb;
+  --accent-rgb: 42, 134, 187;
+  --accent-fg: #fff;
+  /* Intensidade dos efeitos decorativos do modo escuro (glow, dots, ECG). */
+  --fx: 1;
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-pill: 999px;
+}
+
+[data-theme="light"] .cosmos-root {
+  --canvas: #f5f6f8;
+  --surface: #fff;
+  --surface-2: #f7f8fa;
+  --surface-3: #edeff3;
+  --sidebar: #fbfbfd;
+  --hairline: #e5e7ec;
+  --hairline-strong: #d4d8e0;
+  --ink: #0d1017;
+  --ink-muted: #565e6e;
+  --ink-subtle: #5f6878;
+  --ink-faint: #636c7b;
+  --chip-bg: #eff1f5;
+  --card-shadow:
+    0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1);
+  --hover-shadow:
+    0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px
+    rgba(var(--accent-rgb), 0.3);
+  --accent: #1d6a97;
+  --accent-rgb: 29, 106, 151;
+  --accent-soft: rgba(29, 106, 151, 0.1);
+  --accent-text: #145275;
+  --accent-fg: #fff;
+  --blue: #3f8fc4;
+  --blue-rgb: 63, 143, 196;
+  --blue-soft: rgba(63, 143, 196, 0.11);
+  --blue-text: #2a6f9e;
+  --purple: #7a68d8;
+  --purple-rgb: 122, 104, 216;
+  --purple-soft: rgba(122, 104, 216, 0.1);
+  --purple-text: #5f4dbd;
+  --green: #12915a;
+  --green-rgb: 18, 145, 90;
+  --green-soft: rgba(18, 145, 90, 0.1);
+  --green-text: #0d7548;
+  --amber: #9a7415;
+  --amber-rgb: 154, 116, 21;
+  --amber-soft: rgba(154, 116, 21, 0.13);
+  --amber-text: #805f0f;
+  --red: #d63a63;
+  --red-rgb: 214, 58, 99;
+  --red-soft: rgba(214, 58, 99, 0.1);
+  --red-text: #b32750;
+}
+
+[data-theme="dark"] .cosmos-root {
+  --canvas: #07080c;
+  --surface: #0c0f17;
+  --surface-2: #10131e;
+  --surface-3: #181d2c;
+  --sidebar: #0a0c14;
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+  --ink: #f5f7fb;
+  --ink-muted: #b8c0d0;
+  --ink-subtle: #a2acc0;
+  --ink-faint: #8b95a9;
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --card-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
+    rgba(0, 0, 0, 0.9);
+  --hover-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px
+    rgba(var(--accent-rgb), 0.5);
+  --accent: #5cb4e4;
+  --accent-rgb: 92, 180, 228;
+  --accent-text: #a8dbf4;
+  /* Texto sobre o accent sólido é o canvas, não branco: #5cb4e4 com branco por
+     cima dá ~1.8:1 e reprova em AA. Com o canvas passa dos 10:1. */
+  --accent-fg: #07080c;
+  --accent-soft: rgba(92, 180, 228, 0.14);
+  --blue: #89cff0;
+  --blue-rgb: 137, 207, 240;
+  --blue-soft: rgba(137, 207, 240, 0.14);
+  --blue-text: #bde5f8;
+  --purple: #b2a5ff;
+  --purple-rgb: 178, 165, 255;
+  --purple-soft: rgba(178, 165, 255, 0.14);
+  --purple-text: #d6cfff;
+  --green: #29cc7a;
+  --green-rgb: 41, 204, 122;
+  --green-soft: rgba(41, 204, 122, 0.13);
+  --green-text: #7ce8ad;
+  --amber: #ecd06a;
+  --amber-rgb: 236, 208, 106;
+  --amber-soft: rgba(236, 208, 106, 0.13);
+  --amber-text: #f6f2c3;
+  --red: #ff5c8a;
+  --red-rgb: 255, 92, 138;
+  --red-soft: rgba(255, 92, 138, 0.14);
+  --red-text: #ffa3bd;
+}
+
+/* Textura do modo escuro do protótipo: grão e grade. Decorativas — ficam fora
+   do fluxo e não recebem eventos. */
+[data-theme="dark"] .grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] .bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 64px 64px;
+}

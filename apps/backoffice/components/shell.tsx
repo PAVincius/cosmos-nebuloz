@@ -1,14 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { BO_NAV, FORA_DO_PAINEL } from "./nav";
+import { Sidebar, Topbar } from "./chrome";
 
 /**
- * Shell do Big Bang: topbar + sidebar. Server Component — a navegação é toda
- * `<Link>`, sem estado de cliente.
+ * Shell do Big Bang. Server Component: só a topbar e a sidebar são cliente,
+ * porque só elas precisam de tema e de rota ativa.
  *
- * O badge de papel na topbar não é enfeite: o operador precisa saber, antes de
- * clicar, se a sessão dele escreve. `MEMBER` vendo botão apagado sem contexto
- * acha que a tela quebrou (SRD FR-0.4).
+ * O grid nomeado (`bar` / `side` / `main`) é o do protótipo, e não é enfeite:
+ * com áreas nomeadas a topbar atravessa as duas colunas sem `col-span`, e a
+ * sidebar rola sozinha sem arrastar o conteúdo junto.
  */
 export function Shell({
   staff,
@@ -18,68 +18,24 @@ export function Shell({
   children: ReactNode;
 }) {
   return (
-    <div className="grid min-h-screen grid-cols-[232px_1fr] grid-rows-[56px_1fr]">
-      <header className="col-span-2 flex items-center gap-4 border-b px-5">
-        <span className="font-bold text-sm tracking-[.1em]">NEBULOZ</span>
-        <span className="rounded-full border px-2 py-0.5 font-bold font-mono text-[10px] text-muted-foreground tracking-[.12em]">
-          BIG BANG
-        </span>
-        <div className="flex-1" />
-        <span
-          className={`rounded-full border px-2.5 py-1 font-semibold text-xs ${
-            staff.canWrite
-              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-              : "border-amber-500/30 bg-amber-500/10 text-amber-600 dark:text-amber-400"
-          }`}
-        >
-          {staff.canWrite
-            ? "ADMIN · leitura e escrita"
-            : "MEMBER · somente leitura"}
-        </span>
-        <span className="text-muted-foreground text-xs">{staff.email}</span>
-      </header>
-
-      <nav className="flex flex-col gap-5 overflow-y-auto border-r p-3">
-        {BO_NAV.map((grupo) => (
-          <div className="flex flex-col gap-0.5" key={grupo.section}>
-            <div className="px-2.5 pb-1.5 font-bold text-[10px] text-muted-foreground uppercase tracking-[.08em]">
-              {grupo.section}
-            </div>
-            {grupo.items.map((item) => (
-              <Link
-                className="flex items-center justify-between rounded-md px-2.5 py-2 text-sm hover:bg-muted"
-                href={item.href}
-                key={item.href}
-              >
-                <span className={item.pendente ? "text-muted-foreground" : ""}>
-                  {item.label}
-                </span>
-                {item.pendente ? (
-                  <span
-                    className="rounded border px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground"
-                    title={item.pendente}
-                  >
-                    pendente
-                  </span>
-                ) : null}
-              </Link>
-            ))}
-          </div>
-        ))}
-
-        <div className="flex-1" />
-        <div className="mx-1 rounded-md border border-dashed p-3">
-          <div className="font-bold text-[10px] text-amber-600 uppercase tracking-[.08em] dark:text-amber-400">
-            Fora deste painel
-          </div>
-          <p className="mt-1.5 text-[11.5px] text-muted-foreground leading-relaxed">
-            {FORA_DO_PAINEL}
-          </p>
-        </div>
-      </nav>
-
-      <main className="overflow-y-auto p-7">
-        <div className="mx-auto max-w-6xl">{children}</div>
+    <div
+      style={{
+        height: "100vh",
+        display: "grid",
+        gridTemplateAreas: '"bar bar" "side main"',
+        gridTemplateColumns: "236px 1fr",
+        gridTemplateRows: "56px 1fr",
+        background: "var(--canvas)",
+        color: "var(--ink)",
+      }}
+    >
+      <Topbar staff={staff} />
+      <Sidebar />
+      <main
+        className="scroll fade-in"
+        style={{ gridArea: "main", overflowY: "auto", padding: 26 }}
+      >
+        <div style={{ margin: "0 auto", maxWidth: 1180 }}>{children}</div>
       </main>
     </div>
   );
@@ -100,12 +56,45 @@ export function Pendente({
   motivo: string;
 }) {
   return (
-    <div className="mx-auto max-w-xl rounded-lg border border-dashed p-8 text-center">
-      <h1 className="font-semibold text-lg">{titulo}</h1>
-      <p className="mt-3 text-muted-foreground text-sm leading-relaxed">
+    <div
+      className="fade-in"
+      style={{
+        margin: "0 auto",
+        maxWidth: 560,
+        padding: 32,
+        textAlign: "center",
+        background: "var(--surface)",
+        border: "1px dashed var(--hairline-strong)",
+        borderRadius: "var(--r-xl)",
+      }}
+    >
+      <h1
+        className="display"
+        style={{ fontSize: 19, fontWeight: 700, margin: "0 0 10px" }}
+      >
+        {titulo}
+      </h1>
+      <p
+        style={{
+          margin: 0,
+          fontSize: 13,
+          lineHeight: 1.65,
+          color: "var(--ink-muted)",
+          fontWeight: 500,
+        }}
+      >
         {motivo}
       </p>
-      <Link className="mt-5 inline-block text-sm underline" href="/">
+      <Link
+        href="/"
+        style={{
+          display: "inline-block",
+          marginTop: 20,
+          fontSize: 12.5,
+          fontWeight: 700,
+          color: "var(--accent-text)",
+        }}
+      >
         Voltar para Tenants
       </Link>
     </div>
