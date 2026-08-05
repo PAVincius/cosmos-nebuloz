@@ -225,8 +225,11 @@ model CharterPolicySection {
   createdAt             DateTime             @default(now())
   updatedAt             DateTime             @updatedAt
 
-  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy              CharterPolicy       @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  // SetNull, não Cascade: perder a exigência apaga a citação, nunca a seção
+  // de política que um humano escreveu.
+  groundedRequirement CharterRequirement? @relation(fields: [groundedRequirementId], references: [id], onDelete: SetNull)
 
   @@unique([policyId, ordinal])
   @@index([tenantId])
@@ -571,8 +574,12 @@ model CharterRequirement {
   peso      Int?
   categoria String?
 
-  set       CharterRequirementSet @relation(fields: [setId], references: [id], onDelete: Cascade)
-  coverages CharterCoverage[]
+  set              CharterRequirementSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
+  coverages        CharterCoverage[]
+  // Nome ecoa o campo escalar (groundedRequirementId) que ele espelha, não só
+  // "sections": a mesma exigência pode um dia se relacionar com uma seção por
+  // outro motivo, e "grounded" deixa explícito qual relação é essa.
+  groundedSections CharterPolicySection[]
 
   @@unique([setId, codigo])
   @@index([setId])

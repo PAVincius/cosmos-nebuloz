@@ -119,3 +119,11 @@ CREATE POLICY "tenant_isolation" ON "CharterCoverage"
 -- gerado (generated = true) não aponta para nenhuma exigência — texto de
 -- política sem citação é o que o auditor encontra antes de você.
 ALTER TABLE "CharterPolicySection" ADD COLUMN IF NOT EXISTS "groundedRequirementId" TEXT;
+
+-- SET NULL, não CASCADE (diferente de CharterCoverage_requirementId_fkey
+-- acima): perder a exigência (ex.: set superado sendo retirado) deve limpar
+-- a citação, nunca apagar a seção de política que um humano escreveu.
+DO $$ BEGIN
+  ALTER TABLE "CharterPolicySection" ADD CONSTRAINT "CharterPolicySection_groundedRequirementId_fkey"
+    FOREIGN KEY ("groundedRequirementId") REFERENCES "CharterRequirement"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;

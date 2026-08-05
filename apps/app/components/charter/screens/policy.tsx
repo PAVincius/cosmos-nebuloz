@@ -194,8 +194,10 @@ function PolicyInner() {
                   sectionId,
                   body,
                   // TODO(Task 9): esta tela ainda não tem seletor de
-                  // CharterRequirement — sem fundamento real, o servidor
-                  // recusa o rascunho (GovernanceError esperado até lá).
+                  // CharterRequirement. "" falha o min(1) do DraftSchema
+                  // antes de chegar à checagem de fundamento — o rascunho é
+                  // sempre recusado, mas com mensagem de validação do Zod,
+                  // não com o GovernanceError da regra de negócio.
                   groundedRequirementId: "",
                 }),
               {
