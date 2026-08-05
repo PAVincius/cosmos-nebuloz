@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Shell } from "@/components/shell";
 import { resolveStaffAccess } from "@/lib/staff-access";
 
 /** O grupo `(staff)` existe para deixar `/sign-in` fora deste guard. Guard no
@@ -23,5 +24,5 @@ export default async function StaffLayout({
     );
   }
 
-  return <>{children}</>;
+  return <Shell staff={access.staff}>{children}</Shell>;
 }
