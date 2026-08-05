@@ -22,6 +22,7 @@ function alvoDoBanco(): {
   porta: string;
   usuario: string;
   usuarioTemProjectRef: boolean;
+  senhaLen: number;
 } | null {
   const bruto = process.env.DATABASE_URL;
   if (!bruto) {
@@ -40,6 +41,11 @@ function alvoDoBanco(): {
       porta: url.port || "5432",
       usuario,
       usuarioTemProjectRef: usuario.includes("."),
+      // Comprimento, nunca o valor nem hash dele: hash de senha curta é
+      // quebrável por força bruta, comprimento não entrega nada sozinho. É o
+      // suficiente para flagrar truncamento na cópia e para comparar dois
+      // projetos sem que ninguém precise ver o segredo.
+      senhaLen: decodeURIComponent(url.password).length,
     };
   } catch {
     return null;
@@ -80,7 +86,7 @@ export async function GET() {
       responseMs: Date.now() - start,
       checks: {
         database: dbOk
-          ? { status: "ok", latencyMs: dbLatencyMs }
+          ? { status: "ok", latencyMs: dbLatencyMs, target: alvoDoBanco() }
           : { status: "error", target: alvoDoBanco(), ...erro },
       },
     },
