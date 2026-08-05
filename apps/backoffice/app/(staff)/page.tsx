@@ -1,93 +1,146 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@repo/design-system/components/ui/table";
+  KpiCard,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
-import { listClients } from "@/app/actions/clients";
+import { type ClientRow, listClients } from "@/app/actions/clients";
+import { ClientesTabela } from "./clientes-tabela";
 
-const STATUS_VARIANT: Record<string, "default" | "secondary" | "destructive"> =
-  {
-    ACTIVE: "default",
-    TRIAL: "secondary",
-    SUSPENDED: "destructive",
-    CANCELED: "destructive",
+/**
+ * Carteira de clientes (`backoffice-tenant.jsx`).
+ *
+ * Os quatro KPIs do protótipo saem todos de dado real: `ModuleStatus` já tem
+ * ACTIVE, TRIAL, SUSPENDED e CANCELED no schema, então "trials em andamento" e
+ * "exigem atenção" são contagens, não enfeite. Se algum deles dependesse de
+ * campo inexistente, o certo seria não mostrar o card.
+ */
+function contar(clientes: ClientRow[]) {
+  const modulos = clientes.flatMap((c) => c.modules);
+  return {
+    tenants: clientes.length,
+    ativos: modulos.filter((m) => m.status === "ACTIVE").length,
+    trials: modulos.filter((m) => m.status === "TRIAL").length,
+    atencao: modulos.filter((m) => m.status === "SUSPENDED").length,
   };
+}
 
 export default async function ClientsPage() {
   const result = await listClients();
 
   if (!result.ok) {
-    return <p className="text-destructive">{result.error}</p>;
-  }
-
-  if (result.data.length === 0) {
     return (
-      <div className="rounded-lg border p-8 text-center">
-        <p className="font-medium">Nenhum cliente ainda</p>
-        <p className="mt-1 text-muted-foreground text-sm">
-          Provisione o primeiro em{" "}
-          <Link href="/clientes/novo">novo cliente</Link>.
-        </p>
-      </div>
+      <p
+        style={{
+          padding: 14,
+          borderRadius: "var(--r-md)",
+          background: "var(--red-soft)",
+          border: "1px solid rgba(var(--red-rgb),.3)",
+          color: "var(--red-text)",
+          fontSize: 13,
+          fontWeight: 600,
+        }}
+      >
+        {result.error}
+      </p>
     );
   }
 
+  const clientes = result.data;
+  const kpi = contar(clientes);
+
   return (
-    <>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-semibold text-2xl">Clientes</h1>
-        <Link className="text-sm underline" href="/clientes/novo">
-          Novo cliente
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <PageHeader
+        eyebrow="Tenant · system"
+        subtitle="Todos os tenants provisionados, seus módulos e status de contratação."
+        title="Carteira de clientes"
+      >
+        <Link
+          className="btn"
+          href="/clientes/novo"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "9px 15px",
+            borderRadius: "var(--r-md)",
+            background: "var(--accent)",
+            color: "var(--accent-fg)",
+            border: "1px solid var(--accent)",
+            fontSize: 14,
+            fontWeight: 600,
+            textDecoration: "none",
+            boxShadow:
+              "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
+          }}
+        >
+          + Provisionar cliente
         </Link>
+      </PageHeader>
+
+      <div
+        style={{
+          display: "grid",
+          gap: 12,
+          gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))",
+        }}
+      >
+        <KpiCard
+          hint="tenants provisionados"
+          icon="building"
+          label="Clientes na carteira"
+          tone="blue"
+          value={kpi.tenants}
+        />
+        <KpiCard
+          hint="contratos vigentes"
+          icon="layers"
+          label="Módulos ativos"
+          tone="green"
+          value={kpi.ativos}
+        />
+        <KpiCard
+          hint="candidatos a conversão"
+          icon="activity"
+          label="Trials em andamento"
+          tone="accent"
+          value={kpi.trials}
+        />
+        <KpiCard
+          hint="módulos suspensos"
+          icon="alert"
+          label="Exigem atenção"
+          tone="amber"
+          value={kpi.atencao}
+        />
       </div>
 
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Cliente</TableHead>
-            <TableHead>Membros</TableHead>
-            <TableHead>Módulos</TableHead>
-            <TableHead>Desde</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {result.data.map((client) => (
-            <TableRow key={client.id}>
-              <TableCell>
-                <Link className="font-medium" href={`/clientes/${client.slug}`}>
-                  {client.name}
-                </Link>
-                <span className="block text-muted-foreground text-xs">
-                  {client.slug}
-                </span>
-              </TableCell>
-              <TableCell>{client.memberCount}</TableCell>
-              <TableCell className="space-x-1">
-                {client.modules.length === 0 ? (
-                  <span className="text-muted-foreground text-xs">nenhum</span>
-                ) : (
-                  client.modules.map((m) => (
-                    <Badge
-                      key={m.module}
-                      variant={STATUS_VARIANT[m.status] ?? "secondary"}
-                    >
-                      {m.module}
-                    </Badge>
-                  ))
-                )}
-              </TableCell>
-              <TableCell className="text-muted-foreground text-sm">
-                {new Date(client.createdAt).toLocaleDateString("pt-BR")}
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </>
+      <SectionCard
+        icon="building"
+        subtitle="listClients() — clique para abrir o detalhe"
+        title="Clientes"
+      >
+        {clientes.length === 0 ? (
+          <p
+            style={{
+              margin: 0,
+              padding: 28,
+              textAlign: "center",
+              color: "var(--ink-muted)",
+              fontSize: 13,
+            }}
+          >
+            Nenhum cliente provisionado ainda. Comece pelo{" "}
+            <Link href="/clientes/novo" style={{ color: "var(--accent-text)" }}>
+              Criar tenant
+            </Link>
+            .
+          </p>
+        ) : (
+          <ClientesTabela clientes={clientes} />
+        )}
+      </SectionCard>
+    </div>
   );
 }

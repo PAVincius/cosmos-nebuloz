@@ -15,6 +15,7 @@ export function clientListArgs() {
       name: true,
       slug: true,
       createdAt: true,
+      plan: true,
       modules: {
         select: { module: true, status: true, expiresAt: true },
         orderBy: { module: "asc" as const },

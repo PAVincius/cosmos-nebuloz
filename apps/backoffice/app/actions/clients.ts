@@ -10,6 +10,8 @@ export type ClientRow = {
   name: string;
   slug: string;
   createdAt: string;
+  /** SubscriptionPlan do tenant. Real, vem do schema — a tela mostra. */
+  plan: string;
   memberCount: number;
   modules: { module: string; status: string; expiresAt: string | null }[];
 };
@@ -25,6 +27,7 @@ export async function listClients(): Promise<Result<ClientRow[]>> {
       name: row.name,
       slug: row.slug,
       createdAt: row.createdAt.toISOString(),
+      plan: row.plan,
       memberCount: row._count.members,
       modules: row.modules.map((m) => ({
         module: m.module,
@@ -62,6 +65,7 @@ export async function getClient(slug: string): Promise<Result<ClientDetail>> {
       name: tenant.name,
       slug: tenant.slug,
       createdAt: tenant.createdAt.toISOString(),
+      plan: tenant.plan,
       memberCount: tenant._count.members,
       modules: tenant.modules.map((m) => ({
         module: m.module,
