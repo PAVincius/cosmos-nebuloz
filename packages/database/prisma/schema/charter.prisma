@@ -525,3 +525,100 @@ enum CharterPolicyLinkAlvo {
   USE_CASE
   VENDOR
 }
+
+/// Conjunto de exigências: uma RFP recebida pelo cliente, ou uma regulação
+/// publicada pela Nebuloz.
+///
+/// `tenantId` nulo significa conjunto global — regulação vale para todos. RFP é
+/// do tenant que a importou.
+model CharterRequirementSet {
+  id           String            @id @default(cuid())
+  tenantId     String?
+  nome         String
+  origem       CharterReqOrigem
+  editor       CharterReqEditor
+  jurisdicao   String?
+  versao       String            @default("1")
+  supersedesId String?
+  /// LIVRE permite texto verbatim. REFERENCIA proíbe: norma proprietária
+  /// (ISO/IEC 42001) só entra por citação e formulação própria.
+  licenca      CharterReqLicenca @default(LIVRE)
+  importadoEm  DateTime          @default(now())
+  notas        String?           @db.Text
+
+  tenant       Tenant?                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  supersedes   CharterRequirementSet?  @relation("CharterReqSetLineage", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy CharterRequirementSet[] @relation("CharterReqSetLineage")
+  requirements CharterRequirement[]
+
+  @@index([tenantId])
+  @@index([origem])
+}
+
+/// Uma exigência. `citacao` e `resumo` sempre; `texto` só quando a licença do
+/// conjunto permite reproduzir.
+model CharterRequirement {
+  id        String  @id @default(cuid())
+  setId     String
+  codigo    String
+  citacao   String
+  resumo    String  @db.Text
+  texto     String? @db.Text
+  peso      Int?
+  categoria String?
+
+  set       CharterRequirementSet @relation(fields: [setId], references: [id], onDelete: Cascade)
+  coverages CharterCoverage[]
+
+  @@unique([setId, codigo])
+  @@index([setId])
+}
+
+/// Veredito do tenant sobre uma exigência. Uma por exigência: dois vereditos
+/// para a mesma linha são duas respostas contraditórias indo para o mesmo
+/// comprador, e a tela teria de escolher uma — escolha que ninguém fez.
+model CharterCoverage {
+  id            String                @id @default(cuid())
+  tenantId      String
+  requirementId String
+  status        CharterCoverageStatus @default(SEM_VEREDITO)
+  comentario    String?               @db.Text
+  capabilityId  String?
+  atualizadoEm  DateTime              @updatedAt
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requirement CharterRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  // tenantId entra na chave, não só requirementId: CharterRequirementSet.tenantId
+  // pode ser nulo (regulação global, "vale para todos"), então o mesmo
+  // requirementId é referenciado por N tenants — cada um precisa do próprio
+  // veredito. Sem tenantId aqui, o segundo tenant a registrar cobertura numa
+  // exigência de regulação compartilhada colidiria com (ou sobrescreveria) a
+  // linha do primeiro.
+  @@unique([tenantId, requirementId])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+enum CharterReqOrigem {
+  RFP
+  REGULACAO
+}
+
+enum CharterReqEditor {
+  TENANT
+  NEBULOZ
+}
+
+enum CharterReqLicenca {
+  LIVRE
+  REFERENCIA
+}
+
+enum CharterCoverageStatus {
+  ATENDE
+  PARCIAL
+  NAO_ATENDE
+  SEM_VEREDITO
+  REVISAR
+}

@@ -197,6 +197,8 @@ model Tenant {
   charterAcknowledgments    CharterAcknowledgment[]
   charterSequences          CharterSequence[]
   charterPolicyLinks        CharterPolicyLink[]
+  charterRequirementSets    CharterRequirementSet[]
+  charterCoverages          CharterCoverage[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams        StaffDiagram[]   @relation("StaffDiagramSystemTenant")

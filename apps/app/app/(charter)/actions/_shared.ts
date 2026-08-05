@@ -26,7 +26,9 @@ export type CharterEntity =
   | "charter.track"
   | "charter.export"
   | "charter.settings"
-  | "charter.policylink";
+  | "charter.policylink"
+  | "charter.requirementset"
+  | "charter.coverage";
 
 /**
  * Grava entrada de auditoria do Charter.
