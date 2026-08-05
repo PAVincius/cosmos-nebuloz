@@ -206,20 +206,24 @@ model CharterPolicy {
 }
 
 model CharterPolicySection {
-  id        String               @id @default(cuid())
-  tenantId  String
-  policyId  String
+  id                    String               @id @default(cuid())
+  tenantId              String
+  policyId              String
   /// Número de ordem exibido (1..9).
-  ordinal   Int
-  name      String
-  status    CharterSectionStatus @default(DRAFT)
-  ownerId   String?
-  body      String               @db.Text
+  ordinal               Int
+  name                  String
+  status                CharterSectionStatus @default(DRAFT)
+  ownerId               String?
+  body                  String               @db.Text
   /// True quando o corpo veio de geração assistida (FR-2.7). Rascunho gerado
   /// entra sempre como DRAFT, nunca PUBLISHED.
-  generated Boolean              @default(false)
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  generated             Boolean              @default(false)
+  /// Exigência que fundamentou o rascunho gerado. Obrigatório quando
+  /// `generated = true`: texto de política sem citação é o que o auditor
+  /// encontra antes de você.
+  groundedRequirementId String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
   tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)

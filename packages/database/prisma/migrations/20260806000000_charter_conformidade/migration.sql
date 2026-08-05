@@ -114,3 +114,8 @@ DROP POLICY IF EXISTS "tenant_isolation" ON "CharterCoverage";
 CREATE POLICY "tenant_isolation" ON "CharterCoverage"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
+
+-- Task 7: fundamento citado no rascunho gerado. Sem esta coluna, um rascunho
+-- gerado (generated = true) não aponta para nenhuma exigência — texto de
+-- política sem citação é o que o auditor encontra antes de você.
+ALTER TABLE "CharterPolicySection" ADD COLUMN IF NOT EXISTS "groundedRequirementId" TEXT;

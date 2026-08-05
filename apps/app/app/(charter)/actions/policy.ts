@@ -5,14 +5,18 @@ import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
-  GovernanceError,
   requireCharterContext,
   requireCharterPermissionContext,
   StateConflictError,
 } from "@/lib/charter/guards";
 import { policyPublishBlockers } from "@/lib/charter/rules";
 import { type Result, safeAction } from "../../actions/_base";
-import { buildDiff, FIELD_LABELS, logCharterAudit } from "./_shared";
+import {
+  buildDiff,
+  FIELD_LABELS,
+  GovernanceError,
+  logCharterAudit,
+} from "./_shared";
 
 // Política — FR-2. As três abas (Seções, Versões, Escopo) leem de getPolicy().
 
@@ -184,10 +188,15 @@ export async function editSection(
 const DraftSchema = z.object({
   sectionId: z.string().cuid(),
   body: z.string().trim().min(1).max(40_000),
+  groundedRequirementId: z.string().min(1),
 });
 
 /** Persiste o rascunho gerado. Entra sempre como DRAFT — nunca PUBLISHED,
- *  nem REVIEW: texto que ninguém leu não pode estar em revisão. */
+ *  nem REVIEW: texto que ninguém leu não pode estar em revisão.
+ *
+ *  `groundedRequirementId` é obrigatório: rascunho gerado sem exigência que o
+ *  fundamente é texto de política sem citação — o que o auditor encontra
+ *  antes de você. */
 export async function saveGeneratedDraft(
   input: z.infer<typeof DraftSchema>
 ): Promise<Result<null>> {
@@ -203,16 +212,39 @@ export async function saveGeneratedDraft(
         throw new GovernanceError("section.unknown", "Seção não encontrada.");
       }
 
+      // Do tenant OU global — mesmo filtro de compliance.ts (setCoverage):
+      // CharterRequirement não tem tenantId próprio, é escopado pelo
+      // CharterRequirementSet pai, que pode ser do tenant ou uma regulação
+      // global (tenantId null). Sem esse filtro, groundedRequirementId de
+      // outro tenant vira oráculo de existência.
+      const requirement = await db.charterRequirement.findFirst({
+        where: {
+          id: data.groundedRequirementId,
+          set: { OR: [{ tenantId: ctx.tenantId }, { tenantId: null }] },
+        },
+      });
+      if (!requirement) {
+        throw new GovernanceError(
+          "draft.grounding.unknown",
+          "Exigência que fundamenta o rascunho não encontrada."
+        );
+      }
+
       await db.charterPolicySection.update({
         where: { id: section.id },
-        data: { body: data.body, status: "DRAFT", generated: true },
+        data: {
+          body: data.body,
+          status: "DRAFT",
+          generated: true,
+          groundedRequirementId: data.groundedRequirementId,
+        },
       });
 
       await logCharterAudit(db, ctx, {
         action: "Gerou rascunho de seção",
         entityType: "charter.section",
         entityId: section.id,
-        target: `S${String(section.ordinal).padStart(2, "0")} · ${section.name}`,
+        target: `S${String(section.ordinal).padStart(2, "0")} · ${section.name} · ${requirement.citacao}`,
         note: "Rascunho assistido — exige revisão humana antes de publicar.",
         diff: [["Status", section.status, "DRAFT"]],
       });

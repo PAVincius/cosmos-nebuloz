@@ -189,7 +189,15 @@ function PolicyInner() {
         onSave={(sectionId, body) =>
           startTransition(async () => {
             const res = await runWithToast(
-              () => saveGeneratedDraft({ sectionId, body }),
+              () =>
+                saveGeneratedDraft({
+                  sectionId,
+                  body,
+                  // TODO(Task 9): esta tela ainda não tem seletor de
+                  // CharterRequirement — sem fundamento real, o servidor
+                  // recusa o rascunho (GovernanceError esperado até lá).
+                  groundedRequirementId: "",
+                }),
               {
                 loading: "Salvando rascunho…",
                 success: "Rascunho salvo — entra como Rascunho, não publicado",
