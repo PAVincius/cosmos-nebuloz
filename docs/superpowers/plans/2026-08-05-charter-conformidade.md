@@ -1477,6 +1477,12 @@ describe("publishSetVersion", () => {
   });
 
   it("marca como REVISAR só as coberturas cujo requisito mudou", async () => {
+    // Tenant já opinou nas duas: ATENDE em 4.1, ATENDE em 4.2.
+    h.covFindMany.mockResolvedValue([
+      { requirementId: "r-1", status: "ATENDE", comentario: null, capabilityId: "POLICY_VERSIONING" },
+      { requirementId: "r-2", status: "ATENDE", comentario: null, capabilityId: "POLICY_VERSIONING" },
+    ]);
+
     const res = await publishSetVersion({
       supersedesId: "s-1",
       nome: "EU AI Act",
@@ -1495,6 +1501,71 @@ describe("publishSetVersion", () => {
     // assim que aviso de mudança regulatória vira ruído que se ignora.
     expect(res.data.afetadas).toBe(1);
   });
+
+  it("transporta o veredito inalterado para a versão nova, sem rebaixá-lo", async () => {
+    // Sem transporte, publicar versão apaga todo veredito da vista: os
+    // requisitos novos têm ids novos e getComplianceMap busca cobertura por
+    // id de requisito, sem percorrer supersedesId.
+    h.covFindMany.mockResolvedValue([
+      { requirementId: "r-1", status: "ATENDE", comentario: "Prova em v3", capabilityId: "POLICY_VERSIONING" },
+    ]);
+
+    await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+        { codigo: "4.2", citacao: "Art. 4.2", resumo: "Texto NOVO" },
+      ],
+    });
+
+    const transportada = h.covCreateMany.mock.calls[0][0].data.find(
+      (c: { requirementId: string }) => c.requirementId === "novo-r-1"
+    );
+    expect(transportada.status).toBe("ATENDE");
+    expect(transportada.comentario).toBe("Prova em v3");
+    expect(transportada.capabilityId).toBe("POLICY_VERSIONING");
+  });
+
+  it("não cria cobertura onde o tenant nunca opinou", async () => {
+    // Ausência de linha já é SEM_VEREDITO. Criar REVISAR ali transforma
+    // "nunca avaliado" em "avaliado e agora duvidoso" — afirmação falsa.
+    h.covFindMany.mockResolvedValue([]);
+
+    const res = await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+        { codigo: "4.2", citacao: "Art. 4.2", resumo: "Texto NOVO" },
+      ],
+    });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.afetadas).toBe(0);
+    const criadas = h.covCreateMany.mock.calls[0]?.[0]?.data ?? [];
+    expect(criadas).toHaveLength(0);
+  });
+
+  it("audita com entityType e nota do conjunto", async () => {
+    h.covFindMany.mockResolvedValue([]);
+
+    await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [{ codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" }],
+    });
+
+    const entrada = h.auditCreate.mock.calls[0][0].data;
+    expect(entrada.entityType).toBe("charter.requirementset");
+    expect(entrada.note).toContain("v2");
+  });
 });
 ```
 
@@ -1507,12 +1578,23 @@ Esperado: FAIL — `publishSetVersion` não existe.
 
 Adicionar a `compliance.ts`. Permissão `compliance.edit`. Numa só `withTenantDb`:
 
-1. Carregar o set anterior por `supersedesId` e seus requisitos.
+1. Carregar o set anterior por `supersedesId` e seus requisitos, com o mesmo escopo de tenant das outras funções (do tenant **ou** global).
 2. Criar o set novo com `supersedesId` apontando para o anterior, e `createMany` dos requisitos.
-3. Comparar por `codigo`: um requisito **mudou** quando `resumo` ou `texto` diferem do anterior de mesmo código; **novo** quando o código não existia; **removido** quando sumiu.
-4. Para cada código alterado ou removido, atualizar a cobertura do tenant vinculada ao requisito **antigo** para `status: "REVISAR"`. Código inalterado não é tocado.
-5. Auditar com `entityType: "charter.requirementset"`, `note` no formato `"v2 · 1 alterada, 0 nova, 0 removida · 1 cobertura em revisão"`.
-6. Devolver `{ id, afetadas }`.
+3. Reler os requisitos novos para obter os ids — `createMany` não os devolve — e indexá-los por `codigo`.
+4. Comparar por `codigo`: **mudou** quando `resumo` ou `texto` diferem do anterior de mesmo código; **novo** quando o código não existia; **removido** quando sumiu.
+5. **Transportar a cobertura para a versão nova.** Carregar as coberturas do tenant vinculadas aos requisitos **antigos**. Para cada uma cujo código ainda existe na versão nova, criar a cobertura equivalente no requisito **novo**, levando `comentario` e `capabilityId`, com `status`:
+   - o mesmo de antes, se o código não mudou;
+   - `REVISAR`, se mudou.
+
+   Cobertura cujo código foi removido não tem para onde ir: fica no conjunto antigo e entra só na contagem.
+
+   **Nunca criar cobertura onde não existia.** Ausência de linha já significa `SEM_VEREDITO`, e criar `REVISAR` ali transforma "nunca avaliado" em "avaliado e agora duvidoso" — afirmação falsa, e ainda infla a contagem que o usuário lê.
+6. Auditar com `entityType: "charter.requirementset"`, `note` no formato `"v2 · 1 alterada, 0 nova, 0 removida · 3 coberturas transportadas, 1 em revisão"`.
+7. Devolver `{ id, afetadas }`, onde `afetadas` é o número de coberturas **transportadas com status REVISAR** — não o número de requisitos que mudaram.
+
+**Por que o transporte é obrigatório e não otimização.** Os requisitos da versão nova são linhas novas, com ids novos. `getComplianceMap` busca requisitos por `setId` e coberturas por esses ids, sem nunca percorrer `supersedesId`. Sem o transporte, publicar uma versão faz todo veredito sumir da vista no instante seguinte — o mapa volta a 100% `SEM_VEREDITO` mesmo numa versão em que nada mudou. Não é ruído por excesso de alerta: é perda total do sinal, mais falsa regressão de conformidade já estabelecida.
+
+A alternativa — deixar `getComplianceMap` percorrer a linhagem — foi descartada: encarece toda leitura para salvar uma escrita rara, e deixa a cobertura espalhada por N versões em vez de viver junto do requisito que ela cobre.
 
 - [ ] **Step 4: Rodar e confirmar que passa**
 
