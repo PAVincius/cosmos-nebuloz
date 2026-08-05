@@ -1,5 +1,6 @@
 import "server-only";
 import { withTenantDb } from "@repo/database";
+import { CHARTER_ENTITY_TYPES } from "@/app/(charter)/actions/audit.constants";
 import { nivel, severidade } from "@/lib/charter/risk-matrix";
 
 /**
@@ -11,9 +12,14 @@ import { nivel, severidade } from "@/lib/charter/risk-matrix";
  * o mais recente em 12/07".
  *
  * Mora em código, e não em tabela, porque catálogo em banco vira ficção: alguém
- * cadastra capacidade que o código não tem e o mapa mente para o comprador. Em
- * código, `capabilities.test.ts` roda a consulta de cada entrada contra o
- * schema — se um campo sumir, o teste quebra antes de o produto alegar.
+ * cadastra capacidade que o código não tem e o mapa mente para o comprador.
+ *
+ * A proteção contra campo removido do schema é `capabilities.test.ts` **mais**
+ * `tsc --noEmit` (job obrigatório do CI) — não o teste sozinho. O teste, com
+ * banco stub, garante que cada `evidencia()` roda e devolve o formato certo;
+ * quem confirma que `version`, `changeCount`, `personName` etc. realmente
+ * existem no schema é o `tsc`, compilando contra o Prisma Client gerado. Rodar
+ * só `vitest` localmente não pega nome de campo errado.
  */
 export type Evidencia = { total: number; amostra: string[]; href?: string };
 
@@ -154,9 +160,17 @@ export const CAPABILITIES: readonly Capability[] = [
     label: "Trilha de auditoria append-only, exportável",
     evidencia: (tenantId) =>
       withTenantDb(tenantId, async (db) => {
-        const total = await db.auditLog.count({ where: { tenantId } });
+        // auditLog é compartilhada com o resto da plataforma (system.prisma) —
+        // sem o filtro de entityType, total/amostra incluiriam PI Planning,
+        // backoffice etc., e a única capacidade que responde "existe trilha
+        // de auditoria" responderia com número contaminado por outro produto.
+        const where = {
+          tenantId,
+          entityType: { in: CHARTER_ENTITY_TYPES },
+        };
+        const total = await db.auditLog.count({ where });
         const rows = await db.auditLog.findMany({
-          where: { tenantId },
+          where,
           orderBy: { createdAt: "desc" },
           take: 3,
           select: { action: true, createdAt: true },
