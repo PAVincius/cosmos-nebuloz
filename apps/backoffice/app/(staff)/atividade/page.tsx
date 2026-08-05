@@ -1,41 +1,115 @@
+import {
+  Avatar,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 import { listStaffActivity } from "@/app/actions/clients";
 
 export default async function ActivityPage() {
   const result = await listStaffActivity();
 
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <PageHeader
+        eyebrow="Auditoria · staff"
+        subtitle="Quem da Nebuloz mexeu em qual cliente, e quando."
+        title="Atividade do staff"
+      />
+
+      <SectionCard
+        icon="userCheck"
+        subtitle="listStaffActivity() — mais recentes primeiro"
+        title="Trilha"
+      >
+        {renderTrilha(result)}
+      </SectionCard>
+    </div>
+  );
+}
+
+function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
   if (!result.ok) {
     return (
-      <p className="text-destructive" role="alert">
+      <p
+        role="alert"
+        style={{
+          margin: 0,
+          padding: "11px 13px",
+          borderRadius: "var(--r-md)",
+          background: "var(--red-soft)",
+          border: "1px solid rgba(var(--red-rgb),.3)",
+          color: "var(--red-text)",
+          fontSize: 12.5,
+          fontWeight: 600,
+        }}
+      >
         {result.error}
       </p>
     );
   }
 
   if (result.data.length === 0) {
+    // Empty com saída, não beco: diz o que faz a trilha encher.
     return (
-      <div className="rounded-lg border p-8 text-center">
-        <p className="font-medium">Nada registrado ainda</p>
-        <p className="mt-1 text-muted-foreground text-sm">
-          Contratações e provisionamentos aparecem aqui.
-        </p>
-      </div>
+      <p
+        style={{
+          margin: 0,
+          padding: 28,
+          textAlign: "center",
+          color: "var(--ink-muted)",
+          fontSize: 13,
+          lineHeight: 1.6,
+        }}
+      >
+        Nada registrado ainda. Contratação de módulo e provisionamento de
+        cliente aparecem aqui assim que acontecem.
+      </p>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="font-semibold text-2xl">Atividade</h1>
-      <ul className="space-y-2 text-sm">
-        {result.data.map((row) => (
-          <li className="border-b pb-2" key={row.id}>
-            <span className="font-medium">{row.action}</span> · {row.target}
-            <span className="block text-muted-foreground text-xs">
+    <ul
+      style={{
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      {result.data.map((row, i) => (
+        <li
+          key={row.id}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 11,
+            padding: "10px 2px",
+            borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
+          }}
+        >
+          <Avatar name={row.actorName ?? "?"} size={28} />
+          <span style={{ flex: 1, minWidth: 0 }}>
+            <span style={{ display: "block", fontSize: 13 }}>
+              <span className="mono" style={{ fontSize: 12, fontWeight: 700 }}>
+                {row.action}
+              </span>{" "}
+              <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
+            </span>
+            <span
+              className="mono"
+              style={{
+                display: "block",
+                fontSize: 10.5,
+                color: "var(--ink-faint)",
+              }}
+            >
               {row.actorName ?? "—"} ·{" "}
               {new Date(row.createdAt).toLocaleString("pt-BR")}
             </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+          </span>
+        </li>
+      ))}
+    </ul>
   );
 }
