@@ -1,12 +1,119 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
-import { type FormEvent, useState } from "react";
+import type { CSSProperties, FormEvent, ReactNode } from "react";
+import { useState } from "react";
 
 const TOTP_LENGTH = 6;
+
+/**
+ * Campo e input do `backoffice-shell.jsx` (BoField / boInputStyle).
+ *
+ * O botão é `<button type="submit">` nativo, não o `Button` do kit: aquele não
+ * aceita `type` nem `disabled`, então dentro de um form ele não submete e não
+ * trava durante o envio. O visual é o da variante primary, copiado do kit.
+ */
+const INPUT: CSSProperties = {
+  background: "var(--surface-2)",
+  border: "1px solid var(--hairline)",
+  borderRadius: "var(--r-md)",
+  padding: "10px 12px",
+  fontFamily: "inherit",
+  fontSize: 13,
+  fontWeight: 600,
+  color: "var(--ink)",
+  outline: "none",
+  width: "100%",
+};
+
+function Campo({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  children: ReactNode;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <label
+        className="mono"
+        htmlFor={htmlFor}
+        style={{
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: ".12em",
+          textTransform: "uppercase",
+          color: "var(--ink-faint)",
+        }}
+      >
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function Enviar({
+  pending,
+  disabled,
+  children,
+}: {
+  pending: boolean;
+  disabled: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      className="btn"
+      disabled={disabled}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 8,
+        padding: "9px 15px",
+        fontSize: 14,
+        fontWeight: 600,
+        fontFamily: "inherit",
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--accent)",
+        background: "var(--accent)",
+        color: "var(--accent-fg)",
+        width: "100%",
+        boxShadow:
+          "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
+        opacity: disabled ? 0.5 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+      type="submit"
+    >
+      {pending ? "…" : null}
+      {children}
+    </button>
+  );
+}
+
+function Erro({ children }: { children: string }) {
+  return (
+    <p
+      role="alert"
+      style={{
+        margin: 0,
+        padding: "9px 11px",
+        borderRadius: "var(--r-md)",
+        background: "var(--red-soft)",
+        border: "1px solid rgba(var(--red-rgb),.3)",
+        color: "var(--red-text)",
+        fontSize: 12.5,
+        fontWeight: 600,
+      }}
+    >
+      {children}
+    </p>
+  );
+}
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -70,70 +177,72 @@ export function SignInForm() {
 
   if (needsTotp) {
     return (
-      <form className="space-y-4" onSubmit={submitTotp}>
-        <div className="space-y-2">
-          <Label htmlFor="totp">Código do autenticador</Label>
-          <Input
+      <form
+        onSubmit={submitTotp}
+        style={{ display: "flex", flexDirection: "column", gap: 14 }}
+      >
+        <Campo htmlFor="totp" label="Código do autenticador">
+          <input
             autoComplete="one-time-code"
+            className="mono"
             id="totp"
             inputMode="numeric"
             maxLength={TOTP_LENGTH}
             onChange={(e) => setTotp(e.target.value.replace(/\D/g, ""))}
+            style={{ ...INPUT, letterSpacing: ".3em", textAlign: "center" }}
             value={totp}
           />
-        </div>
+        </Campo>
 
-        {error ? (
-          <p className="text-destructive text-sm" role="alert">
-            {error}
-          </p>
-        ) : null}
+        {error ? <Erro>{error}</Erro> : null}
 
-        <Button disabled={pending || totp.length !== TOTP_LENGTH} type="submit">
-          {pending ? "Verificando…" : "Verificar"}
-        </Button>
+        <Enviar
+          disabled={pending || totp.length !== TOTP_LENGTH}
+          pending={pending}
+        >
+          {pending ? "Verificando" : "Verificar"}
+        </Enviar>
       </form>
     );
   }
 
   return (
-    <form className="space-y-4" onSubmit={submitCredentials}>
-      <div className="space-y-2">
-        <Label htmlFor="email">E-mail</Label>
-        <Input
+    <form
+      onSubmit={submitCredentials}
+      style={{ display: "flex", flexDirection: "column", gap: 14 }}
+    >
+      <Campo htmlFor="email" label="E-mail">
+        <input
           autoComplete="email"
           id="email"
           onChange={(e) => setEmail(e.target.value)}
           required
+          style={INPUT}
           type="email"
           value={email}
         />
-      </div>
+      </Campo>
 
-      <div className="space-y-2">
-        <Label htmlFor="password">Senha</Label>
-        <Input
+      <Campo htmlFor="password" label="Senha">
+        <input
           autoComplete="current-password"
           id="password"
           onChange={(e) => setPassword(e.target.value)}
           required
+          style={INPUT}
           type="password"
           value={password}
         />
-      </div>
+      </Campo>
 
-      {error ? (
-        <p className="text-destructive text-sm" role="alert">
-          {error}
-        </p>
-      ) : null}
+      {error ? <Erro>{error}</Erro> : null}
 
-      <Button
+      <Enviar
         disabled={pending || email === "" || password === ""}
-        type="submit"
+        pending={pending}
       >
-        {pending ? "Entrando…" : "Entrar"}
-      </Button>
+        {pending ? "Entrando" : "Entrar"}
+      </Enviar>
     </form>
   );
 }
