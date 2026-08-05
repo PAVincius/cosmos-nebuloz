@@ -362,6 +362,14 @@ model CharterUseCase {
   riskOperational  Int @default(1)
   riskReputational Int @default(1)
 
+  probPrivacy      Int @default(1)
+  probRegulatory   Int @default(1)
+  probSecurity     Int @default(1)
+  probBias         Int @default(1)
+  probIp           Int @default(1)
+  probOperational  Int @default(1)
+  probReputational Int @default(1)
+
   /// Obrigatório quando status = RESTRICTED (≥ 1 condição — FR-6.3).
   restrictions     String[]
   /// Obrigatório quando status = BLOCKED.

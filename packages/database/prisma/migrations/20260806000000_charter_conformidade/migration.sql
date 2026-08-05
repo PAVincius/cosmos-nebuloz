@@ -42,3 +42,13 @@ DROP POLICY IF EXISTS "tenant_isolation" ON "CharterPolicyLink";
 CREATE POLICY "tenant_isolation" ON "CharterPolicyLink"
   USING ("tenantId" = current_tenant_id())
   WITH CHECK ("tenantId" = current_tenant_id());
+
+-- Default 1, e não 0: linha existente tem de manter a severidade que já tinha.
+-- Com 0, impacto × probabilidade zeraria todo risco histórico de uma vez.
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probPrivacy"      INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probRegulatory"   INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probSecurity"     INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probBias"         INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probIp"           INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probOperational"  INTEGER NOT NULL DEFAULT 1;
+ALTER TABLE "CharterUseCase" ADD COLUMN IF NOT EXISTS "probReputational" INTEGER NOT NULL DEFAULT 1;
