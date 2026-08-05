@@ -10,7 +10,12 @@
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, Button, IconButton } from "@repo/design-system/cosmos/kit";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  getComplianceMap,
+  type MapRow,
+  type SetRow,
+} from "@/app/(charter)/actions/compliance";
 import type { VersionDiff } from "@/app/(charter)/actions/policy";
 import type {
   ClauseLibraryRow,
@@ -1149,6 +1154,7 @@ export function PublishVersionModal({
 
 export function GenerateDraftModal({
   sections,
+  requirementSets,
   industry,
   geo,
   posture,
@@ -1163,11 +1169,18 @@ export function GenerateDraftModal({
     statusLabel: string;
     words: number;
   }[];
+  /** Conjuntos disponíveis para fundamentar o rascunho — vem de
+   *  listRequirementSets() na tela de Política. */
+  requirementSets: SetRow[];
   industry: string | null;
   geo: string | null;
   posture: string;
   onClose: () => void;
-  onSave: (sectionId: string, body: string) => void;
+  onSave: (
+    sectionId: string,
+    body: string,
+    groundedRequirementId: string
+  ) => void;
   pending: boolean;
 }) {
   const [stage, setStage] = useState<"form" | "working" | "done">("form");
@@ -1176,6 +1189,35 @@ export function GenerateDraftModal({
   const [ctxPosture, setCtxPosture] = useState(posture);
   const [scope, setScope] = useState<string[]>([]);
   const [body, setBody] = useState("");
+
+  // Exigência que fundamenta o rascunho (groundedRequirementId em
+  // saveGeneratedDraft). Cascata: escolhido o conjunto, busca as exigências
+  // dele — MapRow só existe por conjunto, nunca solto, então sem esse
+  // segundo fetch o seletor de exigência não tem o que listar.
+  const [groundedSetId, setGroundedSetId] = useState("");
+  const [requirements, setRequirements] = useState<MapRow[]>([]);
+  const [loadingRequirements, setLoadingRequirements] = useState(false);
+  const [groundedRequirementId, setGroundedRequirementId] = useState("");
+  const activeSetId = groundedSetId || requirementSets[0]?.id || "";
+
+  useEffect(() => {
+    if (!activeSetId) {
+      setRequirements([]);
+      return;
+    }
+    let alive = true;
+    setLoadingRequirements(true);
+    getComplianceMap(activeSetId).then((res) => {
+      if (!alive) {
+        return;
+      }
+      setRequirements(res.ok ? res.data.linhas : []);
+      setLoadingRequirements(false);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [activeSetId]);
 
   const toggle = (id: string) =>
     setScope((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
@@ -1212,13 +1254,20 @@ export function GenerateDraftModal({
               Fechar
             </Button>
             {stage === "done" ? (
-              <Button
-                icon="check"
-                onClick={() => target && onSave(target.id, body)}
-                size="md"
+              <GatedAction
+                ready={Boolean(target) && Boolean(groundedRequirementId)}
+                reason="Selecione a exigência que este rascunho fundamenta"
               >
-                {pending ? "Salvando…" : "Inserir como rascunho"}
-              </Button>
+                <Button
+                  icon="check"
+                  onClick={() =>
+                    target && onSave(target.id, body, groundedRequirementId)
+                  }
+                  size="md"
+                >
+                  {pending ? "Salvando…" : "Inserir como rascunho"}
+                </Button>
+              </GatedAction>
             ) : (
               <GatedAction
                 ready={scope.length > 0 && stage === "form"}
@@ -1267,6 +1316,52 @@ export function GenerateDraftModal({
               onChange={(e) => setCtxGeo(e.target.value)}
               options={["BR · UE", "BR", "BR · EUA", "Global"]}
               value={ctxGeo}
+            />
+          </FormField>
+        </div>
+        <div
+          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+        >
+          <FormField label="Conjunto de exigências" required>
+            <Select
+              onChange={(e) => {
+                setGroundedSetId(e.target.value);
+                setGroundedRequirementId("");
+              }}
+              options={
+                requirementSets.length > 0
+                  ? requirementSets.map((s) => ({
+                      value: s.id,
+                      label: `${s.nome} · v${s.versao}`,
+                    }))
+                  : [{ value: "", label: "Nenhum conjunto importado" }]
+              }
+              value={activeSetId}
+            />
+          </FormField>
+          <FormField
+            hint="Aparece na trilha de auditoria como fundamento do rascunho"
+            label="Exigência fundamentada"
+            required
+          >
+            <Select
+              onChange={(e) => setGroundedRequirementId(e.target.value)}
+              options={
+                requirements.length > 0
+                  ? requirements.map((r) => ({
+                      value: r.requirementId,
+                      label: `${r.codigo} — ${r.resumo}`,
+                    }))
+                  : [
+                      {
+                        value: "",
+                        label: loadingRequirements
+                          ? "Carregando…"
+                          : "Nenhuma exigência neste conjunto",
+                      },
+                    ]
+              }
+              value={groundedRequirementId}
             />
           </FormField>
         </div>
