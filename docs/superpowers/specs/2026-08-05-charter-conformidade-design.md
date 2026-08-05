@@ -79,10 +79,12 @@ grande. **Este spec não a encerra.**
 
 ## 3. Escopo
 
-**Dentro.** Registro de exigências importadas de um documento; vínculo exigência
-→ capacidade do Charter → artefato de evidência; geração do mapa em tela, CSV,
-JSON e PDF; e as parciais que a RFP cita: vínculo política↔caso↔vendor, export
-PDF, probabilidade na matriz de risco.
+**Dentro.** Registro de exigências importadas de um documento; **regulação como
+conjunto versionado publicado pela Nebuloz** (AI Act, LGPD, NIST AI RMF, ISO/IEC
+42001) com propagação de mudança para as coberturas afetadas; vínculo exigência →
+capacidade do Charter → artefato de evidência; geração do mapa em tela, CSV, JSON
+e PDF; fundamento citado em rascunho gerado por modelo; e as parciais que a RFP
+cita: vínculo política↔caso↔vendor, export PDF, probabilidade na matriz de risco.
 
 **Fora, deliberadamente.** Enforcement em runtime (§6.3, §6.4). Detecção
 automática de viés (§6.2). Portfólio e ROI (§4.2) — são Cosmos. Matriz de risco
@@ -102,14 +104,20 @@ errado é caro toda vez.
 ### 4.1 Modelos novos
 
 ```
-CharterRequirementSet  { tenantId, nome, origem, importadoEm, notas }
-CharterRequirement     { tenantId, setId, codigo, texto, peso?, categoria? }
+CharterRequirementSet  { tenantId?, nome, origem: RFP|REGULACAO, editor: TENANT|NEBULOZ,
+                         jurisdicao?, versao, supersedesId?, licenca: LIVRE|REFERENCIA,
+                         importadoEm, notas }
+CharterRequirement     { setId, codigo, citacao, resumo, texto?, peso?, categoria? }
                        @@unique([setId, codigo])
 CharterCoverage        { tenantId, requirementId, status, comentario, capabilityId? }
                        @@unique([requirementId])
 CharterPolicyLink      { tenantId, policyId, alvoTipo: USE_CASE|VENDOR, alvoId }
                        @@unique([policyId, alvoTipo, alvoId])
 ```
+
+`tenantId` é opcional em `CharterRequirementSet`: conjunto de regulação é
+publicado pela Nebuloz e compartilhado por todos os tenants; conjunto de RFP é do
+tenant que o importou. Nulo significa global.
 
 `status` ∈ `ATENDE | PARCIAL | NAO_ATENDE | SEM_VEREDITO`.
 
@@ -154,7 +162,57 @@ cadastra capacidade que o código não tem e o mapa mente para o comprador. Em
 código, um teste roda a consulta de cada capacidade contra o schema — se o
 `policyVersionId` sumir do aceite, o teste quebra antes de o produto alegar.
 
-### 4.3 Onde mora
+### 4.3 Regulação é um conjunto de exigências, não um corpus para RAG
+
+A RFP §6.1 pede como a solução considera marcos regulatórios e **processo para
+atualização contínua**. A forma óbvia — jogar os PDFs num índice e deixar o
+modelo consultar — é a errada, por três razões.
+
+Faz o produto **afirmar conformidade**, quebrando o limite de §5 e criando
+exposição jurídica justamente no cliente que comprou governança para reduzi-la.
+Corpus desatualizado **cita com confiança artigo revogado**, o que é pior que não
+citar. E saída de RAG **não é verificável**, enquanto todo o resto do design se
+apoia em evidência checável.
+
+Regulação entra como `CharterRequirementSet` com `origem: REGULACAO` e
+`editor: NEBULOZ` — estruturalmente idêntica à RFP da Aurora Mesh. O cliente
+mapeia a evidência dele **uma vez** e ela responde às duas.
+
+**Corpora do primeiro corte:**
+
+| Conjunto | Jurisdição | Licença |
+|---|---|---|
+| EU AI Act — obrigações de sistemas de alto risco | UE | `LIVRE` |
+| LGPD — tratamento e decisão automatizada | BR | `LIVRE` |
+| NIST AI RMF 1.0 | US | `LIVRE` |
+| ISO/IEC 42001 — objetivos de controle | Internacional | `REFERENCIA` |
+
+**A licença é estrutural, não regra que alguém lembra.** ISO/IEC 42001 é norma
+proprietária: reproduzir o texto das cláusulas é infração de copyright. Por isso
+`CharterRequirement` separa três campos — `citacao` (sempre: "Art. 9º", "cláusula
+6.1.2"), `resumo` (sempre: formulação nossa do objetivo) e `texto` (**apenas**
+quando `licenca = LIVRE`). Conjunto `REFERENCIA` com `texto` preenchido é
+recusado no banco e no teste, não no code review.
+
+**Atualização contínua** usa o mecanismo que o Charter já tem para política:
+versão nova é um conjunto com `supersedesId` apontando para o anterior. Publicar
+computa o diff por `codigo` — adicionadas, alteradas, removidas — e marca as
+coberturas cujo requisito mudou como `REVISAR`. O cliente vê o que a mudança
+regulatória afetou **na governança dele**, em vez de receber um aviso genérico de
+que a lei mudou.
+
+### 4.4 O papel do modelo, delimitado
+
+O modelo **sugere** mapeamento por proximidade de texto e **redige** rascunho de
+seção de política fundamentado numa cláusula citada. Ele não afirma cumprimento e
+não decide status de cobertura.
+
+Hoje `saveGeneratedDraft` grava `generated: true` e **não registra o que
+fundamentou a geração** — texto de política nasce sem citação e sem rastro. Este
+trabalho fecha isso: `CharterPolicySection` ganha `groundedRequirementId`, e
+rascunho gerado sem fundamento passa a ser estado inválido, não default.
+
+### 4.5 Onde mora
 
 **No Charter, virado para o tenant** — não no back-office como ferramenta de
 venda. A dor do cliente (responder questionário que ele recebe) é maior e mais
@@ -167,7 +225,7 @@ Actions no padrão que o Charter já usa (`Result<T>`, guard de tenant,
 `logCharterAudit`): `listRequirementSets`, `importRequirementSet`, `setCoverage`,
 `getComplianceMap`, `exportComplianceMap`.
 
-### 4.4 PDF
+### 4.6 PDF
 
 `@react-pdf/renderer`. Sem navegador headless, sem binário extra, roda em função
 serverless sem estourar bundle. Layout é mais limitado que HTML — e relatório de
@@ -213,9 +271,17 @@ Mesmo princípio do `cosmos:graph check`, que reprova nó apontando para arquivo
 inexistente. Sem ele o catálogo vira a planilha desatualizada que este trabalho
 veio substituir.
 
+**A guarda de copyright é teste, não disciplina.** Um teste percorre todo
+conjunto com `licenca = REFERENCIA` e falha se qualquer requisito tiver `texto`
+preenchido. Reproduzir cláusula de ISO/IEC 42001 é infração, e infração não pode
+depender de alguém lembrar disso no code review — nem do próximo que for
+cadastrar um conjunto novo.
+
 Somam-se: validação de importação com código duplicado; contagem de não-mapeados
-no cabeçalho do export; isolamento de tenant; e render tests cobrindo evidência
-presente, evidência indisponível e mapa incompleto.
+no cabeçalho do export; isolamento de tenant; diff de versão de conjunto marcando
+as coberturas certas como `REVISAR`; recusa de rascunho gerado sem
+`groundedRequirementId`; e render tests cobrindo evidência presente, evidência
+indisponível e mapa incompleto.
 
 **Verificação:** rodar com o comando real do pacote (`pnpm --filter app test`),
 contra o resultado mergeado com a `main` — não contra a branch isolada. Conflito
@@ -231,5 +297,8 @@ Registradas para não serem redescobertas como surpresa:
 - **Enforcement** (§6.3, §6.4) — aposta em aberto, dependente da pesquisa de
   concorrente.
 - Charter **não responde a RFP sozinho** — §3.1, §4.2 e §4.4 são Cosmos.
+- Curadoria dos quatro corpora é **trabalho editorial recorrente**, não código.
+  Sem alguém dono disso, o conjunto envelhece e passa a citar norma revogada —
+  que é exatamente a falha que este desenho existe para evitar.
 - A validação apoia-se em **um** documento, e genérico. Mais documentos mudam a
   prioridade; este spec não encerra a fase de validação.
