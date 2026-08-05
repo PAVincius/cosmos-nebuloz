@@ -888,9 +888,16 @@ model CharterRequirement {
   @@index([setId])
 }
 
-/// Veredito do tenant sobre uma exigência. Uma por exigência: dois vereditos
-/// para a mesma linha são duas respostas contraditórias indo para o mesmo
-/// comprador, e a tela teria de escolher uma — escolha que ninguém fez.
+/// Veredito do tenant sobre uma exigência. Uma por exigência **por tenant**:
+/// dois vereditos do mesmo tenant sobre a mesma linha são duas respostas
+/// contraditórias indo para o mesmo comprador, e a tela teria de escolher uma —
+/// escolha que ninguém fez.
+///
+/// O `tenantId` na chave não é redundante. Exigência de regulação vive num
+/// conjunto com `tenantId` nulo, uma linha só compartilhada por todos: sem ele,
+/// apenas o primeiro tenant do mundo a opinar sobre o AI Act teria cobertura, e
+/// o upsert do segundo sobrescreveria a do primeiro — que então some da vista
+/// dele por RLS, sem erro.
 model CharterCoverage {
   id            String                @id @default(cuid())
   tenantId      String
@@ -903,7 +910,7 @@ model CharterCoverage {
   tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   requirement CharterRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
 
-  @@unique([requirementId])
+  @@unique([tenantId, requirementId])
   @@index([tenantId])
   @@index([tenantId, status])
 }
@@ -1186,15 +1193,21 @@ describe("setCoverage", () => {
     h.covUpsert.mockResolvedValue({ id: "c-1" });
   });
 
-  it("é upsert por requisito — nunca cria veredito duplicado", async () => {
+  it("é upsert por requisito e tenant — nunca cria veredito duplicado", async () => {
     await setCoverage({
       requirementId: "r-1",
       status: "ATENDE",
       capabilityId: "POLICY_ATTESTATION",
     });
 
+    // A chave é composta porque exigência de regulação é UMA linha global
+    // compartilhada: com `where: { requirementId }` só o primeiro tenant do
+    // mundo a opinar sobre o AI Act teria cobertura, e o upsert do segundo
+    // sobrescreveria a do primeiro — que então some da vista dele por RLS.
     expect(h.covUpsert).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { requirementId: "r-1" } })
+      expect.objectContaining({
+        where: { tenantId_requirementId: { tenantId: "t-1", requirementId: "r-1" } },
+      })
     );
   });
 
@@ -1395,7 +1408,9 @@ const ImportSchema = z.object({
 Regras que a implementação deve cumprir, cada uma coberta por um teste do Step 1:
 
 1. `importRequirementSet` — permissão `compliance.edit`. **Antes de qualquer escrita**: detectar código repetido em `requisitos` e lançar `GovernanceError("req.duplicate", 'Código repetido na importação: "4.1.2". Corrija antes de importar.')` nomeando o código. Se `licenca === "REFERENCIA"` e algum requisito trouxer `texto`, lançar `GovernanceError("req.licenca", "Conjunto REFERENCIA não pode reproduzir texto de norma proprietária — use apenas citação e resumo.")`. Depois criar o set e `createMany` dos requisitos, e auditar com `entityType: "charter.requirementset"`.
-2. `setCoverage` — permissão `compliance.edit`. Se `capabilityId` vier e `getCapability` devolver `undefined`, lançar `GovernanceError("coverage.capability.unknown", ...)`. Se `status === "ATENDE"` ou `"PARCIAL"` sem `capabilityId`, lançar `GovernanceError("coverage.needs.capability", "Alegar conformidade exige apontar a capacidade que a prova.")`. Gravar com `upsert` sobre `where: { requirementId }`, auditando com `entityType: "charter.coverage"` e `diff` `[["status", anterior, novo]]`.
+2. `setCoverage` — permissão `compliance.edit`. Se `capabilityId` vier e `getCapability` devolver `undefined`, lançar `GovernanceError("coverage.capability.unknown", ...)`. Se `status === "ATENDE"` ou `"PARCIAL"` sem `capabilityId`, lançar `GovernanceError("coverage.needs.capability", "Alegar conformidade exige apontar a capacidade que a prova.")`. Gravar com `upsert` sobre `where: { tenantId_requirementId: { tenantId: ctx.tenantId, requirementId } }` — a chave é composta, ver o teste —, auditando com `entityType: "charter.coverage"` e `diff` `[["status", anterior, novo]]`.
+
+5. **Tornar as entradas novas visíveis na tela de auditoria.** `apps/app/components/charter/parts.tsx` define `AUDIT_TYPE_META` como `Record<string, ...>` — sem chave `"compliance"`, e `apps/app/components/charter/screens/audit.tsx` monta o dropdown de filtro e as contagens por tipo a partir de `Object.keys(AUDIT_TYPE_META)`. Como a Task 4 categorizou `charter.requirementset` e `charter.coverage` como `"compliance"`, sem esta entrada as auditorias que esta task escreve caem no estilo padrão e **não têm opção de filtro nem balde de contagem**. Não quebra a tela (há fallback), o que é pior: some em silêncio. Mesmo defeito da Task 1 — grava e não se lê — num arquivo diferente.
 3. `getComplianceMap` — permissão `compliance.map`. Buscar o set com `findFirst({ where: { id, OR: [{ tenantId: ctx.tenantId }, { tenantId: null }] } })` — aceita o do tenant **ou** o global de regulação. Ausente ⇒ `GovernanceError("set.unknown", "Conjunto de exigências não encontrado.")`, a mesma mensagem para "não existe" e "não é seu": distinguir confirma ao curioso que o id existe em algum lugar. Depois os requisitos e as coberturas do tenant. Para cada linha com `capabilityId`:
    - `getCapability` devolveu `undefined` ⇒ `evidencia: null`, `evidenciaErro: "Capacidade removida do catálogo — revise esta cobertura."`
    - resolveu ⇒ buscar a evidência em `try/catch`; no `catch`, `evidencia: null` e `evidenciaErro` com a mensagem.

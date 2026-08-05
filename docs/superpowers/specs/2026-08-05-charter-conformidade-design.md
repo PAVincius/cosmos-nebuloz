@@ -110,7 +110,7 @@ CharterRequirementSet  { tenantId?, nome, origem: RFP|REGULACAO, editor: TENANT|
 CharterRequirement     { setId, codigo, citacao, resumo, texto?, peso?, categoria? }
                        @@unique([setId, codigo])
 CharterCoverage        { tenantId, requirementId, status, comentario, capabilityId? }
-                       @@unique([requirementId])
+                       @@unique([tenantId, requirementId])
 CharterPolicyLink      { tenantId, policyId, alvoTipo: USE_CASE|VENDOR, alvoId }
                        @@unique([policyId, alvoTipo, alvoId])
 ```
