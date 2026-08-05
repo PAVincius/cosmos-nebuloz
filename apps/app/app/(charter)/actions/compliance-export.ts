@@ -30,8 +30,27 @@ export type ComplianceMapExport = {
   encoding: "utf8" | "base64";
 };
 
+// Excel/Sheets decidem se uma célula é fórmula pelo caractere inicial *depois*
+// de fazer o parse do CSV — aspas resolvem injeção de vírgula/quebra de linha
+// (RFC4180), não isto. codigo/citacao/resumo/comentario são texto livre sem
+// restrição de caractere na importação (RequisitoSchema/SetCoverageSchema em
+// compliance.ts) e a evidência pode carregar texto livre vindo do catálogo de
+// capacidades (ex.: nome de pessoa/fornecedor) — qualquer um deles abrindo com
+// =, +, -, @, tab ou CR executa na máquina do auditor que abrir o arquivo.
+// Mesmo guard de apps/app/components/cosmos/screens/settings-audit-tab.tsx —
+// prefixa com ' para forçar de volta a texto puro, em vez de inventar uma
+// segunda sanitização.
+const FORMULA_INJECTION_RE = /^[=+\-@\t\r]/;
+
+function sanitizeCsvField(value: string): string {
+  return FORMULA_INJECTION_RE.test(value) ? `'${value}` : value;
+}
+
+function esc(value: string): string {
+  return `"${sanitizeCsvField(value).replaceAll('"', '""')}"`;
+}
+
 function toCsv(map: ComplianceMap): string {
-  const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
   const header = [
     "codigo",
     "citacao",
@@ -60,6 +79,24 @@ function toCsv(map: ComplianceMap): string {
       .join(",")
   );
   return [header.join(","), ...lines].join("\n");
+}
+
+/**
+ * Sinaliza rascunho já no nome do arquivo. `cabecalho()` só chega a quem lê
+ * o PDF ou a nota de auditoria — quem recebe o CSV/JSON encaminhado por
+ * e-mail e não tem acesso à trilha do tenant só vê o nome do arquivo antes de
+ * abrir. Uma linha de comentário dentro do corpo do CSV quebraria parser
+ * ingênuo (primeira linha = cabeçalho de coluna); o nome do arquivo não
+ * arrisca nada e aparece mesmo sem abrir.
+ */
+function nomeArquivo(
+  map: ComplianceMap,
+  format: "csv" | "json" | "pdf"
+): string {
+  const total = map.linhas.length;
+  const rascunho =
+    map.semVeredito > 0 ? `-rascunho-${map.semVeredito}-de-${total}` : "";
+  return `charter-mapa-${map.setId}${rascunho}.${format}`;
 }
 
 export async function exportComplianceMap(
@@ -118,7 +155,7 @@ export async function exportComplianceMap(
     });
 
     return {
-      filename: `charter-mapa-${map.setId}.${data.format}`,
+      filename: nomeArquivo(map, data.format),
       mimeType,
       content,
       encoding,

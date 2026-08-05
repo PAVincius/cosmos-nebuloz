@@ -181,6 +181,8 @@ describe("exportComplianceMap", () => {
     }
     expect(res.data.mimeType).toBe("text/csv");
     expect(res.data.encoding).toBe("utf8");
+    // mapFixture: 1 de 3 sem veredito — nome do arquivo já denuncia rascunho.
+    expect(res.data.filename).toBe("charter-mapa-s-1-rascunho-1-de-3.csv");
 
     const linha = res.data.content
       .split("\n")
@@ -189,6 +191,78 @@ describe("exportComplianceMap", () => {
     // A linha com evidência de verdade mostra o total e a amostra — a mesma
     // função (formatarEvidencia) tem de tratar os dois casos.
     expect(res.data.content).toContain("37 · Bia · 12/07");
+  });
+
+  it("CSV: coluna de texto livre com fórmula vem prefixada com apóstrofo", async () => {
+    // Excel/Sheets decidem se é fórmula pelo caractere inicial *depois* do
+    // parse do CSV — aspas (RFC4180) não protegem contra isto. codigo,
+    // citacao, resumo e comentario são texto livre sem restrição de
+    // caractere na importação (compliance.ts).
+    h.getComplianceMap.mockResolvedValue({
+      ok: true,
+      data: {
+        setId: "s-1",
+        nome: "RFP Aurora Mesh",
+        semVeredito: 0,
+        linhas: [
+          {
+            requirementId: "r-1",
+            codigo: "=1+1",
+            citacao: "+SOMA(A1)",
+            resumo: '=HYPERLINK("http://evil","x")',
+            peso: null,
+            status: "ATENDE",
+            comentario: "-2+2",
+            capabilityId: null,
+            capabilityLabel: null,
+            evidencia: null,
+            evidenciaErro: null,
+          },
+        ],
+      },
+    });
+
+    const res = await exportComplianceMap({ setId: "s-1", format: "csv" });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    // Cada coluna perigosa vem forçada de volta a texto puro com um ' líder —
+    // nunca crua.
+    expect(res.data.content).toContain(`"'=1+1"`);
+    expect(res.data.content).toContain(`"'+SOMA(A1)"`);
+    expect(res.data.content).toContain(`"'=HYPERLINK`);
+    expect(res.data.content).toContain(`"'-2+2"`);
+    expect(res.data.content).not.toContain(`"=1+1"`);
+    expect(res.data.content).not.toContain(`"=HYPERLINK`);
+  });
+
+  it("CSV: texto comum sem fórmula não ganha o prefixo", async () => {
+    const res = await exportComplianceMap({ setId: "s-1", format: "csv" });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.content).toContain('"Attestation"');
+    expect(res.data.content).not.toContain("'Attestation");
+  });
+
+  it("nome do arquivo não leva -rascunho quando o mapa está completo", async () => {
+    h.getComplianceMap.mockResolvedValue({
+      ok: true,
+      data: { ...mapFixture, semVeredito: 0 },
+    });
+
+    const res = await exportComplianceMap({ setId: "s-1", format: "csv" });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.filename).toBe("charter-mapa-s-1.csv");
+    expect(res.data.filename).not.toContain("rascunho");
   });
 
   it("JSON: serializa o mapa inteiro, inclusive semVeredito", async () => {
@@ -200,6 +274,7 @@ describe("exportComplianceMap", () => {
     }
     expect(res.data.mimeType).toBe("application/json");
     expect(res.data.encoding).toBe("utf8");
+    expect(res.data.filename).toBe("charter-mapa-s-1-rascunho-1-de-3.json");
 
     const parsed = JSON.parse(res.data.content);
     expect(parsed.setId).toBe("s-1");
@@ -216,6 +291,7 @@ describe("exportComplianceMap", () => {
     }
     expect(res.data.mimeType).toBe("application/pdf");
     expect(res.data.encoding).toBe("base64");
+    expect(res.data.filename).toBe("charter-mapa-s-1-rascunho-1-de-3.pdf");
 
     const buffer = Buffer.from(res.data.content, "base64");
     expect(buffer.subarray(0, 5).toString("latin1")).toBe("%PDF-");
