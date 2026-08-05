@@ -10,6 +10,7 @@ const h = vi.hoisted(() => ({
   covUpsert: vi.fn(),
   covFindMany: vi.fn(),
   covFindUnique: vi.fn(),
+  covCreateMany: vi.fn(),
   auditCreate: vi.fn(),
 }));
 
@@ -29,6 +30,7 @@ vi.mock("@repo/database", () => ({
         upsert: h.covUpsert,
         findMany: h.covFindMany,
         findUnique: h.covFindUnique,
+        createMany: h.covCreateMany,
       },
       auditLog: { create: h.auditCreate },
     }),
@@ -377,14 +379,42 @@ describe("publishSetVersion", () => {
     });
     h.setCreate.mockResolvedValue({ id: "s-2" });
     h.reqCreateMany.mockResolvedValue({ count: 2 });
-    // Versão anterior: 4.1 e 4.2. A nova muda 4.2 e mantém 4.1.
-    h.reqFindMany.mockResolvedValue([
-      { id: "r-1", codigo: "4.1", resumo: "Inalterada" },
-      { id: "r-2", codigo: "4.2", resumo: "Texto antigo" },
-    ]);
+    // Versão anterior: 4.1 e 4.2. A nova muda 4.2 e mantém 4.1. `reqFindMany`
+    // representa dois métodos reais diferentes aqui — requisitos do conjunto
+    // antigo, depois a releitura dos novos após o createMany (regra 3) — e o
+    // mock não distingue chamada por `where`. Sem os dois
+    // `mockResolvedValueOnce`, a segunda leitura devolveria os mesmos ids
+    // "r-1"/"r-2" da primeira, e nenhum teste conseguiria distinguir
+    // cobertura transportada para o requisito novo de cobertura ainda presa
+    // no antigo.
+    h.reqFindMany
+      .mockResolvedValueOnce([
+        { id: "r-1", codigo: "4.1", resumo: "Inalterada" },
+        { id: "r-2", codigo: "4.2", resumo: "Texto antigo" },
+      ])
+      .mockResolvedValueOnce([
+        { id: "novo-r-1", codigo: "4.1" },
+        { id: "novo-r-2", codigo: "4.2" },
+      ]);
   });
 
   it("marca como REVISAR só as coberturas cujo requisito mudou", async () => {
+    // Tenant já opinou nas duas: ATENDE em 4.1, ATENDE em 4.2.
+    h.covFindMany.mockResolvedValue([
+      {
+        requirementId: "r-1",
+        status: "ATENDE",
+        comentario: null,
+        capabilityId: "POLICY_VERSIONING",
+      },
+      {
+        requirementId: "r-2",
+        status: "ATENDE",
+        comentario: null,
+        capabilityId: "POLICY_VERSIONING",
+      },
+    ]);
+
     const res = await publishSetVersion({
       supersedesId: "s-1",
       nome: "EU AI Act",
@@ -402,5 +432,80 @@ describe("publishSetVersion", () => {
     // Só 4.2 mudou. Marcar tudo faria o cliente revisar o que não moveu, e é
     // assim que aviso de mudança regulatória vira ruído que se ignora.
     expect(res.data.afetadas).toBe(1);
+  });
+
+  it("transporta o veredito inalterado para a versão nova, sem rebaixá-lo", async () => {
+    // Sem transporte, publicar versão apaga todo veredito da vista: os
+    // requisitos novos têm ids novos e getComplianceMap busca cobertura por
+    // id de requisito, sem percorrer supersedesId.
+    h.covFindMany.mockResolvedValue([
+      {
+        requirementId: "r-1",
+        status: "ATENDE",
+        comentario: "Prova em v3",
+        capabilityId: "POLICY_VERSIONING",
+      },
+    ]);
+
+    await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+        { codigo: "4.2", citacao: "Art. 4.2", resumo: "Texto NOVO" },
+      ],
+    });
+
+    const transportada = h.covCreateMany.mock.calls[0][0].data.find(
+      (c: { requirementId: string }) => c.requirementId === "novo-r-1"
+    );
+    expect(transportada.status).toBe("ATENDE");
+    expect(transportada.comentario).toBe("Prova em v3");
+    expect(transportada.capabilityId).toBe("POLICY_VERSIONING");
+  });
+
+  it("não cria cobertura onde o tenant nunca opinou", async () => {
+    // Ausência de linha já é SEM_VEREDITO. Criar REVISAR ali transforma
+    // "nunca avaliado" em "avaliado e agora duvidoso" — afirmação falsa.
+    h.covFindMany.mockResolvedValue([]);
+
+    const res = await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+        { codigo: "4.2", citacao: "Art. 4.2", resumo: "Texto NOVO" },
+      ],
+    });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.afetadas).toBe(0);
+    const criadas = h.covCreateMany.mock.calls[0]?.[0]?.data ?? [];
+    expect(criadas).toHaveLength(0);
+  });
+
+  it("audita com entityType e nota do conjunto", async () => {
+    h.covFindMany.mockResolvedValue([]);
+
+    await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+      ],
+    });
+
+    const entrada = h.auditCreate.mock.calls[0][0].data;
+    expect(entrada.entityType).toBe("charter.requirementset");
+    // note vive em metadata.note, não em data.note — é assim que
+    // logCharterAudit (_shared.ts) grava para toda action do Charter, não
+    // uma escolha desta função.
+    expect(entrada.metadata.note).toContain("v2");
   });
 });

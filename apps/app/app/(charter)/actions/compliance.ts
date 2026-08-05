@@ -213,6 +213,15 @@ export async function publishSetVersion(
         })),
       });
 
+      // createMany não devolve os ids gerados — sem reler, não haveria como
+      // saber em qual requisito da versão nova gravar a cobertura
+      // transportada abaixo.
+      const newRequisitos = await db.charterRequirement.findMany({
+        where: { setId: newSet.id },
+        orderBy: { codigo: "asc" },
+      });
+      const newByCode = new Map(newRequisitos.map((n) => [n.codigo, n]));
+
       // Diff por código: mudou quando resumo OU texto difere do mesmo código
       // no conjunto anterior; novo quando o código não existia; removido
       // quando sumiu. citacao fica de fora da comparação de propósito — só o
@@ -220,13 +229,11 @@ export async function publishSetVersion(
       const oldByCode = new Map(
         oldRequisitos.map((anterior) => [anterior.codigo, anterior])
       );
-      const newCodes = new Set(data.requisitos.map((r) => r.codigo));
+      const payloadCodes = new Set(data.requisitos.map((r) => r.codigo));
 
       let alteradas = 0;
       let novas = 0;
-      // Requisitos antigos cuja cobertura precisa virar REVISAR — sempre pela
-      // linha antiga, porque é nela que a cobertura do tenant está gravada.
-      const paraRevisar: { id: string }[] = [];
+      const codigosMudados = new Set<string>();
 
       for (const r of data.requisitos) {
         const anterior = oldByCode.get(r.codigo);
@@ -239,43 +246,80 @@ export async function publishSetVersion(
           (anterior.texto ?? null) !== (r.texto ?? null);
         if (mudou) {
           alteradas += 1;
-          paraRevisar.push(anterior);
+          codigosMudados.add(r.codigo);
         }
       }
 
       const removidas = oldRequisitos.filter(
-        (anterior) => !newCodes.has(anterior.codigo)
+        (anterior) => !payloadCodes.has(anterior.codigo)
       );
-      paraRevisar.push(...removidas);
 
-      // Só as linhas cujo requisito de fato mudou. Marcar tudo faria o
-      // cliente revisar o que não moveu, e é assim que aviso de mudança
-      // regulatória vira ruído que se ignora.
-      for (const anterior of paraRevisar) {
-        await db.charterCoverage.upsert({
-          where: {
-            tenantId_requirementId: {
-              tenantId: ctx.tenantId,
-              requirementId: anterior.id,
-            },
-          },
-          create: {
-            tenantId: ctx.tenantId,
-            requirementId: anterior.id,
-            status: "REVISAR",
-          },
-          update: { status: "REVISAR" },
+      // Transportar cobertura para a versão nova. Os requisitos novos são
+      // linhas com ids novos, e getComplianceMap busca cobertura por id de
+      // requisito sem nunca percorrer supersedesId — sem transportar, todo
+      // veredito (inclusive o que não mudou) some da vista no instante
+      // seguinte à publicação.
+      const oldIdToCode = new Map(
+        oldRequisitos.map((anterior) => [anterior.id, anterior.codigo])
+      );
+      const oldCoverages = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: oldRequisitos.map((anterior) => anterior.id) },
+        },
+      });
+
+      const paraTransportar: {
+        tenantId: string;
+        requirementId: string;
+        status:
+          | "ATENDE"
+          | "PARCIAL"
+          | "NAO_ATENDE"
+          | "SEM_VEREDITO"
+          | "REVISAR";
+        comentario: string | null;
+        capabilityId: string | null;
+      }[] = [];
+
+      for (const cobertura of oldCoverages) {
+        const codigo = oldIdToCode.get(cobertura.requirementId);
+        if (!codigo) {
+          continue;
+        }
+        // Código removido: a cobertura não tem para onde ir. Fica intocada
+        // no conjunto antigo e só entra na contagem de removidas.
+        const novoRequisito = newByCode.get(codigo);
+        if (!novoRequisito) {
+          continue;
+        }
+        paraTransportar.push({
+          tenantId: ctx.tenantId,
+          requirementId: novoRequisito.id,
+          status: codigosMudados.has(codigo) ? "REVISAR" : cobertura.status,
+          comentario: cobertura.comentario,
+          capabilityId: cobertura.capabilityId,
         });
       }
 
-      const afetadas = paraRevisar.length;
+      // Nunca criar cobertura onde não existia: ausência de linha já é
+      // SEM_VEREDITO, e um insert aqui converteria "nunca avaliado" em
+      // "avaliado e agora duvidoso" — afirmação que ninguém fez, e ainda
+      // infla a contagem que o usuário lê.
+      if (paraTransportar.length > 0) {
+        await db.charterCoverage.createMany({ data: paraTransportar });
+      }
+
+      const afetadas = paraTransportar.filter(
+        (c) => c.status === "REVISAR"
+      ).length;
 
       await logCharterAudit(db, ctx, {
         action: "Publicou nova versão do conjunto de exigências",
         entityType: "charter.requirementset",
         entityId: newSet.id,
         target: `${data.nome} · v${data.versao}`,
-        note: `v${data.versao} · ${alteradas} alterada, ${novas} nova, ${removidas.length} removida · ${afetadas} cobertura em revisão`,
+        note: `v${data.versao} · ${alteradas} alterada, ${novas} nova, ${removidas.length} removida · ${paraTransportar.length} coberturas transportadas, ${afetadas} em revisão`,
       });
 
       return { id: newSet.id, afetadas };
