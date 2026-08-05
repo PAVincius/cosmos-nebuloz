@@ -274,10 +274,33 @@ export function Sidebar() {
       {BO_NAV.map((grupo) => (
         <div
           key={grupo.section}
-          style={{ display: "flex", flexDirection: "column", gap: 2 }}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+            // A seção atrás de portão nasce esmaecida, como no desenho. Aqui
+            // ela fica assim sempre: o protótipo libera por `account.lab` e
+            // não existe flag equivalente no schema. Esmaecer sem nunca poder
+            // acender seria promessa; o motivo em cada item diz o que falta.
+            opacity: grupo.lab ? 0.5 : 1,
+          }}
         >
-          <div style={{ padding: "0 10px 7px" }}>
-            <Eyebrow>{grupo.section}</Eyebrow>
+          <div
+            style={{
+              padding: "0 10px 7px",
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+            }}
+          >
+            <Eyebrow tone={grupo.lab ? "blue" : ""}>{grupo.section}</Eyebrow>
+            {grupo.lab ? (
+              <Icon
+                name="ban"
+                size={11}
+                style={{ color: "var(--ink-faint)" }}
+              />
+            ) : null}
           </div>
           {grupo.items.map((item) => (
             <ItemDeMenu

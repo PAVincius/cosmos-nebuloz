@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Sidebar, Topbar } from "./chrome";
+import { itemDaRota } from "./nav";
 
 /**
  * Shell do Big Bang. Server Component: só a topbar e a sidebar são cliente,
@@ -47,14 +48,22 @@ export function Shell({
  * "Em breve" foi exatamente o padrão que tivemos de arrancar do Cosmos: promete
  * sem informar e não ajuda ninguém a decidir. Nomear a entidade que falta
  * transforma a ausência em roadmap legível dentro do produto.
+ *
+ * Título e motivo vêm de `nav.ts` pela rota, não como props. Antes o mesmo
+ * texto vivia nos dois lugares, e dois lugares divergem: a sidebar diria um
+ * motivo no `title` e a tela, outro.
  */
-export function Pendente({
-  titulo,
-  motivo,
-}: {
-  titulo: string;
-  motivo: string;
-}) {
+export function Pendente({ rota }: { rota: string }) {
+  const item = itemDaRota(rota);
+  const titulo = item?.label ?? "Tela indisponível";
+  const motivo =
+    item?.pendente ??
+    `A rota ${rota} não está no menu. Isso é bug de navegação, não tela pendente.`;
+
+  return <PendenteView motivo={motivo} titulo={titulo} />;
+}
+
+function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
   return (
     <div
       className="fade-in"
