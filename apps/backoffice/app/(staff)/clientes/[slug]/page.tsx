@@ -1,4 +1,4 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
 import { listTenantMembers } from "@/app/actions/tenant-members";
@@ -11,6 +11,7 @@ import { CharterBootstrap } from "./charter-bootstrap";
 import { Membros } from "./membros";
 import { ModuleForm } from "./module-form";
 import { AuditTimeline, Integracoes } from "./observabilidade";
+import { Secao, SecaoSimples } from "./secao";
 
 export default async function ClientDetailPage({
   params,
@@ -32,7 +33,7 @@ export default async function ClientDetailPage({
     if (result.code === "TENANT_NOT_FOUND") {
       notFound();
     }
-    return <p className="text-destructive">{result.error}</p>;
+    return <p style={{ color: "var(--red-text)" }}>{result.error}</p>;
   }
 
   const client = result.data;
@@ -43,104 +44,87 @@ export default async function ClientDetailPage({
     !(client.charter.hasCompliance && client.charter.hasPolicy);
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="font-semibold text-2xl">{client.name}</h1>
-        <p className="text-muted-foreground text-sm">
-          {client.slug} · cliente desde{" "}
-          {new Date(client.createdAt).toLocaleDateString("pt-BR")}
-        </p>
-      </header>
+    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+      <PageHeader
+        eyebrow={`Tenant · ${client.plan}`}
+        meta={
+          <span className="mono" style={{ fontSize: 11.5 }}>
+            {client.slug} · cliente desde{" "}
+            {new Date(client.createdAt).toLocaleDateString("pt-BR")} ·{" "}
+            {client.memberCount} membro(s)
+          </span>
+        }
+        title={client.name}
+      />
 
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Contratação</h2>
+      <SecaoSimples
+        icone="layers"
+        subtitulo="contractModule() — o que este cliente comprou"
+        titulo="Módulos contratados"
+      >
         <ModuleForm modules={client.modules} slug={client.slug} />
-      </section>
+      </SecaoSimples>
 
       {/* FR-4.2 — aba Usuários. O guard de último ADMIN (FR-4.2.4) mora no
           servidor; aqui só se mostra o que ele devolve. */}
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Usuários</h2>
-        {membros.ok ? (
+      <Secao
+        icone="userCheck"
+        resultado={membros}
+        subtitulo="listTenantMembers() — papel dentro do tenant do cliente"
+        titulo="Usuários"
+      >
+        {(dados) => (
           <Membros
             canWrite={staff.canWrite}
-            membros={membros.data}
+            membros={dados}
             slug={client.slug}
           />
-        ) : (
-          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
-            {membros.error}
-          </p>
         )}
-      </section>
+      </Secao>
 
-      {/* FR-4.4 — Integrações. Credencial nunca chega aqui: a action não a
-          seleciona (NFR-1.7). */}
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Integrações</h2>
-        {integracoes.ok ? (
-          <Integracoes integracoes={integracoes.data} />
-        ) : (
-          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
-            {integracoes.error}
-          </p>
-        )}
-      </section>
+      {/* FR-4.4 — credencial nunca chega aqui: a action não a seleciona
+          (NFR-1.7). */}
+      <Secao
+        icone="eye"
+        resultado={integracoes}
+        subtitulo="o back-office observa a integração; quem conecta é o cliente"
+        titulo="Integrações e sincronização"
+      >
+        {(dados) => <Integracoes integracoes={dados} />}
+      </Secao>
 
       {/* FR-4.9 — timeline do tenant com diff campo-a-campo. */}
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Auditoria</h2>
-        {auditoria.ok ? (
-          <AuditTimeline eventos={auditoria.data} />
-        ) : (
-          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
-            {auditoria.error}
-          </p>
-        )}
-      </section>
+      <Secao
+        icone="history"
+        resultado={auditoria}
+        subtitulo="cada linha expande no diff campo-a-campo"
+        titulo="Auditoria"
+      >
+        {(dados) => <AuditTimeline eventos={dados} />}
+      </Secao>
 
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Charter</h2>
-        <ul className="space-y-1 text-sm">
-          <li>
-            Módulo contratado:{" "}
-            <Badge
-              variant={
-                client.charter.moduleContracted ? "default" : "secondary"
-              }
-            >
-              {client.charter.moduleContracted ? "sim" : "não"}
-            </Badge>
-          </li>
-          <li>
-            Papel Compliance atribuído:{" "}
-            <Badge
-              variant={client.charter.hasCompliance ? "default" : "secondary"}
-            >
-              {client.charter.hasCompliance ? "sim" : "não"}
-            </Badge>
-          </li>
-          <li>
-            Política criada:{" "}
-            <Badge variant={client.charter.hasPolicy ? "default" : "secondary"}>
-              {client.charter.hasPolicy ? "sim" : "não"}
-            </Badge>
-          </li>
-        </ul>
-        {needsCharterBootstrap ? <CharterBootstrap slug={client.slug} /> : null}
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="font-medium text-lg">Membros</h2>
-        <ul className="space-y-1 text-sm">
-          {client.members.map((member) => (
-            <li key={member.email}>
-              {member.name ?? "—"} · {member.email} ·{" "}
-              <span className="text-muted-foreground">{member.role}</span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <SecaoSimples
+        icone="approve"
+        subtitulo="o que o módulo de governança precisa para funcionar"
+        titulo="Charter"
+      >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          <Badge dot tone={client.charter.moduleContracted ? "green" : "amber"}>
+            Módulo contratado: {client.charter.moduleContracted ? "sim" : "não"}
+          </Badge>
+          <Badge dot tone={client.charter.hasCompliance ? "green" : "amber"}>
+            Papel Compliance: {client.charter.hasCompliance ? "sim" : "não"}
+          </Badge>
+          <Badge dot tone={client.charter.hasPolicy ? "green" : "amber"}>
+            Política criada: {client.charter.hasPolicy ? "sim" : "não"}
+          </Badge>
+        </div>
+        {needsCharterBootstrap ? (
+          <div style={{ marginTop: 12 }}>
+            <CharterBootstrap slug={client.slug} />
+          </div>
+        ) : null}
+      </SecaoSimples>
     </div>
   );
 }
