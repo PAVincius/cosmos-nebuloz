@@ -198,6 +198,7 @@ model Tenant {
   charterSequences          CharterSequence[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
+  staffDiagrams        StaffDiagram[]   @relation("StaffDiagramSystemTenant")
 }
 
 model User {

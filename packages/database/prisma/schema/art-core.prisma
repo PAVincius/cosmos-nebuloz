@@ -213,7 +213,7 @@ model Epic {
   // statusId-scoped readers/writers (app/actions/wsjf/index.ts,
   // app/actions/strategic-themes/index.ts, app/actions/epics/*.ts) and
   // vice versa. See the WSJF rebalance H1 fix commit body.
-  lifecycleOrder Int @default(0)
+  lifecycleOrder  Int    @default(0)
 
   // AI INVEST scoring (cached — recomputed when title/description changes)
   investScore           Float? // 0-100 composite

@@ -204,3 +204,71 @@ model PlatformApproval {
   @@index([targetTenantId])
   @@index([criadoEm])
 }
+
+/// Diagrama do back-office: BPMN ou diagrama-como-código.
+///
+/// Uma entidade para os dois porque são a mesma coisa — texto versionado que
+/// renderiza como diagrama. Separar em `BpmnProcess` e `MermaidDiagram` daria
+/// duas tabelas com os mesmos campos, duas actions com as mesmas guardas e
+/// duas telas de histórico; a única diferença real é qual renderizador monta o
+/// canvas, e isso é uma coluna.
+///
+/// `source` é a fonte da verdade: XML BPMN 2.0 ou DSL Mermaid. O canvas reflete
+/// o texto, nunca o contrário — é o que torna o diagrama versionável em git e
+/// diffável numa revisão.
+model StaffDiagram {
+  id   String @id @default(cuid())
+  /// Tenant dono da linha. É sempre o tenant `system`: diagrama é artefato da
+  /// Nebuloz, não do cliente. O campo existe para a mesma trilha de auditoria
+  /// e o mesmo escopo que o resto do painel usa.
+  tenantId String
+
+  kind String // BPMN | MERMAID
+  name String
+  slug String
+  /// Para que serve este diagrama — some da tela sem isso e vira arquivo órfão.
+  descricao String? @db.Text
+
+  /// Conteúdo atual. O histórico completo fica em StaffDiagramVersion.
+  source String @db.Text
+
+  /// Cliente que o diagrama descreve, quando descreve algum. SetNull porque o
+  /// diagrama sobrevive à saída do cliente — é conhecimento da casa.
+  sobreTenantId String?
+
+  criadoPorId   String
+  criadoPorNome String?
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  tenant   Tenant                @relation("StaffDiagramSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  versions StaffDiagramVersion[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([tenantId, kind])
+  @@index([sobreTenantId])
+}
+
+/// Uma revisão do diagrama. Append-only: editar cria linha nova, nunca altera
+/// a anterior. Sem isso "versionado" seria só a data da última gravação, e a
+/// pergunta que o operador realmente faz — o que mudou entre a v3 e a v4 — não
+/// teria como ser respondida.
+model StaffDiagramVersion {
+  id         String @id @default(cuid())
+  diagramId  String
+  /// Sequencial por diagrama, começando em 1. É o número que a tela mostra.
+  versao     Int
+  source     String @db.Text
+  /// Por que mudou. Curto e obrigatório na UI: diff sem motivo obriga a ler o
+  /// diff inteiro para descobrir a intenção.
+  nota       String? @db.Text
+  autorId    String
+  autorNome  String?
+  criadoEm   DateTime @default(now())
+
+  diagram StaffDiagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
+
+  @@unique([diagramId, versao])
+  @@index([diagramId])
+}
