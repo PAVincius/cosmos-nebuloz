@@ -1913,6 +1913,23 @@ Esperado: FAIL — componente não existe.
 
 Criar `compliance.tsx` seguindo o padrão de `vendors.tsx`: `"use client"`, `useCallback` + `useEffect` para carregar, `PageHeader`, `SectionCard`, `EmptyState`, `ErrorState` do kit do Charter, `useActionToast` nas mutações.
 
+**O editor de cobertura é o passo 2 do fluxo, e sem ele o produto não faz nada.** Importar → **mapear** → gerar: a tela precisa deixar a pessoa escolher, por exigência, o status e a capacidade que o prova, chamando `setCoverage`. Sem isso `CharterCoverage` só nasce por escrita direta no banco, o mapa só sabe exibir `SEM_VEREDITO` para sempre, e os quatro estados que os testes fixam viram código morto em produção.
+
+Isso exige uma action nova, e ela é a menor deste plano. `apps/app/lib/charter/capabilities.ts` é `server-only` — as closures `evidencia` chamam `withTenantDb`, então o módulo não entra num componente cliente. Adicionar a `compliance.ts`:
+
+```ts
+export async function listCapabilities(): Promise<Result<{ id: string; label: string }[]>> {
+  return await safeAction(async () => {
+    await requireCharterPermissionContext("compliance.map");
+    return CAPABILITIES.map(({ id, label }) => ({ id, label }));
+  });
+}
+```
+
+Só `id` e `label` atravessam; `evidencia` fica no servidor, onde tem que ficar.
+
+A tela **sugere** por palavra-chave e **a pessoa decide** — sugestão pré-seleciona, nunca grava sozinha. `setCoverage` já recusa `ATENDE` e `PARCIAL` sem capacidade, então o editor precisa ou desabilitar esses status enquanto nada estiver escolhido, ou deixar o erro do servidor aparecer; desabilitar é melhor, porque explica antes em vez de reclamar depois.
+
 Registrar em `registry.tsx`:
 
 ```ts
