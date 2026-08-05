@@ -23,7 +23,7 @@ const base = {
 // Import direto do módulo real: cabecalho é função pura, sem dependência de
 // DB/permissão, e é o teste dado literalmente pelo brief.
 
-import { cabecalho } from "@/lib/charter/compliance-pdf";
+import { cabecalho, toCsv } from "@/lib/charter/compliance-pdf";
 
 describe("cabecalho", () => {
   it("declara quantas exigências não têm veredito", () => {
@@ -36,6 +36,93 @@ describe("cabecalho", () => {
     expect(cabecalho({ ...base, semVeredito: 0 })).not.toContain(
       "sem veredito"
     );
+  });
+});
+
+// ── toCsv (fix round 2 — guard de injeção de fórmula) ───────────────────────
+// Import direto do módulo real, mesmo padrão de cabecalho acima: toCsv não
+// pode ser exportado de compliance-export.ts ("use server" só aceita export
+// async) — mesmo motivo que já tinha tirado cabecalho de lá na Task 8
+// original. sanitizeCsvField/FORMULA_INJECTION_RE ficam privados no módulo,
+// mesma forma de settings-audit-tab.tsx (só toCsv é exportado de lá também).
+
+describe("toCsv — proteção contra injeção de fórmula", () => {
+  const linhaComResumo = (resumo: string) => ({
+    setId: "s-1",
+    nome: "Teste",
+    semVeredito: 0,
+    linhas: [
+      {
+        requirementId: "r-1",
+        codigo: "4.1",
+        citacao: "§4.1",
+        resumo,
+        peso: null,
+        status: "ATENDE" as const,
+        comentario: null,
+        capabilityId: null,
+        capabilityLabel: null,
+        evidencia: null,
+        evidenciaErro: null,
+      },
+    ],
+  });
+
+  // Os seis caracteres do próprio regex. settings-audit-csv.test.ts (a
+  // referência copiada) só cobre "=" — @, tab e CR ficavam sem teste nenhum.
+  const PERIGOSOS: [rotulo: string, valor: string][] = [
+    ["=", "=1+1"],
+    ["+", "+SOMA(A1)"],
+    ["-", "-2+2"],
+    ["@", "@SUM(A1)"],
+    ["tab", "\tcmd"],
+    ["CR", "\rcmd"],
+  ];
+
+  it("prefixa com apóstrofo um resumo começando com qualquer um dos seis caracteres perigosos", () => {
+    for (const [, valor] of PERIGOSOS) {
+      const csv = toCsv(linhaComResumo(valor));
+      expect(csv).toContain(`"'${valor}"`);
+      expect(csv).not.toContain(`"${valor}"`);
+    }
+  });
+
+  it("deixa texto comum, sem caractere perigoso líder, intocado", () => {
+    const csv = toCsv(linhaComResumo("Resumo comum, sem risco"));
+    expect(csv).toContain('"Resumo comum, sem risco"');
+    expect(csv).not.toContain("'Resumo");
+  });
+
+  it("peso negativo permanece numérico — não passa pelo guard nem ganha aspas", () => {
+    // peso é z.number().int() em compliance.ts, nunca texto digitado pelo
+    // usuário nesta fronteira. CSV é o formato pensado para processamento
+    // (soma, ordenação); aplicar o guard aqui trocaria uma coluna numérica
+    // por texto no Excel/Sheets sempre que o peso for negativo, sem erro
+    // nenhum avisando — a coluna só para de somar.
+    const csv = toCsv({
+      setId: "s-1",
+      nome: "Teste",
+      semVeredito: 0,
+      linhas: [
+        {
+          requirementId: "r-1",
+          codigo: "4.1",
+          citacao: "§4.1",
+          resumo: "Resumo comum",
+          peso: -5,
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: null,
+          capabilityLabel: null,
+          evidencia: null,
+          evidenciaErro: null,
+        },
+      ],
+    });
+
+    expect(csv).toContain(",-5,");
+    expect(csv).not.toContain(`"'-5"`);
+    expect(csv).not.toContain(`"-5"`);
   });
 });
 

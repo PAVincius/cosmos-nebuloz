@@ -4,8 +4,8 @@ import { withTenantDb } from "@repo/database";
 import { z } from "zod";
 import {
   cabecalho,
-  formatarEvidencia,
   renderComplianceMapPdf,
+  toCsv,
 } from "@/lib/charter/compliance-pdf";
 import { requireCharterPermissionContext } from "@/lib/charter/guards";
 import { type Result, safeAction } from "../../actions/_base";
@@ -29,57 +29,6 @@ export type ComplianceMapExport = {
   content: string;
   encoding: "utf8" | "base64";
 };
-
-// Excel/Sheets decidem se uma célula é fórmula pelo caractere inicial *depois*
-// de fazer o parse do CSV — aspas resolvem injeção de vírgula/quebra de linha
-// (RFC4180), não isto. codigo/citacao/resumo/comentario são texto livre sem
-// restrição de caractere na importação (RequisitoSchema/SetCoverageSchema em
-// compliance.ts) e a evidência pode carregar texto livre vindo do catálogo de
-// capacidades (ex.: nome de pessoa/fornecedor) — qualquer um deles abrindo com
-// =, +, -, @, tab ou CR executa na máquina do auditor que abrir o arquivo.
-// Mesmo guard de apps/app/components/cosmos/screens/settings-audit-tab.tsx —
-// prefixa com ' para forçar de volta a texto puro, em vez de inventar uma
-// segunda sanitização.
-const FORMULA_INJECTION_RE = /^[=+\-@\t\r]/;
-
-function sanitizeCsvField(value: string): string {
-  return FORMULA_INJECTION_RE.test(value) ? `'${value}` : value;
-}
-
-function esc(value: string): string {
-  return `"${sanitizeCsvField(value).replaceAll('"', '""')}"`;
-}
-
-function toCsv(map: ComplianceMap): string {
-  const header = [
-    "codigo",
-    "citacao",
-    "resumo",
-    "peso",
-    "status",
-    "comentario",
-    "capacidade",
-    "evidencia",
-  ];
-  const lines = map.linhas.map((r) =>
-    [
-      r.codigo,
-      r.citacao,
-      r.resumo,
-      r.peso === null ? "" : String(r.peso),
-      r.status,
-      r.comentario ?? "",
-      r.capabilityLabel ?? "",
-      // Mesma função usada na célula do PDF: uma consulta de evidência que
-      // falhou não pode virar célula em branco aqui e mensagem clara ali —
-      // as duas leituras do mesmo mapa têm de concordar.
-      formatarEvidencia(r),
-    ]
-      .map(esc)
-      .join(",")
-  );
-  return [header.join(","), ...lines].join("\n");
-}
 
 /**
  * Sinaliza rascunho já no nome do arquivo. `cabecalho()` só chega a quem lê

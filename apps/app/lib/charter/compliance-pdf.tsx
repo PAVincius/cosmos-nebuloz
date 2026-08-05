@@ -50,6 +50,66 @@ export function formatarEvidencia(row: MapRow): string {
   return "—";
 }
 
+// Excel/Sheets decidem se uma célula é fórmula pelo caractere inicial *depois*
+// de fazer o parse do CSV — aspas resolvem injeção de vírgula/quebra de linha
+// (RFC4180), não isto. codigo/citacao/resumo/comentario são texto livre sem
+// restrição de caractere na importação (RequisitoSchema/SetCoverageSchema em
+// compliance.ts) — qualquer um deles abrindo com =, +, -, @, tab ou CR executa
+// na máquina de quem abrir o arquivo. Mesmo guard de
+// apps/app/components/cosmos/screens/settings-audit-tab.tsx — prefixa com '
+// para forçar de volta a texto puro, em vez de inventar uma segunda
+// sanitização.
+const FORMULA_INJECTION_RE = /^[=+\-@\t\r]/;
+
+function sanitizeCsvField(value: string): string {
+  return FORMULA_INJECTION_RE.test(value) ? `'${value}` : value;
+}
+
+function csvCell(value: string): string {
+  return `"${sanitizeCsvField(value).replaceAll('"', '""')}"`;
+}
+
+/** Exportação em CSV do mapa de conformidade. */
+export function toCsv(map: ComplianceMap): string {
+  const header = [
+    "codigo",
+    "citacao",
+    "resumo",
+    "peso",
+    "status",
+    "comentario",
+    "capacidade",
+    "evidencia",
+  ];
+  const lines = map.linhas.map((r) =>
+    [
+      csvCell(r.codigo),
+      csvCell(r.citacao),
+      csvCell(r.resumo),
+      // peso é numérico (z.number().int() em RequisitoSchema) — nunca texto
+      // digitado por usuário nesta fronteira, então não passa pelo guard.
+      // CSV é o formato pensado para processamento posterior (ao contrário do
+      // PDF, só para impressão), e um '-' líder de peso negativo forçaria a
+      // coluna a virar texto no Excel/Sheets — soma e ordenação silenciosamente
+      // param de funcionar, sem erro nenhum para avisar.
+      r.peso === null ? "" : String(r.peso),
+      csvCell(r.status),
+      csvCell(r.comentario ?? ""),
+      csvCell(r.capabilityLabel ?? ""),
+      // Mesma função usada na célula do PDF: uma consulta de evidência que
+      // falhou não pode virar célula em branco aqui e mensagem clara ali —
+      // as duas leituras do mesmo mapa têm de concordar. O guard aqui é
+      // defesa contra uma mudança futura no formato desta função — hoje
+      // formatarEvidencia() sempre abre a célula com "evidência
+      // indisponível", "—" ou `${total} ·` (total é um .count(), inteiro não
+      // negativo), então o texto livre de amostra nunca é o primeiro
+      // caractere e não há caminho de injeção vivo por esta coluna.
+      csvCell(formatarEvidencia(r)),
+    ].join(",")
+  );
+  return [header.join(","), ...lines].join("\n");
+}
+
 const styles = StyleSheet.create({
   page: { padding: 28, fontSize: 8 },
   titulo: { fontSize: 14, marginBottom: 2 },
