@@ -1,5 +1,12 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  ErrorState,
+  PageHeader,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 // roadmap.tsx — Roadmap, wired to listRoadmapItems(). Multi-PI Gantt-style
 // timeline: ART lanes (rows) x period columns (across), each RoadmapItem
 // positioned by its real startDate/endDate. RoadmapItem carries no PI/period
@@ -19,8 +26,6 @@ import {
   type RoadmapItemView,
 } from "@/app/(cosmos)/actions/roadmap";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import { Badge, ErrorState, PageHeader, type Tone } from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_INFO: Record<string, { tone: Tone; label: string }> = {

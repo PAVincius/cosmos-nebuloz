@@ -1,5 +1,12 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+} from "@repo/design-system/cosmos/kit";
 // copilot.tsx — chat surface over the existing streaming backend
 // (api/copilot/chat/route.ts) and session layer (app/actions/safe-copilot).
 // No new chat pipeline, session model, or AI integration here — this is UI
@@ -23,8 +30,6 @@ import {
   type SessionPreview,
   type StoredMessage,
 } from "@/app/actions/safe-copilot/sessions";
-import { Icon } from "../icons";
-import { Badge, Button, ErrorState, PageHeader } from "../kit";
 import { MessagePartsView, type RenderablePart } from "./copilot-parts";
 import { CopilotSessionRail } from "./copilot-sessions";
 

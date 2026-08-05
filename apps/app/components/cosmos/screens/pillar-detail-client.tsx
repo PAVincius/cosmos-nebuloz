@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // pillar-detail-client.tsx — per-StrategyPillar drilldown (design handoff
 // screen-bundle-4.jsx PillarDetailScreen). Static SAFe 6.0 guidance panel
 // (descriptive reference copy, not tenant data) plus the pillar's linked
@@ -9,15 +18,6 @@
 // epics — never fabricated.
 import type { PillarDetailView } from "@/app/(cosmos)/actions/strategy";
 import { EmptyState } from "../empty-state";
-import { Icon, type IconName } from "../icons";
-import {
-  Badge,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   on: "green",

@@ -2,6 +2,14 @@
 
 // Matriz de Risco — FR-7. Port de `charter-screens-2.jsx`.
 
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  SkeletonKpi,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import { createMitigation, getRiskBoard } from "@/app/(charter)/actions/risk";
@@ -12,14 +20,6 @@ import {
   RISK_CATEGORY_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  SkeletonKpi,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   BarRow,

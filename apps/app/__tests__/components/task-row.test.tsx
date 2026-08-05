@@ -1,8 +1,8 @@
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import { fireEvent, render, screen } from "@testing-library/react";
 import type { ReactNode } from "react";
 import { describe, expect, test, vi } from "vitest";
 import type { TaskNode } from "../../app/(cosmos)/actions/epic-tree.constants";
-import { NavCtx } from "../../components/cosmos/kit";
 import { TaskRow } from "../../components/cosmos/screens/epic-tree/task-row";
 
 const nativeTask: TaskNode = {

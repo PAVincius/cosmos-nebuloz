@@ -1,12 +1,5 @@
 "use client";
 
-// theme-detail-client.tsx — per-StrategicTheme drilldown (design handoff
-// screen-bundle-5.jsx ThemeDetailScreen). Real vs. target allocation, linked
-// pillar, and the theme's epics. actualAllocationPct comes from getTheme()
-// (BillingEntryAllocation-derived) and is null, never fabricated, when the
-// tenant has no cost-allocation data yet.
-import type { ThemeDetailView } from "@/app/(cosmos)/actions/themes";
-import { EmptyState } from "../empty-state";
 import {
   Badge,
   KpiCard,
@@ -14,7 +7,14 @@ import {
   Progress,
   SectionCard,
   useNav,
-} from "../kit";
+} from "@repo/design-system/cosmos/kit";
+// theme-detail-client.tsx — per-StrategicTheme drilldown (design handoff
+// screen-bundle-5.jsx ThemeDetailScreen). Real vs. target allocation, linked
+// pillar, and the theme's epics. actualAllocationPct comes from getTheme()
+// (BillingEntryAllocation-derived) and is null, never fabricated, when the
+// tenant has no cost-allocation data yet.
+import type { ThemeDetailView } from "@/app/(cosmos)/actions/themes";
+import { EmptyState } from "../empty-state";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   on: "green",

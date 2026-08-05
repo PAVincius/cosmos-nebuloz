@@ -1,5 +1,15 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  SectionCard,
+  Skel,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-members-tab.tsx — Membros / RBAC tab (Settings screen, tab 2).
 // Real TenantMember list; invite/role-change/remove are wired to the real,
 // ADMIN-gated mature actions (see settings-members.ts for exactly which
@@ -14,16 +24,6 @@ import {
   removeMemberAction,
   updateMemberRoleAction,
 } from "@/app/(cosmos)/actions/settings-members";
-import { Icon } from "../icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  ErrorState,
-  SectionCard,
-  Skel,
-  useAction,
-} from "../kit";
 import { ModalCard, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 import {

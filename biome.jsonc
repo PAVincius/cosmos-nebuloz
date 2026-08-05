@@ -183,7 +183,16 @@
       // prototype (cards-as-divs, tone-lookup ternaries, static demo lists).
       // Preserving markup 1:1 with the design source is intentional; see
       // docs/superpowers/plans/2026-07-19-INDEX-cosmos-full-implementation.md
-      "includes": ["apps/app/components/cosmos/**"],
+      //
+      // O kit e os ícones saíram para packages/design-system/cosmos quando o
+      // back-office passou a precisar deles. O arquivo não mudou, só o
+      // caminho — a isenção segue o arquivo. O contrário seria "consertar" 14
+      // violações de a11y num port de 1616 linhas como efeito colateral de um
+      // `git mv`, que é justamente o tipo de mudança que ninguém pediu.
+      "includes": [
+        "apps/app/components/cosmos/**",
+        "packages/design-system/cosmos/**"
+      ],
       "linter": {
         "rules": {
           "nursery": {

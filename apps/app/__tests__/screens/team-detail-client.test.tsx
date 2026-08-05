@@ -3,10 +3,11 @@
 // data, the load bar/KPIs derive from TeamCapacitySnapshot, the features
 // list navigates, PI Objectives render, and honest empty states show up
 // with no data — never fabricated numbers.
+
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { TeamDetailView } from "@/app/(cosmos)/actions/teams";
-import { NavCtx } from "../../components/cosmos/kit";
 import TeamDetailClient from "../../components/cosmos/screens/team-detail-client";
 
 const BASE: TeamDetailView = {

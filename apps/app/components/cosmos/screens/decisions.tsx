@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 // decisions.tsx — Decision Log, wired to listDecisions(). Chronological list
 // of governance/budget/theme decisions with justification, plus a create
 // flow (NewDecisionModal) for registering a new DecisionLogEntry.
@@ -14,15 +23,6 @@ import {
 } from "@/app/(cosmos)/actions/decisions";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  ErrorState,
-  PageHeader,
-  SectionCard,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

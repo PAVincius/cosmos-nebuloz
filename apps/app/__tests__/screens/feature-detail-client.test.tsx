@@ -3,10 +3,11 @@
 // wrapper), verifying the Stories → Tasks drilldown expands on click, the
 // breadcrumb navigates to the parent epic, prev/next navigate to siblings,
 // and the empty state is honest when there are no stories.
+
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import type { FeatureDetail } from "@/app/(cosmos)/actions/epics";
-import { NavCtx } from "../../components/cosmos/kit";
 import FeatureDetailClient from "../../components/cosmos/screens/feature-detail-client";
 
 const BASE: FeatureDetail = {

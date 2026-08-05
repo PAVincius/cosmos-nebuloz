@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // budgets.tsx — Lean Budgets, wired to listLeanBudgets(). Lists real LeanBudget
 // rows (name, theme, amount vs. spent, CapEx/OpEx split) — the design's
 // "Value Stream" concept has no dedicated model, so this lists budgets directly.
@@ -13,17 +24,6 @@ import {
   updateLeanBudgetGuardrails,
 } from "@/app/(cosmos)/actions/budgets";
 import { createLeanBudget } from "@/app/actions/lean-budget";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

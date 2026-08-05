@@ -1,10 +1,16 @@
 "use client";
 
+import {
+  Badge,
+  CopyId,
+  Progress,
+  Skel,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import type { EpicDetailFull } from "@/app/(cosmos)/actions/epic-detail";
 import { listFeatureStories } from "@/app/(cosmos)/actions/epic-tree";
 import type { StoryNode } from "@/app/(cosmos)/actions/epic-tree.constants";
-import { Badge, CopyId, Progress, Skel, useNav } from "../../kit";
 import { Chevron, StoryRow } from "./story-row";
 
 type FeatureItem = EpicDetailFull["features"][number];

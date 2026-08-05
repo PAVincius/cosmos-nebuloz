@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  useThemeName,
+} from "@repo/design-system/cosmos/kit";
 // dependencies.tsx — Dependências, wired to listDependencies(). Lists real
 // DependencyLink rows (blocking → blocked feature) with status + critical-path
 // flag, now with team attribution (Feature.assignedTeamId → Team, resolved
@@ -22,15 +31,6 @@ import {
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  useThemeName,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

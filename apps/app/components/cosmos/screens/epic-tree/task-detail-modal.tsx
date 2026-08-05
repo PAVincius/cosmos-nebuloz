@@ -1,11 +1,11 @@
 "use client";
 
+import { Badge } from "@repo/design-system/cosmos/kit";
 import {
   PROVIDERS,
   TASK_STATUSES,
   type TaskNode,
 } from "@/app/(cosmos)/actions/epic-tree.constants";
-import { Badge } from "../../kit";
 import { ModalCard } from "../../modal";
 
 export function TaskDetailModal({ task }: { task: TaskNode }) {

@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // arts.tsx — ARTs (setup do trem e ciclo de vida do PI Plan), story-059.
 //
 // Esta tela dá superfície à story-017, que foi implementada inteira no backend e
@@ -22,15 +31,6 @@ import {
   transitionPIPlan,
 } from "@/app/actions/arts/lifecycle";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  PageHeader,
-  SectionCard,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

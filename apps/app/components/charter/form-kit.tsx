@@ -10,14 +10,14 @@
 // antes de jogar fora — num produto onde o formulário é o registro de auditoria,
 // perder digitação por clique no backdrop é caro.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import type { Tone } from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
   createContext,
   type ReactNode,
   useContext,
 } from "react";
-import { Icon, type IconName } from "../cosmos/icons";
-import type { Tone } from "../cosmos/kit";
 
 export const DirtyCtx = createContext<{ markDirty: () => void }>({
   markDirty: () => {

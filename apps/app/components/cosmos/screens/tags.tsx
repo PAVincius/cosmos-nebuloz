@@ -6,6 +6,17 @@
 // create flow. Mirrors the cosmos.html screen-tags handoff
 // (design_handoff_cosmos_full/screen-bundle-4.jsx TagsScreen).
 import type { TagRule } from "@repo/database";
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  Switch,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -16,17 +27,6 @@ import {
 } from "@/app/actions/billing/tag-rules";
 import { TAG_RULE_OUTPUT_TONES } from "@/app/actions/billing/tag-rules.constants";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  Switch,
-  type Tone,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

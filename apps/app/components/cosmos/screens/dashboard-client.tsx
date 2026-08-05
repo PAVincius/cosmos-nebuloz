@@ -1,12 +1,17 @@
 "use client";
 
+import {
+  ChartTip,
+  CopilotInsightBar,
+  NavButton,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // dashboard-client.tsx — client-only pieces of the Dashboard screen: charts
 // with hover state (need useState/useId) and small navigation wrappers (need
 // useNav). Split out so dashboard.tsx can be a real async server component
 // that fetches epics via listEpics(), matching the pattern used by
 // epic-detail.tsx / feature-detail.tsx.
 import { type ReactNode, useId, useState } from "react";
-import { ChartTip, CopilotInsightBar, NavButton, useNav } from "../kit";
 
 // ── AreaChart ──
 export function AreaChart({

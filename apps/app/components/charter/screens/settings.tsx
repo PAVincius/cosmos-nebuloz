@@ -3,6 +3,14 @@
 // Configurações — FR-12. Workspace, matriz de permissões (leitura) e
 // notificações.
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  PageHeader,
+  SectionCard,
+  Switch,
+} from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import {
   getSettings,
@@ -10,14 +18,6 @@ import {
   setNotificationTrigger,
   updateWorkspace,
 } from "@/app/(charter)/actions/settings";
-import { Icon } from "../../cosmos/icons";
-import {
-  Badge,
-  Button,
-  PageHeader,
-  SectionCard,
-  Switch,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Eyebrow,

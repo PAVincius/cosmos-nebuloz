@@ -1,5 +1,17 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // governance.tsx — Governance Board, wired to listGovernedEpics(). Lists real
 // GovernedEpic rows with status + investment estimate. Gate policy editing is
 // wired via GovernancePolicyModal (upserts ApprovalWorkflow by tenantId+tipo).
@@ -23,18 +35,6 @@ import {
 } from "@/app/(cosmos)/actions/governance";
 import { getApprovalRequest, reviewStep } from "@/app/actions/governance";
 import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  IconButton,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  SectionCard,
+  Skel,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-safe-tab.tsx — Configuração SAFe tab (Settings screen, tab 6).
 // Per-ART cadence (piCadenceWeeks/sprintLengthWeeks) via
 // saveArtCadenceAction (= arts/lifecycle.ts::updateARTCadence, ADMIN|RTE
@@ -15,14 +23,6 @@ import {
   saveArtCadenceAction,
   saveWsjfSettingsAction,
 } from "@/app/(cosmos)/actions/settings-safe";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  SectionCard,
-  Skel,
-  useAction,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 import { fieldLabelStyle, inputStyle, selectStyle } from "./settings-shared";
 

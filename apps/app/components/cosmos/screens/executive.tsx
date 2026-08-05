@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 // executive.tsx — Board Snapshot (design handoff screen-bundle-2.jsx:1163,
 // ExecutiveScreen). Live executive summary assembled entirely from the
 // existing mature analytics/list layers — no new aggregate queries beyond
@@ -30,16 +40,6 @@ import type {
   ExecutiveDashboardPayload,
 } from "@/lib/analytics/executive-dashboard";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-} from "../kit";
 
 const sectionLabelStyle = {
   fontSize: 10.5,

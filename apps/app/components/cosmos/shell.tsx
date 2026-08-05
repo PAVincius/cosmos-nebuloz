@@ -1,5 +1,13 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Button,
+  IconButton,
+  NavCtx,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 // shell.tsx — persistent app shell (Sidebar + Topbar) driven by real routing.
@@ -15,8 +23,6 @@ import {
   useState,
 } from "react";
 import { CommandPalette } from "./command-palette";
-import { Icon, type IconName } from "./icons";
-import { Avatar, Button, IconButton, NavCtx, useNav } from "./kit";
 
 type NavChild = { id: string; label: string };
 type NavItem = {

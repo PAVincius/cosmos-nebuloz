@@ -1,11 +1,11 @@
 "use client";
 
+import { Avatar, Badge, useNav } from "@repo/design-system/cosmos/kit";
 import {
   PROVIDERS,
   TASK_STATUSES,
   type TaskNode,
 } from "@/app/(cosmos)/actions/epic-tree.constants";
-import { Avatar, Badge, useNav } from "../../kit";
 
 const SR_ONLY: React.CSSProperties = {
   position: "absolute",

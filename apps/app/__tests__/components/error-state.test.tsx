@@ -1,6 +1,6 @@
+import { ErrorState } from "@repo/design-system/cosmos/kit";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { ErrorState } from "../../components/cosmos/kit";
 
 describe("ErrorState", () => {
   it("renders the given message", () => {

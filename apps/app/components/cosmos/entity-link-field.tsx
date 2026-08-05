@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
 // entity-link-field.tsx — search+create-hook primitive (RF-94). Debounced
 // search over searchEntities, dropdown results, and a trailing "+ Criar
 // novo" row. The "stacked modal, auto-select on create" behavior belongs to
@@ -11,7 +12,6 @@ import {
   searchEntities,
 } from "@/app/(cosmos)/actions/entity-search";
 import type { EntityKind } from "@/app/(cosmos)/actions/entity-search.constants";
-import { Icon } from "./icons";
 
 type EntityLinkFieldProps = {
   kind: EntityKind;

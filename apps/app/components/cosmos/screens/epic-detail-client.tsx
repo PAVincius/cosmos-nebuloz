@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  NavButton,
+  PageHeader,
+  Progress,
+  SectionCard,
+  Tabs,
+} from "@repo/design-system/cosmos/kit";
 import { useEffect, useState } from "react";
 import type { EpicDetailFull } from "@/app/(cosmos)/actions/epic-detail";
 import { autosaveBusinessCase } from "@/app/actions/epics/business-case";
@@ -10,16 +20,6 @@ import {
   submitEpicForApproval,
 } from "@/app/actions/governance";
 import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
-import {
-  Badge,
-  ErrorState,
-  KpiCard,
-  NavButton,
-  PageHeader,
-  Progress,
-  SectionCard,
-  Tabs,
-} from "../kit";
 import { ModalProvider } from "../modal";
 import { FeatureTable } from "./epic-tree/feature-table";
 

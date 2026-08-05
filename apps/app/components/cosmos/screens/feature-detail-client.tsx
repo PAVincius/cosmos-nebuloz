@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  KpiCard,
+  NavButton,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // feature-detail-client.tsx — feature drilldown (design handoff
 // screen-bundle-2.jsx FeatureDetailScreen). Adds the Stories → Tasks
 // drilldown, a breadcrumb back to the parent epic, and prev/next feature
@@ -12,17 +23,6 @@ import type {
   FeatureStoryView,
 } from "@/app/(cosmos)/actions/epics";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  KpiCard,
-  NavButton,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 
 const TASK_TONE: Record<string, Tone> = {
   DONE: "green",

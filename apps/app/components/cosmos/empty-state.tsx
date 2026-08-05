@@ -1,12 +1,12 @@
 "use client";
 
+import type { IconName } from "@repo/design-system/cosmos/icons";
+import { Icon } from "@repo/design-system/cosmos/icons";
+import { Button } from "@repo/design-system/cosmos/kit";
 // empty-state.tsx — shared empty-state-with-CTA (RF-96, cosmos-widgets.jsx handoff).
 // Centered card matching SectionCard's visual language: icon in a tinted
 // circle, title, optional description, optional CTA.
 import type { ReactNode } from "react";
-import type { IconName } from "./icons";
-import { Icon } from "./icons";
-import { Button } from "./kit";
 
 type EmptyStateAction = { label: string; onClick: () => void } | ReactNode;
 

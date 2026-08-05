@@ -97,7 +97,7 @@ importers:
         version: link:../../packages/payments
       '@sentry/nextjs':
         specifier: ^10.29.0
-        version: 10.29.0(@opentelemetry/context-async-hooks@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.0))(next@16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.107.2(esbuild@0.27.1)(lightningcss@1.30.2)(postcss@8.5.15))
+        version: 10.29.0(@opentelemetry/context-async-hooks@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.0))(next@16.2.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.107.2(esbuild@0.27.1)(lightningcss@1.30.2)(postcss@8.5.15))
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(arktype@2.1.20)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.1.13)
@@ -106,7 +106,7 @@ importers:
         version: 2.0.0
       next:
         specifier: 16.2.9
-        version: 16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        version: 16.2.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react:
         specifier: 19.2.1
         version: 19.2.1
@@ -465,7 +465,7 @@ importers:
         version: 0.556.0(react@19.2.1)
       next:
         specifier: 16.2.9
-        version: 16.2.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+        version: 16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       react:
         specifier: 19.2.1
         version: 19.2.1
@@ -1092,6 +1092,9 @@ importers:
       embla-carousel-react:
         specifier: ^8.6.0
         version: 8.6.0(react@19.2.1)
+      framer-motion:
+        specifier: ^12.38.0
+        version: 12.38.0(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
       geist:
         specifier: ^1.5.1
         version: 1.5.1(next@16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
@@ -19999,6 +20002,32 @@ snapshots:
       - supports-color
 
   '@sentry/core@10.29.0': {}
+
+  '@sentry/nextjs@10.29.0(@opentelemetry/context-async-hooks@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.0))(next@16.2.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.107.2(esbuild@0.27.1)(lightningcss@1.30.2)(postcss@8.5.15))':
+    dependencies:
+      '@opentelemetry/api': 1.9.0
+      '@opentelemetry/semantic-conventions': 1.37.0
+      '@rollup/plugin-commonjs': 28.0.1(rollup@4.38.0)
+      '@sentry-internal/browser-utils': 10.29.0
+      '@sentry/bundler-plugin-core': 4.6.1
+      '@sentry/core': 10.29.0
+      '@sentry/node': 10.29.0
+      '@sentry/opentelemetry': 10.29.0(@opentelemetry/api@1.9.0)(@opentelemetry/context-async-hooks@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/semantic-conventions@1.37.0)
+      '@sentry/react': 10.29.0(react@19.2.1)
+      '@sentry/vercel-edge': 10.29.0
+      '@sentry/webpack-plugin': 4.6.1(webpack@5.107.2(esbuild@0.27.1)(lightningcss@1.30.2)(postcss@8.5.15))
+      next: 16.2.9(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      resolve: 1.22.8
+      rollup: 4.38.0
+      stacktrace-parser: 0.1.11
+    transitivePeerDependencies:
+      - '@opentelemetry/context-async-hooks'
+      - '@opentelemetry/core'
+      - '@opentelemetry/sdk-trace-base'
+      - encoding
+      - react
+      - supports-color
+      - webpack
 
   '@sentry/nextjs@10.29.0(@opentelemetry/context-async-hooks@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.7.1(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.7.1(@opentelemetry/api@1.9.0))(next@16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react@19.2.1)(webpack@5.107.2(esbuild@0.27.1)(lightningcss@1.30.2)(postcss@8.5.15))':
     dependencies:

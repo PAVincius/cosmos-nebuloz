@@ -8,7 +8,7 @@ import { headers } from "next/headers";
 import type { ReactNode } from "react";
 import { SCREENS } from "@/components/cosmos/screens/registry";
 import { CosmosShell, type ShellIdentity } from "@/components/cosmos/shell";
-import "@/components/cosmos/cosmos.css";
+import "@repo/design-system/cosmos/cosmos.css";
 
 // ORBIT -> "Orbit". Acronym roles (RTE/STE/SM/PO/DEV) stay uppercase; the rest
 // read better title-cased.

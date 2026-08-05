@@ -7,6 +7,13 @@
 // porque a política tem nove seções com ciclo próprio — uma pilha de cards
 // obrigaria a rolar para comparar status.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import { getOnboarding } from "@/app/(charter)/actions/onboarding";
 import {
@@ -19,8 +26,6 @@ import {
 } from "@/app/(charter)/actions/policy";
 import { getSettings } from "@/app/(charter)/actions/settings";
 import { SECTION_STATUS_LABEL, SECTION_STATUS_TONE } from "@/lib/charter/rules";
-import { Icon, type IconName } from "../../cosmos/icons";
-import { Badge, Button, PageHeader, SectionCard } from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { ScreenError, SmartEmptyState, Tabs, Textarea } from "../base";
 import { Callout, CheckRow } from "../form-kit";

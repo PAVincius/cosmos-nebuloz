@@ -2,6 +2,13 @@
 
 // Caso — detalhe (FR-5) + Decisão (FR-6). Port de `charter-screens-2.jsx`.
 
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import { listAuditForEntity } from "@/app/(charter)/actions/audit";
@@ -22,13 +29,6 @@ import {
   recommendPath,
   type Tone,
 } from "@/lib/charter/rules";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   BackLink,

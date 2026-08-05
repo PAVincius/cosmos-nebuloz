@@ -1,8 +1,8 @@
 "use client";
 
+import { useThemeName } from "@repo/design-system/cosmos/kit";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useId, useState } from "react";
-import { useThemeName } from "@/components/cosmos/kit";
 
 export type KpiTone = "green" | "red" | "amber" | "blue" | "purple" | "accent";
 

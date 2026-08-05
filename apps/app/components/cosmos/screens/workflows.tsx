@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  Switch,
+} from "@repo/design-system/cosmos/kit";
 // workflows.tsx — Workflows (no-code automation list), wired to listWorkflows()/
 // toggleWorkflowActive() over the existing BpmnDefinition model. Mirrors the
 // cosmos.html handoff (design_handoff_cosmos_full/screen-bundle-5.jsx
@@ -18,15 +27,6 @@ import {
   type WorkflowView,
 } from "@/app/(cosmos)/actions/workflows";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  Switch,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 // FR-030: "one active per owner+entityType". O escopo de exclusividade é o

@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // themes.tsx — Temas Estratégicos (portfolio investment themes), wired to
 // listThemes(). KPI row + card grid: health, target-vs-actual allocation
 // (BillingEntryAllocation-derived, see actions/themes.ts), epic count.
@@ -15,16 +25,6 @@ import {
   ARCHIVED_THEME_STATUS,
   THEME_CONCENTRATION_THRESHOLD_PCT,
 } from "@/app/(cosmos)/actions/themes.constants";
-import {
-  Badge,
-  Button,
-  IconButton,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

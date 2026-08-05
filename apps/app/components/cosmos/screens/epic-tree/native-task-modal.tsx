@@ -1,5 +1,6 @@
 "use client";
 
+import { ErrorState } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import { updateNativeTask } from "@/app/(cosmos)/actions/epic-tree";
 import {
@@ -8,7 +9,6 @@ import {
   type TaskBlock,
   type TaskNode,
 } from "@/app/(cosmos)/actions/epic-tree.constants";
-import { ErrorState } from "../../kit";
 import { ModalCard } from "../../modal";
 import { BlockRenderer, BlockToolbar, emptyBlock } from "./blocks";
 

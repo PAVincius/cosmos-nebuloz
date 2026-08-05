@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Badge,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // vs-detail.tsx — per-value-stream financial detail (design handoff
 // screen-bundle-4.jsx ValueStreamDetailScreen). "Value stream" has no
 // dedicated model — governance.prisma's GovernedEpic.valueStreamId comment
@@ -11,14 +19,6 @@
 // time-series spend model exists to back it honestly.
 import type { ValueStreamDetailView } from "@/app/(cosmos)/actions/budgets";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useNav,
-} from "../kit";
 
 export default function ValueStreamDetailClient({
   initial,

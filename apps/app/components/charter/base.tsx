@@ -13,10 +13,10 @@
 // espalhado pelas telas e o Charter não pode, porque o intake é a tela mais
 // importante do produto.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Button, Progress, type Tone } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties, ReactNode, Ref } from "react";
 import { useEffect, useId, useState } from "react";
-import { Icon, type IconName } from "../cosmos/icons";
-import { Button, Progress, type Tone } from "../cosmos/kit";
 
 /** Rótulo lido por leitor de tela e invisível na tela. Usado em <legend> de
  *  fieldset, onde o texto visível já vem do <Field> acima. */

@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Badge, useNav } from "@repo/design-system/cosmos/kit";
 // copilot-parts.tsx — renders the non-text parts of a streamed assistant
 // UIMessage as "insight cards": real tool outputs from api/copilot/chat's
 // buildCopilotTools (tools.ts), never fabricated data. submitSuggestion and
@@ -18,8 +20,6 @@ import {
   createCopilotSuggestion,
   discardSuggestion,
 } from "@/app/actions/safe-copilot";
-import { Icon, type IconName } from "../icons";
-import { Badge, useNav } from "../kit";
 
 type ToolPart = {
   type: string;

@@ -33,7 +33,7 @@ vi.mock("@/app/actions/okrs", () => ({
   createKeyResultCheckIn: vi.fn(),
 }));
 
-import { NavCtx } from "../../components/cosmos/kit";
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import OkrsScreen from "../../components/cosmos/screens/okrs";
 
 describe("OkrsScreen — ObjectiveCard navigation", () => {

@@ -3,6 +3,13 @@
 // Fornecedor — detalhe (FR-9). Port de `charter-screens-3.jsx`.
 // O painel de postura contratual mostra o raciocínio do teto, não só o teto.
 
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import {
@@ -17,13 +24,6 @@ import {
   DATA_CLASS_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   BackLink,

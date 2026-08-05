@@ -2,6 +2,16 @@
 
 // Visão Geral de Governança — FR-1. Port de `charter-screens-1.jsx`.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  SkeletonKpi,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { getDashboard } from "@/app/(charter)/actions/dashboard";
@@ -14,16 +24,6 @@ import {
   SECTION_STATUS_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import { Icon, type IconName } from "../../cosmos/icons";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  SkeletonKpi,
-} from "../../cosmos/kit";
 import {
   BarRow,
   Legend,

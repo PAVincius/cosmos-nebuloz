@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  ErrorState,
+  SectionCard,
+  Skel,
+  Switch,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-notifications-tab.tsx — Notificações tab (Settings screen, tab
 // 5). Real, self-scoped preferences (see settings-notifications.ts for why
 // this uses profile.ts's Tenant.metadata mechanism rather than the unused
@@ -10,7 +17,6 @@ import {
   getNotificationsTab,
   updateNotificationsAction,
 } from "@/app/(cosmos)/actions/settings-notifications";
-import { ErrorState, SectionCard, Skel, Switch, useAction } from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 const PREF_LABEL: Record<string, string> = {

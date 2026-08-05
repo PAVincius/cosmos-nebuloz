@@ -13,6 +13,8 @@
 //  3. **`ModalSplit`.** Formulário à esquerda, trilho de avaliação ao vivo à
 //     direita, fixo. É o que faz o intake avaliar enquanto se preenche.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Button, IconButton, type Tone } from "@repo/design-system/cosmos/kit";
 import {
   createContext,
   type ReactNode,
@@ -23,8 +25,6 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { Icon, type IconName } from "../cosmos/icons";
-import { Button, IconButton, type Tone } from "../cosmos/kit";
 import { DirtyCtx } from "./form-kit";
 
 type ModalApi = { open: (n: ReactNode) => void; close: () => void };

@@ -2,6 +2,14 @@
 
 // Fornecedores — FR-8. Port de `charter-screens-3.jsx`.
 
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  SkeletonKpi,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import {
@@ -14,14 +22,6 @@ import {
   DATA_CLASS_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  SkeletonKpi,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   FilterChips,

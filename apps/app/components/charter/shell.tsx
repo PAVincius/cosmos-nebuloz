@@ -15,6 +15,8 @@
 //  3. Estado da política vive na sidebar: é o que o Compliance Lead olha
 //     primeiro de manhã.
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Avatar, IconButton, NavCtx } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -27,8 +29,6 @@ import {
   useRef,
   useState,
 } from "react";
-import { Icon, type IconName } from "../cosmos/icons";
-import { Avatar, IconButton, NavCtx } from "../cosmos/kit";
 import { Eyebrow, StatusDot } from "./base";
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL";

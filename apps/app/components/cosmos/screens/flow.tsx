@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // flow.tsx — Analytics · Flow Metrics, wired to getLatestFlowMetrics(). Real
 // data is a single point-in-time FlowMetricSnapshot (no week-over-week
 // history), so this is a KPI summary of the latest snapshot rather than the
@@ -19,16 +29,6 @@ import {
 } from "@/app/(cosmos)/actions/flow";
 import { AGING_WIP_SLA_DAYS } from "@/app/(cosmos)/actions/flow.constants";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useAction,
-} from "../kit";
 
 const ENTITY_LABEL: Record<AgingWipItem["entityType"], string> = {
   Story: "História",

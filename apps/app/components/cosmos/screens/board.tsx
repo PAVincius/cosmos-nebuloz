@@ -1,5 +1,13 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // board.tsx — Board do Time (story-060). Primeira tela do Cosmos no nível Team:
 // as 38 telas anteriores param no ART. Aqui mora o Team Backlog e a Iteration
 // Execution do SAFe 6.0 — story em coluna, task dentro da story.
@@ -24,8 +32,6 @@ import {
   updateTaskStatus,
 } from "@/app/actions/tasks";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import { Badge, Button, ErrorState, PageHeader, useNav } from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

@@ -1,5 +1,18 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // value.tsx — Value Realization (design handoff screen-bundle-1.jsx:1283,
 // ValueRealizationScreen), wired to the new value-realization.ts actions.
 // Table linking each tracked epic to a business-value metric: planned vs.
@@ -21,19 +34,6 @@ import {
 } from "@/app/(cosmos)/actions/value-realization.constants";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon, type IconName } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  IconButton,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

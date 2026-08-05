@@ -1,5 +1,17 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ChartTip,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useState } from "react";
 import {
@@ -18,18 +30,6 @@ import { listTeams } from "@/app/(cosmos)/actions/teams";
 // medir sem registrar ação é termômetro, não Measure & Grow. Métricas DORA
 // vivem em /cosmos/flow, não aqui.
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ChartTip,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useAction,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

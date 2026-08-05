@@ -1,7 +1,7 @@
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { CommandPalette } from "../../components/cosmos/command-palette";
-import { NavCtx } from "../../components/cosmos/kit";
 
 // jsdom has no ResizeObserver; cmdk's Command.List uses one internally.
 if (typeof globalThis.ResizeObserver === "undefined") {

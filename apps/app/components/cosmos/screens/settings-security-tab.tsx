@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  SectionCard,
+  Skel,
+  Switch,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-security-tab.tsx — Segurança / SSO tab (Settings screen, tab 3).
 // SSO shows enabled/updatedAt status only — never cert/metadata fields (see
 // settings-security.ts header for why). The toggle and the security-policy
@@ -11,15 +20,6 @@ import {
   saveSecurityPolicyAction,
   toggleSsoEnabled,
 } from "@/app/(cosmos)/actions/settings-security";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  SectionCard,
-  Skel,
-  Switch,
-  useAction,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 import { fieldLabelStyle, fmtDate, inputStyle } from "./settings-shared";
 

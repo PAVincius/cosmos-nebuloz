@@ -1,0 +1,3852 @@
+{
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/access-exceptions/components/pae-row.tsx": {
+    "size": 3901,
+    "mtime_ns": 1781642320364894166,
+    "word_count": 370
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/access-exceptions/components/pae-tabs.tsx": {
+    "size": 2679,
+    "mtime_ns": 1781642167647375051,
+    "word_count": 252
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/access-exceptions/page.tsx": {
+    "size": 1024,
+    "mtime_ns": 1781642041317867883,
+    "word_count": 111
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/components/KpiCard.tsx": {
+    "size": 8000,
+    "mtime_ns": 1781045829259870406,
+    "word_count": 695
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/components/analytics-empty.tsx": {
+    "size": 1206,
+    "mtime_ns": 1779546930784648871,
+    "word_count": 120
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/components/executive-roi-summary.tsx": {
+    "size": 5561,
+    "mtime_ns": 1779246108421594463,
+    "word_count": 483
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/anomaly-feed.tsx": {
+    "size": 1400,
+    "mtime_ns": 1781620695106728872,
+    "word_count": 123
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/art-health-table.tsx": {
+    "size": 1670,
+    "mtime_ns": 1781620695110061903,
+    "word_count": 126
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/confidence-badge.tsx": {
+    "size": 1570,
+    "mtime_ns": 1781655930717297851,
+    "word_count": 140
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/delivery-confidence-widget.tsx": {
+    "size": 2454,
+    "mtime_ns": 1781656378503629642,
+    "word_count": 210
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/kpi-tiles.tsx": {
+    "size": 1552,
+    "mtime_ns": 1781620695117244220,
+    "word_count": 153
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/components/trend-charts.tsx": {
+    "size": 2913,
+    "mtime_ns": 1781620695118769151,
+    "word_count": 251
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/executive/page.tsx": {
+    "size": 2566,
+    "mtime_ns": 1781656594825493247,
+    "word_count": 213
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/anomaly-card.tsx": {
+    "size": 1458,
+    "mtime_ns": 1781045829260057412,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/anomaly-feed.tsx": {
+    "size": 625,
+    "mtime_ns": 1781045829260318545,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/anomaly-summary-panel.tsx": {
+    "size": 4254,
+    "mtime_ns": 1781620695120330707,
+    "word_count": 365
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capability-gap-card.tsx": {
+    "size": 1193,
+    "mtime_ns": 1781045829260769392,
+    "word_count": 108
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capability-matrix.tsx": {
+    "size": 1720,
+    "mtime_ns": 1781045829260963064,
+    "word_count": 138
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capability-privacy-notice.tsx": {
+    "size": 451,
+    "mtime_ns": 1781045829261130861,
+    "word_count": 44
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capability-tab.tsx": {
+    "size": 1579,
+    "mtime_ns": 1781045829261276574,
+    "word_count": 149
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capacity/capacity-forecast-chart.tsx": {
+    "size": 1677,
+    "mtime_ns": 1779495010268164349,
+    "word_count": 165
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capacity/capacity-summary-card.tsx": {
+    "size": 813,
+    "mtime_ns": 1779495010268440641,
+    "word_count": 69
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capacity/member-breakdown-table.tsx": {
+    "size": 2992,
+    "mtime_ns": 1779495010268696308,
+    "word_count": 244
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/capacity/team-capacity-tab.tsx": {
+    "size": 1549,
+    "mtime_ns": 1779495010269186726,
+    "word_count": 132
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/cycle-time-chart.tsx": {
+    "size": 3786,
+    "mtime_ns": 1783776426440065214,
+    "word_count": 303
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-anomaly-callout.tsx": {
+    "size": 1323,
+    "mtime_ns": 1779810951119432469,
+    "word_count": 134
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-distribution-chart.tsx": {
+    "size": 1579,
+    "mtime_ns": 1779810898192088338,
+    "word_count": 144
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-efficiency-gauge.tsx": {
+    "size": 1390,
+    "mtime_ns": 1779810959358512364,
+    "word_count": 129
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-load-gauge.tsx": {
+    "size": 1686,
+    "mtime_ns": 1779810971444880002,
+    "word_count": 157
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-metric-card.tsx": {
+    "size": 756,
+    "mtime_ns": 1779810909855901743,
+    "word_count": 73
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-metrics-dashboard.tsx": {
+    "size": 45379,
+    "mtime_ns": 1783776426492352449,
+    "word_count": 3243
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-predictability-chart.tsx": {
+    "size": 1614,
+    "mtime_ns": 1779810913574079917,
+    "word_count": 154
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-scope-selector.tsx": {
+    "size": 1277,
+    "mtime_ns": 1779810917694294204,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-staleness-badge.tsx": {
+    "size": 772,
+    "mtime_ns": 1779810920688006954,
+    "word_count": 86
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-time-card.tsx": {
+    "size": 951,
+    "mtime_ns": 1779810924235551523,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/flow-velocity-chart.tsx": {
+    "size": 1030,
+    "mtime_ns": 1779810927162242448,
+    "word_count": 96
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/pi-burnup-chart.tsx": {
+    "size": 3264,
+    "mtime_ns": 1783776426509828248,
+    "word_count": 249
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/portfolio-cfd-chart.tsx": {
+    "size": 3277,
+    "mtime_ns": 1783776426531502181,
+    "word_count": 275
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/re-evaluate-modal.tsx": {
+    "size": 3543,
+    "mtime_ns": 1779472912625146230,
+    "word_count": 262
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/components/staleness-badge.tsx": {
+    "size": 1675,
+    "mtime_ns": 1779472912625577201,
+    "word_count": 160
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/error.tsx": {
+    "size": 1292,
+    "mtime_ns": 1783776426557060222,
+    "word_count": 114
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/loading.tsx": {
+    "size": 2263,
+    "mtime_ns": 1783776426565523155,
+    "word_count": 208
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/flow/page.tsx": {
+    "size": 11578,
+    "mtime_ns": 1783776426578655243,
+    "word_count": 945
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/history/components/history-icons.ts": {
+    "size": 541,
+    "mtime_ns": 1783776426584262978,
+    "word_count": 120
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/history/components/history-view.tsx": {
+    "size": 10825,
+    "mtime_ns": 1783776426589294865,
+    "word_count": 711
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/history/error.tsx": {
+    "size": 1286,
+    "mtime_ns": 1783776426599352222,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/history/loading.tsx": {
+    "size": 1806,
+    "mtime_ns": 1783776426601704569,
+    "word_count": 171
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/history/page.tsx": {
+    "size": 1644,
+    "mtime_ns": 1783776426604163703,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/loading.tsx": {
+    "size": 488,
+    "mtime_ns": 1780886856483049413,
+    "word_count": 47
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/assessments-tab.tsx": {
+    "size": 4026,
+    "mtime_ns": 1783776426608217345,
+    "word_count": 349
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/competency-radar.tsx": {
+    "size": 3088,
+    "mtime_ns": 1783776426611843173,
+    "word_count": 258
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/improvement-actions-tab.tsx": {
+    "size": 12124,
+    "mtime_ns": 1781045829262937248,
+    "word_count": 863
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/maturity-overview.tsx": {
+    "size": 6752,
+    "mtime_ns": 1783776426618614895,
+    "word_count": 662
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/maturity-utils.ts": {
+    "size": 2319,
+    "mtime_ns": 1783776426622541417,
+    "word_count": 314
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/measure-grow-dashboard.tsx": {
+    "size": 4602,
+    "mtime_ns": 1781045829263096753,
+    "word_count": 427
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/measure-grow-header-actions.tsx": {
+    "size": 750,
+    "mtime_ns": 1783776426631560449,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/member-skill-card.tsx": {
+    "size": 2740,
+    "mtime_ns": 1781045829263331760,
+    "word_count": 245
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/components/new-assessment-modal.tsx": {
+    "size": 5784,
+    "mtime_ns": 1783776426638007686,
+    "word_count": 423
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/error.tsx": {
+    "size": 1248,
+    "mtime_ns": 1783776426642655966,
+    "word_count": 115
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/loading.tsx": {
+    "size": 1836,
+    "mtime_ns": 1783776426650312770,
+    "word_count": 167
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/measure-grow/page.tsx": {
+    "size": 3629,
+    "mtime_ns": 1783776426657095116,
+    "word_count": 324
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/page.tsx": {
+    "size": 15844,
+    "mtime_ns": 1780887290284656373,
+    "word_count": 1183
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/pi-retro/[piPlanId]/page.tsx": {
+    "size": 11163,
+    "mtime_ns": 1781620695128333490,
+    "word_count": 705
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/velocity/components/velocity-dashboard.tsx": {
+    "size": 13892,
+    "mtime_ns": 1783776426670509190,
+    "word_count": 1056
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/velocity/error.tsx": {
+    "size": 1285,
+    "mtime_ns": 1783776426677343367,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/velocity/loading.tsx": {
+    "size": 1674,
+    "mtime_ns": 1783776426686137409,
+    "word_count": 157
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/analytics/velocity/page.tsx": {
+    "size": 3631,
+    "mtime_ns": 1783776426696959148,
+    "word_count": 345
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/art-event-timeline.tsx": {
+    "size": 3833,
+    "mtime_ns": 1781045829264469461,
+    "word_count": 339
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/art-health-indicators.tsx": {
+    "size": 4715,
+    "mtime_ns": 1781045829264813013,
+    "word_count": 401
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/art-kpi-row.tsx": {
+    "size": 2174,
+    "mtime_ns": 1783776426717559548,
+    "word_count": 241
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/create-pi-dialog.tsx": {
+    "size": 6482,
+    "mtime_ns": 1781045829264980768,
+    "word_count": 508
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/create-pi-wizard-v2.tsx": {
+    "size": 33085,
+    "mtime_ns": 1783776426727760232,
+    "word_count": 2267
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/create-pi-wizard.tsx": {
+    "size": 35640,
+    "mtime_ns": 1781620695130463968,
+    "word_count": 2878
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/lean-budget-section.tsx": {
+    "size": 1812,
+    "mtime_ns": 1783776426730066165,
+    "word_count": 161
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/pi-date-picker.tsx": {
+    "size": 1547,
+    "mtime_ns": 1783776426731150364,
+    "word_count": 141
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/pi-relation-chip.tsx": {
+    "size": 6072,
+    "mtime_ns": 1783776426749019018,
+    "word_count": 536
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/strategic-themes-section.tsx": {
+    "size": 3661,
+    "mtime_ns": 1783776426762151439,
+    "word_count": 300
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/components/team-health-grid.tsx": {
+    "size": 4592,
+    "mtime_ns": 1783776426771574202,
+    "word_count": 433
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/error.tsx": {
+    "size": 2909,
+    "mtime_ns": 1783776426789722927,
+    "word_count": 223
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/impediments/components/impediment-art-dashboard.tsx": {
+    "size": 9122,
+    "mtime_ns": 1781620695131241434,
+    "word_count": 710
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/impediments/page.tsx": {
+    "size": 2434,
+    "mtime_ns": 1781045829266028050,
+    "word_count": 273
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/loading.tsx": {
+    "size": 3572,
+    "mtime_ns": 1783776426873812825,
+    "word_count": 306
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/page.tsx": {
+    "size": 15804,
+    "mtime_ns": 1783776426903192727,
+    "word_count": 1119
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/confidence-vote-panel.tsx": {
+    "size": 7324,
+    "mtime_ns": 1783776426912698236,
+    "word_count": 659
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/new-round-button.tsx": {
+    "size": 1013,
+    "mtime_ns": 1781045829266418895,
+    "word_count": 96
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/new-session-button.tsx": {
+    "size": 967,
+    "mtime_ns": 1781045829266546565,
+    "word_count": 92
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-burnup-chart.tsx": {
+    "size": 4224,
+    "mtime_ns": 1783776426927833395,
+    "word_count": 393
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-header.tsx": {
+    "size": 6102,
+    "mtime_ns": 1783776426935890389,
+    "word_count": 538
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-kpi-row.tsx": {
+    "size": 2212,
+    "mtime_ns": 1783776426941792818,
+    "word_count": 261
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-objectives-view.tsx": {
+    "size": 13971,
+    "mtime_ns": 1783776426949772649,
+    "word_count": 1006
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-summary-view.tsx": {
+    "size": 12195,
+    "mtime_ns": 1781620695132120609,
+    "word_count": 930
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-tone.tsx": {
+    "size": 1745,
+    "mtime_ns": 1783776426956735945,
+    "word_count": 181
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/pi-workspace-tabs.tsx": {
+    "size": 2489,
+    "mtime_ns": 1783776426962430509,
+    "word_count": 218
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/program-board-embedded.tsx": {
+    "size": 9612,
+    "mtime_ns": 1781045829268208948,
+    "word_count": 851
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/risk-roam-board.tsx": {
+    "size": 12544,
+    "mtime_ns": 1781045829268756173,
+    "word_count": 980
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/components/team-breakout-view.tsx": {
+    "size": 8475,
+    "mtime_ns": 1781045829269010014,
+    "word_count": 713
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pi-planning/page.tsx": {
+    "size": 13578,
+    "mtime_ns": 1783776426974254991,
+    "word_count": 1110
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/post-pi/actions.ts": {
+    "size": 1778,
+    "mtime_ns": 1781045829269525279,
+    "word_count": 212
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/post-pi/components/close-pi-button.tsx": {
+    "size": 2182,
+    "mtime_ns": 1781045829269823455,
+    "word_count": 178
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/post-pi/components/inspect-adapt-actions-panel.tsx": {
+    "size": 14160,
+    "mtime_ns": 1779556662131893135,
+    "word_count": 1030
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/post-pi/components/lessons-learned-form.tsx": {
+    "size": 2036,
+    "mtime_ns": 1781045829270065587,
+    "word_count": 188
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/post-pi/page.tsx": {
+    "size": 14542,
+    "mtime_ns": 1781045829270644438,
+    "word_count": 1201
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/pre-pi/page.tsx": {
+    "size": 13815,
+    "mtime_ns": 1781045829270973031,
+    "word_count": 1063
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/program-board/components/program-board-body.tsx": {
+    "size": 3520,
+    "mtime_ns": 1783776426988715682,
+    "word_count": 300
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/program-board/components/program-board-client.tsx": {
+    "size": 19998,
+    "mtime_ns": 1783776426993442500,
+    "word_count": 1689
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/program-board/components/program-board-header-actions.tsx": {
+    "size": 982,
+    "mtime_ns": 1783776427000138184,
+    "word_count": 97
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/[artId]/program-board/page.tsx": {
+    "size": 4872,
+    "mtime_ns": 1783776427007189559,
+    "word_count": 463
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/components/create-art-dialog.tsx": {
+    "size": 6683,
+    "mtime_ns": 1781045829271665760,
+    "word_count": 514
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/arts/page.tsx": {
+    "size": 3286,
+    "mtime_ns": 1781045829271903226,
+    "word_count": 254
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/avatar-stack.tsx": {
+    "size": 2465,
+    "mtime_ns": 1780201105814212504,
+    "word_count": 230
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/board-primitives.tsx": {
+    "size": 6086,
+    "mtime_ns": 1783776427016156718,
+    "word_count": 585
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/can-do.tsx": {
+    "size": 944,
+    "mtime_ns": 1781061664581984310,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/collaboration-provider.tsx": {
+    "size": 1173,
+    "mtime_ns": 1781620695135921227,
+    "word_count": 126
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/command-palette.tsx": {
+    "size": 4255,
+    "mtime_ns": 1781045829272090565,
+    "word_count": 389
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-chat.tsx": {
+    "size": 3235,
+    "mtime_ns": 1779765680875362711,
+    "word_count": 330
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-fab.tsx": {
+    "size": 1587,
+    "mtime_ns": 1779765680876227803,
+    "word_count": 146
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-header.tsx": {
+    "size": 2620,
+    "mtime_ns": 1781620695137030821,
+    "word_count": 226
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-icons.tsx": {
+    "size": 5277,
+    "mtime_ns": 1779765680877132145,
+    "word_count": 518
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-input-area.tsx": {
+    "size": 6543,
+    "mtime_ns": 1781045829272315363,
+    "word_count": 557
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-markdown.tsx": {
+    "size": 5244,
+    "mtime_ns": 1780201105815663859,
+    "word_count": 495
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-panel.tsx": {
+    "size": 4597,
+    "mtime_ns": 1779817650313405397,
+    "word_count": 375
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-prompt-chips.tsx": {
+    "size": 2243,
+    "mtime_ns": 1780201105816189351,
+    "word_count": 273
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-provider.tsx": {
+    "size": 3577,
+    "mtime_ns": 1781620695137419158,
+    "word_count": 416
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-report.tsx": {
+    "size": 3627,
+    "mtime_ns": 1779550294562843748,
+    "word_count": 293
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-role-badge.tsx": {
+    "size": 1034,
+    "mtime_ns": 1779817650312831067,
+    "word_count": 105
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-role-chips.tsx": {
+    "size": 830,
+    "mtime_ns": 1779817650306920611,
+    "word_count": 82
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-steps-timeline.tsx": {
+    "size": 542,
+    "mtime_ns": 1779633207756426286,
+    "word_count": 59
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-suggestions.tsx": {
+    "size": 6540,
+    "mtime_ns": 1780201105816723219,
+    "word_count": 615
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-thread-item.tsx": {
+    "size": 7214,
+    "mtime_ns": 1781045829272487868,
+    "word_count": 648
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-tiptap-editor.tsx": {
+    "size": 1897,
+    "mtime_ns": 1783776427017639106,
+    "word_count": 186
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-tool-call-step.tsx": {
+    "size": 4344,
+    "mtime_ns": 1781045829272628539,
+    "word_count": 355
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-trigger-button.tsx": {
+    "size": 939,
+    "mtime_ns": 1779765680879211291,
+    "word_count": 104
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/copilot-types.ts": {
+    "size": 363,
+    "mtime_ns": 1779633207754793121,
+    "word_count": 42
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/use-copilot-chat.ts": {
+    "size": 8001,
+    "mtime_ns": 1781045829272866213,
+    "word_count": 884
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/copilot/use-copilot-drawer.ts": {
+    "size": 575,
+    "mtime_ns": 1779634981175152862,
+    "word_count": 81
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/cosmos-topbar-shell.tsx": {
+    "size": 3386,
+    "mtime_ns": 1783776427022296011,
+    "word_count": 342
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/cosmos-topbar.tsx": {
+    "size": 7665,
+    "mtime_ns": 1783776427037179432,
+    "word_count": 660
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/create-feature-modal.tsx": {
+    "size": 27978,
+    "mtime_ns": 1783776427054077091,
+    "word_count": 2243
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/create-story-modal.tsx": {
+    "size": 26627,
+    "mtime_ns": 1783776427063293613,
+    "word_count": 2064
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/cursors.tsx": {
+    "size": 2946,
+    "mtime_ns": 1778935188472066766,
+    "word_count": 309
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/data-table.tsx": {
+    "size": 2193,
+    "mtime_ns": 1783776427068133135,
+    "word_count": 189
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/external-source-badge.tsx": {
+    "size": 1756,
+    "mtime_ns": 1779246108413790085,
+    "word_count": 189
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/full-screen-loader.tsx": {
+    "size": 468,
+    "mtime_ns": 1781045829273005759,
+    "word_count": 47
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/funnel-stepper.tsx": {
+    "size": 3719,
+    "mtime_ns": 1783776427072064574,
+    "word_count": 372
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/gauge.tsx": {
+    "size": 3225,
+    "mtime_ns": 1783776427073903112,
+    "word_count": 321
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/header.tsx": {
+    "size": 1504,
+    "mtime_ns": 1780688706806846884,
+    "word_count": 121
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/home-dashboard.tsx": {
+    "size": 9024,
+    "mtime_ns": 1783776427078560350,
+    "word_count": 714
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/keyboard-provider.tsx": {
+    "size": 4298,
+    "mtime_ns": 1781062536949991003,
+    "word_count": 301
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/kpi-card.tsx": {
+    "size": 10375,
+    "mtime_ns": 1783776427084653478,
+    "word_count": 877
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/modal-shell.tsx": {
+    "size": 8792,
+    "mtime_ns": 1783776427090400373,
+    "word_count": 706
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/notifications-provider.tsx": {
+    "size": 1116,
+    "mtime_ns": 1781045829273211307,
+    "word_count": 123
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/pae-request-button.tsx": {
+    "size": 1063,
+    "mtime_ns": 1781641750392797450,
+    "word_count": 96
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/pae-request-sheet.tsx": {
+    "size": 3872,
+    "mtime_ns": 1781641750416054903,
+    "word_count": 283
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/page-header.tsx": {
+    "size": 8305,
+    "mtime_ns": 1783776427099278453,
+    "word_count": 615
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/relation-chip.tsx": {
+    "size": 8093,
+    "mtime_ns": 1783776427104699155,
+    "word_count": 736
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/search.tsx": {
+    "size": 921,
+    "mtime_ns": 1783776427110697913,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/section-card.tsx": {
+    "size": 3927,
+    "mtime_ns": 1783776427124946739,
+    "word_count": 325
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/sidebar.tsx": {
+    "size": 14984,
+    "mtime_ns": 1783776427144612393,
+    "word_count": 1150
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/user-button.tsx": {
+    "size": 3202,
+    "mtime_ns": 1783776427160418020,
+    "word_count": 226
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/wizard-ui.tsx": {
+    "size": 5018,
+    "mtime_ns": 1781045829273868368,
+    "word_count": 436
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/components/workspace-switcher.tsx": {
+    "size": 4698,
+    "mtime_ns": 1783776427170180433,
+    "word_count": 355
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/components/copilot-fullscreen.tsx": {
+    "size": 7416,
+    "mtime_ns": 1783776427183749458,
+    "word_count": 553
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/components/copilot-side-drawer.tsx": {
+    "size": 1378,
+    "mtime_ns": 1783776427190054744,
+    "word_count": 120
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/components/session-group.tsx": {
+    "size": 985,
+    "mtime_ns": 1783776427196337030,
+    "word_count": 91
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/components/session-item.tsx": {
+    "size": 5715,
+    "mtime_ns": 1783776427225312368,
+    "word_count": 483
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/components/session-sidebar.tsx": {
+    "size": 7684,
+    "mtime_ns": 1783776427235012242,
+    "word_count": 660
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/error.tsx": {
+    "size": 1377,
+    "mtime_ns": 1783776427248260699,
+    "word_count": 130
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/loading.tsx": {
+    "size": 1977,
+    "mtime_ns": 1783776427268065054,
+    "word_count": 176
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/copilot/page.tsx": {
+    "size": 766,
+    "mtime_ns": 1779550264944269629,
+    "word_count": 68
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/bento-cell.tsx": {
+    "size": 10939,
+    "mtime_ns": 1783776427274129976,
+    "word_count": 959
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/charts/area-chart.tsx": {
+    "size": 3496,
+    "mtime_ns": 1783776427284906674,
+    "word_count": 392
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/charts/horizontal-bars.tsx": {
+    "size": 2064,
+    "mtime_ns": 1783776427295385262,
+    "word_count": 197
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/charts/vertical-bars.tsx": {
+    "size": 2188,
+    "mtime_ns": 1783776427297605490,
+    "word_count": 206
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/notifications-cell.tsx": {
+    "size": 2979,
+    "mtime_ns": 1781620695140522062,
+    "word_count": 256
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/persona-selector.tsx": {
+    "size": 4256,
+    "mtime_ns": 1781620695140807065,
+    "word_count": 381
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/global-home.tsx": {
+    "size": 7336,
+    "mtime_ns": 1783776427302475135,
+    "word_count": 635
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/lpm-home.tsx": {
+    "size": 14359,
+    "mtime_ns": 1783776427304242093,
+    "word_count": 1091
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/pm-home-sections/feature-backlog-table.tsx": {
+    "size": 1915,
+    "mtime_ns": 1783776427306931633,
+    "word_count": 177
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/pm-home-sections/feature-cta-button.tsx": {
+    "size": 1577,
+    "mtime_ns": 1783776427307605184,
+    "word_count": 125
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/pm-home-sections/pm-home-body.tsx": {
+    "size": 11888,
+    "mtime_ns": 1783776427313070717,
+    "word_count": 1031
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/pm-home-sections/skeleton.tsx": {
+    "size": 3577,
+    "mtime_ns": 1783776427318253305,
+    "word_count": 290
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/pm-home.tsx": {
+    "size": 1920,
+    "mtime_ns": 1783776427320848808,
+    "word_count": 175
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/rte-home.tsx": {
+    "size": 14976,
+    "mtime_ns": 1783776427327720441,
+    "word_count": 1286
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/personas/sm-home.tsx": {
+    "size": 13863,
+    "mtime_ns": 1783776427335423202,
+    "word_count": 990
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/components/view-switcher.tsx": {
+    "size": 992,
+    "mtime_ns": 1781620695147443585,
+    "word_count": 96
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/error.tsx": {
+    "size": 2134,
+    "mtime_ns": 1781620695148992141,
+    "word_count": 194
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/loading.tsx": {
+    "size": 3029,
+    "mtime_ns": 1781620695149888400,
+    "word_count": 339
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/page.tsx": {
+    "size": 4008,
+    "mtime_ns": 1783776427344937502,
+    "word_count": 391
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/ai-action-buttons.tsx": {
+    "size": 2271,
+    "mtime_ns": 1780235908107939799,
+    "word_count": 199
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/card-config-panel.tsx": {
+    "size": 9072,
+    "mtime_ns": 1781620695151214620,
+    "word_count": 807
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/column-settings.tsx": {
+    "size": 4985,
+    "mtime_ns": 1781045829275020111,
+    "word_count": 393
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-create-modal.tsx": {
+    "size": 14822,
+    "mtime_ns": 1781620695152980970,
+    "word_count": 1246
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer-dependencies.tsx": {
+    "size": 269,
+    "mtime_ns": 1779766479825371913,
+    "word_count": 31
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer-description.tsx": {
+    "size": 7388,
+    "mtime_ns": 1780236830155694976,
+    "word_count": 692
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer-hypothesis.tsx": {
+    "size": 3786,
+    "mtime_ns": 1781620695153233472,
+    "word_count": 318
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer-invest.tsx": {
+    "size": 7111,
+    "mtime_ns": 1781062625842217236,
+    "word_count": 600
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer-more.tsx": {
+    "size": 1265,
+    "mtime_ns": 1781045829275594378,
+    "word_count": 99
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/epic-drawer.tsx": {
+    "size": 3798,
+    "mtime_ns": 1781620695154452026,
+    "word_count": 285
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/invest-score-bar.tsx": {
+    "size": 2289,
+    "mtime_ns": 1781045829275860720,
+    "word_count": 209
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/kanban-board.tsx": {
+    "size": 23213,
+    "mtime_ns": 1781620695159808492,
+    "word_count": 1996
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/kanban-card.tsx": {
+    "size": 10230,
+    "mtime_ns": 1781620695160457165,
+    "word_count": 809
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/kanban-column.tsx": {
+    "size": 7880,
+    "mtime_ns": 1781620695165619130,
+    "word_count": 598
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/multiplayer-cursors.tsx": {
+    "size": 1475,
+    "mtime_ns": 1781045829276788997,
+    "word_count": 121
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/prompt-delivery-dialog.tsx": {
+    "size": 4044,
+    "mtime_ns": 1781045829277113757,
+    "word_count": 362
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/tiptap-slash-extension.ts": {
+    "size": 3332,
+    "mtime_ns": 1780236683283759373,
+    "word_count": 309
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/components/wip-limit-warning.tsx": {
+    "size": 720,
+    "mtime_ns": 1780201105822286016,
+    "word_count": 77
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dashboard/portfolio/page.tsx": {
+    "size": 209,
+    "mtime_ns": 1778942403167343426,
+    "word_count": 26
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dependencies/components/create-dependency-modal.tsx": {
+    "size": 6050,
+    "mtime_ns": 1783776427349244381,
+    "word_count": 448
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dependencies/components/dependency-dashboard.tsx": {
+    "size": 11167,
+    "mtime_ns": 1783776427354117776,
+    "word_count": 1070
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/dependencies/page.tsx": {
+    "size": 2308,
+    "mtime_ns": 1783776427360804501,
+    "word_count": 217
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/edit-epic-button.tsx": {
+    "size": 6753,
+    "mtime_ns": 1783776427369946986,
+    "word_count": 500
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/epic-cost-badge.tsx": {
+    "size": 842,
+    "mtime_ns": 1781045829278087078,
+    "word_count": 93
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/epic-kpi-row.tsx": {
+    "size": 1734,
+    "mtime_ns": 1783776427376578255,
+    "word_count": 165
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/epic-metric-cards.tsx": {
+    "size": 6049,
+    "mtime_ns": 1781045829278249791,
+    "word_count": 525
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/features-section.tsx": {
+    "size": 8344,
+    "mtime_ns": 1783776427380050675,
+    "word_count": 654
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/hypothesis-section.tsx": {
+    "size": 3518,
+    "mtime_ns": 1783776427381947210,
+    "word_count": 351
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/invest-section.tsx": {
+    "size": 3641,
+    "mtime_ns": 1783776427386759982,
+    "word_count": 392
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/components/lifecycle-section.tsx": {
+    "size": 1203,
+    "mtime_ns": 1783776427391089527,
+    "word_count": 142
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/features/components/feature-board.tsx": {
+    "size": 12684,
+    "mtime_ns": 1781620695169992921,
+    "word_count": 933
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/features/page.tsx": {
+    "size": 2199,
+    "mtime_ns": 1781045829278540633,
+    "word_count": 233
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/epics/[epicId]/page.tsx": {
+    "size": 11624,
+    "mtime_ns": 1783776427397383105,
+    "word_count": 995
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/error.tsx": {
+    "size": 645,
+    "mtime_ns": 1780886874291885509,
+    "word_count": 68
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/features/[featureId]/components/edit-feature-dialog.tsx": {
+    "size": 6412,
+    "mtime_ns": 1781045829279051357,
+    "word_count": 461
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/features/[featureId]/page.tsx": {
+    "size": 8320,
+    "mtime_ns": 1780694212514103312,
+    "word_count": 588
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/components/connect-wizard.tsx": {
+    "size": 15209,
+    "mtime_ns": 1783776427404927248,
+    "word_count": 1225
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/components/integration-hub.tsx": {
+    "size": 14122,
+    "mtime_ns": 1783776427408119972,
+    "word_count": 1175
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/health/loading.tsx": {
+    "size": 1225,
+    "mtime_ns": 1783776427412205070,
+    "word_count": 109
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/health/page.tsx": {
+    "size": 6705,
+    "mtime_ns": 1783776427418424193,
+    "word_count": 591
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/linear/import/components/import-wizard.tsx": {
+    "size": 25530,
+    "mtime_ns": 1781620695171738562,
+    "word_count": 2112
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/linear/import/page.tsx": {
+    "size": 388,
+    "mtime_ns": 1779495010275162524,
+    "word_count": 47
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/loading.tsx": {
+    "size": 1846,
+    "mtime_ns": 1783776427422418046,
+    "word_count": 169
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/integrations/page.tsx": {
+    "size": 4816,
+    "mtime_ns": 1783776427424368787,
+    "word_count": 432
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/lace/components/lace-workspace.tsx": {
+    "size": 6067,
+    "mtime_ns": 1781045829279717669,
+    "word_count": 484
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/lace/page.tsx": {
+    "size": 2615,
+    "mtime_ns": 1780856595790580150,
+    "word_count": 243
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/layout.tsx": {
+    "size": 5015,
+    "mtime_ns": 1783776427426275530,
+    "word_count": 487
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/loading.tsx": {
+    "size": 490,
+    "mtime_ns": 1780886851607758416,
+    "word_count": 48
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/meetings/[transcriptId]/review/page.tsx": {
+    "size": 2032,
+    "mtime_ns": 1781620695174996926,
+    "word_count": 195
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/meetings/[transcriptId]/review/review-client.tsx": {
+    "size": 4138,
+    "mtime_ns": 1781056872285454940,
+    "word_count": 387
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/meetings/[transcriptId]/review/transcript-summary-panel.tsx": {
+    "size": 2787,
+    "mtime_ns": 1781620695175591348,
+    "word_count": 224
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/meetings/meeting-search-bar.tsx": {
+    "size": 851,
+    "mtime_ns": 1781620695176501273,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/meetings/page.tsx": {
+    "size": 3329,
+    "mtime_ns": 1781620695177283989,
+    "word_count": 269
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/notifications/components/mark-all-read-button.tsx": {
+    "size": 795,
+    "mtime_ns": 1781045829280127556,
+    "word_count": 80
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/notifications/components/notification-item.tsx": {
+    "size": 2527,
+    "mtime_ns": 1781620695178889629,
+    "word_count": 209
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/notifications/components/notification-preferences.tsx": {
+    "size": 4468,
+    "mtime_ns": 1781045829280712657,
+    "word_count": 391
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/notifications/page.tsx": {
+    "size": 3699,
+    "mtime_ns": 1781620695179911972,
+    "word_count": 326
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/complete/page.tsx": {
+    "size": 979,
+    "mtime_ns": 1781045829281197838,
+    "word_count": 91
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/company-wizard-client.tsx": {
+    "size": 9105,
+    "mtime_ns": 1781045829281457596,
+    "word_count": 830
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/onboarding-wizard-shell.tsx": {
+    "size": 3777,
+    "mtime_ns": 1781045829281687103,
+    "word_count": 333
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-company-profile.tsx": {
+    "size": 4742,
+    "mtime_ns": 1781045829281897484,
+    "word_count": 362
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-health-check.tsx": {
+    "size": 2215,
+    "mtime_ns": 1781045829282102323,
+    "word_count": 225
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-org-chart.tsx": {
+    "size": 3030,
+    "mtime_ns": 1781045829282295037,
+    "word_count": 268
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-pis-sprints.tsx": {
+    "size": 5213,
+    "mtime_ns": 1781045829282650673,
+    "word_count": 418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-safe-structure.tsx": {
+    "size": 6940,
+    "mtime_ns": 1781045829282889097,
+    "word_count": 603
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-sectors.tsx": {
+    "size": 4381,
+    "mtime_ns": 1781045829283135146,
+    "word_count": 348
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/components/steps/step-users-teams.tsx": {
+    "size": 6782,
+    "mtime_ns": 1781045829283421071,
+    "word_count": 576
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/company/page.tsx": {
+    "size": 800,
+    "mtime_ns": 1781045829283584076,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/layout.tsx": {
+    "size": 585,
+    "mtime_ns": 1781045829283724081,
+    "word_count": 53
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/complete/page.tsx": {
+    "size": 916,
+    "mtime_ns": 1781045829283858501,
+    "word_count": 84
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/migration-wizard-client.tsx": {
+    "size": 6861,
+    "mtime_ns": 1781045829284120426,
+    "word_count": 625
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-connect-integration.tsx": {
+    "size": 6545,
+    "mtime_ns": 1781045829284368183,
+    "word_count": 539
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-discovery.tsx": {
+    "size": 4489,
+    "mtime_ns": 1781620695181614196,
+    "word_count": 372
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-dry-run.tsx": {
+    "size": 3911,
+    "mtime_ns": 1781045829284970993,
+    "word_count": 332
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-import.tsx": {
+    "size": 3198,
+    "mtime_ns": 1781045829285242834,
+    "word_count": 314
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-post-migration.tsx": {
+    "size": 2527,
+    "mtime_ns": 1781045829285530968,
+    "word_count": 205
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/components/steps/step-source-select.tsx": {
+    "size": 2319,
+    "mtime_ns": 1781045829285853728,
+    "word_count": 226
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/onboarding/migration/page.tsx": {
+    "size": 911,
+    "mtime_ns": 1781045829286009524,
+    "word_count": 82
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/page.tsx": {
+    "size": 110,
+    "mtime_ns": 1781620695182940375,
+    "word_count": 13
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/pi-planning/components/confidence-vote.tsx": {
+    "size": 9410,
+    "mtime_ns": 1781045829286267865,
+    "word_count": 762
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/pi-planning/components/knowledge-citation.tsx": {
+    "size": 549,
+    "mtime_ns": 1781045829286410994,
+    "word_count": 64
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/pi-planning/components/miro-board-panel.tsx": {
+    "size": 3021,
+    "mtime_ns": 1781620695183745299,
+    "word_count": 283
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/pi-planning/page.tsx": {
+    "size": 6525,
+    "mtime_ns": 1781620695184893935,
+    "word_count": 629
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/[epicId]/business-case/components/business-case-form.tsx": {
+    "size": 17032,
+    "mtime_ns": 1781620695185924570,
+    "word_count": 1322
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/[epicId]/business-case/components/hypothesis-resolution-modal.tsx": {
+    "size": 2100,
+    "mtime_ns": 1780989255212541280,
+    "word_count": 177
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/[epicId]/business-case/components/version-history-panel.tsx": {
+    "size": 2070,
+    "mtime_ns": 1780989349206133347,
+    "word_count": 155
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/[epicId]/business-case/page.tsx": {
+    "size": 1098,
+    "mtime_ns": 1780989349203817234,
+    "word_count": 116
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/ai-playground/components/artifact-browser.tsx": {
+    "size": 3422,
+    "mtime_ns": 1781045829286664127,
+    "word_count": 292
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/ai-playground/components/artifact-viewer.tsx": {
+    "size": 1059,
+    "mtime_ns": 1781045829286821548,
+    "word_count": 95
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/ai-playground/page.tsx": {
+    "size": 648,
+    "mtime_ns": 1780688667595119102,
+    "word_count": 66
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/[id]/components/budget-detail.tsx": {
+    "size": 2723,
+    "mtime_ns": 1781620695186682285,
+    "word_count": 227
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/[id]/components/cost-breakdown-card.tsx": {
+    "size": 1562,
+    "mtime_ns": 1781620695187253790,
+    "word_count": 159
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/[id]/components/cost-trend-chart.tsx": {
+    "size": 1856,
+    "mtime_ns": 1779759822183700513,
+    "word_count": 162
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/[id]/page.tsx": {
+    "size": 1353,
+    "mtime_ns": 1779759603076780823,
+    "word_count": 126
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/anomalies/components/anomaly-list.tsx": {
+    "size": 7250,
+    "mtime_ns": 1783776427428336849,
+    "word_count": 683
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/anomalies/components/anomaly-row.tsx": {
+    "size": 6113,
+    "mtime_ns": 1783776427429656078,
+    "word_count": 617
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/anomalies/error.tsx": {
+    "size": 1250,
+    "mtime_ns": 1783776427432624271,
+    "word_count": 115
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/anomalies/loading.tsx": {
+    "size": 2070,
+    "mtime_ns": 1783776427436324513,
+    "word_count": 198
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/anomalies/page.tsx": {
+    "size": 2231,
+    "mtime_ns": 1783776427443542838,
+    "word_count": 188
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/components/budget-allocation-panel.tsx": {
+    "size": 11235,
+    "mtime_ns": 1783776427448926375,
+    "word_count": 946
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/components/budget-dashboard.tsx": {
+    "size": 40325,
+    "mtime_ns": 1783776427459509500,
+    "word_count": 3147
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/components/cosmos-form.tsx": {
+    "size": 4593,
+    "mtime_ns": 1783776427462766054,
+    "word_count": 421
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/components/finops-section.tsx": {
+    "size": 5510,
+    "mtime_ns": 1783776427466574666,
+    "word_count": 462
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/components/usage-bar.tsx": {
+    "size": 2071,
+    "mtime_ns": 1783776427473033694,
+    "word_count": 199
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/error.tsx": {
+    "size": 1236,
+    "mtime_ns": 1783776427484148918,
+    "word_count": 114
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/loading.tsx": {
+    "size": 2001,
+    "mtime_ns": 1783776427486976826,
+    "word_count": 191
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/budgets/page.tsx": {
+    "size": 3218,
+    "mtime_ns": 1783776427497275755,
+    "word_count": 268
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/art-health-grid.tsx": {
+    "size": 9601,
+    "mtime_ns": 1783776427508697882,
+    "word_count": 627
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/epic-grid-card.tsx": {
+    "size": 7594,
+    "mtime_ns": 1781045829287574279,
+    "word_count": 580
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/epic-quick-add-modal.tsx": {
+    "size": 6466,
+    "mtime_ns": 1783776427516581884,
+    "word_count": 483
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/epic-transition-dialog.tsx": {
+    "size": 2742,
+    "mtime_ns": 1783776427545415229,
+    "word_count": 252
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/epics-kanban-board.tsx": {
+    "size": 12573,
+    "mtime_ns": 1783776427548940562,
+    "word_count": 1072
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/kanban-toolbar.tsx": {
+    "size": 3745,
+    "mtime_ns": 1783776427566448734,
+    "word_count": 321
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/portfolio-board.tsx": {
+    "size": 9943,
+    "mtime_ns": 1781062231259623416,
+    "word_count": 891
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/portfolio-kpi-row.tsx": {
+    "size": 2483,
+    "mtime_ns": 1783776427572610901,
+    "word_count": 259
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/components/walkthrough-modal.tsx": {
+    "size": 16592,
+    "mtime_ns": 1781045829288415513,
+    "word_count": 1418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/finops/components/cost-allocation-table.tsx": {
+    "size": 1987,
+    "mtime_ns": 1781045829288586768,
+    "word_count": 138
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/finops/components/cost-treemap.tsx": {
+    "size": 876,
+    "mtime_ns": 1781045829288801649,
+    "word_count": 93
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/finops/components/cost-trend-chart.tsx": {
+    "size": 1201,
+    "mtime_ns": 1781045829289002280,
+    "word_count": 108
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/finops/components/unmapped-cost-alert.tsx": {
+    "size": 675,
+    "mtime_ns": 1781045829289133868,
+    "word_count": 71
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/finops/page.tsx": {
+    "size": 3361,
+    "mtime_ns": 1781045829289371292,
+    "word_count": 243
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/[requestId]/components/approval-detail.tsx": {
+    "size": 7959,
+    "mtime_ns": 1781620695193498224,
+    "word_count": 595
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/[requestId]/page.tsx": {
+    "size": 751,
+    "mtime_ns": 1781045829290121314,
+    "word_count": 83
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/components/decision-log-timeline.tsx": {
+    "size": 1135,
+    "mtime_ns": 1781045829290266193,
+    "word_count": 115
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/components/epic-governance-card.tsx": {
+    "size": 1444,
+    "mtime_ns": 1781045829290427031,
+    "word_count": 141
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/components/governance-epic-list.tsx": {
+    "size": 905,
+    "mtime_ns": 1783776427580324953,
+    "word_count": 88
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/components/governance-epic-row.tsx": {
+    "size": 7466,
+    "mtime_ns": 1783776427597650342,
+    "word_count": 621
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/components/governance-kanban.tsx": {
+    "size": 1580,
+    "mtime_ns": 1781045829290989048,
+    "word_count": 136
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/decision-log/components/decision-log-table.tsx": {
+    "size": 5048,
+    "mtime_ns": 1783776427608317254,
+    "word_count": 425
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/decision-log/loading.tsx": {
+    "size": 862,
+    "mtime_ns": 1783776427617471821,
+    "word_count": 77
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/decision-log/page.tsx": {
+    "size": 2650,
+    "mtime_ns": 1783776427620705835,
+    "word_count": 245
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/error.tsx": {
+    "size": 1244,
+    "mtime_ns": 1783776427634022788,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/loading.tsx": {
+    "size": 1273,
+    "mtime_ns": 1783776427638038057,
+    "word_count": 107
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/governance/page.tsx": {
+    "size": 5361,
+    "mtime_ns": 1783776427645502745,
+    "word_count": 507
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/components/edit-horizon-modal.tsx": {
+    "size": 15034,
+    "mtime_ns": 1783776427678212198,
+    "word_count": 1146
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/components/horizon-detail.tsx": {
+    "size": 15486,
+    "mtime_ns": 1783776427688760783,
+    "word_count": 1460
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/components/horizon-skeleton.tsx": {
+    "size": 2880,
+    "mtime_ns": 1783776427696406088,
+    "word_count": 261
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/data.ts": {
+    "size": 615,
+    "mtime_ns": 1783776427704294465,
+    "word_count": 71
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/page.tsx": {
+    "size": 2348,
+    "mtime_ns": 1783776427711976351,
+    "word_count": 238
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/horizons/[id]/types.ts": {
+    "size": 1281,
+    "mtime_ns": 1783776427718873067,
+    "word_count": 139
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/loading.tsx": {
+    "size": 1545,
+    "mtime_ns": 1781620695196931672,
+    "word_count": 157
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-badge.tsx": {
+    "size": 1786,
+    "mtime_ns": 1783776427723922745,
+    "word_count": 194
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-card-v2.tsx": {
+    "size": 14109,
+    "mtime_ns": 1783776427725909193,
+    "word_count": 1072
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-checkin-modal.tsx": {
+    "size": 4928,
+    "mtime_ns": 1783776427742243253,
+    "word_count": 385
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-constants.ts": {
+    "size": 1989,
+    "mtime_ns": 1783776427752560182,
+    "word_count": 349
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-detail-panel.tsx": {
+    "size": 14118,
+    "mtime_ns": 1783776427754973817,
+    "word_count": 1089
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okr-traceability-view.tsx": {
+    "size": 8451,
+    "mtime_ns": 1783776427761079737,
+    "word_count": 568
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okrs-dashboard.tsx": {
+    "size": 13663,
+    "mtime_ns": 1783776427771030850,
+    "word_count": 1128
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/components/okrs-view.tsx": {
+    "size": 748,
+    "mtime_ns": 1783776427778074600,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/error.tsx": {
+    "size": 1227,
+    "mtime_ns": 1783776427782245569,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/loading.tsx": {
+    "size": 2258,
+    "mtime_ns": 1783776427803738053,
+    "word_count": 212
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/okrs/page.tsx": {
+    "size": 1583,
+    "mtime_ns": 1783776427808722859,
+    "word_count": 148
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/page.tsx": {
+    "size": 4467,
+    "mtime_ns": 1783776427813758079,
+    "word_count": 378
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/portfolio-room.tsx": {
+    "size": 746,
+    "mtime_ns": 1781620695200357829,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/components/roadmap-bar.tsx": {
+    "size": 3523,
+    "mtime_ns": 1783776427818432900,
+    "word_count": 302
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/components/roadmap-gantt-utils.ts": {
+    "size": 5108,
+    "mtime_ns": 1783776427830041476,
+    "word_count": 621
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/components/roadmap-gantt.tsx": {
+    "size": 7065,
+    "mtime_ns": 1783776427834937619,
+    "word_count": 635
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/components/roadmap-timeline.tsx": {
+    "size": 15935,
+    "mtime_ns": 1783776427837147223,
+    "word_count": 1185
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/error.tsx": {
+    "size": 2888,
+    "mtime_ns": 1783776427838231046,
+    "word_count": 221
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/loading.tsx": {
+    "size": 2661,
+    "mtime_ns": 1783776427839855761,
+    "word_count": 222
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/roadmap/page.tsx": {
+    "size": 990,
+    "mtime_ns": 1783776427860373999,
+    "word_count": 109
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/add-epic-modal.tsx": {
+    "size": 5350,
+    "mtime_ns": 1783776427867045559,
+    "word_count": 418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/epic-chip.tsx": {
+    "size": 3132,
+    "mtime_ns": 1783776427882803647,
+    "word_count": 250
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/new-theme-modal.tsx": {
+    "size": 7369,
+    "mtime_ns": 1783776427889565869,
+    "word_count": 538
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/okr-node.tsx": {
+    "size": 3089,
+    "mtime_ns": 1783776427895653914,
+    "word_count": 229
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/pillars-overview.tsx": {
+    "size": 5860,
+    "mtime_ns": 1783776427903365216,
+    "word_count": 460
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/strategy-tree.tsx": {
+    "size": 2171,
+    "mtime_ns": 1783776427908223570,
+    "word_count": 201
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/components/theme-card.tsx": {
+    "size": 11235,
+    "mtime_ns": 1783776427911926436,
+    "word_count": 862
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/error.tsx": {
+    "size": 1006,
+    "mtime_ns": 1783776427928669103,
+    "word_count": 107
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/loading.tsx": {
+    "size": 2680,
+    "mtime_ns": 1783776427932979940,
+    "word_count": 257
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/strategy-map/page.tsx": {
+    "size": 3599,
+    "mtime_ns": 1783776427938810123,
+    "word_count": 294
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/components/new-tag-rule-modal.tsx": {
+    "size": 9811,
+    "mtime_ns": 1783776427946014866,
+    "word_count": 736
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/components/tag-rule-list.tsx": {
+    "size": 6391,
+    "mtime_ns": 1783776427949593571,
+    "word_count": 590
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/components/tag-rules-header-actions.tsx": {
+    "size": 1773,
+    "mtime_ns": 1783776427964953220,
+    "word_count": 165
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/error.tsx": {
+    "size": 1243,
+    "mtime_ns": 1783776427968914866,
+    "word_count": 115
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/loading.tsx": {
+    "size": 1293,
+    "mtime_ns": 1783776427971053931,
+    "word_count": 107
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/tags/page.tsx": {
+    "size": 4222,
+    "mtime_ns": 1783776427978619574,
+    "word_count": 419
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/[id]/components/theme-budget-panel.tsx": {
+    "size": 14191,
+    "mtime_ns": 1781620695203110313,
+    "word_count": 1041
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/[id]/components/theme-detail.tsx": {
+    "size": 49849,
+    "mtime_ns": 1783776427987388534,
+    "word_count": 3256
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/[id]/page.tsx": {
+    "size": 1963,
+    "mtime_ns": 1781045829296216622,
+    "word_count": 186
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/new-theme-button.tsx": {
+    "size": 3723,
+    "mtime_ns": 1783776427990964365,
+    "word_count": 299
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/new-theme-form.tsx": {
+    "size": 6385,
+    "mtime_ns": 1783776427995158500,
+    "word_count": 535
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/progress-bar.tsx": {
+    "size": 851,
+    "mtime_ns": 1783776427998304351,
+    "word_count": 86
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/theme-card.tsx": {
+    "size": 6191,
+    "mtime_ns": 1783776428007976852,
+    "word_count": 573
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/theme-tone.ts": {
+    "size": 901,
+    "mtime_ns": 1783776428011794838,
+    "word_count": 107
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/themes-board.tsx": {
+    "size": 2610,
+    "mtime_ns": 1783776428023346833,
+    "word_count": 311
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/components/themes-empty-state.tsx": {
+    "size": 891,
+    "mtime_ns": 1783776428026572764,
+    "word_count": 93
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/themes/page.tsx": {
+    "size": 2257,
+    "mtime_ns": 1783776428031826641,
+    "word_count": 207
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/components/edit-value-stream-modal.tsx": {
+    "size": 17201,
+    "mtime_ns": 1783776428034409519,
+    "word_count": 1303
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/components/value-stream-detail.tsx": {
+    "size": 18514,
+    "mtime_ns": 1783776428040513730,
+    "word_count": 1548
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/components/value-stream-skeleton.tsx": {
+    "size": 2874,
+    "mtime_ns": 1783776428048749090,
+    "word_count": 249
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/data.ts": {
+    "size": 638,
+    "mtime_ns": 1783776428052205010,
+    "word_count": 78
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/page.tsx": {
+    "size": 2403,
+    "mtime_ns": 1783776428056166739,
+    "word_count": 239
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/value-streams/[id]/types.ts": {
+    "size": 1507,
+    "mtime_ns": 1783776428057596588,
+    "word_count": 161
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/explainability-panel.tsx": {
+    "size": 4036,
+    "mtime_ns": 1781045829297536995,
+    "word_count": 300
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/rebalance-dialog.tsx": {
+    "size": 22404,
+    "mtime_ns": 1781620695203800528,
+    "word_count": 1727
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/rebalance-weights-dialog.tsx": {
+    "size": 4427,
+    "mtime_ns": 1783776428059131099,
+    "word_count": 404
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/scenario-simulator.tsx": {
+    "size": 6569,
+    "mtime_ns": 1781045829298206306,
+    "word_count": 552
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/score-picker.tsx": {
+    "size": 2320,
+    "mtime_ns": 1783776428061388451,
+    "word_count": 185
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/wsjf-dashboard.tsx": {
+    "size": 16105,
+    "mtime_ns": 1783776428063429313,
+    "word_count": 1450
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/components/wsjf-priority-table.tsx": {
+    "size": 11561,
+    "mtime_ns": 1783776428065228436,
+    "word_count": 998
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/error.tsx": {
+    "size": 1245,
+    "mtime_ns": 1783776428070069957,
+    "word_count": 114
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/loading.tsx": {
+    "size": 2154,
+    "mtime_ns": 1783776428073374551,
+    "word_count": 215
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/portfolio/wsjf/page.tsx": {
+    "size": 2352,
+    "mtime_ns": 1783776428075708607,
+    "word_count": 219
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/profile/components/notification-preferences-form.tsx": {
+    "size": 3885,
+    "mtime_ns": 1781045829298802200,
+    "word_count": 329
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/profile/components/profile-form.tsx": {
+    "size": 2835,
+    "mtime_ns": 1781045829298948829,
+    "word_count": 236
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/profile/page.tsx": {
+    "size": 4079,
+    "mtime_ns": 1781045829299325632,
+    "word_count": 346
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/create-risk-dialog.tsx": {
+    "size": 7801,
+    "mtime_ns": 1783776428077878088,
+    "word_count": 646
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/risk-matrix.tsx": {
+    "size": 3797,
+    "mtime_ns": 1783776428080329430,
+    "word_count": 332
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/risk-registry.tsx": {
+    "size": 5469,
+    "mtime_ns": 1783776428089981349,
+    "word_count": 418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/risks-content.tsx": {
+    "size": 4382,
+    "mtime_ns": 1783776428097477827,
+    "word_count": 398
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/roam-constants.ts": {
+    "size": 2691,
+    "mtime_ns": 1783776428099343698,
+    "word_count": 333
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/components/roam-status-select.tsx": {
+    "size": 1449,
+    "mtime_ns": 1783776428106807553,
+    "word_count": 141
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/error.tsx": {
+    "size": 2126,
+    "mtime_ns": 1783776428111374545,
+    "word_count": 195
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/loading.tsx": {
+    "size": 1376,
+    "mtime_ns": 1783776428112574363,
+    "word_count": 131
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/risks/page.tsx": {
+    "size": 2222,
+    "mtime_ns": 1783776428128748099,
+    "word_count": 200
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/search/page.tsx": {
+    "size": 9039,
+    "mtime_ns": 1781045829300628129,
+    "word_count": 649
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/audit/components/audit-log-table.tsx": {
+    "size": 6675,
+    "mtime_ns": 1783776428139786743,
+    "word_count": 512
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/audit/loading.tsx": {
+    "size": 884,
+    "mtime_ns": 1783776428144360569,
+    "word_count": 77
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/audit/page.tsx": {
+    "size": 2571,
+    "mtime_ns": 1783776428151310823,
+    "word_count": 236
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/integrations/components/billing-connect-wizard.tsx": {
+    "size": 6836,
+    "mtime_ns": 1779760121916173698,
+    "word_count": 627
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/integrations/components/integrations-board.tsx": {
+    "size": 11298,
+    "mtime_ns": 1783776428155908022,
+    "word_count": 857
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/integrations/meeting/meeting-integrations-client.tsx": {
+    "size": 5437,
+    "mtime_ns": 1781620695213907706,
+    "word_count": 454
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/integrations/meeting/page.tsx": {
+    "size": 1183,
+    "mtime_ns": 1781056106337196113,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/integrations/page.tsx": {
+    "size": 1511,
+    "mtime_ns": 1781045829301215064,
+    "word_count": 141
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/members/components/member-badges.tsx": {
+    "size": 2056,
+    "mtime_ns": 1783776428160693963,
+    "word_count": 249
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/members/error.tsx": {
+    "size": 1292,
+    "mtime_ns": 1783776428164500824,
+    "word_count": 118
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/members/loading.tsx": {
+    "size": 1920,
+    "mtime_ns": 1783776428172693853,
+    "word_count": 179
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/members/page.tsx": {
+    "size": 8032,
+    "mtime_ns": 1783776428182540929,
+    "word_count": 730
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/reports/page.tsx": {
+    "size": 5098,
+    "mtime_ns": 1781620695216046684,
+    "word_count": 344
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/reports/reports-client.tsx": {
+    "size": 5493,
+    "mtime_ns": 1781620695216489022,
+    "word_count": 430
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/roles/page.tsx": {
+    "size": 1103,
+    "mtime_ns": 1781620695218476624,
+    "word_count": 112
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/roles/roles-client.tsx": {
+    "size": 8429,
+    "mtime_ns": 1783776428190965698,
+    "word_count": 669
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/sso/page.tsx": {
+    "size": 1089,
+    "mtime_ns": 1781620695223059791,
+    "word_count": 116
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/sso/sso-config-form.tsx": {
+    "size": 3756,
+    "mtime_ns": 1781620695224530514,
+    "word_count": 281
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/edit-workspace-modal.tsx": {
+    "size": 3244,
+    "mtime_ns": 1783776428197047368,
+    "word_count": 259
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/identity-card.tsx": {
+    "size": 3443,
+    "mtime_ns": 1783776428197870621,
+    "word_count": 317
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/invite-control.tsx": {
+    "size": 5048,
+    "mtime_ns": 1783776428199219557,
+    "word_count": 418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/member-tone.ts": {
+    "size": 1215,
+    "mtime_ns": 1783776428200583660,
+    "word_count": 153
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/members-preview-card.tsx": {
+    "size": 3039,
+    "mtime_ns": 1783776428201609111,
+    "word_count": 256
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/notifications-card.tsx": {
+    "size": 1672,
+    "mtime_ns": 1783776428205232523,
+    "word_count": 185
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/plan-card.tsx": {
+    "size": 1488,
+    "mtime_ns": 1783776428208670444,
+    "word_count": 133
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/plan-labels.ts": {
+    "size": 444,
+    "mtime_ns": 1783776428220052572,
+    "word_count": 58
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/components/settings-nav.tsx": {
+    "size": 2663,
+    "mtime_ns": 1783776428223346666,
+    "word_count": 289
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/error.tsx": {
+    "size": 1251,
+    "mtime_ns": 1783776428227243524,
+    "word_count": 119
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/loading.tsx": {
+    "size": 2621,
+    "mtime_ns": 1783776428230052224,
+    "word_count": 226
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/settings/workspace/page.tsx": {
+    "size": 3466,
+    "mtime_ns": 1783776428233069040,
+    "word_count": 256
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/[stId]/components/capabilities-tab.tsx": {
+    "size": 10095,
+    "mtime_ns": 1781045829302829487,
+    "word_count": 736
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/[stId]/components/solution-epics-tab.tsx": {
+    "size": 9746,
+    "mtime_ns": 1781045829303127038,
+    "word_count": 670
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/[stId]/components/suppliers-tab.tsx": {
+    "size": 2302,
+    "mtime_ns": 1781045829303275375,
+    "word_count": 172
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/[stId]/page.tsx": {
+    "size": 4581,
+    "mtime_ns": 1781045829303509882,
+    "word_count": 372
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/components/create-solution-train-dialog.tsx": {
+    "size": 3728,
+    "mtime_ns": 1783776428237288049,
+    "word_count": 319
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/components/tone-progress.tsx": {
+    "size": 962,
+    "mtime_ns": 1783776428239188834,
+    "word_count": 111
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/loading.tsx": {
+    "size": 1880,
+    "mtime_ns": 1783776428247610102,
+    "word_count": 174
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/solution-trains/page.tsx": {
+    "size": 15423,
+    "mtime_ns": 1783776428262274408,
+    "word_count": 1139
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/suppliers/components/suppliers-board.tsx": {
+    "size": 12046,
+    "mtime_ns": 1781045829303936270,
+    "word_count": 787
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/suppliers/page.tsx": {
+    "size": 1499,
+    "mtime_ns": 1781045829304128692,
+    "word_count": 142
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/actions.ts": {
+    "size": 232,
+    "mtime_ns": 1781045829304262238,
+    "word_count": 29
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/components/sprint-burndown-chart.tsx": {
+    "size": 17015,
+    "mtime_ns": 1781045829304514579,
+    "word_count": 1228
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/components/team-config-panel.tsx": {
+    "size": 16705,
+    "mtime_ns": 1781045829304889799,
+    "word_count": 1173
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/defects/components/create-defect-dialog.tsx": {
+    "size": 3592,
+    "mtime_ns": 1781045829305108305,
+    "word_count": 251
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/defects/components/defect-actions.tsx": {
+    "size": 2244,
+    "mtime_ns": 1781045829305368188,
+    "word_count": 194
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/defects/page.tsx": {
+    "size": 6177,
+    "mtime_ns": 1781045829305639196,
+    "word_count": 448
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/impediments/components/create-impediment-dialog.tsx": {
+    "size": 2805,
+    "mtime_ns": 1781045829305893787,
+    "word_count": 211
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/impediments/components/resolve-impediment-button.tsx": {
+    "size": 853,
+    "mtime_ns": 1781045829306179712,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/impediments/page.tsx": {
+    "size": 7348,
+    "mtime_ns": 1780773741476700137,
+    "word_count": 525
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/kanban/components/kanban-board.tsx": {
+    "size": 16026,
+    "mtime_ns": 1781620695228703094,
+    "word_count": 1090
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/kanban/page.tsx": {
+    "size": 6260,
+    "mtime_ns": 1780774402960981404,
+    "word_count": 646
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/page.tsx": {
+    "size": 6407,
+    "mtime_ns": 1781045829307061572,
+    "word_count": 522
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/sprints/[sprintId]/page.tsx": {
+    "size": 12348,
+    "mtime_ns": 1781620695230217442,
+    "word_count": 1082
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/sprints/components/add-story-to-sprint-dialog.tsx": {
+    "size": 3870,
+    "mtime_ns": 1781045829307358081,
+    "word_count": 259
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/sprints/components/create-sprint-dialog.tsx": {
+    "size": 3647,
+    "mtime_ns": 1781045829307571962,
+    "word_count": 263
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/sprints/components/sprint-action-buttons.tsx": {
+    "size": 1559,
+    "mtime_ns": 1781045829307926348,
+    "word_count": 151
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/sprints/page.tsx": {
+    "size": 7242,
+    "mtime_ns": 1780774361309446982,
+    "word_count": 518
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/standup/components/standup-entry-card.tsx": {
+    "size": 5087,
+    "mtime_ns": 1783776428264477388,
+    "word_count": 437
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/standup/components/standup-form.tsx": {
+    "size": 5939,
+    "mtime_ns": 1783776428266452711,
+    "word_count": 452
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/standup/loading.tsx": {
+    "size": 1813,
+    "mtime_ns": 1783776428273634413,
+    "word_count": 167
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/[teamId]/standup/page.tsx": {
+    "size": 12041,
+    "mtime_ns": 1783776428274644365,
+    "word_count": 1007
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/actions.ts": {
+    "size": 3571,
+    "mtime_ns": 1783776428280586584,
+    "word_count": 408
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/components/create-team-dialog.tsx": {
+    "size": 3984,
+    "mtime_ns": 1781045829308515074,
+    "word_count": 332
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/components/create-team-wizard.tsx": {
+    "size": 33187,
+    "mtime_ns": 1781620695231706955,
+    "word_count": 2502
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/components/member-search-input.tsx": {
+    "size": 17912,
+    "mtime_ns": 1781045829313299218,
+    "word_count": 1366
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/components/team-card.tsx": {
+    "size": 6047,
+    "mtime_ns": 1783776428285975288,
+    "word_count": 447
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/components/team-tone.ts": {
+    "size": 1194,
+    "mtime_ns": 1783776428288103979,
+    "word_count": 164
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/error.tsx": {
+    "size": 1229,
+    "mtime_ns": 1783776428302548962,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/loading.tsx": {
+    "size": 2277,
+    "mtime_ns": 1783776428306280369,
+    "word_count": 205
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/teams/page.tsx": {
+    "size": 4442,
+    "mtime_ns": 1783776428312380206,
+    "word_count": 443
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/webhooks/page.tsx": {
+    "size": 605,
+    "mtime_ns": 1778465264149797130,
+    "word_count": 64
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/[teamId]/bpmn/page.tsx": {
+    "size": 1174,
+    "mtime_ns": 1781620695232807341,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/actions.ts": {
+    "size": 8889,
+    "mtime_ns": 1781620695233868517,
+    "word_count": 899
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/bpmn-cursors.tsx": {
+    "size": 2862,
+    "mtime_ns": 1781620695234800609,
+    "word_count": 290
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/bpmn-diff-panel.tsx": {
+    "size": 4623,
+    "mtime_ns": 1781620695235636826,
+    "word_count": 364
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/bpmn-loader.tsx": {
+    "size": 1400,
+    "mtime_ns": 1781045829314141326,
+    "word_count": 155
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/bpmn-room.tsx": {
+    "size": 644,
+    "mtime_ns": 1781620695241702132,
+    "word_count": 68
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/bpmn-wrapper.tsx": {
+    "size": 21673,
+    "mtime_ns": 1781620695245159540,
+    "word_count": 1693
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/workflow-actions.tsx": {
+    "size": 7538,
+    "mtime_ns": 1783776428319042974,
+    "word_count": 624
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/workflow-row.tsx": {
+    "size": 4252,
+    "mtime_ns": 1783776428328981129,
+    "word_count": 368
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/components/workflow-toggle.tsx": {
+    "size": 2130,
+    "mtime_ns": 1783776428331171817,
+    "word_count": 231
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/error.tsx": {
+    "size": 1228,
+    "mtime_ns": 1783776428336788551,
+    "word_count": 113
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/lib/bpmn-lint.ts": {
+    "size": 5107,
+    "mtime_ns": 1781045829314730302,
+    "word_count": 402
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/lib/bpmn-templates.ts": {
+    "size": 20328,
+    "mtime_ns": 1779495010275959400,
+    "word_count": 953
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/loading.tsx": {
+    "size": 1053,
+    "mtime_ns": 1783776428344525685,
+    "word_count": 90
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(authenticated)/workflows/page.tsx": {
+    "size": 6771,
+    "mtime_ns": 1783776428358067045,
+    "word_count": 613
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/forgot-password/[[...forgot-password]]/page.tsx": {
+    "size": 516,
+    "mtime_ns": 1781045829315326945,
+    "word_count": 61
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/invite/[token]/complete/page.tsx": {
+    "size": 1715,
+    "mtime_ns": 1781045829315558160,
+    "word_count": 176
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/invite/[token]/components/accept-invite-form.tsx": {
+    "size": 7829,
+    "mtime_ns": 1781045829315966339,
+    "word_count": 648
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/invite/[token]/page.tsx": {
+    "size": 1767,
+    "mtime_ns": 1781045829316123719,
+    "word_count": 169
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/layout.tsx": {
+    "size": 3634,
+    "mtime_ns": 1783776428375154362,
+    "word_count": 324
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/sign-in/[[...sign-in]]/page.tsx": {
+    "size": 448,
+    "mtime_ns": 1781045829316446479,
+    "word_count": 57
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/(unauthenticated)/sign-up/[[...sign-up]]/page.tsx": {
+    "size": 462,
+    "mtime_ns": 1779487652263712822,
+    "word_count": 60
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/.well-known/vercel/flags/route.ts": {
+    "size": 85,
+    "mtime_ns": 1778465264150534844,
+    "word_count": 11
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/_base.ts": {
+    "size": 4460,
+    "mtime_ns": 1781620695250008377,
+    "word_count": 442
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/_denorm.ts": {
+    "size": 4412,
+    "mtime_ns": 1783776428493257360,
+    "word_count": 574
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/_withSecureAction.ts": {
+    "size": 2053,
+    "mtime_ns": 1781061664587717060,
+    "word_count": 208
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/ai-prompt/generate-prompt.ts": {
+    "size": 3283,
+    "mtime_ns": 1781045829316797114,
+    "word_count": 349
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/ai-prompt/rag-search.ts": {
+    "size": 286,
+    "mtime_ns": 1781620695250991761,
+    "word_count": 42
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/cycle-time.ts": {
+    "size": 2117,
+    "mtime_ns": 1781620695252308606,
+    "word_count": 257
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/epic-confidence.ts": {
+    "size": 4953,
+    "mtime_ns": 1783776428506072545,
+    "word_count": 610
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/executive-trends.ts": {
+    "size": 1857,
+    "mtime_ns": 1781620695253085239,
+    "word_count": 213
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/executive.ts": {
+    "size": 2450,
+    "mtime_ns": 1781620695253702953,
+    "word_count": 239
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/flowMetrics.ts": {
+    "size": 5934,
+    "mtime_ns": 1781045829317118582,
+    "word_count": 542
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/history.ts": {
+    "size": 6250,
+    "mtime_ns": 1783776428512499699,
+    "word_count": 648
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/pi-burnup.ts": {
+    "size": 2226,
+    "mtime_ns": 1781620695254830755,
+    "word_count": 249
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/pi-retro.ts": {
+    "size": 4472,
+    "mtime_ns": 1781620695255399635,
+    "word_count": 482
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/analytics/portfolio-cfd.ts": {
+    "size": 2537,
+    "mtime_ns": 1781620695255984307,
+    "word_count": 270
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/artifacts/index.ts": {
+    "size": 3481,
+    "mtime_ns": 1781045829317405174,
+    "word_count": 362
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/artifacts/schema.ts": {
+    "size": 313,
+    "mtime_ns": 1779774173845478837,
+    "word_count": 30
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/confidence-vote.ts": {
+    "size": 5805,
+    "mtime_ns": 1781045829317667724,
+    "word_count": 546
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/get-arts.ts": {
+    "size": 1398,
+    "mtime_ns": 1781045829317821562,
+    "word_count": 165
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/lifecycle.ts": {
+    "size": 12522,
+    "mtime_ns": 1783776428522343109,
+    "word_count": 1144
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/observability.ts": {
+    "size": 4961,
+    "mtime_ns": 1783776428531444345,
+    "word_count": 549
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/pi-plans.ts": {
+    "size": 11833,
+    "mtime_ns": 1783776428534986844,
+    "word_count": 1199
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/risks.ts": {
+    "size": 1927,
+    "mtime_ns": 1781198114353769389,
+    "word_count": 213
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/schema.ts": {
+    "size": 677,
+    "mtime_ns": 1783776428545403143,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/tally-vote.ts": {
+    "size": 6689,
+    "mtime_ns": 1780992365261092806,
+    "word_count": 658
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/arts/types.ts": {
+    "size": 274,
+    "mtime_ns": 1781620695260686268,
+    "word_count": 24
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/audit/index.ts": {
+    "size": 4307,
+    "mtime_ns": 1781061618926945298,
+    "word_count": 418
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/audit/schema.ts": {
+    "size": 1290,
+    "mtime_ns": 1781061560554302880,
+    "word_count": 124
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/auth/switch-org.ts": {
+    "size": 1402,
+    "mtime_ns": 1781062536940895350,
+    "word_count": 161
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/billing/cost-summary.ts": {
+    "size": 2826,
+    "mtime_ns": 1781045829318858176,
+    "word_count": 342
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/billing/epic-cost.ts": {
+    "size": 1170,
+    "mtime_ns": 1781045829319059140,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/billing/index.ts": {
+    "size": 2585,
+    "mtime_ns": 1780201105824035699,
+    "word_count": 274
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/billing/snapshots.ts": {
+    "size": 2387,
+    "mtime_ns": 1781620695261508526,
+    "word_count": 243
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/billing/tag-rules.ts": {
+    "size": 4410,
+    "mtime_ns": 1783776428563527120,
+    "word_count": 415
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/capabilities/index.ts": {
+    "size": 5226,
+    "mtime_ns": 1781620695262450868,
+    "word_count": 496
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/capabilities/schema.ts": {
+    "size": 1175,
+    "mtime_ns": 1781045829319616532,
+    "word_count": 105
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/defects/index.ts": {
+    "size": 5172,
+    "mtime_ns": 1781620695263503961,
+    "word_count": 519
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/defects/schema.ts": {
+    "size": 818,
+    "mtime_ns": 1781045829320117047,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/delivery/defects.ts": {
+    "size": 7953,
+    "mtime_ns": 1781045829320470683,
+    "word_count": 725
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/delivery/impediments.ts": {
+    "size": 6427,
+    "mtime_ns": 1781045829320732357,
+    "word_count": 580
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/dependencies/index.ts": {
+    "size": 3524,
+    "mtime_ns": 1781620695265086059,
+    "word_count": 349
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/dependencies/schema.ts": {
+    "size": 609,
+    "mtime_ns": 1781045829321273623,
+    "word_count": 80
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/analyze-all-epics.ts": {
+    "size": 953,
+    "mtime_ns": 1780235221862515101,
+    "word_count": 119
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/analyze-invest.ts": {
+    "size": 3814,
+    "mtime_ns": 1781045829321524714,
+    "word_count": 355
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/business-case.ts": {
+    "size": 6769,
+    "mtime_ns": 1783776428570954810,
+    "word_count": 550
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/create-epic.ts": {
+    "size": 1404,
+    "mtime_ns": 1780234623922019938,
+    "word_count": 150
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/draft-hypothesis.ts": {
+    "size": 2327,
+    "mtime_ns": 1780989974486940291,
+    "word_count": 273
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/extract-transcription.ts": {
+    "size": 1089,
+    "mtime_ns": 1780235665352444631,
+    "word_count": 130
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/generate-ac.ts": {
+    "size": 1069,
+    "mtime_ns": 1780235665352453298,
+    "word_count": 123
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/get-portfolio.ts": {
+    "size": 5637,
+    "mtime_ns": 1780988944619199436,
+    "word_count": 628
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/improve-description.ts": {
+    "size": 1044,
+    "mtime_ns": 1780235665352435881,
+    "word_count": 117
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/override-invest-score.ts": {
+    "size": 1658,
+    "mtime_ns": 1780990619649262811,
+    "word_count": 162
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/portfolio-cache.ts": {
+    "size": 201,
+    "mtime_ns": 1778935188472176976,
+    "word_count": 20
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/portfolio-constants.ts": {
+    "size": 45,
+    "mtime_ns": 1779325308624830848,
+    "word_count": 5
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/schema.ts": {
+    "size": 1463,
+    "mtime_ns": 1780234882334569931,
+    "word_count": 129
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/suggest-title.ts": {
+    "size": 955,
+    "mtime_ns": 1780235665352435422,
+    "word_count": 118
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/transition-status.ts": {
+    "size": 7625,
+    "mtime_ns": 1780982766906264753,
+    "word_count": 751
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/update-epic.ts": {
+    "size": 2061,
+    "mtime_ns": 1780889318054832762,
+    "word_count": 224
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/epics/update-status.ts": {
+    "size": 964,
+    "mtime_ns": 1781045829321662968,
+    "word_count": 112
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/events.ts": {
+    "size": 11040,
+    "mtime_ns": 1781045829322007979,
+    "word_count": 944
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/dependencies-capacity.ts": {
+    "size": 515,
+    "mtime_ns": 1783776428581179660,
+    "word_count": 69
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/dependencies.ts": {
+    "size": 6427,
+    "mtime_ns": 1783776428589066162,
+    "word_count": 624
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/index.ts": {
+    "size": 9594,
+    "mtime_ns": 1783776428607544496,
+    "word_count": 911
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/readiness.ts": {
+    "size": 7319,
+    "mtime_ns": 1780993707645233583,
+    "word_count": 744
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/schema.ts": {
+    "size": 841,
+    "mtime_ns": 1779487652298111236,
+    "word_count": 116
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/features/update-wsjf.ts": {
+    "size": 1637,
+    "mtime_ns": 1781620695266784658,
+    "word_count": 194
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/finops/billingSyncTrigger.ts": {
+    "size": 2691,
+    "mtime_ns": 1781620695267542707,
+    "word_count": 242
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/analyze-flow.ts": {
+    "size": 5067,
+    "mtime_ns": 1781045829322735376,
+    "word_count": 524
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/anomaly-prompts.ts": {
+    "size": 2498,
+    "mtime_ns": 1779800662140096904,
+    "word_count": 297
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/anomaly-rules.ts": {
+    "size": 5774,
+    "mtime_ns": 1779495010276857610,
+    "word_count": 603
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/capability-planning/capability-schema.ts": {
+    "size": 1342,
+    "mtime_ns": 1781045829322957882,
+    "word_count": 114
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/capability-planning/compute-gaps.ts": {
+    "size": 1291,
+    "mtime_ns": 1781045829323195848,
+    "word_count": 148
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/capability-planning/initiative-demand.ts": {
+    "size": 1694,
+    "mtime_ns": 1781045829323520899,
+    "word_count": 196
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/capability-planning/team-capability-profile.ts": {
+    "size": 2429,
+    "mtime_ns": 1781045829323832617,
+    "word_count": 284
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/capacity.ts": {
+    "size": 8033,
+    "mtime_ns": 1781620695268455632,
+    "word_count": 891
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/check-staleness.ts": {
+    "size": 3791,
+    "mtime_ns": 1779495010277888361,
+    "word_count": 332
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/list-anomalies.ts": {
+    "size": 1262,
+    "mtime_ns": 1780201398761892445,
+    "word_count": 162
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/narrative-generator.ts": {
+    "size": 1947,
+    "mtime_ns": 1781045829323995705,
+    "word_count": 232
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/notify-anomaly.ts": {
+    "size": 1267,
+    "mtime_ns": 1781620695269648643,
+    "word_count": 140
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/person-skills.ts": {
+    "size": 3552,
+    "mtime_ns": 1779495010278048153,
+    "word_count": 380
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/re-evaluate-snapshot.ts": {
+    "size": 2324,
+    "mtime_ns": 1779487652310708635,
+    "word_count": 240
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/staleness-rules.ts": {
+    "size": 3901,
+    "mtime_ns": 1779472912631542838,
+    "word_count": 414
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/suppression-filter.ts": {
+    "size": 1369,
+    "mtime_ns": 1781045829324186419,
+    "word_count": 187
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/synergy-utils.ts": {
+    "size": 415,
+    "mtime_ns": 1779546869509274953,
+    "word_count": 63
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-intelligence/synergy.ts": {
+    "size": 4933,
+    "mtime_ns": 1779799519418056422,
+    "word_count": 592
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/flow-metrics/index.ts": {
+    "size": 12902,
+    "mtime_ns": 1781045829324718269,
+    "word_count": 1364
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/audit-hooks.ts": {
+    "size": 1274,
+    "mtime_ns": 1781045829324900816,
+    "word_count": 126
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/decision-log.ts": {
+    "size": 1492,
+    "mtime_ns": 1781045829325063529,
+    "word_count": 152
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/export-decisions.ts": {
+    "size": 1497,
+    "mtime_ns": 1781045829325258160,
+    "word_count": 171
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/index.ts": {
+    "size": 16422,
+    "mtime_ns": 1781620695270500485,
+    "word_count": 1495
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/multi-step.ts": {
+    "size": 6976,
+    "mtime_ns": 1780991699543875072,
+    "word_count": 618
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/schema.ts": {
+    "size": 3567,
+    "mtime_ns": 1781045829326457112,
+    "word_count": 327
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/state-machine.ts": {
+    "size": 759,
+    "mtime_ns": 1781045829326703661,
+    "word_count": 71
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/governance/transition-epic.ts": {
+    "size": 2245,
+    "mtime_ns": 1781045829327013879,
+    "word_count": 221
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/home/index.ts": {
+    "size": 11394,
+    "mtime_ns": 1783776428613532255,
+    "word_count": 1062
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/impediments/index.ts": {
+    "size": 5848,
+    "mtime_ns": 1781620695271789372,
+    "word_count": 577
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/impediments/schema.ts": {
+    "size": 735,
+    "mtime_ns": 1781045829328143580,
+    "word_count": 65
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/impediments/types.ts": {
+    "size": 327,
+    "mtime_ns": 1781620695272470711,
+    "word_count": 42
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/connectors/fathom.ts": {
+    "size": 858,
+    "mtime_ns": 1781057499925768916,
+    "word_count": 108
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/connectors/fireflies.ts": {
+    "size": 1463,
+    "mtime_ns": 1781055976985274607,
+    "word_count": 191
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/connectors/github.ts": {
+    "size": 5929,
+    "mtime_ns": 1781045829329082066,
+    "word_count": 620
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/connectors/linear.ts": {
+    "size": 4541,
+    "mtime_ns": 1781045829329629458,
+    "word_count": 497
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/index.ts": {
+    "size": 12127,
+    "mtime_ns": 1781620695273061175,
+    "word_count": 1105
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/linear-import.ts": {
+    "size": 3739,
+    "mtime_ns": 1779495010278674528,
+    "word_count": 316
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/schema.ts": {
+    "size": 1279,
+    "mtime_ns": 1781045829329829422,
+    "word_count": 128
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/conflict-resolver.ts": {
+    "size": 970,
+    "mtime_ns": 1780889276460409661,
+    "word_count": 112
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/github-pull.ts": {
+    "size": 9642,
+    "mtime_ns": 1781045829330299728,
+    "word_count": 952
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/github-push.ts": {
+    "size": 1418,
+    "mtime_ns": 1780889168280102565,
+    "word_count": 145
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/linear-full-pull.ts": {
+    "size": 3285,
+    "mtime_ns": 1781045829330497484,
+    "word_count": 364
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/linear-pull.ts": {
+    "size": 7007,
+    "mtime_ns": 1781620695273734640,
+    "word_count": 662
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/linear-push.ts": {
+    "size": 4794,
+    "mtime_ns": 1781045829330918621,
+    "word_count": 542
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/sync/sync-mapping.ts": {
+    "size": 2710,
+    "mtime_ns": 1779774318530674959,
+    "word_count": 190
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/integrations/webhooks/verify-signature.ts": {
+    "size": 1322,
+    "mtime_ns": 1781052786754490278,
+    "word_count": 128
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/intelligence/anomalyRules.ts": {
+    "size": 5724,
+    "mtime_ns": 1781045829331269882,
+    "word_count": 520
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/lace/index.ts": {
+    "size": 3960,
+    "mtime_ns": 1781620695274286728,
+    "word_count": 376
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/lace/schema.ts": {
+    "size": 448,
+    "mtime_ns": 1778943217656024327,
+    "word_count": 45
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/lean-budget/index.ts": {
+    "size": 8957,
+    "mtime_ns": 1781620695274840817,
+    "word_count": 935
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/lean-budget/portfolio-allocation.ts": {
+    "size": 3852,
+    "mtime_ns": 1781620695275399864,
+    "word_count": 475
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/lean-budget/schema.ts": {
+    "size": 1412,
+    "mtime_ns": 1780887693778866637,
+    "word_count": 143
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/measure-grow/constants.ts": {
+    "size": 208,
+    "mtime_ns": 1779157412946399111,
+    "word_count": 24
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/measure-grow/index.ts": {
+    "size": 7324,
+    "mtime_ns": 1783776428624372617,
+    "word_count": 693
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/measure-grow/schema.ts": {
+    "size": 3476,
+    "mtime_ns": 1781045829331790856,
+    "word_count": 264
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/measure-grow/types.ts": {
+    "size": 437,
+    "mtime_ns": 1781620695276430873,
+    "word_count": 53
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/meeting/insights.ts": {
+    "size": 8840,
+    "mtime_ns": 1781620695277637051,
+    "word_count": 952
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/meeting/integrations.ts": {
+    "size": 5869,
+    "mtime_ns": 1781057584597520345,
+    "word_count": 589
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/notifications/index.ts": {
+    "size": 6454,
+    "mtime_ns": 1781620695278169348,
+    "word_count": 632
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/notifications/schema.ts": {
+    "size": 1194,
+    "mtime_ns": 1781639559645065851,
+    "word_count": 119
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/notify-recipients.ts": {
+    "size": 959,
+    "mtime_ns": 1781045829332513169,
+    "word_count": 138
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/okrs/index.ts": {
+    "size": 22267,
+    "mtime_ns": 1781620695279246858,
+    "word_count": 2215
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/okrs/notifications.ts": {
+    "size": 1968,
+    "mtime_ns": 1781620695280137200,
+    "word_count": 225
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/okrs/schema.ts": {
+    "size": 3573,
+    "mtime_ns": 1781200485263019867,
+    "word_count": 340
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/okrs/threshold-logic.ts": {
+    "size": 446,
+    "mtime_ns": 1781199881121583151,
+    "word_count": 69
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/onboarding.ts": {
+    "size": 1861,
+    "mtime_ns": 1781620695280951916,
+    "word_count": 215
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/onboarding/company.ts": {
+    "size": 2230,
+    "mtime_ns": 1781045829333396154,
+    "word_count": 251
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/onboarding/index.ts": {
+    "size": 3222,
+    "mtime_ns": 1781620695282197427,
+    "word_count": 353
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/onboarding/migration.ts": {
+    "size": 2357,
+    "mtime_ns": 1781045829333597577,
+    "word_count": 252
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/onboarding/schema.ts": {
+    "size": 3206,
+    "mtime_ns": 1781045829333789041,
+    "word_count": 246
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/pae/index.ts": {
+    "size": 9704,
+    "mtime_ns": 1781641020805807721,
+    "word_count": 968
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/pae/schema.ts": {
+    "size": 1411,
+    "mtime_ns": 1781639367054544281,
+    "word_count": 172
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/permissions-policy.ts": {
+    "size": 4607,
+    "mtime_ns": 1781107656431125781,
+    "word_count": 594
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/permissions.ts": {
+    "size": 1760,
+    "mtime_ns": 1781641493351925013,
+    "word_count": 217
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio-kanban/index.ts": {
+    "size": 6953,
+    "mtime_ns": 1780988660183864381,
+    "word_count": 698
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio-kanban/schema.ts": {
+    "size": 1907,
+    "mtime_ns": 1780988660184118588,
+    "word_count": 182
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio/analysis-report.ts": {
+    "size": 1502,
+    "mtime_ns": 1783776428628384344,
+    "word_count": 154
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio/analysis.ts": {
+    "size": 3569,
+    "mtime_ns": 1783776428632109834,
+    "word_count": 342
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio/leanBudget.ts": {
+    "size": 4518,
+    "mtime_ns": 1781045829334286764,
+    "word_count": 428
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio/overview.ts": {
+    "size": 4519,
+    "mtime_ns": 1783776428636431755,
+    "word_count": 531
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/portfolio/themes.ts": {
+    "size": 1889,
+    "mtime_ns": 1781045829334508729,
+    "word_count": 195
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/program-board/index.ts": {
+    "size": 10088,
+    "mtime_ns": 1781620695282876100,
+    "word_count": 1107
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/program-board/schema.ts": {
+    "size": 1056,
+    "mtime_ns": 1779246108425985262,
+    "word_count": 127
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/reporting/dashboard-layout.ts": {
+    "size": 1916,
+    "mtime_ns": 1781620695283574815,
+    "word_count": 193
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/reporting/export.ts": {
+    "size": 4536,
+    "mtime_ns": 1781620695284301738,
+    "word_count": 464
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/reporting/pdf-export.ts": {
+    "size": 1959,
+    "mtime_ns": 1781620695285259747,
+    "word_count": 229
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/reporting/scheduled-reports.ts": {
+    "size": 5315,
+    "mtime_ns": 1781620695286893138,
+    "word_count": 532
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/retrospective/index.ts": {
+    "size": 2784,
+    "mtime_ns": 1781620695287664270,
+    "word_count": 245
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/retrospective/schema.ts": {
+    "size": 1347,
+    "mtime_ns": 1779546930777478646,
+    "word_count": 172
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/risks/index.ts": {
+    "size": 4514,
+    "mtime_ns": 1781620695288532236,
+    "word_count": 465
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/risks/roam-transition.ts": {
+    "size": 4226,
+    "mtime_ns": 1780992532146005256,
+    "word_count": 394
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/risks/schema.ts": {
+    "size": 339,
+    "mtime_ns": 1778943239029586494,
+    "word_count": 47
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/roadmap/index.ts": {
+    "size": 8072,
+    "mtime_ns": 1783776428648572847,
+    "word_count": 812
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/roadmap/schema.ts": {
+    "size": 1838,
+    "mtime_ns": 1783776428649935450,
+    "word_count": 207
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/chunk-text.ts": {
+    "size": 719,
+    "mtime_ns": 1781620695291996977,
+    "word_count": 105
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/anomaly-context.ts": {
+    "size": 949,
+    "mtime_ns": 1781045829335727182,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/arts.ts": {
+    "size": 1676,
+    "mtime_ns": 1779549611189304360,
+    "word_count": 174
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/citation-formatter.ts": {
+    "size": 337,
+    "mtime_ns": 1779799819418095433,
+    "word_count": 47
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/flow-metrics.ts": {
+    "size": 2730,
+    "mtime_ns": 1779472912633545815,
+    "word_count": 255
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/index.ts": {
+    "size": 3179,
+    "mtime_ns": 1779549538461850713,
+    "word_count": 344
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/lean-budget.ts": {
+    "size": 2205,
+    "mtime_ns": 1781620695293283197,
+    "word_count": 234
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/pi-workspace.ts": {
+    "size": 4258,
+    "mtime_ns": 1781045829335859478,
+    "word_count": 450
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/portfolio.ts": {
+    "size": 3327,
+    "mtime_ns": 1779472912635311951,
+    "word_count": 350
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/context/wsjf.ts": {
+    "size": 1636,
+    "mtime_ns": 1779472912635841634,
+    "word_count": 177
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/index.ts": {
+    "size": 5671,
+    "mtime_ns": 1779760529080258851,
+    "word_count": 567
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/indexer.ts": {
+    "size": 10084,
+    "mtime_ns": 1781620695293865453,
+    "word_count": 1027
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/prompts/index.ts": {
+    "size": 12290,
+    "mtime_ns": 1781045829336294032,
+    "word_count": 1415
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/quota.ts": {
+    "size": 3324,
+    "mtime_ns": 1780982668007991009,
+    "word_count": 362
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/roles/detect-role.ts": {
+    "size": 592,
+    "mtime_ns": 1779817580768251101,
+    "word_count": 81
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/roles/role-chips.ts": {
+    "size": 3265,
+    "mtime_ns": 1779817650309628508,
+    "word_count": 422
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/roles/role-prompts.ts": {
+    "size": 2701,
+    "mtime_ns": 1781045829336491997,
+    "word_count": 385
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/safe-knowledge-data.ts": {
+    "size": 100209,
+    "mtime_ns": 1779842699150346702,
+    "word_count": 15024
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/sessions.ts": {
+    "size": 4692,
+    "mtime_ns": 1781620695294485334,
+    "word_count": 568
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/sync-safe-knowledge.ts": {
+    "size": 1897,
+    "mtime_ns": 1779842699150343786,
+    "word_count": 221
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/tools.ts": {
+    "size": 15772,
+    "mtime_ns": 1781198210380140871,
+    "word_count": 1549
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/tools/knowledge-search.ts": {
+    "size": 1142,
+    "mtime_ns": 1781198144677506237,
+    "word_count": 133
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/safe-copilot/tools/pricing-tools.ts": {
+    "size": 14191,
+    "mtime_ns": 1779762767420167782,
+    "word_count": 1526
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/schemas.ts": {
+    "size": 3347,
+    "mtime_ns": 1783776428665406510,
+    "word_count": 259
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/admin-settings.ts": {
+    "size": 8213,
+    "mtime_ns": 1781620695294933921,
+    "word_count": 785
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/custom-roles.ts": {
+    "size": 3706,
+    "mtime_ns": 1783776428669487275,
+    "word_count": 414
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/integrations.ts": {
+    "size": 7279,
+    "mtime_ns": 1781620695296209141,
+    "word_count": 700
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/lgpd.ts": {
+    "size": 2170,
+    "mtime_ns": 1781061664584066583,
+    "word_count": 215
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/permissions.ts": {
+    "size": 526,
+    "mtime_ns": 1783776428672197105,
+    "word_count": 36
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/schema.ts": {
+    "size": 1618,
+    "mtime_ns": 1778944129615676554,
+    "word_count": 168
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/sso.ts": {
+    "size": 2593,
+    "mtime_ns": 1781620695296691604,
+    "word_count": 255
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/settings/workspace.ts": {
+    "size": 7364,
+    "mtime_ns": 1783776428675130175,
+    "word_count": 771
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/solution-epics/index.ts": {
+    "size": 4602,
+    "mtime_ns": 1781045829337645740,
+    "word_count": 430
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/solution-epics/schema.ts": {
+    "size": 988,
+    "mtime_ns": 1781045829337781119,
+    "word_count": 89
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/solution-trains/index.ts": {
+    "size": 4338,
+    "mtime_ns": 1783776428678045829,
+    "word_count": 433
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/solution-trains/schema.ts": {
+    "size": 910,
+    "mtime_ns": 1783776428684360322,
+    "word_count": 101
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprint-review/index.ts": {
+    "size": 2633,
+    "mtime_ns": 1781620695298776957,
+    "word_count": 232
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprint-review/schema.ts": {
+    "size": 329,
+    "mtime_ns": 1778944562156456958,
+    "word_count": 32
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/index.ts": {
+    "size": 8494,
+    "mtime_ns": 1781620695299806258,
+    "word_count": 872
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/lifecycle.ts": {
+    "size": 14149,
+    "mtime_ns": 1781620695300598057,
+    "word_count": 1368
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/ppm-formula.ts": {
+    "size": 574,
+    "mtime_ns": 1783776428685617679,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/retrospective.ts": {
+    "size": 10414,
+    "mtime_ns": 1780994650589719832,
+    "word_count": 998
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/review.ts": {
+    "size": 5003,
+    "mtime_ns": 1783776428748733110,
+    "word_count": 433
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/sprints/schema.ts": {
+    "size": 734,
+    "mtime_ns": 1781045829338619644,
+    "word_count": 71
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/standup/index.ts": {
+    "size": 4046,
+    "mtime_ns": 1781620695302649868,
+    "word_count": 371
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/standup/schema.ts": {
+    "size": 281,
+    "mtime_ns": 1778943190873421773,
+    "word_count": 35
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/get-my-active-stories.ts": {
+    "size": 1534,
+    "mtime_ns": 1781045829339289206,
+    "word_count": 174
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/index.ts": {
+    "size": 13067,
+    "mtime_ns": 1783776428753632545,
+    "word_count": 1255
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/invest-utils.ts": {
+    "size": 2006,
+    "mtime_ns": 1783776428755516123,
+    "word_count": 238
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/invest.ts": {
+    "size": 987,
+    "mtime_ns": 1783776428761922111,
+    "word_count": 110
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/schema.ts": {
+    "size": 966,
+    "mtime_ns": 1781045829339424876,
+    "word_count": 79
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/stories/split.ts": {
+    "size": 5055,
+    "mtime_ns": 1780993733102777026,
+    "word_count": 490
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/strategic-themes/index.ts": {
+    "size": 24771,
+    "mtime_ns": 1783776428769101647,
+    "word_count": 2474
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/strategic-themes/schema.ts": {
+    "size": 9016,
+    "mtime_ns": 1783776428771102260,
+    "word_count": 832
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/strategy-map/index.ts": {
+    "size": 6093,
+    "mtime_ns": 1783776428779635857,
+    "word_count": 687
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/suppliers/index.ts": {
+    "size": 5757,
+    "mtime_ns": 1781620695306429154,
+    "word_count": 590
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/suppliers/schema.ts": {
+    "size": 977,
+    "mtime_ns": 1781045829341599233,
+    "word_count": 99
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/tasks/index.ts": {
+    "size": 5490,
+    "mtime_ns": 1781620695308067877,
+    "word_count": 584
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/tasks/schema.ts": {
+    "size": 540,
+    "mtime_ns": 1781045829342224294,
+    "word_count": 54
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/teams/members.ts": {
+    "size": 6657,
+    "mtime_ns": 1780889318058794642,
+    "word_count": 692
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/users/get.ts": {
+    "size": 1425,
+    "mtime_ns": 1778558485307847573,
+    "word_count": 140
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/users/profile.ts": {
+    "size": 2811,
+    "mtime_ns": 1781045829342497469,
+    "word_count": 321
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/users/search.ts": {
+    "size": 1000,
+    "mtime_ns": 1778558355254682910,
+    "word_count": 131
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/velocity/index.ts": {
+    "size": 14188,
+    "mtime_ns": 1781620695310710860,
+    "word_count": 1565
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/velocity/schema.ts": {
+    "size": 1091,
+    "mtime_ns": 1778943214982980628,
+    "word_count": 142
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/velocity/types.ts": {
+    "size": 257,
+    "mtime_ns": 1781620695311339533,
+    "word_count": 35
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/workflow/transition.ts": {
+    "size": 5579,
+    "mtime_ns": 1781620695312173124,
+    "word_count": 597
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/wsjf/index.ts": {
+    "size": 4435,
+    "mtime_ns": 1781620695312632170,
+    "word_count": 470
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/wsjf/rebalance-schema.ts": {
+    "size": 886,
+    "mtime_ns": 1781045829343012567,
+    "word_count": 89
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/wsjf/rebalance.ts": {
+    "size": 19839,
+    "mtime_ns": 1781484821960638183,
+    "word_count": 1991
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/wsjf/schema.ts": {
+    "size": 602,
+    "mtime_ns": 1779245999233038292,
+    "word_count": 80
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/actions/wsjf/score.ts": {
+    "size": 6249,
+    "mtime_ns": 1780991379585488695,
+    "word_count": 665
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/analytics/executive/route.ts": {
+    "size": 4152,
+    "mtime_ns": 1781620695313308468,
+    "word_count": 358
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/audit/route.ts": {
+    "size": 1623,
+    "mtime_ns": 1781045829343739506,
+    "word_count": 200
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/auth/[...all]/route.ts": {
+    "size": 228,
+    "mtime_ns": 1778558330045300011,
+    "word_count": 29
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/auth/switch-tenant/route.ts": {
+    "size": 1580,
+    "mtime_ns": 1781045829343951887,
+    "word_count": 199
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/collaboration/auth/route.ts": {
+    "size": 2621,
+    "mtime_ns": 1781620695314043225,
+    "word_count": 266
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/compliance/soc2-export/route.ts": {
+    "size": 1885,
+    "mtime_ns": 1781045829344538988,
+    "word_count": 212
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/copilot/chat/route.ts": {
+    "size": 5489,
+    "mtime_ns": 1781620836481915670,
+    "word_count": 521
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/copilot/upload/route.ts": {
+    "size": 3436,
+    "mtime_ns": 1781620695316463164,
+    "word_count": 416
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/cron/_utils/validate-cron-secret.ts": {
+    "size": 429,
+    "mtime_ns": 1781045829344762120,
+    "word_count": 46
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/cron/anomaly-scheduler/route.ts": {
+    "size": 656,
+    "mtime_ns": 1781045829344902707,
+    "word_count": 74
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/cron/billing-sync-dispatch/route.ts": {
+    "size": 1768,
+    "mtime_ns": 1781620695317256088,
+    "word_count": 210
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/cron/reindex-knowledge/route.ts": {
+    "size": 1109,
+    "mtime_ns": 1781620695320414826,
+    "word_count": 135
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/cron/staleness-check/route.ts": {
+    "size": 2000,
+    "mtime_ns": 1781620695321224792,
+    "word_count": 234
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/epics/[epicId]/analyze-invest/route.ts": {
+    "size": 8129,
+    "mtime_ns": 1781620695322408178,
+    "word_count": 878
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/epics/[epicId]/transition/route.ts": {
+    "size": 1160,
+    "mtime_ns": 1781620695323157935,
+    "word_count": 149
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/features/route.ts": {
+    "size": 2183,
+    "mtime_ns": 1783773114749294711,
+    "word_count": 273
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/health/route.ts": {
+    "size": 947,
+    "mtime_ns": 1781066502989653970,
+    "word_count": 132
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/inngest/route.ts": {
+    "size": 1529,
+    "mtime_ns": 1781620695325167703,
+    "word_count": 125
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/migration/[source]/connect/route.ts": {
+    "size": 2701,
+    "mtime_ns": 1780885231737505925,
+    "word_count": 300
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/migration/[source]/discover/route.ts": {
+    "size": 3030,
+    "mtime_ns": 1781045829345359596,
+    "word_count": 353
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/migration/[source]/dry-run/route.ts": {
+    "size": 3605,
+    "mtime_ns": 1781045829345638021,
+    "word_count": 419
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/migration/[source]/import/route.ts": {
+    "size": 5953,
+    "mtime_ns": 1780886241976840259,
+    "word_count": 638
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/platform/health/route.ts": {
+    "size": 2545,
+    "mtime_ns": 1781062536943642854,
+    "word_count": 284
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/search/route.ts": {
+    "size": 3914,
+    "mtime_ns": 1781620695326712551,
+    "word_count": 435
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/tenants/route.ts": {
+    "size": 909,
+    "mtime_ns": 1781045829345962197,
+    "word_count": 109
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/webhooks/fathom/[integrationId]/route.ts": {
+    "size": 4014,
+    "mtime_ns": 1781057584598311548,
+    "word_count": 425
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/webhooks/fireflies/[integrationId]/route.ts": {
+    "size": 4900,
+    "mtime_ns": 1781052965187881074,
+    "word_count": 521
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/webhooks/github/route.ts": {
+    "size": 5074,
+    "mtime_ns": 1781620695328274857,
+    "word_count": 525
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/webhooks/linear/route.ts": {
+    "size": 4943,
+    "mtime_ns": 1781620695330288085,
+    "word_count": 525
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/api/webhooks/liveblocks/route.ts": {
+    "size": 3021,
+    "mtime_ns": 1783776428785358669,
+    "word_count": 322
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/apple-icon.png": {
+    "size": 216,
+    "mtime_ns": 1778465264151118606,
+    "word_count": 9
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/global-error.tsx": {
+    "size": 742,
+    "mtime_ns": 1778465264151200644,
+    "word_count": 87
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/hooks/use-draft-state.ts": {
+    "size": 2554,
+    "mtime_ns": 1781045829347955757,
+    "word_count": 333
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/hooks/use-keyboard-nav.ts": {
+    "size": 2467,
+    "mtime_ns": 1781062536943045371,
+    "word_count": 259
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/icon.png": {
+    "size": 96,
+    "mtime_ns": 1778465264151277474,
+    "word_count": 6
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/layout.tsx": {
+    "size": 1278,
+    "mtime_ns": 1781620695336159723,
+    "word_count": 104
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/onboarding/components/onboarding-wizard.tsx": {
+    "size": 16882,
+    "mtime_ns": 1779511841098956419,
+    "word_count": 1205
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/onboarding/page.tsx": {
+    "size": 807,
+    "mtime_ns": 1781045829348167347,
+    "word_count": 91
+  },
+  "/Users/azos/Documents/Github/web-backoffice/my/cosmos-nebuloz/apps/app/app/opengraph-image.png": {
+    "size": 58106,
+    "mtime_ns": 1778465264151632373,
+    "word_count": 2230
+  }
+}

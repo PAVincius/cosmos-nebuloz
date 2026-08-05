@@ -1,5 +1,18 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // objective-detail-client.tsx — ObjectiveDetailScreen (design handoff
 // screen-bundle-3.jsx:461-704), driving the existing OKR/KeyResult actions
 // in app/actions/okrs. Inline edit of the objective (title/description/
@@ -22,19 +35,6 @@ import {
   updateKeyResult,
   updateOKR,
 } from "@/app/actions/okrs";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  IconButton,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 type OwnerOption = { id: string; name: string };

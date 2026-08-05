@@ -3,10 +3,7 @@
 // Histórico de Auditoria — FR-11. Port de `charter-screens-3.jsx`.
 // Append-only: sem edição e sem exclusão, por nenhum papel, inclusive admin.
 
-import { useCallback, useState, useTransition } from "react";
-import { exportEvidence, listAudit } from "@/app/(charter)/actions/audit";
-import { getSettings } from "@/app/(charter)/actions/settings";
-import { Icon } from "../../cosmos/icons";
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   Badge,
   Button,
@@ -14,7 +11,10 @@ import {
   PageHeader,
   SectionCard,
   SkeletonKpi,
-} from "../../cosmos/kit";
+} from "@repo/design-system/cosmos/kit";
+import { useCallback, useState, useTransition } from "react";
+import { exportEvidence, listAudit } from "@/app/(charter)/actions/audit";
+import { getSettings } from "@/app/(charter)/actions/settings";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   FilterChips,

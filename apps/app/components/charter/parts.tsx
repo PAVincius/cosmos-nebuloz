@@ -4,6 +4,8 @@
 // Port de `charter-screens-2.jsx` (RiskMiniMatrix, Heatmap, MitigationTable) e
 // `charter-screens-3.jsx` (AuditList).
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { Badge, Button } from "@repo/design-system/cosmos/kit";
 import { Fragment, useState } from "react";
 import type { AuditRow } from "@/app/(charter)/actions/audit";
 import type { MitigationRow } from "@/app/(charter)/actions/risk";
@@ -12,8 +14,6 @@ import {
   RISK_CATEGORY_TONE,
   type Tone,
 } from "@/lib/charter/rules";
-import { Icon, type IconName } from "../cosmos/icons";
-import { Badge, Button } from "../cosmos/kit";
 import { Legend, TableHead, TableRow } from "./base";
 
 const AXIS = [1, 2, 3, 4, 5];

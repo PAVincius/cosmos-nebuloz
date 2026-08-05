@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  CopyId,
+  ErrorState,
+  IconButton,
+  PageHeader,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 // webhooks.tsx — Webhooks, wired a listWebhooks() + createWebhook() +
 // setWebhookActive() + sendTestWebhook(). Lista os endpoints com a saúde
 // derivada do histórico de entrega (falhas consecutivas, não só a última),
@@ -20,17 +31,6 @@ import {
   DEGRADED_AFTER_CONSECUTIVE_FAILURES,
   FAILING_DELIVERY_STATUSES,
 } from "@/app/(cosmos)/actions/webhooks.constants";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  CopyId,
-  ErrorState,
-  IconButton,
-  PageHeader,
-  SectionCard,
-  type Tone,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

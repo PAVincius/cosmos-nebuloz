@@ -1,5 +1,14 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  SectionCard,
+  Skel,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-workspace-tab.tsx — Workspace tab (Settings screen, tab 1). Real
 // tenant identity via app/(cosmos)/actions/settings.ts::getWorkspaceTab,
 // which wraps the mature app/actions/settings/workspace.ts. Name/slug/logo
@@ -12,15 +21,6 @@ import {
   getWorkspaceTab,
   updateWorkspaceInfo,
 } from "@/app/(cosmos)/actions/settings";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  SectionCard,
-  Skel,
-  useAction,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 import { fieldLabelStyle, fmtDate, inputStyle } from "./settings-shared";
 

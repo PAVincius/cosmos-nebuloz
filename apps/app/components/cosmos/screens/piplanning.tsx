@@ -5,14 +5,6 @@
 // time: ConfidenceVoteTally é uma linha de contagens por rodada, sem nenhuma
 // coluna que ligue voto a votante (story-060, "Jornada do usuário").
 
-import { useCallback, useEffect, useState } from "react";
-import {
-  type ConfidenceVoteView,
-  castConfidenceVote,
-  getActivePiPlanning,
-  type PiPlanningView,
-  revealTally,
-} from "@/app/(cosmos)/actions/piplanning";
 import {
   Badge,
   Button,
@@ -21,7 +13,15 @@ import {
   PageHeader,
   Progress,
   SectionCard,
-} from "../kit";
+} from "@repo/design-system/cosmos/kit";
+import { useCallback, useEffect, useState } from "react";
+import {
+  type ConfidenceVoteView,
+  castConfidenceVote,
+  getActivePiPlanning,
+  type PiPlanningView,
+  revealTally,
+} from "@/app/(cosmos)/actions/piplanning";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {

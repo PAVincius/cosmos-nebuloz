@@ -1,5 +1,15 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 // anomalies.tsx — Cost Anomalies, wired to app/(cosmos)/actions/anomalies.ts.
 // Lists real CostAnomaly rows (detected from BillingEntry via median/MAD
 // modified z-score — see lib/cost/detect-cost-anomalies.ts), with a
@@ -22,16 +32,6 @@ import {
   setAnomalySensitivity,
 } from "@/app/(cosmos)/actions/anomalies";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  type Tone,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

@@ -1,5 +1,18 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  CopyId,
+  GlossaryTip,
+  IconButton,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // wsjf-client.tsx — client-only pieces of the WSJF Rankings screen: rows with
 // hover/toggle state (useState) and navigation/modal hooks (useNav,
 // useModal). Split out so wsjf.tsx can be a real async server component.
@@ -25,19 +38,6 @@ import {
 } from "@/lib/wsjf-math";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  CopyId,
-  GlossaryTip,
-  IconButton,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

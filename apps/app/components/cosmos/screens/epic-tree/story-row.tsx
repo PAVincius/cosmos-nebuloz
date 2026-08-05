@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge, Skel } from "@repo/design-system/cosmos/kit";
 import { useState } from "react";
 import {
   createNativeTask,
@@ -10,7 +11,6 @@ import {
   type StoryNode,
   type TaskNode,
 } from "@/app/(cosmos)/actions/epic-tree.constants";
-import { Badge, Skel } from "../../kit";
 import { useModal } from "../../modal";
 import { NativeTaskModal } from "./native-task-modal";
 import { TaskDetailModal } from "./task-detail-modal";

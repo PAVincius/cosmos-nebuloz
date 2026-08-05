@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Badge,
+  PageHeader,
+  Tabs,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings.tsx — Settings tab shell (RF-84..RF-87). Was a SHELL screen (1 of
 // 7 tabs, no tab shell at all — a flat "Users & Roles" list). This is the
 // tab shell plus all 7 tabs, each wired to the mature action layer
@@ -17,7 +23,6 @@
 // Tabs are client-side state, not routes, per the parity spec.
 import { useState } from "react";
 import { getWorkspaceTab } from "@/app/(cosmos)/actions/settings";
-import { Badge, PageHeader, Tabs, useAction } from "../kit";
 import { ModalProvider } from "../modal";
 import SettingsAuditTab from "./settings-audit-tab";
 import SettingsBillingTab from "./settings-billing-tab";

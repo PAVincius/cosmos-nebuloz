@@ -1,5 +1,12 @@
 "use client";
 
+import {
+  Badge,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // horizon-detail-client.tsx — per-InvestmentHorizon drilldown (design
 // handoff screen-bundle-4.jsx HorizonDetailScreen). Target % (stored) vs.
 // actual % (derived live from LeanBudget rows classified into this
@@ -7,7 +14,6 @@
 // value stream has been classified into this horizon yet.
 import type { InvestmentHorizonDetailView } from "@/app/(cosmos)/actions/horizons";
 import { EmptyState } from "../empty-state";
-import { Badge, KpiCard, PageHeader, SectionCard, useNav } from "../kit";
 
 export default function HorizonDetailClient({
   initial,

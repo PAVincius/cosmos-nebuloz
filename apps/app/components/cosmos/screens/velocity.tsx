@@ -1,5 +1,16 @@
 "use client";
 
+import {
+  Badge,
+  ChartTip,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // velocity.tsx — Velocity & Capacity Analytics (FR-011, story-032), wired a
 // listRecentSprints() + listTeamPredictability(). Por sprint fechada: o
 // comprometido (capacidade de planejamento), o concluído e o aceito da Sprint
@@ -14,17 +25,6 @@ import {
   type TeamPredictabilityView,
 } from "@/app/(cosmos)/actions/velocity";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  ChartTip,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useAction,
-} from "../kit";
 
 // Benchmark SAFe de predictability (FR-011 / story-032 AC-003). Abaixo disso o
 // PI é considerado não-previsível e a tela precisa dizer, não deixar a leitora

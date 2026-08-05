@@ -2,9 +2,10 @@
 // Vive fora de epic-tree.ts porque arquivos "use server" só podem exportar
 // funções async — mapas, schemas Zod e tipos ficam aqui e são importados
 // tanto pelas actions quanto pelos client components.
+
+import type { Tone } from "@repo/design-system/cosmos/kit";
 import { z } from "zod";
 import { TaskStatus } from "@/app/actions/_base";
-import type { Tone } from "@/components/cosmos/kit";
 
 // ─── Blocos da nota nativa ────────────────────────────────────────────────
 

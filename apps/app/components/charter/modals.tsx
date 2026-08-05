@@ -8,6 +8,8 @@
 // ao vivo no intake, RadioCards na decisão, CheckRow para efeitos e artefatos,
 // e Callout carregando a razão na tela em vez de tooltip.
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import { Badge, Button, IconButton } from "@repo/design-system/cosmos/kit";
 import { useMemo, useState } from "react";
 import type { VersionDiff } from "@/app/(charter)/actions/policy";
 import type {
@@ -25,8 +27,6 @@ import {
   type Tone,
   vendorEligibility,
 } from "@/lib/charter/rules";
-import { Icon } from "../cosmos/icons";
-import { Badge, Button, IconButton } from "../cosmos/kit";
 import { Eyebrow, MetaCell, TableHead, TableRow } from "./base";
 import {
   Callout,

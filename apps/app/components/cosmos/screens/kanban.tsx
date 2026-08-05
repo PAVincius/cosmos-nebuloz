@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Button,
+  CopilotInsightBar,
+  ErrorState,
+  PageHeader,
+  Progress,
+  Skel,
+  useNav,
+  useThemeName,
+} from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
   createContext,
@@ -31,17 +42,6 @@ import {
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Button,
-  CopilotInsightBar,
-  ErrorState,
-  PageHeader,
-  Progress,
-  Skel,
-  useNav,
-  useThemeName,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 // ── board columns (real SAFe lifecycle → 5 columns) ──

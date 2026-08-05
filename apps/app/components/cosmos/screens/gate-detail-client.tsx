@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // gate-detail-client.tsx — per-epic Governance Gate detail (RF §2.18).
 // Mirrors design_handoff_cosmos_full/screen-bundle-2.jsx EpicGateScreen's
 // vertical stepper + board-review banner, built over the real approval
@@ -25,15 +34,6 @@ import {
   submitEpicForApproval,
 } from "@/app/actions/governance";
 import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
-import { Icon } from "../icons";
-import {
-  Badge,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  useNav,
-} from "../kit";
 import { useActionToast } from "../use-action-toast";
 
 // Policy constant (not a modeled field) — mirrors the hardcoded

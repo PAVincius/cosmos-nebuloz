@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
 // copilot-sessions.tsx — session rail for the copilot screen. Thin UI over
 // the existing mature layer (app/actions/safe-copilot/sessions.ts): create,
 // select, pin/unpin, rename (double-click), and delete. No new persistence.
@@ -11,7 +12,6 @@ import {
   type SessionPreview,
   unpinCopilotSession,
 } from "@/app/actions/safe-copilot/sessions";
-import { Icon } from "../icons";
 
 export function CopilotSessionRail({
   sessions,

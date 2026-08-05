@@ -1,5 +1,17 @@
 "use client";
 
+import type { IconName } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  IconButton,
+  PageHeader,
+  SectionCard,
+  type Tone,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // integrations.tsx — Integrações, wired to listIntegrations(). Per-connector
 // cards use real, tenant-scoped fields (source, name, status, lastSyncAt)
 // straight from the Integration model — config/mapping stay excluded (both
@@ -31,18 +43,6 @@ import {
   setIntegrationPaused,
   testIntegrationConnection,
 } from "@/app/(cosmos)/actions/integrations";
-import type { IconName } from "../icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  ErrorState,
-  IconButton,
-  PageHeader,
-  SectionCard,
-  type Tone,
-  useAction,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

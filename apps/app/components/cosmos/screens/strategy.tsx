@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // strategy.tsx — Strategy Map: pillars grouping strategic themes, wired to
 // listStrategyPillars(). Cards show a real epic-count/progress rollup
 // (rolled up through themes -> epics, same aggregation getStrategyPillar()
@@ -14,17 +25,6 @@ import {
   type PillarView,
   type UnlinkedThemeView,
 } from "@/app/(cosmos)/actions/strategy";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

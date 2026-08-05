@@ -4,6 +4,18 @@
 // Portfolio KPI row, ART filter popover, and per-team capacity/predictability
 // (both from the same TeamCapacitySnapshot the team-detail screen reads).
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  useNav,
+  useThemeName,
+} from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -15,18 +27,6 @@ import {
   type TeamListView,
 } from "@/app/(cosmos)/actions/teams";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  useNav,
-  useThemeName,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

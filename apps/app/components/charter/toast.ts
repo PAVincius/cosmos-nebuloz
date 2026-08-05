@@ -1,8 +1,8 @@
 "use client";
 
+import type { IconName } from "@repo/design-system/cosmos/icons";
+import type { Tone } from "@repo/design-system/cosmos/kit";
 import { toast } from "sonner";
-import type { IconName } from "../cosmos/icons";
-import type { Tone } from "../cosmos/kit";
 
 // Adapta o `addToast({ tone, icon, title, sub })` do protótipo para o sonner
 // que o app já usa. O protótipo tem um ToastStack próprio; reimplementá-lo

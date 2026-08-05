@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 // kit.tsx — cosmos UI primitives ported from cosmos-kit.jsx.
 // Card, SectionCard, KpiCard (the vibe), Badge, Button, Progress, Avatar,
 // IconButton, Switch, PageHeader, LivePulse + skeletons.
@@ -14,8 +15,22 @@ import {
   useRef,
   useState,
 } from "react";
-import type { Result } from "../../app/actions/_base";
-import { Icon, type IconName } from "./icons";
+
+/**
+ * Contrato que o kit consome, não uma cópia do tipo de ninguém.
+ *
+ * Antes isto era `import type { Result } from "../../app/actions/_base"` — um
+ * kit de UI amarrado ao módulo de server actions de UM app. Era o que impedia
+ * o kit de sair de `apps/app`, e a razão de o back-office não conseguir usá-lo.
+ *
+ * Declarar a forma aqui não duplica nada: `Result` do app e o do back-office
+ * já são estruturalmente idênticos, e ambos satisfazem esta assinatura sem
+ * conversão. O kit passa a dizer o que precisa em vez de importar de onde não
+ * devia — quem tiver a forma serve.
+ */
+type Result<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string; code?: string };
 
 export type Tone =
   | "green"

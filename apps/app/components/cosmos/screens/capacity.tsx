@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // capacity.tsx — Capacity Planning, wired to listTeamCapacity(). Real Team
 // rows joined to their most recent TeamCapacitySnapshot (SP expected vs.
 // delivered, utilization %); "—" where no snapshot exists yet. Also renders
@@ -27,16 +37,6 @@ import {
   type CapacityNoteTone,
 } from "@/app/(cosmos)/actions/capacity.constants";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useAction,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

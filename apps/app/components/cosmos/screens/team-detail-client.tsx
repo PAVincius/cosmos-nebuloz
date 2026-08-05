@@ -1,5 +1,15 @@
 "use client";
 
+import {
+  Badge,
+  ChartTip,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useNav,
+} from "@repo/design-system/cosmos/kit";
 // team-detail-client.tsx — team drilldown (design handoff screen-bundle-4.jsx
 // TeamDetailScreen). Real data only:
 //   - Velocity by sprint: Sprint.capacity/velocity for this team, same chart
@@ -17,16 +27,6 @@
 import { useState } from "react";
 import type { TeamDetailView } from "@/app/(cosmos)/actions/teams";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  ChartTip,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useNav,
-} from "../kit";
 
 const STATUS_TONE: Record<string, Tone> = {
   DONE: "green",

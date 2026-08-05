@@ -4,13 +4,7 @@
 // UpdateProgressModal reuses the existing createKeyResultCheckIn action
 // (story check-in flow) to register a KR progress update from this screen.
 
-import type { CSSProperties } from "react";
-import { useCallback, useEffect, useState } from "react";
-import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
-import { createKeyResultCheckIn } from "@/app/actions/okrs";
-import type { Tone } from "@/lib/cosmos-data";
-import { CardHeaderGlow, IconBadge } from "../card-header-glow";
-import { Icon } from "../icons";
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   Avatar,
   Badge,
@@ -20,7 +14,13 @@ import {
   PageHeader,
   Progress,
   useNav,
-} from "../kit";
+} from "@repo/design-system/cosmos/kit";
+import type { CSSProperties } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
+import { createKeyResultCheckIn } from "@/app/actions/okrs";
+import type { Tone } from "@/lib/cosmos-data";
+import { CardHeaderGlow, IconBadge } from "../card-header-glow";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

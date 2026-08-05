@@ -1,5 +1,16 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 // program.tsx — SAFe Program Board (grade time × sprint do PI ativo), wired to
 // getActiveProgramBoard(). A célula é PIPlanFeatureAssignment, o modelo que já
 // tinha a forma exata do quadro (piPlanId/featureId/teamId/sprintId) e que
@@ -17,17 +28,6 @@ import {
 } from "@/app/(cosmos)/actions/program";
 import { EmptyState } from "../empty-state";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

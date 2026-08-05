@@ -1,5 +1,17 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Badge,
+  Button,
+  ErrorState,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // solution-train.tsx — Solution Train, wired to listSolutionTrains() +
 // createCapability(). Per-ART progress (epic/feature completion), the
 // consolidated ROAM rollup (SolutionRisk) and cross-ART dependency links
@@ -18,18 +30,6 @@ import {
   type SolutionTrainRoamView,
 } from "@/app/(cosmos)/actions/solution-train";
 import { EntityLinkField } from "../entity-link-field";
-import { Icon } from "../icons";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-  useAction,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

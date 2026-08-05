@@ -2,6 +2,17 @@
 
 // Onboarding e Aceite — FR-10. Port de `charter-screens-3.jsx`.
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  Progress,
+  SectionCard,
+  SkeletonKpi,
+} from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import {
@@ -12,17 +23,6 @@ import {
 } from "@/app/(charter)/actions/onboarding";
 import { getPolicy } from "@/app/(charter)/actions/policy";
 import { SECTION_STATUS_LABEL, type Tone } from "@/lib/charter/rules";
-import { Icon } from "../../cosmos/icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  Progress,
-  SectionCard,
-  SkeletonKpi,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Legend,

@@ -12,8 +12,8 @@ vi.mock("../../app/(cosmos)/actions/epic-tree", () => ({
   updateNativeTask: vi.fn(),
 }));
 
+import { NavCtx } from "@repo/design-system/cosmos/kit";
 import type { StoryNode } from "../../app/(cosmos)/actions/epic-tree.constants";
-import { NavCtx } from "../../components/cosmos/kit";
 import { ModalProvider } from "../../components/cosmos/modal";
 import { StoryRow } from "../../components/cosmos/screens/epic-tree/story-row";
 

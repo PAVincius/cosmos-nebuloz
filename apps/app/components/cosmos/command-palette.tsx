@@ -1,5 +1,7 @@
 "use client";
 
+import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
+import { useNav } from "@repo/design-system/cosmos/kit";
 // command-palette.tsx — ⌘K / Ctrl+K command palette for screen navigation (RF-90).
 // Self-contained: owns its own open/close state and global keydown listener, so
 // mounting <CommandPalette /> once inside CosmosShell is all that's needed.
@@ -7,8 +9,6 @@
 import { Command } from "cmdk";
 import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
-import { Icon, type IconName } from "./icons";
-import { useNav } from "./kit";
 import { NAV } from "./shell";
 
 type PaletteEntry = {

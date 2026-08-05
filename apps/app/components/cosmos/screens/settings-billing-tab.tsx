@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Badge,
+  ErrorState,
+  KpiCard,
+  SectionCard,
+  Skel,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-billing-tab.tsx — Plano & faturamento tab (Settings screen, tab
 // 7). Honest "Em breve": billing/plan management needs a payment-provider
 // integration that doesn't exist in this codebase (no Stripe/similar
@@ -8,14 +16,6 @@
 // is its Tenant.plan tier, shown read-only via the same getWorkspaceTab
 // used by the Workspace tab — no invoices, no seats, no card, ever.
 import { getWorkspaceTab } from "@/app/(cosmos)/actions/settings";
-import {
-  Badge,
-  ErrorState,
-  KpiCard,
-  SectionCard,
-  Skel,
-  useAction,
-} from "../kit";
 
 export default function SettingsBillingTab() {
   const { data, loading, error } = useAction(getWorkspaceTab);

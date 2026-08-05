@@ -1,5 +1,14 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
+import {
+  Avatar,
+  Badge,
+  Button,
+  ErrorState,
+  PageHeader,
+  SectionCard,
+} from "@repo/design-system/cosmos/kit";
 // risks.tsx — Registro de riscos (ROAM) + matriz probabilidade × impacto,
 // wired to listRisks(). story-059 AC-004: probability/impact usam o vocabulário
 // de cinco níveis (very_low…very_high), então a matriz é a grade 5×5 do desenho
@@ -17,15 +26,6 @@ import {
   type MembersTabView,
 } from "@/app/(cosmos)/actions/settings-members";
 import { EmptyState } from "../empty-state";
-import { Icon } from "../icons";
-import {
-  Avatar,
-  Badge,
-  Button,
-  ErrorState,
-  PageHeader,
-  SectionCard,
-} from "../kit";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 

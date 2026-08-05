@@ -4,6 +4,16 @@
 // wired to a real tenant-scoped server action — see the commit body for the
 // per-KPI/chart data source.
 
+import {
+  Badge,
+  CopyId,
+  KpiCard,
+  NavButton,
+  PageHeader,
+  Progress,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 import { listLeanBudgets } from "@/app/(cosmos)/actions/budgets";
 import { getCloudCostSummary } from "@/app/(cosmos)/actions/finops";
 import { listEpics } from "@/app/(cosmos)/actions/kanban";
@@ -14,16 +24,6 @@ import {
 } from "@/app/(cosmos)/actions/piplanning";
 import { listRecentSprints } from "@/app/(cosmos)/actions/velocity";
 import { EmptyState } from "../empty-state";
-import {
-  Badge,
-  CopyId,
-  KpiCard,
-  NavButton,
-  PageHeader,
-  Progress,
-  SectionCard,
-  type Tone,
-} from "../kit";
 import {
   AnomaliesCopilotBar,
   AreaChart,

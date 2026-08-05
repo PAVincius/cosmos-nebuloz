@@ -1,5 +1,13 @@
 "use client";
 
+import {
+  Badge,
+  Button,
+  ErrorState,
+  SectionCard,
+  Skel,
+  useAction,
+} from "@repo/design-system/cosmos/kit";
 // settings-audit-tab.tsx — Auditoria tab (Settings screen, tab 4). Real,
 // tenant-scoped AuditLog entries via settings-audit.ts::getAuditTab,
 // capped at 25/page with prev/next pagination (no unbounded pull). CSV
@@ -10,14 +18,6 @@ import {
   type AuditLogRow,
   getAuditTab,
 } from "@/app/(cosmos)/actions/settings-audit";
-import {
-  Badge,
-  Button,
-  ErrorState,
-  SectionCard,
-  Skel,
-  useAction,
-} from "../kit";
 import { fmtDate } from "./settings-shared";
 
 const ACTION_TONE: Record<string, "green" | "red" | "amber" | "blue"> = {

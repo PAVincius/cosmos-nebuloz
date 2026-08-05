@@ -6,6 +6,8 @@
 // mouse-enter radial pulse (always) → content.
 // See design handoff doc: Card-Header-Glow-Pattern.md.
 
+import type { Tone } from "@repo/design-system/cosmos/kit";
+import { useThemeName } from "@repo/design-system/cosmos/kit";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import type {
   CSSProperties,
@@ -14,8 +16,6 @@ import type {
   ReactNode,
 } from "react";
 import { useState } from "react";
-import type { Tone } from "./kit";
-import { useThemeName } from "./kit";
 
 type PulseState = { x: number; y: number; key: number };
 
