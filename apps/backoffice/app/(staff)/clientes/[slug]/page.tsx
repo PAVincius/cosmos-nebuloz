@@ -1,7 +1,10 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
+import { listTenantMembers } from "@/app/actions/tenant-members";
+import { requirePlatformStaff } from "@/lib/guard";
 import { CharterBootstrap } from "./charter-bootstrap";
+import { Membros } from "./membros";
 import { ModuleForm } from "./module-form";
 
 export default async function ClientDetailPage({
@@ -10,7 +13,13 @@ export default async function ClientDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const result = await getClient(slug);
+  // Em paralelo: são leituras independentes, e serializá-las só somaria
+  // latência numa tela que o operador abre o dia inteiro.
+  const [staff, result, membros] = await Promise.all([
+    requirePlatformStaff(),
+    getClient(slug),
+    listTenantMembers(slug),
+  ]);
 
   if (!result.ok) {
     if (result.code === "TENANT_NOT_FOUND") {
@@ -39,6 +48,23 @@ export default async function ClientDetailPage({
       <section className="space-y-3">
         <h2 className="font-medium text-lg">Contratação</h2>
         <ModuleForm modules={client.modules} slug={client.slug} />
+      </section>
+
+      {/* FR-4.2 — aba Usuários. O guard de último ADMIN (FR-4.2.4) mora no
+          servidor; aqui só se mostra o que ele devolve. */}
+      <section className="space-y-3">
+        <h2 className="font-medium text-lg">Usuários</h2>
+        {membros.ok ? (
+          <Membros
+            canWrite={staff.canWrite}
+            membros={membros.data}
+            slug={client.slug}
+          />
+        ) : (
+          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
+            {membros.error}
+          </p>
+        )}
       </section>
 
       <section className="space-y-3">
