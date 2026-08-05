@@ -140,3 +140,67 @@ model DecisionLogEntry {
   @@index([tenantId, tipo])
   @@index([tenantId, dataDecisao])
 }
+
+/// Aprovação de operação **de plataforma** — não confundir com ApprovalRequest.
+///
+/// ApprovalRequest, acima, é governança do cliente sobre o domínio dele: épico,
+/// guardrail, tema, com workflow configurável, múltiplas etapas, SLA e papéis
+/// (lpm, cfo). O `tenantId` dele é o tenant DONO do objeto governado.
+///
+/// Aqui a relação se inverte. O solicitante e o aprovador são staff da Nebuloz,
+/// o alvo é um tenant (ou uma proposta), e não há etapa: é um pedido, uma
+/// decisão. Reusar ApprovalRequest exigiria criar workflow no tenant `system`
+/// para cada tipo de ação, traduzir vocabulário de estado e carregar máquina de
+/// etapas que nunca roda — shoehorn, não reuso.
+///
+/// Existe porque cinco operações do Big Bang não executam no clique, por
+/// decisão de produto (PRD §6.3): deleção de tenant, MCP writes avançadas,
+/// desconto comercial acima de 15%, export sensível e mudança grande de plano.
+model PlatformApproval {
+  id String @id @default(cuid())
+
+  /// Sempre o tenant interno (`system`) — é lá que o staff vive. O tenant
+  /// AFETADO pela operação é `targetTenantId`, que é outra coisa.
+  tenantId String
+
+  /// Que operação foi pedida. Fechado no app, não no banco, porque a lista
+  /// cresce a cada onda e enum em Postgres pede migration para cada valor novo.
+  acao      String
+  /// tenant | module | policy | export | proposal
+  alvoTipo  String
+  alvoId    String
+  /// Denormalizado para a fila não precisar de join só para escrever a linha.
+  alvoLabel String
+
+  /// FR-8.2 — o aprovador não decide sem contexto: motivo do pedido e impacto
+  /// estimado são obrigatórios na criação, não opcionais preenchidos depois.
+  motivo  String @db.Text
+  impacto String @db.Text
+
+  /// Payload da ação original, para executá-la na aprovação (FR-8.4).
+  payload Json @default("{}")
+
+  status String @default("PENDING_APPROVAL") // PENDING_APPROVAL | APPROVED | REJECTED
+
+  solicitanteId   String
+  solicitanteNome String?
+  criadoEm        DateTime @default(now())
+
+  /// Trilha de decisão: quem e quando. Nulos enquanto pendente.
+  decisorId   String?
+  decisorNome String?
+  decididoEm  DateTime?
+  /// Nota da decisão — a rejeição costuma precisar dela mais que a aprovação.
+  nota        String?   @db.Text
+
+  /// Tenant afetado pela operação. SetNull para a trilha sobreviver à remoção
+  /// do alvo: aprovação é registro histórico, não some junto com o objeto.
+  targetTenantId String?
+
+  tenant Tenant @relation("PlatformApprovalSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([targetTenantId])
+  @@index([criadoEm])
+}
