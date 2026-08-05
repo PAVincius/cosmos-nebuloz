@@ -54,6 +54,7 @@ vi.mock("@/lib/charter/capabilities", () => ({
 import {
   getComplianceMap,
   importRequirementSet,
+  publishSetVersion,
   setCoverage,
 } from "../../app/(charter)/actions/compliance";
 
@@ -360,5 +361,46 @@ describe("getComplianceMap", () => {
     }
     expect(res.error).toContain("não encontrado");
     expect(h.reqFindMany).not.toHaveBeenCalled();
+  });
+});
+
+describe("publishSetVersion", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+    h.setFindFirst.mockResolvedValue({
+      id: "s-1",
+      nome: "EU AI Act",
+      licenca: "LIVRE",
+    });
+    h.setCreate.mockResolvedValue({ id: "s-2" });
+    h.reqCreateMany.mockResolvedValue({ count: 2 });
+    // Versão anterior: 4.1 e 4.2. A nova muda 4.2 e mantém 4.1.
+    h.reqFindMany.mockResolvedValue([
+      { id: "r-1", codigo: "4.1", resumo: "Inalterada" },
+      { id: "r-2", codigo: "4.2", resumo: "Texto antigo" },
+    ]);
+  });
+
+  it("marca como REVISAR só as coberturas cujo requisito mudou", async () => {
+    const res = await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act",
+      versao: "2",
+      requisitos: [
+        { codigo: "4.1", citacao: "Art. 4.1", resumo: "Inalterada" },
+        { codigo: "4.2", citacao: "Art. 4.2", resumo: "Texto NOVO" },
+      ],
+    });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    // Só 4.2 mudou. Marcar tudo faria o cliente revisar o que não moveu, e é
+    // assim que aviso de mudança regulatória vira ruído que se ignora.
+    expect(res.data.afetadas).toBe(1);
   });
 });

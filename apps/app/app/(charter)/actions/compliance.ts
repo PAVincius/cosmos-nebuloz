@@ -137,6 +137,152 @@ export async function importRequirementSet(
   });
 }
 
+// ── Nova versão do conjunto ──────────────────────────────────────────────────
+
+const PublishVersionSchema = z.object({
+  supersedesId: z.string().min(1),
+  nome: z.string().min(1).max(200),
+  versao: z.string().min(1),
+  requisitos: z.array(RequisitoSchema).min(1),
+});
+
+export async function publishSetVersion(
+  input: z.input<typeof PublishVersionSchema>
+): Promise<Result<{ id: string; afetadas: number }>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("compliance.edit");
+    const data = PublishVersionSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      // Do tenant OU global — mesmo filtro de getComplianceMap/setCoverage: o
+      // conjunto superado pode ser uma regulação (tenantId null).
+      const oldSet = await db.charterRequirementSet.findFirst({
+        where: {
+          id: data.supersedesId,
+          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+        },
+      });
+      if (!oldSet) {
+        throw new GovernanceError(
+          "set.unknown",
+          "Conjunto de exigências não encontrado."
+        );
+      }
+
+      // Licença é do conjunto, herdada pela nova versão — não perguntada de
+      // novo. Sem isso, uma regulação REFERENCIA (ex.: ISO/IEC 42001) vira
+      // LIVRE só por publicar versão em vez de importar, e o guard de
+      // copyright de importRequirementSet nunca dispara de novo.
+      if (
+        oldSet.licenca === "REFERENCIA" &&
+        data.requisitos.some((r) => r.texto)
+      ) {
+        throw new GovernanceError(
+          "req.licenca",
+          "Conjunto REFERENCIA não pode reproduzir texto de norma proprietária — use apenas citação e resumo."
+        );
+      }
+
+      const oldRequisitos = await db.charterRequirement.findMany({
+        where: { setId: oldSet.id },
+        orderBy: { codigo: "asc" },
+      });
+
+      const newSet = await db.charterRequirementSet.create({
+        data: {
+          tenantId: ctx.tenantId,
+          nome: data.nome,
+          origem: oldSet.origem,
+          editor: oldSet.editor,
+          licenca: oldSet.licenca,
+          jurisdicao: oldSet.jurisdicao,
+          versao: data.versao,
+          supersedesId: oldSet.id,
+        },
+      });
+
+      await db.charterRequirement.createMany({
+        data: data.requisitos.map((r) => ({
+          setId: newSet.id,
+          codigo: r.codigo,
+          citacao: r.citacao,
+          resumo: r.resumo,
+          texto: r.texto ?? null,
+          peso: r.peso ?? null,
+          categoria: r.categoria ?? null,
+        })),
+      });
+
+      // Diff por código: mudou quando resumo OU texto difere do mesmo código
+      // no conjunto anterior; novo quando o código não existia; removido
+      // quando sumiu. citacao fica de fora da comparação de propósito — só o
+      // formato da referência mudar não altera a obrigação em si.
+      const oldByCode = new Map(
+        oldRequisitos.map((anterior) => [anterior.codigo, anterior])
+      );
+      const newCodes = new Set(data.requisitos.map((r) => r.codigo));
+
+      let alteradas = 0;
+      let novas = 0;
+      // Requisitos antigos cuja cobertura precisa virar REVISAR — sempre pela
+      // linha antiga, porque é nela que a cobertura do tenant está gravada.
+      const paraRevisar: { id: string }[] = [];
+
+      for (const r of data.requisitos) {
+        const anterior = oldByCode.get(r.codigo);
+        if (!anterior) {
+          novas += 1;
+          continue;
+        }
+        const mudou =
+          anterior.resumo !== r.resumo ||
+          (anterior.texto ?? null) !== (r.texto ?? null);
+        if (mudou) {
+          alteradas += 1;
+          paraRevisar.push(anterior);
+        }
+      }
+
+      const removidas = oldRequisitos.filter(
+        (anterior) => !newCodes.has(anterior.codigo)
+      );
+      paraRevisar.push(...removidas);
+
+      // Só as linhas cujo requisito de fato mudou. Marcar tudo faria o
+      // cliente revisar o que não moveu, e é assim que aviso de mudança
+      // regulatória vira ruído que se ignora.
+      for (const anterior of paraRevisar) {
+        await db.charterCoverage.upsert({
+          where: {
+            tenantId_requirementId: {
+              tenantId: ctx.tenantId,
+              requirementId: anterior.id,
+            },
+          },
+          create: {
+            tenantId: ctx.tenantId,
+            requirementId: anterior.id,
+            status: "REVISAR",
+          },
+          update: { status: "REVISAR" },
+        });
+      }
+
+      const afetadas = paraRevisar.length;
+
+      await logCharterAudit(db, ctx, {
+        action: "Publicou nova versão do conjunto de exigências",
+        entityType: "charter.requirementset",
+        entityId: newSet.id,
+        target: `${data.nome} · v${data.versao}`,
+        note: `v${data.versao} · ${alteradas} alterada, ${novas} nova, ${removidas.length} removida · ${afetadas} cobertura em revisão`,
+      });
+
+      return { id: newSet.id, afetadas };
+    });
+  });
+}
+
 // ── Definir cobertura ───────────────────────────────────────────────────────
 
 const SetCoverageSchema = z.object({
