@@ -32,14 +32,30 @@ function sanitizar(mensagem: string): string {
 /** Diagnóstico do host sem revelar credencial: só o que já é público numa
  *  resposta de DNS, e o suficiente para saber se a env aponta para onde
  *  deveria (pooler x conexão direta, porta de sessão x de transação). */
-function alvoDoBanco(): { host: string; porta: string } | null {
+function alvoDoBanco(): {
+  host: string;
+  porta: string;
+  usuario: string;
+  usuarioTemProjectRef: boolean;
+} | null {
   const bruto = process.env.DATABASE_URL;
   if (!bruto) {
     return null;
   }
   try {
     const url = new URL(bruto);
-    return { host: url.hostname, porta: url.port || "5432" };
+    // Usuário não é segredo — o próprio Postgres o ecoa em "password
+    // authentication failed for user X". Vale reportar porque o pooler do
+    // Supabase (porta 6543) exige `postgres.<project-ref>`, enquanto a conexão
+    // direta usa `postgres` puro noutro host. Misturar host de pooler com
+    // usuário de conexão direta dá 28P01 e parece senha errada.
+    const usuario = decodeURIComponent(url.username);
+    return {
+      host: url.hostname,
+      porta: url.port || "5432",
+      usuario,
+      usuarioTemProjectRef: usuario.includes("."),
+    };
   } catch {
     return null;
   }
