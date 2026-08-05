@@ -31,7 +31,7 @@ export const BO_NAV: NavSection[] = [
         href: "/observabilidade",
         label: "Observabilidade",
         pendente:
-          "Depende das entidades Integration e AccessLog. Sem elas não há falha de integração para listar nem log de acesso ao painel.",
+          "Falha de integração já aparece por tenant, em Clientes › o cliente › Integrações. Falta a visão cruzada de todos os tenants e o log de acesso ao painel, que depende da entidade AccessLog — ela não existe.",
       },
     ],
   },
@@ -70,7 +70,7 @@ export const BO_NAV: NavSection[] = [
         href: "/audit",
         label: "Audit Explorer",
         pendente:
-          "A timeline agregada precisa de diff campo-a-campo em AuditLog. Hoje o AuditLog existe, mas sem a coluna de diff que o FR-10.3 exige.",
+          "A timeline de UM tenant já existe, em Clientes › o cliente › Auditoria, com o diff campo-a-campo. Falta o explorer agregado do FR-10.3: busca e filtro sobre o AuditLog de todos os tenants ao mesmo tempo.",
       },
       { href: "/atividade", label: "Atividade do staff" },
     ],

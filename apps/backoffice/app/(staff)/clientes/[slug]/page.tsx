@@ -2,10 +2,15 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
 import { listTenantMembers } from "@/app/actions/tenant-members";
+import {
+  listTenantAudit,
+  listTenantIntegrations,
+} from "@/app/actions/tenant-observability";
 import { requirePlatformStaff } from "@/lib/guard";
 import { CharterBootstrap } from "./charter-bootstrap";
 import { Membros } from "./membros";
 import { ModuleForm } from "./module-form";
+import { AuditTimeline, Integracoes } from "./observabilidade";
 
 export default async function ClientDetailPage({
   params,
@@ -15,10 +20,12 @@ export default async function ClientDetailPage({
   const { slug } = await params;
   // Em paralelo: são leituras independentes, e serializá-las só somaria
   // latência numa tela que o operador abre o dia inteiro.
-  const [staff, result, membros] = await Promise.all([
+  const [staff, result, membros, integracoes, auditoria] = await Promise.all([
     requirePlatformStaff(),
     getClient(slug),
     listTenantMembers(slug),
+    listTenantIntegrations(slug),
+    listTenantAudit(slug),
   ]);
 
   if (!result.ok) {
@@ -63,6 +70,31 @@ export default async function ClientDetailPage({
         ) : (
           <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
             {membros.error}
+          </p>
+        )}
+      </section>
+
+      {/* FR-4.4 — Integrações. Credencial nunca chega aqui: a action não a
+          seleciona (NFR-1.7). */}
+      <section className="space-y-3">
+        <h2 className="font-medium text-lg">Integrações</h2>
+        {integracoes.ok ? (
+          <Integracoes integracoes={integracoes.data} />
+        ) : (
+          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
+            {integracoes.error}
+          </p>
+        )}
+      </section>
+
+      {/* FR-4.9 — timeline do tenant com diff campo-a-campo. */}
+      <section className="space-y-3">
+        <h2 className="font-medium text-lg">Auditoria</h2>
+        {auditoria.ok ? (
+          <AuditTimeline eventos={auditoria.data} />
+        ) : (
+          <p className="rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
+            {auditoria.error}
           </p>
         )}
       </section>
