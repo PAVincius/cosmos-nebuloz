@@ -38,6 +38,12 @@ const ALLOWED_UNSCOPED_UNIQUE_KEYS = new Set([
   "CharterPolicySection:policyId,ordinal",
   "CharterPolicyVersion:policyId,version",
   "CharterVendorClause:vendorId,clauseId",
+  // CharterPolicyLink (2026-08-06): policyId is FK'd and tenant-scoped like
+  // the entries above. alvoId has no FK by design — it points at
+  // CharterUseCase or CharterVendor depending on alvoTipo — but linkPolicy()
+  // validates alvoId belongs to the caller's tenant before every write, and
+  // cuids don't collide across tenants, so the same transitive argument holds.
+  "CharterPolicyLink:policyId,alvoTipo,alvoId",
 ]);
 
 type ModelUniqueKey = { model: string; fields: string[]; file: string };

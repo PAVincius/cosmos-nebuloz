@@ -200,6 +200,7 @@ model CharterPolicy {
   sections CharterPolicySection[]
   versions CharterPolicyVersion[]
   tracks   CharterTrack[]
+  links    CharterPolicyLink[]
 
   @@index([tenantId])
 }
@@ -484,4 +485,35 @@ model CharterAcknowledgment {
 
   @@index([tenantId])
   @@index([trackId, status])
+}
+
+/// Vínculo de política a caso de uso ou fornecedor.
+///
+/// A RFP pede isto em dois pontos: §4.1.4 ("vincular políticas específicas a
+/// casos de uso, modelos e vendors") e §4.3.2 ("associação de vendors a
+/// políticas aplicáveis"). Sem ele, uma política publicada não sabe a que se
+/// aplica, e o auditor não consegue ir da regra ao caso concreto.
+///
+/// `alvoId` não tem FK: aponta para duas tabelas diferentes conforme
+/// `alvoTipo`. A integridade é garantida na action, que confirma o alvo no
+/// tenant antes de gravar.
+model CharterPolicyLink {
+  id       String                @id @default(cuid())
+  tenantId String
+  policyId String
+  alvoTipo CharterPolicyLinkAlvo
+  alvoId   String
+  criadoEm DateTime              @default(now())
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@unique([policyId, alvoTipo, alvoId])
+  @@index([tenantId])
+  @@index([tenantId, alvoTipo, alvoId])
+}
+
+enum CharterPolicyLinkAlvo {
+  USE_CASE
+  VENDOR
 }

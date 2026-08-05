@@ -479,3 +479,103 @@ export async function getVersionDiff(
     });
   });
 }
+
+// ── Vínculo política ↔ caso de uso / vendor (RFP §4.1.4, §4.3.2) ─────────────
+
+const LinkSchema = z.object({
+  policyId: z.string().min(1),
+  alvoTipo: z.enum(["USE_CASE", "VENDOR"]),
+  alvoId: z.string().min(1),
+});
+
+/**
+ * RFP §4.1.4 e §4.3.2 — política publicada precisa saber a que se aplica.
+ *
+ * `alvoId` não tem FK porque aponta para duas tabelas conforme `alvoTipo`. A
+ * integridade fica aqui: confirmar o alvo dentro do tenant antes de gravar é o
+ * que impede vincular a política de um cliente ao caso de uso de outro.
+ */
+export async function linkPolicy(
+  input: z.infer<typeof LinkSchema>
+): Promise<Result<null>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("policy.edit");
+    const data = LinkSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const policy = await db.charterPolicy.findFirst({
+        where: { id: data.policyId, tenantId: ctx.tenantId },
+      });
+      if (!policy) {
+        throw new GovernanceError("policy.unknown", "Política não encontrada.");
+      }
+
+      const alvo =
+        data.alvoTipo === "USE_CASE"
+          ? await db.charterUseCase.findFirst({
+              where: { id: data.alvoId, tenantId: ctx.tenantId },
+            })
+          : await db.charterVendor.findFirst({
+              where: { id: data.alvoId, tenantId: ctx.tenantId },
+            });
+      if (!alvo) {
+        throw new GovernanceError(
+          "link.target.unknown",
+          data.alvoTipo === "USE_CASE"
+            ? "Caso de uso não encontrado."
+            : "Fornecedor não encontrado."
+        );
+      }
+
+      await db.charterPolicyLink.create({
+        data: {
+          tenantId: ctx.tenantId,
+          policyId: data.policyId,
+          alvoTipo: data.alvoTipo,
+          alvoId: data.alvoId,
+        },
+      });
+
+      await logCharterAudit(db, ctx, {
+        action: "Vinculou política",
+        entityType: "charter.policylink",
+        entityId: data.alvoId,
+        target: `${policy.name} → ${"code" in alvo ? alvo.code : data.alvoId}`,
+      });
+
+      return null;
+    });
+  });
+}
+
+export async function unlinkPolicy(
+  input: z.infer<typeof LinkSchema>
+): Promise<Result<null>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("policy.edit");
+    const data = LinkSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const { count } = await db.charterPolicyLink.deleteMany({
+        where: {
+          tenantId: ctx.tenantId,
+          policyId: data.policyId,
+          alvoTipo: data.alvoTipo,
+          alvoId: data.alvoId,
+        },
+      });
+      if (count === 0) {
+        throw new GovernanceError("link.unknown", "Vínculo não encontrado.");
+      }
+
+      await logCharterAudit(db, ctx, {
+        action: "Removeu vínculo de política",
+        entityType: "charter.policylink",
+        entityId: data.alvoId,
+        target: `${data.policyId} → ${data.alvoId}`,
+      });
+
+      return null;
+    });
+  });
+}
