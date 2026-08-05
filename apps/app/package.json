@@ -37,6 +37,7 @@
     "@liveblocks/client": "^3.11.0",
     "@liveblocks/node": "^3.11.0",
     "@liveblocks/react": "^3.11.0",
+    "@react-pdf/renderer": "^4.5.1",
     "@repo/analytics": "workspace:*",
     "@repo/audit": "workspace:*",
     "@repo/auth": "workspace:*",
