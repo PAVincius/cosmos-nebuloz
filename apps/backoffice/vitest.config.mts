@@ -5,6 +5,13 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   // Sem o plugin o JSX do teste de componente não é transformado e estoura
   // "React is not defined" — o mesmo tropeço que apps/app já resolveu assim.
+  //
+  // O par disto mora no script `test` do package.json, que precisa do prefixo
+  // `NODE_ENV=test`: o vitest só define NODE_ENV quando ele ainda não existe, e
+  // o build da Vercel exporta `production`. Sob production o `react` resolve
+  // para o bundle de produção, que não exporta `act` — e todo `render` do
+  // testing-library morre com "React.act is not a function". Verde na máquina,
+  // vermelho no CI, exatamente porque lá a variável já vem preenchida.
   plugins: [react()],
   test: {
     // `node` continua sendo o padrão: as actions importam módulos de servidor,
