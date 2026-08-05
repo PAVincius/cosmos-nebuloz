@@ -15,11 +15,14 @@ import { nivel, severidade } from "@/lib/charter/risk-matrix";
  * cadastra capacidade que o código não tem e o mapa mente para o comprador.
  *
  * A proteção contra campo removido do schema é `capabilities.test.ts` **mais**
- * `tsc --noEmit` (job obrigatório do CI) — não o teste sozinho. O teste, com
- * banco stub, garante que cada `evidencia()` roda e devolve o formato certo;
- * quem confirma que `version`, `changeCount`, `personName` etc. realmente
- * existem no schema é o `tsc`, compilando contra o Prisma Client gerado. Rodar
- * só `vitest` localmente não pega nome de campo errado.
+ * `tsc --noEmit` — não o teste sozinho. O teste, com banco stub, garante que
+ * cada `evidencia()` roda e devolve o formato certo; quem confirma que
+ * `version`, `changeCount`, `personName` etc. realmente existem no schema é o
+ * `tsc`, compilando contra o Prisma Client gerado. No CI (`ci.yml`), o job
+ * `typecheck` roda esse `tsc` sem `continue-on-error` — quebra de verdade se
+ * um campo sumir — e `build` só roda depois de `typecheck` passar (`needs:`),
+ * então a mudança não chega a um run verde. Rodar só `vitest` localmente não
+ * pega nome de campo errado.
  */
 export type Evidencia = { total: number; amostra: string[]; href?: string };
 

@@ -79,9 +79,11 @@ describe("catálogo de capacidades", () => {
   // devolve { total: number, amostra: array }. Com linha realista no stub
   // (não []), o `.map()` de cada formatador executa de fato — mas isto não
   // valida nome de coluna contra o banco real, só contra o objeto stub acima.
-  // Quem pega campo removido do schema é o `tsc --noEmit` (job obrigatório do
-  // CI), compilando cada `select`/`.map()` contra o Prisma Client gerado. As
-  // duas coisas juntas impedem o produto de alegar ao comprador uma
+  // Quem pega campo removido do schema é o `tsc --noEmit`, compilando cada
+  // `select`/`.map()` contra o Prisma Client gerado. No CI, o job `typecheck`
+  // roda esse `tsc` sem `continue-on-error`, e `build` só roda depois dele
+  // passar (`needs:` em ci.yml) — um campo quebrado não chega a um run verde.
+  // As duas coisas juntas impedem o produto de alegar ao comprador uma
   // conformidade que não consegue mais provar; rodar só `vitest` não basta.
   it.each(
     CAPABILITIES.map((c) => [c.id, c] as const)
