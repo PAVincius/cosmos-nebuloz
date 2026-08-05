@@ -1923,6 +1923,8 @@ import ComplianceScreen from "./compliance";
 
 E adicionar o item de navegação em `base.tsx`, junto de `audit`.
 
+**Fechar o botão que a Task 7 deixou quebrado.** `GenerateDraftModal` chama `saveGeneratedDraft`, que passou a exigir `groundedRequirementId`. Sem seletor, "Inserir como rascunho" falha sempre — com toast limpo, sem quebrar, o que é pior: parece intermitente. Adicionar ao modal um seletor de `CharterRequirement` alimentado por `listRequirementSets` + `getComplianceMap`, e desabilitar o botão enquanto nada estiver escolhido. Botão que sempre erra é pior que botão ausente: ensina o usuário a não confiar no que a tela oferece.
+
 - [ ] **Step 4: Rodar e confirmar que passa**
 
 Run: `cd apps/app && NODE_ENV=test npx vitest run __tests__/charter/compliance-screen.test.tsx`
