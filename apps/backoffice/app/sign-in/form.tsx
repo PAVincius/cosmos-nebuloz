@@ -1,119 +1,11 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import type { CSSProperties, FormEvent, ReactNode } from "react";
+import type { FormEvent } from "react";
 import { useState } from "react";
+import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 
 const TOTP_LENGTH = 6;
-
-/**
- * Campo e input do `backoffice-shell.jsx` (BoField / boInputStyle).
- *
- * O botão é `<button type="submit">` nativo, não o `Button` do kit: aquele não
- * aceita `type` nem `disabled`, então dentro de um form ele não submete e não
- * trava durante o envio. O visual é o da variante primary, copiado do kit.
- */
-const INPUT: CSSProperties = {
-  background: "var(--surface-2)",
-  border: "1px solid var(--hairline)",
-  borderRadius: "var(--r-md)",
-  padding: "10px 12px",
-  fontFamily: "inherit",
-  fontSize: 13,
-  fontWeight: 600,
-  color: "var(--ink)",
-  outline: "none",
-  width: "100%",
-};
-
-function Campo({
-  label,
-  htmlFor,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  children: ReactNode;
-}) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-      <label
-        className="mono"
-        htmlFor={htmlFor}
-        style={{
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: ".12em",
-          textTransform: "uppercase",
-          color: "var(--ink-faint)",
-        }}
-      >
-        {label}
-      </label>
-      {children}
-    </div>
-  );
-}
-
-function Enviar({
-  pending,
-  disabled,
-  children,
-}: {
-  pending: boolean;
-  disabled: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      className="btn"
-      disabled={disabled}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 8,
-        padding: "9px 15px",
-        fontSize: 14,
-        fontWeight: 600,
-        fontFamily: "inherit",
-        borderRadius: "var(--r-md)",
-        border: "1px solid var(--accent)",
-        background: "var(--accent)",
-        color: "var(--accent-fg)",
-        width: "100%",
-        boxShadow:
-          "0 1px 2px rgba(var(--accent-rgb),.4), 0 6px 16px -8px rgba(var(--accent-rgb),.6)",
-        opacity: disabled ? 0.5 : 1,
-        cursor: disabled ? "not-allowed" : "pointer",
-      }}
-      type="submit"
-    >
-      {pending ? "…" : null}
-      {children}
-    </button>
-  );
-}
-
-function Erro({ children }: { children: string }) {
-  return (
-    <p
-      role="alert"
-      style={{
-        margin: 0,
-        padding: "9px 11px",
-        borderRadius: "var(--r-md)",
-        background: "var(--red-soft)",
-        border: "1px solid rgba(var(--red-rgb),.3)",
-        color: "var(--red-text)",
-        fontSize: 12.5,
-        fontWeight: 600,
-      }}
-    >
-      {children}
-    </p>
-  );
-}
 
 export function SignInForm() {
   const [email, setEmail] = useState("");
@@ -196,12 +88,9 @@ export function SignInForm() {
 
         {error ? <Erro>{error}</Erro> : null}
 
-        <Enviar
-          disabled={pending || totp.length !== TOTP_LENGTH}
-          pending={pending}
-        >
+        <BotaoPrimario disabled={pending || totp.length !== TOTP_LENGTH}>
           {pending ? "Verificando" : "Verificar"}
-        </Enviar>
+        </BotaoPrimario>
       </form>
     );
   }
@@ -237,12 +126,9 @@ export function SignInForm() {
 
       {error ? <Erro>{error}</Erro> : null}
 
-      <Enviar
-        disabled={pending || email === "" || password === ""}
-        pending={pending}
-      >
+      <BotaoPrimario disabled={pending || email === "" || password === ""}>
         {pending ? "Entrando" : "Entrar"}
-      </Enviar>
+      </BotaoPrimario>
     </form>
   );
 }

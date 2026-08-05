@@ -1,12 +1,11 @@
 "use client";
 
-import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
+import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
+import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 
 const MODULES = ["COSMOS", "CHARTER", "SIGNAL"] as const;
 
@@ -56,73 +55,142 @@ export function NewClientForm() {
     });
 
   return (
-    <div className="max-w-lg space-y-4">
-      {error ? (
-        <p className="text-destructive text-sm" role="alert">
-          {error}
-        </p>
-      ) : null}
+    <div
+      style={{
+        maxWidth: 520,
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+      }}
+    >
+      {error ? <Erro>{error}</Erro> : null}
 
       {pendingOwner ? (
-        <output className="block rounded-lg border p-4">
-          <p className="font-medium text-sm">Cliente criado sem dono</p>
-          <p className="mt-1 text-muted-foreground text-sm">
+        <output
+          style={{
+            display: "block",
+            padding: 14,
+            borderRadius: "var(--r-md)",
+            background: "var(--amber-soft)",
+            border: "1px solid rgba(var(--amber-rgb),.3)",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontSize: 13,
+              fontWeight: 700,
+              color: "var(--amber-text)",
+            }}
+          >
+            Cliente criado sem dono
+          </p>
+          <p
+            style={{
+              margin: "6px 0 0",
+              fontSize: 12.5,
+              lineHeight: 1.6,
+              color: "var(--ink-muted)",
+            }}
+          >
             {pendingOwner.email} ainda não tem conta. O convite ficou pendente:
             ninguém consegue entrar neste cliente até alguém aceitá-lo.
           </p>
           <Link
-            className="mt-2 inline-block text-sm underline"
             href={`/clientes/${pendingOwner.slug}`}
+            style={{
+              display: "inline-block",
+              marginTop: 9,
+              fontSize: 12.5,
+              fontWeight: 700,
+              color: "var(--accent-text)",
+            }}
           >
             Abrir {pendingOwner.slug}
           </Link>
         </output>
       ) : null}
 
-      <div className="space-y-2">
-        <Label htmlFor="name">Nome da organização</Label>
-        <Input
+      <Campo htmlFor="name" label="Nome da organização">
+        <input
           id="name"
           onChange={(e) => setName(e.target.value)}
+          style={INPUT}
           value={name}
         />
-      </div>
+      </Campo>
 
-      <div className="space-y-2">
-        <Label htmlFor="ownerEmail">E-mail do responsável</Label>
-        <Input
+      <Campo
+        hint="Se ainda não tiver conta, o cliente nasce sem dono e o convite fica pendente."
+        htmlFor="ownerEmail"
+        label="E-mail do responsável"
+      >
+        <input
           id="ownerEmail"
           onChange={(e) => setOwnerEmail(e.target.value)}
+          style={INPUT}
           type="email"
           value={ownerEmail}
         />
-        <p className="text-muted-foreground text-xs">
-          Se ainda não tiver conta, o cliente nasce sem dono e o convite fica
-          pendente.
-        </p>
-      </div>
+      </Campo>
 
-      <fieldset className="space-y-2">
-        <legend className="font-medium text-sm">Módulos contratados</legend>
+      <fieldset
+        style={{
+          border: "1px solid var(--hairline)",
+          borderRadius: "var(--r-md)",
+          padding: "12px 14px",
+          margin: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 9,
+        }}
+      >
+        <legend
+          className="mono"
+          style={{
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: ".12em",
+            textTransform: "uppercase",
+            color: "var(--ink-faint)",
+            padding: "0 6px",
+          }}
+        >
+          Módulos contratados
+        </legend>
         {MODULES.map((module) => (
-          <label className="flex items-center gap-2 text-sm" key={module}>
+          <label
+            key={module}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 9,
+              fontSize: 13,
+              fontWeight: 600,
+              cursor: "pointer",
+            }}
+          >
             <input
               checked={selected.includes(module)}
               onChange={() => toggle(module)}
               type="checkbox"
             />
-            {module}
+            <Badge tone={selected.includes(module) ? "green" : "neutral"}>
+              {module}
+            </Badge>
           </label>
         ))}
       </fieldset>
 
-      <Button
-        aria-label="Provisionar cliente"
+      <BotaoPrimario
         disabled={pending || name.trim().length < 2}
+        full={false}
         onClick={submit}
+        rotulo="Provisionar cliente"
+        type="button"
       >
         {pending ? "Provisionando…" : "Provisionar cliente"}
-      </Button>
+      </BotaoPrimario>
     </div>
   );
 }
