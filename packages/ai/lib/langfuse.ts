@@ -1,5 +1,8 @@
+import "server-only";
+
 import Langfuse from "langfuse";
 import { keys } from "../keys";
+import { capturaDeConteudoLigada, mascararConteudo } from "./mascara";
 
 // ─── Singleton ────────────────────────────────────────────────────────────────
 
@@ -18,6 +21,11 @@ export function getLangfuse(): Langfuse | null {
       baseUrl: k.LANGFUSE_BASE_URL ?? "https://cloud.langfuse.com",
       flushAt: 1, // flush imediatamente em server actions
       flushInterval: 0, // não aguardar intervalo
+      // A máscara vive aqui, no cliente, e não em cada `trace.generation(...)`:
+      // é o único ponto por onde todo trace passa. Presa a um call site, ela
+      // protegeria o copiloto e deixaria o próximo trace que alguém escrever
+      // saindo em claro — que é como um controle assim costuma envelhecer.
+      ...(capturaDeConteudoLigada() ? {} : { mask: mascararConteudo }),
     });
   }
   return _client;

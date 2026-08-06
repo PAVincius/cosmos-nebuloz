@@ -13,22 +13,13 @@ import {
   checkCopilotQuota,
   incrementCopilotUsage,
 } from "@/app/actions/safe-copilot/quota";
+import {
+  avaliarLimite,
+  limitarPorIp,
+} from "@/app/actions/safe-copilot/rate-limit-gate";
 import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
 import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-prompts";
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
-
-async function checkIpRateLimit(ip: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return true;
-  }
-  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
-  const limiter = createRateLimiter({
-    limiter: slidingWindow(30, "1 m"),
-    prefix: "copilot",
-  });
-  const { success } = await limiter.limit(ip);
-  return success;
-}
 
 export async function POST(req: Request) {
   try {
@@ -37,8 +28,22 @@ export async function POST(req: Request) {
 
     const ip =
       headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
-    if (!(await checkIpRateLimit(ip))) {
+    const limite = await avaliarLimite(ip, {
+      env: { UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL },
+      producao: process.env.NODE_ENV === "production",
+      limitar: limitarPorIp,
+    });
+    if (limite === "excedido") {
       return Response.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+    if (limite === "indisponivel") {
+      // 503 e não 429: o cliente não excedeu nada. Devolver 429 aqui mandaria
+      // a pessoa esperar por um limite que não existe, e esconderia um erro de
+      // configuração atrás de uma mensagem plausível.
+      return Response.json(
+        { error: "Serviço temporariamente indisponível." },
+        { status: 503 }
+      );
     }
 
     const raw = await req.json();

@@ -4,6 +4,7 @@ import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { requireTenantSession } from "@repo/auth/server";
 import { generateText } from "ai";
 import { headers } from "next/headers";
+import { fenceUntrusted } from "@/lib/prompt-fence";
 import { type Result, safeAction } from "../_base";
 
 export async function improveDescription(input: {
@@ -22,7 +23,7 @@ export async function improveDescription(input: {
       model,
       system:
         "Você é especialista SAFe. Melhore a descrição de um épico mantendo estrutura markdown. Responda em português. Retorne apenas o markdown melhorado.",
-      prompt: `Épico: "${input.title}"\n\nDescrição atual:\n${input.descriptionMd}`,
+      prompt: `${fenceUntrusted("título do épico", input.title)}\n\n${fenceUntrusted("descrição atual do épico", input.descriptionMd)}`,
       maxOutputTokens: 800,
     });
 

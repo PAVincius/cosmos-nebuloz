@@ -4,6 +4,7 @@ import { getActiveProvider, getAIModel } from "@repo/ai/lib/models";
 import { requireTenantSession } from "@repo/auth/server";
 import { generateText } from "ai";
 import { headers } from "next/headers";
+import { fenceUntrusted } from "@/lib/prompt-fence";
 import { type Result, safeAction } from "../_base";
 
 export async function suggestTitle(input: {
@@ -19,7 +20,7 @@ export async function suggestTitle(input: {
 
     const { text } = await generateText({
       model,
-      prompt: `Você é um especialista SAFe. Sugira um título curto e claro para um épico com base neste início: "${input.partial}". Retorne apenas o título, sem explicações, máximo 80 caracteres.`,
+      prompt: `Você é um especialista SAFe. Sugira um título curto e claro para um épico com base no início fornecido. Retorne apenas o título, sem explicações, máximo 80 caracteres.\n\n${fenceUntrusted("início do título", input.partial)}`,
       maxOutputTokens: 60,
     });
 

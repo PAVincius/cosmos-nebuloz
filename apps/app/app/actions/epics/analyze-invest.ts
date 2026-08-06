@@ -7,6 +7,7 @@ import { database } from "@repo/database";
 import { generateObject } from "ai";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { fenceUntrusted } from "@/lib/prompt-fence";
 import { type Result, safeAction } from "../_base";
 
 // ─── Schema ───────────────────────────────────────────────────────────────────
@@ -93,10 +94,13 @@ export async function analyzeInvest(input: {
 Retorne scores de 0-100 para cada dimensão (I=Independent, N=Negotiable, V=Valuable, E=Estimable, S=Small, T=Testable).
 compositeScore = média ponderada (V e T pesam mais).
 isSmall = true se S >= 60.`,
-      prompt: `Épico: "${epic.title}"
-Descrição: ${epic.descriptionMd ?? "(sem descrição)"}
+      prompt: `Avalie este épico SAFe usando INVEST e retorne o JSON de score.
 
-Avalie este épico SAFe usando INVEST e retorne o JSON de score.`,
+${fenceUntrusted("título do épico", epic.title)}
+
+${fenceUntrusted("descrição do épico", epic.descriptionMd ?? "(sem descrição)")}`,
+      // Teto contra resposta sem fim (OWASP LLM10) — era o único dos cinco sem.
+      maxOutputTokens: 600,
     });
 
     // Persist result
