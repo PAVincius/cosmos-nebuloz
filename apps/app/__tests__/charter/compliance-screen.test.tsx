@@ -18,6 +18,7 @@ const listRequirementSetsMock = vi.fn();
 const getComplianceMapMock = vi.fn();
 const importRequirementSetMock = vi.fn();
 const listCapabilitiesMock = vi.fn();
+const getComplianceCanMock = vi.fn();
 const setCoverageMock = vi.fn();
 const exportComplianceMapMock = vi.fn();
 
@@ -27,6 +28,7 @@ vi.mock("@/app/(charter)/actions/compliance", () => ({
   importRequirementSet: (...args: unknown[]) =>
     importRequirementSetMock(...args),
   listCapabilities: (...args: unknown[]) => listCapabilitiesMock(...args),
+  getComplianceCan: (...args: unknown[]) => getComplianceCanMock(...args),
   setCoverage: (...args: unknown[]) => setCoverageMock(...args),
 }));
 vi.mock("@/app/(charter)/actions/compliance-export", () => ({
@@ -101,11 +103,15 @@ describe("ComplianceScreen", () => {
     getComplianceMapMock.mockReset();
     importRequirementSetMock.mockReset();
     listCapabilitiesMock.mockReset();
+    getComplianceCanMock.mockReset();
     setCoverageMock.mockReset();
     exportComplianceMapMock.mockReset();
     // Padrão neutro: a maioria dos testes não mexe no editor de cobertura.
     // Os que mexem sobrescrevem com capacidades reais.
     listCapabilitiesMock.mockResolvedValue({ ok: true, data: [] });
+    // Padrão permissivo: a maioria dos testes não é sobre o gate de
+    // compliance.edit — só o describe dedicado a ele sobrescreve para false.
+    getComplianceCanMock.mockResolvedValue({ ok: true, data: { edit: true } });
   });
 
   it("linha ATENDE mostra a evidência real, não um selo", async () => {
@@ -343,13 +349,42 @@ describe("ComplianceScreen", () => {
     expect(atendeOption?.disabled).toBe(false);
   });
 
+  // ── Gate de compliance.edit (Bloqueio "CoverageEditor sem gate") ─────────
+
+  it("papel sem compliance.edit vê 'Definir veredito' desabilitado, com o motivo", async () => {
+    // LEGAL, SECURITY, EXEC e AUDITOR têm compliance.map sem compliance.edit
+    // (packages/rbac/src/charter-matrix.ts) — para eles o botão precisa
+    // ficar visível (o usuário sabe que a ação existe) e desabilitado, nunca
+    // escondido nem clicável até falhar no servidor.
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+    getComplianceCanMock.mockResolvedValue({ ok: true, data: { edit: false } });
+
+    render(<ComplianceScreen />);
+
+    const botao = (await screen.findByRole("button", {
+      name: /definir veredito/i,
+    })) as HTMLButtonElement;
+    expect(botao.disabled).toBe(true);
+    expect(botao.title).toContain("Compliance");
+
+    fireEvent.click(botao);
+    // Desabilitado de verdade, não só apagado visualmente: o clique não abre
+    // o editor nem chega perto de setCoverage.
+    expect(screen.queryByLabelText("Status")).toBeNull();
+    expect(setCoverageMock).not.toHaveBeenCalled();
+  });
+
   // ── ImportQuickAddForm (estado vazio) ─────────────────────────────────────
 
-  it("ImportQuickAddForm preenche, envia e chama importRequirementSet com o que foi digitado", async () => {
+  it("ImportQuickAddForm aceita várias linhas e chama importRequirementSet com todas as exigências", async () => {
     listRequirementSetsMock.mockResolvedValue({ ok: true, data: [] });
     importRequirementSetMock.mockResolvedValue({
       ok: true,
-      data: { id: "set-novo", total: 1 },
+      data: { id: "set-novo", total: 2 },
     });
 
     render(<ComplianceScreen />);
@@ -360,20 +395,18 @@ describe("ComplianceScreen", () => {
     );
 
     // getByPlaceholderText em vez de getByLabelText: Field separa <label> e
-    // <input> como irmãos ligados só por htmlFor/id, e a resolução de
-    // label→control por essa associação não é confiável neste ambiente de
-    // teste — placeholder é um atributo direto, sem ambiguidade.
+    // <input>/<textarea> como irmãos ligados só por htmlFor/id, e a
+    // resolução de label→control por essa associação não é confiável neste
+    // ambiente de teste — placeholder é um atributo direto, sem ambiguidade.
     fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
       target: { value: "RFP Banco Aurora 2026" },
     });
-    fireEvent.change(screen.getByPlaceholderText("ex: 4.2.1"), {
-      target: { value: "4.2.1" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("ex: RFP §4.2.1"), {
-      target: { value: "RFP §4.2.1" },
-    });
-    fireEvent.change(screen.getByPlaceholderText("O que a exigência pede"), {
-      target: { value: "Retenção de dados por 5 anos" },
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: {
+        value:
+          "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
+          "4.2.2 | RFP §4.2.2 | Criptografia em repouso obrigatória",
+      },
     });
 
     fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
@@ -388,9 +421,68 @@ describe("ComplianceScreen", () => {
             citacao: "RFP §4.2.1",
             resumo: "Retenção de dados por 5 anos",
           },
+          {
+            codigo: "4.2.2",
+            citacao: "RFP §4.2.2",
+            resumo: "Criptografia em repouso obrigatória",
+          },
         ],
       })
     );
+  });
+
+  it("recusa linha malformada nomeando a linha, sem chamar a action", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [] });
+
+    render(<ComplianceScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /importar conjunto de exigências/i,
+      })
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
+      target: { value: "RFP Banco Aurora 2026" },
+    });
+    // Segunda linha não tem os dois separadores "|" — igual a colar uma
+    // linha da RFP que não seguiu o formato pedido no hint do campo.
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: {
+        value:
+          "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
+          "linha colada sem separador nenhum",
+      },
+    });
+
+    // Nomeia a linha ofensora — mesma disciplina de importRequirementSet
+    // para código duplicado, não um "formato inválido" genérico.
+    expect(await screen.findByText(/Linha 2:/)).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
+    expect(importRequirementSetMock).not.toHaveBeenCalled();
+  });
+
+  it("botão permanente de importar (Bloqueio 1) funciona mesmo com conjuntos já existentes", async () => {
+    // Antes da correção, ImportQuickAddForm só renderizava dentro do galho
+    // sets.length === 0 — inalcançável assim que a seed de regulação (Task
+    // 10) grava os 4 conjuntos globais. Este teste teria falhado nessa
+    // versão: nenhum botão "Importar exigências" existia com conjuntos.
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("4.2.1"); // mapa carregou — não é o estado vazio
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /^importar exigências$/i })
+    );
+
+    expect(
+      await screen.findByPlaceholderText("ex: RFP Banco Aurora 2026")
+    ).toBeTruthy();
   });
 
   // ── Download do export (base64 x utf8 — errar aqui corrompe o arquivo

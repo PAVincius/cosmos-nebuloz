@@ -96,4 +96,21 @@ describe("catálogo de capacidades", () => {
   it("getCapability devolve undefined para id desconhecido, sem lançar", () => {
     expect(getCapability("NAO_EXISTE")).toBeUndefined();
   });
+
+  // Review final — "duas escalas de risco divergentes": nivel()
+  // (risk-matrix.ts, 15/9/4, maiúsculas) e riskScore() (rules.ts, 16/9/4) já
+  // discordavam entre si; RISK_SCORING usava a primeira, e é a que sai no
+  // export para o comprador. O stub tem riskPrivacy 4 × probPrivacy 3 = 12,
+  // que nivel() rotularia "ALTO" e scoreLabel()/riskScore() rotula "Elevado".
+  it("RISK_SCORING fala o vocabulário de riskScore() (Elevado), não o de nivel() (ALTO)", async () => {
+    const cap = getCapability("RISK_SCORING");
+    const ev = await cap?.evidencia("t-1");
+    expect(ev?.amostra[0]).toContain("Elevado");
+    expect(ev?.amostra[0]).not.toMatch(/ALTO|CRITICO|MEDIO|BAIXO/);
+  });
+
+  it("RISK_SCORING não promete probabilidade que nenhuma tela ainda captura", () => {
+    const cap = CAPABILITIES.find((c) => c.id === "RISK_SCORING");
+    expect(cap?.label).not.toMatch(/probabilidade/i);
+  });
 });

@@ -28,12 +28,24 @@ export { CORPORA };
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const db = new PrismaClient({ adapter: new PrismaPg(pool) });
 
-async function upsertCorpus(corpus: CorpusSeed): Promise<number> {
+type SeedDb = typeof db;
+
+export async function upsertCorpus(
+  seedDb: SeedDb,
+  corpus: CorpusSeed
+): Promise<number> {
   // upsert "por (nome, versao)": não existe @@unique nesses dois campos no
   // schema (mudar isso é migração, fora do escopo desta task), então o
   // idempotente aqui é find + update/create, igual ao resto de seed-cosmos.mts.
-  const existing = await db.charterRequirementSet.findFirst({
-    where: { nome: corpus.nome, versao: corpus.versao },
+  //
+  // tenantId: null é obrigatório aqui, não decorativo: sem ele, um tenant que
+  // já tenha um conjunto próprio com o mesmo (nome, versao) — coincidência ou
+  // colisão deliberada — seria encontrado por este findFirst, e o update
+  // abaixo sobrescreveria a RFP privada dele com o corpus global, virando
+  // `tenantId: null` no processo. CharterRequirementSet não tem RLS, então
+  // nada no banco impediria isso; o filtro é a única defesa.
+  const existing = await seedDb.charterRequirementSet.findFirst({
+    where: { nome: corpus.nome, versao: corpus.versao, tenantId: null },
     select: { id: true },
   });
   const setData = {
@@ -47,19 +59,19 @@ async function upsertCorpus(corpus: CorpusSeed): Promise<number> {
     notas: corpus.notas,
   };
   const set = existing
-    ? await db.charterRequirementSet.update({
+    ? await seedDb.charterRequirementSet.update({
         where: { id: existing.id },
         data: setData,
         select: { id: true },
       })
-    : await db.charterRequirementSet.create({
+    : await seedDb.charterRequirementSet.create({
         data: setData,
         select: { id: true },
       });
 
   let count = 0;
   for (const req of corpus.requisitos) {
-    await db.charterRequirement.upsert({
+    await seedDb.charterRequirement.upsert({
       where: { setId_codigo: { setId: set.id, codigo: req.codigo } },
       update: {
         citacao: req.citacao,
@@ -81,7 +93,7 @@ async function upsertCorpus(corpus: CorpusSeed): Promise<number> {
 
 async function main() {
   for (const corpus of CORPORA) {
-    const count = await upsertCorpus(corpus);
+    const count = await upsertCorpus(db, corpus);
     console.log(`${corpus.nome} (${corpus.versao}): ${count} exigências`);
   }
 }

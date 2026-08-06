@@ -1,9 +1,13 @@
 "use server";
 
 import { withTenantDb } from "@repo/database";
+import { hasCharterPermission } from "@repo/rbac";
 import { z } from "zod";
 import { CAPABILITIES, getCapability } from "@/lib/charter/capabilities";
-import { requireCharterPermissionContext } from "@/lib/charter/guards";
+import {
+  requireCharterContext,
+  requireCharterPermissionContext,
+} from "@/lib/charter/guards";
 import { type Result, safeAction } from "../../actions/_base";
 import { GovernanceError, logCharterAudit } from "./_shared";
 
@@ -592,5 +596,30 @@ export async function listCapabilities(): Promise<
   return await safeAction(async () => {
     await requireCharterPermissionContext("compliance.map");
     return CAPABILITIES.map(({ id, label }) => ({ id, label }));
+  });
+}
+
+// ── Permissão de edição ──────────────────────────────────────────────────────
+
+export type ComplianceCan = { edit: boolean };
+
+/**
+ * Só a permissão do papel da sessão para definir veredito — não pode viver em
+ * `ComplianceMap` (review final, Bloqueio "CoverageEditor sem gate"):
+ * `compliance-export.ts` serializa o mapa inteiro num dos formatos
+ * (`JSON.stringify(map)` no JSON, e o mesmo objeto alimenta CSV/PDF), e "quem
+ * pode editar" não é dado de conformidade — vazaria a matriz de permissão do
+ * tenant para um artefato que sai para o comprador. Por isso é uma action à
+ * parte, no mesmo espírito de `listCapabilities()`: pequena, só o que a tela
+ * cliente precisa, nunca passa perto do export.
+ *
+ * `requireCharterContext()`, não `requireCharterPermissionContext`: mesmo
+ * padrão de `getPolicy()` (actions/policy.ts) — sessão + módulo + papel, sem
+ * exigir uma permissão específica, porque o resultado É a permissão.
+ */
+export async function getComplianceCan(): Promise<Result<ComplianceCan>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterContext();
+    return { edit: hasCharterPermission(ctx.charterRole, "compliance.edit") };
   });
 }

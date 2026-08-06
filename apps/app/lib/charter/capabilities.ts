@@ -1,7 +1,8 @@
 import "server-only";
 import { withTenantDb } from "@repo/database";
 import { CHARTER_ENTITY_TYPES } from "@/app/(charter)/actions/audit.constants";
-import { nivel, severidade } from "@/lib/charter/risk-matrix";
+import { severidade } from "@/lib/charter/risk-matrix";
+import { scoreLabel } from "@/lib/charter/rules";
 
 /**
  * Catálogo do que o Charter consegue **provar**.
@@ -138,7 +139,15 @@ export const CAPABILITIES: readonly Capability[] = [
   },
   {
     id: "RISK_SCORING",
-    label: "Risco pontuado por impacto × probabilidade em 7 dimensões",
+    // Corrigido na review final: a versão anterior prometia "impacto ×
+    // probabilidade em 7 dimensões", mas nenhuma tela escreve nos campos
+    // prob* (Task 2 criou a coluna, ninguém ainda a captura) — todo caso
+    // carrega probabilidade default 1, e severidade(impacto, 1) === impacto.
+    // 7 dimensões continua verdadeiro (CharterUseCase tem sete categorias de
+    // risco, todas preenchidas pelo intake/decisão reais); "× probabilidade"
+    // não é, então saiu do rótulo até a UI de fato capturar esse eixo — ver
+    // lib/charter/risk-matrix.ts, mantido pronto para esse dia.
+    label: "Risco pontuado por impacto em 7 dimensões",
     evidencia: (tenantId) =>
       withTenantDb(tenantId, async (db) => {
         const total = await db.charterUseCase.count({ where: { tenantId } });
@@ -150,9 +159,15 @@ export const CAPABILITIES: readonly Capability[] = [
         });
         return {
           total,
+          // scoreLabel() (lib/charter/rules.ts) — nunca nivel()
+          // (risk-matrix.ts): são duas tabelas de limiares diferentes (16/9/4
+          // vs 15/9/4) e só uma é a que o resto do Charter (tela de risco,
+          // caso de uso) mostra ao cliente. Um mapa que fala a palavra errada
+          // de severidade para o comprador é o defeito que a review final
+          // achou aqui.
           amostra: rows.map(
             (r) =>
-              `${r.code} · privacidade ${nivel(severidade(r.riskPrivacy, r.probPrivacy))}`
+              `${r.code} · privacidade ${scoreLabel(severidade(r.riskPrivacy, r.probPrivacy))}`
           ),
           href: "/charter/risk",
         };

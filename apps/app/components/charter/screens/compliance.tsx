@@ -19,6 +19,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import {
+  getComplianceCan,
   getComplianceMap,
   importRequirementSet,
   listCapabilities,
@@ -205,14 +206,23 @@ function EvidenceBlock({ row }: { row: MapRow }) {
  * só pré-seleciona o campo — nada é salvo até o clique em "Salvar veredito".
  * `setCoverage` já recusa ATENDE/PARCIAL sem capabilityId; desabilitar essas
  * opções aqui explica antes em vez de deixar o servidor recusar depois.
+ *
+ * `canEdit` vem do servidor (`getComplianceCan`, não `compliance-export.ts` —
+ * ver o comentário lá para o porquê da action separada). Quatro dos sete
+ * papéis do Charter (LEGAL, SECURITY, EXEC, AUDITOR) têm `compliance.map` sem
+ * `compliance.edit`: sem este gate, "Definir veredito" abria para eles,
+ * aceitava status/capacidade/comentário e só recusava depois do round-trip —
+ * o mesmo padrão que policy.tsx/case-detail.tsx já resolvem com `data.can`.
  */
 function CoverageEditor({
   row,
   capabilities,
+  canEdit,
   onSaved,
 }: {
   row: MapRow;
   capabilities: CapabilityOption[];
+  canEdit: boolean;
   onSaved: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -226,14 +236,15 @@ function CoverageEditor({
   if (!open) {
     return (
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button
+        <GatedButton
+          allowed={canEdit}
           icon="fileText"
           onClick={() => setOpen(true)}
-          size="sm"
+          reason="Somente o papel Compliance define veredito de cobertura"
           variant="secondary"
         >
           Definir veredito
-        </Button>
+        </GatedButton>
       </div>
     );
   }
@@ -349,10 +360,12 @@ function CoverageEditor({
 function RequirementRow({
   row,
   capabilities,
+  canEdit,
   onSaved,
 }: {
   row: MapRow;
   capabilities: CapabilityOption[];
+  canEdit: boolean;
   onSaved: () => void;
 }) {
   const meta = STATUS_META[row.status];
@@ -437,7 +450,12 @@ function RequirementRow({
         </div>
       )}
 
-      <CoverageEditor capabilities={capabilities} onSaved={onSaved} row={row} />
+      <CoverageEditor
+        canEdit={canEdit}
+        capabilities={capabilities}
+        onSaved={onSaved}
+        row={row}
+      />
     </div>
   );
 }
@@ -455,6 +473,11 @@ function ComplianceMapSection({ setId }: { setId: string }) {
   const capabilitiesState = useCharterData(
     useCallback(() => listCapabilities(), [])
   );
+  // Mesmo tratamento: fecha por padrão (`?? false`) enquanto carrega ou se a
+  // busca falhar. Errar para o lado de "não pode editar" por alguns instantes
+  // é seguro; errar para o outro lado abriria a ação antes de saber se o
+  // papel da sessão tem `compliance.edit`.
+  const canState = useCharterData(useCallback(() => getComplianceCan(), []));
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -570,6 +593,7 @@ function ComplianceMapSection({ setId }: { setId: string }) {
         ) : (
           data.linhas.map((row) => (
             <RequirementRow
+              canEdit={canState.data?.edit ?? false}
               capabilities={capabilitiesState.data ?? []}
               key={row.requirementId}
               onSaved={reload}
@@ -582,9 +606,63 @@ function ComplianceMapSection({ setId }: { setId: string }) {
   );
 }
 
-/** Só o suficiente para tirar um conjunto do zero — uma exigência. O resto
- *  chega por nova versão (publishSetVersion) ou pela seed de regulação
- *  (Task 10); não é este formulário que carrega uma RFP inteira. */
+type ParsedRequisito = { codigo: string; citacao: string; resumo: string };
+
+const REQUISITOS_PLACEHOLDER =
+  "4.2.1 | RFP §4.2.1 | Retenção de dados por 5 anos\n" +
+  "4.2.2 | RFP §4.2.2 | Criptografia em repouso obrigatória";
+
+/**
+ * Spec §5.1: "colar exigências, uma por linha". Pipe (`|`) separa os três
+ * campos — raro em citação/resumo em prosa jurídica, ao contrário de vírgula
+ * ou ponto-e-vírgula — e só os dois primeiros pipes de cada linha contam:
+ * qualquer `|` a mais dentro do resumo (o único campo de texto livre)
+ * permanece ali, em vez de espalhar a linha em pedaços a mais. Formato
+ * documentado no hint do campo — ninguém adivinha um delimitador.
+ *
+ * Linha em branco é ruído de colagem, não erro. Linha sem os dois
+ * separadores, ou com algum campo vazio, é recusada nomeando a linha — a
+ * mesma disciplina que `importRequirementSet` já aplica a código duplicado
+ * (actions/compliance.ts): adivinhar o que a pessoa quis dizer é decidir por
+ * ela o que vai responder a um comprador.
+ */
+function parseRequisitosPaste(text: string): {
+  requisitos: ParsedRequisito[];
+  error: string | null;
+} {
+  const requisitos: ParsedRequisito[] = [];
+  const lines = text.split("\n");
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.trim() === "") {
+      continue;
+    }
+    const first = line.indexOf("|");
+    const second = first === -1 ? -1 : line.indexOf("|", first + 1);
+    if (second === -1) {
+      return {
+        requisitos: [],
+        error: `Linha ${i + 1}: formato inválido — use "código | citação | resumo".`,
+      };
+    }
+    const codigo = line.slice(0, first).trim();
+    const citacao = line.slice(first + 1, second).trim();
+    const resumo = line.slice(second + 1).trim();
+    if (!(codigo && citacao && resumo)) {
+      return {
+        requisitos: [],
+        error: `Linha ${i + 1}: código, citação e resumo não podem ficar em branco.`,
+      };
+    }
+    requisitos.push({ codigo, citacao, resumo });
+  }
+  return { requisitos, error: null };
+}
+
+/** Cola quantas exigências a pessoa tiver — nome do conjunto + uma exigência
+ *  por linha (spec §5.1). O resto chega por nova versão (publishSetVersion)
+ *  ou pela seed de regulação (Task 10); este formulário não substitui as
+ *  duas, só tira um conjunto do zero ou soma a ele. */
 function ImportQuickAddForm({
   onCancel,
   onDone,
@@ -594,15 +672,16 @@ function ImportQuickAddForm({
 }) {
   const [pending, startTransition] = useTransition();
   const [nome, setNome] = useState("");
-  const [codigo, setCodigo] = useState("");
-  const [citacao, setCitacao] = useState("");
-  const [resumo, setResumo] = useState("");
+  const [requisitosText, setRequisitosText] = useState("");
 
+  const parsed = parseRequisitosPaste(requisitosText);
   const ready =
-    nome.trim() !== "" &&
-    codigo.trim() !== "" &&
-    citacao.trim() !== "" &&
-    resumo.trim() !== "";
+    nome.trim() !== "" && parsed.error === null && parsed.requisitos.length > 0;
+  const reason =
+    parsed.error ??
+    (parsed.requisitos.length === 0
+      ? "Cole ao menos uma exigência, uma por linha"
+      : "Preencha o nome do conjunto");
 
   const submit = () =>
     startTransition(async () => {
@@ -611,7 +690,7 @@ function ImportQuickAddForm({
           importRequirementSet({
             nome,
             origem: "RFP",
-            requisitos: [{ codigo, citacao, resumo }],
+            requisitos: parsed.requisitos,
           }),
         {
           loading: "Importando conjunto…",
@@ -650,31 +729,18 @@ function ImportQuickAddForm({
         />
       </Field>
       <Field
-        htmlFor="conformidade-import-codigo"
-        label="Código da 1ª exigência"
+        error={parsed.error ?? undefined}
+        hint='Uma exigência por linha, no formato "código | citação | resumo".'
+        htmlFor="conformidade-import-requisitos"
+        label="Exigências"
         required
       >
-        <Input
-          id="conformidade-import-codigo"
-          onChange={(e) => setCodigo(e.target.value)}
-          placeholder="ex: 4.2.1"
-          value={codigo}
-        />
-      </Field>
-      <Field htmlFor="conformidade-import-citacao" label="Citação" required>
-        <Input
-          id="conformidade-import-citacao"
-          onChange={(e) => setCitacao(e.target.value)}
-          placeholder="ex: RFP §4.2.1"
-          value={citacao}
-        />
-      </Field>
-      <Field htmlFor="conformidade-import-resumo" label="Resumo" required>
-        <Input
-          id="conformidade-import-resumo"
-          onChange={(e) => setResumo(e.target.value)}
-          placeholder="O que a exigência pede"
-          value={resumo}
+        <Textarea
+          id="conformidade-import-requisitos"
+          onChange={(e) => setRequisitosText(e.target.value)}
+          placeholder={REQUISITOS_PLACEHOLDER}
+          rows={6}
+          value={requisitosText}
         />
       </Field>
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
@@ -690,7 +756,7 @@ function ImportQuickAddForm({
           allowed={ready && !pending}
           icon="upload"
           onClick={submit}
-          reason="Preencha nome, código, citação e resumo"
+          reason={reason}
         >
           {pending ? "Importando…" : "Importar"}
         </GatedButton>
@@ -738,32 +804,39 @@ function ComplianceInner() {
             value={activeId ?? ""}
           />
         )}
+        {/* Bloqueio 1 da review final: o CTA do estado vazio abaixo só
+            renderiza com sets.length === 0, e a seed de regulação (Task 10)
+            garante 4 conjuntos globais desde o primeiro deploy — depois dela
+            aquele branch nunca mais é alcançado. Este botão é a porta que fica
+            de pé sempre; o estado vazio continua tendo a dele também. */}
+        <Button icon="upload" onClick={() => setShowImport(true)}>
+          Importar exigências
+        </Button>
       </PageHeader>
 
       {setsState.loading ? (
         <div className="skeleton" style={{ height: 160, borderRadius: 14 }} />
       ) : sets.length === 0 ? (
-        <>
-          <SmartEmptyState
-            icon="scale"
-            onPrimary={() => setShowImport(true)}
-            primaryIcon="upload"
-            primaryLabel="Importar conjunto de exigências"
-            subtitle="Nenhuma RFP ou regulação foi importada ainda. Importe a primeira exigência para começar a registrar cobertura — o restante chega por nova versão do conjunto ou pela seed de regulação."
-            title="Nenhum conjunto de exigências"
-          />
-          {showImport && (
-            <ImportQuickAddForm
-              onCancel={() => setShowImport(false)}
-              onDone={() => {
-                setShowImport(false);
-                setsState.reload();
-              }}
-            />
-          )}
-        </>
+        <SmartEmptyState
+          icon="scale"
+          onPrimary={() => setShowImport(true)}
+          primaryIcon="upload"
+          primaryLabel="Importar conjunto de exigências"
+          subtitle="Nenhuma RFP ou regulação foi importada ainda. Importe a primeira exigência para começar a registrar cobertura — o restante chega por nova versão do conjunto ou pela seed de regulação."
+          title="Nenhum conjunto de exigências"
+        />
       ) : (
         activeId && <ComplianceMapSection setId={activeId} />
+      )}
+
+      {showImport && (
+        <ImportQuickAddForm
+          onCancel={() => setShowImport(false)}
+          onDone={() => {
+            setShowImport(false);
+            setsState.reload();
+          }}
+        />
       )}
     </div>
   );

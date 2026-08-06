@@ -204,6 +204,38 @@ export type RiskResult = {
 };
 
 /**
+ * Rótulo de severidade a partir de um score (severidade × probabilidade) já
+ * calculado — os mesmos limiares que `riskScore()` usa logo abaixo, extraídos
+ * para que outro leitor com um score pronto (hoje só `capabilities.ts`,
+ * RISK_SCORING, que pontua uma dimensão em vez das 7) fale o vocabulário que
+ * o resto do Charter fala, em vez de manter uma segunda tabela de limiares.
+ * Foi exatamente esse o defeito achado na review final: `nivel()`
+ * (`risk-matrix.ts`) usa 15/9/4 e maiúsculas — no score 15 ele diz "CRITICO"
+ * enquanto isto aqui diz "Elevado". Duas escalas de risco no mesmo produto.
+ */
+export function scoreLabel(
+  score: number
+): "Crítico" | "Elevado" | "Moderado" | "Baixo" {
+  if (score >= 16) {
+    return "Crítico";
+  }
+  if (score >= 9) {
+    return "Elevado";
+  }
+  if (score >= 4) {
+    return "Moderado";
+  }
+  return "Baixo";
+}
+
+const TONE_BY_LABEL: Record<RiskResult["label"], Tone> = {
+  Crítico: "red",
+  Elevado: "amber",
+  Moderado: "green",
+  Baixo: "green",
+};
+
+/**
  * Severidade é MÁXIMO, não média, de propósito: um risco de privacidade 5 não
  * pode ser diluído por seis categorias em 1. Probabilidade é a média
  * arredondada — o perfil geral do caso.
@@ -224,17 +256,9 @@ export function riskScore(risks: RiskProfile): RiskResult {
     Math.round(values.reduce((sum, v) => sum + v, 0) / values.length)
   );
   const score = severity * likelihood;
+  const label = scoreLabel(score);
 
-  if (score >= 16) {
-    return { severity, likelihood, score, label: "Crítico", tone: "red" };
-  }
-  if (score >= 9) {
-    return { severity, likelihood, score, label: "Elevado", tone: "amber" };
-  }
-  if (score >= 4) {
-    return { severity, likelihood, score, label: "Moderado", tone: "green" };
-  }
-  return { severity, likelihood, score, label: "Baixo", tone: "green" };
+  return { severity, likelihood, score, label, tone: TONE_BY_LABEL[label] };
 }
 
 export const RISK_CATEGORY_LABEL = {

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({
   requireCtx: vi.fn(),
+  requireContext: vi.fn(),
   setCreate: vi.fn(),
   setFindFirst: vi.fn(),
   reqCreateMany: vi.fn(),
@@ -16,6 +17,7 @@ const h = vi.hoisted(() => ({
 
 vi.mock("@/lib/charter/guards", () => ({
   requireCharterPermissionContext: h.requireCtx,
+  requireCharterContext: h.requireContext,
 }));
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
@@ -68,6 +70,7 @@ vi.mock("@/lib/charter/capabilities", () => ({
 }));
 
 import {
+  getComplianceCan,
   getComplianceMap,
   importRequirementSet,
   listCapabilities,
@@ -561,5 +564,41 @@ describe("listCapabilities", () => {
   it("exige compliance.map", async () => {
     await listCapabilities();
     expect(h.requireCtx).toHaveBeenCalledWith("compliance.map");
+  });
+});
+
+describe("getComplianceCan", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+  });
+
+  // Bloqueio "CoverageEditor sem gate" da review final: 4 dos 7 papéis do
+  // Charter têm compliance.map sem compliance.edit. Esta action é a fonte da
+  // verdade que a tela usa para desabilitar "Definir veredito" com o motivo
+  // visível — errar aqui reabre o mesmo furo por outro caminho.
+  it("papel COMPLIANCE (único com compliance.edit) recebe edit: true", async () => {
+    h.requireContext.mockResolvedValue({ ...ctx, charterRole: "COMPLIANCE" });
+
+    const res = await getComplianceCan();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data).toEqual({ edit: true });
+  });
+
+  it("papel com compliance.map mas sem compliance.edit (LEGAL) recebe edit: false", async () => {
+    h.requireContext.mockResolvedValue({ ...ctx, charterRole: "LEGAL" });
+
+    const res = await getComplianceCan();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data).toEqual({ edit: false });
   });
 });
