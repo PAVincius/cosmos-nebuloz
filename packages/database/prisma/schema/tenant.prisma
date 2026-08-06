@@ -199,6 +199,12 @@ model Tenant {
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams        StaffDiagram[]   @relation("StaffDiagramSystemTenant")
+  accessLogs           AccessLog[]      @relation("AccessLogSystemTenant")
+  ipAssets             IpAsset[]        @relation("IpAssetSystemTenant")
+  staffPeople          StaffPerson[]    @relation("StaffPersonSystemTenant")
+  engagements          Engagement[]     @relation("EngagementSystemTenant")
+  proposals            Proposal[]       @relation("ProposalSystemTenant")
+  services             Service[]        @relation("ServiceSystemTenant")
 }
 
 model User {

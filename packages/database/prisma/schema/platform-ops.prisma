@@ -1,0 +1,321 @@
+/// Operação da Nebuloz: catálogo, propostas, engajamentos, capacidade, IP e
+/// acesso ao painel.
+///
+/// Arquivo separado de `governance.prisma` de propósito: aquele é sobre o que a
+/// plataforma controla nos clientes; este é sobre como a Nebuloz vende e
+/// entrega. Misturar deixaria um arquivo em que ninguém acha nada.
+///
+/// Tudo aqui pertence ao tenant `system` — é dado da casa, não do cliente. O
+/// `tenantId` existe pelo mesmo escopo e pela mesma trilha de auditoria que o
+/// resto do painel usa.
+
+// ─────────────────────────── Catálogo ───────────────────────────
+
+/// O que a Nebuloz vende. É a origem dos itens de uma proposta e do que um
+/// engajamento entrega — sem catálogo, proposta vira texto livre e não há eixo
+/// para comparar um cliente com outro.
+model Service {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Código curto do handoff ("SV-09"). Único por tenant porque é o que
+  /// aparece em proposta e contrato — dois SV-09 tornariam o documento
+  /// ambíguo justamente onde ele precisa ser exato.
+  codigo    String
+  nome      String
+  descricao String? @db.Text
+
+  /// PROJETO | RETAINER | LICENCA — como é cobrado, não o que é entregue.
+  modalidade String @default("PROJETO")
+
+  /// Preço de referência em centavos. Inteiro, não decimal: ponto flutuante em
+  /// dinheiro acumula erro na soma dos itens, e o total da proposta é somado.
+  precoBaseCentavos Int    @default(0)
+  /// A que o preço se refere: "projeto", "mês", "usuário/mês".
+  unidade           String @default("projeto")
+
+  /// Fora de catálogo não some — some da lista de escolha. Proposta antiga
+  /// continua apontando para o serviço que existia quando foi feita.
+  ativo Boolean @default(true)
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant      Tenant           @relation("ServiceSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  itens       ProposalItem[]
+  engajamento Engagement[]
+
+  @@unique([tenantId, codigo])
+  @@index([tenantId])
+  @@index([tenantId, ativo])
+}
+
+// ─────────────────────────── Propostas ───────────────────────────
+
+/// Proposta comercial para um cliente.
+///
+/// O gate de desconto do handoff mora aqui: acima de 15% a proposta não é
+/// enviada no clique — ela entra na fila de PlatformApproval, a mesma das
+/// operações sensíveis do painel.
+model Proposal {
+  id       String @id @default(cuid())
+  tenantId String
+
+  numero String
+  titulo String
+
+  /// Cliente destinatário. Opcional porque proposta nasce antes do tenant
+  /// existir — é assim que se ganha o cliente. SetNull para a proposta
+  /// sobreviver à saída dele: histórico comercial não some junto.
+  clienteTenantId String?
+  /// Nome do prospect enquanto não há tenant. Sem isto, proposta sem cliente
+  /// vinculado apareceria na lista sem dizer para quem é.
+  clienteNome     String?
+
+  /// RASCUNHO | AGUARDANDO_APROVACAO | ENVIADA | ACEITA | RECUSADA
+  status String @default("RASCUNHO")
+
+  /// Percentual, 0 a 100. Acima de LIMITE_DESCONTO_SEM_APROVACAO exige
+  /// aprovação — ver app/actions/proposals.ts.
+  descontoPercent Int @default(0)
+
+  /// Congelado no envio, não recalculado na leitura: preço de catálogo muda, e
+  /// uma proposta que muda de valor sozinha depois de enviada é um problema
+  /// contratual, não um detalhe de exibição.
+  totalCentavos Int @default(0)
+
+  /// Aprovação que destravou o desconto, quando houve.
+  aprovacaoId String?
+
+  criadoPorId   String
+  criadoPorNome String?
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  tenant Tenant         @relation("ProposalSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  itens  ProposalItem[]
+
+  @@unique([tenantId, numero])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([clienteTenantId])
+}
+
+/// Uma linha da proposta.
+///
+/// `precoUnitCentavos` é cópia, não referência: o preço do catálogo muda com o
+/// tempo, e reler dali faria uma proposta assinada mudar de valor
+/// retroativamente.
+model ProposalItem {
+  id         String @id @default(cuid())
+  proposalId String
+  serviceId  String
+
+  /// Nome no momento da proposta, pelo mesmo motivo do preço.
+  descricao         String
+  quantidade        Int    @default(1)
+  precoUnitCentavos Int    @default(0)
+  ordem             Int    @default(0)
+
+  proposal Proposal @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  service  Service  @relation(fields: [serviceId], references: [id], onDelete: Restrict)
+
+  @@index([proposalId])
+  @@index([serviceId])
+}
+
+// ─────────────────────── Delivery ───────────────────────
+
+/// Contrato de serviço em execução, por ESCOPO FECHADO.
+///
+/// Escopo fechado, não alocação: o valor e a entrega são acordados na
+/// assinatura e não variam com as horas gastas. É por isso que não há campo de
+/// hora aqui — quem mede esforço é a alocação de pessoa, e ela serve para saber
+/// se o escopo cabe, não para faturar.
+model Engagement {
+  id       String @id @default(cuid())
+  tenantId String
+
+  nome   String
+  codigo String
+
+  /// Cliente atendido. Restrict, não Cascade: apagar um cliente com
+  /// engajamento em curso deve falhar e obrigar a decisão explícita.
+  clienteTenantId String
+  serviceId       String?
+
+  /// O que foi acordado entregar. Texto porque escopo é prosa negociada, não
+  /// campo estruturado — estruturar aqui obrigaria a inventar taxonomia.
+  escopo String? @db.Text
+
+  /// PROPOSTO | ATIVO | PAUSADO | CONCLUIDO | CANCELADO
+  status String @default("PROPOSTO")
+
+  inicioEm DateTime?
+  fimEm    DateTime?
+
+  valorCentavos Int @default(0)
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant     Tenant            @relation("EngagementSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  service    Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  alocacoes  StaffAllocation[]
+  ipUsados   IpAsset[]
+
+  @@unique([tenantId, codigo])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([clienteTenantId])
+}
+
+/// Pessoa da equipe da Nebuloz.
+///
+/// Capacidade é POR PESSOA, não por papel: a equipe é multidisciplinar e a
+/// maioria é fullstack. Modelar por papel obrigaria a inventar um papel
+/// principal para cada um e perderia exatamente a flexibilidade que existe.
+/// As habilidades ficam numa lista justamente para descrever quem faz o quê
+/// sem reduzir ninguém a um rótulo.
+model StaffPerson {
+  id       String @id @default(cuid())
+  tenantId String
+
+  nome  String
+  email String
+
+  /// Ex.: ["frontend", "backend", "dados"]. Lista porque quase todo mundo tem
+  /// mais de uma.
+  habilidades String[] @default([])
+
+  /// Horas por semana disponíveis para alocação. Base do cálculo de quanto
+  /// ainda cabe.
+  horasSemana Int @default(40)
+
+  ativo Boolean @default(true)
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant    Tenant            @relation("StaffPersonSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  alocacoes StaffAllocation[]
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@index([tenantId, ativo])
+}
+
+/// Quanto de uma pessoa está comprometido com um engajamento, num período.
+///
+/// Percentual e não horas absolutas: o denominador é `horasSemana` da pessoa, e
+/// guardar horas aqui faria a soma mentir quando alguém muda de carga.
+model StaffAllocation {
+  id           String @id @default(cuid())
+  personId     String
+  engagementId String
+
+  percentual Int      @default(0)
+  inicioEm   DateTime
+  fimEm      DateTime?
+
+  nota String? @db.Text
+
+  criadoEm DateTime @default(now())
+
+  person     StaffPerson @relation(fields: [personId], references: [id], onDelete: Cascade)
+  engagement Engagement  @relation(fields: [engagementId], references: [id], onDelete: Cascade)
+
+  @@index([personId])
+  @@index([engagementId])
+  @@index([personId, inicioEm])
+}
+
+// ─────────────────────── Biblioteca de IP ───────────────────────
+
+/// Ativo reutilizável entre engajamentos: template, playbook, componente.
+///
+/// Versionado do mesmo jeito que os diagramas, e pelo mesmo motivo: o valor de
+/// um ativo está em saber o que mudou entre a v3 e a v4 quando ele é reusado
+/// num cliente novo.
+model IpAsset {
+  id       String @id @default(cuid())
+  tenantId String
+
+  nome      String
+  slug      String
+  /// TEMPLATE | PLAYBOOK | COMPONENTE | DOCUMENTO
+  tipo      String  @default("DOCUMENTO")
+  descricao String? @db.Text
+
+  /// Conteúdo atual. O histórico completo fica em IpAssetVersion.
+  conteudo String @db.Text
+
+  /// Engajamento de onde o ativo saiu. SetNull: o ativo sobrevive ao
+  /// engajamento — é conhecimento que fica na casa.
+  origemEngagementId String?
+
+  criadoPorId   String
+  criadoPorNome String?
+  criadoEm      DateTime @default(now())
+  atualizadoEm  DateTime @updatedAt
+
+  tenant   Tenant           @relation("IpAssetSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  origem   Engagement?      @relation(fields: [origemEngagementId], references: [id], onDelete: SetNull)
+  versions IpAssetVersion[]
+
+  @@unique([tenantId, slug])
+  @@index([tenantId])
+  @@index([tenantId, tipo])
+}
+
+/// Revisão de um ativo. Append-only, igual ao StaffDiagramVersion.
+model IpAssetVersion {
+  id       String @id @default(cuid())
+  assetId  String
+  versao   Int
+  conteudo String  @db.Text
+  nota     String? @db.Text
+
+  autorId   String
+  autorNome String?
+  criadoEm  DateTime @default(now())
+
+  asset IpAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([assetId, versao])
+  @@index([assetId])
+}
+
+// ─────────────────────── Acesso ao painel ───────────────────────
+
+/// Quem entrou no back-office, quando e de onde (FR-30 do protótipo).
+///
+/// Separado do AuditLog de propósito: aquele registra o que se FEZ num tenant;
+/// este registra o acesso ao painel em si, inclusive tentativa recusada. Juntar
+/// os dois faria a trilha de um cliente encher de linha de login que não tem
+/// nada a ver com ele.
+model AccessLog {
+  id       String @id @default(cuid())
+  tenantId String
+
+  userId String?
+  email  String
+
+  /// LOGIN | LOGOUT | RECUSADO
+  evento String
+
+  /// Preenchido quando `evento` é RECUSADO — sem o motivo, a linha diz que
+  /// alguém não entrou e não ajuda ninguém a decidir o que fazer.
+  motivo String?
+
+  ip        String?
+  userAgent String? @db.Text
+
+  criadoEm DateTime @default(now())
+
+  tenant Tenant @relation("AccessLogSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([tenantId, criadoEm])
+  @@index([email])
+}
