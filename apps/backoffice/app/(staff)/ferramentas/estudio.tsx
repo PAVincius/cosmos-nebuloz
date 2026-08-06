@@ -1,0 +1,299 @@
+"use client";
+
+import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import { useCallback, useState } from "react";
+import {
+  createDiagramAction,
+  type DiagramDetail,
+  type DiagramKind,
+  type DiagramRow,
+  getDiagram,
+  updateDiagramAction,
+} from "@/app/actions/diagrams";
+import { BPMN_EM_BRANCO, BpmnModeler } from "@/components/bpmn-modeler";
+import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
+
+/**
+ * Estúdio de diagramas: lista à esquerda, editor à direita, histórico embaixo.
+ *
+ * Um componente para BPMN e Mermaid porque tudo em volta do canvas é idêntico —
+ * listar, criar, salvar revisão, ver histórico. Só o editor troca, e ele entra
+ * por `kind`. Duas cópias divergiriam no primeiro ajuste de fluxo.
+ */
+
+export function Estudio({
+  kind,
+  iniciais,
+  podeEscrever,
+}: {
+  kind: DiagramKind;
+  iniciais: DiagramRow[];
+  podeEscrever: boolean;
+}) {
+  const [lista, setLista] = useState(iniciais);
+  const [aberto, setAberto] = useState<DiagramDetail | null>(null);
+  const [criando, setCriando] = useState(false);
+  const [nome, setNome] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+
+  const emBranco = kind === "BPMN" ? BPMN_EM_BRANCO : MERMAID_EXEMPLO;
+
+  const abrir = useCallback(async (id: string) => {
+    setErro(null);
+    const res = await getDiagram(id);
+    if (res.ok) {
+      setAberto(res.data);
+    } else {
+      setErro(res.error);
+    }
+  }, []);
+
+  const criar = useCallback(async () => {
+    setErro(null);
+    const res = await createDiagramAction({
+      kind,
+      name: nome,
+      source: emBranco,
+    });
+    if (!res.ok) {
+      setErro(res.error);
+      return;
+    }
+    setCriando(false);
+    setNome("");
+    // Recarrega o detalhe em vez de montar a linha na mão: o que a tela mostra
+    // passa a ser o que o banco gravou, e não a minha suposição do que gravou.
+    const det = await getDiagram(res.data.id);
+    if (det.ok) {
+      setAberto(det.data);
+      setLista((atual) => [
+        {
+          id: det.data.id,
+          kind: det.data.kind,
+          name: det.data.name,
+          slug: det.data.slug,
+          descricao: det.data.descricao,
+          versoes: det.data.versoes,
+          atualizadoEm: det.data.atualizadoEm,
+          criadoPorNome: det.data.criadoPorNome,
+        },
+        ...atual,
+      ]);
+    }
+  }, [kind, nome, emBranco]);
+
+  const salvar = useCallback(
+    async (source: string, nota: string): Promise<string | null> => {
+      if (!aberto) {
+        return "Nenhum diagrama aberto.";
+      }
+      const res = await updateDiagramAction({ id: aberto.id, source, nota });
+      if (!res.ok) {
+        return res.error;
+      }
+      const det = await getDiagram(aberto.id);
+      if (det.ok) {
+        setAberto(det.data);
+      }
+      return null;
+    },
+    [aberto]
+  );
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      {erro ? <Erro>{erro}</Erro> : null}
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "260px minmax(0,1fr)",
+          gap: 14,
+          alignItems: "start",
+        }}
+      >
+        <SectionCard
+          action={
+            podeEscrever ? (
+              <BotaoPrimario
+                full={false}
+                onClick={() => setCriando((v) => !v)}
+                type="button"
+              >
+                {criando ? "Cancelar" : "Novo"}
+              </BotaoPrimario>
+            ) : null
+          }
+          icon={kind === "BPMN" ? "fileCode" : "server"}
+          subtitle={`${lista.length} diagrama(s)`}
+          title="Diagramas"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {criando ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <Campo htmlFor="nome-diagrama" label="Nome">
+                  <input
+                    id="nome-diagrama"
+                    onChange={(e) => setNome(e.target.value)}
+                    style={INPUT}
+                    value={nome}
+                  />
+                </Campo>
+                <BotaoPrimario
+                  disabled={nome.trim().length < 2}
+                  onClick={criar}
+                  type="button"
+                >
+                  Criar
+                </BotaoPrimario>
+              </div>
+            ) : null}
+
+            {lista.length === 0 ? (
+              <p
+                style={{
+                  margin: 0,
+                  padding: "18px 4px",
+                  fontSize: 12.5,
+                  lineHeight: 1.6,
+                  color: "var(--ink-muted)",
+                }}
+              >
+                Nenhum diagrama ainda.{" "}
+                {podeEscrever
+                  ? "Crie o primeiro em Novo."
+                  : "Criar exige papel ADMIN."}
+              </p>
+            ) : (
+              lista.map((d) => {
+                const on = aberto?.id === d.id;
+                return (
+                  <button
+                    className="btn navitem"
+                    key={d.id}
+                    onClick={() => abrir(d.id)}
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "flex-start",
+                      gap: 4,
+                      textAlign: "left",
+                      padding: "9px 11px",
+                      borderRadius: "var(--r-md)",
+                      border: `1px solid ${on ? "rgba(var(--accent-rgb),.45)" : "var(--hairline)"}`,
+                      background: on
+                        ? "var(--accent-soft)"
+                        : "var(--surface-2)",
+                      color: "var(--ink)",
+                    }}
+                    type="button"
+                  >
+                    <span style={{ fontSize: 12.5, fontWeight: 700 }}>
+                      {d.name}
+                    </span>
+                    <span
+                      className="mono"
+                      style={{ fontSize: 10, color: "var(--ink-faint)" }}
+                    >
+                      {d.slug} · v{d.versoes}
+                    </span>
+                  </button>
+                );
+              })
+            )}
+          </div>
+        </SectionCard>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {aberto ? (
+            <>
+              <SectionCard
+                icon={kind === "BPMN" ? "fileCode" : "server"}
+                subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
+                title={aberto.name}
+              >
+                {kind === "BPMN" ? (
+                  <BpmnModeler
+                    onSalvar={salvar}
+                    podeEscrever={podeEscrever}
+                    sourceInicial={aberto.source}
+                  />
+                ) : (
+                  <MermaidEditor
+                    onSalvar={salvar}
+                    podeEscrever={podeEscrever}
+                    sourceInicial={aberto.source}
+                  />
+                )}
+              </SectionCard>
+
+              <SectionCard
+                icon="history"
+                subtitle="append-only — editar cria revisão, nunca sobrescreve"
+                title="Histórico"
+              >
+                <ul
+                  style={{
+                    listStyle: "none",
+                    margin: 0,
+                    padding: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  {aberto.historico.map((h, i) => (
+                    <li
+                      key={h.versao}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 10,
+                        padding: "9px 2px",
+                        borderTop:
+                          i === 0 ? "none" : "1px solid var(--hairline)",
+                      }}
+                    >
+                      <Badge tone={i === 0 ? "green" : "neutral"}>
+                        v{h.versao}
+                      </Badge>
+                      <span style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}>
+                        {h.nota ?? (
+                          <span style={{ color: "var(--ink-faint)" }}>
+                            sem nota
+                          </span>
+                        )}
+                      </span>
+                      <span
+                        className="mono"
+                        style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                      >
+                        {h.autorNome ?? "—"} ·{" "}
+                        {new Date(h.criadoEm).toLocaleString("pt-BR")}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </SectionCard>
+            </>
+          ) : (
+            <SectionCard title="Nenhum diagrama aberto">
+              <p
+                style={{
+                  margin: 0,
+                  padding: 24,
+                  textAlign: "center",
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  color: "var(--ink-muted)",
+                }}
+              >
+                Escolha um diagrama na lista para editar.
+              </p>
+            </SectionCard>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

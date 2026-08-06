@@ -60,6 +60,31 @@ export function Campo({
   );
 }
 
+/**
+ * Rótulo do botão de gravar, nos três estados que ele tem.
+ *
+ * Compartilhado entre os dois editores porque a regra é a mesma: "Sem
+ * alterações" não é enfeite, é o que impede alguém de clicar esperando criar
+ * revisão quando não há nada para versionar.
+ */
+export function rotuloSalvar(salvando: boolean, sujo: boolean): string {
+  if (salvando) {
+    return "Salvando…";
+  }
+  return sujo ? "Salvar revisão" : "Sem alterações";
+}
+
+/**
+ * Mensagem legível de um erro desconhecido.
+ *
+ * Preserva o texto original de propósito. Tanto o bpmn-js quanto o Mermaid
+ * apontam a linha do problema na mensagem; trocar por "erro ao carregar"
+ * removeria exatamente o que faz a pessoa consertar.
+ */
+export function mensagemDeErro(e: unknown): string {
+  return e instanceof Error ? e.message : String(e);
+}
+
 export function Erro({ children }: { children: string }) {
   return (
     <p

@@ -5,6 +5,14 @@ import "@repo/design-system/cosmos/cosmos.css";
 // Depois do cosmos.css de propósito: mesma especificidade, e é a ordem que faz
 // a paleta do back-office vencer a do produto. Ver backoffice-theme.css.
 import "./backoffice-theme.css";
+// CSS do bpmn-js e addons. Global porque o modeler injeta markup fora da
+// árvore do React e não há como escopar por componente.
+import "bpmn-js/dist/assets/diagram-js.css";
+import "bpmn-js/dist/assets/bpmn-js.css";
+import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
+import "@bpmn-io/properties-panel/dist/assets/properties-panel.css";
+import "bpmn-js-token-simulation/assets/css/bpmn-js-token-simulation.css";
+import "diagram-js-minimap/assets/diagram-js-minimap.css";
 import type { ReactNode } from "react";
 
 export const metadata = {
