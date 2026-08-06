@@ -15,6 +15,7 @@ import {
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
+import { listRequirementSets } from "@/app/(charter)/actions/compliance";
 import { getOnboarding } from "@/app/(charter)/actions/onboarding";
 import {
   editSection,
@@ -93,6 +94,11 @@ function PolicyInner() {
   // Só para o modal de publicação dizer quantas trilhas e pessoas serão
   // afetadas pela invalidação de aceites — número inventado ali seria mentira.
   const onboarding = useCharterData(useCallback(() => getOnboarding(), []));
+  // Só para alimentar o seletor de exigência (groundedRequirementId) do
+  // GenerateDraftModal, em openGenerate.
+  const requirementSets = useCharterData(
+    useCallback(() => listRequirementSets(), [])
+  );
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -186,10 +192,15 @@ function PolicyInner() {
         geo={settings.data?.workspace.geo ?? null}
         industry={settings.data?.workspace.industry ?? null}
         onClose={close}
-        onSave={(sectionId, body) =>
+        onSave={(sectionId, body, groundedRequirementId) =>
           startTransition(async () => {
             const res = await runWithToast(
-              () => saveGeneratedDraft({ sectionId, body }),
+              () =>
+                saveGeneratedDraft({
+                  sectionId,
+                  body,
+                  groundedRequirementId,
+                }),
               {
                 loading: "Salvando rascunho…",
                 success: "Rascunho salvo — entra como Rascunho, não publicado",
@@ -209,6 +220,7 @@ function PolicyInner() {
               ? "Permissiva"
               : "Moderada"
         }
+        requirementSets={requirementSets.data ?? []}
         sections={data.sections.map((s) => ({
           id: s.id,
           ordinal: s.ordinal,

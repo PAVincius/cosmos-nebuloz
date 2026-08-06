@@ -8,7 +8,8 @@
     "build": "prisma generate --no-hints",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
-    "seed:safe": "tsx --env-file=.env seed-safe-full.ts"
+    "seed:safe": "tsx --env-file=.env seed-safe-full.ts",
+    "seed:regulacao": "tsx scripts/seed-regulacao.mts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",

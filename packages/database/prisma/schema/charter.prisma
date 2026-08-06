@@ -200,28 +200,36 @@ model CharterPolicy {
   sections CharterPolicySection[]
   versions CharterPolicyVersion[]
   tracks   CharterTrack[]
+  links    CharterPolicyLink[]
 
   @@index([tenantId])
 }
 
 model CharterPolicySection {
-  id        String               @id @default(cuid())
-  tenantId  String
-  policyId  String
+  id                    String               @id @default(cuid())
+  tenantId              String
+  policyId              String
   /// Número de ordem exibido (1..9).
-  ordinal   Int
-  name      String
-  status    CharterSectionStatus @default(DRAFT)
-  ownerId   String?
-  body      String               @db.Text
+  ordinal               Int
+  name                  String
+  status                CharterSectionStatus @default(DRAFT)
+  ownerId               String?
+  body                  String               @db.Text
   /// True quando o corpo veio de geração assistida (FR-2.7). Rascunho gerado
   /// entra sempre como DRAFT, nunca PUBLISHED.
-  generated Boolean              @default(false)
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  generated             Boolean              @default(false)
+  /// Exigência que fundamentou o rascunho gerado. Obrigatório quando
+  /// `generated = true`: texto de política sem citação é o que o auditor
+  /// encontra antes de você.
+  groundedRequirementId String?
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  tenant              Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy              CharterPolicy       @relation(fields: [policyId], references: [id], onDelete: Cascade)
+  // SetNull, não Cascade: perder a exigência apaga a citação, nunca a seção
+  // de política que um humano escreveu.
+  groundedRequirement CharterRequirement? @relation(fields: [groundedRequirementId], references: [id], onDelete: SetNull)
 
   @@unique([policyId, ordinal])
   @@index([tenantId])
@@ -361,6 +369,14 @@ model CharterUseCase {
   riskOperational  Int @default(1)
   riskReputational Int @default(1)
 
+  probPrivacy      Int @default(1)
+  probRegulatory   Int @default(1)
+  probSecurity     Int @default(1)
+  probBias         Int @default(1)
+  probIp           Int @default(1)
+  probOperational  Int @default(1)
+  probReputational Int @default(1)
+
   /// Obrigatório quando status = RESTRICTED (≥ 1 condição — FR-6.3).
   restrictions     String[]
   /// Obrigatório quando status = BLOCKED.
@@ -484,4 +500,136 @@ model CharterAcknowledgment {
 
   @@index([tenantId])
   @@index([trackId, status])
+}
+
+/// Vínculo de política a caso de uso ou fornecedor.
+///
+/// A RFP pede isto em dois pontos: §4.1.4 ("vincular políticas específicas a
+/// casos de uso, modelos e vendors") e §4.3.2 ("associação de vendors a
+/// políticas aplicáveis"). Sem ele, uma política publicada não sabe a que se
+/// aplica, e o auditor não consegue ir da regra ao caso concreto.
+///
+/// `alvoId` não tem FK: aponta para duas tabelas diferentes conforme
+/// `alvoTipo`. A integridade é garantida na action, que confirma o alvo no
+/// tenant antes de gravar.
+model CharterPolicyLink {
+  id       String                @id @default(cuid())
+  tenantId String
+  policyId String
+  alvoTipo CharterPolicyLinkAlvo
+  alvoId   String
+  criadoEm DateTime              @default(now())
+
+  tenant Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  policy CharterPolicy @relation(fields: [policyId], references: [id], onDelete: Cascade)
+
+  @@unique([policyId, alvoTipo, alvoId])
+  @@index([tenantId])
+  @@index([tenantId, alvoTipo, alvoId])
+}
+
+enum CharterPolicyLinkAlvo {
+  USE_CASE
+  VENDOR
+}
+
+/// Conjunto de exigências: uma RFP recebida pelo cliente, ou uma regulação
+/// publicada pela Nebuloz.
+///
+/// `tenantId` nulo significa conjunto global — regulação vale para todos. RFP é
+/// do tenant que a importou.
+model CharterRequirementSet {
+  id           String            @id @default(cuid())
+  tenantId     String?
+  nome         String
+  origem       CharterReqOrigem
+  editor       CharterReqEditor
+  jurisdicao   String?
+  versao       String            @default("1")
+  supersedesId String?
+  /// LIVRE permite texto verbatim. REFERENCIA proíbe: norma proprietária
+  /// (ISO/IEC 42001) só entra por citação e formulação própria.
+  licenca      CharterReqLicenca @default(LIVRE)
+  importadoEm  DateTime          @default(now())
+  notas        String?           @db.Text
+
+  tenant       Tenant?                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  supersedes   CharterRequirementSet?  @relation("CharterReqSetLineage", fields: [supersedesId], references: [id], onDelete: SetNull)
+  supersededBy CharterRequirementSet[] @relation("CharterReqSetLineage")
+  requirements CharterRequirement[]
+
+  @@index([tenantId])
+  @@index([origem])
+}
+
+/// Uma exigência. `citacao` e `resumo` sempre; `texto` só quando a licença do
+/// conjunto permite reproduzir.
+model CharterRequirement {
+  id        String  @id @default(cuid())
+  setId     String
+  codigo    String
+  citacao   String
+  resumo    String  @db.Text
+  texto     String? @db.Text
+  peso      Int?
+  categoria String?
+
+  set              CharterRequirementSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
+  coverages        CharterCoverage[]
+  // Nome ecoa o campo escalar (groundedRequirementId) que ele espelha, não só
+  // "sections": a mesma exigência pode um dia se relacionar com uma seção por
+  // outro motivo, e "grounded" deixa explícito qual relação é essa.
+  groundedSections CharterPolicySection[]
+
+  @@unique([setId, codigo])
+  @@index([setId])
+}
+
+/// Veredito do tenant sobre uma exigência. Uma por exigência: dois vereditos
+/// para a mesma linha são duas respostas contraditórias indo para o mesmo
+/// comprador, e a tela teria de escolher uma — escolha que ninguém fez.
+model CharterCoverage {
+  id            String                @id @default(cuid())
+  tenantId      String
+  requirementId String
+  status        CharterCoverageStatus @default(SEM_VEREDITO)
+  comentario    String?               @db.Text
+  capabilityId  String?
+  atualizadoEm  DateTime              @updatedAt
+
+  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  requirement CharterRequirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+
+  // tenantId entra na chave, não só requirementId: CharterRequirementSet.tenantId
+  // pode ser nulo (regulação global, "vale para todos"), então o mesmo
+  // requirementId é referenciado por N tenants — cada um precisa do próprio
+  // veredito. Sem tenantId aqui, o segundo tenant a registrar cobertura numa
+  // exigência de regulação compartilhada colidiria com (ou sobrescreveria) a
+  // linha do primeiro.
+  @@unique([tenantId, requirementId])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+enum CharterReqOrigem {
+  RFP
+  REGULACAO
+}
+
+enum CharterReqEditor {
+  TENANT
+  NEBULOZ
+}
+
+enum CharterReqLicenca {
+  LIVRE
+  REFERENCIA
+}
+
+enum CharterCoverageStatus {
+  ATENDE
+  PARCIAL
+  NAO_ATENDE
+  SEM_VEREDITO
+  REVISAR
 }

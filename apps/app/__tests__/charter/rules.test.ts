@@ -6,6 +6,7 @@ import {
   policyPublishBlockers,
   recommendPath,
   riskScore,
+  scoreLabel,
   slaRemaining,
   vendorEligibility,
 } from "@/lib/charter/rules";
@@ -184,6 +185,37 @@ describe("riskScore", () => {
     expect(r.likelihood).toBe(4); // round(26/7) = round(3.71) = 4
     expect(r.score).toBe(20);
     expect(r.label).toBe("Crítico");
+  });
+});
+
+describe("scoreLabel", () => {
+  // Review final (Bloqueio "duas escalas de risco"): nivel() (risk-matrix.ts)
+  // usava 15/9/4 e maiúsculas; riskScore() sempre usou 16/9/4. scoreLabel()
+  // é o ladder que riskScore() já usava, exposto para quem só tem um score —
+  // por isso os limiares abaixo são os mesmos de riskScore() acima, não os
+  // de nivel().
+  it.each([
+    [15, "Elevado"],
+    [16, "Crítico"],
+    [8, "Moderado"],
+    [9, "Elevado"],
+    [3, "Baixo"],
+    [4, "Moderado"],
+  ])("score %i é %s", (score, esperado) => {
+    expect(scoreLabel(score)).toBe(esperado);
+  });
+
+  it("concorda com riskScore() no mesmo score — a garantia que este fix fecha", () => {
+    const r = riskScore({
+      privacy: 5,
+      regulatory: 1,
+      security: 1,
+      bias: 1,
+      ip: 1,
+      operational: 1,
+      reputational: 1,
+    });
+    expect(scoreLabel(r.score)).toBe(r.label);
   });
 });
 

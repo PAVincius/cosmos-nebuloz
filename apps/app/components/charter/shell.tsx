@@ -84,7 +84,10 @@ const NAV: NavSection[] = [
   },
   {
     label: "Evidência",
-    items: [{ id: "audit", icon: "history", label: "Histórico de Auditoria" }],
+    items: [
+      { id: "audit", icon: "history", label: "Histórico de Auditoria" },
+      { id: "conformidade", icon: "scale", label: "Mapa de Conformidade" },
+    ],
   },
 ];
 
@@ -98,6 +101,7 @@ export const TITLES: Record<string, [string, string]> = {
   vendor: ["Fornecedor", "Fornecedores"],
   onboarding: ["Onboarding", "Pessoas"],
   audit: ["Auditoria", "Evidência"],
+  conformidade: ["Mapa de Conformidade", "Evidência"],
   settings: ["Configurações", "Charter"],
 };
 

@@ -5,6 +5,7 @@ import type { ComponentType } from "react";
 import AuditScreen from "./audit";
 import CaseDetailScreen from "./case-detail";
 import CasesScreen from "./cases";
+import ComplianceScreen from "./compliance";
 import DashboardScreen from "./dashboard";
 import OnboardingScreen from "./onboarding";
 import PolicyScreen from "./policy";
@@ -25,5 +26,6 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   vendor: VendorDetailScreen,
   onboarding: OnboardingScreen,
   audit: AuditScreen,
+  conformidade: ComplianceScreen,
   settings: SettingsScreen,
 };

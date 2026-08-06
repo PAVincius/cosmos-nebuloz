@@ -5,14 +5,18 @@ import { hasCharterPermission } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
-  GovernanceError,
   requireCharterContext,
   requireCharterPermissionContext,
   StateConflictError,
 } from "@/lib/charter/guards";
 import { policyPublishBlockers } from "@/lib/charter/rules";
 import { type Result, safeAction } from "../../actions/_base";
-import { buildDiff, FIELD_LABELS, logCharterAudit } from "./_shared";
+import {
+  buildDiff,
+  FIELD_LABELS,
+  GovernanceError,
+  logCharterAudit,
+} from "./_shared";
 
 // Política — FR-2. As três abas (Seções, Versões, Escopo) leem de getPolicy().
 
@@ -184,10 +188,15 @@ export async function editSection(
 const DraftSchema = z.object({
   sectionId: z.string().cuid(),
   body: z.string().trim().min(1).max(40_000),
+  groundedRequirementId: z.string().min(1),
 });
 
 /** Persiste o rascunho gerado. Entra sempre como DRAFT — nunca PUBLISHED,
- *  nem REVIEW: texto que ninguém leu não pode estar em revisão. */
+ *  nem REVIEW: texto que ninguém leu não pode estar em revisão.
+ *
+ *  `groundedRequirementId` é obrigatório: rascunho gerado sem exigência que o
+ *  fundamente é texto de política sem citação — o que o auditor encontra
+ *  antes de você. */
 export async function saveGeneratedDraft(
   input: z.infer<typeof DraftSchema>
 ): Promise<Result<null>> {
@@ -203,16 +212,39 @@ export async function saveGeneratedDraft(
         throw new GovernanceError("section.unknown", "Seção não encontrada.");
       }
 
+      // Do tenant OU global — mesmo filtro de compliance.ts (setCoverage):
+      // CharterRequirement não tem tenantId próprio, é escopado pelo
+      // CharterRequirementSet pai, que pode ser do tenant ou uma regulação
+      // global (tenantId null). Sem esse filtro, groundedRequirementId de
+      // outro tenant vira oráculo de existência.
+      const requirement = await db.charterRequirement.findFirst({
+        where: {
+          id: data.groundedRequirementId,
+          set: { OR: [{ tenantId: ctx.tenantId }, { tenantId: null }] },
+        },
+      });
+      if (!requirement) {
+        throw new GovernanceError(
+          "draft.grounding.unknown",
+          "Exigência que fundamenta o rascunho não encontrada."
+        );
+      }
+
       await db.charterPolicySection.update({
         where: { id: section.id },
-        data: { body: data.body, status: "DRAFT", generated: true },
+        data: {
+          body: data.body,
+          status: "DRAFT",
+          generated: true,
+          groundedRequirementId: data.groundedRequirementId,
+        },
       });
 
       await logCharterAudit(db, ctx, {
         action: "Gerou rascunho de seção",
         entityType: "charter.section",
         entityId: section.id,
-        target: `S${String(section.ordinal).padStart(2, "0")} · ${section.name}`,
+        target: `S${String(section.ordinal).padStart(2, "0")} · ${section.name} · ${requirement.citacao}`,
         note: "Rascunho assistido — exige revisão humana antes de publicar.",
         diff: [["Status", section.status, "DRAFT"]],
       });
@@ -476,6 +508,106 @@ export async function getVersionDiff(
         previous: previous?.version ?? null,
         rows,
       };
+    });
+  });
+}
+
+// ── Vínculo política ↔ caso de uso / vendor (RFP §4.1.4, §4.3.2) ─────────────
+
+const LinkSchema = z.object({
+  policyId: z.string().min(1),
+  alvoTipo: z.enum(["USE_CASE", "VENDOR"]),
+  alvoId: z.string().min(1),
+});
+
+/**
+ * RFP §4.1.4 e §4.3.2 — política publicada precisa saber a que se aplica.
+ *
+ * `alvoId` não tem FK porque aponta para duas tabelas conforme `alvoTipo`. A
+ * integridade fica aqui: confirmar o alvo dentro do tenant antes de gravar é o
+ * que impede vincular a política de um cliente ao caso de uso de outro.
+ */
+export async function linkPolicy(
+  input: z.infer<typeof LinkSchema>
+): Promise<Result<null>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("policy.edit");
+    const data = LinkSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const policy = await db.charterPolicy.findFirst({
+        where: { id: data.policyId, tenantId: ctx.tenantId },
+      });
+      if (!policy) {
+        throw new GovernanceError("policy.unknown", "Política não encontrada.");
+      }
+
+      const alvo =
+        data.alvoTipo === "USE_CASE"
+          ? await db.charterUseCase.findFirst({
+              where: { id: data.alvoId, tenantId: ctx.tenantId },
+            })
+          : await db.charterVendor.findFirst({
+              where: { id: data.alvoId, tenantId: ctx.tenantId },
+            });
+      if (!alvo) {
+        throw new GovernanceError(
+          "link.target.unknown",
+          data.alvoTipo === "USE_CASE"
+            ? "Caso de uso não encontrado."
+            : "Fornecedor não encontrado."
+        );
+      }
+
+      await db.charterPolicyLink.create({
+        data: {
+          tenantId: ctx.tenantId,
+          policyId: data.policyId,
+          alvoTipo: data.alvoTipo,
+          alvoId: data.alvoId,
+        },
+      });
+
+      await logCharterAudit(db, ctx, {
+        action: "Vinculou política",
+        entityType: "charter.policylink",
+        entityId: data.alvoId,
+        target: `${policy.name} → ${"code" in alvo ? alvo.code : data.alvoId}`,
+      });
+
+      return null;
+    });
+  });
+}
+
+export async function unlinkPolicy(
+  input: z.infer<typeof LinkSchema>
+): Promise<Result<null>> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("policy.edit");
+    const data = LinkSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const { count } = await db.charterPolicyLink.deleteMany({
+        where: {
+          tenantId: ctx.tenantId,
+          policyId: data.policyId,
+          alvoTipo: data.alvoTipo,
+          alvoId: data.alvoId,
+        },
+      });
+      if (count === 0) {
+        throw new GovernanceError("link.unknown", "Vínculo não encontrado.");
+      }
+
+      await logCharterAudit(db, ctx, {
+        action: "Removeu vínculo de política",
+        entityType: "charter.policylink",
+        entityId: data.alvoId,
+        target: `${data.policyId} → ${data.alvoId}`,
+      });
+
+      return null;
     });
   });
 }

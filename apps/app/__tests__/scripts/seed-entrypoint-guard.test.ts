@@ -33,6 +33,7 @@ const SEED_MODULES = [
   "packages/database/seed-safe-full.ts",
   "packages/database/seed-admin.ts",
   "packages/database/scripts/seed-cosmos.mts",
+  "packages/database/scripts/seed-regulacao.mts",
 ];
 
 const INERT_ENV = {
@@ -67,16 +68,14 @@ async function importInChildProcess(moduleRelPath: string) {
 describe("seed scripts: guarda de entrypoint", () => {
   // ponytail: spawn real de tsx em vez de mockar Prisma — prova o
   // comportamento de runtime de verdade, ao custo de ~5s por módulo.
-  it.each(SEED_MODULES)(
-    "importar %s não executa nada",
-    async (moduleRelPath) => {
-      const { stdout } = await importInChildProcess(moduleRelPath);
+  it.each(
+    SEED_MODULES
+  )("importar %s não executa nada", async (moduleRelPath) => {
+    const { stdout } = await importInChildProcess(moduleRelPath);
 
-      expect(stdout).toContain(MARKER);
-      // Se main() tivesse rodado, teria falhado na conexão ou impresso o
-      // cabeçalho do seed antes do marker.
-      expect(stdout).not.toMatch(/Seed|seed completo|deleteMany/i);
-    },
-    60_000
-  );
+    expect(stdout).toContain(MARKER);
+    // Se main() tivesse rodado, teria falhado na conexão ou impresso o
+    // cabeçalho do seed antes do marker.
+    expect(stdout).not.toMatch(/Seed|seed completo|deleteMany/i);
+  }, 60_000);
 });

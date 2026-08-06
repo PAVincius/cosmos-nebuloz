@@ -22,7 +22,9 @@ export type CharterPermission =
   | "clause.manage"
   | "onboarding.publish"
   | "audit.read"
-  | "audit.export";
+  | "audit.export"
+  | "compliance.map"
+  | "compliance.edit";
 
 export const CHARTER_PERMISSIONS: readonly CharterPermission[] = [
   "policy.edit",
@@ -35,6 +37,8 @@ export const CHARTER_PERMISSIONS: readonly CharterPermission[] = [
   "onboarding.publish",
   "audit.read",
   "audit.export",
+  "compliance.map",
+  "compliance.edit",
 ] as const;
 
 /** Rótulo pt-BR de cada permissão, para o tooltip de ação desabilitada e para
@@ -50,6 +54,8 @@ export const CHARTER_PERMISSION_LABEL: Record<CharterPermission, string> = {
   "onboarding.publish": "Publicar trilha de onboarding",
   "audit.read": "Ler trilha de auditoria",
   "audit.export": "Exportar pacote de evidência",
+  "compliance.map": "Ler o mapa de conformidade",
+  "compliance.edit": "Definir veredito de cobertura",
 };
 
 export const CHARTER_ROLE_LABEL: Record<CharterRole, string> = {
@@ -90,6 +96,8 @@ export const CHARTER_MATRIX: Record<CharterRole, readonly CharterPermission[]> =
       "onboarding.publish",
       "audit.read",
       "audit.export",
+      "compliance.map",
+      "compliance.edit",
     ],
     LEGAL: [
       "policy.edit",
@@ -98,6 +106,7 @@ export const CHARTER_MATRIX: Record<CharterRole, readonly CharterPermission[]> =
       "clause.manage",
       "audit.read",
       "audit.export",
+      "compliance.map",
     ],
     SECURITY: [
       "case.submit",
@@ -105,13 +114,14 @@ export const CHARTER_MATRIX: Record<CharterRole, readonly CharterPermission[]> =
       "risk.score",
       "vendor.approve",
       "audit.read",
+      "compliance.map",
     ],
     HR: ["onboarding.publish"],
     REQUESTER: ["case.submit"],
     // Exec e Auditor leem e exportam, mas não decidem nada — Auditor é o papel
     // de leitura forense.
-    EXEC: ["audit.read", "audit.export"],
-    AUDITOR: ["audit.read", "audit.export"],
+    EXEC: ["audit.read", "audit.export", "compliance.map"],
+    AUDITOR: ["audit.read", "audit.export", "compliance.map"],
   } as const;
 
 export function hasCharterPermission(
