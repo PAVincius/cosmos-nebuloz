@@ -13,6 +13,9 @@ import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "@bpmn-io/properties-panel/dist/assets/properties-panel.css";
 import "bpmn-js-token-simulation/assets/css/bpmn-js-token-simulation.css";
 import "diagram-js-minimap/assets/diagram-js-minimap.css";
+// Depois do CSS das bibliotecas: é a ordem que faz o tema do back-office
+// vencer o tema claro que elas trazem de fábrica.
+import "./bpmn-estudio.css";
 import type { ReactNode } from "react";
 
 export const metadata = {

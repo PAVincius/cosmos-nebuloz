@@ -22,6 +22,102 @@ import { MERMAID_EXEMPLO, MermaidEditor } from "@/components/mermaid-editor";
  * por `kind`. Duas cópias divergiriam no primeiro ajuste de fluxo.
  */
 
+/** Teto do arquivo enviado. Um BPMN de processo real fica na casa das dezenas
+ *  de KB; 2 MB já é sinal de arquivo errado, e recusar aqui evita descobrir
+ *  isso só quando o payload da action estourar. */
+const LIMITE_BYTES = 2 * 1024 * 1024;
+
+const EXTENSOES: Record<DiagramKind, string> = {
+  BPMN: ".bpmn,.xml",
+  MERMAID: ".mmd,.mermaid,.md,.txt",
+};
+
+/** No topo por exigência do lint, e com razão: regex literal dentro de handler
+ *  é recompilada a cada render. */
+const EXTENSAO_FINAL = /\.[^.]+$/;
+
+type Enviado = { nome: string; texto: string };
+
+/** O que a linha de dica diz, nos três casos. */
+function dica(enviado: Enviado | null, kind: DiagramKind): string {
+  if (enviado) {
+    return `${enviado.nome} · ${Math.round(enviado.texto.length / 1024)} KB`;
+  }
+  return kind === "BPMN"
+    ? "sem arquivo — nasce com um evento de início"
+    : "sem arquivo — nasce com um fluxo de exemplo";
+}
+
+/**
+ * Criação de diagrama: nome mais duas origens, em branco ou arquivo existente.
+ *
+ * Sem a segunda, trazer um diagrama que já existe obriga a abrir o arquivo,
+ * copiar e colar — e no BPMN isso é um XML de dezenas de KB.
+ */
+function FormularioNovo({
+  kind,
+  nome,
+  enviado,
+  onNome,
+  onArquivo,
+  onCriar,
+}: {
+  kind: DiagramKind;
+  nome: string;
+  enviado: Enviado | null;
+  onNome: (v: string) => void;
+  onArquivo: (f: File | undefined) => void;
+  onCriar: () => void;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
+      <Campo htmlFor="nome-diagrama" label="Nome">
+        <input
+          id="nome-diagrama"
+          onChange={(e) => onNome(e.target.value)}
+          style={INPUT}
+          value={nome}
+        />
+      </Campo>
+
+      <Campo htmlFor="arquivo-diagrama" label="Ou envie um arquivo">
+        <input
+          accept={EXTENSOES[kind]}
+          id="arquivo-diagrama"
+          onChange={(e) => onArquivo(e.target.files?.[0])}
+          style={{
+            ...INPUT,
+            padding: "7px 9px",
+            fontSize: 11.5,
+            cursor: "pointer",
+          }}
+          type="file"
+        />
+      </Campo>
+
+      <p
+        className="mono"
+        style={{
+          margin: 0,
+          fontSize: 10.5,
+          lineHeight: 1.5,
+          color: enviado ? "var(--green-text)" : "var(--ink-faint)",
+        }}
+      >
+        {dica(enviado, kind)}
+      </p>
+
+      <BotaoPrimario
+        disabled={nome.trim().length < 2}
+        onClick={onCriar}
+        type="button"
+      >
+        {enviado ? "Importar" : "Criar em branco"}
+      </BotaoPrimario>
+    </div>
+  );
+}
+
 export function Estudio({
   kind,
   iniciais,
@@ -35,9 +131,28 @@ export function Estudio({
   const [aberto, setAberto] = useState<DiagramDetail | null>(null);
   const [criando, setCriando] = useState(false);
   const [nome, setNome] = useState("");
+  const [enviado, setEnviado] = useState<Enviado | null>(null);
   const [erro, setErro] = useState<string | null>(null);
 
   const emBranco = kind === "BPMN" ? BPMN_EM_BRANCO : MERMAID_EXEMPLO;
+
+  const receberArquivo = useCallback(async (arquivo: File | undefined) => {
+    if (!arquivo) {
+      return;
+    }
+    setErro(null);
+    if (arquivo.size > LIMITE_BYTES) {
+      setErro(
+        `${arquivo.name} tem ${Math.round(arquivo.size / 1024)} KB e o limite é 2 MB. Confira se é mesmo um diagrama.`
+      );
+      return;
+    }
+    const texto = await arquivo.text();
+    setEnviado({ nome: arquivo.name, texto });
+    // Nome do arquivo sem extensão vira sugestão, e só quando o campo está
+    // vazio: sobrescrever o que a pessoa já digitou seria roubar o teclado.
+    setNome((atual) => atual || arquivo.name.replace(EXTENSAO_FINAL, ""));
+  }, []);
 
   const abrir = useCallback(async (id: string) => {
     setErro(null);
@@ -54,7 +169,7 @@ export function Estudio({
     const res = await createDiagramAction({
       kind,
       name: nome,
-      source: emBranco,
+      source: enviado?.texto ?? emBranco,
     });
     if (!res.ok) {
       setErro(res.error);
@@ -62,6 +177,7 @@ export function Estudio({
     }
     setCriando(false);
     setNome("");
+    setEnviado(null);
     // Recarrega o detalhe em vez de montar a linha na mão: o que a tela mostra
     // passa a ser o que o banco gravou, e não a minha suposição do que gravou.
     const det = await getDiagram(res.data.id);
@@ -81,7 +197,7 @@ export function Estudio({
         ...atual,
       ]);
     }
-  }, [kind, nome, emBranco]);
+  }, [kind, nome, emBranco, enviado]);
 
   const salvar = useCallback(
     async (source: string, nota: string): Promise<string | null> => {
@@ -131,23 +247,14 @@ export function Estudio({
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {criando ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <Campo htmlFor="nome-diagrama" label="Nome">
-                  <input
-                    id="nome-diagrama"
-                    onChange={(e) => setNome(e.target.value)}
-                    style={INPUT}
-                    value={nome}
-                  />
-                </Campo>
-                <BotaoPrimario
-                  disabled={nome.trim().length < 2}
-                  onClick={criar}
-                  type="button"
-                >
-                  Criar
-                </BotaoPrimario>
-              </div>
+              <FormularioNovo
+                enviado={enviado}
+                kind={kind}
+                nome={nome}
+                onArquivo={receberArquivo}
+                onCriar={criar}
+                onNome={setNome}
+              />
             ) : null}
 
             {lista.length === 0 ? (

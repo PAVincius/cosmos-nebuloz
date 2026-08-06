@@ -227,9 +227,13 @@ export function BpmnModeler({
           background: "var(--surface)",
         }}
       >
-        <div ref={canvasRef} style={{ height: "100%", minWidth: 0 }} />
         <div
-          className="scroll"
+          className="bpmn-estudio"
+          ref={canvasRef}
+          style={{ height: "100%", minWidth: 0 }}
+        />
+        <div
+          className="scroll bpmn-estudio-painel"
           ref={painelRef}
           style={{
             height: "100%",

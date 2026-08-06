@@ -1,0 +1,127 @@
+/* bpmn-estudio.css — tema do bpmn-js com os tokens do back-office.
+ *
+ * O bpmn-js e o properties-panel trazem tema claro próprio, com cinzas e azuis
+ * que não são os da marca. Sem isto o canvas fica um retângulo branco no meio de
+ * um painel escuro — foi o "meio cru" que apareceu na primeira olhada.
+ *
+ * ATENÇÃO À LICENÇA: a bpmn.io License exige que o watermark que linka para
+ * bpmn.io fique visível e NÃO sobreposto. Nada aqui mexe em `.bjs-powered-by`,
+ * e nenhuma regra abaixo cobre o canto inferior direito onde ele mora. Se
+ * alguém precisar ajustar o canvas, esse é o limite que não se move.
+ */
+
+.bpmn-estudio {
+  --bpmn-borda: var(--hairline);
+  --bpmn-fundo: var(--surface);
+  --bpmn-fundo-2: var(--surface-2);
+  --bpmn-tinta: var(--ink);
+  --bpmn-tinta-fraca: var(--ink-muted);
+}
+
+/* ── Canvas ──────────────────────────────────────────────────────── */
+
+.bpmn-estudio .djs-container {
+  background: var(--surface);
+}
+
+/* Grade sutil, no lugar do branco chapado. Decorativa. */
+.bpmn-estudio .djs-container svg {
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(rgba(127, 127, 127, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(127, 127, 127, 0.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* Formas: contorno na tinta do tema, preenchimento na superfície elevada. O
+   bpmn-js pinta stroke/fill inline em alguns elementos, daí o !important. */
+.bpmn-estudio .djs-visual > :is(rect, circle, ellipse, polygon, path) {
+  stroke: var(--ink-subtle) !important;
+}
+.bpmn-estudio .djs-visual > :is(rect, circle, ellipse, polygon) {
+  fill: var(--surface-2) !important;
+}
+.bpmn-estudio .djs-visual > text,
+.bpmn-estudio .djs-visual > text > tspan {
+  fill: var(--ink) !important;
+  font-family: inherit !important;
+}
+/* Conector é linha, não caixa: preencher deixaria a seta com miolo sólido. */
+.bpmn-estudio .djs-connection .djs-visual > path {
+  fill: none !important;
+}
+
+.bpmn-estudio .djs-element.selected .djs-outline,
+.bpmn-estudio .djs-shape.hover .djs-outline {
+  stroke: var(--accent) !important;
+}
+
+/* ── Paleta e context pad ────────────────────────────────────────── */
+
+.bpmn-estudio .djs-palette,
+.bpmn-estudio .djs-context-pad .entry,
+.bpmn-estudio .djs-popup {
+  background: var(--surface-2);
+  border-color: var(--hairline-strong);
+  color: var(--ink);
+}
+
+.bpmn-estudio .djs-palette .entry,
+.bpmn-estudio .djs-context-pad .entry {
+  color: var(--ink-muted);
+}
+
+.bpmn-estudio .djs-palette .entry:hover,
+.bpmn-estudio .djs-context-pad .entry:hover {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+.bpmn-estudio .djs-palette .separator {
+  border-color: var(--hairline);
+}
+
+/* ── Minimapa ────────────────────────────────────────────────────── */
+
+.bpmn-estudio .djs-minimap {
+  background: var(--surface-2);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  color: var(--ink-muted);
+}
+.bpmn-estudio .djs-minimap .djs-minimap-toggle {
+  background: var(--surface-3);
+  color: var(--ink-muted);
+}
+
+/* ── Properties panel ────────────────────────────────────────────── */
+
+/* O painel expõe custom properties próprias; sobrescrevê-las aqui evita ter de
+   caçar cada seletor interno, que muda entre versões menores da biblioteca. */
+.bpmn-estudio-painel {
+  --bio-properties-panel-background-color: var(--surface-2);
+  --bio-properties-panel-text: var(--ink);
+  --bio-properties-panel-text-light: var(--ink-muted);
+  --bio-properties-panel-border-color: var(--hairline);
+  --bio-properties-panel-group-title-color: var(--ink);
+  --bio-properties-panel-input-background-color: var(--surface);
+  --bio-properties-panel-input-border-color: var(--hairline-strong);
+  --bio-properties-panel-input-focus-border-color: var(--accent);
+  --bio-properties-panel-input-focus-background-color: var(--surface);
+  --bio-properties-panel-placeholder-color: var(--ink-faint);
+  --bio-properties-panel-placeholder-background-color: var(--surface-2);
+  --bio-properties-panel-header-background-color: var(--surface-3);
+  --bio-properties-panel-header-color: var(--ink);
+  --bio-properties-panel-dropdown-background-color: var(--surface-3);
+  --bio-properties-panel-toggle-switch-on-background-color: var(--accent);
+  font-family: inherit;
+}
+
+/* ── Simulação de token ──────────────────────────────────────────── */
+
+.bpmn-estudio .bts-toggle-mode,
+.bpmn-estudio .bts-palette {
+  background: var(--surface-2);
+  border-color: var(--hairline-strong);
+  color: var(--ink-muted);
+}

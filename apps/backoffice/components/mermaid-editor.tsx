@@ -26,6 +26,50 @@ export const MERMAID_EXEMPLO = `flowchart LR
 const ESPERA_MS = 400;
 const VAZIO = "flowchart LR\n  vazio[Sem conteúdo]";
 
+const ZOOM_MIN = 0.25;
+const ZOOM_MAX = 4;
+const ZOOM_PASSO = 0.25;
+
+/** Mantém o zoom dentro da faixa útil: abaixo de 25% nada se lê, acima de 400%
+ *  o SVG vira pixel gigante sem ganho de informação. */
+const limitar = (z: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
+
+function BotaoZoom({
+  children,
+  onClick,
+  rotulo,
+}: {
+  children: string;
+  onClick: () => void;
+  rotulo: string;
+}) {
+  return (
+    <button
+      aria-label={rotulo}
+      className="btn"
+      onClick={onClick}
+      style={{
+        width: 24,
+        height: 24,
+        display: "grid",
+        placeItems: "center",
+        background: "none",
+        border: "1px solid var(--hairline)",
+        borderRadius: "var(--r-sm)",
+        fontSize: 14,
+        fontWeight: 700,
+        lineHeight: 1,
+        color: "var(--ink-muted)",
+        cursor: "pointer",
+      }}
+      title={rotulo}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}
+
 /** Renderiza a DSL em SVG. Fora do componente para o efeito ficar só com o
  *  debounce e a decisão de qual resposta ainda vale. */
 async function renderizar(id: string, source: string): Promise<string> {
@@ -55,6 +99,7 @@ export function MermaidEditor({
   const [erroSalvar, setErroSalvar] = useState<string | null>(null);
   const [nota, setNota] = useState("");
   const [salvando, setSalvando] = useState(false);
+  const [zoom, setZoom] = useState(1);
   const seq = useRef(0);
 
   const sujo = source !== sourceInicial;
@@ -186,25 +231,61 @@ export function MermaidEditor({
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-          <span
-            className="mono"
-            style={{
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: ".12em",
-              textTransform: "uppercase",
-              color: erroRender ? "var(--red-text)" : "var(--ink-faint)",
-            }}
-          >
-            {erroRender ? "Não renderizou" : "Prévia"}
-          </span>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span
+              className="mono"
+              style={{
+                flex: 1,
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: ".12em",
+                textTransform: "uppercase",
+                color: erroRender ? "var(--red-text)" : "var(--ink-faint)",
+              }}
+            >
+              {erroRender ? "Não renderizou" : "Prévia"}
+            </span>
+            {/* Zoom só sobre a prévia — o diagrama gerado costuma sair maior
+                que a caixa, e sem isto a única saída é ler o SVG rolando. */}
+            <BotaoZoom
+              onClick={() => setZoom((z) => limitar(z - ZOOM_PASSO))}
+              rotulo="Diminuir zoom"
+            >
+              −
+            </BotaoZoom>
+            <button
+              className="btn mono"
+              onClick={() => setZoom(1)}
+              style={{
+                minWidth: 46,
+                background: "none",
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-sm)",
+                padding: "3px 6px",
+                fontSize: 10.5,
+                fontWeight: 700,
+                color: "var(--ink-muted)",
+                cursor: "pointer",
+              }}
+              title="Voltar para 100%"
+              type="button"
+            >
+              {Math.round(zoom * 100)}%
+            </button>
+            <BotaoZoom
+              onClick={() => setZoom((z) => limitar(z + ZOOM_PASSO))}
+              rotulo="Aumentar zoom"
+            >
+              +
+            </BotaoZoom>
+          </div>
           <div
             className="scroll"
             style={{
               height: 460,
               overflow: "auto",
               display: "grid",
-              placeItems: "center",
+              placeItems: zoom > 1 ? "start" : "center",
               padding: 14,
               background: "var(--surface)",
               border: `1px solid ${erroRender ? "rgba(var(--red-rgb),.35)" : "var(--hairline)"}`,
@@ -237,8 +318,17 @@ export function MermaidEditor({
               // por `assertCanWrite` — não é conteúdo de terceiro. Se um dia
               // esta tela aceitar fonte de fora, esta linha precisa voltar para
               // discussão.
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: SVG sanitizado pelo DOMPurify do mermaid em securityLevel strict
-              <div dangerouslySetInnerHTML={{ __html: svg }} />
+              <div
+                // biome-ignore lint/security/noDangerouslySetInnerHtml: SVG sanitizado pelo DOMPurify do mermaid em securityLevel strict
+                dangerouslySetInnerHTML={{ __html: svg }}
+                style={{
+                  transform: `scale(${zoom})`,
+                  // Cresce a partir do topo-esquerda para o scroll alcançar o
+                  // que passou da caixa; com origem no centro, metade do
+                  // diagrama ampliado fica fora e inacessível.
+                  transformOrigin: "top left",
+                }}
+              />
             )}
           </div>
         </div>
