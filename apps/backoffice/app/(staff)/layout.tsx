@@ -24,5 +24,16 @@ export default async function StaffLayout({
     );
   }
 
+  // Título próprio: quem estourou o teto não perdeu acesso, e oferecer "entrar
+  // com outra conta" aqui mandaria a pessoa fazer logout à toa.
+  if (access.status === "rate_limited") {
+    return (
+      <div className="mx-auto max-w-md rounded-lg border p-8 text-center">
+        <h1 className="font-semibold text-xl">Requisições demais</h1>
+        <p className="mt-2 text-muted-foreground text-sm">{access.message}</p>
+      </div>
+    );
+  }
+
   return <Shell staff={access.staff}>{children}</Shell>;
 }

@@ -460,6 +460,9 @@ importers:
       '@repo/provisioning':
         specifier: workspace:*
         version: link:../../packages/provisioning
+      '@repo/rate-limit':
+        specifier: workspace:*
+        version: link:../../packages/rate-limit
       '@repo/rbac':
         specifier: workspace:*
         version: link:../../packages/rbac

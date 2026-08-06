@@ -1,6 +1,7 @@
 import { log } from "@repo/observability/log";
 import { ProvisioningError } from "@repo/provisioning";
 import { StaffAuthError } from "./guard";
+import { RateLimitError } from "./rate-limit";
 
 export type Result<T> =
   | { ok: true; data: T }
@@ -24,6 +25,11 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
       return err(e.message, e.code);
     }
     if (e instanceof StaffAuthError) {
+      return err(e.message, e.code);
+    }
+    // Sem este caso, o teto viraria "não foi possível concluir a operação" e a
+    // pessoa perderia a única informação útil: em quantos segundos voltar.
+    if (e instanceof RateLimitError) {
       return err(e.message, e.code);
     }
     log.error("[backoffice]", { error: String(e) });

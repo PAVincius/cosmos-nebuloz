@@ -12,6 +12,7 @@ import {
 import { invalidateModuleCache } from "@repo/rbac";
 import { revalidatePath } from "next/cache";
 import { assertCanWrite, requirePlatformStaff } from "@/lib/guard";
+import { assertDentroDoLimite } from "@/lib/rate-limit";
 import { type Result, safeAction } from "@/lib/safe-action";
 
 async function tenantIdBySlug(slug: string): Promise<string> {
@@ -91,6 +92,9 @@ export async function bootstrapCharterAction(input: {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
+    // Cota própria: esta operação cria tenant e roda bootstrap, e o teto de
+    // navegação seria teto nenhum para ela.
+    await assertDentroDoLimite("provisionamento", staff.userId);
 
     const tenantId = await tenantIdBySlug(input.slug);
 
@@ -120,6 +124,9 @@ export async function provisionTenantAction(input: {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
+    // Cota própria: esta operação cria tenant e roda bootstrap, e o teto de
+    // navegação seria teto nenhum para ela.
+    await assertDentroDoLimite("provisionamento", staff.userId);
 
     const result = await provisionTenant(
       platformDb,

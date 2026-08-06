@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const getSession = vi.fn();
 const findFirst = vi.fn();
+const assertDentroDoLimite = vi.fn();
 
 vi.mock("@repo/auth/server", () => ({
   auth: { api: { getSession } },
@@ -12,6 +13,10 @@ vi.mock("@repo/database", () => ({
 vi.mock("next/headers", () => ({
   headers: () => Promise.resolve(new Headers()),
 }));
+vi.mock("../lib/rate-limit", () => ({
+  assertDentroDoLimite,
+  RateLimitError: class extends Error {},
+}));
 
 const { requirePlatformStaff, SYSTEM_TENANT_ID } = await import("../lib/guard");
 
@@ -19,6 +24,7 @@ describe("requirePlatformStaff", () => {
   beforeEach(() => {
     getSession.mockReset();
     findFirst.mockReset();
+    assertDentroDoLimite.mockReset();
   });
 
   it("nega quem não tem sessão", async () => {
@@ -75,5 +81,36 @@ describe("requirePlatformStaff", () => {
     const staff = await requirePlatformStaff();
 
     expect(staff.canWrite).toBe(false);
+  });
+  it("aplica o teto de requisição, com a identidade como chave", async () => {
+    getSession.mockResolvedValue({
+      user: { id: "user-staff", email: "v@n.com", name: "V" },
+    });
+    findFirst.mockResolvedValue({ role: "ADMIN" });
+
+    await requirePlatformStaff();
+
+    expect(assertDentroDoLimite).toHaveBeenCalledWith("staff", "user-staff");
+  });
+
+  it("o teto vem antes da consulta de membership", async () => {
+    // Quem já autenticou mas não é da equipe também para no teto, em vez de
+    // bater no banco a cada tentativa.
+    getSession.mockResolvedValue({
+      user: { id: "user-x", email: "x@n.com", name: null },
+    });
+    assertDentroDoLimite.mockRejectedValue(new Error("estourou"));
+
+    await expect(requirePlatformStaff()).rejects.toThrow("estourou");
+    expect(findFirst).not.toHaveBeenCalled();
+  });
+
+  it("sessão ausente não gasta cota — não há identidade para cobrar", async () => {
+    getSession.mockResolvedValue(null);
+
+    await expect(requirePlatformStaff()).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
+    expect(assertDentroDoLimite).not.toHaveBeenCalled();
   });
 });
