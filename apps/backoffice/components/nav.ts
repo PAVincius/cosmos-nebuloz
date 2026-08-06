@@ -92,7 +92,7 @@ export const BO_NAV: NavSection[] = [
         icon: "tag",
         label: "Propostas",
         pendente:
-          "Depende da entidade Proposal e da função priceProposal(). O gate de desconto acima de 15% também depende de Approval.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/servicos",
