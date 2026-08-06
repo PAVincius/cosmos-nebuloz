@@ -80,7 +80,7 @@ export const BO_NAV: NavSection[] = [
         icon: "book",
         label: "Biblioteca de IP",
         pendente:
-          "Acervo de ativos reutilizáveis entre engajamentos. Nenhuma entidade de ativo existe, e ela depende de Engagement para saber de onde o ativo veio.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },

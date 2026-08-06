@@ -11,6 +11,7 @@ import {
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
+import { slugificar } from "@/lib/slug";
 
 /**
  * Diagramas do back-office: BPMN e diagrama-como-código.
@@ -24,20 +25,6 @@ import { type Result, safeAction } from "@/lib/safe-action";
 
 const TIPOS = ["BPMN", "MERMAID"] as const;
 export type DiagramKind = (typeof TIPOS)[number];
-
-const NAO_ALFANUM = /[^a-z0-9]+/g;
-const BORDA_HIFEN = /(^-|-$)/g;
-
-/** Slug a partir do nome. Local de propósito: o slugify do provisioning é de
- *  tenant e carrega regras de reserva que não valem para diagrama. */
-function slugificar(nome: string): string {
-  return nome
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(NAO_ALFANUM, "-")
-    .replace(BORDA_HIFEN, "");
-}
 
 export type DiagramRow = {
   id: string;
