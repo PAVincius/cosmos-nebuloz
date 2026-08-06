@@ -64,6 +64,7 @@ const STATUS_META: Record<MapRow["status"], { label: string; tone: Tone }> = {
   NAO_ATENDE: { label: "Não atende", tone: "red" },
   SEM_VEREDITO: { label: "Sem veredito", tone: "neutral" },
   REVISAR: { label: "Revisar", tone: "amber" },
+  NAO_APLICAVEL: { label: "Não se aplica", tone: "neutral" },
 };
 
 const FORMAT_OPTIONS: { value: "csv" | "json" | "pdf"; label: string }[] = [
@@ -76,6 +77,7 @@ const STATUS_ORDER: MapRow["status"][] = [
   "ATENDE",
   "PARCIAL",
   "NAO_ATENDE",
+  "NAO_APLICAVEL",
   "REVISAR",
   "SEM_VEREDITO",
 ];

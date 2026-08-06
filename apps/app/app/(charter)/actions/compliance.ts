@@ -26,7 +26,13 @@ export type MapRow = {
   citacao: string;
   resumo: string;
   peso: number | null;
-  status: "ATENDE" | "PARCIAL" | "NAO_ATENDE" | "SEM_VEREDITO" | "REVISAR";
+  status:
+    | "ATENDE"
+    | "PARCIAL"
+    | "NAO_ATENDE"
+    | "SEM_VEREDITO"
+    | "REVISAR"
+    | "NAO_APLICAVEL";
   comentario: string | null;
   capabilityId: string | null;
   capabilityLabel: string | null;
@@ -281,7 +287,8 @@ export async function publishSetVersion(
           | "PARCIAL"
           | "NAO_ATENDE"
           | "SEM_VEREDITO"
-          | "REVISAR";
+          | "REVISAR"
+          | "NAO_APLICAVEL";
         comentario: string | null;
         capabilityId: string | null;
       }[] = [];
@@ -341,6 +348,7 @@ const SetCoverageSchema = z.object({
     "NAO_ATENDE",
     "SEM_VEREDITO",
     "REVISAR",
+    "NAO_APLICAVEL",
   ]),
   capabilityId: z.string().min(1).optional(),
   comentario: z.string().trim().max(2000).optional(),
@@ -366,6 +374,16 @@ export async function setCoverage(
       throw new GovernanceError(
         "coverage.needs.capability",
         "Alegar conformidade exige apontar a capacidade que a prova."
+      );
+    }
+    // Simétrico invertido da regra acima. Lá, alegar conformidade exige
+    // apontar a prova; aqui, descartar exige dizer por quê. "Não se aplica"
+    // sem motivo é indistinguível de "não quis responder", e é o veredito
+    // mais fácil de abusar num documento que vai para um comprador.
+    if (data.status === "NAO_APLICAVEL" && !data.comentario) {
+      throw new GovernanceError(
+        "coverage.needs.reason",
+        "Marcar como não aplicável exige dizer por quê."
       );
     }
 

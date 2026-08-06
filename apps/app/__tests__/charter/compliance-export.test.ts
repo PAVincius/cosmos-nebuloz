@@ -39,6 +39,23 @@ describe("cabecalho", () => {
   });
 });
 
+describe("cabecalho e nome de arquivo com NAO_APLICAVEL", () => {
+  it("mapa todo respondido, mesmo com descartes, não é rascunho", () => {
+    // Se NAO_APLICAVEL contasse como sem veredito, este mapa apareceria como
+    // rascunho para sempre — e o arquivo sairia com o sufixo, para o comprador.
+    const completo = {
+      ...base,
+      semVeredito: 0,
+      linhas: base.linhas.map((l) => ({
+        ...l,
+        status: "NAO_APLICAVEL" as const,
+      })),
+    };
+
+    expect(cabecalho(completo)).not.toContain("sem veredito");
+  });
+});
+
 // ── toCsv (fix round 2 — guard de injeção de fórmula) ───────────────────────
 // Import direto do módulo real, mesmo padrão de cabecalho acima: toCsv não
 // pode ser exportado de compliance-export.ts ("use server" só aceita export
