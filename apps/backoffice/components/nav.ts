@@ -189,13 +189,7 @@ export const BO_NAV: NavSection[] = [
   {
     section: "Auditoria",
     items: [
-      {
-        href: "/audit",
-        icon: "history",
-        label: "Audit Explorer",
-        pendente:
-          "A timeline de UM tenant já existe, em Clientes › o cliente › Auditoria, com o diff campo-a-campo. Falta o explorer agregado do FR-10.3: busca e filtro sobre o AuditLog de todos os tenants ao mesmo tempo.",
-      },
+      { href: "/audit", icon: "history", label: "Audit Explorer" },
       { href: "/atividade", icon: "userCheck", label: "Atividade do staff" },
     ],
   },
