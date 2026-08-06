@@ -705,7 +705,10 @@ export function Select<T extends string>({
 }: {
   value: T;
   onChange: (v: T) => void;
-  options: { value: T; label: string }[];
+  /** `disabled` por opção — ex.: recusar ATENDE/PARCIAL até uma capacidade
+   *  estar escolhida, explicando antes em vez de deixar o servidor recusar
+   *  depois. */
+  options: { value: T; label: string; disabled?: boolean }[];
   invalid?: boolean;
   id?: string;
   ariaLabel?: string;
@@ -724,7 +727,7 @@ export function Select<T extends string>({
       value={value}
     >
       {options.map((o) => (
-        <option key={o.value} value={o.value}>
+        <option disabled={o.disabled} key={o.value} value={o.value}>
           {o.label}
         </option>
       ))}

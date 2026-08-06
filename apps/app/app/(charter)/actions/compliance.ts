@@ -2,7 +2,7 @@
 
 import { withTenantDb } from "@repo/database";
 import { z } from "zod";
-import { getCapability } from "@/lib/charter/capabilities";
+import { CAPABILITIES, getCapability } from "@/lib/charter/capabilities";
 import { requireCharterPermissionContext } from "@/lib/charter/guards";
 import { type Result, safeAction } from "../../actions/_base";
 import { GovernanceError, logCharterAudit } from "./_shared";
@@ -576,5 +576,21 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
         total: s._count.requirements,
       }));
     });
+  });
+}
+
+/**
+ * Catálogo de capacidades, só `id` + `label` — o suficiente para o editor de
+ * cobertura na tela oferecer opções. `evidencia` fica de fora de propósito:
+ * ela chama `withTenantDb` (lib/charter/capabilities.ts é `server-only`) e
+ * nunca deveria atravessar para o cliente, que só precisa saber que
+ * capacidade existe, não como ela prova nada.
+ */
+export async function listCapabilities(): Promise<
+  Result<{ id: string; label: string }[]>
+> {
+  return await safeAction(async () => {
+    await requireCharterPermissionContext("compliance.map");
+    return CAPABILITIES.map(({ id, label }) => ({ id, label }));
   });
 }

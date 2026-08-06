@@ -13,12 +13,15 @@ import { useCallback, useState, useTransition } from "react";
 import {
   getComplianceMap,
   importRequirementSet,
+  listCapabilities,
   listRequirementSets,
   type MapRow,
+  setCoverage,
 } from "@/app/(charter)/actions/compliance";
 import { exportComplianceMap } from "@/app/(charter)/actions/compliance-export";
 import {
   Badge,
+  Button,
   KpiCard,
   PageHeader,
   SectionCard,
@@ -33,9 +36,12 @@ import {
   Select,
   SkeletonCard,
   SmartEmptyState,
+  Textarea,
 } from "../base";
 import { Callout } from "../form-kit";
 import { useCharterData } from "../use-charter-data";
+
+type CapabilityOption = { id: string; label: string };
 
 // Ruído curto para a contagem de evidência ("37 aceites"), escolhido pelo id
 // da capacidade — não pelo catálogo real (lib/charter/capabilities.ts é
@@ -64,6 +70,62 @@ const FORMAT_OPTIONS: { value: "csv" | "json" | "pdf"; label: string }[] = [
   { value: "json", label: "JSON" },
   { value: "pdf", label: "PDF" },
 ];
+
+const STATUS_ORDER: MapRow["status"][] = [
+  "ATENDE",
+  "PARCIAL",
+  "NAO_ATENDE",
+  "REVISAR",
+  "SEM_VEREDITO",
+];
+
+const STOPWORD_LEN = 3;
+// Marcas de acento combinantes (U+0300-U+036F) que sobram depois de
+// normalize("NFD") separar a letra do acento — ex. "e" + combining acute.
+const DIACRITIC_MARKS = /[\u0300-\u036f]/g;
+
+const NON_WORD_CHARS = /[^a-z0-9]+/;
+
+/** Tokeniza em minúsculas, sem acento, descartando palavra curta demais para
+ *  carregar sentido (artigo, preposição). */
+function keywords(text: string): Set<string> {
+  return new Set(
+    text
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(DIACRITIC_MARKS, "")
+      .split(NON_WORD_CHARS)
+      .filter((w) => w.length > STOPWORD_LEN)
+  );
+}
+
+/**
+ * Sugestão por palavra-chave — nunca decide sozinha. Compara palavras do
+ * resumo/citação da exigência com o rótulo de cada capacidade e devolve a de
+ * maior sobreposição; `""` quando nenhuma capacidade tem nada em comum, para
+ * não sugerir ao acaso. O campo continua editável — isto só pré-seleciona.
+ */
+function suggestCapabilityId(
+  row: MapRow,
+  capabilities: CapabilityOption[]
+): string {
+  const target = keywords(`${row.resumo} ${row.citacao}`);
+  let best = "";
+  let bestScore = 0;
+  for (const cap of capabilities) {
+    let score = 0;
+    for (const word of keywords(cap.label)) {
+      if (target.has(word)) {
+        score += 1;
+      }
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      best = cap.id;
+    }
+  }
+  return best;
+}
 
 /** Dispara o download no browser a partir do conteúdo já trazido pela server
  *  action. PDF chega em base64 (binário); CSV e JSON chegam em utf8 — tratar
@@ -133,7 +195,166 @@ function EvidenceBlock({ row }: { row: MapRow }) {
   );
 }
 
-function RequirementRow({ row }: { row: MapRow }) {
+/**
+ * O passo "mapear" do fluxo (importar → mapear → gerar). Sem isto,
+ * CharterCoverage só nasce por escrita direta no banco e o mapa nunca sai de
+ * SEM_VEREDITO sozinho — os quatro estados que a tela sabe mostrar viram
+ * código morto em produção.
+ *
+ * A tela sugere a capacidade por palavra-chave; a pessoa decide. A sugestão
+ * só pré-seleciona o campo — nada é salvo até o clique em "Salvar veredito".
+ * `setCoverage` já recusa ATENDE/PARCIAL sem capabilityId; desabilitar essas
+ * opções aqui explica antes em vez de deixar o servidor recusar depois.
+ */
+function CoverageEditor({
+  row,
+  capabilities,
+  onSaved,
+}: {
+  row: MapRow;
+  capabilities: CapabilityOption[];
+  onSaved: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pending, startTransition] = useTransition();
+  const [status, setStatus] = useState<MapRow["status"]>(row.status);
+  const [capabilityId, setCapabilityId] = useState(
+    row.capabilityId ?? suggestCapabilityId(row, capabilities)
+  );
+  const [comentario, setComentario] = useState(row.comentario ?? "");
+
+  if (!open) {
+    return (
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          icon="fileText"
+          onClick={() => setOpen(true)}
+          size="sm"
+          variant="secondary"
+        >
+          Definir veredito
+        </Button>
+      </div>
+    );
+  }
+
+  const needsCapability = status === "ATENDE" || status === "PARCIAL";
+  const ready = !needsCapability || capabilityId !== "";
+
+  const statusOptions = STATUS_ORDER.map((s) => ({
+    value: s,
+    label: STATUS_META[s].label,
+    // Recusa ATENDE/PARCIAL até uma capacidade estar escolhida, em vez de
+    // deixar o clique em "Salvar" voltar com o erro do servidor.
+    disabled: (s === "ATENDE" || s === "PARCIAL") && capabilityId === "",
+  }));
+
+  const capabilityOptions = [
+    { value: "", label: "Nenhuma capacidade" },
+    ...capabilities.map((c) => ({ value: c.id, label: c.label })),
+  ];
+
+  const submit = () =>
+    startTransition(async () => {
+      const res = await runWithToast(
+        () =>
+          setCoverage({
+            requirementId: row.requirementId,
+            status,
+            capabilityId: capabilityId || undefined,
+            comentario: comentario.trim() || undefined,
+          }),
+        {
+          loading: "Salvando veredito…",
+          success: "Veredito registrado",
+        }
+      );
+      if (res.ok) {
+        setOpen(false);
+        onSaved();
+      }
+    });
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        padding: 12,
+        borderRadius: 9,
+        border: "1px solid var(--hairline)",
+        background: "var(--surface-2)",
+      }}
+    >
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        <Field htmlFor={`status-${row.requirementId}`} label="Status">
+          <Select
+            ariaLabel="Status"
+            id={`status-${row.requirementId}`}
+            onChange={setStatus}
+            options={statusOptions}
+            value={status}
+          />
+        </Field>
+        <Field
+          hint={
+            needsCapability && capabilityId === ""
+              ? "Escolha a capacidade que prova Atende/Parcial"
+              : undefined
+          }
+          htmlFor={`capability-${row.requirementId}`}
+          label="Capacidade que prova"
+        >
+          <Select
+            ariaLabel="Capacidade que prova"
+            id={`capability-${row.requirementId}`}
+            onChange={setCapabilityId}
+            options={capabilityOptions}
+            value={capabilityId}
+          />
+        </Field>
+      </div>
+      <Field htmlFor={`comentario-${row.requirementId}`} label="Comentário">
+        <Textarea
+          id={`comentario-${row.requirementId}`}
+          onChange={(e) => setComentario(e.target.value)}
+          placeholder="Contexto opcional para quem ler depois"
+          rows={2}
+          value={comentario}
+        />
+      </Field>
+      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <GatedButton
+          allowed={!pending}
+          onClick={() => setOpen(false)}
+          reason="Salvando…"
+          variant="secondary"
+        >
+          Cancelar
+        </GatedButton>
+        <GatedButton
+          allowed={ready && !pending}
+          icon="check"
+          onClick={submit}
+          reason="Escolha uma capacidade para Atende ou Parcial"
+        >
+          {pending ? "Salvando…" : "Salvar veredito"}
+        </GatedButton>
+      </div>
+    </div>
+  );
+}
+
+function RequirementRow({
+  row,
+  capabilities,
+  onSaved,
+}: {
+  row: MapRow;
+  capabilities: CapabilityOption[];
+  onSaved: () => void;
+}) {
   const meta = STATUS_META[row.status];
   const revisar = row.status === "REVISAR";
 
@@ -215,6 +436,8 @@ function RequirementRow({ row }: { row: MapRow }) {
           Comentário: {row.comentario}
         </div>
       )}
+
+      <CoverageEditor capabilities={capabilities} onSaved={onSaved} row={row} />
     </div>
   );
 }
@@ -224,6 +447,13 @@ function ComplianceMapSection({ setId }: { setId: string }) {
   const [pending, startTransition] = useTransition();
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getComplianceMap(setId), [setId])
+  );
+  // Secundário e não bloqueante: sem capacidade nenhuma, o editor de
+  // cobertura ainda funciona para NAO_ATENDE/REVISAR/SEM_VEREDITO (não
+  // exigem capabilityId) — só ATENDE/PARCIAL ficam desabilitados até
+  // carregar, o mesmo efeito que teriam sem nenhuma capacidade no catálogo.
+  const capabilitiesState = useCharterData(
+    useCallback(() => listCapabilities(), [])
   );
 
   if (error) {
@@ -339,7 +569,12 @@ function ComplianceMapSection({ setId }: { setId: string }) {
           </div>
         ) : (
           data.linhas.map((row) => (
-            <RequirementRow key={row.requirementId} row={row} />
+            <RequirementRow
+              capabilities={capabilitiesState.data ?? []}
+              key={row.requirementId}
+              onSaved={reload}
+              row={row}
+            />
           ))
         )}
       </SectionCard>

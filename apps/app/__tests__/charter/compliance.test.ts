@@ -51,11 +51,26 @@ vi.mock("@/lib/charter/capabilities", () => ({
         }
       : undefined
   ),
+  // Catálogo mínimo para listCapabilities — evidencia real fica de fora de
+  // propósito (server-only, nunca deveria atravessar para o cliente).
+  CAPABILITIES: [
+    {
+      id: "POLICY_ATTESTATION",
+      label: "Aceite individual de política, com revalidação por versão",
+      evidencia: async () => ({ total: 37, amostra: [] }),
+    },
+    {
+      id: "VENDOR_TIER",
+      label: "Fornecedor classificado como aprovado, restrito ou bloqueado",
+      evidencia: async () => ({ total: 5, amostra: [] }),
+    },
+  ],
 }));
 
 import {
   getComplianceMap,
   importRequirementSet,
+  listCapabilities,
   publishSetVersion,
   setCoverage,
 } from "../../app/(charter)/actions/compliance";
@@ -507,5 +522,44 @@ describe("publishSetVersion", () => {
     // logCharterAudit (_shared.ts) grava para toda action do Charter, não
     // uma escolha desta função.
     expect(entrada.metadata.note).toContain("v2");
+  });
+});
+
+describe("listCapabilities", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("devolve só id e label — evidencia nunca atravessa para o cliente", async () => {
+    const res = await listCapabilities();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data).toEqual([
+      {
+        id: "POLICY_ATTESTATION",
+        label: "Aceite individual de política, com revalidação por versão",
+      },
+      {
+        id: "VENDOR_TIER",
+        label: "Fornecedor classificado como aprovado, restrito ou bloqueado",
+      },
+    ]);
+    // Nenhum item carrega evidencia (ou qualquer chave além de id/label) —
+    // é o contrato que mantém a busca de prova, que chama withTenantDb, no
+    // servidor.
+    for (const cap of res.data) {
+      expect(Object.keys(cap).sort()).toEqual(["id", "label"]);
+    }
+  });
+
+  it("exige compliance.map", async () => {
+    await listCapabilities();
+    expect(h.requireCtx).toHaveBeenCalledWith("compliance.map");
   });
 });
