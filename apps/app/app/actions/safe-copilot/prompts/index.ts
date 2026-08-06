@@ -233,22 +233,6 @@ export function getModeMessages(
 ): CoreMessage[] {
   const persona = MODE_PERSONAS[mode] ?? MODE_PERSONAS.global;
 
-  const staticBlock: CoreMessage = {
-    role: "user",
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    content: [
-      {
-        type: "text",
-        text: COPILOT_BASE_RULES,
-        // Anthropic ephemeral cache: TTL 5min, min 1024 tokens — 90% cost reduction after first call
-        // Cast needed: experimental_providerMetadata is extra field not in TextPart type definition
-        experimental_providerMetadata: {
-          anthropic: { cacheControl: { type: "ephemeral" } },
-        },
-      } as unknown as import("ai").TextPart,
-    ],
-  };
-
   const contextText = [
     rolePrompt,
     `PAPEL: ${persona.role} — ${persona.title}\nFOCO: ${persona.focus}\nESTILO: ${persona.style}\nAUDIÊNCIA: ${persona.audience}`,
@@ -257,11 +241,27 @@ export function getModeMessages(
     .filter(Boolean)
     .join("\n\n");
 
-  const contextBlock: CoreMessage = {
-    role: "user",
-    content: contextText,
+  // Regras e contexto vão numa ÚNICA mensagem `system`.
+  //
+  // Antes eram dois blocos `role: "user"`, o que dava às regras do produto
+  // exatamente a mesma autoridade que o texto de quem está do outro lado — não
+  // havia hierarquia a respeitar porque nenhuma tinha sido declarada. O próprio
+  // AI SDK documenta a mensagem de sistema única como "resilience against
+  // prompt injection attacks"; múltiplos blocos de sistema, além disso, não são
+  // suportados por todo provider.
+  //
+  // O cache efêmero da Anthropic (TTL 5min, mín. 1024 tokens, ~90% de economia
+  // a partir da segunda chamada) foi o motivo de o bloco ter nascido como
+  // `user`, já que `cacheControl` ia na part. Em `system` ele vai em
+  // `providerOptions` da própria mensagem — mesma economia, sem abrir mão da
+  // hierarquia.
+  const systemBlock: CoreMessage = {
+    role: "system",
+    content: `${COPILOT_BASE_RULES}\n\n${contextText}`,
+    providerOptions: {
+      anthropic: { cacheControl: { type: "ephemeral" } },
+    },
   };
 
-  // Insert static + context blocks before the actual conversation
-  return [staticBlock, contextBlock, ...userMessages];
+  return [systemBlock, ...userMessages];
 }

@@ -5,8 +5,8 @@ import { requireTenantSession } from "@repo/auth/server";
 import { log } from "@repo/observability/log";
 import { stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
-import { z } from "zod";
 import { saveCopilotMessages } from "@/app/actions/safe-copilot";
+import { ChatRequestSchema } from "@/app/actions/safe-copilot/chat-request";
 import { buildCopilotContext } from "@/app/actions/safe-copilot/context";
 import { getModeMessages } from "@/app/actions/safe-copilot/prompts";
 import {
@@ -16,16 +16,6 @@ import {
 import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
 import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-prompts";
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
-
-const BodySchema = z.object({
-  messages: z
-    .array(z.object({ role: z.string(), content: z.string().max(10_000) }))
-    .min(1),
-  mode: z.string().optional(),
-  surface: z.string().optional(),
-  contextRef: z.record(z.string(), z.string()).optional(),
-  sessionId: z.string().optional(),
-});
 
 async function checkIpRateLimit(ip: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
@@ -52,7 +42,7 @@ export async function POST(req: Request) {
     }
 
     const raw = await req.json();
-    const parseResult = BodySchema.safeParse(raw);
+    const parseResult = ChatRequestSchema.safeParse(raw);
     if (!parseResult.success) {
       return Response.json({ error: "Invalid request body" }, { status: 400 });
     }
@@ -127,7 +117,9 @@ export async function POST(req: Request) {
     const result = streamText({
       model,
       messages: modeMessages as any,
-      tools: buildCopilotTools(ctx.tenantId),
+      // O papel vai junto: sem ele, o guard de escrita das tools nega tudo por
+      // padrão — e antes desta linha ele nunca era avaliado.
+      tools: buildCopilotTools(ctx.tenantId, ctx.role),
       stopWhen: stepCountIs(5),
       ...(provider === "anthropic" && {
         providerOptions: {

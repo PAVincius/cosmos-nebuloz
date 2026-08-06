@@ -364,7 +364,7 @@ describe("queryOKRs", () => {
     };
     mocks.oKRFindMany.mockResolvedValue([okr]);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     const result = await tools.queryOKRs.execute(
       { status: "AT_RISK" },
       {} as never
@@ -381,7 +381,7 @@ describe("queryOKRs", () => {
   it("omits status from where clause when not provided", async () => {
     mocks.oKRFindMany.mockResolvedValue([]);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     await tools.queryOKRs.execute({}, {} as never);
 
     expect(mocks.oKRFindMany).toHaveBeenCalledWith(
@@ -404,7 +404,7 @@ describe("createFeature", () => {
     };
     mocks.featureCreate.mockResolvedValue(createdFeature);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     const result = await tools.createFeature.execute(
       {
         title: "Export to CSV",
@@ -446,7 +446,7 @@ describe("createFeature", () => {
       statusId: "BACKLOG",
     });
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     await tools.createFeature.execute(
       { title: "Bulk Import", bv: 10, tc: 5, rr: 5, js: 8, storyPoints: 8 },
       {} as never
@@ -469,7 +469,7 @@ describe("createFeature", () => {
       statusId: "BACKLOG",
     });
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     await tools.createFeature.execute(
       { title: "Zero JS feature", bv: 8, tc: 4, rr: 3, js: 0, storyPoints: 5 },
       {} as never
@@ -494,7 +494,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     const result = await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "IN_PROGRESS" },
       {} as never
@@ -520,7 +520,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     const result = await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "DONE" },
       {} as never
@@ -546,7 +546,7 @@ describe("moveFeature", () => {
     };
     mocks.featureUpdate.mockResolvedValue(updatedFeature);
 
-    const tools = buildCopilotTools(TENANT_ID) as unknown as AnyTools;
+    const tools = buildCopilotTools(TENANT_ID, "ADMIN") as unknown as AnyTools;
     await tools.moveFeature.execute(
       { featureId: "feat-1", toStatus: "BACKLOG" },
       {} as never
