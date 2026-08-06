@@ -9,6 +9,14 @@
 // evidência ("37 aceites"), nunca um selo verde: o selo diria que o sistema
 // verificou, e quem verificou foi uma pessoa nomeada em outro lugar da tela.
 
+import {
+  Badge,
+  Button,
+  KpiCard,
+  PageHeader,
+  SectionCard,
+  type Tone,
+} from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import {
   getComplianceMap,
@@ -19,14 +27,6 @@ import {
   setCoverage,
 } from "@/app/(charter)/actions/compliance";
 import { exportComplianceMap } from "@/app/(charter)/actions/compliance-export";
-import {
-  Badge,
-  Button,
-  KpiCard,
-  PageHeader,
-  SectionCard,
-  type Tone,
-} from "../../cosmos/kit";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import {
   Field,
