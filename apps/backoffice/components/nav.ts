@@ -45,7 +45,7 @@ export const BO_NAV: NavSection[] = [
         icon: "gauge",
         label: "Home",
         pendente:
-          "Painel agregado com o que exige atenção e os últimos eventos de auditoria de todos os tenants. A lista de clientes já é a tela inicial em /; o que falta é a visão cruzada, que depende do AccessLog — ele não existe no schema.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       { href: "/", icon: "building", label: "Tenants" },
       { href: "/aprovacoes", icon: "approve", label: "Aprovações" },
@@ -54,7 +54,7 @@ export const BO_NAV: NavSection[] = [
         icon: "eye",
         label: "Observabilidade",
         pendente:
-          "Falha de integração já aparece por tenant, em Clientes › o cliente › Integrações. Falta a visão cruzada de todos os tenants e o log de acesso ao painel, que depende da entidade AccessLog — ela não existe.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },
