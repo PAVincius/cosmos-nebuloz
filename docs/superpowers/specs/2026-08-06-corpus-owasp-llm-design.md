@@ -12,11 +12,22 @@ O Charter ganhou em `feat/charter-conformidade` exatamente a máquina que isso c
 
 O checklist pede **Pass / Fail / N/A** — e a terceira não existe.
 
-Não é hipótese. A stack da Nebuloz é TypeScript e Next.js: não há backend Python, RAG, base vetorial nem fine-tuning. As seções 3.2 (segurança de RAG e vetores), 3.3 (poisoning e backdoors) e boa parte da 4.2 descrevem controles sobre componentes que o produto não tem — cerca de 25 dos ~70 itens.
+**Correção de uma versão anterior deste spec.** A primeira redação justificava o `NAO_APLICAVEL` afirmando que a stack não tem backend Python, RAG, base vetorial nem fine-tuning, e que por isso ~25 itens seriam descartados. **Isso é falso**, e verificado:
 
-Marcá-los `NAO_ATENDE` faria o mapa afirmar, a um comprador, que a Nebuloz **falha** em 25 controles de segurança de IA que sequer se aplicam. É a mentira mais cara possível, porque é auto-infligida num documento comercial, e é exatamente a falha que §6 do spec do mapa nomeia como a única que importa.
+| Afirmação da versão anterior | Realidade | Onde |
+|---|---|---|
+| sem RAG | orquestrador, reescritor de query, reranker, dois caches | `packages/ai/lib/rag/` |
+| sem base vetorial | pgvector com `<=>`, modelo `PIKnowledgeVector` | `packages/database/vector-search.ts` |
+| sem fine-tuning | pipeline de corpus e geração de dataset SAFe | `experiments/slm-pipeline/scripts/` |
+| sem backend Python | cinco scripts, o maior com 33 KB | idem |
 
-Usar `PARCIAL` com comentário mente igual, mais baixo. Omitir os itens do corpus esconde metade do valor de um checklist: o comprador não vê que a pergunta foi considerada e descartada com razão.
+E `searchKnowledge` não é experimento parado: é chamada em produção pelo tool use do copilot (`apps/app/app/actions/safe-copilot/tools.ts:209`).
+
+Se aquele raciocínio tivesse virado corpus, ele nasceria recomendando dispensar §3.2 e §3.3 — LLM08 e LLM04 — que são precisamente as seções que cobrem o código que existe. **Um checklist que apaga da lista o componente que você tem é pior que checklist nenhum**, porque o item some em vez de ficar em aberto. Registrado aqui, e não corrigido em silêncio, porque é o mesmo modo de falha que este produto inteiro existe para impedir.
+
+**O `NAO_APLICAVEL` continua necessário, por outro motivo.** O checklist pede os três vereditos explicitamente em §11.1, e alguns itens genuinamente não se aplicam — §10.2 fala em shadow e canary release de modelo, que a Nebuloz não faz. Sem o terceiro valor, esses viram `NAO_ATENDE` e o mapa afirma falha onde não há controle a exercer. Marcá-los `PARCIAL` com comentário mente igual, mais baixo; omiti-los do corpus esconde metade do valor de um checklist, porque o comprador não vê que a pergunta foi considerada e descartada com razão.
+
+O que muda é a escala: são poucos itens, não 25, e **cada um precisa apontar arquivo na justificativa** — ver §4.3. Dispensa por palpite é como uma seção inteira de segurança sai do radar.
 
 **Decisão: o enum ganha `NAO_APLICAVEL`.** Migration nova — a `20260806000000_charter_conformidade` já está aplicada em produção e não se edita.
 
@@ -24,7 +35,7 @@ Usar `PARCIAL` com comentário mente igual, mais baixo. Omitir os itens do corpu
 
 ## 3. Escopo
 
-**Dentro.** O valor `NAO_APLICAVEL` no enum e tudo que precisa saber dele; o corpus com ~70 exigências citadas por seção.
+**Dentro.** O valor `NAO_APLICAVEL` no enum e tudo que precisa saber dele; o corpus com 59 exigências citadas por seção.
 
 **Fora, deliberadamente:**
 
@@ -67,7 +78,9 @@ O quinto e o sexto são o ponto: se `NAO_APLICAVEL` contasse como sem veredito, 
 
 `setCoverage` já recusa `ATENDE` e `PARCIAL` sem capacidade, porque alegação precisa de prova. `NAO_APLICAVEL` tem a exigência simétrica: **recusar sem `comentario`.**
 
-"Não se aplica" sem motivo é indistinguível de "não quis responder", e é o veredito mais fácil de abusar num documento que vai para um comprador. O comentário é o que transforma um descarte em uma decisão auditável — "não há base vetorial neste produto" é uma afirmação que alguém assina.
+"Não se aplica" sem motivo é indistinguível de "não quis responder", e é o veredito mais fácil de abusar num documento que vai para um comprador. O comentário é o que transforma um descarte em decisão auditável.
+
+E a justificativa precisa **apontar arquivo ou ausência verificável**, não impressão. A primeira versão deste spec dispensou §3.2 inteira alegando "não há base vetorial neste produto" — enquanto `packages/database/vector-search.ts` existe e roda em produção. Uma frase que soa como justificativa e não foi conferida é exatamente como uma seção de segurança sai do radar sem ninguém notar. A regra é do produto, e vale para quem escreve o corpus tanto quanto para o cliente que o responde.
 
 ### 4.4 O corpus
 
@@ -101,7 +114,7 @@ O teste de copyright existente (`licenca-copyright.test.ts`) continua valendo se
 - `NAO_APLICAVEL` **não** entra na contagem de `semVeredito` — em `getComplianceMap` e em `cabecalho`
 - um mapa em que todo item é `ATENDE` ou `NAO_APLICAVEL` **não** gera nome de arquivo com `-rascunho`
 - a tela renderiza o rótulo "Não se aplica" e o motivo
-- o corpus tem ~70 exigências, `codigo` único, `citacao` e `resumo` não vazios em todas
+- o corpus tem 59 exigências, `codigo` único, `citacao` e `resumo` não vazios em todas
 - o teste de copyright segue verde sem alteração
 
 **Verificação:** `cd apps/app && NODE_ENV=test pnpm run test`, contra o resultado mergeado com a `main`.
@@ -110,6 +123,7 @@ O teste de copyright existente (`licenca-copyright.test.ts`) continua valendo se
 
 ## 7. Lacunas conhecidas
 
-- **O corpus nasce sem veredito nenhum.** Ele só vira ativo comercial depois que alguém responder os ~70 itens. Este trabalho entrega a pergunta, não a resposta.
+- **O corpus nasce sem veredito nenhum.** Ele só vira ativo comercial depois que alguém responder os 59 itens. Este trabalho entrega a pergunta, não a resposta.
 - **`origem` não tem valor para "padrão interno".** O enum é `RFP | REGULACAO`, e um checklist derivado de OWASP fica em `REGULACAO` por aproximação. Funciona, mas o dia em que houver um terceiro tipo de origem, isto vira dívida.
-- **~25 itens serão `NAO_APLICAVEL` hoje e podem deixar de ser.** Se o produto ganhar RAG, base vetorial ou fine-tuning, esses vereditos ficam errados e nada avisa — o corpus não sabe o que a arquitetura virou. É o mesmo problema que `publishSetVersion` resolve para mudança de texto, e ele não cobre mudança de contexto.
+- **Um `NAO_APLICAVEL` pode deixar de ser verdade sem nada avisar.** O corpus não sabe o que a arquitetura virou: se a Nebuloz passar a fazer canary release de modelo, o veredito de §10.2 fica errado em silêncio. `publishSetVersion` cobre mudança de *texto* da exigência, não mudança de *contexto* do produto. Este spec já foi vítima da mesma cegueira ao afirmar que não havia RAG — a diferença é que ali havia arquivo para conferir, e aqui o gatilho é uma prática que ninguém registra em lugar nenhum.
+- **59 exigências entram sem veredito.** Responder todas é trabalho humano real, e é o que separa este corpus de uma lista de intenções.
