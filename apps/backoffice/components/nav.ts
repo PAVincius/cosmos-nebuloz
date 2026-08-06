@@ -99,7 +99,7 @@ export const BO_NAV: NavSection[] = [
         icon: "briefcase",
         label: "Serviços",
         pendente:
-          "Catálogo do que a Nebuloz vende, que é a origem dos itens de uma proposta. Depende da entidade Service — não existe.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/contas",
