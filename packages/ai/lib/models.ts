@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createOpenAI } from "@ai-sdk/openai";
 import type { EmbeddingModel, LanguageModel } from "ai";
 import { keys } from "../keys";

@@ -136,7 +136,17 @@ describe("SettingsScreen", () => {
     expect(screen.getByText("Settings")).toBeTruthy();
     // ADMIN renders the tenant name inside an editable input (see the
     // "shows editable fields..." test below) — wait on its value, not text.
-    expect(await screen.findByDisplayValue("Acme")).toBeTruthy();
+    //
+    // Timeout explícito porque este é o PRIMEIRO teste do arquivo e paga
+    // sozinho a inicialização do módulo: aqui ele leva ~1,5s, e o padrão de
+    // `findBy*` é 1s. Verde em máquina de dev, vermelho no CI de 4 cores — foi
+    // assim que derrubou o deploy do merge #56. Não é o elemento faltando: o
+    // teste "shows editable fields and a save control for an ADMIN" assere o
+    // mesmo input em ~160ms com o módulo já quente. Aumentar o orçamento não
+    // esconde defeito — se o input nunca renderizar, isto continua falhando.
+    expect(
+      await screen.findByDisplayValue("Acme", undefined, { timeout: 5000 })
+    ).toBeTruthy();
     for (const label of [
       "Workspace",
       "Membros",

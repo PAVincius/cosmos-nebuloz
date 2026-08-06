@@ -1,14 +1,42 @@
 import { models } from "@repo/ai/lib/models";
 import { database } from "@repo/database";
 import { searchKnowledge } from "@repo/database/vector-search";
+import { hasPermission, type SaFeRole } from "@repo/rbac";
 import { embed, tool } from "ai";
 import { z } from "zod";
 import { awsPricingTool, gcpPricingTool } from "./tools/pricing-tools";
 
-const VIEWER_ROLE = "VIEWER";
+const PAPEIS: readonly SaFeRole[] = [
+  "ADMIN",
+  "STE",
+  "RTE",
+  "PO",
+  "SM",
+  "DEV",
+  "MEMBER",
+];
+
+/**
+ * Pode escrever feature pelo copiloto?
+ *
+ * Pergunta ao RBAC em vez de manter uma segunda tabela aqui. A versão anterior
+ * comparava com a string `"VIEWER"`, que **não existe no enum `MemberRole`** —
+ * a comparação nunca era verdadeira, e a rota ainda por cima chamava sem passar
+ * o papel. Duas fontes de verdade para a mesma pergunta é como esse buraco
+ * nasceu; com uma só, ele não volta.
+ *
+ * Papel ausente ou desconhecido nega. É escrita disparada por texto de modelo:
+ * o modo de falha certo é fechado.
+ */
+function podeEscreverFeature(role?: string): boolean {
+  if (!(role && PAPEIS.includes(role as SaFeRole))) {
+    return false;
+  }
+  return hasPermission(role as SaFeRole, "feature:write");
+}
 
 export function buildCopilotTools(tenantId: string, role?: string) {
-  const isViewer = role === VIEWER_ROLE;
+  const semEscrita = !podeEscreverFeature(role);
   return {
     queryFlowMetrics: tool({
       description:
@@ -247,10 +275,10 @@ export function buildCopilotTools(tenantId: string, role?: string) {
         js,
         storyPoints,
       }) => {
-        if (isViewer) {
+        if (semEscrita) {
           return {
             ok: false,
-            error: "Sem permissão: VIEWER não pode criar features.",
+            error: "Sem permissão: seu papel não pode criar features.",
           };
         }
         const wsjfScore = js > 0 ? (bv + tc + rr) / js : 0;
@@ -284,10 +312,10 @@ export function buildCopilotTools(tenantId: string, role?: string) {
           .describe("Target status"),
       }),
       execute: async ({ featureId, toStatus }) => {
-        if (isViewer) {
+        if (semEscrita) {
           return {
             ok: false,
-            error: "Sem permissão: VIEWER não pode mover features.",
+            error: "Sem permissão: seu papel não pode mover features.",
           };
         }
         let extra: Record<string, unknown> = {};

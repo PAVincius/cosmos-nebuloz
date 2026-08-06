@@ -2,6 +2,7 @@ import "server-only";
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { assertDentroDoLimite } from "./rate-limit";
 
 /** O tenant interno da Nebuloz, criado pela migration 20260728020000 e marcado
  *  `isSystem = true`. Ser membro dele é o que define staff. */
@@ -34,6 +35,14 @@ export async function requirePlatformStaff(): Promise<PlatformStaff> {
   if (!session?.user) {
     throw new StaffAuthError("UNAUTHORIZED", "Sessão ausente.");
   }
+
+  // O teto mora aqui, e não em cada action, porque aqui é o único ponto por
+  // onde tudo passa — página e RPC. Espalhado, a próxima action nasceria sem
+  // ele e ninguém perceberia até a conta do banco chegar.
+  //
+  // Antes da consulta de membership de propósito: quem já autenticou mas não é
+  // da equipe também para aqui, em vez de bater no banco a cada tentativa.
+  await assertDentroDoLimite("staff", session.user.id);
 
   const membership = await database.tenantMember.findFirst({
     where: { userId: session.user.id, tenantId: SYSTEM_TENANT_ID },

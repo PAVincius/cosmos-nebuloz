@@ -1,3 +1,5 @@
+import "server-only";
+
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
@@ -10,6 +12,9 @@ export const keys = () =>
       LANGFUSE_SECRET_KEY: z.string().startsWith("sk-lf-").optional(),
       LANGFUSE_PUBLIC_KEY: z.string().startsWith("pk-lf-").optional(),
       LANGFUSE_BASE_URL: z.string().url().optional(),
+      /** Opt-in explícito para mandar prompt e resposta em claro ao Langfuse.
+       *  Ausente = mascarado. Ligar só em ambiente sem dado de cliente real. */
+      LANGFUSE_CAPTURE_CONTENT: z.enum(["true", "false"]).optional(),
     },
     runtimeEnv: {
       OPENAI_API_KEY: process.env.OPENAI_API_KEY,
@@ -18,5 +23,6 @@ export const keys = () =>
       LANGFUSE_SECRET_KEY: process.env.LANGFUSE_SECRET_KEY,
       LANGFUSE_PUBLIC_KEY: process.env.LANGFUSE_PUBLIC_KEY,
       LANGFUSE_BASE_URL: process.env.LANGFUSE_BASE_URL,
+      LANGFUSE_CAPTURE_CONTENT: process.env.LANGFUSE_CAPTURE_CONTENT,
     },
   });

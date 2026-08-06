@@ -5,12 +5,14 @@ import {
   requirePlatformStaff,
   StaffAuthError,
 } from "./guard";
+import { RateLimitError } from "./rate-limit";
 
-/** Os dois desfechos que o layout sabe desenhar. Sessão ausente não aparece
- *  aqui de propósito: ela não vira mensagem, vira redirect. */
+/** Os desfechos que o layout sabe desenhar. Sessão ausente não aparece aqui de
+ *  propósito: ela não vira mensagem, vira redirect. */
 export type StaffAccess =
   | { status: "ok"; staff: PlatformStaff }
-  | { status: "forbidden"; message: string };
+  | { status: "forbidden"; message: string }
+  | { status: "rate_limited"; message: string };
 
 /**
  * Traduz o guard para o que uma página pode renderizar.
@@ -31,6 +33,12 @@ export async function resolveStaffAccess(): Promise<StaffAccess> {
     }
     if (error instanceof StaffAuthError && error.code === "FORBIDDEN") {
       return { status: "forbidden", message: error.message };
+    }
+    // Estourar o teto não é falta de permissão, e desenhar como se fosse faria
+    // a pessoa achar que perdeu acesso ao painel. Desfecho próprio, título
+    // próprio: o que ela precisa saber é que basta esperar.
+    if (error instanceof RateLimitError) {
+      return { status: "rate_limited", message: error.message };
     }
     throw error;
   }

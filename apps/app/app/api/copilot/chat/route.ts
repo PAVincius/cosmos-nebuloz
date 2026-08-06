@@ -5,40 +5,21 @@ import { requireTenantSession } from "@repo/auth/server";
 import { log } from "@repo/observability/log";
 import { stepCountIs, streamText } from "ai";
 import { headers } from "next/headers";
-import { z } from "zod";
 import { saveCopilotMessages } from "@/app/actions/safe-copilot";
+import { ChatRequestSchema } from "@/app/actions/safe-copilot/chat-request";
 import { buildCopilotContext } from "@/app/actions/safe-copilot/context";
 import { getModeMessages } from "@/app/actions/safe-copilot/prompts";
 import {
   checkCopilotQuota,
   incrementCopilotUsage,
 } from "@/app/actions/safe-copilot/quota";
+import {
+  avaliarLimite,
+  limitarPorIp,
+} from "@/app/actions/safe-copilot/rate-limit-gate";
 import { detectPrimaryRole } from "@/app/actions/safe-copilot/roles/detect-role";
 import { buildRoleSystemPrompt } from "@/app/actions/safe-copilot/roles/role-prompts";
 import { buildCopilotTools } from "@/app/actions/safe-copilot/tools";
-
-const BodySchema = z.object({
-  messages: z
-    .array(z.object({ role: z.string(), content: z.string().max(10_000) }))
-    .min(1),
-  mode: z.string().optional(),
-  surface: z.string().optional(),
-  contextRef: z.record(z.string(), z.string()).optional(),
-  sessionId: z.string().optional(),
-});
-
-async function checkIpRateLimit(ip: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return true;
-  }
-  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
-  const limiter = createRateLimiter({
-    limiter: slidingWindow(30, "1 m"),
-    prefix: "copilot",
-  });
-  const { success } = await limiter.limit(ip);
-  return success;
-}
 
 export async function POST(req: Request) {
   try {
@@ -47,12 +28,26 @@ export async function POST(req: Request) {
 
     const ip =
       headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
-    if (!(await checkIpRateLimit(ip))) {
+    const limite = await avaliarLimite(ip, {
+      env: { UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL },
+      producao: process.env.NODE_ENV === "production",
+      limitar: limitarPorIp,
+    });
+    if (limite === "excedido") {
       return Response.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+    if (limite === "indisponivel") {
+      // 503 e não 429: o cliente não excedeu nada. Devolver 429 aqui mandaria
+      // a pessoa esperar por um limite que não existe, e esconderia um erro de
+      // configuração atrás de uma mensagem plausível.
+      return Response.json(
+        { error: "Serviço temporariamente indisponível." },
+        { status: 503 }
+      );
     }
 
     const raw = await req.json();
-    const parseResult = BodySchema.safeParse(raw);
+    const parseResult = ChatRequestSchema.safeParse(raw);
     if (!parseResult.success) {
       return Response.json({ error: "Invalid request body" }, { status: 400 });
     }
@@ -127,7 +122,9 @@ export async function POST(req: Request) {
     const result = streamText({
       model,
       messages: modeMessages as any,
-      tools: buildCopilotTools(ctx.tenantId),
+      // O papel vai junto: sem ele, o guard de escrita das tools nega tudo por
+      // padrão — e antes desta linha ele nunca era avaliado.
+      tools: buildCopilotTools(ctx.tenantId, ctx.role),
       stopWhen: stepCountIs(5),
       ...(provider === "anthropic" && {
         providerOptions: {
