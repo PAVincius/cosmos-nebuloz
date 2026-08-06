@@ -24,12 +24,29 @@ fila de aprovação, que é o começo desse controle.
 
 ## Estado
 
-CRÍTICO-1, ALTO-1, ALTO-2 e ALTO-3 foram **corrigidos** em
-`fix/copilot-authz-prompt-injection`. Os achados seguem descritos abaixo no
-estado em que foram encontrados — é o que explica por que a correção é o que é —
-e cada um traz a nota do que mudou.
+Corrigidos em `fix/copilot-authz-prompt-injection`: **CRÍTICO-1, ALTO-1, ALTO-2,
+ALTO-3, MÉDIO-1, MÉDIO-2 e MÉDIO-3**.
 
-MÉDIO-1 a MÉDIO-4 continuam abertos.
+**MÉDIO-4** (back-office sem rate limiting) está sendo tratado em separado — não
+foi tocado aqui.
+
+Os achados seguem descritos abaixo no estado em que foram encontrados; é o que
+explica por que cada correção é o que é.
+
+Duas correções ficaram diferentes do que este documento previa, porque a
+investigação achou mais do que o diagnóstico inicial:
+
+- **CRÍTICO-1** não era só "a rota não passa o papel". `VIEWER_ROLE = "VIEWER"`
+  também não existe no enum `MemberRole`, então o guard estava morto por dois
+  motivos independentes — passar `ctx.role` sozinho teria deixado o buraco
+  aberto com aparência de resolvido. A correção passou a perguntar ao
+  `@repo/rbac` (`hasPermission(role, "feature:write")`), que é a única fonte de
+  verdade do repositório para isso. Efeito colateral correto: `DEV` também perde
+  escrita pelo copiloto, porque a matriz só lhe dá `feature:read`.
+- **MÉDIO-3** apontava `packages/ai/index.ts`. Esse arquivo é só
+  `export * from "ai"` e marcá-lo seria errado. Os arquivos que tocam
+  credencial são `keys.ts`, `lib/models.ts`, `lib/router.ts` e `lib/langfuse.ts`
+  — foram esses que ganharam `server-only`.
 
 ## Achados
 
