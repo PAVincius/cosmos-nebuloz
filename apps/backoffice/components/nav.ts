@@ -44,8 +44,6 @@ export const BO_NAV: NavSection[] = [
         href: "/home",
         icon: "gauge",
         label: "Home",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       { href: "/", icon: "building", label: "Tenants" },
       { href: "/aprovacoes", icon: "approve", label: "Aprovações" },
@@ -53,8 +51,6 @@ export const BO_NAV: NavSection[] = [
         href: "/observabilidade",
         icon: "eye",
         label: "Observabilidade",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },
@@ -65,22 +61,16 @@ export const BO_NAV: NavSection[] = [
         href: "/delivery",
         icon: "handshake",
         label: "Engajamentos",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/capacidade",
         icon: "users",
         label: "Capacidade",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/ip",
         icon: "book",
         label: "Biblioteca de IP",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },
@@ -91,29 +81,17 @@ export const BO_NAV: NavSection[] = [
         href: "/propostas",
         icon: "tag",
         label: "Propostas",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/servicos",
         icon: "briefcase",
         label: "Serviços",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
-      {
-        href: "/contas",
-        icon: "heart",
-        label: "Health e renovação",
-        pendente:
-          "Depende de sinal de saúde e data de renovação por cliente, que não existem. Atenção: o model Account do schema é o do better-auth, credencial de login — não tem relação com esta tela.",
-      },
+      { href: "/contas", icon: "heart", label: "Health e renovação" },
       {
         href: "/benchmark",
         icon: "chart",
         label: "Benchmark",
-        pendente:
-          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },
@@ -174,15 +152,11 @@ export const BO_NAV: NavSection[] = [
         href: "/ferramentas/bpmn",
         icon: "fileCode",
         label: "Modelagem BPMN",
-        pendente:
-          "Editor BPMN 2.0 versionado por tenant. Em produção monta bpmn-js, não o canvas SVG do protótipo.",
       },
       {
         href: "/ferramentas/diagramas",
         icon: "server",
         label: "Diagramas",
-        pendente:
-          "Diagrama-como-código: a DSL é a fonte da verdade e é versionável em git; o canvas reflete a estrutura.",
       },
     ],
   },
