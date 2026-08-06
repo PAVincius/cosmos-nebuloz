@@ -113,7 +113,7 @@ export const BO_NAV: NavSection[] = [
         icon: "chart",
         label: "Benchmark",
         pendente:
-          "Comparação entre clientes sobre métrica agregada. Depende de haver o que agregar: sem Engagement e sem Service, não há eixo de comparação.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
     ],
   },
