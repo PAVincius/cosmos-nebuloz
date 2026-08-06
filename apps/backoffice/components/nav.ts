@@ -66,7 +66,7 @@ export const BO_NAV: NavSection[] = [
         icon: "handshake",
         label: "Engajamentos",
         pendente:
-          "Depende da entidade Engagement, que não existe no schema. Hoje não há como representar um contrato de serviço da Nebuloz com um cliente.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/capacidade",
