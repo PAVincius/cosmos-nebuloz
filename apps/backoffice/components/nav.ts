@@ -73,7 +73,7 @@ export const BO_NAV: NavSection[] = [
         icon: "users",
         label: "Capacidade",
         pendente:
-          "Capacidade da equipe da Nebuloz distribuída entre clientes. O schema tem TeamCapacitySnapshot, mas aquilo é capacidade de time ágil DENTRO de um tenant — outra coisa, e reusar confundiria as duas.",
+          "Tela pronta, aguardando a migration 20260806120000_platform_ops rodar no banco. Sem as tabelas ela responde 42P01.",
       },
       {
         href: "/ip",
