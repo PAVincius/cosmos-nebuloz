@@ -354,6 +354,20 @@ export async function setMemberCharterRole(
       // acima) e o único que publica política (CHARTER_MATRIX). Deixar o
       // tenant sem nenhum não é um estado ruim — é um estado sem saída pelo
       // produto: ninguém mais teria como criar outro Compliance.
+      //
+      // TOCTOU conhecido, não fechado aqui: `count` e o `upsert` abaixo
+      // correm na mesma transação, mas cada chamada a setMemberCharterRole
+      // abre a sua própria — não há lock entre requests. Duas chamadas
+      // concorrentes demovendo dois Compliance diferentes do mesmo tenant
+      // podem as duas ler `restantes` = 2, as duas passar neste `if`, as
+      // duas commitar: o tenant termina com zero Compliance, o mesmo beco
+      // sem saída que este guard existe para evitar — só que agora exige
+      // dois atores em vez de um. Fechar isso de verdade pede isolamento
+      // serializable nesta transação ou uma constraint no banco (ex.: índice
+      // parcial que recusa a linha COMPLIANCE sair de count=1); nenhuma das
+      // duas cabe aqui — `withTenantDb` é compartilhado por toda action do
+      // Charter, e mudar a semântica de transação dele não é ajuste desta
+      // rodada.
       if (before?.role === "COMPLIANCE" && data.role !== "COMPLIANCE") {
         const restantes = await db.charterMembership.count({
           where: { tenantId: ctx.tenantId, role: "COMPLIANCE" },

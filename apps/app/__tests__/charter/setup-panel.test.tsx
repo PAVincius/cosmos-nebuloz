@@ -249,4 +249,31 @@ describe("SetupPanel", () => {
     await screen.findByText(/Aurora Bank/);
     expect(screen.queryByText(/revisada dentro do SLA/i)).toBeNull();
   });
+
+  it("alertas: enquanto o dashboard ainda carrega, não mostra o texto tranquilizador", async () => {
+    // getDashboard nunca resolve nesta suíte: reproduz a janela real, em que
+    // setupProgress (um punhado de count()s) assenta antes de data (fila,
+    // política, KPIs e alertas — a leitura pesada). O card de fila já tem o
+    // gate `loading || !data`; o de alertas, achado da revisão do branch
+    // inteiro, caía direto no `data?.alerts ?? []` vazio e afirmava um texto
+    // sobre dado que ainda não chegou — trocando uma falsa afirmação de
+    // falha por uma falsa afirmação de calma.
+    getDashboardMock.mockReturnValue(new Promise(() => {}));
+    getSetupProgressMock.mockResolvedValue({
+      ok: true,
+      data: { passos: [], concluidos: 5, total: 5, completo: true },
+    });
+
+    render(<DashboardScreen />);
+
+    // Sinal de assentamento independente de `data`: o resumo do painel só
+    // depende de `setupProgress`, que aqui resolve mesmo com `data` preso.
+    expect(
+      await screen.findByText(/passos de montagem inicial foram feitos/i)
+    ).toBeTruthy();
+    expect(screen.queryByText("Nada exige ação agora")).toBeNull();
+    expect(
+      screen.queryByText(/nenhum sla vencido, nenhuma mitigação atrasada/i)
+    ).toBeNull();
+  });
 });

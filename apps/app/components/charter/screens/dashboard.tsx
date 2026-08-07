@@ -576,7 +576,21 @@ export default function DashboardScreen() {
           title="Alertas de governança"
           tone="amber"
         >
-          {(data?.alerts ?? []).length === 0 ? (
+          {loading || !data ? (
+            <div
+              style={{
+                padding: 16,
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+            >
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          ) : data.alerts.length === 0 ? (
             <SmartEmptyState
               icon={alertasVazio.icon}
               subtitle={alertasVazio.subtitle}
@@ -585,7 +599,7 @@ export default function DashboardScreen() {
             />
           ) : (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {(data?.alerts ?? []).map((a, i, arr) => (
+              {data.alerts.map((a, i, arr) => (
                 <button
                   className="navitem btn"
                   key={a.title}
