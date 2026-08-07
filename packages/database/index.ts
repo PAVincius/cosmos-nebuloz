@@ -52,6 +52,19 @@ function createPrismaClient(): PrismaClient {
   const { PrismaPg } = require("@prisma/adapter-pg");
   const isLocalDb = /localhost|127\.0\.0\.1/.test(DATABASE_URL);
   const pool = new Pool({
+    // Sem `max`, o `pg` usa 10 conexões por pool. Na Vercel cada instância de
+    // função tem o próprio pool, então o total é `instâncias × 10` — e sob
+    // carga o número de instâncias é a variável que ninguém controla. É assim
+    // que se esgota o pooler do Supabase sem nenhuma query lenta.
+    //
+    // 5 e não 1: as leituras do painel usam `Promise.all` com três consultas
+    // em paralelo, e um pool de 1 as serializaria — trocaria esgotamento por
+    // latência, que é o mesmo problema com outra cara.
+    max: 5,
+    // Sem isto, requisição que não acha conexão livre espera para sempre.
+    // Esgotamento de pool vira requisição pendurada em vez de erro, e
+    // pendurado não aparece em taxa de erro — só em usuário desistindo.
+    connectionTimeoutMillis: 10_000,
     connectionString: isLocalDb ? DATABASE_URL : withoutSslMode(DATABASE_URL),
     ssl: isLocalDb ? undefined : { rejectUnauthorized: false },
   });
