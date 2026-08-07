@@ -632,4 +632,5 @@ enum CharterCoverageStatus {
   NAO_ATENDE
   SEM_VEREDITO
   REVISAR
+  NAO_APLICAVEL
 }

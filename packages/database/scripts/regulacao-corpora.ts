@@ -1,5 +1,6 @@
-// regulacao-corpora.ts — dado puro dos quatro corpora globais de regulação
-// (EU AI Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001).
+// regulacao-corpora.ts — dado puro dos cinco corpora globais de regulação
+// (EU AI Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001, Segurança em IA
+// generativa).
 //
 // Separado de seed-regulacao.mts de propósito: um arquivo `.ts` comum resolve
 // sem extensão sob "moduleResolution": "Bundler" (packages/typescript-config/
@@ -16,19 +17,27 @@
 export type RequirementSeed = {
   codigo: string;
   citacao: string;
+  /** Área da tabela de §Áreas do documento-fonte, quando o corpus tiver uma. */
+  categoria?: string;
   resumo: string;
   /**
-   * Ausente — não `undefined` explícito, a chave inteira some do objeto — em
-   * TODO requisito deste arquivo, não só nos REFERENCIA. Para ISO/IEC 42001
-   * (REFERENCIA) é a regra: norma proprietária só entra por citação e
-   * formulação própria (ver licenca-copyright.test.ts). Para os três corpora
-   * LIVRE, texto também fica ausente aqui de propósito, e não por limitação
-   * de licença: nenhuma citação abaixo foi conferida palavra-por-palavra
-   * contra a fonte oficial, e um campo "texto" que não é de fato verbatim é
-   * pior do que não ter texto nenhum. citacao + resumo já bastam para o
-   * tenant mapear evidência; texto pode ser adicionado depois, requisito a
-   * requisito, pela própria tela de conformidade, quando alguém conferir a
-   * redação exata contra a publicação oficial.
+   * Ausente — não `undefined` explícito, a chave inteira some do objeto — nos
+   * quatro corpora regulatórios (EU AI Act, LGPD, NIST AI RMF, ISO/IEC 42001).
+   * Para ISO/IEC 42001 (REFERENCIA) é a regra: norma proprietária só entra por
+   * citação e formulação própria (ver licenca-copyright.test.ts). Para os
+   * outros três (LIVRE) texto também fica ausente, e não por limitação de
+   * licença: nenhuma citação daqueles corpora foi conferida palavra por
+   * palavra contra a fonte oficial, e um campo "texto" que não é de fato
+   * verbatim é pior do que não ter texto nenhum. citacao + resumo já bastam
+   * para o tenant mapear evidência; texto pode ser adicionado depois,
+   * requisito a requisito, pela própria tela de conformidade, quando alguém
+   * conferir a redação exata contra a publicação oficial.
+   *
+   * O corpus "Segurança em IA generativa — checklist Nebuloz" é diferente: a
+   * fonte é docs/security/checklist-ia-generativa.md, documento da própria
+   * Nebuloz neste repositório, não norma de terceiro. Ali texto é de fato
+   * verbatim — copiado do documento-fonte — e reproduzir é legítimo e útil: o
+   * comprador lê a exigência inteira no export, não só um resumo dela.
    */
   texto?: string;
 };
@@ -252,6 +261,542 @@ export const CORPORA: CorpusSeed[] = [
         citacao: "ISO/IEC 42001:2023, Cláusula 10",
         resumo:
           "Exige tratamento de não conformidades, ações corretivas e melhoria contínua do sistema de gestão de IA ao longo do tempo.",
+      },
+    ],
+  },
+  {
+    nome: "Segurança em IA generativa — checklist Nebuloz",
+    origem: "REGULACAO",
+    editor: "NEBULOZ",
+    jurisdicao: "INT",
+    licenca: "LIVRE",
+    versao: "1",
+    notas:
+      "Síntese sobre OWASP LLM Top 10 2025, checklist OWASP de governança de IA " +
+      "e Secure AI Model Ops. Fonte: docs/security/checklist-ia-generativa.md — " +
+      "mudou lá, suba a versao aqui em CORPORA e rode o seed de novo: é " +
+      "conjunto global, e publishSetVersion criaria uma cópia por tenant.",
+    requisitos: [
+      {
+        codigo: "SEC-01-01",
+        citacao: "§1",
+        categoria: "arquitetura",
+        resumo:
+          "Inventariar todos os componentes de IA do sistema e definir as fronteiras de confiança entre frontend, backend, provedor de modelo e dados corporativos.",
+        texto:
+          "Mapear todos os componentes de IA (API de LLM, RAG, agentes, orquestradores, workers assíncronos, filas, vetores, storage de contexto) e definir trust boundaries entre frontend, backend, provedor de modelo e dados corporativos.",
+      },
+      {
+        codigo: "SEC-01-02",
+        citacao: "§1",
+        categoria: "arquitetura",
+        resumo:
+          "Executar threat modeling específico de LLM com base no OWASP LLM Top 10 2025 e em STRIDE/MITRE ATLAS.",
+        texto:
+          "Rodar threat modeling específico de LLM usando OWASP LLM Top 10 2025 (LLM01–LLM10) e STRIDE/MITRE ATLAS.",
+      },
+      {
+        codigo: "SEC-01-03",
+        citacao: "§1",
+        categoria: "arquitetura",
+        resumo:
+          "Classificar as integrações de agente e tool use por nível de risco, aplicando privilégio mínimo e defesa em profundidade.",
+        texto:
+          "Classificar as integrações de agente e tool use — ferramentas que escrevem em banco, chamam ERP, disparam email — e aplicar privilégio mínimo e defesa em profundidade.",
+      },
+      {
+        codigo: "SEC-01-04",
+        citacao: "§1",
+        categoria: "arquitetura",
+        resumo:
+          "Documentar em diagrama onde vivem os prompts de sistema, seu versionamento e a proteção contra vazamento (LLM07).",
+        texto:
+          "Documentar em diagrama onde vivem os prompts de sistema, como são versionados e como são protegidos contra leakage (LLM07).",
+      },
+      {
+        codigo: "SEC-02-01",
+        citacao: "§2",
+        categoria: "dados",
+        resumo:
+          "Classificar por sensibilidade todo dado que pode entrar em prompt, contexto de RAG ou log.",
+        texto:
+          "Classificar todo dado que pode entrar em prompt, contexto de RAG e log: PII, sensível, confidencial corporativo, público.",
+      },
+      {
+        codigo: "SEC-02-02",
+        citacao: "§2",
+        categoria: "dados",
+        resumo:
+          "Definir e formalizar em contrato a política de uso de dado de entrada e saída pelo provedor de LLM, incluindo se ele serve para treinamento.",
+        texto:
+          "Definir política de data-in / data-out para o provedor de LLM: se dado de usuário pode ser usado para treinamento; refletir em contrato e ToS.",
+      },
+      {
+        codigo: "SEC-02-03",
+        citacao: "§2",
+        categoria: "dados",
+        resumo:
+          "Filtrar a resposta do LLM (output scanning) para remover PII e segredo antes de ela chegar ao usuário ou a sistema downstream (LLM02).",
+        texto:
+          "Filtrar a saída (output scanning) para PII e segredo antes de a resposta chegar ao usuário ou a sistema downstream (LLM02).",
+      },
+      {
+        codigo: "SEC-02-04",
+        citacao: "§2",
+        categoria: "dados",
+        resumo:
+          "Proibir segredo, credencial ou dado ultrassensível em prompt de sistema, preferindo RAG com controle de acesso.",
+        texto:
+          "Não colocar segredo, credencial, chave de API ou dado ultrassensível em prompt de sistema; usar RAG com controle de acesso em vez de fixar no contexto.",
+      },
+      {
+        codigo: "SEC-02-05",
+        citacao: "§2",
+        categoria: "dados",
+        resumo: "Anonimizar ou pseudonimizar dado usado em fine-tuning.",
+        texto: "Anonimizar ou pseudonimizar dado usado em fine-tuning.",
+      },
+      {
+        codigo: "SEC-03-01-01",
+        citacao: "§3.1",
+        categoria: "modelos",
+        resumo:
+          "Usar apenas modelo e weights de fonte confiável, com verificação de integridade, evitando formatos inseguros como pickle.",
+        texto:
+          "Usar apenas modelo e weights de fonte confiável, com verificação de integridade (hash, assinatura), evitando formato inseguro como pickle.",
+      },
+      {
+        codigo: "SEC-03-01-02",
+        citacao: "§3.1",
+        categoria: "modelos",
+        resumo:
+          "Manter um ML-BOM com modelos, datasets, versões, origem, licenças e dependências, com artefato assinado.",
+        texto:
+          "Manter ML-BOM com modelos, datasets, versões, origem, licenças e dependências, com artefato assinado.",
+      },
+      {
+        codigo: "SEC-03-01-03",
+        citacao: "§3.1",
+        categoria: "modelos",
+        resumo:
+          "Avaliar periodicamente vulnerabilidade conhecida em modelo e SDK de fornecedor, com patch em tempo hábil.",
+        texto:
+          "Avaliar periodicamente vulnerabilidade conhecida em modelo e SDK de fornecedor, aplicando patch em tempo hábil.",
+      },
+      {
+        codigo: "SEC-03-02-01",
+        citacao: "§3.2",
+        categoria: "modelos",
+        resumo:
+          "Sanitizar e validar documento antes de indexar na base vetorial, removendo segredo e marcando por nível de sensibilidade.",
+        texto:
+          "Sanitizar e validar documento antes de indexar: remover segredo, normalizar, marcar por nível de sensibilidade.",
+      },
+      {
+        codigo: "SEC-03-02-02",
+        citacao: "§3.2",
+        categoria: "modelos",
+        resumo:
+          "Isolar a base vetorial por tenant, ou ao menos por domínio lógico, contra vazamento cross-tenant.",
+        texto:
+          "Isolar base vetorial por tenant, ou ao menos por domínio lógico, contra leakage cross-tenant.",
+      },
+      {
+        codigo: "SEC-03-02-03",
+        citacao: "§3.2",
+        categoria: "modelos",
+        resumo:
+          "Proteger o banco vetorial com autenticação forte, controle de acesso por papel/tenant e criptografia em repouso e em trânsito.",
+        texto:
+          "Proteger o banco vetorial com autenticação forte, controle de acesso por papel/tenant e criptografia em repouso e em trânsito.",
+      },
+      {
+        codigo: "SEC-03-02-04",
+        citacao: "§3.2",
+        categoria: "modelos",
+        resumo:
+          "Aplicar controles contra fraqueza de embedding e vetor — teste de robustez, limite de similaridade, detecção de input adversarial (LLM08).",
+        texto:
+          "Controles contra LLM08: teste de robustez de embedding, limite de similaridade, detecção de input adversarial.",
+      },
+      {
+        codigo: "SEC-03-03-01",
+        citacao: "§3.3",
+        categoria: "modelos",
+        resumo:
+          "Validar origem e integridade do dado usado em treino ou fine-tuning, com trilha de proveniência.",
+        texto:
+          "Validar origem e integridade de dado usado em treino ou fine-tuning, com trilha de proveniência (CycloneDX/ML-BOM).",
+      },
+      {
+        codigo: "SEC-03-03-02",
+        citacao: "§3.3",
+        categoria: "modelos",
+        resumo:
+          "Monitorar mudança de comportamento do modelo após re-treino e testar gatilho de backdoor e resposta anômala (LLM04).",
+        texto:
+          "Monitorar mudança de comportamento do modelo após re-treino; testar gatilho de backdoor e resposta anômala (LLM04).",
+      },
+      {
+        codigo: "SEC-04-01-01",
+        citacao: "§4.1",
+        categoria: "backend",
+        resumo:
+          "Colocar toda interação com LLM atrás de serviço interno, nunca expor a API do provedor ao frontend, com autenticação, autorização por tenant/papel e rate limiting.",
+        texto:
+          "Colocar toda interação com LLM atrás de serviço interno — nunca expor a API do provedor ao frontend — com autenticação, autorização por tenant/papel e rate limiting.",
+      },
+      {
+        codigo: "SEC-04-01-02",
+        citacao: "§4.1",
+        categoria: "backend",
+        resumo:
+          "Validar rigorosamente a entrada nas rotas de IA — tamanho, formato, whitelist de campo, normalização — antes de enviar ao LLM (LLM01).",
+        texto:
+          "Validação rigorosa de entrada nas rotas de IA: limite de tamanho, formato esperado, whitelist de campo, normalização antes de enviar ao LLM (LLM01).",
+      },
+      {
+        codigo: "SEC-04-01-03",
+        citacao: "§4.1",
+        categoria: "backend",
+        resumo:
+          "Usar template de prompt estruturado que separa instrução de sistema, instrução da aplicação e entrada do usuário, com hierarquia imutável.",
+        texto:
+          "Template de prompt estruturado separando instrução de sistema, instrução da aplicação e entrada do usuário, com hierarquia imutável.",
+      },
+      {
+        codigo: "SEC-04-01-04",
+        citacao: "§4.1",
+        categoria: "backend",
+        resumo:
+          "Tratar a resposta do LLM como dado não confiável: validar, sanitizar e aplicar regra de negócio antes de persistir ou gerar efeito colateral (LLM05).",
+        texto:
+          "Tratar resposta do LLM como dado não confiável: validar, sanitizar (escaping para HTML/JS) e aplicar regra de negócio antes de persistir ou acionar efeito colateral (LLM05).",
+      },
+      {
+        codigo: "SEC-04-02-01",
+        citacao: "§4.2",
+        categoria: "backend",
+        resumo:
+          "Aplicar hardening clássico de API: autenticação forte, política de senha, CSRF, rate limiting, prevenção de injection, ORM seguro.",
+        texto:
+          "Práticas clássicas OWASP para API: autenticação forte, política de senha, proteção CSRF onde cabe, rate limiting, prevenção de injection em SQL/NoSQL, ORM seguro.",
+      },
+      {
+        codigo: "SEC-04-02-02",
+        citacao: "§4.2",
+        categoria: "backend",
+        resumo:
+          "Nunca armazenar segredo de modelo ou de provedor em código; usar secret manager ou variável de ambiente gerida pelo CI/CD.",
+        texto:
+          "Nunca armazenar segredo de modelo ou de provedor em código; usar secret manager ou variável de ambiente gerida pelo CI/CD.",
+      },
+      {
+        codigo: "SEC-04-02-03",
+        citacao: "§4.2",
+        categoria: "backend",
+        resumo:
+          "Integrar SAST/DAST e auditoria de dependência no CI/CD, com gate mínimo antes de subir versão do serviço de IA.",
+        texto:
+          "Integrar SAST/DAST e auditoria de dependência no CI/CD, com gate mínimo antes de subir versão do serviço de IA.",
+      },
+      {
+        codigo: "SEC-04-02-04",
+        citacao: "§4.2",
+        categoria: "backend",
+        resumo:
+          "Versionar modelo e prompt, com rollback rápido via canary/shadow para modelo problemático.",
+        texto:
+          "Versionar modelo e prompt, com rollback rápido (canary/shadow) para modelo problemático.",
+      },
+      {
+        codigo: "SEC-05-01",
+        citacao: "§5",
+        categoria: "frontend",
+        resumo:
+          "Nunca interpolar resposta do LLM em `dangerouslySetInnerHTML` ou atributo de HTML sem escaping, já que o LLM pode gerar HTML/JS malicioso.",
+        texto:
+          "Não interpolar resposta do LLM em `dangerouslySetInnerHTML` nem em atributo de HTML; aplicar escaping, porque o LLM pode gerar HTML/JS malicioso.",
+      },
+      {
+        codigo: "SEC-05-02",
+        citacao: "§5",
+        categoria: "frontend",
+        resumo:
+          "Nunca expor chave de API de LLM no código do frontend; toda chamada passa pelo backend.",
+        texto:
+          "Nunca expor chave de API de LLM no código do frontend; toda chamada passa pelo backend.",
+      },
+      {
+        codigo: "SEC-05-03",
+        citacao: "§5",
+        categoria: "frontend",
+        resumo:
+          "Aplicar controle de entrada no cliente sem tratá-lo como única barreira de segurança.",
+        texto:
+          "Controle de entrada no cliente (limite de caractere, hint de conteúdo permitido), sem confiar nele como única barreira.",
+      },
+      {
+        codigo: "SEC-05-04",
+        citacao: "§5",
+        categoria: "frontend",
+        resumo:
+          "Não usar dado sensível exibido na UI como contexto de prompt client-side sem consentimento explícito.",
+        texto:
+          "Não usar dado sensível exibido na UI como contexto de prompt client-side sem consentimento explícito.",
+      },
+      {
+        codigo: "SEC-05-05",
+        citacao: "§5",
+        categoria: "frontend",
+        resumo:
+          "Proteger rota de streaming (SSE, WebSocket) com autenticação e autorização, sanitizando antes de injetar no DOM.",
+        texto:
+          "Proteger rota de streaming (SSE, WebSocket) com autenticação e autorização, e sanitizar antes de injetar no DOM.",
+      },
+      {
+        codigo: "SEC-06-01",
+        citacao: "§6",
+        categoria: "backend",
+        resumo:
+          "Filtrar a entrada para detectar padrão de prompt injection — instrução para ignorar regras anteriores, exfiltrar dado interno, executar código.",
+        texto:
+          "Filtro de entrada para detectar padrão de prompt injection: ignorar regras anteriores, exfiltrar dado interno, executar código.",
+      },
+      {
+        codigo: "SEC-06-02",
+        citacao: "§6",
+        categoria: "backend",
+        resumo:
+          "Validar a saída do LLM quanto a formato esperado, citação apenas de fonte autorizada e ausência de comando perigoso.",
+        texto:
+          "Validação de saída: formato esperado (JSON schema), citação apenas de fonte autorizada, ausência de comando perigoso.",
+      },
+      {
+        codigo: "SEC-06-03",
+        citacao: "§6",
+        categoria: "backend",
+        resumo:
+          "Executar código ou tool call derivada de resposta de LLM em sandbox rigoroso — worker isolado, sem rede direta, com limite de CPU, memória e tempo.",
+        texto:
+          "Sandbox rigoroso para execução de código ou tool call derivada de resposta de LLM: worker isolado, sem rede direta, com limite de CPU, memória e tempo.",
+      },
+      {
+        codigo: "SEC-06-04",
+        citacao: "§6",
+        categoria: "backend",
+        resumo:
+          "Exigir human-in-the-loop e aprovação explícita para operação de alto impacto disparada por agente (LLM06).",
+        texto:
+          "Human-in-the-loop e aprovação explícita para operação de alto impacto — dado financeiro, email em massa, infraestrutura (LLM06).",
+      },
+      {
+        codigo: "SEC-06-05",
+        citacao: "§6",
+        categoria: "monitoramento",
+        resumo:
+          "Logar toda tool call de agente com contexto mínimo — quem, quando, qual ação, quais parâmetros — sem dado sensível em claro.",
+        texto:
+          "Logar toda tool call de agente com contexto mínimo — quem, quando, qual ação, quais parâmetros — sem dado sensível em claro.",
+      },
+      {
+        codigo: "SEC-07-01",
+        citacao: "§7",
+        categoria: "runtime",
+        resumo:
+          "Aplicar quota por tenant, usuário e tipo de operação — tokens/mês, requisições/dia, concorrência máxima (LLM10).",
+        texto:
+          "Quota por tenant, usuário e tipo de operação: tokens/mês, requisições/dia, concorrência máxima (LLM10).",
+      },
+      {
+        codigo: "SEC-07-02",
+        citacao: "§7",
+        categoria: "runtime",
+        resumo:
+          "Limitar timeout, tokens por request e profundidade de cadeia de agente, contra loop e denial-of-wallet.",
+        texto:
+          "Timeout, limite de token por request e limite de profundidade de cadeia de agente, contra loop e denial-of-wallet.",
+      },
+      {
+        codigo: "SEC-07-03",
+        citacao: "§7",
+        categoria: "runtime",
+        resumo:
+          "Monitorar custo — tokens, chamadas, latência — quase em tempo real, com alerta para pico anômalo.",
+        texto:
+          "Monitorar custo — tokens, chamadas, latência — quase em tempo real, com alerta para pico anômalo.",
+      },
+      {
+        codigo: "SEC-07-04",
+        citacao: "§7",
+        categoria: "runtime",
+        resumo:
+          "Prover circuit breaker e kill switch para desligar feature de IA ou tenant específico em caso de abuso ou bug de consumo.",
+        texto:
+          "Circuit breaker e kill switch para desligar feature de IA ou tenant específico em caso de abuso ou bug de consumo.",
+      },
+      {
+        codigo: "SEC-08-01",
+        citacao: "§8",
+        categoria: "monitoramento",
+        resumo:
+          "Logar requisição de IA com metadado operacional — usuário, tenant, tipo de operação, modelo, custo — sem conteúdo sensível de prompt ou resposta em claro.",
+        texto:
+          "Logar requisição de IA com metadado — usuário, tenant, tipo de operação, modelo, custo aproximado — sem conteúdo sensível de prompt ou resposta em claro.",
+      },
+      {
+        codigo: "SEC-08-02",
+        citacao: "§8",
+        categoria: "monitoramento",
+        resumo:
+          "Monitorar padrão anormal de uso — volume, tentativa repetida de quebrar instrução, indício de scraping ou exfiltração.",
+        texto:
+          "Monitorar padrão anormal: volume, tentativa repetida de quebrar instrução, consulta que sugere scraping ou exfiltração.",
+      },
+      {
+        codigo: "SEC-08-03",
+        citacao: "§8",
+        categoria: "monitoramento",
+        resumo: "Detectar drift e mudança estatística no output do modelo.",
+        texto:
+          "Detectar drift e mudança estatística no output: distribuição de classe de resposta, taxa de erro de validação.",
+      },
+      {
+        codigo: "SEC-08-04",
+        citacao: "§8",
+        categoria: "monitoramento",
+        resumo:
+          "Incluir cenário de ataque de LLM — prompt injection, exfiltração, poisoning operacional — em teste de segurança, pentest e red teaming.",
+        texto:
+          "Incluir cenário de ataque de LLM — prompt injection, exfiltração, poisoning operacional — em teste de segurança, pentest e red teaming.",
+      },
+      {
+        codigo: "SEC-09-01",
+        citacao: "§9",
+        categoria: "governança",
+        resumo:
+          "Manter inventário de todo serviço de IA em uso, com dono interno e dado processado.",
+        texto:
+          "Inventário de todo serviço de IA em uso, com dono interno e dado processado.",
+      },
+      {
+        codigo: "SEC-09-02",
+        citacao: "§9",
+        categoria: "governança",
+        resumo:
+          "Definir política de uso aceitável de IA para usuário final e equipe interna, com limite de uso, conteúdo proibido e disclaimer sobre limitação do modelo.",
+        texto:
+          "Política de uso aceitável de IA para usuário final e equipe interna, com limite de uso, conteúdo proibido e disclaimer sobre limitação do modelo.",
+      },
+      {
+        codigo: "SEC-09-03",
+        citacao: "§9",
+        categoria: "governança",
+        resumo:
+          "Integrar risco de LLM/GenAI à gestão de risco corporativa, mapeando o LLM Top 10 para os controles de processos existentes como ISO 27001 e SOC 2.",
+        texto:
+          "Integrar risco de LLM/GenAI à gestão de risco corporativa e aos processos existentes (ISO 27001, SOC 2), mapeando o LLM Top 10 para controles.",
+      },
+      {
+        codigo: "SEC-09-04",
+        citacao: "§9",
+        categoria: "governança",
+        resumo:
+          "Exigir processo formal com revisão de segurança para mudança de modelo, novo plugin ou nova integração de agente antes da liberação.",
+        texto:
+          "Processo formal para mudança de modelo, novo plugin e nova integração de agente, com revisão de segurança antes da liberação.",
+      },
+      {
+        codigo: "SEC-10-01-01",
+        citacao: "§10.1",
+        categoria: "backend",
+        resumo: "Configurar linter e formatador voltados a código seguro.",
+        texto: "Linter e formatador configurados para código seguro.",
+      },
+      {
+        codigo: "SEC-10-01-02",
+        citacao: "§10.1",
+        categoria: "frontend",
+        resumo: "Integrar SAST para backend e frontend.",
+        texto: "SAST integrado para backend e frontend.",
+      },
+      {
+        codigo: "SEC-10-01-03",
+        citacao: "§10.1",
+        categoria: "backend",
+        resumo:
+          "Usar mock de LLM em teste, sem chamar modelo real em suíte automatizada.",
+        texto:
+          "Mock de LLM em teste, sem chamar modelo real em suíte automatizada.",
+      },
+      {
+        codigo: "SEC-10-02-01",
+        citacao: "§10.2",
+        categoria: "monitoramento",
+        resumo:
+          "Testar segurança focada em LLM em staging — prompt injection, leakage de sistema, uso indevido de ferramenta.",
+        texto:
+          "Teste de segurança focado em LLM: prompt injection, leakage de sistema, misuse de ferramenta.",
+      },
+      {
+        codigo: "SEC-10-02-02",
+        citacao: "§10.2",
+        categoria: "monitoramento",
+        resumo:
+          "Fazer shadow e canary release de modelo e prompt novos, com observabilidade plena.",
+        texto:
+          "Shadow e canary release de modelo e prompt novos, com observabilidade plena.",
+      },
+      {
+        codigo: "SEC-10-03-01",
+        citacao: "§10.3",
+        categoria: "runtime",
+        resumo:
+          "Aplicar rate limiting por rota de IA e por tenant em produção.",
+        texto: "Rate limiting por rota de IA e por tenant.",
+      },
+      {
+        codigo: "SEC-10-03-02",
+        citacao: "§10.3",
+        categoria: "runtime",
+        resumo: "Manter log e métrica de custo em dashboard interno.",
+        texto: "Log e métrica de custo em dashboard interno.",
+      },
+      {
+        codigo: "SEC-10-03-03",
+        citacao: "§10.3",
+        categoria: "monitoramento",
+        resumo:
+          "Manter runbook de incidente cobrindo vazamento de dado, abuso de agente, custo fora de controle e comportamento anômalo de modelo.",
+        texto:
+          "Runbook de incidente cobrindo vazamento de dado, abuso de agente, custo fora de controle e comportamento anômalo de modelo.",
+      },
+      {
+        codigo: "SEC-11-01",
+        citacao: "§11",
+        categoria: "governança",
+        resumo:
+          "Percorrer todas as seções do checklist por aplicação de IA, marcando atende, não atende ou não se aplica.",
+        texto:
+          "Para cada aplicação com IA, percorrer todas as seções marcando atende, não atende ou não se aplica.",
+      },
+      {
+        codigo: "SEC-11-02",
+        citacao: "§11",
+        categoria: "governança",
+        resumo:
+          "Abrir ação com dono, severidade e prazo para cada item que não atende, priorizada pelo que é mais crítico no contexto.",
+        texto:
+          "Para cada item que não atende, abrir ação com dono, severidade e prazo, priorizando o que é mais crítico no contexto.",
+      },
+      {
+        codigo: "SEC-11-03",
+        citacao: "§11",
+        categoria: "governança",
+        resumo:
+          "Reexecutar a revisão a cada mudança relevante de modelo, arquitetura de RAG, integração de agente ou release grande.",
+        texto:
+          "Reexecutar a revisão a cada mudança relevante de modelo, arquitetura de RAG, integração de agente ou release grande.",
       },
     ],
   },

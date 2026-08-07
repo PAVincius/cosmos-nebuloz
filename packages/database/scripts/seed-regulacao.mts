@@ -1,11 +1,11 @@
-// seed-regulacao.mts — semeia os quatro corpora globais de regulação (EU AI
-// Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001) que o Charter usa como base do
-// mapa de conformidade. Dado (CORPORA) mora em regulacao-corpora.ts — ver o
-// comentário lá para o motivo da separação.
+// seed-regulacao.mts — semeia os cinco corpora globais de regulação (EU AI
+// Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001, Segurança em IA generativa) que
+// o Charter usa como base do mapa de conformidade. Dado (CORPORA) mora em
+// regulacao-corpora.ts — ver o comentário lá para o motivo da separação.
 // Run: pnpm exec tsx scripts/seed-regulacao.mts   (from packages/database)
 // Run with: pnpm exec tsx --env-file=.env scripts/seed-regulacao.mts
 //
-// GRAVAÇÃO GLOBAL DE PROPÓSITO: os quatro conjuntos entram com
+// GRAVAÇÃO GLOBAL DE PROPÓSITO: os cinco conjuntos entram com
 // `tenantId: null` (valem para todo tenant, não só para quem os importou).
 // CharterRequirementSet e CharterRequirement têm RLS habilitado em produção
 // sem nenhuma policy, e hoje só funcionam porque a app conecta como dona da
@@ -77,6 +77,7 @@ export async function upsertCorpus(
         citacao: req.citacao,
         resumo: req.resumo,
         texto: req.texto ?? null,
+        categoria: req.categoria ?? null,
       },
       create: {
         setId: set.id,
@@ -84,6 +85,7 @@ export async function upsertCorpus(
         citacao: req.citacao,
         resumo: req.resumo,
         texto: req.texto ?? null,
+        categoria: req.categoria ?? null,
       },
     });
     count++;
