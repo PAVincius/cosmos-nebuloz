@@ -3,9 +3,21 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { useState, useTransition } from "react";
 import { contractModuleAction } from "@/app/actions/provisioning";
+import { ConfirmarAcao } from "@/components/confirmar-acao";
 
 const MODULES = ["COSMOS", "CHARTER", "SIGNAL"] as const;
 const STATUSES = ["ACTIVE", "TRIAL", "SUSPENDED", "CANCELED"] as const;
+
+/** Liberar acesso é reversível e barato de errar: segue como clique direto.
+ *  Cortar acesso chega ao cliente em segundos e não tem desfazer. */
+const CORTAM_O_CLIENTE = new Set(["SUSPENDED", "CANCELED"]);
+
+const CONSEQUENCIA: Record<string, string> = {
+  SUSPENDED:
+    "O cliente perde acesso ao módulo agora. Quem estiver usando é interrompido na próxima requisição.",
+  CANCELED:
+    "O cliente perde acesso ao módulo e o contrato passa a constar como encerrado.",
+};
 
 type ModuleRow = { module: string; status: string; expiresAt: string | null };
 
@@ -50,18 +62,29 @@ export function ModuleForm({
                   {current?.status ?? "não contratado"}
                 </td>
                 <td className="space-x-2 py-2 text-right">
-                  {STATUSES.map((status) => (
-                    <Button
-                      aria-label={`Definir ${module} para ${status}`}
-                      disabled={pending || current?.status === status}
-                      key={status}
-                      onClick={() => apply(module, status)}
-                      size="sm"
-                      variant="outline"
-                    >
-                      {status}
-                    </Button>
-                  ))}
+                  {STATUSES.map((status) =>
+                    CORTAM_O_CLIENTE.has(status) ? (
+                      <ConfirmarAcao
+                        alvo={`${module} · ${slug}`}
+                        consequencia={CONSEQUENCIA[status]}
+                        executando={pending}
+                        key={status}
+                        onConfirmar={() => apply(module, status)}
+                        rotulo={status}
+                      />
+                    ) : (
+                      <Button
+                        aria-label={`Definir ${module} para ${status}`}
+                        disabled={pending || current?.status === status}
+                        key={status}
+                        onClick={() => apply(module, status)}
+                        size="sm"
+                        variant="outline"
+                      >
+                        {status}
+                      </Button>
+                    )
+                  )}
                 </td>
               </tr>
             );

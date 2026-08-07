@@ -1,6 +1,7 @@
 "use server";
 
 import { database } from "@repo/database";
+import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
@@ -143,12 +144,32 @@ export async function decidePlatformApprovalAction(
 
     const pedido = await database.platformApproval.findFirst({
       where: { id: dados.data.id, tenantId: SYSTEM_TENANT_ID },
-      select: { id: true, status: true, acao: true, alvoLabel: true },
+      select: {
+        id: true,
+        status: true,
+        acao: true,
+        alvoLabel: true,
+        solicitanteId: true,
+      },
     });
     if (!pedido) {
       throw new StaffAuthError(
         "FORBIDDEN",
         "Pedido de aprovação não encontrado."
+      );
+    }
+
+    // A fila existe para separar quem pede de quem aprova. Sem esta checagem
+    // ela é decorativa: a operação sensível volta a executar no clique, só que
+    // com um passo a mais e a aparência de ter sido revisada — que é pior que
+    // não ter fila, porque a auditoria mostra um aprovador.
+    //
+    // Vale também para rejeitar: retirar o próprio pedido da fila sem ninguém
+    // olhar é o mesmo furo ao contrário.
+    if (pedido.solicitanteId === staff.userId) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Você pediu esta operação e não pode decidi-la. Outra pessoa da equipe precisa revisar."
       );
     }
 
@@ -175,6 +196,20 @@ export async function decidePlatformApprovalAction(
         decididoEm: new Date(),
         nota: dados.data.nota ?? null,
       },
+    });
+
+    // A decisão entra na trilha, não só o pedido. Sem isto a fila registra
+    // metade do ato: fica gravado que alguém pediu, e não quem liberou — que é
+    // exatamente a pergunta que uma auditoria faz.
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: dados.data.outcome === "APPROVED" ? "approved" : "rejected",
+      entityType: "platform_approval",
+      entityId: pedido.id,
+      target: `${pedido.acao} · ${pedido.alvoLabel}`,
+      diff: [["status", pedido.status, dados.data.outcome]],
     });
 
     // FR-8.4 diz que aprovar executa a ação original. Ainda não há o que

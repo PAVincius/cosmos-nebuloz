@@ -14,6 +14,7 @@ const mocks = vi.hoisted(() => ({
   update: vi.fn(),
   create: vi.fn(),
   auditCreate: vi.fn(),
+  logPlatformAudit: vi.fn(),
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
@@ -28,6 +29,10 @@ vi.mock("@/lib/guard", () => ({
       this.code = code;
     }
   },
+}));
+vi.mock("@repo/provisioning", () => ({
+  logPlatformAudit: mocks.logPlatformAudit,
+  ProvisioningError: class extends Error {},
 }));
 vi.mock("@repo/database", () => ({
   database: {
@@ -220,5 +225,93 @@ describe("requestPlatformApproval", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.create).not.toHaveBeenCalled();
+  });
+});
+
+describe("decidePlatformApprovalAction — separação de quem pede e quem aprova", () => {
+  beforeEach(() => {
+    for (const m of Object.values(mocks)) {
+      m.mockReset();
+    }
+    mocks.requirePlatformStaff.mockResolvedValue(admin);
+    mocks.update.mockResolvedValue({});
+  });
+
+  it("recusa quem tenta aprovar o próprio pedido", async () => {
+    // A fila existe para separar duas pessoas. Se quem pede pode aprovar, o
+    // controle é decorativo: a operação sensível volta a executar no clique,
+    // só que com um passo a mais e a aparência de ter sido revisada.
+    mocks.findFirst.mockResolvedValue({
+      ...pendente,
+      solicitanteId: admin.userId,
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("recusa também a auto-rejeição", async () => {
+    // Rejeitar o próprio pedido parece inofensivo, mas é o mesmo furo ao
+    // contrário: permite retirar da fila sem ninguém ter olhado.
+    mocks.findFirst.mockResolvedValue({
+      ...pendente,
+      solicitanteId: admin.userId,
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "REJECTED",
+    });
+
+    expect(res.ok).toBe(false);
+  });
+
+  it("deixa passar quando o aprovador é outra pessoa", async () => {
+    mocks.findFirst.mockResolvedValue({
+      ...pendente,
+      solicitanteId: "u-outro",
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.update).toHaveBeenCalled();
+  });
+
+  it("a decisão entra na trilha de auditoria", async () => {
+    // Era o buraco: o pedido ficava registrado, quem aprovou não. A fila
+    // existe para ser auditável — sem isto ela registra metade do ato.
+    mocks.findFirst.mockResolvedValue({
+      ...pendente,
+      solicitanteId: "u-outro",
+    });
+
+    await decidePlatformApprovalAction({ id: "ap-1", outcome: "APPROVED" });
+
+    expect(mocks.logPlatformAudit).toHaveBeenCalled();
+  });
+
+  it("a mensagem diz por que recusou, não só que recusou", async () => {
+    mocks.findFirst.mockResolvedValue({
+      ...pendente,
+      solicitanteId: admin.userId,
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    if (!res.ok) {
+      expect(res.error).toMatch(/pediu|solicit|própri/i);
+    }
   });
 });
