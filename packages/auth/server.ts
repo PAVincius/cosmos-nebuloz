@@ -15,6 +15,9 @@ import { redirect } from "next/navigation";
 
 const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
 const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
+/** Janela em que uma sessão encerrada ainda é servida pelo cookie assinado.
+ *  É o teto do atraso da revogação — e o prazo que o AC-002 pede. */
+const SESSION_REVALIDATE_SECONDS = 60;
 
 const _rawSecret = process.env.BETTER_AUTH_SECRET;
 if (!_rawSecret || _rawSecret.length < 32) {
@@ -47,9 +50,21 @@ export const auth = betterAuth({
   session: {
     expiresIn: SESSION_IDLE_SECONDS,
     updateAge: SESSION_IDLE_SECONDS / 2,
+    // O `cookieCache` serve a sessão a partir do cookie assinado, sem reler o
+    // banco — é o que faz o guard custar duas queries e não três.
+    //
+    // O `maxAge` era `SESSION_ABSOLUTE_SECONDS`, sete dias: enquanto o cookie
+    // valesse, o servidor não relia a linha de `Session`, e apagar essa linha
+    // não encerrava nada. Isso transformava o cache em "a sessão inteira" e
+    // deixava o sistema **sem nenhuma forma de encerrar uma sessão** — o caso
+    // que importa é cookie roubado ou conta comprometida, onde remover
+    // permissão não basta porque a permissão não é o problema.
+    //
+    // 60s é o prazo que o AC-002 já pedia. Custa uma leitura de sessão por
+    // pessoa por minuto e devolve a capacidade de expulsar alguém.
     cookieCache: {
       enabled: true,
-      maxAge: SESSION_ABSOLUTE_SECONDS,
+      maxAge: SESSION_REVALIDATE_SECONDS,
     },
     additionalFields: {
       activeTenantId: {

@@ -37,12 +37,33 @@ async function assertNotLastAdmin(
 
 // ─── Session revocation ───────────────────────────────────────────────────────
 
-async function revokeUserSessions(userId: string): Promise<void> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return;
-  }
-  const { redis } = await import("@repo/rate-limit");
-  await redis.set(`session:revoked:user:${userId}`, "1", { ex: 86_400 });
+/**
+ * Encerra as sessões da pessoa no tenant de onde ela saiu.
+ *
+ * A versão anterior gravava `session:revoked:user:*` no Redis — e **nada em
+ * lugar nenhum do repositório lia essa chave**. Escrever um flag que ninguém
+ * consulta é pior que não ter revogação: a operação reporta sucesso e a UI
+ * confirma, então ninguém procura o problema.
+ *
+ * Apagar a linha é o que de fato encerra a sessão. O efeito não é instantâneo:
+ * o `cookieCache` do better-auth serve a sessão do cookie sem reler o banco, e
+ * é por isso que o `maxAge` dele foi reduzido para 60s — o mesmo prazo que o
+ * AC-002 já pedia e que nunca tinha sido cumprido.
+ *
+ * Escopo por `activeTenantId`, não por usuário: quem participa de dois clientes
+ * não perde acesso ao outro por causa de uma remoção que não tem a ver com ele.
+ *
+ * Isto é **defesa em profundidade**, não o controle principal. O que barra o
+ * acesso é a remoção do `TenantMember`, que `requireTenantSession` reconfere a
+ * cada requisição. Encerrar a sessão fecha a janela do cookie ainda válido.
+ */
+async function revokeUserSessions(
+  userId: string,
+  tenantId: string
+): Promise<void> {
+  await database.session.deleteMany({
+    where: { userId, activeTenantId: tenantId },
+  });
 }
 
 // ─── Member removal (AC-002/AC-003) ──────────────────────────────────────────
@@ -89,8 +110,10 @@ export async function removeMemberSafe(
 
   await database.tenantMember.delete({ where: { id: memberId } });
 
-  // AC-002: revoke sessions within 60s via Redis flag
-  revokeUserSessions(member.userId).catch((err) => {
+  // AC-002: a sessão cai em até 60s — o prazo é o `cookieCache.maxAge`.
+  // Sem `await` de propósito: a remoção do membership já barrou o acesso, e
+  // falha aqui não pode desfazer a operação principal.
+  revokeUserSessions(member.userId, ctx.tenantId).catch((err) => {
     log.error("[removeMemberSafe] session revocation failed", err);
   });
 

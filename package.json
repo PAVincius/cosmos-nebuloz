@@ -49,12 +49,12 @@
     "glob": "^11.0.2",
     "lint-staged": "^15.5.2",
     "simple-git-hooks": "^2.13.0",
-    "tsx": "^4.19.4",
     "tsup": "^8.5.1",
+    "tsx": "^4.19.4",
     "turbo": "^2.6.3",
     "typescript": "^5.9.3",
     "ultracite": "6.3.9",
-    "vitest": "^4.0.15",
+    "vitest": "^4.1.10",
     "zod": "4.1.13"
   },
   "engines": {

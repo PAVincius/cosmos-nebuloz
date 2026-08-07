@@ -114,14 +114,14 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "4.0.15",
-    "better-auth": "^1.6.10",
+    "@vitest/coverage-v8": "^4.1.10",
+    "better-auth": "^1.6.26",
     "dotenv": "^17.4.2",
     "jsdom": "^27.2.0",
     "pg": "^8.20.0",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.19.4",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.15"
+    "vitest": "^4.1.10"
   }
 }

@@ -215,8 +215,8 @@ maybDescribe("Flow Intelligence schema constraints", () => {
       const [u1, u2] = [USER_1, USER_2].sort();
 
       const { rows } = await pool.query(
-        `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2")
-         VALUES (gen_random_uuid()::text, $1, $2, $3)
+        `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2", "updatedAt")
+         VALUES (gen_random_uuid()::text, $1, $2, $3, NOW())
          RETURNING "userId1", "userId2"`,
         [TEST_TENANT_ID, u1, u2]
       );
@@ -226,8 +226,8 @@ maybDescribe("Flow Intelligence schema constraints", () => {
       // Same pair + same default taskType ("any") → unique constraint fires.
       await expect(
         pool.query(
-          `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2")
-           VALUES (gen_random_uuid()::text, $1, $2, $3)`,
+          `INSERT INTO "PairSynergy" (id, "tenantId", "userId1", "userId2", "updatedAt")
+           VALUES (gen_random_uuid()::text, $1, $2, $3, NOW())`,
           [TEST_TENANT_ID, u1, u2]
         )
       ).rejects.toThrow(UNIQUE_VIOLATION_RE);

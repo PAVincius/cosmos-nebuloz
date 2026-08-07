@@ -11,6 +11,7 @@ const dbMocks = vi.hoisted(() => ({
   invitationCreate: vi.fn(),
   auditLogCreate: vi.fn(),
   securityPolicyUpsert: vi.fn(),
+  sessionDeleteMany: vi.fn(),
 }));
 
 vi.mock("@repo/database", () => ({
@@ -25,6 +26,7 @@ vi.mock("@repo/database", () => ({
     tenantInvitation: { create: dbMocks.invitationCreate },
     auditLog: { create: dbMocks.auditLogCreate },
     tenantSecurityPolicy: { upsert: dbMocks.securityPolicyUpsert },
+    session: { deleteMany: dbMocks.sessionDeleteMany },
   },
 }));
 
@@ -260,5 +262,55 @@ describe("checkIpAllowlist (AC-008)", () => {
       "192.168.0.0/16",
     ]);
     expect(result.allowed).toBe(false);
+  });
+});
+
+describe("removeMemberSafe — encerramento de sessão", () => {
+  beforeEach(() => {
+    for (const m of Object.values(dbMocks)) {
+      m.mockReset();
+    }
+    authMocks.requireTenantSession.mockResolvedValue(ADMIN_CTX);
+    authMocks.requireRole.mockReturnValue(undefined);
+    authMocks.headers.mockResolvedValue(new Headers());
+    dbMocks.memberFindFirst.mockResolvedValue({
+      id: "m-2",
+      role: "MEMBER",
+      userId: "user-2",
+    });
+    dbMocks.memberCount.mockResolvedValue(3);
+    dbMocks.memberDelete.mockResolvedValue({});
+    dbMocks.sessionDeleteMany.mockResolvedValue({ count: 1 });
+    dbMocks.auditLogCreate.mockResolvedValue({});
+  });
+
+  it("apaga a linha de sessão, não escreve um flag que ninguém lê", async () => {
+    // A implementação anterior gravava `session:revoked:user:*` no Redis, e
+    // nada em lugar nenhum do repositório lia essa chave. Apagar a linha é o
+    // que de fato encerra a sessão.
+    await removeMemberSafe("m-2");
+
+    expect(dbMocks.sessionDeleteMany).toHaveBeenCalled();
+  });
+
+  it("encerra só as sessões ativas no tenant de onde a pessoa saiu", async () => {
+    // Quem participa de dois clientes não perde o acesso ao outro por causa
+    // de uma remoção que não tem nada a ver com ele.
+    await removeMemberSafe("m-2");
+
+    const where = dbMocks.sessionDeleteMany.mock.calls[0][0].where;
+    expect(where.userId).toBe("user-2");
+    expect(where.activeTenantId).toBe("tenant-1");
+  });
+
+  it("falha ao encerrar não desfaz a remoção", async () => {
+    // A remoção do membership é o que barra o acesso — `requireTenantSession`
+    // reconfere a cada requisição. Encerrar a sessão é defesa em profundidade,
+    // e não pode derrubar a operação principal.
+    dbMocks.sessionDeleteMany.mockRejectedValue(new Error("banco fora"));
+
+    const res = await removeMemberSafe("m-2");
+
+    expect(res.ok).toBe(true);
   });
 });
