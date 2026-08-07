@@ -415,6 +415,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     permissions:
+      # `contents: read` não é redundante: declarar um bloco `permissions` no
+      # job **zera todas as outras**, e o `actions/checkout` precisa de leitura
+      # de conteúdo. Sem isto, num repositório privado o GitHub responde 404
+      # ("Repository not found") em vez de 403 — o erro parece repositório
+      # inexistente e manda a investigação para o lugar errado.
+      #
+      # É por isso que este job falhava em 100% dos PRs desde que existe. Os
+      # dois jobs irmãos de IA (`generate-tests`, `fix-ci`) declaram `contents`
+      # e por isso nunca tiveram o problema.
+      contents: read
       pull-requests: write
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -437,15 +447,17 @@ jobs:
 
       # O repositório não tem secret nenhum configurado (`gh secret list` vem
       # vazio), então `ANTHROPIC_API_KEY` chega indefinido e o cliente da
-      # Anthropic estoura na construção. O resultado é que este job falha em
-      # 100% dos PRs desde que existe — #57, #58, #59, #61.
+      # Anthropic estouraria na construção.
+      #
+      # Isto é a **segunda** barreira, não a que derrubava o job: o que o
+      # derrubava era a falta de `contents: read` acima, no checkout. Sem este
+      # guarda, consertar a permissão só faria a falha andar alguns passos para
+      # frente.
       #
       # Portão vermelho em todo PR não protege ninguém: ensina a equipe a
       # ignorar CI vermelho, e aí o vermelho que importa passa junto. A escolha
-      # aqui é tornar a ausência **visível como ausência**, com um aviso no
-      # resumo do run, em vez de vermelho permanente que ninguém mais lê.
-      #
-      # Configurar o secret devolve o job ao ar sem mexer neste arquivo.
+      # é tornar a ausência **visível como ausência**, com aviso no resumo do
+      # run. Configurar o secret devolve a análise ao ar sem mexer neste arquivo.
       - name: AI risk score
         if: env.ANTHROPIC_API_KEY != ''
         run: pnpm risk:score
