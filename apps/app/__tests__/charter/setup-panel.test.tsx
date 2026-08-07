@@ -190,12 +190,59 @@ describe("SetupPanel", () => {
 
     render(<DashboardScreen />);
 
-    // Sinal de que `getDashboard` já resolveu e o loading acabou — não é
-    // conteúdo estático do PageHeader, que apareceria mesmo antes do fetch.
-    expect(await screen.findByText("Nada aguardando decisão")).toBeTruthy();
+    // Sinal de que `getDashboard` já resolveu e o loading acabou — não pode
+    // mais ser o texto tranquilizador do card de fila: com a leitura de
+    // progresso indisponível, esse texto é exatamente o que a Task 3 proíbe
+    // de aparecer (ver os três testes abaixo).
+    expect(await screen.findByText(/Aurora Bank/)).toBeTruthy();
     expect(screen.getByText("Visão Geral de Governança")).toBeTruthy();
     // O painel é aditivo: leitura de progresso que falhou não aparece, mas
     // também não derruba o resto da tela.
     expect(screen.queryByText("Comece por aqui")).toBeNull();
+  });
+
+  it("montagem incompleta: card de fila não afirma o texto tranquilizador", async () => {
+    // O produto afirmando conformidade que ninguém construiu é o defeito que
+    // este trabalho existe para tirar da primeira tela que o cliente vê: com
+    // a montagem incompleta, "toda submissão foi revisada dentro do SLA" é
+    // uma frase sobre um processo que nunca rodou.
+    getDashboardMock.mockResolvedValue({ ok: true, data: dashboardFixture() });
+    getSetupProgressMock.mockResolvedValue({
+      ok: true,
+      data: { passos: [], concluidos: 0, total: 5, completo: false },
+    });
+
+    render(<DashboardScreen />);
+
+    expect(await screen.findByText(/nenhum caso foi submetido/i)).toBeTruthy();
+    expect(screen.queryByText(/revisada dentro do SLA/i)).toBeNull();
+  });
+
+  it("montagem completa: card de fila volta a mostrar o texto tranquilizador", async () => {
+    getDashboardMock.mockResolvedValue({ ok: true, data: dashboardFixture() });
+    getSetupProgressMock.mockResolvedValue({
+      ok: true,
+      data: { passos: [], concluidos: 5, total: 5, completo: true },
+    });
+
+    render(<DashboardScreen />);
+
+    expect(await screen.findByText(/revisada dentro do SLA/i)).toBeTruthy();
+  });
+
+  it("getSetupProgress falhou: card de fila não afirma o texto tranquilizador", async () => {
+    getDashboardMock.mockResolvedValue({ ok: true, data: dashboardFixture() });
+    getSetupProgressMock.mockResolvedValue({
+      ok: false,
+      error: "Falha ao carregar o progresso de montagem.",
+    });
+
+    render(<DashboardScreen />);
+
+    // Mesmo sinal de assentamento do teste de falha acima: o nome da org só
+    // aparece depois que `getDashboard` resolve, independente do que
+    // aconteça com `getSetupProgress`.
+    await screen.findByText(/Aurora Bank/);
+    expect(screen.queryByText(/revisada dentro do SLA/i)).toBeNull();
   });
 });
