@@ -219,13 +219,15 @@ ligado.
 
 Ordenada por consequência, não por esforço.
 
-| # | O quê | Por quê primeiro |
+Estado depois desta rodada — os cinco primeiros estão fechados.
+
+| # | O quê | Estado |
 |---|---|---|
-| 1 | Ler `session:revoked` no guard + `cookieCache` para 60s | Revogação de sessão hoje não funciona. É o único item aqui em que o sistema afirma ter feito algo que não fez. |
-| 2 | Agregar a última atividade no banco em `listAccountHealth` | O erro é resposta errada, não lentidão, e é silencioso. Chega junto com o crescimento da base de clientes, sem aviso. |
-| 3 | `max` explícito no pool + `connection_limit` na URL | É o teto duro. Enquanto não estiver definido, nenhuma outra otimização de query importa. |
-| 4 | Rate limit para o middleware de borda | Tira 1 round trip de rede de todo caminho quente e decide antes de a função subir. |
-| 5 | 2FA resolvido no login, não por requisição | Uma query a menos por chamada de guard, para reconfirmar um fato que não muda. |
+| 1 | Encerrar sessão de verdade + `cookieCache` para 60s | **Feito.** `deleteMany` escopado em `activeTenantId`, `SESSION_REVALIDATE_SECONDS = 60`. |
+| 2 | Agregar a última atividade no banco em `listAccountHealth` | **Feito.** `groupBy` com `_max`, uma linha por cliente. |
+| 3 | `max` explícito no pool | **Feito.** `max: 5` e `connectionTimeoutMillis: 10s`. |
+| 4 | Reduzir o custo do guard por render | **Feito por outro caminho.** `cache()` do React cortou de 2–3 chamadas por render para 1, sem middleware de borda — que continua sendo a melhoria seguinte, para decidir antes de a função subir. |
+| 5 | 2FA resolvido no login, não por requisição | **Reduzido pelo `cache()`** — de 3 leituras por render para 1. Resolver na sessão continua valendo. |
 | 6 | `take` nas cinco varreduras | Barato e mecânico. |
 | 7 | Retenção ou particionamento do `AuditLog` | Degrada sozinho com o tempo; não urge, mas nunca melhora. |
 
