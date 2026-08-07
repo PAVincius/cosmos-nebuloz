@@ -11,12 +11,11 @@ import {
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
-  GovernanceError,
   requireCharterContext,
   requireCharterPermissionContext,
 } from "@/lib/charter/guards";
 import { type Result, safeAction } from "../../actions/_base";
-import { logCharterAudit } from "./_shared";
+import { GovernanceError, logCharterAudit } from "./_shared";
 
 // Configurações — FR-12.
 
@@ -100,6 +99,12 @@ export type SettingsView = {
   activeRole: CharterRole;
   notifications: NotificationTrigger[];
   members: { userId: string; name: string; email: string; role: CharterRole }[];
+  /** Gente do tenant sem CharterMembership — candidatos ao passo 3 da
+   *  montagem ("Atribua papéis de governança"). Sem esta lista, o único
+   *  controle da aba era editar quem já tinha papel, e um tenant novo só
+   *  tem o Compliance lead: nada no /charter/settings dava para cumprir o
+   *  passo. */
+  unassignedMembers: { userId: string; name: string; email: string }[];
 };
 
 export async function getSettings(): Promise<Result<SettingsView>> {
@@ -107,7 +112,7 @@ export async function getSettings(): Promise<Result<SettingsView>> {
     const ctx = await requireCharterContext();
 
     return withTenantDb(ctx.tenantId, async (db) => {
-      const [tenant, settings, memberships] = await Promise.all([
+      const [tenant, settings, memberships, tenantMembers] = await Promise.all([
         db.tenant.findUniqueOrThrow({
           where: { id: ctx.tenantId },
           select: { name: true, slug: true },
@@ -118,7 +123,21 @@ export async function getSettings(): Promise<Result<SettingsView>> {
           include: { user: { select: { name: true, email: true } } },
           orderBy: { role: "asc" },
         }),
+        db.tenantMember.findMany({
+          where: { tenantId: ctx.tenantId },
+          include: { user: { select: { name: true, email: true } } },
+          orderBy: { createdAt: "asc" },
+        }),
       ]);
+
+      const comCharterRole = new Set(memberships.map((m) => m.userId));
+      const unassignedMembers = tenantMembers
+        .filter((tm) => !comCharterRole.has(tm.userId))
+        .map((tm) => ({
+          userId: tm.userId,
+          name: tm.user.name ?? tm.user.email,
+          email: tm.user.email,
+        }));
 
       const stored =
         (settings?.notificationTriggers as Record<string, boolean> | null) ??
@@ -156,6 +175,7 @@ export async function getSettings(): Promise<Result<SettingsView>> {
           email: m.user.email,
           role: m.role,
         })),
+        unassignedMembers,
       };
     });
   });
@@ -329,6 +349,22 @@ export async function setMemberCharterRole(
         },
         select: { role: true },
       });
+
+      // Compliance é o único papel que atribui papel (comparação direta,
+      // acima) e o único que publica política (CHARTER_MATRIX). Deixar o
+      // tenant sem nenhum não é um estado ruim — é um estado sem saída pelo
+      // produto: ninguém mais teria como criar outro Compliance.
+      if (before?.role === "COMPLIANCE" && data.role !== "COMPLIANCE") {
+        const restantes = await db.charterMembership.count({
+          where: { tenantId: ctx.tenantId, role: "COMPLIANCE" },
+        });
+        if (restantes <= 1) {
+          throw new GovernanceError(
+            "membership.lastCompliance",
+            "Esta é a última pessoa com papel Compliance. Atribua Compliance a outra pessoa antes de trocar este papel."
+          );
+        }
+      }
 
       await db.charterMembership.upsert({
         where: {

@@ -2,6 +2,7 @@
 
 import type { CharterRole } from "@repo/database";
 import { withTenantDb } from "@repo/database";
+import { POLICY_SECTIONS } from "@repo/provisioning";
 import {
   CHARTER_ROLE_LABEL,
   type CharterPermission,
@@ -52,7 +53,9 @@ export type SetupProgress = {
   completo: boolean;
 };
 
-const TOTAL_SECOES = 9;
+// Mesma fonte que o provisionamento grava — nunca um segundo 9 escrito à mão
+// que pode divergir do array que `bootstrapCharter` de fato usa.
+const TOTAL_SECOES = POLICY_SECTIONS.length;
 
 /** `feito` vence `bloqueado`: dado seedado torto ou provisionamento antigo pode
  *  produzir um passo concluído com o pré-requisito ainda aberto — e um passo

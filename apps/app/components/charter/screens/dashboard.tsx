@@ -92,9 +92,12 @@ function copiaDeMontagem(
   completa: { title: string; subtitle: string }
 ): CopiaVazia {
   if (!setupProgress) {
+    // Sem saber se isto é "ainda carregando" ou "falhou" (os dois casos são o
+    // mesmo `null`, ver acima), o subtítulo não pode afirmar nenhum dos dois —
+    // um round trip normal não pode se ler como falha.
     return {
       title: "Nada aqui.",
-      subtitle: "Não foi possível confirmar o estado da montagem inicial.",
+      subtitle: "",
       tone: "accent",
       icon: "inbox",
     };

@@ -13,6 +13,11 @@ vi.mock("@/lib/charter/guards", () => ({
   requireCharterContext: h.requireCtx,
 }));
 vi.mock("@repo/database", () => ({
+  // setup.ts importa POLICY_SECTIONS de @repo/provisioning (TOTAL_SECOES); o
+  // barrel desse pacote reexporta platformDb = database de platform-db.ts, e
+  // um export ausente do factory de vi.mock lança ao ser acessado — mesmo
+  // sem uso aqui, precisa existir.
+  database: {},
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
       charterPolicySection: { findMany: h.sectionFindMany },

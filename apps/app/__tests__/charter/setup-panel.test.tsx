@@ -215,6 +215,10 @@ describe("SetupPanel", () => {
     render(<DashboardScreen />);
 
     expect(await screen.findByText(/nenhum caso foi submetido/i)).toBeTruthy();
+    // `{setupProgress && <SetupPanel/>}` (Task 2) não tinha teste de caminho
+    // de sucesso: apagar essa linha deixava os outros 8 testes deste arquivo
+    // verdes (achado da revisão do branch inteiro).
+    expect(screen.getByText("Comece por aqui")).toBeTruthy();
     expect(screen.queryByText(/revisada dentro do SLA/i)).toBeNull();
   });
 
