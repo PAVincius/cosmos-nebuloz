@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   getSession: vi.fn(),
   findFirst: vi.fn(),
+  userFindUnique: vi.fn(),
   // O `redirect` do Next não retorna: ele lança e o framework intercepta.
   // Simular retorno normal esconderia justamente o defeito que este módulo
   // existe para evitar — seguir renderizando depois de mandar logar.
@@ -16,7 +17,10 @@ vi.mock("@repo/auth/server", () => ({
   redirectToSignIn: mocks.redirectToSignIn,
 }));
 vi.mock("@repo/database", () => ({
-  database: { tenantMember: { findFirst: mocks.findFirst } },
+  database: {
+    tenantMember: { findFirst: mocks.findFirst },
+    user: { findUnique: mocks.userFindUnique },
+  },
 }));
 vi.mock("next/headers", () => ({
   headers: () => Promise.resolve(new Headers()),
@@ -28,6 +32,8 @@ describe("resolveStaffAccess", () => {
   beforeEach(() => {
     mocks.getSession.mockReset();
     mocks.findFirst.mockReset();
+    mocks.userFindUnique.mockReset();
+    mocks.userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
     // `mockClear`, não `mockReset`: reset apagaria o throw que imita o redirect.
     mocks.redirectToSignIn.mockClear();
   });
@@ -44,6 +50,7 @@ describe("resolveStaffAccess", () => {
   it("sessão válida de quem não é staff é recusada sem voltar ao login", async () => {
     mocks.getSession.mockResolvedValue({
       user: { id: "user-cliente", email: "ana@vanta.exemplo", name: "Ana" },
+      session: { twoFactorVerified: true },
     });
     mocks.findFirst.mockResolvedValue(null);
 
@@ -65,6 +72,7 @@ describe("resolveStaffAccess", () => {
         email: "vini@nebuloz.exemplo",
         name: "Vinícius",
       },
+      session: { twoFactorVerified: true },
     });
     mocks.findFirst.mockResolvedValue({ role: "ADMIN" });
 
@@ -85,6 +93,7 @@ describe("resolveStaffAccess", () => {
   it("staff sem ADMIN entra, mas só para ler", async () => {
     mocks.getSession.mockResolvedValue({
       user: { id: "user-leitor", email: "leitor@nebuloz.exemplo", name: null },
+      session: { twoFactorVerified: true },
     });
     mocks.findFirst.mockResolvedValue({ role: "MEMBER" });
 

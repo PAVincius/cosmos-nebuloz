@@ -23,6 +23,35 @@ export type EpicLifecycleEvent =
   | { type: "COMPLETE" }
   | { type: "REJECT"; reason: string };
 
+/** INVEST mínimo para um épico sair da análise. */
+export const INVEST_MINIMO = 40;
+/** Tamanho mínimo de hipótese. Abaixo disto é título, não hipótese. */
+export const HIPOTESE_MINIMA = 50;
+/** Tamanho mínimo do motivo de rejeição. "Não gostei" não é motivo. */
+export const MOTIVO_MINIMO = 20;
+
+/**
+ * Os predicados de cada portão, como funções.
+ *
+ * Antes existiam duas vezes: uma como guard nomeado que nenhuma transição
+ * usava, outra copiada dentro dos guards compostos. Duas cópias da mesma regra
+ * são livres para divergir — mudar o mínimo de INVEST num lugar e não no outro
+ * não quebra nada e ninguém percebe até um épico passar por onde não devia.
+ */
+export function temInvest(ctx: Pick<EpicLifecycleContext, "investScore">) {
+  return (ctx.investScore ?? 0) >= INVEST_MINIMO;
+}
+
+export function temHipotese(ctx: Pick<EpicLifecycleContext, "hypothesis">) {
+  return (ctx.hypothesis?.length ?? 0) >= HIPOTESE_MINIMA;
+}
+
+export function temVerba(
+  ctx: Pick<EpicLifecycleContext, "leanBudgetAllocation">
+) {
+  return (ctx.leanBudgetAllocation ?? 0) > 0;
+}
+
 export const epicLifecycleMachine = setup({
   types: {
     context: {} as EpicLifecycleContext,
@@ -30,18 +59,12 @@ export const epicLifecycleMachine = setup({
     input: {} as Partial<EpicLifecycleContext>,
   },
   guards: {
-    hasInvestScore: ({ context }) => (context.investScore ?? 0) >= 40,
-    hasHypothesis: ({ context }) => (context.hypothesis?.length ?? 0) >= 50,
-    hasGovernanceApproval: ({ context }) => context.hasGovernanceApproval,
-    hasBudgetAllocation: ({ context }) =>
-      (context.leanBudgetAllocation ?? 0) > 0,
     hasValidRejectionReason: ({ event }) =>
-      event.type === "REJECT" && event.reason.length >= 20,
+      event.type === "REJECT" && event.reason.length >= MOTIVO_MINIMO,
     canTransitionToBacklog: ({ context }) =>
-      (context.investScore ?? 0) >= 40 &&
-      (context.hypothesis?.length ?? 0) >= 50,
+      temInvest(context) && temHipotese(context),
     canTransitionToImplementing: ({ context }) =>
-      context.hasGovernanceApproval && (context.leanBudgetAllocation ?? 0) > 0,
+      context.hasGovernanceApproval && temVerba(context),
   },
 }).createMachine({
   id: "epicLifecycle",

@@ -27,6 +27,43 @@ export class StaffAuthError extends Error {
 }
 
 /**
+ * Exige segundo fator para entrar no painel.
+ *
+ * O `packages/auth` já traz `requireMfaForPrivilegedRoles`, marcada SOC2 CC6.2
+ * — mas ela recebe `TenantContext`, o papel de dentro de um cliente, e o staff
+ * do painel não tem esse contexto. A função existia e o app que mais precisa
+ * dela não a chamava. Esta é a versão para o back-office.
+ *
+ * São **duas** condições, e omitir a segunda é o erro comum: ter 2FA cadastrado
+ * não é o mesmo que ter usado nesta sessão. Aceitar só o cadastro transforma o
+ * controle em enfeite de perfil.
+ */
+async function assertSegundoFator(session: {
+  user: { id: string };
+  session?: unknown;
+}): Promise<void> {
+  const usuario = await database.user.findUnique({
+    where: { id: session.user.id },
+    select: { twoFactorEnabled: true },
+  });
+
+  if (!usuario?.twoFactorEnabled) {
+    throw new StaffAuthError(
+      "FORBIDDEN",
+      "O painel exige verificação em dois fatores. Habilite 2FA no seu perfil e entre de novo."
+    );
+  }
+
+  const dados = session.session as { twoFactorVerified?: boolean } | undefined;
+  if (!dados?.twoFactorVerified) {
+    throw new StaffAuthError(
+      "FORBIDDEN",
+      "Esta sessão não passou pela verificação em dois fatores. Saia e entre de novo para completá-la."
+    );
+  }
+}
+
+/**
  * O único guard do back-office. Toda page e toda server action começa por ele —
  * o layout protege navegação, não protege RPC.
  */
@@ -55,6 +92,8 @@ export async function requirePlatformStaff(): Promise<PlatformStaff> {
       "Esta conta não é da equipe da Nebuloz."
     );
   }
+
+  await assertSegundoFator(session);
 
   return {
     userId: session.user.id,
