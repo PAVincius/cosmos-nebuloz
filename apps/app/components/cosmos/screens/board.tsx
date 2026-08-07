@@ -24,7 +24,8 @@ import type {
   BoardStoryView,
   TeamBoardView,
 } from "@/app/(cosmos)/actions/board";
-import { COLUNAS, getTeamBoard } from "@/app/(cosmos)/actions/board";
+import { getTeamBoard } from "@/app/(cosmos)/actions/board";
+import { COLUNAS } from "@/app/(cosmos)/actions/board.constants";
 import { createStory, updateStoryStatus } from "@/app/actions/stories";
 import {
   createTask,
