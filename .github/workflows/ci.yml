@@ -100,6 +100,11 @@ jobs:
       # vale de verdade para os outros 29, em vez de ser vermelho para todos e
       # não proteger ninguém. Rastreado em docs/compliance.
       - name: Type check
+        # O tsc do apps/app estoura o heap padrão de 2 GB do runner
+        # ("Ineffective mark-compacts near heap limit", exit 134). O projeto é
+        # grande o bastante para precisar disto; o runner tem folga.
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm turbo typecheck --filter=!web
 
   cosmos-graph:
