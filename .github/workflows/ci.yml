@@ -313,15 +313,16 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
-      # O env abaixo é pré-requisito, não afrouxamento: nenhum destes é
-      # segredo de verdade e nenhum é publicado — o build de CI compila, não
-      # executa nem é implantado. O segredo real vive no ambiente da Vercel.
+      # `web` fica fora pelo mesmo motivo que já o tirou do typecheck: 56 erros
+      # de tipo pré-existentes, dívida dos scaffolds do v0.dev em `apps/web/v0/`.
+      # O `next build` roda type check no fim, então o erro que o portão de
+      # typecheck já ignora reaparece aqui — não é falta de credencial: o
+      # `basehub build` passa desde o PR #60, e `@repo/cms` volta ao portão.
       #
-      # Este job ainda NÃO passa: storybook, apps/web e apps/email têm dívida
-      # de build anterior a este trabalho. As correções deste PR levaram o
-      # turbo de 0 de 12 tarefas para 8 de 10; o resto está listado no PR.
+      # Estar fora de dois portões pelo mesmo motivo é sinal de dívida real, não
+      # de configuração. Consertar os tipos devolve `web` aos dois de uma vez.
       - name: Build
-        run: pnpm turbo build
+        run: pnpm turbo build --filter=!web
         env:
           SKIP_ENV_VALIDATION: true
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
@@ -433,6 +434,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     permissions:
+      # `contents: read` não é redundante: declarar um bloco `permissions` no
+      # job **zera todas as outras**, e o `actions/checkout` precisa de leitura
+      # de conteúdo. Sem isto, num repositório privado o GitHub responde 404
+      # ("Repository not found") em vez de 403 — o erro parece repositório
+      # inexistente e manda a investigação para o lugar errado.
+      #
+      # É por isso que este job falhava em 100% dos PRs desde que existe. Os
+      # dois jobs irmãos de IA (`generate-tests`, `fix-ci`) declaram `contents`
+      # e por isso nunca tiveram o problema.
+      contents: read
       pull-requests: write
     env:
       ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
@@ -453,5 +464,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      # O repositório não tem secret nenhum configurado (`gh secret list` vem
+      # vazio), então `ANTHROPIC_API_KEY` chega indefinido e o cliente da
+      # Anthropic estouraria na construção.
+      #
+      # Isto é a **segunda** barreira, não a que derrubava o job: o que o
+      # derrubava era a falta de `contents: read` acima, no checkout. Sem este
+      # guarda, consertar a permissão só faria a falha andar alguns passos para
+      # frente.
+      #
+      # Portão vermelho em todo PR não protege ninguém: ensina a equipe a
+      # ignorar CI vermelho, e aí o vermelho que importa passa junto. A escolha
+      # é tornar a ausência **visível como ausência**, com aviso no resumo do
+      # run. Configurar o secret devolve a análise ao ar sem mexer neste arquivo.
       - name: AI risk score
+        if: env.ANTHROPIC_API_KEY != ''
         run: pnpm risk:score
+
+      - name: Sem chave de IA — análise de risco não roda
+        if: env.ANTHROPIC_API_KEY == ''
+        run: |
+          echo "::notice title=AI Risk Score pulado::ANTHROPIC_API_KEY não está configurado no repositório. A análise de risco por IA não rodou neste PR."

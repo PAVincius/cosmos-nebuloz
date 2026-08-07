@@ -173,19 +173,31 @@ export async function listAccountHealth(
         where: { status: "ERROR" },
         select: { tenantId: true, name: true, status: true },
       }),
-      // Só a atividade mais recente de cada tenant interessa; trazer a coluna
-      // de data de todos e reduzir aqui evita uma consulta por cliente.
-      database.auditLog.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 2000,
-        select: { tenantId: true, createdAt: true },
+      // Agregação no banco, uma linha por cliente.
+      //
+      // A versão anterior trazia os 2000 eventos mais recentes e reduzia aqui.
+      // Funcionava com a base pequena e **passava a mentir** quando ela
+      // crescesse: acima de ~2000 eventos, os clientes menos ativos deixavam
+      // de caber na amostra, o mapa devolvia `undefined`, e o health afirmava
+      // SEM_SINAL sobre cliente ativo.
+      //
+      // O sintoma não seria lentidão — seria a tela dizendo com confiança o
+      // oposto da verdade, sem erro, sem log, sem métrica. Alguém ligaria para
+      // o cliente errado e não ligaria para o certo.
+      //
+      // Aumentar o `take` não resolvia: só adiava, e adiava sem aviso.
+      database.auditLog.groupBy({
+        by: ["tenantId"],
+        _max: { createdAt: true },
       }),
     ]);
 
+    // Agora "não veio na resposta" e "nunca teve atividade" são a mesma coisa —
+    // e isso é verdade. Antes, "não coube na amostra" caía no mesmo lugar.
     const ultimaPorTenant = new Map<string, Date>();
     for (const e of eventos) {
-      if (!ultimaPorTenant.has(e.tenantId)) {
-        ultimaPorTenant.set(e.tenantId, e.createdAt);
+      if (e._max.createdAt) {
+        ultimaPorTenant.set(e.tenantId, e._max.createdAt);
       }
     }
 
