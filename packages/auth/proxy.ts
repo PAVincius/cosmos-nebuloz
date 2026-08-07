@@ -2,7 +2,11 @@ import { type NextRequest, NextResponse } from "next/server";
 
 /** Aligned with `apps/app/app/(authenticated)/**` — early redirect before RSC. */
 const PROTECTED_PREFIXES = [
-  "/dashboard",
+  // Cosmos — mesma razão do Charter abaixo: o layout do route group já guarda
+  // (sessão + tenant), mas sem o prefixo aqui quem não tem sessão renderizava
+  // RSC antes de ser mandado para o /sign-in. Passou a ser a primeira tela do
+  // produto, então é também a rota mais pedida por quem ainda não entrou.
+  "/cosmos",
   "/portfolio",
   "/arts",
   "/teams",
