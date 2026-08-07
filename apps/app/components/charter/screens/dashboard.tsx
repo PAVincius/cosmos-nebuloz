@@ -15,6 +15,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { getDashboard } from "@/app/(charter)/actions/dashboard";
+import { getSetupProgress } from "@/app/(charter)/actions/setup";
 import {
   DATA_CLASS_LABEL,
   DATA_CLASS_TONE,
@@ -34,6 +35,7 @@ import {
   TableHead,
   TableRow,
 } from "../base";
+import { SetupPanel } from "../setup-panel";
 import { useCharterData } from "../use-charter-data";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
@@ -69,6 +71,11 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getDashboard(), [])
+  );
+  // Carrega separado do dashboard, não junto: se a montagem falhar, o
+  // dashboard tem de renderizar mesmo assim — o painel é aditivo.
+  const { data: setupProgress } = useCharterData(
+    useCallback(() => getSetupProgress(), [])
   );
 
   if (error) {
@@ -123,6 +130,12 @@ export default function DashboardScreen() {
           Publicar atualização
         </Button>
       </PageHeader>
+
+      {setupProgress && (
+        <div style={{ marginBottom: "var(--gap)" }}>
+          <SetupPanel progresso={setupProgress} />
+        </div>
+      )}
 
       <div
         style={{
