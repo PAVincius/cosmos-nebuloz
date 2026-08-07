@@ -114,7 +114,7 @@
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
-    "@vitest/coverage-v8": "4.0.15",
+    "@vitest/coverage-v8": "^4.1.10",
     "better-auth": "^1.6.26",
     "dotenv": "^17.4.2",
     "jsdom": "^27.2.0",
