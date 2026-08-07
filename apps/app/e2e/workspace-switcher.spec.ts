@@ -121,7 +121,7 @@ test.describe("WorkspaceSwitcher — Visual @auth", () => {
   });
 
   test("should display the active tenant name in sidebar", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("/cosmos/dashboard");
     // O workspace switcher deve estar visível na sidebar
     const switcher = page
       .locator('[data-testid="workspace-switcher"], .sidebar-menu-button')
@@ -132,7 +132,7 @@ test.describe("WorkspaceSwitcher — Visual @auth", () => {
   test("should open dropdown with workspace list on click", async ({
     page,
   }) => {
-    await page.goto("/dashboard");
+    await page.goto("/cosmos/dashboard");
     const switcher = page.locator('[data-testid="workspace-switcher"]').first();
     await switcher.click();
 
