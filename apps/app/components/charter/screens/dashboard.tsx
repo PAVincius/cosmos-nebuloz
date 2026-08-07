@@ -16,6 +16,10 @@ import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { getDashboard } from "@/app/(charter)/actions/dashboard";
 import {
+  getSetupProgress,
+  type SetupProgress,
+} from "@/app/(charter)/actions/setup";
+import {
   DATA_CLASS_LABEL,
   DATA_CLASS_TONE,
   RISK_CATEGORY_LABEL,
@@ -34,6 +38,7 @@ import {
   TableHead,
   TableRow,
 } from "../base";
+import { SetupPanel } from "../setup-panel";
 import { useCharterData } from "../use-charter-data";
 
 const STATUS_META: Record<string, { label: string; tone: Tone }> = {
@@ -65,10 +70,52 @@ function slaToneFor(sla: number | null): Tone {
   return "green";
 }
 
+type CopiaVazia = {
+  title: string;
+  subtitle: string;
+  tone: Tone;
+  icon: IconName;
+};
+
+/**
+ * Título, subtítulo, tom e ícone de uma SmartEmptyState que depende do
+ * progresso de montagem, não do fato de a lista estar vazia. `setupProgress`
+ * só é não nulo quando `getSetupProgress` respondeu com sucesso — enquanto
+ * ainda carrega ou depois que falhou, os dois casos ficam indistinguíveis
+ * (`null`), e sem saber se a montagem está incompleta o card não pode
+ * escolher a frase que afirma uma conformidade que ninguém verificou. Errar
+ * para o lado de não afirmar.
+ */
+function copiaDeMontagem(
+  setupProgress: SetupProgress | null,
+  incompleta: { title: string; subtitle: string },
+  completa: { title: string; subtitle: string }
+): CopiaVazia {
+  if (!setupProgress) {
+    // Sem saber se isto é "ainda carregando" ou "falhou" (os dois casos são o
+    // mesmo `null`, ver acima), o subtítulo não pode afirmar nenhum dos dois —
+    // um round trip normal não pode se ler como falha.
+    return {
+      title: "Nada aqui.",
+      subtitle: "",
+      tone: "accent",
+      icon: "inbox",
+    };
+  }
+  return setupProgress.completo
+    ? { ...completa, tone: "green", icon: "check" }
+    : { ...incompleta, tone: "accent", icon: "inbox" };
+}
+
 export default function DashboardScreen() {
   const router = useRouter();
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getDashboard(), [])
+  );
+  // Carrega separado do dashboard, não junto: se a montagem falhar, o
+  // dashboard tem de renderizar mesmo assim — o painel é aditivo.
+  const { data: setupProgress } = useCharterData(
+    useCallback(() => getSetupProgress(), [])
   );
 
   if (error) {
@@ -76,6 +123,30 @@ export default function DashboardScreen() {
   }
 
   const k = data?.kpis;
+  const filaVazia = copiaDeMontagem(
+    setupProgress,
+    {
+      title: "Nenhum caso foi submetido ainda",
+      subtitle: "A fila aparece aqui assim que o primeiro caso for submetido.",
+    },
+    {
+      title: "Nada aguardando decisão",
+      subtitle: "Toda submissão foi revisada dentro do SLA.",
+    }
+  );
+  const alertasVazio = copiaDeMontagem(
+    setupProgress,
+    {
+      title: "Ainda não há o que monitorar",
+      subtitle:
+        "Alertas aparecem aqui quando houver SLA, mitigação ou seção de política para acompanhar.",
+    },
+    {
+      title: "Nada exige ação agora",
+      subtitle:
+        "Nenhum SLA vencido, nenhuma mitigação atrasada e nenhuma seção de política fora de publicação.",
+    }
+  );
 
   return (
     <div className="fade-in">
@@ -123,6 +194,12 @@ export default function DashboardScreen() {
           Publicar atualização
         </Button>
       </PageHeader>
+
+      {setupProgress && (
+        <div style={{ marginBottom: "var(--gap)" }}>
+          <SetupPanel progresso={setupProgress} />
+        </div>
+      )}
 
       <div
         style={{
@@ -218,10 +295,10 @@ export default function DashboardScreen() {
             </div>
           ) : data.queue.length === 0 ? (
             <SmartEmptyState
-              icon="check"
-              subtitle="Toda submissão foi revisada dentro do SLA."
-              title="Nada aguardando decisão"
-              tone="green"
+              icon={filaVazia.icon}
+              subtitle={filaVazia.subtitle}
+              title={filaVazia.title}
+              tone={filaVazia.tone}
             />
           ) : (
             <>
@@ -499,16 +576,30 @@ export default function DashboardScreen() {
           title="Alertas de governança"
           tone="amber"
         >
-          {(data?.alerts ?? []).length === 0 ? (
+          {loading || !data ? (
+            <div
+              style={{
+                padding: 16,
+                display: "flex",
+                flexDirection: "column",
+                gap: 8,
+              }}
+            >
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+              <SkeletonCard />
+            </div>
+          ) : data.alerts.length === 0 ? (
             <SmartEmptyState
-              icon="check"
-              subtitle="Nenhum SLA vencido, nenhuma mitigação atrasada e nenhuma seção de política fora de publicação."
-              title="Nada exige ação agora"
-              tone="green"
+              icon={alertasVazio.icon}
+              subtitle={alertasVazio.subtitle}
+              title={alertasVazio.title}
+              tone={alertasVazio.tone}
             />
           ) : (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {(data?.alerts ?? []).map((a, i, arr) => (
+              {data.alerts.map((a, i, arr) => (
                 <button
                   className="navitem btn"
                   key={a.title}
