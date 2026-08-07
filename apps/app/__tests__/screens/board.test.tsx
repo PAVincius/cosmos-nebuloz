@@ -7,18 +7,11 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const getTeamBoardMock = vi.fn();
-// COLUNAS é declarada aqui em vez de vir por importActual: o módulo real é
-// "use server" e arrastaria @repo/auth/server e @repo/database para dentro do
-// env de cliente. Duplicar as cinco colunas também deixa o teste falar — mudar
-// o vocabulário de StoryStatus tem de quebrar aqui, não passar batido.
+// Só a leitura é mockada. COLUNAS mora em board.constants.ts — módulo puro, sem
+// "use server" e sem @repo/auth/server ou @repo/database atrás — então a tela
+// usa o array real, e mudar o vocabulário de StoryStatus quebra aqui em vez de
+// passar batido por causa de uma cópia desatualizada no mock.
 vi.mock("@/app/(cosmos)/actions/board", () => ({
-  COLUNAS: [
-    { status: "BACKLOG", label: "Backlog" },
-    { status: "TODO", label: "A fazer" },
-    { status: "IN_PROGRESS", label: "Em andamento" },
-    { status: "REVIEW", label: "Revisão" },
-    { status: "DONE", label: "Concluído" },
-  ],
   getTeamBoard: (...args: unknown[]) => getTeamBoardMock(...args),
 }));
 
