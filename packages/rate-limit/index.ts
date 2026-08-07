@@ -4,9 +4,32 @@ import { keys } from "./keys";
 
 export { buildRateLimitHeaders, type RateLimitResult } from "./headers";
 
-export const redis = new Redis({
-  url: keys().UPSTASH_REDIS_REST_URL,
-  token: keys().UPSTASH_REDIS_REST_TOKEN,
+/**
+ * Cliente do Upstash Redis construído na primeira utilização, não no import.
+ *
+ * Construir cliente de serviço no escopo do módulo faz **importar** o módulo
+ * exigir a credencial — e o `next build` importa, ao coletar dados de página.
+ * Era por isso que o job Build morria sem nunca ter passado. Ver o porquê
+ * completo em packages/analytics/server.ts.
+ */
+let _redis: Redis | null = null;
+
+function _getredis(): Redis {
+  if (!_redis) {
+    _redis = new Redis({
+      url: keys().UPSTASH_REDIS_REST_URL,
+      token: keys().UPSTASH_REDIS_REST_TOKEN,
+    });
+  }
+  return _redis;
+}
+
+export const redis = new Proxy({} as Redis, {
+  get(_alvo, prop, receptor) {
+    const alvoReal = _getredis();
+    const valor = Reflect.get(alvoReal, prop, receptor);
+    return typeof valor === "function" ? valor.bind(alvoReal) : valor;
+  },
 });
 
 export const createRateLimiter = (props: Omit<RatelimitConfig, "redis">) =>

@@ -87,6 +87,13 @@ jobs:
         # abaixo existe só para satisfazer essa validação.
         env:
           DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          # O better-auth valida e usa o segredo já na construção, e a rota
+          # /api/auth/[...all] exporta o handler dele — o next build precisa
+          # construir para saber a forma da rota. Este valor é explicitamente
+          # falso e serve só para o construtor não lançar: o build de CI não
+          # assina nada e não é publicado. O segredo real vive no ambiente da
+          # Vercel, lido em runtime, e nunca entra no artefato.
+          BETTER_AUTH_SECRET: ci-build-placeholder-nao-e-segredo-0123456789
         run: pnpm turbo build --filter=@repo/database
 
       # `web` (site de marketing) fica fora: são 56 erros pré-existentes, e a
@@ -306,10 +313,21 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
+      # O env abaixo é pré-requisito, não afrouxamento: nenhum destes é
+      # segredo de verdade e nenhum é publicado — o build de CI compila, não
+      # executa nem é implantado. O segredo real vive no ambiente da Vercel.
+      #
+      # Este job ainda NÃO passa: storybook, apps/web e apps/email têm dívida
+      # de build anterior a este trabalho. As correções deste PR levaram o
+      # turbo de 0 de 12 tarefas para 8 de 10; o resto está listado no PR.
       - name: Build
         run: pnpm turbo build
         env:
           SKIP_ENV_VALIDATION: true
+          BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
+          # prisma generate valida o ambiente ao carregar o config, mas não
+          # conecta em banco nenhum. Placeholder só para a validação passar.
+          DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
 
   generate-tests:
     name: AI Test Generation
