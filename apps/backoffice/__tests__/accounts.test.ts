@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
   tenantFindMany: vi.fn(),
   integrationFindMany: vi.fn(),
   auditFindMany: vi.fn(),
+  auditGroupBy: vi.fn(),
 }));
 
 vi.mock("@/lib/guard", () => ({
@@ -29,7 +30,7 @@ vi.mock("@repo/database", () => ({
   database: {
     tenant: { findMany: mocks.tenantFindMany },
     integration: { findMany: mocks.integrationFindMany },
-    auditLog: { findMany: mocks.auditFindMany },
+    auditLog: { findMany: mocks.auditFindMany, groupBy: mocks.auditGroupBy },
   },
 }));
 
@@ -55,6 +56,7 @@ function resetar() {
   mocks.tenantFindMany.mockResolvedValue([]);
   mocks.integrationFindMany.mockResolvedValue([]);
   mocks.auditFindMany.mockResolvedValue([]);
+  mocks.auditGroupBy.mockResolvedValue([]);
 }
 
 function tenant(over: Record<string, unknown> = {}) {
@@ -103,8 +105,8 @@ describe("listAccountHealth", () => {
         modules: [{ module: "COSMOS", status: "ACTIVE", expiresAt: dias(300) }],
       }),
     ]);
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-2) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-2) } },
     ]);
 
     const res = await listAccountHealth(HOJE);
@@ -124,8 +126,8 @@ describe("listAccountHealth", () => {
         ],
       }),
     ]);
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-2) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-2) } },
     ]);
 
     const res = await listAccountHealth(HOJE);
@@ -151,9 +153,9 @@ describe("listAccountHealth", () => {
         modules: [{ module: "COSMOS", status: "ACTIVE", expiresAt: dias(20) }],
       }),
     ]);
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-1) },
-      { tenantId: "t-2", createdAt: dias(-1) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-1) } },
+      { tenantId: "t-2", _max: { createdAt: dias(-1) } },
     ]);
 
     const res = await listAccountHealth(HOJE);
@@ -174,8 +176,8 @@ describe("listAccountHealth", () => {
         modules: [{ module: "COSMOS", status: "ACTIVE", expiresAt: dias(300) }],
       }),
     ]);
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-1) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-1) } },
     ]);
     mocks.integrationFindMany.mockResolvedValue([
       { tenantId: "t-1", name: "GitHub", status: "ERROR" },
@@ -198,8 +200,8 @@ describe("listAccountHealth", () => {
       }),
     ]);
     // Última atividade há 90 dias.
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-90) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-90) } },
     ]);
 
     const res = await listAccountHealth(HOJE);
@@ -225,9 +227,9 @@ describe("listAccountHealth", () => {
         ],
       }),
     ]);
-    mocks.auditFindMany.mockResolvedValue([
-      { tenantId: "t-1", createdAt: dias(-1) },
-      { tenantId: "t-2", createdAt: dias(-1) },
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-1) } },
+      { tenantId: "t-2", _max: { createdAt: dias(-1) } },
     ]);
 
     const res = await listAccountHealth(HOJE);
@@ -236,5 +238,68 @@ describe("listAccountHealth", () => {
       return;
     }
     expect(res.data[0].slug).toBe("risco");
+  });
+});
+
+describe("listAccountHealth — a leitura de atividade não pode depender de amostra", () => {
+  beforeEach(resetar);
+
+  it("agrega no banco, uma linha por cliente", async () => {
+    // A versão anterior trazia os 2000 eventos mais recentes e reduzia em
+    // memória. Com base pequena funcionava; passando de ~2000 eventos, os
+    // clientes menos ativos sumiam da amostra, `ultimaPorTenant` devolvia
+    // undefined, e o health afirmava SEM_SINAL sobre cliente ativo.
+    //
+    // O erro não era lentidão — era resposta errada, e silenciosa.
+    await listAccountHealth(HOJE);
+
+    expect(mocks.auditGroupBy).toHaveBeenCalled();
+    const args = mocks.auditGroupBy.mock.calls[0][0];
+    expect(args.by).toEqual(["tenantId"]);
+    expect(args._max.createdAt).toBe(true);
+  });
+
+  it("não varre o AuditLog com take", async () => {
+    // Aumentar o take só adiaria o dia em que a tela volta a mentir, e adiaria
+    // sem aviso nenhum.
+    await listAccountHealth(HOJE);
+
+    expect(mocks.auditFindMany).not.toHaveBeenCalled();
+  });
+
+  it("cliente ausente da agregação é cliente sem atividade nenhuma", async () => {
+    // Agora "não veio na resposta" e "nunca teve atividade" são a mesma coisa,
+    // e isso é verdade — antes, "não coube na amostra" também caía aqui.
+    mocks.tenantFindMany.mockResolvedValue([
+      tenant({
+        modules: [{ module: "COSMOS", status: "ACTIVE", expiresAt: dias(300) }],
+      }),
+    ]);
+    mocks.auditGroupBy.mockResolvedValue([]);
+
+    const res = await listAccountHealth(HOJE);
+
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data[0].ultimaAtividade).toBeNull();
+  });
+
+  it("usa a data agregada de cada cliente", async () => {
+    mocks.tenantFindMany.mockResolvedValue([
+      tenant({
+        modules: [{ module: "COSMOS", status: "ACTIVE", expiresAt: dias(300) }],
+      }),
+    ]);
+    mocks.auditGroupBy.mockResolvedValue([
+      { tenantId: "t-1", _max: { createdAt: dias(-3) } },
+    ]);
+
+    const res = await listAccountHealth(HOJE);
+
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data[0].ultimaAtividade).toBe(dias(-3).toISOString());
   });
 });

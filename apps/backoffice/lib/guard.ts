@@ -2,6 +2,7 @@ import "server-only";
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
+import { cache } from "react";
 import { assertDentroDoLimite } from "./rate-limit";
 
 /** O tenant interno da Nebuloz, criado pela migration 20260728020000 e marcado
@@ -66,8 +67,21 @@ async function assertSegundoFator(session: {
 /**
  * O único guard do back-office. Toda page e toda server action começa por ele —
  * o layout protege navegação, não protege RPC.
+ *
+ * Envolvido em `cache()` porque num render de página ele roda **duas a três
+ * vezes**: o layout chama, a página chama de novo, e cada action chamada
+ * durante o render chama outra vez. Cada chamada custava duas queries e um
+ * round trip ao Upstash.
+ *
+ * O `cache` do React vale por requisição — não é cache entre requisições, e
+ * portanto não afrouxa nada: dentro de uma requisição a resposta do guard não
+ * muda mesmo. Só para de ser perguntada três vezes.
+ *
+ * Efeito colateral desejado no teto de requisição: um carregamento de página
+ * passa a consumir uma unidade de cota, não três. O comportamento anterior
+ * cobrava do operador o custo da própria arquitetura de render.
  */
-export async function requirePlatformStaff(): Promise<PlatformStaff> {
+export const requirePlatformStaff = cache(async (): Promise<PlatformStaff> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {
     throw new StaffAuthError("UNAUTHORIZED", "Sessão ausente.");
@@ -101,7 +115,7 @@ export async function requirePlatformStaff(): Promise<PlatformStaff> {
     email: session.user.email,
     canWrite: membership.role === "ADMIN",
   };
-}
+});
 
 /** Leitura é para todo staff; escrita é só de quem é ADMIN no tenant interno.
  *
