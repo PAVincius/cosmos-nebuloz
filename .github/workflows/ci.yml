@@ -313,21 +313,8 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
-      # `@repo/cms` e `web` ficam fora, pelo mesmo motivo que já tirou `web` do
-      # typecheck: o build do CMS é `basehub build`, que morre com
-      # "🔴 Token not found. Make sure to include the BASEHUB_TOKEN env var." —
-      # e o repositório não tem secret nenhum configurado (`gh secret list` vem
-      # vazio). `web` é o único que depende de `@repo/cms`, então sai junto ou
-      # quebraria na dependência.
-      #
-      # Sem isto o portão de build fica vermelho em toda `main` e todo PR por
-      # falta de credencial, não por código quebrado — e portão sempre vermelho
-      # não reprova ninguém, só ensina a ignorar CI.
-      #
-      # A exclusão é declarada, não silenciosa: configurar `BASEHUB_TOKEN`
-      # devolve os dois ao portão apagando estes dois filtros.
       - name: Build
-        run: pnpm turbo build --filter=!web --filter=!@repo/cms
+        run: pnpm turbo build
         env:
           SKIP_ENV_VALIDATION: true
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
