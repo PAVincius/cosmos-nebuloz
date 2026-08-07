@@ -15,7 +15,7 @@
       ]
     },
     "typecheck": {
-      "dependsOn": ["^typecheck"]
+      "dependsOn": ["^typecheck", "@repo/database#build"]
     },
     "test": {
       "dependsOn": ["^test"]

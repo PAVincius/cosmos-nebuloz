@@ -1089,6 +1089,9 @@ importers:
       '@types/ws':
         specifier: ^8.18.1
         version: 8.18.1
+      better-auth:
+        specifier: ^1.6.10
+        version: 1.6.10(@cloudflare/workers-types@4.20250525.0)(@opentelemetry/api@1.9.0)(@prisma/client@7.1.0(prisma@7.1.0(@types/react@19.2.7)(magicast@0.3.5)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3))(typescript@5.9.3))(mysql2@3.15.3)(next@16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(pg@8.20.0)(prisma@7.1.0(@types/react@19.2.7)(magicast@0.3.5)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(vitest@4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(jiti@2.6.1)(jsdom@27.2.0(bufferutil@4.0.9)(postcss@8.5.15))(lightningcss@1.30.2)(terser@5.48.0)(tsx@4.21.0)(yaml@2.7.0))
       bufferutil:
         specifier: ^4.0.9
         version: 4.0.9
@@ -1545,6 +1548,9 @@ importers:
       '@nosecone/next':
         specifier: 1.0.0-beta.15
         version: 1.0.0-beta.15(next@16.2.9(@opentelemetry/api@1.9.0)(@playwright/test@1.60.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))
+      '@repo/rbac':
+        specifier: workspace:*
+        version: link:../rbac
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
         version: 0.13.8(arktype@2.1.20)(typescript@5.9.3)(valibot@1.2.0(typescript@5.9.3))(zod@4.1.13)

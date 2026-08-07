@@ -40,9 +40,6 @@ export const confidenceVoteMachine = setup({
       totalVotes: 0,
     })),
   },
-  guards: {
-    hasEnoughVotes: ({ context }) => context.totalVotes > 0,
-  },
 }).createMachine({
   id: "confidenceVote",
   initial: "NOT_STARTED",
