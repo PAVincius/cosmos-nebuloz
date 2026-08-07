@@ -1,5 +1,6 @@
-// regulacao-corpora.ts — dado puro dos quatro corpora globais de regulação
-// (EU AI Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001).
+// regulacao-corpora.ts — dado puro dos cinco corpora globais de regulação
+// (EU AI Act, LGPD, NIST AI RMF 1.0, ISO/IEC 42001, Segurança em IA
+// generativa).
 //
 // Separado de seed-regulacao.mts de propósito: um arquivo `.ts` comum resolve
 // sem extensão sob "moduleResolution": "Bundler" (packages/typescript-config/
@@ -273,10 +274,11 @@ export const CORPORA: CorpusSeed[] = [
     notas:
       "Síntese sobre OWASP LLM Top 10 2025, checklist OWASP de governança de IA " +
       "e Secure AI Model Ops. Fonte: docs/security/checklist-ia-generativa.md — " +
-      "mudou lá, versione aqui com publishSetVersion em vez de editar no lugar.",
+      "mudou lá, suba a versao aqui em CORPORA e rode o seed de novo: é " +
+      "conjunto global, e publishSetVersion criaria uma cópia por tenant.",
     requisitos: [
       {
-        codigo: "SEC-1-1",
+        codigo: "SEC-01-01",
         citacao: "§1",
         categoria: "arquitetura",
         resumo:
@@ -285,7 +287,7 @@ export const CORPORA: CorpusSeed[] = [
           "Mapear todos os componentes de IA (API de LLM, RAG, agentes, orquestradores, workers assíncronos, filas, vetores, storage de contexto) e definir trust boundaries entre frontend, backend, provedor de modelo e dados corporativos.",
       },
       {
-        codigo: "SEC-1-2",
+        codigo: "SEC-01-02",
         citacao: "§1",
         categoria: "arquitetura",
         resumo:
@@ -294,7 +296,7 @@ export const CORPORA: CorpusSeed[] = [
           "Rodar threat modeling específico de LLM usando OWASP LLM Top 10 2025 (LLM01–LLM10) e STRIDE/MITRE ATLAS.",
       },
       {
-        codigo: "SEC-1-3",
+        codigo: "SEC-01-03",
         citacao: "§1",
         categoria: "arquitetura",
         resumo:
@@ -303,7 +305,7 @@ export const CORPORA: CorpusSeed[] = [
           "Classificar as integrações de agente e tool use — ferramentas que escrevem em banco, chamam ERP, disparam email — e aplicar privilégio mínimo e defesa em profundidade.",
       },
       {
-        codigo: "SEC-1-4",
+        codigo: "SEC-01-04",
         citacao: "§1",
         categoria: "arquitetura",
         resumo:
@@ -312,7 +314,7 @@ export const CORPORA: CorpusSeed[] = [
           "Documentar em diagrama onde vivem os prompts de sistema, como são versionados e como são protegidos contra leakage (LLM07).",
       },
       {
-        codigo: "SEC-2-1",
+        codigo: "SEC-02-01",
         citacao: "§2",
         categoria: "dados",
         resumo:
@@ -321,7 +323,7 @@ export const CORPORA: CorpusSeed[] = [
           "Classificar todo dado que pode entrar em prompt, contexto de RAG e log: PII, sensível, confidencial corporativo, público.",
       },
       {
-        codigo: "SEC-2-2",
+        codigo: "SEC-02-02",
         citacao: "§2",
         categoria: "dados",
         resumo:
@@ -330,7 +332,7 @@ export const CORPORA: CorpusSeed[] = [
           "Definir política de data-in / data-out para o provedor de LLM: se dado de usuário pode ser usado para treinamento; refletir em contrato e ToS.",
       },
       {
-        codigo: "SEC-2-3",
+        codigo: "SEC-02-03",
         citacao: "§2",
         categoria: "dados",
         resumo:
@@ -339,7 +341,7 @@ export const CORPORA: CorpusSeed[] = [
           "Filtrar a saída (output scanning) para PII e segredo antes de a resposta chegar ao usuário ou a sistema downstream (LLM02).",
       },
       {
-        codigo: "SEC-2-4",
+        codigo: "SEC-02-04",
         citacao: "§2",
         categoria: "dados",
         resumo:
@@ -348,14 +350,14 @@ export const CORPORA: CorpusSeed[] = [
           "Não colocar segredo, credencial, chave de API ou dado ultrassensível em prompt de sistema; usar RAG com controle de acesso em vez de fixar no contexto.",
       },
       {
-        codigo: "SEC-2-5",
+        codigo: "SEC-02-05",
         citacao: "§2",
         categoria: "dados",
         resumo: "Anonimizar ou pseudonimizar dado usado em fine-tuning.",
         texto: "Anonimizar ou pseudonimizar dado usado em fine-tuning.",
       },
       {
-        codigo: "SEC-3-1-1",
+        codigo: "SEC-03-01-01",
         citacao: "§3.1",
         categoria: "modelos",
         resumo:
@@ -364,7 +366,7 @@ export const CORPORA: CorpusSeed[] = [
           "Usar apenas modelo e weights de fonte confiável, com verificação de integridade (hash, assinatura), evitando formato inseguro como pickle.",
       },
       {
-        codigo: "SEC-3-1-2",
+        codigo: "SEC-03-01-02",
         citacao: "§3.1",
         categoria: "modelos",
         resumo:
@@ -373,7 +375,7 @@ export const CORPORA: CorpusSeed[] = [
           "Manter ML-BOM com modelos, datasets, versões, origem, licenças e dependências, com artefato assinado.",
       },
       {
-        codigo: "SEC-3-1-3",
+        codigo: "SEC-03-01-03",
         citacao: "§3.1",
         categoria: "modelos",
         resumo:
@@ -382,7 +384,7 @@ export const CORPORA: CorpusSeed[] = [
           "Avaliar periodicamente vulnerabilidade conhecida em modelo e SDK de fornecedor, aplicando patch em tempo hábil.",
       },
       {
-        codigo: "SEC-3-2-1",
+        codigo: "SEC-03-02-01",
         citacao: "§3.2",
         categoria: "modelos",
         resumo:
@@ -391,7 +393,7 @@ export const CORPORA: CorpusSeed[] = [
           "Sanitizar e validar documento antes de indexar: remover segredo, normalizar, marcar por nível de sensibilidade.",
       },
       {
-        codigo: "SEC-3-2-2",
+        codigo: "SEC-03-02-02",
         citacao: "§3.2",
         categoria: "modelos",
         resumo:
@@ -400,7 +402,7 @@ export const CORPORA: CorpusSeed[] = [
           "Isolar base vetorial por tenant, ou ao menos por domínio lógico, contra leakage cross-tenant.",
       },
       {
-        codigo: "SEC-3-2-3",
+        codigo: "SEC-03-02-03",
         citacao: "§3.2",
         categoria: "modelos",
         resumo:
@@ -409,7 +411,7 @@ export const CORPORA: CorpusSeed[] = [
           "Proteger o banco vetorial com autenticação forte, controle de acesso por papel/tenant e criptografia em repouso e em trânsito.",
       },
       {
-        codigo: "SEC-3-2-4",
+        codigo: "SEC-03-02-04",
         citacao: "§3.2",
         categoria: "modelos",
         resumo:
@@ -418,7 +420,7 @@ export const CORPORA: CorpusSeed[] = [
           "Controles contra LLM08: teste de robustez de embedding, limite de similaridade, detecção de input adversarial.",
       },
       {
-        codigo: "SEC-3-3-1",
+        codigo: "SEC-03-03-01",
         citacao: "§3.3",
         categoria: "modelos",
         resumo:
@@ -427,7 +429,7 @@ export const CORPORA: CorpusSeed[] = [
           "Validar origem e integridade de dado usado em treino ou fine-tuning, com trilha de proveniência (CycloneDX/ML-BOM).",
       },
       {
-        codigo: "SEC-3-3-2",
+        codigo: "SEC-03-03-02",
         citacao: "§3.3",
         categoria: "modelos",
         resumo:
@@ -436,7 +438,7 @@ export const CORPORA: CorpusSeed[] = [
           "Monitorar mudança de comportamento do modelo após re-treino; testar gatilho de backdoor e resposta anômala (LLM04).",
       },
       {
-        codigo: "SEC-4-1-1",
+        codigo: "SEC-04-01-01",
         citacao: "§4.1",
         categoria: "backend",
         resumo:
@@ -445,7 +447,7 @@ export const CORPORA: CorpusSeed[] = [
           "Colocar toda interação com LLM atrás de serviço interno — nunca expor a API do provedor ao frontend — com autenticação, autorização por tenant/papel e rate limiting.",
       },
       {
-        codigo: "SEC-4-1-2",
+        codigo: "SEC-04-01-02",
         citacao: "§4.1",
         categoria: "backend",
         resumo:
@@ -454,7 +456,7 @@ export const CORPORA: CorpusSeed[] = [
           "Validação rigorosa de entrada nas rotas de IA: limite de tamanho, formato esperado, whitelist de campo, normalização antes de enviar ao LLM (LLM01).",
       },
       {
-        codigo: "SEC-4-1-3",
+        codigo: "SEC-04-01-03",
         citacao: "§4.1",
         categoria: "backend",
         resumo:
@@ -463,7 +465,7 @@ export const CORPORA: CorpusSeed[] = [
           "Template de prompt estruturado separando instrução de sistema, instrução da aplicação e entrada do usuário, com hierarquia imutável.",
       },
       {
-        codigo: "SEC-4-1-4",
+        codigo: "SEC-04-01-04",
         citacao: "§4.1",
         categoria: "backend",
         resumo:
@@ -472,7 +474,7 @@ export const CORPORA: CorpusSeed[] = [
           "Tratar resposta do LLM como dado não confiável: validar, sanitizar (escaping para HTML/JS) e aplicar regra de negócio antes de persistir ou acionar efeito colateral (LLM05).",
       },
       {
-        codigo: "SEC-4-2-1",
+        codigo: "SEC-04-02-01",
         citacao: "§4.2",
         categoria: "backend",
         resumo:
@@ -481,7 +483,7 @@ export const CORPORA: CorpusSeed[] = [
           "Práticas clássicas OWASP para API: autenticação forte, política de senha, proteção CSRF onde cabe, rate limiting, prevenção de injection em SQL/NoSQL, ORM seguro.",
       },
       {
-        codigo: "SEC-4-2-2",
+        codigo: "SEC-04-02-02",
         citacao: "§4.2",
         categoria: "backend",
         resumo:
@@ -490,7 +492,7 @@ export const CORPORA: CorpusSeed[] = [
           "Nunca armazenar segredo de modelo ou de provedor em código; usar secret manager ou variável de ambiente gerida pelo CI/CD.",
       },
       {
-        codigo: "SEC-4-2-3",
+        codigo: "SEC-04-02-03",
         citacao: "§4.2",
         categoria: "backend",
         resumo:
@@ -499,7 +501,7 @@ export const CORPORA: CorpusSeed[] = [
           "Integrar SAST/DAST e auditoria de dependência no CI/CD, com gate mínimo antes de subir versão do serviço de IA.",
       },
       {
-        codigo: "SEC-4-2-4",
+        codigo: "SEC-04-02-04",
         citacao: "§4.2",
         categoria: "backend",
         resumo:
@@ -508,7 +510,7 @@ export const CORPORA: CorpusSeed[] = [
           "Versionar modelo e prompt, com rollback rápido (canary/shadow) para modelo problemático.",
       },
       {
-        codigo: "SEC-5-1",
+        codigo: "SEC-05-01",
         citacao: "§5",
         categoria: "frontend",
         resumo:
@@ -517,7 +519,7 @@ export const CORPORA: CorpusSeed[] = [
           "Não interpolar resposta do LLM em `dangerouslySetInnerHTML` nem em atributo de HTML; aplicar escaping, porque o LLM pode gerar HTML/JS malicioso.",
       },
       {
-        codigo: "SEC-5-2",
+        codigo: "SEC-05-02",
         citacao: "§5",
         categoria: "frontend",
         resumo:
@@ -526,7 +528,7 @@ export const CORPORA: CorpusSeed[] = [
           "Nunca expor chave de API de LLM no código do frontend; toda chamada passa pelo backend.",
       },
       {
-        codigo: "SEC-5-3",
+        codigo: "SEC-05-03",
         citacao: "§5",
         categoria: "frontend",
         resumo:
@@ -535,7 +537,7 @@ export const CORPORA: CorpusSeed[] = [
           "Controle de entrada no cliente (limite de caractere, hint de conteúdo permitido), sem confiar nele como única barreira.",
       },
       {
-        codigo: "SEC-5-4",
+        codigo: "SEC-05-04",
         citacao: "§5",
         categoria: "frontend",
         resumo:
@@ -544,7 +546,7 @@ export const CORPORA: CorpusSeed[] = [
           "Não usar dado sensível exibido na UI como contexto de prompt client-side sem consentimento explícito.",
       },
       {
-        codigo: "SEC-5-5",
+        codigo: "SEC-05-05",
         citacao: "§5",
         categoria: "frontend",
         resumo:
@@ -553,7 +555,7 @@ export const CORPORA: CorpusSeed[] = [
           "Proteger rota de streaming (SSE, WebSocket) com autenticação e autorização, e sanitizar antes de injetar no DOM.",
       },
       {
-        codigo: "SEC-6-1",
+        codigo: "SEC-06-01",
         citacao: "§6",
         categoria: "backend",
         resumo:
@@ -562,7 +564,7 @@ export const CORPORA: CorpusSeed[] = [
           "Filtro de entrada para detectar padrão de prompt injection: ignorar regras anteriores, exfiltrar dado interno, executar código.",
       },
       {
-        codigo: "SEC-6-2",
+        codigo: "SEC-06-02",
         citacao: "§6",
         categoria: "backend",
         resumo:
@@ -571,7 +573,7 @@ export const CORPORA: CorpusSeed[] = [
           "Validação de saída: formato esperado (JSON schema), citação apenas de fonte autorizada, ausência de comando perigoso.",
       },
       {
-        codigo: "SEC-6-3",
+        codigo: "SEC-06-03",
         citacao: "§6",
         categoria: "backend",
         resumo:
@@ -580,7 +582,7 @@ export const CORPORA: CorpusSeed[] = [
           "Sandbox rigoroso para execução de código ou tool call derivada de resposta de LLM: worker isolado, sem rede direta, com limite de CPU, memória e tempo.",
       },
       {
-        codigo: "SEC-6-4",
+        codigo: "SEC-06-04",
         citacao: "§6",
         categoria: "backend",
         resumo:
@@ -589,7 +591,7 @@ export const CORPORA: CorpusSeed[] = [
           "Human-in-the-loop e aprovação explícita para operação de alto impacto — dado financeiro, email em massa, infraestrutura (LLM06).",
       },
       {
-        codigo: "SEC-6-5",
+        codigo: "SEC-06-05",
         citacao: "§6",
         categoria: "monitoramento",
         resumo:
@@ -598,7 +600,7 @@ export const CORPORA: CorpusSeed[] = [
           "Logar toda tool call de agente com contexto mínimo — quem, quando, qual ação, quais parâmetros — sem dado sensível em claro.",
       },
       {
-        codigo: "SEC-7-1",
+        codigo: "SEC-07-01",
         citacao: "§7",
         categoria: "runtime",
         resumo:
@@ -607,7 +609,7 @@ export const CORPORA: CorpusSeed[] = [
           "Quota por tenant, usuário e tipo de operação: tokens/mês, requisições/dia, concorrência máxima (LLM10).",
       },
       {
-        codigo: "SEC-7-2",
+        codigo: "SEC-07-02",
         citacao: "§7",
         categoria: "runtime",
         resumo:
@@ -616,7 +618,7 @@ export const CORPORA: CorpusSeed[] = [
           "Timeout, limite de token por request e limite de profundidade de cadeia de agente, contra loop e denial-of-wallet.",
       },
       {
-        codigo: "SEC-7-3",
+        codigo: "SEC-07-03",
         citacao: "§7",
         categoria: "runtime",
         resumo:
@@ -625,7 +627,7 @@ export const CORPORA: CorpusSeed[] = [
           "Monitorar custo — tokens, chamadas, latência — quase em tempo real, com alerta para pico anômalo.",
       },
       {
-        codigo: "SEC-7-4",
+        codigo: "SEC-07-04",
         citacao: "§7",
         categoria: "runtime",
         resumo:
@@ -634,7 +636,7 @@ export const CORPORA: CorpusSeed[] = [
           "Circuit breaker e kill switch para desligar feature de IA ou tenant específico em caso de abuso ou bug de consumo.",
       },
       {
-        codigo: "SEC-8-1",
+        codigo: "SEC-08-01",
         citacao: "§8",
         categoria: "monitoramento",
         resumo:
@@ -643,7 +645,7 @@ export const CORPORA: CorpusSeed[] = [
           "Logar requisição de IA com metadado — usuário, tenant, tipo de operação, modelo, custo aproximado — sem conteúdo sensível de prompt ou resposta em claro.",
       },
       {
-        codigo: "SEC-8-2",
+        codigo: "SEC-08-02",
         citacao: "§8",
         categoria: "monitoramento",
         resumo:
@@ -652,7 +654,7 @@ export const CORPORA: CorpusSeed[] = [
           "Monitorar padrão anormal: volume, tentativa repetida de quebrar instrução, consulta que sugere scraping ou exfiltração.",
       },
       {
-        codigo: "SEC-8-3",
+        codigo: "SEC-08-03",
         citacao: "§8",
         categoria: "monitoramento",
         resumo: "Detectar drift e mudança estatística no output do modelo.",
@@ -660,7 +662,7 @@ export const CORPORA: CorpusSeed[] = [
           "Detectar drift e mudança estatística no output: distribuição de classe de resposta, taxa de erro de validação.",
       },
       {
-        codigo: "SEC-8-4",
+        codigo: "SEC-08-04",
         citacao: "§8",
         categoria: "monitoramento",
         resumo:
@@ -669,7 +671,7 @@ export const CORPORA: CorpusSeed[] = [
           "Incluir cenário de ataque de LLM — prompt injection, exfiltração, poisoning operacional — em teste de segurança, pentest e red teaming.",
       },
       {
-        codigo: "SEC-9-1",
+        codigo: "SEC-09-01",
         citacao: "§9",
         categoria: "governança",
         resumo:
@@ -678,7 +680,7 @@ export const CORPORA: CorpusSeed[] = [
           "Inventário de todo serviço de IA em uso, com dono interno e dado processado.",
       },
       {
-        codigo: "SEC-9-2",
+        codigo: "SEC-09-02",
         citacao: "§9",
         categoria: "governança",
         resumo:
@@ -687,7 +689,7 @@ export const CORPORA: CorpusSeed[] = [
           "Política de uso aceitável de IA para usuário final e equipe interna, com limite de uso, conteúdo proibido e disclaimer sobre limitação do modelo.",
       },
       {
-        codigo: "SEC-9-3",
+        codigo: "SEC-09-03",
         citacao: "§9",
         categoria: "governança",
         resumo:
@@ -696,7 +698,7 @@ export const CORPORA: CorpusSeed[] = [
           "Integrar risco de LLM/GenAI à gestão de risco corporativa e aos processos existentes (ISO 27001, SOC 2), mapeando o LLM Top 10 para controles.",
       },
       {
-        codigo: "SEC-9-4",
+        codigo: "SEC-09-04",
         citacao: "§9",
         categoria: "governança",
         resumo:
@@ -705,21 +707,21 @@ export const CORPORA: CorpusSeed[] = [
           "Processo formal para mudança de modelo, novo plugin e nova integração de agente, com revisão de segurança antes da liberação.",
       },
       {
-        codigo: "SEC-10-1-1",
+        codigo: "SEC-10-01-01",
         citacao: "§10.1",
         categoria: "backend",
         resumo: "Configurar linter e formatador voltados a código seguro.",
         texto: "Linter e formatador configurados para código seguro.",
       },
       {
-        codigo: "SEC-10-1-2",
+        codigo: "SEC-10-01-02",
         citacao: "§10.1",
-        categoria: "backend",
+        categoria: "frontend",
         resumo: "Integrar SAST para backend e frontend.",
         texto: "SAST integrado para backend e frontend.",
       },
       {
-        codigo: "SEC-10-1-3",
+        codigo: "SEC-10-01-03",
         citacao: "§10.1",
         categoria: "backend",
         resumo:
@@ -728,7 +730,7 @@ export const CORPORA: CorpusSeed[] = [
           "Mock de LLM em teste, sem chamar modelo real em suíte automatizada.",
       },
       {
-        codigo: "SEC-10-2-1",
+        codigo: "SEC-10-02-01",
         citacao: "§10.2",
         categoria: "monitoramento",
         resumo:
@@ -737,7 +739,7 @@ export const CORPORA: CorpusSeed[] = [
           "Teste de segurança focado em LLM: prompt injection, leakage de sistema, misuse de ferramenta.",
       },
       {
-        codigo: "SEC-10-2-2",
+        codigo: "SEC-10-02-02",
         citacao: "§10.2",
         categoria: "monitoramento",
         resumo:
@@ -746,7 +748,7 @@ export const CORPORA: CorpusSeed[] = [
           "Shadow e canary release de modelo e prompt novos, com observabilidade plena.",
       },
       {
-        codigo: "SEC-10-3-1",
+        codigo: "SEC-10-03-01",
         citacao: "§10.3",
         categoria: "runtime",
         resumo:
@@ -754,14 +756,14 @@ export const CORPORA: CorpusSeed[] = [
         texto: "Rate limiting por rota de IA e por tenant.",
       },
       {
-        codigo: "SEC-10-3-2",
+        codigo: "SEC-10-03-02",
         citacao: "§10.3",
         categoria: "runtime",
         resumo: "Manter log e métrica de custo em dashboard interno.",
         texto: "Log e métrica de custo em dashboard interno.",
       },
       {
-        codigo: "SEC-10-3-3",
+        codigo: "SEC-10-03-03",
         citacao: "§10.3",
         categoria: "monitoramento",
         resumo:
@@ -770,7 +772,7 @@ export const CORPORA: CorpusSeed[] = [
           "Runbook de incidente cobrindo vazamento de dado, abuso de agente, custo fora de controle e comportamento anômalo de modelo.",
       },
       {
-        codigo: "SEC-11-1",
+        codigo: "SEC-11-01",
         citacao: "§11",
         categoria: "governança",
         resumo:
@@ -779,7 +781,7 @@ export const CORPORA: CorpusSeed[] = [
           "Para cada aplicação com IA, percorrer todas as seções marcando atende, não atende ou não se aplica.",
       },
       {
-        codigo: "SEC-11-2",
+        codigo: "SEC-11-02",
         citacao: "§11",
         categoria: "governança",
         resumo:
@@ -788,7 +790,7 @@ export const CORPORA: CorpusSeed[] = [
           "Para cada item que não atende, abrir ação com dono, severidade e prazo, priorizando o que é mais crítico no contexto.",
       },
       {
-        codigo: "SEC-11-3",
+        codigo: "SEC-11-03",
         citacao: "§11",
         categoria: "governança",
         resumo:

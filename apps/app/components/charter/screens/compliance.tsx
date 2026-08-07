@@ -201,7 +201,7 @@ function EvidenceBlock({ row }: { row: MapRow }) {
 /**
  * O passo "mapear" do fluxo (importar → mapear → gerar). Sem isto,
  * CharterCoverage só nasce por escrita direta no banco e o mapa nunca sai de
- * SEM_VEREDITO sozinho — os quatro estados que a tela sabe mostrar viram
+ * SEM_VEREDITO sozinho — os seis estados que a tela sabe mostrar viram
  * código morto em produção.
  *
  * A tela sugere a capacidade por palavra-chave; a pessoa decide. A sugestão
@@ -252,7 +252,13 @@ function CoverageEditor({
   }
 
   const needsCapability = status === "ATENDE" || status === "PARCIAL";
-  const ready = !needsCapability || capabilityId !== "";
+  // Simétrico a needsCapability: `setCoverage` também recusa NAO_APLICAVEL
+  // sem comentário (dizer por quê é obrigatório) — desabilitar "Salvar" aqui
+  // evita o mesmo round-trip que a checagem de capacidade acima evita.
+  const needsComment = status === "NAO_APLICAVEL";
+  const ready =
+    (!needsCapability || capabilityId !== "") &&
+    (!needsComment || comentario.trim() !== "");
 
   const statusOptions = STATUS_ORDER.map((s) => ({
     value: s,
@@ -328,11 +334,23 @@ function CoverageEditor({
           />
         </Field>
       </div>
-      <Field htmlFor={`comentario-${row.requirementId}`} label="Comentário">
+      <Field
+        hint={
+          needsComment && comentario.trim() === ""
+            ? "Obrigatório para Não se aplica: diga por quê"
+            : undefined
+        }
+        htmlFor={`comentario-${row.requirementId}`}
+        label="Comentário"
+      >
         <Textarea
           id={`comentario-${row.requirementId}`}
           onChange={(e) => setComentario(e.target.value)}
-          placeholder="Contexto opcional para quem ler depois"
+          placeholder={
+            needsComment
+              ? "Obrigatório: diga por que este item não se aplica"
+              : "Contexto opcional para quem ler depois"
+          }
           rows={2}
           value={comentario}
         />
@@ -350,7 +368,11 @@ function CoverageEditor({
           allowed={ready && !pending}
           icon="check"
           onClick={submit}
-          reason="Escolha uma capacidade para Atende ou Parcial"
+          reason={
+            needsComment
+              ? "Diga por que este item não se aplica"
+              : "Escolha uma capacidade para Atende ou Parcial"
+          }
         >
           {pending ? "Salvando…" : "Salvar veredito"}
         </GatedButton>
@@ -469,9 +491,10 @@ function ComplianceMapSection({ setId }: { setId: string }) {
     useCallback(() => getComplianceMap(setId), [setId])
   );
   // Secundário e não bloqueante: sem capacidade nenhuma, o editor de
-  // cobertura ainda funciona para NAO_ATENDE/REVISAR/SEM_VEREDITO (não
-  // exigem capabilityId) — só ATENDE/PARCIAL ficam desabilitados até
-  // carregar, o mesmo efeito que teriam sem nenhuma capacidade no catálogo.
+  // cobertura ainda funciona para NAO_ATENDE/REVISAR/SEM_VEREDITO/
+  // NAO_APLICAVEL (não exigem capabilityId — NAO_APLICAVEL exige comentário
+  // em vez disso) — só ATENDE/PARCIAL ficam desabilitados até carregar, o
+  // mesmo efeito que teriam sem nenhuma capacidade no catálogo.
   const capabilitiesState = useCharterData(
     useCallback(() => listCapabilities(), [])
   );

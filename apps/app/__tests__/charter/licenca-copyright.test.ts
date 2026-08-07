@@ -68,4 +68,12 @@ describe("corpus de segurança em IA", () => {
       expect(c).toMatch(/^SEC-\d+(-\d+){1,2}$/);
     }
   });
+
+  it("ordena por codigo igual ao array — getComplianceMap usa orderBy codigo asc", () => {
+    // Todo componente numérico vem com zero-pad (SEC-01-01, não SEC-1-1):
+    // sem isso, ordenação lexicográfica de string põe §10/§11 antes de §2, e
+    // é exatamente essa ordem que a tela, o CSV e o PDF usam sem reordenar.
+    const codigos = (corpus?.requisitos ?? []).map((r) => r.codigo);
+    expect([...codigos].sort()).toEqual(codigos);
+  });
 });
