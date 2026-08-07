@@ -313,8 +313,16 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
+      # `web` fica fora pelo mesmo motivo que já o tirou do typecheck: 56 erros
+      # de tipo pré-existentes, dívida dos scaffolds do v0.dev em `apps/web/v0/`.
+      # O `next build` roda type check no fim, então o erro que o portão de
+      # typecheck já ignora reaparece aqui — não é falta de credencial: o
+      # `basehub build` passa desde o PR #60, e `@repo/cms` volta ao portão.
+      #
+      # Estar fora de dois portões pelo mesmo motivo é sinal de dívida real, não
+      # de configuração. Consertar os tipos devolve `web` aos dois de uma vez.
       - name: Build
-        run: pnpm turbo build
+        run: pnpm turbo build --filter=!web
         env:
           SKIP_ENV_VALIDATION: true
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}

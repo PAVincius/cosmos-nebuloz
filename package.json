@@ -72,7 +72,8 @@
       "next": "16.2.9",
       "lodash": "^4.17.21",
       "basic-ftp": "^5.2.0",
-      "handlebars": "^4.7.9"
+      "handlebars": "^4.7.9",
+      "webpack": "5.109.2"
     }
   },
   "type": "module"
