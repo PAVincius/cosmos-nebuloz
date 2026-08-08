@@ -321,8 +321,24 @@ jobs:
       #
       # Estar fora de dois portões pelo mesmo motivo é sinal de dívida real, não
       # de configuração. Consertar os tipos devolve `web` aos dois de uma vez.
+      #
+      # `email` fica fora por um motivo diferente, e mais grave: o portão não
+      # controla o que ele instala. `email build` gera `apps/email/.react-email/`
+      # — diretório no `.gitignore` — e roda um `npm install` próprio lá dentro,
+      # fora do alcance do `pnpm-lock.yaml`. O `react-email@5.0.5` pina
+      # `framer-motion@12.23.22`, que importa `activeAnimations` de `motion-dom`;
+      # o npm resolve `motion-dom` pelo range aberto e hoje traz a `12.43.0`, que
+      # removeu esse export. A main quebrou sozinha quando essa versão foi
+      # publicada, sem commit nenhum, e voltaria a quebrar na próxima.
+      #
+      # O preview server é ferramenta de autoria: os templates moram em
+      # `packages/email/templates` e são compilados por quem os consome, que
+      # segue no portão. Buildá-lo aqui não prova nada de produção e importa uma
+      # resolução de dependência que não é nossa para dentro de um gate.
+      # Subir `react-email` para a 6.x — onde `framer-motion` saiu das
+      # dependências — é o que devolve `email` ao portão.
       - name: Build
-        run: pnpm turbo build --filter=!web
+        run: pnpm turbo build --filter=!web --filter=!email
         env:
           SKIP_ENV_VALIDATION: true
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
