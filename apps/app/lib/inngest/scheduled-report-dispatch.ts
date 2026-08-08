@@ -1,6 +1,6 @@
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
-import { isDue } from "@/lib/reporting/schedule";
+import { isDue, previousFireTime } from "@/lib/reporting/schedule";
 import { inngest } from "./client";
 
 /**
@@ -60,6 +60,24 @@ export async function dispatchScheduledReports({
   let disparados = 0;
 
   for (const report of reports) {
+    // `isDue` devolve `false` tanto para "não venceu" quanto para "cron ou
+    // timezone inválidos" — sem distinguir os dois casos aqui, um relatório
+    // mal configurado nunca dispara e nada acusa o motivo. Checar
+    // `previousFireTime` primeiro isola o caso de configuração quebrada.
+    const anterior = previousFireTime(
+      { cronExpression: report.cronExpression, timezone: report.timezone },
+      now
+    );
+    if (!anterior) {
+      log.error("[scheduled-report-dispatch] cron ou timezone inválidos", {
+        reportId: report.id,
+        tenantId: report.tenantId,
+        cronExpression: report.cronExpression,
+        timezone: report.timezone,
+      });
+      continue;
+    }
+
     if (
       !isDue(
         {

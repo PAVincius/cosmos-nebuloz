@@ -4,6 +4,7 @@ const findManyMock = vi.fn();
 const updateMock = vi.fn();
 const createExecutionMock = vi.fn();
 const sendMock = vi.fn();
+const logErrorMock = vi.fn();
 
 vi.mock("@repo/database", () => ({
   database: {
@@ -18,7 +19,11 @@ vi.mock("@repo/database", () => ({
 }));
 
 vi.mock("@repo/observability/log", () => ({
-  log: { error: vi.fn(), info: vi.fn(), warn: vi.fn() },
+  log: {
+    error: (...a: unknown[]) => logErrorMock(...a),
+    info: vi.fn(),
+    warn: vi.fn(),
+  },
 }));
 
 vi.mock("@/lib/inngest/client", () => ({
@@ -111,9 +116,13 @@ describe("dispatchScheduledReports", () => {
     expect(out).toEqual({ examinados: 1, disparados: 0 });
   });
 
-  it("pula expressão inválida sem derrubar os demais", async () => {
+  it("pula expressão inválida sem derrubar os demais, e loga o motivo", async () => {
     findManyMock.mockResolvedValue([
-      relatorio({ id: "rpt_ruim", cronExpression: "quebrado" }),
+      relatorio({
+        id: "rpt_ruim",
+        tenantId: "tn_ruim",
+        cronExpression: "quebrado",
+      }),
       relatorio({ id: "rpt_bom" }),
     ]);
 
@@ -125,6 +134,30 @@ describe("dispatchScheduledReports", () => {
       expect.objectContaining({
         data: expect.objectContaining({ reportId: "rpt_bom" }),
       })
+    );
+    expect(logErrorMock).toHaveBeenCalledWith(
+      expect.stringContaining("cron ou timezone inválidos"),
+      expect.objectContaining({
+        reportId: "rpt_ruim",
+        tenantId: "tn_ruim",
+        cronExpression: "quebrado",
+        timezone: "UTC",
+      })
+    );
+  });
+
+  it("loga timezone inválido do mesmo jeito que cron inválido", async () => {
+    findManyMock.mockResolvedValue([
+      relatorio({ id: "rpt_tz_ruim", timezone: "Marte/Olympus" }),
+    ]);
+
+    const out = await dispatchScheduledReports({ step, now: AGORA });
+
+    expect(out).toEqual({ examinados: 1, disparados: 0 });
+    expect(sendMock).not.toHaveBeenCalled();
+    expect(logErrorMock).toHaveBeenCalledWith(
+      expect.stringContaining("cron ou timezone inválidos"),
+      expect.objectContaining({ reportId: "rpt_tz_ruim" })
     );
   });
 
