@@ -235,19 +235,31 @@ const inputStyle: CSSProperties = {
 
 type TeamOption = { id: string; name: string };
 
+// A lista de times é buscada aqui dentro, e não recebida por prop, porque estes
+// dois formulários vivem em modal e o modal é aberto por
+// `modal.open(<Modal .../>)` — um elemento React criado no instante do clique,
+// com as props congeladas ali. Se `listTeams` ainda não tivesse respondido, o
+// select nasceria vazio e continuaria vazio para sempre: nenhum re-render da
+// tela alcança um elemento já guardado no estado do provider. O usuário não
+// conseguiria escolher time nenhum, e "Salvar" não faria nada — sem erro, sem
+// aviso, porque o guard do `save` sai calado quando `scopeId` está vazio.
 function TeamSelect({
   id,
   label,
-  teams,
   value,
   onChange,
 }: {
   id: string;
   label: string;
-  teams: TeamOption[];
   value: string;
   onChange: (v: string) => void;
 }) {
+  const { data, loading } = useAction(listTeams);
+  const teams: TeamOption[] = (data ?? []).map((t) => ({
+    id: t.id,
+    name: t.name,
+  }));
+
   return (
     <div>
       <label htmlFor={id} style={fieldLabelStyle}>
@@ -259,7 +271,9 @@ function TeamSelect({
         style={inputStyle}
         value={value}
       >
-        <option value="">Selecione um time</option>
+        <option value="">
+          {loading ? "Carregando times..." : "Selecione um time"}
+        </option>
         {teams.map((t) => (
           <option key={t.id} value={t.id}>
             {t.name}
@@ -272,11 +286,9 @@ function TeamSelect({
 
 function NewAssessmentModal({
   competencies,
-  teams,
   onSaved,
 }: {
   competencies: CompetencyScoreView[];
-  teams: TeamOption[];
   onSaved: () => void;
 }) {
   const { close } = useModal();
@@ -362,7 +374,6 @@ function NewAssessmentModal({
           id="assessment-scope"
           label="Time avaliado"
           onChange={setScopeId}
-          teams={teams}
           value={scopeId}
         />
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
@@ -378,13 +389,7 @@ function NewAssessmentModal({
   );
 }
 
-function NewImprovementActionModal({
-  teams,
-  onSaved,
-}: {
-  teams: TeamOption[];
-  onSaved: () => void;
-}) {
+function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
   const { close } = useModal();
   const [title, setTitle] = useState("");
   const [scopeId, setScopeId] = useState("");
@@ -440,7 +445,6 @@ function NewImprovementActionModal({
           id="action-scope"
           label="Time responsável"
           onChange={setScopeId}
-          teams={teams}
           value={scopeId}
         />
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
@@ -675,11 +679,6 @@ function MeasureBody() {
 
   const { data, loading, error } = useAction(listCompetencyScores, [reloadKey]);
   const actions = useAction(listImprovementActions, [reloadKey]);
-  const teams = useAction(listTeams);
-  const teamOptions = (teams.data ?? []).map((t) => ({
-    id: t.id,
-    name: t.name,
-  }));
   const rows = data ?? [];
   const scored = rows.filter(
     (c): c is CompetencyScoreView & { score: number } => c.score !== null
@@ -723,11 +722,7 @@ function MeasureBody() {
           icon="plus"
           onClick={() =>
             modal.open(
-              <NewAssessmentModal
-                competencies={rows}
-                onSaved={reload}
-                teams={teamOptions}
-              />
+              <NewAssessmentModal competencies={rows} onSaved={reload} />
             )
           }
           size="sm"
@@ -958,12 +953,7 @@ function MeasureBody() {
               error={actions.error}
               loading={actions.loading}
               onNew={() =>
-                modal.open(
-                  <NewImprovementActionModal
-                    onSaved={reload}
-                    teams={teamOptions}
-                  />
-                )
+                modal.open(<NewImprovementActionModal onSaved={reload} />)
               }
             />
           </div>
