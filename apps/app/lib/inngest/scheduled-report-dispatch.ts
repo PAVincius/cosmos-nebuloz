@@ -125,7 +125,13 @@ export async function dispatchScheduledReports({
 
       disparados += 1;
     } catch (e) {
-      // Um relatório que falha não pode levar os outros junto.
+      // Um relatório que falha não pode levar os outros junto. Mas isso tem
+      // um custo: se "marcar" já commitou e "criar-execucao"/"emitir" falha
+      // em seguida, `lastRunAt` já foi gravado — a ocorrência deste ciclo é
+      // perdida até o próximo horário do cron (num relatório mensal, um mês),
+      // porque logar e seguir aqui impede o Inngest de dar retry no step que
+      // falhou. É o trade-off escolhido: isolamento entre relatórios da
+      // mesma varredura preferido a retry automático desta ocorrência.
       log.error("[scheduled-report-dispatch] falha ao disparar", {
         reportId: report.id,
         error: String(e),
