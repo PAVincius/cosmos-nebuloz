@@ -4,6 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { previousFireTime } from "@/lib/reporting/schedule";
 import {
   buildPage,
   cuid,
@@ -16,21 +17,55 @@ import {
 } from "../_base";
 import { enforce } from "../permissions";
 
-const CRON_RE =
-  /^(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)\s+(\*|[0-9,\-/]+)$/;
+/**
+ * O regex antigo aceitava qualquer expressão com a forma certa de campos,
+ * sem validar faixas ("99 * * * *" passava), e o timezone só checava
+ * comprimento ("Sao Paulo" passava). `previousFireTime` já faz a validação
+ * real (mesma usada pela varredura para decidir vencimento) — reaproveitar
+ * aqui garante que nada inválido passa na criação/edição para só falhar em
+ * silêncio depois, no cron.
+ */
+function cronValido(cronExpression: string): boolean {
+  return (
+    previousFireTime({ cronExpression, timezone: "UTC" }, new Date()) !== null
+  );
+}
 
-const CreateReportSchema = z.object({
+function timezoneValido(timezone: string): boolean {
+  return (
+    previousFireTime({ cronExpression: "0 0 * * *", timezone }, new Date()) !==
+    null
+  );
+}
+
+const ScheduledReportFieldsSchema = z.object({
   name: nnStr,
-  cronExpression: z.string().regex(CRON_RE, "Invalid cron expression"),
+  cronExpression: z.string(),
   timezone: z.string().min(1).max(64).default("UTC"),
   recipients: z.array(z.string().email()).min(1).max(20),
   slackChannelId: z.string().max(64).optional(),
   config: z.record(z.string(), z.unknown()).default({}),
 });
 
-const UpdateReportSchema = CreateReportSchema.partial().extend({
-  enabled: z.boolean().optional(),
+const CreateReportSchema = ScheduledReportFieldsSchema.refine(
+  (data) => cronValido(data.cronExpression),
+  { message: "Expressão cron inválida", path: ["cronExpression"] }
+).refine((data) => timezoneValido(data.timezone), {
+  message: "Timezone inválido",
+  path: ["timezone"],
 });
+
+const UpdateReportSchema = ScheduledReportFieldsSchema.partial()
+  .extend({ enabled: z.boolean().optional() })
+  .refine(
+    (data) =>
+      data.cronExpression === undefined || cronValido(data.cronExpression),
+    { message: "Expressão cron inválida", path: ["cronExpression"] }
+  )
+  .refine(
+    (data) => data.timezone === undefined || timezoneValido(data.timezone),
+    { message: "Timezone inválido", path: ["timezone"] }
+  );
 
 export async function createScheduledReport(
   raw: unknown
