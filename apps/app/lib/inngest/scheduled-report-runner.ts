@@ -10,6 +10,16 @@ export const runScheduledReport = inngest.createFunction(
     id: "scheduled-report-run",
     concurrency: { limit: 5 },
     triggers: [{ event: "reporting/scheduled-report.run" }],
+    // Quando os retries se esgotam, o Inngest chama isto com o evento
+    // original embrulhado em `event.data.event` — sem isto a execução ficava
+    // presa em RUNNING para sempre, com `error = null`, e o plano prometia
+    // FAILED.
+    onFailure: async ({ event, error }) => {
+      const { executionId } = event.data.event.data as {
+        executionId: string;
+      };
+      await marcarExecucaoFalha(executionId, error);
+    },
   },
   async ({ event, step }) => {
     const { reportId, executionId } = event.data as {
@@ -77,6 +87,22 @@ export const runScheduledReport = inngest.createFunction(
     return { reportId, executionId, status: "DELIVERED" };
   }
 );
+
+/**
+ * Marca uma execução como FAILED quando o Inngest esgota os retries. Extraída
+ * do `onFailure` para ser testável sem o runtime do Inngest — mesmo padrão
+ * usado em `entregarRelatorio`.
+ */
+export async function marcarExecucaoFalha(
+  executionId: string,
+  erro: unknown
+): Promise<void> {
+  const mensagem = erro instanceof Error ? erro.message : String(erro);
+  await database.scheduledReportExecution.update({
+    where: { id: executionId },
+    data: { status: "FAILED", error: mensagem.slice(0, 1000) },
+  });
+}
 
 /**
  * O remetente vinha literal como "reports@cosmos.app" — domínio não
