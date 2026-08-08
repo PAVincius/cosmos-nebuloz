@@ -337,6 +337,15 @@ jobs:
       # resolução de dependência que não é nossa para dentro de um gate.
       # Subir `react-email` para a 6.x — onde `framer-motion` saiu das
       # dependências — é o que devolve `email` ao portão.
+      #
+      # Este passo não roda mais teste. O `build` do `turbo.json` dependia de
+      # `test`, o que trazia a suíte de 29 pacotes para dentro deste job: a do
+      # `app` inteira rodava concorrente com seis builds Next.js num runner de
+      # 4 cores, e testes de UI estouravam `Test timed out in 5000ms` por fome
+      # de CPU — os mesmos que passam no job `Tests & Coverage` ao lado, que
+      # roda `turbo test:coverage` sem filtro, sozinho, com Postgres efêmero.
+      # Teste não é insumo de build; a dependência era política, e a política
+      # continua sendo cumprida — ali, e não aqui.
       - name: Build
         run: pnpm turbo build --filter=!web --filter=!email
         env:
