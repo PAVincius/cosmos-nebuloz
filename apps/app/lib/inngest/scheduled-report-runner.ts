@@ -1,5 +1,6 @@
 import { database } from "@repo/database";
 import { resend } from "@repo/email";
+import { keys } from "@repo/email/keys";
 import { log } from "@repo/observability/log";
 import { computeArtHealth } from "@/lib/analytics/art-health";
 import { inngest } from "./client";
@@ -40,16 +41,7 @@ export const runScheduledReport = inngest.createFunction(
       return generateCsvExport(report);
     });
 
-    await step.run("deliver", async () => {
-      if (report.recipients.length > 0 && report.type === "EXECUTIVE_SUMMARY") {
-        await resend.emails.send({
-          from: "reports@cosmos.app",
-          to: report.recipients,
-          subject: `Executive Summary: ${report.name}`,
-          html: artifactRef,
-        });
-      }
-    });
+    await step.run("deliver", () => entregarRelatorio(report, artifactRef));
 
     const now = new Date();
     await step.run("mark-delivered", () =>
@@ -85,6 +77,33 @@ export const runScheduledReport = inngest.createFunction(
     return { reportId, executionId, status: "DELIVERED" };
   }
 );
+
+/**
+ * O remetente vinha literal como "reports@cosmos.app" — domínio não
+ * verificado no Resend faz o envio falhar, e o erro era engolido: o
+ * `step.run` seguinte marcava DELIVERED do mesmo jeito, então o relatório
+ * sumia sem erro visível. `RESEND_FROM` já existia em packages/email/keys.ts,
+ * validado como email, e era ignorado.
+ */
+export async function entregarRelatorio(
+  report: { name: string; type: string; recipients: string[] },
+  html: string
+): Promise<void> {
+  if (report.recipients.length === 0 || report.type !== "EXECUTIVE_SUMMARY") {
+    return;
+  }
+
+  const { error } = await resend.emails.send({
+    from: keys().RESEND_FROM,
+    to: report.recipients,
+    subject: `Executive Summary: ${report.name}`,
+    html,
+  });
+
+  if (error) {
+    throw new Error(`Falha ao entregar relatório: ${error.message}`);
+  }
+}
 
 // ── Executive Summary HTML (AC-004) ──────────────────────────────────────────
 
