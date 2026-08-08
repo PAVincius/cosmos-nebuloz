@@ -345,6 +345,17 @@ jobs:
           # prisma generate valida o ambiente ao carregar o config, mas não
           # conecta em banco nenhum. Placeholder só para a validação passar.
           DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          # `packages/auth/server.ts` valida o segredo no topo do módulo, e não
+          # dentro de uma função — então o throw dispara em qualquer import,
+          # inclusive no "Collecting page data" do `next build`, que carrega a
+          # rota `/api/auth/[...all]` de `app` e de `backoffice`. Não é t3-env,
+          # então `SKIP_ENV_VALIDATION` não alcança.
+          #
+          # Placeholder de propósito, e não `secrets.BETTER_AUTH_SECRET`: aqui
+          # só é preciso que o módulo carregue. Assinar cookie de sessão exige
+          # o segredo de verdade, e nada disso acontece durante um build — pôr
+          # o segredo real neste passo o exporia sem que nada o exigisse.
+          BETTER_AUTH_SECRET: ci-build-placeholder-nao-e-segredo-de-verdade
 
   generate-tests:
     name: AI Test Generation
