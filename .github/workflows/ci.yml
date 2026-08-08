@@ -350,6 +350,13 @@ jobs:
         run: pnpm turbo build --filter=!web --filter=!email
         env:
           SKIP_ENV_VALIDATION: true
+          # O type check que o `next build` roda no fim estourava o heap padrão
+          # do Node (~2 GB) em `apps/app`: "Ineffective mark-compacts near heap
+          # limit", com o processo parado em 2043 de 2082 MB. O runner tem 16 GB,
+          # e `--max-old-space-size` é teto e não reserva — os outros builds do
+          # turbo continuam usando o que precisam. A Vercel já dá 8 GB, que é por
+          # isso que o deploy do app passa enquanto este portão morria.
+          NODE_OPTIONS: --max-old-space-size=6144
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
           # prisma generate valida o ambiente ao carregar o config, mas não
           # conecta em banco nenhum. Placeholder só para a validação passar.
