@@ -31,7 +31,10 @@ vi.mock("@/lib/inngest/client", () => ({
 import { dispatchScheduledReports } from "@/lib/inngest/scheduled-report-dispatch";
 
 /** `step.run` do Inngest, reduzido ao que o handler usa. */
-const step = { run: (_id: string, fn: () => unknown) => fn() };
+const step = {
+  run: <T>(_id: string, fn: () => T | Promise<T>): Promise<T> =>
+    Promise.resolve(fn()),
+};
 
 const AS_8H_DIARIO = "0 8 * * *";
 const AGORA = new Date("2026-03-10T12:00:00Z");
