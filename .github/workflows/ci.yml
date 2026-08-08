@@ -372,6 +372,21 @@ jobs:
           # o segredo de verdade, e nada disso acontece durante um build — pôr
           # o segredo real neste passo o exporia sem que nada o exigisse.
           BETTER_AUTH_SECRET: ci-build-placeholder-nao-e-segredo-de-verdade
+          # `SKIP_ENV_VALIDATION` desliga a validação do t3-env, mas não faz a
+          # variável existir: quem depende dela recebe `undefined` e quebra
+          # longe da causa. Foi assim que `app/layout.tsx:24` derrubou o build
+          # com `TypeError: Invalid URL, input: '/legal/privacy'` — é
+          # `new URL(path, env.NEXT_PUBLIC_WEB_URL)` com a base indefinida,
+          # estourando no prerender de /onboarding/company/complete.
+          #
+          # Estas são as quatro `NEXT_PUBLIC_*` sem `.optional()` do repo, então
+          # a lista fecha a classe inteira em vez de tapar um buraco por vez.
+          # `.invalid` é TLD reservado por RFC 2606: se algo tentar sair para a
+          # rede a partir daqui, não chega em host de ninguém.
+          NEXT_PUBLIC_APP_URL: https://app.placeholder.invalid
+          NEXT_PUBLIC_WEB_URL: https://web.placeholder.invalid
+          NEXT_PUBLIC_POSTHOG_KEY: phc_ci_build_placeholder
+          NEXT_PUBLIC_POSTHOG_HOST: https://posthog.placeholder.invalid
 
   generate-tests:
     name: AI Test Generation
