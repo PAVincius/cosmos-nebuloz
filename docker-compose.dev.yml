@@ -1,0 +1,32 @@
+# Serviços de desenvolvimento. Nada aqui roda em produção.
+#
+# `docker-compose.dev.yml` e não `docker-compose.yml` de propósito: o nome
+# padrão sobe sozinho em ferramenta que procura por ele, e um dia alguém
+# apontaria isso para um ambiente que não é a máquina dele.
+
+services:
+  # Caixa de email local. Recebe SMTP na 1025 e mostra o que chegou em
+  # http://localhost:8025.
+  #
+  # Existe para uma coisa: enquanto se desenvolve, convite e notificação param
+  # aqui em vez de sair para a internet. O risco que isso remove não é a cota do
+  # Resend — é alguém testar convite com um endereço real e o domínio da Nebuloz
+  # colecionar reputação de spam por causa de dado de brincadeira.
+  #
+  # Sem volume: mensagem de desenvolvimento não deve sobreviver ao reinício.
+  # Guardar histórico aqui só cria um arquivo com endereço de gente de verdade
+  # dentro, na máquina de todo mundo.
+  mailpit:
+    image: axllent/mailpit:v1.21
+    container_name: cosmos-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025" # SMTP — é para cá que a aplicação manda
+      - "8025:8025" # interface web — é aqui que se lê
+    environment:
+      MP_MAX_MESSAGES: 500
+      # Sem autenticação: escuta só em localhost pelo mapeamento acima, e exigir
+      # senha de um serviço de desenvolvimento só faria alguém escrevê-la no
+      # repositório.
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
