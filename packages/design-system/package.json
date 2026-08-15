@@ -25,6 +25,7 @@
     "react-day-picker": "^9.11.3",
     "react-hook-form": "^7.68.0",
     "react-moveable": "^0.56.0",
+    "react-qr-code": "^2.2.0",
     "react-resizable-panels": "^3.0.6",
     "recharts": "^2.15.4",
     "server-only": "^0.0.1",
@@ -36,11 +37,11 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "next": "16.2.9",
     "@tailwindcss/postcss": "^4.1.17",
     "@tailwindcss/typography": "^0.5.19",
     "@types/node": "^24.10.1",
     "@types/react": "^19.2.7",
+    "next": "16.2.9",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"

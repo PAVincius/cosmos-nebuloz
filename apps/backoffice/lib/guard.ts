@@ -49,9 +49,11 @@ async function assertSegundoFator(session: {
   });
 
   if (!usuario?.twoFactorEnabled) {
+    // A mensagem nomeia a rota porque a versão anterior mandava a pessoa ao
+    // "seu perfil", onde não havia nada — e o painel não tinha onde cadastrar.
     throw new StaffAuthError(
       "FORBIDDEN",
-      "O painel exige verificação em dois fatores. Habilite 2FA no seu perfil e entre de novo."
+      "O painel exige verificação em dois fatores. Cadastre seu aplicativo autenticador em /seguranca."
     );
   }
 
@@ -81,6 +83,48 @@ async function assertSegundoFator(session: {
  * passa a consumir uma unidade de cota, não três. O comportamento anterior
  * cobrava do operador o custo da própria arquitetura de render.
  */
+/**
+ * Tudo o que o guard checa **menos** o segundo fator.
+ *
+ * Existe por causa de um beco: o painel exige 2FA para entrar, e a tela onde se
+ * cadastra 2FA fica dentro do painel. Com uma checagem só, quem mais precisa da
+ * tela é exatamente quem não alcança ela — e a única saída vira SQL, que é o
+ * que este painel veio remover.
+ *
+ * Só `/seguranca` usa esta versão. Toda rota do grupo `(staff)` continua
+ * passando por `requirePlatformStaff`, e há teste que falha no dia em que a
+ * rota de cadastro migrar para dentro do grupo.
+ */
+export const requirePlatformStaffSemSegundoFator = cache(
+  async (): Promise<PlatformStaff> => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      throw new StaffAuthError("UNAUTHORIZED", "Sessão ausente.");
+    }
+
+    await assertDentroDoLimite("staff", session.user.id);
+
+    const membership = await database.tenantMember.findFirst({
+      where: { userId: session.user.id, tenantId: SYSTEM_TENANT_ID },
+      select: { role: true },
+    });
+
+    if (!membership) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Esta conta não é da equipe da Nebuloz."
+      );
+    }
+
+    return {
+      userId: session.user.id,
+      name: session.user.name ?? null,
+      email: session.user.email,
+      canWrite: membership.role === "ADMIN",
+    };
+  }
+);
+
 export const requirePlatformStaff = cache(async (): Promise<PlatformStaff> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {

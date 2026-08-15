@@ -13,6 +13,7 @@ export function SignInForm() {
   const [password, setPassword] = useState("");
   const [totp, setTotp] = useState("");
   const [needsTotp, setNeedsTotp] = useState(false);
+  const [confiarNoDispositivo, setConfiarNoDispositivo] = useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -70,7 +71,14 @@ export function SignInForm() {
     setPending(true);
     setError(null);
 
-    const result = (await authClient.twoFactor.verifyTotp({ code: totp })) as {
+    // `trustDevice` explícito, e desmarcado por padrão. O padrão da lib é
+    // `true` — 30 dias sem pedir segundo fator. Omitir o campo herdava isso
+    // sem ninguém ter decidido, num painel que provisiona tenant e lê a
+    // auditoria de todos os clientes.
+    const result = (await authClient.twoFactor.verifyTotp({
+      code: totp,
+      trustDevice: confiarNoDispositivo,
+    })) as {
       error?: { message?: string } | null;
     } | null;
 
@@ -101,6 +109,27 @@ export function SignInForm() {
             value={totp}
           />
         </Campo>
+
+        <label
+          htmlFor="confiar"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            fontSize: 12,
+            color: "var(--ink-muted)",
+            fontWeight: 500,
+            cursor: "pointer",
+          }}
+        >
+          <input
+            checked={confiarNoDispositivo}
+            id="confiar"
+            onChange={(e) => setConfiarNoDispositivo(e.target.checked)}
+            type="checkbox"
+          />
+          Confiar neste dispositivo por 30 dias
+        </label>
 
         {error ? <Erro>{error}</Erro> : null}
 
