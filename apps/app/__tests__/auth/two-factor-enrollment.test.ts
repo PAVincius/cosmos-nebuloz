@@ -82,6 +82,37 @@ describe("useTwoFactorEnrollment", () => {
       expect(result.current.backupCodes).toBeNull();
     });
 
+    it("falha desconhecida NÃO vira 'senha incorreta' — repassa o servidor", async () => {
+      // O defeito que isto trava: dizer "confira sua senha" para quem digitou
+      // a senha certa esconde a causa real e manda a pessoa para o lugar
+      // errado. Foi o que aconteceu em produção no primeiro teste.
+      h.enable.mockResolvedValue({
+        error: { status: 500, message: "Invalid origin", code: "ORIGIN" },
+        data: null,
+      });
+      const { result } = renderHook(() => useTwoFactorEnrollment());
+      act(() => result.current.iniciar());
+
+      await act(async () => {
+        await result.current.gerarSegredo("senha-certa-de-doze");
+      });
+
+      expect(result.current.erro).not.toBe("Senha incorreta.");
+      expect(result.current.erro).toContain("Invalid origin");
+    });
+
+    it("sucesso sem segredo tem mensagem própria", async () => {
+      h.enable.mockResolvedValue({ error: null, data: {} });
+      const { result } = renderHook(() => useTwoFactorEnrollment());
+      act(() => result.current.iniciar());
+
+      await act(async () => {
+        await result.current.gerarSegredo("senha-de-doze-ou-mais");
+      });
+
+      expect(result.current.erro).toContain("não devolveu o segredo");
+    });
+
     it("senha errada vira mensagem de senha, sem avançar", async () => {
       h.enable.mockResolvedValue({ error: { status: 401 }, data: null });
       const { result } = renderHook(() => useTwoFactorEnrollment());

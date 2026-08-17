@@ -94,18 +94,40 @@ export function extrairChaveManual(totpURI: string): string | null {
  * cai no genérico, que é o desfecho seguro.
  */
 function traduzirErro(erro: RespostaDeErro, contexto: "senha" | "codigo") {
-  const mensagem = erro?.message?.toLowerCase() ?? "";
-  const bloqueado =
-    erro?.status === 429 ||
-    /lock|too many|attempt|bloque|tentativ/.test(mensagem);
+  const mensagem = erro?.message ?? "";
+  const minuscula = mensagem.toLowerCase();
 
-  if (bloqueado) {
+  if (
+    erro?.status === 429 ||
+    /lock|too many|attempt|bloque|tentativ/.test(minuscula)
+  ) {
     return "Muitas tentativas seguidas. A conta ficou bloqueada por alguns minutos — espere e tente de novo.";
   }
+
+  // Só afirma "senha incorreta" quando o servidor disse isso. A versão anterior
+  // devolvia essa frase para QUALQUER falha no passo da senha — que é o mesmo
+  // defeito do wizard original, e o pior tipo: manda a pessoa conferir uma
+  // coisa que está certa enquanto esconde a que está errada.
   if (contexto === "senha") {
-    return "Senha incorreta.";
+    if (erro?.status === 401 || /password|credential|senha/.test(minuscula)) {
+      return "Senha incorreta.";
+    }
   }
-  return "Código inválido. Confira o aplicativo autenticador.";
+
+  if (contexto === "codigo") {
+    if (erro?.status === 400 || /code|otp|totp|invalid/.test(minuscula)) {
+      return "Código inválido. Confira o aplicativo autenticador.";
+    }
+  }
+
+  // Desconhecido: repassa o que veio, com o código, em vez de inventar causa.
+  // Feio de ler e honesto — e é o que permite diagnosticar sem adivinhação.
+  const detalhe = [mensagem, erro?.code, erro?.status]
+    .filter(Boolean)
+    .join(" · ");
+  return detalhe
+    ? `Falha ao ativar: ${detalhe}`
+    : "Falha ao ativar, sem detalhe do servidor. Recarregue e tente de novo.";
 }
 
 function reducer(estado: EstadoInterno, acao: Acao): EstadoInterno {
@@ -160,10 +182,19 @@ export function useTwoFactorEnrollment(): Cadastro {
     despachar({ tipo: "PEDIU" });
     try {
       const resposta = await authClient.twoFactor.enable({ password: senha });
-      if (resposta.error || !resposta.data?.totpURI) {
+      if (resposta.error) {
         despachar({
           tipo: "FALHOU",
           erro: traduzirErro(resposta.error, "senha"),
+        });
+        return;
+      }
+      // Sem erro e sem segredo é caso próprio, não "senha incorreta": o
+      // servidor aceitou e não devolveu o que devia.
+      if (!resposta.data?.totpURI) {
+        despachar({
+          tipo: "FALHOU",
+          erro: "O servidor aceitou a senha mas não devolveu o segredo. Recarregue e tente de novo.",
         });
         return;
       }
