@@ -68,10 +68,22 @@ describe("guard de /seguranca", () => {
     });
   });
 
-  it("a recusa aponta para onde cadastrar", async () => {
-    // Mensagem que manda a pessoa ao "seu perfil" é o beco: o painel não tem
-    // perfil, e o app é outro domínio.
-    await expect(requirePlatformStaff()).rejects.toThrow(/\/seguranca/);
+  it("a recusa por falta de 2FA se identifica, para a tela oferecer o botão certo", async () => {
+    // Sem o motivo, esta recusa chega à tela como qualquer outro FORBIDDEN, e a
+    // única ação oferecida vira "entrar com outra conta" — que manda a pessoa
+    // para o mesmo lugar de novo.
+    await expect(requirePlatformStaff()).rejects.toMatchObject({
+      motivo: "SEM_SEGUNDO_FATOR",
+    });
+  });
+
+  it("não é da equipe NÃO ganha o motivo — a saída dela é outra", async () => {
+    findFirst.mockResolvedValue(null);
+
+    await expect(requirePlatformStaff()).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      motivo: undefined,
+    });
   });
 
   it("ainda exige sessão", async () => {

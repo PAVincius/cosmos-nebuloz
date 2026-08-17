@@ -17,13 +17,24 @@ export type PlatformStaff = {
   canWrite: boolean;
 };
 
+/** Recusas que têm saída própria. Sem isto, "falta cadastrar 2FA" e "você não
+ *  é da equipe" chegam à tela como o mesmo FORBIDDEN — e a única ação oferecida
+ *  vira "entrar com outra conta", que não resolve a primeira. */
+export type MotivoDeRecusa = "SEM_SEGUNDO_FATOR";
+
 export class StaffAuthError extends Error {
   readonly code: "UNAUTHORIZED" | "FORBIDDEN";
+  readonly motivo?: MotivoDeRecusa;
 
-  constructor(code: "UNAUTHORIZED" | "FORBIDDEN", message: string) {
+  constructor(
+    code: "UNAUTHORIZED" | "FORBIDDEN",
+    message: string,
+    motivo?: MotivoDeRecusa
+  ) {
     super(message);
     this.name = "StaffAuthError";
     this.code = code;
+    this.motivo = motivo;
   }
 }
 
@@ -49,11 +60,12 @@ async function assertSegundoFator(session: {
   });
 
   if (!usuario?.twoFactorEnabled) {
-    // A mensagem nomeia a rota porque a versão anterior mandava a pessoa ao
-    // "seu perfil", onde não havia nada — e o painel não tinha onde cadastrar.
+    // O motivo vai junto porque a tela precisa oferecer o botão certo: esta
+    // recusa se resolve cadastrando, não trocando de conta.
     throw new StaffAuthError(
       "FORBIDDEN",
-      "O painel exige verificação em dois fatores. Cadastre seu aplicativo autenticador em /seguranca."
+      "O painel exige verificação em dois fatores. Cadastre seu aplicativo autenticador para entrar.",
+      "SEM_SEGUNDO_FATOR"
     );
   }
 
