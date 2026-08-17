@@ -33,6 +33,13 @@ const BlogIndex = async ({ params }: BlogProps) => {
     "@context": "https://schema.org",
   };
 
+  /* `Feed` is BaseHub's `Pump`, which queries during React's render — an
+     unreachable CMS throws where no try/catch upstream can reach it and the
+     index answers 500. Probe through the tolerant getter first so the page
+     degrades to its empty state instead, and keep `Feed` (and its draft-mode
+     live editing) for when the CMS is actually up. */
+  const hasPosts = (await blog.getPosts()).length > 0;
+
   return (
     <>
       <JsonLd code={jsonLd} />
@@ -44,50 +51,52 @@ const BlogIndex = async ({ params }: BlogProps) => {
             </h4>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            <Feed queries={[blog.postsQuery]}>
-              {async ([data]) => {
-                "use server";
+            {hasPosts ? (
+              <Feed queries={[blog.postsQuery]}>
+                {async ([data]) => {
+                  "use server";
 
-                if (!data.blog.posts.items.length) {
-                  return null;
-                }
+                  if (!data.blog.posts.items.length) {
+                    return null;
+                  }
 
-                return data.blog.posts.items.map((post, index) => (
-                  <Link
-                    className={cn(
-                      "flex cursor-pointer flex-col gap-4 hover:opacity-75",
-                      !index && "md:col-span-2"
-                    )}
-                    href={`/blog/${post._slug}`}
-                    key={post._slug}
-                  >
-                    <Image
-                      alt={post.image.alt ?? ""}
-                      height={post.image.height}
-                      src={post.image.url}
-                      width={post.image.width}
-                    />
-                    <div className="flex flex-row items-center gap-4">
-                      <p className="text-muted-foreground text-sm">
-                        {new Date(post.date).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <h3 className="max-w-3xl text-4xl tracking-tight">
-                        {post._title}
-                      </h3>
-                      <p className="max-w-3xl text-base text-muted-foreground">
-                        {post.description}
-                      </p>
-                    </div>
-                  </Link>
-                ));
-              }}
-            </Feed>
+                  return data.blog.posts.items.map((post, index) => (
+                    <Link
+                      className={cn(
+                        "flex cursor-pointer flex-col gap-4 hover:opacity-75",
+                        !index && "md:col-span-2"
+                      )}
+                      href={`/blog/${post._slug}`}
+                      key={post._slug}
+                    >
+                      <Image
+                        alt={post.image.alt ?? ""}
+                        height={post.image.height}
+                        src={post.image.url}
+                        width={post.image.width}
+                      />
+                      <div className="flex flex-row items-center gap-4">
+                        <p className="text-muted-foreground text-sm">
+                          {new Date(post.date).toLocaleDateString("en-US", {
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric",
+                          })}
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2">
+                        <h3 className="max-w-3xl text-4xl tracking-tight">
+                          {post._title}
+                        </h3>
+                        <p className="max-w-3xl text-base text-muted-foreground">
+                          {post.description}
+                        </p>
+                      </div>
+                    </Link>
+                  ));
+                }}
+              </Feed>
+            ) : null}
           </div>
         </div>
       </div>

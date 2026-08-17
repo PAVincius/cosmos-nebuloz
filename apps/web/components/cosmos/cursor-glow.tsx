@@ -38,7 +38,7 @@ export function CursorGlow() {
           height: 480,
           borderRadius: "50%",
           background:
-            "radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(92,180,228,0.07) 0%, transparent 70%)",
           mixBlendMode: "screen",
         }}
       />
@@ -54,8 +54,8 @@ export function CursorGlow() {
           width: 5,
           height: 5,
           borderRadius: "50%",
-          background: "rgba(0,212,255,0.9)",
-          boxShadow: "0 0 8px rgba(0,212,255,0.8)",
+          background: "rgba(92,180,228,0.9)",
+          boxShadow: "0 0 8px rgba(92,180,228,0.8)",
           mixBlendMode: "screen",
         }}
       />

@@ -13,8 +13,15 @@ import { env } from "@/env";
 
 export const config = {
   // matcher tells Next.js which routes to run the middleware on. This runs the
-  // middleware on all routes except for static assets and Posthog ingest
-  matcher: ["/((?!_next/static|_next/image|ingest|favicon.ico).*)"],
+  // middleware on all routes except for static assets and Posthog ingest.
+  //
+  // Everything after `ingest` is a root-only metadata file. The i18n middleware
+  // rewrote them into the locale tree (`/en/robots.txt`, `/en/icon.png`), where
+  // no route exists — so robots.txt, the sitemap, the favicon and the Open Graph
+  // image all answered 404, to crawlers and social unfurlers respectively.
+  matcher: [
+    "/((?!_next/static|_next/image|ingest|favicon.ico|robots.txt|sitemap.xml|icon.png|apple-icon.png|opengraph-image.png).*)",
+  ],
 };
 
 const securityHeaders = env.FLAGS_SECRET
@@ -31,9 +38,19 @@ const arcjetMiddleware = async (request: NextRequest) => {
     await secure(
       [
         // See https://docs.arcjet.com/bot-protection/identifying-bots
+        //
+        // This is an ALLOWLIST and `detectBot` runs in LIVE mode: anything not
+        // named here is denied. That makes omissions silent and expensive.
         "CATEGORY:SEARCH_ENGINE", // Allow search engines
         "CATEGORY:PREVIEW", // Allow preview links to show OG images
         "CATEGORY:MONITOR", // Allow uptime monitoring services
+        /* Allow AI crawlers — retrieval and training alike, matching the
+           decision documented in app/robots.ts. Without this line, the moment
+           ARCJET_KEY is set every one of them (GPTBot, ClaudeBot, OAI-SearchBot,
+           PerplexityBot…) starts getting 403 while robots.txt still says they
+           are welcome. The site would quietly stop appearing in AI answers and
+           robots.txt would look innocent, because the block lives here. */
+        "CATEGORY:AI",
       ],
       request
     );
@@ -56,7 +73,8 @@ export default authMiddleware(async (request) => {
   try {
     const i18nResponse = await internationalizationMiddleware(request);
     return i18nResponse || headersResponse;
-  } catch {
+  } catch (error) {
+    console.error("[proxy] i18n middleware threw:", error);
     return headersResponse;
   }
 }) as unknown as NextProxy;

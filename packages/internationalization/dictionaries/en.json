@@ -17,6 +17,403 @@
       "signIn": "Sign in",
       "signUp": "Get started"
     },
+    "readiness": {
+      "meta": {
+        "title": "AI readiness, in the right order",
+        "description": "Nebuloz makes organisations AI-ready in a fixed order: diagnose the gap, structure adoption, measure return, govern risk. The framework stays with your team."
+      },
+      "nav": {
+        "primary": "Primary",
+        "mobile": "Mobile menu",
+        "openMenu": "Open menu",
+        "closeMenu": "Close menu",
+        "cta": "Book assessment",
+        "links": [
+          { "label": "The gap", "href": "#gap" },
+          { "label": "The ladder", "href": "#ladder" },
+          { "label": "Your shape", "href": "#shape" },
+          { "label": "Products", "href": "#products" },
+          { "label": "Assessment", "href": "#assessment" }
+        ]
+      },
+      "hero": {
+        "badge": "AI Readiness & Adoption",
+        "lines": ["Your teams don’t", "need more AI.", "They need a plan."],
+        "lead": "Nebuloz makes organisations AI-ready in a fixed order: diagnose the gap, structure the adoption, measure the return, govern the risk. The framework stays with your team.",
+        "primaryCta": "Book the assessment",
+        "secondaryCta": "See the five stages",
+        "sequenceLabel": "THE SEQUENCE",
+        "sequence": ["Diagnose", "Structure", "Measure", "Govern", "Operate"],
+        "sceneAlt": "An animated nebula of light that condenses from dust into a dense glass sphere"
+      },
+      "gap": {
+        "eyebrow": "THE GAP · 01",
+        "titleA": "Most companies aren’t",
+        "titleB": "blocked by technology.",
+        "desc": "They are blocked by sequence. Readiness is not a tool you install — it is an order of operations most organisations have never been shown.",
+        "items": [
+          {
+            "title": "Nobody owns the starting point",
+            "text": "Leadership agrees AI matters. No one can say which process to change first, or what has to be true before it works."
+          },
+          {
+            "title": "Pilots never become practice",
+            "text": "A team ships a promising pilot. It dies at the handover because no framework carries it into daily operations."
+          },
+          {
+            "title": "Nobody can prove it worked",
+            "text": "Spend is visible, return is anecdotal. Without a measured baseline, the next budget conversation is a matter of belief."
+          },
+          {
+            "title": "Legal is the silent blocker",
+            "text": "No usage policy, no risk matrix, no vendor clauses. So the safest decision is always to wait one more quarter."
+          }
+        ]
+      },
+      "ladder": {
+        "eyebrow": "THE LADDER · 02",
+        "titleA": "Five stages.",
+        "titleB": "In this order.",
+        "desc": "Each stage is a product you can buy on its own — and each one leaves your team more capable than it found them. Run them in sequence and readiness stops being a matter of opinion.",
+        "stages": [
+          {
+            "name": "Meridian",
+            "role": "Diagnose",
+            "claim": "Know exactly where you stand.",
+            "desc": "A structured readiness assessment across five axes. A score per axis, a gap-ranked roadmap, and a defensible starting point.",
+            "itemsCap": "FIVE AXES",
+            "items": [
+              "Data",
+              "Process",
+              "People",
+              "Governance",
+              "Infrastructure"
+            ]
+          },
+          {
+            "name": "Scaffold",
+            "role": "Structure",
+            "claim": "A framework, not a workshop.",
+            "desc": "The methodology as guided tracks your teams move through on their own — checklists, templates, and validation gates at every step.",
+            "itemsCap": "FOUR PHASES",
+            "items": ["Assess", "Pilot", "Scale", "Embed"]
+          },
+          {
+            "name": "Signal",
+            "role": "Measure",
+            "claim": "Prove the return in real numbers.",
+            "desc": "Connects to the tools you already run and turns adoption into a measured baseline — hours recovered, error rates, cycle time.",
+            "itemsCap": "WHAT IT TRACKS",
+            "items": [
+              "Adoption rate",
+              "Hours recovered",
+              "Cycle time",
+              "Cost per outcome"
+            ]
+          },
+          {
+            "name": "Charter",
+            "role": "Govern",
+            "claim": "Policy in minutes, not months.",
+            "desc": "Generates the governance layer that unblocks legal — usage policy, risk matrix, vendor clauses, and an onboarding guide for staff.",
+            "itemsCap": "GENERATED ARTIFACTS",
+            "items": [
+              "Usage policy",
+              "Risk matrix",
+              "Vendor clauses",
+              "Onboarding guide"
+            ]
+          }
+        ],
+        "cosmos": {
+          "stage": "05",
+          "name": "Cosmos",
+          "role": "Operate",
+          "claim": "Where the ready operate.",
+          "desc": "Cosmos is our SAFe 6.0 delivery platform — portfolio, program, and team planning in one surface, with AI assistance built into the ceremonies your teams already run. It is the last stage on purpose: it rewards organisations that arrive structured.",
+          "bestFitCap": "BEST FIT WHEN",
+          "bestFit": [
+            "Assessment is complete",
+            "A framework is in place",
+            "Baseline is measured",
+            "Policy is signed off"
+          ]
+        }
+      },
+      "shape": {
+        "eyebrow": "YOUR SHAPE · LIVE",
+        "titleA": "Answer five questions.",
+        "titleB": "Watch your shape form.",
+        "lead": "The sphere beside you is your organisation. Each answer condenses or loosens one sector. This is a taste of the Meridian assessment — the real one goes five layers deeper.",
+        "axesLabel": "Assessment axes",
+        "answered": "answered",
+        "scoreLabel": "PROVISIONAL SCORE",
+        "scoreSuffix": "/100",
+        "cta": "Get the real assessment",
+        "verdicts": {
+          "high": "Structured. The full assessment would sharpen sequence, not direction.",
+          "mid": "Typical shape: capability exists, order does not. Exactly what the assessment sequences.",
+          "low": "Honest answer — and the most common one. The gap is a plan, not talent."
+        },
+        "questions": [
+          {
+            "axis": "Data",
+            "q": "If a model needed your customer history tomorrow, could it get it?",
+            "options": [
+              "One clean source, owned and documented",
+              "It exists, but scattered across systems",
+              "Somewhere in spreadsheets and inboxes"
+            ]
+          },
+          {
+            "axis": "Process",
+            "q": "Could you name the one process you would automate first?",
+            "options": [
+              "Yes — mapped, measured, and owned",
+              "We have candidates, no ranking",
+              "Every team would name a different one"
+            ]
+          },
+          {
+            "axis": "People",
+            "q": "Who used an AI tool for real work in your org last week?",
+            "options": [
+              "Most teams, in the open",
+              "A few enthusiasts, quietly",
+              "Nobody — or nobody admits it"
+            ]
+          },
+          {
+            "axis": "Governance",
+            "q": "An employee asks “am I allowed to paste this into ChatGPT?” — what happens?",
+            "options": [
+              "They check the policy. There is one.",
+              "They ask their manager, who guesses",
+              "They do it anyway. Nobody knows."
+            ]
+          },
+          {
+            "axis": "Infrastructure",
+            "q": "Where is your data allowed to live?",
+            "options": [
+              "Defined per class, enforced in contracts",
+              "We know roughly, nothing written",
+              "Wherever the vendor put it"
+            ]
+          }
+        ]
+      },
+      "method": {
+        "eyebrow": "METHOD · 03",
+        "titleA": "What the first",
+        "titleB": "eight weeks look like.",
+        "desc": "No discovery theatre. The assessment is productised, so the expensive part of a traditional engagement is finished before week two.",
+        "facts": [
+          "weeks to a scored assessment",
+          "weeks to a repeatable pattern",
+          "framework your team keeps"
+        ],
+        "steps": [
+          {
+            "when": "Week 01",
+            "title": "Assessment",
+            "desc": "Structured interviews and system review across the five axes. You leave with a score and a ranked gap list."
+          },
+          {
+            "when": "Week 02–03",
+            "title": "Sequencing",
+            "desc": "We turn the gap list into an ordered plan — what changes first, what has to be true before it, who owns it."
+          },
+          {
+            "when": "Week 04–08",
+            "title": "First track",
+            "desc": "One process, taken end to end with your team inside Scaffold. The point is a repeatable pattern, not a demo."
+          },
+          {
+            "when": "Ongoing",
+            "title": "Baseline",
+            "desc": "Signal measures the change against the pre-work baseline, so the second decision is made on evidence."
+          }
+        ]
+      },
+      "products": {
+        "eyebrow": "THE PRODUCTS · 04",
+        "titleA": "Five products.",
+        "titleB": "Each one stands alone.",
+        "desc": "The ladder is the recommended order, not a bundle. Every product solves a problem you can name today, and leaves your team more capable whether or not you continue.",
+        "tablistLabel": "Products",
+        "whoCap": "WHO OPENS IT",
+        "cadenceCap": "CADENCE",
+        "outputsCap": "WHAT YOU GET",
+        "aloneCap": "BUY IT ALONE WHEN",
+        "talk": "Talk about {name}",
+        "orderLabel": "Recommended order",
+        "orderNote": "Most teams start at Meridian and stop when the gap closes",
+        "stopRotation": "Stop auto-advancing",
+        "items": [
+          {
+            "name": "Meridian",
+            "role": "Diagnose",
+            "line": "The readiness assessment, productised.",
+            "who": "Exec sponsor · Transformation lead",
+            "desc": "Structured interviews and system review across the five axes. Replaces the discovery phase of a traditional engagement — the expensive part — with a repeatable instrument.",
+            "outputs": [
+              "Score per axis, 0–100",
+              "Gap list, ranked by cost of delay",
+              "Sequenced 12-month plan",
+              "Peer benchmark"
+            ],
+            "alone": "Buy alone when leadership disagrees about where to start.",
+            "cadence": "Two weeks"
+          },
+          {
+            "name": "Scaffold",
+            "role": "Structure",
+            "line": "The adoption framework your team runs without us.",
+            "who": "Team leads · Process owners",
+            "desc": "Guided tracks that carry one process from pilot to practice. Checklists, prompt templates, and validation gates at each phase, so progress does not depend on who is in the room.",
+            "outputs": [
+              "Guided track per process",
+              "Prompt + policy templates",
+              "Validation gates",
+              "Handover pack"
+            ],
+            "alone": "Buy alone when pilots keep dying at handover.",
+            "cadence": "Per workspace"
+          },
+          {
+            "name": "Signal",
+            "role": "Measure",
+            "line": "The number your CFO will actually accept.",
+            "who": "Finance · Ops leadership",
+            "desc": "Connects to the tools you already run and measures adoption against a pre-work baseline. Turns “the AI is helping” into hours recovered, cycle time, and cost per outcome.",
+            "outputs": [
+              "Adoption telemetry by team",
+              "Hours-recovered ledger",
+              "Cycle-time delta",
+              "Board-ready report"
+            ],
+            "alone": "Buy alone when the next budget round needs evidence, not anecdote.",
+            "cadence": "Continuous"
+          },
+          {
+            "name": "Charter",
+            "role": "Govern",
+            "line": "The governance layer that unblocks legal.",
+            "who": "Legal · Risk · Security",
+            "desc": "Generates the written rules that stop “am I allowed to?” from defaulting to “wait”. Drafted against your obligations, reviewed with your counsel, versioned as regulation moves.",
+            "outputs": [
+              "AI usage policy",
+              "Risk matrix by data class",
+              "Vendor clause library",
+              "Staff onboarding guide"
+            ],
+            "alone": "Buy alone when legal is the reason nothing has shipped.",
+            "cadence": "One-time + updates"
+          },
+          {
+            "name": "Cosmos",
+            "role": "Operate",
+            "line": "SAFe 6.0 delivery, with AI inside the ceremonies.",
+            "who": "RTEs · Portfolio + program leads",
+            "desc": "Our delivery platform for organisations running SAFe: portfolio, program, and team planning in one surface, with AI assistance built into PI planning, backlog refinement, and dependency mapping.",
+            "outputs": [
+              "Portfolio → team planning",
+              "AI-assisted PI planning",
+              "Dependency + risk mapping",
+              "Flow metrics"
+            ],
+            "alone": "Buy alone only if you already run SAFe and the first four are handled.",
+            "cadence": "Per ART"
+          }
+        ]
+      },
+      "proof": {
+        "eyebrow": "THE ASSESSMENT · 05",
+        "titleA": "Five questions",
+        "titleB": "most roadmaps skip.",
+        "desc": "This is the substance of Meridian. If a vendor cannot answer these about your organisation, they are selling you software, not readiness.",
+        "axes": [
+          {
+            "title": "Data",
+            "q": "Can a model reach the right data, with the right permissions, in the right shape?",
+            "desc": "We audit sources, ownership, freshness, and access control. The output is a list of what must be fixed before any model is useful — usually shorter than teams expect."
+          },
+          {
+            "title": "Process",
+            "q": "Which process, changed first, returns the most for the least disruption?",
+            "desc": "We map candidate processes by volume, variance, and reversibility. High-volume and reversible wins first; irreversible and political waits."
+          },
+          {
+            "title": "People",
+            "q": "Who will actually use this on a Tuesday afternoon?",
+            "desc": "Adoption fails at the individual level, not the org level. We identify the operators, their current workaround, and what would make the new path easier than the old one."
+          },
+          {
+            "title": "Governance",
+            "q": "What is the written rule when someone asks “am I allowed to?”",
+            "desc": "Absence of policy is read as prohibition. We produce the usage policy, the risk matrix, and the escalation path so the default answer stops being “wait”."
+          },
+          {
+            "title": "Infrastructure",
+            "q": "Can this run where your data is allowed to live?",
+            "desc": "Residency, retention, and vendor posture, assessed against your existing obligations — before a procurement conversation, not after."
+          }
+        ]
+      },
+      "position": {
+        "eyebrow": "POSITION · 06",
+        "titleA": "How we work,",
+        "titleB": "stated plainly.",
+        "rows": [
+          {
+            "yes": "We assess before we build",
+            "no": "We do not start with a tool selection"
+          },
+          {
+            "yes": "We hand the framework to your team",
+            "no": "We do not become a permanent dependency"
+          },
+          {
+            "yes": "We measure against a baseline",
+            "no": "We do not report activity as outcome"
+          },
+          {
+            "yes": "We write the policy you can sign",
+            "no": "We do not leave governance to legal alone"
+          }
+        ]
+      },
+      "cta": {
+        "eyebrow": "START WITH THE ASSESSMENT",
+        "titleA": "Find out where",
+        "titleB": "you actually stand.",
+        "lead": "The readiness assessment takes two weeks and ends with a score, a ranked gap list, and a sequenced plan. You keep all three whether or not you continue with us.",
+        "primaryCta": "Book the assessment",
+        "secondaryCta": "See what it covers",
+        "notes": [
+          "Two-week assessment",
+          "Deliverables are yours",
+          "No tool commitment"
+        ]
+      },
+      "footer": {
+        "tagline": "AI readiness and adoption, delivered as a sequence your team can run.",
+        "nav": "Footer",
+        "copyright": "© 2026 Nebuloz",
+        "products": "Meridian · Scaffold · Signal · Charter · Cosmos",
+        "links": [
+          { "label": "The gap", "href": "#gap" },
+          { "label": "The ladder", "href": "#ladder" },
+          { "label": "Products", "href": "#products" },
+          { "label": "Method", "href": "#method" },
+          { "label": "Assessment", "href": "#assessment" },
+          { "label": "Book", "href": "#start" },
+          { "label": "Privacy", "href": "/legal/privacy" },
+          { "label": "Terms", "href": "/legal/terms" }
+        ]
+      }
+    },
     "home": {
       "meta": {
         "title": "Transform Your Business Operations Today",
@@ -183,6 +580,218 @@
           "resume": "Upload resume",
           "cta": "Book the meeting"
         }
+      }
+    },
+    "legal": {
+      "shared": {
+        "updatedLabel": "Last updated",
+        "backLabel": "Back to Nebuloz",
+        "indexLabel": "Legal",
+        "draftHeading": "Draft pending legal review",
+        "draftBody": "This document is a structured draft. It has not been reviewed by counsel and is not legal advice. Items in double brackets are placeholders for facts only Nebuloz can confirm.",
+        "contactHeading": "Questions about this document",
+        "contactBody": "Write to [[DADO NECESSÁRIO: e-mail de contato — ex. legal@nebuloz.ai]]. For data protection requests specifically, see the rights section of the Privacy Policy."
+      },
+      "index": {
+        "meta": {
+          "title": "Legal",
+          "description": "Privacy Policy and Terms of Use for Nebuloz."
+        },
+        "eyebrow": "LEGAL",
+        "titleA": "The documents",
+        "titleB": "that govern this site.",
+        "lead": "Two documents: what happens to data you leave here, and the terms under which the site and the assessment are offered.",
+        "docs": [
+          {
+            "href": "/legal/privacy",
+            "title": "Privacy Policy",
+            "desc": "What is collected, why, on what legal basis, who processes it, how long it is kept, and how to exercise your rights."
+          },
+          {
+            "href": "/legal/terms",
+            "title": "Terms of Use",
+            "desc": "What this site is and is not, what the assessment engagement covers, who owns the framework, and the limits of liability."
+          }
+        ]
+      },
+      "privacy": {
+        "meta": {
+          "title": "Privacy Policy",
+          "description": "How Nebuloz collects, uses and protects personal data, under the LGPD and the GDPR."
+        },
+        "eyebrow": "PRIVACY · LGPD · GDPR",
+        "title": "Privacy Policy",
+        "lead": "This policy covers nebuloz.ai. It does not cover the products themselves once you are a client — those are governed by the contract and by the data processing agreement signed with it.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "Who is responsible for your data",
+            "body": [
+              "The controller of the personal data described here is [[DADO NECESSÁRIO: razão social completa]], registered under CNPJ [[DADO NECESSÁRIO: CNPJ]], at [[DADO NECESSÁRIO: endereço completo]].",
+              "Under Article 41 of the LGPD the controller must name a data protection officer. Ours is [[DADO NECESSÁRIO: nome do encarregado]], reachable at [[DADO NECESSÁRIO: e-mail do encarregado]]."
+            ]
+          },
+          {
+            "heading": "What this site collects",
+            "body": [
+              "Right now, one thing: a first-party cookie named Next-Locale, which remembers the language you were served. It carries no identifier and is not used for analytics. Verified on the live site — no other cookie, no local storage entry, and no request to any third party.",
+              "When product analytics is switched on, the site will use PostHog, which stores an identifier in your browser (a cookie and a local storage entry) and records page views and interactions. PostHog processes that on infrastructure in the United States. [[DADO NECESSÁRIO: atualizar esta seção no dia em que o analytics for ligado de verdade — hoje está desativado]]",
+              "Contacting us: whatever you type into the contact form, plus your email address, so we can reply.",
+              "Server logs kept by our hosting provider, which include IP address, user agent and requested path."
+            ],
+            "items": [
+              "We do not run advertising or cross-site tracking.",
+              "We do not buy or sell personal data.",
+              "We do not ask for, and you should not send, sensitive personal data as defined in Article 5 II of the LGPD."
+            ]
+          },
+          {
+            "heading": "Why, and on what legal basis",
+            "body": [
+              "Replying to you when you make contact: performance of a contract or preliminary steps at your request — LGPD Article 7 V, GDPR Article 6(1)(b).",
+              "Keeping the site secure and available, including logs: legitimate interest — LGPD Article 7 IX, GDPR Article 6(1)(f).",
+              "Understanding how the site is used, through analytics: consent — LGPD Article 7 I, GDPR Article 6(1)(a). [[DADO NECESSÁRIO: decidir se haverá banner de consentimento; sem ele, analytics não pode rodar antes do consentimento para visitantes na UE]]"
+            ]
+          },
+          {
+            "heading": "Who else processes it",
+            "body": [
+              "We use third parties to run the site. Each one processes data only on our instructions.",
+              "Vercel Inc. — hosting, delivery and server logs. Processes in the United States. Active.",
+              "PostHog Inc. — product analytics. Processes in the United States. Not active yet; nothing is sent to PostHog and no analytics identifier is written until it is configured.",
+              "[[DADO NECESSÁRIO: confirmar se Resend (envio de e-mail do formulário) e Sentry (monitoramento de erros) estarão ativos em produção — hoje o formulário não envia e o Sentry não tem DSN configurada]]"
+            ]
+          },
+          {
+            "heading": "International transfer",
+            "body": [
+              "The providers above process data outside Brazil and outside the European Economic Area. Transfers rely on Standard Contractual Clauses and on the safeguards each provider publishes, as permitted by Article 33 of the LGPD and Chapter V of the GDPR.",
+              "[[DADO NECESSÁRIO: confirmar qual mecanismo cada fornecedor oferece no contrato assinado, e anexar]]"
+            ]
+          },
+          {
+            "heading": "How long it is kept",
+            "body": [
+              "[[DADO NECESSÁRIO: prazo de retenção por finalidade — mensagens de contato, logs de servidor, dados de analytics. A LGPD exige eliminação ao fim da finalidade, então cada um precisa de um prazo declarado.]]"
+            ]
+          },
+          {
+            "heading": "Your rights",
+            "body": [
+              "Article 18 of the LGPD gives you the right to confirm that we process your data, to access it, to correct it, to anonymise, block or delete unnecessary or excessive data, to port it, to delete data processed under consent, to know who we share it with, to be told the consequences of refusing consent, and to withdraw consent.",
+              "Under the GDPR you also have the right to restrict processing, to object, and to lodge a complaint with your supervisory authority.",
+              "To exercise any of these, write to [[DADO NECESSÁRIO: e-mail do encarregado]]. We answer within the period the law sets. In Brazil you may also complain to the ANPD."
+            ]
+          },
+          {
+            "heading": "Cookies and similar technologies",
+            "body": [
+              "Today the site sets one thing in your browser: the Next-Locale cookie described above. There is no analytics identifier, no advertising cookie and no third-party script.",
+              "If analytics is switched on later, it will add one identifier. You can clear it from your browser settings, and blocking it does not affect how the site works."
+            ]
+          },
+          {
+            "heading": "Security",
+            "body": [
+              "The site is served only over HTTPS. Access to the systems behind it is restricted to people who need it.",
+              "[[DADO NECESSÁRIO: descrever medidas reais — não afirmar certificação, controle ou auditoria que a empresa não tenha. Afirmação de segurança não comprovada é o tipo de coisa que vira responsabilidade em incidente.]]"
+            ]
+          },
+          {
+            "heading": "Changes",
+            "body": [
+              "When this policy changes we update the date at the top. Material changes will be announced on this page before they take effect."
+            ]
+          },
+          {
+            "heading": "Governing law",
+            "body": [
+              "This policy is governed by Brazilian law, in particular Law 13.709/2018 (LGPD). [[DADO NECESSÁRIO: foro eleito — normalmente a comarca da sede]]"
+            ]
+          }
+        ]
+      },
+      "terms": {
+        "meta": {
+          "title": "Terms of Use",
+          "description": "The terms under which Nebuloz offers this site and the readiness assessment."
+        },
+        "eyebrow": "TERMS OF USE",
+        "title": "Terms of Use",
+        "lead": "These terms cover your use of nebuloz.ai. The assessment and the products are contracted separately, and that contract prevails over anything here.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "Who you are dealing with",
+            "body": [
+              "This site is operated by [[DADO NECESSÁRIO: razão social completa]], CNPJ [[DADO NECESSÁRIO: CNPJ]], at [[DADO NECESSÁRIO: endereço completo]]."
+            ]
+          },
+          {
+            "heading": "What this site is",
+            "body": [
+              "An informational site describing a method and five products. Nothing here is an offer, a proposal, or a commitment to deliver a result.",
+              "The readiness questionnaire on the home page is illustrative. It runs entirely in your browser, produces an indicative score, and is not the Meridian assessment."
+            ]
+          },
+          {
+            "heading": "The assessment and the products",
+            "body": [
+              "Meridian, Scaffold, Signal, Charter and Cosmos are contracted through a separate written agreement that defines scope, deliverables, price, deadlines and confidentiality.",
+              "Descriptions on this site are summaries. Where a summary and a signed contract differ, the contract governs."
+            ]
+          },
+          {
+            "heading": "Intellectual property",
+            "body": [
+              "The method, the five-axis model, the product names, the texts, the visual identity and the code of this site belong to Nebuloz and are protected by Law 9.610/1998 and Law 9.279/1996.",
+              "Deliverables handed to a client under contract are licensed as that contract states — and the framework is intended to stay with the client's team, which the contract makes explicit.",
+              "You may quote and link to this site with attribution. You may not republish it wholesale or present it as your own."
+            ]
+          },
+          {
+            "heading": "Acceptable use",
+            "body": ["When using this site, do not:"],
+            "items": [
+              "attempt to gain access to systems or data you are not entitled to;",
+              "interfere with availability, including automated load beyond normal reading;",
+              "use it to send unlawful content or content that infringes third-party rights;",
+              "scrape it in a way that misrepresents Nebuloz as the source of a claim we did not make."
+            ]
+          },
+          {
+            "heading": "No warranty on informational content",
+            "body": [
+              "We try to keep this site accurate and current, but we do not warrant that it is free of error or omission, nor that it will be continuously available.",
+              "Nothing here is legal, accounting, tax or regulatory advice. Governance material describes a structure, not a compliance opinion."
+            ]
+          },
+          {
+            "heading": "Limits of liability",
+            "body": [
+              "To the extent Brazilian law permits, Nebuloz is not liable for indirect damages, lost profits, or losses arising from decisions taken solely on the basis of content published on this site.",
+              "This clause does not exclude liability that cannot be excluded by law, including consumer-law liability where it applies."
+            ]
+          },
+          {
+            "heading": "Links to third parties",
+            "body": [
+              "Where we link elsewhere, we do not control that content and do not endorse it."
+            ]
+          },
+          {
+            "heading": "Changes",
+            "body": [
+              "We may change these terms. The date at the top shows the current version, and continued use after a change means you accept it."
+            ]
+          },
+          {
+            "heading": "Governing law and forum",
+            "body": [
+              "Brazilian law governs these terms. [[DADO NECESSÁRIO: foro eleito]]"
+            ]
+          }
+        ]
       }
     }
   }
