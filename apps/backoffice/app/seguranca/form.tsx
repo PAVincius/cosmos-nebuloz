@@ -7,7 +7,6 @@ import { useState } from "react";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 
 const TOTP_LENGTH = 6;
-const SENHA_MINIMA = 12;
 
 /**
  * Cadastro do autenticador, no painel.
@@ -186,9 +185,11 @@ export function CadastroDe2FA() {
 
       {cadastro.erro ? <Erro>{cadastro.erro}</Erro> : null}
 
-      <BotaoPrimario
-        disabled={cadastro.pendente || senha.length < SENHA_MINIMA}
-      >
+      {/* Só exige não-vazio. O mínimo de 12 caracteres é regra de CADASTRO de
+          senha (minPasswordLength no better-auth); aplicá-lo aqui trancaria
+          fora quem tem conta anterior à política — sem erro, só um botão que
+          nunca acende. */}
+      <BotaoPrimario disabled={cadastro.pendente || senha.length === 0}>
         {cadastro.pendente ? "Gerando" : "Gerar QR code"}
       </BotaoPrimario>
     </form>
