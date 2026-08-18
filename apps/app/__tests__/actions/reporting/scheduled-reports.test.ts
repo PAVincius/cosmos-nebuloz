@@ -94,6 +94,43 @@ describe("createScheduledReport", () => {
     expect(mocks.scheduledReportCreate).not.toHaveBeenCalled();
   });
 
+  it("rejects cron expression with out-of-range field", async () => {
+    // O regex antigo aceitava isto: "99" tem a forma de um campo numérico,
+    // mas minuto só vai até 59.
+    const result = await createScheduledReport({
+      ...VALID_REPORT,
+      cronExpression: "99 * * * *",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(mocks.scheduledReportCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects timezone that isn't a valid IANA name", async () => {
+    // O schema antigo só checava comprimento (1-64 chars) — "Sao Paulo"
+    // passava sem nunca resolver a um timezone real.
+    const result = await createScheduledReport({
+      ...VALID_REPORT,
+      timezone: "Sao Paulo",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(mocks.scheduledReportCreate).not.toHaveBeenCalled();
+  });
+
+  it("accepts a valid cron + timezone combination", async () => {
+    mocks.scheduledReportCreate.mockResolvedValue({ id: "r1" });
+
+    const result = await createScheduledReport({
+      ...VALID_REPORT,
+      cronExpression: "0 9 * * 1",
+      timezone: "America/Sao_Paulo",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.scheduledReportCreate).toHaveBeenCalled();
+  });
+
   it("rejects empty recipients", async () => {
     const result = await createScheduledReport({
       ...VALID_REPORT,
@@ -157,6 +194,39 @@ describe("updateScheduledReport", () => {
 
     expect(result.ok).toBe(false);
     expect(mocks.scheduledReportUpdate).not.toHaveBeenCalled();
+  });
+
+  it("rejects out-of-range cron expression on update", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({ id: "r1" });
+
+    const result = await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      cronExpression: "99 * * * *",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(mocks.scheduledReportUpdate).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid timezone on update", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({ id: "r1" });
+
+    const result = await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      timezone: "Sao Paulo",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(mocks.scheduledReportUpdate).not.toHaveBeenCalled();
+  });
+
+  it("allows partial update that doesn't touch cron or timezone", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({ id: "r1" });
+    mocks.scheduledReportUpdate.mockResolvedValue({ id: "r1" });
+
+    const result = await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      name: "Updated",
+    });
+
+    expect(result.ok).toBe(true);
   });
 });
 

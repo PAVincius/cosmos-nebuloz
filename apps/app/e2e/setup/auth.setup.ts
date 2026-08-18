@@ -49,12 +49,18 @@ async function signInAndSave(
     password: string;
     paths: string[];
     /** Rota autenticada que dispara `requireTenantSession` e fixa o tenant
-     *  ativo antes de gravar o storageState. `/dashboard` para Cosmos; telas
-     *  do Charter usam `/charter` para o mesmo efeito nesse módulo. */
+     *  ativo antes de gravar o storageState. `/cosmos/dashboard` para Cosmos;
+     *  telas do Charter usam `/charter` para o mesmo efeito nesse módulo. */
     landingPath?: string;
   }
 ) {
-  const { baseURL, email, password, paths, landingPath = "/dashboard" } = opts;
+  const {
+    baseURL,
+    email,
+    password,
+    paths,
+    landingPath = "/cosmos/dashboard",
+  } = opts;
   const context = await browser.newContext();
   const page = await context.newPage();
   try {

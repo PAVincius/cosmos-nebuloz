@@ -29,7 +29,7 @@ import { WorkspaceSwitcher } from "./workspace-switcher";
  *  portas para a mesma prática divergem, e a antiga é a que não recebe trabalho.
  *  As páginas seguem no repo — o que se removeu foi o caminho até elas. */
 const NAV = [
-  { href: "/dashboard", label: "Home", icon: HomeIcon },
+  { href: "/cosmos/dashboard", label: "Home", icon: HomeIcon },
   // O Cosmos serve suas 38 telas por uma rota única, `/cosmos/[[...seg]]`, com
   // navegação própria no CosmosShell. Um link só — replicar os ids aqui criaria
   // um segundo mapa para divergir do registry.

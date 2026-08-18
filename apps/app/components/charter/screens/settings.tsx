@@ -463,6 +463,87 @@ export default function SettingsScreen() {
               </div>
             ))}
           </SectionCard>
+
+          {/* Passo 3 da montagem ("Atribua papéis de governança") manda a
+              pessoa para cá — sem esta lista, o único controle da aba era
+              editar quem já tinha CharterMembership, e um tenant novo só tem
+              o Compliance lead: nada aqui dava para cumprir o passo. */}
+          {data.unassignedMembers.length > 0 && (
+            <SectionCard
+              bodyStyle={{ padding: 0 }}
+              subtitle="Precisam de um papel para aparecer no passo 3 da montagem"
+              title="Sem papel no Charter"
+            >
+              {data.unassignedMembers.map((m, i) => (
+                <div
+                  key={m.userId}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "minmax(0,1fr) 220px 200px",
+                    gap: 12,
+                    padding: "11px 16px",
+                    alignItems: "center",
+                    borderBottom:
+                      i === data.unassignedMembers.length - 1
+                        ? "none"
+                        : "1px solid var(--hairline)",
+                  }}
+                >
+                  <span>
+                    <span
+                      style={{
+                        display: "block",
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        color: "var(--ink)",
+                      }}
+                    >
+                      {m.name}
+                    </span>
+                    <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+                      {m.email}
+                    </span>
+                  </span>
+                  <Badge tone="neutral">Sem papel</Badge>
+                  <Select
+                    ariaLabel={`Atribuir papel a ${m.name}`}
+                    onChange={(role) => {
+                      // Placeholder desabilitado, nunca um papel real — só
+                      // existe para o <select> não nascer já apontando para
+                      // COMPLIANCE (ver options abaixo).
+                      if (!role) {
+                        return;
+                      }
+                      startTransition(async () => {
+                        const res = await runWithToast(
+                          () =>
+                            setMemberCharterRole({
+                              userId: m.userId,
+                              role: role as never,
+                            }),
+                          {
+                            loading: "Atribuindo papel…",
+                            success: "Papel atribuído",
+                          }
+                        );
+                        if (res.ok) {
+                          reload();
+                        }
+                      });
+                    }}
+                    options={[
+                      { value: "", label: "Atribuir papel…", disabled: true },
+                      ...data.roles.map((r) => ({
+                        value: r.id,
+                        label: r.label,
+                      })),
+                    ]}
+                    value=""
+                  />
+                </div>
+              ))}
+            </SectionCard>
+          )}
         </div>
       )}
 

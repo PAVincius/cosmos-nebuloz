@@ -122,6 +122,8 @@ migration. There is no DROP VALUE, so the name is not cheap to change later."
 
 **A propriedade que amarra esta task:** `NAO_APLICAVEL` é um veredito. Se ele contasse como sem-veredito, um mapa inteiramente respondido apareceria como rascunho para sempre — no cabeçalho do PDF e no nome do arquivo exportado.
 
+**Comece por alargar `MapRow["status"]`, e saiba por quê.** Em `compliance.ts`, `MapRow.status` é uma união literal escrita à mão com os cinco valores antigos — **não** é derivada do enum do Prisma. Por isso a Task 1 quebrou o `tsc` em `compliance.ts:303` e `:546`, onde resultado de query tipado pelo Prisma (agora com seis membros) entra nessa união mais estreita, e **não** no `STATUS_META` como este plano previa. Acrescente `"NAO_APLICAVEL"` à união primeiro: os dois erros somem, e só então o `STATUS_META` passa a exigir a chave nova. A ordem importa, senão você persegue erro que ainda não apareceu.
+
 - [ ] **Step 1: Escrever os testes que falham**
 
 Anexar a `apps/app/__tests__/charter/compliance.test.ts`, dentro do `describe("setCoverage")` existente:
@@ -446,7 +448,7 @@ Depois de mergear com a `main`, **rode a suíte de novo contra o resultado do me
 ## O que este plano não faz
 
 - **Não preenche veredito nenhum.** O corpus entra com 59 exigências e zero respostas. Quem decide se a Nebuloz atende um controle é uma pessoa; o seed não tem opinião. Este trabalho entrega a pergunta.
-- **Não audita o código contra o checklist.** É o trabalho seguinte, e o mapa é onde o resultado dele mora.
+- **Não audita o código contra o checklist** — mas boa parte dessa auditoria já foi feita. `docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md` registra os achados do OWASP LLM Top 10 sobre o Cosmos, com sete de oito corrigidos, e os commits `791f5d5d` e `27127462` trazem `fenceUntrusted`, o gate de rate limit do copilot, mascaramento e tetos de consumo. **Quem for preencher os vereditos começa por ali, não do zero** — vários itens de §4.1, §6 e §7 já têm evidência real no código.
 - **Não avisa quando um `NAO_APLICAVEL` deixa de ser verdade.** O corpus não sabe o que a arquitetura virou. `publishSetVersion` cobre mudança de *texto* da exigência, não mudança de *contexto* do produto.
 
   Vale a pena saber como este risco já se materializou: a primeira versão do spec afirmava que a stack não tinha RAG, base vetorial, fine-tuning nem Python, e dispensava ~25 itens por isso. Todos os quatro existem — `packages/ai/lib/rag/`, `packages/database/vector-search.ts`, `experiments/slm-pipeline/scripts/*.py` — e `searchKnowledge` roda em produção no tool use do copilot. Tivesse virado corpus, ele nasceria dispensando §3.2 e §3.3, que são justamente as seções que cobrem esse código. **Nenhum item é `NAO_APLICAVEL` por suposição sobre a arquitetura; só por ausência que alguém conferiu e citou.**

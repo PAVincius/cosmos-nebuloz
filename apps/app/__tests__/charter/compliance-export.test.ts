@@ -352,6 +352,51 @@ describe("exportComplianceMap", () => {
     expect(res.data.filename).not.toContain("rascunho");
   });
 
+  it("nome do arquivo não leva -rascunho quando todo o mapa foi respondido com NAO_APLICAVEL", async () => {
+    // Fix round 1: o teste que ficava aqui antes chamava cabecalho() direto
+    // com linhas viradas para NAO_APLICAVEL, mas cabecalho() só lê
+    // map.semVeredito e map.linhas.length — nunca o status de uma linha —
+    // então a troca de status era inerte, e o teste provava exatamente o
+    // mesmo que "não avisa quando o mapa está completo" (describe cabecalho,
+    // no topo do arquivo), sem exercitar NAO_APLICAVEL nem nomeArquivo.
+    //
+    // Este teste passa pelo export inteiro e verifica o que o comprador de
+    // fato recebe: o nome do arquivo. getComplianceMap está mockado neste
+    // arquivo (h.getComplianceMap) — chamar a implementação real exigiria
+    // duplicar aqui o mock de banco que compliance.test.ts já mantém só para
+    // provar a contagem em si, e essa contagem já está provada lá, em "não
+    // conta NAO_APLICAVEL como sem veredito". Por isso semVeredito abaixo é
+    // derivado das próprias linhas do fixture por filter(), não um literal
+    // solto: se algum dia uma linha aqui deixar de ser NAO_APLICAVEL sem
+    // querer, o número acompanha, em vez de continuar mentindo 0.
+    // Tipada como ComplianceMap["linhas"] (não `as const`) de propósito: o
+    // filter logo abaixo precisa comparar status contra SEM_VEREDITO, e um
+    // `as const` faria o TypeScript enxergar o array como singleton
+    // NAO_APLICAVEL e recusar a comparação como sempre-falsa (TS2367) — o
+    // compilador estaria certo, mas a checagem deixaria de ser real.
+    const linhas: ComplianceMap["linhas"] = mapFixture.linhas.map((linha) => ({
+      ...linha,
+      status: "NAO_APLICAVEL",
+      comentario: "Não se aplica a este produto.",
+    }));
+    h.getComplianceMap.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mapFixture,
+        linhas,
+        semVeredito: linhas.filter((l) => l.status === "SEM_VEREDITO").length,
+      },
+    });
+
+    const res = await exportComplianceMap({ setId: "s-1", format: "csv" });
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.filename).not.toContain("rascunho");
+  });
+
   it("JSON: serializa o mapa inteiro, inclusive semVeredito", async () => {
     const res = await exportComplianceMap({ setId: "s-1", format: "json" });
 

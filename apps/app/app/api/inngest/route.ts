@@ -9,6 +9,7 @@ import { checkGovernanceSLA } from "@/lib/inngest/governance-sla";
 import { monthlyIsolationAudit } from "@/lib/inngest/isolation-audit";
 import { drainJobFallbackQueue } from "@/lib/inngest/job-fallback-drain";
 import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
+import { scheduledReportDispatch } from "@/lib/inngest/scheduled-report-dispatch";
 import { runScheduledReport } from "@/lib/inngest/scheduled-report-runner";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
 import { deliverWebhookEvent } from "@/lib/inngest/webhook-delivery";
@@ -29,6 +30,7 @@ export const { GET, POST, PUT } = serve({
     monthlyIsolationAudit,
     drainJobFallbackQueue,
     runExport,
+    scheduledReportDispatch,
     runScheduledReport,
     releaseWorkflowWaitState,
     checkWorkflowSla,

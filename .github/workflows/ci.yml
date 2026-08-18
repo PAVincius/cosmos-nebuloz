@@ -321,14 +321,72 @@ jobs:
       #
       # Estar fora de dois portões pelo mesmo motivo é sinal de dívida real, não
       # de configuração. Consertar os tipos devolve `web` aos dois de uma vez.
+      #
+      # `email` fica fora por um motivo diferente, e mais grave: o portão não
+      # controla o que ele instala. `email build` gera `apps/email/.react-email/`
+      # — diretório no `.gitignore` — e roda um `npm install` próprio lá dentro,
+      # fora do alcance do `pnpm-lock.yaml`. O `react-email@5.0.5` pina
+      # `framer-motion@12.23.22`, que importa `activeAnimations` de `motion-dom`;
+      # o npm resolve `motion-dom` pelo range aberto e hoje traz a `12.43.0`, que
+      # removeu esse export. A main quebrou sozinha quando essa versão foi
+      # publicada, sem commit nenhum, e voltaria a quebrar na próxima.
+      #
+      # O preview server é ferramenta de autoria: os templates moram em
+      # `packages/email/templates` e são compilados por quem os consome, que
+      # segue no portão. Buildá-lo aqui não prova nada de produção e importa uma
+      # resolução de dependência que não é nossa para dentro de um gate.
+      # Subir `react-email` para a 6.x — onde `framer-motion` saiu das
+      # dependências — é o que devolve `email` ao portão.
+      #
+      # Este passo não roda mais teste. O `build` do `turbo.json` dependia de
+      # `test`, o que trazia a suíte de 29 pacotes para dentro deste job: a do
+      # `app` inteira rodava concorrente com seis builds Next.js num runner de
+      # 4 cores, e testes de UI estouravam `Test timed out in 5000ms` por fome
+      # de CPU — os mesmos que passam no job `Tests & Coverage` ao lado, que
+      # roda `turbo test:coverage` sem filtro, sozinho, com Postgres efêmero.
+      # Teste não é insumo de build; a dependência era política, e a política
+      # continua sendo cumprida — ali, e não aqui.
       - name: Build
-        run: pnpm turbo build --filter=!web
+        run: pnpm turbo build --filter=!web --filter=!email
         env:
           SKIP_ENV_VALIDATION: true
+          # O type check que o `next build` roda no fim estourava o heap padrão
+          # do Node (~2 GB) em `apps/app`: "Ineffective mark-compacts near heap
+          # limit", com o processo parado em 2043 de 2082 MB. O runner tem 16 GB,
+          # e `--max-old-space-size` é teto e não reserva — os outros builds do
+          # turbo continuam usando o que precisam. A Vercel já dá 8 GB, que é por
+          # isso que o deploy do app passa enquanto este portão morria.
+          NODE_OPTIONS: --max-old-space-size=6144
           BASEHUB_TOKEN: ${{ secrets.BASEHUB_TOKEN }}
           # prisma generate valida o ambiente ao carregar o config, mas não
           # conecta em banco nenhum. Placeholder só para a validação passar.
           DATABASE_URL: postgresql://placeholder:placeholder@localhost:5432/placeholder
+          # `packages/auth/server.ts` valida o segredo no topo do módulo, e não
+          # dentro de uma função — então o throw dispara em qualquer import,
+          # inclusive no "Collecting page data" do `next build`, que carrega a
+          # rota `/api/auth/[...all]` de `app` e de `backoffice`. Não é t3-env,
+          # então `SKIP_ENV_VALIDATION` não alcança.
+          #
+          # Placeholder de propósito, e não `secrets.BETTER_AUTH_SECRET`: aqui
+          # só é preciso que o módulo carregue. Assinar cookie de sessão exige
+          # o segredo de verdade, e nada disso acontece durante um build — pôr
+          # o segredo real neste passo o exporia sem que nada o exigisse.
+          BETTER_AUTH_SECRET: ci-build-placeholder-nao-e-segredo-de-verdade
+          # `SKIP_ENV_VALIDATION` desliga a validação do t3-env, mas não faz a
+          # variável existir: quem depende dela recebe `undefined` e quebra
+          # longe da causa. Foi assim que `app/layout.tsx:24` derrubou o build
+          # com `TypeError: Invalid URL, input: '/legal/privacy'` — é
+          # `new URL(path, env.NEXT_PUBLIC_WEB_URL)` com a base indefinida,
+          # estourando no prerender de /onboarding/company/complete.
+          #
+          # Estas são as quatro `NEXT_PUBLIC_*` sem `.optional()` do repo, então
+          # a lista fecha a classe inteira em vez de tapar um buraco por vez.
+          # `.invalid` é TLD reservado por RFC 2606: se algo tentar sair para a
+          # rede a partir daqui, não chega em host de ninguém.
+          NEXT_PUBLIC_APP_URL: https://app.placeholder.invalid
+          NEXT_PUBLIC_WEB_URL: https://web.placeholder.invalid
+          NEXT_PUBLIC_POSTHOG_KEY: phc_ci_build_placeholder
+          NEXT_PUBLIC_POSTHOG_HOST: https://posthog.placeholder.invalid
 
   generate-tests:
     name: AI Test Generation

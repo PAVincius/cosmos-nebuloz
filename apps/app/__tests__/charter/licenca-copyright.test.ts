@@ -37,3 +37,43 @@ describe("guarda de copyright dos corpora", () => {
     expect(iso?.licenca).toBe("REFERENCIA");
   });
 });
+
+describe("corpus de segurança em IA", () => {
+  const corpus = CORPORA.find((c) => c.nome.includes("checklist Nebuloz"));
+
+  it("existe e é LIVRE — é texto próprio da Nebuloz, não norma de terceiro", () => {
+    expect(corpus).toBeDefined();
+    expect(corpus?.licenca).toBe("LIVRE");
+  });
+
+  it("tem as 59 exigências do documento-fonte", () => {
+    // Se este número divergir, o corpus e docs/security/checklist-ia-generativa.md
+    // saíram de sincronia — e o mapa passa a perguntar coisa que o documento
+    // não pede, ou a calar coisa que ele pede.
+    expect(corpus?.requisitos).toHaveLength(59);
+  });
+
+  it("carrega texto verbatim, diferente dos quatro corpora regulatórios", () => {
+    // Aqui a fonte é nossa, então reproduzir é legítimo e útil: o comprador lê
+    // a exigência inteira no export, não só um resumo.
+    for (const req of corpus?.requisitos ?? []) {
+      expect(req.texto, `${req.codigo} sem texto`).toBeTruthy();
+    }
+  });
+
+  it("tem código único e no formato SEC-<seção>-<item>", () => {
+    const codigos = (corpus?.requisitos ?? []).map((r) => r.codigo);
+    expect(new Set(codigos).size).toBe(codigos.length);
+    for (const c of codigos) {
+      expect(c).toMatch(/^SEC-\d+(-\d+){1,2}$/);
+    }
+  });
+
+  it("ordena por codigo igual ao array — getComplianceMap usa orderBy codigo asc", () => {
+    // Todo componente numérico vem com zero-pad (SEC-01-01, não SEC-1-1):
+    // sem isso, ordenação lexicográfica de string põe §10/§11 antes de §2, e
+    // é exatamente essa ordem que a tela, o CSV e o PDF usam sem reordenar.
+    const codigos = (corpus?.requisitos ?? []).map((r) => r.codigo);
+    expect([...codigos].sort()).toEqual(codigos);
+  });
+});

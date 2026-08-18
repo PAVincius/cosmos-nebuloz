@@ -68,10 +68,24 @@ describe("MeasureScreen", () => {
     createImprovementActionMock.mockReset();
     listTeamsMock.mockReset();
     listImprovementActionsMock.mockResolvedValue(NO_ACTIONS);
-    listTeamsMock.mockResolvedValue({
-      ok: true,
-      data: [{ id: "team-atlas", name: "Squad Atlas" }],
-    });
+    // Deliberadamente lento. `listTeams` é um fetch independente do que desenha
+    // a tela, então na prática ele às vezes chega depois do primeiro clique —
+    // foi o que deixou este arquivo vermelho na CI sem nenhum commit o ter
+    // causado. Resolver na hora esconderia a corrida e o `findByRole("option")`
+    // dos testes de escrita viraria enfeite: passaria por acidente de ordem.
+    listTeamsMock.mockImplementation(
+      () =>
+        new Promise((resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                ok: true,
+                data: [{ id: "team-atlas", name: "Squad Atlas" }],
+              }),
+            50
+          )
+        )
+    );
   });
 
   it("renders KPIs and the prev-cycle delta column from real data", async () => {
@@ -241,6 +255,12 @@ describe("MeasureScreen", () => {
     fireEvent.change(screen.getByLabelText("Nota (1–5)"), {
       target: { value: "4" },
     });
+    // A lista de times vem de `listTeams`, um fetch independente do que
+    // desenha a tela — esperar por "Registrar avaliação" não garante que ela
+    // chegou. Selecionar um value cuja <option> ainda não existe é no-op
+    // silencioso no jsdom: `scopeId` fica "", o guard do `save` devolve sem
+    // chamar nada, e a falha aparece como "Number of calls: 0" longe da causa.
+    await screen.findByRole("option", { name: "Squad Atlas" });
     fireEvent.change(screen.getByLabelText("Time avaliado"), {
       target: { value: "team-atlas" },
     });
@@ -276,6 +296,7 @@ describe("MeasureScreen", () => {
     fireEvent.change(await screen.findByLabelText("Título"), {
       target: { value: "Rodar dojo de testes de contrato" },
     });
+    await screen.findByRole("option", { name: "Squad Atlas" });
     fireEvent.change(screen.getByLabelText("Time responsável"), {
       target: { value: "team-atlas" },
     });
