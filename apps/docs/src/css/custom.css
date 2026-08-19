@@ -1,0 +1,33 @@
+:root {
+  --ifm-color-primary: #5b5bd6;
+  --ifm-color-primary-dark: #4a4ac9;
+  --ifm-color-primary-darker: #4646be;
+  --ifm-color-primary-darkest: #3a3a9c;
+  --ifm-color-primary-light: #6f6fdc;
+  --ifm-color-primary-lighter: #7a7ade;
+  --ifm-color-primary-lightest: #9797e6;
+  --ifm-code-font-size: 92%;
+  --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 10%);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #a1a1f5;
+  --ifm-color-primary-dark: #8484f1;
+  --ifm-color-primary-darker: #7575ef;
+  --ifm-color-primary-darkest: #4949e9;
+  --ifm-color-primary-light: #bebef9;
+  --ifm-color-primary-lighter: #cdcdfb;
+  --ifm-color-primary-lightest: #f9f9fe;
+  --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 30%);
+}
+
+/* Os diagramas ASCII dos SRDs dependem de largura fixa e não podem quebrar. */
+.markdown pre code {
+  white-space: pre;
+}
+
+/* Tabelas de requisito são densas; o padrão do Infima folga demais. */
+.markdown table td,
+.markdown table th {
+  padding: 0.5rem 0.75rem;
+}

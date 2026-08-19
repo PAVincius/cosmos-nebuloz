@@ -36,7 +36,7 @@ export const SignIn = () => {
     const result = await authClient.signIn.email({
       email: email.trim().toLowerCase(),
       password,
-      callbackURL: "/dashboard",
+      callbackURL: "/cosmos/dashboard",
     });
 
     if (result?.error) {

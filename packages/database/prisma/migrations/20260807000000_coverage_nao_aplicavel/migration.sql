@@ -1,0 +1,12 @@
+-- "Não se aplica" — o terceiro veredito que o checklist de segurança pede
+-- (Pass / Fail / N/A) e que o enum não sabia dizer.
+--
+-- Sem ele, um controle sobre componente que o produto não tem — RAG, base
+-- vetorial, fine-tuning — só podia ser marcado NAO_ATENDE, e o mapa afirmaria
+-- a um comprador que a Nebuloz falha em controles que sequer se aplicam.
+--
+-- Esta migration contém APENAS o ADD VALUE. No Postgres 12+ o comando roda
+-- dentro de transação, mas o valor novo não pode ser USADO até ela committar,
+-- e o Prisma envolve cada migration numa transação. Qualquer passo que precise
+-- usar o valor vai em migration seguinte.
+ALTER TYPE "CharterCoverageStatus" ADD VALUE IF NOT EXISTS 'NAO_APLICAVEL';

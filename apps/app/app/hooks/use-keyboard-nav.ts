@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 type NavBinding = { key: string; label: string; path: string };
 
 export const NAV_BINDINGS: NavBinding[] = [
-  { key: "d", label: "Dashboard", path: "/dashboard" },
+  { key: "d", label: "Dashboard", path: "/cosmos/dashboard" },
   { key: "p", label: "Portfolio", path: "/portfolio" },
   { key: "k", label: "PI Planning", path: "/pi-planning" },
   { key: "t", label: "Times", path: "/teams" },

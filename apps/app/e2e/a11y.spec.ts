@@ -41,7 +41,7 @@ test.describe("a11y — Authenticated pages @auth", () => {
   test.use({ storageState: "e2e/fixtures/auth-session.json" });
 
   test("dashboard has no critical violations", async ({ page }) => {
-    await page.goto("/dashboard");
+    await page.goto("/cosmos/dashboard");
     await page.waitForLoadState("networkidle");
 
     const results = await new AxeBuilder({ page })

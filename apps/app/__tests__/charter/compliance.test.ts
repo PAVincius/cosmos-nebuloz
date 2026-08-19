@@ -260,6 +260,67 @@ describe("setCoverage", () => {
       })
     );
   });
+
+  it("recusa NAO_APLICAVEL sem justificativa", async () => {
+    // "Não se aplica" sem motivo é indistinguível de "não quis responder", e é
+    // o veredito mais fácil de abusar num documento que sai da empresa.
+    const res = await setCoverage({
+      requirementId: "r-1",
+      status: "NAO_APLICAVEL",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(h.covUpsert).not.toHaveBeenCalled();
+  });
+
+  it("aceita NAO_APLICAVEL com justificativa, sem exigir capacidade", async () => {
+    // Simétrico invertido de ATENDE: lá a capacidade é obrigatória porque
+    // alegação precisa de prova; aqui não há o que provar, só o que explicar.
+    const res = await setCoverage({
+      requirementId: "r-1",
+      status: "NAO_APLICAVEL",
+      comentario: "Não fazemos canary release de modelo.",
+    });
+
+    expect(res.ok).toBe(true);
+  });
+});
+
+describe("getComplianceMap — NAO_APLICAVEL é veredito", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+    h.setFindFirst.mockResolvedValue({
+      id: "s-1",
+      nome: "RFP",
+      licenca: "LIVRE",
+    });
+    h.reqFindMany.mockResolvedValue([
+      { id: "r-1", codigo: "1", citacao: "§1", resumo: "a", peso: null },
+      { id: "r-2", codigo: "2", citacao: "§2", resumo: "b", peso: null },
+    ]);
+    h.covFindMany.mockResolvedValue([
+      {
+        requirementId: "r-1",
+        status: "NAO_APLICAVEL",
+        comentario: "Não fazemos canary release de modelo (§10.2).",
+        capabilityId: null,
+      },
+    ]);
+  });
+
+  it("não conta NAO_APLICAVEL como sem veredito", async () => {
+    // r-1 foi respondido (não se aplica); só r-2 segue sem resposta.
+    const res = await getComplianceMap("s-1");
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.semVeredito).toBe(1);
+  });
 });
 
 describe("getComplianceMap", () => {

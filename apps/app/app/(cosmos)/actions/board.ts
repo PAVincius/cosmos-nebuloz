@@ -4,6 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
+import { COLUNAS } from "./board.constants";
 
 // Leitura do board do time (/cosmos/board, story-060). As mutações não moram
 // aqui: createStory/updateStoryStatus vivem em app/actions/stories e
@@ -14,15 +15,6 @@ import { type Result, safeAction } from "../../actions/_base";
 // paginada e por filtro, então montar o board exigiria uma chamada por coluna e
 // mais uma por story para as tasks. Aqui é uma ida ao banco para o quadro
 // inteiro, já agrupado, com a contagem de task que o card precisa.
-
-/** Mesma ordem de StoryStatus em app/actions/_base.ts. */
-export const COLUNAS = [
-  { status: "BACKLOG", label: "Backlog" },
-  { status: "TODO", label: "A fazer" },
-  { status: "IN_PROGRESS", label: "Em andamento" },
-  { status: "REVIEW", label: "Revisão" },
-  { status: "DONE", label: "Concluído" },
-] as const;
 
 export type BoardStoryView = {
   id: string;
