@@ -25,7 +25,7 @@ vi.mock("@repo/database", () => ({
     }),
 }));
 
-import { linkPolicy } from "../../app/(charter)/actions/policy";
+import { linkPolicy, unlinkPolicy } from "../../app/(charter)/actions/policy";
 
 const ctx = {
   tenantId: "t-1",
@@ -92,5 +92,47 @@ describe("linkPolicy", () => {
 
     expect(res.ok).toBe(false);
     expect(h.linkCreate).not.toHaveBeenCalled();
+  });
+});
+
+describe("unlinkPolicy", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("remove o vínculo existente", async () => {
+    h.linkDeleteMany.mockResolvedValue({ count: 1 });
+
+    const res = await unlinkPolicy({
+      policyId: "pol-1",
+      alvoTipo: "USE_CASE",
+      alvoId: "uc-1",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(h.linkDeleteMany).toHaveBeenCalledWith({
+      where: {
+        tenantId: expect.any(String),
+        policyId: "pol-1",
+        alvoTipo: "USE_CASE",
+        alvoId: "uc-1",
+      },
+    });
+  });
+
+  it("recusa desvincular o que não existe em vez de devolver sucesso calado", async () => {
+    h.linkDeleteMany.mockResolvedValue({ count: 0 });
+
+    const res = await unlinkPolicy({
+      policyId: "pol-1",
+      alvoTipo: "VENDOR",
+      alvoId: "inexistente",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não encontrado/i);
   });
 });
