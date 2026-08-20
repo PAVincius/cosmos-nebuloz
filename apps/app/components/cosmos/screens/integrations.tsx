@@ -33,13 +33,22 @@ import {
 // faltava. Testar usa a credencial JÁ guardada, decifrada dentro da action:
 // nenhum campo de segredo existe nesta tela.
 //
-// "Conectar" segue diferido: conectar exige entrada de credencial ou OAuth
-// (outro subsistema, integrations-vault.prisma). O modal diz isso em voz
-// alta e não finge conectar nada nem sintetiza estado ou dado de sync.
+// Conectar (Linear): o modal coleta a API key, valida com o Linear ANTES de
+// gravar, lista os times reais da conta e delega a escrita a
+// connectLinearIntegration — que cifra via createIntegration. A chave existe
+// só no submit: não é lida de volta em lugar nenhum desta tela, porque
+// `listIntegrations` não seleciona `config`. As demais fontes do catálogo
+// seguem sem caminho de conexão e o modal continua dizendo isso em voz alta,
+// em vez de fingir um formulário que não grava nada.
 import { type CSSProperties, useState } from "react";
 import {
+  connectLinearIntegration,
+  discoverLinearTeams,
+  type ImportCounts,
   type IntegrationView,
+  type LinearTeamOption,
   listIntegrations,
+  resyncIntegration,
   setIntegrationPaused,
   testIntegrationConnection,
 } from "@/app/(cosmos)/actions/integrations";
@@ -188,6 +197,28 @@ function fmtSync(iso: string | null): string {
   })}`;
 }
 
+const inputStyle: CSSProperties = {
+  background: "var(--surface)",
+  border: "1px solid var(--hairline-strong)",
+  borderRadius: "var(--r-md)",
+  color: "var(--ink)",
+  fontFamily: "inherit",
+  fontSize: 14,
+  outline: "none",
+  padding: "10px 12px",
+  width: "100%",
+};
+
+const labelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  display: "block",
+  fontSize: 11.5,
+  fontWeight: 700,
+  letterSpacing: ".04em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
 function fieldRowStyle(): CSSProperties {
   return {
     alignItems: "center",
@@ -283,6 +314,208 @@ function ManageIntegrationModal({
   );
 }
 
+// Conectar o Linear em dois passos, na ordem em que a segurança exige:
+// validar a chave e listar os times **antes** de gravar qualquer coisa. O
+// caminho inverso — gravar e testar depois — deixaria uma Integration ACTIVE
+// apontando para credencial que não autentica, e alguém confiaria no card
+// verde.
+function ConnectLinearModal({
+  catalog,
+  onConnected,
+}: {
+  catalog: CatalogEntry;
+  onConnected: () => void;
+}) {
+  const { close } = useModal();
+  const [name, setName] = useState(catalog.label);
+  const [apiKey, setApiKey] = useState("");
+  const [account, setAccount] = useState<string | null>(null);
+  const [teams, setTeams] = useState<LinearTeamOption[] | null>(null);
+  const [teamId, setTeamId] = useState("");
+  const [importNow, setImportNow] = useState(true);
+  const [busy, setBusy] = useState(false);
+
+  const discover = async () => {
+    if (apiKey.trim().length < 8 || busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => discoverLinearTeams({ apiKey }), {
+      loading: "Validando credencial no Linear...",
+      success: (data: { account: string | null }) =>
+        data.account
+          ? `Autenticado como ${data.account}.`
+          : "Credencial aceita.",
+      error: (e: string) => `Linear recusou a credencial: ${e}`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      setAccount(res.data.account);
+      setTeams(res.data.teams);
+      setTeamId(res.data.teams[0]?.id ?? "");
+    }
+  };
+
+  const connect = async () => {
+    if (!(teamId && name.trim()) || busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        connectLinearIntegration({
+          name: name.trim(),
+          apiKey,
+          linearTeamId: teamId,
+          importNow,
+        }),
+      {
+        loading: importNow
+          ? "Conectando e importando issues..."
+          : "Conectando...",
+        success: (data: { imported: ImportCounts | null }) =>
+          data.imported
+            ? `Conectado — ${data.imported.created} criadas, ${data.imported.updated} atualizadas, ${data.imported.skipped} puladas.`
+            : "Conectado. Sincronize quando quiser trazer as issues.",
+        error: (e: string) => `Não foi possível conectar: ${e}`,
+      }
+    );
+    setBusy(false);
+    // Só fecha no sucesso: fechar no erro custaria a chave já digitada, e ela
+    // não é lida de volta em lugar nenhum para repopular o campo.
+    if (res.ok) {
+      setApiKey("");
+      close();
+      onConnected();
+    }
+  };
+
+  return (
+    <ModalCard
+      icon={<Avatar name={catalog.label} size={24} tone={catalog.tone} />}
+      subtitle={catalog.category}
+      title={`Conectar ${catalog.label}`}
+      width={460}
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div>
+          <label htmlFor="linear-name" style={labelStyle}>
+            Nome da integração
+          </label>
+          <input
+            id="linear-name"
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ex: Linear Nebuloz"
+            style={inputStyle}
+            value={name}
+          />
+        </div>
+
+        <div>
+          <label htmlFor="linear-key" style={labelStyle}>
+            Personal API key
+          </label>
+          <input
+            autoComplete="off"
+            disabled={teams !== null}
+            id="linear-key"
+            onChange={(e) => setApiKey(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && teams === null) {
+                discover();
+              }
+            }}
+            placeholder="lin_api_..."
+            spellCheck={false}
+            style={inputStyle}
+            type="password"
+            value={apiKey}
+          />
+          <p
+            style={{
+              color: "var(--ink-faint)",
+              fontSize: 12,
+              lineHeight: 1.5,
+              margin: "6px 0 0",
+            }}
+          >
+            Linear → Settings → Security &amp; access → Personal API keys. A
+            chave é cifrada no servidor (AES-256-GCM) e nunca volta para esta
+            tela — para trocá-la, reconecte.
+          </p>
+        </div>
+
+        {teams !== null && (
+          <div>
+            <label htmlFor="linear-team" style={labelStyle}>
+              Time do Linear{account ? ` · conta ${account}` : ""}
+            </label>
+            {teams.length === 0 ? (
+              <p style={{ color: "var(--ink-muted)", fontSize: 13, margin: 0 }}>
+                Esta conta não tem nenhum time visível. Nada a mapear.
+              </p>
+            ) : (
+              <select
+                id="linear-team"
+                onChange={(e) => setTeamId(e.target.value)}
+                style={inputStyle}
+                value={teamId}
+              >
+                {teams.map((t) => (
+                  <option key={t.id} value={t.id}>
+                    {`${t.key} · ${t.name}`}
+                  </option>
+                ))}
+              </select>
+            )}
+          </div>
+        )}
+
+        {teams !== null && teams.length > 0 && (
+          <label
+            htmlFor="linear-import"
+            style={{
+              alignItems: "center",
+              color: "var(--ink-subtle)",
+              display: "flex",
+              fontSize: 13,
+              gap: 8,
+            }}
+          >
+            <input
+              checked={importNow}
+              id="linear-import"
+              onChange={(e) => setImportNow(e.target.checked)}
+              type="checkbox"
+            />
+            Importar as issues deste time agora (vira Feature no COSMOS)
+          </label>
+        )}
+
+        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+          <Button onClick={close} size="sm" variant="secondary">
+            Cancelar
+          </Button>
+          {teams === null ? (
+            <Button onClick={discover} size="sm" variant="primary">
+              Validar e listar times
+            </Button>
+          ) : (
+            <Button onClick={connect} size="sm" variant="primary">
+              Conectar
+            </Button>
+          )}
+        </div>
+      </div>
+    </ModalCard>
+  );
+}
+
+// As demais fontes do catálogo não têm conector no repositório — nem cliente
+// de API, nem rota de webhook. Um formulário aqui coletaria credencial para
+// guardar e nunca usar, que é pior que dizer que não existe.
 function ConnectIntegrationModal({ catalog }: { catalog: CatalogEntry }) {
   const { close } = useModal();
   return (
@@ -311,9 +544,8 @@ function ConnectIntegrationModal({ catalog }: { catalog: CatalogEntry }) {
             margin: 0,
           }}
         >
-          O fluxo de conexão (autenticação e mapeamento de campos) ainda não
-          está implementado nesta versão — nenhuma credencial é coletada aqui.
-          Item pendente de infraestrutura.
+          Não há conector para {catalog.label} neste ambiente — nem cliente de
+          API, nem rota de ingestão. Nenhuma credencial é coletada aqui.
         </p>
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
           <Button onClick={close} size="sm" variant="secondary">
@@ -352,6 +584,27 @@ function ConnectorCard({
           ? "Conector retomado."
           : "Conector pausado — eventos que chegarem vão para a fila de mortos.",
         error: (err: string) => `Não foi possível atualizar o conector: ${err}`,
+      }
+    );
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
+  const syncNow = async () => {
+    if (!integration || busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () => resyncIntegration({ id: integration.id }),
+      {
+        loading: `Sincronizando ${integration.name}...`,
+        success: (data: ImportCounts) =>
+          `${data.created} criadas, ${data.updated} atualizadas, ${data.skipped} puladas.`,
+        error: (e: string) => `Sincronização falhou: ${e}`,
       }
     );
     setBusy(false);
@@ -434,6 +687,14 @@ function ConnectorCard({
                   size={30}
                   title={`Testar conexão de ${integration.name}`}
                 />
+                {integration.source === "linear" && (
+                  <IconButton
+                    name="download"
+                    onClick={syncNow}
+                    size={30}
+                    title={`Sincronizar ${integration.name} agora`}
+                  />
+                )}
                 <IconButton
                   name={paused ? "play" : "pause"}
                   onClick={togglePaused}
@@ -461,7 +722,16 @@ function ConnectorCard({
               full
               icon="plug"
               onClick={() =>
-                modal.open(<ConnectIntegrationModal catalog={catalog} />)
+                modal.open(
+                  catalog.source === "linear" ? (
+                    <ConnectLinearModal
+                      catalog={catalog}
+                      onConnected={onChanged}
+                    />
+                  ) : (
+                    <ConnectIntegrationModal catalog={catalog} />
+                  )
+                )
               }
               size="sm"
               variant="soft"

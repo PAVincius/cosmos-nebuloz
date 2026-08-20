@@ -26,8 +26,15 @@ import { headers } from "next/headers";
 import { z } from "zod";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
+import {
+  createIntegration,
+  runImportSnapshot,
+} from "../../actions/integrations";
 import { githubTestConnection } from "../../actions/integrations/connectors/github";
-import { linearTestConnection } from "../../actions/integrations/connectors/linear";
+import {
+  linearDiscoverTeams,
+  linearTestConnection,
+} from "../../actions/integrations/connectors/linear";
 
 export type SyncRunView = {
   id: string;
@@ -232,5 +239,166 @@ export async function testIntegrationConnection(
         ("login" in result ? result.login : undefined) ??
         null,
     };
+  });
+}
+
+// ─── Conectar o Linear (fecha a lacuna do modal stub) ──────────────────────
+//
+// A tela dizia em voz alta que conectar não estava implementado, e estava
+// certa: `createIntegration` já cifrava a credencial e ninguém a chamava. O
+// que faltava era o caminho de entrada — e ele precisa de três cuidados que
+// as actions de leitura desta tela não precisavam ter:
+//
+//  1. A chave entra por parâmetro e some no fim da action. Nunca volta na
+//     resposta, nunca vai para a auditoria e nunca é lida de volta por
+//     `listIntegrations` (que não seleciona `config`). Trocar a chave é
+//     reconectar.
+//  2. Listar os times do Linear valida a credencial ANTES de gravar nada.
+//     Gravar primeiro e descobrir depois deixaria uma Integration ACTIVE
+//     apontando para uma chave que não autentica.
+//  3. Re-sincronizar recebe só o id: o time do Linear vem de `mapping`, lido
+//     no servidor. Aceitar `projectId` da tela deixaria um cliente pedir
+//     import de um time que este tenant nunca mapeou.
+
+export type LinearTeamOption = { id: string; name: string; key: string };
+
+export type ImportCounts = {
+  created: number;
+  updated: number;
+  skipped: number;
+};
+
+const ApiKeySchema = z.object({ apiKey: z.string().min(8) });
+
+export async function discoverLinearTeams(
+  input: z.input<typeof ApiKeySchema>
+): Promise<Result<{ account: string | null; teams: LinearTeamOption[] }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { apiKey } = ApiKeySchema.parse(input);
+
+    const test = await linearTestConnection(apiKey);
+    if (!test.ok) {
+      throw new Error(test.error ?? "Falha na conexão com o Linear.");
+    }
+
+    const teams = await linearDiscoverTeams(apiKey);
+    return {
+      account: test.name ?? null,
+      teams: teams.map((t) => ({ id: t.id, name: t.name, key: t.key })),
+    };
+  });
+}
+
+const ConnectLinearSchema = z.object({
+  name: z.string().min(1).max(120).trim(),
+  apiKey: z.string().min(8),
+  linearTeamId: z.string().min(1),
+  /** Importa as issues do time logo depois de conectar. */
+  importNow: z.boolean().default(false),
+});
+
+export async function connectLinearIntegration(
+  input: z.input<typeof ConnectLinearSchema>
+): Promise<Result<{ id: string; imported: ImportCounts | null }>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const parsed = ConnectLinearSchema.parse(input);
+
+    const test = await linearTestConnection(parsed.apiKey);
+    if (!test.ok) {
+      throw new Error(test.error ?? "Falha na conexão com o Linear.");
+    }
+
+    // createIntegration é quem cifra (`encryptConfigSecrets`). Duplicar a
+    // escrita aqui duplicaria a cifragem em dois lugares que podem divergir.
+    const created = await createIntegration({
+      source: "linear",
+      name: parsed.name,
+      config: { apiKey: parsed.apiKey },
+    });
+    if (!created.ok) {
+      throw new Error(created.error);
+    }
+
+    // `mapping` só é gravado por runImportSnapshot, junto do SyncLog da
+    // execução. Sem importar agora, a integração fica conectada e sem time
+    // mapeado — e é isso que `resyncIntegration` recusa depois, em vez de
+    // adivinhar um time.
+    let imported: ImportCounts | null = null;
+    if (parsed.importNow) {
+      const snapshot = await runImportSnapshot({
+        integrationId: created.data.id,
+        projectId: parsed.linearTeamId,
+        targetType: "feature",
+      });
+      if (!snapshot.ok) {
+        throw new Error(snapshot.error);
+      }
+      imported = snapshot.data;
+    }
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "integration",
+      entityId: created.data.id,
+      diff: { source: "linear", name: parsed.name, team: parsed.linearTeamId },
+    });
+    revalidatePath("/cosmos/integrations");
+
+    return { id: created.data.id, imported };
+  });
+}
+
+const ResyncSchema = z.object({ id: z.string().cuid() });
+
+export async function resyncIntegration(
+  input: z.input<typeof ResyncSchema>
+): Promise<Result<ImportCounts>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { id } = ResyncSchema.parse(input);
+
+    const existing = await database.integration.findFirst({
+      where: { id, tenantId: ctx.tenantId },
+      select: { id: true, source: true, status: true, mapping: true },
+    });
+    if (!existing) {
+      throw new Error("Integração não encontrada.");
+    }
+    if (existing.source !== "linear") {
+      throw new Error(
+        `Sincronização manual não implementada para '${existing.source}'.`
+      );
+    }
+    // Pausar contém um estrago em produção. Sincronizar como se nada tivesse
+    // acontecido reabriria a ingestão sem ninguém decidir retomar.
+    if (existing.status === "PAUSED") {
+      throw new Error("Integração pausada — retome antes de sincronizar.");
+    }
+
+    const projectId = (existing.mapping as { projectId?: unknown } | null)
+      ?.projectId;
+    if (typeof projectId !== "string" || projectId.length === 0) {
+      throw new Error(
+        "Integração sem time do Linear mapeado — reconecte escolhendo o time."
+      );
+    }
+
+    const snapshot = await runImportSnapshot({
+      integrationId: id,
+      projectId,
+      targetType: "feature",
+    });
+    if (!snapshot.ok) {
+      throw new Error(snapshot.error);
+    }
+
+    revalidatePath("/cosmos/integrations");
+    return snapshot.data;
   });
 }
