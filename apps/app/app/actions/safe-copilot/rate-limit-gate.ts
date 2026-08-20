@@ -23,7 +23,6 @@ export type VeredictoDeLimite =
   | "indisponivel";
 
 type Dependencias = {
-  env: { UPSTASH_REDIS_REST_URL?: string };
   producao: boolean;
   /** Devolve `true` se ainda está dentro do limite. */
   limitar: (identificador: string) => Promise<boolean>;
@@ -33,24 +32,17 @@ export async function avaliarLimite(
   identificador: string,
   deps: Dependencias
 ): Promise<VeredictoDeLimite> {
-  const { env, producao, limitar } = deps;
+  const { producao, limitar } = deps;
 
-  if (!env.UPSTASH_REDIS_REST_URL) {
-    if (producao) {
-      log.error(
-        "[copilot/chat] UPSTASH_REDIS_REST_URL ausente em produção — o rate limiting não pode ser aplicado e as requisições estão sendo recusadas."
-      );
-      return "indisponivel";
-    }
-    return "ok";
-  }
-
+  // Não há mais ramo de "não configurado": o contador vive no Postgres
+  // (@repo/rate-limit), e banco ausente não é estado que este portão alcance —
+  // sem DATABASE_URL o app não sobe. O que sobra é falha em tempo de execução.
   try {
     return (await limitar(identificador)) ? "ok" : "excedido";
   } catch (erro) {
-    // Redis configurado mas inacessível é o mesmo risco de segurança: se isto
-    // devolvesse "ok", derrubar o Redis passaria a ser a maneira de remover o
-    // limite.
+    // Contador inacessível é o mesmo risco de segurança de sempre: se isto
+    // devolvesse "ok", derrubar o banco do limite passaria a ser a maneira de
+    // remover o teto de custo de IA.
     if (producao) {
       log.error("[copilot/chat] rate limiting indisponível", {
         error: String(erro),
@@ -63,9 +55,9 @@ export async function avaliarLimite(
 
 /** Janela de 30 requisições por minuto por IP, preservada da versão anterior. */
 export async function limitarPorIp(identificador: string): Promise<boolean> {
-  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
-    limiter: slidingWindow(30, "1 m"),
+    limiter: fixedWindow(30, "1 m"),
     prefix: "copilot",
   });
   const { success } = await limiter.limit(identificador);

@@ -34,9 +34,9 @@ async function checkUploadRateLimit(tenantId: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
     return false;
   }
-  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
-    limiter: slidingWindow(10, "1 h"),
+    limiter: fixedWindow(10, "1 h"),
     prefix: "copilot:upload",
   });
   const { success } = await limiter.limit(tenantId);

@@ -29,7 +29,6 @@ export async function POST(req: Request) {
     const ip =
       headerStore.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anonymous";
     const limite = await avaliarLimite(ip, {
-      env: { UPSTASH_REDIS_REST_URL: process.env.UPSTASH_REDIS_REST_URL },
       producao: process.env.NODE_ENV === "production",
       limitar: limitarPorIp,
     });

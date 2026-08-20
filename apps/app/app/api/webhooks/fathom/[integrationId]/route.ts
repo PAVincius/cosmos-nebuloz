@@ -14,9 +14,9 @@ async function checkWebhookRateLimit(ip: string): Promise<boolean> {
   if (!process.env.UPSTASH_REDIS_REST_URL) {
     return true;
   }
-  const { createRateLimiter, slidingWindow } = await import("@repo/rate-limit");
+  const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
-    limiter: slidingWindow(100, "1 m"),
+    limiter: fixedWindow(100, "1 m"),
     prefix: "webhook:fathom",
   });
   const { success } = await limiter.limit(ip);

@@ -171,3 +171,25 @@ model SyncLog {
   @@index([integrationId])
   @@index([integrationId, createdAt])
 }
+
+// ── Rate limit em Postgres ────────────────────────────────────────────────────
+
+/// Contador de janela fixa do teto de requisição. Substitui o Upstash: a
+/// decisão foi não adicionar infra — o limite vive no mesmo banco que ele
+/// protege, o que é aceitável enquanto o tráfego é o de dezenas de pessoas,
+/// não de uma API pública de alto volume.
+///
+/// `key` já vem com o prefixo do escopo ("bo:staff:u-123"). `bucket` é o
+/// índice da janela (floor(epoch/janela)) — janela fixa, não deslizante: no
+/// pior caso a fronteira de duas janelas admite o dobro do teto por instante,
+/// e para tetos de navegação e de custo isso é tolerável. A linha expira e é
+/// varrida pelo próprio caminho do limite, sem cron.
+model RateLimitBucket {
+  key       String
+  bucket    BigInt
+  count     Int      @default(1)
+  expiresAt DateTime
+
+  @@id([key, bucket])
+  @@index([expiresAt])
+}

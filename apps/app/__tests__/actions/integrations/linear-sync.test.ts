@@ -300,7 +300,7 @@ vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: () => ({
     limit: () => Promise.resolve({ success: true }),
   }),
-  slidingWindow: vi.fn(),
+  fixedWindow: vi.fn(),
 }));
 vi.mock("@/lib/inngest/client", () => ({
   inngest: { send: routeMocks.inngestSend },
