@@ -25,7 +25,22 @@ import { scoreLabel } from "@/lib/charter/rules";
  * então a mudança não chega a um run verde. Rodar só `vitest` localmente não
  * pega nome de campo errado.
  */
-export type Evidencia = { total: number; amostra: string[]; href?: string };
+/**
+ * `de` e `lacunas` são opcionais porque só fazem sentido onde a contagem crua
+ * não basta. `POLICY_ATTESTATION` responde "37 aceites" e 37 é 37; `POLICY_LINK`
+ * responde "12 vínculos", que não significa nada sem saber de quantos.
+ *
+ * `amostra` continua sendo "exemplos do que existe" em TODAS as capacidades.
+ * Inverter esse sentido só numa delas seria rasteira garantida para quem ler o
+ * catálogo depois — daí `lacunas` ser campo novo, com nome que diz o que é.
+ */
+export type Evidencia = {
+  total: number;
+  amostra: string[];
+  de?: number;
+  lacunas?: string[];
+  href?: string;
+};
 
 export type Capability = {
   id: string;
@@ -121,18 +136,52 @@ export const CAPABILITIES: readonly Capability[] = [
   },
   {
     id: "POLICY_LINK",
-    label: "Política vinculada a caso de uso e fornecedor",
+    // O rótulo antigo — "Política vinculada a caso de uso e fornecedor" —
+    // prometia mais do que a contagem entregava: com uma política por tenant,
+    // vincular é quase tautologia, e o que prova algo é a cobertura estar
+    // completa. Mesmo movimento já feito no RISK_SCORING abaixo.
+    label: "Todo caso de uso e fornecedor sob a política publicada",
     evidencia: (tenantId) =>
       withTenantDb(tenantId, async (db) => {
-        const total = await db.charterPolicyLink.count({ where: { tenantId } });
-        const rows = await db.charterPolicyLink.findMany({
-          where: { tenantId },
-          take: 3,
-          select: { alvoTipo: true, alvoId: true },
-        });
+        const [casos, vendors, links] = await Promise.all([
+          db.charterUseCase.findMany({
+            where: { tenantId },
+            select: { id: true, code: true, title: true },
+            orderBy: { code: "asc" },
+          }),
+          db.charterVendor.findMany({
+            where: { tenantId },
+            select: { id: true, code: true, name: true },
+            orderBy: { code: "asc" },
+          }),
+          db.charterPolicyLink.findMany({
+            where: { tenantId },
+            select: { alvoTipo: true, alvoId: true },
+          }),
+        ]);
+
+        const vinculados = new Set(
+          links.map((l) => `${l.alvoTipo}:${l.alvoId}`)
+        );
+        const alvos = [
+          ...casos.map((c) => ({
+            chave: `USE_CASE:${c.id}`,
+            rotulo: `USE_CASE · ${c.code} ${c.title}`,
+          })),
+          ...vendors.map((v) => ({
+            chave: `VENDOR:${v.id}`,
+            rotulo: `VENDOR · ${v.code} ${v.name}`,
+          })),
+        ];
+
+        const cobertos = alvos.filter((a) => vinculados.has(a.chave));
+        const faltando = alvos.filter((a) => !vinculados.has(a.chave));
+
         return {
-          total,
-          amostra: rows.map((r) => `${r.alvoTipo} · ${r.alvoId}`),
+          total: cobertos.length,
+          de: alvos.length,
+          amostra: cobertos.slice(0, 3).map((a) => a.rotulo),
+          lacunas: faltando.map((a) => a.rotulo),
           href: "/charter/policy",
         };
       }),
