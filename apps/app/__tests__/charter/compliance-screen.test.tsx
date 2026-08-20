@@ -21,6 +21,8 @@ const listCapabilitiesMock = vi.fn();
 const getComplianceCanMock = vi.fn();
 const setCoverageMock = vi.fn();
 const exportComplianceMapMock = vi.fn();
+const adoptSetVersionMock = vi.fn();
+const publishSetVersionMock = vi.fn();
 
 vi.mock("@/app/(charter)/actions/compliance", () => ({
   listRequirementSets: (...args: unknown[]) => listRequirementSetsMock(...args),
@@ -30,6 +32,8 @@ vi.mock("@/app/(charter)/actions/compliance", () => ({
   listCapabilities: (...args: unknown[]) => listCapabilitiesMock(...args),
   getComplianceCan: (...args: unknown[]) => getComplianceCanMock(...args),
   setCoverage: (...args: unknown[]) => setCoverageMock(...args),
+  adoptSetVersion: (...args: unknown[]) => adoptSetVersionMock(...args),
+  publishSetVersion: (...args: unknown[]) => publishSetVersionMock(...args),
 }));
 vi.mock("@/app/(charter)/actions/compliance-export", () => ({
   exportComplianceMap: (...args: unknown[]) => exportComplianceMapMock(...args),
@@ -41,8 +45,13 @@ const set = (over: Partial<SetRow> = {}): SetRow => ({
   id: "set-1",
   nome: "RFP Banco Aurora",
   origem: "RFP",
+  global: false,
   versao: "1",
   total: 1,
+  supersedesId: null,
+  supersededById: null,
+  temCobertura: false,
+  diff: null,
   ...over,
 });
 
@@ -106,6 +115,8 @@ describe("ComplianceScreen", () => {
     getComplianceCanMock.mockReset();
     setCoverageMock.mockReset();
     exportComplianceMapMock.mockReset();
+    adoptSetVersionMock.mockReset();
+    publishSetVersionMock.mockReset();
     // Padrão neutro: a maioria dos testes não mexe no editor de cobertura.
     // Os que mexem sobrescrevem com capacidades reais.
     listCapabilitiesMock.mockResolvedValue({ ok: true, data: [] });
@@ -137,6 +148,95 @@ describe("ComplianceScreen", () => {
     // aparece no KPI de contagem — por isso getAllByText, não getByText.
     expect(await screen.findByText(/37 aceites/i)).toBeTruthy();
     expect(screen.getAllByText("Atende").length).toBeGreaterThan(0);
+  });
+
+  it("mostra a fração e nomeia as lacunas quando a evidência tem denominador", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_LINK",
+            evidencia: {
+              total: 12,
+              de: 14,
+              amostra: ["USE_CASE · UC-001 Triagem"],
+              lacunas: [
+                "USE_CASE · UC-013 Sumarizador",
+                "USE_CASE · UC-014 Chat interno",
+              ],
+            },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText("12 de 14")).toBeTruthy();
+    expect(screen.getByText(/2 fora da política/)).toBeTruthy();
+    expect(screen.getByText(/UC-013 Sumarizador/)).toBeTruthy();
+  });
+
+  it("trunca lacunas em 3 nomes e soma o resto no sufixo", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_LINK",
+            evidencia: {
+              total: 9,
+              de: 14,
+              amostra: ["USE_CASE · UC-001 Triagem"],
+              lacunas: [
+                "USE_CASE · UC-013 Sumarizador",
+                "USE_CASE · UC-014 Chat interno",
+                "USE_CASE · UC-015 Triagem de ticket",
+                "VENDOR · V-003 Fornecedor de tradução",
+                "VENDOR · V-004 Fornecedor de anotação",
+              ],
+            },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText(/5 fora da política/)).toBeTruthy();
+    // As três primeiras vêm nomeadas...
+    expect(screen.getByText(/UC-013 Sumarizador/)).toBeTruthy();
+    expect(screen.getByText(/UC-014 Chat interno/)).toBeTruthy();
+    expect(screen.getByText(/UC-015 Triagem de ticket/)).toBeTruthy();
+    // ...a quarta e a quinta não — só somadas no sufixo.
+    expect(screen.queryByText(/V-003/)).toBeNull();
+    expect(screen.queryByText(/V-004/)).toBeNull();
+    expect(screen.getByText(/e mais 2/)).toBeTruthy();
+  });
+
+  it("evidência sem denominador segue mostrando só a contagem", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_ATTESTATION",
+            evidencia: { total: 37, amostra: [] },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText("37 aceites")).toBeTruthy();
   });
 
   it("linha com evidenciaErro mostra 'evidência indisponível' e nunca a evidência", async () => {
@@ -485,6 +585,82 @@ describe("ComplianceScreen", () => {
     ).toBeTruthy();
   });
 
+  // ── Publicar nova versão de um conjunto existente (Task 12 — fecha o
+  //    bloqueio: publishSetVersion ganha caller de produção) ───────────────
+
+  it("importar com conjunto selecionado publica versão em vez de conjunto novo", async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [set({ id: "set-v1", nome: "RFP Cliente", versao: "1" })],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+    publishSetVersionMock.mockResolvedValue({
+      ok: true,
+      data: { id: "set-v2", afetadas: 1 },
+    });
+
+    render(<ComplianceScreen />);
+    // Espera o conjunto carregar — sem isso o seletor "Substitui um conjunto
+    // existente" abriria sem a opção "set-v1" para escolher.
+    await screen.findByText("1 conjunto de exigências");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /^importar exigências$/i })
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
+      target: { value: "RFP Cliente" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: { value: "A-1 | §1 | Resumo" },
+    });
+    fireEvent.change(screen.getByLabelText("Substitui um conjunto existente"), {
+      target: { value: "set-v1" },
+    });
+    fireEvent.change(screen.getByLabelText("Versão"), {
+      target: { value: "2" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
+
+    await waitFor(() =>
+      expect(publishSetVersionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ supersedesId: "set-v1", versao: "2" })
+      )
+    );
+    expect(importRequirementSetMock).not.toHaveBeenCalled();
+  });
+
+  it("importar sem selecionar conjunto segue criando conjunto novo", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [] });
+    importRequirementSetMock.mockResolvedValue({
+      ok: true,
+      data: { id: "novo", total: 1 },
+    });
+
+    render(<ComplianceScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /importar conjunto de exigências/i,
+      })
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
+      target: { value: "RFP Nova" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: { value: "A-1 | §1 | Resumo" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
+
+    await waitFor(() => expect(importRequirementSetMock).toHaveBeenCalled());
+    expect(publishSetVersionMock).not.toHaveBeenCalled();
+  });
+
   // ── Download do export (base64 x utf8 — errar aqui corrompe o arquivo
   //    sem lançar erro nenhum, o tipo de bug que ninguém percebe sozinho) ───
 
@@ -581,5 +757,124 @@ describe("ComplianceScreen", () => {
     } finally {
       blobStub.restore();
     }
+  });
+
+  // ── Adotar a versão nova do conjunto ativo (Task 11) ──────────────────────
+
+  it("oferece adotar quando o conjunto em uso tem sucessor", async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({
+          id: "set-v1",
+          supersededById: "set-v2",
+          diff: { alteradas: 7, novas: 2, removidas: 1 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+    adoptSetVersionMock.mockResolvedValue({
+      ok: true,
+      data: { transportadas: 9, emRevisao: 7, novas: 2 },
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(
+      await screen.findByText(/7 alteradas, 2 novas, 1 removida/)
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByText("Adotar a versão nova"));
+
+    await waitFor(() =>
+      expect(adoptSetVersionMock).toHaveBeenCalledWith({ setId: "set-v2" })
+    );
+  });
+
+  it("conjunto sem sucessor não mostra aviso de versão", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("4.2.1"); // mapa carregou — não é o estado vazio
+
+    expect(screen.queryByText("Adotar a versão nova")).toBeNull();
+  });
+
+  it("cai no conjunto com cobertura do tenant, não no sucessor vazio — é onde mora o aviso de adoção", async () => {
+    // listRequirementSets ordena por importadoEm desc: set-v2 (o sucessor,
+    // sem nenhum veredito do tenant ainda) vem primeiro na lista, exatamente
+    // como o seed publicando uma v2 nova deixaria. Sem o critério de
+    // temCobertura, activeId cairia em set-v2 e o aviso abaixo — que só o
+    // antecessor carrega (supersededById + diff) — nunca apareceria sozinho.
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({ id: "set-v2", nome: "Reg", versao: "2" }),
+        set({
+          id: "set-v1",
+          nome: "Reg",
+          versao: "1",
+          temCobertura: true,
+          supersededById: "set-v2",
+          diff: { alteradas: 1, novas: 1, removidas: 0 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ setId: "set-v1", linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+
+    // Sem clique nenhum: a carga limpa já abre set-v1 e mostra o aviso.
+    expect(
+      await screen.findByText(/1 alteradas, 1 novas, 0 removida/)
+    ).toBeTruthy();
+    expect(getComplianceMapMock).toHaveBeenCalledWith("set-v1");
+  });
+
+  it('dropdown "Substitui um conjunto existente" nunca oferece um conjunto global', async () => {
+    // publishSetVersion recusa supersedesId de conjunto global no servidor —
+    // este teste escopa a asserção ao select de dentro do Field (por label),
+    // não à tela toda: o Select do header (linha ~908 de compliance.tsx)
+    // lista todos os conjuntos, inclusive o global, então um getByText solto
+    // acharia o nome do global ali e passaria mesmo com o dropdown de
+    // "substituir" quebrado.
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({ id: "set-global", nome: "EU AI Act", versao: "1", global: true }),
+        set({ id: "set-tenant", nome: "RFP Banco Aurora", versao: "1" }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("2 conjuntos de exigências");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /^importar exigências$/i })
+    );
+
+    const supersedesSelect = screen.getByLabelText(
+      "Substitui um conjunto existente"
+    ) as HTMLSelectElement;
+    const labels = Array.from(supersedesSelect.options).map(
+      (o) => o.textContent
+    );
+
+    expect(labels).not.toContain("EU AI Act (v1)");
+    expect(labels).toContain("RFP Banco Aurora (v1)");
   });
 });

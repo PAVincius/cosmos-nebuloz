@@ -611,3 +611,75 @@ export async function unlinkPolicy(
     });
   });
 }
+
+// ── Alcance da política (quem está — e quem falta — vinculado) ───────────────
+
+export type PolicyScopeView = {
+  policyId: string;
+  casos: { id: string; rotulo: string; vinculado: boolean }[];
+  vendors: { id: string; rotulo: string; vinculado: boolean }[];
+};
+
+/**
+ * Quem está — e quem não está — sob a política publicada.
+ *
+ * Sem permissão específica, com `requireCharterContext()`, igual ao `getPolicy`
+ * acima: ler quem está sob a política tem a mesma sensibilidade que ler a
+ * política. Quem *escreve* segue precisando de `policy.edit`, que só COMPLIANCE
+ * e LEGAL têm.
+ *
+ * O valor desta leitura não é a lista dos vinculados — é a dos que faltam. Com
+ * uma política por tenant, vincular é quase tautologia; o que prova governança
+ * é não sobrar ninguém de fora.
+ */
+export async function getPolicyScope(): Promise<
+  Result<PolicyScopeView | null>
+> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterContext();
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const policy = await db.charterPolicy.findFirst({
+        where: { tenantId: ctx.tenantId },
+        orderBy: { createdAt: "asc" },
+        select: { id: true },
+      });
+      if (!policy) {
+        return null;
+      }
+
+      const [casos, vendors, links] = await Promise.all([
+        db.charterUseCase.findMany({
+          where: { tenantId: ctx.tenantId },
+          select: { id: true, code: true, title: true },
+          orderBy: { code: "asc" },
+        }),
+        db.charterVendor.findMany({
+          where: { tenantId: ctx.tenantId },
+          select: { id: true, code: true, name: true },
+          orderBy: { code: "asc" },
+        }),
+        db.charterPolicyLink.findMany({
+          where: { tenantId: ctx.tenantId, policyId: policy.id },
+          select: { alvoTipo: true, alvoId: true },
+        }),
+      ]);
+
+      const vinculados = new Set(links.map((l) => `${l.alvoTipo}:${l.alvoId}`));
+
+      return {
+        policyId: policy.id,
+        casos: casos.map((c) => ({
+          id: c.id,
+          rotulo: `${c.code} ${c.title}`,
+          vinculado: vinculados.has(`USE_CASE:${c.id}`),
+        })),
+        vendors: vendors.map((v) => ({
+          id: v.id,
+          rotulo: `${v.code} ${v.name}`,
+          vinculado: vinculados.has(`VENDOR:${v.id}`),
+        })),
+      };
+    });
+  });
+}

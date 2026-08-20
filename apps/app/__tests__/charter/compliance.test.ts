@@ -5,6 +5,7 @@ const h = vi.hoisted(() => ({
   requireContext: vi.fn(),
   setCreate: vi.fn(),
   setFindFirst: vi.fn(),
+  setFindMany: vi.fn(),
   reqCreateMany: vi.fn(),
   reqFindMany: vi.fn(),
   reqFindFirst: vi.fn(),
@@ -22,7 +23,11 @@ vi.mock("@/lib/charter/guards", () => ({
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
-      charterRequirementSet: { create: h.setCreate, findFirst: h.setFindFirst },
+      charterRequirementSet: {
+        create: h.setCreate,
+        findFirst: h.setFindFirst,
+        findMany: h.setFindMany,
+      },
       charterRequirement: {
         createMany: h.reqCreateMany,
         findMany: h.reqFindMany,
@@ -70,10 +75,12 @@ vi.mock("@/lib/charter/capabilities", () => ({
 }));
 
 import {
+  adoptSetVersion,
   getComplianceCan,
   getComplianceMap,
   importRequirementSet,
   listCapabilities,
+  listRequirementSets,
   publishSetVersion,
   setCoverage,
 } from "../../app/(charter)/actions/compliance";
@@ -477,6 +484,33 @@ describe("publishSetVersion", () => {
       ]);
   });
 
+  it("recusa publicar versão de um conjunto global — só a Nebuloz publica, adoção é o caminho certo", async () => {
+    // "Substitui um conjunto existente" oferecendo qualquer conjunto (Bloqueio
+    // da review final) deixava a tela chamar isto com o id de uma regulação
+    // global. Sem este guard, o tenant cria fork privado tudo-REVISAR (a
+    // colagem não tem `texto`) e disputa sucessor com a v2 oficial futura.
+    h.setFindFirst.mockResolvedValueOnce({
+      id: "s-1",
+      nome: "EU AI Act",
+      licenca: "LIVRE",
+      tenantId: null,
+    });
+
+    const res = await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act (fork)",
+      versao: "2",
+      requisitos: [{ codigo: "4.1", citacao: "Art. 4.1", resumo: "x" }],
+    });
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toMatch(/publicado pela Nebuloz/);
+    expect(h.setCreate).not.toHaveBeenCalled();
+  });
+
   it("marca como REVISAR só as coberturas cujo requisito mudou", async () => {
     // Tenant já opinou nas duas: ATENDE em 4.1, ATENDE em 4.2.
     h.covFindMany.mockResolvedValue([
@@ -589,6 +623,127 @@ describe("publishSetVersion", () => {
   });
 });
 
+describe("adoptSetVersion", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("recusa conjunto que não substitui nenhum outro", async () => {
+    h.setFindFirst.mockResolvedValueOnce({
+      id: "set-v2",
+      supersedesId: null,
+      tenantId: null,
+    });
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não substitui nenhum outro/);
+  });
+
+  it("recusa conjunto de outro tenant sem distinguir de inexistente", async () => {
+    h.setFindFirst.mockResolvedValueOnce(null);
+
+    const res = await adoptSetVersion({ setId: "set-de-outro" });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não encontrado/i);
+  });
+
+  it("transporta cobertura e marca REVISAR só no que mudou de texto", async () => {
+    h.setFindFirst
+      .mockResolvedValueOnce({
+        id: "set-v2",
+        supersedesId: "set-v1",
+        tenantId: null,
+      })
+      .mockResolvedValueOnce({ id: "set-v1", tenantId: null });
+    h.reqFindMany
+      // exigências do antecessor
+      .mockResolvedValueOnce([
+        { id: "r1-v1", codigo: "A-1", resumo: "igual", texto: null },
+        { id: "r2-v1", codigo: "B-1", resumo: "antigo", texto: null },
+      ])
+      // exigências do sucessor
+      .mockResolvedValueOnce([
+        { id: "r1-v2", codigo: "A-1", resumo: "igual", texto: null },
+        { id: "r2-v2", codigo: "B-1", resumo: "NOVO", texto: null },
+        { id: "r3-v2", codigo: "C-1", resumo: "inédita", texto: null },
+      ]);
+    h.covFindMany
+      // cobertura do antecessor
+      .mockResolvedValueOnce([
+        {
+          requirementId: "r1-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: "POLICY_LINK",
+        },
+        {
+          requirementId: "r2-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: "POLICY_LINK",
+        },
+      ])
+      // nada ainda no sucessor — a implementação lê as duas, nesta ordem
+      .mockResolvedValueOnce([]);
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data).toEqual({
+      transportadas: 2,
+      emRevisao: 1,
+      novas: 1,
+    });
+    expect(h.covCreateMany).toHaveBeenCalledWith({
+      data: expect.arrayContaining([
+        expect.objectContaining({ requirementId: "r1-v2", status: "ATENDE" }),
+        expect.objectContaining({ requirementId: "r2-v2", status: "REVISAR" }),
+      ]),
+    });
+  });
+
+  it("não sobrescreve veredito já dado no sucessor — adotar duas vezes é idempotente", async () => {
+    h.setFindFirst
+      .mockResolvedValueOnce({
+        id: "set-v2",
+        supersedesId: "set-v1",
+        tenantId: null,
+      })
+      .mockResolvedValueOnce({ id: "set-v1", tenantId: null });
+    h.reqFindMany
+      .mockResolvedValueOnce([
+        { id: "r1-v1", codigo: "A-1", resumo: "x", texto: null },
+      ])
+      .mockResolvedValueOnce([
+        { id: "r1-v2", codigo: "A-1", resumo: "x", texto: null },
+      ]);
+    h.covFindMany
+      // cobertura do antecessor
+      .mockResolvedValueOnce([
+        {
+          requirementId: "r1-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: null,
+        },
+      ])
+      // cobertura que já existe no sucessor (segunda adoção)
+      .mockResolvedValueOnce([{ requirementId: "r1-v2" }]);
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.transportadas).toBe(0);
+    expect(h.covCreateMany).not.toHaveBeenCalled();
+  });
+});
+
 describe("listCapabilities", () => {
   beforeEach(() => {
     for (const m of Object.values(h)) {
@@ -661,5 +816,173 @@ describe("getComplianceCan", () => {
       return;
     }
     expect(res.data).toEqual({ edit: false });
+  });
+});
+
+describe("listRequirementSets — sucessão", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("aponta o sucessor e resume o que muda ao adotá-lo", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 2 },
+      },
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 3 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      { setId: "set-v1", codigo: "A-1", resumo: "igual", texto: null },
+      { setId: "set-v1", codigo: "B-1", resumo: "antigo", texto: null },
+      { setId: "set-v2", codigo: "A-1", resumo: "igual", texto: null },
+      { setId: "set-v2", codigo: "B-1", resumo: "NOVO", texto: null },
+      { setId: "set-v2", codigo: "C-1", resumo: "inédita", texto: null },
+    ]);
+    // Ruído para listRequirementSets ler cobertura sem quebrar — este teste é
+    // sobre sucessão/diff, não sobre temCobertura.
+    h.covFindMany.mockResolvedValueOnce([]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    const v1 = res.data.find((s) => s.id === "set-v1");
+    expect(v1?.supersededById).toBe("set-v2");
+    expect(v1?.diff).toEqual({ alteradas: 1, novas: 1, removidas: 0 });
+
+    const v2 = res.data.find((s) => s.id === "set-v2");
+    expect(v2?.supersededById).toBe(null);
+    expect(v2?.diff).toBe(null);
+  });
+
+  it("conjunto sem sucessor não carrega diff", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "solo",
+        nome: "RFP",
+        origem: "RFP",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([]);
+    h.covFindMany.mockResolvedValueOnce([]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok && res.data[0].supersededById).toBe(null);
+    expect(res.ok && res.data[0].diff).toBe(null);
+  });
+
+  it("com dois sucessores do mesmo antecessor, oferece o mais recente", async () => {
+    // importadoEm desc: set-v3 é o mais recente dos dois que substituem set-v1
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v3",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "3",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      { setId: "set-v1", codigo: "A-1", resumo: "antigo", texto: null },
+      { setId: "set-v2", codigo: "A-1", resumo: "v2", texto: null },
+      { setId: "set-v3", codigo: "A-1", resumo: "v3", texto: null },
+    ]);
+    h.covFindMany.mockResolvedValueOnce([]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    const v1 = res.data.find((s) => s.id === "set-v1");
+    expect(v1?.supersededById).toBe("set-v3");
+  });
+
+  it("marca temCobertura no set com veredito do tenant, não no outro", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      {
+        id: "req-v1-a1",
+        setId: "set-v1",
+        codigo: "A-1",
+        resumo: "antigo",
+        texto: null,
+      },
+      {
+        id: "req-v2-a1",
+        setId: "set-v2",
+        codigo: "A-1",
+        resumo: "novo",
+        texto: null,
+      },
+    ]);
+    // Só o requisito do set-v1 tem veredito do tenant — set-v2 (o sucessor)
+    // ainda não recebeu nenhum.
+    h.covFindMany.mockResolvedValueOnce([{ requirementId: "req-v1-a1" }]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.find((s) => s.id === "set-v1")?.temCobertura).toBe(true);
+    expect(res.data.find((s) => s.id === "set-v2")?.temCobertura).toBe(false);
   });
 });

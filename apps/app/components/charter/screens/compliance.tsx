@@ -19,12 +19,15 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import {
+  adoptSetVersion,
   getComplianceCan,
   getComplianceMap,
   importRequirementSet,
   listCapabilities,
   listRequirementSets,
   type MapRow,
+  publishSetVersion,
+  type SetRow,
   setCoverage,
 } from "@/app/(charter)/actions/compliance";
 import { exportComplianceMap } from "@/app/(charter)/actions/compliance-export";
@@ -53,7 +56,7 @@ const EVIDENCE_NOUN: Record<string, string> = {
   POLICY_ATTESTATION: "aceites",
   DECISION_RECORD: "decisões registradas",
   VENDOR_TIER: "fornecedores classificados",
-  POLICY_LINK: "vínculos registrados",
+  POLICY_LINK: "sob a política",
   RISK_SCORING: "casos pontuados",
   AUDIT_EXPORT: "exportações registradas",
 };
@@ -182,12 +185,35 @@ function EvidenceBlock({ row }: { row: MapRow }) {
     const noun = row.capabilityId
       ? (EVIDENCE_NOUN[row.capabilityId] ?? "registros")
       : "registros";
+    const lacunas = row.evidencia.lacunas ?? [];
     return (
-      <div
-        className="mono"
-        style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}
-      >
-        {row.evidencia.total} {noun}
+      <div>
+        <div
+          className="mono"
+          style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}
+        >
+          {row.evidencia.de === undefined
+            ? `${row.evidencia.total} ${noun}`
+            : `${row.evidencia.total} de ${row.evidencia.de}`}
+        </div>
+        {/* A lacuna aparece na mesma linha do selo de propósito: um "Atende"
+            com dois casos fora precisa ser incoerente à vista de quem lê o
+            selo, que é o comprador. O veredito continua sendo escolha humana —
+            setCoverage não vira juiz de evidência —, mas a escolha passa a ser
+            feita com o número na frente. */}
+        {lacunas.length > 0 && (
+          <div
+            style={{
+              fontSize: 11.5,
+              color: "var(--amber-text)",
+              marginTop: 2,
+              lineHeight: 1.45,
+            }}
+          >
+            {lacunas.length} fora da política: {lacunas.slice(0, 3).join(", ")}
+            {lacunas.length > 3 ? ` e mais ${lacunas.length - 3}` : ""}
+          </div>
+        )}
       </div>
     );
   }
@@ -689,20 +715,31 @@ function parseRequisitosPaste(text: string): {
  *  ou pela seed de regulação (Task 10); este formulário não substitui as
  *  duas, só tira um conjunto do zero ou soma a ele. */
 function ImportQuickAddForm({
+  sets,
   onCancel,
   onDone,
 }: {
+  sets: SetRow[];
   onCancel: () => void;
   onDone: () => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [nome, setNome] = useState("");
   const [requisitosText, setRequisitosText] = useState("");
+  const [supersedesId, setSupersedesId] = useState("");
+  const [versao, setVersao] = useState("");
 
   const parsed = parseRequisitosPaste(requisitosText);
+  // Só entra em jogo quando a pessoa escolheu um conjunto pra substituir —
+  // sem escolha, o caminho é importRequirementSet e a versão não importa.
+  const versaoObrigatoria = supersedesId !== "" && versao.trim() === "";
   const ready =
-    nome.trim() !== "" && parsed.error === null && parsed.requisitos.length > 0;
+    nome.trim() !== "" &&
+    parsed.error === null &&
+    parsed.requisitos.length > 0 &&
+    !versaoObrigatoria;
   const reason =
+    (versaoObrigatoria ? "Informe a versão do conjunto novo" : null) ??
     parsed.error ??
     (parsed.requisitos.length === 0
       ? "Cole ao menos uma exigência, uma por linha"
@@ -710,18 +747,37 @@ function ImportQuickAddForm({
 
   const submit = () =>
     startTransition(async () => {
-      const res = await runWithToast(
-        () =>
-          importRequirementSet({
-            nome,
-            origem: "RFP",
-            requisitos: parsed.requisitos,
-          }),
-        {
-          loading: "Importando conjunto…",
-          success: (d) => `${d.total} exigência(s) importada(s)`,
-        }
-      );
+      // Com conjunto selecionado o caminho é outro: publishSetVersion grava
+      // supersedesId e transporta a cobertura, marcando REVISAR no que mudou
+      // de texto. Importar como conjunto novo perderia todos os vereditos já
+      // dados sobre a versão anterior.
+      const res = supersedesId
+        ? await runWithToast(
+            () =>
+              publishSetVersion({
+                supersedesId,
+                nome,
+                versao,
+                requisitos: parsed.requisitos,
+              }),
+            {
+              loading: "Publicando nova versão…",
+              success: (d) =>
+                `Nova versão publicada · ${d.afetadas} em revisão`,
+            }
+          )
+        : await runWithToast(
+            () =>
+              importRequirementSet({
+                nome,
+                origem: "RFP",
+                requisitos: parsed.requisitos,
+              }),
+            {
+              loading: "Importando conjunto…",
+              success: (d) => `${d.total} exigência(s) importada(s)`,
+            }
+          );
       if (res.ok) {
         onDone();
       }
@@ -768,6 +824,39 @@ function ImportQuickAddForm({
           value={requisitosText}
         />
       </Field>
+      <Field
+        htmlFor="conformidade-import-supersedes"
+        label="Substitui um conjunto existente"
+      >
+        <Select
+          ariaLabel="Substitui um conjunto existente"
+          id="conformidade-import-supersedes"
+          onChange={setSupersedesId}
+          options={[
+            { value: "", label: "Não — é um conjunto novo" },
+            // Nunca um conjunto global aqui: publishSetVersion recusa
+            // supersedesId de conjunto global no servidor — filtrar já na
+            // tela poupa o round-trip que só voltaria com esse erro.
+            ...sets
+              .filter((s) => !s.global)
+              .map((s) => ({
+                value: s.id,
+                label: `${s.nome} (v${s.versao})`,
+              })),
+          ]}
+          value={supersedesId}
+        />
+      </Field>
+      {supersedesId !== "" && (
+        <Field htmlFor="conformidade-import-versao" label="Versão">
+          <Input
+            id="conformidade-import-versao"
+            onChange={(e) => setVersao(e.target.value)}
+            placeholder="2"
+            value={versao}
+          />
+        </Field>
+      )}
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
         <GatedButton
           allowed={!pending}
@@ -796,15 +885,26 @@ function ComplianceInner() {
   );
   const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   if (setsState.error) {
     return <ScreenError message={setsState.error} onRetry={setsState.reload} />;
   }
 
   const sets = setsState.data ?? [];
-  // Conjunto mais recente por padrão (listRequirementSets já ordena por
-  // importadoEm desc) — escolha explícita do usuário sempre vence.
-  const activeId = selectedSetId ?? sets[0]?.id ?? null;
+  // Default é o conjunto mais recente COM cobertura do tenant, não
+  // simplesmente o mais recente por importadoEm — o sucessor recém-publicado
+  // ainda sem nenhum veredito não carrega o aviso de adoção (ele mora no
+  // antecessor), e sem este critério o tenant abre o mapa, cai direto no
+  // sucessor vazio e nunca vê que existe versão nova para adotar. Sem
+  // cobertura nenhuma em lugar algum, cai no mais recente mesmo. Escolha
+  // explícita do usuário sempre vence.
+  const activeId =
+    selectedSetId ??
+    sets.find((s) => s.temCobertura)?.id ??
+    sets[0]?.id ??
+    null;
+  const ativo = sets.find((s) => s.id === activeId);
 
   return (
     <div className="fade-in">
@@ -839,6 +939,58 @@ function ComplianceInner() {
         </Button>
       </PageHeader>
 
+      {ativo?.supersededById && ativo.diff && (
+        <div
+          style={{
+            marginBottom: "var(--gap)",
+            padding: "8px 10px",
+            borderRadius: "var(--r-md)",
+            background: "rgba(var(--accent-rgb),.08)",
+            border: "1px solid var(--hairline)",
+          }}
+        >
+          <div style={{ fontSize: 12.5, color: "var(--ink)" }}>
+            Há uma versão nova deste conjunto — {ativo.diff.alteradas}{" "}
+            alteradas, {ativo.diff.novas} novas, {ativo.diff.removidas}{" "}
+            removida.
+          </div>
+          {/* Adotar é escolha, não automatismo: o mapa é artefato de auditoria
+              e mudar sozinho entre duas visitas é o que um time de compliance
+              não tolera. Quem não clicar continua na versão atual, com os
+              vereditos intactos. */}
+          <Button
+            onClick={() => {
+              if (pending) {
+                return;
+              }
+              const successorId = ativo.supersededById;
+              if (!successorId) {
+                return;
+              }
+              startTransition(async () => {
+                const res = await runWithToast(
+                  () => adoptSetVersion({ setId: successorId }),
+                  {
+                    loading: "Adotando a versão nova…",
+                    success: (d) =>
+                      `${d.transportadas} vereditos transportados, ${d.emRevisao} em revisão`,
+                  }
+                );
+                if (res.ok) {
+                  setsState.reload();
+                  setSelectedSetId(successorId);
+                }
+              });
+            }}
+            size="sm"
+            style={{ marginTop: 6 }}
+            variant="primary"
+          >
+            Adotar a versão nova
+          </Button>
+        </div>
+      )}
+
       {setsState.loading ? (
         <div className="skeleton" style={{ height: 160, borderRadius: 14 }} />
       ) : sets.length === 0 ? (
@@ -861,6 +1013,7 @@ function ComplianceInner() {
             setShowImport(false);
             setsState.reload();
           }}
+          sets={sets}
         />
       )}
     </div>

@@ -113,4 +113,49 @@ describe("catálogo de capacidades", () => {
     const cap = CAPABILITIES.find((c) => c.id === "RISK_SCORING");
     expect(cap?.label).not.toMatch(/probabilidade/i);
   });
+
+  it("POLICY_LINK reporta cobertura com denominador e nomeia o que falta", async () => {
+    // O stub precisa ter caso vinculado E caso solto. Com listas vazias, `de` e
+    // `lacunas` nunca são exercitados e o teste passaria sem provar nada — foi
+    // esse exatamente o defeito que uma review pegou neste arquivo antes.
+    dbStub.charterUseCase.findMany.mockResolvedValueOnce([
+      { id: "uc-1", code: "UC-001", title: "Triagem de currículos" },
+      { id: "uc-2", code: "UC-002", title: "Sumarizador de reunião" },
+    ]);
+    dbStub.charterVendor.findMany.mockResolvedValueOnce([
+      { id: "v-1", code: "V-001", name: "OpenAI" },
+    ]);
+    dbStub.charterPolicyLink.findMany.mockResolvedValueOnce([
+      { alvoTipo: "USE_CASE", alvoId: "uc-1" },
+      { alvoTipo: "VENDOR", alvoId: "v-1" },
+    ]);
+
+    const cap = CAPABILITIES.find((c) => c.id === "POLICY_LINK");
+    const ev = await cap!.evidencia("t1");
+
+    expect(ev.total).toBe(2);
+    expect(ev.de).toBe(3);
+    expect(ev.lacunas).toEqual(["USE_CASE · UC-002 Sumarizador de reunião"]);
+    expect(ev.href).toBe("/charter/policy");
+  });
+
+  it("POLICY_LINK sem nenhum caso nem fornecedor não divide por zero", async () => {
+    dbStub.charterUseCase.findMany.mockResolvedValueOnce([]);
+    dbStub.charterVendor.findMany.mockResolvedValueOnce([]);
+    dbStub.charterPolicyLink.findMany.mockResolvedValueOnce([]);
+
+    const cap = CAPABILITIES.find((c) => c.id === "POLICY_LINK");
+    const ev = await cap!.evidencia("t1");
+
+    expect(ev.total).toBe(0);
+    expect(ev.de).toBe(0);
+    expect(ev.lacunas).toEqual([]);
+  });
+
+  it("o rótulo do POLICY_LINK afirma cobertura, não contagem", () => {
+    const cap = CAPABILITIES.find((c) => c.id === "POLICY_LINK");
+    expect(cap!.label).toBe(
+      "Todo caso de uso e fornecedor sob a política publicada"
+    );
+  });
 });

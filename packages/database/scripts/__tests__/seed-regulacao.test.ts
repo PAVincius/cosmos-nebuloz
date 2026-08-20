@@ -25,6 +25,7 @@ it("busca o conjunto existente só entre os globais — nunca sequestra um conju
       create: vi.fn().mockResolvedValue({ id: "set-1" }),
     },
     charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
       upsert: vi.fn().mockResolvedValue({}),
     },
   };
@@ -46,6 +47,7 @@ it("atualiza o conjunto global encontrado em vez de criar um novo", async () => 
       create: vi.fn(),
     },
     charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
       upsert: vi.fn().mockResolvedValue({}),
     },
   };
@@ -57,4 +59,120 @@ it("atualiza o conjunto global encontrado em vez de criar um novo", async () => 
   );
   expect(db.charterRequirementSet.create).not.toHaveBeenCalled();
   expect(count).toBe(1);
+});
+
+it("recusa reescrever exigência cujo resumo mudou numa versão já publicada", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi
+        .fn()
+        .mockResolvedValue([
+          { codigo: "1.1", resumo: "Resumo ANTIGO", texto: null },
+        ]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await expect(upsertCorpus(db as never, corpus)).rejects.toThrow(
+    /1\.1 mudou de texto na versão "1"/
+  );
+  expect(db.charterRequirement.upsert).not.toHaveBeenCalled();
+});
+
+it("aceita citacao diferente sem exigir versão nova — não muda a obrigação", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi
+        .fn()
+        .mockResolvedValue([{ codigo: "1.1", resumo: "Resumo", texto: null }]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  const count = await upsertCorpus(db as never, {
+    ...corpus,
+    requisitos: [
+      { codigo: "1.1", citacao: "Art. 1º (redação nova)", resumo: "Resumo" },
+    ],
+  });
+
+  expect(count).toBe(1);
+  expect(db.charterRequirement.upsert).toHaveBeenCalledTimes(1);
+});
+
+it("exigência nova numa versão existente entra sem erro", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  const count = await upsertCorpus(db as never, corpus);
+
+  expect(count).toBe(1);
+});
+
+it("versão nova nasce ligada à anterior por supersedesId", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi
+        .fn()
+        // 1ª chamada: procura (nome, versao) — não existe, é versão nova
+        .mockResolvedValueOnce(null)
+        // 2ª chamada: procura a versão anterior mais recente do mesmo nome
+        .mockResolvedValueOnce({ id: "set-v1" }),
+      update: vi.fn(),
+      create: vi.fn().mockResolvedValue({ id: "set-v2" }),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await upsertCorpus(db as never, { ...corpus, versao: "2" });
+
+  expect(db.charterRequirementSet.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({ supersedesId: "set-v1", versao: "2" }),
+    })
+  );
+});
+
+it("corpus inédito nasce sem supersedesId", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue(null),
+      update: vi.fn(),
+      create: vi.fn().mockResolvedValue({ id: "set-novo" }),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await upsertCorpus(db as never, corpus);
+
+  expect(db.charterRequirementSet.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({ supersedesId: null }),
+    })
+  );
 });

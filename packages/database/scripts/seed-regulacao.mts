@@ -48,6 +48,19 @@ export async function upsertCorpus(
     where: { nome: corpus.nome, versao: corpus.versao, tenantId: null },
     select: { id: true },
   });
+
+  // Versão nova de um corpus que já existe: a aresta para a anterior é o que
+  // permite ao tenant adotar a v2 carregando os vereditos da v1. Sem ela o
+  // conjunto novo nasce órfão e o trabalho humano de responder o corpus
+  // aparece como perdido.
+  const anteriorGlobal = existing
+    ? null
+    : await seedDb.charterRequirementSet.findFirst({
+        where: { nome: corpus.nome, tenantId: null },
+        orderBy: { importadoEm: "desc" },
+        select: { id: true },
+      });
+
   const setData = {
     tenantId: null,
     nome: corpus.nome,
@@ -65,9 +78,37 @@ export async function upsertCorpus(
         select: { id: true },
       })
     : await seedDb.charterRequirementSet.create({
-        data: setData,
+        data: { ...setData, supersedesId: anteriorGlobal?.id ?? null },
         select: { id: true },
       });
+
+  // Exigência publicada não se reescreve. `resumo` e `texto` são o que muda a
+  // obrigação; mudá-los sob um veredito já dado converte "o cliente respondeu
+  // isto" em "o cliente respondeu outra coisa", sem que ninguém veja. `citacao`
+  // e `categoria` ficam de fora de propósito: corrigir o formato da referência
+  // ou reclassificar a área não altera o que a exigência exige.
+  const publicadas = await seedDb.charterRequirement.findMany({
+    where: { setId: set.id },
+    select: { codigo: true, resumo: true, texto: true },
+  });
+  const publicadasPorCodigo = new Map(publicadas.map((p) => [p.codigo, p]));
+
+  for (const req of corpus.requisitos) {
+    const anterior = publicadasPorCodigo.get(req.codigo);
+    if (!anterior) {
+      continue;
+    }
+    const mudou =
+      anterior.resumo !== req.resumo ||
+      (anterior.texto ?? null) !== (req.texto ?? null);
+    if (mudou) {
+      throw new Error(
+        `${req.codigo} mudou de texto na versão "${corpus.versao}" de ` +
+          `"${corpus.nome}", que já está publicada. Exigência publicada não ` +
+          "se reescreve: suba `versao` em CORPORA e rode o seed de novo."
+      );
+    }
+  }
 
   let count = 0;
   for (const req of corpus.requisitos) {

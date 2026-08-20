@@ -42,10 +42,19 @@ export function formatarEvidencia(row: MapRow): string {
     return "evidência indisponível";
   }
   if (row.evidencia) {
-    const [amostra] = row.evidencia.amostra;
-    return amostra
-      ? `${row.evidencia.total} · ${amostra}`
-      : String(row.evidencia.total);
+    const { total, de, amostra, lacunas } = row.evidencia;
+    const [primeiraAmostra] = amostra;
+    // Mesmo sinal que EvidenceBlock (compliance.tsx) usa para "12 de 14" em
+    // vez de "12" solto — PDF e CSV são o artefato que sai para o comprador,
+    // e as duas leituras do mesmo mapa têm de concordar (ver comentário no
+    // topo do arquivo).
+    const totalTexto = de === undefined ? String(total) : `${total} de ${de}`;
+    const base = primeiraAmostra
+      ? `${totalTexto} · ${primeiraAmostra}`
+      : totalTexto;
+    return lacunas && lacunas.length > 0
+      ? `${base} · ${lacunas.length} fora`
+      : base;
   }
   return "—";
 }

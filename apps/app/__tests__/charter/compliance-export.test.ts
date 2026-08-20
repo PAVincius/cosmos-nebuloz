@@ -23,7 +23,12 @@ const base = {
 // Import direto do módulo real: cabecalho é função pura, sem dependência de
 // DB/permissão, e é o teste dado literalmente pelo brief.
 
-import { cabecalho, toCsv } from "@/lib/charter/compliance-pdf";
+import type { MapRow } from "@/app/(charter)/actions/compliance";
+import {
+  cabecalho,
+  formatarEvidencia,
+  toCsv,
+} from "@/lib/charter/compliance-pdf";
 
 describe("cabecalho", () => {
   it("declara quantas exigências não têm veredito", () => {
@@ -35,6 +40,55 @@ describe("cabecalho", () => {
   it("não avisa quando o mapa está completo", () => {
     expect(cabecalho({ ...base, semVeredito: 0 })).not.toContain(
       "sem veredito"
+    );
+  });
+});
+
+// ── formatarEvidencia (review final — PDF/CSV ignoravam o denominador) ─────
+// Import direto, mesmo motivo de cabecalho: função pura, sem dependência de
+// DB/permissão. A tela (EvidenceBlock, compliance.tsx) mostra "12 de 14 · 2
+// fora da política" para a mesma evidência — o comentário no topo do arquivo
+// exige que as duas leituras do mesmo mapa concordem.
+
+describe("formatarEvidencia", () => {
+  const rowComEvidencia = (evidencia: MapRow["evidencia"]): MapRow => ({
+    requirementId: "r-1",
+    codigo: "4.1",
+    citacao: "§4.1",
+    resumo: "x",
+    peso: null,
+    status: "ATENDE" as const,
+    comentario: null,
+    capabilityId: "POLICY_LINK",
+    capabilityLabel: "Sob a política",
+    evidencia,
+    evidenciaErro: null,
+  });
+
+  it("com denominador e lacunas, mostra os dois — mesmo fato que a tela mostra", () => {
+    const texto = formatarEvidencia(
+      rowComEvidencia({
+        total: 12,
+        de: 14,
+        amostra: ["USE_CASE · UC-001 Triagem"],
+        lacunas: [
+          "USE_CASE · UC-013 Sumarizador",
+          "USE_CASE · UC-014 Chat interno",
+        ],
+      })
+    );
+
+    expect(texto).toBe("12 de 14 · USE_CASE · UC-001 Triagem · 2 fora");
+  });
+
+  it("sem denominador, o texto continua idêntico ao formato anterior", () => {
+    expect(
+      formatarEvidencia(
+        rowComEvidencia({ total: 37, amostra: ["Bia · 12/07"] })
+      )
+    ).toBe("37 · Bia · 12/07");
+    expect(formatarEvidencia(rowComEvidencia({ total: 37, amostra: [] }))).toBe(
+      "37"
     );
   });
 });

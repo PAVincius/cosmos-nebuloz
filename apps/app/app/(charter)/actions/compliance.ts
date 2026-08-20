@@ -4,6 +4,7 @@ import { withTenantDb } from "@repo/database";
 import { hasCharterPermission } from "@repo/rbac";
 import { z } from "zod";
 import { CAPABILITIES, getCapability } from "@/lib/charter/capabilities";
+import { planejarTransporte } from "@/lib/charter/coverage-transfer";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
@@ -36,7 +37,13 @@ export type MapRow = {
   comentario: string | null;
   capabilityId: string | null;
   capabilityLabel: string | null;
-  evidencia: { total: number; amostra: string[]; href?: string } | null;
+  evidencia: {
+    total: number;
+    amostra: string[];
+    de?: number;
+    lacunas?: string[];
+    href?: string;
+  } | null;
   /** Preenchido quando a consulta de evidência falhou. A linha então não pode
    *  ser lida como prova — só como alegação. */
   evidenciaErro: string | null;
@@ -53,8 +60,18 @@ export type SetRow = {
   id: string;
   nome: string;
   origem: "RFP" | "REGULACAO";
+  /** `tenantId === null` — regulação publicada pela Nebuloz, vale para todos.
+   *  A tela usa isto para nunca oferecer um global no "Substitui um conjunto
+   *  existente": publishSetVersion recusa supersedesId de conjunto global no
+   *  servidor, e o filtro aqui poupa o round-trip que só voltaria com esse
+   *  erro. */
+  global: boolean;
   versao: string;
   total: number;
+  supersedesId: string | null;
+  supersededById: string | null;
+  temCobertura: boolean;
+  diff: { alteradas: number; novas: number; removidas: number } | null;
 };
 
 const RequisitoSchema = z.object({
@@ -179,6 +196,19 @@ export async function publishSetVersion(
         );
       }
 
+      // Conjunto global é publicado pela Nebuloz — versão nova chega pelo
+      // seed, e a adoção acontece por adoptSetVersion. Sem este guard, "Substitui
+      // um conjunto existente" oferecendo qualquer conjunto deixa um tenant
+      // criar fork privado de uma regulação global (tudo REVISAR, porque a
+      // colagem não tem `texto`) e disputar sucessor com a v2 oficial que a
+      // Nebuloz publicar depois.
+      if (oldSet.tenantId === null) {
+        throw new GovernanceError(
+          "set.global",
+          "Conjunto global é publicado pela Nebuloz — versão nova chega pelo seed, e a adoção acontece aqui."
+        );
+      }
+
       // Licença é do conjunto, herdada pela nova versão — não perguntada de
       // novo. Sem isso, uma regulação REFERENCIA (ex.: ISO/IEC 42001) vira
       // LIVRE só por publicar versão em vez de importar, e o guard de
@@ -279,39 +309,13 @@ export async function publishSetVersion(
         },
       });
 
-      const paraTransportar: {
-        tenantId: string;
-        requirementId: string;
-        status:
-          | "ATENDE"
-          | "PARCIAL"
-          | "NAO_ATENDE"
-          | "SEM_VEREDITO"
-          | "REVISAR"
-          | "NAO_APLICAVEL";
-        comentario: string | null;
-        capabilityId: string | null;
-      }[] = [];
-
-      for (const cobertura of oldCoverages) {
-        const codigo = oldIdToCode.get(cobertura.requirementId);
-        if (!codigo) {
-          continue;
-        }
-        // Código removido: a cobertura não tem para onde ir. Fica intocada
-        // no conjunto antigo e só entra na contagem de removidas.
-        const novoRequisito = newByCode.get(codigo);
-        if (!novoRequisito) {
-          continue;
-        }
-        paraTransportar.push({
-          tenantId: ctx.tenantId,
-          requirementId: novoRequisito.id,
-          status: codigosMudados.has(codigo) ? "REVISAR" : cobertura.status,
-          comentario: cobertura.comentario,
-          capabilityId: cobertura.capabilityId,
-        });
-      }
+      const paraTransportar = planejarTransporte({
+        tenantId: ctx.tenantId,
+        coberturas: oldCoverages,
+        idAnteriorParaCodigo: oldIdToCode,
+        novoPorCodigo: newByCode,
+        codigosMudados,
+      });
 
       // Nunca criar cobertura onde não existia: ausência de linha já é
       // SEM_VEREDITO, e um insert aqui converteria "nunca avaliado" em
@@ -334,6 +338,145 @@ export async function publishSetVersion(
       });
 
       return { id: newSet.id, afetadas };
+    });
+  });
+}
+
+// ── Adoção de versão publicada ───────────────────────────────────────────────
+
+const AdoptVersionSchema = z.object({ setId: z.string().min(1) });
+
+/**
+ * O tenant passa a usar a versão nova de um conjunto, carregando os vereditos
+ * que já deu.
+ *
+ * Existe porque o seed não pode fazer isso: `CharterCoverage` tem FORCE RLS e o
+ * seed conecta sem `SET LOCAL app.tenant_id`. O seed publica a norma; a adoção
+ * roda aqui, sob contexto de tenant. A divisão também é a de produto: o mapa é
+ * artefato de auditoria, e mudar sozinho entre duas visitas é o que um time de
+ * compliance não tolera — quem não adotar continua na versão anterior.
+ */
+export async function adoptSetVersion(
+  input: z.infer<typeof AdoptVersionSchema>
+): Promise<
+  Result<{ transportadas: number; emRevisao: number; novas: number }>
+> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("compliance.edit");
+    const data = AdoptVersionSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const sucessor = await db.charterRequirementSet.findFirst({
+        where: {
+          id: data.setId,
+          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+        },
+      });
+      if (!sucessor) {
+        throw new GovernanceError(
+          "set.unknown",
+          "Conjunto de exigências não encontrado."
+        );
+      }
+      if (!sucessor.supersedesId) {
+        throw new GovernanceError(
+          "set.noPredecessor",
+          "Este conjunto não substitui nenhum outro."
+        );
+      }
+
+      const antecessor = await db.charterRequirementSet.findFirst({
+        where: {
+          id: sucessor.supersedesId,
+          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+        },
+      });
+      if (!antecessor) {
+        throw new GovernanceError(
+          "set.unknown",
+          "Conjunto de exigências não encontrado."
+        );
+      }
+
+      const anteriores = await db.charterRequirement.findMany({
+        where: { setId: antecessor.id },
+        orderBy: { codigo: "asc" },
+      });
+      const novos = await db.charterRequirement.findMany({
+        where: { setId: sucessor.id },
+        orderBy: { codigo: "asc" },
+      });
+
+      const anteriorPorCodigo = new Map(anteriores.map((a) => [a.codigo, a]));
+      const novoPorCodigo = new Map(novos.map((n) => [n.codigo, n]));
+
+      const codigosMudados = new Set<string>();
+      let novas = 0;
+      for (const n of novos) {
+        const anterior = anteriorPorCodigo.get(n.codigo);
+        if (!anterior) {
+          novas += 1;
+          continue;
+        }
+        if (
+          anterior.resumo !== n.resumo ||
+          (anterior.texto ?? null) !== (n.texto ?? null)
+        ) {
+          codigosMudados.add(n.codigo);
+        }
+      }
+
+      const coberturas = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: anteriores.map((a) => a.id) },
+        },
+      });
+
+      // Já adotado antes: qualquer cobertura no sucessor significa que este
+      // transporte já rodou. Reexecutar sobrescreveria veredito dado depois da
+      // primeira adoção — o inverso do que "adotar" promete.
+      const jaNoSucessor = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: novos.map((n) => n.id) },
+        },
+        select: { requirementId: true },
+      });
+      const ocupados = new Set(jaNoSucessor.map((c) => c.requirementId));
+
+      const planejadas = planejarTransporte({
+        tenantId: ctx.tenantId,
+        coberturas,
+        idAnteriorParaCodigo: new Map(anteriores.map((a) => [a.id, a.codigo])),
+        novoPorCodigo,
+        codigosMudados,
+      });
+      const paraTransportar = planejadas.filter(
+        (linha) => !ocupados.has(linha.requirementId)
+      );
+
+      if (paraTransportar.length > 0) {
+        await db.charterCoverage.createMany({ data: paraTransportar });
+      }
+
+      const emRevisao = paraTransportar.filter(
+        (linha) => linha.status === "REVISAR"
+      ).length;
+
+      await logCharterAudit(db, ctx, {
+        action: "Adotou nova versão do conjunto de exigências",
+        entityType: "charter.requirementset",
+        entityId: sucessor.id,
+        target: `${sucessor.nome} · v${sucessor.versao}`,
+        note: `${paraTransportar.length} coberturas transportadas, ${emRevisao} em revisão, ${novas} exigências novas sem veredito`,
+      });
+
+      return {
+        transportadas: paraTransportar.length,
+        emRevisao,
+        novas,
+      };
     });
   });
 }
@@ -590,15 +733,124 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
         orderBy: { importadoEm: "desc" },
       });
 
-      return sets.map((s) => ({
-        id: s.id,
-        nome: s.nome,
-        origem: s.origem,
-        versao: s.versao,
-        total: s._count.requirements,
-      }));
+      // A aresta só existe para trás no schema. A inversa é derivada aqui para
+      // a tela conseguir dizer "há versão nova" olhando o conjunto que o tenant
+      // usa hoje, em vez de o cliente cruzar a lista consigo mesma.
+      //
+      // Dois conjuntos podem declarar o mesmo antecessor: `supersedesId` não
+      // tem @@unique e `publishSetVersion` não impede publicar duas versões a
+      // partir da mesma. `sets` vem em `importadoEm desc`, então o primeiro a
+      // aparecer é o mais recente — e é ele que deve ser oferecido para adoção.
+      // Sem este guard, o `set` seguinte sobrescreveria com o sucessor mais
+      // ANTIGO, e a tela ofereceria a versão errada sem nada indicar o
+      // conflito.
+      const sucessorPorAntecessor = new Map<string, string>();
+      for (const s of sets) {
+        if (s.supersedesId && !sucessorPorAntecessor.has(s.supersedesId)) {
+          sucessorPorAntecessor.set(s.supersedesId, s.id);
+        }
+      }
+
+      // Uma leitura só para todas as exigências envolvidas. O diff é calculado
+      // aqui, e não na tela, para não custar um segundo round-trip só para
+      // saber se vale mostrar o aviso de versão nova. `id` entra na seleção
+      // para a busca de cobertura logo abaixo — sem ele não haveria como
+      // ligar uma linha de CharterCoverage de volta ao conjunto dela.
+      const requisitos = await db.charterRequirement.findMany({
+        where: { setId: { in: sets.map((s) => s.id) } },
+        select: {
+          id: true,
+          setId: true,
+          codigo: true,
+          resumo: true,
+          texto: true,
+        },
+      });
+      const porSet = new Map<
+        string,
+        { codigo: string; resumo: string; texto: string | null }[]
+      >();
+      const setIdPorRequisito = new Map<string, string>();
+      for (const r of requisitos) {
+        const lista = porSet.get(r.setId) ?? [];
+        lista.push({ codigo: r.codigo, resumo: r.resumo, texto: r.texto });
+        porSet.set(r.setId, lista);
+        setIdPorRequisito.set(r.id, r.setId);
+      }
+
+      // Quais conjuntos já têm veredito do tenant — é o que decide, na tela,
+      // qual conjunto abrir por padrão (Bloqueio "default cai no sucessor
+      // vazio" da review final): o mais recente COM trabalho do tenant vence,
+      // não simplesmente o mais recente por importadoEm. CharterCoverage tem
+      // RLS, mas o filtro de tenant explícito fica de todo jeito — mesmo
+      // cuidado do resto deste arquivo.
+      const coberturas = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: requisitos.map((r) => r.id) },
+        },
+        select: { requirementId: true },
+      });
+      const setsComCobertura = new Set<string>();
+      for (const c of coberturas) {
+        const setId = setIdPorRequisito.get(c.requirementId);
+        if (setId) {
+          setsComCobertura.add(setId);
+        }
+      }
+
+      return sets.map((s) => {
+        const supersededById = sucessorPorAntecessor.get(s.id) ?? null;
+        return {
+          id: s.id,
+          nome: s.nome,
+          origem: s.origem,
+          global: s.tenantId === null,
+          versao: s.versao,
+          total: s._count.requirements,
+          supersedesId: s.supersedesId,
+          supersededById,
+          temCobertura: setsComCobertura.has(s.id),
+          diff: supersededById
+            ? diffEntreVersoes(
+                porSet.get(s.id) ?? [],
+                porSet.get(supersededById) ?? []
+              )
+            : null,
+        };
+      });
     });
   });
+}
+
+/** Alterada = mesmo código com resumo ou texto diferente. Nova = código que não
+ *  existia. Removida = código que sumiu. `citacao` fica de fora de propósito:
+ *  mudar o formato da referência não altera a obrigação. */
+function diffEntreVersoes(
+  antes: { codigo: string; resumo: string; texto: string | null }[],
+  depois: { codigo: string; resumo: string; texto: string | null }[]
+): { alteradas: number; novas: number; removidas: number } {
+  const antesPorCodigo = new Map(antes.map((r) => [r.codigo, r]));
+  const depoisCodigos = new Set(depois.map((r) => r.codigo));
+
+  let alteradas = 0;
+  let novas = 0;
+  for (const r of depois) {
+    const anterior = antesPorCodigo.get(r.codigo);
+    if (!anterior) {
+      novas += 1;
+      continue;
+    }
+    if (
+      anterior.resumo !== r.resumo ||
+      (anterior.texto ?? null) !== (r.texto ?? null)
+    ) {
+      alteradas += 1;
+    }
+  }
+  const removidas = antes.filter((r) => !depoisCodigos.has(r.codigo)).length;
+
+  return { alteradas, novas, removidas };
 }
 
 /**
