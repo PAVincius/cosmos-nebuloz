@@ -718,18 +718,20 @@ function MeasureBody() {
         subtitle="Avaliação por competência-chave SAFe vs. ciclo anterior (escala 1–5)."
         title="Measure & Grow"
       >
-        <Button
-          icon="plus"
-          onClick={() =>
-            modal.open(
-              <NewAssessmentModal competencies={rows} onSaved={reload} />
-            )
-          }
-          size="sm"
-          variant="primary"
-        >
-          Registrar avaliação
-        </Button>
+        {data !== undefined && (
+          <Button
+            icon="plus"
+            onClick={() =>
+              modal.open(
+                <NewAssessmentModal competencies={rows} onSaved={reload} />
+              )
+            }
+            size="sm"
+            variant="primary"
+          >
+            Registrar avaliação
+          </Button>
+        )}
       </PageHeader>
       {error && <ErrorState />}
       {!error && (

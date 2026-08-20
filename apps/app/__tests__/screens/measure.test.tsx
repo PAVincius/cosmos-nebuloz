@@ -279,6 +279,65 @@ describe("MeasureScreen", () => {
     );
   });
 
+  it("esconde 'Registrar avaliação' até listCompetencyScores resolver, e completa o registro depois (corrida)", async () => {
+    // Mesma razão da corrida do listTeams acima, mas na prop que alimenta o
+    // próprio modal: `modal.open(<NewAssessmentModal competencies={rows} />)`
+    // congela `rows` no clique. Se o botão existisse antes de
+    // listCompetencyScores responder, `competencies` nasceria [], o select de
+    // competência ficaria sem <option>, `competency` ficaria "" e o guard do
+    // `save` devolveria mudo.
+    let resolveScores: (v: { ok: true; data: typeof FULL_PREV_CYCLE }) => void =
+      () => {};
+    // Fallback para a chamada de reload após salvar (o `mockImplementationOnce`
+    // abaixo só cobre a primeira, a que a corrida testa).
+    listCompetencyScoresMock.mockResolvedValue({
+      ok: true,
+      data: FULL_PREV_CYCLE,
+    });
+    listCompetencyScoresMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveScores = resolve;
+        })
+    );
+    recordCompetencyAssessmentMock.mockResolvedValue({
+      ok: true,
+      data: { id: "ca-1" },
+    });
+
+    render(<MeasureScreen />);
+
+    expect(
+      screen.queryByRole("button", { name: "Registrar avaliação" })
+    ).toBeNull();
+
+    resolveScores({ ok: true, data: FULL_PREV_CYCLE });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Registrar avaliação" })
+    );
+    fireEvent.change(await screen.findByLabelText("Competência"), {
+      target: { value: "AGILE_PRODUCT_DELIVERY" },
+    });
+    fireEvent.change(screen.getByLabelText("Nota (1–5)"), {
+      target: { value: "4" },
+    });
+    await screen.findByRole("option", { name: "Squad Atlas" });
+    fireEvent.change(screen.getByLabelText("Time avaliado"), {
+      target: { value: "team-atlas" },
+    });
+    fireEvent.click(screen.getByText("Salvar avaliação"));
+
+    await waitFor(() =>
+      expect(recordCompetencyAssessmentMock).toHaveBeenCalledWith({
+        competency: "AGILE_PRODUCT_DELIVERY",
+        score: 4,
+        scope: "team",
+        scopeId: "team-atlas",
+      })
+    );
+  });
+
   it("abre uma ação de melhoria pela tela", async () => {
     listCompetencyScoresMock.mockResolvedValue({
       ok: true,
