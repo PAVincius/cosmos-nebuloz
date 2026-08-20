@@ -33,6 +33,7 @@ import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
 import { DiffModal, GenerateDraftModal, PublishVersionModal } from "../modals";
 import { useCharterData } from "../use-charter-data";
+import PolicyScope from "./policy-scope";
 
 const fmt = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR") : "—";
@@ -970,6 +971,10 @@ function PolicyInner() {
           </SectionCard>
         </div>
       )}
+
+      <div style={{ marginTop: "var(--gap)" }}>
+        <PolicyScope />
+      </div>
     </div>
   );
 }
