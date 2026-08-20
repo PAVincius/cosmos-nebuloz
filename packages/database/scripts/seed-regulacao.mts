@@ -69,6 +69,34 @@ export async function upsertCorpus(
         select: { id: true },
       });
 
+  // Exigência publicada não se reescreve. `resumo` e `texto` são o que muda a
+  // obrigação; mudá-los sob um veredito já dado converte "o cliente respondeu
+  // isto" em "o cliente respondeu outra coisa", sem que ninguém veja. `citacao`
+  // e `categoria` ficam de fora de propósito: corrigir o formato da referência
+  // ou reclassificar a área não altera o que a exigência exige.
+  const publicadas = await seedDb.charterRequirement.findMany({
+    where: { setId: set.id },
+    select: { codigo: true, resumo: true, texto: true },
+  });
+  const publicadasPorCodigo = new Map(publicadas.map((p) => [p.codigo, p]));
+
+  for (const req of corpus.requisitos) {
+    const anterior = publicadasPorCodigo.get(req.codigo);
+    if (!anterior) {
+      continue;
+    }
+    const mudou =
+      anterior.resumo !== req.resumo ||
+      (anterior.texto ?? null) !== (req.texto ?? null);
+    if (mudou) {
+      throw new Error(
+        `${req.codigo} mudou de texto na versão "${corpus.versao}" de ` +
+          `"${corpus.nome}", que já está publicada. Exigência publicada não ` +
+          "se reescreve: suba `versao` em CORPORA e rode o seed de novo."
+      );
+    }
+  }
+
   let count = 0;
   for (const req of corpus.requisitos) {
     await seedDb.charterRequirement.upsert({

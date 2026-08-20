@@ -25,6 +25,7 @@ it("busca o conjunto existente só entre os globais — nunca sequestra um conju
       create: vi.fn().mockResolvedValue({ id: "set-1" }),
     },
     charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
       upsert: vi.fn().mockResolvedValue({}),
     },
   };
@@ -46,6 +47,7 @@ it("atualiza o conjunto global encontrado em vez de criar um novo", async () => 
       create: vi.fn(),
     },
     charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
       upsert: vi.fn().mockResolvedValue({}),
     },
   };
@@ -56,5 +58,72 @@ it("atualiza o conjunto global encontrado em vez de criar um novo", async () => 
     expect.objectContaining({ where: { id: "set-existente" } })
   );
   expect(db.charterRequirementSet.create).not.toHaveBeenCalled();
+  expect(count).toBe(1);
+});
+
+it("recusa reescrever exigência cujo resumo mudou numa versão já publicada", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi
+        .fn()
+        .mockResolvedValue([
+          { codigo: "1.1", resumo: "Resumo ANTIGO", texto: null },
+        ]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await expect(upsertCorpus(db as never, corpus)).rejects.toThrow(
+    /1\.1 mudou de texto na versão "1"/
+  );
+  expect(db.charterRequirement.upsert).not.toHaveBeenCalled();
+});
+
+it("aceita citacao diferente sem exigir versão nova — não muda a obrigação", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi
+        .fn()
+        .mockResolvedValue([{ codigo: "1.1", resumo: "Resumo", texto: null }]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  const count = await upsertCorpus(db as never, {
+    ...corpus,
+    requisitos: [
+      { codigo: "1.1", citacao: "Art. 1º (redação nova)", resumo: "Resumo" },
+    ],
+  });
+
+  expect(count).toBe(1);
+  expect(db.charterRequirement.upsert).toHaveBeenCalledTimes(1);
+});
+
+it("exigência nova numa versão existente entra sem erro", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      update: vi.fn().mockResolvedValue({ id: "set-existente" }),
+      create: vi.fn(),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  const count = await upsertCorpus(db as never, corpus);
+
   expect(count).toBe(1);
 });
