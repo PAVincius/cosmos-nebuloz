@@ -94,6 +94,17 @@ describe("discoverLinearTeams", () => {
     expect(h.linearTestConnection).toHaveBeenCalledWith(API_KEY);
   });
 
+  it("apara espaço e quebra de linha da chave colada antes de mandar ao Linear", async () => {
+    h.linearTestConnection.mockResolvedValue({ ok: true, name: "Nebuloz" });
+    h.linearDiscoverTeams.mockResolvedValue([]);
+
+    await discoverLinearTeams({ apiKey: `  ${API_KEY}\n` });
+
+    // Sem o trim, o header iria com o lixo junto e o Linear devolveria 401 —
+    // indistinguível de chave revogada para quem está na tela.
+    expect(h.linearTestConnection).toHaveBeenCalledWith(API_KEY);
+  });
+
   it("não chama o discover quando a credencial é recusada", async () => {
     h.linearTestConnection.mockResolvedValue({
       ok: false,
