@@ -510,16 +510,20 @@ function ThemesBody() {
         subtitle="Alocação de investimento por tema, alinhada à estratégia de portfólio."
         title="Temas Estratégicos"
       >
-        <Button
-          icon="scale"
-          onClick={() =>
-            modal.open(<RebalanceTargetsModal onSaved={load} themes={active} />)
-          }
-          size="md"
-          variant="secondary"
-        >
-          Rebalancear alocação
-        </Button>
+        {active.length > 0 && (
+          <Button
+            icon="scale"
+            onClick={() =>
+              modal.open(
+                <RebalanceTargetsModal onSaved={load} themes={active} />
+              )
+            }
+            size="md"
+            variant="secondary"
+          >
+            Rebalancear alocação
+          </Button>
+        )}
         <Button
           icon="plus"
           onClick={() => modal.open(<NewThemeModal onCreated={load} />)}

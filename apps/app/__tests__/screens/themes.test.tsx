@@ -8,12 +8,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listThemesMock = vi.fn();
 const archiveThemeMock = vi.fn();
+const rebalanceThemeTargetsMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/themes", () => ({
   listThemes: (...args: unknown[]) => listThemesMock(...args),
   archiveTheme: (...args: unknown[]) => archiveThemeMock(...args),
   createTheme: vi.fn(),
-  rebalanceThemeTargets: vi.fn(),
+  rebalanceThemeTargets: (...args: unknown[]) =>
+    rebalanceThemeTargetsMock(...args),
 }));
 
 import ThemesScreen from "../../components/cosmos/screens/themes";
@@ -41,6 +43,7 @@ describe("ThemesScreen", () => {
     // mockResolvedValueOnce, e um `once` sobrando vaza para o teste seguinte.
     listThemesMock.mockReset();
     archiveThemeMock.mockReset();
+    rebalanceThemeTargetsMock.mockReset();
   });
 
   it("arquiva o tema pela tela e recarrega a lista (AC-003)", async () => {
@@ -145,5 +148,53 @@ describe("ThemesScreen", () => {
     );
     expect(screen.queryByText("Nenhum tema")).toBeNull();
     expect(document.body.innerHTML).not.toContain("Expansão LATAM");
+  });
+
+  it("esconde 'Rebalancear alocação' até os temas carregarem, e completa o rebalanceamento depois (corrida)", async () => {
+    // modal.open(<RebalanceTargetsModal themes={active} />) congela `active`
+    // no clique. Aberto antes de listThemes responder, o modal nasceria sem
+    // linha nenhuma, sumValid ficaria false para sempre e o guard do `save`
+    // devolveria mudo.
+    const withOneTheme = {
+      ok: true,
+      data: [
+        theme({
+          id: "th1",
+          title: "Expansão LATAM",
+          targetAllocationPct: 100,
+        }),
+      ],
+    };
+    // Fallback para o reload que RebalanceTargetsModal dispara via `onSaved`
+    // depois de salvar (o `mockImplementationOnce` abaixo só cobre a
+    // primeira chamada, a que a corrida testa).
+    listThemesMock.mockResolvedValue(withOneTheme);
+    listThemesMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => setTimeout(() => resolve(withOneTheme), 50))
+    );
+    rebalanceThemeTargetsMock.mockResolvedValue({
+      ok: true,
+      data: { updated: 1 },
+    });
+
+    render(<ThemesScreen />);
+
+    expect(
+      screen.queryByRole("button", { name: "Rebalancear alocação" })
+    ).toBeNull();
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Rebalancear alocação" })
+    );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Salvar rebalanceamento" })
+    );
+
+    await waitFor(() =>
+      expect(rebalanceThemeTargetsMock).toHaveBeenCalledWith({
+        targets: [{ themeId: "th1", targetAllocationPct: 100 }],
+      })
+    );
   });
 });
