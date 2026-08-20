@@ -40,17 +40,18 @@ export const SignIn = () => {
     });
 
     if (result?.error) {
-      const msg = result.error.message ?? "";
-      if (
-        msg.toLowerCase().includes("two") ||
-        msg.toLowerCase().includes("otp") ||
-        msg.toLowerCase().includes("2fa")
-      ) {
-        setStep("totp");
-      } else {
-        setError("Email ou senha incorretos.");
-        await logLoginFailure(email.trim().toLowerCase());
-      }
+      setError("Email ou senha incorretos.");
+      await logLoginFailure(email.trim().toLowerCase());
+      setLoading(false);
+      return;
+    }
+
+    // Conta com 2FA não devolve erro: o better-auth responde 200 com
+    // `twoFactorRedirect: true` e NENHUMA sessão. Tratar como sucesso aqui
+    // deixava a tela parada na senha — 200 no network e nada acontecendo.
+    const data = result?.data as { twoFactorRedirect?: boolean } | null;
+    if (data?.twoFactorRedirect) {
+      setStep("totp");
       setLoading(false);
       return;
     }
@@ -63,14 +64,21 @@ export const SignIn = () => {
     setLoading(true);
     setError(null);
 
-    try {
-      await authClient.twoFactor.verifyTotp({ code: totpCode });
-      await logMfaVerified();
-    } catch {
+    // `verifyTotp` não lança em código errado — devolve `{ error }` (a
+    // pegadinha documentada em ../client.ts). O try/catch antigo registrava
+    // MFA verificado para código inválido e nunca mostrava o erro.
+    const result = await authClient.twoFactor.verifyTotp({ code: totpCode });
+    if (result?.error) {
       setError("Código inválido. Verifique seu aplicativo autenticador.");
       await logMfaFailed();
       setLoading(false);
+      return;
     }
+
+    await logMfaVerified();
+    // O redirect do callbackURL pertence ao sign-in; depois do TOTP a
+    // navegação é nossa.
+    window.location.href = "/cosmos/dashboard";
   };
 
   if (step === "totp") {
