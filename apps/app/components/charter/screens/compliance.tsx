@@ -26,6 +26,8 @@ import {
   listCapabilities,
   listRequirementSets,
   type MapRow,
+  publishSetVersion,
+  type SetRow,
   setCoverage,
 } from "@/app/(charter)/actions/compliance";
 import { exportComplianceMap } from "@/app/(charter)/actions/compliance-export";
@@ -713,20 +715,31 @@ function parseRequisitosPaste(text: string): {
  *  ou pela seed de regulação (Task 10); este formulário não substitui as
  *  duas, só tira um conjunto do zero ou soma a ele. */
 function ImportQuickAddForm({
+  sets,
   onCancel,
   onDone,
 }: {
+  sets: SetRow[];
   onCancel: () => void;
   onDone: () => void;
 }) {
   const [pending, startTransition] = useTransition();
   const [nome, setNome] = useState("");
   const [requisitosText, setRequisitosText] = useState("");
+  const [supersedesId, setSupersedesId] = useState("");
+  const [versao, setVersao] = useState("");
 
   const parsed = parseRequisitosPaste(requisitosText);
+  // Só entra em jogo quando a pessoa escolheu um conjunto pra substituir —
+  // sem escolha, o caminho é importRequirementSet e a versão não importa.
+  const versaoObrigatoria = supersedesId !== "" && versao.trim() === "";
   const ready =
-    nome.trim() !== "" && parsed.error === null && parsed.requisitos.length > 0;
+    nome.trim() !== "" &&
+    parsed.error === null &&
+    parsed.requisitos.length > 0 &&
+    !versaoObrigatoria;
   const reason =
+    (versaoObrigatoria ? "Informe a versão do conjunto novo" : null) ??
     parsed.error ??
     (parsed.requisitos.length === 0
       ? "Cole ao menos uma exigência, uma por linha"
@@ -734,18 +747,37 @@ function ImportQuickAddForm({
 
   const submit = () =>
     startTransition(async () => {
-      const res = await runWithToast(
-        () =>
-          importRequirementSet({
-            nome,
-            origem: "RFP",
-            requisitos: parsed.requisitos,
-          }),
-        {
-          loading: "Importando conjunto…",
-          success: (d) => `${d.total} exigência(s) importada(s)`,
-        }
-      );
+      // Com conjunto selecionado o caminho é outro: publishSetVersion grava
+      // supersedesId e transporta a cobertura, marcando REVISAR no que mudou
+      // de texto. Importar como conjunto novo perderia todos os vereditos já
+      // dados sobre a versão anterior.
+      const res = supersedesId
+        ? await runWithToast(
+            () =>
+              publishSetVersion({
+                supersedesId,
+                nome,
+                versao,
+                requisitos: parsed.requisitos,
+              }),
+            {
+              loading: "Publicando nova versão…",
+              success: (d) =>
+                `Nova versão publicada · ${d.afetadas} em revisão`,
+            }
+          )
+        : await runWithToast(
+            () =>
+              importRequirementSet({
+                nome,
+                origem: "RFP",
+                requisitos: parsed.requisitos,
+              }),
+            {
+              loading: "Importando conjunto…",
+              success: (d) => `${d.total} exigência(s) importada(s)`,
+            }
+          );
       if (res.ok) {
         onDone();
       }
@@ -792,6 +824,34 @@ function ImportQuickAddForm({
           value={requisitosText}
         />
       </Field>
+      <Field
+        htmlFor="conformidade-import-supersedes"
+        label="Substitui um conjunto existente"
+      >
+        <Select
+          ariaLabel="Substitui um conjunto existente"
+          id="conformidade-import-supersedes"
+          onChange={setSupersedesId}
+          options={[
+            { value: "", label: "Não — é um conjunto novo" },
+            ...sets.map((s) => ({
+              value: s.id,
+              label: `${s.nome} (v${s.versao})`,
+            })),
+          ]}
+          value={supersedesId}
+        />
+      </Field>
+      {supersedesId !== "" && (
+        <Field htmlFor="conformidade-import-versao" label="Versão">
+          <Input
+            id="conformidade-import-versao"
+            onChange={(e) => setVersao(e.target.value)}
+            placeholder="2"
+            value={versao}
+          />
+        </Field>
+      )}
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
         <GatedButton
           allowed={!pending}
@@ -939,6 +999,7 @@ function ComplianceInner() {
             setShowImport(false);
             setsState.reload();
           }}
+          sets={sets}
         />
       )}
     </div>

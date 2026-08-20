@@ -22,6 +22,7 @@ const getComplianceCanMock = vi.fn();
 const setCoverageMock = vi.fn();
 const exportComplianceMapMock = vi.fn();
 const adoptSetVersionMock = vi.fn();
+const publishSetVersionMock = vi.fn();
 
 vi.mock("@/app/(charter)/actions/compliance", () => ({
   listRequirementSets: (...args: unknown[]) => listRequirementSetsMock(...args),
@@ -32,6 +33,7 @@ vi.mock("@/app/(charter)/actions/compliance", () => ({
   getComplianceCan: (...args: unknown[]) => getComplianceCanMock(...args),
   setCoverage: (...args: unknown[]) => setCoverageMock(...args),
   adoptSetVersion: (...args: unknown[]) => adoptSetVersionMock(...args),
+  publishSetVersion: (...args: unknown[]) => publishSetVersionMock(...args),
 }));
 vi.mock("@/app/(charter)/actions/compliance-export", () => ({
   exportComplianceMap: (...args: unknown[]) => exportComplianceMapMock(...args),
@@ -112,6 +114,7 @@ describe("ComplianceScreen", () => {
     setCoverageMock.mockReset();
     exportComplianceMapMock.mockReset();
     adoptSetVersionMock.mockReset();
+    publishSetVersionMock.mockReset();
     // Padrão neutro: a maioria dos testes não mexe no editor de cobertura.
     // Os que mexem sobrescrevem com capacidades reais.
     listCapabilitiesMock.mockResolvedValue({ ok: true, data: [] });
@@ -578,6 +581,82 @@ describe("ComplianceScreen", () => {
     expect(
       await screen.findByPlaceholderText("ex: RFP Banco Aurora 2026")
     ).toBeTruthy();
+  });
+
+  // ── Publicar nova versão de um conjunto existente (Task 12 — fecha o
+  //    bloqueio: publishSetVersion ganha caller de produção) ───────────────
+
+  it("importar com conjunto selecionado publica versão em vez de conjunto novo", async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [set({ id: "set-v1", nome: "RFP Cliente", versao: "1" })],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+    publishSetVersionMock.mockResolvedValue({
+      ok: true,
+      data: { id: "set-v2", afetadas: 1 },
+    });
+
+    render(<ComplianceScreen />);
+    // Espera o conjunto carregar — sem isso o seletor "Substitui um conjunto
+    // existente" abriria sem a opção "set-v1" para escolher.
+    await screen.findByText("1 conjunto de exigências");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /^importar exigências$/i })
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
+      target: { value: "RFP Cliente" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: { value: "A-1 | §1 | Resumo" },
+    });
+    fireEvent.change(screen.getByLabelText("Substitui um conjunto existente"), {
+      target: { value: "set-v1" },
+    });
+    fireEvent.change(screen.getByLabelText("Versão"), {
+      target: { value: "2" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
+
+    await waitFor(() =>
+      expect(publishSetVersionMock).toHaveBeenCalledWith(
+        expect.objectContaining({ supersedesId: "set-v1", versao: "2" })
+      )
+    );
+    expect(importRequirementSetMock).not.toHaveBeenCalled();
+  });
+
+  it("importar sem selecionar conjunto segue criando conjunto novo", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [] });
+    importRequirementSetMock.mockResolvedValue({
+      ok: true,
+      data: { id: "novo", total: 1 },
+    });
+
+    render(<ComplianceScreen />);
+    fireEvent.click(
+      await screen.findByRole("button", {
+        name: /importar conjunto de exigências/i,
+      })
+    );
+
+    fireEvent.change(screen.getByPlaceholderText("ex: RFP Banco Aurora 2026"), {
+      target: { value: "RFP Nova" },
+    });
+    fireEvent.change(screen.getByPlaceholderText(/4\.2\.1 \| RFP/), {
+      target: { value: "A-1 | §1 | Resumo" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /^importar$/i }));
+
+    await waitFor(() => expect(importRequirementSetMock).toHaveBeenCalled());
+    expect(publishSetVersionMock).not.toHaveBeenCalled();
   });
 
   // ── Download do export (base64 x utf8 — errar aqui corrompe o arquivo
