@@ -172,6 +172,45 @@ describe("ComplianceScreen", () => {
     expect(screen.getByText(/UC-013 Sumarizador/)).toBeTruthy();
   });
 
+  it("trunca lacunas em 3 nomes e soma o resto no sufixo", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_LINK",
+            evidencia: {
+              total: 9,
+              de: 14,
+              amostra: ["USE_CASE · UC-001 Triagem"],
+              lacunas: [
+                "USE_CASE · UC-013 Sumarizador",
+                "USE_CASE · UC-014 Chat interno",
+                "USE_CASE · UC-015 Triagem de ticket",
+                "VENDOR · V-003 Fornecedor de tradução",
+                "VENDOR · V-004 Fornecedor de anotação",
+              ],
+            },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText(/5 fora da política/)).toBeTruthy();
+    // As três primeiras vêm nomeadas...
+    expect(screen.getByText(/UC-013 Sumarizador/)).toBeTruthy();
+    expect(screen.getByText(/UC-014 Chat interno/)).toBeTruthy();
+    expect(screen.getByText(/UC-015 Triagem de ticket/)).toBeTruthy();
+    // ...a quarta e a quinta não — só somadas no sufixo.
+    expect(screen.queryByText(/V-003/)).toBeNull();
+    expect(screen.queryByText(/V-004/)).toBeNull();
+    expect(screen.getByText(/e mais 2/)).toBeTruthy();
+  });
+
   it("evidência sem denominador segue mostrando só a contagem", async () => {
     listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
     getComplianceMapMock.mockResolvedValue({
