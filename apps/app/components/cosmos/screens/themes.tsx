@@ -510,6 +510,9 @@ function ThemesBody() {
         subtitle="Alocação de investimento por tema, alinhada à estratégia de portfólio."
         title="Temas Estratégicos"
       >
+        {/* Rebalancear zero temas não existe como operação: sem tema ativo
+        carregado (ainda buscando, ou tenant sem nenhum) o botão some, e
+        "Novo tema" ao lado segue sendo o caminho. */}
         {active.length > 0 && (
           <Button
             icon="scale"

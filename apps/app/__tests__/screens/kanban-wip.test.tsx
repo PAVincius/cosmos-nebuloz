@@ -115,8 +115,8 @@ describe("KanbanScreen — limites de WIP", () => {
     await act(async () => {
       resolveRole({ ok: true, data: "RTE" });
     });
-    // Sem `configCarregada`, colunas=[] (estado inicial) e o papel já
-    // liberado já bastariam para mostrar o botão aqui — e salvar() com
+    // Com `colunas` ainda no estado inicial ([]), o papel já liberado
+    // sozinho já bastaria para mostrar o botão aqui — e salvar() com
     // colunas=[] filtra alteradas=[], nunca chama updateWipLimitAction e
     // fecha como sucesso.
     expect(
@@ -141,6 +141,30 @@ describe("KanbanScreen — limites de WIP", () => {
         wipLimit: 7,
       })
     );
+  });
+
+  it("esconde 'Configurar limites de WIP' quando getPortfolioKanbanConfig falha, mesmo com o papel liberado", async () => {
+    // safeAction nunca rejeita — toda falha de getPortfolioKanbanConfig
+    // resolve como {ok: false}, e o guard `if (res.ok)` em loadConfig nunca
+    // seta `colunas`. Gate por colunas.length > 0 (e não por uma flag
+    // "carregou", que ficaria true mesmo aqui) é o que garante que erro e
+    // carregamento pendente colapsam para o mesmo estado seguro: colunas=[],
+    // botão escondido, sem salvar() abrir a mentira de "sucesso" com
+    // alteradas=[].
+    getViewerRoleMock.mockResolvedValue({ ok: true, data: "RTE" });
+    getPortfolioKanbanConfigMock.mockResolvedValue({
+      ok: false,
+      error: "boom",
+    });
+
+    render(<KanbanScreen />);
+    await waitFor(() =>
+      expect(getPortfolioKanbanConfigMock).toHaveBeenCalled()
+    );
+
+    expect(
+      screen.queryByRole("button", { name: "Configurar limites de WIP" })
+    ).toBeNull();
   });
 
   it("salva o limite novo e recarrega a config", async () => {

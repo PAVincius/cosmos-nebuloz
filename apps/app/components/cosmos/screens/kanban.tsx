@@ -1317,11 +1317,6 @@ export default function KanbanScreen() {
   const { navigate } = useNav();
   const [epics, setEpics] = useState<KanbanEpic[]>([]);
   const [colunas, setColunas] = useState<KanbanColumnConfig[]>([]);
-  // Distingue "ainda carregando" de "config vazia" — sem isto, colunas=[]
-  // (estado inicial) é indistinguível de um tenant sem colunas configuradas,
-  // e o botão abriria o modal com `colunas` congeladas em [] antes do fetch
-  // responder.
-  const [configCarregada, setConfigCarregada] = useState(false);
   const [viewerRole, setViewerRole] = useState<string | null>(null);
   const wipLimits: Record<string, number | null> = Object.fromEntries(
     colunas.flatMap((c) => {
@@ -1387,7 +1382,6 @@ export default function KanbanScreen() {
     if (res.ok) {
       setColunas(res.data.columns);
     }
-    setConfigCarregada(true);
   }, []);
   useEffect(() => {
     loadConfig();
@@ -1454,8 +1448,8 @@ export default function KanbanScreen() {
           title="Kanban de Épicos"
         >
           {viewerRole !== null &&
-            configCarregada &&
-            WIP_CONFIG_ROLES.has(viewerRole) && (
+            WIP_CONFIG_ROLES.has(viewerRole) &&
+            colunas.length > 0 && (
               <Button
                 onClick={() =>
                   modal.open(
