@@ -64,6 +64,7 @@ export type SetRow = {
   total: number;
   supersedesId: string | null;
   supersededById: string | null;
+  temCobertura: boolean;
   diff: { alteradas: number; novas: number; removidas: number } | null;
 };
 
@@ -733,19 +734,50 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
 
       // Uma leitura só para todas as exigências envolvidas. O diff é calculado
       // aqui, e não na tela, para não custar um segundo round-trip só para
-      // saber se vale mostrar o aviso de versão nova.
+      // saber se vale mostrar o aviso de versão nova. `id` entra na seleção
+      // para a busca de cobertura logo abaixo — sem ele não haveria como
+      // ligar uma linha de CharterCoverage de volta ao conjunto dela.
       const requisitos = await db.charterRequirement.findMany({
         where: { setId: { in: sets.map((s) => s.id) } },
-        select: { setId: true, codigo: true, resumo: true, texto: true },
+        select: {
+          id: true,
+          setId: true,
+          codigo: true,
+          resumo: true,
+          texto: true,
+        },
       });
       const porSet = new Map<
         string,
         { codigo: string; resumo: string; texto: string | null }[]
       >();
+      const setIdPorRequisito = new Map<string, string>();
       for (const r of requisitos) {
         const lista = porSet.get(r.setId) ?? [];
         lista.push({ codigo: r.codigo, resumo: r.resumo, texto: r.texto });
         porSet.set(r.setId, lista);
+        setIdPorRequisito.set(r.id, r.setId);
+      }
+
+      // Quais conjuntos já têm veredito do tenant — é o que decide, na tela,
+      // qual conjunto abrir por padrão (Bloqueio "default cai no sucessor
+      // vazio" da review final): o mais recente COM trabalho do tenant vence,
+      // não simplesmente o mais recente por importadoEm. CharterCoverage tem
+      // RLS, mas o filtro de tenant explícito fica de todo jeito — mesmo
+      // cuidado do resto deste arquivo.
+      const coberturas = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: requisitos.map((r) => r.id) },
+        },
+        select: { requirementId: true },
+      });
+      const setsComCobertura = new Set<string>();
+      for (const c of coberturas) {
+        const setId = setIdPorRequisito.get(c.requirementId);
+        if (setId) {
+          setsComCobertura.add(setId);
+        }
       }
 
       return sets.map((s) => {
@@ -758,6 +790,7 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
           total: s._count.requirements,
           supersedesId: s.supersedesId,
           supersededById,
+          temCobertura: setsComCobertura.has(s.id),
           diff: supersededById
             ? diffEntreVersoes(
                 porSet.get(s.id) ?? [],

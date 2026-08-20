@@ -826,6 +826,9 @@ describe("listRequirementSets — sucessão", () => {
       { setId: "set-v2", codigo: "B-1", resumo: "NOVO", texto: null },
       { setId: "set-v2", codigo: "C-1", resumo: "inédita", texto: null },
     ]);
+    // Ruído para listRequirementSets ler cobertura sem quebrar — este teste é
+    // sobre sucessão/diff, não sobre temCobertura.
+    h.covFindMany.mockResolvedValueOnce([]);
 
     const res = await listRequirementSets();
 
@@ -854,6 +857,7 @@ describe("listRequirementSets — sucessão", () => {
       },
     ]);
     h.reqFindMany.mockResolvedValueOnce([]);
+    h.covFindMany.mockResolvedValueOnce([]);
 
     const res = await listRequirementSets();
 
@@ -894,6 +898,7 @@ describe("listRequirementSets — sucessão", () => {
       { setId: "set-v2", codigo: "A-1", resumo: "v2", texto: null },
       { setId: "set-v3", codigo: "A-1", resumo: "v3", texto: null },
     ]);
+    h.covFindMany.mockResolvedValueOnce([]);
 
     const res = await listRequirementSets();
 
@@ -903,5 +908,54 @@ describe("listRequirementSets — sucessão", () => {
     }
     const v1 = res.data.find((s) => s.id === "set-v1");
     expect(v1?.supersededById).toBe("set-v3");
+  });
+
+  it("marca temCobertura no set com veredito do tenant, não no outro", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      {
+        id: "req-v1-a1",
+        setId: "set-v1",
+        codigo: "A-1",
+        resumo: "antigo",
+        texto: null,
+      },
+      {
+        id: "req-v2-a1",
+        setId: "set-v2",
+        codigo: "A-1",
+        resumo: "novo",
+        texto: null,
+      },
+    ]);
+    // Só o requisito do set-v1 tem veredito do tenant — set-v2 (o sucessor)
+    // ainda não recebeu nenhum.
+    h.covFindMany.mockResolvedValueOnce([{ requirementId: "req-v1-a1" }]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.find((s) => s.id === "set-v1")?.temCobertura).toBe(true);
+    expect(res.data.find((s) => s.id === "set-v2")?.temCobertura).toBe(false);
   });
 });

@@ -49,6 +49,7 @@ const set = (over: Partial<SetRow> = {}): SetRow => ({
   total: 1,
   supersedesId: null,
   supersededById: null,
+  temCobertura: false,
   diff: null,
   ...over,
 });
@@ -803,5 +804,39 @@ describe("ComplianceScreen", () => {
     await screen.findByText("4.2.1"); // mapa carregou — não é o estado vazio
 
     expect(screen.queryByText("Adotar a versão nova")).toBeNull();
+  });
+
+  it("cai no conjunto com cobertura do tenant, não no sucessor vazio — é onde mora o aviso de adoção", async () => {
+    // listRequirementSets ordena por importadoEm desc: set-v2 (o sucessor,
+    // sem nenhum veredito do tenant ainda) vem primeiro na lista, exatamente
+    // como o seed publicando uma v2 nova deixaria. Sem o critério de
+    // temCobertura, activeId cairia em set-v2 e o aviso abaixo — que só o
+    // antecessor carrega (supersededById + diff) — nunca apareceria sozinho.
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({ id: "set-v2", nome: "Reg", versao: "2" }),
+        set({
+          id: "set-v1",
+          nome: "Reg",
+          versao: "1",
+          temCobertura: true,
+          supersededById: "set-v2",
+          diff: { alteradas: 1, novas: 1, removidas: 0 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ setId: "set-v1", linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+
+    // Sem clique nenhum: a carga limpa já abre set-v1 e mostra o aviso.
+    expect(
+      await screen.findByText(/1 alteradas, 1 novas, 0 removida/)
+    ).toBeTruthy();
+    expect(getComplianceMapMock).toHaveBeenCalledWith("set-v1");
   });
 });

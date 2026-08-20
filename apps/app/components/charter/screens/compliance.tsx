@@ -887,9 +887,18 @@ function ComplianceInner() {
   }
 
   const sets = setsState.data ?? [];
-  // Conjunto mais recente por padrão (listRequirementSets já ordena por
-  // importadoEm desc) — escolha explícita do usuário sempre vence.
-  const activeId = selectedSetId ?? sets[0]?.id ?? null;
+  // Default é o conjunto mais recente COM cobertura do tenant, não
+  // simplesmente o mais recente por importadoEm — o sucessor recém-publicado
+  // ainda sem nenhum veredito não carrega o aviso de adoção (ele mora no
+  // antecessor), e sem este critério o tenant abre o mapa, cai direto no
+  // sucessor vazio e nunca vê que existe versão nova para adotar. Sem
+  // cobertura nenhuma em lugar algum, cai no mais recente mesmo. Escolha
+  // explícita do usuário sempre vence.
+  const activeId =
+    selectedSetId ??
+    sets.find((s) => s.temCobertura)?.id ??
+    sets[0]?.id ??
+    null;
   const ativo = sets.find((s) => s.id === activeId);
 
   return (
