@@ -2,11 +2,15 @@
 // policy-scope.test.tsx — painel de alcance da política: fora antes de
 // dentro (a lista existe para fechar lacuna, não para exibir quem já está
 // coberto), vincular/desvincular chamando a action certa com o alvo certo e
-// recarregando a leitura, tenant sem política sem quebrar a tela, e loading
+// recarregando a leitura, tenant sem política sem quebrar a tela, loading
 // distinto de "sem política" — os dois são estados diferentes de `data`
 // (ver useCharterData) e precisam renderizar coisas diferentes, senão um
-// tenant sem política fica preso em "Carregando…". Asserção sobre conteúdo,
-// sem snapshot.
+// tenant sem política fica preso em "Carregando…" —, e escrita recusada
+// (`res.ok === false`, o caso real de SECURITY sem `policy.edit`) nem
+// recarregando silenciosamente nem descartando o erro: `sonner` é mockado
+// (não `useActionToast`) para provar que o wrapper real de fato chama
+// `toast.error` com a mensagem do servidor, igual ao padrão de
+// `settings-members-tab.test.tsx`. Asserção sobre conteúdo, sem snapshot.
 import {
   fireEvent,
   render,
@@ -15,6 +19,13 @@ import {
   within,
 } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const toastMocks = vi.hoisted(() => ({
+  loading: vi.fn(),
+  success: vi.fn(),
+  error: vi.fn(),
+}));
+vi.mock("sonner", () => ({ toast: toastMocks }));
 
 const getPolicyScopeMock = vi.hoisted(() => vi.fn());
 const linkPolicyMock = vi.hoisted(() => vi.fn());
@@ -33,6 +44,10 @@ describe("PolicyScope", () => {
     getPolicyScopeMock.mockReset();
     linkPolicyMock.mockReset();
     unlinkPolicyMock.mockReset();
+    toastMocks.loading.mockReset();
+    toastMocks.success.mockReset();
+    toastMocks.error.mockReset();
+    toastMocks.loading.mockReturnValue("toast-1");
     getPolicyScopeMock.mockResolvedValue({
       ok: true,
       data: {
@@ -101,6 +116,36 @@ describe("PolicyScope", () => {
         alvoId: "uc-1",
       })
     );
+  });
+
+  it("vincular recusado (res.ok false) não recarrega e avisa o usuário — não descarta o erro em silêncio", async () => {
+    // Caso real, não hipotético: SECURITY vê a linha (getPolicyScope não
+    // exige policy.edit) mas linkPolicy exige — todo clique dele aqui volta
+    // ok:false.
+    linkPolicyMock.mockResolvedValue({
+      ok: false,
+      error: "Sem permissão para editar a política.",
+    });
+    render(<PolicyScope />);
+    await screen.findByText("UC-002 Sumarizador");
+    const chamadasAntes = getPolicyScopeMock.mock.calls.length;
+
+    const linha = screen.getByText("UC-002 Sumarizador").closest("div");
+    fireEvent.click(within(linha as HTMLElement).getByRole("button"));
+
+    await waitFor(() => expect(linkPolicyMock).toHaveBeenCalled());
+    // A mensagem do servidor chega ao usuário — via o toast.error real do
+    // wrapper, não um stub que a engoliria sem provar nada.
+    await waitFor(() =>
+      expect(toastMocks.error).toHaveBeenCalledWith(
+        "Sem permissão para editar a política.",
+        { id: "toast-1" }
+      )
+    );
+    // Sem reload: a linha continuaria "fora da política" — mas silenciosa,
+    // sem repetir a leitura, é o que denunciaria a falha se reload tivesse
+    // disparado mesmo com ok:false.
+    expect(getPolicyScopeMock.mock.calls.length).toBe(chamadasAntes);
   });
 
   it("tenant sem política mostra o aviso, não quebra a tela", async () => {

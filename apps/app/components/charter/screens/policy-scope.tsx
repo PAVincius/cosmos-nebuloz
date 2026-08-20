@@ -7,6 +7,7 @@ import {
   linkPolicy,
   unlinkPolicy,
 } from "@/app/(charter)/actions/policy";
+import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { useCharterData } from "../use-charter-data";
 
 // policy-scope.tsx — quem está e quem não está sob a política publicada.
@@ -83,9 +84,18 @@ export default function PolicyScope() {
         alvoTipo: alvo.tipo,
         alvoId: alvo.id,
       };
-      const res = alvo.vinculado
-        ? await unlinkPolicy(args)
-        : await linkPolicy(args);
+      // Sem isto, `res.ok === false` (por exemplo SECURITY, sem
+      // `policy.edit`) não recarregava, não avisava — a linha continuava
+      // "fora da política" sem nenhum sinal de que o clique foi recusado.
+      // `runWithToast` já cai para `res.error` quando `error` não é
+      // passado, então a mensagem que o servidor deu não se perde.
+      const res = await runWithToast(
+        () => (alvo.vinculado ? unlinkPolicy(args) : linkPolicy(args)),
+        {
+          loading: alvo.vinculado ? "Removendo vínculo…" : "Vinculando…",
+          success: alvo.vinculado ? "Vínculo removido" : "Vinculado à política",
+        }
+      );
       if (res.ok) {
         reload();
       }
