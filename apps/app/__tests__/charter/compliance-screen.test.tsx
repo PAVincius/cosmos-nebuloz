@@ -43,6 +43,9 @@ const set = (over: Partial<SetRow> = {}): SetRow => ({
   origem: "RFP",
   versao: "1",
   total: 1,
+  supersedesId: null,
+  supersededById: null,
+  diff: null,
   ...over,
 });
 

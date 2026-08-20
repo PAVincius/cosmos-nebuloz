@@ -5,6 +5,7 @@ const h = vi.hoisted(() => ({
   requireContext: vi.fn(),
   setCreate: vi.fn(),
   setFindFirst: vi.fn(),
+  setFindMany: vi.fn(),
   reqCreateMany: vi.fn(),
   reqFindMany: vi.fn(),
   reqFindFirst: vi.fn(),
@@ -22,7 +23,11 @@ vi.mock("@/lib/charter/guards", () => ({
 vi.mock("@repo/database", () => ({
   withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
     fn({
-      charterRequirementSet: { create: h.setCreate, findFirst: h.setFindFirst },
+      charterRequirementSet: {
+        create: h.setCreate,
+        findFirst: h.setFindFirst,
+        findMany: h.setFindMany,
+      },
       charterRequirement: {
         createMany: h.reqCreateMany,
         findMany: h.reqFindMany,
@@ -75,6 +80,7 @@ import {
   getComplianceMap,
   importRequirementSet,
   listCapabilities,
+  listRequirementSets,
   publishSetVersion,
   setCoverage,
 } from "../../app/(charter)/actions/compliance";
@@ -783,5 +789,75 @@ describe("getComplianceCan", () => {
       return;
     }
     expect(res.data).toEqual({ edit: false });
+  });
+});
+
+describe("listRequirementSets — sucessão", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("aponta o sucessor e resume o que muda ao adotá-lo", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 2 },
+      },
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 3 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      { setId: "set-v1", codigo: "A-1", resumo: "igual", texto: null },
+      { setId: "set-v1", codigo: "B-1", resumo: "antigo", texto: null },
+      { setId: "set-v2", codigo: "A-1", resumo: "igual", texto: null },
+      { setId: "set-v2", codigo: "B-1", resumo: "NOVO", texto: null },
+      { setId: "set-v2", codigo: "C-1", resumo: "inédita", texto: null },
+    ]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    const v1 = res.data.find((s) => s.id === "set-v1");
+    expect(v1?.supersededById).toBe("set-v2");
+    expect(v1?.diff).toEqual({ alteradas: 1, novas: 1, removidas: 0 });
+
+    const v2 = res.data.find((s) => s.id === "set-v2");
+    expect(v2?.supersededById).toBe(null);
+    expect(v2?.diff).toBe(null);
+  });
+
+  it("conjunto sem sucessor não carrega diff", async () => {
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "solo",
+        nome: "RFP",
+        origem: "RFP",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok && res.data[0].supersededById).toBe(null);
+    expect(res.ok && res.data[0].diff).toBe(null);
   });
 });

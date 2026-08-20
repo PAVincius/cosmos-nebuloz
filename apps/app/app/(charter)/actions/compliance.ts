@@ -56,6 +56,9 @@ export type SetRow = {
   origem: "RFP" | "REGULACAO";
   versao: string;
   total: number;
+  supersedesId: string | null;
+  supersededById: string | null;
+  diff: { alteradas: number; novas: number; removidas: number } | null;
 };
 
 const RequisitoSchema = z.object({
@@ -704,15 +707,83 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
         orderBy: { importadoEm: "desc" },
       });
 
-      return sets.map((s) => ({
-        id: s.id,
-        nome: s.nome,
-        origem: s.origem,
-        versao: s.versao,
-        total: s._count.requirements,
-      }));
+      // A aresta só existe para trás no schema. A inversa é derivada aqui para
+      // a tela conseguir dizer "há versão nova" olhando o conjunto que o tenant
+      // usa hoje, em vez de o cliente cruzar a lista consigo mesma.
+      const sucessorPorAntecessor = new Map<string, string>();
+      for (const s of sets) {
+        if (s.supersedesId) {
+          sucessorPorAntecessor.set(s.supersedesId, s.id);
+        }
+      }
+
+      // Uma leitura só para todas as exigências envolvidas. O diff é calculado
+      // aqui, e não na tela, para não custar um segundo round-trip só para
+      // saber se vale mostrar o aviso de versão nova.
+      const requisitos = await db.charterRequirement.findMany({
+        where: { setId: { in: sets.map((s) => s.id) } },
+        select: { setId: true, codigo: true, resumo: true, texto: true },
+      });
+      const porSet = new Map<
+        string,
+        { codigo: string; resumo: string; texto: string | null }[]
+      >();
+      for (const r of requisitos) {
+        const lista = porSet.get(r.setId) ?? [];
+        lista.push({ codigo: r.codigo, resumo: r.resumo, texto: r.texto });
+        porSet.set(r.setId, lista);
+      }
+
+      return sets.map((s) => {
+        const supersededById = sucessorPorAntecessor.get(s.id) ?? null;
+        return {
+          id: s.id,
+          nome: s.nome,
+          origem: s.origem,
+          versao: s.versao,
+          total: s._count.requirements,
+          supersedesId: s.supersedesId,
+          supersededById,
+          diff: supersededById
+            ? diffEntreVersoes(
+                porSet.get(s.id) ?? [],
+                porSet.get(supersededById) ?? []
+              )
+            : null,
+        };
+      });
     });
   });
+}
+
+/** Alterada = mesmo código com resumo ou texto diferente. Nova = código que não
+ *  existia. Removida = código que sumiu. `citacao` fica de fora de propósito:
+ *  mudar o formato da referência não altera a obrigação. */
+function diffEntreVersoes(
+  antes: { codigo: string; resumo: string; texto: string | null }[],
+  depois: { codigo: string; resumo: string; texto: string | null }[]
+): { alteradas: number; novas: number; removidas: number } {
+  const antesPorCodigo = new Map(antes.map((r) => [r.codigo, r]));
+  const depoisCodigos = new Set(depois.map((r) => r.codigo));
+
+  let alteradas = 0;
+  let novas = 0;
+  for (const r of depois) {
+    const anterior = antesPorCodigo.get(r.codigo);
+    if (!anterior) {
+      novas += 1;
+      continue;
+    }
+    if (
+      anterior.resumo !== r.resumo ||
+      (anterior.texto ?? null) !== (r.texto ?? null)
+    ) {
+      alteradas += 1;
+    }
+  }
+  const removidas = antes.filter((r) => !depoisCodigos.has(r.codigo)).length;
+
+  return { alteradas, novas, removidas };
 }
 
 /**
