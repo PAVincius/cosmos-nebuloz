@@ -223,17 +223,42 @@ model User {
   sessions           Session[]
   accounts           Account[]
   memberships        TenantMember[]
-  twoFactor          TwoFactor?
+  // Lista, não opcional-único: o `userId` da TwoFactor deixou de ser `@unique`
+  // porque o `enable` do better-auth sempre insere linha nova.
+  twoFactor          TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
   charterMemberships CharterMembership[]
 }
 
+/// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,
+/// não por nós: a lib grava direto aqui pelo adapter do Prisma, e qualquer
+/// coluna que ela espere e não exista vira PrismaClientValidationError — 500 no
+/// cadastro, sem aviso em build nem em teste.
+///
+/// Foi o que aconteceu: a migration 20260518012140 nasceu contra uma versão
+/// anterior do plugin e ficou três colunas atrás.
 model TwoFactor {
   id          String @id @default(cuid())
   secret      String
   backupCodes String
-  userId      String @unique
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+
+  /// `true` por padrão de propósito, seguindo a lib: linhas que já existiam
+  /// antes desta coluna são tratadas como verificadas. O `enable` grava `false`
+  /// explicitamente, e linha não verificada não é oferecida como método de
+  /// login.
+  verified                Boolean   @default(true)
+  /// Falhas consecutivas de segundo fator. É o orçamento do bloqueio de conta.
+  failedVerificationCount Int       @default(0)
+  /// Quando o bloqueio expira. Nulo = não bloqueada.
+  lockedUntil             DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Índice, não `@unique`. A lib declara índice e o `enable` faz `create` puro:
+  // com restrição de unicidade, um segundo cadastro — depois de abandonar o
+  // primeiro, ou ao trocar de método — viola P2002 e devolve outro 500.
+  @@index([userId])
 }
 
 model Session {
