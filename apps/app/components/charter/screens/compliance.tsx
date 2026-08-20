@@ -53,7 +53,7 @@ const EVIDENCE_NOUN: Record<string, string> = {
   POLICY_ATTESTATION: "aceites",
   DECISION_RECORD: "decisões registradas",
   VENDOR_TIER: "fornecedores classificados",
-  POLICY_LINK: "vínculos registrados",
+  POLICY_LINK: "sob a política",
   RISK_SCORING: "casos pontuados",
   AUDIT_EXPORT: "exportações registradas",
 };
@@ -182,12 +182,35 @@ function EvidenceBlock({ row }: { row: MapRow }) {
     const noun = row.capabilityId
       ? (EVIDENCE_NOUN[row.capabilityId] ?? "registros")
       : "registros";
+    const lacunas = row.evidencia.lacunas ?? [];
     return (
-      <div
-        className="mono"
-        style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}
-      >
-        {row.evidencia.total} {noun}
+      <div>
+        <div
+          className="mono"
+          style={{ fontSize: 13, fontWeight: 700, color: "var(--ink)" }}
+        >
+          {row.evidencia.de === undefined
+            ? `${row.evidencia.total} ${noun}`
+            : `${row.evidencia.total} de ${row.evidencia.de}`}
+        </div>
+        {/* A lacuna aparece na mesma linha do selo de propósito: um "Atende"
+            com dois casos fora precisa ser incoerente à vista de quem lê o
+            selo, que é o comprador. O veredito continua sendo escolha humana —
+            setCoverage não vira juiz de evidência —, mas a escolha passa a ser
+            feita com o número na frente. */}
+        {lacunas.length > 0 && (
+          <div
+            style={{
+              fontSize: 11.5,
+              color: "var(--amber-text)",
+              marginTop: 2,
+              lineHeight: 1.45,
+            }}
+          >
+            {lacunas.length} fora da política: {lacunas.slice(0, 3).join(", ")}
+            {lacunas.length > 3 ? ` e mais ${lacunas.length - 3}` : ""}
+          </div>
+        )}
       </div>
     );
   }

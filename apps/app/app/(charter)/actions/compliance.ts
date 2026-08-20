@@ -37,7 +37,13 @@ export type MapRow = {
   comentario: string | null;
   capabilityId: string | null;
   capabilityLabel: string | null;
-  evidencia: { total: number; amostra: string[]; href?: string } | null;
+  evidencia: {
+    total: number;
+    amostra: string[];
+    de?: number;
+    lacunas?: string[];
+    href?: string;
+  } | null;
   /** Preenchido quando a consulta de evidência falhou. A linha então não pode
    *  ser lida como prova — só como alegação. */
   evidenciaErro: string | null;

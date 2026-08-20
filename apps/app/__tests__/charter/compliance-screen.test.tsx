@@ -142,6 +142,56 @@ describe("ComplianceScreen", () => {
     expect(screen.getAllByText("Atende").length).toBeGreaterThan(0);
   });
 
+  it("mostra a fração e nomeia as lacunas quando a evidência tem denominador", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_LINK",
+            evidencia: {
+              total: 12,
+              de: 14,
+              amostra: ["USE_CASE · UC-001 Triagem"],
+              lacunas: [
+                "USE_CASE · UC-013 Sumarizador",
+                "USE_CASE · UC-014 Chat interno",
+              ],
+            },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText("12 de 14")).toBeTruthy();
+    expect(screen.getByText(/2 fora da política/)).toBeTruthy();
+    expect(screen.getByText(/UC-013 Sumarizador/)).toBeTruthy();
+  });
+
+  it("evidência sem denominador segue mostrando só a contagem", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({
+        linhas: [
+          row({
+            status: "ATENDE",
+            capabilityId: "POLICY_ATTESTATION",
+            evidencia: { total: 37, amostra: [] },
+          }),
+        ],
+      }),
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(await screen.findByText("37 aceites")).toBeTruthy();
+  });
+
   it("linha com evidenciaErro mostra 'evidência indisponível' e nunca a evidência", async () => {
     listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
     getComplianceMapMock.mockResolvedValue({
