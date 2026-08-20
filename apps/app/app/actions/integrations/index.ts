@@ -266,7 +266,10 @@ export async function runImportSnapshot(raw: unknown): Promise<
 
         for (const issue of issues) {
           try {
-            const statusId = linearStateToStatus(issue.state.type);
+            const statusId = linearStateToStatus(
+              issue.state.type,
+              issue.state.name
+            );
             const existing = await database.feature.findFirst({
               where: {
                 tenantId: ctx.tenantId,

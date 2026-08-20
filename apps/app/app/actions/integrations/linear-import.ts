@@ -69,7 +69,7 @@ export async function linearDryRun(input: ImportInput): Promise<DryRunResult> {
           title: issue.title,
           url: issue.url,
           cosmosType: "Feature",
-          statusId: linearStateToStatus(issue.state.type),
+          statusId: linearStateToStatus(issue.state.type, issue.state.name),
           alreadySynced: !!existing,
           teamName: issue.team.name,
           isChild: !!issue.parent,
