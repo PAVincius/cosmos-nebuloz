@@ -1317,6 +1317,11 @@ export default function KanbanScreen() {
   const { navigate } = useNav();
   const [epics, setEpics] = useState<KanbanEpic[]>([]);
   const [colunas, setColunas] = useState<KanbanColumnConfig[]>([]);
+  // Distingue "ainda carregando" de "config vazia" — sem isto, colunas=[]
+  // (estado inicial) é indistinguível de um tenant sem colunas configuradas,
+  // e o botão abriria o modal com `colunas` congeladas em [] antes do fetch
+  // responder.
+  const [configCarregada, setConfigCarregada] = useState(false);
   const [viewerRole, setViewerRole] = useState<string | null>(null);
   const wipLimits: Record<string, number | null> = Object.fromEntries(
     colunas.flatMap((c) => {
@@ -1382,6 +1387,7 @@ export default function KanbanScreen() {
     if (res.ok) {
       setColunas(res.data.columns);
     }
+    setConfigCarregada(true);
   }, []);
   useEffect(() => {
     loadConfig();
@@ -1447,19 +1453,21 @@ export default function KanbanScreen() {
           subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
           title="Kanban de Épicos"
         >
-          {viewerRole !== null && WIP_CONFIG_ROLES.has(viewerRole) && (
-            <Button
-              onClick={() =>
-                modal.open(
-                  <WipConfigModal colunas={colunas} onSaved={loadConfig} />
-                )
-              }
-              size="sm"
-              variant="secondary"
-            >
-              Configurar limites de WIP
-            </Button>
-          )}
+          {viewerRole !== null &&
+            configCarregada &&
+            WIP_CONFIG_ROLES.has(viewerRole) && (
+              <Button
+                onClick={() =>
+                  modal.open(
+                    <WipConfigModal colunas={colunas} onSaved={loadConfig} />
+                  )
+                }
+                size="sm"
+                variant="secondary"
+              >
+                Configurar limites de WIP
+              </Button>
+            )}
           <button
             className="btn"
             data-kanban-filter-trigger

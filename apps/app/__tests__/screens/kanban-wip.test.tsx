@@ -6,7 +6,13 @@
 // A ação já guarda o papel (ADMIN/STE/RTE). A tela não recria essa regra: ela
 // pergunta o papel a getViewerRole e só oferece o controle a quem pode — um
 // botão que sempre falha é pior que botão nenhum.
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listEpicsMock = vi.fn();
@@ -77,6 +83,64 @@ describe("KanbanScreen — limites de WIP", () => {
     expect(
       screen.queryByRole("button", { name: "Configurar limites de WIP" })
     ).toBeNull();
+  });
+
+  it("esconde 'Configurar limites de WIP' enquanto a config não carregou, mesmo com o papel já liberado, e salva depois de resolver (corrida)", async () => {
+    // Duas fontes independentes gateiam este botão: o papel (getViewerRole) e
+    // a config (getPortfolioKanbanConfig, que vira a prop `colunas`).
+    // Resolvendo as duas manualmente garante a janela exata que causava o
+    // bug — papel já liberado, config ainda pendente — sem depender de
+    // timing real entre dois fetches independentes.
+    let resolveRole: (v: { ok: true; data: string }) => void = () => {};
+    let resolveConfig: (v: {
+      ok: true;
+      data: ReturnType<typeof config>;
+    }) => void = () => {};
+    getViewerRoleMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRole = resolve;
+        })
+    );
+    getPortfolioKanbanConfigMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveConfig = resolve;
+        })
+    );
+    updateWipLimitActionMock.mockResolvedValue({ ok: true, data: config() });
+
+    render(<KanbanScreen />);
+
+    await act(async () => {
+      resolveRole({ ok: true, data: "RTE" });
+    });
+    // Sem `configCarregada`, colunas=[] (estado inicial) e o papel já
+    // liberado já bastariam para mostrar o botão aqui — e salvar() com
+    // colunas=[] filtra alteradas=[], nunca chama updateWipLimitAction e
+    // fecha como sucesso.
+    expect(
+      screen.queryByRole("button", { name: "Configurar limites de WIP" })
+    ).toBeNull();
+
+    await act(async () => {
+      resolveConfig({ ok: true, data: config() });
+    });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Configurar limites de WIP" })
+    );
+    fireEvent.change(await screen.findByLabelText("Limite de Implementing"), {
+      target: { value: "7" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar limites" }));
+
+    await waitFor(() =>
+      expect(updateWipLimitActionMock).toHaveBeenCalledWith({
+        columnId: "IMPLEMENTING",
+        wipLimit: 7,
+      })
+    );
   });
 
   it("salva o limite novo e recarrega a config", async () => {
