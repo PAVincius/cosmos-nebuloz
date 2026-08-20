@@ -1,6 +1,27 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+/** Vigência do caso padrão: RFP sem data, que obriga desde que chega. Estes
+ *  testes são sobre export, não sobre vigência — declaram uma vez e espalham,
+ *  em vez de repetir seis campos em cada literal. */
+const VIGENCIA_PADRAO = {
+  status: "VIGENTE",
+  em: null,
+  obriga: true,
+  motivo: null,
+  nota: null,
+  herdada: true,
+} as const;
+
+/** Campos de mapa que a vigência acrescentou. Mesmo motivo. */
+const MAPA_PADRAO = {
+  cenario: "EM_VIGOR",
+  referencia: "2026-08-08T00:00:00.000Z",
+  semVereditoQueObriga: 0,
+  divergentes: 0,
+} as const;
+
 const base = {
+  ...MAPA_PADRAO,
   setId: "s-1",
   nome: "RFP Aurora Mesh",
   semVeredito: 12,
@@ -16,6 +37,7 @@ const base = {
     capabilityLabel: null,
     evidencia: null,
     evidenciaErro: null,
+    vigencia: VIGENCIA_PADRAO,
   })),
 };
 
@@ -63,6 +85,7 @@ describe("formatarEvidencia", () => {
     capabilityLabel: "Sob a política",
     evidencia,
     evidenciaErro: null,
+    vigencia: VIGENCIA_PADRAO,
   });
 
   it("com denominador e lacunas, mostra os dois — mesmo fato que a tela mostra", () => {
@@ -102,6 +125,7 @@ describe("formatarEvidencia", () => {
 
 describe("toCsv — proteção contra injeção de fórmula", () => {
   const linhaComResumo = (resumo: string) => ({
+    ...MAPA_PADRAO,
     setId: "s-1",
     nome: "Teste",
     semVeredito: 0,
@@ -118,6 +142,7 @@ describe("toCsv — proteção contra injeção de fórmula", () => {
         capabilityLabel: null,
         evidencia: null,
         evidenciaErro: null,
+        vigencia: VIGENCIA_PADRAO,
       },
     ],
   });
@@ -154,6 +179,7 @@ describe("toCsv — proteção contra injeção de fórmula", () => {
     // por texto no Excel/Sheets sempre que o peso for negativo, sem erro
     // nenhum avisando — a coluna só para de somar.
     const csv = toCsv({
+      ...MAPA_PADRAO,
       setId: "s-1",
       nome: "Teste",
       semVeredito: 0,
@@ -170,6 +196,7 @@ describe("toCsv — proteção contra injeção de fórmula", () => {
           capabilityLabel: null,
           evidencia: null,
           evidenciaErro: null,
+          vigencia: VIGENCIA_PADRAO,
         },
       ],
     });
@@ -225,9 +252,11 @@ const ctx = {
 };
 
 const mapFixture: ComplianceMap = {
+  ...MAPA_PADRAO,
   setId: "s-1",
   nome: "RFP Aurora Mesh",
   semVeredito: 1,
+  semVereditoQueObriga: 1,
   linhas: [
     {
       requirementId: "r-1",
@@ -241,6 +270,7 @@ const mapFixture: ComplianceMap = {
       capabilityLabel: "Aceite individual de política",
       evidencia: { total: 37, amostra: ["Bia · 12/07"] },
       evidenciaErro: null,
+      vigencia: VIGENCIA_PADRAO,
     },
     {
       requirementId: "r-2",
@@ -257,6 +287,7 @@ const mapFixture: ComplianceMap = {
       // por falha.
       evidencia: null,
       evidenciaErro: "Falha ao buscar evidência: coluna removida",
+      vigencia: VIGENCIA_PADRAO,
     },
     {
       requirementId: "r-3",
@@ -270,6 +301,7 @@ const mapFixture: ComplianceMap = {
       capabilityLabel: null,
       evidencia: null,
       evidenciaErro: null,
+      vigencia: VIGENCIA_PADRAO,
     },
   ],
 };

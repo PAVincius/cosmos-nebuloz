@@ -9,6 +9,12 @@ import {
   requireCharterContext,
   requireCharterPermissionContext,
 } from "@/lib/charter/guards";
+import {
+  type Cenario,
+  type FonteDeVigencia,
+  resolverVigencia,
+  type Vigencia,
+} from "@/lib/charter/vigencia";
 import { type Result, safeAction } from "../../actions/_base";
 import { GovernanceError, logCharterAudit } from "./_shared";
 
@@ -47,13 +53,24 @@ export type MapRow = {
   /** Preenchido quando a consulta de evidência falhou. A linha então não pode
    *  ser lida como prova — só como alegação. */
   evidenciaErro: string | null;
+  /** Derivada do conjunto e da exigência, nunca gravada. Ver lib/charter/vigencia.ts. */
+  vigencia: Vigencia;
 };
 
 export type ComplianceMap = {
   setId: string;
   nome: string;
+  cenario: Cenario;
+  /** A data em que o mapa foi resolvido. Vai para o export: um mapa sem a data
+   *  de referência é uma afirmação sem validade declarada. */
+  referencia: string;
   linhas: MapRow[];
   semVeredito: number;
+  /** Sem veredito **entre as que já obrigam**. É o número que responde a um
+   *  comprador; `semVeredito` inclui linha que ainda nem entrou em vigor. */
+  semVereditoQueObriga: number;
+  /** Linhas cuja resposta muda conforme a alteração em trâmite passe ou não. */
+  divergentes: number;
 };
 
 export type SetRow = {
@@ -72,6 +89,25 @@ export type SetRow = {
   supersededById: string | null;
   temCobertura: boolean;
   diff: { alteradas: number; novas: number; removidas: number } | null;
+  normaStatus: "VIGENTE" | "PROPOSTO" | "ADIADO" | "REVOGADO";
+  vigenciaEm: string | null;
+  vigenciaPropostaEm: string | null;
+};
+
+const NormaStatusSchema = z.enum([
+  "VIGENTE",
+  "PROPOSTO",
+  "ADIADO",
+  "REVOGADO",
+]);
+
+/** Vigência da exigência. Tudo opcional porque ausente significa "herda do
+ *  conjunto" — que é o caso comum, e o que evita repetir valor herdado. */
+const VigenciaRequisitoSchema = {
+  normaStatus: NormaStatusSchema.optional(),
+  vigenciaEm: z.coerce.date().optional(),
+  vigenciaPropostaEm: z.coerce.date().optional(),
+  notaVigencia: z.string().trim().max(2000).optional(),
 };
 
 const RequisitoSchema = z.object({
@@ -81,6 +117,7 @@ const RequisitoSchema = z.object({
   texto: z.string().optional(),
   peso: z.number().int().optional(),
   categoria: z.string().optional(),
+  ...VigenciaRequisitoSchema,
 });
 
 const ImportSchema = z.object({
@@ -91,8 +128,27 @@ const ImportSchema = z.object({
   jurisdicao: z.string().optional(),
   versao: z.string().default("1"),
   notas: z.string().optional(),
+  ...VigenciaRequisitoSchema,
+  normaStatus: NormaStatusSchema.default("VIGENTE"),
   requisitos: z.array(RequisitoSchema).min(1),
 });
+
+/** Só os campos de vigência, na forma que `resolverVigencia` espera. Prisma
+ *  devolve `undefined` para campo ausente em `select` parcial; a normalização
+ *  para `null` mora aqui para a derivação não ter dois casos de "não disse". */
+function fonteDeVigencia(linha: {
+  normaStatus?: string | null;
+  vigenciaEm?: Date | null;
+  vigenciaPropostaEm?: Date | null;
+  notaVigencia?: string | null;
+}): FonteDeVigencia {
+  return {
+    normaStatus: (linha.normaStatus ?? null) as FonteDeVigencia["normaStatus"],
+    vigenciaEm: linha.vigenciaEm ?? null,
+    vigenciaPropostaEm: linha.vigenciaPropostaEm ?? null,
+    notaVigencia: linha.notaVigencia ?? null,
+  };
+}
 
 // ── Importar conjunto ───────────────────────────────────────────────────────
 
@@ -136,6 +192,10 @@ export async function importRequirementSet(
           jurisdicao: data.jurisdicao ?? null,
           versao: data.versao,
           notas: data.notas ?? null,
+          normaStatus: data.normaStatus,
+          vigenciaEm: data.vigenciaEm ?? null,
+          vigenciaPropostaEm: data.vigenciaPropostaEm ?? null,
+          notaVigencia: data.notaVigencia ?? null,
         },
       });
 
@@ -148,6 +208,10 @@ export async function importRequirementSet(
           texto: r.texto ?? null,
           peso: r.peso ?? null,
           categoria: r.categoria ?? null,
+          normaStatus: r.normaStatus ?? null,
+          vigenciaEm: r.vigenciaEm ?? null,
+          vigenciaPropostaEm: r.vigenciaPropostaEm ?? null,
+          notaVigencia: r.notaVigencia ?? null,
         })),
       });
 
@@ -238,6 +302,15 @@ export async function publishSetVersion(
           jurisdicao: oldSet.jurisdicao,
           versao: data.versao,
           supersedesId: oldSet.id,
+          // Herdadas pelo mesmo motivo da licença: publicar versão nova de um
+          // conjunto não é notícia sobre o trâmite dele. Sem herdar, um
+          // conjunto PROPOSTO viraria VIGENTE (o default da coluna) só por
+          // receber texto novo — e o mapa passaria a afirmar obrigação a
+          // partir de uma edição de redação.
+          normaStatus: oldSet.normaStatus,
+          vigenciaEm: oldSet.vigenciaEm,
+          vigenciaPropostaEm: oldSet.vigenciaPropostaEm,
+          notaVigencia: oldSet.notaVigencia,
         },
       });
 
@@ -250,6 +323,10 @@ export async function publishSetVersion(
           texto: r.texto ?? null,
           peso: r.peso ?? null,
           categoria: r.categoria ?? null,
+          normaStatus: r.normaStatus ?? null,
+          vigenciaEm: r.vigenciaEm ?? null,
+          vigenciaPropostaEm: r.vigenciaPropostaEm ?? null,
+          notaVigencia: r.notaVigencia ?? null,
         })),
       });
 
@@ -603,11 +680,25 @@ export async function setCoverage(
 
 // ── Mapa de conformidade ─────────────────────────────────────────────────────
 
+const CenarioSchema = z.enum(["EM_VIGOR", "SE_APROVADA"]).default("EM_VIGOR");
+
+/**
+ * `cenario` decide qual prazo o mapa enxerga, e o padrão é o conservador:
+ * `EM_VIGOR` lê o texto publicado, ignorando alteração em trâmite. Quem quiser
+ * ver o cenário otimista pede por ele — o contrário faria o produto assumir,
+ * por omissão, que um trílogo termina como a proposta.
+ */
 export async function getComplianceMap(
-  setId: string
+  setId: string,
+  cenarioInput?: z.input<typeof CenarioSchema>
 ): Promise<Result<ComplianceMap>> {
   return await safeAction(async () => {
     const ctx = await requireCharterPermissionContext("compliance.map");
+    const cenario = CenarioSchema.parse(cenarioInput);
+    // Uma data por chamada, capturada aqui e passada adiante: resolver linha a
+    // linha com `new Date()` faria um mapa longo cruzar a meia-noite e
+    // responder diferente para as primeiras e as últimas linhas.
+    const referencia = new Date();
 
     // Só as três leituras aqui dentro — set, requisitos, coberturas do
     // tenant. `withTenantDb` é um `$transaction`, e cada capacidade do
@@ -662,13 +753,36 @@ export async function getComplianceMap(
       coberturas.map((c) => [c.requirementId, c])
     );
 
+    const fonteDoConjunto = fonteDeVigencia(set);
+
     let semVeredito = 0;
+    let semVereditoQueObriga = 0;
+    let divergentes = 0;
     const linhas: MapRow[] = [];
     for (const r of requisitos) {
       const cobertura = coberturaPorRequisito.get(r.id);
       const status = cobertura?.status ?? "SEM_VEREDITO";
       if (status === "SEM_VEREDITO") {
         semVeredito += 1;
+      }
+
+      const fonteDaExigencia = fonteDeVigencia(r);
+      const vigencia = resolverVigencia(fonteDoConjunto, fonteDaExigencia, {
+        em: referencia,
+        cenario,
+      });
+
+      if (status === "SEM_VEREDITO" && vigencia.obriga) {
+        semVereditoQueObriga += 1;
+      }
+      // Calculado com o resultado que já temos em vez de chamar
+      // `cenariosDivergem`, que resolveria os dois cenários de novo por linha.
+      const oposto = resolverVigencia(fonteDoConjunto, fonteDaExigencia, {
+        em: referencia,
+        cenario: cenario === "EM_VIGOR" ? "SE_APROVADA" : "EM_VIGOR",
+      });
+      if (oposto.obriga !== vigencia.obriga) {
+        divergentes += 1;
       }
 
       let evidencia: MapRow["evidencia"] = null;
@@ -710,10 +824,20 @@ export async function getComplianceMap(
         capabilityLabel,
         evidencia,
         evidenciaErro,
+        vigencia,
       });
     }
 
-    return { setId: set.id, nome: set.nome, linhas, semVeredito };
+    return {
+      setId: set.id,
+      nome: set.nome,
+      cenario,
+      referencia: referencia.toISOString(),
+      linhas,
+      semVeredito,
+      semVereditoQueObriga,
+      divergentes,
+    };
   });
 }
 
@@ -811,6 +935,11 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
           supersedesId: s.supersedesId,
           supersededById,
           temCobertura: setsComCobertura.has(s.id),
+          normaStatus: s.normaStatus,
+          // ISO na fronteira: `Date` atravessa a serialização de server
+          // action, mas volta como string no cliente sem o tipo acompanhar.
+          vigenciaEm: s.vigenciaEm?.toISOString() ?? null,
+          vigenciaPropostaEm: s.vigenciaPropostaEm?.toISOString() ?? null,
           diff: supersededById
             ? diffEntreVersoes(
                 porSet.get(s.id) ?? [],
