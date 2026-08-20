@@ -1,0 +1,172 @@
+"use server";
+
+import { requireTenantSession } from "@repo/auth/server";
+import { database, type ProductModule } from "@repo/database";
+import { listModules } from "@repo/rbac";
+import { headers } from "next/headers";
+import { safeAction } from "../_base";
+
+/**
+ * O que o tenant contratou, para a tela de produtos.
+ *
+ * **Não reimplementa a regra de acesso.** Quem decide se um módulo abre é
+ * `listModules` do `@repo/rbac`, cujo comentário já diz ser a fonte do
+ * app-switcher e da nav. Duas cópias da regra divergem no dia em que alguém
+ * mexe numa e esquece a outra — e o sintoma seria a tela oferecer entrada num
+ * módulo que o guard recusa, ou esconder um que o cliente pagou.
+ *
+ * As linhas cruas de `TenantModule` são lidas **só para explicar a ausência**.
+ * `listModules` responde "abre ou não"; ela não responde "por que não", e a
+ * diferença entre "você não contratou" e "seu contrato está suspenso" é a
+ * diferença entre falar com o comercial e falar com o financeiro.
+ */
+
+export type EstadoDoProduto =
+  /** Contratado, vigente, e existe rota para entrar. */
+  | "DISPONIVEL"
+  /** Sem linha em TenantModule. Default deny — não contratou, não é falha. */
+  | "SEM_CONTRATO"
+  /** Contratado, mas inadimplente ou cancelado: a porta fecha sem apagar dado. */
+  | "SUSPENSO"
+  | "CANCELADO"
+  /** Venceu por `expiresAt`, mesmo com status que concederia. */
+  | "EXPIRADO"
+  /** Contratado e vigente, mas o produto ainda não tem tela neste app. */
+  | "SEM_ROTA";
+
+export type ProdutoNoPainel = {
+  modulo: ProductModule;
+  nome: string;
+  resumo: string;
+  /** Para onde ir. Nulo quando não há como entrar — a tela não monta link. */
+  href: string | null;
+  estado: EstadoDoProduto;
+  /** Por que não dá para entrar. Nulo quando dá: frase de sucesso é ruído. */
+  motivo: string | null;
+  /** ISO. Nulo quando não há prazo. */
+  expiraEm: string | null;
+  emTrial: boolean;
+  assentos: number | null;
+};
+
+/** Catálogo fixo: nome, resumo e a rota que existe neste app.
+ *
+ *  `href: null` em SIGNAL não é esquecimento — o produto não tem rota aqui, e
+ *  inventar uma levaria a um 404 com cara de bug. */
+const CATALOGO: Record<
+  ProductModule,
+  { nome: string; resumo: string; href: string | null }
+> = {
+  COSMOS: {
+    nome: "Cosmos",
+    resumo: "Planejamento e execução SAFe — PI Planning, portfólio, fluxo.",
+    href: "/cosmos",
+  },
+  CHARTER: {
+    nome: "Charter",
+    resumo: "Governança de IA — políticas, fornecedores, conformidade.",
+    href: "/charter",
+  },
+  SIGNAL: {
+    nome: "Signal",
+    resumo: "Métrica de carteira que exige pipeline de dados.",
+    href: null,
+  },
+};
+
+const ORDEM: ProductModule[] = ["COSMOS", "CHARTER", "SIGNAL"];
+
+type LinhaDeModulo = {
+  status: string;
+  expiresAt: Date | null;
+  seats: number | null;
+};
+
+/** Traduz a ausência de acesso em causa. Só roda quando `listModules` já
+ *  decidiu que o módulo não abre. */
+function explicarAusencia(linha: LinhaDeModulo | undefined): {
+  estado: EstadoDoProduto;
+  motivo: string;
+} {
+  if (!linha) {
+    return {
+      estado: "SEM_CONTRATO",
+      motivo: "Não contratado. Fale com o comercial para incluir no plano.",
+    };
+  }
+  if (linha.status === "SUSPENDED") {
+    return {
+      estado: "SUSPENSO",
+      motivo: "Contrato suspenso. Seus dados seguem intactos.",
+    };
+  }
+  if (linha.status === "CANCELED") {
+    return {
+      estado: "CANCELADO",
+      motivo: "Contrato cancelado. Seus dados seguem intactos.",
+    };
+  }
+  // Status concederia, mas `listModules` recusou: só sobra o prazo. Sem
+  // inventar outra causa — se aparecer uma, ela vem como este texto e alguém
+  // investiga, em vez de virar "indisponível" genérico.
+  return {
+    estado: "EXPIRADO",
+    motivo: "Contrato vencido. Renove para voltar a acessar.",
+  };
+}
+
+export async function listarProdutos() {
+  return safeAction(async () => {
+    const { tenantId } = await requireTenantSession(await headers());
+
+    const [liberados, linhas] = await Promise.all([
+      listModules(tenantId),
+      database.tenantModule.findMany({
+        where: { tenantId },
+        select: { module: true, status: true, expiresAt: true, seats: true },
+      }),
+    ]);
+
+    const porModulo = new Map(linhas.map((l) => [l.module, l]));
+
+    const produtos: ProdutoNoPainel[] = ORDEM.map((modulo) => {
+      const { nome, resumo, href } = CATALOGO[modulo];
+      const linha = porModulo.get(modulo);
+      const abre = liberados.includes(modulo);
+
+      const comum = {
+        modulo,
+        nome,
+        resumo,
+        expiraEm: linha?.expiresAt?.toISOString() ?? null,
+        emTrial: linha?.status === "TRIAL",
+        assentos: linha?.seats ?? null,
+      };
+
+      if (!abre) {
+        const { estado, motivo } = explicarAusencia(linha);
+        return { ...comum, href: null, estado, motivo };
+      }
+
+      // Contratado e vigente, mas sem tela neste app. Estado próprio: dizer
+      // "disponível" e não ter para onde ir é pior que dizer que falta.
+      if (!href) {
+        return {
+          ...comum,
+          href: null,
+          estado: "SEM_ROTA" as const,
+          motivo: "Contratado. Ainda não tem tela nesta plataforma.",
+        };
+      }
+
+      return {
+        ...comum,
+        href,
+        estado: "DISPONIVEL" as const,
+        motivo: null,
+      };
+    });
+
+    return produtos;
+  });
+}
