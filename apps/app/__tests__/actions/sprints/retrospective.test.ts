@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   sprintFindFirst: vi.fn(),
   teamFindFirst: vi.fn(),
   retroItemFindFirst: vi.fn(),
+  tenantMemberFindFirst: vi.fn(),
   retroFindFirst: vi.fn(),
   retroFindFirstOrThrow: vi.fn(),
   retroFindMany: vi.fn(),
@@ -42,6 +43,7 @@ vi.mock("@repo/database", () => ({
       update: mocks.retroItemUpdate,
     },
     sprint: { findFirst: mocks.sprintFindFirst },
+    tenantMember: { findFirst: mocks.tenantMemberFindFirst },
     team: { findFirst: mocks.teamFindFirst },
     retroVote: {
       create: mocks.retroVoteCreate,
@@ -344,6 +346,25 @@ describe("addRetroActionItem (AC-005)", () => {
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "SM" });
     mocks.retroFindFirstOrThrow.mockResolvedValue({ id: "retro-1" });
     mocks.retroActionCreate.mockResolvedValue({ id: "action-1" });
+    mocks.tenantMemberFindFirst.mockResolvedValue({ id: "member-1" });
+  });
+
+  it("rejects an ownerId from outside the tenant (IDOR guard)", async () => {
+    mocks.tenantMemberFindFirst.mockResolvedValue(null);
+
+    const result = await addRetroActionItem({
+      retroId: "retro-1",
+      title: "Fix the flaky test",
+      ownerId: "user-of-another-tenant",
+      dueDate: new Date(Date.now() + 30 * 86_400_000).toISOString(),
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("OWNER_NOT_IN_TENANT");
+    expect(mocks.retroActionCreate).not.toHaveBeenCalled();
   });
 
   it("creates action item with owner and future due date (AC-005)", async () => {

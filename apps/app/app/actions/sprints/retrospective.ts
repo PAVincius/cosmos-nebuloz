@@ -288,6 +288,15 @@ export async function addRetroActionItem(
       select: { id: true },
     });
 
+    // Cross-tenant IDOR guard — the action item owner is addressed by user id.
+    const owner = await database.tenantMember.findFirst({
+      where: { userId: input.ownerId, tenantId },
+      select: { id: true },
+    });
+    if (!owner) {
+      throw new Error("OWNER_NOT_IN_TENANT");
+    }
+
     const item = await database.retroActionItem.create({
       data: {
         tenantId,

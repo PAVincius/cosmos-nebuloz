@@ -9,6 +9,7 @@ const mocks = vi.hoisted(() => ({
   teamFindFirst: vi.fn(),
   sprintFindFirst: vi.fn(),
   storyFindFirst: vi.fn(),
+  tenantMemberFindFirst: vi.fn(),
   defectFindFirstOrThrow: vi.fn(),
   defectUpdateMany: vi.fn(),
   stateTransitionHistoryCreate: vi.fn(),
@@ -32,6 +33,7 @@ vi.mock("@repo/database", () => ({
     team: { findFirst: mocks.teamFindFirst },
     sprint: { findFirst: mocks.sprintFindFirst },
     story: { findFirst: mocks.storyFindFirst },
+    tenantMember: { findFirst: mocks.tenantMemberFindFirst },
     stateTransitionHistory: { create: mocks.stateTransitionHistoryCreate },
     anomalyDetectionRun: { create: mocks.anomalyDetectionRunCreate },
     anomaly: { create: mocks.anomalyCreate },
@@ -81,6 +83,7 @@ describe("createDefect", () => {
     mocks.teamFindFirst.mockResolvedValue({ id: "team-1" });
     mocks.sprintFindFirst.mockResolvedValue({ id: "sprint-1" });
     mocks.storyFindFirst.mockResolvedValue({ id: "story-1" });
+    mocks.tenantMemberFindFirst.mockResolvedValue({ id: "member-1" });
     mocks.anomalyDetectionRunCreate.mockResolvedValue({ id: "run-1" });
     mocks.anomalyCreate.mockResolvedValue({});
   });
@@ -170,6 +173,25 @@ describe("createDefect", () => {
       return;
     }
     expect(result.error).toContain("SPRINT_NOT_FOUND");
+    expect(mocks.defectCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects an assigneeUserId from outside the tenant (IDOR guard)", async () => {
+    mocks.tenantMemberFindFirst.mockResolvedValue(null);
+
+    const result = await createDefect({
+      sprintId: "sprint-1",
+      teamId: "team-1",
+      assigneeUserId: "user-of-another-tenant",
+      title: "Login fails",
+      severity: "high",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("ASSIGNEE_NOT_IN_TENANT");
     expect(mocks.defectCreate).not.toHaveBeenCalled();
   });
 

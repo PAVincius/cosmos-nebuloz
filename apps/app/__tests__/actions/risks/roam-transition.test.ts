@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   riskUpdateMany: vi.fn(),
   riskCreate: vi.fn(),
   piPlanFindFirst: vi.fn(),
+  tenantMemberFindFirst: vi.fn(),
 }));
 
 vi.mock("next/headers", () => ({ headers: mocks.headers }));
@@ -22,6 +23,7 @@ vi.mock("@repo/database", () => ({
       create: mocks.riskCreate,
     },
     pIPlan: { findFirst: mocks.piPlanFindFirst },
+    tenantMember: { findFirst: mocks.tenantMemberFindFirst },
   },
 }));
 
@@ -36,6 +38,24 @@ describe("roamTransitionRisk", () => {
     mocks.headers.mockResolvedValue(new Headers());
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "RTE" });
     mocks.riskUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.tenantMemberFindFirst.mockResolvedValue({ id: "member-1" });
+  });
+
+  it("rejects an ownerId that is not a member of the tenant (IDOR guard)", async () => {
+    mocks.tenantMemberFindFirst.mockResolvedValue(null);
+
+    const result = await roamTransitionRisk({
+      riskId: "risk-1",
+      roamStatus: "OWNED",
+      ownerId: "user-of-another-tenant",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("OWNER_NOT_IN_TENANT");
+    expect(mocks.riskUpdateMany).not.toHaveBeenCalled();
   });
 
   it("transitions to OWNED with ownerId sets ownedAt", async () => {

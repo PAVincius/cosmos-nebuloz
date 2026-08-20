@@ -65,7 +65,7 @@ export async function createDefect(
     // Cross-tenant IDOR guard — the parent ids come from the client and none of
     // them carry a database FK, so nothing but this check keeps a defect from
     // pointing at another tenant's sprint, team or story.
-    const [team, sprint, story] = await Promise.all([
+    const [team, sprint, story, assignee] = await Promise.all([
       database.team.findFirst({
         where: { id: input.teamId, tenantId },
         select: { id: true },
@@ -80,6 +80,12 @@ export async function createDefect(
             select: { id: true },
           })
         : Promise.resolve(null),
+      input.assigneeUserId
+        ? database.tenantMember.findFirst({
+            where: { userId: input.assigneeUserId, tenantId },
+            select: { id: true },
+          })
+        : Promise.resolve(null),
     ]);
     if (!team) {
       throw new Error("TEAM_NOT_FOUND");
@@ -89,6 +95,9 @@ export async function createDefect(
     }
     if (input.storyId && !story) {
       throw new Error("STORY_NOT_FOUND");
+    }
+    if (input.assigneeUserId && !assignee) {
+      throw new Error("ASSIGNEE_NOT_IN_TENANT");
     }
 
     return database.$transaction(async (tx) => {

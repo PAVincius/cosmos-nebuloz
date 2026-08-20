@@ -71,6 +71,16 @@ export async function escalateImpediment(
       throw new Error("PI_PLAN_NOT_FOUND");
     }
 
+    if (input.ownerUserId) {
+      const owner = await database.tenantMember.findFirst({
+        where: { userId: input.ownerUserId, tenantId },
+        select: { id: true },
+      });
+      if (!owner) {
+        throw new Error("OWNER_NOT_IN_TENANT");
+      }
+    }
+
     return database.$transaction(async (tx) => {
       const impediment = await tx.impediment.findFirstOrThrow({
         where: { id: input.impedimentId, tenantId },
