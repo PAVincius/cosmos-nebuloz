@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { SairEEntrar } from "@/components/sair-e-entrar";
 import { Shell } from "@/components/shell";
 import { resolveStaffAccess } from "@/lib/staff-access";
 
@@ -26,6 +27,19 @@ export default async function StaffLayout({
         >
           Cadastrar aplicativo autenticador
         </Link>
+      </div>
+    );
+  }
+
+  // Cadastrou o autenticador e continua barrado: a sessão é anterior ao
+  // cadastro. Um link para /sign-in não resolve — a sessão velha continua de
+  // pé e o guard a recusa de novo. Só encerrar resolve.
+  if (access.status === "sessao_sem_2fa") {
+    return (
+      <div className="mx-auto max-w-md rounded-lg border p-8 text-center">
+        <h1 className="font-semibold text-xl">Falta um login novo</h1>
+        <p className="mt-2 text-muted-foreground text-sm">{access.message}</p>
+        <SairEEntrar rotulo="Sair e entrar de novo" />
       </div>
     );
   }
