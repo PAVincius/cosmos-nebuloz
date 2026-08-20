@@ -6,6 +6,9 @@ const mocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn(),
   revalidatePath: vi.fn(),
   defectCreate: vi.fn(),
+  teamFindFirst: vi.fn(),
+  sprintFindFirst: vi.fn(),
+  storyFindFirst: vi.fn(),
   defectFindFirstOrThrow: vi.fn(),
   defectUpdateMany: vi.fn(),
   stateTransitionHistoryCreate: vi.fn(),
@@ -26,6 +29,9 @@ vi.mock("@repo/database", () => ({
       findFirstOrThrow: mocks.defectFindFirstOrThrow,
       updateMany: mocks.defectUpdateMany,
     },
+    team: { findFirst: mocks.teamFindFirst },
+    sprint: { findFirst: mocks.sprintFindFirst },
+    story: { findFirst: mocks.storyFindFirst },
     stateTransitionHistory: { create: mocks.stateTransitionHistoryCreate },
     anomalyDetectionRun: { create: mocks.anomalyDetectionRunCreate },
     anomaly: { create: mocks.anomalyCreate },
@@ -72,6 +78,9 @@ describe("createDefect", () => {
     mocks.requireTenantSession.mockResolvedValue(tenantCtx);
     makeTransactionMock();
     mocks.defectCreate.mockResolvedValue({ id: "def-1" });
+    mocks.teamFindFirst.mockResolvedValue({ id: "team-1" });
+    mocks.sprintFindFirst.mockResolvedValue({ id: "sprint-1" });
+    mocks.storyFindFirst.mockResolvedValue({ id: "story-1" });
     mocks.anomalyDetectionRunCreate.mockResolvedValue({ id: "run-1" });
     mocks.anomalyCreate.mockResolvedValue({});
   });
@@ -127,6 +136,60 @@ describe("createDefect", () => {
         }),
       })
     );
+  });
+  it("rejects a teamId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.teamFindFirst.mockResolvedValue(null);
+
+    const result = await createDefect({
+      sprintId: "sprint-1",
+      teamId: "team-of-another-tenant",
+      title: "Login fails",
+      severity: "high",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("TEAM_NOT_FOUND");
+    expect(mocks.defectCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a sprintId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.sprintFindFirst.mockResolvedValue(null);
+
+    const result = await createDefect({
+      sprintId: "sprint-of-another-tenant",
+      teamId: "team-1",
+      title: "Login fails",
+      severity: "high",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("SPRINT_NOT_FOUND");
+    expect(mocks.defectCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a storyId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.storyFindFirst.mockResolvedValue(null);
+
+    const result = await createDefect({
+      sprintId: "sprint-1",
+      teamId: "team-1",
+      storyId: "story-of-another-tenant",
+      title: "Login fails",
+      severity: "high",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("STORY_NOT_FOUND");
+    expect(mocks.defectCreate).not.toHaveBeenCalled();
   });
 });
 

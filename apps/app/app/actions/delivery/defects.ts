@@ -62,6 +62,35 @@ export async function createDefect(
     const { tenantId } = await requireTenantSession(await headers());
     const input = createDefectSchema.parse(raw);
 
+    // Cross-tenant IDOR guard — the parent ids come from the client and none of
+    // them carry a database FK, so nothing but this check keeps a defect from
+    // pointing at another tenant's sprint, team or story.
+    const [team, sprint, story] = await Promise.all([
+      database.team.findFirst({
+        where: { id: input.teamId, tenantId },
+        select: { id: true },
+      }),
+      database.sprint.findFirst({
+        where: { id: input.sprintId, tenantId },
+        select: { id: true },
+      }),
+      input.storyId
+        ? database.story.findFirst({
+            where: { id: input.storyId, tenantId },
+            select: { id: true },
+          })
+        : Promise.resolve(null),
+    ]);
+    if (!team) {
+      throw new Error("TEAM_NOT_FOUND");
+    }
+    if (!sprint) {
+      throw new Error("SPRINT_NOT_FOUND");
+    }
+    if (input.storyId && !story) {
+      throw new Error("STORY_NOT_FOUND");
+    }
+
     return database.$transaction(async (tx) => {
       const defect = await tx.defect.create({
         data: {

@@ -32,6 +32,17 @@ export async function saveSprintReview(
       );
     }
 
+    // Cross-tenant IDOR guard — the upsert key is `sprintId` alone, so without
+    // this check another tenant's SprintReview row falls into the update branch
+    // and gets overwritten.
+    const sprint = await database.sprint.findFirst({
+      where: { id: input.sprintId, tenantId },
+      select: { id: true },
+    });
+    if (!sprint) {
+      throw new Error("SPRINT_NOT_FOUND");
+    }
+
     const review = await database.sprintReview.upsert({
       where: { sprintId: input.sprintId },
       create: {

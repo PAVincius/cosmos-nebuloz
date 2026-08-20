@@ -6,6 +6,9 @@ const mocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn(),
   revalidatePath: vi.fn(),
   retroCreate: vi.fn(),
+  sprintFindFirst: vi.fn(),
+  teamFindFirst: vi.fn(),
+  retroItemFindFirst: vi.fn(),
   retroFindFirst: vi.fn(),
   retroFindFirstOrThrow: vi.fn(),
   retroFindMany: vi.fn(),
@@ -34,9 +37,12 @@ vi.mock("@repo/database", () => ({
     },
     retroItem: {
       create: mocks.retroItemCreate,
+      findFirst: mocks.retroItemFindFirst,
       findMany: mocks.retroItemFindMany,
       update: mocks.retroItemUpdate,
     },
+    sprint: { findFirst: mocks.sprintFindFirst },
+    team: { findFirst: mocks.teamFindFirst },
     retroVote: {
       create: mocks.retroVoteCreate,
       count: mocks.retroVoteCount,
@@ -76,6 +82,7 @@ function makeTransactionMock() {
             count: mocks.retroVoteCount,
           },
           retroItem: {
+            findFirst: mocks.retroItemFindFirst,
             update: mocks.retroItemUpdate,
           },
         });
@@ -93,7 +100,41 @@ describe("createRetro carry-forward (AC-006)", () => {
     mocks.headers.mockResolvedValue(new Headers());
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "SM" });
     mocks.retroCreate.mockResolvedValue({ id: "retro-new" });
+    mocks.sprintFindFirst.mockResolvedValue({ id: "sprint-1" });
+    mocks.teamFindFirst.mockResolvedValue({ id: "team-1" });
     makeTransactionMock();
+  });
+
+  it("rejects a sprintId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.sprintFindFirst.mockResolvedValue(null);
+
+    const result = await createRetro({
+      sprintId: "sprint-of-another-tenant",
+      teamId: "team-1",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("SPRINT_NOT_FOUND");
+    expect(mocks.retroCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a teamId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.teamFindFirst.mockResolvedValue(null);
+
+    const result = await createRetro({
+      sprintId: "sprint-1",
+      teamId: "team-of-another-tenant",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("TEAM_NOT_FOUND");
+    expect(mocks.retroCreate).not.toHaveBeenCalled();
   });
 
   it("carries forward 2 open actions from prior closed retro (AC-006)", async () => {
@@ -228,7 +269,30 @@ describe("castRetroVote (AC-004)", () => {
     });
     mocks.retroVoteCreate.mockResolvedValue({});
     mocks.retroItemUpdate.mockResolvedValue({});
+    mocks.retroItemFindFirst.mockResolvedValue({ id: "item-1" });
     makeTransactionMock();
+  });
+
+  it("rejects an itemId outside this retro/tenant (IDOR guard)", async () => {
+    mocks.retroFindFirstOrThrow.mockResolvedValue({
+      phase: "VOTING",
+      votesPerMember: 3,
+    });
+    mocks.retroVoteCount.mockResolvedValue(0);
+    mocks.retroItemFindFirst.mockResolvedValue(null);
+
+    const result = await castRetroVote({
+      retroId: "retro-1",
+      itemId: "item-of-another-tenant",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("RETRO_ITEM_NOT_FOUND");
+    expect(mocks.retroVoteCreate).not.toHaveBeenCalled();
+    expect(mocks.retroItemUpdate).not.toHaveBeenCalled();
   });
 
   it("casts vote and returns remaining count (AC-004)", async () => {

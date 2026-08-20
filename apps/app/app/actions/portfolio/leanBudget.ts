@@ -34,6 +34,24 @@ export async function saveLeanBudget(
       );
     }
 
+    // Cross-tenant IDOR guard — both parent ids come from the client.
+    const [art, piPlan] = await Promise.all([
+      database.aRT.findFirst({
+        where: { id: input.artId, tenantId },
+        select: { id: true },
+      }),
+      database.pIPlan.findFirst({
+        where: { id: input.piPlanId, tenantId },
+        select: { id: true },
+      }),
+    ]);
+    if (!art) {
+      throw new Error("ART_NOT_FOUND");
+    }
+    if (!piPlan) {
+      throw new Error("PI_PLAN_NOT_FOUND");
+    }
+
     const existing = await database.leanBudget.findFirst({
       where: { tenantId, artId: input.artId, piPlanId: input.piPlanId },
       select: { id: true },
