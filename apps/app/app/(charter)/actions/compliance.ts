@@ -710,9 +710,17 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
       // A aresta só existe para trás no schema. A inversa é derivada aqui para
       // a tela conseguir dizer "há versão nova" olhando o conjunto que o tenant
       // usa hoje, em vez de o cliente cruzar a lista consigo mesma.
+      //
+      // Dois conjuntos podem declarar o mesmo antecessor: `supersedesId` não
+      // tem @@unique e `publishSetVersion` não impede publicar duas versões a
+      // partir da mesma. `sets` vem em `importadoEm desc`, então o primeiro a
+      // aparecer é o mais recente — e é ele que deve ser oferecido para adoção.
+      // Sem este guard, o `set` seguinte sobrescreveria com o sucessor mais
+      // ANTIGO, e a tela ofereceria a versão errada sem nada indicar o
+      // conflito.
       const sucessorPorAntecessor = new Map<string, string>();
       for (const s of sets) {
-        if (s.supersedesId) {
+        if (s.supersedesId && !sucessorPorAntecessor.has(s.supersedesId)) {
           sucessorPorAntecessor.set(s.supersedesId, s.id);
         }
       }

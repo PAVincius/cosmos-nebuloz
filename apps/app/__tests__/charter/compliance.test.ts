@@ -860,4 +860,48 @@ describe("listRequirementSets — sucessão", () => {
     expect(res.ok && res.data[0].supersededById).toBe(null);
     expect(res.ok && res.data[0].diff).toBe(null);
   });
+
+  it("com dois sucessores do mesmo antecessor, oferece o mais recente", async () => {
+    // importadoEm desc: set-v3 é o mais recente dos dois que substituem set-v1
+    h.setFindMany.mockResolvedValueOnce([
+      {
+        id: "set-v3",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "3",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v2",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "2",
+        supersedesId: "set-v1",
+        _count: { requirements: 1 },
+      },
+      {
+        id: "set-v1",
+        nome: "Reg",
+        origem: "REGULACAO",
+        versao: "1",
+        supersedesId: null,
+        _count: { requirements: 1 },
+      },
+    ]);
+    h.reqFindMany.mockResolvedValueOnce([
+      { setId: "set-v1", codigo: "A-1", resumo: "antigo", texto: null },
+      { setId: "set-v2", codigo: "A-1", resumo: "v2", texto: null },
+      { setId: "set-v3", codigo: "A-1", resumo: "v3", texto: null },
+    ]);
+
+    const res = await listRequirementSets();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    const v1 = res.data.find((s) => s.id === "set-v1");
+    expect(v1?.supersededById).toBe("set-v3");
+  });
 });
