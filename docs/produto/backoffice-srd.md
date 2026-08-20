@@ -15,9 +15,10 @@ provisionamento de tenant, ciclo de vida de módulo, fila de aprovação, trilha
 auditoria, health de carteira, e as interfaces com `@repo/provisioning`,
 `@repo/auth` e o Cosmos.
 
-**Fora de escopo:** funcionalidade entregue ao cliente (Cosmos), execução de
-modelo (LAB registra, não roda), e operação de emergência — o painel cobre o
-caminho normal, não substitui acesso ao banco.
+**Fora de escopo:** funcionalidade entregue ao cliente (Cosmos), o registro de
+modelo próprio (LAB — documento próprio, [LAB SRD v1.0](./lab-srd.md)), e
+operação de emergência — o painel cobre o caminho normal, não substitui acesso
+ao banco.
 
 ### Definições
 
@@ -29,7 +30,7 @@ caminho normal, não substitui acesso ao banco.
 | Provisionar | Criar tenant e semear o mínimo para ele funcionar |
 | Aprovação | Pedido enfileirado para operação que não executa no clique |
 | Saúde | Veredito **derivado** sobre um cliente — nunca campo gravado |
-| Capability | Permissão concedida à parte do papel (hoje: `lab`) |
+| Capability | Permissão concedida à parte do papel — nenhuma existe hoje; a primeira será `lab` |
 
 ---
 
@@ -48,9 +49,9 @@ caminho normal, não substitui acesso ao banco.
      ┌──────────┬─────────┼─────────┬──────────┐
      ▼          ▼         ▼         ▼          ▼
 ┌─────────┐ ┌────────┐ ┌──────┐ ┌───────┐ ┌──────────┐
-│ Tenants │ │Aprova- │ │Health│ │ Audit │ │   LAB    │
-│ e módu- │ │ ções   │ │ deri-│ │ Explo-│ │ (atrás   │
-│  los    │ │        │ │ vada │ │  rer  │ │ de cap.) │
+│ Tenants │ │Aprova- │ │Health│ │ Audit │ │Delivery e│
+│ e módu- │ │ ções   │ │ deri-│ │ Explo-│ │ Comercial│
+│  los    │ │        │ │ vada │ │  rer  │ │          │
 └────┬────┘ └───┬────┘ └──┬───┘ └───┬───┘ └────┬─────┘
      └──────────┴─────────┼─────────┴──────────┘
                           ▼
@@ -76,7 +77,7 @@ caminho normal, não substitui acesso ao banco.
 | `@repo/provisioning` | Criação de tenant, módulo, bootstrap — e a auditoria de cada um |
 | `app/actions/*` | 15 módulos de server action, um por área do painel |
 | `lib/health.ts` | Derivação de saúde a partir de sinais que a plataforma já grava |
-| `lib/lab.ts` | Derivação de status de treino a partir de fatos |
+| `lib/comercial.ts`, `lib/delivery.ts` | Derivações de carteira e de alocação |
 | `lib/rate-limit.ts` | Teto por identidade, com escopos separados |
 
 ---
@@ -86,7 +87,7 @@ caminho normal, não substitui acesso ao banco.
 ```
 Tenant ──1:N── TenantModule
   │
-  ├──1:N── TenantMember ──(role, labAccess)── User
+  ├──1:N── TenantMember ──(role)── User
   ├──1:N── Integration
   └──1:N── AuditLog
 
@@ -102,7 +103,7 @@ AccessLog   (quem do staff olhou o quê)
 
 | ENTIDADE | CAMPOS-CHAVE |
 |---|---|
-| `TenantMember` | `id`, `tenantId`, `userId`, `role`, **`labAccess`** |
+| `TenantMember` | `id`, `tenantId`, `userId`, `role` |
 | `PlatformApproval` | `id`, `acao`, `alvoTipo`, `alvoId`, `motivo`, `impacto`, `status`, `solicitanteId`, `decisorId`, `decididoEm` |
 | `AuditLog` | `id`, `tenantId`, `actorUserId`, `action`, `entityType`, `entityId`, `target`, `diff`, `createdAt` |
 | `AccessLog` | separado do `AuditLog` de propósito: registra **leitura**, não escrita |
@@ -139,7 +140,7 @@ layout protege navegação; não protege RPC.
         ┌──────────┐  sem 2FA       ┌───────────┐
         │ 2º fator │───────────────▶│ FORBIDDEN │──▶ "habilite 2FA"
         └────┬─────┘                └───────────┘
-             ▼  PlatformStaff { canWrite, lab }
+             ▼  PlatformStaff { canWrite }
 ```
 *FIGURA 3 — ORDEM DAS PERGUNTAS. O TETO VEM ANTES DO BANCO.*
 
@@ -150,7 +151,7 @@ layout protege navegação; não protege RPC.
 | BG-03 | A chave do teto é a identidade, nunca o IP |
 | BG-04 | Segundo fator exige **cadastrado E verificado nesta sessão** |
 | BG-05 | `assertCanWrite` roda no servidor; UI escondida não é controle |
-| BG-06 | Capability `lab` não deriva de `role`, e há teste que impede derivar |
+| BG-06 | Capability não deriva de `role` — regra do [LAB SRD](./lab-srd.md), sem consumidor aqui hoje |
 | BG-07 | O guard resolve uma vez por requisição (`cache` do React) |
 | BG-08 | Sem Redis, o teto degrada **aberto** e grava aviso |
 
@@ -218,12 +219,14 @@ fila, e nenhum dos dois é decisão.
 - O painel tem dezenas de usuários e centenas a milhares de clientes. **Escala
   com número de clientes e volume de auditoria, não com número de staff** — e a
   otimização segue esse eixo.
-- 14 das 24 rotas são `force-dynamic` por decisão: dado velho em painel de
+- 14 das 18 rotas são `force-dynamic` por decisão: dado velho em painel de
   operação é pior que espera. Cache entra por tela, se entrar.
 - Toda leitura que reduz em memória o que veio de uma amostra é defeito de
   correção, não de performance: a tela passa a afirmar o oposto da verdade sem
   erro, sem log e sem métrica.
-- O LAB pode estar ausente; a seção degrada para portão explicativo.
+- O LAB não está no painel. Uma seção inteira em que nenhuma das seis rotas abre
+  não é limite anotado, é promessa — e ocupava um quarto do menu. Volta quando
+  tiver schema, atrás de capability de verdade.
 - Operação de emergência continua sendo SQL. O painel não promete cobrir tudo.
 
 ---

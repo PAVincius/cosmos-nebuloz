@@ -10,9 +10,16 @@
  * vale para o que ainda vem: esconder a rota faz o operador perguntar; mostrá-la
  * dizendo o que falta responde antes da pergunta.
  *
- * Cada motivo nomeia a entidade que bloqueia, e cada uma foi conferida contra
- * os 151 models do schema — nenhuma existe. Motivo genérico ("em breve") é
+ * Cada motivo nomeia a entidade que bloqueia. Motivo genérico ("em breve") é
  * exatamente o que este campo existe para impedir.
+ *
+ * O limite dessa lógica é escala: ela funciona para uma rota anotada dentro de
+ * uma seção que existe, não para uma seção inteira de seis rotas em que nenhuma
+ * abre. O LAB era esse caso — seis das 24 rotas do painel, todas `Pendente`,
+ * um quarto do menu prometendo o que não tem entidade no schema. Saiu daqui até
+ * ter PRD, SRD e schema; volta com portão de acesso de verdade, não esmaecido
+ * para sempre. Nenhum item usa `pendente` hoje, e o campo fica: é o mecanismo
+ * que o LAB vai usar ao voltar em fatias.
  *
  * O id `clients` com label "Tenants" é do próprio protótipo — a rota continua
  * `/clientes` porque é a que existe, é a que os `revalidatePath` das actions
@@ -32,8 +39,6 @@ export type NavItem = {
 export type NavSection = {
   section: string;
   items: NavItem[];
-  /** Seção atrás de um portão de acesso que ainda não existe no schema. */
-  lab?: boolean;
 };
 
 export const BO_NAV: NavSection[] = [
@@ -92,56 +97,6 @@ export const BO_NAV: NavSection[] = [
         href: "/benchmark",
         icon: "chart",
         label: "Benchmark",
-      },
-    ],
-  },
-  {
-    // Seção inteira atrás de um portão que ainda não existe: o protótipo a
-    // libera por `account.lab`, e não há flag equivalente em User nem em
-    // TenantMember. Aparece esmaecida, como no desenho.
-    section: "LAB",
-    lab: true,
-    items: [
-      {
-        href: "/lab",
-        icon: "flask",
-        label: "Modelo próprio",
-        pendente:
-          "Toda a seção LAB depende de uma flag de acesso por conta, que não existe em User nem em TenantMember, e das entidades de modelo — nenhuma delas está no schema.",
-      },
-      {
-        href: "/lab/datasets",
-        icon: "dataset",
-        label: "Datasets",
-        pendente: "Depende da entidade Dataset — não existe no schema.",
-      },
-      {
-        href: "/lab/treinos",
-        icon: "cpu",
-        label: "Treinos",
-        pendente:
-          "Depende da entidade de execução de treino e de Dataset — nenhuma existe.",
-      },
-      {
-        href: "/lab/avaliacoes",
-        icon: "gauge",
-        label: "Avaliações",
-        pendente:
-          "Depende da entidade de avaliação e dos treinos que ela mede — nenhuma existe.",
-      },
-      {
-        href: "/lab/linhagem",
-        icon: "layers",
-        label: "Linhagem",
-        pendente:
-          "Rastreia dataset → treino → modelo. Depende dos três, e nenhum existe.",
-      },
-      {
-        href: "/lab/model-card",
-        icon: "fileCode",
-        label: "Model card",
-        pendente:
-          "Ficha de um modelo próprio. Depende da entidade de modelo e da avaliação que a preenche.",
       },
     ],
   },

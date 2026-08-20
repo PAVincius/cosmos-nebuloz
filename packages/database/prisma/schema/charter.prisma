@@ -553,6 +553,19 @@ model CharterRequirementSet {
   importadoEm  DateTime          @default(now())
   notas        String?           @db.Text
 
+  /// Se o conjunto já obriga hoje, ainda é projeto, teve prazo movido ou caiu.
+  /// Sem isso, LGPD (lei) e PL 2338/2023 (projeto) chegam ao comprador com o
+  /// mesmo peso — e o mapa afirma obrigação onde há intenção legislativa.
+  normaStatus        CharterNormaStatus @default(VIGENTE)
+  /// Quando obriga pelo texto **em vigor**. Nula para conjunto sem data (RFP).
+  vigenciaEm         DateTime?
+  /// Quando obrigaria por alteração ainda **não aprovada**. Nula quando não há
+  /// proposta em trâmite. As duas coexistem de propósito: escolher uma é
+  /// apostar no resultado de um trílogo, e o painel não aposta.
+  vigenciaPropostaEm DateTime?
+  /// O trâmite em uma frase — o que sustenta `normaStatus` para quem lê.
+  notaVigencia       String?            @db.Text
+
   tenant       Tenant?                 @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   supersedes   CharterRequirementSet?  @relation("CharterReqSetLineage", fields: [supersedesId], references: [id], onDelete: SetNull)
   supersededBy CharterRequirementSet[] @relation("CharterReqSetLineage")
@@ -560,6 +573,7 @@ model CharterRequirementSet {
 
   @@index([tenantId])
   @@index([origem])
+  @@index([normaStatus])
 }
 
 /// Uma exigência. `citacao` e `resumo` sempre; `texto` só quando a licença do
@@ -573,6 +587,17 @@ model CharterRequirement {
   texto     String? @db.Text
   peso      Int?
   categoria String?
+
+  /// Sobrepõem o conjunto quando presentes; nulas herdam. Existe porque o
+  /// prazo quebra **dentro** do conjunto: no AI Act, o Art. 50 obriga desde
+  /// 2 ago 2026, a marcação do 50(2) ganhou carência até 2 dez 2026, e o alto
+  /// risco do Anexo III está proposto para 2 dez 2027. Um status por conjunto
+  /// inteiro não consegue dizer isso, e arredondar para o prazo mais próximo
+  /// ou mais distante erra na direção oposta em metade das linhas.
+  normaStatus        CharterNormaStatus?
+  vigenciaEm         DateTime?
+  vigenciaPropostaEm DateTime?
+  notaVigencia       String?             @db.Text
 
   set              CharterRequirementSet  @relation(fields: [setId], references: [id], onDelete: Cascade)
   coverages        CharterCoverage[]
@@ -624,6 +649,22 @@ enum CharterReqEditor {
 enum CharterReqLicenca {
   LIVRE
   REFERENCIA
+}
+
+/// Estado normativo de um conjunto ou de uma exigência.
+///
+/// `VIGENTE` obriga hoje. `PROPOSTO` é projeto sem força — PL 2338/2023 está
+/// aqui. `ADIADO` já foi publicado mas teve o prazo movido por alteração
+/// posterior. `REVOGADO` caiu e fica no registro porque cobertura antiga
+/// aponta para ele.
+///
+/// O padrão é `VIGENTE` porque RFP de cliente é obrigação contratual assim que
+/// chega — quem tem data é regulação, e regulação é importada com data.
+enum CharterNormaStatus {
+  VIGENTE
+  PROPOSTO
+  ADIADO
+  REVOGADO
 }
 
 enum CharterCoverageStatus {
