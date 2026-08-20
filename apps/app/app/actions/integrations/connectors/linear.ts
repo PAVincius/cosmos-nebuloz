@@ -9,7 +9,10 @@ async function linearQuery<T>(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
+      // Personal API key vai crua — Bearer é formato de OAuth, e a API
+      // devolve 400 INPUT_ERROR para chave pessoal com o prefixo. Igual a
+      // linear-push.ts e linear-full-pull.ts, que sempre mandaram assim.
+      Authorization: apiKey,
     },
     body: JSON.stringify({ query, variables }),
   });
