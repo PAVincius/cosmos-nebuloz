@@ -834,10 +834,15 @@ function ImportQuickAddForm({
           onChange={setSupersedesId}
           options={[
             { value: "", label: "Não — é um conjunto novo" },
-            ...sets.map((s) => ({
-              value: s.id,
-              label: `${s.nome} (v${s.versao})`,
-            })),
+            // Nunca um conjunto global aqui: publishSetVersion recusa
+            // supersedesId de conjunto global no servidor — filtrar já na
+            // tela poupa o round-trip que só voltaria com esse erro.
+            ...sets
+              .filter((s) => !s.global)
+              .map((s) => ({
+                value: s.id,
+                label: `${s.nome} (v${s.versao})`,
+              })),
           ]}
           value={supersedesId}
         />

@@ -484,6 +484,33 @@ describe("publishSetVersion", () => {
       ]);
   });
 
+  it("recusa publicar versão de um conjunto global — só a Nebuloz publica, adoção é o caminho certo", async () => {
+    // "Substitui um conjunto existente" oferecendo qualquer conjunto (Bloqueio
+    // da review final) deixava a tela chamar isto com o id de uma regulação
+    // global. Sem este guard, o tenant cria fork privado tudo-REVISAR (a
+    // colagem não tem `texto`) e disputa sucessor com a v2 oficial futura.
+    h.setFindFirst.mockResolvedValueOnce({
+      id: "s-1",
+      nome: "EU AI Act",
+      licenca: "LIVRE",
+      tenantId: null,
+    });
+
+    const res = await publishSetVersion({
+      supersedesId: "s-1",
+      nome: "EU AI Act (fork)",
+      versao: "2",
+      requisitos: [{ codigo: "4.1", citacao: "Art. 4.1", resumo: "x" }],
+    });
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toMatch(/publicado pela Nebuloz/);
+    expect(h.setCreate).not.toHaveBeenCalled();
+  });
+
   it("marca como REVISAR só as coberturas cujo requisito mudou", async () => {
     // Tenant já opinou nas duas: ATENDE em 4.1, ATENDE em 4.2.
     h.covFindMany.mockResolvedValue([

@@ -60,6 +60,12 @@ export type SetRow = {
   id: string;
   nome: string;
   origem: "RFP" | "REGULACAO";
+  /** `tenantId === null` — regulação publicada pela Nebuloz, vale para todos.
+   *  A tela usa isto para nunca oferecer um global no "Substitui um conjunto
+   *  existente": publishSetVersion recusa supersedesId de conjunto global no
+   *  servidor, e o filtro aqui poupa o round-trip que só voltaria com esse
+   *  erro. */
+  global: boolean;
   versao: string;
   total: number;
   supersedesId: string | null;
@@ -187,6 +193,19 @@ export async function publishSetVersion(
         throw new GovernanceError(
           "set.unknown",
           "Conjunto de exigências não encontrado."
+        );
+      }
+
+      // Conjunto global é publicado pela Nebuloz — versão nova chega pelo
+      // seed, e a adoção acontece por adoptSetVersion. Sem este guard, "Substitui
+      // um conjunto existente" oferecendo qualquer conjunto deixa um tenant
+      // criar fork privado de uma regulação global (tudo REVISAR, porque a
+      // colagem não tem `texto`) e disputar sucessor com a v2 oficial que a
+      // Nebuloz publicar depois.
+      if (oldSet.tenantId === null) {
+        throw new GovernanceError(
+          "set.global",
+          "Conjunto global é publicado pela Nebuloz — versão nova chega pelo seed, e a adoção acontece aqui."
         );
       }
 
@@ -786,6 +805,7 @@ export async function listRequirementSets(): Promise<Result<SetRow[]>> {
           id: s.id,
           nome: s.nome,
           origem: s.origem,
+          global: s.tenantId === null,
           versao: s.versao,
           total: s._count.requirements,
           supersedesId: s.supersedesId,

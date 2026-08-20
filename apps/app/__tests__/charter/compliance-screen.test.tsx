@@ -45,6 +45,7 @@ const set = (over: Partial<SetRow> = {}): SetRow => ({
   id: "set-1",
   nome: "RFP Banco Aurora",
   origem: "RFP",
+  global: false,
   versao: "1",
   total: 1,
   supersedesId: null,
@@ -838,5 +839,42 @@ describe("ComplianceScreen", () => {
       await screen.findByText(/1 alteradas, 1 novas, 0 removida/)
     ).toBeTruthy();
     expect(getComplianceMapMock).toHaveBeenCalledWith("set-v1");
+  });
+
+  it('dropdown "Substitui um conjunto existente" nunca oferece um conjunto global', async () => {
+    // publishSetVersion recusa supersedesId de conjunto global no servidor —
+    // este teste escopa a asserção ao select de dentro do Field (por label),
+    // não à tela toda: o Select do header (linha ~908 de compliance.tsx)
+    // lista todos os conjuntos, inclusive o global, então um getByText solto
+    // acharia o nome do global ali e passaria mesmo com o dropdown de
+    // "substituir" quebrado.
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({ id: "set-global", nome: "EU AI Act", versao: "1", global: true }),
+        set({ id: "set-tenant", nome: "RFP Banco Aurora", versao: "1" }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("2 conjuntos de exigências");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: /^importar exigências$/i })
+    );
+
+    const supersedesSelect = screen.getByLabelText(
+      "Substitui um conjunto existente"
+    ) as HTMLSelectElement;
+    const labels = Array.from(supersedesSelect.options).map(
+      (o) => o.textContent
+    );
+
+    expect(labels).not.toContain("EU AI Act (v1)");
+    expect(labels).toContain("RFP Banco Aurora (v1)");
   });
 });
