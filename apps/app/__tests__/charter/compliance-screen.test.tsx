@@ -21,6 +21,7 @@ const listCapabilitiesMock = vi.fn();
 const getComplianceCanMock = vi.fn();
 const setCoverageMock = vi.fn();
 const exportComplianceMapMock = vi.fn();
+const adoptSetVersionMock = vi.fn();
 
 vi.mock("@/app/(charter)/actions/compliance", () => ({
   listRequirementSets: (...args: unknown[]) => listRequirementSetsMock(...args),
@@ -30,6 +31,7 @@ vi.mock("@/app/(charter)/actions/compliance", () => ({
   listCapabilities: (...args: unknown[]) => listCapabilitiesMock(...args),
   getComplianceCan: (...args: unknown[]) => getComplianceCanMock(...args),
   setCoverage: (...args: unknown[]) => setCoverageMock(...args),
+  adoptSetVersion: (...args: unknown[]) => adoptSetVersionMock(...args),
 }));
 vi.mock("@/app/(charter)/actions/compliance-export", () => ({
   exportComplianceMap: (...args: unknown[]) => exportComplianceMapMock(...args),
@@ -109,6 +111,7 @@ describe("ComplianceScreen", () => {
     getComplianceCanMock.mockReset();
     setCoverageMock.mockReset();
     exportComplianceMapMock.mockReset();
+    adoptSetVersionMock.mockReset();
     // Padrão neutro: a maioria dos testes não mexe no editor de cobertura.
     // Os que mexem sobrescrevem com capacidades reais.
     listCapabilitiesMock.mockResolvedValue({ ok: true, data: [] });
@@ -673,5 +676,53 @@ describe("ComplianceScreen", () => {
     } finally {
       blobStub.restore();
     }
+  });
+
+  // ── Adotar a versão nova do conjunto ativo (Task 11) ──────────────────────
+
+  it("oferece adotar quando o conjunto em uso tem sucessor", async () => {
+    listRequirementSetsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        set({
+          id: "set-v1",
+          supersededById: "set-v2",
+          diff: { alteradas: 7, novas: 2, removidas: 1 },
+        }),
+      ],
+    });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+    adoptSetVersionMock.mockResolvedValue({
+      ok: true,
+      data: { transportadas: 9, emRevisao: 7, novas: 2 },
+    });
+
+    render(<ComplianceScreen />);
+
+    expect(
+      await screen.findByText(/7 alteradas, 2 novas, 1 removida/)
+    ).toBeTruthy();
+
+    fireEvent.click(screen.getByText("Adotar a versão nova"));
+
+    await waitFor(() =>
+      expect(adoptSetVersionMock).toHaveBeenCalledWith({ setId: "set-v2" })
+    );
+  });
+
+  it("conjunto sem sucessor não mostra aviso de versão", async () => {
+    listRequirementSetsMock.mockResolvedValue({ ok: true, data: [set()] });
+    getComplianceMapMock.mockResolvedValue({
+      ok: true,
+      data: map({ linhas: [row()] }),
+    });
+
+    render(<ComplianceScreen />);
+    await screen.findByText("4.2.1"); // mapa carregou — não é o estado vazio
+
+    expect(screen.queryByText("Adotar a versão nova")).toBeNull();
   });
 });

@@ -19,6 +19,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
 import {
+  adoptSetVersion,
   getComplianceCan,
   getComplianceMap,
   importRequirementSet,
@@ -819,6 +820,7 @@ function ComplianceInner() {
   );
   const [selectedSetId, setSelectedSetId] = useState<string | null>(null);
   const [showImport, setShowImport] = useState(false);
+  const [pending, startTransition] = useTransition();
 
   if (setsState.error) {
     return <ScreenError message={setsState.error} onRetry={setsState.reload} />;
@@ -828,6 +830,7 @@ function ComplianceInner() {
   // Conjunto mais recente por padrão (listRequirementSets já ordena por
   // importadoEm desc) — escolha explícita do usuário sempre vence.
   const activeId = selectedSetId ?? sets[0]?.id ?? null;
+  const ativo = sets.find((s) => s.id === activeId);
 
   return (
     <div className="fade-in">
@@ -861,6 +864,58 @@ function ComplianceInner() {
           Importar exigências
         </Button>
       </PageHeader>
+
+      {ativo?.supersededById && ativo.diff && (
+        <div
+          style={{
+            marginBottom: "var(--gap)",
+            padding: "8px 10px",
+            borderRadius: "var(--r-md)",
+            background: "rgba(var(--accent-rgb),.08)",
+            border: "1px solid var(--hairline)",
+          }}
+        >
+          <div style={{ fontSize: 12.5, color: "var(--ink)" }}>
+            Há uma versão nova deste conjunto — {ativo.diff.alteradas}{" "}
+            alteradas, {ativo.diff.novas} novas, {ativo.diff.removidas}{" "}
+            removida.
+          </div>
+          {/* Adotar é escolha, não automatismo: o mapa é artefato de auditoria
+              e mudar sozinho entre duas visitas é o que um time de compliance
+              não tolera. Quem não clicar continua na versão atual, com os
+              vereditos intactos. */}
+          <Button
+            onClick={() => {
+              if (pending) {
+                return;
+              }
+              const successorId = ativo.supersededById;
+              if (!successorId) {
+                return;
+              }
+              startTransition(async () => {
+                const res = await runWithToast(
+                  () => adoptSetVersion({ setId: successorId }),
+                  {
+                    loading: "Adotando a versão nova…",
+                    success: (d) =>
+                      `${d.transportadas} vereditos transportados, ${d.emRevisao} em revisão`,
+                  }
+                );
+                if (res.ok) {
+                  setsState.reload();
+                  setSelectedSetId(successorId);
+                }
+              });
+            }}
+            size="sm"
+            style={{ marginTop: 6 }}
+            variant="primary"
+          >
+            Adotar a versão nova
+          </Button>
+        </div>
+      )}
 
       {setsState.loading ? (
         <div className="skeleton" style={{ height: 160, borderRadius: 14 }} />
