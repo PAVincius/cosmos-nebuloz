@@ -77,6 +77,31 @@ describe("guard de /seguranca", () => {
     });
   });
 
+  it("cadastrou o 2FA mas a sessão é anterior: motivo próprio", async () => {
+    // O estado logo depois do cadastro. A sessão nasceu no sign-in anterior ao
+    // 2FA e nunca viu o desafio de TOTP — recusar está certo, mas a saída é
+    // encerrar a sessão, não cadastrar de novo nem trocar de conta. Sem motivo
+    // próprio, a tela oferece a ação errada para quem acabou de acertar tudo.
+    userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
+
+    await expect(requirePlatformStaff()).rejects.toMatchObject({
+      code: "FORBIDDEN",
+      motivo: "SESSAO_SEM_SEGUNDO_FATOR",
+    });
+  });
+
+  it("sessão carimbada passa", async () => {
+    userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
+    getSession.mockResolvedValue({
+      ...STAFF_SEM_2FA,
+      session: { twoFactorVerified: true },
+    });
+
+    await expect(requirePlatformStaff()).resolves.toMatchObject({
+      email: "ana@nebuloz.ai",
+    });
+  });
+
   it("não é da equipe NÃO ganha o motivo — a saída dela é outra", async () => {
     findFirst.mockResolvedValue(null);
 

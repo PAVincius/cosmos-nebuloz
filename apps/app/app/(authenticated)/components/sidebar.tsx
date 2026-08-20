@@ -13,7 +13,13 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@repo/design-system/components/ui/sidebar";
-import { HomeIcon, SettingsIcon, SparklesIcon, UserIcon } from "lucide-react";
+import {
+  HomeIcon,
+  LayoutGridIcon,
+  SettingsIcon,
+  SparklesIcon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -34,6 +40,10 @@ const NAV = [
   // navegação própria no CosmosShell. Um link só — replicar os ids aqui criaria
   // um segundo mapa para divergir do registry.
   { href: "/cosmos", label: "Cosmos", icon: SparklesIcon },
+  // O hub de contratação: os três produtos com o estado real de cada um. O
+  // Charter não ganha link direto aqui de propósito — quem decide se ele abre
+  // é o rbac, e /produto é onde essa resposta aparece explicada.
+  { href: "/produto", label: "Produtos", icon: LayoutGridIcon },
   { href: "/settings/workspace", label: "Configurações", icon: SettingsIcon },
   { href: "/profile", label: "Perfil", icon: UserIcon },
 ] as const;

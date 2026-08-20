@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { useTwoFactorEnrollment } from "@repo/auth/two-factor-enrollment";
 import { QrCode } from "@repo/design-system/cosmos/qr-code";
 import type { FormEvent } from "react";
@@ -32,6 +33,7 @@ export function CadastroDe2FA() {
   const [senha, setSenha] = useState("");
   const [codigo, setCodigo] = useState("");
   const [verChaveManual, setVerChaveManual] = useState(false);
+  const [saindo, setSaindo] = useState(false);
 
   const temSegredo = cadastro.totpURI !== null;
 
@@ -47,6 +49,28 @@ export function CadastroDe2FA() {
       cadastro.iniciar();
     }
     await cadastro.gerarSegredo(senha);
+  };
+
+  /**
+   * Encerra a sessão antes de mandar para o login.
+   *
+   * A sessão em curso nasceu no sign-in, **antes** de o 2FA existir, então ela
+   * não carrega `twoFactorVerified` — e o guard do painel exige esse carimbo.
+   * Sem encerrar, a pessoa acaba de cadastrar o autenticador e é recebida por
+   * "esta sessão não passou pela verificação em dois fatores", que soa como
+   * falha do cadastro que acabou de dar certo.
+   *
+   * Só o login novo passa pelo desafio de TOTP, e é ele que carimba a sessão.
+   */
+  const sairEEntrar = async () => {
+    setSaindo(true);
+    try {
+      await authClient.signOut();
+    } finally {
+      // Navegação dura: o cookie acabou de ser invalidado e quem precisa reler
+      // é o servidor, no guard.
+      window.location.assign("/sign-in");
+    }
   };
 
   // ── Terminal: os códigos de recuperação, uma vez ──────────────────────────
@@ -73,16 +97,21 @@ export function CadastroDe2FA() {
             <span key={c}>{c}</span>
           ))}
         </div>
-        <a
-          href="/sign-in"
+        <p
           style={{
-            fontSize: 12.5,
-            fontWeight: 700,
-            color: "var(--accent-text)",
+            margin: 0,
+            fontSize: 11.5,
+            lineHeight: 1.55,
+            color: "var(--ink-faint)",
           }}
         >
-          Guardei — entrar no painel
-        </a>
+          Entrar de novo é obrigatório: a sessão atual foi aberta antes do 2FA
+          existir, e só o login novo passa pelo autenticador.
+        </p>
+
+        <BotaoPrimario disabled={saindo} onClick={sairEEntrar} type="button">
+          {saindo ? "Saindo" : "Guardei — sair e entrar no painel"}
+        </BotaoPrimario>
       </div>
     );
   }

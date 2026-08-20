@@ -5,9 +5,10 @@
 // 1. **A chave é a pessoa, não o IP.** O back-office é só autenticado, e a
 //    equipe inteira atrás de um NAT dividiria uma cota — o primeiro a trabalhar
 //    derrubaria os outros, e o sintoma pareceria bug de sessão.
-// 2. **Sem Redis, passa — mas isso é registrado.** Degradar aberto é escolha
-//    deliberada para dev e CI não quebrarem; o perigo é a ausência do controle
-//    ficar parecida com o controle funcionando.
+// 2. **Erro no contador passa — mas é registrado.** O contador vive no
+//    Postgres; falha transitória do caminho do limite não pode derrubar
+//    requisição legítima. O perigo é a ausência do controle ficar parecida
+//    com o controle funcionando, e o log no catch é o que separa os dois.
 // 3. **O erro diz quando voltar.** "Limite excedido" sem prazo faz a pessoa
 //    tentar de novo em laço, que é exatamente o que o limite quer parar.
 // 4. **Provisionar tem cota própria.** É a operação que cria tenant e roda
@@ -17,13 +18,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   limit: vi.fn(),
   createRateLimiter: vi.fn(),
-  slidingWindow: vi.fn((n: number, janela: string) => ({ n, janela })),
+  fixedWindow: vi.fn((n: number, janela: string) => ({ n, janela })),
   warn: vi.fn(),
 }));
 
 vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: mocks.createRateLimiter,
-  slidingWindow: mocks.slidingWindow,
+  fixedWindow: mocks.fixedWindow,
 }));
 vi.mock("@repo/observability/log", () => ({
   log: { warn: mocks.warn, error: vi.fn(), info: vi.fn() },
@@ -42,7 +43,7 @@ function resetar() {
   for (const m of Object.values(mocks)) {
     m.mockReset();
   }
-  mocks.slidingWindow.mockImplementation((n: number, janela: string) => ({
+  mocks.fixedWindow.mockImplementation((n: number, janela: string) => ({
     n,
     janela,
   }));
@@ -53,7 +54,6 @@ function resetar() {
     remaining: 90,
     reset: DAQUI_A_UM_MINUTO,
   });
-  process.env.UPSTASH_REDIS_REST_URL = "https://redis.exemplo";
 }
 
 describe("assertDentroDoLimite", () => {
@@ -119,17 +119,18 @@ describe("assertDentroDoLimite", () => {
     );
   });
 
-  describe("sem Redis configurado", () => {
+  describe("contador fora do ar", () => {
     beforeEach(() => {
       resetar();
-      process.env.UPSTASH_REDIS_REST_URL = "";
+      mocks.limit.mockRejectedValue(new Error("connection refused"));
     });
 
-    it("passa — dev e CI não podem quebrar por falta de infra", async () => {
+    it("passa — falha do caminho do limite não derruba requisição legítima", async () => {
+      // Se o banco caiu de verdade, a requisição morre logo adiante, no dado.
+      // O que o degrade-aberto evita é o limite virar ponto único de falha.
       await expect(
         assertDentroDoLimite("staff", "user-1")
       ).resolves.toBeUndefined();
-      expect(mocks.createRateLimiter).not.toHaveBeenCalled();
     });
 
     it("mas registra, para a ausência do controle não parecer o controle", async () => {

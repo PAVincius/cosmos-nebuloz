@@ -20,7 +20,10 @@ export type PlatformStaff = {
 /** Recusas que têm saída própria. Sem isto, "falta cadastrar 2FA" e "você não
  *  é da equipe" chegam à tela como o mesmo FORBIDDEN — e a única ação oferecida
  *  vira "entrar com outra conta", que não resolve a primeira. */
-export type MotivoDeRecusa = "SEM_SEGUNDO_FATOR";
+export type MotivoDeRecusa =
+  | "SEM_SEGUNDO_FATOR"
+  /** Tem 2FA cadastrado; a sessão é que nasceu antes e não passou pelo desafio. */
+  | "SESSAO_SEM_SEGUNDO_FATOR";
 
 export class StaffAuthError extends Error {
   readonly code: "UNAUTHORIZED" | "FORBIDDEN";
@@ -71,9 +74,13 @@ async function assertSegundoFator(session: {
 
   const dados = session.session as { twoFactorVerified?: boolean } | undefined;
   if (!dados?.twoFactorVerified) {
+    // Motivo próprio: a saída daqui é encerrar a sessão, não trocar de conta.
+    // Acontece sempre logo depois do cadastro — a sessão em curso é anterior a
+    // ele e nunca viu o desafio de TOTP.
     throw new StaffAuthError(
       "FORBIDDEN",
-      "Esta sessão não passou pela verificação em dois fatores. Saia e entre de novo para completá-la."
+      "Seu autenticador está cadastrado, mas esta sessão é anterior a ele. Saia e entre de novo para completar a verificação.",
+      "SESSAO_SEM_SEGUNDO_FATOR"
     );
   }
 }

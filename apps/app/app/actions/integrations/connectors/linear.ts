@@ -133,8 +133,30 @@ const STATE_TYPE_MAP: Record<string, string> = {
   cancelled: "CANCELLED",
 };
 
-export function linearStateToStatus(stateType: string): string {
-  return STATE_TYPE_MAP[stateType.toLowerCase()] ?? "BACKLOG";
+/** Nomes de estado que significam "pronto, esperando alguém olhar".
+ *  Cobre pt e en porque o time nomeia a coluna na língua dele. */
+const NOME_DE_REVISAO = /review|revis|test|qa\b|homolog/i;
+
+/**
+ * O Linear não tem tipo de estado para revisão: "In Review", "Testando" e "QA"
+ * são todos `started`, iguais a "In Progress". Olhando só o tipo, a coluna
+ * REVIEW do board (`(cosmos)/actions/board.constants.ts`) nunca receberia nada
+ * vindo de integração — e quem separa desenvolvimento de teste no Linear via
+ * as duas colunas colapsarem numa só ao importar.
+ *
+ * O nome só desempata dentro de `started`. Um estado `completed` chamado
+ * "Reviewed" terminou; devolvê-lo como REVIEW o traria de volta para uma
+ * coluna em aberto.
+ */
+export function linearStateToStatus(
+  stateType: string,
+  stateName?: string
+): string {
+  const tipo = stateType.toLowerCase();
+  if (tipo === "started" && stateName && NOME_DE_REVISAO.test(stateName)) {
+    return "REVIEW";
+  }
+  return STATE_TYPE_MAP[tipo] ?? "BACKLOG";
 }
 
 // ─── Map Linear priority → Cosmos type hint ──────────────────────────────────

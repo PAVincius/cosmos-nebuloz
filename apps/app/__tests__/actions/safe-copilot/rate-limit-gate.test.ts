@@ -1,62 +1,24 @@
-// rate-limit-gate.test.ts — o que acontece quando o limitador não existe.
+// rate-limit-gate.test.ts — como o portão do copiloto falha.
 //
-// A versão anterior devolvia `true` quando `UPSTASH_REDIS_REST_URL` não estava
-// definida: sem Redis, sem limite, em silêncio. Em desenvolvimento isso é
-// conveniência; em produção é um controle de segurança que desliga sozinho
-// quando alguém mexe numa variável de ambiente, sem nada falhar e sem nada
-// alertar. O primeiro a perceber seria a fatura.
+// O contador vive no Postgres (@repo/rate-limit): não existe mais o estado
+// "limitador não configurado" que a versão Upstash tinha — sem DATABASE_URL o
+// app nem sobe. O que sobra, e o que se prova aqui, é o modo de falha em
+// tempo de execução.
 //
-// O modo de falha certo para um controle de segurança é fechado. Mas fechado
-// **com o motivo certo**: 429 diria ao cliente "você excedeu o limite", que é
-// mentira e manda a pessoa esperar em vez de olhar a configuração. Por isso
-// existe um terceiro estado.
+// O modo certo para um controle de custo é fechado. Mas fechado **com o motivo
+// certo**: 429 diria ao cliente "você excedeu o limite", que é mentira e manda
+// a pessoa esperar em vez de alguém olhar a infraestrutura. Por isso existe o
+// terceiro estado.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { avaliarLimite } from "../../../app/actions/safe-copilot/rate-limit-gate";
-
-const semRedis = { UPSTASH_REDIS_REST_URL: undefined };
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
 describe("avaliarLimite", () => {
-  it("sem Redis em desenvolvimento, deixa passar", async () => {
+  it("dentro do limite passa", async () => {
     const r = await avaliarLimite("1.2.3.4", {
-      env: semRedis,
-      producao: false,
-      limitar: async () => true,
-    });
-
-    expect(r).toBe("ok");
-  });
-
-  it("sem Redis em produção, NÃO deixa passar", async () => {
-    // O caso que a mudança existe para cobrir.
-    const r = await avaliarLimite("1.2.3.4", {
-      env: semRedis,
-      producao: true,
-      limitar: async () => true,
-    });
-
-    expect(r).not.toBe("ok");
-  });
-
-  it("sem Redis em produção devolve `indisponivel`, não `excedido`", async () => {
-    // A distinção inteira: "excedido" manda a pessoa esperar; "indisponível"
-    // manda alguém olhar a configuração. Chamar um de outro esconde um erro de
-    // deploy atrás de uma mensagem plausível.
-    const r = await avaliarLimite("1.2.3.4", {
-      env: semRedis,
-      producao: true,
-      limitar: async () => true,
-    });
-
-    expect(r).toBe("indisponivel");
-  });
-
-  it("com Redis, dentro do limite passa", async () => {
-    const r = await avaliarLimite("1.2.3.4", {
-      env: { UPSTASH_REDIS_REST_URL: "https://redis.exemplo" },
       producao: true,
       limitar: async () => true,
     });
@@ -64,9 +26,8 @@ describe("avaliarLimite", () => {
     expect(r).toBe("ok");
   });
 
-  it("com Redis, acima do limite é `excedido`", async () => {
+  it("acima do limite é `excedido`", async () => {
     const r = await avaliarLimite("1.2.3.4", {
-      env: { UPSTASH_REDIS_REST_URL: "https://redis.exemplo" },
       producao: true,
       limitar: async () => false,
     });
@@ -74,40 +35,44 @@ describe("avaliarLimite", () => {
     expect(r).toBe("excedido");
   });
 
-  it("Redis fora do ar em produção fecha, não abre", async () => {
-    // Redis configurado mas inacessível é o mesmo risco: se o erro virasse
-    // `true`, derrubar o Redis passaria a ser a maneira de remover o limite.
+  it("contador fora do ar em produção fecha, não abre", async () => {
+    // Se o erro virasse `true`, derrubar o banco do limite passaria a ser a
+    // maneira de remover o teto de custo de IA.
     const r = await avaliarLimite("1.2.3.4", {
-      env: { UPSTASH_REDIS_REST_URL: "https://redis.exemplo" },
       producao: true,
       limitar: async () => {
-        throw new Error("ECONNREFUSED");
+        throw new Error("connection refused");
       },
     });
 
     expect(r).toBe("indisponivel");
   });
 
-  it("Redis fora do ar em desenvolvimento deixa passar", async () => {
+  it("contador fora do ar fora de produção deixa passar", async () => {
+    // Em dev e CI, exigir o contador de pé transformaria qualquer suíte em
+    // dependente de banco — e o risco que o portão cobre é fatura de
+    // produção, não custo de laboratório.
     const r = await avaliarLimite("1.2.3.4", {
-      env: { UPSTASH_REDIS_REST_URL: "https://redis.exemplo" },
       producao: false,
       limitar: async () => {
-        throw new Error("ECONNREFUSED");
+        throw new Error("connection refused");
       },
     });
 
     expect(r).toBe("ok");
   });
 
-  it("passa o identificador adiante", async () => {
-    const limitar = vi.fn().mockResolvedValue(true);
-    await avaliarLimite("9.9.9.9", {
-      env: { UPSTASH_REDIS_REST_URL: "https://redis.exemplo" },
+  it("`indisponivel` nunca se disfarça de `excedido`", async () => {
+    // A distinção inteira: "excedido" manda a pessoa esperar; "indisponível"
+    // manda alguém olhar a infraestrutura. Chamar um de outro esconde um erro
+    // de operação atrás de uma mensagem plausível.
+    const r = await avaliarLimite("1.2.3.4", {
       producao: true,
-      limitar,
+      limitar: async () => {
+        throw new Error("boom");
+      },
     });
 
-    expect(limitar).toHaveBeenCalledWith("9.9.9.9");
+    expect(r).not.toBe("excedido");
   });
 });

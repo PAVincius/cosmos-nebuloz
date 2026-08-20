@@ -53,36 +53,28 @@ export class RateLimitError extends Error {
 /**
  * Barra a chamada se a pessoa passou do teto do escopo.
  *
- * **Degrada aberto** — sem Redis, ou com Redis fora do ar, a chamada passa.
- * Fechar transformaria indisponibilidade do Upstash em queda total do painel,
- * e faria dev e CI dependerem de infra externa para rodar. O preço dessa
- * escolha é que a ausência do controle se parece com o controle funcionando,
- * e é por isso que os dois casos gravam log: sem o aviso, ninguém descobre que
- * o painel passou um mês sem teto nenhum.
+ * O contador vive no Postgres (@repo/rate-limit) — não existe mais o estado
+ * "sem Redis" que deixou este teto desligado por meses sem ninguém ler o
+ * aviso (NEB-144).
+ *
+ * **Degrada aberto** no erro, e só nele: falha transitória do caminho do
+ * limite não pode derrubar requisição legítima do painel — se o banco caiu de
+ * verdade, a própria requisição morre logo adiante, no dado. O log no catch
+ * continua sendo o que separa "controle funcionando" de "controle ausente".
  */
 export async function assertDentroDoLimite(
   escopo: EscopoDeLimite,
   chave: string
 ): Promise<void> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    log.warn(
-      "[backoffice] rate limit desligado: UPSTASH_REDIS_REST_URL ausente",
-      {
-        escopo,
-      }
-    );
-    return;
-  }
-
   const { prefixo, quantidade, janela } = ESCOPOS[escopo];
 
   let resultado: { success: boolean; reset: number };
   try {
-    const { createRateLimiter, slidingWindow } = await import(
+    const { createRateLimiter, fixedWindow } = await import(
       "@repo/rate-limit"
     );
     const limiter = createRateLimiter({
-      limiter: slidingWindow(quantidade, janela),
+      limiter: fixedWindow(quantidade, janela),
       prefix: prefixo,
     });
     resultado = await limiter.limit(chave);

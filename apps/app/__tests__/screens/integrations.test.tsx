@@ -11,6 +11,9 @@ import type { IntegrationView } from "../../app/(cosmos)/actions/integrations";
 const listIntegrationsMock = vi.fn();
 const setIntegrationPausedMock = vi.fn();
 const testIntegrationConnectionMock = vi.fn();
+const discoverLinearTeamsMock = vi.fn();
+const connectLinearIntegrationMock = vi.fn();
+const resyncIntegrationMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/integrations", () => ({
   listIntegrations: (...args: unknown[]) => listIntegrationsMock(...args),
@@ -18,6 +21,10 @@ vi.mock("@/app/(cosmos)/actions/integrations", () => ({
     setIntegrationPausedMock(...args),
   testIntegrationConnection: (...args: unknown[]) =>
     testIntegrationConnectionMock(...args),
+  discoverLinearTeams: (...args: unknown[]) => discoverLinearTeamsMock(...args),
+  connectLinearIntegration: (...args: unknown[]) =>
+    connectLinearIntegrationMock(...args),
+  resyncIntegration: (...args: unknown[]) => resyncIntegrationMock(...args),
 }));
 
 import IntegrationsScreen from "../../components/cosmos/screens/integrations";
@@ -39,6 +46,9 @@ describe("IntegrationsScreen", () => {
     listIntegrationsMock.mockReset();
     setIntegrationPausedMock.mockReset();
     testIntegrationConnectionMock.mockReset();
+    discoverLinearTeamsMock.mockReset();
+    connectLinearIntegrationMock.mockReset();
+    resyncIntegrationMock.mockReset();
   });
 
   it("renders a connected card with real status/sync and an available card for an unconfigured connector", async () => {
@@ -183,7 +193,7 @@ describe("IntegrationsScreen", () => {
     expect(screen.queryByText(/apiKey|token|mapping/i)).toBeNull();
   });
 
-  it("shows an honest deferred message for Conectar — no fake connected state, no fabricated sync data", async () => {
+  it("shows an honest deferred message for a source with no connector in the repo", async () => {
     // No configured integrations at all here, so every catalog card is
     // "available" and any "Sincronizado em" text would only be able to come
     // from a fabrication, not real data.
@@ -193,15 +203,103 @@ describe("IntegrationsScreen", () => {
     expect(await screen.findByText("0 conectadas")).toBeTruthy();
     expect(screen.getByText("9 disponíveis")).toBeTruthy();
 
-    const connectButtons = screen.getAllByText("Conectar");
-    fireEvent.click(connectButtons[0]);
+    // Jira é a segunda entrada do catálogo e não tem cliente de API nem rota
+    // de ingestão no repositório — o modal diz isso em vez de coletar chave.
+    fireEvent.click(screen.getAllByText("Conectar")[1]);
 
-    expect(
-      await screen.findByText(/ainda não está implementado nesta versão/)
-    ).toBeTruthy();
+    expect(await screen.findByText(/Não há conector para Jira/)).toBeTruthy();
+    expect(document.querySelector('input[type="password"]')).toBeNull();
     expect(screen.queryByText("Conectado")).toBeNull();
     expect(screen.queryByText("Ativo")).toBeNull();
     expect(screen.queryByText(/Sincronizado em/)).toBeNull();
+  });
+
+  it("conecta o Linear validando a credencial antes de gravar, e só então oferece o time", async () => {
+    listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [{ id: "lt_1", name: "Meridian", key: "MER" }],
+      },
+    });
+    connectLinearIntegrationMock.mockResolvedValue({
+      ok: true,
+      data: { id: "i9", imported: { created: 4, updated: 0, skipped: 0 } },
+    });
+
+    render(<IntegrationsScreen />);
+    fireEvent.click((await screen.findAllByText("Conectar"))[0]);
+
+    // Antes de validar, nenhuma escolha de time é oferecida: escolher time de
+    // uma conta que ainda não autenticou seria escolher sobre nada.
+    expect(screen.queryByLabelText(/Time do Linear/)).toBeNull();
+
+    const key = screen.getByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    await waitFor(() =>
+      expect(discoverLinearTeamsMock).toHaveBeenCalledWith({
+        apiKey: "lin_api_teste_00000000",
+      })
+    );
+
+    expect(await screen.findByText("MER · Meridian")).toBeTruthy();
+    // O modal é o último "Conectar" do documento — os anteriores são os cards
+    // do catálogo, que continuam atrás dele.
+    const submits = screen.getAllByText("Conectar");
+    const submit = submits.at(-1);
+    if (!submit) {
+      throw new Error("botão de submit do modal não renderizou");
+    }
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
+        name: "Linear · Meridian",
+        apiKey: "lin_api_teste_00000000",
+        linearTeamId: "lt_1",
+        importNow: true,
+      })
+    );
+  });
+
+  it("deixa conectar um segundo time do Linear a partir de um card já conectado", async () => {
+    // O catálogo esconde a fonte quando já existe integração dela. Com uma
+    // conexão por time do Linear, sem esta porta o segundo time não teria por
+    // onde entrar.
+    listIntegrationsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        integration({ id: "i2", source: "linear", name: "Linear · Meridian" }),
+      ],
+    });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [{ id: "lt_2", name: "Charter", key: "CHA" }],
+      },
+    });
+
+    render(<IntegrationsScreen />);
+    await screen.findByText("Linear · Meridian");
+
+    // Card de catálogo do Linear não existe mais — só o do conectado. Os
+    // outros conectores do catálogo seguem com o botão "Conectar" deles.
+    expect(screen.queryByText("Linear")).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Conectar outro time do Linear" })
+    );
+
+    const key = await screen.findByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    // O nome sugerido acompanha o time, senão nasceriam cinco "Linear".
+    expect(await screen.findByDisplayValue("Linear · Charter")).toBeTruthy();
   });
 
   it("shows the error state when the action fails", async () => {
