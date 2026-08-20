@@ -127,3 +127,52 @@ it("exigência nova numa versão existente entra sem erro", async () => {
 
   expect(count).toBe(1);
 });
+
+it("versão nova nasce ligada à anterior por supersedesId", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi
+        .fn()
+        // 1ª chamada: procura (nome, versao) — não existe, é versão nova
+        .mockResolvedValueOnce(null)
+        // 2ª chamada: procura a versão anterior mais recente do mesmo nome
+        .mockResolvedValueOnce({ id: "set-v1" }),
+      update: vi.fn(),
+      create: vi.fn().mockResolvedValue({ id: "set-v2" }),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await upsertCorpus(db as never, { ...corpus, versao: "2" });
+
+  expect(db.charterRequirementSet.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({ supersedesId: "set-v1", versao: "2" }),
+    })
+  );
+});
+
+it("corpus inédito nasce sem supersedesId", async () => {
+  const db = {
+    charterRequirementSet: {
+      findFirst: vi.fn().mockResolvedValue(null),
+      update: vi.fn(),
+      create: vi.fn().mockResolvedValue({ id: "set-novo" }),
+    },
+    charterRequirement: {
+      findMany: vi.fn().mockResolvedValue([]),
+      upsert: vi.fn().mockResolvedValue({}),
+    },
+  };
+
+  await upsertCorpus(db as never, corpus);
+
+  expect(db.charterRequirementSet.create).toHaveBeenCalledWith(
+    expect.objectContaining({
+      data: expect.objectContaining({ supersedesId: null }),
+    })
+  );
+});

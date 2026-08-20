@@ -48,6 +48,19 @@ export async function upsertCorpus(
     where: { nome: corpus.nome, versao: corpus.versao, tenantId: null },
     select: { id: true },
   });
+
+  // Versão nova de um corpus que já existe: a aresta para a anterior é o que
+  // permite ao tenant adotar a v2 carregando os vereditos da v1. Sem ela o
+  // conjunto novo nasce órfão e o trabalho humano de responder o corpus
+  // aparece como perdido.
+  const anteriorGlobal = existing
+    ? null
+    : await seedDb.charterRequirementSet.findFirst({
+        where: { nome: corpus.nome, tenantId: null },
+        orderBy: { importadoEm: "desc" },
+        select: { id: true },
+      });
+
   const setData = {
     tenantId: null,
     nome: corpus.nome,
@@ -65,7 +78,7 @@ export async function upsertCorpus(
         select: { id: true },
       })
     : await seedDb.charterRequirementSet.create({
-        data: setData,
+        data: { ...setData, supersedesId: anteriorGlobal?.id ?? null },
         select: { id: true },
       });
 
