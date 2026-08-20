@@ -6,7 +6,13 @@
 // A ação já guarda o papel (ADMIN/STE/RTE). A tela não recria essa regra: ela
 // pergunta o papel a getViewerRole e só oferece o controle a quem pode — um
 // botão que sempre falha é pior que botão nenhum.
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listEpicsMock = vi.fn();
@@ -73,6 +79,88 @@ describe("KanbanScreen — limites de WIP", () => {
 
     render(<KanbanScreen />);
     await waitFor(() => expect(getViewerRoleMock).toHaveBeenCalled());
+
+    expect(
+      screen.queryByRole("button", { name: "Configurar limites de WIP" })
+    ).toBeNull();
+  });
+
+  it("esconde 'Configurar limites de WIP' enquanto a config não carregou, mesmo com o papel já liberado, e salva depois de resolver (corrida)", async () => {
+    // Duas fontes independentes gateiam este botão: o papel (getViewerRole) e
+    // a config (getPortfolioKanbanConfig, que vira a prop `colunas`).
+    // Resolvendo as duas manualmente garante a janela exata que causava o
+    // bug — papel já liberado, config ainda pendente — sem depender de
+    // timing real entre dois fetches independentes.
+    let resolveRole: (v: { ok: true; data: string }) => void = () => {};
+    let resolveConfig: (v: {
+      ok: true;
+      data: ReturnType<typeof config>;
+    }) => void = () => {};
+    getViewerRoleMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveRole = resolve;
+        })
+    );
+    getPortfolioKanbanConfigMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveConfig = resolve;
+        })
+    );
+    updateWipLimitActionMock.mockResolvedValue({ ok: true, data: config() });
+
+    render(<KanbanScreen />);
+
+    await act(async () => {
+      resolveRole({ ok: true, data: "RTE" });
+    });
+    // Com `colunas` ainda no estado inicial ([]), o papel já liberado
+    // sozinho já bastaria para mostrar o botão aqui — e salvar() com
+    // colunas=[] filtra alteradas=[], nunca chama updateWipLimitAction e
+    // fecha como sucesso.
+    expect(
+      screen.queryByRole("button", { name: "Configurar limites de WIP" })
+    ).toBeNull();
+
+    await act(async () => {
+      resolveConfig({ ok: true, data: config() });
+    });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Configurar limites de WIP" })
+    );
+    fireEvent.change(await screen.findByLabelText("Limite de Implementing"), {
+      target: { value: "7" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Salvar limites" }));
+
+    await waitFor(() =>
+      expect(updateWipLimitActionMock).toHaveBeenCalledWith({
+        columnId: "IMPLEMENTING",
+        wipLimit: 7,
+      })
+    );
+  });
+
+  it("esconde 'Configurar limites de WIP' quando getPortfolioKanbanConfig falha, mesmo com o papel liberado", async () => {
+    // safeAction nunca rejeita — toda falha de getPortfolioKanbanConfig
+    // resolve como {ok: false}, e o guard `if (res.ok)` em loadConfig nunca
+    // seta `colunas`. Gate por colunas.length > 0 (e não por uma flag
+    // "carregou", que ficaria true mesmo aqui) é o que garante que erro e
+    // carregamento pendente colapsam para o mesmo estado seguro: colunas=[],
+    // botão escondido, sem salvar() abrir a mentira de "sucesso" com
+    // alteradas=[].
+    getViewerRoleMock.mockResolvedValue({ ok: true, data: "RTE" });
+    getPortfolioKanbanConfigMock.mockResolvedValue({
+      ok: false,
+      error: "boom",
+    });
+
+    render(<KanbanScreen />);
+    await waitFor(() =>
+      expect(getPortfolioKanbanConfigMock).toHaveBeenCalled()
+    );
 
     expect(
       screen.queryByRole("button", { name: "Configurar limites de WIP" })

@@ -1447,19 +1447,21 @@ export default function KanbanScreen() {
           subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
           title="Kanban de Épicos"
         >
-          {viewerRole !== null && WIP_CONFIG_ROLES.has(viewerRole) && (
-            <Button
-              onClick={() =>
-                modal.open(
-                  <WipConfigModal colunas={colunas} onSaved={loadConfig} />
-                )
-              }
-              size="sm"
-              variant="secondary"
-            >
-              Configurar limites de WIP
-            </Button>
-          )}
+          {viewerRole !== null &&
+            WIP_CONFIG_ROLES.has(viewerRole) &&
+            colunas.length > 0 && (
+              <Button
+                onClick={() =>
+                  modal.open(
+                    <WipConfigModal colunas={colunas} onSaved={loadConfig} />
+                  )
+                }
+                size="sm"
+                variant="secondary"
+              >
+                Configurar limites de WIP
+              </Button>
+            )}
           <button
             className="btn"
             data-kanban-filter-trigger
