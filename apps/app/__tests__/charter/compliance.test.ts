@@ -70,6 +70,7 @@ vi.mock("@/lib/charter/capabilities", () => ({
 }));
 
 import {
+  adoptSetVersion,
   getComplianceCan,
   getComplianceMap,
   importRequirementSet,
@@ -586,6 +587,127 @@ describe("publishSetVersion", () => {
     // logCharterAudit (_shared.ts) grava para toda action do Charter, não
     // uma escolha desta função.
     expect(entrada.metadata.note).toContain("v2");
+  });
+});
+
+describe("adoptSetVersion", () => {
+  beforeEach(() => {
+    for (const m of Object.values(h)) {
+      m.mockReset();
+    }
+    h.requireCtx.mockResolvedValue(ctx);
+  });
+
+  it("recusa conjunto que não substitui nenhum outro", async () => {
+    h.setFindFirst.mockResolvedValueOnce({
+      id: "set-v2",
+      supersedesId: null,
+      tenantId: null,
+    });
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não substitui nenhum outro/);
+  });
+
+  it("recusa conjunto de outro tenant sem distinguir de inexistente", async () => {
+    h.setFindFirst.mockResolvedValueOnce(null);
+
+    const res = await adoptSetVersion({ setId: "set-de-outro" });
+
+    expect(res.ok).toBe(false);
+    expect(res.ok === false && res.error).toMatch(/não encontrado/i);
+  });
+
+  it("transporta cobertura e marca REVISAR só no que mudou de texto", async () => {
+    h.setFindFirst
+      .mockResolvedValueOnce({
+        id: "set-v2",
+        supersedesId: "set-v1",
+        tenantId: null,
+      })
+      .mockResolvedValueOnce({ id: "set-v1", tenantId: null });
+    h.reqFindMany
+      // exigências do antecessor
+      .mockResolvedValueOnce([
+        { id: "r1-v1", codigo: "A-1", resumo: "igual", texto: null },
+        { id: "r2-v1", codigo: "B-1", resumo: "antigo", texto: null },
+      ])
+      // exigências do sucessor
+      .mockResolvedValueOnce([
+        { id: "r1-v2", codigo: "A-1", resumo: "igual", texto: null },
+        { id: "r2-v2", codigo: "B-1", resumo: "NOVO", texto: null },
+        { id: "r3-v2", codigo: "C-1", resumo: "inédita", texto: null },
+      ]);
+    h.covFindMany
+      // cobertura do antecessor
+      .mockResolvedValueOnce([
+        {
+          requirementId: "r1-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: "POLICY_LINK",
+        },
+        {
+          requirementId: "r2-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: "POLICY_LINK",
+        },
+      ])
+      // nada ainda no sucessor — a implementação lê as duas, nesta ordem
+      .mockResolvedValueOnce([]);
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data).toEqual({
+      transportadas: 2,
+      emRevisao: 1,
+      novas: 1,
+    });
+    expect(h.covCreateMany).toHaveBeenCalledWith({
+      data: expect.arrayContaining([
+        expect.objectContaining({ requirementId: "r1-v2", status: "ATENDE" }),
+        expect.objectContaining({ requirementId: "r2-v2", status: "REVISAR" }),
+      ]),
+    });
+  });
+
+  it("não sobrescreve veredito já dado no sucessor — adotar duas vezes é idempotente", async () => {
+    h.setFindFirst
+      .mockResolvedValueOnce({
+        id: "set-v2",
+        supersedesId: "set-v1",
+        tenantId: null,
+      })
+      .mockResolvedValueOnce({ id: "set-v1", tenantId: null });
+    h.reqFindMany
+      .mockResolvedValueOnce([
+        { id: "r1-v1", codigo: "A-1", resumo: "x", texto: null },
+      ])
+      .mockResolvedValueOnce([
+        { id: "r1-v2", codigo: "A-1", resumo: "x", texto: null },
+      ]);
+    h.covFindMany
+      // cobertura do antecessor
+      .mockResolvedValueOnce([
+        {
+          requirementId: "r1-v1",
+          status: "ATENDE",
+          comentario: null,
+          capabilityId: null,
+        },
+      ])
+      // cobertura que já existe no sucessor (segunda adoção)
+      .mockResolvedValueOnce([{ requirementId: "r1-v2" }]);
+
+    const res = await adoptSetVersion({ setId: "set-v2" });
+
+    expect(res.ok).toBe(true);
+    expect(res.ok && res.data.transportadas).toBe(0);
+    expect(h.covCreateMany).not.toHaveBeenCalled();
   });
 });
 

@@ -313,6 +313,145 @@ export async function publishSetVersion(
   });
 }
 
+// ── Adoção de versão publicada ───────────────────────────────────────────────
+
+const AdoptVersionSchema = z.object({ setId: z.string().min(1) });
+
+/**
+ * O tenant passa a usar a versão nova de um conjunto, carregando os vereditos
+ * que já deu.
+ *
+ * Existe porque o seed não pode fazer isso: `CharterCoverage` tem FORCE RLS e o
+ * seed conecta sem `SET LOCAL app.tenant_id`. O seed publica a norma; a adoção
+ * roda aqui, sob contexto de tenant. A divisão também é a de produto: o mapa é
+ * artefato de auditoria, e mudar sozinho entre duas visitas é o que um time de
+ * compliance não tolera — quem não adotar continua na versão anterior.
+ */
+export async function adoptSetVersion(
+  input: z.infer<typeof AdoptVersionSchema>
+): Promise<
+  Result<{ transportadas: number; emRevisao: number; novas: number }>
+> {
+  return await safeAction(async () => {
+    const ctx = await requireCharterPermissionContext("compliance.edit");
+    const data = AdoptVersionSchema.parse(input);
+
+    return withTenantDb(ctx.tenantId, async (db) => {
+      const sucessor = await db.charterRequirementSet.findFirst({
+        where: {
+          id: data.setId,
+          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+        },
+      });
+      if (!sucessor) {
+        throw new GovernanceError(
+          "set.unknown",
+          "Conjunto de exigências não encontrado."
+        );
+      }
+      if (!sucessor.supersedesId) {
+        throw new GovernanceError(
+          "set.noPredecessor",
+          "Este conjunto não substitui nenhum outro."
+        );
+      }
+
+      const antecessor = await db.charterRequirementSet.findFirst({
+        where: {
+          id: sucessor.supersedesId,
+          OR: [{ tenantId: ctx.tenantId }, { tenantId: null }],
+        },
+      });
+      if (!antecessor) {
+        throw new GovernanceError(
+          "set.unknown",
+          "Conjunto de exigências não encontrado."
+        );
+      }
+
+      const anteriores = await db.charterRequirement.findMany({
+        where: { setId: antecessor.id },
+        orderBy: { codigo: "asc" },
+      });
+      const novos = await db.charterRequirement.findMany({
+        where: { setId: sucessor.id },
+        orderBy: { codigo: "asc" },
+      });
+
+      const anteriorPorCodigo = new Map(anteriores.map((a) => [a.codigo, a]));
+      const novoPorCodigo = new Map(novos.map((n) => [n.codigo, n]));
+
+      const codigosMudados = new Set<string>();
+      let novas = 0;
+      for (const n of novos) {
+        const anterior = anteriorPorCodigo.get(n.codigo);
+        if (!anterior) {
+          novas += 1;
+          continue;
+        }
+        if (
+          anterior.resumo !== n.resumo ||
+          (anterior.texto ?? null) !== (n.texto ?? null)
+        ) {
+          codigosMudados.add(n.codigo);
+        }
+      }
+
+      const coberturas = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: anteriores.map((a) => a.id) },
+        },
+      });
+
+      // Já adotado antes: qualquer cobertura no sucessor significa que este
+      // transporte já rodou. Reexecutar sobrescreveria veredito dado depois da
+      // primeira adoção — o inverso do que "adotar" promete.
+      const jaNoSucessor = await db.charterCoverage.findMany({
+        where: {
+          tenantId: ctx.tenantId,
+          requirementId: { in: novos.map((n) => n.id) },
+        },
+        select: { requirementId: true },
+      });
+      const ocupados = new Set(jaNoSucessor.map((c) => c.requirementId));
+
+      const planejadas = planejarTransporte({
+        tenantId: ctx.tenantId,
+        coberturas,
+        idAnteriorParaCodigo: new Map(anteriores.map((a) => [a.id, a.codigo])),
+        novoPorCodigo,
+        codigosMudados,
+      });
+      const paraTransportar = planejadas.filter(
+        (linha) => !ocupados.has(linha.requirementId)
+      );
+
+      if (paraTransportar.length > 0) {
+        await db.charterCoverage.createMany({ data: paraTransportar });
+      }
+
+      const emRevisao = paraTransportar.filter(
+        (linha) => linha.status === "REVISAR"
+      ).length;
+
+      await logCharterAudit(db, ctx, {
+        action: "Adotou nova versão do conjunto de exigências",
+        entityType: "charter.requirementset",
+        entityId: sucessor.id,
+        target: `${sucessor.nome} · v${sucessor.versao}`,
+        note: `${paraTransportar.length} coberturas transportadas, ${emRevisao} em revisão, ${novas} exigências novas sem veredito`,
+      });
+
+      return {
+        transportadas: paraTransportar.length,
+        emRevisao,
+        novas,
+      };
+    });
+  });
+}
+
 // ── Definir cobertura ───────────────────────────────────────────────────────
 
 const SetCoverageSchema = z.object({
