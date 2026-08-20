@@ -70,16 +70,18 @@ a partir de logs de aplicação.
   de dados é do Signal.
 - **Não é CRM.** Propostas e serviços existem para virar contrato e
   provisionamento, não para gerir funil.
-- **Não hospeda modelo.** O LAB registra treino, dataset e linhagem; a execução
-  roda fora.
+- **Não é o LAB.** O registro de modelo próprio — dataset, treino, avaliação,
+  linhagem, model card — saiu deste painel e ganhou documento próprio
+  ([LAB PRD v1.0](./lab-prd.md)). Enquanto não houver schema, não há rota: seis
+  rotas prometendo o que não existe eram um quarto do menu.
 - **Não substitui o banco.** Operação de emergência continua sendo SQL — o
   painel cobre o caminho normal, não todos.
 
 ---
 
-## 4. As sete áreas
+## 4. As seis áreas
 
-O painel tem 22 rotas em sete seções. A divisão não é de conveniência: cada
+O painel tem 16 rotas em seis seções. A divisão não é de conveniência: cada
 seção corresponde a um papel que usa o painel por um motivo diferente.
 
 **Plataforma** — Tenants, aprovações, observabilidade. É onde o cliente nasce e
@@ -90,9 +92,6 @@ biblioteca de IP versionada com diagramas.
 
 **Comercial** — Propostas, catálogo de serviços, health e renovação, benchmark
 entre clientes.
-
-**LAB** — Modelo próprio, datasets, treinos, avaliações, linhagem, model card.
-Atrás de capability própria.
 
 **Ferramentas** — Modelagem BPMN e diagramas, para o IP não ser prosa.
 
@@ -133,7 +132,7 @@ Prioridade: **P0** necessário para operar · **P1** dentro de dois trimestres �
 | B-07 | Teto de requisição por identidade, com cota própria para provisionar | P0 |
 | B-08 | Health e renovação derivados do que a plataforma já grava | P0 |
 | B-09 | Audit Explorer com filtro por cliente, ação e período | P0 |
-| B-10 | Capability de LAB concedida à parte do papel de admin | P1 |
+| B-10 | Capability de LAB concedida à parte do papel de admin — ver [LAB SRD](./lab-srd.md) | P1 |
 | B-11 | Aprovação executa a operação original ao ser aprovada | P1 |
 | B-12 | Reversão de provisionamento sem SQL | P1 |
 | B-13 | Coletor de erro de produção no painel | P1 |
