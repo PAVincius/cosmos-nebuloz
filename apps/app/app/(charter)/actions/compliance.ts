@@ -4,6 +4,7 @@ import { withTenantDb } from "@repo/database";
 import { hasCharterPermission } from "@repo/rbac";
 import { z } from "zod";
 import { CAPABILITIES, getCapability } from "@/lib/charter/capabilities";
+import { planejarTransporte } from "@/lib/charter/coverage-transfer";
 import {
   requireCharterContext,
   requireCharterPermissionContext,
@@ -279,39 +280,13 @@ export async function publishSetVersion(
         },
       });
 
-      const paraTransportar: {
-        tenantId: string;
-        requirementId: string;
-        status:
-          | "ATENDE"
-          | "PARCIAL"
-          | "NAO_ATENDE"
-          | "SEM_VEREDITO"
-          | "REVISAR"
-          | "NAO_APLICAVEL";
-        comentario: string | null;
-        capabilityId: string | null;
-      }[] = [];
-
-      for (const cobertura of oldCoverages) {
-        const codigo = oldIdToCode.get(cobertura.requirementId);
-        if (!codigo) {
-          continue;
-        }
-        // Código removido: a cobertura não tem para onde ir. Fica intocada
-        // no conjunto antigo e só entra na contagem de removidas.
-        const novoRequisito = newByCode.get(codigo);
-        if (!novoRequisito) {
-          continue;
-        }
-        paraTransportar.push({
-          tenantId: ctx.tenantId,
-          requirementId: novoRequisito.id,
-          status: codigosMudados.has(codigo) ? "REVISAR" : cobertura.status,
-          comentario: cobertura.comentario,
-          capabilityId: cobertura.capabilityId,
-        });
-      }
+      const paraTransportar = planejarTransporte({
+        tenantId: ctx.tenantId,
+        coberturas: oldCoverages,
+        idAnteriorParaCodigo: oldIdToCode,
+        novoPorCodigo: newByCode,
+        codigosMudados,
+      });
 
       // Nunca criar cobertura onde não existia: ausência de linha já é
       // SEM_VEREDITO, e um insert aqui converteria "nunca avaliado" em
