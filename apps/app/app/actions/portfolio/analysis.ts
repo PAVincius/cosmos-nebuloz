@@ -29,6 +29,16 @@ export async function triggerPortfolioAnalysis(raw: unknown): Promise<
     const { tenantId } = await requireTenantSession(await headers());
     const input = triggerPortfolioAnalysisSchema.parse(raw);
 
+    // Cross-tenant IDOR guard — checked before the lock, because the lock key is
+    // the bare artId: an unchecked call would hold another tenant's ART lock.
+    const art = await database.aRT.findFirst({
+      where: { id: input.artId, tenantId },
+      select: { id: true },
+    });
+    if (!art) {
+      throw new Error("ART_NOT_FOUND");
+    }
+
     // AC-007: per-ART Upstash lock — prevents concurrent runs
     const lockKey = `${LOCK_KEY_PREFIX}${input.artId}`;
     const { redis } = await import("@repo/rate-limit");
@@ -122,4 +132,3 @@ export async function getPortfolioReport(raw: unknown): Promise<
     return report;
   });
 }
-

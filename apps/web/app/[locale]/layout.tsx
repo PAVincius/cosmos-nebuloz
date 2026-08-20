@@ -4,7 +4,6 @@ import { DesignSystemProvider } from "@repo/design-system";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
-import { CursorGlow } from "@/components/cosmos/cursor-glow";
 import { LenisProvider } from "@/components/cosmos/lenis-provider";
 import { ScrollProgress } from "@/components/cosmos/scroll-progress";
 
@@ -18,28 +17,29 @@ type RootLayoutProperties = {
 const RootLayout = async ({ children, params }: RootLayoutProperties) => {
   const { locale } = await params;
 
+  // No `scroll-smooth` on <html>: Lenis drives smooth scrolling, and lenis.css
+  // (which ships the `scroll-behavior: auto !important` reset) is not imported —
+  // so native smooth-scroll would fight Lenis on every anchor jump.
   return (
     <html
-      className={cn(fonts, "scroll-smooth relative")}
+      className={cn(fonts, "relative")}
       lang={locale}
       suppressHydrationWarning
     >
-      <head>
-        <link href="https://fonts.googleapis.com" rel="preconnect" />
-        <link
-          crossOrigin="anonymous"
-          href="https://fonts.gstatic.com"
-          rel="preconnect"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Inter+Tight:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+      {/* No Google Fonts <link>: the nosecone CSP is `style-src 'self'
+          'unsafe-inline'`, so it was blocked in every environment and Inter
+          Tight / JetBrains Mono never loaded. They are self-hosted through
+          next/font now — see @repo/design-system/lib/fonts. */}
       <body className="grain">
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        {/* No CursorGlow: the sphere already owns the cursor — it drives the
+            camera parallax, the hover wake and the click shockwave. A second
+            glow following the pointer competed with it and read as smear. The
+            component stays in components/cosmos for the older pages. */}
         <LenisProvider />
         <ScrollProgress />
-        <CursorGlow />
         <AnalyticsProvider>
           <DesignSystemProvider>{children}</DesignSystemProvider>
         </AnalyticsProvider>

@@ -5,6 +5,7 @@ const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   requireTenantSession: vi.fn(),
   reportCreate: vi.fn(),
+  artFindFirst: vi.fn(),
   reportFindFirst: vi.fn(),
   reportFindFirstOrThrow: vi.fn(),
   reportUpdate: vi.fn(),
@@ -24,6 +25,7 @@ vi.mock("@repo/database", () => ({
       findFirstOrThrow: mocks.reportFindFirstOrThrow,
       update: mocks.reportUpdate,
     },
+    aRT: { findFirst: mocks.artFindFirst },
   },
 }));
 vi.mock("@/lib/inngest/client", () => ({
@@ -33,8 +35,8 @@ vi.mock("@repo/rate-limit", () => ({
   redis: { set: mocks.redisSet },
 }));
 
-import { buildPortfolioReport } from "../../../app/actions/portfolio/analysis-report";
 import { triggerPortfolioAnalysis } from "../../../app/actions/portfolio/analysis";
+import { buildPortfolioReport } from "../../../app/actions/portfolio/analysis-report";
 
 // ─── buildPortfolioReport (pure) ─────────────────────────────────────────────
 
@@ -102,6 +104,23 @@ describe("triggerPortfolioAnalysis (AC-006/AC-007)", () => {
     mocks.reportCreate.mockResolvedValue({ id: "report-1" });
     mocks.reportUpdate.mockResolvedValue({ id: "report-1", jobId: "job-1" });
     mocks.inngestSend.mockResolvedValue({ ids: ["job-1"] });
+    mocks.artFindFirst.mockResolvedValue({ id: "art-1" });
+  });
+
+  it("rejects an artId that is not owned by the tenant, without taking the lock (IDOR guard)", async () => {
+    mocks.artFindFirst.mockResolvedValue(null);
+
+    const result = await triggerPortfolioAnalysis({
+      artId: "art-of-another-tenant",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("ART_NOT_FOUND");
+    expect(mocks.redisSet).not.toHaveBeenCalled();
+    expect(mocks.reportCreate).not.toHaveBeenCalled();
   });
 
   it("creates report and enqueues Inngest job (AC-006)", async () => {

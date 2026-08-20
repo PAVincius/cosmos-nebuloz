@@ -7,9 +7,29 @@
 import * as Sentry from "@sentry/nextjs";
 import { keys } from "./keys";
 
-export const initializeSentry = (): ReturnType<typeof Sentry.init> =>
-  Sentry.init({
-    dsn: keys().NEXT_PUBLIC_SENTRY_DSN,
+/**
+ * No DSN, no init.
+ *
+ * `NEXT_PUBLIC_SENTRY_DSN` is optional, and `Sentry.init({ dsn: undefined })`
+ * does not no-op: it still starts the SDK and registers every integration
+ * below, including Session Replay. rrweb then instruments the whole document —
+ * mutation observers, input capture, the lot — on every page load, and throws
+ * the recording away because there is nowhere to send it.
+ *
+ * apps/web ships without a DSN today, so this is the common path, not the edge
+ * case. Apps that do configure one behave exactly as before.
+ */
+export const initializeSentry = ():
+  | ReturnType<typeof Sentry.init>
+  | undefined => {
+  const dsn = keys().NEXT_PUBLIC_SENTRY_DSN;
+
+  if (!dsn) {
+    return;
+  }
+
+  return Sentry.init({
+    dsn,
 
     // Enable logging
     enableLogs: true,
@@ -39,3 +59,4 @@ export const initializeSentry = (): ReturnType<typeof Sentry.init> =>
       Sentry.consoleLoggingIntegration({ levels: ["log", "error", "warn"] }),
     ],
   });
+};

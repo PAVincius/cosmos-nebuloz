@@ -5,20 +5,51 @@ import { createI18nMiddleware } from "next-international/middleware";
 import languine from "./languine.json" with { type: "json" };
 
 const locales = [languine.locale.source, ...languine.locale.targets];
+const DEFAULT_LOCALE = "en";
+
+/** True only for tags `Intl` will canonicalise; everything else throws. */
+const isWellFormedTag = (tag: string): boolean => {
+  try {
+    return Intl.getCanonicalLocales(tag).length > 0;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * Negotiator answers `["*"]` for a request that sends no `Accept-Language` — or
+ * sends the wildcard — which is normal for curl, uptime monitors and a good
+ * share of crawlers. `@formatjs`'s matcher pushes every tag through
+ * `Intl.getCanonicalLocales`, and that throws `RangeError` on `"*"` and on any
+ * malformed tag.
+ *
+ * The throw propagated out of the middleware, so the locale rewrite never ran
+ * and `/` fell through to a 404 — the site's front door answering "not found"
+ * to precisely the clients least likely to retry with a better header. Drop
+ * what Intl cannot read and fall back to the default locale.
+ */
+const resolveLocaleFromRequest = (request: NextRequest): string => {
+  const headers = Object.fromEntries(request.headers.entries());
+  const accepted = new Negotiator({ headers })
+    .languages()
+    .filter(isWellFormedTag);
+
+  if (accepted.length === 0) {
+    return DEFAULT_LOCALE;
+  }
+
+  try {
+    return matchLocale(accepted, locales, DEFAULT_LOCALE);
+  } catch {
+    return DEFAULT_LOCALE;
+  }
+};
 
 const I18nMiddleware = createI18nMiddleware({
   locales,
-  defaultLocale: "en",
+  defaultLocale: DEFAULT_LOCALE,
   urlMappingStrategy: "rewriteDefault",
-  resolveLocaleFromRequest: (request: NextRequest) => {
-    const headers = Object.fromEntries(request.headers.entries());
-    const negotiator = new Negotiator({ headers });
-    const acceptedLanguages = negotiator.languages();
-
-    const matchedLocale = matchLocale(acceptedLanguages, locales, "en");
-
-    return matchedLocale;
-  },
+  resolveLocaleFromRequest,
 });
 
 export const internationalizationMiddleware = (request: NextRequest) =>

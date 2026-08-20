@@ -17,13 +17,24 @@ export type PlatformStaff = {
   canWrite: boolean;
 };
 
+/** Recusas que têm saída própria. Sem isto, "falta cadastrar 2FA" e "você não
+ *  é da equipe" chegam à tela como o mesmo FORBIDDEN — e a única ação oferecida
+ *  vira "entrar com outra conta", que não resolve a primeira. */
+export type MotivoDeRecusa = "SEM_SEGUNDO_FATOR";
+
 export class StaffAuthError extends Error {
   readonly code: "UNAUTHORIZED" | "FORBIDDEN";
+  readonly motivo?: MotivoDeRecusa;
 
-  constructor(code: "UNAUTHORIZED" | "FORBIDDEN", message: string) {
+  constructor(
+    code: "UNAUTHORIZED" | "FORBIDDEN",
+    message: string,
+    motivo?: MotivoDeRecusa
+  ) {
     super(message);
     this.name = "StaffAuthError";
     this.code = code;
+    this.motivo = motivo;
   }
 }
 
@@ -49,9 +60,12 @@ async function assertSegundoFator(session: {
   });
 
   if (!usuario?.twoFactorEnabled) {
+    // O motivo vai junto porque a tela precisa oferecer o botão certo: esta
+    // recusa se resolve cadastrando, não trocando de conta.
     throw new StaffAuthError(
       "FORBIDDEN",
-      "O painel exige verificação em dois fatores. Habilite 2FA no seu perfil e entre de novo."
+      "O painel exige verificação em dois fatores. Cadastre seu aplicativo autenticador para entrar.",
+      "SEM_SEGUNDO_FATOR"
     );
   }
 
@@ -81,6 +95,48 @@ async function assertSegundoFator(session: {
  * passa a consumir uma unidade de cota, não três. O comportamento anterior
  * cobrava do operador o custo da própria arquitetura de render.
  */
+/**
+ * Tudo o que o guard checa **menos** o segundo fator.
+ *
+ * Existe por causa de um beco: o painel exige 2FA para entrar, e a tela onde se
+ * cadastra 2FA fica dentro do painel. Com uma checagem só, quem mais precisa da
+ * tela é exatamente quem não alcança ela — e a única saída vira SQL, que é o
+ * que este painel veio remover.
+ *
+ * Só `/seguranca` usa esta versão. Toda rota do grupo `(staff)` continua
+ * passando por `requirePlatformStaff`, e há teste que falha no dia em que a
+ * rota de cadastro migrar para dentro do grupo.
+ */
+export const requirePlatformStaffSemSegundoFator = cache(
+  async (): Promise<PlatformStaff> => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      throw new StaffAuthError("UNAUTHORIZED", "Sessão ausente.");
+    }
+
+    await assertDentroDoLimite("staff", session.user.id);
+
+    const membership = await database.tenantMember.findFirst({
+      where: { userId: session.user.id, tenantId: SYSTEM_TENANT_ID },
+      select: { role: true },
+    });
+
+    if (!membership) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Esta conta não é da equipe da Nebuloz."
+      );
+    }
+
+    return {
+      userId: session.user.id,
+      name: session.user.name ?? null,
+      email: session.user.email,
+      canWrite: membership.role === "ADMIN",
+    };
+  }
+);
+
 export const requirePlatformStaff = cache(async (): Promise<PlatformStaff> => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) {

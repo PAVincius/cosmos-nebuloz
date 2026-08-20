@@ -20,8 +20,39 @@ function _getresend(): Resend {
   return _resend;
 }
 
+/**
+ * Ponto único onde o email escolhe o caminho.
+ *
+ * Os quatro pontos de envio do repositório chamam `resend.emails.send(...)`, e
+ * continuam chamando: o desvio para o catcher local mora aqui, não neles.
+ * Espalhar um `if (dev)` por quatro arquivos garantiria que o quinto nasceria
+ * sem ele — e o quinto é o que manda email de verdade da máquina de alguém.
+ *
+ * Quando `MAIL_CATCHER_SMTP` está definido, `emails.send` vai para o SMTP
+ * local e o cliente do Resend nunca é construído. Ver `transporte.ts` para a
+ * ordem de precedência e o porquê.
+ */
+function _emailsComCatcher(catcher: string) {
+  return {
+    send: async (carta: {
+      from: string;
+      to: string | string[];
+      subject: string;
+      html: string;
+    }) => {
+      const { escolherTransporte } = await import("./transporte");
+      return await escolherTransporte({ catcher }).send(carta);
+    },
+  };
+}
+
 export const resend = new Proxy({} as Resend, {
   get(_alvo, prop, receptor) {
+    const catcher = process.env.MAIL_CATCHER_SMTP;
+    if (catcher && prop === "emails") {
+      return _emailsComCatcher(catcher);
+    }
+
     const alvoReal = _getresend();
     const valor = Reflect.get(alvoReal, prop, receptor);
     return typeof valor === "function" ? valor.bind(alvoReal) : valor;

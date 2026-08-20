@@ -8,6 +8,8 @@ const mocks = vi.hoisted(() => ({
   impedimentFindFirstOrThrow: vi.fn(),
   impedimentUpdateMany: vi.fn(),
   riskCreate: vi.fn(),
+  piPlanFindFirst: vi.fn(),
+  tenantMemberFindFirst: vi.fn(),
   anomalyDetectionRunCreate: vi.fn(),
   anomalyCreate: vi.fn(),
   transaction: vi.fn(),
@@ -25,6 +27,8 @@ vi.mock("@repo/database", () => ({
       updateMany: mocks.impedimentUpdateMany,
     },
     risk: { create: mocks.riskCreate },
+    pIPlan: { findFirst: mocks.piPlanFindFirst },
+    tenantMember: { findFirst: mocks.tenantMemberFindFirst },
     anomalyDetectionRun: { create: mocks.anomalyDetectionRunCreate },
     anomaly: { create: mocks.anomalyCreate },
     $transaction: mocks.transaction,
@@ -69,6 +73,43 @@ describe("escalateImpediment (AC-004)", () => {
     makeTransactionMock();
     mocks.riskCreate.mockResolvedValue({ id: "risk-1" });
     mocks.impedimentUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.piPlanFindFirst.mockResolvedValue({ id: "pi-1" });
+    mocks.tenantMemberFindFirst.mockResolvedValue({ id: "member-1" });
+  });
+
+  it("rejects an ownerUserId from outside the tenant (IDOR guard)", async () => {
+    mocks.tenantMemberFindFirst.mockResolvedValue(null);
+
+    const result = await escalateImpediment({
+      impedimentId: "imp-1",
+      piPlanId: "pi-1",
+      ownerUserId: "user-of-another-tenant",
+      dueDate: new Date(Date.now() + 86_400_000).toISOString(),
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("OWNER_NOT_IN_TENANT");
+    expect(mocks.riskCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a piPlanId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.piPlanFindFirst.mockResolvedValue(null);
+
+    const result = await escalateImpediment({
+      impedimentId: "imp-1",
+      piPlanId: "pi-of-another-tenant",
+      dueDate: new Date(Date.now() + 86_400_000).toISOString(),
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("PI_PLAN_NOT_FOUND");
+    expect(mocks.riskCreate).not.toHaveBeenCalled();
   });
 
   it("creates Risk with IMPEDIMENT category and OWNED roamStatus (AC-004)", async () => {

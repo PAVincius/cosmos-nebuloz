@@ -61,6 +61,26 @@ export async function escalateImpediment(
     const { tenantId, userId } = await requireTenantSession(await headers());
     const input = escalateImpedimentSchema.parse(raw);
 
+    // Cross-tenant IDOR guard — piPlanId comes from the client and the Risk row
+    // would otherwise hang off another tenant's PI plan.
+    const piPlan = await database.pIPlan.findFirst({
+      where: { id: input.piPlanId, tenantId },
+      select: { id: true },
+    });
+    if (!piPlan) {
+      throw new Error("PI_PLAN_NOT_FOUND");
+    }
+
+    if (input.ownerUserId) {
+      const owner = await database.tenantMember.findFirst({
+        where: { userId: input.ownerUserId, tenantId },
+        select: { id: true },
+      });
+      if (!owner) {
+        throw new Error("OWNER_NOT_IN_TENANT");
+      }
+    }
+
     return database.$transaction(async (tx) => {
       const impediment = await tx.impediment.findFirstOrThrow({
         where: { id: input.impedimentId, tenantId },

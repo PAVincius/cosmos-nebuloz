@@ -10,62 +10,162 @@
   --c-canvas: #07080c;
   --c-hairline: rgba(255, 255, 255, 0.07);
   --c-hairline-strong: rgba(255, 255, 255, 0.14);
+  --c-surface: #0c0f17;
+  --c-ink: #f5f7fb;
+  --c-body: #b8c0d0;
+  --c-muted: #8d97ae;
+  /* Was #444c5e, which measured 2.33:1 against --c-canvas — below even the 3:1
+     large-text floor, on the one tier that is only ever used for 11px uppercase
+     mono (`.label`) and 11px `.mono` numbering. Small tracked caps are the
+     hardest thing on the page to read, so this needed the full 4.5:1.
+     Same hue (222°) and saturation (16%), lightness 32% → 53%: 4.99:1 on canvas
+     and 4.62:1 on --c-card, so it passes on both surfaces it appears over.
+     Every one of its 18 call sites is text — verified — so nothing decorative
+     shifts. It does sit closer to --c-muted than before; that compression is
+     the price of the tier being legible at all. */
+  --c-faint: #737f9a;
+  /* Border for controls whose ONLY boundary is the border — the ghost button,
+     the inactive product tabs, the quiz options. Those have a transparent or
+     near-transparent background, so under WCAG 1.4.11 the border IS the
+     component boundary and owes 3:1. `--c-hairline` measures 1.14:1 and
+     `--c-hairline-strong` 1.41:1; white at 0.38 gives 3.48:1.
+     The plain hairlines stay where they are on purpose: as dividers and card
+     outlines they are decoration, which 1.4.11 exempts, and raising them
+     globally would turn every seam on the page into a visible line. */
+  --c-border-control: rgba(255, 255, 255, 0.38);
+  --c-danger: #ff5c8a;
+  --c-success: #29cc7a;
+  --c-warning: #f5b942;
 }
 
-/* Canvas bg */
-.bg-canvas {
-  background: #07080c;
-}
-.bg-surface {
-  background: #0c0f17;
+/* Nebuloz palette → Tailwind's colour space.
+   These used to be hand-rolled classes (.bg-canvas, .text-body, …). Being
+   unlayered, they out-ranked every `@layer utilities` variant, so
+   `text-body hover:text-ink` had a dead hover and `hover:text-body` emitted
+   nothing at all (no --color-body token existed). Registering them as theme
+   colours fixes variants and opacity modifiers (bg-canvas/70) in one move.
+
+   `inline` is required: utilities then emit var(--c-*) directly, so the runtime
+   palette override in (home)/nebuloz/app.tsx keeps working.
+
+   These keys deliberately shadow globals.css's @theme inline for THIS app only —
+   the values there are the COSMOS product-UI palette (--background is a neutral
+   graphite), not the Nebuloz brand palette. apps/web has its own PostCSS entry,
+   so apps/app and apps/backoffice are unaffected. --color-card is deliberately
+   NOT shadowed: it is shadcn's surface token, used by ui/card and ui/alert. */
+@theme inline {
+  --color-canvas: var(--c-canvas);
+  --color-surface: var(--c-surface);
+  --color-hairline: var(--c-hairline);
+  --color-hairline-strong: var(--c-hairline-strong);
+  --color-ink: var(--c-ink);
+  --color-body: var(--c-body);
+  --color-muted: var(--c-muted);
+  --color-faint: var(--c-faint);
+  --color-violet: var(--c-violet);
+  --color-indigo: var(--c-indigo);
+  --color-cyan: var(--c-cyan);
+  --color-danger: var(--c-danger);
+  --color-success: var(--c-success);
+  --color-warning: var(--c-warning);
+  --font-sans: var(--font-inter), var(--font-manrope), system-ui, sans-serif;
 }
 
-/* Text */
-.text-ink {
-  color: #f5f7fb;
+/* Base — `scroll-behavior` is deliberately absent: Lenis owns smooth scrolling
+   (see layout.tsx). scroll-padding-top / scroll-margin-top clear the fixed
+   h-16 nav on anchor navigation. */
+html {
+  color-scheme: dark;
+  scroll-padding-top: 88px;
+  -webkit-text-size-adjust: 100%;
+  /* on <html>, not <body> — on body it becomes the scroll container and
+     defeats scroll-padding-top */
+  overflow-x: hidden;
 }
-.text-body {
-  color: #b8c0d0;
+body {
+  /* globals.css sets `body { @apply bg-background }`, which is the COSMOS
+     graphite. The readiness <main> is deliberately translucent in places so the
+     sphere shows through — anything behind it has to be Nebuloz blue-black. */
+  background: var(--c-canvas);
+  font-feature-settings:
+    "cv05" 1,
+    "cv11" 1,
+    "calt" 1;
+  caret-color: var(--c-violet);
+  accent-color: var(--c-violet);
 }
-.text-muted {
-  color: #8d97ae;
+h1,
+h2,
+h3 {
+  text-wrap: balance;
 }
-.text-faint {
-  color: #444c5e;
+p {
+  text-wrap: pretty;
 }
-
-/* Border hairlines */
-.border-hairline {
-  border-color: var(--c-hairline);
-}
-.border-hairline-strong {
-  border-color: var(--c-hairline-strong);
+section[id] {
+  scroll-margin-top: 88px;
 }
 
 /* Micro-aesthetics typography */
 .display {
-  font-family: "Inter Tight", "Inter", system-ui, sans-serif;
+  font-family: var(--font-inter-tight), "Inter Tight", system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: -0.035em;
   line-height: 1.02;
+  font-variant-numeric: tabular-nums;
 }
 .display-tight {
   letter-spacing: -0.045em;
 }
+/* 900-weight display — the readiness hero and CTA compose `display hero-heading`,
+   so this has to out-weigh .display's 700, not fall below it. */
 .hero-heading {
-  font-weight: 500;
-  letter-spacing: -0.03em;
-  line-height: 0.95;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  line-height: 0.93;
+  font-variant-numeric: tabular-nums;
 }
 .label {
-  font-family: "JetBrains Mono", "IBM Plex Mono", monospace;
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
 }
 .mono {
-  font-family: "JetBrains Mono", "IBM Plex Mono", monospace;
+  font-family: var(--font-jetbrains-mono), "JetBrains Mono", monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hero headline reveal — see SplitLine in readiness/hero.tsx for why this is
+   CSS and not framer-motion. `backwards` holds the from-state during the
+   stagger delay; outside the no-preference block the text just renders. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-line {
+    animation: heroLine 0.85s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  }
+}
+@keyframes heroLine {
+  from {
+    opacity: 0;
+    transform: translateY(22px);
+  }
+}
+
+/* Small screens: the hero and section tracking are calibrated for 96px display
+   type. At the mobile floor the word gaps start competing with the letter gaps,
+   so ease both off. */
+@media (max-width: 640px) {
+  .hero-heading {
+    letter-spacing: -0.025em;
+  }
+  .display {
+    letter-spacing: -0.02em;
+  }
+  .label {
+    font-size: 12px;
+  }
 }
 
 /* Gradient text */
@@ -87,25 +187,8 @@
   color: transparent;
 }
 
-/* Syntax colors */
-.text-violet {
-  color: var(--c-violet);
-}
-.text-cyan {
-  color: var(--c-cyan);
-}
-.text-indigo {
-  color: var(--c-indigo);
-}
-.text-danger {
-  color: #ff5c8a;
-}
-.text-success {
-  color: #29cc7a;
-}
-.text-warning {
-  color: #f5b942;
-}
+/* Syntax colors (text-violet / -cyan / -indigo / -danger / -success / -warning)
+   now come from the @theme block above. */
 
 /* Status dots */
 .dot {
@@ -160,6 +243,21 @@
     border-color 0.2s,
     box-shadow 0.3s;
   text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  will-change: transform;
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.06s;
+}
+/* Class-scoped on purpose: a global `:focus-visible { outline }` would beat the
+   `focus-visible:outline-none focus-visible:ring-*` utilities used elsewhere in
+   this app and double up the indicator. */
+.btn-primary:focus-visible,
+.btn-ghost:focus-visible {
+  outline: 2px solid var(--c-violet);
+  outline-offset: 3px;
 }
 .btn-primary::before {
   content: "";
@@ -204,18 +302,26 @@
   border-radius: 12px;
   background: transparent;
   color: #c3cad7;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* Transparent background, so this border is the whole button as far as the
+     eye is concerned — 1.4.11 territory. 0.1 measured 1.24:1. */
+  border: 1px solid var(--c-border-control);
   font-weight: 500;
   font-size: 14px;
   letter-spacing: -0.01em;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .btn-ghost:hover {
   color: #fff;
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
   background: rgba(255, 255, 255, 0.02);
   transform: translateY(-1px);
+}
+.btn-ghost:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.06s;
 }
 
 /* Cards */
@@ -227,6 +333,7 @@
   );
   border: 1px solid var(--c-hairline);
   border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
   position: relative;
 }
 .grad-shell {
@@ -248,6 +355,7 @@
   );
   border-radius: 18px;
   height: 100%;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 /* Workspace */
@@ -271,6 +379,234 @@
     linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
   background-size: 64px 64px;
+}
+.bg-grid-fade {
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    black 30%,
+    transparent 75%
+  );
+}
+.bg-dots {
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
+/* Hairline edge helpers — used by the gap-px grids on the readiness page */
+.hl {
+  border-color: var(--c-hairline);
+}
+.hl-t {
+  border-top: 1px solid var(--c-hairline);
+}
+.hl-b {
+  border-bottom: 1px solid var(--c-hairline);
+}
+.hl-l {
+  border-left: 1px solid var(--c-hairline);
+}
+.hl-r {
+  border-right: 1px solid var(--c-hairline);
+}
+
+/* SVG connector helpers */
+.svg-grad-stroke {
+  stroke: url(#nz-grad);
+}
+.dash-flow {
+  stroke-dasharray: 4 8;
+  animation: nz-dash 4s linear infinite;
+}
+@keyframes nz-dash {
+  to {
+    stroke-dashoffset: -200;
+  }
+}
+
+/* Hide the scrollbar in horizontal scrollers */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Skip-to-content — the only way to bypass the fixed nav with a keyboard */
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 12px 24px;
+  border-radius: 0 0 12px 12px;
+  background: var(--c-canvas);
+  color: var(--c-ink);
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-top: none;
+  text-decoration: none;
+  transition: top 0.15s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--c-violet);
+  outline-offset: 2px;
+}
+
+/* Reactive hairline — a card's border ignites near the cursor, tying the flat
+   surfaces to the sphere's light vocabulary. Driven per-card by useSpotCard()
+   in (home)/readiness/spot-card.tsx, which writes --spot / --mx / --my.
+   Drawn just inside the border box so overflow-hidden parents don't clip it. */
+.spot-card {
+  position: relative;
+}
+.spot-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 5;
+  background: radial-gradient(
+    190px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(92, 180, 228, 0.55),
+    rgba(137, 207, 240, 0.18) 45%,
+    transparent 72%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: var(--spot, 0);
+  transition: opacity 0.35s;
+}
+
+/* ─── Motion primitives (readiness/magic.tsx) ─────────────────────── */
+/* The design prototype injected these from JS at module load. In Next that
+   would ship unlayered CSS from a client chunk and duplicate on every HMR
+   pass, so they live here instead. Every colour is a var(--c-*), so the
+   runtime palette override reaches them. */
+@keyframes nzBeamSpin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes nzShimmer {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: -100% 50%;
+  }
+}
+@keyframes nzPulseRing {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.55;
+  }
+  70% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.25);
+    opacity: 0;
+  }
+}
+.nz-beam-mask {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  padding: 1px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  overflow: hidden;
+}
+.nz-beam {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
+}
+.nz-beam::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220%;
+  border: 0;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 300deg,
+    var(--c-violet) 340deg,
+    var(--c-cyan) 355deg,
+    transparent 360deg
+  );
+  animation: nzBeamSpin var(--nz-beam-dur, 7s) linear infinite;
+  animation-delay: var(--nz-beam-delay, 0s);
+}
+.nz-shimmer {
+  background: linear-gradient(
+    100deg,
+    var(--c-indigo) 0%,
+    #ffffff 18%,
+    var(--c-cyan) 34%,
+    var(--c-indigo) 52%,
+    var(--c-indigo) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: nzShimmer 6.5s linear infinite;
+}
+.nz-spot {
+  position: relative;
+  isolation: isolate;
+}
+.nz-spot-light {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  background: radial-gradient(
+    320px circle at var(--nz-x, 50%) var(--nz-y, 50%),
+    rgba(92, 180, 228, 0.1),
+    transparent 62%
+  );
+}
+.nz-spot:hover .nz-spot-light {
+  opacity: 1;
+}
+.nz-pulse-ring {
+  animation: nzPulseRing 2.6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  box-shadow: none;
 }
 
 /* Scrolling marquee */
@@ -407,7 +743,7 @@
 
 /* Selection */
 ::selection {
-  background: rgba(124, 108, 255, 0.4);
+  background: rgba(92, 180, 228, 0.4);
   color: #fff;
 }
 /* Reduced motion */
@@ -418,6 +754,19 @@
   .reveal-card {
     animation: none !important;
     opacity: 1 !important;
+  }
+  .dash-flow {
+    animation: none !important;
+  }
+  .nz-beam::before {
+    animation: none !important;
+  }
+  .nz-shimmer {
+    animation: none !important;
+  }
+  .nz-pulse-ring {
+    animation: none !important;
+    opacity: 0 !important;
   }
 }
 
@@ -523,14 +872,21 @@
 }
 
 /* ─── Glow text ──────────────────────────────────────────────────── */
+/* Retuned off the pre-pivot Cosmos accents (#00d4ff / #7c6cff) onto the locked
+   Nebuloz palette. --glow-indigo is new; the readiness ladder and products use it. */
 .glow-cyan {
-  color: var(--accent);
-  text-shadow: 0 0 32px rgba(0, 212, 255, 0.4);
+  color: var(--c-cyan);
+  text-shadow: 0 0 32px rgba(246, 242, 195, 0.4);
 }
 
 .glow-violet {
-  color: var(--violet);
-  text-shadow: 0 0 32px rgba(124, 108, 255, 0.35);
+  color: var(--c-violet);
+  text-shadow: 0 0 32px rgba(92, 180, 228, 0.35);
+}
+
+.glow-indigo {
+  color: var(--c-indigo);
+  text-shadow: 0 0 32px rgba(137, 207, 240, 0.35);
 }
 
 /* ─── Card depth ─────────────────────────────────────────────────── */
@@ -648,7 +1004,11 @@
     transparent 1px
   );
   background-size: 42px 42px;
-  mask-image: radial-gradient(ellipse 90% 80% at 50% 40%, black 30%, transparent 80%);
+  mask-image: radial-gradient(
+    ellipse 90% 80% at 50% 40%,
+    black 30%,
+    transparent 80%
+  );
 }
 .bg-beam {
   position: absolute;

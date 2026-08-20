@@ -12,6 +12,24 @@ export default async function StaffLayout({
 }) {
   const access = await resolveStaffAccess();
 
+  // Antes esta recusa caía no ramo genérico: a pessoa lia o endereço da tela de
+  // cadastro como texto e tinha de digitá-lo, enquanto o único botão oferecido
+  // era "entrar com outra conta" — que não é o problema dela.
+  if (access.status === "sem_2fa") {
+    return (
+      <div className="mx-auto max-w-md rounded-lg border p-8 text-center">
+        <h1 className="font-semibold text-xl">Falta o segundo fator</h1>
+        <p className="mt-2 text-muted-foreground text-sm">{access.message}</p>
+        <Link
+          className="mt-4 inline-block rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground text-sm"
+          href="/seguranca"
+        >
+          Cadastrar aplicativo autenticador
+        </Link>
+      </div>
+    );
+  }
+
   if (access.status === "forbidden") {
     return (
       <div className="mx-auto max-w-md rounded-lg border p-8 text-center">

@@ -1,18 +1,11 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
+import { useTwoFactorEnrollment } from "@repo/auth/two-factor-enrollment";
+import { QrCode } from "@repo/design-system/cosmos/qr-code";
 import { useState, useTransition } from "react";
 import { createOnboardingWorkspace } from "../../actions/onboarding";
 
 type Step = "welcome" | "workspace" | "security" | "done";
-
-function extractTotpSecret(uri: string): string | null {
-  try {
-    return new URL(uri).searchParams.get("secret");
-  } catch {
-    return null;
-  }
-}
 
 type Props = {
   fromInvite: boolean;
@@ -33,13 +26,13 @@ export function OnboardingWizard({
   const [step, setStep] = useState<Step>(fromInvite ? "security" : "welcome");
   const [wsName, setWsName] = useState("");
   const [wsError, setWsError] = useState<string | null>(null);
-  const [totpUri, setTotpUri] = useState<string | null>(null);
-  const [backupCodes, setBackupCodes] = useState<string[]>([]);
+  // O fluxo de 2FA mora em @repo/auth: o painel e o perfil usam o mesmo, e a
+  // ordem das chamadas (segredo → confirma → só então revela os códigos de
+  // recuperação) é a parte que precisa ser idêntica nos três lugares.
+  const doisFatores = useTwoFactorEnrollment();
   const [totpCode, setTotpCode] = useState("");
   const [twoFaPassword, setTwoFaPassword] = useState("");
   const [showManualKey, setShowManualKey] = useState(false);
-  const [twoFaError, setTwoFaError] = useState<string | null>(null);
-  const [twoFaLoading, setTwoFaLoading] = useState(false);
   const [skip2fa, setSkip2fa] = useState(false);
   const [navigating, setNavigating] = useState(false);
 
@@ -72,36 +65,14 @@ export function OnboardingWizard({
   }
 
   async function handleEnable2FA() {
-    setTwoFaLoading(true);
-    setTwoFaError(null);
-    try {
-      const result = await authClient.twoFactor.enable({
-        password: twoFaPassword,
-      });
-      if (result?.data?.totpURI) {
-        setTotpUri(result.data.totpURI);
-        setBackupCodes(result.data.backupCodes ?? []);
-      } else {
-        setTwoFaError("Erro ao ativar 2FA. Verifique sua senha.");
-      }
-    } catch {
-      setTwoFaError("Erro ao ativar 2FA. Tente novamente.");
-    } finally {
-      setTwoFaLoading(false);
+    if (doisFatores.passo === "ocioso") {
+      doisFatores.iniciar();
     }
+    await doisFatores.gerarSegredo(twoFaPassword);
   }
 
   async function handleVerify2FA() {
-    setTwoFaLoading(true);
-    setTwoFaError(null);
-    try {
-      await authClient.twoFactor.verifyTotp({ code: totpCode });
-      setStep("done");
-    } catch {
-      setTwoFaError("Código inválido. Verifique seu aplicativo autenticador.");
-    } finally {
-      setTwoFaLoading(false);
-    }
+    await doisFatores.confirmar(totpCode);
   }
 
   function goToPortfolio() {
@@ -111,7 +82,13 @@ export function OnboardingWizard({
     window.location.href = "/portfolio";
   }
 
-  const totpSecret = totpUri ? extractTotpSecret(totpUri) : null;
+  const totpUri = doisFatores.totpURI;
+  const totpSecret = doisFatores.chaveManual;
+  const twoFaError = doisFatores.erro;
+  const twoFaLoading = doisFatores.pendente;
+  // Nulo até o código ser confirmado — o hook retém de propósito. Ver
+  // packages/auth/two-factor-enrollment.ts.
+  const backupCodes = doisFatores.backupCodes;
   const showWorkspaceBadge = fromInvite;
   const showManualKeySection = showManualKey && totpSecret !== null;
 
@@ -290,15 +267,15 @@ export function OnboardingWizard({
                     <p className="font-semibold text-sm">
                       1. Escaneie o QR Code
                     </p>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    {/* biome-ignore lint/performance/noImgElement: external QR code service, no next/image domain configured */}
-                    <img
-                      alt="QR Code 2FA"
-                      className="mx-auto rounded-lg border"
-                      height={180}
-                      src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(totpUri)}`}
-                      width={180}
-                    />
+                    {/* Desenhado aqui, em SVG. Antes esta imagem vinha de
+                        api.qrserver.com com a otpauth:// — que carrega a chave
+                        do segundo fator — numa query string. */}
+                    <div className="mx-auto w-fit rounded-lg border bg-white p-3">
+                      <QrCode
+                        title="QR code para o aplicativo autenticador"
+                        value={totpUri}
+                      />
+                    </div>
                     <button
                       className="w-full text-muted-foreground text-xs underline underline-offset-2 transition-colors hover:text-foreground"
                       onClick={() => setShowManualKey((v) => !v)}
@@ -321,36 +298,41 @@ export function OnboardingWizard({
                     ) : null}
                   </div>
 
-                  <div className="space-y-2">
-                    <p className="font-semibold text-sm">
-                      2. Insira o código gerado
-                    </p>
-                    <input
-                      className={`${inputClass} text-center font-mono text-xl tracking-[0.5em]`}
-                      inputMode="numeric"
-                      maxLength={6}
-                      onChange={(e) =>
-                        setTotpCode(e.target.value.replace(/\D/g, ""))
-                      }
-                      pattern="[0-9]{6}"
-                      placeholder="000000"
-                      type="text"
-                      value={totpCode}
-                    />
-                    {twoFaError !== null && (
-                      <p className="text-destructive text-xs">{twoFaError}</p>
-                    )}
-                    <button
-                      className="w-full rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={totpCode.length !== 6 || twoFaLoading}
-                      onClick={handleVerify2FA}
-                      type="button"
-                    >
-                      {twoFaLoading ? "Verificando…" : "Confirmar e ativar"}
-                    </button>
-                  </div>
+                  {backupCodes === null && (
+                    <div className="space-y-2">
+                      <p className="font-semibold text-sm">
+                        2. Insira o código gerado
+                      </p>
+                      <input
+                        className={`${inputClass} text-center font-mono text-xl tracking-[0.5em]`}
+                        inputMode="numeric"
+                        maxLength={6}
+                        onChange={(e) =>
+                          setTotpCode(e.target.value.replace(/\D/g, ""))
+                        }
+                        pattern="[0-9]{6}"
+                        placeholder="000000"
+                        type="text"
+                        value={totpCode}
+                      />
+                      {twoFaError !== null && (
+                        <p className="text-destructive text-xs">{twoFaError}</p>
+                      )}
+                      <button
+                        className="w-full rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground text-sm transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={totpCode.length !== 6 || twoFaLoading}
+                        onClick={handleVerify2FA}
+                        type="button"
+                      >
+                        {twoFaLoading ? "Verificando…" : "Confirmar e ativar"}
+                      </button>
+                    </div>
+                  )}
 
-                  {backupCodes.length > 0 && (
+                  {/* Só depois de o código passar. Antes disso `backupCodes` é
+                      null: código de recuperação para um 2FA que ainda não
+                      ativou é um papel que a pessoa guarda achando que vale. */}
+                  {backupCodes !== null && (
                     <div className="space-y-1">
                       <p className="font-semibold text-muted-foreground text-xs">
                         Códigos de backup (guarde em local seguro):
@@ -365,6 +347,13 @@ export function OnboardingWizard({
                           </code>
                         ))}
                       </div>
+                      <button
+                        className="mt-3 w-full rounded-lg bg-primary px-4 py-2.5 font-semibold text-primary-foreground text-sm transition-opacity hover:opacity-90"
+                        onClick={() => setStep("done")}
+                        type="button"
+                      >
+                        Guardei os códigos →
+                      </button>
                     </div>
                   )}
                 </div>

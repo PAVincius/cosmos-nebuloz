@@ -62,6 +62,17 @@ export async function roamTransitionRisk(
       throw new Error(`ROAM_GUARD:${guardError}`);
     }
 
+    // Cross-tenant IDOR guard — the ROAM owner is addressed by user id.
+    if (input.ownerId) {
+      const owner = await database.tenantMember.findFirst({
+        where: { userId: input.ownerId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!owner) {
+        throw new Error("OWNER_NOT_IN_TENANT");
+      }
+    }
+
     const now = new Date();
     const risk = await database.risk.updateMany({
       where: { id: input.riskId, tenantId: ctx.tenantId },

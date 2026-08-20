@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn(),
   revalidatePath: vi.fn(),
   sprintReviewUpsert: vi.fn(),
+  sprintFindFirst: vi.fn(),
   sprintUpdateMany: vi.fn(),
   piObjectiveFindFirstOrThrow: vi.fn(),
   piObjectiveUpdateMany: vi.fn(),
@@ -22,7 +23,10 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@repo/database", () => ({
   database: {
     sprintReview: { upsert: mocks.sprintReviewUpsert },
-    sprint: { updateMany: mocks.sprintUpdateMany },
+    sprint: {
+      findFirst: mocks.sprintFindFirst,
+      updateMany: mocks.sprintUpdateMany,
+    },
     pIObjective: {
       findFirstOrThrow: mocks.piObjectiveFindFirstOrThrow,
       updateMany: mocks.piObjectiveUpdateMany,
@@ -33,12 +37,12 @@ vi.mock("@repo/database", () => ({
   },
 }));
 
+import { ppmFormula } from "../../../app/actions/sprints/ppm-formula";
 import {
   computePIPPM,
   saveSprintReview,
   updatePIObjectiveAchieved,
 } from "../../../app/actions/sprints/review";
-import { ppmFormula } from "../../../app/actions/sprints/ppm-formula";
 
 // ─── ppmFormula (pure, no mocks needed) ──────────────────────────────────────
 
@@ -100,6 +104,25 @@ describe("saveSprintReview (AC-001)", () => {
       velocity: 30,
     });
     mocks.sprintUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.sprintFindFirst.mockResolvedValue({ id: "sprint-1" });
+  });
+
+  it("rejects a sprintId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.sprintFindFirst.mockResolvedValue(null);
+
+    const result = await saveSprintReview({
+      sprintId: "sprint-of-another-tenant",
+      completedPoints: 40,
+      acceptedPoints: 30,
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("SPRINT_NOT_FOUND");
+    // the upsert key is sprintId alone — never reach it for a foreign sprint
+    expect(mocks.sprintReviewUpsert).not.toHaveBeenCalled();
   });
 
   it("saves review with accepted ≤ completed (AC-001)", async () => {

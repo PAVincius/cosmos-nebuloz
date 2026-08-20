@@ -6,6 +6,8 @@ const mocks = vi.hoisted(() => ({
   requireTenantSession: vi.fn(),
   revalidatePath: vi.fn(),
   leanBudgetFindFirst: vi.fn(),
+  artFindFirst: vi.fn(),
+  piPlanFindFirst: vi.fn(),
   leanBudgetCreate: vi.fn(),
   leanBudgetUpdateMany: vi.fn(),
   leanBudgetFindFirstOrThrow: vi.fn(),
@@ -25,6 +27,8 @@ vi.mock("@repo/database", () => ({
       create: mocks.leanBudgetCreate,
       updateMany: mocks.leanBudgetUpdateMany,
     },
+    aRT: { findFirst: mocks.artFindFirst },
+    pIPlan: { findFirst: mocks.piPlanFindFirst },
     epic: { aggregate: mocks.epicAggregate },
   },
 }));
@@ -44,6 +48,50 @@ describe("saveLeanBudget (AC-002)", () => {
     mocks.requireTenantSession.mockResolvedValue({ ...tenantCtx, role: "RTE" });
     mocks.leanBudgetFindFirst.mockResolvedValue(null);
     mocks.leanBudgetCreate.mockResolvedValue({ id: "budget-1" });
+    mocks.artFindFirst.mockResolvedValue({ id: "art-1" });
+    mocks.piPlanFindFirst.mockResolvedValue({ id: "pi-1" });
+  });
+
+  it("rejects an artId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.artFindFirst.mockResolvedValue(null);
+
+    const result = await saveLeanBudget({
+      artId: "art-of-another-tenant",
+      piPlanId: "pi-1",
+      name: "PI-2026-Q2 Budget",
+      amount: 500_000,
+      capexPct: 60,
+      opexPct: 40,
+      period: "PI-2026-Q2",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("ART_NOT_FOUND");
+    expect(mocks.leanBudgetCreate).not.toHaveBeenCalled();
+  });
+
+  it("rejects a piPlanId that is not owned by the tenant (IDOR guard)", async () => {
+    mocks.piPlanFindFirst.mockResolvedValue(null);
+
+    const result = await saveLeanBudget({
+      artId: "art-1",
+      piPlanId: "pi-of-another-tenant",
+      name: "PI-2026-Q2 Budget",
+      amount: 500_000,
+      capexPct: 60,
+      opexPct: 40,
+      period: "PI-2026-Q2",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("PI_PLAN_NOT_FOUND");
+    expect(mocks.leanBudgetCreate).not.toHaveBeenCalled();
   });
 
   it("saves valid budget with capex+opex=100 (AC-002)", async () => {

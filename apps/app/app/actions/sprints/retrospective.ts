@@ -25,6 +25,24 @@ export async function createRetro(
     const { tenantId } = await requireTenantSession(await headers());
     const input = createRetroSchema.parse(raw);
 
+    // Cross-tenant IDOR guard — sprint and team come from the client.
+    const [sprint, team] = await Promise.all([
+      database.sprint.findFirst({
+        where: { id: input.sprintId, tenantId },
+        select: { id: true },
+      }),
+      database.team.findFirst({
+        where: { id: input.teamId, tenantId },
+        select: { id: true },
+      }),
+    ]);
+    if (!sprint) {
+      throw new Error("SPRINT_NOT_FOUND");
+    }
+    if (!team) {
+      throw new Error("TEAM_NOT_FOUND");
+    }
+
     return database.$transaction(async (tx) => {
       const retro = await tx.retrospective.create({
         data: {
@@ -214,6 +232,16 @@ export async function castRetroVote(
         );
       }
 
+      // Cross-tenant IDOR guard — the retro is tenant-checked above but the
+      // item is not, and the increment below writes the row by id alone.
+      const item = await tx.retroItem.findFirst({
+        where: { id: input.itemId, retroId: input.retroId, tenantId },
+        select: { id: true },
+      });
+      if (!item) {
+        throw new Error("RETRO_ITEM_NOT_FOUND");
+      }
+
       await tx.retroVote.create({
         data: { itemId: input.itemId, userId },
       });
@@ -259,6 +287,15 @@ export async function addRetroActionItem(
       where: { id: input.retroId, tenantId },
       select: { id: true },
     });
+
+    // Cross-tenant IDOR guard — the action item owner is addressed by user id.
+    const owner = await database.tenantMember.findFirst({
+      where: { userId: input.ownerId, tenantId },
+      select: { id: true },
+    });
+    if (!owner) {
+      throw new Error("OWNER_NOT_IN_TENANT");
+    }
 
     const item = await database.retroActionItem.create({
       data: {

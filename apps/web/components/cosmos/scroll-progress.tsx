@@ -1,9 +1,11 @@
 "use client";
-import { motion, useScroll, useSpring } from "framer-motion";
+import { motion, useScroll } from "framer-motion";
 
+// Matches the design source's `.progress`: a 1px hairline of palette light,
+// tracking raw scroll position. No spring — the lag reads as the bar falling
+// behind the scrollbar.
 export function ScrollProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 30 });
 
   return (
     <motion.div
@@ -12,12 +14,11 @@ export function ScrollProgress() {
         top: 0,
         left: 0,
         right: 0,
-        height: 2,
-        background: "var(--accent)",
+        height: 1,
+        background: "linear-gradient(90deg, var(--c-violet), var(--c-cyan))",
         transformOrigin: "0%",
-        scaleX,
-        zIndex: 9999,
-        boxShadow: "0 0 8px var(--accent-glow)",
+        scaleX: scrollYProgress,
+        zIndex: 200,
       }}
     />
   );

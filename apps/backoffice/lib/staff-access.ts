@@ -12,6 +12,10 @@ import { RateLimitError } from "./rate-limit";
 export type StaffAccess =
   | { status: "ok"; staff: PlatformStaff }
   | { status: "forbidden"; message: string }
+  /** Recusa com saída própria: a pessoa é da equipe, só não cadastrou o
+   *  autenticador. Desfecho separado porque a ação é cadastrar, e oferecer
+   *  "entrar com outra conta" aqui manda a pessoa para o mesmo lugar de novo. */
+  | { status: "sem_2fa"; message: string }
   | { status: "rate_limited"; message: string };
 
 /**
@@ -32,6 +36,9 @@ export async function resolveStaffAccess(): Promise<StaffAccess> {
       redirectToSignIn();
     }
     if (error instanceof StaffAuthError && error.code === "FORBIDDEN") {
+      if (error.motivo === "SEM_SEGUNDO_FATOR") {
+        return { status: "sem_2fa", message: error.message };
+      }
       return { status: "forbidden", message: error.message };
     }
     // Estourar o teto não é falta de permissão, e desenhar como se fosse faria
