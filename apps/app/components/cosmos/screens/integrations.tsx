@@ -328,6 +328,10 @@ function ConnectLinearModal({
 }) {
   const { close } = useModal();
   const [name, setName] = useState(catalog.label);
+  // Uma conexão por time do Linear significa vários registros com a mesma
+  // fonte. Sem isto todos nasceriam chamados "Linear" e a tela viraria cinco
+  // cards idênticos. O nome só é sugerido enquanto ninguém o digitou.
+  const [nameTouched, setNameTouched] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const [account, setAccount] = useState<string | null>(null);
   const [teams, setTeams] = useState<LinearTeamOption[] | null>(null);
@@ -353,7 +357,19 @@ function ConnectLinearModal({
     if (res.ok) {
       setAccount(res.data.account);
       setTeams(res.data.teams);
-      setTeamId(res.data.teams[0]?.id ?? "");
+      const primeiro = res.data.teams[0];
+      setTeamId(primeiro?.id ?? "");
+      if (!nameTouched && primeiro) {
+        setName(`${catalog.label} · ${primeiro.name}`);
+      }
+    }
+  };
+
+  const escolherTime = (id: string) => {
+    setTeamId(id);
+    const escolhido = teams?.find((t) => t.id === id);
+    if (!nameTouched && escolhido) {
+      setName(`${catalog.label} · ${escolhido.name}`);
     }
   };
 
@@ -406,8 +422,11 @@ function ConnectLinearModal({
           </label>
           <input
             id="linear-name"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Linear Nebuloz"
+            onChange={(e) => {
+              setNameTouched(true);
+              setName(e.target.value);
+            }}
+            placeholder="Ex: Linear · Meridian"
             style={inputStyle}
             value={name}
           />
@@ -459,7 +478,7 @@ function ConnectLinearModal({
             ) : (
               <select
                 id="linear-team"
-                onChange={(e) => setTeamId(e.target.value)}
+                onChange={(e) => escolherTime(e.target.value)}
                 style={inputStyle}
                 value={teamId}
               >
@@ -688,12 +707,31 @@ function ConnectorCard({
                   title={`Testar conexão de ${integration.name}`}
                 />
                 {integration.source === "linear" && (
-                  <IconButton
-                    name="download"
-                    onClick={syncNow}
-                    size={30}
-                    title={`Sincronizar ${integration.name} agora`}
-                  />
+                  <>
+                    <IconButton
+                      name="download"
+                      onClick={syncNow}
+                      size={30}
+                      title={`Sincronizar ${integration.name} agora`}
+                    />
+                    {/* O catálogo esconde a fonte assim que existe uma
+                        integração dela, e o Linear admite uma por time —
+                        sem esta porta, o segundo time não teria por onde
+                        entrar. */}
+                    <IconButton
+                      name="plus"
+                      onClick={() =>
+                        modal.open(
+                          <ConnectLinearModal
+                            catalog={catalog}
+                            onConnected={onChanged}
+                          />
+                        )
+                      }
+                      size={30}
+                      title="Conectar outro time do Linear"
+                    />
+                  </>
                 )}
                 <IconButton
                   name={paused ? "play" : "pause"}

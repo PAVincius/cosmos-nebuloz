@@ -257,12 +257,49 @@ describe("IntegrationsScreen", () => {
 
     await waitFor(() =>
       expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
-        name: "Linear",
+        name: "Linear · Meridian",
         apiKey: "lin_api_teste_00000000",
         linearTeamId: "lt_1",
         importNow: true,
       })
     );
+  });
+
+  it("deixa conectar um segundo time do Linear a partir de um card já conectado", async () => {
+    // O catálogo esconde a fonte quando já existe integração dela. Com uma
+    // conexão por time do Linear, sem esta porta o segundo time não teria por
+    // onde entrar.
+    listIntegrationsMock.mockResolvedValue({
+      ok: true,
+      data: [
+        integration({ id: "i2", source: "linear", name: "Linear · Meridian" }),
+      ],
+    });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [{ id: "lt_2", name: "Charter", key: "CHA" }],
+      },
+    });
+
+    render(<IntegrationsScreen />);
+    await screen.findByText("Linear · Meridian");
+
+    // Card de catálogo do Linear não existe mais — só o do conectado. Os
+    // outros conectores do catálogo seguem com o botão "Conectar" deles.
+    expect(screen.queryByText("Linear")).toBeNull();
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Conectar outro time do Linear" })
+    );
+
+    const key = await screen.findByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    // O nome sugerido acompanha o time, senão nasceriam cinco "Linear".
+    expect(await screen.findByDisplayValue("Linear · Charter")).toBeTruthy();
   });
 
   it("shows the error state when the action fails", async () => {
