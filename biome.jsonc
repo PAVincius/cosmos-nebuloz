@@ -388,6 +388,10 @@
       // nó do grafo.
       "!docs/cosmos/grafo.json",
       "!docs/cosmos/GRAFO.md",
+      // Mesmo caso: gerado por `pnpm audit:runtime --update`, que expande os
+      // arrays. Sem isto, formatador e gerador brigam pelo arquivo a cada
+      // atualização da catraca.
+      "!scripts/audit-runtime-baseline.json",
       "!**/.next"
     ]
   }

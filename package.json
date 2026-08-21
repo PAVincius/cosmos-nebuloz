@@ -22,6 +22,7 @@
     "generate:tests": "tsx scripts/generate-tests.ts",
     "fix:ci": "tsx scripts/fix-ci.ts",
     "risk:score": "tsx scripts/risk-score.ts",
+    "audit:runtime": "tsx scripts/audit-runtime.mts",
     "cosmos:graph": "tsx scripts/cosmos-graph.mts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",

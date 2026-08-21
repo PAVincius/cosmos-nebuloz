@@ -278,12 +278,23 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       # Portão em `critical`, não `high`: com `high` ele ficava vermelho em
-      # todo run (124 altos, quase todos transitivos de tooling), e job que
+      # todo run (125 altos, quase todos transitivos de tooling), e job que
       # nunca passa não é portão — é ruído que o time aprende a ignorar. Hoje o
-      # repo tem ZERO críticos, então qualquer um novo para a esteira. Os altos
-      # seguem registrados como dívida em docs/compliance.
-      - name: Audit dependencies (fail on high/critical)
+      # repo tem ZERO críticos, então qualquer um novo para a esteira.
+      - name: Audit dependencies (fail on critical)
         run: pnpm audit --audit-level=critical
+
+      # A rede que faltava para as altas. O nível global não podia subir para
+      # `high` sem voltar a ser ruído, mas "125 altas" nunca foi o número certo:
+      # separando o que é embarcado do que só constrói, são 14 pacotes em
+      # dependência de runtime e 29 em tooling.
+      #
+      # Os 14 estão em scripts/audit-runtime-baseline.json como dívida aceita e
+      # rastreável. Este passo falha só quando aparece uma alta NOVA em runtime
+      # — mesma ideia do piso de cobertura do apps/app: daqui pra frente nada
+      # pode piorar, e baixar a catraca é commit explícito com justificativa.
+      - name: Audit runtime dependencies (no new highs)
+        run: pnpm audit:runtime
 
   build:
     name: Build
