@@ -50,7 +50,10 @@ jobs:
         run: pnpm exec biome check --changed --no-errors-on-unmatched --vcs-client-kind=git --vcs-use-ignore-file=true
 
   typecheck:
-    name: Type Check (informational)
+    # Não é informativo: não tem continue-on-error e está em `needs:` do build,
+    # então typecheck vermelho já barra o merge. O rótulo dizia o contrário e
+    # convidava a ignorar o job.
+    name: Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,23 +99,21 @@ jobs:
           BETTER_AUTH_SECRET: ci-build-placeholder-nao-e-segredo-0123456789
         run: pnpm turbo build --filter=@repo/database
 
-      # `web` (site de marketing) fica fora: são 56 erros pré-existentes, e a
-      # maior parte deles não é consertável aqui. Os tipos do CMS vêm de
-      # `basehub build`, que exige BASEHUB_TOKEN — e o repositório não tem
-      # nenhum secret configurado (`gh secret list` vem vazio), então o client
-      # tipado não pode ser gerado em CI de jeito nenhum. O resto é dívida dos
-      # scaffolds do v0.dev em `apps/web/v0/`.
+      # `web` voltou para o portão. A exclusão foi criada quando eram 56 erros
+      # pré-existentes; hoje é ZERO — os tipos do CMS resolvem sem
+      # BASEHUB_TOKEN e os scaffolds do v0.dev já saíram do caminho.
       #
-      # Excluir um pacote de um portão é decisão visível de propósito: o gate
-      # vale de verdade para os outros 29, em vez de ser vermelho para todos e
-      # não proteger ninguém. Rastreado em docs/compliance.
+      # O que a exclusão custou enquanto durou: a migração do rate-limit para
+      # Postgres removeu `slidingWindow`, e `apps/web` continuou importando o
+      # símbolo que não existe mais. Erro de compilação de verdade, invisível
+      # por estar fora do gate.
       - name: Type check
         # O tsc do apps/app estoura o heap padrão de 2 GB do runner
         # ("Ineffective mark-compacts near heap limit", exit 134). O projeto é
         # grande o bastante para precisar disto; o runner tem folga.
         env:
           NODE_OPTIONS: --max-old-space-size=6144
-        run: pnpm turbo typecheck --filter=!web
+        run: pnpm turbo typecheck
 
   cosmos-graph:
     name: Grafo do Cosmos
@@ -324,14 +325,10 @@ jobs:
             turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
             turbo-${{ runner.os }}-
 
-      # `web` fica fora pelo mesmo motivo que já o tirou do typecheck: 56 erros
-      # de tipo pré-existentes, dívida dos scaffolds do v0.dev em `apps/web/v0/`.
-      # O `next build` roda type check no fim, então o erro que o portão de
-      # typecheck já ignora reaparece aqui — não é falta de credencial: o
-      # `basehub build` passa desde o PR #60, e `@repo/cms` volta ao portão.
-      #
-      # Estar fora de dois portões pelo mesmo motivo é sinal de dívida real, não
-      # de configuração. Consertar os tipos devolve `web` aos dois de uma vez.
+      # `web` voltou aos dois portões, como este comentário previa: consertar os
+      # tipos devolvia typecheck e build de uma vez. Não era falta de segredo —
+      # o `SKIP_ENV_VALIDATION` deste passo já cobre `BASEHUB_TOKEN`, e o build
+      # fecha sem token de verdade.
       #
       # `email` fica fora por um motivo diferente, e mais grave: o portão não
       # controla o que ele instala. `email build` gera `apps/email/.react-email/`
@@ -358,7 +355,7 @@ jobs:
       # Teste não é insumo de build; a dependência era política, e a política
       # continua sendo cumprida — ali, e não aqui.
       - name: Build
-        run: pnpm turbo build --filter=!web --filter=!email
+        run: pnpm turbo build --filter=!email
         env:
           SKIP_ENV_VALIDATION: true
           # O type check que o `next build` roda no fim estourava o heap padrão
