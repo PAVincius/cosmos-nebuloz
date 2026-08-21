@@ -1,4 +1,5 @@
 import { database } from "@repo/database";
+import { decryptConfigSecrets } from "@repo/security/encrypt";
 import {
   type AwsAdapterConfig,
   fetchAwsPage,
@@ -147,7 +148,12 @@ export const billingSyncFunction = inngest.createFunction(
       });
 
       return {
-        config: integration.config as AwsAdapterConfig,
+        // Par do `encryptConfigSecrets` em app/actions/billing: campo não
+        // secreto passa direto, e linha antiga em claro cai no fallback do
+        // decrypt. Sem isto, cifrar na escrita quebraria o sync.
+        config: decryptConfigSecrets(
+          integration.config as Record<string, unknown>
+        ) as unknown as AwsAdapterConfig,
         syncRunId: syncRun.id,
         startDate: startDate.toISOString().split("T")[0] as string,
         endDate: now.toISOString().split("T")[0] as string,

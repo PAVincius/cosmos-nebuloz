@@ -2,6 +2,7 @@
 
 import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import { encryptConfigSecrets } from "@repo/security/encrypt";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -32,8 +33,13 @@ export async function createBillingIntegration(
         tenantId: ctx.tenantId,
         source: data.source,
         name: data.name,
+        // O adapter da AWS hoje guarda só roleArn/externalId, que não são
+        // campos secretos — para ele isto é no-op. Está aqui porque o schema
+        // aceita config livre e `billing_gcp`/`billing_azure` já são fontes
+        // declaradas: quando elas trouxerem chave de service account ou client
+        // secret, o caminho já cifra em vez de gravar em claro.
         // biome-ignore lint/suspicious/noExplicitAny: Prisma Json column requires cast from z.record unknown values
-        config: data.config as any,
+        config: encryptConfigSecrets(data.config) as any,
         status: "ACTIVE",
       },
     });

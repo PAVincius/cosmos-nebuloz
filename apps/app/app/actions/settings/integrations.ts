@@ -2,6 +2,10 @@
 
 import { requireRole, requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
+import {
+  decryptConfigSecrets,
+  encryptConfigSecrets,
+} from "@repo/security/encrypt";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { IntegrationType, type Result, safeAction } from "../_base";
@@ -68,7 +72,9 @@ export async function getIntegrationByType(
 
     return {
       ...toPublic(row),
-      config: (row.config as Record<string, unknown>) ?? {},
+      config: decryptConfigSecrets(
+        (row.config as Record<string, unknown>) ?? {}
+      ),
     };
   });
 }
@@ -89,12 +95,19 @@ export async function upsertIntegration(
       where: { tenantId: ctx.tenantId, source: data.type },
     });
 
+    // `Integration.config` guarda token/PAT/webhook: cifrar na escrita é o que
+    // o comentário do model manda ("sensitive, store encrypted at app layer").
+    // Quem lê para usar o valor decifra — ver `testIntegration` abaixo.
+    const config = encryptConfigSecrets(
+      data.config as Record<string, unknown>
+    ) as Record<string, string>;
+
     const row = existing
       ? await database.integration.update({
           where: { id: existing.id },
           data: {
             name: data.name,
-            config: data.config as Record<string, string>,
+            config,
             status: "ACTIVE",
           },
         })
@@ -103,7 +116,7 @@ export async function upsertIntegration(
             tenantId: ctx.tenantId,
             source: data.type,
             name: data.name,
-            config: data.config as Record<string, string>,
+            config,
             status: "ACTIVE",
           },
         });
@@ -127,7 +140,9 @@ export async function testIntegration(
       throw new Error(`Integração '${type}' não encontrada.`);
     }
 
-    const config = (row.config as Record<string, string>) ?? {};
+    const config = decryptConfigSecrets(
+      (row.config as Record<string, unknown>) ?? {}
+    ) as Record<string, string>;
     let testOk = false;
     let message = "Teste não implementado para este tipo.";
 
@@ -219,6 +234,3 @@ export async function deleteIntegration(
     return { id };
   });
 }
-
-// TODO: Migrate config tokens/passwords from plain text DB storage to a secrets
-// manager (e.g., AWS Secrets Manager, Doppler) — tracked as tech debt.
