@@ -57,6 +57,12 @@ services:
       RESEND_TOKEN: re_e2e_placeholder
       RESEND_FROM: e2e@cosmos.local
       ARCJET_KEY: ajkey_e2e_placeholder
+      # `packages/security/keys.ts` exige `ENCRYPTION_KEY` com no mínimo 32
+      # caracteres e ela não estava aqui: sem ela o `next.config.ts` nem carrega
+      # e o container morre em "Invalid environment variables" antes de servir
+      # a primeira rota. Passou despercebido porque este compose nunca rodou em
+      # CI — nenhum workflow o referenciava.
+      ENCRYPTION_KEY: cosmos-e2e-encryption-key-min-32-chars-long
       BETTERSTACK_API_KEY: ""
       BETTERSTACK_URL: https://uptime.betterstack.com
       FLAGS_SECRET: ""

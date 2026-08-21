@@ -264,6 +264,90 @@ jobs:
             packages/safe-engine/coverage/
           retention-days: 7
 
+  e2e-backoffice:
+    name: E2E Back-office
+    runs-on: ubuntu-latest
+    # Sem serviço de Postgres, e isso é medido, não suposto: a suíte
+    # `default-deny` roda com a DATABASE_URL apontando para uma porta morta e
+    # passa 19/19. Sem cookie o better-auth devolve sessão nula sem tocar o
+    # banco, e o guard redireciona para /sign-in. As variáveis abaixo existem só
+    # para o @t3-oss/env-nextjs validar na carga do módulo — nenhuma é usada.
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/cosmos_dev
+      BETTER_AUTH_SECRET: ci-e2e-backoffice-secret-minimo-de-32-caracteres
+      BETTER_AUTH_URL: http://localhost:3013
+      PLAYWRIGHT_BASE_URL: http://localhost:3013
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            turbo-${{ runner.os }}-
+
+      # O app importa @repo/database, que importa ./generated/client. Sem gerar,
+      # o dev server morre na carga do módulo — antes de qualquer teste.
+      - name: Generate Prisma client
+        run: pnpm turbo build --filter=@repo/database
+
+      # Sem `--only-shell` de propósito: ele instala apenas o
+      # chromium-headless-shell, e o projeto da config usa
+      # `devices["Desktop Chrome"]`. O download completo é o passo mais lento do
+      # job, mas trocar minutos por um modo de falhar que só aparece no CI é
+      # troca ruim para um portão recém-nascido.
+      - name: Install Playwright Chromium
+        run: pnpm --filter backoffice exec playwright install --with-deps chromium
+
+      # `PLAYWRIGHT_BASE_URL` acima desliga o `webServer` da config, então o
+      # servidor sobe aqui e não por dentro do Playwright — assim o log dele
+      # aparece separado quando algo falha.
+      - name: Start back-office
+        run: |
+          pnpm --filter backoffice dev > /tmp/backoffice.log 2>&1 &
+          for _ in $(seq 1 120); do
+            if curl -sfo /dev/null http://localhost:3013/sign-in; then
+              echo "back-office no ar"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "back-office não subiu em 120s"
+          tail -50 /tmp/backoffice.log
+          exit 1
+
+      - name: Run E2E
+        run: pnpm --filter backoffice test:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report-backoffice
+          path: |
+            apps/backoffice/playwright-report/
+            apps/backoffice/test-results/
+          retention-days: 7
+
+      - name: Server log on failure
+        if: failure()
+        run: tail -100 /tmp/backoffice.log
+
   security-audit:
     name: Security Vulnerability Scan
     runs-on: ubuntu-latest
