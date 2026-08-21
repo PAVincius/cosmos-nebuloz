@@ -971,9 +971,15 @@ importers:
       '@types/node':
         specifier: ^24.10.1
         version: 24.13.3
+      '@vitest/coverage-v8':
+        specifier: ^4.1.10
+        version: 4.1.10(vitest@4.1.10)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@27.2.0(bufferutil@4.0.9)(postcss@8.5.26))(vite@6.2.4(@types/node@24.13.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.49.2)(tsx@4.21.0)(yaml@2.7.0))
 
   packages/auth:
     dependencies:
@@ -1017,9 +1023,15 @@ importers:
       '@types/react-dom':
         specifier: 19.2.3
         version: 19.2.3(@types/react@19.2.7)
+      '@vitest/coverage-v8':
+        specifier: ^4.1.10
+        version: 4.1.10(vitest@4.1.10)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@27.2.0(bufferutil@4.0.9)(postcss@8.5.26))(vite@6.2.4(@types/node@24.13.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.49.2)(tsx@4.21.0)(yaml@2.7.0))
 
   packages/cms:
     dependencies:
@@ -1574,9 +1586,18 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.13.3
+      '@vitest/coverage-v8':
+        specifier: ^4.1.10
+        version: 4.1.10(vitest@4.1.10)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@27.2.0(bufferutil@4.0.9)(postcss@8.5.26))(vite@6.2.4(@types/node@24.13.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.49.2)(tsx@4.21.0)(yaml@2.7.0))
 
   packages/safe-engine:
     dependencies:
@@ -1618,12 +1639,27 @@ importers:
         specifier: 4.1.13
         version: 4.1.13
     devDependencies:
+      '@repo/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../database
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/node':
+        specifier: ^24.10.1
+        version: 24.13.3
+      '@vitest/coverage-v8':
+        specifier: ^4.1.10
+        version: 4.1.10(vitest@4.1.10)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.1.10
+        version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.13.3)(@vitest/coverage-v8@4.1.10)(jsdom@27.2.0(bufferutil@4.0.9)(postcss@8.5.26))(vite@6.2.4(@types/node@24.13.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.49.2)(tsx@4.21.0)(yaml@2.7.0))
 
   packages/seo:
     dependencies:

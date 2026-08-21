@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@arcjet/next": "1.0.0-beta.15",
@@ -15,7 +17,12 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@repo/auth": "workspace:*",
+    "@repo/database": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "typescript": "^5.9.3"
+    "@types/node": "24.10.1",
+    "@vitest/coverage-v8": "^4.1.10",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.10"
   }
 }
