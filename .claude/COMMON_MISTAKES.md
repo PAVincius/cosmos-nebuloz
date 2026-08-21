@@ -104,9 +104,60 @@ import { createEpic } from "../../../app/actions/epics/create-epic";
 
 ---
 
+## 7. Styling `apps/backoffice` — Tailwind is the default, inline is legacy
+
+**Symptom**: You see 358 `style={{}}` against 190 `className` in the back-office
+and copy the inline style, or you write Tailwind and it silently does nothing.
+
+**Fix**: New code uses Tailwind utilities plus the cosmos primitives (`.btn`,
+`.mono`, `.lift`, `.navitem`, `.kpi`). The existing inline styles are a legacy
+port of the `backoffice-shell.jsx` handoff — leave them where they are, do not
+add more, and do not run a migration.
+
+Tailwind only works there because two things are wired, and both are easy to
+break by "cleaning up":
+
+- `apps/backoffice/postcss.config.mjs` re-exports the design-system PostCSS
+  config. Without it no plugin runs and every utility is inert.
+- `@source "../**/*.{ts,tsx}"` at the bottom of `apps/backoffice/app/styles.css`.
+  Tailwind's automatic source detection does NOT reach this app — measured: with
+  the plugin on and that line removed, `.items-center` existed (it comes from
+  the design-system's own `@source`) and `.flex` and `.p-8` did not.
+
+It stays at the bottom of the file because CSS requires every `@import` to
+precede other at-rules; Biome fails the build if you move it up.
+
+This was live for months: ~72 utility classes rendered unstyled, including the
+four guard refusal screens in `app/(staff)/layout.tsx`.
+
+---
+
+## 8. Adding a package test without `test:coverage`
+
+**Symptom**: The suite is green locally and has never run in CI. No error, no
+warning.
+
+**Fix**: CI runs `pnpm turbo test:coverage` and nothing else. Turbo silently
+skips any package that does not declare the task, so a package with only
+`"test"` is invisible to CI. Declare both:
+
+```json
+"test": "vitest run",
+"test:coverage": "vitest run --coverage"
+```
+
+Then run it once, measure, and set `thresholds` to the measured floor — not to
+an aspirational 80. A gate that is red on day one gets switched off in week one.
+
+This has now bitten twice: `apps/app` (see the comment in its
+`vitest.config.mts`) and `apps/backoffice`, whose 24 files and 4.254 lines of
+tests had never run in a pull request.
+
+---
+
 **Update this file when:**
 - Bug took >30 min to debug
 - Mistake repeated across sessions
 - Pattern violates project conventions
 
-**Last Updated**: 2026-05-31
+**Last Updated**: 2026-08-21

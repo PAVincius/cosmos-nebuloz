@@ -50,7 +50,12 @@ jobs:
         run: pnpm exec biome check --changed --no-errors-on-unmatched --vcs-client-kind=git --vcs-use-ignore-file=true
 
   typecheck:
-    name: Type Check (informational)
+    # Deixou de ser "(informational)" em 2026-08-21: o rótulo vinha de quando
+    # `main` não tinha branch protection e NENHUM check barrava merge — o nome
+    # descrevia o repositório inteiro, não este job. Medido na mesma data:
+    # 30/30 pacotes passam. Agora é required check junto de Lint & Format e
+    # Tests & Coverage. Se voltar a ficar vermelho, corrija — não renomeie.
+    name: Type Check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
