@@ -397,6 +397,59 @@
           "No tool commitment"
         ]
       },
+      "contact": {
+        "eyebrow": "CONTACT",
+        "titleA": "Four ways in.",
+        "titleB": "Pick a heading.",
+        "lead": "Every channel reaches the same two people. Take whichever costs you the least effort — none of them route through a queue.",
+        "groupLabel": "Contact channel",
+        "hint": "Arrow keys steer, or point at a card.",
+        "idleTitle": "No heading yet",
+        "idleDesc": "Point at a card, or press an arrow key.",
+        "open": "Open",
+        "pick": "Choose this",
+        "close": "Close",
+        "formFor": "Writing to",
+        "fieldName": "NAME",
+        "fieldEmail": "EMAIL",
+        "fieldCompany": "COMPANY (OPTIONAL)",
+        "fieldMessage": "MESSAGE",
+        "send": "Send",
+        "sending": "Sending",
+        "formError": "That did not send. Try again, or use one of the other three headings.",
+        "sentTitle": "Sent",
+        "sentDesc": "It lands in an inbox two people read. Expect a reply within one business day.",
+        "channels": [
+          {
+            "label": "Email",
+            "value": "NEBULOZ_EMAIL_AQUI",
+            "desc": "Best for scope, documents, and anything you want written down.",
+            "href": "mailto:NEBULOZ_EMAIL_AQUI",
+            "tone": "cyan"
+          },
+          {
+            "label": "WhatsApp",
+            "value": "NEBULOZ_WHATSAPP_AQUI",
+            "desc": "Fastest reply in business hours, and a voice note is fine.",
+            "href": "https://wa.me/NEBULOZ_WHATSAPP_AQUI",
+            "tone": "success"
+          },
+          {
+            "label": "Assessment form",
+            "value": "On this page",
+            "desc": "Skip the introductions — book the two-week readiness assessment.",
+            "href": "#start",
+            "tone": "violet"
+          },
+          {
+            "label": "LinkedIn",
+            "value": "NEBULOZ_LINKEDIN_AQUI",
+            "desc": "For an intro, a referral, or if you would rather see who we are first.",
+            "href": "https://www.linkedin.com/company/NEBULOZ_LINKEDIN_AQUI",
+            "tone": "indigo"
+          }
+        ]
+      },
       "footer": {
         "tagline": "AI readiness and adoption, delivered as a sequence your team can run.",
         "nav": "Footer",

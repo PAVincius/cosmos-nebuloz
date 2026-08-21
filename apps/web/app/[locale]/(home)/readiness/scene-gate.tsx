@@ -87,7 +87,6 @@ export type NebulaTier = {
   count: number;
   dpr: [number, number];
   energySegments: number;
-  haloSegments: number;
   /** MSAA samples on the EffectComposer target. 0 falls back to an FXAA pass. */
   multisampling: number;
   pixelRatioCap: number;
@@ -120,7 +119,6 @@ export function tierNebula(tier: Tier): NebulaTier {
       count: 16_000,
       dpr: [1, 1.5],
       energySegments: 80,
-      haloSegments: 64,
       /* 0, with the FXAA pass doing the antialiasing — which is what the design
          ships and what this scene needs.
          4× MSAA was tried here and produced a visible regression: the comet
@@ -146,7 +144,6 @@ export function tierNebula(tier: Tier): NebulaTier {
     count: 6500,
     dpr: [1, 1.25],
     energySegments: 56,
-    haloSegments: 48,
     // No MSAA here — the FXAA pass covers it at a fraction of the fill rate.
     multisampling: 0,
     pixelRatioCap: 1.25,

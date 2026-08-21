@@ -40,6 +40,7 @@ import {
   DUST_VERT,
   ENERGY_FRAG,
   HALO_FRAG,
+  HALO_VERT,
   SPHERE_VERT,
   WAVE_FRAG,
 } from "./nebula-shaders";
@@ -63,10 +64,12 @@ import { type NebulaTier, type Tier, tierNebula } from "./scene-gate";
 
 const DUST_R_MAX = 2.9;
 const BODY_RADIUS = 1.24;
-/* The halo shell. Paired with HALO_FRAG's RIM constant, which is
-   atan(BODY_RADIUS / 6.2) / atan(HALO_RADIUS / 6.2) — change either radius, or
-   the camera's z in the Canvas below, and RIM has to follow. */
-const HALO_RADIUS = 1.78;
+/* Half-width of the halo's quad, in world units on a plane through the sphere's
+   centre. Not a sphere radius — see the note above HALO_VERT for why the halo
+   stopped being a shell. This only has to stay comfortably outside HALO_FRAG's
+   OUT (1.82) so the fade reaches zero before the quad's own edge; the edge is
+   never drawn, so extra margin costs only fragments that discard to nothing. */
+const HALO_EXTENT = 1.95;
 
 type ShellUniforms = {
   uTime: { value: number };
@@ -78,6 +81,11 @@ type ShellUniforms = {
   uA: { value: Color };
   uB: { value: Color };
   uC: { value: Color };
+};
+
+/** The halo also needs its quad's half-width, to turn UV back into world units. */
+type HaloUniforms = ShellUniforms & {
+  uExtent: { value: number };
 };
 
 type DustUniforms = {
@@ -218,7 +226,7 @@ type Rig = {
   dust: DustUniforms;
   energy: ShellUniforms;
   fx: SceneFx;
-  halo: ShellUniforms;
+  halo: HaloUniforms;
   hit: number;
   scratch: Scratch;
   shells: ShellUniforms[];
@@ -396,7 +404,10 @@ function NebulaScene({ fxRef, tier }: SceneProps) {
     const body = makeShellUniforms();
     const energy = makeShellUniforms();
     const wave = makeShellUniforms();
-    const halo = makeShellUniforms();
+    const halo: HaloUniforms = {
+      ...makeShellUniforms(),
+      uExtent: { value: HALO_EXTENT },
+    };
     return {
       body,
       dt: 0,
@@ -578,16 +589,13 @@ function NebulaScene({ fxRef, tier }: SceneProps) {
             wireframe
           />
         </mesh>
-        {/* The halo. 1.78 rather than the 1.30 it was: against a body at 1.24
-            that gave the falloff ten screen pixels to happen in, so it could
-            only ever read as a plate with an edge. This is the width the fade
-            lives in — HALO_FRAG's RIM constant is derived from it and from
-            BODY_RADIUS, so the two move together. Cheap to grow: 1.8x the
-            fragments of a fifteen-op shader, no noise, no loops. */}
+        {/* The halo — a screen-facing quad, two triangles. It was a sphere for
+            three rewrites and the fade never stopped ending on a traceable 2px
+            step; the note above HALO_VERT has the measurements and the reason.
+            HALO_VERT builds the quad in view space, so the group's rotation
+            below does not foreshorten it. */}
         <mesh renderOrder={3}>
-          <sphereGeometry
-            args={[HALO_RADIUS, tier.haloSegments, tier.haloSegments]}
-          />
+          <planeGeometry args={[HALO_EXTENT * 2, HALO_EXTENT * 2]} />
           <shaderMaterial
             blending={AdditiveBlending}
             depthWrite={false}
@@ -595,7 +603,7 @@ function NebulaScene({ fxRef, tier }: SceneProps) {
             ref={haloMat}
             transparent
             uniforms={rig.halo}
-            vertexShader={SPHERE_VERT}
+            vertexShader={HALO_VERT}
           />
         </mesh>
         {/* five rings — independent tilts and spins */}

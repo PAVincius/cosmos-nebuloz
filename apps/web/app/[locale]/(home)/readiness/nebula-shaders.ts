@@ -290,79 +290,99 @@ export const WAVE_FRAG = /* glsl */ `
   }`;
 
 /**
- * The rim, and the air outside it.
+ * The halo is a screen-facing quad, not a sphere. Three rewrites went into a
+ * spherical shell before that changed, and all three failed the same way, so
+ * the reason is worth keeping.
  *
- * This used to be two fresnel terms — a tight `pow(f, 11)` limb and a wider
- * `pow(f, 5.2)` bleed. Both are wrong for a halo, for the same reason: fresnel
- * is *maximum* at the silhouette. So alpha reached 1.0 on the shell's own
- * outline and was gone one pixel outside it. Measured on the rendered frame,
- * the radial luminance floor went 57.6 -> 13.7 across two pixels — a 22-per-
- * pixel cliff, with flat black beyond. That is not a glow with a soft end; it
- * is a lit plate whose edge you can trace, which is exactly how it read.
+ * A sphere cannot carry this falloff. Parameterise it on anything derived from
+ * the surface normal — fresnel, or `sqrt(1 - dot(N,V)^2)` — and the parameter
+ * stops being single-valued in screen space near the limb, because the surface
+ * turns away and its projection folds back on itself. Concretely, for radius R
+ * at distance D the projected radius peaks at p = R^2 / D and *decreases* after
+ * it: at R 1.78 and D 6.443 the outermost pixel is 305px at p 1.70, while
+ * p 1.78 lands back at 293px. Two surface points, one pixel, summed by additive
+ * blending. Emitting the parameter as a colour and reading it back off the
+ * frame showed it saturating near 0.95 instead of reaching 1.0 at the outline.
  *
- * The shell also had no room to fade: at r 1.30 against a body at 1.24 it was
- * 4.8% larger, about ten screen pixels at this framing. A halo cannot dissolve
- * across ten pixels no matter what curve it follows, so the mesh grew with
- * this rewrite (see HALO_RADIUS) and the falloff is now driven by screen
- * radius instead of fresnel.
+ * What that cost, measured: a hard 2px step near the end of the fade, dropping
+ * luminance ~51 to ~14 against a black floor of 12. Renormalising the varyings
+ * did not move it. Reparameterising on exact perpendicular distance did not
+ * move it. Pulling the falloff's end inward only moved the step inward with it
+ * — 262px at OUT 0.93, 252px at OUT 0.87, same magnitude both times — because
+ * the step is the fade running out of usable parameter, not hitting an edge.
+ *
+ * A camera-facing quad has none of that. Screen radius is the parameter, it is
+ * exactly linear in pixels, and the geometry's own edge is never reached
+ * because the curve is already at zero well inside it.
  */
+export const HALO_VERT = /* glsl */ `
+  uniform float uExtent;
+  varying vec2 vUv;
+  void main(){
+    vUv = uv;
+    /* The quad is built in view space from the mesh origin, so it faces the
+       camera whatever the parent group is doing. That matters here: this mesh
+       lives inside the rotating sphere group, and a plane that inherited that
+       rotation would foreshorten into an ellipse. */
+    vec3 c = (modelViewMatrix * vec4(0.0, 0.0, 0.0, 1.0)).xyz;
+    vec2 off = (uv - 0.5) * 2.0 * uExtent;
+    gl_Position = projectionMatrix * vec4(c.xy + off, c.z, 1.0);
+  }`;
 export const HALO_FRAG = /* glsl */ `
-  uniform float uPresence; uniform vec3 uA, uC;
-  varying vec3 vN, vV, vW;
+  uniform float uPresence, uExtent; uniform vec3 uA, uC;
+  varying vec2 vUv;
 
-  /* Where the body's silhouette crosses this shell, as a fraction of the
-     shell's own screen radius — so the halo starts exactly at the glass edge.
-     BODY_RADIUS / HALO_RADIUS = 1.24 / 1.78 = 0.697, and measured on the
-     rendered frame the shell's silhouette lands at 270px with the body's at
-     ~188px, a ratio of 0.696. Do not try to derive this from the camera's
-     declared z: CameraRig moves the camera, so the absolute projected radii are
-     not 6.2's. The ratio is what holds, and it is the only thing used here.
-     Retune alongside either radius in nebula.tsx, or the halo starts inside the
-     glass or leaves a gap around it. */
-  const float RIM = 0.68;
-  /* Where the falloff is fully spent — deliberately inside the silhouette
-     rather than on it. The last tenth of a shell's rho is its worst-behaved: it
-     projects into a thin annulus of near-edge-on triangles, and vN and vV are
-     interpolated without being renormalised in the fragment shader, so rho is
-     least trustworthy exactly there. Ending at 0.93 puts zero alpha in front of
-     all of it, and costs about 19 of the band's 86 screen pixels. */
-  const float OUT = 0.93;
+  /* Both bounds are distances from the view axis, in world units, on a plane
+     through the sphere's centre. Screen radius is r / dist / tan(fov/2) * H/2,
+     so they scale with the camera exactly as the sphere does — CameraRig can
+     move and the halo stays pinned to the glass.
+
+     RIM is the body's outline. Not BODY_RADIUS itself: what the eye sees is the
+     sphere's horizon, which sits at BODY_RADIUS / sqrt(1 - (BODY_RADIUS/dist)^2)
+     when measured on this plane — 1.264 at dist 6.443, and within 2% of that
+     across any distance this scene uses. Measured, the body's outline lands at
+     208px and so does this. */
+  const float RIM = 1.264;
+  /* Where the fade is spent. 1.82 puts it at ~300 screen px, a 92px band. It is
+     inside uExtent by design: the quad's own edge must never be reachable, or
+     the plate-with-an-edge problem comes straight back as a square. */
+  const float OUT = 1.82;
 
   void main(){
-    float ndv = clamp(dot(vN, vV), 0.0, 1.0);
-    /* Normalised screen radius: 0 at the centre of the disc, 1 exactly on the
-       silhouette. It is the sine of the angle between normal and view, so
-       unlike fresnel it is linear in screen space — a curve on it spans a
-       predictable number of pixels rather than collapsing into the two-pixel
-       band where fresnel does all of its work. */
-    float rho = sqrt(clamp(1.0 - ndv * ndv, 0.0, 1.0));
-    float t = clamp((rho - RIM) / (OUT - RIM), 0.0, 1.0);
+    /* The whole point of the quad: this is a real screen radius. It is linear
+       in pixels, single-valued, and needs no normal — so a curve on it spans
+       the number of pixels the arithmetic says it does. */
+    float r = length(vUv - 0.5) * 2.0 * uExtent;
+    float t = clamp((r - RIM) / (OUT - RIM), 0.0, 1.0);
 
-    /* Atmospheric falloff across the ~67 screen pixels between the glass and
-       OUT. pow with an exponent above 1 lands on zero with zero slope, so the
-       halo ends in black on its own terms and there is no boundary left to find.
-       The coefficient is load-bearing rather than cosmetic: both bloom passes
-       run at luminanceThreshold 0, so every unit of light emitted here gets
-       smeared over the whole frame. Carrying the old ten-pixel version's 0.42
-       across a band nine times wider is nine times the light, and it measured a
-       black floor of 63.7 against the correct 10.4 — the page went grey. */
+    /* Atmospheric falloff. pow with an exponent above 1 lands on zero with zero
+       slope, so the halo ends in black on its own terms. The coefficient is
+       load-bearing rather than cosmetic: both bloom passes run at
+       luminanceThreshold 0, so every unit of light emitted here gets smeared
+       over the whole frame. An earlier version carried a ten-pixel shell's 0.42
+       across a band nine times wider and measured a black floor of 63.7 against
+       the correct 10.4 — the page went grey. */
     float glow = pow(1.0 - t, 2.2);
-    /* The power curve alone left a visible tail where it ran out of band —
-       measured at 21% of peak with the shell painted pure red so its own
-       footprint could be separated from the rest of the scene. This spends the
-       last 45% of the band so the curve arrives at OUT already at zero. */
+    /* The power curve alone is not enough, and the reason is perceptual rather
+       than arithmetic: its tail is tiny in alpha but sRGB expands exactly that
+       range, so it still reads. Painted red and measured on its own, the curve
+       was still at 27% of peak luminance where the band ran out, which showed
+       in the composite as a 2px step from 54 to 15 against a floor of 12. This
+       spends the last 45% of the band so the curve arrives at OUT already at
+       zero, with zero slope. */
     glow *= 1.0 - smoothstep(0.55, 1.0, t);
-    /* Off the glass. This shell's near hemisphere passes the depth test in
-       front of the body, so without a gate the halo lays a flat wash across the
-       whole face — the haze this scene is specifically not meant to have. */
-    float face = smoothstep(RIM - 0.085, RIM, rho);
+    /* Off the glass. This plane sits at the sphere's centre depth, so the body
+       already depth-rejects it across the face; this gate is what keeps the
+       transition at the rim smooth rather than letting it start on a hard
+       depth boundary. */
+    float face = smoothstep(RIM - 0.10, RIM, r);
 
-    /* No rim term. There was one — a tight pow(f, 11) limb — and it is gone
-       on purpose: BODY_FRAG's fresnel and ENERGY_FRAG's both peak at the body's
-       own silhouette and already draw the crisp edge. A limb on this shell drew
-       a *second* ring outside the glass, and once the shell grew it became a
-       25px blown-white torus whose light was what bloom was spreading. This
-       shell's only job is the air outside the sphere. */
+    /* No rim term. There was one — a tight pow(f, 11) limb — and it is gone on
+       purpose: BODY_FRAG's fresnel and ENERGY_FRAG's both peak at the body's own
+       silhouette and already draw the crisp edge. A limb here drew a *second*
+       ring outside the glass, and once the halo grew it became a 25px blown-white
+       torus whose light was what bloom was spreading. This layer's only job is
+       the air outside the sphere. */
     vec3 col = mix(uA, uC, 0.30) * 1.35;
     float alpha = glow * 0.26 * face * uPresence;
     gl_FragColor = vec4(col, alpha);
