@@ -13,8 +13,14 @@
  *
  * Usage:
  *   cd apps/app
- *   npx tsx scripts/backfill-integration-secrets.ts            # dry-run
- *   npx tsx scripts/backfill-integration-secrets.ts --apply    # grava
+ *   pnpm backfill:integration-secrets            # dry-run
+ *   pnpm backfill:integration-secrets --apply    # grava
+ *
+ * O `--conditions=react-server` no script do package.json não é enfeite:
+ * `@repo/security/encrypt` abre com `import "server-only"`, e o mapa de
+ * exports desse pacote só devolve o módulo vazio sob essa condição. Sem ela,
+ * qualquer execução fora do bundler do Next morre em "This module cannot be
+ * imported from a Client Component module" antes da primeira linha útil.
  *
  * Requer ENCRYPTION_KEY e DATABASE_URL no ambiente — os mesmos que a app usa.
  * Aponte para um banco de cada vez e confira o dry-run antes do --apply.
