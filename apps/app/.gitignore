@@ -1,3 +1,10 @@
 
 # clerk configuration (can include secrets)
 /.clerk/
+
+# Artefatos do Playwright (test:e2e). Eram versionados até 2026-08-21: 92
+# arquivos e 9,3 MB de screenshots e relatórios de execuções antigas, que
+# reapareciam no diff a cada rodada local. Destrackeados com `git rm --cached`;
+# os arquivos seguem em disco de quem já os tinha.
+/test-results
+/playwright-report
