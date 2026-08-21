@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
+import { useContactDialog } from "./contact-dialog";
 import { BlurFade, EASE_OUT } from "./magic";
 import { AXES_NEUTRAL, useSceneSignals } from "./nebula-store";
 import type { ShapeCopy } from "./types";
@@ -200,6 +201,7 @@ type ResultProps = {
 };
 
 function ShapeResult({ copy, score }: ResultProps) {
+  const { open: openContact } = useContactDialog();
   return (
     <motion.div
       animate={{ opacity: 1, y: 0 }}
@@ -218,7 +220,11 @@ function ShapeResult({ copy, score }: ResultProps) {
         <p className="mb-3 text-[13px] text-body leading-[1.6]">
           {verdictFor(score, copy.verdicts)}
         </p>
-        <a className="btn-primary !h-[40px] !text-[13px]" href="#start">
+        <button
+          className="btn-primary !h-[40px] !text-[13px]"
+          onClick={openContact}
+          type="button"
+        >
           <span>{copy.cta}</span>
           <svg
             aria-hidden="true"
@@ -236,7 +242,7 @@ function ShapeResult({ copy, score }: ResultProps) {
               strokeWidth="1.4"
             />
           </svg>
-        </a>
+        </button>
       </div>
     </motion.div>
   );
