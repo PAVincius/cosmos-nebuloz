@@ -14,6 +14,14 @@ const testIntegrationConnectionMock = vi.fn();
 const discoverLinearTeamsMock = vi.fn();
 const connectLinearIntegrationMock = vi.fn();
 const resyncIntegrationMock = vi.fn();
+const listEpicsMock = vi.fn();
+
+// O modal importa listEpics de kanban.ts; sem o Next para trocar "use server"
+// por stub RPC, importar o módulo real executa código de servidor no jsdom e
+// explode no guard de variável de ambiente.
+vi.mock("@/app/(cosmos)/actions/kanban", () => ({
+  listEpics: (...args: unknown[]) => listEpicsMock(...args),
+}));
 
 vi.mock("@/app/(cosmos)/actions/integrations", () => ({
   listIntegrations: (...args: unknown[]) => listIntegrationsMock(...args),
@@ -47,6 +55,8 @@ describe("IntegrationsScreen", () => {
     setIntegrationPausedMock.mockReset();
     testIntegrationConnectionMock.mockReset();
     discoverLinearTeamsMock.mockReset();
+    listEpicsMock.mockReset();
+    listEpicsMock.mockResolvedValue({ ok: true, data: [] });
     connectLinearIntegrationMock.mockReset();
     resyncIntegrationMock.mockReset();
   });
