@@ -297,6 +297,10 @@ const ConnectLinearSchema = z.object({
   linearTeamId: z.string().min(1),
   /** Importa as issues do time logo depois de conectar. */
   importNow: z.boolean().default(false),
+  /** Épico que adota as features importadas. Sem ele, elas nascem órfãs — e
+   *  o Cosmos é épico-cêntrico: feature sem épico não aparece em tela
+   *  nenhuma (epic-tree, program board e getEpicFeatures partem do épico). */
+  epicId: z.string().cuid().optional(),
 });
 
 export async function connectLinearIntegration(
@@ -333,6 +337,7 @@ export async function connectLinearIntegration(
         integrationId: created.data.id,
         projectId: parsed.linearTeamId,
         targetType: "feature",
+        ...(parsed.epicId ? { epicId: parsed.epicId } : {}),
       });
       if (!snapshot.ok) {
         throw new Error(snapshot.error);
@@ -381,18 +386,35 @@ export async function resyncIntegration(
       throw new Error("Integração pausada — retome antes de sincronizar.");
     }
 
-    const projectId = (existing.mapping as { projectId?: unknown } | null)
-      ?.projectId;
+    const mapping = existing.mapping as {
+      projectId?: unknown;
+      epicId?: unknown;
+      piPlanId?: unknown;
+      teamId?: unknown;
+    } | null;
+    const projectId = mapping?.projectId;
     if (typeof projectId !== "string" || projectId.length === 0) {
       throw new Error(
         "Integração sem time do Linear mapeado — reconecte escolhendo o time."
       );
     }
 
+    // O mapping inteiro segue junto: runImportSnapshot regrava `mapping` com
+    // o input desta chamada, então repassar só o projectId apagaria o épico
+    // escolhido na conexão — e o sync seguinte largaria as features órfãs.
     const snapshot = await runImportSnapshot({
       integrationId: id,
       projectId,
       targetType: "feature",
+      ...(typeof mapping?.epicId === "string"
+        ? { epicId: mapping.epicId }
+        : {}),
+      ...(typeof mapping?.piPlanId === "string"
+        ? { piPlanId: mapping.piPlanId }
+        : {}),
+      ...(typeof mapping?.teamId === "string"
+        ? { teamId: mapping.teamId }
+        : {}),
     });
     if (!snapshot.ok) {
       throw new Error(snapshot.error);

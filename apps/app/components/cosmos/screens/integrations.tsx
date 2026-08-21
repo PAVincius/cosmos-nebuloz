@@ -52,6 +52,7 @@ import {
   setIntegrationPaused,
   testIntegrationConnection,
 } from "@/app/(cosmos)/actions/integrations";
+import { type KanbanEpic, listEpics } from "@/app/(cosmos)/actions/kanban";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
 
@@ -337,6 +338,11 @@ function ConnectLinearModal({
   const [teams, setTeams] = useState<LinearTeamOption[] | null>(null);
   const [teamId, setTeamId] = useState("");
   const [importNow, setImportNow] = useState(true);
+  // O Cosmos é épico-cêntrico: feature sem épico não aparece em tela nenhuma.
+  // A lista carrega junto com a validação da chave para o select já estar
+  // pronto quando o passo do time aparecer.
+  const [epics, setEpics] = useState<KanbanEpic[] | null>(null);
+  const [epicId, setEpicId] = useState("");
   const [busy, setBusy] = useState(false);
 
   const discover = async () => {
@@ -344,6 +350,11 @@ function ConnectLinearModal({
       return;
     }
     setBusy(true);
+    listEpics().then((r) => {
+      if (r.ok) {
+        setEpics(r.data);
+      }
+    });
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(() => discoverLinearTeams({ apiKey }), {
       loading: "Validando credencial no Linear...",
@@ -386,6 +397,7 @@ function ConnectLinearModal({
           apiKey,
           linearTeamId: teamId,
           importNow,
+          ...(epicId ? { epicId } : {}),
         }),
       {
         loading: importNow
@@ -489,6 +501,39 @@ function ConnectLinearModal({
                 ))}
               </select>
             )}
+          </div>
+        )}
+
+        {teams !== null && teams.length > 0 && (
+          <div>
+            <label htmlFor="linear-epic" style={labelStyle}>
+              Épico de destino das features
+            </label>
+            <select
+              id="linear-epic"
+              onChange={(e) => setEpicId(e.target.value)}
+              style={inputStyle}
+              value={epicId}
+            >
+              <option value="">— sem épico (não aparece nos boards) —</option>
+              {(epics ?? []).map((ep) => (
+                <option key={ep.id} value={ep.id}>
+                  {ep.title}
+                </option>
+              ))}
+            </select>
+            <p
+              style={{
+                color: "var(--ink-faint)",
+                fontSize: 12,
+                lineHeight: 1.5,
+                margin: "6px 0 0",
+              }}
+            >
+              As issues viram Features deste épico — é por ele que elas chegam
+              ao Kanban de Épicos e ao Program Board. Sem épico, ficam só no
+              banco. Crie um em Kanban → Novo Épico se ainda não houver.
+            </p>
           </div>
         )}
 

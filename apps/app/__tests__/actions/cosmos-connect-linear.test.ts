@@ -186,6 +186,24 @@ describe("connectLinearIntegration", () => {
     expect(r.ok && r.data.imported).toBeNull();
   });
 
+  it("repassa o épico de destino para o import", async () => {
+    const r = await connectLinearIntegration({
+      name: "Linear Nebuloz",
+      apiKey: API_KEY,
+      linearTeamId: "lt_1",
+      importNow: true,
+      epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+    });
+
+    expect(r.ok).toBe(true);
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+    });
+  });
+
   it("recusa credencial inválida antes de criar a integração", async () => {
     h.linearTestConnection.mockResolvedValue({ ok: false, error: "401" });
 
@@ -221,6 +239,32 @@ describe("resyncIntegration", () => {
       targetType: "feature",
     });
     expect(r.ok && r.data).toEqual({ created: 3, updated: 4, skipped: 0 });
+  });
+
+  it("carrega o épico do mapping no re-sync — senão o sync seguinte apagaria a adoção", async () => {
+    h.integrationFindFirst.mockResolvedValue({
+      id: ID,
+      source: "linear",
+      status: "ACTIVE",
+      mapping: {
+        projectId: "lt_1",
+        targetType: "feature",
+        epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+      },
+    });
+    h.runImportSnapshot.mockResolvedValue({
+      ok: true,
+      data: { created: 0, updated: 89, skipped: 0 },
+    });
+
+    await resyncIntegration({ id: ID });
+
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+    });
   });
 
   it("recusa integração pausada — retomar é decisão humana, não efeito de sync", async () => {
