@@ -8,7 +8,9 @@
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "test": "NODE_ENV=test vitest run",
-    "test:coverage": "NODE_ENV=test vitest run --coverage"
+    "test:coverage": "NODE_ENV=test vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@bpmn-io/properties-panel": "^3.42.0",
@@ -36,6 +38,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
     "@prisma/adapter-pg": "7.1.0",
     "@repo/typescript-config": "workspace:*",
     "@testing-library/dom": "^10.4.1",

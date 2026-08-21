@@ -1,2 +1,6 @@
 .vercel
 .env*
+
+# Artefatos do Playwright (test:e2e)
+/test-results
+/playwright-report
