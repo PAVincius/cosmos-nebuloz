@@ -23,6 +23,41 @@ export default defineConfig({
     // `.tsx` incluído: sem isso o teste de componente não é sequer coletado, e
     // o vitest sai com "0 passed" parecendo verde.
     include: ["__tests__/**/*.test.{ts,tsx}"],
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary", "html", "lcov"],
+      reportsDirectory: "./coverage",
+      // Mesmo recorte de `apps/app`: a regra de negócio mora nas actions e em
+      // `lib/`. Componente de tela entra por E2E, não por cobertura de linha —
+      // medir `.tsx` aqui só produziria número alto sem garantia nenhuma.
+      include: ["app/actions/**/*.ts", "lib/**/*.ts"],
+      exclude: ["**/*.d.ts"],
+      // PISO DE CATRACA — não é alvo atingido.
+      //
+      // Estes números são a medição de 2026-08-21, a primeira que existiu: até
+      // aqui a suíte inteira do back-office nunca rodou no CI, porque o script
+      // `test:coverage` não existia e o `turbo` pula em silêncio a task que o
+      // pacote não declara. Eram 4.254 linhas de teste sem portão nenhum.
+      //
+      // Fixar no medido é o que faz o portão valer HOJE: daqui pra frente nada
+      // pode piorar. Escolher 80 de saída deixaria o CI vermelho na primeira
+      // execução e o portão seria desligado na mesma semana — que é como se
+      // chega de volta ao estado que este achado corrigiu.
+      //
+      // A medição foi melhor que o esperado — 88.25 / 87.74 / 81.92 / 77.27,
+      // acima dos pisos de `apps/app` (75/75/70/64). A suíte estava correta o
+      // tempo todo; só não tinha portão. Os pisos abaixo são o medido truncado.
+      //
+      // Subir é trabalho planejado. O que puxa para baixo é
+      // `app/actions/clients.ts` (40%), `app/actions/provisioning.ts` (50%) e
+      // `lib/staff-access.ts` (61%).
+      thresholds: {
+        lines: 88,
+        statements: 87,
+        functions: 81,
+        branches: 77,
+      },
+    },
   },
   resolve: {
     alias: {
