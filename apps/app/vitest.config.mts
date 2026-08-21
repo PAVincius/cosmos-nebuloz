@@ -61,11 +61,6 @@ export default defineConfig({
         "../../packages/storage/src/index.ts"
       ),
       "server-only": path.resolve(__dirname, "./vitest-mocks/server-only.ts"),
-      // sonner is a root-level pnpm dep, not hoisted into apps/app — alias it explicitly
-      sonner: path.resolve(
-        __dirname,
-        "../../node_modules/.pnpm/sonner@2.0.7_react-dom@19.2.1_react@19.2.1__react@19.2.1/node_modules/sonner"
-      ),
     },
   },
 });
