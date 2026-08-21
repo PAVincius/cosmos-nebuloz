@@ -268,7 +268,10 @@ export type ImportCounts = {
   skipped: number;
 };
 
-const ApiKeySchema = z.object({ apiKey: z.string().min(8) });
+// `.trim()` porque a chave chega por colagem, e colagem traz quebra de linha
+// e espaço invisível. Sem o trim, o header vai com o lixo junto e o Linear
+// devolve 401 — indistinguível de chave revogada para quem está na tela.
+const ApiKeySchema = z.object({ apiKey: z.string().trim().min(8) });
 
 export async function discoverLinearTeams(
   input: z.input<typeof ApiKeySchema>
@@ -293,7 +296,7 @@ export async function discoverLinearTeams(
 
 const ConnectLinearSchema = z.object({
   name: z.string().min(1).max(120).trim(),
-  apiKey: z.string().min(8),
+  apiKey: z.string().trim().min(8),
   linearTeamId: z.string().min(1),
   /** Importa as issues do time logo depois de conectar. */
   importNow: z.boolean().default(false),
