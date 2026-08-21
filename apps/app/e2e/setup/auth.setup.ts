@@ -41,6 +41,47 @@ export function charterStorageState(role: CharterPersonaRole): string {
   return `./e2e/fixtures/charter/${role}.json`;
 }
 
+/**
+ * O `/api/auth/sign-in/email` tem teto de requisição — o do próprio better-auth,
+ * ligado por padrão fora de desenvolvimento. Medido contra o build: cerca de
+ * três sign-ins passam por janela, e a janela vira em torno de um minuto.
+ *
+ * Este setup faz DEZ logins seguidos (seis papéis SAFe e quatro personas do
+ * Charter). Do terceiro ou quarto em diante a resposta é 429, o formulário não
+ * navega, e o `waitForURL` abaixo morre de timeout — sempre no mesmo lugar,
+ * sempre com cara de seletor errado ou de servidor lento. Não é nem um nem
+ * outro, e foi o que manteve esta suíte inteira fora do CI.
+ *
+ * Esperar o tempo todo custaria mais de meio minuto por papel. Tentar de novo
+ * só quando falha paga o custo apenas quando o teto realmente barra.
+ */
+const TENTATIVAS = 4;
+const ESPERA_MS = 20_000;
+
+async function comRetentativa(
+  rotulo: string,
+  fn: () => Promise<void>
+): Promise<void> {
+  for (let tentativa = 1; tentativa <= TENTATIVAS; tentativa++) {
+    try {
+      await fn();
+      return;
+    } catch (erro) {
+      if (tentativa === TENTATIVAS) {
+        throw erro;
+      }
+      // Sem afirmar a causa: daqui não dá para distinguir 429 de credencial
+      // recusada, e as duas chegam como o mesmo timeout de `waitForURL`. Se as
+      // quatro tentativas caírem, é sinal de que não era o teto — provavelmente
+      // o usuário não existe, porque o seed dele falhou.
+      console.log(
+        `   ↻ ${rotulo}: tentativa ${tentativa} falhou. Esperando ${ESPERA_MS / 1000}s — o sign-in tem teto de requisição e esta pode ser a vez que ele barrou.`
+      );
+      await new Promise((r) => setTimeout(r, ESPERA_MS));
+    }
+  }
+}
+
 async function signInAndSave(
   browser: Browser,
   opts: {
@@ -107,9 +148,20 @@ async function globalSetup(config: FullConfig) {
   }
 
   console.log("🌱 Executing seed:charter before E2E tests...");
+  // O resultado é lido, e não só avisado. Antes o `catch` seguia adiante e o
+  // setup morria logo depois tentando logar personas que o seed falho nunca
+  // criou — trinta segundos de timeout, mensagem de `waitForURL`, e nenhuma
+  // pista de que a causa tinha acontecido dez linhas acima.
+  //
+  // Hoje `seed:charter` falha de verdade neste repositório: ele espera o tenant
+  // `medcore` (`scripts/seed-charter.ts`, argv[2] ?? "medcore") e não o cria —
+  // quem cria é `packages/database/seed-safe-full.ts`, que não está nesta
+  // cadeia. Os slugs que `seed:e2e` deixa são `teste` e `cosmos-dev`.
+  let charterSemeado = true;
   try {
     execSync("pnpm seed:charter", { stdio: "inherit" });
   } catch (_err) {
+    charterSemeado = false;
     console.warn("⚠️ pnpm seed:charter had warnings/errors but continuing...");
   }
 
@@ -130,26 +182,37 @@ async function globalSetup(config: FullConfig) {
           : [roleStorageState(role)];
 
       console.log(`🔐 Signing in ${email} (${role.toUpperCase()})...`);
-      await signInAndSave(browser, {
-        baseURL: baseURL as string,
-        email,
-        password,
-        paths,
-      });
+      await comRetentativa(email, () =>
+        signInAndSave(browser, {
+          baseURL: baseURL as string,
+          email,
+          password,
+          paths,
+        })
+      );
     }
     console.log(`✅ ${ROLES.length} sessões salvas em e2e/fixtures/`);
+
+    if (!charterSemeado) {
+      console.warn(
+        `⏭  Pulando as ${CHARTER_PERSONAS.length} personas do Charter: o seed falhou e elas não existem no banco. As ${ROLES.length} sessões SAFe acima seguem válidas — os specs do Charter é que vão falhar, e por falta de dado, não por falta de sessão.`
+      );
+      return;
+    }
 
     for (const persona of CHARTER_PERSONAS) {
       console.log(
         `🔐 Signing in ${persona.email} (Charter/${persona.role.toUpperCase()})...`
       );
-      await signInAndSave(browser, {
-        baseURL: baseURL as string,
-        email: persona.email,
-        password: charterPassword,
-        paths: [charterStorageState(persona.role)],
-        landingPath: "/charter",
-      });
+      await comRetentativa(persona.email, () =>
+        signInAndSave(browser, {
+          baseURL: baseURL as string,
+          email: persona.email,
+          password: charterPassword,
+          paths: [charterStorageState(persona.role)],
+          landingPath: "/charter",
+        })
+      );
     }
     console.log(
       `✅ ${CHARTER_PERSONAS.length} sessões do Charter salvas em e2e/fixtures/charter/`
