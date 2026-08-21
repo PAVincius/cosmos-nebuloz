@@ -58,6 +58,22 @@ interface DataAuditPayload extends BaseAuditPayload {
 
 // ─── Audit service ───────────────────────────────────────────────────────────
 
+/**
+ * Grava uma linha do `AuditLog`.
+ *
+ * Cada campo vai na SUA coluna. O modelo tem `actorId`, `actorType`,
+ * `metadata`, `ipAddress`, `userAgent`, `targetUserId` e `reason` — e a versão
+ * anterior desta função não gravava nenhuma delas: empilhava `ipAddress`,
+ * `userAgent`, `reason` e `metadata` todos dentro de `diff`.
+ *
+ * O efeito era silencioso e do pior tipo. `apps/app/app/api/audit/route.ts`
+ * seleciona `actorId`, `actorType`, `metadata` e `ipAddress` — quatro colunas
+ * que voltavam nulas em toda linha de evento de segurança, sem erro nenhum. O
+ * `email` que `auth-events.ts` passa em `metadata` caía no `diff`, que aquela
+ * rota nem seleciona. Uma consulta por `targetUserId` ou por `ipAddress` não
+ * achava nada, e "não achou nada" é indistinguível de "não aconteceu" — que é
+ * exatamente a pergunta que uma trilha de auditoria existe para responder.
+ */
 async function writeToDb(payload: {
   tenantId: string;
   userId?: string;
@@ -65,16 +81,32 @@ async function writeToDb(payload: {
   entityType: string;
   entityId: string;
   diff?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+  ipAddress?: string;
+  userAgent?: string;
+  targetUserId?: string;
+  reason?: string;
 }): Promise<void> {
   try {
     await database.auditLog.create({
       data: {
         tenantId: payload.tenantId,
         userId: payload.userId ?? null,
+        // `actorId`/`actorType` são o que a rota de audit do produto lê para
+        // dizer QUEM agiu. Sem eles a linha existe e não identifica ninguém.
+        // "user" porque este caminho só é chamado a partir de uma sessão; ato
+        // de sistema não passa por aqui.
+        actorId: payload.userId ?? null,
+        actorType: payload.userId ? "user" : "system",
         action: payload.action,
         entityType: payload.entityType,
         entityId: payload.entityId,
         diff: payload.diff as object | undefined,
+        metadata: payload.metadata as object | undefined,
+        ipAddress: payload.ipAddress ?? null,
+        userAgent: payload.userAgent ?? null,
+        targetUserId: payload.targetUserId ?? null,
+        reason: payload.reason ?? null,
       },
     });
   } catch (err) {
@@ -127,12 +159,11 @@ export async function logSecurityEvent(
       action: payload.action,
       entityType: "SECURITY_EVENT",
       entityId: payload.targetUserId ?? payload.userId ?? "system",
-      diff: {
-        ipAddress: payload.ipAddress,
-        userAgent: payload.userAgent,
-        reason: payload.reason,
-        ...payload.metadata,
-      },
+      metadata: payload.metadata,
+      ipAddress: payload.ipAddress,
+      userAgent: payload.userAgent,
+      targetUserId: payload.targetUserId,
+      reason: payload.reason,
     });
   }
 }
@@ -157,7 +188,12 @@ export async function logDataEvent(payload: DataAuditPayload): Promise<void> {
     action: payload.action,
     entityType: payload.entityType,
     entityId: payload.entityId,
+    // `diff` aqui é o antes/depois da mutação e vai mesmo em `diff`. O resto do
+    // contexto tem coluna própria.
     diff: payload.diff,
+    metadata: payload.metadata,
+    ipAddress: payload.ipAddress,
+    userAgent: payload.userAgent,
   });
 }
 
@@ -185,7 +221,11 @@ export async function logAdminEvent(
       action: payload.action,
       entityType: "ADMIN_EVENT",
       entityId: payload.targetUserId ?? "system",
-      diff: payload.metadata,
+      metadata: payload.metadata,
+      ipAddress: payload.ipAddress,
+      userAgent: payload.userAgent,
+      targetUserId: payload.targetUserId,
+      reason: payload.reason,
     });
   }
 }
