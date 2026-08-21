@@ -1,5 +1,6 @@
 "use client";
 
+import { useContactDialog } from "./contact-dialog";
 import { ShimmerText } from "./magic";
 import type { CtaCopy } from "./types";
 
@@ -9,6 +10,7 @@ type ReadinessCtaProps = {
 
 /** The close. Always the assessment — low commitment, deliverables are theirs. */
 export function ReadinessCta({ copy }: ReadinessCtaProps) {
+  const { open: openContact } = useContactDialog();
   return (
     <section
       className="relative overflow-hidden border-hairline border-t py-20 sm:py-28 md:py-40"
@@ -36,7 +38,7 @@ export function ReadinessCta({ copy }: ReadinessCtaProps) {
           {copy.lead}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
-          <a className="btn-primary" href="#start">
+          <button className="btn-primary" onClick={openContact} type="button">
             <span>{copy.primaryCta}</span>
             <svg
               aria-hidden="true"
@@ -54,7 +56,7 @@ export function ReadinessCta({ copy }: ReadinessCtaProps) {
                 strokeWidth="1.4"
               />
             </svg>
-          </a>
+          </button>
           <a className="btn-ghost" href="#assessment">
             {copy.secondaryCta}
           </a>

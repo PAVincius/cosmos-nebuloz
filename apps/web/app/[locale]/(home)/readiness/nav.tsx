@@ -2,6 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useContactDialog } from "./contact-dialog";
 import { Logo } from "./logo";
 import { EASE_OUT } from "./magic";
 import type { NavCopy } from "./types";
@@ -19,6 +20,7 @@ type ReadinessNavProps = {
  * at the top of the viewport, and two indicators reads as a bug.
  */
 export function ReadinessNav({ copy, logoLabel }: ReadinessNavProps) {
+  const { open: openContact } = useContactDialog();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -101,12 +103,13 @@ export function ReadinessNav({ copy, logoLabel }: ReadinessNavProps) {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
-            <a
+            <button
               className="btn-primary !h-[44px] !px-4 !text-[13px] whitespace-nowrap"
-              href="#start"
+              onClick={openContact}
+              type="button"
             >
               <span>{copy.cta}</span>
-            </a>
+            </button>
             <button
               aria-expanded={open}
               aria-label={open ? copy.closeMenu : copy.openMenu}

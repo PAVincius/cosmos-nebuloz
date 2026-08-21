@@ -19,4 +19,9 @@ export type ProductsCopy = ReadinessCopy["products"];
 export type ProofCopy = ReadinessCopy["proof"];
 export type PositionCopy = ReadinessCopy["position"];
 export type CtaCopy = ReadinessCopy["cta"];
+export type ContactCopy = ReadinessCopy["contact"];
 export type FooterCopy = ReadinessCopy["footer"];
+
+/** One channel card. `tone` indexes magic.tsx's TONE map, so a dictionary can
+ *  only name a colour the palette actually has. */
+export type ContactChannel = ContactCopy["channels"][number];
