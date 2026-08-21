@@ -186,6 +186,7 @@ model LeanBudget {
   @@index([tenantId, artId])
   @@index([tenantId, themeId])
   @@index([tenantId, horizonId])
+  @@index([themeId])
 }
 
 // cosmos.html screen-budgets HorizonDetailScreen — an investment horizon

@@ -125,6 +125,7 @@ model ImprovementAction {
   @@index([tenantId, scope, scopeId])
   @@index([tenantId, status])
   @@index([tenantId, source])
+  @@index([assessmentId])
 }
 
 // S4: Audit trail for staleness state transitions

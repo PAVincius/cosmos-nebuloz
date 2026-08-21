@@ -168,6 +168,7 @@ model Engagement {
   @@index([tenantId])
   @@index([tenantId, status])
   @@index([clienteTenantId])
+  @@index([serviceId])
 }
 
 /// Pessoa da equipe da Nebuloz.
@@ -266,6 +267,7 @@ model IpAsset {
   @@unique([tenantId, slug])
   @@index([tenantId])
   @@index([tenantId, tipo])
+  @@index([origemEngagementId])
 }
 
 /// Revisão de um ativo. Append-only, igual ao StaffDiagramVersion.

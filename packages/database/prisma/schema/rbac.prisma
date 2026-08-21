@@ -42,4 +42,5 @@ model CustomRoleAssignment {
 
   @@unique([tenantId, userId, customRoleId])
   @@index([tenantId, userId])
+  @@index([customRoleId])
 }
