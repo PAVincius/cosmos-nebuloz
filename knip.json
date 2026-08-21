@@ -1,0 +1,103 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.{ts,mts}", "tsup.config.ts"],
+      "project": ["scripts/**/*.{ts,mts}"]
+    },
+    "apps/app": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "app/**/{error,loading,not-found,global-error}.tsx",
+        "app/**/{opengraph-image,icon,apple-icon}.tsx",
+        "middleware.ts",
+        "instrumentation.ts",
+        "next.config.ts",
+        "scripts/**/*.ts",
+        "e2e/**/*.ts",
+        "__tests__/**/*.{test,spec}.{ts,tsx}",
+        "vitest-mocks/**/*.ts"
+      ]
+    },
+    "apps/api": {
+      "entry": [
+        "app/**/route.ts",
+        "middleware.ts",
+        "instrumentation.ts",
+        "next.config.ts",
+        "scripts/**/*.{ts,js}",
+        "__tests__/**/*.{test,spec}.ts"
+      ]
+    },
+    "apps/backoffice": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "middleware.ts",
+        "next.config.ts",
+        "__tests__/**/*.{test,spec}.{ts,tsx}"
+      ]
+    },
+    "apps/web": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "middleware.ts",
+        "next.config.ts"
+      ]
+    },
+    "apps/storybook": {
+      "entry": [".storybook/{main,preview}.ts", "**/*.stories.tsx"]
+    },
+    "apps/docs": {
+      "entry": ["docusaurus.config.ts", "sidebars.ts", "src/**/*.{ts,tsx}"]
+    },
+    "apps/email": {
+      "entry": ["emails/**/*.tsx"]
+    },
+    "apps/studio": {
+      "entry": ["*.{ts,tsx}"]
+    },
+    "packages/*": {
+      "entry": [
+        "index.ts",
+        "src/index.ts",
+        "keys.ts",
+        "**/__tests__/**/*.{test,spec}.ts"
+      ]
+    },
+    "packages/database": {
+      "entry": [
+        "index.ts",
+        "keys.ts",
+        "prisma.config.ts",
+        "scripts/**/*.{ts,mts}",
+        "seed-*.ts"
+      ]
+    },
+    "packages/design-system": {
+      "entry": [
+        "index.tsx",
+        "index.ts",
+        "components/**/*.tsx",
+        "lib/**/*.ts",
+        "hooks/**/*.ts"
+      ]
+    }
+  },
+  "ignore": [
+    "**/generated/**",
+    "**/.design-ref/**",
+    "**/v0/**",
+    "**/graphify-out/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/*.d.ts"
+  ],
+  "ignoreDependencies": ["@repo/typescript-config", "server-only", "sharp"],
+  "ignoreWorkspaces": ["packages/typescript-config"]
+}

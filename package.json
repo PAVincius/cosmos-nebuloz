@@ -17,6 +17,7 @@
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",
+    "knip": "DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder BETTER_AUTH_SECRET=knip-placeholder-nao-e-segredo-0123456789 knip --no-progress",
     "prepare": "simple-git-hooks",
     "generate:tests": "tsx scripts/generate-tests.ts",
     "fix:ci": "tsx scripts/fix-ci.ts",
