@@ -119,6 +119,25 @@ export async function requestPlatformApproval(
       select: { id: true },
     });
 
+    // O pedido entra na trilha, não só a decisão. Sem isto o Audit Explorer
+    // (FR-10.3) mostra quem liberou e não mostra quem pediu — e não mostra de
+    // jeito nenhum o pedido que foi criado e nunca decidido, que é justamente
+    // o que uma auditoria procura. A linha existe em `PlatformApproval`, mas
+    // quem audita olha o `AuditLog`.
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "requested",
+      entityType: "platform_approval",
+      entityId: criado.id,
+      // Sem `diff`: criação não tem estado anterior, e `AuditDiff` exige
+      // `before: string`. O motivo é o que carrega contexto aqui, e ele já é
+      // obrigatório na criação (FR-8.2) — vai na nota.
+      note: dados.motivo,
+      target: `${dados.acao} · ${dados.alvoLabel}`,
+    });
+
     revalidatePath("/aprovacoes");
     return { id: criado.id };
   });
