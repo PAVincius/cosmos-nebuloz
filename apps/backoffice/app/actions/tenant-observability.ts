@@ -1,8 +1,9 @@
 "use server";
 
 import { database } from "@repo/database";
-import { requirePlatformStaff, StaffAuthError } from "@/lib/guard";
+import { requirePlatformStaff } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
+import { tenantPorSlug } from "@/lib/tenants";
 
 /**
  * Abas Integrações (FR-4.4) e Audit (FR-4.9) do detalhe do tenant.
@@ -11,17 +12,6 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * staff (FR-0.4). Nenhuma migration: `Integration`, `SyncLog` e `AuditLog` já
  * existiam no schema.
  */
-
-async function tenantPorSlug(slug: string) {
-  const tenant = await database.tenant.findFirst({
-    where: { slug },
-    select: { id: true, slug: true, name: true },
-  });
-  if (!tenant) {
-    throw new StaffAuthError("FORBIDDEN", `Nenhum cliente com o slug ${slug}.`);
-  }
-  return tenant;
-}
 
 export type IntegracaoRow = {
   id: string;

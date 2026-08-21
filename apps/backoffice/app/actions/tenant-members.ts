@@ -10,6 +10,7 @@ import {
   StaffAuthError,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
+import { tenantPorSlug } from "@/lib/tenants";
 
 /**
  * Aba Usuários do detalhe do tenant (SRD FR-4.2).
@@ -35,17 +36,6 @@ export type TenantMemberRow = {
   role: string;
   desde: string;
 };
-
-async function tenantPorSlug(slug: string) {
-  const tenant = await database.tenant.findFirst({
-    where: { slug },
-    select: { id: true, slug: true, name: true },
-  });
-  if (!tenant) {
-    throw new StaffAuthError("FORBIDDEN", `Nenhum cliente com o slug ${slug}.`);
-  }
-  return tenant;
-}
 
 export async function listTenantMembers(
   slug: string
