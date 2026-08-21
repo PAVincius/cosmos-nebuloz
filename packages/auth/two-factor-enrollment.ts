@@ -108,16 +108,18 @@ function traduzirErro(erro: RespostaDeErro, contexto: "senha" | "codigo") {
   // devolvia essa frase para QUALQUER falha no passo da senha — que é o mesmo
   // defeito do wizard original, e o pior tipo: manda a pessoa conferir uma
   // coisa que está certa enquanto esconde a que está errada.
-  if (contexto === "senha") {
-    if (erro?.status === 401 || /password|credential|senha/.test(minuscula)) {
-      return "Senha incorreta.";
-    }
+  if (
+    contexto === "senha" &&
+    (erro?.status === 401 || /password|credential|senha/.test(minuscula))
+  ) {
+    return "Senha incorreta.";
   }
 
-  if (contexto === "codigo") {
-    if (erro?.status === 400 || /code|otp|totp|invalid/.test(minuscula)) {
-      return "Código inválido. Confira o aplicativo autenticador.";
-    }
+  if (
+    contexto === "codigo" &&
+    (erro?.status === 400 || /code|otp|totp|invalid/.test(minuscula))
+  ) {
+    return "Código inválido. Confira o aplicativo autenticador.";
   }
 
   // Desconhecido: repassa o que veio, com o código, em vez de inventar causa.

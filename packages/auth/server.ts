@@ -14,7 +14,6 @@ import { headers as nextHeaders } from "next/headers";
 import { redirect } from "next/navigation";
 
 const SESSION_IDLE_SECONDS = 24 * 60 * 60; // 24h idle timeout
-const SESSION_ABSOLUTE_SECONDS = 7 * 24 * 60 * 60; // 7d absolute max
 /** Janela em que uma sessão encerrada ainda é servida pelo cookie assinado.
  *  É o teto do atraso da revogação — e o prazo que o AC-002 pede. */
 const SESSION_REVALIDATE_SECONDS = 60;
@@ -53,7 +52,7 @@ export const auth = betterAuth({
     // O `cookieCache` serve a sessão a partir do cookie assinado, sem reler o
     // banco — é o que faz o guard custar duas queries e não três.
     //
-    // O `maxAge` era `SESSION_ABSOLUTE_SECONDS`, sete dias: enquanto o cookie
+    // O `maxAge` era de sete dias: enquanto o cookie
     // valesse, o servidor não relia a linha de `Session`, e apagar essa linha
     // não encerrava nada. Isso transformava o cache em "a sessão inteira" e
     // deixava o sistema **sem nenhuma forma de encerrar uma sessão** — o caso
