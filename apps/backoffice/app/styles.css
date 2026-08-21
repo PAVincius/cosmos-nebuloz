@@ -1,0 +1,56 @@
+/* Entrada única de CSS do back-office, no mesmo formato de `apps/app/app/styles.css`.
+ *
+ * O `@import "tailwindcss"` precisa acontecer a partir da raiz DESTE app.
+ * Enquanto o `layout.tsx` importava `globals.css` do design-system direto, o
+ * único `@import "tailwindcss"` do build era o de dentro daquele pacote — que
+ * varre `packages/design-system/**` e mais nada. As ~72 classes utilitárias
+ * deste app não eram geradas.
+ *
+ * A ordem abaixo é a mesma que estava comentada no `layout.tsx`, e ela importa:
+ * cada bloco vence o anterior por chegar depois com a mesma especificidade.
+ * Em CSS a ordem é literal; em imports de JS o bundler pode reordenar.
+ *
+ * Todos os `@import` vêm juntos e antes de qualquer outra at-rule — é exigência
+ * da spec de CSS, e o `@source` no fim deste arquivo existe por causa dela. */
+
+@import "tailwindcss";
+
+@import "@repo/design-system/styles/globals.css";
+
+/* Tokens e primitivas do Cosmos (.kpi, .lift, .navitem, .btn, .skeleton),
+ * escopados em `.cosmos-root`. O `globals.css` também define `--canvas` e
+ * `--surface`, mas com valores já divergentes do protótipo (#f4f5f8 contra
+ * #f5f6f8) — o escopo do cosmos vence porque é mais específico, e é ele que
+ * carrega os valores fiéis. */
+@import "@repo/design-system/cosmos/cosmos.css";
+
+/* Depois do cosmos.css de propósito: mesma especificidade, e é a ordem que faz
+ * a paleta do back-office vencer a do produto. */
+@import "./backoffice-theme.css";
+
+/* CSS do bpmn-js e addons. Global porque o modeler injeta markup fora da
+ * árvore do React e não há como escopar por componente. */
+@import "bpmn-js/dist/assets/diagram-js.css";
+@import "bpmn-js/dist/assets/bpmn-js.css";
+@import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
+@import "@bpmn-io/properties-panel/dist/assets/properties-panel.css";
+@import "bpmn-js-token-simulation/assets/css/bpmn-js-token-simulation.css";
+@import "diagram-js-minimap/assets/diagram-js-minimap.css";
+
+/* Depois do CSS das bibliotecas: é a ordem que faz o tema do back-office
+ * vencer o tema claro que elas trazem de fábrica. */
+@import "./bpmn-estudio.css";
+
+/* A detecção automática de fontes do Tailwind não alcança este app — medido no
+ * navegador: com o plugin de PostCSS ligado e sem esta linha, `.items-center`
+ * existia (vem do `@source` do design-system, que varre o próprio pacote) e
+ * `.flex` e `.p-8` não existiam, porque só aparecem aqui. Declarar é explícito
+ * e custa uma linha; contar com a heurística custou quatro telas sem estilo —
+ * as de recusa do guard, em `app/(staff)/layout.tsx`.
+ *
+ * Fica depois dos `@import` porque a spec de CSS exige que eles venham antes de
+ * qualquer outra at-rule. `@source` não tem restrição de posição.
+ *
+ * Mesma forma do `@source` do design-system, um nível acima deste arquivo:
+ * cobre `app/`, `components/` e `lib/`. */
+@source "../**/*.{ts,tsx}";

@@ -1,21 +1,11 @@
 import { DesignSystemProvider } from "@repo/design-system";
 import { fonts } from "@repo/design-system/lib/fonts";
-import "@repo/design-system/styles/globals.css";
-import "@repo/design-system/cosmos/cosmos.css";
-// Depois do cosmos.css de propósito: mesma especificidade, e é a ordem que faz
-// a paleta do back-office vencer a do produto. Ver backoffice-theme.css.
-import "./backoffice-theme.css";
-// CSS do bpmn-js e addons. Global porque o modeler injeta markup fora da
-// árvore do React e não há como escopar por componente.
-import "bpmn-js/dist/assets/diagram-js.css";
-import "bpmn-js/dist/assets/bpmn-js.css";
-import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
-import "@bpmn-io/properties-panel/dist/assets/properties-panel.css";
-import "bpmn-js-token-simulation/assets/css/bpmn-js-token-simulation.css";
-import "diagram-js-minimap/assets/diagram-js-minimap.css";
-// Depois do CSS das bibliotecas: é a ordem que faz o tema do back-office
-// vencer o tema claro que elas trazem de fábrica.
-import "./bpmn-estudio.css";
+// Entrada única, como em `apps/app`. A cascata (cosmos → tema do back-office →
+// bibliotecas → bpmn-estudio) mora dentro do arquivo, onde a ordem é literal e
+// o bundler não reordena. É também o que traz o `@import "tailwindcss"` a
+// partir da raiz deste app — sem ele as classes utilitárias daqui não são
+// geradas. Ver os comentários em styles.css.
+import "./styles.css";
 import type { ReactNode } from "react";
 
 export const metadata = {
@@ -30,11 +20,9 @@ export const metadata = {
  * `--font-manrope` e companhia direto; sem a classe no <html> tudo cai para a
  * fonte de sistema e o desenho não se parece com o protótipo em nada.
  *
- * `cosmos.css` — os tokens e as primitivas (.kpi, .lift, .navitem, .btn,
- * .skeleton) escopados em `.cosmos-root`. O `globals.css` também define
- * `--canvas` e `--surface`, mas com valores que já divergiram do protótipo
- * (#f4f5f8 contra #f5f6f8). O escopo do cosmos vence porque é mais específico,
- * e é ele que carrega os valores fiéis.
+ * `cosmos-root` no body — é o escopo em que `cosmos.css` publica os tokens e as
+ * primitivas (.kpi, .lift, .navitem, .btn, .skeleton). Sem a classe, nada
+ * daquele arquivo se aplica. A ordem de carga mora em `styles.css`.
  *
  * `defaultTheme="dark"` com `storageKey` próprio — o back-office nasce escuro,
  * como o protótipo, e não divide preferência de tema com o produto: são duas
