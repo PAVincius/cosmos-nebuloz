@@ -8,6 +8,7 @@ import {
   setServiceAtivoAction,
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { useFormAction } from "@/components/use-form-action";
 
 /**
  * Catálogo de serviços.
@@ -117,7 +118,6 @@ export function Catalogo({
 }) {
   const [lista, setLista] = useState(iniciais);
   const [criando, setCriando] = useState(false);
-  const [erro, setErro] = useState<string | null>(null);
   const [form, setForm] = useState({
     codigo: "",
     nome: "",
@@ -125,54 +125,59 @@ export function Catalogo({
     preco: "",
     unidade: "projeto",
   });
+  // Primeira tela a adotar o hook. As outras cinco seguem quando forem tocadas
+  // por outro motivo — ver o comentário em `components/use-form-action.ts`.
+  const { pendente, erro, executar } = useFormAction();
 
-  const criar = useCallback(async () => {
-    setErro(null);
-    const res = await createServiceAction({
-      codigo: form.codigo,
-      nome: form.nome,
-      modalidade: form.modalidade as "PROJETO",
-      precoBaseCentavos: paraCentavos(form.preco),
-      unidade: form.unidade,
-    });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
-    setLista((atual) => [
-      {
-        id: res.data.id,
-        codigo: res.data.codigo,
-        nome: form.nome,
-        descricao: null,
-        modalidade: form.modalidade,
-        precoBaseCentavos: paraCentavos(form.preco),
-        unidade: form.unidade,
-        ativo: true,
-      },
-      ...atual,
-    ]);
-    setCriando(false);
-    setForm({
-      codigo: "",
-      nome: "",
-      modalidade: "PROJETO",
-      preco: "",
-      unidade: "projeto",
-    });
-  }, [form]);
+  const criar = useCallback(() => {
+    executar(
+      () =>
+        createServiceAction({
+          codigo: form.codigo,
+          nome: form.nome,
+          modalidade: form.modalidade as "PROJETO",
+          precoBaseCentavos: paraCentavos(form.preco),
+          unidade: form.unidade,
+        }),
+      (dado) => {
+        setLista((atual) => [
+          {
+            id: dado.id,
+            codigo: dado.codigo,
+            nome: form.nome,
+            descricao: null,
+            modalidade: form.modalidade,
+            precoBaseCentavos: paraCentavos(form.preco),
+            unidade: form.unidade,
+            ativo: true,
+          },
+          ...atual,
+        ]);
+        setCriando(false);
+        setForm({
+          codigo: "",
+          nome: "",
+          modalidade: "PROJETO",
+          preco: "",
+          unidade: "projeto",
+        });
+      }
+    );
+  }, [form, executar]);
 
-  const alternar = useCallback(async (id: string, ativo: boolean) => {
-    setErro(null);
-    const res = await setServiceAtivoAction({ id, ativo });
-    if (res.ok) {
-      setLista((atual) =>
-        atual.map((s) => (s.id === id ? { ...s, ativo } : s))
+  const alternar = useCallback(
+    (id: string, ativo: boolean) => {
+      executar(
+        () => setServiceAtivoAction({ id, ativo }),
+        () => {
+          setLista((atual) =>
+            atual.map((s) => (s.id === id ? { ...s, ativo } : s))
+          );
+        }
       );
-    } else {
-      setErro(res.error);
-    }
-  }, []);
+    },
+    [executar]
+  );
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -270,14 +275,20 @@ export function Catalogo({
               />
             </Campo>
             <div style={{ display: "flex", alignItems: "flex-end" }}>
+              {/* `pendente` no disabled é o ponto do hook: sem ele o segundo
+                  clique manda um segundo `createServiceAction` e cadastra o
+                  mesmo serviço duas vezes. O rótulo muda junto porque botão
+                  desabilitado sem explicação lê como bug. */}
               <BotaoPrimario
                 disabled={
-                  form.codigo.trim().length < 2 || form.nome.trim().length < 2
+                  pendente ||
+                  form.codigo.trim().length < 2 ||
+                  form.nome.trim().length < 2
                 }
                 onClick={criar}
                 type="button"
               >
-                Cadastrar
+                {pendente ? "Cadastrando…" : "Cadastrar"}
               </BotaoPrimario>
             </div>
           </div>
