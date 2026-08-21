@@ -1,2 +1,16 @@
+# StorageState gerado pelo globalSetup (e2e/setup/auth.setup.ts). Nenhum destes
+# entra no controle de versão: carregam cookie de sessão real e são reescritos
+# a cada execução do E2E.
+#
+# `auth-session.json` só entrou aqui em 2026-08-21. Até então era versionado —
+# e como `{"cookies": [], "origins": []}`, 37 bytes, vazio. Os vinte specs que
+# fazem `test.use({ storageState: "./e2e/fixtures/auth-session.json" })` estão
+# marcados @auth e rodavam DESLOGADOS sempre que o globalSetup não repopulava o
+# arquivo, ou seja, sempre que AUTH_TEST não estava ligado. Passavam, porque as
+# páginas redirecionam e a asserção não distinguia as duas coisas.
+#
+# Ausente, o Playwright falha na hora com "storage state file not found". Barulho
+# alto é melhor que suíte verde que não exercita o que promete.
 roles/
 charter/
+auth-session.json
