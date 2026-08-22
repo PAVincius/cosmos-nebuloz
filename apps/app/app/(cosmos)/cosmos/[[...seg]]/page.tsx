@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { SCREENS } from "@/components/cosmos/screens/registry";
-import { ComingSoon, TITLES } from "@/components/cosmos/shell";
+import { ComingSoon } from "@/components/cosmos/shell";
+// Direto de `titles`, e não via `shell`: aquele é `"use client"`, e importar o
+// mapa através dessa fronteira devolvia uma referência de client — `TITLES[id]`
+// vinha `undefined` e toda aba do Cosmos lia "dashboard | COSMOS · COSMOS" em
+// vez de "Visão Geral | Portfolio · COSMOS".
+import { TITLES } from "@/components/cosmos/titles";
 
 // Every /cosmos screen shares this one route, so none of them had a <title> —
 // axe flags that on all of them, and every browser tab read "localhost:3012".

@@ -30,6 +30,7 @@ import {
   useState,
 } from "react";
 import { Eyebrow, StatusDot } from "./base";
+import { TITLES } from "./titles";
 
 export type ModuleId = "COSMOS" | "CHARTER" | "SIGNAL";
 
@@ -91,19 +92,9 @@ const NAV: NavSection[] = [
   },
 ];
 
-export const TITLES: Record<string, [string, string]> = {
-  dashboard: ["Visão Geral", "Governança"],
-  policy: ["Políticas", "Governança"],
-  cases: ["Casos de Uso", "Governança"],
-  case: ["Caso de Uso", "Casos de Uso"],
-  risk: ["Matriz de Risco", "Risco"],
-  vendors: ["Fornecedores", "Risco"],
-  vendor: ["Fornecedor", "Fornecedores"],
-  onboarding: ["Onboarding", "Pessoas"],
-  audit: ["Auditoria", "Evidência"],
-  conformidade: ["Mapa de Conformidade", "Evidência"],
-  settings: ["Configurações", "Charter"],
-};
+// O mapa mora em `./titles`, sem `"use client"`: os catch-alls precisam dele
+// no server, e objeto importado através da fronteira de client chega como
+// referência, não como dado. Ver o comentário em `./titles`.
 
 export type ShellBadges = Partial<Record<string, number>>;
 

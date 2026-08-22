@@ -23,6 +23,7 @@ import {
   useState,
 } from "react";
 import { CommandPalette } from "./command-palette";
+import { TITLES } from "./titles";
 
 type NavChild = { id: string; label: string };
 type NavItem = {
@@ -94,39 +95,9 @@ export const NAV: NavItem[] = [
   { id: "settings", label: "Settings", icon: "settings" },
 ];
 
-export const TITLES: Record<string, [string, string]> = {
-  executive: ["Board Snapshot", "COSMOS"],
-  dashboard: ["Visão Geral", "Portfolio"],
-  kanban: ["Kanban de Épicos", "Portfolio"],
-  wsjf: ["WSJF Rankings", "Portfolio"],
-  themes: ["Temas Estratégicos", "Portfolio"],
-  value: ["Value Realization", "Portfolio"],
-  okrs: ["OKRs", "Portfolio"],
-  budgets: ["Lean Budgets", "Portfolio"],
-  roadmap: ["Roadmap", "Portfolio"],
-  anomalies: ["Anomalias", "Portfolio"],
-  arts: ["ARTs", "ART Board"],
-  board: ["Board do Time", "Time"],
-  program: ["Program Board", "ART Board"],
-  piplanning: ["PI Planning", "ART Board"],
-  dependencies: ["Dependências", "ART Board"],
-  risks: ["Riscos", "ART Board"],
-  capacity: ["Capacity Planning", "ART Board"],
-  teams: ["Times", "COSMOS"],
-  flow: ["Flow Metrics", "Analytics"],
-  velocity: ["Velocity", "Analytics"],
-  measure: ["Measure & Grow", "Analytics"],
-  strategy: ["Strategy Map", "Portfolio"],
-  tags: ["Tag Rules", "Portfolio"],
-  governance: ["Governance Board", "Portfolio"],
-  decisions: ["Decision Log", "Portfolio"],
-  solution: ["Large Solution", "COSMOS"],
-  workflows: ["Workflows", "COSMOS"],
-  integrations: ["Integrações", "COSMOS"],
-  webhooks: ["Webhooks", "COSMOS"],
-  settings: ["Settings", "COSMOS"],
-  copilot: ["Copilot", "COSMOS"],
-};
+// O mapa mora em `./titles`, sem `"use client"`: os catch-alls precisam dele
+// no server, e objeto importado através da fronteira de client chega como
+// referência, não como dado. Ver o comentário em `./titles`.
 
 const href = (id: string) => `/cosmos/${id}`;
 

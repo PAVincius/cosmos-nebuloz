@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { SCREENS } from "@/components/charter/screens/registry";
-import { ComingSoon, TITLES } from "@/components/charter/shell";
+import { ComingSoon } from "@/components/charter/shell";
+// Direto de `titles` pelo mesmo motivo do catch-all do Cosmos: `shell` é
+// `"use client"` e o mapa não atravessa essa fronteira como dado.
+import { TITLES } from "@/components/charter/titles";
 
 // Rota única para toda tela /charter/<id>, mesmo padrão do Cosmos. `seg[1]` é o
 // parâmetro opcional de detalhe (/charter/case/UC-118).
