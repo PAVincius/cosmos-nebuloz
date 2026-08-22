@@ -15,7 +15,7 @@ import { expect, test } from "@playwright/test";
  */
 test.describe("Portfolio Kanban — Page Structure", () => {
   test("unauthenticated access redirects safely", async ({ page }) => {
-    const response = await page.goto("/portfolio");
+    const response = await page.goto("/cosmos/kanban");
     expect(response?.status()).toBeLessThan(500);
     // Must redirect to sign-in or stay on portfolio (if auth is permissive in dev)
     await expect(page).toHaveURL(/sign-in|portfolio/);
@@ -27,7 +27,7 @@ test.describe("Portfolio Kanban — Page Structure", () => {
     const errors: string[] = [];
     page.on("pageerror", (err) => errors.push(err.message));
 
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
     await page.waitForTimeout(2000);
 
     const criticalErrors = errors.filter(
@@ -68,8 +68,8 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   ];
 
   test("renders the Portfolio Kanban title", async ({ page }) => {
-    await page.goto("/portfolio");
-    await expect(page.locator("h1:has-text('Portfolio')")).toBeVisible({
+    await page.goto("/cosmos/kanban");
+    await expect(page.locator("h1:has-text('Kanban de Épicos')")).toBeVisible({
       timeout: 15_000,
     });
   });
@@ -77,7 +77,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   test("renders all 5 SAFe columns", async ({ page }) => {
     // Abort Liveblocks auth so board renders without waiting for real-time connection
     await page.route("**/api/collaboration/auth**", (route) => route.abort());
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
 
     // Aguarda o board carregar
     await expect(page.locator("h3:has-text('Backlog')").first()).toBeVisible({
@@ -92,7 +92,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
 
   test("each column has a card counter badge", async ({ page }) => {
     await page.route("**/api/collaboration/auth**", (route) => route.abort());
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
 
     await page
       .locator("h3:has-text('Backlog')")
@@ -106,7 +106,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
   });
 
   test("page has correct SEO title", async ({ page }) => {
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
     await page.waitForLoadState("domcontentloaded");
     await expect(page).toHaveTitle(/Portfolio.*COSMOS/i);
   });
@@ -117,7 +117,7 @@ test.describe("Portfolio Kanban — Authenticated @auth", () => {
     // Mock: aborta a conexão do Liveblocks para simular sem credenciais
     await page.route("**/api/collaboration/auth", (route) => route.abort());
 
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
 
     // O Room fallback deve aparecer quando Liveblocks não conecta
     const fallbackOrBoard = page

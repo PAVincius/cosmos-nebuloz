@@ -9,21 +9,21 @@ test.describe("Analytics Dashboards @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("Flow Metrics renders header", async ({ page }) => {
-    await page.goto("/analytics/flow");
+    await page.goto("/cosmos/flow");
     await expect(page.locator("h1")).toContainText(/Flow Metrics/i, {
       timeout: 15_000,
     });
   });
 
   test("Velocity renders header", async ({ page }) => {
-    await page.goto("/analytics/velocity");
+    await page.goto("/cosmos/velocity");
     await expect(page.locator("h1")).toContainText(/Velocity/i, {
       timeout: 15_000,
     });
   });
 
   test("Measure & Grow renders header", async ({ page }) => {
-    await page.goto("/analytics/measure-grow");
+    await page.goto("/cosmos/measure");
     await expect(page.locator("h1")).toContainText(/Measure/i, {
       timeout: 15_000,
     });

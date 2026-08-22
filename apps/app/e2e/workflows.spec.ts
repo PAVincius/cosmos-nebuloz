@@ -11,7 +11,7 @@ test.describe("Workflows @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders header and workflow rows", async ({ page }) => {
-    await page.goto("/workflows");
+    await page.goto("/cosmos/workflows");
     await expect(page.locator("h1")).toContainText(/Workflows/i, {
       timeout: 15_000,
     });

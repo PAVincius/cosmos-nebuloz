@@ -10,14 +10,14 @@ test.describe("Strategy Map @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders header and theme tree", async ({ page }) => {
-    await page.goto("/portfolio/strategy-map");
+    await page.goto("/cosmos/strategy");
     await expect(page.locator("h1")).toContainText(/Strategy Map/i, {
       timeout: 15_000,
     });
   });
 
   test("Épico chip opens the add-epic-to-theme modal", async ({ page }) => {
-    await page.goto("/portfolio/strategy-map");
+    await page.goto("/cosmos/strategy");
 
     const addEpicButton = page.getByTitle("Adicionar épico ao tema").first();
     await addEpicButton.waitFor({ timeout: 15_000 });

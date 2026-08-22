@@ -10,12 +10,12 @@ test.describe("Portfolio OKRs @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders header and OKR cards", async ({ page }) => {
-    await page.goto("/portfolio/okrs");
+    await page.goto("/cosmos/okrs");
     await expect(page.locator("h1")).toContainText(/OKR/i, { timeout: 15_000 });
   });
 
   test("Novo OKR button opens the create-OKR dialog", async ({ page }) => {
-    await page.goto("/portfolio/okrs");
+    await page.goto("/cosmos/okrs");
     await page.getByRole("button", { name: "Novo OKR" }).click();
 
     await expect(

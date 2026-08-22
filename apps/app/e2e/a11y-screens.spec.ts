@@ -36,7 +36,7 @@ async function assertNoSeriousViolations(page: Page, label: string) {
 /**
  * Rotas nativas de `(authenticated)` — cada uma tem `page.tsx` própria.
  *
- * As 11 rotas `/portfolio/*` saíram daqui junto com a árvore que as servia: era
+ * As 11 rotas `/cosmos/kanban/*` saíram daqui junto com a árvore que as servia: era
  * a UI anterior ao Cosmos, duplicada 1:1 pelo registry (`/cosmos/kanban`,
  * `/cosmos/wsjf`, `/cosmos/themes`…). A cobertura não caiu — mudou de endereço,
  * e está em COSMOS_SCREENS abaixo.
@@ -57,8 +57,8 @@ const APP_ROUTES = [
  * `app/(cosmos)/cosmos/[[...seg]]/page.tsx`, que resolve o id contra
  * `components/cosmos/screens/registry.tsx`.
  *
- * Esta lista apontava para `/risks`, `/teams`, `/copilot`, `/workflows`,
- * `/integrations`, `/dependencies`, `/solution-trains` e `/analytics/*` — rotas
+ * Esta lista apontava para `/cosmos/risks`, `/teams`, `/cosmos/copilot`, `/cosmos/workflows`,
+ * `/cosmos/integrations`, `/cosmos/dependencies`, `/cosmos/solution` e `/analytics/*` — rotas
  * de `(authenticated)` apagadas em 43afe6d. A suíte ficou vermelha e a falha
  * parecia regressão de a11y, quando era 404. Só ids do registry entram aqui.
  *

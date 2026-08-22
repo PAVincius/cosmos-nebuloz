@@ -12,7 +12,7 @@ import { expect, test } from "@playwright/test";
  * - Authenticated tests are tagged @auth and use storageState.
  */
 test.describe("BPMN Canvas — Page Structure", () => {
-  const BPMN_URL = "/workflows/team-demo/bpmn";
+  const BPMN_URL = "/cosmos/workflows/team-demo/bpmn";
 
   test("unauthenticated access redirects safely (no 500)", async ({ page }) => {
     const response = await page.goto(BPMN_URL);
@@ -62,7 +62,7 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
     // Mock the server action to return null (blank canvas)
     await page.route("**/api/**", (route) => route.continue());
 
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
     // O fallback do next/dynamic deve aparecer enquanto carrega
     const _loader = page.locator('.animate-spin, [class*="animate-"]').first();
@@ -71,16 +71,16 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
   });
 
   test("renders Modelador BPMN Corporativo heading", async ({ page }) => {
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
     // Aguarda o componente carregar (next/dynamic tem delay)
-    await expect(
-      page.locator("h2:has-text('Modelador BPMN')")
-    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("h2:has-text('Modelador BPMN')")).toBeVisible({
+      timeout: 15_000,
+    });
   });
 
   test("Exportar SVG button is present", async ({ page }) => {
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
     await expect(page.locator("button:has-text('SVG')")).toBeVisible({
       timeout: 15_000,
@@ -88,7 +88,7 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
   });
 
   test("Salvar Fluxo button is present", async ({ page }) => {
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
     await expect(page.locator("button:has-text('Salvar')")).toBeVisible({
       timeout: 15_000,
@@ -96,7 +96,7 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
   });
 
   test("BPMN canvas container is mounted in DOM", async ({ page }) => {
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
     // Aguarda o canvas do bpmn-js montar (o div .djs-container é criado pelo bpmn-js)
     await expect(
@@ -105,10 +105,10 @@ test.describe("BPMN Canvas — Authenticated @auth", () => {
   });
 
   test("canvas has correct teamId displayed", async ({ page }) => {
-    await page.goto("/workflows/team-demo/bpmn");
+    await page.goto("/cosmos/workflows/team-demo/bpmn");
 
-    await expect(
-      page.locator("p:has-text('Equipe: team-demo')")
-    ).toBeVisible({ timeout: 15_000 });
+    await expect(page.locator("p:has-text('Equipe: team-demo')")).toBeVisible({
+      timeout: 15_000,
+    });
   });
 });

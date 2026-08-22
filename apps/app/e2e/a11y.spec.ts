@@ -59,7 +59,7 @@ test.describe("a11y — Authenticated pages @auth", () => {
   });
 
   test("portfolio kanban has no critical violations", async ({ page }) => {
-    await page.goto("/portfolio");
+    await page.goto("/cosmos/kanban");
     await page.waitForLoadState("networkidle");
 
     const results = await new AxeBuilder({ page })
@@ -77,7 +77,7 @@ test.describe("a11y — Authenticated pages @auth", () => {
   });
 
   test("PI planning kanban has no critical violations", async ({ page }) => {
-    await page.goto("/pi-planning");
+    await page.goto("/cosmos/piplanning");
     await page.waitForLoadState("networkidle");
 
     const results = await new AxeBuilder({ page })

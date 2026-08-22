@@ -87,7 +87,7 @@ test.describe("WorkspaceSwitcher — API Contract", () => {
     page,
   }) => {
     // Ao acessar rota autenticada sem sessão, deve redirecionar para sign-in
-    const response = await page.goto("/portfolio");
+    const response = await page.goto("/cosmos/kanban");
 
     // Expect redirect to sign-in or the page shows sign-in content
     await expect(page).toHaveURL(/sign-in|portfolio/);

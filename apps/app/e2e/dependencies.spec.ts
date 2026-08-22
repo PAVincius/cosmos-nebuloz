@@ -9,7 +9,7 @@ test.describe("Dependencies @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders header and dependency map", async ({ page }) => {
-    await page.goto("/dependencies");
+    await page.goto("/cosmos/dependencies");
     await expect(page.locator("h1")).toContainText(/Depend/i, {
       timeout: 15_000,
     });

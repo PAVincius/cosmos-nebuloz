@@ -9,7 +9,9 @@ test.describe("Integrations @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders header and integration cards", async ({ page }) => {
-    await page.goto("/integrations");
-    await expect(page.locator("h1")).toContainText(/Integra/i, { timeout: 15_000 });
+    await page.goto("/cosmos/integrations");
+    await expect(page.locator("h1")).toContainText(/Integra/i, {
+      timeout: 15_000,
+    });
   });
 });

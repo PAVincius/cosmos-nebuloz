@@ -10,14 +10,15 @@ test.describe("Portfolio Governance @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("governance list renders header and epic list", async ({ page }) => {
-    await page.goto("/portfolio/governance");
-    await expect(page.locator("h1")).toContainText(/Governança/i, {
+    await page.goto("/cosmos/governance");
+    // O h1 real é "Governance Board" — em inglês, como o registry.
+    await expect(page.locator("h1")).toContainText(/Governance Board/i, {
       timeout: 15_000,
     });
   });
 
   test("decision log renders header and table", async ({ page }) => {
-    await page.goto("/portfolio/governance/decision-log");
+    await page.goto("/cosmos/decisions");
     await expect(page.locator("h1")).toContainText(/Decision Log/i, {
       timeout: 15_000,
     });

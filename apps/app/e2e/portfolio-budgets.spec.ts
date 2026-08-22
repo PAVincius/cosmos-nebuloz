@@ -10,15 +10,17 @@ import { expect, test } from "@playwright/test";
 test.describe("Portfolio Budgets @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
-  test("budgets dashboard renders header and KPI sections", async ({ page }) => {
-    await page.goto("/portfolio/budgets");
+  test("budgets dashboard renders header and KPI sections", async ({
+    page,
+  }) => {
+    await page.goto("/cosmos/budgets");
     await expect(page.locator("h1")).toContainText(/Lean Budget/i, {
       timeout: 15_000,
     });
   });
 
   test("anomalies list renders header and rows", async ({ page }) => {
-    await page.goto("/portfolio/budgets/anomalies");
+    await page.goto("/cosmos/anomalies");
     await expect(page.locator("h1")).toContainText(/Anomalias/i, {
       timeout: 15_000,
     });

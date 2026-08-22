@@ -10,7 +10,7 @@ test.describe("Portfolio Roadmap @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
   test("renders the roadmap timeline", async ({ page }) => {
-    await page.goto("/portfolio/roadmap");
+    await page.goto("/cosmos/roadmap");
     await page.waitForLoadState("networkidle");
     await expect(page).toHaveTitle(/Roadmap/i);
   });
