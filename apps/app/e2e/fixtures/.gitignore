@@ -14,3 +14,13 @@
 roles/
 charter/
 auth-session.json
+
+# Quadro-branco do UX Swarm (`e2e/swarm/state.ts`): cada persona anexa suas
+# descobertas ao seu arquivo durante a execução, e o orquestrador lê todos no
+# fim. É saída, não fixture — `clearSwarmState()` apaga os cinco no início de
+# cada rodada, `readPersonaFindings()` devolve [] quando não existe, e
+# `initSwarmDir()` recria o diretório. Nada depende deles virem no clone.
+#
+# Estavam versionados, então toda execução de E2E sujava o diff com resultado
+# de uma rodada antiga.
+swarm/
