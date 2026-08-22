@@ -32,6 +32,7 @@ import {
 } from "../../actions/integrations";
 import { githubTestConnection } from "../../actions/integrations/connectors/github";
 import {
+  linearDiscoverProjects,
   linearDiscoverTeams,
   linearTestConnection,
 } from "../../actions/integrations/connectors/linear";
@@ -291,6 +292,35 @@ export async function discoverLinearTeams(
       account: test.name ?? null,
       teams: teams.map((t) => ({ id: t.id, name: t.name, key: t.key })),
     };
+  });
+}
+
+// ─── Projects do time escolhido (COS-91) ───────────────────────────────────
+//
+// No plano free do Linear os produtos vivem como projects dentro de um único
+// time — sem filtrar por project, conectar o time traria as issues de todos
+// eles misturadas (mesmo problema que levou o import/re-sync a ganhar
+// `linearProjectId` em COS-85). Esta descoberta roda DEPOIS de
+// discoverLinearTeams, com o time já escolhido: é uma chamada própria, feita
+// de dentro do modal, nunca uma prop congelada no clique que abriu o modal.
+
+export type LinearProjectOption = { id: string; name: string };
+
+const DiscoverLinearProjectsSchema = z.object({
+  apiKey: z.string().trim().min(8),
+  linearTeamId: z.string().min(1),
+});
+
+export async function discoverLinearProjects(
+  input: z.input<typeof DiscoverLinearProjectsSchema>
+): Promise<Result<LinearProjectOption[]>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { apiKey, linearTeamId } = DiscoverLinearProjectsSchema.parse(input);
+
+    const projects = await linearDiscoverProjects(apiKey, linearTeamId);
+    return projects.map((p) => ({ id: p.id, name: p.name }));
   });
 }
 
