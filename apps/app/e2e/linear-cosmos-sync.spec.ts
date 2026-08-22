@@ -83,10 +83,14 @@ test.describe("Linear → Cosmos @auth", () => {
       timeout: 15_000,
     });
 
-    // Time COS do fake, épico recém-criado, importar agora.
+    // Time COS do fake, project Meridian (COS-85), épico recém-criado.
     await page
       .getByLabel(/Time do Linear/)
       .selectOption({ label: "COS · Cosmos" });
+    // O filtro do plano free: das 6 issues do time, 3 pertencem ao project.
+    await page
+      .getByLabel("Project do Linear")
+      .selectOption({ label: "Meridian" });
     await page
       .getByLabel("Épico de destino das features")
       .selectOption({ label: EPICO });
@@ -99,9 +103,10 @@ test.describe("Linear → Cosmos @auth", () => {
       .last()
       .click();
 
-    // Toast com os contadores reais do snapshot: 6 issues do fake.
+    // Contadores reais do snapshot: só as 3 issues do project Meridian — o
+    // time inteiro tem 6, e as outras 3 ficarem de fora É a feature.
     await expect(
-      page.getByText(/Conectado — 6 criadas, 0 atualizadas/)
+      page.getByText(/Conectado — 3 criadas, 0 atualizadas/)
     ).toBeVisible({ timeout: 30_000 });
 
     // ── 3. Card ativo com saúde de sync ──────────────────────────────────
@@ -116,7 +121,8 @@ test.describe("Linear → Cosmos @auth", () => {
     await page
       .getByRole("button", { name: `Sincronizar ${NOME_INTEGRACAO} agora` })
       .click();
-    await expect(page.getByText(/0 criadas, 6 atualizadas/)).toBeVisible({
+    // Re-sync preserva o filtro gravado no mapping: 3, não 6.
+    await expect(page.getByText(/0 criadas, 3 atualizadas/)).toBeVisible({
       timeout: 30_000,
     });
 

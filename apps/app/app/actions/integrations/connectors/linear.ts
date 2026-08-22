@@ -37,7 +37,14 @@ async function linearQuery<T>(
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LinearTeam = { id: string; name: string; key: string };
+export type LinearProjectRef = { id: string; name: string };
+export type LinearTeam = {
+  id: string;
+  name: string;
+  key: string;
+  /** Projects do time — no plano free do Linear é onde os produtos moram. */
+  projects?: { nodes: LinearProjectRef[] };
+};
 
 export type LinearIssue = {
   id: string;
@@ -80,9 +87,12 @@ export async function linearTestConnection(
 export async function linearDiscoverTeams(
   apiKey: string
 ): Promise<LinearTeam[]> {
+  // Projects vêm na mesma viagem: o modal precisa deles logo depois da
+  // validação, e uma segunda chamada exigiria segurar a chave por mais tempo
+  // do que o necessário.
   const data = await linearQuery<{ teams: { nodes: LinearTeam[] } }>(
     apiKey,
-    "{ teams { nodes { id name key } } }"
+    "{ teams { nodes { id name key projects { nodes { id name } } } } }"
   );
   return data.teams.nodes;
 }

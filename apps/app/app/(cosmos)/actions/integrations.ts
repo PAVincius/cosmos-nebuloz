@@ -260,7 +260,13 @@ export async function testIntegrationConnection(
 //     no servidor. Aceitar `projectId` da tela deixaria um cliente pedir
 //     import de um time que este tenant nunca mapeou.
 
-export type LinearTeamOption = { id: string; name: string; key: string };
+export type LinearTeamOption = {
+  id: string;
+  name: string;
+  key: string;
+  /** Projects do time no Linear — um ART de produto conecta num deles. */
+  projects: { id: string; name: string }[];
+};
 
 export type ImportCounts = {
   created: number;
@@ -289,7 +295,15 @@ export async function discoverLinearTeams(
     const teams = await linearDiscoverTeams(apiKey);
     return {
       account: test.name ?? null,
-      teams: teams.map((t) => ({ id: t.id, name: t.name, key: t.key })),
+      teams: teams.map((t) => ({
+        id: t.id,
+        name: t.name,
+        key: t.key,
+        projects: (t.projects?.nodes ?? []).map((p) => ({
+          id: p.id,
+          name: p.name,
+        })),
+      })),
     };
   });
 }

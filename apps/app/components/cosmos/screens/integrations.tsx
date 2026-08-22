@@ -337,6 +337,10 @@ function ConnectLinearModal({
   const [account, setAccount] = useState<string | null>(null);
   const [teams, setTeams] = useState<LinearTeamOption[] | null>(null);
   const [teamId, setTeamId] = useState("");
+  // Project do Linear (COS-85): no plano free os produtos moram como projects
+  // dentro de um time só, e um ART de produto conecta num project — não no
+  // time inteiro. Vazio = time inteiro, que segue sendo o caso do ART Cosmos.
+  const [projectId, setProjectId] = useState("");
   const [importNow, setImportNow] = useState(true);
   // O Cosmos é épico-cêntrico: feature sem épico não aparece em tela nenhuma.
   // A lista carrega junto com a validação da chave para o select já estar
@@ -378,9 +382,27 @@ function ConnectLinearModal({
 
   const escolherTime = (id: string) => {
     setTeamId(id);
+    // Project pertence ao time: trocar de time com project antigo selecionado
+    // conectaria um filtro que não existe no time novo.
+    setProjectId("");
     const escolhido = teams?.find((t) => t.id === id);
     if (!nameTouched && escolhido) {
       setName(`${catalog.label} · ${escolhido.name}`);
+    }
+  };
+
+  const escolherProject = (id: string) => {
+    setProjectId(id);
+    const time = teams?.find((t) => t.id === teamId);
+    const proj = time?.projects.find((p) => p.id === id);
+    if (!nameTouched) {
+      setName(
+        proj
+          ? `${catalog.label} · ${proj.name}`
+          : time
+            ? `${catalog.label} · ${time.name}`
+            : name
+      );
     }
   };
 
@@ -398,6 +420,7 @@ function ConnectLinearModal({
           linearTeamId: teamId,
           importNow,
           ...(epicId ? { epicId } : {}),
+          ...(projectId ? { linearProjectId: projectId } : {}),
         }),
       {
         loading: importNow
@@ -503,6 +526,43 @@ function ConnectLinearModal({
             )}
           </div>
         )}
+
+        {teams !== null &&
+          (teams.find((t) => t.id === teamId)?.projects.length ?? 0) > 0 && (
+            <div>
+              <label htmlFor="linear-project" style={labelStyle}>
+                Project do Linear
+              </label>
+              <select
+                id="linear-project"
+                onChange={(e) => escolherProject(e.target.value)}
+                style={inputStyle}
+                value={projectId}
+              >
+                <option value="">— time inteiro —</option>
+                {(teams.find((t) => t.id === teamId)?.projects ?? []).map(
+                  (p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  )
+                )}
+              </select>
+              <p
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                  margin: "6px 0 0",
+                }}
+              >
+                No plano free os produtos vivem como projects de um time só.
+                Escolher um project importa e sincroniza apenas as issues dele —
+                é assim que cada ART de produto conecta sem engolir o time
+                inteiro.
+              </p>
+            </div>
+          )}
 
         {teams !== null && teams.length > 0 && (
           <div>

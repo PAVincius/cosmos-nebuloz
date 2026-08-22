@@ -230,7 +230,7 @@ describe("IntegrationsScreen", () => {
       ok: true,
       data: {
         account: "Nebuloz",
-        teams: [{ id: "lt_1", name: "Meridian", key: "MER" }],
+        teams: [{ id: "lt_1", name: "Meridian", key: "MER", projects: [] }],
       },
     });
     connectLinearIntegrationMock.mockResolvedValue({
@@ -289,7 +289,7 @@ describe("IntegrationsScreen", () => {
       ok: true,
       data: {
         account: "Nebuloz",
-        teams: [{ id: "lt_2", name: "Charter", key: "CHA" }],
+        teams: [{ id: "lt_2", name: "Charter", key: "CHA", projects: [] }],
       },
     });
 
@@ -310,6 +310,63 @@ describe("IntegrationsScreen", () => {
 
     // O nome sugerido acompanha o time, senão nasceriam cinco "Linear".
     expect(await screen.findByDisplayValue("Linear · Charter")).toBeTruthy();
+  });
+
+  it("conecta num project do Linear — o filtro do plano free (COS-85)", async () => {
+    listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [
+          {
+            id: "lt_neb",
+            name: "Nebuloz",
+            key: "NEB",
+            projects: [
+              { id: "prj_mer", name: "Meridian" },
+              { id: "prj_cha", name: "Charter" },
+            ],
+          },
+        ],
+      },
+    });
+    connectLinearIntegrationMock.mockResolvedValue({
+      ok: true,
+      data: { id: "i9", imported: { created: 3, updated: 0, skipped: 0 } },
+    });
+
+    render(<IntegrationsScreen />);
+    fireEvent.click((await screen.findAllByText("Conectar"))[0]);
+
+    fireEvent.change(await screen.findByLabelText("Personal API key"), {
+      target: { value: "lin_api_teste_00000000" },
+    });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    // Select de project aparece com o time-inteiro como default.
+    const projSelect = await screen.findByLabelText("Project do Linear");
+    expect(screen.getByText("— time inteiro —")).toBeTruthy();
+    fireEvent.change(projSelect, { target: { value: "prj_mer" } });
+
+    // Escolher o project renomeia a sugestão para o produto, não o time.
+    expect(await screen.findByDisplayValue("Linear · Meridian")).toBeTruthy();
+
+    const submit = screen.getAllByText("Conectar").at(-1);
+    if (!submit) {
+      throw new Error("botão Conectar do modal não renderizado");
+    }
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
+        name: "Linear · Meridian",
+        apiKey: "lin_api_teste_00000000",
+        linearTeamId: "lt_neb",
+        importNow: true,
+        linearProjectId: "prj_mer",
+      })
+    );
   });
 
   it("shows the error state when the action fails", async () => {
