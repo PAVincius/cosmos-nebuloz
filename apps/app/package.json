@@ -19,6 +19,7 @@
     "seed:portfolio": "tsx scripts/seed-portfolio.ts",
     "seed:e2e": "tsx scripts/seed-e2e.ts",
     "seed:charter": "tsx scripts/seed-charter.ts",
+    "backfill:integration-secrets": "tsx --conditions=react-server scripts/backfill-integration-secrets.ts",
     "verify:charter": "tsx scripts/verify-charter.ts",
     "verify:seed": "tsx scripts/verify-seed.ts",
     "swarm": "tsx scripts/ux-swarm.ts",

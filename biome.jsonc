@@ -313,6 +313,37 @@
       }
     },
     {
+      // Religa no caminho de acesso o que o bloco `packages/**` desliga para
+      // todo mundo. Override posterior vence, então isto vale só para estes
+      // quatro.
+      //
+      // São os pacotes que decidem quem entra e quem enxerga o quê, e agora os
+      // únicos com suíte de teste — `any` aqui não é atalho de tipagem, é
+      // buraco na checagem do papel. São pequenos (470, 295, 191 e 1300
+      // linhas), então religar custa pouco e o ganho é onde mais importa.
+      //
+      // O caminho para os outros 20 pacotes é este: um bloco por vez, com o
+      // pacote verde antes de entrar.
+      "includes": [
+        "packages/rbac/**",
+        "packages/security/**",
+        "packages/audit/**",
+        "packages/auth/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "error",
+            "noEvolvingTypes": "error"
+          },
+          "correctness": {
+            "noUnusedVariables": "error",
+            "noUnusedFunctionParameters": "error"
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "apps/app/app/(authenticated)/components/copilot/copilot-markdown.tsx"
       ],
@@ -388,6 +419,10 @@
       // nó do grafo.
       "!docs/cosmos/grafo.json",
       "!docs/cosmos/GRAFO.md",
+      // Mesmo caso: gerado por `pnpm audit:runtime --update`, que expande os
+      // arrays. Sem isto, formatador e gerador brigam pelo arquivo a cada
+      // atualização da catraca.
+      "!scripts/audit-runtime-baseline.json",
       "!**/.next"
     ]
   }

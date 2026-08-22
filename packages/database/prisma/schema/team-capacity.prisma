@@ -24,6 +24,7 @@ model TeamMemberAssignment {
   @@index([tenantId])
   @@index([teamId])
   @@index([userId])
+  @@index([sprintId])
 }
 
 // S2: Actual story points delivered per member per sprint (write-once at sprint close)

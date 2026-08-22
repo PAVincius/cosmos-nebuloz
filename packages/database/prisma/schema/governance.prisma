@@ -73,6 +73,7 @@ model ApprovalRequest {
   @@index([tenantId])
   @@index([tenantId, estado])
   @@index([governedEpicId])
+  @@index([workflowId])
 }
 
 model ApprovalStepInstance {

@@ -1,0 +1,48 @@
+{
+  "@langchain/core": [
+    "packages/payments>@stripe/agent-toolkit"
+  ],
+  "@modelcontextprotocol/sdk": [
+    "packages/payments>@stripe/agent-toolkit"
+  ],
+  "@opentelemetry/propagator-jaeger": [
+    "apps/app>inngest"
+  ],
+  "@xmldom/xmldom": [
+    "packages/cms>basehub"
+  ],
+  "axios": [
+    "packages/cms>basehub",
+    "packages/notifications>@knocklabs/react"
+  ],
+  "form-data": [
+    "packages/cms>basehub"
+  ],
+  "hono": [
+    "apps/app>inngest"
+  ],
+  "js-yaml": [
+    "apps/web>mdx-bundler"
+  ],
+  "langsmith": [
+    "packages/payments>@stripe/agent-toolkit"
+  ],
+  "next": [
+    "apps/api>next",
+    "apps/app>next"
+  ],
+  "path-to-regexp": [
+    "apps/web>@rescale/nemo",
+    "apps/web>fumadocs-core"
+  ],
+  "sharp": [
+    "apps/web>sharp"
+  ],
+  "undici": [
+    "apps/web>@arcjet/next",
+    "packages/database>undici"
+  ],
+  "ws": [
+    "packages/database>ws"
+  ]
+}

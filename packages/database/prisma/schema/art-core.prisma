@@ -133,6 +133,9 @@ model PIObjective {
 
   @@index([tenantId])
   @@index([tenantId, piPlanId])
+  // Só o composto não serve para a FK: apagar um PIPlan faz o Postgres varrer
+  // esta tabela atrás dos filhos, e `tenantId` na frente impede o uso do índice.
+  @@index([piPlanId])
 }
 
 // ROAM Risk tracking (Resolved/Owned/Accepted/Mitigated)
@@ -172,6 +175,7 @@ model Risk {
 
   @@index([tenantId])
   @@index([tenantId, piPlanId])
+  @@index([piPlanId])
 }
 
 // M:N junction Risk <-> OKR (ROAM impact on OKRs)

@@ -68,6 +68,7 @@ model BillingEntry {
   @@index([tenantId, mappingConf])
   @@index([tenantId, themeId, usageStartDate])
   @@index([integrationId, usageStartDate])
+  @@index([themeId])
 }
 
 model BillingEntryAllocation {

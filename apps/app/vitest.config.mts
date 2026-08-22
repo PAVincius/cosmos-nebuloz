@@ -41,9 +41,20 @@ export default defineConfig({
       // nada pode piorar. Deixar em 80 mantinha o CI vermelho para todo mundo
       // e não protegia ninguém.
       //
-      // Subir de volta é trabalho planejado. A lacuna está em ~87 diretórios;
-      // os mais vazios são app/actions/{impediments,integrations,measure-grow,
-      // notifications,velocity,workflow} a 0% e app/actions/okrs a 21%.
+      // Subir de volta é trabalho planejado, e a regra é por módulo tocado:
+      // feature que entra num diretório fraco sai com teste, e a catraca sobe
+      // sozinha. `pnpm coverage:gaps` lista os piores depois de um
+      // test:coverage.
+      //
+      // Medição de 2026-08-21 — 75.41 / 75.25 / 70.8 / 64.96, ou seja o piso
+      // continua no lugar certo e não há o que apertar hoje. A lista anterior
+      // aqui estava desatualizada: app/actions/integrations não está a 0% e
+      // sim a 27.9% (366 linhas), e impediments e velocity não têm linha
+      // nenhuma a cobrir — são diretório de schema, não de lógica.
+      //
+      // O que de fato pesa, por linha descoberta: integrations (~264),
+      // analytics (~163), okrs (~161), epics (~116), lean-budget (~99) e
+      // workflow (51, o único de tamanho real ainda em 0%).
       thresholds: {
         lines: 75,
         statements: 75,
@@ -61,11 +72,6 @@ export default defineConfig({
         "../../packages/storage/src/index.ts"
       ),
       "server-only": path.resolve(__dirname, "./vitest-mocks/server-only.ts"),
-      // sonner is a root-level pnpm dep, not hoisted into apps/app — alias it explicitly
-      sonner: path.resolve(
-        __dirname,
-        "../../node_modules/.pnpm/sonner@2.0.7_react-dom@19.2.1_react@19.2.1__react@19.2.1/node_modules/sonner"
-      ),
     },
   },
 });
