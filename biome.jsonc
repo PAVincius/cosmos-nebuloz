@@ -15,6 +15,13 @@
   },
   "overrides": [
     {
+      // `.jsonc` é JSON com comentário por definição, mas o biome só abre essa
+      // exceção para o próprio config — qualquer outro arquivo com a extensão
+      // é lido como JSON estrito e falha no primeiro `//`.
+      "includes": ["**/*.jsonc"],
+      "json": { "parser": { "allowComments": true } }
+    },
+    {
       "includes": [
         "**/__tests__/**",
         "**/*.test.ts",
