@@ -101,30 +101,6 @@ export async function linearDiscoverTeams(
 
 export type LinearProject = { id: string; name: string };
 
-/**
- * Projects dentro de um time (COS-91). No plano free do Linear os produtos
- * (Charter, Signal, Meridian, Scaffold) vivem como projects dentro do mesmo
- * time NEB — o seletor de project na tela de conexão usa isto para listar as
- * opções depois que o time já foi escolhido.
- */
-export async function linearDiscoverProjects(
-  apiKey: string,
-  teamId: string
-): Promise<LinearProject[]> {
-  const data = await linearQuery<{
-    team: { projects: { nodes: LinearProject[] } };
-  }>(
-    apiKey,
-    `query TeamProjects($teamId: String!) {
-      team(id: $teamId) {
-        projects { nodes { id name } }
-      }
-    }`,
-    { teamId }
-  );
-  return data.team.projects.nodes;
-}
-
 // ─── importSnapshot ──────────────────────────────────────────────────────────
 
 const ISSUE_FIELDS = `
