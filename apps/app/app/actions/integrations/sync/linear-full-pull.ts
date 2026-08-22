@@ -1,6 +1,7 @@
 // Story-024 AC-006: cursor-resumable full pull (250/page)
 
 import { database } from "@repo/database";
+import { LINEAR_GQL } from "../connectors/linear";
 import { handleLinearWebhook, type LinearWebhookPayload } from "./linear-pull";
 
 const PAGE_SIZE = 250;
@@ -35,7 +36,7 @@ async function fetchLinearIssuesPage(opts: {
     }
   `;
 
-  const res = await fetch("https://api.linear.app/graphql", {
+  const res = await fetch(LINEAR_GQL, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

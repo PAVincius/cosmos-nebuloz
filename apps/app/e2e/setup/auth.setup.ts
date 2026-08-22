@@ -139,21 +139,31 @@ async function globalSetup(config: FullConfig) {
     }
     console.log(`✅ ${ROLES.length} sessões salvas em e2e/fixtures/`);
 
-    for (const persona of CHARTER_PERSONAS) {
+    // Persona do Charter sem seed (tenant medcore ausente) não pode derrubar
+    // as suítes SAFe: as sessões de papel já foram salvas acima, e abortar
+    // aqui jogaria tudo fora. Specs do Charter falham sozinhos, com contexto.
+    try {
+      for (const persona of CHARTER_PERSONAS) {
+        console.log(
+          `🔐 Signing in ${persona.email} (Charter/${persona.role.toUpperCase()})...`
+        );
+        await signInAndSave(browser, {
+          baseURL: baseURL as string,
+          email: persona.email,
+          password: charterPassword,
+          paths: [charterStorageState(persona.role)],
+          landingPath: "/charter",
+        });
+      }
       console.log(
-        `🔐 Signing in ${persona.email} (Charter/${persona.role.toUpperCase()})...`
+        `✅ ${CHARTER_PERSONAS.length} sessões do Charter salvas em e2e/fixtures/charter/`
       );
-      await signInAndSave(browser, {
-        baseURL: baseURL as string,
-        email: persona.email,
-        password: charterPassword,
-        paths: [charterStorageState(persona.role)],
-        landingPath: "/charter",
-      });
+    } catch (err) {
+      console.warn(
+        "⚠️ Sessões do Charter não salvas (seed do medcore ausente?) — suítes SAFe seguem:",
+        err instanceof Error ? err.message : err
+      );
     }
-    console.log(
-      `✅ ${CHARTER_PERSONAS.length} sessões do Charter salvas em e2e/fixtures/charter/`
-    );
   } catch (err) {
     console.error("❌ Auth setup failed:", err);
     throw err;

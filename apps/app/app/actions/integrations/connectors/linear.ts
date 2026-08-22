@@ -1,4 +1,9 @@
-const LINEAR_GQL = "https://api.linear.app/graphql";
+/** Endpoint GraphQL do Linear. `LINEAR_API_URL` existe para o E2E apontar o
+ *  fluxo inteiro (conectar → importar → sync) para um Linear falso — as
+ *  chamadas acontecem no servidor Next, fora do alcance de interceptação do
+ *  navegador de teste. Produção nunca define a variável. */
+export const LINEAR_GQL =
+  process.env.LINEAR_API_URL ?? "https://api.linear.app/graphql";
 
 async function linearQuery<T>(
   apiKey: string,
