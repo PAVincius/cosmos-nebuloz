@@ -53,6 +53,7 @@
     "@turbo/gen": "^2.6.3",
     "@types/node": "^24.10.1",
     "glob": "^11.0.2",
+    "knip": "^6.32.2",
     "lint-staged": "^15.5.2",
     "simple-git-hooks": "^2.13.0",
     "tsup": "^8.5.1",
@@ -60,8 +61,7 @@
     "turbo": "^2.6.3",
     "typescript": "^5.9.3",
     "ultracite": "6.3.9",
-    "vitest": "^4.1.10",
-    "zod": "4.1.13"
+    "vitest": "^4.1.10"
   },
   "engines": {
     "node": ">=18"
