@@ -29,12 +29,42 @@ const TEAMS = [
 ];
 
 const ISSUES = [
-  { id: "fk-1", title: "E2E — WSJF Scoring Engine", state: { name: "Done", type: "completed" }, estimate: 5 },
-  { id: "fk-2", title: "E2E — Program Board", state: { name: "Done", type: "completed" }, estimate: 8 },
-  { id: "fk-3", title: "E2E — Fluxo de conexão do Linear", state: { name: "Testando", type: "started" }, estimate: 3 },
-  { id: "fk-4", title: "E2E — Guards de FK cross-tenant", state: { name: "In Progress", type: "started" }, estimate: 5 },
-  { id: "fk-5", title: "E2E — Import filtrado por project", state: { name: "Todo", type: "unstarted" }, estimate: 2 },
-  { id: "fk-6", title: "E2E — Conector do GitHub", state: { name: "Backlog", type: "backlog" }, estimate: 1 },
+  {
+    id: "fk-1",
+    title: "E2E — WSJF Scoring Engine",
+    state: { name: "Done", type: "completed" },
+    estimate: 5,
+  },
+  {
+    id: "fk-2",
+    title: "E2E — Program Board",
+    state: { name: "Done", type: "completed" },
+    estimate: 8,
+  },
+  {
+    id: "fk-3",
+    title: "E2E — Fluxo de conexão do Linear",
+    state: { name: "Testando", type: "started" },
+    estimate: 3,
+  },
+  {
+    id: "fk-4",
+    title: "E2E — Guards de FK cross-tenant",
+    state: { name: "In Progress", type: "started" },
+    estimate: 5,
+  },
+  {
+    id: "fk-5",
+    title: "E2E — Import filtrado por project",
+    state: { name: "Todo", type: "unstarted" },
+    estimate: 2,
+  },
+  {
+    id: "fk-6",
+    title: "E2E — Conector do GitHub",
+    state: { name: "Backlog", type: "backlog" },
+    estimate: 1,
+  },
 ];
 
 function issueNode(i) {
@@ -96,7 +126,9 @@ const server = createServer((req, res) => {
 
     if (query.includes("viewer")) {
       res.end(
-        JSON.stringify({ data: { viewer: { id: "u-e2e", name: "Nebuloz E2E" } } })
+        JSON.stringify({
+          data: { viewer: { id: "u-e2e", name: "Nebuloz E2E" } },
+        })
       );
       return;
     }
@@ -122,7 +154,9 @@ const server = createServer((req, res) => {
 
     res.statusCode = 400;
     res.end(
-      JSON.stringify({ errors: [{ message: `fake-linear: query não mapeada` }] })
+      JSON.stringify({
+        errors: [{ message: "fake-linear: query não mapeada" }],
+      })
     );
   });
 });
