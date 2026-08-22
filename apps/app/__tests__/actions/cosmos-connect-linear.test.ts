@@ -215,6 +215,24 @@ describe("connectLinearIntegration", () => {
     });
   });
 
+  it("repassa o filtro de project do Linear para o import (COS-85)", async () => {
+    const r = await connectLinearIntegration({
+      name: "Linear Nebuloz",
+      apiKey: API_KEY,
+      linearTeamId: "lt_1",
+      importNow: true,
+      linearProjectId: "proj-charter",
+    });
+
+    expect(r.ok).toBe(true);
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      linearProjectId: "proj-charter",
+    });
+  });
+
   it("recusa credencial inválida antes de criar a integração", async () => {
     h.linearTestConnection.mockResolvedValue({ ok: false, error: "401" });
 
@@ -275,6 +293,32 @@ describe("resyncIntegration", () => {
       projectId: "lt_1",
       targetType: "feature",
       epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+    });
+  });
+
+  it("carrega o filtro de project do mapping no re-sync (COS-85)", async () => {
+    h.integrationFindFirst.mockResolvedValue({
+      id: ID,
+      source: "linear",
+      status: "ACTIVE",
+      mapping: {
+        projectId: "lt_1",
+        targetType: "feature",
+        linearProjectId: "proj-charter",
+      },
+    });
+    h.runImportSnapshot.mockResolvedValue({
+      ok: true,
+      data: { created: 1, updated: 0, skipped: 0 },
+    });
+
+    await resyncIntegration({ id: ID });
+
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      linearProjectId: "proj-charter",
     });
   });
 

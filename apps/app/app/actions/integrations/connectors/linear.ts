@@ -49,6 +49,7 @@ export type LinearIssue = {
   estimate: number | null;
   assignee: { id: string; name: string; email: string } | null;
   team: { id: string; name: string };
+  project: { id: string } | null;
   labels: { nodes: { name: string }[] };
   parent: { id: string; title: string } | null;
   createdAt: string;
@@ -94,15 +95,24 @@ const ISSUE_FIELDS = `
   priority estimate
   assignee { id name email }
   team { id name }
+  project { id }
   labels { nodes { name } }
   parent { id title }
   createdAt updatedAt
 `;
 
+/**
+ * `linearProjectId` filtra pelo Project real do Linear (COS-85) — distinto
+ * do `teamId` recebido acima, que no vocabulário deste conector é chamado
+ * de "projectId" (ver schema.ts). A paginação continua varrendo o time
+ * inteiro: o cursor do Linear é por time, não por project, então o filtro
+ * é aplicado nos nós de cada página já buscada, não na query em si.
+ */
 export async function linearImportTeamIssues(
   apiKey: string,
   teamId: string,
-  after?: string
+  after?: string,
+  linearProjectId?: string
 ): Promise<{ issues: LinearIssue[]; nextCursor: string | null }> {
   const data = await linearQuery<{
     team: {
@@ -125,8 +135,11 @@ export async function linearImportTeamIssues(
   );
 
   const { nodes, pageInfo } = data.team.issues;
+  const issues = linearProjectId
+    ? nodes.filter((n) => n.project?.id === linearProjectId)
+    : nodes;
   return {
-    issues: nodes,
+    issues,
     nextCursor: pageInfo.hasNextPage ? pageInfo.endCursor : null,
   };
 }

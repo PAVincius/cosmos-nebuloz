@@ -24,10 +24,18 @@ export type LinearWebhookPayload = {
   organizationId?: string;
 };
 
+export type HandleLinearWebhookOptions = {
+  // COS-85: Project real do Linear — times no plano free hospedam vários
+  // produtos como projects dentro de um único time, e sem este filtro uma
+  // issue de outro produto entraria como Story deste ART.
+  linearProjectId?: string;
+};
+
 export async function handleLinearWebhook(
   tenantId: string,
   integrationId: string,
-  payload: LinearWebhookPayload
+  payload: LinearWebhookPayload,
+  opts?: HandleLinearWebhookOptions
 ): Promise<void> {
   if (payload.action === "remove") {
     return;
@@ -38,6 +46,42 @@ export async function handleLinearWebhook(
 
   const { data } = payload;
   if (!data.title) {
+    return;
+  }
+
+  // COS-85: com filtro configurado, só aceita a issue do project mapeado.
+  // LIMITAÇÃO CONHECIDA: um webhook real do Linear pode não trazer
+  // `data.project` (o formato observado varia; ver linear-full-pull.ts, que
+  // já pede `project { id }` na própria página buscada para nunca cair
+  // aqui sem essa informação). Quando o filtro está ativo e o payload não
+  // traz project, descartamos por segurança em vez de deixar passar sem
+  // checar — este código não faz uma segunda chamada de detalhe ao Linear
+  // para resolver o project, porque hoje não existe consumidor de webhook
+  // ao vivo que precise disso (app/api/webhooks/linear/route.ts só
+  // enfileira no Inngest; nenhuma function consome o evento ainda).
+  //
+  // O descarte não é silencioso: sem rastro, uma issue com project
+  // legítimo (não é payload malformado — o Linear simplesmente não
+  // mandou o campo, ou a issue está fora do project mapeado) some do
+  // sync para sempre sem deixar pista. Grava FILTERED reaproveitando o
+  // mecanismo de writeSyncEvent já usado para SKIPPED por conflito de
+  // merge, com o motivo distinguindo os dois casos operacionais.
+  if (opts?.linearProjectId && data.project?.id !== opts.linearProjectId) {
+    await writeSyncEvent({
+      tenantId,
+      integrationId,
+      direction: "INBOUND",
+      source: "LINEAR",
+      action: "FILTERED",
+      entityType: "Story",
+      entityId: data.id,
+      externalId: data.id,
+      field: "linearProjectId",
+      linearValue: `filtro linearProjectId: issue ${data.id} pertence a ${
+        data.project?.id ?? "nenhum project"
+      }`,
+      cosmosValue: opts.linearProjectId,
+    });
     return;
   }
 

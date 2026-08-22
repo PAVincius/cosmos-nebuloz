@@ -260,7 +260,8 @@ export async function runImportSnapshot(raw: unknown): Promise<
         const { issues, nextCursor } = await linearImportTeamIssues(
           config.apiKey ?? "",
           input.projectId,
-          cursor
+          cursor,
+          input.linearProjectId
         );
         cursor = nextCursor ?? undefined;
 
