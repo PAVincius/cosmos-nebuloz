@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { type Browser, chromium, type FullConfig } from "@playwright/test";
 
 // ponytail: no direct DB — requireTenantSession auto-sets activeTenantId on first request
@@ -147,19 +147,30 @@ async function globalSetup(config: FullConfig) {
     console.warn("⚠️ pnpm seed:e2e had warnings/errors but continuing...");
   }
 
-  console.log("🌱 Executing seed:charter before E2E tests...");
+  // O slug vai explícito, e é o MESMO que `seed:e2e` acabou de usar.
+  //
+  // `seed-charter.ts` popula um tenant existente e não cria nenhum; sem
+  // argumento ele assume `medcore`, que nada nesta cadeia produz — o seed
+  // morria em "Tenant medcore não encontrado", as quatro personas do Charter
+  // nunca eram criadas, e o login delas falhava depois com cara de timeout.
+  //
+  // `cosmos-dev` é o default de `SEED_TENANT_SLUG` em `scripts/seed-e2e.ts`.
+  // Ler a mesma variável aqui é o que mantém os dois seeds apontando para o
+  // mesmo tenant quando alguém a define — e é o arranjo que a própria doc do
+  // seed descreve: um tenant com Cosmos e Charter juntos, que é a prova visível
+  // do ADR-0001.
+  const tenantSlug = process.env.SEED_TENANT_SLUG ?? "cosmos-dev";
+
+  console.log(`🌱 Executing seed:charter (${tenantSlug}) before E2E tests...`);
   // O resultado é lido, e não só avisado. Antes o `catch` seguia adiante e o
   // setup morria logo depois tentando logar personas que o seed falho nunca
   // criou — trinta segundos de timeout, mensagem de `waitForURL`, e nenhuma
   // pista de que a causa tinha acontecido dez linhas acima.
-  //
-  // Hoje `seed:charter` falha de verdade neste repositório: ele espera o tenant
-  // `medcore` (`scripts/seed-charter.ts`, argv[2] ?? "medcore") e não o cria —
-  // quem cria é `packages/database/seed-safe-full.ts`, que não está nesta
-  // cadeia. Os slugs que `seed:e2e` deixa são `teste` e `cosmos-dev`.
   let charterSemeado = true;
   try {
-    execSync("pnpm seed:charter", { stdio: "inherit" });
+    // `execFileSync` com lista de argumentos, e não string para o shell: o slug
+    // vem de variável de ambiente e não tem por que passar por interpretação.
+    execFileSync("pnpm", ["seed:charter", tenantSlug], { stdio: "inherit" });
   } catch (_err) {
     charterSemeado = false;
     console.warn("⚠️ pnpm seed:charter had warnings/errors but continuing...");
