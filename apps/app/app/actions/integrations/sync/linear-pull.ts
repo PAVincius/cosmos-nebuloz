@@ -126,17 +126,52 @@ export async function handleLinearWebhook(
   }
 
   // New issue — create Story and mapping (AC-005: unmapped lands in holding area)
-  const created = await database.story.create({
-    data: {
+  let created: { id: string };
+  try {
+    created = await database.story.create({
+      data: {
+        tenantId,
+        title: data.title,
+        description: data.description ?? null,
+        externalId: data.id,
+        externalSource: "linear",
+        status: mapLinearStatusToCosmos(data.state?.name ?? ""),
+      },
+      select: { id: true },
+    });
+  } catch (error) {
+    // Corrida create-vs-create (cron full pull × webhook ao vivo, limitação
+    // registrada no PR #91): outro executor commitou a Story entre o
+    // findFirst acima e este create, e o unique (tenantId, externalId,
+    // externalSource) derrubou o INSERT perdedor com P2002. A issue já
+    // existe no Cosmos — converge para o caminho de update, como se este
+    // webhook tivesse chegado um segundo depois.
+    if (!isUniqueViolation(error)) {
+      throw error;
+    }
+    const existing = await database.story.findFirst({
+      where: { tenantId, externalId: data.id, externalSource: "linear" },
+      select: { id: true },
+    });
+    if (!existing) {
+      throw error;
+    }
+    await syncInboundUpdate({
       tenantId,
-      title: data.title,
-      description: data.description ?? null,
-      externalId: data.id,
-      externalSource: "linear",
-      status: mapLinearStatusToCosmos(data.state?.name ?? ""),
-    },
-    select: { id: true },
-  });
+      integrationId,
+      cosmosStoryId: existing.id,
+      data,
+      linearUpdatedAt,
+    });
+    await upsertLinearMapping({
+      tenantId,
+      linearId: data.id,
+      linearType: "issue",
+      cosmosId: existing.id,
+      cosmosType: "Story",
+    });
+    return;
+  }
 
   await upsertLinearMapping({
     tenantId,
@@ -159,6 +194,19 @@ export async function handleLinearWebhook(
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
+
+// P2002 = violação de unique constraint. Checagem estrutural de propósito, em
+// vez de instanceof PrismaClientKnownRequestError: não amarra este módulo à
+// classe de erro do runtime do client (que varia com driver adapter) e vale
+// igual sob mock nos testes.
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "P2002"
+  );
+}
 
 type InboundUpdateArgs = {
   tenantId: string;
