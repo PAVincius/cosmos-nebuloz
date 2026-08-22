@@ -36,6 +36,7 @@
     "@types/react-dom": "19.2.3",
     "chromatic": "^13.3.4",
     "postcss": "^8",
+    "postcss-load-config": "^6.0.1",
     "storybook": "^10.1.4",
     "tailwindcss": "^4.1.17",
     "typescript": "^5"

@@ -120,5 +120,10 @@
     "**/*.d.ts"
   ],
   "ignoreDependencies": ["@repo/typescript-config", "server-only", "sharp"],
+  // `stripe listen` em apps/api é a CLI do Stripe — binário nativo que se
+  // instala por brew/scoop, não pacote npm. O pacote `stripe` do registro é o
+  // SDK e não publica `bin`, então declará-lo não resolveria o script e ainda
+  // deixaria a impressão errada de que resolve.
+  "ignoreBinaries": ["stripe"],
   "ignoreWorkspaces": ["packages/typescript-config"]
 }
