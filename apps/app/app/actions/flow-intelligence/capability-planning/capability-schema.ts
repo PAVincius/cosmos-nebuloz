@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const TASK_TYPES = [
+const TASK_TYPES = [
   "backend",
   "frontend",
   "ml",
@@ -9,9 +9,9 @@ export const TASK_TYPES = [
   "data",
   "design",
 ] as const;
-export type TaskType = (typeof TASK_TYPES)[number];
+type TaskType = (typeof TASK_TYPES)[number];
 
-export const teamCapabilitySchema = z.object({
+const teamCapabilitySchema = z.object({
   teamId: z.string(),
   artId: z.string().nullable(),
   capabilities: z.record(
@@ -26,14 +26,14 @@ export const teamCapabilitySchema = z.object({
 });
 export type TeamCapability = z.infer<typeof teamCapabilitySchema>;
 
-export const initiativeDemandSchema = z.object({
+const initiativeDemandSchema = z.object({
   initiativeId: z.string(),
   initiativeType: z.enum(["epic", "feature"]),
   demand: z.record(z.enum(TASK_TYPES), z.number().min(0).max(1)),
 });
 export type InitiativeDemand = z.infer<typeof initiativeDemandSchema>;
 
-export const capabilityGapSchema = z.object({
+const capabilityGapSchema = z.object({
   teamId: z.string(),
   initiativeId: z.string(),
   initiativeType: z.enum(["epic", "feature"]),
@@ -49,4 +49,4 @@ export const capabilityGapSchema = z.object({
   ),
   recommendation: z.string(),
 });
-export type CapabilityGap = z.infer<typeof capabilityGapSchema>;
+type CapabilityGap = z.infer<typeof capabilityGapSchema>;

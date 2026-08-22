@@ -24,7 +24,6 @@ import { slugificar } from "@/lib/slug";
  */
 
 const TIPOS = ["TEMPLATE", "PLAYBOOK", "COMPONENTE", "DOCUMENTO"] as const;
-export type TipoDeAtivo = (typeof TIPOS)[number];
 
 export type IpAssetRow = {
   id: string;

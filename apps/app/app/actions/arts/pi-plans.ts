@@ -379,7 +379,7 @@ export async function createPIObjective(data: {
 
 // ─── Miro board URL ───────────────────────────────────────────────────────────
 
-export async function saveMiroBoardUrl(
+async function saveMiroBoardUrl(
   piPlanId: string,
   miroBoardUrl: string | null
 ): Promise<{ ok: true } | { ok: false; error: string }> {

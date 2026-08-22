@@ -22,7 +22,7 @@ export type ProgramFeatureView = {
 // Uma célula do quadro: um time numa sprint do PI. É a forma que
 // PIPlanFeatureAssignment já tinha (piPlanId/featureId/teamId/sprintId/rank) e
 // que nenhuma tela usava.
-export type ProgramBoardCell = {
+type ProgramBoardCell = {
   sprintId: string;
   sprintName: string;
   features: ProgramFeatureView[];
@@ -35,7 +35,7 @@ export type ProgramBoardCell = {
   overCapacity: boolean;
 };
 
-export type ProgramBoardTeamRow = {
+type ProgramBoardTeamRow = {
   id: string;
   name: string;
   // Alinhadas a um índice de coluna 1..sprintCount compartilhado, sobre as

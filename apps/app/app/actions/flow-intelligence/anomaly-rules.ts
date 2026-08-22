@@ -1,6 +1,6 @@
-export type AnomalySeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+type AnomalySeverity = "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
 
-export type AnomalyRuleName =
+type AnomalyRuleName =
   | "VelocityCliff"
   | "WIPOverload"
   | "PredictabilityCollapse"

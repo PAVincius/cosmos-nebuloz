@@ -15,7 +15,7 @@ const SearchMeetingsSchema = z.object({
   insightType: z.enum(["ACTION", "RISK", "DECISION"]).optional(),
 });
 
-export type MeetingSearchFilters = z.infer<typeof SearchMeetingsSchema>;
+type MeetingSearchFilters = z.infer<typeof SearchMeetingsSchema>;
 
 const ApplyInsightSchema = z.object({
   insightId: z.string().min(1),
@@ -36,7 +36,7 @@ export type InsightRow = {
   createdAt: Date;
 };
 
-export type TranscriptSummary = {
+type TranscriptSummary = {
   id: string;
   meetingId: string;
   title: string | null;
@@ -206,9 +206,7 @@ export async function dismissInsight(
   }
 }
 
-export async function listMeetingTimeline(): Promise<
-  Result<TranscriptSummary[]>
-> {
+async function listMeetingTimeline(): Promise<Result<TranscriptSummary[]>> {
   try {
     const ctx = await requireTenantSession(await headers());
     const transcripts = await database.meetingTranscript.findMany({
@@ -245,7 +243,7 @@ export async function listMeetingTimeline(): Promise<
   }
 }
 
-export async function searchMeetings(
+async function searchMeetings(
   raw: unknown
 ): Promise<Result<TranscriptSummary[]>> {
   try {

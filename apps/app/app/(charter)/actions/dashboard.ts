@@ -20,7 +20,7 @@ import { type Result, safeAction } from "../../actions/_base";
 // A fila de revisão é ordenada por **folga de SLA**, não por data: o que vence
 // primeiro aparece primeiro, que é a pergunta que o Compliance Lead faz de manhã.
 
-export type Alert = {
+type Alert = {
   tone: "red" | "amber" | "accent";
   icon: string;
   title: string;
@@ -30,7 +30,7 @@ export type Alert = {
   param?: string;
 };
 
-export type QueueRow = {
+type QueueRow = {
   code: string;
   title: string;
   status: CharterUseCaseStatus;

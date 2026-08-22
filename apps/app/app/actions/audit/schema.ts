@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { cuid, nnStr, optCuid, optDate, PaginationSchema } from "../_base";
 
-export const AuditActionSchema = z.enum([
+const AuditActionSchema = z.enum([
   "created",
   "updated",
   "deleted",
@@ -18,7 +18,7 @@ export const AuditActionSchema = z.enum([
   "risk_linked",
   "risk_unlinked",
 ]);
-export type AuditAction = z.infer<typeof AuditActionSchema>;
+type AuditAction = z.infer<typeof AuditActionSchema>;
 
 export const WriteAuditLogSchema = z.object({
   userId: optCuid,
@@ -40,7 +40,7 @@ export const AuditFiltersSchema = PaginationSchema.extend({
   ...val,
   limit: Math.min(val.limit, 100),
 }));
-export type AuditFilters = z.infer<typeof AuditFiltersSchema>;
+type AuditFilters = z.infer<typeof AuditFiltersSchema>;
 
 export type AuditLog = {
   id: string;

@@ -5,10 +5,10 @@ import type * as React from "react";
 export const wizardInputClassName =
   "shadow-none focus-visible:ring-2 focus-visible:ring-ring/25 focus-visible:ring-offset-0 focus-visible:border-border";
 
-export const wizardDialogContentClassName =
+const wizardDialogContentClassName =
   "max-w-2xl gap-0 overflow-hidden border-border/80 bg-background p-0 shadow-md sm:max-w-2xl";
 
-export function WizardStepIndicator({
+function WizardStepIndicator({
   current,
   total,
 }: {
@@ -82,12 +82,12 @@ export function WizardStepHeader({
   );
 }
 
-export type WizardChromeDraft = {
+type WizardChromeDraft = {
   savedAtRelative: string;
   onDiscard: () => void;
 };
 
-export function WizardChromeHeader({
+function WizardChromeHeader({
   step,
   total,
   stepLabel,
@@ -136,7 +136,7 @@ export function WizardChromeHeader({
   );
 }
 
-export function WizardBody({ children }: { children: React.ReactNode }) {
+function WizardBody({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-[420px] overflow-y-auto px-6 py-6">
       <div className="rounded-xl border border-border/70 bg-card/40 p-5 shadow-[var(--card-shadow)]">
@@ -146,7 +146,7 @@ export function WizardBody({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function WizardFooterNav({ children }: { children: React.ReactNode }) {
+function WizardFooterNav({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between border-border/80 border-t bg-muted/10 px-6 py-4">
       {children}

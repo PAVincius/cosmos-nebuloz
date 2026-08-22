@@ -5,7 +5,7 @@ import { computeArtHealth, type HealthState } from "./art-health";
 
 export const EXECUTIVE_CACHE_TTL = 300; // 5 min
 
-export type KpiTiles = {
+type KpiTiles = {
   predictabilityPct: number;
   flowEfficiency: number;
   cycleTimeDays: number;
@@ -28,7 +28,7 @@ export type ARTRow = {
   healthReasons: string[];
 };
 
-export type AnomalyFeedItem = {
+type AnomalyFeedItem = {
   id: string;
   rule: string;
   severity: string;

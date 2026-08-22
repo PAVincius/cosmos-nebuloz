@@ -26,7 +26,7 @@ const ROLE_TONE: Record<string, MemberTone> = {
   MEMBER: "neutral",
 };
 
-export function toneForRole(role: string): MemberTone {
+function toneForRole(role: string): MemberTone {
   return ROLE_TONE[role] ?? "neutral";
 }
 

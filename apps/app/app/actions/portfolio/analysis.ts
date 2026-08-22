@@ -105,7 +105,7 @@ const getPortfolioReportSchema = z.object({
   reportId: z.string().min(1),
 });
 
-export async function getPortfolioReport(raw: unknown): Promise<
+async function getPortfolioReport(raw: unknown): Promise<
   Result<{
     id: string;
     completionStatus: string;

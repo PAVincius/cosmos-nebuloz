@@ -14,7 +14,7 @@ import { logCharterAudit, nextCode } from "./_shared";
 
 // Matriz de risco — FR-7. Heatmap 5×5, distribuição por categoria e mitigações.
 
-export type HeatCell = {
+type HeatCell = {
   severity: number;
   likelihood: number;
   count: number;
@@ -266,7 +266,7 @@ const UpdateMitigationSchema = z.object({
   status: z.enum(["OPEN", "PROGRESS", "DONE"]),
 });
 
-export async function setMitigationStatus(
+async function setMitigationStatus(
   input: z.infer<typeof UpdateMitigationSchema>
 ): Promise<Result<null>> {
   return await safeAction(async () => {

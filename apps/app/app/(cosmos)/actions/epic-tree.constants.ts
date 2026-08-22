@@ -23,7 +23,7 @@ const ChecklistItemSchema = z.object({
   done: z.boolean(),
 });
 
-export const TaskBlockSchema = z.discriminatedUnion("kind", [
+const TaskBlockSchema = z.discriminatedUnion("kind", [
   z.object({
     id: z.string().min(1),
     kind: z.literal("heading"),

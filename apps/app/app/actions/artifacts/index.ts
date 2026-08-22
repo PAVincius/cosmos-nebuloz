@@ -89,9 +89,7 @@ export async function listArtifacts(): Promise<Result<ArtifactMetadata[]>> {
   });
 }
 
-export async function deleteArtifact(
-  artifactId: string
-): Promise<Result<void>> {
+async function deleteArtifact(artifactId: string): Promise<Result<void>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 

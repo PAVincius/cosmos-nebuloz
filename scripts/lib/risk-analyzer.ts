@@ -5,9 +5,9 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const JSON_FENCE_START = /^```(?:json)?\n?/;
 const JSON_FENCE_END = /\n?```$/;
 
-export type RiskSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+type RiskSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
-export type RiskFinding = {
+type RiskFinding = {
   risk: string;
   location: string;
   severity: RiskSeverity;

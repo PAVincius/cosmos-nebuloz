@@ -4,7 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 
-export type ARTEvent = {
+type ARTEvent = {
   id: string;
   type: "pi_planning" | "system_demo" | "inspect_adapt";
   label: string;
@@ -13,7 +13,7 @@ export type ARTEvent = {
   status: "past" | "current" | "future";
 };
 
-export type PIHealthSummary = {
+type PIHealthSummary = {
   piName: string;
   piId: string;
   totalObjectives: number;
@@ -22,7 +22,7 @@ export type PIHealthSummary = {
   predictability: number;
 };
 
-export type ARTHealthIndicators = {
+type ARTHealthIndicators = {
   activeRisks: number;
   unresolvedRisks: number;
   piHealth: PIHealthSummary[];

@@ -22,9 +22,9 @@ import { authClient, type RespostaDeErro } from "./client";
  * elas precisam compartilhar é a ordem das chamadas, não o markup.
  */
 
-export type PassoDoCadastro = "ocioso" | "senha" | "escaneando" | "codigos";
+type PassoDoCadastro = "ocioso" | "senha" | "escaneando" | "codigos";
 
-export type EstadoDoCadastro = {
+type EstadoDoCadastro = {
   passo: PassoDoCadastro;
   /** `otpauth://…`. Nunca sai desta máquina para a rede. */
   totpURI: string | null;

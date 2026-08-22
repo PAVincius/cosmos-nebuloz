@@ -2,7 +2,7 @@ import { database } from "@repo/database";
 
 export type RecurrenceKind = "new" | "recurring" | "chronic";
 
-export async function classifyRecurrence(args: {
+async function classifyRecurrence(args: {
   tenantId: string;
   scope: string;
   scopeId: string;

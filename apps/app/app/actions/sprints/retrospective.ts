@@ -109,9 +109,7 @@ const addRetroItemSchema = z.object({
   text: z.string().min(1).max(1000),
 });
 
-export async function addRetroItem(
-  raw: unknown
-): Promise<Result<{ id: string }>> {
+async function addRetroItem(raw: unknown): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const { tenantId, userId } = await requireTenantSession(await headers());
     const input = addRetroItemSchema.parse(raw);

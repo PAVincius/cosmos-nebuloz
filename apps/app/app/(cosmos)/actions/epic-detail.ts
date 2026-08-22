@@ -5,7 +5,7 @@ import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
 
-export type LbcItem = { id: string; text: string };
+type LbcItem = { id: string; text: string };
 
 // The epic's single investScore aggregate is always present when scored.
 // A per-letter decomposition is only available when investBreakdown was
@@ -13,7 +13,7 @@ export type LbcItem = { id: string; text: string };
 // route) — two different writers persist two different JSON shapes into
 // that column (see parseInvestBreakdown below), and older/never-analyzed
 // epics have neither. Never fabricated: null means "show the aggregate only."
-export type InvestBreakdown = {
+type InvestBreakdown = {
   I: number;
   N: number;
   V: number;

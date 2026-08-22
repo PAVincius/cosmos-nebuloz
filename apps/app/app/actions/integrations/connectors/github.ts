@@ -30,7 +30,7 @@ async function githubQuery<T>(
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type GitHubViewer = { login: string; name: string | null };
+type GitHubViewer = { login: string; name: string | null };
 
 export type GitHubProject = {
   id: string;

@@ -12,7 +12,7 @@ export type FeatureWsjfFields = {
   completedAt?: Date | null;
 };
 
-export type EpicTopFeature = {
+type EpicTopFeature = {
   title: string;
   wsjfScore: number;
 };

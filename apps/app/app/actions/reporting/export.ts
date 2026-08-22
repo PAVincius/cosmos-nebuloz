@@ -15,7 +15,7 @@ const ExportSchema = z.object({
   format: z.enum(["csv"]).default("csv"),
 });
 
-export type ExportInput = z.infer<typeof ExportSchema>;
+type ExportInput = z.infer<typeof ExportSchema>;
 export type ExportResult =
   | { mode: "sync"; dataUrl: string; rows: number }
   | { mode: "async"; jobId: string };

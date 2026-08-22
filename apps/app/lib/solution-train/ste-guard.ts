@@ -1,6 +1,6 @@
 // Solution Train write-access guard (story-043 AC-005)
 
-export const SOLUTION_WRITE_ROLES: ReadonlySet<string> = new Set([
+const SOLUTION_WRITE_ROLES: ReadonlySet<string> = new Set([
   "STE",
   "ENTERPRISE_ARCHITECT",
 ]);

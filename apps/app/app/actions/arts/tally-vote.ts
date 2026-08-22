@@ -215,7 +215,7 @@ export async function openNextVoteRound(
   });
 }
 
-export async function getConfidenceVoteHistory(artId: string) {
+async function getConfidenceVoteHistory(artId: string) {
   const ctx = await requireTenantSession(await headers());
 
   const plans = await database.pIPlan.findMany({

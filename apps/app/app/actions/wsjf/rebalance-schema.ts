@@ -8,7 +8,7 @@ export type AIAccessStatus = {
   reason?: string;
 };
 
-export type FeatureSuggestion = {
+type FeatureSuggestion = {
   featureId: string;
   currentBV: number;
   currentTC: number;

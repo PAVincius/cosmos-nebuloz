@@ -27,7 +27,7 @@ async function linearMutation(
   return { ok: true };
 }
 
-export async function pushStoryStatusToLinear(args: {
+async function pushStoryStatusToLinear(args: {
   tenantId: string;
   storyId: string;
   newStatus: string;
@@ -97,7 +97,7 @@ export async function pushStoryStatusToLinear(args: {
   });
 }
 
-export async function pushCosmosLabelToLinear(args: {
+async function pushCosmosLabelToLinear(args: {
   tenantId: string;
   storyId: string;
   labelKey: string; // must be cosmos:* namespaced

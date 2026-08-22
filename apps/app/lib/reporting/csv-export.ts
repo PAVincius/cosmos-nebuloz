@@ -11,7 +11,7 @@ export const CSV_COLUMNS = [
   "WSJF",
 ] as const;
 
-export type CsvColumn = (typeof CSV_COLUMNS)[number];
+type CsvColumn = (typeof CSV_COLUMNS)[number];
 
 export const LARGE_EXPORT_THRESHOLD = 5000;
 

@@ -2,7 +2,7 @@
 
 export const MAX_KEY_RESULTS_PER_OKR = 5;
 export const MAX_OKRS_PER_QUARTER = 10;
-export const AT_RISK_THRESHOLD = 0.85;
+const AT_RISK_THRESHOLD = 0.85;
 export const THRESHOLD_MILESTONES = [25, 50, 75, 100] as const;
 
 export type KrInput = {

@@ -38,8 +38,7 @@ export async function createBillingIntegration(
         // aceita config livre e `billing_gcp`/`billing_azure` já são fontes
         // declaradas: quando elas trouxerem chave de service account ou client
         // secret, o caminho já cifra em vez de gravar em claro.
-        // biome-ignore lint/suspicious/noExplicitAny: Prisma Json column requires cast from z.record unknown values
-        config: encryptConfigSecrets(data.config) as any,
+        config: encryptConfigSecrets(data.config) as Record<string, string>,
         status: "ACTIVE",
       },
     });
@@ -49,7 +48,7 @@ export async function createBillingIntegration(
   });
 }
 
-export async function listBillingIntegrations(): Promise<
+async function listBillingIntegrations(): Promise<
   Result<
     Array<{
       id: string;
@@ -76,7 +75,7 @@ export async function listBillingIntegrations(): Promise<
   });
 }
 
-export async function triggerManualSync(
+async function triggerManualSync(
   integrationId: string
 ): Promise<Result<{ eventId: string }>> {
   return safeAction(async () => {

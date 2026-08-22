@@ -19,7 +19,7 @@ import { GovernanceError, logCharterAudit } from "./_shared";
 
 // Configurações — FR-12.
 
-export type NotificationTrigger = {
+type NotificationTrigger = {
   id: string;
   label: string;
   audience: string;
@@ -78,7 +78,7 @@ const TRIGGER_DEFAULTS: Record<string, boolean> = {
   "onboarding.overdue": true,
 };
 
-export type PermissionMatrixRow = {
+type PermissionMatrixRow = {
   id: string;
   label: string;
   grants: CharterRole[];

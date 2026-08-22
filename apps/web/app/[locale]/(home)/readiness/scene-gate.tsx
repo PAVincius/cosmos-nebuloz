@@ -155,7 +155,12 @@ export function tierNebula(tier: Tier): NebulaTier {
 }
 
 /** Static stand-in wherever the Canvas is skipped. No animation — it has to
- *  satisfy prefers-reduced-motion, which is one of the reasons it shows. */
+ *  satisfy prefers-reduced-motion, which is one of the reasons it shows.
+ *
+ *  NOTA: nada renderiza este componente hoje. O export fica de propósito — um
+ *  fallback de prefers-reduced-motion que ninguém monta parece fiação
+ *  esquecida, não código morto, e apagá-lo removeria a acessibilidade em vez
+ *  de ligá-la. */
 export function ReadinessOrbFallback() {
   return (
     <div

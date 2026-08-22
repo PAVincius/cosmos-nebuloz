@@ -11,7 +11,7 @@ export type IncidentRecord = {
   resolvedAt: Date;
 };
 
-export type DORAClassification = "Elite" | "High" | "Medium" | "Low";
+type DORAClassification = "Elite" | "High" | "Medium" | "Low";
 
 export type DORAMetrics = {
   deploymentFrequency: number; // deployments/day

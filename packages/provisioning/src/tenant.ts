@@ -32,7 +32,7 @@ export type ProvisionTenantResult = {
  *  genéricos que não encaixam numa forma descrita à mão, e o retorno — o que a
  *  lógica de fato consome — segue checado. Sintaxe de método em tudo, pelo
  *  mesmo motivo: bivariância deixa o client real do Prisma caber. */
-export type ProvisionTx = ModuleDb &
+type ProvisionTx = ModuleDb &
   SlugChecker & {
     tenant: {
       create(args: unknown): Promise<{ id: string; slug: string }>;

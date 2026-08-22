@@ -14,7 +14,7 @@
 // is robust to outliers in the historical window in a way a mean/stddev
 // approach is not.
 
-export type CostAnomalySeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+type CostAnomalySeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 
 // Minimum number of historical periods required before a baseline is
 // trusted. Below this, we do not fabricate a baseline — detectCostAnomaly

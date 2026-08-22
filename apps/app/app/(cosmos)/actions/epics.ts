@@ -67,7 +67,7 @@ export async function getEpic(id: string): Promise<Result<EpicDetail | null>> {
   });
 }
 
-export type FeatureTaskView = {
+type FeatureTaskView = {
   id: string;
   title: string;
   status: string;

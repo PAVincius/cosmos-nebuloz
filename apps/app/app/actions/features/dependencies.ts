@@ -172,7 +172,7 @@ export async function updateDependencyBoardStatus(
 
 const GetBoardSchema = z.object({ piPlanId: z.string().min(1) });
 
-export async function getProgramBoardData(raw: unknown) {
+async function getProgramBoardData(raw: unknown) {
   const ctx = await requireTenantSession(await headers());
   const input = GetBoardSchema.parse(raw);
 

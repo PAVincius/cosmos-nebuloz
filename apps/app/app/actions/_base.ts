@@ -24,9 +24,9 @@ export const PaginationSchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   limit: z.coerce.number().int().positive().max(100).default(20),
 });
-export type PaginationInput = z.infer<typeof PaginationSchema>;
+type PaginationInput = z.infer<typeof PaginationSchema>;
 
-export type PageMeta = {
+type PageMeta = {
   total: number;
   page: number;
   limit: number;
@@ -92,14 +92,14 @@ export const cuid = z.string().cuid();
 export const nnStr = z.string().min(1).max(255).trim(); // non-empty string
 export const optStr = z.string().max(10_000).trim().optional(); // optional long text
 export const optCuid = z.string().cuid().optional();
-export const isoDate = z.coerce.date();
+const isoDate = z.coerce.date();
 export const optDate = z.coerce.date().optional();
 
-export const SortOrder = z.enum(["asc", "desc"]).default("desc");
+const SortOrder = z.enum(["asc", "desc"]).default("desc");
 
 // ─── Common enums ─────────────────────────────────────────────────────────────
 
-export const SprintStatus = z.enum(["PLANNING", "ACTIVE", "COMPLETED"]);
+const SprintStatus = z.enum(["PLANNING", "ACTIVE", "COMPLETED"]);
 export const StoryStatus = z.enum([
   "BACKLOG",
   "TODO",
@@ -108,28 +108,23 @@ export const StoryStatus = z.enum([
   "DONE",
 ]);
 export const TaskStatus = z.enum(["TODO", "IN_PROGRESS", "REVIEW", "DONE"]);
-export const Severity = z.enum(["critical", "high", "medium", "low"]);
-export const ImpedimentStatus = z.enum(["OPEN", "IN_PROGRESS", "RESOLVED"]);
-export const DefectStatus = z.enum([
-  "OPEN",
-  "IN_PROGRESS",
-  "RESOLVED",
-  "CLOSED",
-]);
+const Severity = z.enum(["critical", "high", "medium", "low"]);
+const ImpedimentStatus = z.enum(["OPEN", "IN_PROGRESS", "RESOLVED"]);
+const DefectStatus = z.enum(["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"]);
 export const OKRStatus = z.enum(["ON_TRACK", "AT_RISK", "BEHIND", "ACHIEVED"]);
-export const RoadmapStatus = z.enum(["PLANNED", "IN_PROGRESS", "DONE"]);
-export const CapabilityStatus = z.enum([
+const RoadmapStatus = z.enum(["PLANNED", "IN_PROGRESS", "DONE"]);
+const CapabilityStatus = z.enum([
   "BACKLOG",
   "ANALYZING",
   "IMPLEMENTING",
   "DONE",
 ]);
-export const IntegrationStatus = z.enum(["ACTIVE", "INACTIVE", "ERROR"]);
+const IntegrationStatus = z.enum(["ACTIVE", "INACTIVE", "ERROR"]);
 export const IntegrationType = z.enum([
   "jira",
   "azure-devops",
   "github",
   "slack",
 ]);
-export const SupplierStatus = z.enum(["ACTIVE", "INACTIVE"]);
+const SupplierStatus = z.enum(["ACTIVE", "INACTIVE"]);
 export const Priority = z.enum(["critical", "high", "medium", "low"]);

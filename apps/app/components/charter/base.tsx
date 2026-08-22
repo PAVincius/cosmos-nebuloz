@@ -16,7 +16,6 @@
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Button, Progress, type Tone } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties, ReactNode, Ref } from "react";
-import { useEffect, useId, useState } from "react";
 
 /** Rótulo lido por leitor de tela e invisível na tela. Usado em <legend> de
  *  fieldset, onde o texto visível já vem do <Field> acima. */
@@ -801,23 +800,6 @@ export function Segmented<T extends string>({
 
 // ── Estados de tela ───────────────────────────────────────────────────────────
 
-/**
- * Marca a janela em que o skeleton aparece. Só liga acima de 300ms de espera —
- * abaixo disso o skeleton pisca e a tela parece instável (NFR-3.3).
- */
-export function useScreenLoad(ready: boolean, minMs = 300): boolean {
-  const [settled, setSettled] = useState(false);
-  useEffect(() => {
-    if (!ready) {
-      setSettled(false);
-      return;
-    }
-    const t = setTimeout(() => setSettled(true), minMs);
-    return () => clearTimeout(t);
-  }, [ready, minMs]);
-  return !settled;
-}
-
 /** Skeleton com a **forma do conteúdo real**. Um retângulo genérico causa
  *  layout shift ao resolver; este não. */
 export function SkeletonRows({
@@ -1102,10 +1084,4 @@ export function GatedButton({
       {children}
     </button>
   );
-}
-
-/** id estável para ligar <label htmlFor> ao controle sem colisão entre modais. */
-export function useFieldId(prefix: string): string {
-  const id = useId();
-  return `${prefix}-${id}`;
 }

@@ -21,7 +21,7 @@ export type TenantMetadata = {
 /** Papéis que podem estourar o limite de WIP — sempre com justificativa. */
 export const WIP_OVERRIDE_ROLES = new Set(["ADMIN", "STE", "RTE", "PO", "SM"]);
 
-export function mergeWithDefaults(
+function mergeWithDefaults(
   stored?: KanbanColumnConfig[]
 ): KanbanColumnConfig[] {
   if (!stored || stored.length === 0) {

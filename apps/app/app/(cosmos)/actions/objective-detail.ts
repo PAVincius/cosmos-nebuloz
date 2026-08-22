@@ -23,7 +23,7 @@ import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { type Result, safeAction } from "../../actions/_base";
 
-export type ObjectiveDetailKeyResult = {
+type ObjectiveDetailKeyResult = {
   id: string;
   title: string;
   current: number;

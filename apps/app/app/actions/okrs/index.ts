@@ -76,9 +76,7 @@ function toOKRWithProgress(
 
 // ─── OKR Queries ─────────────────────────────────────────────────────────────
 
-export async function listOKRs(
-  raw?: unknown
-): Promise<Result<Page<OKRWithProgress>>> {
+async function listOKRs(raw?: unknown): Promise<Result<Page<OKRWithProgress>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const input = OKRFiltersSchema.parse(raw ?? {});
@@ -104,7 +102,7 @@ export async function listOKRs(
   });
 }
 
-export async function getOKRById(id: string): Promise<Result<OKRWithProgress>> {
+async function getOKRById(id: string): Promise<Result<OKRWithProgress>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -220,7 +218,7 @@ export async function updateOKR(
   });
 }
 
-export async function updateOKRStatus(
+async function updateOKRStatus(
   id: string,
   status: string
 ): Promise<Result<OKR>> {
@@ -248,7 +246,7 @@ export async function updateOKRStatus(
   });
 }
 
-export async function deleteOKR(id: string): Promise<Result<{ id: string }>> {
+async function deleteOKR(id: string): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "OKR", "delete");
@@ -378,7 +376,7 @@ export async function updateKeyResult(
   });
 }
 
-export async function updateKeyResultProgress(
+async function updateKeyResultProgress(
   id: string,
   raw: unknown
 ): Promise<Result<KeyResultWithProgress>> {
@@ -455,7 +453,7 @@ export async function deleteKeyResult(
 
 // ─── Context-enriched query (inclui tema estratégico + snapshots) ────────────
 
-export async function getOKRsWithContext(
+async function getOKRsWithContext(
   piPlanId?: string
 ): Promise<OKRWithContext[]> {
   return safeAction(async () => {
@@ -556,7 +554,7 @@ export async function createKeyResultCheckIn(
 
 // ─── OKR Traceability Tree ────────────────────────────────────────────────────
 
-export type OKRTraceabilityNode = {
+type OKRTraceabilityNode = {
   okrId: string;
   okrTitle: string;
   okrStatus: string;
@@ -570,7 +568,7 @@ export type OKRTraceabilityNode = {
   progress: number;
 };
 
-export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
+async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
   const ctx = await requireTenantSession(await headers());
 
   const okrs = await database.oKR.findMany({
@@ -632,16 +630,11 @@ export async function getOKRTraceability(): Promise<OKRTraceabilityNode[]> {
   });
 }
 
-export type {
-  KeyResultWithProgress,
-  OKRStatus,
-  OKRWithContext,
-  OKRWithProgress,
-} from "./schema";
+export type { KeyResultWithProgress } from "./schema";
 
 // ─── AC-005: Quarter-close archive ───────────────────────────────────────────
 
-export async function archiveQuarterOKRs(
+async function archiveQuarterOKRs(
   raw: unknown
 ): Promise<Result<{ archived: number }>> {
   return safeAction(async () => {
@@ -702,7 +695,7 @@ export async function archiveQuarterOKRs(
 
 // ─── AC-004: Automated snapshot from webhook ──────────────────────────────────
 
-export async function createAutomatedSnapshot(
+async function createAutomatedSnapshot(
   raw: unknown
 ): Promise<Result<KeyResultSnapshotItem>> {
   return safeAction(async () => {
@@ -748,7 +741,7 @@ export async function createAutomatedSnapshot(
 // ─── Backward-compatible helpers (for existing UI components) ─────────────────
 
 /** @deprecated use listOKRs */
-export async function getOKRs(piPlanId?: string): Promise<OKRWithProgress[]> {
+async function getOKRs(piPlanId?: string): Promise<OKRWithProgress[]> {
   const result = await listOKRs(
     piPlanId ? { piPlanId, page: 1, limit: 100 } : { page: 1, limit: 100 }
   );

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const FlowTypeSchema = z.enum(["company_setup", "migration_setup"]);
+const FlowTypeSchema = z.enum(["company_setup", "migration_setup"]);
 export type FlowType = z.infer<typeof FlowTypeSchema>;
 
 export const SaveStepSchema = z.object({
@@ -9,9 +9,9 @@ export const SaveStepSchema = z.object({
   stepIndex: z.number().int().nonnegative(),
   data: z.record(z.string(), z.unknown()),
 });
-export type SaveStepInput = z.infer<typeof SaveStepSchema>;
+type SaveStepInput = z.infer<typeof SaveStepSchema>;
 
-export const CompanyProfileSchema = z.object({
+const CompanyProfileSchema = z.object({
   legalName: z.string().min(1).max(200).trim(),
   displayName: z.string().min(1).max(200).trim(),
   country: z.string().min(2).max(10),
@@ -19,18 +19,18 @@ export const CompanyProfileSchema = z.object({
   locale: z.string().min(2).max(10).default("pt-BR"),
   emailDomains: z.array(z.string()).optional(),
 });
-export type CompanyProfileData = z.infer<typeof CompanyProfileSchema>;
+type CompanyProfileData = z.infer<typeof CompanyProfileSchema>;
 
-export const SafeStructureItemSchema = z.object({
+const SafeStructureItemSchema = z.object({
   name: z.string().min(1).max(200).trim(),
   description: z.string().optional(),
 });
 
-export const ARTInputSchema = SafeStructureItemSchema.extend({
+const ARTInputSchema = SafeStructureItemSchema.extend({
   cadence: z.number().int().min(4).max(26).default(10),
 });
 
-export const ValueStreamInputSchema = SafeStructureItemSchema.extend({
+const ValueStreamInputSchema = SafeStructureItemSchema.extend({
   arts: z.array(ARTInputSchema).min(1),
 });
 
@@ -41,7 +41,7 @@ export const SafeStructureSchema = z.object({
 });
 export type SafeStructureData = z.infer<typeof SafeStructureSchema>;
 
-export const SectorsSchema = z.object({
+const SectorsSchema = z.object({
   departments: z.array(
     z.object({
       name: z.string().min(1).max(200).trim(),
@@ -50,9 +50,9 @@ export const SectorsSchema = z.object({
   ),
   businessUnits: z.array(z.object({ name: z.string().min(1).max(200).trim() })),
 });
-export type SectorsData = z.infer<typeof SectorsSchema>;
+type SectorsData = z.infer<typeof SectorsSchema>;
 
-export const OrgChartSchema = z.object({
+const OrgChartSchema = z.object({
   nodes: z.array(
     z.object({
       name: z.string().min(1).max(200).trim(),
@@ -61,9 +61,9 @@ export const OrgChartSchema = z.object({
     })
   ),
 });
-export type OrgChartData = z.infer<typeof OrgChartSchema>;
+type OrgChartData = z.infer<typeof OrgChartSchema>;
 
-export const InviteUserSchema = z.object({
+const InviteUserSchema = z.object({
   email: z.string().email(),
   name: z.string().min(1).max(200),
   safeRole: z.enum([
@@ -79,7 +79,7 @@ export const InviteUserSchema = z.object({
   teamName: z.string().optional(),
 });
 
-export const UsersTeamsSchema = z.object({
+const UsersTeamsSchema = z.object({
   invites: z.array(InviteUserSchema),
   teams: z.array(
     z.object({
@@ -89,7 +89,7 @@ export const UsersTeamsSchema = z.object({
     })
   ),
 });
-export type UsersTeamsData = z.infer<typeof UsersTeamsSchema>;
+type UsersTeamsData = z.infer<typeof UsersTeamsSchema>;
 
 export const PISprintsSchema = z
   .object({

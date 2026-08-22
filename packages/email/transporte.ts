@@ -16,7 +16,7 @@
  * reputação de spam por causa de endereço digitado em teste.
  */
 
-export type Carta = {
+type Carta = {
   from: string;
   to: string | string[];
   subject: string;

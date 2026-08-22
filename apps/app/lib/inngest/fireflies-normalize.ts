@@ -1,9 +1,9 @@
 // Pure Fireflies helpers — zero heavy imports so they stay unit-testable
 // without triggering env validation from @repo/* packages.
 
-export const FIREFLIES_GRAPHQL_URL = "https://api.fireflies.ai/graphql";
+const FIREFLIES_GRAPHQL_URL = "https://api.fireflies.ai/graphql";
 
-export const TRANSCRIPT_QUERY = `query Transcript($id: String!) {
+const TRANSCRIPT_QUERY = `query Transcript($id: String!) {
   transcript(id: $id) {
     id
     title

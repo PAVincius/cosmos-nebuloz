@@ -61,7 +61,7 @@ const COLUMN_TO_TRANSITION_EVENT: Record<string, string> = {
   REJECTED: "REJECT",
 };
 
-export async function moveEpicAction(
+async function moveEpicAction(
   raw: unknown
 ): Promise<Result<{ epicId: string; fromColumn: string; toColumn: string }>> {
   return safeAction(async () => {

@@ -55,7 +55,7 @@ export type SceneSignals = {
 /** The value `axes` holds before the quiz is touched — a middling shape. */
 export const AXES_NEUTRAL: SceneSignals["axes"] = [0.4, 0.4, 0.4, 0.4, 0.4];
 
-export const createSceneSignals = (): SceneSignals => ({
+const createSceneSignals = (): SceneSignals => ({
   build: 0,
   energy: 0,
   offsetX: 0,

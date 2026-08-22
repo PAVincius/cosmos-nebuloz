@@ -12,7 +12,6 @@ import {
 } from "./permissions-policy";
 
 export type { EntityType, PolicyAction } from "./permissions-policy";
-export { POLICIES } from "./permissions-policy";
 
 export function can(
   role: DbMemberRole,

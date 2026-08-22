@@ -90,7 +90,7 @@ async function ensureDefaultWorkflows(tenantId: string): Promise<void> {
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listGovernedEpics(
+async function listGovernedEpics(
   raw?: unknown
 ): Promise<Result<GovernedEpicWithDetails[]>> {
   return safeAction(async () => {
@@ -178,7 +178,7 @@ export async function getApprovalRequest(
   });
 }
 
-export async function listApprovalRequests(
+async function listApprovalRequests(
   raw?: unknown
 ): Promise<Result<ApprovalRequestWithSteps[]>> {
   return safeAction(async () => {
@@ -228,7 +228,7 @@ export async function listApprovalRequests(
   });
 }
 
-export async function listDecisionLog(
+async function listDecisionLog(
   raw?: unknown
 ): Promise<Result<Page<DecisionLogEntryPublic>>> {
   return safeAction(async () => {
@@ -524,7 +524,7 @@ export async function reviewStep(
   });
 }
 
-export async function cancelApprovalRequest(
+async function cancelApprovalRequest(
   requestId: string
 ): Promise<Result<{ id: string }>> {
   return safeAction(async () => {

@@ -10,21 +10,21 @@ export type Tone =
   | "accent"
   | "neutral";
 
-export type Art = { name: string; tone: Tone };
-export const ARTS: Record<string, Art> = {
+type Art = { name: string; tone: Tone };
+const ARTS: Record<string, Art> = {
   pay: { name: "Payments ART", tone: "accent" },
   plat: { name: "Platform ART", tone: "accent" },
   growth: { name: "Growth ART", tone: "accent" },
   data: { name: "Data & AI ART", tone: "accent" },
 };
 
-export type KanbanColumnDef = {
+type KanbanColumnDef = {
   id: string;
   label: string;
   tone: Tone;
   hex: string;
 };
-export const KANBAN_COLUMNS: KanbanColumnDef[] = [
+const KANBAN_COLUMNS: KanbanColumnDef[] = [
   { id: "funnel", label: "Funnel", tone: "neutral", hex: "100,116,139" },
   { id: "reviewing", label: "Reviewing", tone: "accent", hex: "94,106,210" },
   { id: "analyzing", label: "Analyzing", tone: "accent", hex: "94,106,210" },
@@ -43,7 +43,7 @@ export const KANBAN_COLUMNS: KanbanColumnDef[] = [
   { id: "done", label: "Done", tone: "green", hex: "22,163,74" },
 ];
 
-export type Epic = {
+type Epic = {
   id: string;
   col: string;
   title: string;
@@ -55,7 +55,7 @@ export type Epic = {
   progress: number;
   hot?: boolean;
 };
-export const EPICS: Epic[] = [
+const EPICS: Epic[] = [
   {
     id: "EP-104",
     col: "funnel",
@@ -215,7 +215,7 @@ export const EPICS: Epic[] = [
   },
 ];
 
-export type WsjfItem = {
+type WsjfItem = {
   rank: number;
   id: string;
   name: string;
@@ -229,7 +229,7 @@ export type WsjfItem = {
   prev: number;
   ai: string;
 };
-export const WSJF_ITEMS: WsjfItem[] = [
+const WSJF_ITEMS: WsjfItem[] = [
   {
     rank: 1,
     id: "EP-076",
@@ -401,20 +401,20 @@ export const WSJF_ITEMS: WsjfItem[] = [
 ];
 
 // ── Program Board / PI Planning / Flow (batch 2) ──
-export type PiTeam = {
+type PiTeam = {
   id: string;
   name: string;
   tone: Tone;
   cap: number;
   load: number;
 };
-export const PI_TEAMS: PiTeam[] = [
+const PI_TEAMS: PiTeam[] = [
   { id: "t1", name: "Squad Pagamentos", tone: "blue", cap: 42, load: 38 },
   { id: "t2", name: "Squad Núcleo", tone: "purple", cap: 40, load: 44 },
   { id: "t3", name: "Squad Growth", tone: "green", cap: 36, load: 30 },
   { id: "t4", name: "Squad Data & IA", tone: "amber", cap: 34, load: 33 },
 ];
-export const SPRINTS = [
+const SPRINTS = [
   "Sprint 1",
   "Sprint 2",
   "Sprint 3",
@@ -423,8 +423,8 @@ export const SPRINTS = [
   "IP",
 ];
 
-export type FeatureStatus = "done" | "wip" | "planned";
-export type Feature = {
+type FeatureStatus = "done" | "wip" | "planned";
+type Feature = {
   id: string;
   team: string;
   s: number;
@@ -435,7 +435,7 @@ export type Feature = {
   risk?: boolean;
   milestone?: boolean;
 };
-export const FEATURES: Feature[] = [
+const FEATURES: Feature[] = [
   {
     id: "FE-318",
     team: "t1",
@@ -559,13 +559,13 @@ export const FEATURES: Feature[] = [
   },
 ];
 
-export type Milestone = { s: number; label: string; tone: Tone };
-export const MILESTONES: Milestone[] = [
+type Milestone = { s: number; label: string; tone: Tone };
+const MILESTONES: Milestone[] = [
   { s: 2, label: "Beta Open Finance", tone: "blue" },
   { s: 4, label: "GA multi-tenant · Copilot", tone: "purple" },
 ];
 
-export type PiObjective = {
+type PiObjective = {
   team: string;
   text: string;
   bv: number;
@@ -573,7 +573,7 @@ export type PiObjective = {
   conf: number;
   committed: boolean;
 };
-export const PI_OBJECTIVES: PiObjective[] = [
+const PI_OBJECTIVES: PiObjective[] = [
   {
     team: "t2",
     text: "Concluir isolamento multi-tenant do core e cutover sem downtime",
@@ -624,22 +624,22 @@ export const PI_OBJECTIVES: PiObjective[] = [
   },
 ];
 
-export type ConfidenceVote = { id: string; v: number };
-export const CONFIDENCE_VOTE: ConfidenceVote[] = [
+type ConfidenceVote = { id: string; v: number };
+const CONFIDENCE_VOTE: ConfidenceVote[] = [
   { id: "t1", v: 4 },
   { id: "t2", v: 3 },
   { id: "t3", v: 4 },
   { id: "t4", v: 3 },
 ];
 
-export type RoamRisk = {
+type RoamRisk = {
   id: string;
   text: string;
   status: string;
   tone: Tone;
   owner: string;
 };
-export const ROAM_RISKS: RoamRisk[] = [
+const ROAM_RISKS: RoamRisk[] = [
   {
     id: "R-12",
     text: "Dependência do provedor de KYC pode atrasar onboarding",
@@ -677,14 +677,14 @@ export const ROAM_RISKS: RoamRisk[] = [
   },
 ];
 
-export type FlowData = {
+type FlowData = {
   velocity: number[];
   weeks: string[];
   cfd: { done: number; impl: number; anal: number; backlog: number }[];
   distribution: { label: string; v: number; tone: Tone }[];
   aging: { label: string; days: number; sla: number; tone: Tone }[];
 };
-export const FLOW: FlowData = {
+const FLOW: FlowData = {
   velocity: [44, 52, 48, 58, 61, 66, 63, 71],
   weeks: ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"],
   cfd: [
@@ -713,7 +713,7 @@ export const FLOW: FlowData = {
 };
 
 // ── OKRs / Risks / Teams (batch 3) ──
-export type Okr = {
+type Okr = {
   id: string;
   tone: Tone;
   owner: string;
@@ -721,7 +721,7 @@ export type Okr = {
   objective: string;
   krs: { text: string; v: number; now: string; goal: string }[];
 };
-export const OKRS: Okr[] = [
+const OKRS: Okr[] = [
   {
     id: "O1",
     tone: "blue",
@@ -824,7 +824,7 @@ export const OKRS: Okr[] = [
   },
 ];
 
-export type Risk = {
+type Risk = {
   id: string;
   text: string;
   roam: string;
@@ -834,7 +834,7 @@ export type Risk = {
   impact: number;
   art: string;
 };
-export const RISKS: Risk[] = [
+const RISKS: Risk[] = [
   {
     id: "R-12",
     text: "Provedor de KYC pode atrasar onboarding self-service",
@@ -906,14 +906,14 @@ export const RISKS: Risk[] = [
     art: "plat",
   },
 ];
-export const ROAM_TONE: Record<string, Tone> = {
+const ROAM_TONE: Record<string, Tone> = {
   Resolved: "green",
   Owned: "amber",
   Accepted: "neutral",
   Mitigated: "blue",
 };
 
-export type TeamDir = {
+type TeamDir = {
   id: string;
   name: string;
   art: string;
@@ -926,7 +926,7 @@ export type TeamDir = {
   pred: number;
   focus: string;
 };
-export const TEAMS_DIR: TeamDir[] = [
+const TEAMS_DIR: TeamDir[] = [
   {
     id: "t1",
     name: "Squad Pagamentos",

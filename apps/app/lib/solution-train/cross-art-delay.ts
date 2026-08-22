@@ -1,6 +1,6 @@
 // Cross-ART dependency delay detection (story-043 AC-002)
 
-export type CrossArtDepType = "PROVIDES" | "NEEDS" | "BLOCKS";
+type CrossArtDepType = "PROVIDES" | "NEEDS" | "BLOCKS";
 
 export type SprintIndexedDep = {
   dependencyId: string;

@@ -16,26 +16,21 @@ export const SAFE_COMPETENCIES = [
   { key: "LEAN_AGILE_LEADERSHIP", label: "Lean-Agile Leadership" },
 ] as const;
 
-export type CompetencyKey = (typeof SAFE_COMPETENCIES)[number]["key"];
+type CompetencyKey = (typeof SAFE_COMPETENCIES)[number]["key"];
 
 // ─── Scope ────────────────────────────────────────────────────────────────────
 
-export const ScopeType = z.enum(["team", "art", "value_stream", "portfolio"]);
-export type ScopeTypeValue = z.infer<typeof ScopeType>;
+const ScopeType = z.enum(["team", "art", "value_stream", "portfolio"]);
+type ScopeTypeValue = z.infer<typeof ScopeType>;
 
 // ─── Action Status ────────────────────────────────────────────────────────────
 
-export const ActionStatus = z.enum([
-  "OPEN",
-  "IN_PROGRESS",
-  "DONE",
-  "CANCELLED",
-]);
-export type ActionStatusValue = z.infer<typeof ActionStatus>;
+const ActionStatus = z.enum(["OPEN", "IN_PROGRESS", "DONE", "CANCELLED"]);
+type ActionStatusValue = z.infer<typeof ActionStatus>;
 
 // ─── Flow Metric Keys (match DB comment values) ───────────────────────────────
 
-export const FLOW_METRICS = [
+const FLOW_METRICS = [
   "flow_distribution",
   "flow_velocity",
   "flow_time",
@@ -44,9 +39,9 @@ export const FLOW_METRICS = [
   "flow_predictability",
 ] as const;
 
-export type FlowMetricKey = (typeof FLOW_METRICS)[number];
+type FlowMetricKey = (typeof FLOW_METRICS)[number];
 
-export const FLOW_METRIC_LABELS: Record<FlowMetricKey, string> = {
+const FLOW_METRIC_LABELS: Record<FlowMetricKey, string> = {
   flow_distribution: "Distribuição",
   flow_velocity: "Velocity",
   flow_time: "Flow Time",
@@ -57,7 +52,7 @@ export const FLOW_METRIC_LABELS: Record<FlowMetricKey, string> = {
 
 // ─── Validation Schemas ───────────────────────────────────────────────────────
 
-export const CreateAssessmentSchema = z.object({
+const CreateAssessmentSchema = z.object({
   scope: ScopeType,
   scopeId: z.string().min(1),
   competency: z.string().min(1),
@@ -67,7 +62,7 @@ export const CreateAssessmentSchema = z.object({
   piPlanId: z.string().optional(),
 });
 
-export const CreateImprovementActionSchema = z.object({
+const CreateImprovementActionSchema = z.object({
   title: nnStr,
   description: optStr,
   scope: ScopeType,
@@ -80,13 +75,12 @@ export const CreateImprovementActionSchema = z.object({
   assessmentId: z.string().optional(),
 });
 
-export const UpdateImprovementActionSchema =
-  CreateImprovementActionSchema.partial();
+const UpdateImprovementActionSchema = CreateImprovementActionSchema.partial();
 
-export type CreateAssessmentInput = z.infer<typeof CreateAssessmentSchema>;
-export type CreateImprovementActionInput = z.infer<
+type CreateAssessmentInput = z.infer<typeof CreateAssessmentSchema>;
+type CreateImprovementActionInput = z.infer<
   typeof CreateImprovementActionSchema
 >;
-export type UpdateImprovementActionInput = z.infer<
+type UpdateImprovementActionInput = z.infer<
   typeof UpdateImprovementActionSchema
 >;

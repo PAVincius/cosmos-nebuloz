@@ -7,7 +7,7 @@
  *  export async functions, found object" — erro que o Next mostra ao usuário
  *  como falha genérica de render, sem dizer a causa.
  */
-export const TRIAL_DAYS = 14;
+const TRIAL_DAYS = 14;
 
 export const SELF_SERVICE_MODULES = [
   {

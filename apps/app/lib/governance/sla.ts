@@ -1,4 +1,4 @@
-export type SlaCheckResult = {
+type SlaCheckResult = {
   stepId: string;
   approvalRequestId: string;
   epicId: string | null;

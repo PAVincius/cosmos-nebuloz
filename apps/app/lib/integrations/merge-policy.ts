@@ -1,9 +1,6 @@
 // Story-024: Field-level merge policy for Linear↔Cosmos bidirectional sync
 
-export type FieldMergePolicy =
-  | "LINEAR_WINS"
-  | "COSMOS_WINS"
-  | "LAST_WRITE_WINS";
+type FieldMergePolicy = "LINEAR_WINS" | "COSMOS_WINS" | "LAST_WRITE_WINS";
 
 export type MergePolicyMap = Record<string, FieldMergePolicy>;
 

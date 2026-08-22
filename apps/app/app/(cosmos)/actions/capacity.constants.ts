@@ -14,8 +14,8 @@ export type CapacityNoteTone = (typeof CAPACITY_NOTE_TONES)[number];
 // "< 80%: green · 80–100%: yellow · > 100%: red (always red, non-configurable)".
 // Fixas de propósito: o AC diz explicitamente que a faixa vermelha não é
 // configurável por org, então isto não é candidato a linha de configuração.
-export const CAPACITY_UTIL_AMBER_PCT = 80;
-export const CAPACITY_UTIL_RED_PCT = 100;
+const CAPACITY_UTIL_AMBER_PCT = 80;
+const CAPACITY_UTIL_RED_PCT = 100;
 
 export type CapacityBand = "green" | "amber" | "red";
 

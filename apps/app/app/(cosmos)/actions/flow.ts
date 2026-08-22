@@ -25,7 +25,7 @@ const STORY_IN_PROGRESS_STATUSES = ["IN_PROGRESS", "IN_REVIEW"];
 const FEATURE_IN_PROGRESS_STATUSES = ["ANALYSIS", "REVIEW", "IMPLEMENTING"];
 const EPIC_IN_PROGRESS_STATUSES = ["ANALYZING", "IMPLEMENTING"];
 
-export type AgingWipEntityType = "Story" | "Feature" | "Epic";
+type AgingWipEntityType = "Story" | "Feature" | "Epic";
 
 export type AgingWipItem = {
   entityType: AgingWipEntityType;

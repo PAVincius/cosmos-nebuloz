@@ -175,7 +175,7 @@ type SystemTransitionInput = {
 };
 
 // For system/AI-initiated transitions (Inngest jobs); userId is omitted → null in DB
-export async function transitionEpicStatusSystem(
+async function transitionEpicStatusSystem(
   input: SystemTransitionInput
 ): Promise<Result<TransitionResult>> {
   return transitionEpicStatus({

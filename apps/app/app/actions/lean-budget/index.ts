@@ -69,7 +69,7 @@ function withStats(b: LeanBudget): LeanBudgetWithStats {
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function listBudgetsByTheme(
+async function listBudgetsByTheme(
   themeId: string
 ): Promise<Result<LeanBudgetWithStats[]>> {
   return safeAction(async () => {
@@ -128,9 +128,7 @@ export async function linkBudgetToTheme(
   });
 }
 
-export async function listLeanBudgets(): Promise<
-  Result<LeanBudgetWithStats[]>
-> {
+async function listLeanBudgets(): Promise<Result<LeanBudgetWithStats[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const budgets = await database.leanBudget.findMany({
@@ -141,7 +139,7 @@ export async function listLeanBudgets(): Promise<
   });
 }
 
-export async function getLeanBudgetById(
+async function getLeanBudgetById(
   id: string
 ): Promise<Result<LeanBudgetWithStats>> {
   return safeAction(async () => {
@@ -156,7 +154,7 @@ export async function getLeanBudgetById(
   });
 }
 
-export async function getBudgetSummary(): Promise<
+async function getBudgetSummary(): Promise<
   Result<{
     totalBudget: number;
     totalSpent: number;
@@ -371,7 +369,7 @@ export async function deleteLeanBudget(
   });
 }
 
-export async function getBudgetById(
+async function getBudgetById(
   id: string
 ): Promise<Result<LeanBudgetWithStats | null>> {
   return safeAction(async () => {
@@ -386,7 +384,7 @@ export async function getBudgetById(
 // ─── Backward-compatible helpers (for existing UI components) ─────────────────
 
 /** @deprecated use listLeanBudgets */
-export async function getLeanBudgets(): Promise<LeanBudgetWithUsage[]> {
+async function getLeanBudgets(): Promise<LeanBudgetWithUsage[]> {
   const result = await listLeanBudgets();
   if (!result.ok) {
     throw new Error(result.error);

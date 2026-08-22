@@ -105,7 +105,7 @@ export const TITLES: Record<string, [string, string]> = {
   settings: ["Configurações", "Charter"],
 };
 
-export type ShellBadges = Partial<Record<string, number>>;
+type ShellBadges = Partial<Record<string, number>>;
 
 export type CharterShellProps = {
   children?: ReactNode;

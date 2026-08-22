@@ -201,7 +201,7 @@ export const getPortfolioEpicsPage = async (
 };
 
 /** Carrega primeira página de cada coluna Kanban em paralelo. */
-export const getPortfolioEpicsInitialPages = async (
+const getPortfolioEpicsInitialPages = async (
   statusIds: string[],
   limit = PORTFOLIO_EPICS_PAGE_SIZE
 ): Promise<Record<string, PortfolioEpicsPage>> => {

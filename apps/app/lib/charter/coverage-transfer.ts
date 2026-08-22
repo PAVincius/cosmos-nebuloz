@@ -11,7 +11,7 @@
  * o que torna a regra testável sem stub de Prisma.
  */
 
-export type CoberturaStatus =
+type CoberturaStatus =
   | "ATENDE"
   | "PARCIAL"
   | "NAO_ATENDE"

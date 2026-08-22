@@ -76,7 +76,7 @@ const getFlowMetricsSchema = z.object({
   period: z.enum(["sprint", "pi", "quarter"]).default("pi"),
 });
 
-export async function getFlowMetrics(raw: unknown): Promise<
+async function getFlowMetrics(raw: unknown): Promise<
   Result<{
     metrics: {
       velocity: number;
@@ -141,7 +141,7 @@ const getBenchmarkComparisonSchema = z.object({
   currentPiPlanId: z.string().min(1),
 });
 
-export async function getBenchmarkComparison(raw: unknown): Promise<
+async function getBenchmarkComparison(raw: unknown): Promise<
   Result<{
     comparisons: ReturnType<typeof computeBenchmarkComparisons>;
   }>

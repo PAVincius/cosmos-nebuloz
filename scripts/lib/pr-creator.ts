@@ -28,7 +28,7 @@ function run(
   };
 }
 
-export function prExists(branch: string, repoRoot: string): boolean {
+function prExists(branch: string, repoRoot: string): boolean {
   const result = run(
     "gh",
     ["pr", "list", "--head", branch, "--json", "number"],

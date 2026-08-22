@@ -14,5 +14,5 @@ export const UpdateTaskSchema = CreateTaskSchema.partial().omit({
   storyId: true,
 });
 
-export type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
-export type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;
+type CreateTaskInput = z.infer<typeof CreateTaskSchema>;
+type UpdateTaskInput = z.infer<typeof UpdateTaskSchema>;

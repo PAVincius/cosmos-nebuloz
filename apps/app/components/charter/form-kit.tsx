@@ -24,7 +24,7 @@ export const DirtyCtx = createContext<{ markDirty: () => void }>({
     /* noop fora de um ModalHost */
   },
 });
-export const useDirty = () => useContext(DirtyCtx);
+const useDirty = () => useContext(DirtyCtx);
 
 const inputStyle: CSSProperties = {
   width: "100%",

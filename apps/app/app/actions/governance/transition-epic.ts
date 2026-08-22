@@ -23,7 +23,7 @@ const TransitionSchema = z.object({
   dadosSuporte: z.record(z.string(), z.unknown()).optional(),
 });
 
-export type TransitionEpicInput = z.infer<typeof TransitionSchema>;
+type TransitionEpicInput = z.infer<typeof TransitionSchema>;
 
 export async function transitionEpic(
   raw: unknown

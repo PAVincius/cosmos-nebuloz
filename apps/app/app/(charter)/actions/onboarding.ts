@@ -30,7 +30,7 @@ export type TrackRow = {
   coverage: number;
 };
 
-export type AckPendingRow = {
+type AckPendingRow = {
   id: string;
   personName: string;
   department: string | null;

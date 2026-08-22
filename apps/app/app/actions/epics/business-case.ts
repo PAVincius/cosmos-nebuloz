@@ -9,9 +9,9 @@ import { type Result, safeAction } from "../_base";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LbcItem = { id: string; text: string };
+type LbcItem = { id: string; text: string };
 
-export type VersionSnapshot = {
+type VersionSnapshot = {
   field: string;
   prev: string;
   next: string;
@@ -66,7 +66,7 @@ const AutosaveBusinessCaseSchema = z.object({
     .optional(),
 });
 
-export type AutosaveInput = z.infer<typeof AutosaveBusinessCaseSchema>;
+type AutosaveInput = z.infer<typeof AutosaveBusinessCaseSchema>;
 
 // ─── Ring buffer helper ───────────────────────────────────────────────────────
 

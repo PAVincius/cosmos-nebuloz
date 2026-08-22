@@ -1,4 +1,4 @@
-export type WSJFLabels = {
+type WSJFLabels = {
   bv: string;
   tc: string;
   rr: string;

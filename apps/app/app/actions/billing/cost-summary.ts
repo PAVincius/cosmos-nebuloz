@@ -4,7 +4,7 @@ import { requireTenantSession } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 
-export type ThemeCostRow = {
+type ThemeCostRow = {
   themeId: string;
   themeName: string;
   cost: number;

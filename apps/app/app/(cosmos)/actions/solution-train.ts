@@ -40,7 +40,7 @@ export type SolutionTrainArtView = {
 const ROAM_STATUSES = ["RESOLVED", "OWNED", "ACCEPTED", "MITIGATED"] as const;
 type RoamStatus = (typeof ROAM_STATUSES)[number];
 
-export type SolutionTrainRiskView = {
+type SolutionTrainRiskView = {
   id: string;
   title: string;
   roamStatus: RoamStatus;
@@ -66,7 +66,7 @@ export type SolutionTrainCrossArtDependencyView = {
   type: "PROVIDES" | "NEEDS" | "BLOCKS";
 };
 
-export type SolutionTrainView = {
+type SolutionTrainView = {
   id: string;
   name: string;
   description: string | null;

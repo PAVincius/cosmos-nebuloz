@@ -48,7 +48,7 @@ const UpsertWsjfSettingsSchema = z.object({
   staleDays: z.number().int().min(1).max(90),
 });
 
-export type UpsertWsjfSettingsInput = z.infer<typeof UpsertWsjfSettingsSchema>;
+type UpsertWsjfSettingsInput = z.infer<typeof UpsertWsjfSettingsSchema>;
 
 export async function upsertWsjfSettings(raw: unknown): Promise<void> {
   const ctx = await requireTenantSession(await headers());

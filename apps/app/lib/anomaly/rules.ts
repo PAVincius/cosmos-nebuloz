@@ -112,10 +112,7 @@ export const ANOMALY_RULES: Record<string, RuleEntry> = {
   },
 };
 
-export function getEffectiveThreshold(
-  ruleId: string,
-  orgOverride?: number
-): number {
+function getEffectiveThreshold(ruleId: string, orgOverride?: number): number {
   const rule = ANOMALY_RULES[ruleId];
   if (!rule) {
     throw new Error(`Unknown rule: ${ruleId}`);

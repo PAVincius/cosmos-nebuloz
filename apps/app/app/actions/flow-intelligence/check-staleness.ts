@@ -8,7 +8,7 @@ import { computeStaleness, type StalenessState } from "./staleness-rules";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type CheckStalenessResult = {
+type CheckStalenessResult = {
   snapshotId: string;
   oldState: StalenessState;
   newState: StalenessState;

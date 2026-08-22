@@ -18,7 +18,7 @@ type AuthenticateRoomOptions = {
 
 const secret = keys().LIVEBLOCKS_SECRET;
 
-export const authenticate = async ({
+const authenticate = async ({
   userId,
   orgId,
   userInfo,

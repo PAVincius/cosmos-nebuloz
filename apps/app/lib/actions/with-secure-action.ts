@@ -26,7 +26,7 @@ export type SecureActionConfig<TInput extends z.ZodType> = {
   resourceIdFn?: (parsedInput: z.infer<TInput>) => string | undefined;
 };
 
-export type ActionContext = TenantContext;
+type ActionContext = TenantContext;
 
 // ─── Role hierarchy ───────────────────────────────────────────────────────────
 

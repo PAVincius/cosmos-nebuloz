@@ -8,7 +8,7 @@ export type DashboardTile = {
   config?: Record<string, unknown>;
 };
 
-export type DashboardLayoutConfig = {
+type DashboardLayoutConfig = {
   tiles: DashboardTile[];
   lastModified?: string;
 };

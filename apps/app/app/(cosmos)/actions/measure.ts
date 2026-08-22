@@ -145,7 +145,7 @@ export async function recordCompetencyAssessment(
   });
 }
 
-export type ImprovementActionView = {
+type ImprovementActionView = {
   id: string;
   title: string;
   status: string;

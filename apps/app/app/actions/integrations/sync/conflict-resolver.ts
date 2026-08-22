@@ -21,7 +21,7 @@ export function resolveConflict(conflict: SyncConflict): ConflictResolution {
   return "cosmos_wins";
 }
 
-export function logSyncConflict(
+function logSyncConflict(
   conflict: SyncConflict,
   resolution: ConflictResolution
 ): void {

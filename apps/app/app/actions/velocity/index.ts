@@ -166,7 +166,7 @@ type TeamMemberEntry = {
   [key: string]: unknown;
 };
 
-export async function getTeamVelocityStats(
+async function getTeamVelocityStats(
   teamId: string
 ): Promise<TeamVelocityStats> {
   const ctx = await requireTenantSession(await headers());
@@ -275,7 +275,7 @@ export async function getTeamVelocityStats(
 // Function 3: getSprintBurndownData
 // ---------------------------------------------------------------------------
 
-export async function getSprintBurndownData(
+async function getSprintBurndownData(
   sprintLengthDays: number,
   teamId?: string
 ): Promise<BurndownPoint[]> {
@@ -400,7 +400,7 @@ export async function getSprintBurndownData(
 // Function 4: getVelocityOverview — ART/tenant-level summary
 // ---------------------------------------------------------------------------
 
-export async function getVelocityOverview(
+async function getVelocityOverview(
   artId?: string
 ): Promise<TeamVelocitySummary[]> {
   const ctx = await requireTenantSession(await headers());

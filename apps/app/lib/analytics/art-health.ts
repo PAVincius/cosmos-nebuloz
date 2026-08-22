@@ -2,7 +2,7 @@
 
 export type HealthState = "CRITICAL" | "WARNING" | "HEALTHY";
 
-export type AnomalyInput = {
+type AnomalyInput = {
   severity: string;
 };
 
@@ -13,8 +13,8 @@ export type ArtMetrics = {
 
 export const PPM_CRITICAL_THRESHOLD = 0.65;
 export const PPM_WARNING_THRESHOLD = 0.8;
-export const CRITICAL_ANOMALY_COUNT_CRITICAL = 2;
-export const CRITICAL_ANOMALY_COUNT_WARNING = 1;
+const CRITICAL_ANOMALY_COUNT_CRITICAL = 2;
+const CRITICAL_ANOMALY_COUNT_WARNING = 1;
 
 export function computeArtHealth(art: ArtMetrics): HealthState {
   const criticalAnomalies = art.anomalies.filter(

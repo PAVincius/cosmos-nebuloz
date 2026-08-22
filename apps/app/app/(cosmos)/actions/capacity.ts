@@ -74,7 +74,7 @@ export async function listTeamCapacity(): Promise<Result<CapacityView[]>> {
   });
 }
 
-export type CapacityGridCell = {
+type CapacityGridCell = {
   sprintName: string;
   expectedSp: number | null;
   actualSp: number | null;
@@ -82,7 +82,7 @@ export type CapacityGridCell = {
   band: CapacityBand | null;
 };
 
-export type CapacityGridRow = {
+type CapacityGridRow = {
   teamId: string;
   teamName: string;
   // Aligned to a shared 1..sprintCount column index — each team's OWN

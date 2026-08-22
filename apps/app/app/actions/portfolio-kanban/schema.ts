@@ -1,8 +1,8 @@
 import { z } from "zod";
 
-export const COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
+const COLOR_REGEX = /^#[0-9A-Fa-f]{6}$/;
 
-export const KanbanColumnSchema = z.object({
+const KanbanColumnSchema = z.object({
   id: z.string().min(1).max(64),
   label: z.string().min(1).max(64),
   color: z.string().regex(COLOR_REGEX, "Cor inválida (#RRGGBB)"),
@@ -30,7 +30,7 @@ export const UpdateWipLimitSchema = z.object({
   wipLimit: z.number().int().min(1).nullable(),
 });
 
-export const LIFECYCLE_COLUMNS = [
+const LIFECYCLE_COLUMNS = [
   "FUNNEL",
   "ANALYZING",
   "PORTFOLIO_BACKLOG",
@@ -38,7 +38,7 @@ export const LIFECYCLE_COLUMNS = [
   "DONE",
   "REJECTED",
 ] as const;
-export type LifecycleColumn = (typeof LIFECYCLE_COLUMNS)[number];
+type LifecycleColumn = (typeof LIFECYCLE_COLUMNS)[number];
 
 export const MoveEpicSchema = z.object({
   epicId: z.string().min(1),
@@ -46,7 +46,7 @@ export const MoveEpicSchema = z.object({
   reason: z.string().min(20).optional(),
   wipOverrideReason: z.string().min(5).optional(),
 });
-export type MoveEpicInput = z.infer<typeof MoveEpicSchema>;
+type MoveEpicInput = z.infer<typeof MoveEpicSchema>;
 
 export const DEFAULT_PORTFOLIO_COLUMNS: KanbanColumnConfig[] = [
   { id: "FUNNEL", label: "Funnel", color: "#71717a", wipLimit: 10 },

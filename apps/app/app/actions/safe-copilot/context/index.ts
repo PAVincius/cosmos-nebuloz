@@ -5,13 +5,6 @@ import { buildPIWorkspaceContext } from "./pi-workspace";
 import { buildPortfolioContext } from "./portfolio";
 import { buildWsjfContext } from "./wsjf";
 
-export type { ARTsContext } from "./arts";
-export type { FlowMetricsContext } from "./flow-metrics";
-export type { LeanBudgetContext } from "./lean-budget";
-export type { PIWorkspaceContext } from "./pi-workspace";
-export type { PortfolioContext } from "./portfolio";
-export type { WsjfContext } from "./wsjf";
-
 export type CopilotContext = {
   mode: string;
   surface: string;

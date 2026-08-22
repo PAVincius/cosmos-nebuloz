@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { indexEntity } from "../safe-copilot/index-entity";
 
-export type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
+type RoamStatus = "resolved" | "owned" | "accepted" | "mitigated";
 
 export async function updateRiskStatus(riskId: string, status: string) {
   const ctx = await requireTenantSession(await headers());

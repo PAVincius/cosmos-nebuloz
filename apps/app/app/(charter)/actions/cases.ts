@@ -545,7 +545,7 @@ const RescoreSchema = z.object({
   note: z.string().trim().max(1000).optional(),
 });
 
-export async function rescoreCase(
+async function rescoreCase(
   input: z.infer<typeof RescoreSchema>
 ): Promise<Result<{ score: number; label: string }>> {
   return await safeAction(async () => {
@@ -617,7 +617,7 @@ export async function rescoreCase(
 
 /** Avaliação ao vivo do intake (FR-4.2). Roda no cliente; esta versão existe
  *  para quem preferir chamar do servidor — mesma função pura dos dois lados. */
-export async function previewPath(input: {
+async function previewPath(input: {
   dataClass: CharterDataClass;
   exposure: "INTERNAL" | "EXTERNAL";
   criticality: "LOW" | "MEDIUM" | "HIGH";

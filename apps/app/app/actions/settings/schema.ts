@@ -34,7 +34,7 @@ const IntegrationConfigSchema = z.discriminatedUnion("type", [
 export const UpsertIntegrationSchema = IntegrationConfigSchema.and(
   z.object({ name: nnStr })
 );
-export type UpsertIntegrationInput = z.infer<typeof UpsertIntegrationSchema>;
+type UpsertIntegrationInput = z.infer<typeof UpsertIntegrationSchema>;
 
 /**
  * Public-safe shape — config is NEVER returned to avoid exposing secrets.

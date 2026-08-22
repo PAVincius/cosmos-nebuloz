@@ -1,16 +1,11 @@
 import { z } from "zod";
 import { cuid } from "../_base";
 
-export const PAE_DURATIONS = ["1h", "4h", "8h", "24h"] as const;
+const PAE_DURATIONS = ["1h", "4h", "8h", "24h"] as const;
 export type PAEDuration = (typeof PAE_DURATIONS)[number];
 
-export const PAE_STATUSES = [
-  "PENDING",
-  "APPROVED",
-  "DENIED",
-  "REVOKED",
-] as const;
-export type PAEStatus = (typeof PAE_STATUSES)[number];
+const PAE_STATUSES = ["PENDING", "APPROVED", "DENIED", "REVOKED"] as const;
+type PAEStatus = (typeof PAE_STATUSES)[number];
 
 export const CreatePAERequestSchema = z.object({
   entityType: z.string().min(1),
@@ -19,12 +14,12 @@ export const CreatePAERequestSchema = z.object({
   justification: z.string().max(500).trim().optional(),
   duration: z.enum(PAE_DURATIONS),
 });
-export type CreatePAERequestInput = z.infer<typeof CreatePAERequestSchema>;
+type CreatePAERequestInput = z.infer<typeof CreatePAERequestSchema>;
 
 export const ResolvePAERequestSchema = z.object({
   id: cuid,
 });
-export type ResolvePAERequestInput = z.infer<typeof ResolvePAERequestSchema>;
+type ResolvePAERequestInput = z.infer<typeof ResolvePAERequestSchema>;
 
 export type PAERequest = {
   id: string;

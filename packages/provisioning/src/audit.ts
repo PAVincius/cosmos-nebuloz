@@ -1,4 +1,4 @@
-export type AuditDiff = [field: string, before: string, after: string][];
+type AuditDiff = [field: string, before: string, after: string][];
 
 export type PlatformAuditEntry = {
   tenantId: string;

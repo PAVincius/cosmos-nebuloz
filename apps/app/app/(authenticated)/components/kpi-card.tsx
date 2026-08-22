@@ -4,7 +4,7 @@ import { useThemeName } from "@repo/design-system/cosmos/kit";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useId, useState } from "react";
 
-export type KpiTone = "green" | "red" | "amber" | "blue" | "purple" | "accent";
+type KpiTone = "green" | "red" | "amber" | "blue" | "purple" | "accent";
 
 export type KpiCardProps = {
   tone?: KpiTone;

@@ -96,7 +96,7 @@ export const NavCtx = createContext<{
 export const useNav = () => useContext(NavCtx);
 
 // tone → dark gradient backgrounds (match the tecno-UI cards)
-export const TONES: Record<string, { darkInk: string; darkBg: string }> = {
+const TONES: Record<string, { darkInk: string; darkBg: string }> = {
   green: {
     darkInk: "#0a111c",
     darkBg:
@@ -269,7 +269,7 @@ export function IconButton({
 }
 
 // ── Live/operational status dot ──
-export function LivePulse({
+function LivePulse({
   tone = "green",
   size = 7,
 }: {
@@ -440,7 +440,7 @@ export function Badge({
 }
 
 // ── Card / SectionCard ──
-export function Card({
+function Card({
   children,
   style,
   className = "",
@@ -1459,7 +1459,7 @@ export function ChartTip({
 }
 
 // ── GlossaryTip — hover a SAFe term to see its definition ──
-export const SAFe_GLOSSARY: Record<string, { title: string; def: string }> = {
+const SAFe_GLOSSARY: Record<string, { title: string; def: string }> = {
   WSJF: {
     title: "Weighted Shortest Job First",
     def: "Método de priorização SAFe: Cost of Delay ÷ Job Size. Maximiza o valor entregue por unidade de tempo. Calcula-se como (BV + TC + RR/OE) ÷ Size.",

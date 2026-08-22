@@ -2,7 +2,7 @@ import type { LeanBudget } from "@repo/database";
 import { z } from "zod";
 import { nnStr, optCuid } from "@/app/actions/_base";
 
-export const GuardrailsSchema = z
+const GuardrailsSchema = z
   .object({
     capex: z.number().nonnegative(),
     opex: z.number().nonnegative(),
@@ -28,9 +28,9 @@ export const UpdateSpentSchema = z.object({
   spent: z.number().nonnegative().finite(),
 });
 
-export type CreateBudgetInput = z.infer<typeof CreateBudgetSchema>;
-export type UpdateBudgetInput = z.infer<typeof UpdateBudgetSchema>;
-export type GuardrailsInput = z.infer<typeof GuardrailsSchema>;
+type CreateBudgetInput = z.infer<typeof CreateBudgetSchema>;
+type UpdateBudgetInput = z.infer<typeof UpdateBudgetSchema>;
+type GuardrailsInput = z.infer<typeof GuardrailsSchema>;
 
 export type LeanBudgetWithStats = Omit<
   LeanBudget,

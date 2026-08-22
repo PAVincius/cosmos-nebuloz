@@ -21,7 +21,7 @@ export const POLICY_SECTIONS: { ordinal: number; name: string }[] = [
  *  consome — segue checado. Sintaxe de método em tudo: sob `strictFunctionTypes`
  *  a forma com seta seria contravariante e o `withTenantDb` real deixaria de
  *  ser atribuível a `BootstrapCharterDeps`. */
-export type CharterDb = AuditWriter & {
+type CharterDb = AuditWriter & {
   tenant: {
     findUnique(args: unknown): Promise<{ id: string; slug: string } | null>;
   };

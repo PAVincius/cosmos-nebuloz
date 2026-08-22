@@ -1,6 +1,6 @@
 import type { PrismaClient } from "../../../../packages/database/generated";
 
-export const STAFF_EMAIL = "e2e-staff@nebuloz.exemplo";
+const STAFF_EMAIL = "e2e-staff@nebuloz.exemplo";
 
 /**
  * `@repo/database` abre com `import "server-only"`, que lança fora do

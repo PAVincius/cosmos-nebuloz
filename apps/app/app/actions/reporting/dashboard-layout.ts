@@ -20,7 +20,7 @@ const UpsertLayoutSchema = z.object({
   tiles: z.array(TileSchema).max(50),
 });
 
-export type DashboardTile = z.infer<typeof TileSchema>;
+type DashboardTile = z.infer<typeof TileSchema>;
 export type DashboardLayout = { tiles: DashboardTile[] };
 
 export async function getDashboardLayout(): Promise<Result<DashboardLayout>> {

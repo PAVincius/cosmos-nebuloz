@@ -50,7 +50,7 @@ export type DoraMetricValue =
   | { status: "unavailable"; reason: string };
 
 /** Metrics with no data source at all today — always this shape, never "measured". */
-export type DoraUnavailableMetric = { status: "unavailable"; reason: string };
+type DoraUnavailableMetric = { status: "unavailable"; reason: string };
 
 export type DoraMetricsView = {
   windowDays: number;

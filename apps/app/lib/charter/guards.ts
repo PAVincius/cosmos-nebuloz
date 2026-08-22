@@ -56,7 +56,7 @@ export class StateConflictError extends Error {
   }
 }
 
-export async function requireModule(
+async function requireModule(
   productModule: ProductModule,
   ctx: TenantContext
 ): Promise<void> {
@@ -89,7 +89,7 @@ export async function requireCharterContext(): Promise<CharterContext> {
   return { ...ctx, charterRole };
 }
 
-export function requireCharterPermission(
+function requireCharterPermission(
   permission: CharterPermission,
   ctx: CharterContext
 ): void {

@@ -1,6 +1,6 @@
 export type SAFeRole = "RTE" | "LPM" | "PO" | "SM" | "DEV";
 
-export const ROLE_PRIORITY: SAFeRole[] = ["RTE", "LPM", "PO", "SM", "DEV"];
+const ROLE_PRIORITY: SAFeRole[] = ["RTE", "LPM", "PO", "SM", "DEV"];
 
 const ROLE_MAP: Record<string, SAFeRole> = {
   RTE: "RTE",

@@ -5,7 +5,7 @@
 // Program Board is read-only". Depois do commitment o plano é um compromisso do
 // trem, não um rascunho; mover feature de célula reescreveria o que foi
 // comprometido na sessão de PI Planning.
-export const READ_ONLY_PI_STATUSES = ["COMMITTED", "CLOSED"];
+const READ_ONLY_PI_STATUSES = ["COMMITTED", "CLOSED"];
 
 export function isPiReadOnly(status: string): boolean {
   return READ_ONLY_PI_STATUSES.includes(status);

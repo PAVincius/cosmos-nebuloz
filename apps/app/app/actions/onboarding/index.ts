@@ -29,7 +29,7 @@ export async function getOrCreateProgress(flowType: FlowType) {
   });
 }
 
-export async function getProgress(flowType: FlowType) {
+async function getProgress(flowType: FlowType) {
   const ctx = await requireTenantSession(await headers());
   return database.onboardingProgress.findFirst({
     where: { tenantId: ctx.tenantId, flowType },

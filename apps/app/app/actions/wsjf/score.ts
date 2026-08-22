@@ -25,7 +25,7 @@ const WsjfScoreSchema = z.object({
   source: z.enum(["MANUAL", "COPILOT"]).default("MANUAL"),
 });
 
-export type WsjfScoreInput = z.infer<typeof WsjfScoreSchema>;
+type WsjfScoreInput = z.infer<typeof WsjfScoreSchema>;
 
 const LockJobSizeSchema = z.object({
   featureId: z.string().min(1),
@@ -218,7 +218,7 @@ export async function lockJobSizeAction(
   });
 }
 
-export async function getScoringHistory(featureId: string): Promise<
+async function getScoringHistory(featureId: string): Promise<
   Result<
     {
       id: string;

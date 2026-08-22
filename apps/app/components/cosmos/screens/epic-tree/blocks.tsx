@@ -9,7 +9,7 @@ import type {
 // contentEditable com commit no blur: o React não controla o conteúdo (isso
 // destruiria o cursor a cada tecla), então o valor só sobe quando o campo
 // perde o foco.
-export function EditableText({
+function EditableText({
   value,
   onCommit,
   style,

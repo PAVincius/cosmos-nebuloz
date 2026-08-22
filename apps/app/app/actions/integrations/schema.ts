@@ -1,11 +1,13 @@
 import { z } from "zod";
 
-export const IntegrationSourceSchema = z.enum([
+const IntegrationSourceSchema = z.enum([
   "linear",
   "github",
   "asana",
   "gitlab",
 ] as const);
+// Usado por `index.ts` na forma `import("./schema").IntegrationSource`, que é
+// referência de tipo inline — o knip não a enxerga e propôs remover o export.
 export type IntegrationSource = z.infer<typeof IntegrationSourceSchema>;
 
 export const CreateIntegrationSchema = z.object({
@@ -23,8 +25,8 @@ export const ImportMappingSchema = z.object({
   teamId: z.string().cuid().optional(),
 });
 
-export type CreateIntegrationInput = z.infer<typeof CreateIntegrationSchema>;
-export type ImportMappingInput = z.infer<typeof ImportMappingSchema>;
+type CreateIntegrationInput = z.infer<typeof CreateIntegrationSchema>;
+type ImportMappingInput = z.infer<typeof ImportMappingSchema>;
 
 export type IntegrationRow = {
   id: string;

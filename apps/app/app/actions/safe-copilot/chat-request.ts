@@ -47,4 +47,4 @@ export const ChatRequestSchema = z.object({
   sessionId: z.string().optional(),
 });
 
-export type ChatRequest = z.infer<typeof ChatRequestSchema>;
+type ChatRequest = z.infer<typeof ChatRequestSchema>;

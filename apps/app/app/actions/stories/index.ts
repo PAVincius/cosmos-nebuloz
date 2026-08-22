@@ -68,7 +68,7 @@ async function resolveTeamId(
 
 // ─── Queries ──────────────────────────────────────────────────────────────────
 
-export async function listStories(raw: unknown): Promise<Result<Page<any>>> {
+async function listStories(raw: unknown): Promise<Result<Page<any>>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     const { page, limit, sprintId, featureId, status, assigneeUserId, search } =
@@ -101,7 +101,7 @@ export async function listStories(raw: unknown): Promise<Result<Page<any>>> {
   });
 }
 
-export async function getStoryById(id: string): Promise<Result<any>> {
+async function getStoryById(id: string): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
 
@@ -170,10 +170,7 @@ export async function createStory(raw: unknown): Promise<Result<any>> {
   });
 }
 
-export async function updateStory(
-  id: string,
-  raw: unknown
-): Promise<Result<any>> {
+async function updateStory(id: string, raw: unknown): Promise<Result<any>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Story", "update");
@@ -333,7 +330,7 @@ export async function updateStoryStatus(
   });
 }
 
-export async function moveStoryToSprint(
+async function moveStoryToSprint(
   id: string,
   sprintId: string | null
 ): Promise<Result<any>> {
@@ -391,7 +388,7 @@ export async function moveStoryToSprint(
   });
 }
 
-export async function deleteStory(id: string): Promise<Result<{ id: string }>> {
+async function deleteStory(id: string): Promise<Result<{ id: string }>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Story", "delete");
@@ -436,7 +433,7 @@ export async function deleteStory(id: string): Promise<Result<{ id: string }>> {
   });
 }
 
-export async function reorderStories(ids: string[]): Promise<Result<void>> {
+async function reorderStories(ids: string[]): Promise<Result<void>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     enforce(ctx.role, "Story", "update");

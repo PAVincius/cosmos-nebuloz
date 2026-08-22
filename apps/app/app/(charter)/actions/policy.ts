@@ -20,7 +20,7 @@ import {
 
 // Política — FR-2. As três abas (Seções, Versões, Escopo) leem de getPolicy().
 
-export type SectionView = {
+type SectionView = {
   id: string;
   ordinal: number;
   name: string;
@@ -32,7 +32,7 @@ export type SectionView = {
   generated: boolean;
 };
 
-export type VersionView = {
+type VersionView = {
   id: string;
   version: string;
   status: string;

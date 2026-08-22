@@ -26,7 +26,7 @@ export type BoardStoryView = {
   taskDone: number;
 };
 
-export type BoardColumnView = {
+type BoardColumnView = {
   status: string;
   label: string;
   stories: BoardStoryView[];

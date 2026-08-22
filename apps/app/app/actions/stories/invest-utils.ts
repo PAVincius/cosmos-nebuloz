@@ -1,7 +1,7 @@
-export type InvestLevel = "ERROR" | "WARN" | "INFO";
-export type InvestBadge = "GREEN" | "AMBER" | "RED";
+type InvestLevel = "ERROR" | "WARN" | "INFO";
+type InvestBadge = "GREEN" | "AMBER" | "RED";
 
-export type InvestCriterion = {
+type InvestCriterion = {
   key: string;
   label: string;
   pass: boolean;

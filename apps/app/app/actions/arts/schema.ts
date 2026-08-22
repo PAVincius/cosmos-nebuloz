@@ -1,4 +1,4 @@
-export type PIObjectiveInput = {
+type PIObjectiveInput = {
   teamId?: string;
   title: string;
   description?: string;
@@ -6,7 +6,7 @@ export type PIObjectiveInput = {
   isStretch: boolean;
 };
 
-export type PIRiskInput = {
+type PIRiskInput = {
   title: string;
   description?: string;
   status: string;

@@ -34,7 +34,7 @@ import { scoreLabel } from "@/lib/charter/rules";
  * Inverter esse sentido só numa delas seria rasteira garantida para quem ler o
  * catálogo depois — daí `lacunas` ser campo novo, com nome que diz o que é.
  */
-export type Evidencia = {
+type Evidencia = {
   total: number;
   amostra: string[];
   de?: number;
@@ -253,7 +253,7 @@ export const CAPABILITIES: readonly Capability[] = [
   },
 ] as const;
 
-export type CapabilityId = (typeof CAPABILITIES)[number]["id"];
+type CapabilityId = (typeof CAPABILITIES)[number]["id"];
 
 export function getCapability(id: string): Capability | undefined {
   return CAPABILITIES.find((c) => c.id === id);

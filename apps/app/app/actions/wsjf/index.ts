@@ -41,7 +41,7 @@ function isWSJFConfig(value: unknown): value is WSJFConfig {
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
+async function getEpicsWithFeatureWSJF(): Promise<EpicWithFeatures[]> {
   const ctx = await requireTenantSession(await headers());
 
   const [epics, deps] = await Promise.all([
@@ -130,7 +130,7 @@ export async function getWSJFConfig(): Promise<WSJFConfig> {
   return DEFAULT_CONFIG;
 }
 
-export async function saveWSJFConfig(config: WSJFConfig): Promise<void> {
+async function saveWSJFConfig(config: WSJFConfig): Promise<void> {
   const ctx = await requireTenantSession(await headers());
   requireRole(["ADMIN", "STE", "RTE"], ctx);
 

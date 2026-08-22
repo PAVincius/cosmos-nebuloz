@@ -30,7 +30,7 @@ export type GovernedEpicView = {
   gateSteps: GovernanceGateStepView[];
 };
 
-export type GovernanceKpis = {
+type GovernanceKpis = {
   totalUnderGovernance: number;
   awaitingDecision: number;
   investmentInReview: number;

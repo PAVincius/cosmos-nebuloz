@@ -3,7 +3,7 @@
   "apps/app/__tests__/charter/compliance-screen.test.tsx": 900,
   "apps/app/__tests__/charter/compliance.test.ts": 989,
   "apps/app/app/(charter)/actions/compliance.ts": 1025,
-  "apps/app/components/charter/base.tsx": 1112,
+  "apps/app/components/charter/base.tsx": 1088,
   "apps/app/components/charter/modals.tsx": 2482,
   "apps/app/components/charter/screens/compliance.tsx": 1026,
   "apps/app/components/charter/screens/policy.tsx": 989,

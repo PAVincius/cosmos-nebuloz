@@ -322,5 +322,3 @@ export function Sidebar() {
     </nav>
   );
 }
-
-export { Eyebrow };

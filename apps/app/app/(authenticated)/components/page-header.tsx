@@ -4,12 +4,12 @@ import type { ElementType, ReactNode } from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type BreadcrumbItem = {
+type BreadcrumbItem = {
   label: string;
   href?: string;
 };
 
-export type StatItem = {
+type StatItem = {
   label: string;
   value: ReactNode;
   icon?: ElementType;
@@ -165,10 +165,25 @@ export function PageHeader({
       )}
 
       {/* ── Title + actions ──────────────────────────────────────────────────── */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+        }}
+      >
         <div style={{ minWidth: 0, flex: 1 }}>
           {badge && (
-            <div style={{ marginBottom: 6, display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+            <div
+              style={{
+                marginBottom: 6,
+                display: "flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                gap: 8,
+              }}
+            >
               {badge}
             </div>
           )}
@@ -200,7 +215,15 @@ export function PageHeader({
         </div>
 
         {actions && (
-          <div style={{ marginTop: 2, display: "flex", flexShrink: 0, alignItems: "center", gap: 8 }}>
+          <div
+            style={{
+              marginTop: 2,
+              display: "flex",
+              flexShrink: 0,
+              alignItems: "center",
+              gap: 8,
+            }}
+          >
             {actions}
           </div>
         )}

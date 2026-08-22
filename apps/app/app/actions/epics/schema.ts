@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type PortfolioEpic = {
+type PortfolioEpic = {
   id: string;
   title: string;
   statusId: string;

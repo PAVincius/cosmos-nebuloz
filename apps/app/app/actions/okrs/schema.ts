@@ -74,14 +74,14 @@ export const CreateCheckInSchema = z.object({
 });
 
 /** Union string literal type for OKR status values */
-export type OKRStatus = z.infer<typeof OKRStatus>;
+type OKRStatus = z.infer<typeof OKRStatus>;
 
-export type CreateOKRInput = z.infer<typeof CreateOKRSchema>;
-export type UpdateOKRInput = z.infer<typeof UpdateOKRSchema>;
-export type OKRFiltersInput = z.infer<typeof OKRFiltersSchema>;
-export type CreateKeyResultInput = z.infer<typeof CreateKeyResultSchema>;
-export type UpdateKeyResultInput = z.infer<typeof UpdateKeyResultSchema>;
-export type CreateCheckInInput = z.infer<typeof CreateCheckInSchema>;
+type CreateOKRInput = z.infer<typeof CreateOKRSchema>;
+type UpdateOKRInput = z.infer<typeof UpdateOKRSchema>;
+type OKRFiltersInput = z.infer<typeof OKRFiltersSchema>;
+type CreateKeyResultInput = z.infer<typeof CreateKeyResultSchema>;
+type UpdateKeyResultInput = z.infer<typeof UpdateKeyResultSchema>;
+type CreateCheckInInput = z.infer<typeof CreateCheckInSchema>;
 
 export type KeyResultWithProgress = {
   id: string;
@@ -109,7 +109,7 @@ export type OKRWithProgress = OKR & {
 };
 
 // SAFe context enrichment
-export type OKRContextData = {
+type OKRContextData = {
   themeTitle: string | null;
   themeColor: string | null;
 };
@@ -125,7 +125,7 @@ export type KeyResultSnapshotItem = {
   recordedAt: Date;
 };
 
-export type ArchiveQuarterInput = z.infer<typeof ArchiveQuarterOKRsSchema>;
-export type CreateAutomatedSnapshotInput = z.infer<
+type ArchiveQuarterInput = z.infer<typeof ArchiveQuarterOKRsSchema>;
+type CreateAutomatedSnapshotInput = z.infer<
   typeof CreateAutomatedSnapshotSchema
 >;

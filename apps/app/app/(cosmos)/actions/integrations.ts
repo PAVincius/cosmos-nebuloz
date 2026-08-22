@@ -36,7 +36,7 @@ import {
   linearTestConnection,
 } from "../../actions/integrations/connectors/linear";
 
-export type SyncRunView = {
+type SyncRunView = {
   id: string;
   type: string;
   status: string;

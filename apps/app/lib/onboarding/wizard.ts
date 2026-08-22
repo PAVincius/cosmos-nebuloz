@@ -9,7 +9,7 @@ export const ONBOARDING_STEPS = [
 
 export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
-export type OnboardingData = {
+type OnboardingData = {
   orgName?: string;
   artId?: string;
   invitedEmails?: string[];

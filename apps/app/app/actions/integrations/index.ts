@@ -37,7 +37,7 @@ import {
 
 // ─── List ─────────────────────────────────────────────────────────────────────
 
-export async function listIntegrations(): Promise<Result<IntegrationRow[]>> {
+async function listIntegrations(): Promise<Result<IntegrationRow[]>> {
   try {
     const ctx = await requireTenantSession(await headers());
 
@@ -80,7 +80,7 @@ export async function listIntegrations(): Promise<Result<IntegrationRow[]>> {
 
 // ─── Test connection ──────────────────────────────────────────────────────────
 
-export async function testIntegrationConnection(
+async function testIntegrationConnection(
   raw: unknown
 ): Promise<Result<{ name?: string; login?: string }>> {
   try {
@@ -121,7 +121,7 @@ export async function testIntegrationConnection(
 
 // ─── Discover projects ────────────────────────────────────────────────────────
 
-export async function discoverIntegrationProjects(
+async function discoverIntegrationProjects(
   raw: unknown
 ): Promise<Result<{ id: string; name: string; key?: string }[]>> {
   try {
@@ -197,7 +197,7 @@ export async function createIntegration(
 
 // ─── Delete integration ───────────────────────────────────────────────────────
 
-export async function deleteIntegration(id: string): Promise<Result<void>> {
+async function deleteIntegration(id: string): Promise<Result<void>> {
   try {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "STE"] as MemberRole[], ctx);

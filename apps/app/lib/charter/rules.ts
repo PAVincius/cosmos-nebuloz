@@ -468,7 +468,7 @@ export function slaRemaining(
 }
 
 /** Tom do SLA por proximidade do vencimento (FR-3.3). */
-export function slaTone(remaining: number | null): Tone {
+function slaTone(remaining: number | null): Tone {
   if (remaining === null) {
     return "accent";
   }

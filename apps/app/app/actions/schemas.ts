@@ -30,7 +30,7 @@ export const UpdateEpicStatusSchema = z.object({
   statusId: z.enum(EPIC_STATUSES),
   order: z.number().int().nonnegative(),
 });
-export type UpdateEpicStatusInput = z.infer<typeof UpdateEpicStatusSchema>;
+type UpdateEpicStatusInput = z.infer<typeof UpdateEpicStatusSchema>;
 
 export const UpdateWSJFSchema = z.object({
   featureId: id,
@@ -39,7 +39,7 @@ export const UpdateWSJFSchema = z.object({
   rr: wsjfParam,
   js: jobSize,
 });
-export type UpdateWSJFInput = z.infer<typeof UpdateWSJFSchema>;
+type UpdateWSJFInput = z.infer<typeof UpdateWSJFSchema>;
 
 // ─── ART / PI ────────────────────────────────────────────────────────────────
 
@@ -47,7 +47,7 @@ export const CreateARTSchema = z.object({
   name: safeTitle,
   cadence: z.number().int().min(4).max(26).optional().default(10),
 });
-export type CreateARTInput = z.infer<typeof CreateARTSchema>;
+type CreateARTInput = z.infer<typeof CreateARTSchema>;
 
 export const CreatePIPlanSchema = z.object({
   artId: id,
@@ -57,7 +57,7 @@ export const CreatePIPlanSchema = z.object({
   startDate: z.coerce.date().optional(),
   endDate: z.coerce.date().optional(),
 });
-export type CreatePIPlanInput = z.infer<typeof CreatePIPlanSchema>;
+type CreatePIPlanInput = z.infer<typeof CreatePIPlanSchema>;
 
 // ─── Confidence Vote ─────────────────────────────────────────────────────────
 
@@ -76,11 +76,11 @@ export const SendVoteEventSchema = z.object({
   sessionId: id,
   event: ConfidenceVoteEventSchema,
 });
-export type SendVoteEventInput = z.infer<typeof SendVoteEventSchema>;
+type SendVoteEventInput = z.infer<typeof SendVoteEventSchema>;
 
 // ─── API Routes ──────────────────────────────────────────────────────────────
 
 export const SwitchTenantSchema = z.object({
   tenantId: id,
 });
-export type SwitchTenantInput = z.infer<typeof SwitchTenantSchema>;
+type SwitchTenantInput = z.infer<typeof SwitchTenantSchema>;

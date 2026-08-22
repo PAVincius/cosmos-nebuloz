@@ -68,7 +68,7 @@ const getSyncStatusSchema = z.object({
   syncRunId: z.string().min(1),
 });
 
-export async function getSyncStatus(raw: unknown): Promise<
+async function getSyncStatus(raw: unknown): Promise<
   Result<{
     status: string;
     entriesProcessed: number;

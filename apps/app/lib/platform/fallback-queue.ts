@@ -1,6 +1,6 @@
 // Inngest degradation fallback queue helpers (story-044 AC-008)
 
-export type FallbackJobStatus = "PENDING" | "PROCESSING" | "DONE" | "FAILED";
+type FallbackJobStatus = "PENDING" | "PROCESSING" | "DONE" | "FAILED";
 
 export type FallbackQueueEntry = {
   jobType: string;

@@ -164,7 +164,7 @@ export function linearStateToStatus(
 
 // ─── Map Linear priority → Cosmos type hint ──────────────────────────────────
 
-export function linearPriorityLabel(priority: number): string {
+function linearPriorityLabel(priority: number): string {
   return (
     ["No priority", "Urgent", "High", "Medium", "Low"][priority] ??
     "No priority"

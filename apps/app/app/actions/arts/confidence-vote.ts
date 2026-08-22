@@ -27,7 +27,7 @@ export async function getOrCreatePISession(piPlanId: string) {
   });
 }
 
-export async function getAllPISessions(piPlanId: string) {
+async function getAllPISessions(piPlanId: string) {
   const ctx = await requireTenantSession(await headers());
   return database.pISession.findMany({
     where: { piPlanId, tenantId: ctx.tenantId },
@@ -90,7 +90,7 @@ export async function getAllVoteRounds(piSessionId: string) {
   });
 }
 
-export async function createNewVoteRound(piSessionId: string) {
+async function createNewVoteRound(piSessionId: string) {
   const ctx = await requireTenantSession(await headers());
   requireRole(["ADMIN", "STE", "RTE"], ctx);
 
@@ -169,7 +169,7 @@ export async function sendVoteEvent(
 // Mantido para não quebrar imports existentes
 
 /** @deprecated use getOrCreatePISession + getOrCreateVoteRound */
-export async function getOrCreateVoteSession(piPlanId: string) {
+async function getOrCreateVoteSession(piPlanId: string) {
   const piSession = await getOrCreatePISession(piPlanId);
   return getOrCreateVoteRound(piSession.id);
 }
