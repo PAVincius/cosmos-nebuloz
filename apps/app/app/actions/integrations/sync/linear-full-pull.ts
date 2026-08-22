@@ -134,12 +134,14 @@ export async function triggerLinearFullPull(
     hasNext = page.pageInfo.hasNextPage;
 
     // Persist cursor after each page so interruption can resume (AC-006).
-    // COS-84: o cursor é por (integração, time) — nunca por tenant. Um
-    // `updateMany({ where: { tenantId } })` batia em toda linha LinearSync
-    // do tenant (outros times, outras issues) e substituía `metadata`
-    // inteiro, apagando chaves de terceiros (ex.: `linearTeamId`, que
-    // linear-push.ts usa para resolver o time ao empurrar labels). Aqui o
-    // `where` fecha em tenant+time, e o metadata é mesclado, não trocado.
+    // COS-84: o cursor é por tenant+time — a chave única de LinearSync é
+    // `@@unique([tenantId, linearId, linearType])` (o modelo não tem
+    // `integrationId`). Um `updateMany({ where: { tenantId } })` batia em
+    // toda linha LinearSync do tenant (outros times, outras issues) e
+    // substituía `metadata` inteiro, apagando chaves de terceiros (ex.:
+    // `linearTeamId`, que linear-push.ts usa para resolver o time ao
+    // empurrar labels). Aqui o `where` fecha em tenant+time, e o metadata
+    // é mesclado, não trocado.
     if (cursor) {
       const teamSync = await database.linearSync.findFirst({
         where: {

@@ -59,7 +59,29 @@ export async function handleLinearWebhook(
   // para resolver o project, porque hoje não existe consumidor de webhook
   // ao vivo que precise disso (app/api/webhooks/linear/route.ts só
   // enfileira no Inngest; nenhuma function consome o evento ainda).
+  //
+  // O descarte não é silencioso: sem rastro, uma issue com project
+  // legítimo (não é payload malformado — o Linear simplesmente não
+  // mandou o campo, ou a issue está fora do project mapeado) some do
+  // sync para sempre sem deixar pista. Grava FILTERED reaproveitando o
+  // mecanismo de writeSyncEvent já usado para SKIPPED por conflito de
+  // merge, com o motivo distinguindo os dois casos operacionais.
   if (opts?.linearProjectId && data.project?.id !== opts.linearProjectId) {
+    await writeSyncEvent({
+      tenantId,
+      integrationId,
+      direction: "INBOUND",
+      source: "LINEAR",
+      action: "FILTERED",
+      entityType: "Story",
+      entityId: data.id,
+      externalId: data.id,
+      field: "linearProjectId",
+      linearValue: `filtro linearProjectId: issue ${data.id} pertence a ${
+        data.project?.id ?? "nenhum project"
+      }`,
+      cosmosValue: opts.linearProjectId,
+    });
     return;
   }
 

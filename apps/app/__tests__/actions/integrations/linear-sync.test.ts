@@ -297,7 +297,7 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
     mocks.storyCreate.mockResolvedValue({ id: "story-new" });
   });
 
-  it("descarta issue de outro project quando o filtro está configurado", async () => {
+  it("descarta issue de outro project quando o filtro está configurado, com rastro gravado (não é silencioso)", async () => {
     await handleLinearWebhook(
       TENANT,
       INT_ID,
@@ -316,6 +316,17 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
 
     expect(mocks.storyCreate).not.toHaveBeenCalled();
     expect(mocks.storyUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.linearSyncEventCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "FILTERED",
+          field: "linearProjectId",
+          linearValue:
+            "filtro linearProjectId: issue lin-1 pertence a proj-outro",
+          cosmosValue: "proj-alvo",
+        }),
+      })
+    );
   });
 
   it("processa normalmente a issue do project mapeado", async () => {
@@ -336,6 +347,11 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
     );
 
     expect(mocks.storyCreate).toHaveBeenCalled();
+    expect(mocks.linearSyncEventCreate).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ action: "FILTERED" }),
+      })
+    );
   });
 
   it("descarta em vez de deixar passar quando o filtro está ativo mas o payload não traz project — limite documentado, não é filtro que finge filtrar", async () => {
@@ -355,6 +371,19 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
     );
 
     expect(mocks.storyCreate).not.toHaveBeenCalled();
+    // motivo precisa distinguir este caso ("sem project") do caso "project
+    // diferente" acima — o texto muda, não só o resultado do filtro.
+    expect(mocks.linearSyncEventCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          action: "FILTERED",
+          field: "linearProjectId",
+          linearValue:
+            "filtro linearProjectId: issue lin-3 pertence a nenhum project",
+          cosmosValue: "proj-alvo",
+        }),
+      })
+    );
   });
 
   it("processa qualquer project quando nenhum filtro é passado (comportamento atual intacto)", async () => {
@@ -370,6 +399,12 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
     });
 
     expect(mocks.storyCreate).toHaveBeenCalled();
+    // sem filtro configurado, nenhum evento de descarte é gravado
+    expect(mocks.linearSyncEventCreate).not.toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ action: "FILTERED" }),
+      })
+    );
   });
 });
 
