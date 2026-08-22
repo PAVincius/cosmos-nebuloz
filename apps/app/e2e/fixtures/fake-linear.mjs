@@ -23,10 +23,20 @@ import { createServer } from "node:http";
 
 const PORT = Number(process.env.FAKE_LINEAR_PORT ?? 4801);
 
+// O time COS carrega um project "Meridian" — o desenho do plano free, em que
+// o produto mora como project dentro do time. Metade das issues pertence a
+// ele, para o E2E provar que o filtro por project importa só essa metade.
 const TEAMS = [
-  { id: "fake-team-cosmos", name: "Cosmos", key: "COS" },
-  { id: "fake-team-nebuloz", name: "Nebuloz", key: "NEB" },
+  {
+    id: "fake-team-cosmos",
+    name: "Cosmos",
+    key: "COS",
+    projects: { nodes: [{ id: "fake-prj-meridian", name: "Meridian" }] },
+  },
+  { id: "fake-team-nebuloz", name: "Nebuloz", key: "NEB", projects: { nodes: [] } },
 ];
+
+const PRJ_MERIDIAN = { id: "fake-prj-meridian" };
 
 const ISSUES = [
   {
@@ -34,6 +44,7 @@ const ISSUES = [
     title: "E2E — WSJF Scoring Engine",
     state: { name: "Done", type: "completed" },
     estimate: 5,
+    project: PRJ_MERIDIAN,
   },
   {
     id: "fk-2",
@@ -46,6 +57,7 @@ const ISSUES = [
     title: "E2E — Fluxo de conexão do Linear",
     state: { name: "Testando", type: "started" },
     estimate: 3,
+    project: PRJ_MERIDIAN,
   },
   {
     id: "fk-4",
@@ -58,6 +70,7 @@ const ISSUES = [
     title: "E2E — Import filtrado por project",
     state: { name: "Todo", type: "unstarted" },
     estimate: 2,
+    project: PRJ_MERIDIAN,
   },
   {
     id: "fk-6",
@@ -69,6 +82,7 @@ const ISSUES = [
 
 function issueNode(i) {
   return {
+    project: null,
     ...i,
     description: null,
     url: `https://linear.app/fake/issue/${i.id}`,

@@ -404,6 +404,21 @@ function ConnectLinearModal({
     }
   };
 
+  const escolherProject = (id: string) => {
+    setProjectId(id);
+    const time = teams?.find((t) => t.id === teamId);
+    const proj = time?.projects.find((p) => p.id === id);
+    if (!nameTouched) {
+      setName(
+        proj
+          ? `${catalog.label} · ${proj.name}`
+          : time
+            ? `${catalog.label} · ${time.name}`
+            : name
+      );
+    }
+  };
+
   const connect = async () => {
     if (!(teamId && name.trim()) || busy) {
       return;
@@ -524,6 +539,43 @@ function ConnectLinearModal({
             )}
           </div>
         )}
+
+        {teams !== null &&
+          (teams.find((t) => t.id === teamId)?.projects.length ?? 0) > 0 && (
+            <div>
+              <label htmlFor="linear-project" style={labelStyle}>
+                Project do Linear
+              </label>
+              <select
+                id="linear-project"
+                onChange={(e) => escolherProject(e.target.value)}
+                style={inputStyle}
+                value={projectId}
+              >
+                <option value="">— time inteiro —</option>
+                {(teams.find((t) => t.id === teamId)?.projects ?? []).map(
+                  (p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  )
+                )}
+              </select>
+              <p
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                  margin: "6px 0 0",
+                }}
+              >
+                No plano free os produtos vivem como projects de um time só.
+                Escolher um project importa e sincroniza apenas as issues dele —
+                é assim que cada ART de produto conecta sem engolir o time
+                inteiro.
+              </p>
+            </div>
+          )}
 
         {teams !== null && teams.length > 0 && (
           <div>

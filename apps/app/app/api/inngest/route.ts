@@ -9,6 +9,8 @@ import { checkGovernanceSLA } from "@/lib/inngest/governance-sla";
 import { monthlyIsolationAudit } from "@/lib/inngest/isolation-audit";
 import { drainJobFallbackQueue } from "@/lib/inngest/job-fallback-drain";
 import { processErasureRequest } from "@/lib/inngest/lgpd-dsr";
+import { linearFullPullDispatch } from "@/lib/inngest/linear-full-pull-dispatch";
+import { consumeLinearWebhook } from "@/lib/inngest/linear-webhook-consumer";
 import { scheduledReportDispatch } from "@/lib/inngest/scheduled-report-dispatch";
 import { runScheduledReport } from "@/lib/inngest/scheduled-report-runner";
 import { checkSolutionStaleness } from "@/lib/inngest/solution-staleness";
@@ -29,6 +31,8 @@ export const { GET, POST, PUT } = serve({
     mapFirefliesInsightsFn,
     monthlyIsolationAudit,
     drainJobFallbackQueue,
+    consumeLinearWebhook,
+    linearFullPullDispatch,
     runExport,
     scheduledReportDispatch,
     runScheduledReport,

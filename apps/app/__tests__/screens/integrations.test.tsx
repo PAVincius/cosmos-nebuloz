@@ -235,7 +235,7 @@ describe("IntegrationsScreen", () => {
       ok: true,
       data: {
         account: "Nebuloz",
-        teams: [{ id: "lt_1", name: "Meridian", key: "MER" }],
+        teams: [{ id: "lt_1", name: "Meridian", key: "MER", projects: [] }],
       },
     });
     connectLinearIntegrationMock.mockResolvedValue({
@@ -294,7 +294,7 @@ describe("IntegrationsScreen", () => {
       ok: true,
       data: {
         account: "Nebuloz",
-        teams: [{ id: "lt_2", name: "Charter", key: "CHA" }],
+        teams: [{ id: "lt_2", name: "Charter", key: "CHA", projects: [] }],
       },
     });
 

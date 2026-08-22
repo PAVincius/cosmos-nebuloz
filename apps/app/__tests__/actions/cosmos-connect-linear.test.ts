@@ -78,10 +78,23 @@ beforeEach(() => {
 });
 
 describe("discoverLinearTeams", () => {
-  it("valida a credencial antes de listar e devolve a conta do Linear", async () => {
+  it("valida a credencial antes de listar e devolve times com seus projects", async () => {
     h.linearTestConnection.mockResolvedValue({ ok: true, name: "Nebuloz" });
     h.linearDiscoverTeams.mockResolvedValue([
-      { id: "lt_1", name: "Meridian", key: "MER" },
+      {
+        id: "lt_1",
+        name: "Nebuloz",
+        key: "NEB",
+        projects: {
+          nodes: [
+            { id: "prj_mer", name: "Meridian" },
+            { id: "prj_cha", name: "Charter" },
+          ],
+        },
+      },
+      // Time sem o campo (resposta antiga em cache, workspace sem projects):
+      // projects vira lista vazia, nunca undefined — o modal itera direto.
+      { id: "lt_2", name: "Cosmos", key: "COS" },
     ]);
 
     const r = await discoverLinearTeams({ apiKey: API_KEY });
@@ -92,7 +105,16 @@ describe("discoverLinearTeams", () => {
     }
     expect(r.data.account).toBe("Nebuloz");
     expect(r.data.teams).toEqual([
-      { id: "lt_1", name: "Meridian", key: "MER" },
+      {
+        id: "lt_1",
+        name: "Nebuloz",
+        key: "NEB",
+        projects: [
+          { id: "prj_mer", name: "Meridian" },
+          { id: "prj_cha", name: "Charter" },
+        ],
+      },
+      { id: "lt_2", name: "Cosmos", key: "COS", projects: [] },
     ]);
     expect(h.linearTestConnection).toHaveBeenCalledWith(API_KEY);
   });
