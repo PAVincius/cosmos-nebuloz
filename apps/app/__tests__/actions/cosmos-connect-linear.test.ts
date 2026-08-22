@@ -20,7 +20,6 @@ const h = vi.hoisted(() => ({
   decryptConfigSecrets: vi.fn(),
   linearTestConnection: vi.fn(),
   linearDiscoverTeams: vi.fn(),
-  linearDiscoverProjects: vi.fn(),
   githubTestConnection: vi.fn(),
   createIntegration: vi.fn(),
   runImportSnapshot: vi.fn(),
@@ -49,7 +48,6 @@ vi.mock("../../app/actions/audit/log-audit", () => ({ logAudit: h.logAudit }));
 vi.mock("../../app/actions/integrations/connectors/linear", () => ({
   linearTestConnection: h.linearTestConnection,
   linearDiscoverTeams: h.linearDiscoverTeams,
-  linearDiscoverProjects: h.linearDiscoverProjects,
 }));
 vi.mock("../../app/actions/integrations/connectors/github", () => ({
   githubTestConnection: h.githubTestConnection,
@@ -61,7 +59,6 @@ vi.mock("../../app/actions/integrations", () => ({
 
 import {
   connectLinearIntegration,
-  discoverLinearProjects,
   discoverLinearTeams,
   resyncIntegration,
 } from "../../app/(cosmos)/actions/integrations";
@@ -151,52 +148,6 @@ describe("discoverLinearTeams", () => {
 
     expect(r.ok).toBe(false);
     expect(h.linearTestConnection).not.toHaveBeenCalled();
-  });
-});
-
-describe("discoverLinearProjects", () => {
-  it("busca os projects do time escolhido e devolve id/name (COS-91)", async () => {
-    h.linearDiscoverProjects.mockResolvedValue([
-      { id: "proj_1", name: "Charter" },
-      { id: "proj_2", name: "Meridian" },
-    ]);
-
-    const r = await discoverLinearProjects({
-      apiKey: API_KEY,
-      linearTeamId: "lt_1",
-    });
-
-    expect(r.ok).toBe(true);
-    expect(r.ok && r.data).toEqual([
-      { id: "proj_1", name: "Charter" },
-      { id: "proj_2", name: "Meridian" },
-    ]);
-    expect(h.linearDiscoverProjects).toHaveBeenCalledWith(API_KEY, "lt_1");
-  });
-
-  it("exige papel de administração", async () => {
-    h.requireRole.mockImplementation(() => {
-      throw new MockAuthError("FORBIDDEN", "forbidden");
-    });
-
-    const r = await discoverLinearProjects({
-      apiKey: API_KEY,
-      linearTeamId: "lt_1",
-    });
-
-    expect(r.ok).toBe(false);
-    expect(h.linearDiscoverProjects).not.toHaveBeenCalled();
-  });
-
-  it("devolve Result de erro em vez de estourar quando o Linear falha", async () => {
-    h.linearDiscoverProjects.mockRejectedValue(new Error("Linear API 500"));
-
-    const r = await discoverLinearProjects({
-      apiKey: API_KEY,
-      linearTeamId: "lt_1",
-    });
-
-    expect(r.ok).toBe(false);
   });
 });
 

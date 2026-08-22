@@ -32,7 +32,6 @@ import {
 } from "../../actions/integrations";
 import { githubTestConnection } from "../../actions/integrations/connectors/github";
 import {
-  linearDiscoverProjects,
   linearDiscoverTeams,
   linearTestConnection,
 } from "../../actions/integrations/connectors/linear";
@@ -317,26 +316,6 @@ export async function discoverLinearTeams(
 // `linearProjectId` em COS-85). Esta descoberta roda DEPOIS de
 // discoverLinearTeams, com o time já escolhido: é uma chamada própria, feita
 // de dentro do modal, nunca uma prop congelada no clique que abriu o modal.
-
-export type LinearProjectOption = { id: string; name: string };
-
-const DiscoverLinearProjectsSchema = z.object({
-  apiKey: z.string().trim().min(8),
-  linearTeamId: z.string().min(1),
-});
-
-export async function discoverLinearProjects(
-  input: z.input<typeof DiscoverLinearProjectsSchema>
-): Promise<Result<LinearProjectOption[]>> {
-  return safeAction(async () => {
-    const ctx = await requireTenantSession(await headers());
-    requireRole(["ADMIN", "STE"], ctx);
-    const { apiKey, linearTeamId } = DiscoverLinearProjectsSchema.parse(input);
-
-    const projects = await linearDiscoverProjects(apiKey, linearTeamId);
-    return projects.map((p) => ({ id: p.id, name: p.name }));
-  });
-}
 
 const ConnectLinearSchema = z.object({
   name: z.string().min(1).max(120).trim(),

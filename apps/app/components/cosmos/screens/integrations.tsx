@@ -43,11 +43,9 @@ import {
 import { type CSSProperties, useState } from "react";
 import {
   connectLinearIntegration,
-  discoverLinearProjects,
   discoverLinearTeams,
   type ImportCounts,
   type IntegrationView,
-  type LinearProjectOption,
   type LinearTeamOption,
   listIntegrations,
   resyncIntegration,
@@ -341,19 +339,7 @@ function ConnectLinearModal({
   const [teamId, setTeamId] = useState("");
   // Project real do Linear (COS-91), opcional: no plano free os produtos
   // vivem como projects dentro de um único time. A lista é buscada aqui
-  // dentro do modal, reagindo à troca de teamId — nunca como prop congelada
-  // vinda da tela (regra da corrida de modal do PR #80). Falha em buscar não
-  // bloqueia conectar: só fica sem filtro por project.
   const [projectId, setProjectId] = useState("");
-  const { data: projects, error: projectsError } = useAction<
-    LinearProjectOption[]
-  >(
-    () =>
-      teamId
-        ? discoverLinearProjects({ apiKey, linearTeamId: teamId })
-        : Promise.resolve({ ok: true, data: [] }),
-    [teamId]
-  );
   const [importNow, setImportNow] = useState(true);
   // O Cosmos é épico-cêntrico: feature sem épico não aparece em tela nenhuma.
   // A lista carrega junto com a validação da chave para o select já estar
@@ -576,53 +562,6 @@ function ConnectLinearModal({
               </p>
             </div>
           )}
-
-        {teams !== null && teams.length > 0 && (
-          <div>
-            <label htmlFor="linear-project" style={labelStyle}>
-              Project do Linear (opcional)
-            </label>
-            <select
-              id="linear-project"
-              onChange={(e) => setProjectId(e.target.value)}
-              style={inputStyle}
-              value={projectId}
-            >
-              <option value="">— todos os projects deste time —</option>
-              {(projects ?? []).map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-            {projectsError ? (
-              <p
-                style={{
-                  color: "var(--red-text)",
-                  fontSize: 12,
-                  lineHeight: 1.5,
-                  margin: "6px 0 0",
-                }}
-              >
-                Não foi possível carregar os projects deste time. Você ainda
-                pode conectar sem filtrar por project.
-              </p>
-            ) : (
-              <p
-                style={{
-                  color: "var(--ink-faint)",
-                  fontSize: 12,
-                  lineHeight: 1.5,
-                  margin: "6px 0 0",
-                }}
-              >
-                No plano free do Linear, produtos diferentes costumam viver como
-                projects dentro do mesmo time. Sem seleção, o import traz as
-                issues de todos os projects.
-              </p>
-            )}
-          </div>
-        )}
 
         {teams !== null && teams.length > 0 && (
           <div>
