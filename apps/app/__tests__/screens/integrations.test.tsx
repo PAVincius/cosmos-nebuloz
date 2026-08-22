@@ -12,6 +12,7 @@ const listIntegrationsMock = vi.fn();
 const setIntegrationPausedMock = vi.fn();
 const testIntegrationConnectionMock = vi.fn();
 const discoverLinearTeamsMock = vi.fn();
+const discoverLinearProjectsMock = vi.fn();
 const connectLinearIntegrationMock = vi.fn();
 const resyncIntegrationMock = vi.fn();
 const listEpicsMock = vi.fn();
@@ -30,6 +31,8 @@ vi.mock("@/app/(cosmos)/actions/integrations", () => ({
   testIntegrationConnection: (...args: unknown[]) =>
     testIntegrationConnectionMock(...args),
   discoverLinearTeams: (...args: unknown[]) => discoverLinearTeamsMock(...args),
+  discoverLinearProjects: (...args: unknown[]) =>
+    discoverLinearProjectsMock(...args),
   connectLinearIntegration: (...args: unknown[]) =>
     connectLinearIntegrationMock(...args),
   resyncIntegration: (...args: unknown[]) => resyncIntegrationMock(...args),
@@ -55,6 +58,8 @@ describe("IntegrationsScreen", () => {
     setIntegrationPausedMock.mockReset();
     testIntegrationConnectionMock.mockReset();
     discoverLinearTeamsMock.mockReset();
+    discoverLinearProjectsMock.mockReset();
+    discoverLinearProjectsMock.mockResolvedValue({ ok: true, data: [] });
     listEpicsMock.mockReset();
     listEpicsMock.mockResolvedValue({ ok: true, data: [] });
     connectLinearIntegrationMock.mockReset();
@@ -312,49 +317,70 @@ describe("IntegrationsScreen", () => {
     expect(await screen.findByDisplayValue("Linear · Charter")).toBeTruthy();
   });
 
-  it("conecta num project do Linear — o filtro do plano free (COS-85)", async () => {
+  it("carrega os projects do time escolhido dentro do modal, sem quebrar se o fetch atrasar (COS-91)", async () => {
+    // Regra da corrida de modal (PR #80): a lista de projects precisa vir de
+    // um fetch disparado DENTRO do modal (aqui, reativo à troca de teamId),
+    // nunca de uma prop congelada em modal.open. Atrasamos a resolução de
+    // propósito para provar que o formulário — inclusive o próprio select de
+    // project — não quebra nem trava enquanto ela ainda não chegou.
     listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
     discoverLinearTeamsMock.mockResolvedValue({
       ok: true,
       data: {
         account: "Nebuloz",
-        teams: [
-          {
-            id: "lt_neb",
-            name: "Nebuloz",
-            key: "NEB",
-            projects: [
-              { id: "prj_mer", name: "Meridian" },
-              { id: "prj_cha", name: "Charter" },
-            ],
-          },
-        ],
+        teams: [{ id: "lt_1", name: "Meridian", key: "MER" }],
       },
     });
+    let resolveProjects: (v: {
+      ok: true;
+      data: { id: string; name: string }[];
+    }) => void = () => {};
+    discoverLinearProjectsMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveProjects = resolve;
+        })
+    );
     connectLinearIntegrationMock.mockResolvedValue({
       ok: true,
-      data: { id: "i9", imported: { created: 3, updated: 0, skipped: 0 } },
+      data: { id: "i9", imported: null },
     });
 
     render(<IntegrationsScreen />);
     fireEvent.click((await screen.findAllByText("Conectar"))[0]);
 
-    fireEvent.change(await screen.findByLabelText("Personal API key"), {
-      target: { value: "lin_api_teste_00000000" },
-    });
+    const key = screen.getByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
     fireEvent.click(screen.getByText("Validar e listar times"));
 
-    // Select de project aparece com o time-inteiro como default.
-    const projSelect = await screen.findByLabelText("Project do Linear");
-    expect(screen.getByText("— time inteiro —")).toBeTruthy();
-    fireEvent.change(projSelect, { target: { value: "prj_mer" } });
+    await waitFor(() =>
+      expect(discoverLinearProjectsMock).toHaveBeenCalledWith({
+        apiKey: "lin_api_teste_00000000",
+        linearTeamId: "lt_1",
+      })
+    );
 
-    // Escolher o project renomeia a sugestão para o produto, não o time.
-    expect(await screen.findByDisplayValue("Linear · Meridian")).toBeTruthy();
+    // O time já foi escolhido e o select de project existe, só sem opções
+    // além da default — nada trava enquanto o fetch não resolveu.
+    expect(screen.getByLabelText(/Project do Linear/)).toBeTruthy();
+    expect(screen.queryByRole("option", { name: "Charter" })).toBeNull();
 
-    const submit = screen.getAllByText("Conectar").at(-1);
+    resolveProjects({
+      ok: true,
+      data: [
+        { id: "proj_1", name: "Charter" },
+        { id: "proj_2", name: "Meridian" },
+      ],
+    });
+
+    fireEvent.change(await screen.findByLabelText(/Project do Linear/), {
+      target: { value: "proj_1" },
+    });
+
+    const submits = screen.getAllByText("Conectar");
+    const submit = submits.at(-1);
     if (!submit) {
-      throw new Error("botão Conectar do modal não renderizado");
+      throw new Error("botão de submit do modal não renderizou");
     }
     fireEvent.click(submit);
 
@@ -362,9 +388,57 @@ describe("IntegrationsScreen", () => {
       expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
         name: "Linear · Meridian",
         apiKey: "lin_api_teste_00000000",
-        linearTeamId: "lt_neb",
+        linearTeamId: "lt_1",
         importNow: true,
-        linearProjectId: "prj_mer",
+        linearProjectId: "proj_1",
+      })
+    );
+  });
+
+  it("mostra que a lista de projects falhou sem travar a conexão, e conecta sem filtro (degradação honesta)", async () => {
+    listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [{ id: "lt_1", name: "Meridian", key: "MER" }],
+      },
+    });
+    discoverLinearProjectsMock.mockResolvedValue({
+      ok: false,
+      error: "Linear API 500: boom",
+    });
+    connectLinearIntegrationMock.mockResolvedValue({
+      ok: true,
+      data: { id: "i9", imported: null },
+    });
+
+    render(<IntegrationsScreen />);
+    fireEvent.click((await screen.findAllByText("Conectar"))[0]);
+
+    const key = screen.getByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    expect(
+      await screen.findByText(/Não foi possível carregar os projects/)
+    ).toBeTruthy();
+
+    // Submit sem seleção continua conectando, igual ao comportamento atual —
+    // a falha de fetch não é bloqueante, e o payload não ganha linearProjectId.
+    const submits = screen.getAllByText("Conectar");
+    const submit = submits.at(-1);
+    if (!submit) {
+      throw new Error("botão de submit do modal não renderizou");
+    }
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
+        name: "Linear · Meridian",
+        apiKey: "lin_api_teste_00000000",
+        linearTeamId: "lt_1",
+        importNow: true,
       })
     );
   });
