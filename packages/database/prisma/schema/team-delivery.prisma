@@ -80,6 +80,12 @@ model Story {
   feature Feature? @relation(fields: [featureId], references: [id], onDelete: SetNull)
   tasks   Task[]
 
+  // Corrida cron full pull × webhook ao vivo (PR #91): duas execuções
+  // concorrentes de handleLinearWebhook podem passar pelo find-then-create
+  // sem se enxergar; este unique faz o INSERT perdedor falhar com P2002 e o
+  // código converge para o caminho de update. NULLs são distintos no
+  // Postgres — Stories manuais (externalId null) não são afetadas.
+  @@unique([tenantId, externalId, externalSource])
   @@index([tenantId])
   @@index([sprintId])
   @@index([featureId])
