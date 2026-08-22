@@ -84,9 +84,6 @@ async function createMigrationEntities(
 }
 
 async function checkImportRateLimit(ip: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return false;
-  }
   const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
     limiter: fixedWindow(5, "10 m"),

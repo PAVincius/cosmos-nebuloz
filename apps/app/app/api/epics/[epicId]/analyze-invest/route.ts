@@ -169,30 +169,6 @@ export async function POST(
   const plan = (tenant?.plan ?? "ORBIT") as string;
   const monthlyLimit = INVEST_LIMITS[plan] ?? 200;
 
-  if (
-    monthlyLimit < Number.POSITIVE_INFINITY &&
-    process.env.UPSTASH_REDIS_REST_URL
-  ) {
-    const { redis } = await import("@repo/rate-limit");
-    const periodKey = new Date().toISOString().slice(0, 7);
-    const usageKey = `invest:usage:${ctx.tenantId}:${periodKey}`;
-    const currentUsage = (await redis.get<number>(usageKey)) ?? 0;
-
-    if (currentUsage >= monthlyLimit) {
-      const nextMonth = new Date();
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-      nextMonth.setDate(1);
-      return NextResponse.json(
-        {
-          code: "AI_QUOTA_EXCEEDED",
-          retryAfter: nextMonth.toISOString(),
-          upgradeUrl: "/settings/billing",
-        },
-        { status: 429 }
-      );
-    }
-  }
-
   const contentHash = computeContentHash({
     description: epic.descriptionMd,
     hypothesis: epic.hypothesis,
@@ -215,6 +191,29 @@ export async function POST(
         cachedAt: cached.cachedAt,
         result: cached.result,
       });
+    }
+  }
+
+  // Cota mensal de custo de IA. Checada aqui — depois do cache-hit acima, que
+  // não deve consumir cota, e antes do streamText abaixo, que já gera custo
+  // mesmo se a resposta não parsear.
+  if (monthlyLimit < Number.POSITIVE_INFINITY) {
+    const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
+    const limiter = createRateLimiter({
+      limiter: fixedWindow(monthlyLimit, "30 d"),
+      prefix: "invest:usage",
+    });
+    const { success, reset } = await limiter.limit(ctx.tenantId);
+
+    if (!success) {
+      return NextResponse.json(
+        {
+          code: "AI_QUOTA_EXCEEDED",
+          retryAfter: new Date(reset).toISOString(),
+          upgradeUrl: "/settings/billing",
+        },
+        { status: 429 }
+      );
     }
   }
 
@@ -254,10 +253,6 @@ export async function POST(
           { result: scores, cachedAt: new Date().toISOString() },
           { ex: 86_400 }
         );
-        const periodKey = new Date().toISOString().slice(0, 7);
-        const usageKey = `invest:usage:${ctx.tenantId}:${periodKey}`;
-        await redis.incr(usageKey);
-        await redis.expire(usageKey, 60 * 60 * 24 * 35);
       }
     },
   });
