@@ -304,6 +304,10 @@ const ConnectLinearSchema = z.object({
    *  o Cosmos é épico-cêntrico: feature sem épico não aparece em tela
    *  nenhuma (epic-tree, program board e getEpicFeatures partem do épico). */
   epicId: z.string().cuid().optional(),
+  /** Project real do Linear, para times no plano free que hospedam vários
+   *  produtos (ARTs do Cosmos) como projects dentro do mesmo linearTeamId.
+   *  Sem ele, o import traz as issues de todos os projects do time. */
+  linearProjectId: z.string().min(1).optional(),
 });
 
 export async function connectLinearIntegration(
@@ -341,6 +345,9 @@ export async function connectLinearIntegration(
         projectId: parsed.linearTeamId,
         targetType: "feature",
         ...(parsed.epicId ? { epicId: parsed.epicId } : {}),
+        ...(parsed.linearProjectId
+          ? { linearProjectId: parsed.linearProjectId }
+          : {}),
       });
       if (!snapshot.ok) {
         throw new Error(snapshot.error);
@@ -394,6 +401,7 @@ export async function resyncIntegration(
       epicId?: unknown;
       piPlanId?: unknown;
       teamId?: unknown;
+      linearProjectId?: unknown;
     } | null;
     const projectId = mapping?.projectId;
     if (typeof projectId !== "string" || projectId.length === 0) {
@@ -417,6 +425,9 @@ export async function resyncIntegration(
         : {}),
       ...(typeof mapping?.teamId === "string"
         ? { teamId: mapping.teamId }
+        : {}),
+      ...(typeof mapping?.linearProjectId === "string"
+        ? { linearProjectId: mapping.linearProjectId }
         : {}),
     });
     if (!snapshot.ok) {

@@ -281,6 +281,98 @@ describe("handleLinearWebhook (AC-001 / AC-002 / AC-008)", () => {
   });
 });
 
+// ─── handleLinearWebhook — filtro por project do Linear (COS-85) ────────────
+//
+// Times do plano free do Linear viram vários ARTs do Cosmos via projects
+// dentro do mesmo time (NEB). Sem filtro, conectar um ART ao time misturaria
+// as issues dos quatro produtos. `opts.linearProjectId` é opcional — sem ele
+// o comportamento é o de sempre (nenhum teste acima passa opts).
+describe("handleLinearWebhook — filtro por project (COS-85)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.linearSyncEventCreate.mockResolvedValue({ id: "evt-1" });
+    mocks.linearSyncUpsert.mockResolvedValue({});
+    mocks.linearSyncFindFirst.mockResolvedValue(null);
+    mocks.storyFindFirst.mockResolvedValue(null);
+    mocks.storyCreate.mockResolvedValue({ id: "story-new" });
+  });
+
+  it("descarta issue de outro project quando o filtro está configurado", async () => {
+    await handleLinearWebhook(
+      TENANT,
+      INT_ID,
+      {
+        action: "update",
+        type: "Issue",
+        data: {
+          id: "lin-1",
+          title: "Issue de outro produto",
+          state: { name: "Todo" },
+          project: { id: "proj-outro" },
+        },
+      },
+      { linearProjectId: "proj-alvo" }
+    );
+
+    expect(mocks.storyCreate).not.toHaveBeenCalled();
+    expect(mocks.storyUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("processa normalmente a issue do project mapeado", async () => {
+    await handleLinearWebhook(
+      TENANT,
+      INT_ID,
+      {
+        action: "create",
+        type: "Issue",
+        data: {
+          id: "lin-2",
+          title: "Issue do produto certo",
+          state: { name: "Todo" },
+          project: { id: "proj-alvo" },
+        },
+      },
+      { linearProjectId: "proj-alvo" }
+    );
+
+    expect(mocks.storyCreate).toHaveBeenCalled();
+  });
+
+  it("descarta em vez de deixar passar quando o filtro está ativo mas o payload não traz project — limite documentado, não é filtro que finge filtrar", async () => {
+    await handleLinearWebhook(
+      TENANT,
+      INT_ID,
+      {
+        action: "create",
+        type: "Issue",
+        data: {
+          id: "lin-3",
+          title: "Sem informação de project",
+          state: { name: "Todo" },
+        },
+      },
+      { linearProjectId: "proj-alvo" }
+    );
+
+    expect(mocks.storyCreate).not.toHaveBeenCalled();
+  });
+
+  it("processa qualquer project quando nenhum filtro é passado (comportamento atual intacto)", async () => {
+    await handleLinearWebhook(TENANT, INT_ID, {
+      action: "create",
+      type: "Issue",
+      data: {
+        id: "lin-4",
+        title: "Sem filtro configurado",
+        state: { name: "Todo" },
+        project: { id: "proj-qualquer" },
+      },
+    });
+
+    expect(mocks.storyCreate).toHaveBeenCalled();
+  });
+});
+
 // ─── Webhook DLQ for PAUSED integration (AC-004) ─────────────────────────────
 
 const routeMocks = vi.hoisted(() => ({

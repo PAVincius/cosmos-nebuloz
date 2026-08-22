@@ -12,6 +12,9 @@ type LinearIssueNode = {
   state?: { name: string };
   assignee?: { id: string } | null;
   updatedAt?: string;
+  // COS-85: pedido de graça na mesma página paginada por time — permite
+  // filtrar por Project do Linear sem uma segunda chamada de detalhe.
+  project?: { id: string } | null;
 };
 
 type LinearIssuesPage = {
@@ -28,7 +31,7 @@ async function fetchLinearIssuesPage(opts: {
     query Issues($teamId: String!, $first: Int!, $after: String) {
       team(id: $teamId) {
         issues(first: $first, after: $after, orderBy: updatedAt) {
-          nodes { id title description state { name } assignee { id } updatedAt }
+          nodes { id title description state { name } assignee { id } updatedAt project { id } }
           pageInfo { hasNextPage endCursor }
         }
       }
@@ -71,6 +74,10 @@ type FullPullOptions = {
   teamId: string;
   apiKey: string;
   resumeCursor?: string | null; // AC-006: resume from cursor on interruption
+  // COS-85: Project real do Linear — filtra as issues do time para as de um
+  // único produto/ART. Ausente → todo o time entra, igual ao comportamento
+  // anterior.
+  linearProjectId?: string;
 };
 
 type FullPullResult = {
@@ -93,6 +100,13 @@ export async function triggerLinearFullPull(
       after: cursor,
     });
 
+    // COS-85: só monta opts de filtro quando há linearProjectId configurado
+    // — handleLinearWebhook trata "sem opts" como "sem filtro", igual ao
+    // comportamento anterior a esta issue.
+    const webhookOpts = opts.linearProjectId
+      ? { linearProjectId: opts.linearProjectId }
+      : undefined;
+
     for (const node of page.nodes) {
       const webhookPayload: LinearWebhookPayload = {
         action: "update",
@@ -104,12 +118,14 @@ export async function triggerLinearFullPull(
           state: node.state,
           assignee: node.assignee,
           updatedAt: node.updatedAt,
+          project: node.project ?? undefined,
         },
       };
       await handleLinearWebhook(
         opts.tenantId,
         opts.integrationId,
-        webhookPayload
+        webhookPayload,
+        webhookOpts
       );
       itemsProcessed += 1;
     }

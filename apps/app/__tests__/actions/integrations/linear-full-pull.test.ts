@@ -188,3 +188,59 @@ describe("triggerLinearFullPull — escopo da escrita do cursor (COS-84)", () =>
     });
   });
 });
+
+// ─── COS-85: filtro por project do Linear ──────────────────────────────────
+//
+// O full pull hoje é o único chamador real de handleLinearWebhook (não há
+// consumidor de webhook ao vivo — app/api/webhooks/linear/route.ts só
+// enfileira no Inngest, e nenhuma function consome esse evento ainda). Por
+// isso o filtro por project entra em dois pontos: a query já pede
+// `project { id }` — de graça, é o mesmo request paginado — e o resultado
+// segue para handleLinearWebhook, que decide se aceita ou descarta.
+describe("triggerLinearFullPull — repasse do filtro de project (COS-85)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.linearSyncFindFirst.mockResolvedValue({ metadata: null });
+    mocks.linearSyncUpdateMany.mockResolvedValue({ count: 1 });
+    mocks.handleLinearWebhook.mockResolvedValue(undefined);
+  });
+
+  it("inclui o project da issue no payload e repassa o filtro configurado para handleLinearWebhook", async () => {
+    mockLinearPage(
+      [{ id: "iss-1", title: "Issue 1", project: { id: "proj-x" } }],
+      false,
+      "cursor-x"
+    );
+
+    await triggerLinearFullPull({
+      tenantId: TENANT,
+      integrationId: INTEGRATION,
+      teamId: "team-a",
+      apiKey: "key",
+      linearProjectId: "proj-x",
+    });
+
+    expect(mocks.handleLinearWebhook).toHaveBeenCalledWith(
+      TENANT,
+      INTEGRATION,
+      expect.objectContaining({
+        data: expect.objectContaining({ project: { id: "proj-x" } }),
+      }),
+      { linearProjectId: "proj-x" }
+    );
+  });
+
+  it("não manda opts de filtro quando nenhum linearProjectId é configurado (comportamento atual intacto)", async () => {
+    mockLinearPage([{ id: "iss-1", title: "Issue 1" }], false, "cursor-y");
+
+    await triggerLinearFullPull({
+      tenantId: TENANT,
+      integrationId: INTEGRATION,
+      teamId: "team-a",
+      apiKey: "key",
+    });
+
+    const call = mocks.handleLinearWebhook.mock.calls[0];
+    expect(call[3]).toBeUndefined();
+  });
+});
