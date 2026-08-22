@@ -5,7 +5,7 @@ import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { mapCosmosStatusToLinear } from "@/lib/integrations/merge-policy";
 
-const LINEAR_GQL = "https://api.linear.app/graphql";
+import { LINEAR_GQL } from "../connectors/linear";
 
 // AC-007: only cosmos:* namespace labels are touched
 const COSMOS_LABEL_PREFIX = "cosmos:";
