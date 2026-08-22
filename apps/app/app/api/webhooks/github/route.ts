@@ -6,9 +6,6 @@ import { verifyGitHubSignature } from "@/app/actions/integrations/webhooks/verif
 const DEDUP_TTL_SECONDS = 172_800; // 48h
 
 async function checkWebhookRateLimit(ip: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return false;
-  }
   const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
     limiter: fixedWindow(100, "1 m"),
