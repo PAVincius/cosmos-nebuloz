@@ -7,13 +7,17 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listThemesMock = vi.fn();
+const createThemeMock = vi.fn();
+const listThemeLinkOptionsMock = vi.fn();
 const archiveThemeMock = vi.fn();
 const rebalanceThemeTargetsMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/themes", () => ({
   listThemes: (...args: unknown[]) => listThemesMock(...args),
   archiveTheme: (...args: unknown[]) => archiveThemeMock(...args),
-  createTheme: vi.fn(),
+  createTheme: (...args: unknown[]) => createThemeMock(...args),
+  listThemeLinkOptions: (...args: unknown[]) =>
+    listThemeLinkOptionsMock(...args),
   rebalanceThemeTargets: (...args: unknown[]) =>
     rebalanceThemeTargetsMock(...args),
 }));
@@ -44,6 +48,12 @@ describe("ThemesScreen", () => {
     listThemesMock.mockReset();
     archiveThemeMock.mockReset();
     rebalanceThemeTargetsMock.mockReset();
+    createThemeMock.mockReset();
+    listThemeLinkOptionsMock.mockReset();
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: { budgets: [], epics: [], budgetTotalPortfolio: 0 },
+    });
   });
 
   it("arquiva o tema pela tela e recarrega a lista (AC-003)", async () => {
@@ -196,5 +206,129 @@ describe("ThemesScreen", () => {
         targets: [{ themeId: "th1", targetAllocationPct: 100 }],
       })
     );
+  });
+
+  it("cria o tema com budget e épicos vinculados numa chamada só", async () => {
+    // O ponto do modal: um tema sem budget real e sem épicos reais é uma
+    // caixa de texto com nome bonito.
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        budgets: [
+          {
+            id: "clb00000000000000000000a",
+            label: "Plataforma",
+            sub: "R$ 2M · PI-2026-Q3",
+            amount: 2_000_000,
+          },
+        ],
+        epics: [
+          {
+            id: "cle00000000000000000000a",
+            label: "Carteira digital",
+            sub: "FUNNEL",
+          },
+          {
+            id: "cle00000000000000000000b",
+            label: "Antifraude",
+            sub: "ANALYZING",
+          },
+        ],
+        budgetTotalPortfolio: 8_000_000,
+      },
+    });
+    createThemeMock.mockResolvedValue({ ok: true, data: { id: "th-novo" } });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    fireEvent.change(await screen.findByPlaceholderText(/Modernização/), {
+      target: { value: "Expansão LATAM" },
+    });
+
+    // Vincula o budget aprovado.
+    fireEvent.focus(screen.getByPlaceholderText(/budget já aprovado/));
+    fireEvent.click(await screen.findByText("Plataforma"));
+
+    // Vincula dois épicos — multi.
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Carteira digital"));
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Antifraude"));
+
+    fireEvent.click(screen.getByText("Criar tema"));
+
+    await waitFor(() =>
+      expect(createThemeMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Expansão LATAM",
+          leanBudgetId: "clb00000000000000000000a",
+          epicIds: ["cle00000000000000000000a", "cle00000000000000000000b"],
+        })
+      )
+    );
+  });
+
+  it("o preview mostra o desvio do alvo assim que o budget é vinculado", async () => {
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        // 2M de 8M = 25% alocado, contra alvo padrão de 15% → +10pp.
+        budgets: [
+          {
+            id: "clb00000000000000000000a",
+            label: "Plataforma",
+            sub: "R$ 2M",
+            amount: 2_000_000,
+          },
+        ],
+        epics: [],
+        budgetTotalPortfolio: 8_000_000,
+      },
+    });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    // Antes de vincular, o preview diz o que falta em vez de fingir um número.
+    expect(
+      screen.getByText(/Vincule um budget para calcular o desvio/)
+    ).toBeTruthy();
+
+    fireEvent.focus(screen.getByPlaceholderText(/budget já aprovado/));
+    fireEvent.click(await screen.findByText("Plataforma"));
+
+    expect(await screen.findByText(/desvio de \+10pp do alvo/)).toBeTruthy();
+    expect(screen.getByText("Alocado ~25%")).toBeTruthy();
+  });
+
+  it("não oferece o épico que já foi escolhido", async () => {
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        budgets: [],
+        epics: [
+          {
+            id: "cle00000000000000000000a",
+            label: "Carteira digital",
+            sub: "FUNNEL",
+          },
+        ],
+        budgetTotalPortfolio: 0,
+      },
+    });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Carteira digital"));
+
+    // Continua visível como chip escolhido, mas some da lista de opções.
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    expect(await screen.findByText("Nenhum resultado")).toBeTruthy();
   });
 });
