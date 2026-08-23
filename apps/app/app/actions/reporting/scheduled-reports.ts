@@ -84,6 +84,11 @@ export async function createScheduledReport(
         recipients: data.recipients,
         slackChannelId: data.slackChannelId,
         config: data.config as import("@repo/database").Prisma.InputJsonValue,
+        // Sem isso `lastRunAt` fica NULL e `isDue` (schedule.ts) lê NULL como
+        // "nunca rodou, logo venceu" — o próximo scan de 15 min dispara o
+        // relatório fora do cron configurado, com email real. Mesmo raciocínio
+        // da migration 20260808000000_backfill_scheduled_report_lastrunat.
+        lastRunAt: new Date(),
       },
       select: { id: true },
     });
@@ -105,11 +110,17 @@ export async function updateScheduledReport(
 
     const existing = await database.scheduledReport.findFirst({
       where: { id: validId, tenantId: ctx.tenantId },
-      select: { id: true },
+      select: { id: true, enabled: true },
     });
     if (!existing) {
       throw new Error("Report not found");
     }
+
+    // Reativar (false -> true) tem o mesmo problema da criação: um lastRunAt
+    // antigo (ou nunca preenchido) faz `isDue` disparar no próximo scan em
+    // vez de esperar o cron. Recarimba só nessa borda, não em todo update com
+    // enabled: true.
+    const reativando = existing.enabled === false && data.enabled === true;
 
     const updated = await database.scheduledReport.update({
       where: { id: validId },
@@ -125,6 +136,7 @@ export async function updateScheduledReport(
           config: data.config as import("@repo/database").Prisma.InputJsonValue,
         }),
         ...(data.enabled !== undefined && { enabled: data.enabled }),
+        ...(reativando && { lastRunAt: new Date() }),
       },
       select: { id: true },
     });
