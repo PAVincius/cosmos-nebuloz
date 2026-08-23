@@ -683,3 +683,11 @@ export async function getPolicyScope(): Promise<
     });
   });
 }
+
+// Geração de rascunho de seção por IA (FR-2.7) — implementação em
+// policy-generate.ts, num arquivo próprio para não estourar o
+// file-size-guard. Sem re-export daqui: um arquivo "use server" só pode
+// exportar async function — re-exportar de outro módulo quebra o transform
+// do Next ("Only async functions are allowed to be exported in a 'use
+// server' file"). Quem precisa de generatePolicyDraft importa direto de
+// "@/app/(charter)/actions/policy-generate".
