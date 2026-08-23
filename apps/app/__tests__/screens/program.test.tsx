@@ -22,6 +22,12 @@ vi.mock("@/app/(cosmos)/actions/entity-search", () => ({
   searchEntities: vi.fn().mockResolvedValue({ ok: true, data: [] }),
 }));
 
+// Mesma razão: o quick-create do campo "Épico pai" traz createEpic para o
+// escopo do módulo.
+vi.mock("@/app/(cosmos)/actions/kanban", () => ({
+  createEpic: vi.fn(),
+}));
+
 import ProgramScreen from "../../components/cosmos/screens/program";
 
 const feature = (over: Record<string, unknown>) => ({

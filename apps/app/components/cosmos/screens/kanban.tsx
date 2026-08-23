@@ -32,6 +32,7 @@ import {
   listEpics,
   moveEpic,
 } from "@/app/(cosmos)/actions/kanban";
+import { createTheme } from "@/app/(cosmos)/actions/themes";
 import {
   getPortfolioKanbanConfig,
   getViewerRole,
@@ -352,6 +353,18 @@ function NewEpicModal({
     const r = await searchEntities("theme", q);
     return r.ok ? r.data : [];
   }, []);
+  // Criar o tema sem sair daqui: épico sem tema é épico órfão no portfólio, e
+  // mandar a pessoa abrir a tela de temas custaria o formulário já preenchido.
+  const criarTema = async (rascunho: Record<string, string>) => {
+    const titulo = (rascunho.title ?? "").trim();
+    if (!titulo) {
+      return null;
+    }
+    const res = await createTheme({ title: titulo });
+    // createTheme devolve só o id — o rótulo do chip vem do que foi digitado.
+    return res.ok ? { id: res.data.id, label: titulo } : null;
+  };
+
   const tema = themeItems.find((t) => t.id === themeId);
   const colDef = BOARD_COLUMNS.find((c) => c.id === col);
   const colLabel = colDef?.label ?? "Funnel";
@@ -580,6 +593,18 @@ function NewEpicModal({
             onChange={(v) => setThemeId(v as string | null)}
             onSearch={buscarTemas}
             placeholder="Buscar um tema existente..."
+            quickCreate={{
+              campos: [
+                {
+                  key: "title",
+                  label: "Título do tema",
+                  placeholder: "ex: Expansão LATAM",
+                },
+              ],
+              inicial: { title: "" },
+              label: "+ Criar novo tema",
+              onCreate: criarTema,
+            }}
             tone={EPIC_TONE}
             value={themeId}
           />

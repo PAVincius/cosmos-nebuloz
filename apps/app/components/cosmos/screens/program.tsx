@@ -20,6 +20,7 @@ import {
 // (AC-002).
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
+import { createEpic } from "@/app/(cosmos)/actions/kanban";
 import {
   assignFeatureToCell,
   createFeature,
@@ -397,6 +398,20 @@ function NewFeatureModal({ onCreated }: { onCreated?: () => void }) {
     const r = await searchEntities("team", q);
     return r.ok ? r.data : [];
   }, []);
+  // Toda feature decompõe um épico; quando o épico ainda não existe, criá-lo
+  // aqui evita descartar o formulário só para cadastrar o pai no Kanban.
+  const criarEpico = async (rascunho: Record<string, string>) => {
+    const titulo = (rascunho.title ?? "").trim();
+    if (!titulo) {
+      return null;
+    }
+    // "funnel" é onde épico novo nasce no fluxo SAFe; a coluna não é escolha
+    // do formulário compacto.
+    const res = await createEpic({ title: titulo, column: "funnel" });
+    // A action devolve só o id — o rótulo do chip vem do que foi digitado.
+    return res.ok ? { id: res.data.id, label: titulo } : null;
+  };
+
   const epic = epics.find((e) => e.id === epicId);
   const team = teams.find((t) => t.id === teamId);
   // Mesma conta de calculateWSJF (packages/safe-engine), que é quem grava o
@@ -608,6 +623,18 @@ function NewFeatureModal({ onCreated }: { onCreated?: () => void }) {
             onChange={(v) => setEpicId(v as string | null)}
             onSearch={buscarEpicos}
             placeholder="Buscar o épico que esta feature entrega..."
+            quickCreate={{
+              campos: [
+                {
+                  key: "title",
+                  label: "Título do épico",
+                  placeholder: "ex: Antifraude",
+                },
+              ],
+              inicial: { title: "" },
+              label: "+ Criar novo épico",
+              onCreate: criarEpico,
+            }}
             tone={FEATURE_TONE}
             value={epicId}
           />

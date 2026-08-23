@@ -39,6 +39,12 @@ vi.mock("@/app/(cosmos)/actions/entity-search", () => ({
   searchEntities: (...args: unknown[]) => searchEntitiesMock(...args),
 }));
 
+// O quick-create do campo "Tema estratégico" importa a server action de temas
+// no escopo do módulo — sem mock, ela roda código de servidor no jsdom.
+vi.mock("@/app/(cosmos)/actions/themes", () => ({
+  createTheme: vi.fn(),
+}));
+
 import KanbanScreen from "../../components/cosmos/screens/kanban";
 
 const config = (over: Record<string, unknown> = {}) => ({
