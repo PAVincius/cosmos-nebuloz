@@ -40,23 +40,18 @@ import {
 // `listIntegrations` não seleciona `config`. As demais fontes do catálogo
 // seguem sem caminho de conexão e o modal continua dizendo isso em voz alta,
 // em vez de fingir um formulário que não grava nada.
-import { type CSSProperties, useEffect, useState } from "react";
+import { type CSSProperties, useState } from "react";
 import {
-  analyzeLinearImport,
-  connectLinearIntegration,
-  discoverLinearTeams,
   type ImportCounts,
   type IntegrationView,
-  type LinearImportPreview,
-  type LinearTeamOption,
   listIntegrations,
   resyncIntegration,
   setIntegrationPaused,
   testIntegrationConnection,
 } from "@/app/(cosmos)/actions/integrations";
-import { type KanbanEpic, listEpics } from "@/app/(cosmos)/actions/kanban";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
+import { ConnectLinearModal } from "./integrations-connect-linear";
 
 const STATUS_TONE: Record<string, Tone> = {
   ACTIVE: "green",
@@ -87,7 +82,7 @@ const SYNC_STATUS_TONE: Record<string, Tone> = {
   error: "red",
 };
 
-type CatalogEntry = {
+export type CatalogEntry = {
   source: string;
   label: string;
   category: string;
@@ -199,28 +194,6 @@ function fmtSync(iso: string | null): string {
     year: "numeric",
   })}`;
 }
-
-const inputStyle: CSSProperties = {
-  background: "var(--surface)",
-  border: "1px solid var(--hairline-strong)",
-  borderRadius: "var(--r-md)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  fontSize: 14,
-  outline: "none",
-  padding: "10px 12px",
-  width: "100%",
-};
-
-const labelStyle: CSSProperties = {
-  color: "var(--ink-faint)",
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  marginBottom: 6,
-  textTransform: "uppercase",
-};
 
 function fieldRowStyle(): CSSProperties {
   return {

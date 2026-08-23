@@ -4,7 +4,13 @@
 // (saúde de sincronização vinda de SyncLog, "nunca sincronizado" sem log) e
 // AC-006 (vazio/erro sem conexão fabricada). Asserção sobre conteúdo — sem
 // snapshot.
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { IntegrationView } from "../../app/(cosmos)/actions/integrations";
 
@@ -317,6 +323,115 @@ describe("IntegrationsScreen", () => {
 
     // O nome sugerido acompanha o time, senão nasceriam cinco "Linear".
     expect(await screen.findByDisplayValue("Linear · Charter")).toBeTruthy();
+  });
+
+  it("não deixa o project do time anterior sobreviver à troca de time (COS-91)", async () => {
+    // Antes, o project vinha de um discoverLinearProjects(teamId) disparado
+    // depois da escolha do time, e o hook de fetch (useAction) mantinha as
+    // options do time anterior visíveis durante o refetch — trocar de time
+    // no meio desse fetch podia deixar um project ERRADO selecionável no
+    // instante de conectar. Agora discoverLinearTeams já devolve os projects
+    // aninhados em cada time: a lista de options é um lookup local em
+    // `teams`, sem segundo fetch. Atrasamos a resolução do único fetch que
+    // resta (o discover) de propósito, no padrão de mock atrasado da casa,
+    // só para provar que nada quebra ou trava enquanto ele não chega.
+    listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
+    let resolveTeams: (v: {
+      ok: true;
+      data: {
+        account: string | null;
+        teams: {
+          id: string;
+          name: string;
+          key: string;
+          projects: { id: string; name: string }[];
+        }[];
+      };
+    }) => void = () => {};
+    discoverLinearTeamsMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveTeams = resolve;
+        })
+    );
+    connectLinearIntegrationMock.mockResolvedValue({
+      ok: true,
+      data: { id: "i9", imported: null },
+    });
+
+    render(<IntegrationsScreen />);
+    fireEvent.click((await screen.findAllByText("Conectar"))[0]);
+
+    const key = screen.getByLabelText("Personal API key");
+    fireEvent.change(key, { target: { value: "lin_api_teste_00000000" } });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    await waitFor(() =>
+      expect(discoverLinearTeamsMock).toHaveBeenCalledWith({
+        apiKey: "lin_api_teste_00000000",
+      })
+    );
+    // Nada além do form de chave existe enquanto o fetch não resolveu.
+    expect(screen.queryByLabelText(/Time do Linear/)).toBeNull();
+
+    await act(async () => {
+      resolveTeams({
+        ok: true,
+        data: {
+          account: "Nebuloz",
+          teams: [
+            {
+              id: "lt_a",
+              name: "Time A",
+              key: "TMA",
+              projects: [{ id: "proj_alpha", name: "Alpha" }],
+            },
+            {
+              id: "lt_b",
+              name: "Time B",
+              key: "TMB",
+              projects: [{ id: "proj_beta", name: "Beta" }],
+            },
+          ],
+        },
+      });
+    });
+
+    // Time A já vem selecionado (primeiro da lista) — escolhe o project Alpha.
+    fireEvent.change(await screen.findByLabelText(/Project do Linear/), {
+      target: { value: "proj_alpha" },
+    });
+    expect(
+      (screen.getByLabelText(/Project do Linear/) as HTMLSelectElement).value
+    ).toBe("proj_alpha");
+
+    // Troca para o time B sem escolher project de novo.
+    fireEvent.change(screen.getByLabelText(/Time do Linear/), {
+      target: { value: "lt_b" },
+    });
+
+    // O project do time anterior não sobrevive à troca: Alpha some das
+    // options do select, Beta (do novo time) aparece.
+    expect(screen.queryByRole("option", { name: "Alpha" })).toBeNull();
+    expect(screen.getByRole("option", { name: "Beta" })).toBeTruthy();
+
+    const submits = screen.getAllByText("Conectar");
+    const submit = submits.at(-1);
+    if (!submit) {
+      throw new Error("botão de submit do modal não renderizou");
+    }
+    fireEvent.click(submit);
+
+    // Conectar sem escolher project de novo não carrega o linearProjectId
+    // stale do time anterior.
+    await waitFor(() =>
+      expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
+        name: "Linear · Time B",
+        apiKey: "lin_api_teste_00000000",
+        linearTeamId: "lt_b",
+        importNow: true,
+      })
+    );
   });
 
   it("shows the error state when the action fails", async () => {

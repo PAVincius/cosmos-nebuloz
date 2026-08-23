@@ -37,15 +37,6 @@ async function linearQuery<T>(
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LinearProjectRef = { id: string; name: string };
-export type LinearTeam = {
-  id: string;
-  name: string;
-  key: string;
-  /** Projects do time — no plano free do Linear é onde os produtos moram. */
-  projects?: { nodes: LinearProjectRef[] };
-};
-
 export type LinearIssue = {
   id: string;
   title: string;
@@ -82,24 +73,62 @@ export async function linearTestConnection(
   }
 }
 
-// ─── discoverProjects (teams in Linear) ──────────────────────────────────────
+// ─── discoverTeams (teams + nested projects in Linear) ────────────────────────
+
+export type LinearProject = { id: string; name: string };
+
+/**
+ * Projects (COS-85/COS-91) vêm ANINHADOS dentro de cada time nesta mesma
+ * query, em vez de uma segunda chamada `linearDiscoverProjects(teamId)`
+ * disparada depois que o time é escolhido — duas versões independentes deste
+ * fix chegaram na mesma ideia por razões diferentes: manter a chave em
+ * trânsito pelo menor tempo possível (uma viagem, não duas), e matar uma
+ * corrida real no cliente — o hook de fetch (`useAction`) mantém os dados da
+ * resposta anterior visíveis durante o refetch, então trocar de time no meio
+ * de um fetch em andamento podia deixar as options de project do time ERRADO
+ * na tela no instante em que alguém clicava conectar. Trazer tudo numa query
+ * só elimina a classe inteira do bug: o cliente escolhe entre times já
+ * carregados, sem "enquanto isso" onde o project de outro time pode
+ * aparecer. `first: 50` é o mesmo teto de bom senso que outras listagens do
+ * conector usam para uma conta comum — não é paginado porque não há UI de
+ * paginação neste seletor.
+ *
+ * O campo `projects` na resposta bruta do GraphQL é opcional só na defesa:
+ * uma resposta que por algum motivo não o traga (cache antigo, por exemplo)
+ * vira lista vazia aqui mesmo, no limite do conector — quem chama
+ * `linearDiscoverTeams` recebe sempre um array, nunca `undefined` para
+ * propagar adiante.
+ */
+export type LinearTeam = {
+  id: string;
+  name: string;
+  key: string;
+  projects: LinearProject[];
+};
 
 export async function linearDiscoverTeams(
   apiKey: string
 ): Promise<LinearTeam[]> {
-  // Projects vêm na mesma viagem: o modal precisa deles logo depois da
-  // validação, e uma segunda chamada exigiria segurar a chave por mais tempo
-  // do que o necessário.
-  const data = await linearQuery<{ teams: { nodes: LinearTeam[] } }>(
+  const data = await linearQuery<{
+    teams: {
+      nodes: {
+        id: string;
+        name: string;
+        key: string;
+        projects?: { nodes: LinearProject[] };
+      }[];
+    };
+  }>(
     apiKey,
-    "{ teams { nodes { id name key projects { nodes { id name } } } } }"
+    "{ teams { nodes { id name key projects(first: 50) { nodes { id name } } } } }"
   );
-  return data.teams.nodes;
+  return data.teams.nodes.map((t) => ({
+    id: t.id,
+    name: t.name,
+    key: t.key,
+    projects: t.projects?.nodes ?? [],
+  }));
 }
-
-// ─── discoverProjects (projects within a team) ───────────────────────────────
-
-export type LinearProject = { id: string; name: string };
 
 // ─── importSnapshot ──────────────────────────────────────────────────────────
 
