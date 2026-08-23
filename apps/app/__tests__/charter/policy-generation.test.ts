@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { POLICY_SECTIONS } from "@repo/provisioning/src/charter";
+import { describe, expect, it, vi } from "vitest";
 // CORPORA mora em regulacao-corpora.ts (não em seed-regulacao.mts) — mesmo
 // idioma de import direto usado por licenca-copyright.test.ts.
 import { CORPORA } from "../../../../packages/database/scripts/regulacao-corpora";
@@ -20,21 +21,27 @@ describe("SECAO_CATEGORIAS", () => {
     }
   });
 
-  it("só usa as 9 seções do bootstrap", () => {
-    const NOVE_SECOES = [
-      "Perfil organizacional e contexto",
-      "Classificação de dados",
-      "Usos permitidos",
-      "Usos restritos",
-      "Usos proibidos",
-      "IA voltada ao cliente",
-      "Requisitos de aprovação",
-      "Human-in-the-loop",
-      "Escalonamento e exceções",
-    ];
+  it("só usa as seções do bootstrap — chaves vêm de POLICY_SECTIONS, não de lista redigitada", () => {
     expect(Object.keys(SECAO_CATEGORIAS).sort()).toEqual(
-      [...NOVE_SECOES].sort()
+      POLICY_SECTIONS.map((s) => s.name).sort()
     );
+  });
+
+  it("seção nova em POLICY_SECTIONS sem entrada no mapa derruba o import — prova de mutação", async () => {
+    vi.resetModules();
+    vi.doMock("@repo/provisioning/src/charter", () => ({
+      POLICY_SECTIONS: [
+        ...POLICY_SECTIONS,
+        { ordinal: 10, name: "Seção órfã inventada pelo teste" },
+      ],
+    }));
+
+    await expect(import("../../lib/charter/policy-generation")).rejects.toThrow(
+      /Seção órfã inventada pelo teste/
+    );
+
+    vi.doUnmock("@repo/provisioning/src/charter");
+    vi.resetModules();
   });
 });
 

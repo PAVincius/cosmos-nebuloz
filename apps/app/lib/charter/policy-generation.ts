@@ -2,9 +2,17 @@
 // seção de política por IA (NEB-156).
 //
 // Módulo puro de propósito: sem I/O, sem import de banco ou do pacote `ai`.
-// A server action em app/(charter)/actions/policy.ts monta o inventário do
-// tenant e chama generateText; aqui só decide o que entra no prompt e como —
-// testável por contrato, sem mock de rede nem de Prisma.
+// A server action em app/(charter)/actions/policy-generate.ts monta o
+// inventário do tenant e chama generateText; aqui só decide o que entra no
+// prompt e como — testável por contrato, sem mock de rede nem de Prisma.
+//
+// Import de "@repo/provisioning/src/charter" (não do índice público do
+// pacote): o índice reexporta platform-db.ts, que importa "server-only" —
+// inofensivo em Next, mas o pacote "server-only" real lança incondicionalmente
+// fora da condição "react-server" (fora do bundler do Next), o que quebraria
+// qualquer teste/script que carregasse este módulo puro sem mock. charter.ts
+// não importa nada assim — só tipos e um erro puro.
+import { POLICY_SECTIONS } from "@repo/provisioning/src/charter";
 
 export type CasoParaGeracao = {
   code: string;
@@ -37,12 +45,15 @@ export type ContextoGeracao = {
   fontes: { casos: number; fornecedores: number; exigencias: number };
 };
 
-/** Seção do Charter (as 9 do bootstrap — packages/provisioning/src/charter.ts)
- *  → categorias do corpus "Segurança em IA generativa" relevantes a ela. Toda
- *  categoria existente nos corpora precisa aparecer em ao menos uma seção —
- *  coberto por teste de contrato, para categoria órfã acusar aqui em vez de
- *  silenciosamente nunca entrar em rascunho nenhum. */
-export const SECAO_CATEGORIAS: Record<string, string[]> = {
+/** Categorias do corpus "Segurança em IA generativa" relevantes a cada seção
+ *  do Charter — dado de negócio, não derivável de POLICY_SECTIONS (que só
+ *  tem ordinal + nome). Toda categoria existente nos corpora precisa
+ *  aparecer em ao menos uma seção — coberto por teste de contrato, para
+ *  categoria órfã acusar aqui em vez de silenciosamente nunca entrar em
+ *  rascunho nenhum. Chave não usada pelas 9 seções do bootstrap não aparece
+ *  em SECAO_CATEGORIAS abaixo — só entra rascunho quem a seção realmente
+ *  tem. */
+const CATEGORIAS_POR_SECAO: Record<string, string[]> = {
   "Perfil organizacional e contexto": ["governança"],
   "Classificação de dados": ["dados"],
   "Usos permitidos": ["modelos", "runtime"],
@@ -53,6 +64,23 @@ export const SECAO_CATEGORIAS: Record<string, string[]> = {
   "Human-in-the-loop": ["monitoramento", "frontend"],
   "Escalonamento e exceções": ["monitoramento", "backend"],
 };
+
+/** Seção do Charter → categorias do corpus relevantes a ela. As CHAVES vêm
+ *  de POLICY_SECTIONS (packages/provisioning/src/charter.ts — fonte de
+ *  verdade única das nove seções do bootstrap), não de uma lista redigitada
+ *  aqui: seção nova ali sem entrada em CATEGORIAS_POR_SECAO derruba o import
+ *  deste módulo em vez de ficar silenciosamente sem categoria nenhuma. */
+export const SECAO_CATEGORIAS: Record<string, string[]> = Object.fromEntries(
+  POLICY_SECTIONS.map(({ name }) => {
+    const categorias = CATEGORIAS_POR_SECAO[name];
+    if (!categorias) {
+      throw new Error(
+        `Seção "${name}" existe em POLICY_SECTIONS (packages/provisioning) mas não tem categorias mapeadas em policy-generation.ts.`
+      );
+    }
+    return [name, categorias];
+  })
+);
 
 const MAX_FIELD_LENGTH = 200;
 const MIN_PRINTABLE_CODE_POINT = 0x20;
