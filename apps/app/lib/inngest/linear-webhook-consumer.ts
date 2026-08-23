@@ -1,5 +1,9 @@
 import { database } from "@repo/database";
 import {
+  lerScopes,
+  projectsAceitos,
+} from "@/app/actions/integrations/linear-scopes";
+import {
   handleLinearWebhook,
   type LinearWebhookPayload,
 } from "@/app/actions/integrations/sync/linear-pull";
@@ -35,7 +39,7 @@ export const consumeLinearWebhook = inngest.createFunction(
     // não no evento em si — sem carregar a integration, um tenant
     // multi-produto no plano free do Linear importaria issues dos outros
     // produtos do mesmo time.
-    const linearProjectId = await step.run("load-integration", async () => {
+    const linearProjectIds = await step.run("load-integration", async () => {
       const integration = await database.integration.findFirstOrThrow({
         where: {
           id: integrationId,
@@ -46,19 +50,14 @@ export const consumeLinearWebhook = inngest.createFunction(
         select: { mapping: true },
       });
 
-      const mapping = integration.mapping as {
-        linearProjectId?: unknown;
-      } | null;
-
-      // `null`, não `undefined`: o retorno de step.run passa por
-      // serialização no Inngest real (mesmo cuidado documentado em
-      // scheduled-report-dispatch.ts para lastRunAt).
-      return typeof mapping?.linearProjectId === "string"
-        ? mapping.linearProjectId
-        : null;
+      // Uma integração acompanha vários projects (a credencial é da conta),
+      // então o filtro é uma lista. `null`, não `undefined`: o retorno de
+      // step.run passa por serialização no Inngest real (mesmo cuidado
+      // documentado em scheduled-report-dispatch.ts para lastRunAt).
+      return projectsAceitos(lerScopes(integration.mapping));
     });
 
-    const opts = linearProjectId ? { linearProjectId } : undefined;
+    const opts = linearProjectIds ? { linearProjectIds } : undefined;
 
     // Sem try/catch de propósito: erro aqui (integration sumiu, Linear
     // trouxe dado inesperado, banco fora) precisa propagar para o retry do

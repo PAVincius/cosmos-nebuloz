@@ -311,7 +311,7 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
           project: { id: "proj-outro" },
         },
       },
-      { linearProjectId: "proj-alvo" }
+      { linearProjectIds: ["proj-alvo"] }
     );
 
     expect(mocks.storyCreate).not.toHaveBeenCalled();
@@ -343,7 +343,7 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
           project: { id: "proj-alvo" },
         },
       },
-      { linearProjectId: "proj-alvo" }
+      { linearProjectIds: ["proj-alvo"] }
     );
 
     expect(mocks.storyCreate).toHaveBeenCalled();
@@ -367,7 +367,7 @@ describe("handleLinearWebhook — filtro por project (COS-85)", () => {
           state: { name: "Todo" },
         },
       },
-      { linearProjectId: "proj-alvo" }
+      { linearProjectIds: ["proj-alvo"] }
     );
 
     expect(mocks.storyCreate).not.toHaveBeenCalled();

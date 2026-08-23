@@ -36,6 +36,11 @@ import {
   linearImportTeamIssues,
   linearTestConnection,
 } from "../../actions/integrations/connectors/linear";
+import {
+  type LinearScope,
+  lerScopes,
+} from "../../actions/integrations/linear-scopes";
+import { createEpic } from "./kanban";
 
 export type SyncRunView = {
   id: string;
@@ -330,7 +335,8 @@ export type LinearImportPreview = {
 const AnalyzeLinearImportSchema = z.object({
   apiKey: z.string().trim().min(8),
   linearTeamId: z.string().min(1),
-  linearProjectId: z.string().min(1).optional(),
+  /** Projects marcados no modal. Vazio = o time inteiro. */
+  linearProjectIds: z.array(z.string().min(1)).optional(),
 });
 
 /**
@@ -344,19 +350,25 @@ export async function analyzeLinearImport(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "STE"], ctx);
-    const { apiKey, linearTeamId, linearProjectId } =
+    const { apiKey, linearTeamId, linearProjectIds } =
       AnalyzeLinearImportSchema.parse(input);
 
+    // Uma passada só, mesmo com vários projects marcados: o conector já
+    // pagina o time inteiro e filtra localmente, então pedir por project
+    // seria reler o time uma vez por produto.
     const lote = [];
     let cursor: string | undefined;
     do {
       const { issues, nextCursor } = await linearImportTeamIssues(
         apiKey,
         linearTeamId,
-        cursor,
-        linearProjectId
+        cursor
       );
-      lote.push(...issues);
+      lote.push(
+        ...(linearProjectIds && linearProjectIds.length > 0
+          ? issues.filter((i) => linearProjectIds.includes(i.project?.id ?? ""))
+          : issues)
+      );
       cursor = nextCursor ?? undefined;
     } while (cursor);
 
@@ -379,21 +391,74 @@ export async function analyzeLinearImport(
   });
 }
 
+/** Um recorte escolhido no modal: time, project opcional e destino. */
+const LinearScopeInputSchema = z.object({
+  linearTeamId: z.string().min(1),
+  /** Project real do Linear. Ausente = o time inteiro. */
+  linearProjectId: z.string().min(1).optional(),
+  /** Nome do project, usado no épico criado e no rótulo da tela. */
+  label: z.string().min(1).max(120).trim().optional(),
+  /** Épico já existente que adota as features deste recorte. Sem ele e sem
+   *  `criarEpico`, as features nascem órfãs — e o Cosmos é épico-cêntrico:
+   *  feature sem épico não aparece em tela nenhuma. */
+  epicId: z.string().cuid().optional(),
+  /** Cria um épico com o nome do project e usa ele como destino. Ignorado
+   *  quando `epicId` vem preenchido. */
+  criarEpico: z.boolean().default(false),
+});
+
 const ConnectLinearSchema = z.object({
   name: z.string().min(1).max(120).trim(),
   apiKey: z.string().trim().min(8),
-  linearTeamId: z.string().min(1),
-  /** Importa as issues do time logo depois de conectar. */
+  /** Recortes do Linear que esta integração acompanha. A credencial é da
+   *  conta, então uma integração cobre vários projects — ver o comentário de
+   *  `linear-scopes.ts` para o que o modelo antigo (um card por project)
+   *  quebrava no webhook. */
+  scopes: z.array(LinearScopeInputSchema).min(1),
+  /** Importa as issues dos recortes logo depois de conectar. */
   importNow: z.boolean().default(false),
-  /** Épico que adota as features importadas. Sem ele, elas nascem órfãs — e
-   *  o Cosmos é épico-cêntrico: feature sem épico não aparece em tela
-   *  nenhuma (epic-tree, program board e getEpicFeatures partem do épico). */
-  epicId: z.string().cuid().optional(),
-  /** Project real do Linear, para times no plano free que hospedam vários
-   *  produtos (ARTs do Cosmos) como projects dentro do mesmo linearTeamId.
-   *  Sem ele, o import traz as issues de todos os projects do time. */
-  linearProjectId: z.string().min(1).optional(),
 });
+
+/**
+ * Roda o import de cada recorte e soma os contadores.
+ *
+ * Um recorte que falha não derruba os outros: com quatro produtos numa
+ * integração, um project que o Linear recusa deixaria os três restantes sem
+ * sincronizar. A falha vira `skipped`, que é o contador que a tela já mostra.
+ */
+async function importarScopes(
+  integrationId: string,
+  scopes: LinearScope[]
+): Promise<ImportCounts> {
+  const total: ImportCounts = {
+    created: 0,
+    updated: 0,
+    skipped: 0,
+    reclassified: 0,
+  };
+  for (const scope of scopes) {
+    const snapshot = await runImportSnapshot({
+      integrationId,
+      projectId: scope.linearTeamId,
+      targetType: "feature",
+      ...(scope.epicId ? { epicId: scope.epicId } : {}),
+      ...(scope.linearProjectId
+        ? { linearProjectId: scope.linearProjectId }
+        : {}),
+    });
+    if (!snapshot.ok) {
+      total.skipped += 1;
+      continue;
+    }
+    // `?? 0` porque um contador ausente somaria NaN, e NaN atravessaria o
+    // toast até a tela como "NaN reclassificadas" em vez de estourar.
+    total.created += snapshot.data.created ?? 0;
+    total.updated += snapshot.data.updated ?? 0;
+    total.skipped += snapshot.data.skipped ?? 0;
+    total.reclassified += snapshot.data.reclassified ?? 0;
+  }
+  return total;
+}
 
 export async function connectLinearIntegration(
   input: z.input<typeof ConnectLinearSchema>
@@ -419,25 +484,46 @@ export async function connectLinearIntegration(
       throw new Error(created.error);
     }
 
-    // `mapping` só é gravado por runImportSnapshot, junto do SyncLog da
-    // execução. Sem importar agora, a integração fica conectada e sem time
-    // mapeado — e é isso que `resyncIntegration` recusa depois, em vez de
-    // adivinhar um time.
+    // Cada recorte ganha o épico que vai adotar as features dele. Criar aqui,
+    // e não antes no Kanban, é o que permite marcar quatro produtos de uma vez
+    // sem sair da tela para preparar quatro épicos à mão.
+    const scopes: LinearScope[] = [];
+    for (const s of parsed.scopes) {
+      let epicId = s.epicId;
+      if (!epicId && s.criarEpico) {
+        const epico = await createEpic({
+          title: s.label ?? parsed.name,
+          column: "funnel",
+        });
+        if (!epico.ok) {
+          throw new Error(epico.error);
+        }
+        epicId = epico.data.id;
+      }
+      scopes.push({
+        linearTeamId: s.linearTeamId,
+        ...(s.linearProjectId ? { linearProjectId: s.linearProjectId } : {}),
+        ...(epicId ? { epicId } : {}),
+        ...(s.label ? { label: s.label } : {}),
+      });
+    }
+
+    // O mapping é gravado aqui, antes de importar: runImportSnapshot regrava
+    // o blob com o input de UMA execução, e deixá-lo mandar apagaria os
+    // outros recortes a cada import.
+    await database.integration.update({
+      where: { id: created.data.id },
+      data: { mapping: { scopes } },
+    });
+
     let imported: ImportCounts | null = null;
     if (parsed.importNow) {
-      const snapshot = await runImportSnapshot({
-        integrationId: created.data.id,
-        projectId: parsed.linearTeamId,
-        targetType: "feature",
-        ...(parsed.epicId ? { epicId: parsed.epicId } : {}),
-        ...(parsed.linearProjectId
-          ? { linearProjectId: parsed.linearProjectId }
-          : {}),
+      imported = await importarScopes(created.data.id, scopes);
+      // runImportSnapshot sobrescreveu o mapping com o último recorte.
+      await database.integration.update({
+        where: { id: created.data.id },
+        data: { mapping: { scopes } },
       });
-      if (!snapshot.ok) {
-        throw new Error(snapshot.error);
-      }
-      imported = snapshot.data;
     }
 
     await logAudit(ctx.tenantId, {
@@ -445,7 +531,11 @@ export async function connectLinearIntegration(
       action: "created",
       entityType: "integration",
       entityId: created.data.id,
-      diff: { source: "linear", name: parsed.name, team: parsed.linearTeamId },
+      diff: {
+        source: "linear",
+        name: parsed.name,
+        scopes: scopes.map((s) => s.linearProjectId ?? s.linearTeamId),
+      },
     });
     revalidatePath("/cosmos/integrations");
 
@@ -481,45 +571,115 @@ export async function resyncIntegration(
       throw new Error("Integração pausada — retome antes de sincronizar.");
     }
 
-    const mapping = existing.mapping as {
-      projectId?: unknown;
-      epicId?: unknown;
-      piPlanId?: unknown;
-      teamId?: unknown;
-      linearProjectId?: unknown;
-    } | null;
-    const projectId = mapping?.projectId;
-    if (typeof projectId !== "string" || projectId.length === 0) {
+    // Atravessa os dois formatos de mapping — integração antiga (um project
+    // por card) ainda sincroniza enquanto não é fundida.
+    const scopes = lerScopes(existing.mapping);
+    if (scopes.length === 0) {
       throw new Error(
         "Integração sem time do Linear mapeado — reconecte escolhendo o time."
       );
     }
 
-    // O mapping inteiro segue junto: runImportSnapshot regrava `mapping` com
-    // o input desta chamada, então repassar só o projectId apagaria o épico
-    // escolhido na conexão — e o sync seguinte largaria as features órfãs.
-    const snapshot = await runImportSnapshot({
-      integrationId: id,
-      projectId,
-      targetType: "feature",
-      ...(typeof mapping?.epicId === "string"
-        ? { epicId: mapping.epicId }
-        : {}),
-      ...(typeof mapping?.piPlanId === "string"
-        ? { piPlanId: mapping.piPlanId }
-        : {}),
-      ...(typeof mapping?.teamId === "string"
-        ? { teamId: mapping.teamId }
-        : {}),
-      ...(typeof mapping?.linearProjectId === "string"
-        ? { linearProjectId: mapping.linearProjectId }
-        : {}),
+    const counts = await importarScopes(id, scopes);
+    // runImportSnapshot regrava o mapping com o input do último recorte; sem
+    // isto o segundo sync encontraria só ele e largaria os outros produtos.
+    await database.integration.update({
+      where: { id },
+      data: { mapping: { scopes } },
     });
-    if (!snapshot.ok) {
-      throw new Error(snapshot.error);
-    }
 
     revalidatePath("/cosmos/integrations");
-    return snapshot.data;
+    return counts;
+  });
+}
+
+/**
+ * Funde as integrações do Linear do tenant em uma só.
+ *
+ * O modelo antigo criava uma Integration por project, o que além de encher a
+ * tela quebrava o webhook: a rota escolhe a integração com
+ * `findFirst({tenantId, source:"linear"})`, então com N integrações todo
+ * evento caía na primeira e era filtrado pelo project dela — as issues dos
+ * outros produtos eram descartadas como FILTERED.
+ *
+ * A sobrevivente é a mais antiga (a que a rota já vinha escolhendo, então os
+ * eventos em voo continuam achando o mesmo id). Os escopos das demais são
+ * absorvidos, e os filhos que apontam para elas — SyncLog, LinearSyncEvent,
+ * WebhookDlq — são re-apontados antes de sumirem: `LinearSyncEvent` guarda
+ * `integrationId` como coluna solta, sem FK, então apagar sem re-apontar
+ * deixaria histórico órfão em vez de erro.
+ */
+export async function fundirIntegracoesLinear(): Promise<
+  Result<{ id: string; absorvidas: number; scopes: number }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+
+    const integracoes = await database.integration.findMany({
+      where: { tenantId: ctx.tenantId, source: "linear" },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, mapping: true, name: true },
+    });
+    if (integracoes.length === 0) {
+      throw new Error("Nenhuma integração do Linear para fundir.");
+    }
+
+    const principal = integracoes[0];
+    if (!principal) {
+      throw new Error("Nenhuma integração do Linear para fundir.");
+    }
+    const extras = integracoes.slice(1);
+
+    // Dedup por recorte: reconectar o mesmo project duas vezes não pode
+    // gerar dois escopos iguais, que dobrariam cada import.
+    const porChave = new Map<string, LinearScope>();
+    for (const i of integracoes) {
+      for (const s of lerScopes(i.mapping)) {
+        porChave.set(`${s.linearTeamId}:${s.linearProjectId ?? ""}`, s);
+      }
+    }
+    const scopes = [...porChave.values()];
+
+    for (const extra of extras) {
+      await database.syncLog.updateMany({
+        where: { integrationId: extra.id },
+        data: { integrationId: principal.id },
+      });
+      await database.linearSyncEvent.updateMany({
+        where: { tenantId: ctx.tenantId, integrationId: extra.id },
+        data: { integrationId: principal.id },
+      });
+      await database.webhookDlq.updateMany({
+        where: { tenantId: ctx.tenantId, integrationId: extra.id },
+        data: { integrationId: principal.id },
+      });
+      await database.integration.delete({ where: { id: extra.id } });
+    }
+
+    await database.integration.update({
+      where: { id: principal.id },
+      data: { name: "Linear", mapping: { scopes } },
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "updated",
+      entityType: "integration",
+      entityId: principal.id,
+      diff: {
+        fundidas: extras.map((e) => e.name),
+        scopes: scopes.map(
+          (s) => s.label ?? s.linearProjectId ?? s.linearTeamId
+        ),
+      },
+    });
+    revalidatePath("/cosmos/integrations");
+
+    return {
+      id: principal.id,
+      absorvidas: extras.length,
+      scopes: scopes.length,
+    };
   });
 }

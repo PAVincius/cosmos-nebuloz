@@ -101,11 +101,13 @@ export async function triggerLinearFullPull(
       after: cursor,
     });
 
-    // COS-85: só monta opts de filtro quando há linearProjectId configurado
-    // — handleLinearWebhook trata "sem opts" como "sem filtro", igual ao
-    // comportamento anterior a esta issue.
+    // COS-85: só monta opts de filtro quando há project configurado —
+    // handleLinearWebhook trata "sem opts" como "sem filtro", igual ao
+    // comportamento anterior a esta issue. O full pull é por time, então
+    // filtra por um project de cada vez, e o dispatch chama uma vez por
+    // escopo.
     const webhookOpts = opts.linearProjectId
-      ? { linearProjectId: opts.linearProjectId }
+      ? { linearProjectIds: [opts.linearProjectId] }
       : undefined;
 
     for (const node of page.nodes) {

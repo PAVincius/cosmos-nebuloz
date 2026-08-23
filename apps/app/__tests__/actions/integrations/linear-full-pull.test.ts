@@ -226,7 +226,9 @@ describe("triggerLinearFullPull — repasse do filtro de project (COS-85)", () =
       expect.objectContaining({
         data: expect.objectContaining({ project: { id: "proj-x" } }),
       }),
-      { linearProjectId: "proj-x" }
+      // O full pull é por time e filtra um project por vez; o dispatch chama
+      // uma vez por escopo da integração.
+      { linearProjectIds: ["proj-x"] }
     );
   });
 

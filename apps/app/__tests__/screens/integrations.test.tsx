@@ -237,6 +237,80 @@ describe("IntegrationsScreen", () => {
     expect(screen.queryByText(/Sincronizado em/)).toBeNull();
   });
 
+  it("conecta vários projects numa integração só — um card, uma credencial", async () => {
+    // O ponto do modelo: a credencial é da conta do Linear, não do project.
+    // Marcar quatro produtos manda quatro recortes numa chamada, não quatro
+    // integrações — e cada um ganha um épico de mesmo nome.
+    listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
+    discoverLinearTeamsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        account: "Nebuloz",
+        teams: [
+          {
+            id: "lt_neb",
+            name: "Nebuloz",
+            key: "NEB",
+            projects: [
+              { id: "prj_mer", name: "Meridian" },
+              { id: "prj_cha", name: "Charter" },
+              { id: "prj_sig", name: "Signal" },
+            ],
+          },
+        ],
+      },
+    });
+    connectLinearIntegrationMock.mockResolvedValue({
+      ok: true,
+      data: {
+        id: "i9",
+        imported: { created: 30, updated: 0, skipped: 0, reclassified: 0 },
+      },
+    });
+
+    render(<IntegrationsScreen />);
+    fireEvent.click((await screen.findAllByText("Conectar"))[0]);
+    fireEvent.change(screen.getByLabelText("Personal API key"), {
+      target: { value: "lin_api_teste_00000000" },
+    });
+    fireEvent.click(screen.getByText("Validar e listar times"));
+
+    fireEvent.click(await screen.findByLabelText("Meridian"));
+    fireEvent.click(screen.getByLabelText("Signal"));
+
+    const submits = screen.getAllByText("Conectar");
+    const submit = submits.at(-1);
+    if (!submit) {
+      throw new Error("botão de submit do modal não renderizou");
+    }
+    fireEvent.click(submit);
+
+    await waitFor(() =>
+      expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
+        name: "Linear · Nebuloz",
+        apiKey: "lin_api_teste_00000000",
+        importNow: true,
+        scopes: [
+          {
+            linearTeamId: "lt_neb",
+            linearProjectId: "prj_mer",
+            label: "Meridian",
+            criarEpico: true,
+          },
+          {
+            linearTeamId: "lt_neb",
+            linearProjectId: "prj_sig",
+            label: "Signal",
+            criarEpico: true,
+          },
+        ],
+      })
+    );
+    // Uma chamada só: o Charter não marcado fica de fora, e nada disso vira
+    // uma segunda integração.
+    expect(connectLinearIntegrationMock).toHaveBeenCalledTimes(1);
+  });
+
   it("conecta o Linear validando a credencial antes de gravar, e só então oferece o time", async () => {
     listIntegrationsMock.mockResolvedValue({ ok: true, data: [] });
     discoverLinearTeamsMock.mockResolvedValue({
@@ -282,7 +356,7 @@ describe("IntegrationsScreen", () => {
       expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
         name: "Linear · Meridian",
         apiKey: "lin_api_teste_00000000",
-        linearTeamId: "lt_1",
+        scopes: [{ linearTeamId: "lt_1" }],
         importNow: true,
       })
     );
@@ -397,23 +471,23 @@ describe("IntegrationsScreen", () => {
       });
     });
 
-    // Time A já vem selecionado (primeiro da lista) — escolhe o project Alpha.
-    fireEvent.change(await screen.findByLabelText(/Project do Linear/), {
-      target: { value: "proj_alpha" },
-    });
-    expect(
-      (screen.getByLabelText(/Project do Linear/) as HTMLSelectElement).value
-    ).toBe("proj_alpha");
+    // Time A já vem selecionado (primeiro da lista) — marca o project Alpha.
+    fireEvent.click(await screen.findByLabelText("Alpha"));
+    expect((screen.getByLabelText("Alpha") as HTMLInputElement).checked).toBe(
+      true
+    );
 
     // Troca para o time B sem escolher project de novo.
     fireEvent.change(screen.getByLabelText(/Time do Linear/), {
       target: { value: "lt_b" },
     });
 
-    // O project do time anterior não sobrevive à troca: Alpha some das
-    // options do select, Beta (do novo time) aparece.
-    expect(screen.queryByRole("option", { name: "Alpha" })).toBeNull();
-    expect(screen.getByRole("option", { name: "Beta" })).toBeTruthy();
+    // O project do time anterior não sobrevive à troca: Alpha some da lista,
+    // Beta (do novo time) aparece — e desmarcado.
+    expect(screen.queryByLabelText("Alpha")).toBeNull();
+    expect((screen.getByLabelText("Beta") as HTMLInputElement).checked).toBe(
+      false
+    );
 
     const submits = screen.getAllByText("Conectar");
     const submit = submits.at(-1);
@@ -422,13 +496,13 @@ describe("IntegrationsScreen", () => {
     }
     fireEvent.click(submit);
 
-    // Conectar sem escolher project de novo não carrega o linearProjectId
-    // stale do time anterior.
+    // Conectar sem marcar project de novo não carrega o proj_alpha stale do
+    // time anterior: o escopo é o time B inteiro.
     await waitFor(() =>
       expect(connectLinearIntegrationMock).toHaveBeenCalledWith({
         name: "Linear · Time B",
         apiKey: "lin_api_teste_00000000",
-        linearTeamId: "lt_b",
+        scopes: [{ linearTeamId: "lt_b" }],
         importNow: true,
       })
     );

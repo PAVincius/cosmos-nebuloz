@@ -128,9 +128,17 @@ describe("handler — caminho feliz", () => {
     );
   });
 
-  it("monta opts com linearProjectId quando o mapping da integration configura o filtro (COS-85)", async () => {
+  it("filtra pelos projects de todos os escopos da integração", async () => {
+    // Uma integração cobre vários produtos: o webhook precisa aceitar issue
+    // de qualquer um deles. Com uma integração por project (modelo antigo),
+    // a rota escolhia sempre a primeira e descartava os outros produtos.
     mocks.integrationFindFirstOrThrow.mockResolvedValue({
-      mapping: { linearProjectId: "proj-x" },
+      mapping: {
+        scopes: [
+          { linearTeamId: "lt_neb", linearProjectId: "proj-mer" },
+          { linearTeamId: "lt_neb", linearProjectId: "proj-cha" },
+        ],
+      },
     });
 
     await capturedHandler({ event: baseEvent, step: makeStep() });
@@ -139,11 +147,44 @@ describe("handler — caminho feliz", () => {
       "t1",
       "integ-1",
       expect.anything(),
-      { linearProjectId: "proj-x" }
+      { linearProjectIds: ["proj-mer", "proj-cha"] }
     );
   });
 
-  it("não monta opts quando o mapping não tem linearProjectId", async () => {
+  it("lê o mapping antigo (um project por integração) como escopo único", async () => {
+    // `projectId` era o teamId do Linear no formato anterior.
+    mocks.integrationFindFirstOrThrow.mockResolvedValue({
+      mapping: { projectId: "lt_1", linearProjectId: "proj-x" },
+    });
+
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    expect(mocks.handleLinearWebhook).toHaveBeenCalledWith(
+      "t1",
+      "integ-1",
+      expect.anything(),
+      { linearProjectIds: ["proj-x"] }
+    );
+  });
+
+  it("não filtra quando um escopo acompanha o time inteiro", async () => {
+    // O payload do webhook não carrega time: filtrar por project descartaria
+    // issues que o escopo de time inteiro aceita.
+    mocks.integrationFindFirstOrThrow.mockResolvedValue({
+      mapping: {
+        scopes: [
+          { linearTeamId: "lt_neb", linearProjectId: "proj-mer" },
+          { linearTeamId: "lt_cos" },
+        ],
+      },
+    });
+
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    expect(mocks.handleLinearWebhook.mock.calls[0][3]).toBeUndefined();
+  });
+
+  it("não monta opts quando o mapping não tem escopo nenhum", async () => {
     mocks.integrationFindFirstOrThrow.mockResolvedValue({
       mapping: { someOtherKey: true },
     });
