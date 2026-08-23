@@ -22,12 +22,17 @@ if (process.env.VERCEL_ENV !== "production") {
 }
 
 if (!process.env.DATABASE_URL) {
-  // Build sem banco configurado não deve quebrar por causa deste script —
-  // mas nenhuma migration foi aplicada, e isso precisa ficar visível no log.
-  console.warn(
-    "deploy-migrations: DATABASE_URL ausente em produção — pulando prisma migrate deploy. Nenhuma migration foi aplicada."
+  // Falha proposital, e não um aviso. Build de produção sem DATABASE_URL
+  // significa que nenhuma migration pode ser aplicada — e seguir assim
+  // publicaria código novo contra um schema possivelmente velho, que é o
+  // incidente inteiro que este script existe para impedir. Sair com 0 aqui
+  // deixaria o pipeline decorativo: verde, silencioso e sem efeito.
+  // Se este erro aparecer, o conserto é configurar DATABASE_URL no ambiente
+  // de produção da Vercel — não afrouxar esta verificação.
+  console.error(
+    "deploy-migrations: DATABASE_URL ausente no build de produção. Nenhuma migration pode ser aplicada — derrubando o build em vez de publicar contra schema não verificado."
   );
-  process.exit(0);
+  process.exit(1);
 }
 
 // A partir daqui: produção, com banco configurado. Falha de migration DEVE
