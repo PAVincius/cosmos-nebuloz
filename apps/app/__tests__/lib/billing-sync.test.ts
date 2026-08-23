@@ -335,6 +335,60 @@ describe("handler — extractCostFields defaults", () => {
   });
 });
 
+// NEB-185 defeito 2 — o INSERT do CostSnapshot agrupava só por (tenantId,
+// themeId, dia) e gravava NULL literal nas posições artId/epicId: todo o
+// custo de um tema num dia caía numa única linha, sem quebra por épico/ART,
+// mesmo a constraint única já suportando essa granularidade.
+// Strips `-- ...` SQL comment lines so assertions target real SQL tokens,
+// not prose in the explanatory comments living inside the template literal.
+function stripSqlComments(sql: string): string {
+  return sql
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("--"))
+    .join("\n");
+}
+
+function findAggregateSnapshotsCall() {
+  const call = mocks.dbExecuteRaw.mock.calls.find(([strings]) =>
+    (strings as unknown as string[]).join("").includes('"CostSnapshot"')
+  );
+  if (!call) {
+    throw new Error("aggregate-snapshots $executeRaw call not found");
+  }
+  const [strings] = call as [TemplateStringsArray];
+  return stripSqlComments(Array.from(strings).join("§"));
+}
+
+describe("handler — aggregate-snapshots SQL groups by epic/ART", () => {
+  it("selects be.artId and be.epicId instead of literal NULL", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateSnapshotsCall();
+    expect(sql).toContain('be."artId"');
+    expect(sql).toContain('be."epicId"');
+  });
+
+  it("groups by themeId, artId and epicId (not just themeId) so each entry lands in exactly one group", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateSnapshotsCall();
+    const groupByClause = sql.split("GROUP BY")[1]?.split("ON CONFLICT")[0];
+    expect(groupByClause).toContain('be."themeId"');
+    expect(groupByClause).toContain('be."artId"');
+    expect(groupByClause).toContain('be."epicId"');
+  });
+
+  it("keeps okrId as literal NULL — no OKR resolution exists in the pipeline", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateSnapshotsCall();
+    const selectClause = sql.split("SELECT")[1]?.split("FROM")[0] ?? "";
+    // themeId, artId, epicId are all column refs now; okrId is the sole
+    // remaining literal NULL in the SELECT list.
+    expect((selectClause.match(/NULL/g) ?? []).length).toBe(1);
+  });
+});
+
 describe("handler — advance cursor", () => {
   it("upserts cursor and updates syncRun to SUCCESS", async () => {
     await capturedHandler({ event: baseEvent, step: makeStep() });

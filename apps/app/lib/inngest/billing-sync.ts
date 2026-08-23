@@ -266,16 +266,23 @@ export const billingSyncFunction = inngest.createFunction(
           gen_random_uuid()::text,
           be."tenantId",
           be."themeId",
-          NULL,
-          NULL,
+          be."artId",
+          be."epicId",
           NULL,
           DATE_TRUNC('day', be."usageStartDate"),
           'DAILY',
-          SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'),
+          -- COALESCE(...,0) nas três: SUM(...) FILTER(...) devolve NULL (não
+          -- 0) quando nenhuma linha do grupo bate o filtro — todo grupo cujas
+          -- entradas são 100% não-Credit (o normal) já violava a NOT NULL de
+          -- unmappedAmount antes desta correção, abortando o INSERT inteiro
+          -- (statement único, uma linha ruim derruba todas). Achado ao provar
+          -- que a soma bate — sem isto não dava nem para rodar a query contra
+          -- um Postgres de verdade.
+          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
           0,
           0,
-          SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'),
-          SUM(be."tenantAmount") FILTER (WHERE be."mappingConf" = 'UNMAPPED'),
+          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
+          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."mappingConf" = 'UNMAPPED'), 0),
           '{}',
           '{}',
           'USD',
@@ -285,7 +292,28 @@ export const billingSyncFunction = inngest.createFunction(
         FROM "BillingEntry" be
         WHERE be."tenantId" = ${tenantId}
           AND be."integrationId" = ${integrationId}
-        GROUP BY be."tenantId", be."themeId", DATE_TRUNC('day', be."usageStartDate")
+        -- Cada BillingEntry cai em exatamente um grupo: o agrupamento abaixo
+        -- lista todas as colunas não-agregadas do SELECT (garantia do próprio
+        -- Postgres — não compila SELECT de coluna não-agregada fora dele),
+        -- então a partição é exaustiva e sem sobreposição por construção. Antes,
+        -- artId/epicId eram NULL literal fora do agrupamento: linhas de épicos
+        -- diferentes sob o mesmo tema caíam numa só linha (o total do dia
+        -- batia, mas a quebra por épico/ART se perdia).
+        GROUP BY be."tenantId", be."themeId", be."artId", be."epicId", DATE_TRUNC('day', be."usageStartDate")
+        -- okrId segue NULL literal — não há resolução de OKR no pipeline.
+        --
+        -- NEB-185: o ON CONFLICT abaixo só "casa" quando NENHUMA das colunas
+        -- da constraint é NULL — no Postgres, NULLS DISTINCT (padrão, e o
+        -- único modo que o Prisma sabe declarar; NULLS NOT DISTINCT existe no
+        -- Postgres 15+ mas não tem sintaxe no schema.prisma) trata NULL como
+        -- nunca igual a NULL, então duas linhas com a mesma chave mas algum
+        -- campo NULL nunca colidem. okrId é NULL literal em TODA linha desta
+        -- query — logo o DO UPDATE abaixo nunca dispara hoje, com ou sem este
+        -- fix: cada sync insere de novo em vez de atualizar. Bug pré-existente
+        -- (não introduzido nem agravado por agrupar por artId/epicId), fora do
+        -- escopo dos três defeitos do NEB-185 — requer NULLS NOT DISTINCT no
+        -- índice (não representável em schema.prisma sem quebrar o
+        -- "prisma migrate diff") ou reescrever o upsert. Sinalizado à parte.
         ON CONFLICT ("tenantId", "themeId", "artId", "epicId", "okrId", period, granularity)
         DO UPDATE SET
           "cloudCost"      = EXCLUDED."cloudCost",
