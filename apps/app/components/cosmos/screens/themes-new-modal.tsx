@@ -4,13 +4,20 @@ import { Icon } from "@repo/design-system/cosmos/icons";
 import { Badge, Button, useAction } from "@repo/design-system/cosmos/kit";
 // themes-new-modal.tsx — NewThemeModal, separado de themes.tsx pelo
 // file-size-guard (teto de 800 linhas, scripts/file-size-guard.mts).
-// Conteúdo movido como estava.
+// Conteúdo movido como estava — inclusive o quick-create de budget e épico
+// (#113/#114), que uma extração anterior deste arquivo (#112, cortada de
+// main antes desse trabalho) tinha deixado de fora. Regride quem reintroduz
+// a versão antiga aqui: a fonte de verdade passou a ser este arquivo, não
+// mais um bloco dentro de themes.tsx.
 import { type CSSProperties, useState } from "react";
+import { createEpic } from "@/app/(cosmos)/actions/kanban";
 import {
   createTheme,
   listThemeLinkOptions,
+  type ThemeLinkOption,
   type ThemeLinkOptions,
 } from "@/app/(cosmos)/actions/themes";
+import { createLeanBudget } from "@/app/actions/lean-budget";
 import {
   ModalCard,
   ModalShortcutHint,
@@ -56,18 +63,69 @@ export function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
     []
   );
 
-  const budgets = opcoes?.budgets ?? [];
+  // Budget criado aqui dentro não volta em listThemeLinkOptions: aquela lista
+  // foi carregada uma vez, ao abrir. Sem guardá-lo, o preview diria "nenhum
+  // budget vinculado" logo depois de vincular um.
+  const [budgetsCriados, setBudgetsCriados] = useState<ThemeLinkOption[]>([]);
+  const budgets = [...budgetsCriados, ...(opcoes?.budgets ?? [])];
   const epics = opcoes?.epics ?? [];
   const budget = budgets.find((b) => b.id === budgetId);
   const alvo = Number(target) || 0;
   // Quanto do lean budget do portfólio esta aposta consome, comparado ao que
   // ela deveria consumir — é a pergunta que o tema existe para responder.
-  const totalPortfolio = opcoes?.budgetTotalPortfolio ?? 0;
+  // O denominador soma os budgets recém-criados: eles também são portfólio, e
+  // deixá-los de fora inflaria a fatia deste tema.
+  const totalPortfolio =
+    (opcoes?.budgetTotalPortfolio ?? 0) +
+    budgetsCriados.reduce((soma, b) => soma + (b.amount ?? 0), 0);
   const alocado =
     budget && totalPortfolio > 0
       ? Math.round(((budget.amount ?? 0) / totalPortfolio) * 100)
       : 0;
   const desvio = alocado - alvo;
+
+  // Criar o épico sem sair daqui: exigir abrir o Kanban para cadastrá-lo antes
+  // custaria tudo o que já foi preenchido neste formulário.
+  const criarEpico = async (rascunho: Record<string, string>) => {
+    const titulo = (rascunho.title ?? "").trim();
+    if (!titulo) {
+      return null;
+    }
+    // "funnel" é onde épico novo nasce no fluxo SAFe; a coluna não é escolha
+    // do formulário compacto.
+    const res = await createEpic({ title: titulo, column: "funnel" });
+    // A action devolve só o id — o rótulo do chip vem do que foi digitado.
+    return res.ok ? { id: res.data.id, label: titulo } : null;
+  };
+
+  // Mesmo motivo do épico: um tema sem budget aprovado é caixa de texto, e o
+  // budget é justamente o que costuma faltar na hora de criar o tema.
+  const criarBudget = async (rascunho: Record<string, string>) => {
+    const nome = (rascunho.name ?? "").trim();
+    const periodo = (rascunho.period ?? "").trim();
+    const valor = Number(rascunho.amount);
+    // O schema do servidor recusaria do mesmo jeito; barrar aqui devolve o
+    // formulário aberto sem gastar a viagem.
+    if (!(nome && periodo && Number.isFinite(valor) && valor > 0)) {
+      return null;
+    }
+    const res = await createLeanBudget({
+      amount: valor,
+      name: nome,
+      period: periodo,
+    });
+    if (!res.ok) {
+      return null;
+    }
+    const novo = {
+      amount: valor,
+      id: res.data.id,
+      label: res.data.name,
+      sub: periodo,
+    };
+    setBudgetsCriados((atuais) => [novo, ...atuais]);
+    return novo;
+  };
 
   const create = async () => {
     if (!title.trim() || saving) {
@@ -357,6 +415,29 @@ export function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
             label="Budget / Value Stream"
             onChange={(v) => setBudgetId(v as string | null)}
             placeholder="Buscar um budget já aprovado..."
+            quickCreate={{
+              campos: [
+                {
+                  key: "name",
+                  label: "Nome do budget",
+                  placeholder: "ex: Plataforma",
+                },
+                {
+                  key: "amount",
+                  label: "Valor (R$)",
+                  placeholder: "1000000",
+                  type: "number",
+                },
+                {
+                  key: "period",
+                  label: "Período",
+                  placeholder: "ex: PI-2026-Q1",
+                },
+              ],
+              inicial: { amount: "", name: "", period: "" },
+              label: "+ Criar novo budget",
+              onCreate: criarBudget,
+            }}
             tone={tone}
             value={budgetId}
           />
@@ -368,6 +449,18 @@ export function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
             multi
             onChange={(v) => setEpicIds((v as string[]) ?? [])}
             placeholder="Buscar épicos existentes..."
+            quickCreate={{
+              campos: [
+                {
+                  key: "title",
+                  label: "Título do épico",
+                  placeholder: "ex: Antifraude",
+                },
+              ],
+              inicial: { title: "" },
+              label: "+ Criar novo épico",
+              onCreate: criarEpico,
+            }}
             tone={tone}
             value={epicIds}
           />
