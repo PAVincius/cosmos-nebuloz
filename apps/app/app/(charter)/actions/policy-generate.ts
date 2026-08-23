@@ -197,8 +197,26 @@ export async function generatePolicyDraft(input: {
     const { section, casos, fornecedores, exigencias } =
       await lerSecaoEInventario(ctx.tenantId, data.sectionId);
 
-    // Fase 2 — fora de qualquer transação: cota, provider, IA.
+    // Fase 2 — fora de qualquer transação: provider, cota, IA.
     //
+    // Import dinâmico pelo mesmo motivo de @repo/rate-limit abaixo: um
+    // import estático de @repo/ai/lib/models força todo importador deste
+    // arquivo a validar chave de provedor em tempo de import.
+    const { getActiveProvider, getAIModel } = await import(
+      "@repo/ai/lib/models"
+    );
+    const provider = getActiveProvider();
+    if (provider === "none") {
+      // Checado ANTES da cota: sem provedor configurado a geração não tem
+      // como acontecer de jeito nenhum — cobrar uma das 30 gerações/mês do
+      // tenant por um erro de configuração da plataforma não protege
+      // ninguém, só queima cota.
+      throw new GovernanceError(
+        "ia.indisponivel",
+        "Nenhum provedor de IA configurado."
+      );
+    }
+
     // Cota checada antes de chamar a IA — ela é o custo, e negar depois de
     // pagar o custo não protege ninguém.
     const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
@@ -212,20 +230,6 @@ export async function generatePolicyDraft(input: {
       throw new GovernanceError(
         "draft.quota",
         `${MONTHLY_QUOTA} gerações de rascunho este mês; renova em ${dias} dia(s).`
-      );
-    }
-
-    // Import dinâmico pelo mesmo motivo de @repo/rate-limit acima: um
-    // import estático de @repo/ai/lib/models força todo importador deste
-    // arquivo a validar chave de provedor em tempo de import.
-    const { getActiveProvider, getAIModel } = await import(
-      "@repo/ai/lib/models"
-    );
-    const provider = getActiveProvider();
-    if (provider === "none") {
-      throw new GovernanceError(
-        "ia.indisponivel",
-        "Nenhum provedor de IA configurado."
       );
     }
 

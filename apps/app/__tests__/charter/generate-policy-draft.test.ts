@@ -224,7 +224,7 @@ describe("generatePolicyDraft", () => {
     }
   });
 
-  it("provider de IA indisponível recusa com mensagem clara", async () => {
+  it("provider de IA indisponível recusa com mensagem clara e não queima cota (I4)", async () => {
     ia.getActiveProvider.mockReturnValue("none");
 
     const res = await generatePolicyDraft({ sectionId: SECTION_ID });
@@ -234,6 +234,10 @@ describe("generatePolicyDraft", () => {
       expect(res.error).toContain("Nenhum provedor");
     }
     expect(ia.generateText).not.toHaveBeenCalled();
+    // Provider checado ANTES da cota (I4): sem provedor, limiter.limit nem
+    // chega a rodar — um tenant sem chave de IA não pode queimar uma das 30
+    // gerações/mês por um erro de configuração da plataforma.
+    expect(cota.limit).not.toHaveBeenCalled();
   });
 
   it("generateText roda fora de qualquer withTenantDb (C2) — prova de mutação: mova a IA pra dentro da transação e este teste cai", async () => {
