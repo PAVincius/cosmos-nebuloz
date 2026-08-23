@@ -16,9 +16,9 @@ import { GovernanceError, logCharterAudit } from "./_shared";
 
 // Geração de rascunho de seção por IA (FR-2.7). Separado de policy.ts —
 // que já reunia as outras ações de política — para não estourar o
-// file-size-guard (teto de 800 linhas); `generatePolicyDraft` continua
-// importável de "@/app/(charter)/actions/policy" via re-export naquele
-// arquivo.
+// file-size-guard (teto de 800 linhas). Sem re-export em policy.ts: um
+// arquivo "use server" só pode exportar async function, então quem precisa
+// de `generatePolicyDraft` importa direto deste caminho.
 
 const GenerateDraftSchema = z.object({ sectionId: z.string().cuid() });
 

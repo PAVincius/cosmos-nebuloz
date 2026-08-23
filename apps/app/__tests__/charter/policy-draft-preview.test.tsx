@@ -17,8 +17,10 @@ vi.mock("sonner", () => ({ toast: toastMocks }));
 const gerarMock = vi.hoisted(() => vi.fn());
 const salvarMock = vi.hoisted(() => vi.fn());
 vi.mock("@/app/(charter)/actions/policy", () => ({
-  generatePolicyDraft: (...a: unknown[]) => gerarMock(...a),
   saveGeneratedDraft: (...a: unknown[]) => salvarMock(...a),
+}));
+vi.mock("@/app/(charter)/actions/policy-generate", () => ({
+  generatePolicyDraft: (...a: unknown[]) => gerarMock(...a),
 }));
 
 import { PolicyDraftPreview } from "../../components/charter/screens/policy-draft-preview";

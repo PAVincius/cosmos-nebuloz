@@ -51,7 +51,7 @@ vi.mock("@repo/database", () => ({
     }),
 }));
 
-import { generatePolicyDraft } from "../../app/(charter)/actions/policy";
+import { generatePolicyDraft } from "../../app/(charter)/actions/policy-generate";
 
 // cuid válido: GenerateDraftSchema.sectionId usa z.string().cuid() — mesmo id
 // de grounded-draft.test.ts.

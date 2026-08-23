@@ -8,10 +8,8 @@
 // fake de geração (setTimeout) que existia antes nesta tela.
 import { Button } from "@repo/design-system/cosmos/kit";
 import { useState, useTransition } from "react";
-import {
-  generatePolicyDraft,
-  saveGeneratedDraft,
-} from "@/app/(charter)/actions/policy";
+import { saveGeneratedDraft } from "@/app/(charter)/actions/policy";
+import { generatePolicyDraft } from "@/app/(charter)/actions/policy-generate";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { Textarea } from "../base";
 import { Callout } from "../form-kit";
