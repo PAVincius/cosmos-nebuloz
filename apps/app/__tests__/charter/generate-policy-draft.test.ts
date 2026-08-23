@@ -9,6 +9,9 @@ const h = vi.hoisted(() => ({
   coverageFindMany: vi.fn(),
   reqFindMany: vi.fn(),
   auditCreate: vi.fn(),
+  // Prova de que a IA roda fora de qualquer $transaction (C2): true só
+  // durante a execução do callback passado a withTenantDb.
+  dentroDaTransacao: false,
 }));
 
 const ia = vi.hoisted(() => ({
@@ -37,18 +40,24 @@ vi.mock("@repo/rate-limit", () => ({
   fixedWindow: cota.fixedWindow,
 }));
 vi.mock("@repo/database", () => ({
-  withTenantDb: (_t: string, fn: (db: unknown) => unknown) =>
-    fn({
-      charterPolicySection: {
-        findFirst: h.sectionFindFirst,
-        update: h.sectionUpdate,
-      },
-      charterUseCase: { findMany: h.casosFindMany },
-      charterVendor: { findMany: h.fornecedoresFindMany },
-      charterCoverage: { findMany: h.coverageFindMany },
-      charterRequirement: { findMany: h.reqFindMany },
-      auditLog: { create: h.auditCreate },
-    }),
+  withTenantDb: async (_t: string, fn: (db: unknown) => unknown) => {
+    h.dentroDaTransacao = true;
+    try {
+      return await fn({
+        charterPolicySection: {
+          findFirst: h.sectionFindFirst,
+          update: h.sectionUpdate,
+        },
+        charterUseCase: { findMany: h.casosFindMany },
+        charterVendor: { findMany: h.fornecedoresFindMany },
+        charterCoverage: { findMany: h.coverageFindMany },
+        charterRequirement: { findMany: h.reqFindMany },
+        auditLog: { create: h.auditCreate },
+      });
+    } finally {
+      h.dentroDaTransacao = false;
+    }
+  },
 }));
 
 import { generatePolicyDraft } from "../../app/(charter)/actions/policy-generate";
@@ -70,8 +79,11 @@ function draftSection(status: "DRAFT" | "REVIEW" | "PUBLISHED" = "DRAFT") {
 describe("generatePolicyDraft", () => {
   beforeEach(() => {
     for (const m of Object.values(h)) {
-      m.mockReset();
+      if (typeof m === "function" && "mockReset" in m) {
+        m.mockReset();
+      }
     }
+    h.dentroDaTransacao = false;
     for (const m of Object.values(ia)) {
       m.mockReset();
     }
@@ -222,5 +234,18 @@ describe("generatePolicyDraft", () => {
       expect(res.error).toContain("Nenhum provedor");
     }
     expect(ia.generateText).not.toHaveBeenCalled();
+  });
+
+  it("generateText roda fora de qualquer withTenantDb (C2) — prova de mutação: mova a IA pra dentro da transação e este teste cai", async () => {
+    let dentroDaTransacaoNaChamada: boolean | undefined;
+    ia.generateText.mockImplementation(() => {
+      dentroDaTransacaoNaChamada = h.dentroDaTransacao;
+      return Promise.resolve({ text: "x".repeat(300) });
+    });
+
+    const res = await generatePolicyDraft({ sectionId: SECTION_ID });
+
+    expect(res.ok).toBe(true);
+    expect(dentroDaTransacaoNaChamada).toBe(false);
   });
 });
