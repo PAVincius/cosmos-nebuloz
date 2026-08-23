@@ -5,6 +5,7 @@ import { database } from "@repo/database";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { contarParticipantesDoPi } from "@/lib/pi/participantes";
 import { type Result, safeAction } from "../_base";
 
 const MIN_PARTICIPATION_PCT = 50;
@@ -181,12 +182,12 @@ export async function openNextVoteRound(
 
     const piPlanId = voteSession.piSession.piPlan.id;
 
-    const participantCount = await database.pIParticipant.count({
-      where: {
-        piPlanId,
-        tenantId: ctx.tenantId,
-        role: { not: "OBSERVER" },
-      },
+    // Mesma contagem que a abertura da primeira rodada usa: sem lista explícita
+    // de participantes, uma rodada nasceria com quórum zero e nunca poderia ser
+    // revelada. Ver lib/pi/participantes.ts.
+    const participantCount = await contarParticipantesDoPi(database, {
+      piPlanId,
+      tenantId: ctx.tenantId,
     });
 
     const tally = await database.confidenceVoteTally.create({

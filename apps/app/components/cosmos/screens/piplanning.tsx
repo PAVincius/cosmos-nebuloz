@@ -16,12 +16,15 @@ import {
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useEffect, useState } from "react";
 import {
+  abrirRodadaDeConfianca,
   type ConfidenceVoteView,
   castConfidenceVote,
   getActivePiPlanning,
   type PiPlanningView,
   revealTally,
 } from "@/app/(cosmos)/actions/piplanning";
+import { transitionPIPlan } from "@/app/actions/arts/lifecycle";
+import { FormField, TextArea } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
@@ -70,6 +73,32 @@ function ConfidenceVoteCard({
     }
   };
 
+  // O passo que não existia: sem alguém abrir a rodada, o card só sabia dizer
+  // que não havia rodada — e não havia como haver.
+  const abrir = async () => {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(() => abrirRodadaDeConfianca(), {
+      loading: "Abrindo rodada...",
+      success: (d: {
+        round: number;
+        participantCount: number;
+        jaAberta: boolean;
+      }) =>
+        d.jaAberta
+          ? `A rodada ${d.round} já estava aberta.`
+          : `Rodada ${d.round} aberta para ${d.participantCount} participante${d.participantCount === 1 ? "" : "s"}.`,
+      error: (err: string) => `Não foi possível abrir a rodada: ${err}`,
+    });
+    setBusy(false);
+    if (res.ok) {
+      onChanged();
+    }
+  };
+
   const reveal = async () => {
     if (busy) {
       return;
@@ -96,9 +125,17 @@ function ConfidenceVoteCard({
       title="Confidence vote"
     >
       {vote === null ? (
-        <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
-          Nenhuma rodada de confidence vote aberta.
-        </span>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+            Nenhuma rodada de confidence vote aberta. Quem facilita a cerimônia
+            abre a rodada; o voto é de todo o ART.
+          </span>
+          <div>
+            <Button onClick={abrir} size="sm" variant="primary">
+              Abrir rodada de confiança
+            </Button>
+          </div>
+        </div>
       ) : (
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div
@@ -173,6 +210,14 @@ function ConfidenceVoteCard({
                   </div>
                 ))}
               </div>
+              {/* Confiança baixa não é impasse: em SAFe o ART replaneja e vota
+                  de novo. Sem esta saída, a única alternativa ao commit forçado
+                  seria abandonar a cerimônia. */}
+              <div style={{ marginTop: 12 }}>
+                <Button onClick={abrir} size="sm" variant="secondary">
+                  Abrir nova rodada
+                </Button>
+              </div>
             </div>
           ) : (
             <div
@@ -200,6 +245,239 @@ function ConfidenceVoteCard({
           )}
         </div>
       )}
+    </SectionCard>
+  );
+}
+
+// O portão de compromisso fala em código de erro (`COMMITMENT_GATE_FAILED:
+// LOW_CONFIDENCE:1:required:3`) porque é contrato de action. Quem está na sala
+// da cerimônia precisa da frase, e de uma frase que diga o que fazer a seguir.
+function traduzirRecusa(erro: string, limite: number): string[] {
+  const marca = "COMMITMENT_GATE_FAILED:";
+  if (erro.startsWith("FORCE_COMMIT_REASON_TOO_SHORT")) {
+    return ["A justificativa precisa de pelo menos 20 caracteres."];
+  }
+  if (erro.startsWith("FORCE_COMMIT_PREREQUISITES_NOT_MET")) {
+    return [
+      "Commit forçado não dispensa objetivos sem valor planejado nem riscos sem ROAM — só o limite de confiança.",
+    ];
+  }
+  if (!erro.startsWith(marca)) {
+    return [erro];
+  }
+  return erro
+    .slice(marca.length)
+    .split("|")
+    .map((parte) => {
+      const [chave, valor, , exigido] = parte.split(":");
+      if (chave === "MISSING_PLANNED_VALUE") {
+        return `${valor} objetivo(s) sem valor planejado.`;
+      }
+      if (chave === "UNROAMED_RISKS") {
+        return `${valor} risco(s) ainda sem classificação ROAM.`;
+      }
+      if (chave === "LOW_CONFIDENCE") {
+        return `Confiança de ${Number(valor).toFixed(1)} abaixo do mínimo de ${exigido ?? limite} do ART.`;
+      }
+      return parte;
+    });
+}
+
+const ROTULO_DA_TRANSICAO = {
+  COMMIT: {
+    loading: "Comprometendo o PI...",
+    sucesso: "PI comprometido pelo ART.",
+  },
+  FORCE_COMMIT: {
+    loading: "Comprometendo com justificativa...",
+    sucesso: "PI comprometido por decisão registrada.",
+  },
+  START_EXECUTING: {
+    loading: "Iniciando execução...",
+    sucesso: "PI em execução.",
+  },
+  CLOSE: { loading: "Encerrando o PI...", sucesso: "PI encerrado." },
+} as const;
+
+type EventoDeCiclo = keyof typeof ROTULO_DA_TRANSICAO;
+
+/**
+ * O fecho da cerimônia, na tela onde a cerimônia acontece.
+ *
+ * `transitionPIPlan` já existia com quatro eventos e testes verdes; só
+ * `OPEN_PLANNING` tinha botão, em /cosmos/arts. Comprometer e iniciar execução
+ * não tinham chamador nenhum — a cerimônia começava no produto e terminava no
+ * banco.
+ */
+function CompromissoCard({
+  plan,
+  onChanged,
+}: {
+  plan: PiPlanningView;
+  onChanged: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [recusas, setRecusas] = useState<string[]>([]);
+  const [justificativa, setJustificativa] = useState("");
+  const [confirmandoFecho, setConfirmandoFecho] = useState(false);
+
+  const transitar = async (event: EventoDeCiclo, overrideReason?: string) => {
+    if (busy) {
+      return;
+    }
+    setBusy(true);
+    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
+    const res = await useActionToast(
+      () =>
+        transitionPIPlan({
+          piPlanId: plan.piPlanId,
+          event,
+          ...(overrideReason ? { overrideReason } : {}),
+        }),
+      {
+        loading: ROTULO_DA_TRANSICAO[event].loading,
+        success: ROTULO_DA_TRANSICAO[event].sucesso,
+        error: (err: string) =>
+          traduzirRecusa(err, plan.confidenceThreshold).join(" "),
+      }
+    );
+    setBusy(false);
+    if (res.ok) {
+      setRecusas([]);
+      setJustificativa("");
+      setConfirmandoFecho(false);
+      onChanged();
+      return;
+    }
+    setRecusas(traduzirRecusa(res.error, plan.confidenceThreshold));
+  };
+
+  const emPlanejamento = plan.piPlanStatus === "PLANNING";
+  const comprometido = plan.piPlanStatus === "COMMITTED";
+  const executando = plan.piPlanStatus === "EXECUTING";
+  // O commit forçado só se oferece depois que o portão recusou por confiança:
+  // atalho permanente convidaria a pular o voto, que é o ponto da cerimônia.
+  const podeForcar = recusas.some((r) => r.startsWith("Confiança de"));
+
+  return (
+    <SectionCard
+      action={
+        <Badge tone={executando ? "green" : comprometido ? "accent" : "amber"}>
+          {plan.piPlanStatus}
+        </Badge>
+      }
+      bodyStyle={{ padding: 14 }}
+      icon="target"
+      subtitle="O compromisso do ART com o incremento — o fecho da cerimônia"
+      title="Compromisso do PI"
+    >
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+          {emPlanejamento &&
+            "Com os objetivos escritos, os riscos no ROAM e a confiança revelada, o ART assume o compromisso."}
+          {comprometido &&
+            "Compromisso assumido. Iniciar a execução libera o trabalho dos times nas sprints do PI."}
+          {executando &&
+            "PI em execução. Encerrar apura o valor entregue e congela os orçamentos do período."}
+        </span>
+
+        {recusas.length > 0 && (
+          <div
+            style={{
+              background: "var(--amber-soft)",
+              border: "1px solid rgba(var(--amber-rgb),.3)",
+              borderRadius: "var(--r-md)",
+              color: "var(--amber-text)",
+              fontSize: 12,
+              lineHeight: 1.55,
+              padding: "9px 11px",
+            }}
+          >
+            {recusas.map((r) => (
+              <div key={r}>{r}</div>
+            ))}
+          </div>
+        )}
+
+        {podeForcar && (
+          <FormField
+            hint="Fica registrada na trilha do PI, com autor e data"
+            label="Justificativa para comprometer abaixo do limite"
+            required
+          >
+            <TextArea
+              maxLength={500}
+              onChange={setJustificativa}
+              placeholder="ex: o ART assume o risco da integração externa porque o cliente âncora depende da data"
+              required
+              rows={3}
+              value={justificativa}
+            />
+          </FormField>
+        )}
+
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {emPlanejamento && (
+            <Button
+              onClick={() => transitar("COMMIT")}
+              size="sm"
+              variant="primary"
+            >
+              Comprometer o PI
+            </Button>
+          )}
+          {/* O botão só existe com justificativa escrita: o portão exige 20
+              caracteres, e um botão que aparece para recusar ensina menos do
+              que um que aparece quando a decisão está pronta. */}
+          {emPlanejamento &&
+            podeForcar &&
+            justificativa.trim().length >= 20 && (
+              <Button
+                onClick={() => transitar("FORCE_COMMIT", justificativa.trim())}
+                size="sm"
+                variant="secondary"
+              >
+                Comprometer mesmo assim
+              </Button>
+            )}
+          {comprometido && (
+            <Button
+              onClick={() => transitar("START_EXECUTING")}
+              size="sm"
+              variant="primary"
+            >
+              Iniciar execução
+            </Button>
+          )}
+          {executando &&
+            (confirmandoFecho ? (
+              <>
+                <Button
+                  onClick={() => transitar("CLOSE")}
+                  size="sm"
+                  variant="primary"
+                >
+                  Confirmar encerramento
+                </Button>
+                <Button
+                  onClick={() => setConfirmandoFecho(false)}
+                  size="sm"
+                  variant="ghost"
+                >
+                  Cancelar
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => setConfirmandoFecho(true)}
+                size="sm"
+                variant="secondary"
+              >
+                Encerrar PI
+              </Button>
+            ))}
+        </div>
+      </div>
     </SectionCard>
   );
 }
@@ -314,8 +592,16 @@ export default function PiPlanningScreen() {
             />
           </div>
 
-          <div style={{ marginBottom: "var(--gap)" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "var(--gap)",
+              marginBottom: "var(--gap)",
+            }}
+          >
             <ConfidenceVoteCard onChanged={load} vote={plan.confidenceVote} />
+            <CompromissoCard onChanged={load} plan={plan} />
           </div>
 
           <div

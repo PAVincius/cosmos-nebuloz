@@ -347,7 +347,18 @@ type CommitGateOpts = {
 async function validateCommitmentGate(opts: CommitGateOpts) {
   const { piPlanId, tenantId, confidenceThreshold, isForce, overrideReason } =
     opts;
-  const [objectives, risks, confidenceSession] = await Promise.all([
+  // O placar é lido do `ConfidenceVoteTally`, e não da `PISession`, porque é
+  // ali que o voto de fato cai: `castConfidenceVote` incrementa o tally, e
+  // `revealTally` grava nele o resultado. A leitura anterior procurava uma
+  // `PISession` de `type: "CONFIDENCE_VOTE"` — valor que nenhuma escrita do
+  // produto produz (o schema documenta só PLANNING/REPLAN), então a busca
+  // voltava sempre vazia, `avgScore` caía em `null` e o portão de confiança
+  // aprovava qualquer PI como se ninguém tivesse votado.
+  //
+  // `revealedAt: { not: null }` mantém a regra do anonimato de pé: rodada em
+  // curso não governa o commit — nem para liberar, nem para travar —, só o
+  // resultado que o ART já viu revelado.
+  const [objectives, risks, latestTally] = await Promise.all([
     database.pIObjective.findMany({
       where: { piPlanId, tenantId },
       select: { plannedValue: true },
@@ -356,15 +367,10 @@ async function validateCommitmentGate(opts: CommitGateOpts) {
       where: { piPlanId, tenantId },
       select: { roamStatus: true },
     }),
-    database.pISession.findFirst({
-      where: { piPlanId, tenantId, type: "CONFIDENCE_VOTE" },
-      include: {
-        confidenceSessions: {
-          orderBy: { roundNumber: "desc" },
-          take: 1,
-          select: { averageScore: true },
-        },
-      },
+    database.confidenceVoteTally.findFirst({
+      where: { piPlanId, tenantId, revealedAt: { not: null } },
+      orderBy: { round: "desc" },
+      select: { aggregateScore: true, round: true },
     }),
   ]);
 
@@ -374,8 +380,7 @@ async function validateCommitmentGate(opts: CommitGateOpts) {
   const unroamedRisks = risks.filter(
     (r) => !r.roamStatus || r.roamStatus === "IDENTIFIED"
   ).length;
-  const avgScore =
-    confidenceSession?.confidenceSessions[0]?.averageScore ?? null;
+  const avgScore = latestTally?.aggregateScore ?? null;
 
   const confidenceOk = avgScore === null || avgScore >= confidenceThreshold;
 

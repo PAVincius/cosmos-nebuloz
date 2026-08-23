@@ -34,7 +34,7 @@ const mocks = vi.hoisted(() => ({
   piPlanUpdate: vi.fn(),
   piObjectiveFindMany: vi.fn(),
   riskFindMany: vi.fn(),
-  piSessionFindFirst: vi.fn(),
+  confidenceVoteTallyFindFirst: vi.fn(),
   sprintFindMany: vi.fn(),
   stateTransitionHistoryCreate: vi.fn(),
   sprintCreateMany: vi.fn(),
@@ -64,7 +64,7 @@ vi.mock("@repo/database", () => ({
     },
     pIObjective: { findMany: mocks.piObjectiveFindMany },
     risk: { findMany: mocks.riskFindMany },
-    pISession: { findFirst: mocks.piSessionFindFirst },
+    confidenceVoteTally: { findFirst: mocks.confidenceVoteTallyFindFirst },
     sprint: { findMany: mocks.sprintFindMany },
     stateTransitionHistory: { create: mocks.stateTransitionHistoryCreate },
     leanBudget: { updateMany: mocks.leanBudgetUpdateMany },
@@ -244,7 +244,7 @@ describe("transitionPIPlan", () => {
     mocks.piPlanFindFirstOrThrow.mockResolvedValue(piBase);
     mocks.piObjectiveFindMany.mockResolvedValue([]);
     mocks.riskFindMany.mockResolvedValue([]);
-    mocks.piSessionFindFirst.mockResolvedValue(null);
+    mocks.confidenceVoteTallyFindFirst.mockResolvedValue(null);
     mocks.sprintFindMany.mockResolvedValue([]);
     mocks.piPlanUpdate.mockResolvedValue({});
     mocks.stateTransitionHistoryCreate.mockResolvedValue({});
@@ -275,6 +275,99 @@ describe("transitionPIPlan", () => {
       return;
     }
     expect(result.data.status).toBe("PLANNING");
+  });
+
+  // O portão de confiança procurava o voto numa `PISession` de
+  // `type: "CONFIDENCE_VOTE"` — valor que nenhuma escrita do produto grava (o
+  // schema documenta PLANNING/REPLAN). A busca voltava sempre vazia, `avgScore`
+  // caía em `null` e todo COMMIT passava como se ninguém tivesse votado. O
+  // caminho com voto nunca foi exercitado: o mock era `null` no único lugar em
+  // que aparecia, e o teste verde escondia o portão cego.
+  it("COMMIT recusa quando o placar revelado ficou abaixo do limite", async () => {
+    mocks.piPlanFindFirstOrThrow.mockResolvedValue({
+      ...piBase,
+      status: "PLANNING",
+    });
+    mocks.confidenceVoteTallyFindFirst.mockResolvedValue({
+      aggregateScore: 1,
+      round: 1,
+    });
+
+    const result = await transitionPIPlan({
+      piPlanId: "pi-1",
+      event: "COMMIT",
+    });
+
+    expect(result.ok).toBe(false);
+    if (result.ok) {
+      return;
+    }
+    expect(result.error).toContain("LOW_CONFIDENCE:1:required:3");
+    expect(mocks.piPlanUpdate).not.toHaveBeenCalled();
+  });
+
+  it("COMMIT passa quando o placar revelado alcança o limite", async () => {
+    mocks.piPlanFindFirstOrThrow.mockResolvedValue({
+      ...piBase,
+      status: "PLANNING",
+    });
+    mocks.confidenceVoteTallyFindFirst.mockResolvedValue({
+      aggregateScore: 3.4,
+      round: 2,
+    });
+
+    const result = await transitionPIPlan({
+      piPlanId: "pi-1",
+      event: "COMMIT",
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.status).toBe("COMMITTED");
+  });
+
+  // Rodada em curso não governa o commit: liberar por ela vazaria o resultado
+  // parcial, e travar por ela puniria o ART por ainda estar votando.
+  it("só o placar já revelado entra no portão", async () => {
+    mocks.piPlanFindFirstOrThrow.mockResolvedValue({
+      ...piBase,
+      status: "PLANNING",
+    });
+
+    await transitionPIPlan({ piPlanId: "pi-1", event: "COMMIT" });
+
+    expect(mocks.confidenceVoteTallyFindFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ revealedAt: { not: null } }),
+      })
+    );
+  });
+
+  it("FORCE_COMMIT atravessa a confiança baixa e registra a justificativa", async () => {
+    mocks.piPlanFindFirstOrThrow.mockResolvedValue({
+      ...piBase,
+      status: "PLANNING",
+    });
+    mocks.confidenceVoteTallyFindFirst.mockResolvedValue({
+      aggregateScore: 1,
+      round: 1,
+    });
+
+    const result = await transitionPIPlan({
+      piPlanId: "pi-1",
+      event: "FORCE_COMMIT",
+      overrideReason:
+        "O ART assume o risco da integração externa por causa da data do cliente âncora.",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(mocks.piPlanUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ commitmentOverride: true }),
+      })
+    );
   });
 
   // story-017 AC-005 / AC-008 — `immutableAt` é comentado no schema como "set
