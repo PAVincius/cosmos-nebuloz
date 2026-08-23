@@ -26,7 +26,22 @@ import {
   type MembersTabView,
 } from "@/app/(cosmos)/actions/settings-members";
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  MiniSlider,
+  Select,
+  TextArea,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const LEVELS = ["very_low", "low", "medium", "high", "very_high"] as const;
@@ -380,6 +395,15 @@ const fieldLabelStyle: CSSProperties = {
   marginBottom: 6,
 };
 
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
 function NewRiskModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [title, setTitle] = useState("");
@@ -391,6 +415,17 @@ function NewRiskModal({ onCreated }: { onCreated?: () => void }) {
   const [probability, setProbability] = useState<Level>("medium");
   const [impact, setImpact] = useState<Level>("medium");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  // Duas leituras diferentes da mesma tela: o cabeçalho segue `severity`, que
+  // é a coluna que colore o registro de riscos, e a exposição segue
+  // probabilidade × impacto, que é a que decide a célula da matriz. Mostrar as
+  // duas evita registrar um risco severidade 5 que cai numa célula verde sem
+  // ninguém notar a contradição.
+  const tone = severityTone(severity);
+  const exposicao = severityScore(probability, impact);
+  const toneExposicao = matrixCellTone(exposicao);
 
   const create = async () => {
     if (!title.trim() || saving) {
@@ -421,140 +456,229 @@ function NewRiskModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
-      subtitle="Adicionar um risco ao registro ROAM do ART"
-      title="Registrar risco"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="risk-title" style={fieldLabelStyle}>
-            Título do risco
-          </label>
-          <input
-            autoFocus
-            id="risk-title"
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="registrar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Registrando..." : "Registrar risco"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="shield" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Risco ROAM — classificado por severidade e por probabilidade × impacto"
+        title="Registrar risco"
+        tone={tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div style={{ display: "flex", gap: 6, marginBottom: 12 }}>
+                <Badge tone={tone}>{`Severidade ${severity}`}</Badge>
+                <Badge dot tone="neutral">
+                  UNCLASSIFIED
+                </Badge>
+              </div>
+              <div
+                className="display"
+                style={{
+                  color: "var(--ink)",
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 8,
+                }}
+              >
+                {title || "Título do risco"}
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-muted)",
+                  fontSize: 12,
+                  lineHeight: 1.55,
+                  marginBottom: 14,
+                }}
+              >
+                {description || "Contexto, causa raiz, impacto potencial..."}
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gap: 10,
+                  gridTemplateColumns: "1fr 1fr",
+                  marginBottom: 12,
+                }}
+              >
+                <div>
+                  <div style={previewLabelStyle}>Probabilidade</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 600 }}>
+                    {LEVEL_LABEL[probability]}
+                  </div>
+                </div>
+                <div>
+                  <div style={previewLabelStyle}>Impacto</div>
+                  <div style={{ fontSize: 12.5, fontWeight: 600 }}>
+                    {LEVEL_LABEL[impact]}
+                  </div>
+                </div>
+              </div>
+
+              <div
+                className="mono"
+                style={{
+                  color: `var(--${toneExposicao}-text)`,
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  marginBottom: 14,
+                }}
+              >
+                {`Exposição ${exposicao}/25 na matriz`}
+              </div>
+
+              <div style={previewLabelStyle}>Categoria</div>
+              <div style={{ fontSize: 12.5, marginBottom: 14 }}>
+                {category ? CATEGORY_LABEL[category] : "Sem categoria"}
+              </div>
+
+              {/* O gate de commitment do PI recusa risco UNCLASSIFIED: dizer
+                  isso aqui evita a surpresa de descobrir o pendente só na
+                  hora de fechar o PI. */}
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.5,
+                  paddingTop: 10,
+                }}
+              >
+                Nasce sem desfecho ROAM — o RTE classifica depois, pelo botão
+                ROAM do registro.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Título do risco" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Instabilidade no gateway de pagamento"
+              required
+              value={title}
+            />
+          </FormField>
+          <FormField label="Descrição">
+            <TextArea
+              maxLength={2000}
+              onChange={setDescription}
+              placeholder="Contexto, causa raiz, impacto potencial"
+              rows={3}
+              value={description}
+            />
+          </FormField>
+          <FormField label="Categoria">
+            <Select
+              onChange={(v) =>
+                setCategory(v as (typeof CATEGORIES)[number] | "")
               }
-            }}
-            placeholder="Ex: Instabilidade no gateway de pagamento…"
-            style={selectStyle}
-            value={title}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="risk-description" style={fieldLabelStyle}>
-            Descrição
-          </label>
-          <textarea
-            id="risk-description"
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Contexto, causa raiz, impacto potencial…"
-            rows={3}
-            style={{ ...selectStyle, resize: "vertical" }}
-            value={description}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="risk-category" style={fieldLabelStyle}>
-            Categoria
-          </label>
-          <select
-            id="risk-category"
-            onChange={(e) =>
-              setCategory(e.target.value as (typeof CATEGORIES)[number] | "")
-            }
-            style={selectStyle}
-            value={category}
-          >
-            <option value="">Sem categoria</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {CATEGORY_LABEL[c]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              ...fieldLabelStyle,
-            }}
-          >
-            <span>Severidade</span>
-            <span className="mono" style={{ color: "var(--accent-text)" }}>
-              {severity}
-            </span>
-          </div>
-          <input
+              options={[
+                { value: "", label: "Sem categoria" },
+                ...CATEGORIES.map((c) => ({
+                  value: c,
+                  label: CATEGORY_LABEL[c],
+                })),
+              ]}
+              value={category}
+            />
+          </FormField>
+          <MiniSlider
+            label="Severidade"
             max={5}
             min={1}
-            onChange={(e) => setSeverity(Number(e.target.value))}
-            style={{ width: "100%", accentColor: "var(--accent)" }}
-            type="range"
+            onChange={setSeverity}
             value={severity}
           />
-        </div>
-
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
-        >
-          <div>
-            <label htmlFor="risk-probability" style={fieldLabelStyle}>
-              Probabilidade
-            </label>
-            <select
-              id="risk-probability"
-              onChange={(e) => setProbability(e.target.value as Level)}
-              style={selectStyle}
-              value={probability}
-            >
-              {LEVELS.map((l) => (
-                <option key={l} value={l}>
-                  {LEVEL_LABEL[l]}
-                </option>
-              ))}
-            </select>
+          <div
+            style={{ display: "grid", gap: 14, gridTemplateColumns: "1fr 1fr" }}
+          >
+            <FormField label="Probabilidade">
+              <Select
+                onChange={(v) => setProbability(v as Level)}
+                options={LEVELS.map((l) => ({
+                  value: l,
+                  label: LEVEL_LABEL[l],
+                }))}
+                value={probability}
+              />
+            </FormField>
+            <FormField label="Impacto">
+              <Select
+                onChange={(v) => setImpact(v as Level)}
+                options={LEVELS.map((l) => ({
+                  value: l,
+                  label: LEVEL_LABEL[l],
+                }))}
+                value={impact}
+              />
+            </FormField>
           </div>
-          <div>
-            <label htmlFor="risk-impact" style={fieldLabelStyle}>
-              Impacto
-            </label>
-            <select
-              id="risk-impact"
-              onChange={(e) => setImpact(e.target.value as Level)}
-              style={selectStyle}
-              value={impact}
-            >
-              {LEVELS.map((l) => (
-                <option key={l} value={l}>
-                  {LEVEL_LABEL[l]}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Registrar risco
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

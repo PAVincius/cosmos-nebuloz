@@ -144,7 +144,7 @@ describe("SolutionTrainScreen", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Adicionar capability" })
     );
-    fireEvent.change(screen.getByLabelText("Título"), {
+    fireEvent.change(screen.getByLabelText(/Título da capability/), {
       target: { value: "Antifraude compartilhado" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar capability" }));

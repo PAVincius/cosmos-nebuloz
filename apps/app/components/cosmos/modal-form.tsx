@@ -17,6 +17,7 @@ import {
   createContext,
   type ReactNode,
   useContext,
+  useEffect,
   useId,
   useState,
 } from "react";
@@ -123,7 +124,7 @@ type CampoTextoProps = {
   placeholder?: string;
   required?: boolean;
   disabled?: boolean;
-  type?: "text" | "number" | "password" | "email";
+  type?: "text" | "number" | "password" | "email" | "date";
   style?: CSSProperties;
 };
 
@@ -177,7 +178,8 @@ export function TextArea({
   placeholder,
   required,
   rows = 3,
-}: CampoTextoProps & { rows?: number }) {
+  maxLength,
+}: CampoTextoProps & { rows?: number; maxLength?: number }) {
   const { markDirty } = useDirty();
   const [erro, setErro] = useState("");
   const erroId = useId();
@@ -186,6 +188,7 @@ export function TextArea({
       <textarea
         aria-describedby={erro ? erroId : undefined}
         aria-invalid={erro ? true : undefined}
+        maxLength={maxLength}
         onBlur={(e) => {
           const vazio = required && !e.target.value.trim();
           setErro(vazio ? "Campo obrigatório" : "");
@@ -254,6 +257,7 @@ export function Segmented({
   onChange: (v: string) => void;
   tone?: string;
 }) {
+  const { markDirty } = useDirty();
   return (
     <fieldset
       style={{ border: "none", display: "flex", gap: 6, margin: 0, padding: 0 }}
@@ -265,7 +269,10 @@ export function Segmented({
             aria-pressed={on}
             className="btn"
             key={o.value}
-            onClick={() => onChange(o.value)}
+            onClick={() => {
+              markDirty();
+              onChange(o.value);
+            }}
             style={{
               background: on ? `var(--${tone}-soft)` : "var(--surface)",
               border: `1px solid ${on ? `rgba(var(--${tone}-rgb),.4)` : "var(--hairline-strong)"}`,
@@ -300,6 +307,7 @@ export function MiniSlider({
   min?: number;
   max?: number;
 }) {
+  const { markDirty } = useDirty();
   return (
     <label style={{ display: "flex", flexDirection: "column", gap: 5 }}>
       <span
@@ -319,7 +327,10 @@ export function MiniSlider({
       <input
         max={max}
         min={min}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => {
+          markDirty();
+          onChange(Number(e.target.value));
+        }}
         style={{ accentColor: "var(--accent)", width: "100%" }}
         type="range"
         value={value}
@@ -338,6 +349,7 @@ export function TonePicker({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const { markDirty } = useDirty();
   return (
     <fieldset
       style={{ border: "none", display: "flex", gap: 8, margin: 0, padding: 0 }}
@@ -349,7 +361,10 @@ export function TonePicker({
             aria-label={`Cor ${t}`}
             aria-pressed={on}
             key={t}
-            onClick={() => onChange(t)}
+            onClick={() => {
+              markDirty();
+              onChange(t);
+            }}
             style={{
               background: `var(--${t})`,
               border: on ? "2px solid var(--ink)" : "2px solid transparent",
@@ -393,9 +408,12 @@ export function EntityLinkField({
   multi = false,
   placeholder = "Buscar...",
   tone = "accent",
+  onSearch,
 }: {
   label: string;
   hint?: string;
+  /** Opções já carregadas. Com `onSearch`, serve de estado inicial e de
+   *  cache dos rótulos já escolhidos. */
   items: LinkItem[];
   /** id (single) ou lista de ids (multi). */
   value: string | string[] | null;
@@ -403,11 +421,39 @@ export function EntityLinkField({
   multi?: boolean;
   placeholder?: string;
   tone?: string;
+  /** Busca no servidor a cada digitação. Sem isto o campo filtra localmente
+   *  a lista recebida — e uma lista truncada pela origem (searchEntities
+   *  devolve 10) faz o campo dizer "nenhum resultado" para entidade que
+   *  existe. Aqui a pergunta vai para quem tem a tabela inteira. */
+  onSearch?: (q: string) => Promise<LinkItem[]>;
 }) {
   const { markDirty } = useDirty();
   const [query, setQuery] = useState("");
   const [aberto, setAberto] = useState(false);
+  const [remotos, setRemotos] = useState<LinkItem[] | null>(null);
+  const [buscando, setBuscando] = useState(false);
   const listaId = useId();
+
+  // Debounce: uma ida ao servidor por tecla transformaria a digitação em
+  // rajada de requisições, e as respostas voltariam fora de ordem.
+  useEffect(() => {
+    if (!(onSearch && aberto)) {
+      return;
+    }
+    let cancelado = false;
+    setBuscando(true);
+    const t = setTimeout(async () => {
+      const achados = await onSearch(query);
+      if (!cancelado) {
+        setRemotos(achados);
+        setBuscando(false);
+      }
+    }, 220);
+    return () => {
+      cancelado = true;
+      clearTimeout(t);
+    };
+  }, [query, aberto, onSearch]);
 
   const escolhidos = multi
     ? ((value as string[] | null) ?? [])
@@ -415,11 +461,15 @@ export function EntityLinkField({
       ? [value as string]
       : [];
 
-  const filtrados = items.filter(
-    (it) =>
-      !escolhidos.includes(it.id) &&
-      it.label.toLowerCase().includes(query.toLowerCase())
-  );
+  // Com busca remota o servidor já filtrou; sem ela, filtra o que veio.
+  const fonte = onSearch ? (remotos ?? items) : items;
+  const filtrados = onSearch
+    ? fonte.filter((it) => !escolhidos.includes(it.id))
+    : fonte.filter(
+        (it) =>
+          !escolhidos.includes(it.id) &&
+          it.label.toLowerCase().includes(query.toLowerCase())
+      );
 
   function escolher(id: string) {
     markDirty();
@@ -444,7 +494,11 @@ export function EntityLinkField({
       {escolhidos.length > 0 && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           {escolhidos.map((id) => {
-            const it = items.find((x) => x.id === id);
+            // Procura nos dois: o escolhido pode ter saído da página atual
+            // da busca remota, e o chip não pode virar um id cru na tela.
+            const it =
+              items.find((x) => x.id === id) ??
+              remotos?.find((x) => x.id === id);
             return (
               <span
                 key={id}
@@ -535,7 +589,7 @@ export function EntityLinkField({
                     padding: "10px 9px",
                   }}
                 >
-                  Nenhum resultado
+                  {buscando ? "Buscando..." : "Nenhum resultado"}
                 </div>
               ) : (
                 filtrados.slice(0, 6).map((it) => (

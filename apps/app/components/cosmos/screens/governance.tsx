@@ -35,7 +35,21 @@ import {
 } from "@/app/(cosmos)/actions/governance";
 import { getApprovalRequest, reviewStep } from "@/app/actions/governance";
 import type { ApprovalRequestWithSteps } from "@/app/actions/governance/schema";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  Segmented,
+  Select,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<
@@ -57,6 +71,24 @@ const TIPO_OPTIONS: { value: string; label: string }[] = [
 ];
 
 const ROLE_OPTIONS = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"];
+
+const ROLE_SELECT_OPTIONS = ROLE_OPTIONS.map((role) => ({
+  label: role,
+  value: role,
+}));
+
+// Cada tipo de gate governa uma coisa diferente — dar cor ao modal é o que
+// diferencia "aprovar investimento" de "mexer em guardrail" antes de ler.
+const TIPO_TONE: Record<string, string> = {
+  epic_investment: "accent",
+  budget_guardrail_change: "amber",
+  theme_creation: "purple",
+};
+
+const ATIVO_OPTIONS = [
+  { label: "Ativa", value: "sim" },
+  { label: "Inativa", value: "nao" },
+];
 
 type GateStepDraft = {
   roleRequired: string;
@@ -85,7 +117,15 @@ const inputStyle: CSSProperties = {
   outline: "none",
 };
 
-const selectStyle: CSSProperties = inputStyle;
+const rotuloOculto: CSSProperties = {
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 1,
+  overflow: "hidden",
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: 1,
+};
 
 function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
   const { close } = useModal();
@@ -96,6 +136,8 @@ function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
     { roleRequired: "STE", slaDays: "" },
   ]);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const addStep = () => {
     setSteps((prev) => [...prev, { roleRequired: "STE", slaDays: "" }]);
@@ -110,6 +152,9 @@ function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
       prev.map((step, i) => (i === index ? { ...step, ...patch } : step))
     );
   };
+
+  const tone = TIPO_TONE[tipo] ?? "accent";
+  const tipoLabel = TIPO_OPTIONS.find((o) => o.value === tipo)?.label ?? tipo;
 
   const save = async () => {
     if (!nome.trim() || steps.length === 0 || saving) {
@@ -152,150 +197,282 @@ function GovernancePolicyModal({ onSaved }: { onSaved?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(save, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="shield" size={16} strokeWidth={2.4} />}
-      subtitle="Definir o gate de aprovação (etapas e papéis) para um tipo de decisão"
-      title="Nova política de gate"
-      width={520}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="gate-tipo" style={fieldLabelStyle}>
-            Tipo
-          </label>
-          <select
-            id="gate-tipo"
-            onChange={(e) => setTipo(e.target.value)}
-            style={selectStyle}
-            value={tipo}
-          >
-            {TIPO_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="gate-nome" style={fieldLabelStyle}>
-            Nome do gate
-          </label>
-          <input
-            id="gate-nome"
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Ex.: Aprovação de Épico de Portfólio"
-            style={inputStyle}
-            value={nome}
-          />
-        </div>
-
-        <div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: 6,
-            }}
-          >
-            <span style={fieldLabelStyle}>Etapas de aprovação</span>
-            <Button icon="plus" onClick={addStep} size="sm" variant="secondary">
-              Etapa
-            </Button>
-          </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {steps.map((step, index) => (
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="salvar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button icon="check" onClick={save} size="sm" variant="primary">
+                  {saving ? "Salvando..." : "Salvar política"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="shield" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Gate de aprovação de um tipo de decisão — quem aprova, em que ordem, em quantos dias"
+        title="Nova política de gate"
+        tone={tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
               <div
-                // biome-ignore lint/suspicious/noArrayIndexKey: steps are an ordered, position-addressed draft list with no stable id
-                key={index}
                 style={{
-                  display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "8px 10px",
-                  borderRadius: "var(--r-md)",
-                  border: "1px solid var(--hairline)",
-                  background: "var(--surface)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
                 }}
               >
                 <span
                   className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  {tipoLabel}
+                </span>
+                <Badge dot tone={ativo ? "green" : "neutral"}>
+                  {ativo ? "ativa" : "inativa"}
+                </Badge>
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 14,
+                }}
+              >
+                {nome || "Nome do gate"}
+              </div>
+
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: ".06em",
+                  marginBottom: 8,
+                  textTransform: "uppercase",
+                }}
+              >
+                {`Etapas (${steps.length})`}
+              </div>
+              {steps.length === 0 ? (
+                <div style={{ color: "var(--ink-faint)", fontSize: 12 }}>
+                  Sem etapa nenhuma o gate não bloqueia nada
+                </div>
+              ) : (
+                <div
+                  style={{ display: "flex", flexDirection: "column", gap: 6 }}
+                >
+                  {steps.map((step, index) => (
+                    <div
+                      key={`preview-step-${index}`}
+                      style={{
+                        alignItems: "center",
+                        display: "flex",
+                        fontSize: 12,
+                        gap: 8,
+                      }}
+                    >
+                      <span
+                        className="mono"
+                        style={{
+                          background: `var(--${tone}-soft)`,
+                          borderRadius: 99,
+                          color: `var(--${tone}-text)`,
+                          display: "grid",
+                          flexShrink: 0,
+                          fontSize: 10.5,
+                          fontWeight: 700,
+                          height: 18,
+                          placeItems: "center",
+                          width: 18,
+                        }}
+                      >
+                        {index + 1}
+                      </span>
+                      <span style={{ color: "var(--ink)", fontWeight: 600 }}>
+                        {step.roleRequired}
+                      </span>
+                      <span
+                        style={{ color: "var(--ink-faint)", fontSize: 11.5 }}
+                      >
+                        {step.slaDays.trim()
+                          ? `SLA ${step.slaDays}d`
+                          : "sem SLA"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          }
+        >
+          <FormField label="Tipo de decisão">
+            <Select onChange={setTipo} options={TIPO_OPTIONS} value={tipo} />
+          </FormField>
+
+          <FormField label="Nome do gate" required>
+            <TextInput
+              onChange={setNome}
+              placeholder="ex: Aprovação de Épico de Portfólio"
+              required
+              value={nome}
+            />
+          </FormField>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <div
+              style={{
+                alignItems: "center",
+                display: "flex",
+                justifyContent: "space-between",
+              }}
+            >
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                }}
+              >
+                Etapas de aprovação
+                <span style={{ color: "var(--red-text)" }}> *</span>
+              </span>
+              <Button
+                icon="plus"
+                onClick={addStep}
+                size="sm"
+                variant="secondary"
+              >
+                Etapa
+              </Button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {steps.map((step, index) => (
+                // Rascunho ordenado sem id estável: a posição é a identidade
+                // da etapa até ela existir no banco.
+                <div
+                  key={`step-${index}`}
                   style={{
-                    fontSize: 11.5,
-                    color: "var(--ink-faint)",
-                    width: 18,
-                    flexShrink: 0,
+                    alignItems: "center",
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--hairline)",
+                    borderRadius: "var(--r-md)",
+                    display: "flex",
+                    gap: 8,
+                    padding: "8px 10px",
                   }}
                 >
-                  {index + 1}
-                </span>
-                <select
-                  aria-label={`Papel requerido na etapa ${index + 1}`}
-                  onChange={(e) =>
-                    updateStep(index, { roleRequired: e.target.value })
-                  }
-                  style={{ ...selectStyle, flex: 1 }}
-                  value={step.roleRequired}
-                >
-                  {ROLE_OPTIONS.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  aria-label={`SLA em dias da etapa ${index + 1}`}
-                  min={0}
-                  onChange={(e) =>
-                    updateStep(index, { slaDays: e.target.value })
-                  }
-                  placeholder="SLA (dias)"
-                  style={{ ...inputStyle, width: 110 }}
-                  type="number"
-                  value={step.slaDays}
-                />
-                <IconButton
-                  name="x"
-                  onClick={() => removeStep(index)}
-                  size={30}
-                  title="Remover etapa"
-                />
-              </div>
-            ))}
+                  <span
+                    className="mono"
+                    style={{
+                      color: "var(--ink-faint)",
+                      flexShrink: 0,
+                      fontSize: 11.5,
+                      width: 18,
+                    }}
+                  >
+                    {index + 1}
+                  </span>
+                  {/* O rótulo some da tela mas não do leitor de tela: a linha
+                      só se explica pela posição, e "select sem nome" é o que
+                      o teclado ouviria sem ele. */}
+                  <label style={{ flex: 1, minWidth: 0 }}>
+                    <span style={rotuloOculto}>
+                      {`Papel requerido na etapa ${index + 1}`}
+                    </span>
+                    <Select
+                      onChange={(v) => updateStep(index, { roleRequired: v })}
+                      options={ROLE_SELECT_OPTIONS}
+                      value={step.roleRequired}
+                    />
+                  </label>
+                  <label style={{ flexShrink: 0, width: 110 }}>
+                    <span style={rotuloOculto}>
+                      {`SLA em dias da etapa ${index + 1}`}
+                    </span>
+                    <TextInput
+                      onChange={(v) => updateStep(index, { slaDays: v })}
+                      placeholder="SLA (dias)"
+                      type="number"
+                      value={step.slaDays}
+                    />
+                  </label>
+                  <IconButton
+                    name="x"
+                    onClick={() => removeStep(index)}
+                    size={30}
+                    title="Remover etapa"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
 
-        <label
-          htmlFor="gate-ativo"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 13,
-            color: "var(--ink-muted)",
-          }}
-        >
-          <input
-            checked={ativo}
-            id="gate-ativo"
-            onChange={(e) => setAtivo(e.target.checked)}
-            type="checkbox"
-          />
-          Ativo
-        </label>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={save} size="sm" variant="primary">
-            Salvar política
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <FormField
+            hint="Uma política inativa fica registrada mas não bloqueia decisão nenhuma"
+            label="Situação"
+          >
+            <Segmented
+              onChange={(v) => setAtivo(v === "sim")}
+              options={ATIVO_OPTIONS}
+              tone={tone}
+              value={ativo ? "sim" : "nao"}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

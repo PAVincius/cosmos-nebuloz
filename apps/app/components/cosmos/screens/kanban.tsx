@@ -2,21 +2,20 @@
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import {
+  Badge,
   Button,
   CopilotInsightBar,
   ErrorState,
   PageHeader,
   Progress,
   Skel,
+  useAction,
   useNav,
   useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
-  createContext,
-  type ReactNode,
   useCallback,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -26,7 +25,7 @@ import {
 // authenticated. Filter popover, drag affordance, NewEpic modal + Copilot bar
 // are self-contained.
 import { createPortal } from "react-dom";
-import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
 import {
   createEpic,
   type KanbanEpic,
@@ -41,7 +40,22 @@ import {
 } from "@/app/actions/portfolio-kanban";
 import type { KanbanColumnConfig } from "@/app/actions/portfolio-kanban/schema";
 import { EmptyState } from "../empty-state";
-import { EntityLinkField } from "../entity-link-field";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  FormField,
+  MiniSlider,
+  TextArea,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 // ── board columns (real SAFe lifecycle → 5 columns) ──
@@ -107,73 +121,15 @@ const SPRINT_DATE: Record<string, string> = {
   done: "Concluído",
 };
 
-// ── local modal ──
-const ModalCtx = createContext<{
-  open: (n: ReactNode) => void;
-  close: () => void;
-}>({ open: () => {}, close: () => {} });
-const useModal = () => useContext(ModalCtx);
-
-function ModalHost({
-  node,
-  onClose,
-}: {
-  node: ReactNode;
-  onClose: () => void;
-}) {
-  if (!node) {
-    return null;
-  }
-  return createPortal(
-    <div
-      onClick={onClose}
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 400,
-        background: "rgba(4,6,14,.6)",
-        backdropFilter: "blur(6px)",
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "center",
-        paddingTop: 90,
-      }}
-    >
-      <div onClick={(e) => e.stopPropagation()}>{node}</div>
-    </div>,
-    document.body
-  );
-}
-
-// Parses a WSJF slider's raw text value into a finite number, or undefined
-// when the field is untouched/blank — an untouched field must never be
-// coerced into 0 and sent to the server.
-function parseWsjfField(raw: string): number | undefined {
-  if (raw.trim() === "") {
-    return;
-  }
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : undefined;
-}
-
 // Same formula + rounding as computeEpicWsjf in
 // app/(cosmos)/actions/kanban.ts, so the live preview always matches what
 // gets persisted. Unweighted — see that file for the Task 16 divergence note.
 function computeLiveWsjf(
-  bv?: number,
-  tc?: number,
-  rr?: number,
-  js?: number
-): number | null {
-  if (
-    bv === undefined ||
-    tc === undefined ||
-    rr === undefined ||
-    js === undefined ||
-    js <= 0
-  ) {
-    return null;
-  }
+  bv: number,
+  tc: number,
+  rr: number,
+  js: number
+): number {
   return Math.round(((bv + tc + rr) / js) * 100) / 100;
 }
 
@@ -346,6 +302,19 @@ function WipConfigModal({
   );
 }
 
+// Epic não tem coluna de cor no schema — o accent é o realce do cabeçalho e do
+// preview, não um atributo que vai ser gravado.
+const EPIC_TONE = "accent";
+
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
 function NewEpicModal({
   col,
   onCreated,
@@ -356,19 +325,39 @@ function NewEpicModal({
   const { close } = useModal();
   const [title, setTitle] = useState("");
   const [hypothesis, setHypothesis] = useState("");
-  const [bv, setBv] = useState("");
-  const [tc, setTc] = useState("");
-  const [rr, setRr] = useState("");
-  const [js, setJs] = useState("");
-  const [theme, setTheme] = useState<EntityOption | null>(null);
+  const [themeId, setThemeId] = useState<string | null>(null);
+  const [bv, setBv] = useState(5);
+  const [tc, setTc] = useState(5);
+  const [rr, setRr] = useState(5);
+  const [js, setJs] = useState(5);
+  // As quatro dimensões são opcionais na action, e o slider sempre tem um
+  // valor: sem esta trava um épico que ninguém pontuou nasceria com o WSJF do
+  // valor inicial, que é uma pontuação inventada.
+  const [wsjfDefinido, setWsjfDefinido] = useState(false);
+  /** Pontuar qualquer dimensão tira o WSJF do estado "ninguém mexeu". */
+  const pontuar = (set: (v: number) => void) => (v: number) => {
+    setWsjfDefinido(true);
+    set(v);
+  };
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  const { data: temas } = useAction(() => searchEntities("theme", ""), []);
+  const themeItems = temas ?? [];
+  // A carga inicial só alimenta o rótulo do chip: searchEntities corta em 10,
+  // e filtrar essa fatia localmente faria o campo negar tema que existe.
+  // Estável por useCallback — o efeito de busca tem onSearch nas dependências.
+  const buscarTemas = useCallback(async (q: string) => {
+    const r = await searchEntities("theme", q);
+    return r.ok ? r.data : [];
+  }, []);
+  const tema = themeItems.find((t) => t.id === themeId);
   const colDef = BOARD_COLUMNS.find((c) => c.id === col);
-  const liveWsjf = computeLiveWsjf(
-    parseWsjfField(bv),
-    parseWsjfField(tc),
-    parseWsjfField(rr),
-    parseWsjfField(js)
-  );
+  const colLabel = colDef?.label ?? "Funnel";
+  const wsjf = wsjfDefinido ? computeLiveWsjf(bv, tc, rr, js) : null;
+
+  // Mexer num slider é o que declara "este épico é pontuado" — e também o que
   const create = async () => {
     if (!title.trim() || saving) {
       return;
@@ -378,11 +367,8 @@ function NewEpicModal({
       title: title.trim(),
       column: col ?? "funnel",
       ...(hypothesis.trim() ? { hypothesis: hypothesis.trim() } : {}),
-      ...(theme ? { strategicThemeId: theme.id } : {}),
-      ...(parseWsjfField(bv) !== undefined ? { bv: parseWsjfField(bv) } : {}),
-      ...(parseWsjfField(tc) !== undefined ? { tc: parseWsjfField(tc) } : {}),
-      ...(parseWsjfField(rr) !== undefined ? { rr: parseWsjfField(rr) } : {}),
-      ...(parseWsjfField(js) !== undefined ? { js: parseWsjfField(js) } : {}),
+      ...(themeId ? { strategicThemeId: themeId } : {}),
+      ...(wsjfDefinido ? { bv, tc, rr, js } : {}),
     };
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(() => createEpic(payload), {
@@ -396,248 +382,259 @@ function NewEpicModal({
       onCreated?.();
     }
   };
+
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <div
-      style={{
-        width: 460,
-        maxWidth: "92vw",
-        background: "var(--surface-2)",
-        border: "1px solid var(--hairline-strong)",
-        borderRadius: 18,
-        boxShadow: "0 48px 96px -24px rgba(0,0,0,.7)",
-        overflow: "hidden",
-        animation: "cosmos-fadeIn .18s ease",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "16px 18px",
-          borderBottom: "1px solid var(--hairline)",
-        }}
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar épico"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="flag" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Épico de portfólio — hipótese de negócio, tema estratégico e WSJF"
+        title="Novo Épico"
+        tone={EPIC_TONE}
+        width={880}
       >
-        <span
-          style={{
-            display: "grid",
-            placeItems: "center",
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            background: "rgba(var(--accent-rgb),.14)",
-            border: "1px solid rgba(var(--accent-rgb),.25)",
-            color: "var(--accent-text)",
-          }}
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${EPIC_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <span
+                  style={{
+                    background: `var(--${EPIC_TONE})`,
+                    borderRadius: 99,
+                    height: 8,
+                    width: 8,
+                  }}
+                />
+                <span
+                  className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  {colLabel}
+                </span>
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                  marginBottom: 14,
+                }}
+              >
+                {title || "Título do épico"}
+              </div>
+
+              <div style={previewLabelStyle}>WSJF</div>
+              <div
+                className="mono"
+                style={{
+                  color: `var(--${EPIC_TONE}-text)`,
+                  fontSize: 30,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  marginBottom: 4,
+                }}
+              >
+                {wsjf === null ? "—" : wsjf.toFixed(2)}
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  marginBottom: 14,
+                }}
+              >
+                {wsjf === null
+                  ? "Ajuste os sliders para pontuar este épico"
+                  : `(${bv} + ${tc} + ${rr}) / ${js}`}
+              </div>
+
+              <div style={previewLabelStyle}>Hipótese</div>
+              <div
+                style={{
+                  color: "var(--ink-muted)",
+                  fontSize: 12.5,
+                  lineHeight: 1.55,
+                  marginBottom: 14,
+                }}
+              >
+                {hypothesis ||
+                  "A hipótese de negócio aparece aqui conforme você escreve."}
+              </div>
+
+              {tema ? (
+                <div
+                  style={{
+                    alignItems: "center",
+                    borderTop: "1px solid var(--hairline)",
+                    display: "flex",
+                    gap: 8,
+                    paddingTop: 12,
+                  }}
+                >
+                  <Icon
+                    name="target"
+                    size={13}
+                    style={{ color: `var(--${EPIC_TONE}-text)` }}
+                  />
+                  <span style={{ color: "var(--ink-muted)", fontSize: 12 }}>
+                    {tema.label}
+                  </span>
+                </div>
+              ) : (
+                <Badge tone="neutral">Sem tema estratégico</Badge>
+              )}
+            </div>
+          }
         >
-          <Icon name="plus" size={16} strokeWidth={2.4} />
-        </span>
-        <div style={{ flex: 1 }}>
-          <div
-            className="display"
-            style={{ fontSize: 15, fontWeight: 700, color: "var(--ink)" }}
+          <FormField label="Título do épico" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Antifraude em tempo real"
+              required
+              value={title}
+            />
+          </FormField>
+
+          <FormField
+            hint="Sempre visível no preview — é o campo mais importante do épico"
+            label="Hipótese de negócio"
           >
-            Novo Épico
-          </div>
-          <div style={{ fontSize: 12, color: "var(--ink-subtle)" }}>
-            {colDef ? `Coluna: ${colDef.label}` : "Portfolio Backlog"}
-          </div>
-        </div>
-        <button
-          className="btn navitem"
-          onClick={close}
-          style={{
-            width: 30,
-            height: 30,
-            borderRadius: 8,
-            border: "none",
-            background: "transparent",
-            color: "var(--ink-faint)",
-            display: "grid",
-            placeItems: "center",
-            cursor: "pointer",
-          }}
-        >
-          <Icon name="x" size={16} />
-        </button>
-      </div>
-      <div
-        style={{
-          padding: 18,
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-        }}
-      >
-        <label
-          style={{
-            fontSize: 11.5,
-            fontWeight: 700,
-            letterSpacing: ".04em",
-            textTransform: "uppercase",
-            color: "var(--ink-faint)",
-          }}
-        >
-          Título do épico
-        </label>
-        <input
-          autoFocus
-          onChange={(e) => setTitle(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              create();
-            }
-          }}
-          placeholder="Ex: Antifraude em tempo real…"
-          style={{
-            padding: "10px 12px",
-            fontSize: 14,
-            borderRadius: 10,
-            border: "1px solid var(--hairline-strong)",
-            background: "var(--surface)",
-            color: "var(--ink)",
-            fontFamily: "inherit",
-            outline: "none",
-          }}
-          value={title}
-        />
+            <TextArea
+              onChange={setHypothesis}
+              placeholder="Se entregarmos [capacidade], então [resultado de negócio], medido por [indicador]."
+              rows={3}
+              value={hypothesis}
+            />
+          </FormField>
 
-        <label htmlFor="new-epic-hypothesis" style={fieldLabelStyle}>
-          Hipótese de negócio
-        </label>
-        <textarea
-          id="new-epic-hypothesis"
-          maxLength={2000}
-          onChange={(e) => setHypothesis(e.target.value)}
-          placeholder="Acreditamos que… resultará em… medido por…"
-          rows={3}
-          style={{
-            ...fieldInputStyle,
-            resize: "vertical",
-            fontFamily: "inherit",
-          }}
-          value={hypothesis}
-        />
+          <EntityLinkField
+            hint="Vincula este épico a uma aposta de investimento do portfólio"
+            items={themeItems}
+            label="Tema estratégico"
+            onChange={(v) => setThemeId(v as string | null)}
+            onSearch={buscarTemas}
+            placeholder="Buscar um tema existente..."
+            tone={EPIC_TONE}
+            value={themeId}
+          />
 
-        <EntityLinkField
-          kind="theme"
-          label="Tema estratégico"
-          onChange={setTheme}
-          value={theme}
-        />
-
-        <div>
-          <span style={fieldLabelStyle}>WSJF (opcional)</span>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr 1fr 1fr",
-              gap: 8,
-              marginTop: 6,
-            }}
-          >
-            <div>
-              <label htmlFor="new-epic-bv" style={fieldLabelStyle}>
-                BV
-              </label>
-              <input
-                id="new-epic-bv"
+          <div>
+            <div
+              style={{
+                color: "var(--ink-subtle)",
+                fontSize: 12.5,
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              WSJF (opcional)
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gap: 14,
+                gridTemplateColumns: "1fr 1fr",
+              }}
+            >
+              <MiniSlider
+                label="Business Value"
                 max={10}
                 min={0}
-                onChange={(e) => setBv(e.target.value)}
-                style={{ ...fieldInputStyle, marginTop: 4 }}
-                type="number"
+                onChange={pontuar(setBv)}
                 value={bv}
               />
-            </div>
-            <div>
-              <label htmlFor="new-epic-tc" style={fieldLabelStyle}>
-                TC
-              </label>
-              <input
-                id="new-epic-tc"
+              <MiniSlider
+                label="Time Criticality"
                 max={10}
                 min={0}
-                onChange={(e) => setTc(e.target.value)}
-                style={{ ...fieldInputStyle, marginTop: 4 }}
-                type="number"
+                onChange={pontuar(setTc)}
                 value={tc}
               />
-            </div>
-            <div>
-              <label htmlFor="new-epic-rr" style={fieldLabelStyle}>
-                RR
-              </label>
-              <input
-                id="new-epic-rr"
+              <MiniSlider
+                label="Risco/Oportunidade"
                 max={10}
                 min={0}
-                onChange={(e) => setRr(e.target.value)}
-                style={{ ...fieldInputStyle, marginTop: 4 }}
-                type="number"
+                onChange={pontuar(setRr)}
                 value={rr}
               />
-            </div>
-            <div>
-              <label htmlFor="new-epic-js" style={fieldLabelStyle}>
-                JS
-              </label>
-              <input
-                id="new-epic-js"
+              <MiniSlider
+                label="Job Size"
                 max={10}
                 min={1}
-                onChange={(e) => setJs(e.target.value)}
-                style={{ ...fieldInputStyle, marginTop: 4 }}
-                type="number"
+                onChange={pontuar(setJs)}
                 value={js}
               />
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginTop: 8,
-              padding: "8px 12px",
-              borderRadius: 10,
-              background: "var(--accent-soft)",
-              border: "1px solid rgba(var(--accent-rgb),.25)",
-            }}
-          >
-            <span style={{ fontSize: 12.5, color: "var(--ink-muted)" }}>
-              Score WSJF
-            </span>
-            <span
-              className="mono"
-              style={{
-                fontSize: 14,
-                fontWeight: 700,
-                color: "var(--accent-text)",
-              }}
-            >
-              {liveWsjf === null ? "—" : liveWsjf.toFixed(2)}
-            </span>
-          </div>
-        </div>
-
-        <div
-          style={{
-            display: "flex",
-            gap: 8,
-            justifyContent: "flex-end",
-            marginTop: 4,
-          }}
-        >
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button icon="check" onClick={create} size="sm" variant="primary">
-            {saving ? "Criando…" : "Criar épico"}
-          </Button>
-        </div>
-      </div>
-    </div>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 
@@ -1313,8 +1310,9 @@ function KanbanFilterPopover({
 }
 
 // ── Screen ──
-export default function KanbanScreen() {
+function KanbanBody() {
   const { navigate } = useNav();
+  const modal = useModal();
   const [epics, setEpics] = useState<KanbanEpic[]>([]);
   const [colunas, setColunas] = useState<KanbanColumnConfig[]>([]);
   const [viewerRole, setViewerRole] = useState<string | null>(null);
@@ -1328,7 +1326,6 @@ export default function KanbanScreen() {
   const [error, setError] = useState(false);
   const { filters, setFilters, activeCount, matches } = useKanbanFilters();
   const [filterOpen, setFilterOpen] = useState(false);
-  const [modalNode, setModalNode] = useState<ReactNode>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const dragId = useRef<string | null>(null);
 
@@ -1418,7 +1415,6 @@ export default function KanbanScreen() {
   }, [filterOpen]);
 
   const visible = epics.filter(matches);
-  const modal = { open: setModalNode, close: () => setModalNode(null) };
 
   // real hot/high-WSJF epics still sitting in the earliest board columns —
   // the only thing the Copilot bar is allowed to claim it "detected".
@@ -1431,183 +1427,188 @@ export default function KanbanScreen() {
     .sort((a, b) => b.wsjf - a.wsjf);
 
   return (
-    <ModalCtx.Provider value={modal}>
-      <div
-        className="fade-in"
-        style={{ display: "flex", flexDirection: "column", height: "100%" }}
+    <div
+      className="fade-in"
+      style={{ display: "flex", flexDirection: "column", height: "100%" }}
+    >
+      <PageHeader
+        eyebrow="Portfolio · Lifecycle SAFe"
+        meta={
+          <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
+            <strong style={{ color: "var(--ink)" }}>{visible.length}</strong> de{" "}
+            {epics.length} épicos{activeCount > 0 ? " (filtrado)" : ""}
+          </span>
+        }
+        subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
+        title="Kanban de Épicos"
       >
-        <PageHeader
-          eyebrow="Portfolio · Lifecycle SAFe"
-          meta={
-            <span style={{ fontSize: 12.5, color: "var(--ink-subtle)" }}>
-              <strong style={{ color: "var(--ink)" }}>{visible.length}</strong>{" "}
-              de {epics.length} épicos{activeCount > 0 ? " (filtrado)" : ""}
-            </span>
-          }
-          subtitle="Arraste épicos pelo funil de portfólio — do Funnel ao Done — com priorização WSJF e gates de governança."
-          title="Kanban de Épicos"
+        {viewerRole !== null &&
+          WIP_CONFIG_ROLES.has(viewerRole) &&
+          colunas.length > 0 && (
+            <Button
+              onClick={() =>
+                modal.open(
+                  <WipConfigModal colunas={colunas} onSaved={loadConfig} />
+                )
+              }
+              size="sm"
+              variant="secondary"
+            >
+              Configurar limites de WIP
+            </Button>
+          )}
+        <button
+          className="btn"
+          data-kanban-filter-trigger
+          onClick={() => setFilterOpen((o) => !o)}
+          ref={btnRef}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "9px 15px",
+            fontSize: 14,
+            fontWeight: 600,
+            fontFamily: "inherit",
+            borderRadius: "var(--r-md)",
+            border: "1px solid var(--hairline-strong)",
+            background: "var(--surface)",
+            color: "var(--ink)",
+            cursor: "pointer",
+          }}
         >
-          {viewerRole !== null &&
-            WIP_CONFIG_ROLES.has(viewerRole) &&
-            colunas.length > 0 && (
-              <Button
-                onClick={() =>
-                  modal.open(
-                    <WipConfigModal colunas={colunas} onSaved={loadConfig} />
-                  )
-                }
-                size="sm"
-                variant="secondary"
-              >
-                Configurar limites de WIP
-              </Button>
-            )}
-          <button
-            className="btn"
-            data-kanban-filter-trigger
-            onClick={() => setFilterOpen((o) => !o)}
-            ref={btnRef}
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: 8,
-              padding: "9px 15px",
-              fontSize: 14,
-              fontWeight: 600,
-              fontFamily: "inherit",
-              borderRadius: "var(--r-md)",
-              border: "1px solid var(--hairline-strong)",
-              background: "var(--surface)",
-              color: "var(--ink)",
-              cursor: "pointer",
-            }}
-          >
-            <Icon name="filter" size={16} strokeWidth={2.1} /> Filtros
-            {activeCount > 0 && (
-              <span
-                className="mono"
-                style={{
-                  fontSize: 11,
-                  fontWeight: 700,
-                  color: "var(--accent-fg)",
-                  background: "var(--accent)",
-                  borderRadius: 99,
-                  padding: "1px 7px",
-                }}
-              >
-                {activeCount}
-              </span>
-            )}
-          </button>
-          <Button
-            icon="plus"
-            onClick={() => modal.open(<NewEpicModal onCreated={load} />)}
-            variant="primary"
-          >
-            Novo Épico
-          </Button>
-        </PageHeader>
+          <Icon name="filter" size={16} strokeWidth={2.1} /> Filtros
+          {activeCount > 0 && (
+            <span
+              className="mono"
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: "var(--accent-fg)",
+                background: "var(--accent)",
+                borderRadius: 99,
+                padding: "1px 7px",
+              }}
+            >
+              {activeCount}
+            </span>
+          )}
+        </button>
+        <Button
+          icon="plus"
+          onClick={() => modal.open(<NewEpicModal onCreated={load} />)}
+          variant="primary"
+        >
+          Novo Épico
+        </Button>
+      </PageHeader>
 
-        {filterOpen && btnRef.current && (
-          <KanbanFilterPopover
-            btnRect={btnRef.current.getBoundingClientRect()}
-            epics={epics}
-            filters={filters}
-            onChange={setFilters}
-            onClose={() => setFilterOpen(false)}
-          />
-        )}
+      {filterOpen && btnRef.current && (
+        <KanbanFilterPopover
+          btnRect={btnRef.current.getBoundingClientRect()}
+          epics={epics}
+          filters={filters}
+          onChange={setFilters}
+          onClose={() => setFilterOpen(false)}
+        />
+      )}
 
-        {!(loading || error) && hotHighWsjfEarly.length > 0 && (
-          <CopilotInsightBar
-            onAction={() => navigate("epic", hotHighWsjfEarly[0].id)}
-          >
-            <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
-              ORBIT
-            </strong>{" "}
-            detectou{" "}
-            {hotHighWsjfEarly.length === 1
-              ? "1 épico"
-              : `${hotHighWsjfEarly.length} épicos`}{" "}
-            com WSJF alto ainda em Funnel/Analyzing — priorize{" "}
-            {hotHighWsjfEarly.slice(0, 2).map((e, i) => (
-              <span key={e.id}>
-                {i > 0 && " e "}
-                <strong style={{ color: "var(--ink)" }}>{e.title}</strong>
-              </span>
-            ))}{" "}
-            no próximo refinamento.
-          </CopilotInsightBar>
-        )}
+      {!(loading || error) && hotHighWsjfEarly.length > 0 && (
+        <CopilotInsightBar
+          onAction={() => navigate("epic", hotHighWsjfEarly[0].id)}
+        >
+          <strong style={{ color: "var(--accent-text)", fontWeight: 700 }}>
+            ORBIT
+          </strong>{" "}
+          detectou{" "}
+          {hotHighWsjfEarly.length === 1
+            ? "1 épico"
+            : `${hotHighWsjfEarly.length} épicos`}{" "}
+          com WSJF alto ainda em Funnel/Analyzing — priorize{" "}
+          {hotHighWsjfEarly.slice(0, 2).map((e, i) => (
+            <span key={e.id}>
+              {i > 0 && " e "}
+              <strong style={{ color: "var(--ink)" }}>{e.title}</strong>
+            </span>
+          ))}{" "}
+          no próximo refinamento.
+        </CopilotInsightBar>
+      )}
 
-        {error && (
-          <ErrorState message="Não foi possível carregar os épicos do portfólio." />
-        )}
+      {error && (
+        <ErrorState message="Não foi possível carregar os épicos do portfólio." />
+      )}
 
-        {!(loading || error) && epics.length === 0 && (
-          <EmptyState
-            action={{
-              label: "Novo Épico",
-              onClick: () => modal.open(<NewEpicModal onCreated={load} />),
-            }}
-            description="Nenhum épico foi registrado neste tenant ainda."
-            icon="kanban"
-            title="Nenhum épico no portfólio"
-          />
-        )}
+      {!(loading || error) && epics.length === 0 && (
+        <EmptyState
+          action={{
+            label: "Novo Épico",
+            onClick: () => modal.open(<NewEpicModal onCreated={load} />),
+          }}
+          description="Nenhum épico foi registrado neste tenant ainda."
+          icon="kanban"
+          title="Nenhum épico no portfólio"
+        />
+      )}
 
-        {!error && (loading || epics.length > 0) && (
-          <div
-            className="scroll"
-            style={{
-              display: "flex",
-              gap: 12,
-              overflowX: "auto",
-              overflowY: "hidden",
-              flex: 1,
-              paddingBottom: 8,
-              minHeight: 420,
-            }}
-          >
-            {loading
-              ? Array.from({ length: 5 }).map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      flexShrink: 0,
-                      width: 290,
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: 9,
-                      background: "var(--surface-2)",
-                      borderRadius: 16,
-                      border: "1px solid var(--hairline)",
-                      padding: 12,
-                    }}
-                  >
-                    <Skel h={16} w="60%" />
-                    {Array.from({ length: 3 }).map((_, j) => (
-                      <Skel h={90} key={j} r={14} />
-                    ))}
-                  </div>
-                ))
-              : BOARD_COLUMNS.map((col) => (
-                  <KanbanColumn
-                    col={col}
-                    items={visible.filter((e) => e.column === col.id)}
-                    key={col.id}
-                    onCreated={load}
-                    onDragStart={(id) => {
-                      dragId.current = id;
-                    }}
-                    onDropEpic={moveTo}
-                    wipLimit={wipLimits[col.id] ?? null}
-                  />
-                ))}
-          </div>
-        )}
-      </div>
-      <ModalHost node={modalNode} onClose={modal.close} />
-    </ModalCtx.Provider>
+      {!error && (loading || epics.length > 0) && (
+        <div
+          className="scroll"
+          style={{
+            display: "flex",
+            gap: 12,
+            overflowX: "auto",
+            overflowY: "hidden",
+            flex: 1,
+            paddingBottom: 8,
+            minHeight: 420,
+          }}
+        >
+          {loading
+            ? Array.from({ length: 5 }).map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    flexShrink: 0,
+                    width: 290,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 9,
+                    background: "var(--surface-2)",
+                    borderRadius: 16,
+                    border: "1px solid var(--hairline)",
+                    padding: 12,
+                  }}
+                >
+                  <Skel h={16} w="60%" />
+                  {Array.from({ length: 3 }).map((_, j) => (
+                    <Skel h={90} key={j} r={14} />
+                  ))}
+                </div>
+              ))
+            : BOARD_COLUMNS.map((col) => (
+                <KanbanColumn
+                  col={col}
+                  items={visible.filter((e) => e.column === col.id)}
+                  key={col.id}
+                  onCreated={load}
+                  onDragStart={(id) => {
+                    dragId.current = id;
+                  }}
+                  onDropEpic={moveTo}
+                  wipLimit={wipLimits[col.id] ?? null}
+                />
+              ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function KanbanScreen() {
+  return (
+    <ModalProvider>
+      <KanbanBody />
+    </ModalProvider>
   );
 }
