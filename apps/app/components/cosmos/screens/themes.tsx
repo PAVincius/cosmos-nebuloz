@@ -12,7 +12,7 @@ import {
 } from "@repo/design-system/cosmos/kit";
 // themes.tsx — Temas Estratégicos (portfolio investment themes), wired to
 // listThemes(). KPI row + card grid: health, target-vs-actual allocation
-// (BillingEntryAllocation-derived, see actions/themes.ts), epic count.
+// (BillingEntry.themeId + effectiveCost, see actions/themes.ts), epic count.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   archiveTheme,

@@ -50,6 +50,8 @@ model BillingEntry {
   tags Json @default("{}")
 
   themeId       String?
+  epicId        String?
+  artId         String?
   mappingRuleId String?
   mappingConf   String  @default("UNMAPPED")
 
@@ -58,6 +60,8 @@ model BillingEntry {
   tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   integration Integration              @relation(fields: [integrationId], references: [id], onDelete: Cascade)
   theme       StrategicTheme?          @relation(fields: [themeId], references: [id], onDelete: SetNull)
+  epic        Epic?                    @relation(fields: [epicId], references: [id], onDelete: SetNull)
+  art         ART?                     @relation(fields: [artId], references: [id], onDelete: SetNull)
   allocations BillingEntryAllocation[]
 
   @@unique([tenantId, integrationId, externalId])
@@ -67,8 +71,12 @@ model BillingEntry {
   @@index([tenantId, service, usageStartDate])
   @@index([tenantId, mappingConf])
   @@index([tenantId, themeId, usageStartDate])
+  @@index([tenantId, epicId, usageStartDate])
+  @@index([tenantId, artId, usageStartDate])
   @@index([integrationId, usageStartDate])
   @@index([themeId])
+  @@index([epicId])
+  @@index([artId])
 }
 
 model BillingEntryAllocation {
