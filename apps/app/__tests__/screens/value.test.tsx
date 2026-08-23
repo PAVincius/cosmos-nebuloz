@@ -9,9 +9,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const listValueRealizationsMock = vi.fn();
 const recordActualValueMock = vi.fn();
 
-// EntityLinkField (usado pelo modal de criação) importa a server action de
-// busca no escopo do módulo — sem este mock a cadeia de import encosta em
-// @repo/database sob o guard de ambiente cliente do vitest.
+// A tela importa a server action de busca no escopo do módulo (o modal de
+// criação vincula o épico por ela) — sem este mock a cadeia de import encosta
+// em @repo/database sob o guard de ambiente cliente do vitest.
 vi.mock("@/app/(cosmos)/actions/entity-search", () => ({
   searchEntities: vi.fn().mockResolvedValue({ ok: true, data: [] }),
 }));

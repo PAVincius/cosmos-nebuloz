@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   Badge,
   Button,
@@ -37,7 +38,21 @@ import {
   type CapacityNoteTone,
 } from "@/app/(cosmos)/actions/capacity.constants";
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  Segmented,
+  Select,
+  TextArea,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const NOTE_TONE: Record<CapacityNoteTone, Tone> = {
@@ -65,29 +80,14 @@ function utilTitle(
   return `Planejado ${expectedSp ?? "—"} SP · Entregue ${actualSp ?? "—"} SP · Utilização ${utilizationPct}% — ${CAPACITY_BAND_LABEL[band]}`;
 }
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
+const previewLabelStyle: CSSProperties = {
   color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
   marginBottom: 6,
+  textTransform: "uppercase",
 };
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const selectStyle: CSSProperties = inputStyle;
 
 const NOTE_TONE_LABEL: Record<CapacityNoteTone, string> = {
   green: "Positivo",
@@ -95,6 +95,19 @@ const NOTE_TONE_LABEL: Record<CapacityNoteTone, string> = {
   red: "Crítico",
   neutral: "Neutro",
 };
+
+// O tom da nota é o realce do modal, mas "neutral" não é cor no tema — cai no
+// accent para o cabeçalho não ficar sem realce nenhum.
+const NOTE_MODAL_TONE: Record<CapacityNoteTone, string> = {
+  green: "green",
+  amber: "amber",
+  red: "red",
+  neutral: "accent",
+};
+
+// O mesmo teto do CreateCapacityAdjustmentNoteSchema. Repetido aqui porque o
+// contador precisa de um número; divergir só adiantaria a recusa do zod.
+const TEXTO_MAX = 500;
 
 function NewCapacityNoteModal({
   teams,
@@ -110,6 +123,8 @@ function NewCapacityNoteModal({
   const [text, setText] = useState("");
   const [tone, setTone] = useState<CapacityNoteTone>("neutral");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   useEffect(() => {
     setSprintId("");
@@ -129,6 +144,9 @@ function NewCapacityNoteModal({
   }, [teamId]);
 
   const canSave = teamId.trim() && text.trim() && !saving;
+  const modalTone = NOTE_MODAL_TONE[tone];
+  const time = teams.find((t) => t.teamId === teamId);
+  const sprint = sprints.find((s) => s.id === sprintId);
 
   const create = async () => {
     if (!canSave) {
@@ -157,98 +175,188 @@ function NewCapacityNoteModal({
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      subtitle="Explique férias, treinamento, onboarding ou outros fatores considerados na capacidade"
-      title="Novo ajuste de capacidade"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="capnote-team" style={fieldLabelStyle}>
-            Time
-          </label>
-          <select
-            id="capnote-team"
-            onChange={(e) => setTeamId(e.target.value)}
-            style={selectStyle}
-            value={teamId}
-          >
-            {teams.map((t) => (
-              <option key={t.teamId} value={t.teamId}>
-                {t.teamName}
-              </option>
-            ))}
-          </select>
-        </div>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  style={
+                    canSave ? undefined : { opacity: 0.5, cursor: "default" }
+                  }
+                  variant="primary"
+                >
+                  {saving ? "Adicionando..." : "Adicionar ajuste"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="sliders" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Explique férias, treinamento, onboarding ou outros fatores considerados na capacidade"
+        title="Novo ajuste de capacidade"
+        tone={modalTone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${modalTone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              {/* Mesma forma da linha no painel "Ajustes de capacidade": o
+                  preview mostra onde a nota vai parar, não uma outra coisa. */}
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <Badge dot tone={NOTE_TONE[tone]}>
+                  {time?.teamName ?? "Time"}
+                </Badge>
+                {sprint && <Badge tone="neutral">{sprint.name}</Badge>}
+              </div>
+              <div
+                style={{
+                  color: text ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12.5,
+                  lineHeight: 1.55,
+                  marginBottom: 14,
+                }}
+              >
+                {text || "O que explica a variação de capacidade..."}
+              </div>
 
-        <div>
-          <label htmlFor="capnote-sprint" style={fieldLabelStyle}>
-            Sprint (opcional)
-          </label>
-          <select
-            id="capnote-sprint"
-            onChange={(e) => setSprintId(e.target.value)}
-            style={selectStyle}
-            value={sprintId}
-          >
-            <option value="">Sem sprint específico</option>
-            {sprints.map((s) => (
-              <option key={s.id} value={s.id}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div style={previewLabelStyle}>Capacidade do time hoje</div>
+              {time && time.utilizationPct !== null ? (
+                <>
+                  <Progress
+                    tone={bandTone(time.band)}
+                    value={time.utilizationPct}
+                  />
+                  <div
+                    style={{
+                      color: "var(--ink-muted)",
+                      fontSize: 11,
+                      marginTop: 6,
+                    }}
+                  >
+                    {`${time.actualSp ?? "—"} / ${time.expectedSp ?? "—"} SP · utilização ${time.utilizationPct}%`}
+                  </div>
+                </>
+              ) : (
+                <div style={{ color: "var(--ink-faint)", fontSize: 12 }}>
+                  Sem snapshot de capacidade para este time
+                </div>
+              )}
+            </div>
+          }
+        >
+          <FormField label="Time">
+            <Select
+              onChange={setTeamId}
+              options={teams.map((t) => ({
+                value: t.teamId,
+                label: t.teamName,
+              }))}
+              value={teamId}
+            />
+          </FormField>
 
-        <div>
-          <label htmlFor="capnote-text" style={fieldLabelStyle}>
-            Explicação
-          </label>
-          <textarea
-            id="capnote-text"
-            maxLength={500}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="ex: −4 pts: 1 dev em treinamento de segurança"
-            rows={3}
-            style={{ ...inputStyle, resize: "vertical" }}
-            value={text}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="capnote-tone" style={fieldLabelStyle}>
-            Impacto
-          </label>
-          <select
-            id="capnote-tone"
-            onChange={(e) => setTone(e.target.value as CapacityNoteTone)}
-            style={selectStyle}
-            value={tone}
+          <FormField
+            hint="Sem sprint, o ajuste vale para o time como um todo"
+            label="Sprint (opcional)"
           >
-            {CAPACITY_NOTE_TONES.map((t) => (
-              <option key={t} value={t}>
-                {NOTE_TONE_LABEL[t]}
-              </option>
-            ))}
-          </select>
-        </div>
+            <Select
+              onChange={setSprintId}
+              options={[
+                { value: "", label: "Sem sprint específico" },
+                ...sprints.map((s) => ({ value: s.id, label: s.name })),
+              ]}
+              value={sprintId}
+            />
+          </FormField>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button
-            onClick={create}
-            size="sm"
-            style={canSave ? undefined : { opacity: 0.5, cursor: "default" }}
-            variant="primary"
+          <FormField
+            hint={`${text.length}/${TEXTO_MAX} caracteres`}
+            label="Explicação"
+            required
           >
-            Adicionar ajuste
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+            <TextArea
+              onChange={(v) => setText(v.slice(0, TEXTO_MAX))}
+              placeholder="ex: −4 pts: 1 dev em treinamento de segurança"
+              required
+              rows={3}
+              value={text}
+            />
+          </FormField>
+
+          <FormField label="Impacto">
+            <Segmented
+              onChange={(v) => {
+                setDirty(true);
+                setTone(v as CapacityNoteTone);
+              }}
+              options={CAPACITY_NOTE_TONES.map((t) => ({
+                value: t,
+                label: NOTE_TONE_LABEL[t],
+              }))}
+              tone={modalTone}
+              value={tone}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

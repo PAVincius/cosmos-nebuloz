@@ -24,7 +24,15 @@ import {
   updateLeanBudgetGuardrails,
 } from "@/app/(cosmos)/actions/budgets";
 import { createLeanBudget } from "@/app/actions/lean-budget";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, TextInput } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 function utilizationTone(pct: number | null): "green" | "amber" | "red" {
@@ -300,10 +308,14 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
   const [amount, setAmount] = useState("");
   const [period, setPeriod] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  const valor = Number(amount);
+  const valorValido = Number.isFinite(valor) && valor > 0;
 
   const create = async () => {
-    const valor = Number(amount);
-    if (!(name.trim() && period.trim() && valor > 0) || saving) {
+    if (!(name.trim() && period.trim() && valorValido) || saving) {
       return;
     }
     setSaving(true);
@@ -331,63 +343,178 @@ function NovoBudgetModal({ onCreated }: { onCreated: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="wallet" size={16} strokeWidth={2.4} />}
-      subtitle="Lean Budget é o envelope de gasto de um PI — depois de fechado ele congela"
-      title="Novo orçamento"
-      width={440}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="budget-name" style={fieldLabelStyle}>
-            Nome do orçamento
-          </label>
-          <input
-            autoFocus
-            id="budget-name"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: Budget Pagamentos"
-            style={inputStyle}
-            value={name}
-          />
-        </div>
-        <div>
-          <label htmlFor="budget-amount" style={fieldLabelStyle}>
-            Valor alocado
-          </label>
-          <input
-            id="budget-amount"
-            min={1}
-            onChange={(e) => setAmount(e.target.value)}
-            placeholder="1000000"
-            style={inputStyle}
-            type="number"
-            value={amount}
-          />
-        </div>
-        <div>
-          <label htmlFor="budget-period" style={fieldLabelStyle}>
-            Período
-          </label>
-          <input
-            id="budget-period"
-            onChange={(e) => setPeriod(e.target.value)}
-            placeholder="Ex: PI-2026-Q1"
-            style={inputStyle}
-            value={period}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar orçamento
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar orçamento"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="wallet" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Financiamento contínuo de um fluxo de valor — depois que o PI fecha, o envelope congela"
+        title="Novo orçamento"
+        tone="green"
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: "1px solid rgba(var(--green-rgb),.25)",
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <Badge icon="wallet" tone="green">
+                {period.trim() || "Período do PI"}
+              </Badge>
+              <div
+                className="display"
+                style={{ fontSize: 15.5, fontWeight: 700, margin: "10px 0" }}
+              >
+                {name || "Nome do orçamento"}
+              </div>
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  marginTop: 14,
+                  paddingTop: 12,
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    fontSize: 12.5,
+                    justifyContent: "space-between",
+                    marginBottom: 6,
+                  }}
+                >
+                  <span
+                    className="mono"
+                    style={{ color: "var(--ink-muted)", fontWeight: 700 }}
+                  >
+                    {valorValido ? `$${valor.toLocaleString()}` : "$—"}
+                  </span>
+                  <span style={{ color: "var(--ink-faint)" }}>alocado</span>
+                </div>
+                {/* Zero não é enfeite: o envelope nasce sem consumo e só a
+                    apropriação de custo do PI move esta barra. */}
+                <Progress height={8} tone="green" value={0} />
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                  marginTop: 12,
+                }}
+              >
+                0% consumido — o gasto entra pelos custos apropriados ao PI, não
+                por edição manual.
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                  marginTop: 6,
+                }}
+              >
+                CapEx/OpEx e limites de aprovação se ajustam depois, em
+                Guardrails.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Nome do orçamento" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: Budget Pagamentos"
+              required
+              value={name}
+            />
+          </FormField>
+          <div
+            style={{
+              display: "grid",
+              gap: 14,
+              gridTemplateColumns: "1fr 1fr",
+            }}
+          >
+            <FormField label="Valor alocado" required>
+              <TextInput
+                onChange={setAmount}
+                placeholder="1000000"
+                required
+                type="number"
+                value={amount}
+              />
+            </FormField>
+            <FormField
+              hint="O PI que este envelope financia"
+              label="Período"
+              required
+            >
+              <TextInput
+                onChange={setPeriod}
+                placeholder="ex: PI-2026-Q1"
+                required
+                value={period}
+              />
+            </FormField>
+          </div>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

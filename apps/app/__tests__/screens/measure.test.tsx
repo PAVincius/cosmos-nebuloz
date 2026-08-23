@@ -352,11 +352,13 @@ describe("MeasureScreen", () => {
     await screen.findByText("Nova ação");
 
     fireEvent.click(screen.getByText("Nova ação"));
-    fireEvent.change(await screen.findByLabelText("Título"), {
+    // O rótulo carrega o asterisco de obrigatório desde que o modal passou a
+    // usar FormField — a âncora continua sendo o rótulo, não o placeholder.
+    fireEvent.change(await screen.findByLabelText(/^Título/), {
       target: { value: "Rodar dojo de testes de contrato" },
     });
     await screen.findByRole("option", { name: "Squad Atlas" });
-    fireEvent.change(screen.getByLabelText("Time responsável"), {
+    fireEvent.change(screen.getByLabelText(/^Time responsável/), {
       target: { value: "team-atlas" },
     });
     fireEvent.click(screen.getByText("Criar ação"));

@@ -163,7 +163,9 @@ describe("BoardScreen", () => {
     await screen.findByTestId("coluna-TODO");
 
     fireEvent.click(screen.getByRole("button", { name: "Nova story" }));
-    fireEvent.change(screen.getByLabelText("Título da story"), {
+    // Regex e não string exata: FormField marca campo obrigatório com um " *"
+    // no fim do rótulo, que entra no texto do label.
+    fireEvent.change(screen.getByLabelText(/^Título da story/), {
       target: { value: "Exportar relatório" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar story" }));

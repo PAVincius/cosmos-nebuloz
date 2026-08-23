@@ -19,8 +19,11 @@ import {
 // multi-PI cadence timeline is NOT wired — see the comment on
 // listSolutionTrains in actions/solution-train.ts for why.
 import type { CSSProperties } from "react";
-import { useState } from "react";
-import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { useCallback, useState } from "react";
+import {
+  type EntityOption,
+  searchEntities,
+} from "@/app/(cosmos)/actions/entity-search";
 import {
   createCapability,
   listSolutionTrains,
@@ -29,8 +32,22 @@ import {
   type SolutionTrainCrossArtDependencyView,
   type SolutionTrainRoamView,
 } from "@/app/(cosmos)/actions/solution-train";
-import { EntityLinkField } from "../entity-link-field";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  FormField,
+  Segmented,
+  TextArea,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_OPTIONS: { value: string; label: string }[] = [
@@ -54,29 +71,7 @@ function capabilityStatusLabel(status: string): string {
   return STATUS_OPTIONS.find((opt) => opt.value === status)?.label ?? status;
 }
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const selectStyle: CSSProperties = inputStyle;
+const CAPABILITY_TONE = "purple";
 
 function NewCapabilityModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
@@ -84,8 +79,26 @@ function NewCapabilityModal({ onCreated }: { onCreated?: () => void }) {
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState(STATUS_OPTIONS[0].value);
   const [milestone, setMilestone] = useState("");
-  const [solutionTrain, setSolutionTrain] = useState<EntityOption | null>(null);
+  const [solutionTrainId, setSolutionTrainId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  // Trens vinculáveis, carregados uma vez ao abrir. Esta primeira leva só
+  // alimenta o rótulo do chip escolhido: searchEntities corta em 10, e
+  // "raramente passa de 10" não é garantia — quando passa, o campo nega trem
+  // que existe.
+  const { data: trains } = useAction<EntityOption[]>(
+    () => searchEntities("solutionTrain", ""),
+    []
+  );
+  const train = (trains ?? []).find((t) => t.id === solutionTrainId);
+  // Estável por useCallback — o efeito de busca do campo tem onSearch nas
+  // dependências e uma função nova a cada render viraria busca em loop.
+  const buscarTrens = useCallback(async (q: string) => {
+    const r = await searchEntities("solutionTrain", q);
+    return r.ok ? r.data : [];
+  }, []);
 
   const create = async () => {
     if (!title.trim() || saving) {
@@ -100,7 +113,7 @@ function NewCapabilityModal({ onCreated }: { onCreated?: () => void }) {
           description: description.trim() || undefined,
           status: status as "BACKLOG" | "ANALYZING" | "IMPLEMENTING" | "DONE",
           milestone: milestone.trim() || undefined,
-          solutionTrainId: solutionTrain?.id,
+          solutionTrainId: solutionTrainId ?? undefined,
         }),
       {
         loading: "Criando capability...",
@@ -115,89 +128,191 @@ function NewCapabilityModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="target" size={16} strokeWidth={2.4} />}
-      subtitle="Registrar uma nova capability de Solution Train"
-      title="Nova capability"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="capability-title" style={fieldLabelStyle}>
-            Título
-          </label>
-          <input
-            id="capability-title"
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Nome da capability…"
-            style={inputStyle}
-            value={title}
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar capability"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="layers" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Entrega de larga escala do Solution Train, coordenando múltiplos ARTs"
+        title="Nova capability"
+        tone={CAPABILITY_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${CAPABILITY_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                className="display"
+                style={{
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 10,
+                }}
+              >
+                {title || "Título da capability"}
+              </div>
+              {description && (
+                <div
+                  style={{
+                    color: "var(--ink-muted)",
+                    fontSize: 12,
+                    lineHeight: 1.55,
+                    marginBottom: 12,
+                  }}
+                >
+                  {description}
+                </div>
+              )}
+              <div style={{ marginBottom: 12 }}>
+                <Badge tone={CAPABILITY_STATUS_TONE[status] ?? "neutral"}>
+                  {capabilityStatusLabel(status)}
+                </Badge>
+              </div>
+              {milestone && (
+                <div
+                  style={{
+                    alignItems: "center",
+                    color: "var(--ink-muted)",
+                    display: "flex",
+                    fontSize: 11.5,
+                    gap: 6,
+                    marginBottom: 12,
+                  }}
+                >
+                  <Icon name="calendar" size={13} strokeWidth={2} />
+                  {milestone}
+                </div>
+              )}
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: ".06em",
+                  marginBottom: 6,
+                  textTransform: "uppercase",
+                }}
+              >
+                Solution Train
+              </div>
+              <div
+                style={{
+                  color: train ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12,
+                }}
+              >
+                {/* Capability solta não aparece em rollup nenhum: o trem é o
+                    que a torna visível na tela de Large Solution. */}
+                {train?.label ??
+                  "Nenhum trem vinculado — a capability não entra no rollup"}
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Título da capability" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Checkout unificado multi-região"
+              required
+              value={title}
+            />
+          </FormField>
+          <FormField label="Descrição">
+            <TextArea
+              onChange={setDescription}
+              placeholder="O que esta entrega de larga escala resolve, e para quem"
+              rows={3}
+              value={description}
+            />
+          </FormField>
+          <FormField label="Status">
+            <Segmented
+              onChange={setStatus}
+              options={STATUS_OPTIONS}
+              tone={CAPABILITY_TONE}
+              value={status}
+            />
+          </FormField>
+          <FormField hint="Opcional" label="Próximo marco">
+            <TextInput
+              onChange={setMilestone}
+              placeholder="ex: Beta no Solution PI-12"
+              value={milestone}
+            />
+          </FormField>
+
+          <EntityLinkField
+            hint="Sem trem, a capability existe mas não aparece em rollup nenhum"
+            items={trains ?? []}
+            label="Solution Train"
+            onChange={(v) => setSolutionTrainId(v as string | null)}
+            onSearch={buscarTrens}
+            placeholder="Buscar um solution train..."
+            tone={CAPABILITY_TONE}
+            value={solutionTrainId}
           />
-        </div>
-
-        <div>
-          <label htmlFor="capability-description" style={fieldLabelStyle}>
-            Descrição (opcional)
-          </label>
-          <textarea
-            id="capability-description"
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Descrição da capability…"
-            rows={3}
-            style={{ ...inputStyle, resize: "vertical" }}
-            value={description}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="capability-status" style={fieldLabelStyle}>
-            Status
-          </label>
-          <select
-            id="capability-status"
-            onChange={(e) => setStatus(e.target.value)}
-            style={selectStyle}
-            value={status}
-          >
-            {STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="capability-milestone" style={fieldLabelStyle}>
-            Marco (opcional)
-          </label>
-          <input
-            id="capability-milestone"
-            onChange={(e) => setMilestone(e.target.value)}
-            placeholder="Ex.: Marco Q2"
-            style={inputStyle}
-            value={milestone}
-          />
-        </div>
-
-        <EntityLinkField
-          kind="solutionTrain"
-          label="Solution Train (opcional)"
-          onChange={setSolutionTrain}
-          value={solutionTrain}
-        />
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar capability
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

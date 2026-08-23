@@ -22,7 +22,7 @@ import {
 // getActiveProgramBoard só enxerga PLANNING/COMMITTED/EXECUTING. Sem abrir o PI,
 // o Program Board fica vazio e o botão de criar Feature nunca aparece — por isso
 // o aviso de DRAFT é conteúdo da tela, não detalhe cosmético.
-import { useCallback, useEffect, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import type { ArtListView, ArtPiView } from "@/app/(cosmos)/actions/arts";
 import { listArts } from "@/app/(cosmos)/actions/arts";
 import {
@@ -31,30 +31,67 @@ import {
   transitionPIPlan,
 } from "@/app/actions/arts/lifecycle";
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  MiniSlider,
+  Segmented,
+  TextInput,
+  useDirty,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
-const inputStyle = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
+// Medidas de modal-form (campoBase), replicadas porque TextInput não aceita
+// type="date" e não há primitiva de data — ver relatório.
+const dateInputStyle: CSSProperties = {
   background: "var(--surface)",
+  border: "1px solid var(--hairline-strong)",
+  borderRadius: "var(--r-md)",
   color: "var(--ink)",
   fontFamily: "inherit",
+  fontSize: 13.5,
   outline: "none",
-} as const;
+  padding: "9px 11px",
+  width: "100%",
+};
 
-const labelStyle = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-} as const;
+function DateInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const { markDirty } = useDirty();
+  return (
+    <input
+      onChange={(e) => {
+        markDirty();
+        onChange(e.target.value);
+      }}
+      style={dateInputStyle}
+      type="date"
+      value={value}
+    />
+  );
+}
 
 const PI_TONE: Record<string, "neutral" | "accent" | "green" | "amber"> = {
   DRAFT: "neutral",
@@ -70,6 +107,9 @@ const PI_TONE: Record<string, "neutral" | "accent" | "green" | "amber"> = {
 const CADENCIA_PADRAO = 10;
 const SPRINT_PADRAO = 2;
 
+const ART_TONE = "accent";
+const PI_MODAL_TONE = "purple";
+
 function NovoArtModal({ onCreated }: { onCreated: () => void }) {
   const { close } = useModal();
   const [name, setName] = useState("");
@@ -77,6 +117,8 @@ function NovoArtModal({ onCreated }: { onCreated: () => void }) {
   const [sprintLengthWeeks, setSprintLength] = useState(SPRINT_PADRAO);
   const [ipSprintEnabled, setIpSprint] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const create = async () => {
     if (!name.trim() || saving) {
@@ -110,102 +152,211 @@ function NovoArtModal({ onCreated }: { onCreated: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   const sprintsPrevistos = Math.floor(piCadenceWeeks / sprintLengthWeeks);
 
   return (
-    <ModalCard
-      icon={<Icon name="route" size={16} strokeWidth={2.4} />}
-      subtitle="Um Agile Release Train é o container de execução do PI"
-      title="Novo ART"
-      width={460}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="art-name" style={labelStyle}>
-            Nome do ART
-          </label>
-          <input
-            autoFocus
-            id="art-name"
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
-              }
-            }}
-            placeholder="Ex: ART Pagamentos"
-            style={inputStyle}
-            value={name}
-          />
-        </div>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar ART"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="route" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Um Agile Release Train é o container de execução do PI — a cadência definida aqui gera os sprints de todo time do trem"
+        title="Novo ART"
+        tone={ART_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${ART_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <Icon
+                  name="route"
+                  size={14}
+                  strokeWidth={2}
+                  style={{ color: `var(--${ART_TONE}-text)` }}
+                />
+                <div
+                  className="display"
+                  style={{ fontSize: 14.5, fontWeight: 700 }}
+                >
+                  {name || "Nome do ART"}
+                </div>
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  marginBottom: 14,
+                }}
+              >
+                <Badge tone="neutral">{`PI de ${piCadenceWeeks} semanas`}</Badge>
+                <Badge tone="neutral">{`Sprint de ${sprintLengthWeeks}`}</Badge>
+              </div>
 
-        <div style={{ display: "flex", gap: 12 }}>
-          <div style={{ flex: 1 }}>
-            <label htmlFor="art-cadence" style={labelStyle}>
-              Cadência do PI (semanas)
-            </label>
-            <input
-              id="art-cadence"
-              max={52}
-              min={2}
-              onChange={(e) => setPiCadence(Number(e.target.value))}
-              style={inputStyle}
-              type="number"
-              value={piCadenceWeeks}
-            />
-          </div>
-          <div style={{ flex: 1 }}>
-            <label htmlFor="art-sprint" style={labelStyle}>
-              Duração do sprint (semanas)
-            </label>
-            <input
-              id="art-sprint"
-              max={4}
-              min={1}
-              onChange={(e) => setSprintLength(Number(e.target.value))}
-              style={inputStyle}
-              type="number"
-              value={sprintLengthWeeks}
-            />
-          </div>
-        </div>
-
-        <label
-          htmlFor="art-ip"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 8,
-            fontSize: 13,
-            color: "var(--ink-subtle)",
-          }}
+              <div style={previewLabelStyle}>
+                {`Sprints por time (${sprintsPrevistos})`}
+              </div>
+              {/* A cadência só vira decisão quando se vê o que ela produz: a
+                  faixa mostra a última barra como IP quando o IP está ligado. */}
+              <div style={{ display: "flex", gap: 4, marginBottom: 8 }}>
+                {Array.from(
+                  { length: Math.max(0, sprintsPrevistos) },
+                  (_, i) => {
+                    const ip = ipSprintEnabled && i === sprintsPrevistos - 1;
+                    return (
+                      <span
+                        key={i}
+                        style={{
+                          background: ip
+                            ? "var(--amber)"
+                            : `var(--${ART_TONE}-soft)`,
+                          border: `1px solid rgba(var(--${ip ? "amber" : ART_TONE}-rgb),.4)`,
+                          borderRadius: 3,
+                          flex: 1,
+                          height: 22,
+                        }}
+                      />
+                    );
+                  }
+                )}
+              </div>
+              <div style={{ color: "var(--ink-muted)", fontSize: 11.5 }}>
+                {ipSprintEnabled
+                  ? `${sprintsPrevistos - 1} regulares + IP sprint`
+                  : `${sprintsPrevistos} regulares`}
+              </div>
+            </div>
+          }
         >
-          <input
-            checked={ipSprintEnabled}
-            id="art-ip"
-            onChange={(e) => setIpSprint(e.target.checked)}
-            type="checkbox"
-          />
-          Reservar IP sprint (Innovation &amp; Planning)
-        </label>
+          <FormField label="Nome do ART" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: ART Pagamentos"
+              required
+              value={name}
+            />
+          </FormField>
 
-        <div style={{ fontSize: 12.5, color: "var(--ink-faint)" }}>
-          Cada PI deste ART gerará {sprintsPrevistos} sprints por time
-          {ipSprintEnabled
-            ? ` (${sprintsPrevistos - 1} regulares + IP sprint).`
-            : " regulares."}
-        </div>
+          <div>
+            <div
+              style={{
+                color: "var(--ink-subtle)",
+                fontSize: 12.5,
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              Cadência
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gap: 14,
+                gridTemplateColumns: "1fr 1fr",
+              }}
+            >
+              <MiniSlider
+                label="Cadência do PI (semanas)"
+                max={52}
+                min={2}
+                onChange={setPiCadence}
+                value={piCadenceWeeks}
+              />
+              <MiniSlider
+                label="Duração do sprint (semanas)"
+                max={4}
+                min={1}
+                onChange={setSprintLength}
+                value={sprintLengthWeeks}
+              />
+            </div>
+          </div>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar ART
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <FormField
+            hint="A IP sprint é a última do PI — inovação, planejamento e folga de cadência"
+            label="IP sprint (Innovation & Planning)"
+          >
+            <Segmented
+              onChange={(v) => {
+                setDirty(true);
+                setIpSprint(v === "sim");
+              }}
+              options={[
+                { value: "sim", label: "Reservar" },
+                { value: "nao", label: "Sem IP" },
+              ]}
+              tone={ART_TONE}
+              value={ipSprintEnabled ? "sim" : "nao"}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 
@@ -222,6 +373,8 @@ function NovoPiModal({
   const [name, setName] = useState("");
   const [startDate, setStartDate] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const create = async () => {
     if (!(name.trim() && startDate) || saving) {
@@ -255,49 +408,158 @@ function NovoPiModal({
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="calendar" size={16} strokeWidth={2.4} />}
-      subtitle={`${art.sprintsPorTime} sprints por time serão gerados a partir da cadência do ART`}
-      title={`Novo PI em ${art.name}`}
-      width={460}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="pi-name" style={labelStyle}>
-            Nome do PI
-          </label>
-          <input
-            autoFocus
-            id="pi-name"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Ex: PI 2026.1"
-            style={inputStyle}
-            value={name}
-          />
-        </div>
-        <div>
-          <label htmlFor="pi-start" style={labelStyle}>
-            Início
-          </label>
-          <input
-            id="pi-start"
-            onChange={(e) => setStartDate(e.target.value)}
-            style={inputStyle}
-            type="date"
-            value={startDate}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar PI e gerar sprints
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar PI e gerar sprints"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="calendar" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle={`${art.sprintsPorTime} sprints por time serão gerados a partir da cadência do ART`}
+        title={`Novo PI em ${art.name}`}
+        tone={PI_MODAL_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${PI_MODAL_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                className="mono"
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 10.5,
+                  marginBottom: 10,
+                }}
+              >
+                {art.name}
+              </div>
+              <div
+                className="display"
+                style={{ fontSize: 14.5, fontWeight: 700, marginBottom: 10 }}
+              >
+                {name || "Nome do PI"}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  marginBottom: 14,
+                }}
+              >
+                <Badge tone={PI_TONE.DRAFT}>DRAFT</Badge>
+                <Badge tone="neutral">{`${art.sprintsPorTime} sprints por time`}</Badge>
+              </div>
+
+              <div style={previewLabelStyle}>Início</div>
+              <div
+                style={{
+                  color: startDate ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12.5,
+                  marginBottom: 14,
+                }}
+              >
+                {startDate
+                  ? new Date(startDate).toLocaleDateString("pt-BR", {
+                      timeZone: "UTC",
+                    })
+                  : "Escolha a data de início do PI"}
+              </div>
+
+              {/* O passo que o RTE não adivinha: o PI nasce em DRAFT e some do
+                  Program Board até ser aberto. Dizer isso antes de criar é mais
+                  barato do que deixá-lo procurar um board vazio. */}
+              <div
+                style={{
+                  background: "var(--amber-soft)",
+                  border: "1px solid rgba(var(--amber-rgb),.3)",
+                  borderRadius: "var(--r-md)",
+                  color: "var(--amber-text)",
+                  fontSize: 11.5,
+                  lineHeight: 1.5,
+                  padding: "9px 11px",
+                }}
+              >
+                O PI nasce em DRAFT. Abra-o para planejamento aqui mesmo, ou ele
+                não aparece no Program Board.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Nome do PI" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: PI 2026.1"
+              required
+              value={name}
+            />
+          </FormField>
+          <FormField
+            hint="A partir dela a cadência do ART calcula o fim do PI e as datas de cada sprint"
+            label="Início"
+            required
+          >
+            <DateInput onChange={setStartDate} value={startDate} />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

@@ -16,7 +16,7 @@ import {
 // ones and why). Non-ADMIN roles see the same list with no write controls
 // at all — the gate is real server-side too, this just avoids showing
 // controls that would only bounce off a 403.
-import { useState } from "react";
+import { type CSSProperties, useState } from "react";
 import {
   getMembersTab,
   inviteMemberAction,
@@ -24,23 +24,37 @@ import {
   removeMemberAction,
   updateMemberRoleAction,
 } from "@/app/(cosmos)/actions/settings-members";
-import { ModalCard, useModal } from "../modal";
-import { useActionToast } from "../use-action-toast";
 import {
-  fieldLabelStyle,
-  inputStyle,
-  MEMBER_ROLES,
-  ROLE_LABEL,
-  selectStyle,
-} from "./settings-shared";
+  ModalCard,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, Select, TextInput } from "../modal-form";
+import { useActionToast } from "../use-action-toast";
+import { MEMBER_ROLES, ROLE_LABEL, selectStyle } from "./settings-shared";
 
 type Member = MembersTabView["members"][number];
+
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
+const INVITE_TONE = "accent";
 
 function InviteMemberModal({ onInvited }: { onInvited: () => void }) {
   const { close } = useModal();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<string>("MEMBER");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const canSave = /\S+@\S+\.\S+/.test(email) && !saving;
 
@@ -65,58 +79,151 @@ function InviteMemberModal({ onInvited }: { onInvited: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(invite, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="users" size={16} strokeWidth={2.4} />}
-      subtitle="Envia um convite por email — ADMIN apenas"
-      title="Convidar membro"
-      width={420}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="invite-email" style={fieldLabelStyle}>
-            Email
-          </label>
-          <input
-            id="invite-email"
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="pessoa@empresa.com"
-            style={inputStyle}
-            value={email}
-          />
-        </div>
-        <div>
-          <label htmlFor="invite-role" style={fieldLabelStyle}>
-            Papel
-          </label>
-          <select
-            id="invite-role"
-            onChange={(e) => setRole(e.target.value)}
-            style={selectStyle}
-            value={role}
-          >
-            {MEMBER_ROLES.map((r) => (
-              <option key={r} value={r}>
-                {ROLE_LABEL[r]}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button
-            onClick={invite}
-            size="sm"
-            style={canSave ? undefined : { opacity: 0.5, cursor: "default" }}
-            variant="primary"
-          >
-            Enviar convite
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="convidar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={invite}
+                  size="sm"
+                  style={
+                    canSave ? undefined : { opacity: 0.5, cursor: "default" }
+                  }
+                  variant="primary"
+                >
+                  {saving ? "Enviando..." : "Enviar convite"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="users" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Envia um convite por email — ADMIN apenas"
+        title="Convidar membro"
+        tone={INVITE_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${INVITE_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 10,
+                  marginBottom: 14,
+                }}
+              >
+                <Avatar name={email || undefined} size={34} tone="accent" />
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    style={{
+                      color: email ? "var(--ink)" : "var(--ink-faint)",
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {email || "pessoa@empresa.com"}
+                  </div>
+                  <div style={{ color: "var(--ink-faint)", fontSize: 11 }}>
+                    Convite pendente
+                  </div>
+                </div>
+              </div>
+
+              <div style={previewLabelStyle}>Papel no workspace</div>
+              <Badge tone="accent">{ROLE_LABEL[role] ?? role}</Badge>
+
+              {/* O papel é o que o servidor usa para autorizar cada ação:
+                  trocar depois é possível, mas convidar já no papel certo
+                  evita a pessoa esbarrar em 403 no primeiro acesso. */}
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.5,
+                  marginTop: 14,
+                  paddingTop: 10,
+                }}
+              >
+                O papel define o que a pessoa pode fazer no workspace e pode ser
+                alterado depois na lista de membros.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Email" required>
+            <TextInput
+              onChange={setEmail}
+              placeholder="pessoa@empresa.com"
+              required
+              type="email"
+              value={email}
+            />
+          </FormField>
+          <FormField label="Papel">
+            <Select
+              onChange={setRole}
+              options={MEMBER_ROLES.map((r) => ({
+                value: r,
+                label: ROLE_LABEL[r],
+              }))}
+              value={role}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

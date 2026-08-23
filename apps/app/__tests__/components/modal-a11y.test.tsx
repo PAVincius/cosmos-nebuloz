@@ -5,12 +5,20 @@
 // tenha lembrado disso. Cada caso aqui é uma regressão que a tela inteira
 // sofreria em silêncio — ninguém percebe um focus trap quebrado olhando.
 import { fireEvent, render, screen } from "@testing-library/react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import {
   ModalCard,
   ModalProvider,
   useModal,
 } from "../../components/cosmos/modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  MiniSlider,
+  Segmented,
+  TonePicker,
+} from "../../components/cosmos/modal-form";
 
 function AbrirBotao({ children }: { children: React.ReactNode }) {
   const { open } = useModal();
@@ -210,5 +218,116 @@ describe("useModalSubmitShortcut", () => {
     fireEvent.keyDown(document, { key: "Enter" });
 
     expect(onSubmit).not.toHaveBeenCalled();
+  });
+});
+
+describe("primitivas — sujeira do formulário", () => {
+  // Três agentes reconstruindo modais tiveram que contornar isto à mão: sem
+  // markDirty nos controles não-texto, pontuar um WSJF inteiro e clicar em
+  // Cancelar perdia tudo sem aviso.
+  function Sonda({ children }: { children: React.ReactNode }) {
+    const [sujo, setSujo] = useState(false);
+    return (
+      <DirtyProvider value={{ markDirty: () => setSujo(true) }}>
+        <span>{sujo ? "sujo" : "limpo"}</span>
+        {children}
+      </DirtyProvider>
+    );
+  }
+
+  it("Segmented marca o formulário como sujo", () => {
+    render(
+      <Sonda>
+        <Segmented
+          onChange={() => {
+            // o teste observa o DirtyProvider, não o valor
+          }}
+          options={[
+            { value: "s", label: "S" },
+            { value: "m", label: "M" },
+          ]}
+          value="s"
+        />
+      </Sonda>
+    );
+    expect(screen.getByText("limpo")).toBeTruthy();
+
+    fireEvent.click(screen.getByText("M"));
+
+    expect(screen.getByText("sujo")).toBeTruthy();
+  });
+
+  it("MiniSlider marca o formulário como sujo", () => {
+    render(
+      <Sonda>
+        <MiniSlider
+          label="Business Value"
+          onChange={() => {
+            // idem
+          }}
+          value={5}
+        />
+      </Sonda>
+    );
+
+    fireEvent.change(screen.getByLabelText(/Business Value/), {
+      target: { value: "8" },
+    });
+
+    expect(screen.getByText("sujo")).toBeTruthy();
+  });
+
+  it("TonePicker marca o formulário como sujo", () => {
+    render(
+      <Sonda>
+        <TonePicker
+          onChange={() => {
+            // idem
+          }}
+          value="accent"
+        />
+      </Sonda>
+    );
+
+    fireEvent.click(screen.getByLabelText("Cor green"));
+
+    expect(screen.getByText("sujo")).toBeTruthy();
+  });
+});
+
+describe("EntityLinkField — busca no servidor", () => {
+  it("pergunta ao servidor em vez de filtrar uma lista truncada", async () => {
+    // `searchEntities` devolve 10 itens no máximo. Filtrar essa fatia no
+    // cliente faz o campo dizer "nenhum resultado" para entidade que existe.
+    const onSearch = vi
+      .fn()
+      .mockResolvedValue([
+        { id: "e99", label: "Épico que estava fora dos 10 primeiros" },
+      ]);
+
+    render(
+      <DirtyProvider value={{ markDirty: () => {} }}>
+        <EntityLinkField
+          items={[]}
+          label="Épico"
+          onChange={() => {
+            // só a busca importa aqui
+          }}
+          onSearch={onSearch}
+          placeholder="Buscar épico..."
+          value={null}
+        />
+      </DirtyProvider>
+    );
+
+    fireEvent.focus(screen.getByPlaceholderText("Buscar épico..."));
+    fireEvent.change(screen.getByPlaceholderText("Buscar épico..."), {
+      target: { value: "fora dos 10" },
+    });
+
+    expect(
+      await screen.findByText("Épico que estava fora dos 10 primeiros")
+    ).toBeTruthy();
+    expect(onSearch).toHaveBeenCalledWith("fora dos 10");
   });
 });
