@@ -68,7 +68,11 @@ export function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
   // budget vinculado" logo depois de vincular um.
   const [budgetsCriados, setBudgetsCriados] = useState<ThemeLinkOption[]>([]);
   const budgets = [...budgetsCriados, ...(opcoes?.budgets ?? [])];
-  const epics = opcoes?.epics ?? [];
+  // Mesmo motivo do budget: épico criado aqui dentro não está em
+  // opcoes.epics (carregada uma vez, ao abrir) — sem isto o preview mostrava
+  // o id cru na lista de "épicos vinculados" em vez do título digitado.
+  const [epicsCriados, setEpicsCriados] = useState<ThemeLinkOption[]>([]);
+  const epics = [...epicsCriados, ...(opcoes?.epics ?? [])];
   const budget = budgets.find((b) => b.id === budgetId);
   const alvo = Number(target) || 0;
   // Quanto do lean budget do portfólio esta aposta consome, comparado ao que
@@ -94,8 +98,15 @@ export function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
     // "funnel" é onde épico novo nasce no fluxo SAFe; a coluna não é escolha
     // do formulário compacto.
     const res = await createEpic({ title: titulo, column: "funnel" });
+    if (!res.ok) {
+      return null;
+    }
     // A action devolve só o id — o rótulo do chip vem do que foi digitado.
-    return res.ok ? { id: res.data.id, label: titulo } : null;
+    // "sub" vazio: sem o épico recém-criado ter status nem WSJF ainda, não
+    // há linha de apoio honesta a mostrar no dropdown.
+    const novo = { id: res.data.id, label: titulo, sub: "" };
+    setEpicsCriados((atuais) => [novo, ...atuais]);
+    return { id: novo.id, label: novo.label };
   };
 
   // Mesmo motivo do épico: um tema sem budget aprovado é caixa de texto, e o
