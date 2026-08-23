@@ -5,7 +5,8 @@
   "types": "./index.ts",
   "scripts": {
     "analyze": "prisma generate --no-hints",
-    "build": "prisma generate --no-hints && tsx scripts/deploy-migrations.mts",
+    "build": "prisma generate --no-hints",
+    "migrate:deploy": "tsx scripts/deploy-migrations.mts",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "seed:safe": "tsx --env-file=.env seed-safe-full.ts",

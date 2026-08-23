@@ -5,7 +5,7 @@
   "envMode": "loose",
   "tasks": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "@repo/database#migrate:deploy"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -14,9 +14,7 @@
         ".react-email/**"
       ]
     },
-    "@repo/database#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["**/generated/**"],
+    "@repo/database#migrate:deploy": {
       "cache": false,
       "env": ["DATABASE_URL", "VERCEL_ENV"]
     },
