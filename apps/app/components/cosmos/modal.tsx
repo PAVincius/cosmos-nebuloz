@@ -25,6 +25,24 @@ const ModalCtx = createContext<{
 }>({ open: () => {}, close: () => {} });
 export const useModal = () => useContext(ModalCtx);
 
+/**
+ * Nó DOM do diálogo aberto, para quem precisa escapar do `overflow: hidden`
+ * do ModalCard sem escapar do Tab-trap.
+ *
+ * ModalCard corta o que ultrapassa sua altura — é o que faz o border-radius
+ * funcionar no conteúdo com scroll. Um dropdown como o do EntityLinkField,
+ * `position: absolute` perto do fim do formulário, era cortado ali: o
+ * quick-create existia mas ficava invisível. `position: fixed` sozinho não
+ * resolve — `overflow: hidden` de um ancestral corta descendentes
+ * independente de position. A única saída é um portal; e portar para
+ * `document.body` sairia da árvore que o Tab-trap varre com
+ * `dialogRef.current.querySelectorAll`. Portar para este nó em vez disso — o
+ * mesmo `dialogRef` do provider — mantém o dropdown como irmão do ModalCard
+ * (livre do overflow dele) e ainda dentro do que o Tab-trap considera.
+ */
+const ModalDialogNodeCtx = createContext<HTMLElement | null>(null);
+export const useModalDialogNode = () => useContext(ModalDialogNodeCtx);
+
 /** Focáveis dentro do diálogo, na ordem do DOM. */
 const FOCUSAVEIS =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -32,6 +50,10 @@ const FOCUSAVEIS =
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [node, setNode] = useState<ReactNode>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  // Espelha dialogRef em state: o ref só populate depois do primeiro render,
+  // e o contexto precisa disparar re-render de quem o consome quando o nó
+  // aparece.
+  const [dialogNode, setDialogNode] = useState<HTMLDivElement | null>(null);
   // Quem tinha o foco antes de abrir: devolver para lá no fechamento é o que
   // impede o teclado de voltar ao topo da página a cada modal.
   const origemDoFoco = useRef<Element | null>(null);
@@ -132,8 +154,16 @@ export function ModalProvider({ children }: { children: ReactNode }) {
               paddingTop: 90,
             }}
           >
-            <div onClick={(e) => e.stopPropagation()} ref={dialogRef}>
-              {node}
+            <div
+              onClick={(e) => e.stopPropagation()}
+              ref={(el) => {
+                dialogRef.current = el;
+                setDialogNode(el);
+              }}
+            >
+              <ModalDialogNodeCtx.Provider value={dialogNode}>
+                {node}
+              </ModalDialogNodeCtx.Provider>
             </div>
           </div>,
           document.body

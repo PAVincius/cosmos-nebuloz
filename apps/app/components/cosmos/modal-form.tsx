@@ -20,8 +20,11 @@ import {
   useContext,
   useEffect,
   useId,
+  useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
+import { useModalDialogNode } from "./modal";
 
 /** Sinaliza "a pessoa já digitou" para o modal confirmar antes de descartar. */
 const DirtyCtx = createContext<{ markDirty: () => void }>({
@@ -420,10 +423,85 @@ export type QuickCreate = {
  * mostra o que já foi escolhido como chips removíveis e nunca oferece o que
  * já está selecionado.
  *
- * O dropdown é irmão do campo, não filho de um portal: dentro de um modal que
- * já prende o foco, um portal no body sairia do ciclo de Tab e o teclado
- * perderia a lista logo depois de abri-la.
+ * O dropdown some visualmente quando o campo fica perto do fim do modal:
+ * ModalCard corta com `overflow: hidden` (é o que faz o border-radius
+ * funcionar). Por isso ele é portado — não para `document.body`, que sairia
+ * do ciclo de Tab do modal, mas para o próprio nó do diálogo
+ * (`useModalDialogNode`), do qual o dropdown vira irmão do card em vez de
+ * descendente. Sem esse nó (uso fora de um ModalProvider, como em teste),
+ * cai de volta para `position: absolute` local — mesmo comportamento de
+ * sempre, só sem a proteção contra o corte.
  */
+type PosicaoDropdown = { top: number; left: number; width: number };
+
+/** Onde ancorar o dropdown, medido a partir do campo — flip para cima
+ *  quando o espaço embaixo não cobre a altura máxima de 220px. */
+function calcularPosicao(campo: HTMLElement): PosicaoDropdown {
+  const r = campo.getBoundingClientRect();
+  const espacoEmbaixo = window.innerHeight - r.bottom;
+  const flipUp = espacoEmbaixo < 220 && r.top > espacoEmbaixo;
+  return {
+    left: r.left,
+    top: flipUp ? r.top - 4 - Math.min(220, r.top - 8) : r.bottom + 4,
+    width: r.width,
+  };
+}
+
+/** Casca do dropdown: porta para o nó do diálogo quando existe (escapando
+ *  do `overflow: hidden` do ModalCard), senão renderiza no lugar. */
+function ListaDropdown({
+  listaId,
+  dialogNode,
+  posicao,
+  children,
+}: {
+  listaId: string;
+  dialogNode: HTMLElement | null;
+  posicao: PosicaoDropdown | null;
+  children: ReactNode;
+}) {
+  const conteudo = (
+    <div
+      id={listaId}
+      role="listbox"
+      style={
+        dialogNode && posicao
+          ? {
+              background: "var(--surface-3)",
+              border: "1px solid var(--hairline-strong)",
+              borderRadius: "var(--r-md)",
+              boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
+              left: posicao.left,
+              maxHeight: 220,
+              overflowY: "auto",
+              padding: 5,
+              position: "fixed",
+              top: posicao.top,
+              width: posicao.width,
+              zIndex: 410,
+            }
+          : {
+              background: "var(--surface-3)",
+              border: "1px solid var(--hairline-strong)",
+              borderRadius: "var(--r-md)",
+              boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
+              left: 0,
+              maxHeight: 220,
+              overflowY: "auto",
+              padding: 5,
+              position: "absolute",
+              right: 0,
+              top: "calc(100% + 4px)",
+              zIndex: 10,
+            }
+      }
+    >
+      {children}
+    </div>
+  );
+  return dialogNode ? createPortal(conteudo, dialogNode) : conteudo;
+}
+
 export function EntityLinkField({
   label,
   hint,
@@ -468,6 +546,30 @@ export function EntityLinkField({
   const [criandoBusy, setCriandoBusy] = useState(false);
   const [erroCriar, setErroCriar] = useState("");
   const listaId = useId();
+  const campoWrapRef = useRef<HTMLDivElement | null>(null);
+  const dialogNode = useModalDialogNode();
+  const [posDropdown, setPosDropdown] = useState<PosicaoDropdown | null>(null);
+
+  // Recalcula sempre que o dropdown abre, e ao rolar/redimensionar enquanto
+  // aberto — sem isto o dropdown portado ficaria ancorado no lugar onde o
+  // campo estava no instante da abertura, não onde ele está agora.
+  useEffect(() => {
+    if (!(aberto && dialogNode && campoWrapRef.current)) {
+      return;
+    }
+    const atualizar = () => {
+      if (campoWrapRef.current) {
+        setPosDropdown(calcularPosicao(campoWrapRef.current));
+      }
+    };
+    atualizar();
+    window.addEventListener("scroll", atualizar, true);
+    window.addEventListener("resize", atualizar);
+    return () => {
+      window.removeEventListener("scroll", atualizar, true);
+      window.removeEventListener("resize", atualizar);
+    };
+  }, [aberto, dialogNode]);
 
   // Debounce: uma ida ao servidor por tecla transformaria a digitação em
   // rajada de requisições, e as respostas voltariam fora de ordem.
@@ -598,7 +700,7 @@ export function EntityLinkField({
       )}
 
       {(multi || escolhidos.length === 0) && (
-        <div style={{ position: "relative" }}>
+        <div ref={campoWrapRef} style={{ position: "relative" }}>
           <input
             aria-controls={aberto ? listaId : undefined}
             aria-expanded={aberto}
@@ -628,23 +730,10 @@ export function EntityLinkField({
             value={query}
           />
           {aberto && (
-            <div
-              id={listaId}
-              role="listbox"
-              style={{
-                background: "var(--surface-3)",
-                border: "1px solid var(--hairline-strong)",
-                borderRadius: "var(--r-md)",
-                boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
-                left: 0,
-                maxHeight: 220,
-                overflowY: "auto",
-                padding: 5,
-                position: "absolute",
-                right: 0,
-                top: "calc(100% + 4px)",
-                zIndex: 10,
-              }}
+            <ListaDropdown
+              dialogNode={dialogNode}
+              listaId={listaId}
+              posicao={posDropdown}
             >
               {filtrados.length === 0 && !quickCreate ? (
                 <div
@@ -848,7 +937,7 @@ export function EntityLinkField({
                   )}
                 </>
               )}
-            </div>
+            </ListaDropdown>
           )}
         </div>
       )}
