@@ -253,11 +253,34 @@ export async function getTheme(id: string): Promise<Result<ThemeDetailView>> {
   });
 }
 
+/** Tones do design, na ordem do TonePicker. StrategicTheme.color guarda hex
+ *  desde antes desta tela, então o token vira hex na escrita — quem lê a cor
+ *  como hex continua funcionando. */
+const TONE_HEX: Record<string, string> = {
+  accent: "#6366f1",
+  blue: "#38bdf8",
+  purple: "#a78bfa",
+  green: "#34d399",
+  amber: "#fbbf24",
+  red: "#fb7185",
+};
+
 const CreateThemeSchema = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(2000).optional(),
   // "Investment amount" — see StrategicTheme.budgetTotal in schema.
   budgetTotal: z.number().nonnegative().optional(),
+  /** Token de cor do TonePicker. */
+  tone: z
+    .enum(["accent", "blue", "purple", "green", "amber", "red"])
+    .optional(),
+  /** Fatia do lean budget do portfólio que esta aposta deveria consumir. */
+  targetAllocationPct: z.number().min(0).max(100).optional(),
+  /** Value Stream que banca o tema. LeanBudget.themeId é o lado que aponta,
+   *  então vincular é atualizar o budget escolhido. */
+  leanBudgetId: z.string().cuid().optional(),
+  /** Épicos que compõem o tema — Epic.strategicThemeId. */
+  epicIds: z.array(z.string().cuid()).optional(),
 });
 
 export async function createTheme(
@@ -266,7 +289,15 @@ export async function createTheme(
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
     requireRole(["ADMIN", "STE"], ctx);
-    const { title, description, budgetTotal } = CreateThemeSchema.parse(input);
+    const {
+      title,
+      description,
+      budgetTotal,
+      tone,
+      targetAllocationPct,
+      leanBudgetId,
+      epicIds,
+    } = CreateThemeSchema.parse(input);
 
     // Teto SAFe de temas ativos. Conta status, não linha: tema arquivado
     // continua na tabela por fidelidade histórica e não ocupa vaga.
@@ -282,22 +313,66 @@ export async function createTheme(
       );
     }
 
+    // Guardas cross-tenant ANTES de criar: um id de outro tenant vindo do
+    // cliente não pode virar vínculo, e falhar depois de criar deixaria um
+    // tema órfão pela metade.
+    if (leanBudgetId) {
+      const budget = await database.leanBudget.findFirst({
+        where: { id: leanBudgetId, tenantId: ctx.tenantId },
+        select: { id: true },
+      });
+      if (!budget) {
+        throw new Error("Budget não encontrado neste workspace.");
+      }
+    }
+    if (epicIds && epicIds.length > 0) {
+      const encontrados = await database.epic.count({
+        where: { id: { in: epicIds }, tenantId: ctx.tenantId },
+      });
+      if (encontrados !== epicIds.length) {
+        throw new Error("Épico não encontrado neste workspace.");
+      }
+    }
+
     const created = await database.strategicTheme.create({
       data: {
         tenantId: ctx.tenantId,
         title,
         description: description ?? null,
         budgetTotal: budgetTotal ?? null,
+        ...(tone ? { color: TONE_HEX[tone] ?? TONE_HEX.accent } : {}),
+        ...(targetAllocationPct !== undefined ? { targetAllocationPct } : {}),
       },
       select: { id: true },
     });
+
+    // Os vínculos moram no outro lado da relação: o budget aponta para o tema
+    // (LeanBudget.themeId) e cada épico aponta para o tema
+    // (Epic.strategicThemeId). Sem isto o tema nasce sem dinheiro e sem
+    // escopo — que é o estado em que a tela antiga deixava todos eles.
+    if (leanBudgetId) {
+      await database.leanBudget.update({
+        where: { id: leanBudgetId },
+        data: { themeId: created.id },
+      });
+    }
+    if (epicIds && epicIds.length > 0) {
+      await database.epic.updateMany({
+        where: { id: { in: epicIds }, tenantId: ctx.tenantId },
+        data: { strategicThemeId: created.id },
+      });
+    }
 
     await logAudit(ctx.tenantId, {
       userId: ctx.userId,
       action: "created",
       entityType: "theme",
       entityId: created.id,
-      diff: { title },
+      diff: {
+        title,
+        ...(leanBudgetId ? { leanBudgetId } : {}),
+        ...(epicIds?.length ? { epicIds } : {}),
+      },
     });
     revalidateTag(`themes:${ctx.tenantId}`, "max");
     return { id: created.id };
@@ -437,4 +512,79 @@ export async function rebalanceThemeTargets(
     revalidateTag(`themes:${ctx.tenantId}`, "max");
     return { count: targets.length };
   });
+}
+
+// ─── Opções de vínculo do modal de tema ──────────────────────────────────────
+
+export type ThemeLinkOption = {
+  id: string;
+  label: string;
+  /** Linha de apoio no dropdown — o que ajuda a escolher sem sair da tela. */
+  sub: string;
+  /** Só para budgets: alimenta a barra de alocado × alvo no preview. */
+  amount?: number;
+};
+
+export type ThemeLinkOptions = {
+  budgets: ThemeLinkOption[];
+  epics: ThemeLinkOption[];
+  /** Soma dos lean budgets do portfólio — denominador do "% alocado". */
+  budgetTotalPortfolio: number;
+};
+
+/**
+ * Budgets e épicos que o modal de tema pode vincular.
+ *
+ * Uma viagem só: os dois campos de busca abrem juntos, e duas actions
+ * separadas fariam a tela piscar em ordens diferentes a cada abertura. Só
+ * traz o que é vinculável — budget já tomado por outro tema e épico já
+ * ligado a um tema ficam de fora, porque oferecê-los seria oferecer um
+ * roubo silencioso de vínculo.
+ */
+export async function listThemeLinkOptions(): Promise<
+  Result<ThemeLinkOptions>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    const [budgets, epics, todosOsBudgets] = await Promise.all([
+      database.leanBudget.findMany({
+        where: { tenantId: ctx.tenantId, themeId: null },
+        orderBy: { name: "asc" },
+        select: { id: true, name: true, amount: true, period: true },
+      }),
+      database.epic.findMany({
+        where: { tenantId: ctx.tenantId, strategicThemeId: null },
+        orderBy: { updatedAt: "desc" },
+        take: 50,
+        select: { id: true, title: true, lifecycleStatus: true },
+      }),
+      database.leanBudget.findMany({
+        where: { tenantId: ctx.tenantId },
+        select: { amount: true },
+      }),
+    ]);
+
+    return {
+      budgets: budgets.map((b) => ({
+        id: b.id,
+        label: b.name,
+        sub: `${formatBRL(b.amount)} · ${b.period}`,
+        amount: b.amount,
+      })),
+      epics: epics.map((e) => ({
+        id: e.id,
+        label: e.title,
+        sub: e.lifecycleStatus,
+      })),
+      budgetTotalPortfolio: todosOsBudgets.reduce((s, b) => s + b.amount, 0),
+    };
+  });
+}
+
+function formatBRL(valor: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    currency: "BRL",
+    maximumFractionDigits: 0,
+    style: "currency",
+  }).format(valor);
 }
