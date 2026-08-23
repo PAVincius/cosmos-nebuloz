@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   billingEntryCreateMany: vi.fn(),
   tagRuleFindMany: vi.fn(),
   dbExecuteRaw: vi.fn(),
+  dbTransaction: vi.fn(),
   fetchAwsPage: vi.fn(),
   resolveMapping: vi.fn(),
 }));
@@ -48,6 +49,7 @@ vi.mock("@repo/database", () => ({
     billingEntry: { createMany: mocks.billingEntryCreateMany },
     tagRule: { findMany: mocks.tagRuleFindMany },
     $executeRaw: mocks.dbExecuteRaw,
+    $transaction: mocks.dbTransaction,
   },
 }));
 
@@ -114,6 +116,7 @@ beforeEach(() => {
   mocks.billingEntryCreateMany.mockResolvedValue({});
   mocks.billingEntryStagingDeleteMany.mockResolvedValue({});
   mocks.dbExecuteRaw.mockResolvedValue(1);
+  mocks.dbTransaction.mockResolvedValue([1, 1]);
   mocks.billingSyncCursorUpsert.mockResolvedValue({});
   mocks.billingSyncRunUpdate.mockResolvedValue({});
   mocks.integrationUpdate.mockResolvedValue({});
@@ -348,22 +351,32 @@ function stripSqlComments(sql: string): string {
     .join("\n");
 }
 
-function findAggregateSnapshotsCall() {
+function findAggregateSnapshotsCall(marker: string) {
   const call = mocks.dbExecuteRaw.mock.calls.find(([strings]) =>
-    (strings as unknown as string[]).join("").includes('"CostSnapshot"')
+    (strings as unknown as string[]).join("").includes(marker)
   );
   if (!call) {
-    throw new Error("aggregate-snapshots $executeRaw call not found");
+    throw new Error(
+      `aggregate-snapshots $executeRaw call not found (${marker})`
+    );
   }
   const [strings] = call as [TemplateStringsArray];
   return stripSqlComments(Array.from(strings).join("§"));
+}
+
+function findAggregateInsertCall() {
+  return findAggregateSnapshotsCall('INSERT INTO "CostSnapshot"');
+}
+
+function findAggregateDeleteCall() {
+  return findAggregateSnapshotsCall('DELETE FROM "CostSnapshot"');
 }
 
 describe("handler — aggregate-snapshots SQL groups by epic/ART", () => {
   it("selects be.artId and be.epicId instead of literal NULL", async () => {
     await capturedHandler({ event: baseEvent, step: makeStep() });
 
-    const sql = findAggregateSnapshotsCall();
+    const sql = findAggregateInsertCall();
     expect(sql).toContain('be."artId"');
     expect(sql).toContain('be."epicId"');
   });
@@ -371,8 +384,8 @@ describe("handler — aggregate-snapshots SQL groups by epic/ART", () => {
   it("groups by themeId, artId and epicId (not just themeId) so each entry lands in exactly one group", async () => {
     await capturedHandler({ event: baseEvent, step: makeStep() });
 
-    const sql = findAggregateSnapshotsCall();
-    const groupByClause = sql.split("GROUP BY")[1]?.split("ON CONFLICT")[0];
+    const sql = findAggregateInsertCall();
+    const groupByClause = sql.split("GROUP BY")[1] ?? "";
     expect(groupByClause).toContain('be."themeId"');
     expect(groupByClause).toContain('be."artId"');
     expect(groupByClause).toContain('be."epicId"');
@@ -381,11 +394,52 @@ describe("handler — aggregate-snapshots SQL groups by epic/ART", () => {
   it("keeps okrId as literal NULL — no OKR resolution exists in the pipeline", async () => {
     await capturedHandler({ event: baseEvent, step: makeStep() });
 
-    const sql = findAggregateSnapshotsCall();
+    const sql = findAggregateInsertCall();
     const selectClause = sql.split("SELECT")[1]?.split("FROM")[0] ?? "";
     // themeId, artId, epicId are all column refs now; okrId is the sole
     // remaining literal NULL in the SELECT list.
     expect((selectClause.match(/NULL/g) ?? []).length).toBe(1);
+  });
+});
+
+// NEB-186 — DELETE+INSERT dentro de uma transação substituiu o
+// INSERT ... ON CONFLICT DO UPDATE. Estes testes cobrem só a FORMA da SQL
+// (string do template) — não provam que o dinheiro soma certo. A prova real
+// está em __tests__/finops/cost-snapshot-aggregation.test.ts, contra um
+// Postgres de verdade (gated por RUN_DB_TESTS).
+describe("handler — aggregate-snapshots is a DELETE+INSERT transaction", () => {
+  it("wraps DELETE and INSERT in a single $transaction call", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    expect(mocks.dbTransaction).toHaveBeenCalledTimes(1);
+    const [statements] = mocks.dbTransaction.mock.calls[0] as [unknown[]];
+    expect(statements).toHaveLength(2);
+  });
+
+  it("no longer uses ON CONFLICT — DELETE clears the range before INSERT", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateInsertCall();
+    expect(sql).not.toContain("ON CONFLICT");
+  });
+
+  it("DELETE scopes by tenantId, granularity and period range — no integrationId (CostSnapshot has no such column)", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateDeleteCall();
+    expect(sql).toContain('"tenantId"');
+    expect(sql).toContain("granularity = 'DAILY'");
+    expect(sql).toContain("period >=");
+    expect(sql).toContain("period <");
+    expect(sql).not.toContain("integrationId");
+  });
+
+  it("INSERT aggregates the whole tenant, not just the integration that triggered this sync (no integrationId filter)", async () => {
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const sql = findAggregateInsertCall();
+    const whereClause = sql.split("WHERE")[1]?.split("GROUP BY")[0] ?? "";
+    expect(whereClause).not.toContain("integrationId");
   });
 });
 

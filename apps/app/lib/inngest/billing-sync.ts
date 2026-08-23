@@ -108,6 +108,110 @@ function mapStagedRowToEntry(
   };
 }
 
+// NEB-186 — agrega BillingEntry em CostSnapshot via DELETE+INSERT dentro de
+// uma transação, não INSERT ... ON CONFLICT DO UPDATE. Dois defeitos
+// pré-existentes tornavam o upsert incorreto e, juntos com o cron diário,
+// inflavam o custo do dashboard a cada sync:
+//
+// 1. okrId é NULL literal em toda linha desta query, e o índice único do
+//    Postgres usa NULLS DISTINCT (padrão — e o único modo que o
+//    schema.prisma sabe declarar; NULLS NOT DISTINCT existe no Postgres 15+
+//    mas não tem sintaxe no schema.prisma). Duas linhas com a mesma chave
+//    mas algum campo NULL nunca colidem, então o DO UPDATE nunca disparava:
+//    cada sync inseria de novo em vez de atualizar.
+// 2. A agregação não tinha recorte temporal — reagregava o histórico inteiro
+//    do tenant a cada execução.
+//
+// DELETE+INSERT resolve os dois de uma vez: idempotente por construção (a
+// mesma janela reagregada duas vezes produz o mesmo resultado, provado em
+// __tests__/finops/cost-snapshot-aggregation.test.ts), sem depender de
+// semântica de NULL em índice único, e naturalmente limitado ao período.
+//
+// Intervalo: [startDate, endDate) é a mesma janela que load-cursor calculou
+// e que fetchAwsPage usou para consultar a Cost Explorer API (TimePeriod
+// Start/End, exclusivo no fim — mesma convenção da AWS). É o recorte exato
+// do que este sync pode ter tocado: não precisa de outra fonte, e evita
+// reprocessar o histórico inteiro a cada execução.
+//
+// Escopo do DELETE = escopo do SELECT que o substitui: mesmo tenantId, mesma
+// granularity, mesmo intervalo de period. SEM filtro de integrationId —
+// CostSnapshot não tem essa coluna (schema/finops.prisma): a tabela é
+// desenhada como agregado por tenant/tema/ART/épico, não por integração.
+// getCloudCostSummary (app/(cosmos)/actions/finops.ts) já lê assim, sem
+// filtrar por integração. A query anterior escopava o SELECT a UMA
+// integração (WHERE integrationId = ...) enquanto gravava numa chave
+// tenant-wide — com duas integrações de billing no mesmo tenant, cada sync
+// substituiria (EXCLUDED, não soma) a contribuição da outra na próxima
+// execução dela. Agregar por tenant inteiro (todas as integrações) em vez de
+// só a que disparou este sync resolve isso: cada linha volta a ser o total
+// real daquela dimensão para aquele período, e o DELETE nunca apaga dado que
+// o INSERT não vá recriar no mesmo passo.
+export async function aggregateCostSnapshots(
+  db: typeof database,
+  params: { tenantId: string; startDate: Date; endDate: Date }
+): Promise<void> {
+  const { tenantId, startDate, endDate } = params;
+
+  await db.$transaction([
+    db.$executeRaw`
+      DELETE FROM "CostSnapshot"
+      WHERE "tenantId" = ${tenantId}
+        AND granularity = 'DAILY'
+        AND period >= ${startDate}
+        AND period < ${endDate}
+    `,
+    db.$executeRaw`
+      INSERT INTO "CostSnapshot" (
+        id, "tenantId", "themeId", "artId", "epicId", "okrId",
+        period, granularity,
+        "cloudCost", "peopleCost", "saasCost", "actualCost",
+        "unmappedAmount", breakdown, "sourceCurrencies",
+        currency, "fxStrategy", "fxConvertedAt", "syncedAt"
+      )
+      SELECT
+        gen_random_uuid()::text,
+        be."tenantId",
+        be."themeId",
+        be."artId",
+        be."epicId",
+        NULL,
+        DATE_TRUNC('day', be."usageStartDate"),
+        'DAILY',
+        -- COALESCE(...,0): SUM(...) FILTER(...) devolve NULL (não 0) quando
+        -- nenhuma linha do grupo bate o filtro. Para unmappedAmount isso
+        -- acontece no caso NORMAL — grupo sem NENHUMA linha UNMAPPED, a
+        -- maior parte do custo mapeado — e sem o COALESCE aqui o INSERT
+        -- inteiro aborta em NOT NULL (statement único, uma linha ruim
+        -- derruba todas). Prova de mutação em
+        -- __tests__/finops/cost-snapshot-aggregation.test.ts. peopleCost e
+        -- saasCost seguem 0 fixo: hoje só esta query escreve nestas colunas;
+        -- se outra fonte passar a alimentá-las, este DELETE precisa ser
+        -- revisto para não apagar o trabalho dela.
+        COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
+        0,
+        0,
+        COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
+        COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."mappingConf" = 'UNMAPPED'), 0),
+        '{}',
+        '{}',
+        'USD',
+        'MONTH_AVG',
+        NOW(),
+        NOW()
+      FROM "BillingEntry" be
+      WHERE be."tenantId" = ${tenantId}
+        AND be."usageStartDate" >= ${startDate}
+        AND be."usageStartDate" < ${endDate}
+      -- Cada BillingEntry cai em exatamente um grupo: o agrupamento abaixo
+      -- lista todas as colunas não-agregadas do SELECT (garantia do próprio
+      -- Postgres — não compila SELECT de coluna não-agregada fora dele),
+      -- então a partição é exaustiva e sem sobreposição por construção.
+      GROUP BY be."tenantId", be."themeId", be."artId", be."epicId", DATE_TRUNC('day', be."usageStartDate")
+      -- okrId segue NULL literal — não há resolução de OKR no pipeline.
+    `,
+  ]);
+}
+
 export const billingSyncFunction = inngest.createFunction(
   {
     id: "billing-sync",
@@ -254,73 +358,11 @@ export const billingSyncFunction = inngest.createFunction(
 
     // ── Step 5: Aggregate CostSnapshot ───────────────────────────────────
     await step.run("aggregate-snapshots", async () => {
-      await database.$executeRaw`
-        INSERT INTO "CostSnapshot" (
-          id, "tenantId", "themeId", "artId", "epicId", "okrId",
-          period, granularity,
-          "cloudCost", "peopleCost", "saasCost", "actualCost",
-          "unmappedAmount", breakdown, "sourceCurrencies",
-          currency, "fxStrategy", "fxConvertedAt", "syncedAt"
-        )
-        SELECT
-          gen_random_uuid()::text,
-          be."tenantId",
-          be."themeId",
-          be."artId",
-          be."epicId",
-          NULL,
-          DATE_TRUNC('day', be."usageStartDate"),
-          'DAILY',
-          -- COALESCE(...,0) nas três: SUM(...) FILTER(...) devolve NULL (não
-          -- 0) quando nenhuma linha do grupo bate o filtro — todo grupo cujas
-          -- entradas são 100% não-Credit (o normal) já violava a NOT NULL de
-          -- unmappedAmount antes desta correção, abortando o INSERT inteiro
-          -- (statement único, uma linha ruim derruba todas). Achado ao provar
-          -- que a soma bate — sem isto não dava nem para rodar a query contra
-          -- um Postgres de verdade.
-          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
-          0,
-          0,
-          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."chargeCategory" != 'Credit'), 0),
-          COALESCE(SUM(be."tenantAmount") FILTER (WHERE be."mappingConf" = 'UNMAPPED'), 0),
-          '{}',
-          '{}',
-          'USD',
-          'MONTH_AVG',
-          NOW(),
-          NOW()
-        FROM "BillingEntry" be
-        WHERE be."tenantId" = ${tenantId}
-          AND be."integrationId" = ${integrationId}
-        -- Cada BillingEntry cai em exatamente um grupo: o agrupamento abaixo
-        -- lista todas as colunas não-agregadas do SELECT (garantia do próprio
-        -- Postgres — não compila SELECT de coluna não-agregada fora dele),
-        -- então a partição é exaustiva e sem sobreposição por construção. Antes,
-        -- artId/epicId eram NULL literal fora do agrupamento: linhas de épicos
-        -- diferentes sob o mesmo tema caíam numa só linha (o total do dia
-        -- batia, mas a quebra por épico/ART se perdia).
-        GROUP BY be."tenantId", be."themeId", be."artId", be."epicId", DATE_TRUNC('day', be."usageStartDate")
-        -- okrId segue NULL literal — não há resolução de OKR no pipeline.
-        --
-        -- NEB-185: o ON CONFLICT abaixo só "casa" quando NENHUMA das colunas
-        -- da constraint é NULL — no Postgres, NULLS DISTINCT (padrão, e o
-        -- único modo que o Prisma sabe declarar; NULLS NOT DISTINCT existe no
-        -- Postgres 15+ mas não tem sintaxe no schema.prisma) trata NULL como
-        -- nunca igual a NULL, então duas linhas com a mesma chave mas algum
-        -- campo NULL nunca colidem. okrId é NULL literal em TODA linha desta
-        -- query — logo o DO UPDATE abaixo nunca dispara hoje, com ou sem este
-        -- fix: cada sync insere de novo em vez de atualizar. Bug pré-existente
-        -- (não introduzido nem agravado por agrupar por artId/epicId), fora do
-        -- escopo dos três defeitos do NEB-185 — requer NULLS NOT DISTINCT no
-        -- índice (não representável em schema.prisma sem quebrar o
-        -- "prisma migrate diff") ou reescrever o upsert. Sinalizado à parte.
-        ON CONFLICT ("tenantId", "themeId", "artId", "epicId", "okrId", period, granularity)
-        DO UPDATE SET
-          "cloudCost"      = EXCLUDED."cloudCost",
-          "actualCost"     = EXCLUDED."actualCost",
-          "unmappedAmount" = EXCLUDED."unmappedAmount",
-          "syncedAt"       = NOW()
-      `;
+      await aggregateCostSnapshots(database, {
+        tenantId,
+        startDate: new Date(context.startDate),
+        endDate: new Date(context.endDate),
+      });
     });
 
     // ── Step 6: Update UnmappedCostBucket ─────────────────────────────────
