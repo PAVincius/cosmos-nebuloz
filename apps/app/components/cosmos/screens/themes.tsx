@@ -1,6 +1,5 @@
 "use client";
 
-import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   Badge,
   Button,
@@ -9,7 +8,6 @@ import {
   PageHeader,
   Progress,
   SectionCard,
-  useAction,
   useNav,
 } from "@repo/design-system/cosmos/kit";
 // themes.tsx — Temas Estratégicos (portfolio investment themes), wired to
@@ -19,8 +17,6 @@ import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import { createEpic } from "@/app/(cosmos)/actions/kanban";
 import {
   archiveTheme,
-  createTheme,
-  listThemeLinkOptions,
   listThemes,
   rebalanceThemeTargets,
   type ThemeLinkOption,
@@ -49,6 +45,7 @@ import {
   TonePicker,
 } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
+import { NewThemeModal } from "./themes-new-modal";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   on: "green",

@@ -81,3 +81,29 @@ describe("isDue", () => {
     ).toBe(false);
   });
 });
+
+describe("isDue — COS-93 (relatório recém-criado)", () => {
+  // Relatório mensal: dispara às 00:00 do dia 1º.
+  const MENSAL_DIA1 = "0 0 1 * *";
+  const base = { cronExpression: MENSAL_DIA1, timezone: "UTC" };
+
+  it("relatório recém-criado com cron mensal não vence 15 minutos depois", () => {
+    // createScheduledReport carimba lastRunAt = now() na criação, no meio do
+    // mês — não no instante exato do próximo disparo.
+    const criadoEm = new Date("2026-03-15T10:00:00Z");
+    const quinzeMinDepois = new Date("2026-03-15T10:15:00Z");
+
+    expect(isDue({ ...base, lastRunAt: criadoEm }, quinzeMinDepois)).toBe(
+      false
+    );
+  });
+
+  it("vence quando o próximo disparo do cron passa", () => {
+    const criadoEm = new Date("2026-03-15T10:00:00Z");
+    const depoisDoDisparoDeAbril = new Date("2026-04-01T00:05:00Z");
+
+    expect(
+      isDue({ ...base, lastRunAt: criadoEm }, depoisDoDisparoDeAbril)
+    ).toBe(true);
+  });
+});
