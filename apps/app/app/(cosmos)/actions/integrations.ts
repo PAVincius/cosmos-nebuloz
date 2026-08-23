@@ -261,12 +261,22 @@ export async function testIntegrationConnection(
 //     no servidor. Aceitar `projectId` da tela deixaria um cliente pedir
 //     import de um time que este tenant nunca mapeou.
 
+/**
+ * Project real do Linear (COS-85/COS-91): aninhado dentro de cada
+ * `LinearTeamOption` em vez de uma descoberta própria feita depois que o
+ * time é escolhido. Ver o comentário sobre `linearDiscoverTeams` no conector
+ * (`connectors/linear.ts`) para o porquê — resumo: a versão de duas
+ * chamadas tinha uma corrida real, e trazer os projects já dentro do time
+ * elimina a classe inteira do bug.
+ */
+export type LinearProjectOption = { id: string; name: string };
+
 export type LinearTeamOption = {
   id: string;
   name: string;
   key: string;
   /** Projects do time no Linear — um ART de produto conecta num deles. */
-  projects: { id: string; name: string }[];
+  projects: LinearProjectOption[];
 };
 
 export type ImportCounts = {
@@ -300,23 +310,11 @@ export async function discoverLinearTeams(
         id: t.id,
         name: t.name,
         key: t.key,
-        projects: (t.projects?.nodes ?? []).map((p) => ({
-          id: p.id,
-          name: p.name,
-        })),
+        projects: t.projects.map((p) => ({ id: p.id, name: p.name })),
       })),
     };
   });
 }
-
-// ─── Projects do time escolhido (COS-91) ───────────────────────────────────
-//
-// No plano free do Linear os produtos vivem como projects dentro de um único
-// time — sem filtrar por project, conectar o time traria as issues de todos
-// eles misturadas (mesmo problema que levou o import/re-sync a ganhar
-// `linearProjectId` em COS-85). Esta descoberta roda DEPOIS de
-// discoverLinearTeams, com o time já escolhido: é uma chamada própria, feita
-// de dentro do modal, nunca uma prop congelada no clique que abriu o modal.
 
 export type LinearImportPreview = {
   /** Issues com sub-issues — viram Feature no import. */

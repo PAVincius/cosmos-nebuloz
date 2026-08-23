@@ -82,16 +82,14 @@ describe("discoverLinearTeams", () => {
         id: "lt_1",
         name: "Nebuloz",
         key: "NEB",
-        projects: {
-          nodes: [
-            { id: "prj_mer", name: "Meridian" },
-            { id: "prj_cha", name: "Charter" },
-          ],
-        },
+        projects: [
+          { id: "prj_mer", name: "Meridian" },
+          { id: "prj_cha", name: "Charter" },
+        ],
       },
-      // Time sem o campo (resposta antiga em cache, workspace sem projects):
-      // projects vira lista vazia, nunca undefined — o modal itera direto.
-      { id: "lt_2", name: "Cosmos", key: "COS" },
+      // Time sem project algum: o conector já garante array, nunca
+      // undefined — esta action só remapeia id/name, sem fallback próprio.
+      { id: "lt_2", name: "Cosmos", key: "COS", projects: [] },
     ]);
 
     const r = await discoverLinearTeams({ apiKey: API_KEY });
