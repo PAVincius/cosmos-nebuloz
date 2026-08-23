@@ -1,5 +1,6 @@
 "use client";
 
+import { Icon } from "@repo/design-system/cosmos/icons";
 // modal-form.tsx — primitivas de formulário dos modais, portadas do design
 // de referência (Claude Design, cosmos-modal.jsx).
 //
@@ -11,7 +12,7 @@
 // O que o design não trazia e foi mantido daqui: foco visível, `aria-invalid`
 // e erro anunciado por `role="alert"` — teclado e leitor de tela são parte da
 // qualidade que estes modais precisavam ter.
-import { Icon } from "@repo/design-system/cosmos/icons";
+import { Button } from "@repo/design-system/cosmos/kit";
 import {
   type CSSProperties,
   createContext,
@@ -19,8 +20,11 @@ import {
   useContext,
   useEffect,
   useId,
+  useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
+import { useModalDialogNode } from "./modal";
 
 /** Sinaliza "a pessoa já digitou" para o modal confirmar antes de descartar. */
 const DirtyCtx = createContext<{ markDirty: () => void }>({
@@ -387,6 +391,30 @@ export function TonePicker({
 
 export type LinkItem = { id: string; label: string; sub?: string };
 
+/** Campo do formulário compacto de criação dentro do dropdown. */
+export type QuickCampo = {
+  key: string;
+  label: string;
+  placeholder?: string;
+  type?: "text" | "number";
+  options?: { value: string; label: string }[];
+};
+
+export type QuickCreate = {
+  /** Texto do gatilho, no estilo "+ Criar novo épico". */
+  label: string;
+  campos: QuickCampo[];
+  inicial: Record<string, string>;
+  /**
+   * Cria a entidade de verdade e devolve o item já vinculável.
+   *
+   * Assíncrono porque aqui isto é server action, não objeto de protótipo:
+   * pode falhar por permissão, limite de tenant ou validação. Devolver
+   * `null` mantém o formulário aberto com o que a pessoa digitou.
+   */
+  onCreate: (draft: Record<string, string>) => Promise<LinkItem | null>;
+};
+
 /**
  * Vincula o formulário a entidades que já existem — budget, épicos, temas.
  *
@@ -395,10 +423,85 @@ export type LinkItem = { id: string; label: string; sub?: string };
  * mostra o que já foi escolhido como chips removíveis e nunca oferece o que
  * já está selecionado.
  *
- * O dropdown é irmão do campo, não filho de um portal: dentro de um modal que
- * já prende o foco, um portal no body sairia do ciclo de Tab e o teclado
- * perderia a lista logo depois de abri-la.
+ * O dropdown some visualmente quando o campo fica perto do fim do modal:
+ * ModalCard corta com `overflow: hidden` (é o que faz o border-radius
+ * funcionar). Por isso ele é portado — não para `document.body`, que sairia
+ * do ciclo de Tab do modal, mas para o próprio nó do diálogo
+ * (`useModalDialogNode`), do qual o dropdown vira irmão do card em vez de
+ * descendente. Sem esse nó (uso fora de um ModalProvider, como em teste),
+ * cai de volta para `position: absolute` local — mesmo comportamento de
+ * sempre, só sem a proteção contra o corte.
  */
+type PosicaoDropdown = { top: number; left: number; width: number };
+
+/** Onde ancorar o dropdown, medido a partir do campo — flip para cima
+ *  quando o espaço embaixo não cobre a altura máxima de 220px. */
+function calcularPosicao(campo: HTMLElement): PosicaoDropdown {
+  const r = campo.getBoundingClientRect();
+  const espacoEmbaixo = window.innerHeight - r.bottom;
+  const flipUp = espacoEmbaixo < 220 && r.top > espacoEmbaixo;
+  return {
+    left: r.left,
+    top: flipUp ? r.top - 4 - Math.min(220, r.top - 8) : r.bottom + 4,
+    width: r.width,
+  };
+}
+
+/** Casca do dropdown: porta para o nó do diálogo quando existe (escapando
+ *  do `overflow: hidden` do ModalCard), senão renderiza no lugar. */
+function ListaDropdown({
+  listaId,
+  dialogNode,
+  posicao,
+  children,
+}: {
+  listaId: string;
+  dialogNode: HTMLElement | null;
+  posicao: PosicaoDropdown | null;
+  children: ReactNode;
+}) {
+  const conteudo = (
+    <div
+      id={listaId}
+      role="listbox"
+      style={
+        dialogNode && posicao
+          ? {
+              background: "var(--surface-3)",
+              border: "1px solid var(--hairline-strong)",
+              borderRadius: "var(--r-md)",
+              boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
+              left: posicao.left,
+              maxHeight: 220,
+              overflowY: "auto",
+              padding: 5,
+              position: "fixed",
+              top: posicao.top,
+              width: posicao.width,
+              zIndex: 410,
+            }
+          : {
+              background: "var(--surface-3)",
+              border: "1px solid var(--hairline-strong)",
+              borderRadius: "var(--r-md)",
+              boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
+              left: 0,
+              maxHeight: 220,
+              overflowY: "auto",
+              padding: 5,
+              position: "absolute",
+              right: 0,
+              top: "calc(100% + 4px)",
+              zIndex: 10,
+            }
+      }
+    >
+      {children}
+    </div>
+  );
+  return dialogNode ? createPortal(conteudo, dialogNode) : conteudo;
+}
+
 export function EntityLinkField({
   label,
   hint,
@@ -409,6 +512,7 @@ export function EntityLinkField({
   placeholder = "Buscar...",
   tone = "accent",
   onSearch,
+  quickCreate,
 }: {
   label: string;
   hint?: string;
@@ -426,13 +530,46 @@ export function EntityLinkField({
    *  devolve 10) faz o campo dizer "nenhum resultado" para entidade que
    *  existe. Aqui a pergunta vai para quem tem a tabela inteira. */
   onSearch?: (q: string) => Promise<LinkItem[]>;
+  /** Cria a entidade sem sair do modal — o vínculo do SAFe não pode exigir
+   *  abandonar o formulário no meio para preparar a dependência. */
+  quickCreate?: QuickCreate;
 }) {
   const { markDirty } = useDirty();
   const [query, setQuery] = useState("");
   const [aberto, setAberto] = useState(false);
   const [remotos, setRemotos] = useState<LinkItem[] | null>(null);
   const [buscando, setBuscando] = useState(false);
+  const [criando, setCriando] = useState(false);
+  const [rascunho, setRascunho] = useState<Record<string, string>>(
+    () => quickCreate?.inicial ?? {}
+  );
+  const [criandoBusy, setCriandoBusy] = useState(false);
+  const [erroCriar, setErroCriar] = useState("");
   const listaId = useId();
+  const campoWrapRef = useRef<HTMLDivElement | null>(null);
+  const dialogNode = useModalDialogNode();
+  const [posDropdown, setPosDropdown] = useState<PosicaoDropdown | null>(null);
+
+  // Recalcula sempre que o dropdown abre, e ao rolar/redimensionar enquanto
+  // aberto — sem isto o dropdown portado ficaria ancorado no lugar onde o
+  // campo estava no instante da abertura, não onde ele está agora.
+  useEffect(() => {
+    if (!(aberto && dialogNode && campoWrapRef.current)) {
+      return;
+    }
+    const atualizar = () => {
+      if (campoWrapRef.current) {
+        setPosDropdown(calcularPosicao(campoWrapRef.current));
+      }
+    };
+    atualizar();
+    window.addEventListener("scroll", atualizar, true);
+    window.addEventListener("resize", atualizar);
+    return () => {
+      window.removeEventListener("scroll", atualizar, true);
+      window.removeEventListener("resize", atualizar);
+    };
+  }, [aberto, dialogNode]);
 
   // Debounce: uma ida ao servidor por tecla transformaria a digitação em
   // rajada de requisições, e as respostas voltariam fora de ordem.
@@ -471,11 +608,35 @@ export function EntityLinkField({
           it.label.toLowerCase().includes(query.toLowerCase())
       );
 
-  function escolher(id: string) {
+  function escolher(id: string, novo?: LinkItem) {
     markDirty();
     onChange(multi ? [...escolhidos, id] : id);
+    // Recém-criada não está na busca nem em `items`: sem guardá-la aqui, o
+    // chip mostraria o id cru.
+    if (novo) {
+      setRemotos((atuais) => [novo, ...(atuais ?? [])]);
+    }
     setQuery("");
     setAberto(false);
+  }
+
+  async function criarEVincular() {
+    if (!quickCreate || criandoBusy) {
+      return;
+    }
+    setCriandoBusy(true);
+    setErroCriar("");
+    const item = await quickCreate.onCreate(rascunho);
+    setCriandoBusy(false);
+    if (!item) {
+      // Falhou: o formulário fica aberto com o que foi digitado, porque
+      // fechar aqui custaria o trabalho e esconderia o motivo.
+      setErroCriar("Não foi possível criar. Revise os campos.");
+      return;
+    }
+    escolher(item.id, item);
+    setCriando(false);
+    setRascunho(quickCreate.inicial);
   }
 
   function remover(id: string) {
@@ -539,7 +700,7 @@ export function EntityLinkField({
       )}
 
       {(multi || escolhidos.length === 0) && (
-        <div style={{ position: "relative" }}>
+        <div ref={campoWrapRef} style={{ position: "relative" }}>
           <input
             aria-controls={aberto ? listaId : undefined}
             aria-expanded={aberto}
@@ -547,7 +708,13 @@ export function EntityLinkField({
               limpaAnel(e.currentTarget, false);
               // Fecha depois do clique na opção: fechar no blur imediato
               // cancelaria a escolha antes de ela acontecer.
-              setTimeout(() => setAberto(false), 120);
+              setTimeout(() => {
+                // Com o formulário de criação aberto, fechar no blur
+                // destruiria o que a pessoa está digitando nele.
+                if (!criando) {
+                  setAberto(false);
+                }
+              }, 120);
             }}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -563,25 +730,12 @@ export function EntityLinkField({
             value={query}
           />
           {aberto && (
-            <div
-              id={listaId}
-              role="listbox"
-              style={{
-                background: "var(--surface-3)",
-                border: "1px solid var(--hairline-strong)",
-                borderRadius: "var(--r-md)",
-                boxShadow: "0 16px 32px -12px rgba(0,0,0,.5)",
-                left: 0,
-                maxHeight: 220,
-                overflowY: "auto",
-                padding: 5,
-                position: "absolute",
-                right: 0,
-                top: "calc(100% + 4px)",
-                zIndex: 10,
-              }}
+            <ListaDropdown
+              dialogNode={dialogNode}
+              listaId={listaId}
+              posicao={posDropdown}
             >
-              {filtrados.length === 0 ? (
+              {filtrados.length === 0 && !quickCreate ? (
                 <div
                   style={{
                     color: "var(--ink-faint)",
@@ -629,7 +783,161 @@ export function EntityLinkField({
                   </button>
                 ))
               )}
-            </div>
+
+              {quickCreate && (
+                <>
+                  {filtrados.length > 0 && (
+                    <div
+                      style={{
+                        borderTop: "1px solid var(--hairline)",
+                        margin: "4px 2px",
+                      }}
+                    />
+                  )}
+                  {criando ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 8,
+                        padding: 9,
+                      }}
+                    >
+                      {quickCreate.campos.map((campo) => (
+                        <label
+                          key={campo.key}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 4,
+                          }}
+                        >
+                          <span
+                            style={{
+                              color: "var(--ink-subtle)",
+                              fontSize: 11,
+                              fontWeight: 700,
+                            }}
+                          >
+                            {campo.label}
+                          </span>
+                          {campo.options ? (
+                            <select
+                              onChange={(e) =>
+                                setRascunho((d) => ({
+                                  ...d,
+                                  [campo.key]: e.target.value,
+                                }))
+                              }
+                              style={{
+                                ...campoBase,
+                                fontSize: 12.5,
+                                padding: "6px 9px",
+                              }}
+                              value={rascunho[campo.key] ?? ""}
+                            >
+                              {campo.options.map((o) => (
+                                <option key={o.value} value={o.value}>
+                                  {o.label}
+                                </option>
+                              ))}
+                            </select>
+                          ) : (
+                            <input
+                              onChange={(e) =>
+                                setRascunho((d) => ({
+                                  ...d,
+                                  [campo.key]: e.target.value,
+                                }))
+                              }
+                              placeholder={campo.placeholder}
+                              style={{
+                                ...campoBase,
+                                fontSize: 12.5,
+                                padding: "6px 9px",
+                              }}
+                              type={campo.type ?? "text"}
+                              value={rascunho[campo.key] ?? ""}
+                            />
+                          )}
+                        </label>
+                      ))}
+                      {erroCriar && (
+                        <span
+                          role="alert"
+                          style={{
+                            color: "var(--red-text)",
+                            fontSize: 11,
+                            fontWeight: 600,
+                          }}
+                        >
+                          {erroCriar}
+                        </span>
+                      )}
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: 8,
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <Button
+                          onClick={() => {
+                            setCriando(false);
+                            setErroCriar("");
+                          }}
+                          size="sm"
+                          variant="secondary"
+                        >
+                          Cancelar
+                        </Button>
+                        <Button
+                          icon="check"
+                          onClick={criarEVincular}
+                          size="sm"
+                          variant="primary"
+                        >
+                          {criandoBusy ? "Criando..." : "Criar e vincular"}
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      className="btn"
+                      onClick={() => {
+                        // O que já foi digitado na busca vira o nome da nova
+                        // entidade: quem não achou "Antifraude" quer criar
+                        // "Antifraude", não digitar de novo.
+                        const nomeKey = quickCreate.campos[0]?.key;
+                        setRascunho({
+                          ...quickCreate.inicial,
+                          ...(nomeKey && query ? { [nomeKey]: query } : {}),
+                        });
+                        setCriando(true);
+                      }}
+                      style={{
+                        alignItems: "center",
+                        background: "transparent",
+                        border: "none",
+                        borderRadius: "var(--r-sm)",
+                        color: `var(--${tone}-text)`,
+                        display: "flex",
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        gap: 7,
+                        padding: "8px 9px",
+                        textAlign: "left",
+                        width: "100%",
+                      }}
+                      type="button"
+                    >
+                      <Icon name="plus" size={13} strokeWidth={2.4} />
+                      {quickCreate.label}
+                    </button>
+                  )}
+                </>
+              )}
+            </ListaDropdown>
           )}
         </div>
       )}

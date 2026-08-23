@@ -4,7 +4,7 @@
 // ModalCard novo precisa herdar Escape, foco e ARIA sem que quem o escreveu
 // tenha lembrado disso. Cada caso aqui é uma regressão que a tela inteira
 // sofreria em silêncio — ninguém percebe um focus trap quebrado olhando.
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -329,5 +329,96 @@ describe("EntityLinkField — busca no servidor", () => {
       await screen.findByText("Épico que estava fora dos 10 primeiros")
     ).toBeTruthy();
     expect(onSearch).toHaveBeenCalledWith("fora dos 10");
+  });
+});
+
+describe("EntityLinkField — criar sem sair do modal", () => {
+  const quickCreate = (
+    onCreate: (d: Record<string, string>) => Promise<{
+      id: string;
+      label: string;
+    } | null>
+  ) => ({
+    label: "+ Criar novo épico",
+    campos: [{ key: "titulo", label: "Título do épico" }],
+    inicial: { titulo: "" },
+    onCreate,
+  });
+
+  function montarCampo(
+    onCreate: (d: Record<string, string>) => Promise<{
+      id: string;
+      label: string;
+    } | null>,
+    onChange = () => {}
+  ) {
+    render(
+      <DirtyProvider value={{ markDirty: () => {} }}>
+        <EntityLinkField
+          items={[]}
+          label="Épicos"
+          onChange={onChange}
+          placeholder="Buscar épico..."
+          quickCreate={quickCreate(onCreate)}
+          value={null}
+        />
+      </DirtyProvider>
+    );
+    fireEvent.focus(screen.getByPlaceholderText("Buscar épico..."));
+  }
+
+  it("cria a entidade e já a vincula", async () => {
+    const onCreate = vi
+      .fn()
+      .mockResolvedValue({ id: "ep-9", label: "Antifraude" });
+    const onChange = vi.fn();
+    montarCampo(onCreate, onChange);
+
+    fireEvent.click(await screen.findByText("+ Criar novo épico"));
+    fireEvent.change(screen.getByLabelText("Título do épico"), {
+      target: { value: "Antifraude" },
+    });
+    fireEvent.click(screen.getByText("Criar e vincular"));
+
+    await waitFor(() =>
+      expect(onCreate).toHaveBeenCalledWith({ titulo: "Antifraude" })
+    );
+    await waitFor(() => expect(onChange).toHaveBeenCalledWith("ep-9"));
+  });
+
+  it("aproveita o que foi digitado na busca como nome da nova entidade", async () => {
+    // Quem procurou "Antifraude" e não achou quer criar "Antifraude" — pedir
+    // para digitar de novo é cobrar duas vezes pela mesma informação.
+    const onCreate = vi.fn().mockResolvedValue({ id: "ep-9", label: "x" });
+    montarCampo(onCreate);
+
+    fireEvent.change(screen.getByPlaceholderText("Buscar épico..."), {
+      target: { value: "Antifraude" },
+    });
+    fireEvent.click(await screen.findByText("+ Criar novo épico"));
+
+    expect(
+      (screen.getByLabelText("Título do épico") as HTMLInputElement).value
+    ).toBe("Antifraude");
+  });
+
+  it("falha ao criar mantém o formulário aberto com o que foi digitado", async () => {
+    // Server action pode recusar por limite de tenant ou permissão. Fechar
+    // aqui custaria o trabalho e esconderia o motivo.
+    const onCreate = vi.fn().mockResolvedValue(null);
+    const onChange = vi.fn();
+    montarCampo(onCreate, onChange);
+
+    fireEvent.click(await screen.findByText("+ Criar novo épico"));
+    fireEvent.change(screen.getByLabelText("Título do épico"), {
+      target: { value: "Antifraude" },
+    });
+    fireEvent.click(screen.getByText("Criar e vincular"));
+
+    expect(await screen.findByRole("alert")).toBeTruthy();
+    expect(
+      (screen.getByLabelText("Título do épico") as HTMLInputElement).value
+    ).toBe("Antifraude");
+    expect(onChange).not.toHaveBeenCalled();
   });
 });

@@ -30,6 +30,12 @@ vi.mock("@/app/actions/portfolio-kanban", () => ({
   resetKanbanColumns: vi.fn(),
 }));
 
+// Mesma razão: o quick-create do campo "Tema estratégico" traz a server action
+// de temas para o escopo do módulo.
+vi.mock("@/app/(cosmos)/actions/themes", () => ({
+  createTheme: vi.fn(),
+}));
+
 import KanbanScreen from "../../components/cosmos/screens/kanban";
 
 const FAKE_MOCK_TITLES = [
