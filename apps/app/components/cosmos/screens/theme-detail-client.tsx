@@ -11,8 +11,8 @@ import {
 // theme-detail-client.tsx — per-StrategicTheme drilldown (design handoff
 // screen-bundle-5.jsx ThemeDetailScreen). Real vs. target allocation, linked
 // pillar, and the theme's epics. actualAllocationPct comes from getTheme()
-// (BillingEntryAllocation-derived) and is null, never fabricated, when the
-// tenant has no cost-allocation data yet.
+// (BillingEntry.themeId + effectiveCost — see NEB-185) and is null, never
+// fabricated, when the tenant has no themed cost data yet.
 import type { ThemeDetailView } from "@/app/(cosmos)/actions/themes";
 import { EmptyState } from "../empty-state";
 
@@ -171,7 +171,7 @@ export default function ThemeDetailClient({
         >
           {initial.actualAllocationPct === null ? (
             <EmptyState
-              description="Nenhuma alocação de custo (BillingEntryAllocation) foi registrada para este tema ainda — apenas o alvo é exibido."
+              description="Nenhum custo de nuvem foi mapeado para este tema ainda — apenas o alvo é exibido."
               icon="compass"
               title="Sem dados de alocação real"
             />

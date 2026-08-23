@@ -21,9 +21,10 @@ export type ThemeView = {
   healthStatus: string;
   status: string;
   targetAllocationPct: number | null;
-  // Derived from BillingEntryAllocation, same normalization getTheme() uses
+  // Derived from BillingEntry.themeId + effectiveCost (the only path that has
+  // a production writer — see NEB-185), same normalization getTheme() uses
   // for a single theme (see below) — null only when the tenant has no
-  // themed allocation data at all yet, never fabricated.
+  // themed cost data at all yet, never fabricated.
   actualAllocationPct: number | null;
   horizon: string | null;
   epicCount: number;
@@ -38,7 +39,7 @@ export type ThemeView = {
 export async function listThemes(): Promise<Result<ThemeView[]>> {
   return safeAction(async () => {
     const ctx = await requireTenantSession(await headers());
-    const [rows, allocations] = await Promise.all([
+    const [rows, costGroups] = await Promise.all([
       database.strategicTheme.findMany({
         where: { tenantId: ctx.tenantId },
         orderBy: { order: "asc" },
@@ -54,29 +55,27 @@ export async function listThemes(): Promise<Result<ThemeView[]>> {
           epics: { select: { featureCount: true, doneFeatureCount: true } },
         },
       }),
-      // Same tenant-scoped BillingEntryAllocation aggregation getTheme()
-      // performs for one theme, batched across every theme at once: each
-      // theme's actual cost, normalized against the sum across every themed
-      // allocation in the tenant.
-      database.billingEntryAllocation.findMany({
+      // Same tenant-scoped BillingEntry aggregation getTheme() performs for
+      // one theme, batched across every theme at once: each theme's cost,
+      // normalized against the sum across every themed BillingEntry in the
+      // tenant. BillingEntryAllocation has no production writer (NEB-185) —
+      // this is the path that actually has data.
+      database.billingEntry.groupBy({
+        by: ["themeId"],
         where: { tenantId: ctx.tenantId, themeId: { not: null } },
-        select: {
-          themeId: true,
-          percentage: true,
-          billingEntry: { select: { effectiveCost: true } },
-        },
+        _sum: { effectiveCost: true },
       }),
     ]);
 
     const costByTheme = new Map<string, number>();
     let totalCost = 0;
-    for (const a of allocations) {
-      const cost =
-        (Number(a.percentage) / 100) * Number(a.billingEntry.effectiveCost);
-      totalCost += cost;
-      if (a.themeId) {
-        costByTheme.set(a.themeId, (costByTheme.get(a.themeId) ?? 0) + cost);
+    for (const g of costGroups) {
+      if (!g.themeId) {
+        continue;
       }
+      const cost = Number(g._sum.effectiveCost ?? 0);
+      totalCost += cost;
+      costByTheme.set(g.themeId, cost);
     }
 
     // Denominador da concentração: épicos sob temas ATIVOS. Um tema arquivado
@@ -134,9 +133,9 @@ export type ThemeDetailView = {
   healthStatus: string;
   horizon: string | null;
   targetAllocationPct: number | null;
-  // Derived from BillingEntryAllocation (percentage-based cost attribution,
-  // finops.prisma). null when the tenant has no allocation data at all yet —
-  // never fabricated, never defaulted to 0.
+  // Derived from BillingEntry.themeId + effectiveCost (finops.prisma) — the
+  // only path with a production writer (NEB-185). null when the tenant has
+  // no themed cost data at all yet — never fabricated, never defaulted to 0.
   actualAllocationPct: number | null;
   pillar: { id: string; name: string } | null;
   epics: {
@@ -203,37 +202,23 @@ export async function getTheme(id: string): Promise<Result<ThemeDetailView>> {
         )
       : 0;
 
-    // Real allocation: sum(billingEntry.effectiveCost * percentage/100) for
-    // this theme's allocations, normalized against the same sum across every
-    // themed allocation in the tenant — comparable to targetAllocationPct,
-    // which is also a % of total portfolio investment.
-    const [themeAllocations, allThemeAllocations] = await Promise.all([
-      database.billingEntryAllocation.findMany({
+    // Real allocation: sum(BillingEntry.effectiveCost) for this theme,
+    // normalized against the same sum across every themed BillingEntry in
+    // the tenant — comparable to targetAllocationPct, which is also a % of
+    // total portfolio investment. BillingEntryAllocation has no production
+    // writer (NEB-185) — this is the path that actually has data.
+    const [themeCostAgg, totalCostAgg] = await Promise.all([
+      database.billingEntry.aggregate({
         where: { tenantId: ctx.tenantId, themeId: id },
-        select: {
-          percentage: true,
-          billingEntry: { select: { effectiveCost: true } },
-        },
+        _sum: { effectiveCost: true },
       }),
-      database.billingEntryAllocation.findMany({
+      database.billingEntry.aggregate({
         where: { tenantId: ctx.tenantId, themeId: { not: null } },
-        select: {
-          percentage: true,
-          billingEntry: { select: { effectiveCost: true } },
-        },
+        _sum: { effectiveCost: true },
       }),
     ]);
-    const sumCost = (
-      rows: { percentage: unknown; billingEntry: { effectiveCost: unknown } }[]
-    ) =>
-      rows.reduce(
-        (sum, a) =>
-          sum +
-          (Number(a.percentage) / 100) * Number(a.billingEntry.effectiveCost),
-        0
-      );
-    const themeCost = sumCost(themeAllocations);
-    const totalCost = sumCost(allThemeAllocations);
+    const themeCost = Number(themeCostAgg._sum.effectiveCost ?? 0);
+    const totalCost = Number(totalCostAgg._sum.effectiveCost ?? 0);
     const actualAllocationPct =
       totalCost > 0 ? Math.round((themeCost / totalCost) * 1000) / 10 : null;
 
