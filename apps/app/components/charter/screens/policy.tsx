@@ -15,24 +15,22 @@ import {
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState, useTransition } from "react";
-import { listRequirementSets } from "@/app/(charter)/actions/compliance";
 import { getOnboarding } from "@/app/(charter)/actions/onboarding";
 import {
   editSection,
   getPolicy,
   getVersionDiff,
   publishPolicyVersion,
-  saveGeneratedDraft,
   setSectionStatus,
 } from "@/app/(charter)/actions/policy";
-import { getSettings } from "@/app/(charter)/actions/settings";
 import { SECTION_STATUS_LABEL, SECTION_STATUS_TONE } from "@/lib/charter/rules";
 import { useActionToast as runWithToast } from "../../cosmos/use-action-toast";
 import { ScreenError, SmartEmptyState, Tabs, Textarea } from "../base";
 import { Callout, CheckRow } from "../form-kit";
 import { ModalProvider, useModal } from "../modal";
-import { DiffModal, GenerateDraftModal, PublishVersionModal } from "../modals";
+import { DiffModal, PublishVersionModal } from "../modals";
 import { useCharterData } from "../use-charter-data";
+import { PolicyDraftPreview } from "./policy-draft-preview";
 import PolicyScope from "./policy-scope";
 
 const fmt = (iso: string | null) =>
@@ -91,15 +89,9 @@ function PolicyInner() {
   const { data, loading, error, reload } = useCharterData(
     useCallback(() => getPolicy(), [])
   );
-  const settings = useCharterData(useCallback(() => getSettings(), []));
   // Só para o modal de publicação dizer quantas trilhas e pessoas serão
   // afetadas pela invalidação de aceites — número inventado ali seria mentira.
   const onboarding = useCharterData(useCallback(() => getOnboarding(), []));
-  // Só para alimentar o seletor de exigência (groundedRequirementId) do
-  // GenerateDraftModal, em openGenerate.
-  const requirementSets = useCharterData(
-    useCallback(() => listRequirementSets(), [])
-  );
 
   if (error) {
     return <ScreenError message={error} onRetry={reload} />;
@@ -187,51 +179,6 @@ function PolicyInner() {
       />
     );
 
-  const openGenerate = () =>
-    open(
-      <GenerateDraftModal
-        geo={settings.data?.workspace.geo ?? null}
-        industry={settings.data?.workspace.industry ?? null}
-        onClose={close}
-        onSave={(sectionId, body, groundedRequirementId) =>
-          startTransition(async () => {
-            const res = await runWithToast(
-              () =>
-                saveGeneratedDraft({
-                  sectionId,
-                  body,
-                  groundedRequirementId,
-                }),
-              {
-                loading: "Salvando rascunho…",
-                success: "Rascunho salvo — entra como Rascunho, não publicado",
-              }
-            );
-            if (res.ok) {
-              close();
-              reload();
-            }
-          })
-        }
-        pending={pending}
-        posture={
-          settings.data?.workspace.posture === "CONSERVATIVE"
-            ? "Conservadora"
-            : settings.data?.workspace.posture === "AGGRESSIVE"
-              ? "Permissiva"
-              : "Moderada"
-        }
-        requirementSets={requirementSets.data ?? []}
-        sections={data.sections.map((s) => ({
-          id: s.id,
-          ordinal: s.ordinal,
-          name: s.name,
-          statusLabel: SECTION_STATUS_LABEL[s.status],
-          words: s.words,
-        }))}
-      />
-    );
-
   const openDiff = (versionId: string) =>
     startTransition(async () => {
       const res = await getVersionDiff(versionId);
@@ -272,9 +219,6 @@ function PolicyInner() {
         title={data.name}
         tone="accent"
       >
-        <Button icon="sparkles" onClick={openGenerate} variant="secondary">
-          Gerar rascunho
-        </Button>
         <span
           style={{
             opacity: data.can.publish ? 1 : 0.45,
@@ -495,6 +439,15 @@ function PolicyInner() {
                           ? "Rascunho não publicado: colaboradores não veem esta seção e o onboarding não a cobre. Solicite revisão para entrar na fila de aprovação."
                           : "Em revisão. A versão publicada continua valendo até a aprovação — nenhuma regra muda antes disso."}
                       </Callout>
+                    )}
+
+                    {sel.status === "DRAFT" && (
+                      <PolicyDraftPreview
+                        bodyAtual={sel.body}
+                        onAccepted={reload}
+                        sectionId={sel.id}
+                        sectionName={sel.name}
+                      />
                     )}
 
                     <div
