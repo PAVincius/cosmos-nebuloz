@@ -9,17 +9,29 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const getActivePiPlanningMock = vi.fn();
 const castConfidenceVoteMock = vi.fn();
 const revealTallyMock = vi.fn();
+const abrirRodadaMock = vi.fn();
+const transitionPIPlanMock = vi.fn();
 
 vi.mock("@/app/(cosmos)/actions/piplanning", () => ({
   getActivePiPlanning: (...args: unknown[]) => getActivePiPlanningMock(...args),
   castConfidenceVote: (...args: unknown[]) => castConfidenceVoteMock(...args),
   revealTally: (...args: unknown[]) => revealTallyMock(...args),
+  abrirRodadaDeConfianca: (...args: unknown[]) => abrirRodadaMock(...args),
+}));
+// A tela fecha a cerimônia chamando `transitionPIPlan`, e o módulo dele puxa
+// `@repo/auth/server` → `@repo/database` → env de servidor. Sem este mock, o
+// teste de tela morre no import, antes de renderizar qualquer coisa.
+vi.mock("@/app/actions/arts/lifecycle", () => ({
+  transitionPIPlan: (...args: unknown[]) => transitionPIPlanMock(...args),
 }));
 
 import PiPlanningScreen from "../../components/cosmos/screens/piplanning";
 
 const plan = (over: Record<string, unknown>) => ({
+  piPlanId: "pi-1",
   piPlanName: "PI 2026.3",
+  piPlanStatus: "PLANNING",
+  confidenceThreshold: 3,
   activeSprintName: "Sprint 15",
   objectives: [],
   risks: [],
@@ -159,9 +171,30 @@ describe("PiPlanningScreen", () => {
     render(<PiPlanningScreen />);
 
     expect(
-      await screen.findByText("Nenhuma rodada de confidence vote aberta.")
+      await screen.findByText(/Nenhuma rodada de confidence vote aberta/)
     ).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Votar 4" })).toBeNull();
+    // Dizer que não há rodada sem oferecer como abrir foi o beco onde a
+    // cerimônia parava: a tela informava o vazio e não dava saída dele.
+    expect(
+      screen.getByRole("button", { name: "Abrir rodada de confiança" })
+    ).toBeTruthy();
+  });
+
+  it("abre a rodada pela tela quando não há nenhuma", async () => {
+    getActivePiPlanningMock.mockResolvedValue({ ok: true, data: plan({}) });
+    abrirRodadaMock.mockResolvedValue({
+      ok: true,
+      data: { round: 1, participantCount: 4, jaAberta: false },
+    });
+
+    render(<PiPlanningScreen />);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Abrir rodada de confiança" })
+    );
+
+    await waitFor(() => expect(abrirRodadaMock).toHaveBeenCalledTimes(1));
   });
 
   it("mostra o estado sem PI ativo e nenhum controle de voto (AC-005)", async () => {

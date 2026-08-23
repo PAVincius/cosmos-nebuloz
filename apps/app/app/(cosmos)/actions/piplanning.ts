@@ -9,6 +9,7 @@ import { applyVoteEvent, canSendVoteEvent } from "@repo/safe-engine";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { contarParticipantesDoPi } from "@/lib/pi/participantes";
 import { type Result, safeAction } from "../../actions/_base";
 import { logAudit } from "../../actions/audit/log-audit";
 
@@ -29,7 +30,15 @@ export type ConfidenceVoteView = {
 };
 
 export type PiPlanningView = {
+  piPlanId: string;
   piPlanName: string;
+  // Status do PI (PLANNING/COMMITTED/EXECUTING): a tela precisa dele para saber
+  // qual passo da cerimônia oferecer — comprometer, iniciar execução, ou nada.
+  piPlanStatus: string;
+  // Limite de confiança do ART. Vem junto porque a tela explica ao facilitador
+  // por que o commit foi recusado, e "abaixo de 3" só faz sentido com o 3 à
+  // vista.
+  confidenceThreshold: number;
   // Current in-progress sprint under this PI (Sprint.status === "ACTIVE"),
   // null when no team has an active sprint right now.
   activeSprintName: string | null;
@@ -125,6 +134,8 @@ export async function getActivePiPlanning(): Promise<
       select: {
         id: true,
         name: true,
+        status: true,
+        confidenceThreshold: true,
         piObjectives: {
           select: {
             id: true,
@@ -187,7 +198,10 @@ export async function getActivePiPlanning(): Promise<
     const teamNameById = new Map(teams.map((t) => [t.id, t.name]));
 
     return {
+      piPlanId: plan.id,
       piPlanName: plan.name,
+      piPlanStatus: plan.status,
+      confidenceThreshold: plan.confidenceThreshold,
       activeSprintName: plan.sprints[0]?.name ?? null,
       objectives: plan.piObjectives.map((o) => ({
         id: o.id,
@@ -213,6 +227,144 @@ export async function getActivePiPlanning(): Promise<
 const CastVoteSchema = z.object({
   score: z.number().int().min(1).max(5),
 });
+
+/**
+ * Abre a rodada de confidence vote do PI ativo — o passo que faltava.
+ *
+ * A cerimônia depende de três linhas encadeadas: a `PISession` (a cerimônia),
+ * a `ConfidenceVoteSession` (a rodada, com sua máquina de estado) e o
+ * `ConfidenceVoteTally` (o placar anônimo onde os votos caem). As três já
+ * existiam no banco e nenhuma tela as criava: o card de voto só sabia dizer
+ * "nenhuma rodada aberta", e não havia caminho no produto para abrir uma.
+ *
+ * Tudo numa transação porque o estado meio-criado é o pior dos mundos: uma
+ * rodada `OPEN` sem placar aceita o clique do votante e depois recusa o voto
+ * com "nenhuma rodada aberta para receber voto" — mensagem que acusa o
+ * contrário do que aconteceu.
+ *
+ * Idempotente: com rodada aberta e placar aberto, devolve o que existe em vez
+ * de empilhar uma rodada por clique.
+ */
+export async function abrirRodadaDeConfianca(): Promise<
+  Result<{ round: number; participantCount: number; jaAberta: boolean }>
+> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    // Mesmo gate de facilitador que revelar: abrir e revelar são os dois atos
+    // de condução da cerimônia. Votar, não — votar é de todo mundo.
+    requireRole(["ADMIN", "RTE"], ctx);
+
+    const piPlanId = await findActivePiPlanId(ctx.tenantId);
+    if (!piPlanId) {
+      throw new Error("Nenhum PI aberto para planejamento.");
+    }
+
+    const participantCount = await contarParticipantesDoPi(database, {
+      piPlanId,
+      tenantId: ctx.tenantId,
+    });
+    if (participantCount === 0) {
+      throw new Error(
+        "Nenhuma pessoa neste workspace para compor o quórum da votação."
+      );
+    }
+
+    const atual = await findCurrentVoteRound(ctx.tenantId, piPlanId);
+    if (atual) {
+      const placarAberto = await findOpenTally(ctx.tenantId, atual.id);
+      if (placarAberto && atual.xStateStatus === "OPEN") {
+        return {
+          round: placarAberto.round,
+          participantCount: placarAberto.participantCount,
+          jaAberta: true,
+        };
+      }
+    }
+
+    const piSession =
+      (await database.pISession.findFirst({
+        where: { piPlanId, tenantId: ctx.tenantId, type: "PLANNING" },
+        orderBy: { createdAt: "asc" },
+        select: { id: true },
+      })) ??
+      (await database.pISession.create({
+        data: { tenantId: ctx.tenantId, piPlanId, type: "PLANNING" },
+        select: { id: true },
+      }));
+
+    // Uma rodada em `NOT_STARTED` ou `OPEN` ainda é a rodada corrente e volta a
+    // receber votos; qualquer outro estado (TALLYING, REWORK, APPROVED) já teve
+    // seu desfecho, e abrir votação depois disso é abrir a rodada seguinte.
+    const reaproveita =
+      atual &&
+      (atual.xStateStatus === "OPEN" || atual.xStateStatus === "NOT_STARTED");
+    const roundNumber = reaproveita
+      ? atual.roundNumber
+      : (atual?.roundNumber ?? 0) + 1;
+
+    const { round } = await database.$transaction(async (tx) => {
+      const voteSessionId = reaproveita
+        ? atual.id
+        : (
+            await tx.confidenceVoteSession.create({
+              data: {
+                tenantId: ctx.tenantId,
+                piSessionId: piSession.id,
+                roundNumber,
+                xStateStatus: "NOT_STARTED",
+                votes: [],
+              },
+              select: { id: true },
+            })
+          ).id;
+
+      // Quem decide que NOT_STARTED → OPEN é legal é a máquina do
+      // @repo/safe-engine, a mesma que guarda o voto e a revelação. Abrir por
+      // escrita direta faria a tela e a máquina discordarem sobre a rodada.
+      const aberta = applyVoteEvent(
+        { xStateStatus: "NOT_STARTED", votes: [] },
+        { type: "START_VOTING" }
+      );
+      if (!aberta) {
+        throw new Error("A máquina de votação recusou abrir a rodada.");
+      }
+      await tx.confidenceVoteSession.update({
+        where: { id: voteSessionId },
+        data: { xStateStatus: aberta.xStateStatus },
+      });
+
+      // O número do placar segue o último placar desta rodada, não o número da
+      // rodada: `@@unique([voteSessionId, round])` proíbe repetir, e uma sessão
+      // reaproveitada pode já carregar um placar fechado de antes.
+      const ultimoPlacar = await tx.confidenceVoteTally.findFirst({
+        where: { voteSessionId, tenantId: ctx.tenantId },
+        orderBy: { round: "desc" },
+        select: { round: true },
+      });
+      const placar = await tx.confidenceVoteTally.create({
+        data: {
+          tenantId: ctx.tenantId,
+          voteSessionId,
+          piPlanId,
+          round: ultimoPlacar ? ultimoPlacar.round + 1 : roundNumber,
+          participantCount,
+        },
+        select: { id: true, round: true },
+      });
+      return { round: placar.round, tallyId: placar.id };
+    });
+
+    await logAudit(ctx.tenantId, {
+      userId: ctx.userId,
+      action: "created",
+      entityType: "confidence_vote",
+      entityId: piPlanId,
+      diff: { round: String(round), participantes: String(participantCount) },
+    });
+    revalidateTag(`piplanning:${ctx.tenantId}`, "max");
+    return { round, participantCount, jaAberta: false };
+  });
+}
 
 const MIN_PARTICIPATION_PCT = 50;
 
