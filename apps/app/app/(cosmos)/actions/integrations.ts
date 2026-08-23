@@ -33,6 +33,7 @@ import {
 import { githubTestConnection } from "../../actions/integrations/connectors/github";
 import {
   linearDiscoverTeams,
+  linearImportTeamIssues,
   linearTestConnection,
 } from "../../actions/integrations/connectors/linear";
 
@@ -316,6 +317,67 @@ export async function discoverLinearTeams(
 // `linearProjectId` em COS-85). Esta descoberta roda DEPOIS de
 // discoverLinearTeams, com o time já escolhido: é uma chamada própria, feita
 // de dentro do modal, nunca uma prop congelada no clique que abriu o modal.
+
+export type LinearImportPreview = {
+  /** Issues com sub-issues — viram Feature no import. */
+  features: number;
+  /** Sub-issues — viram Story linkada na Feature do parent. */
+  comSub: number;
+  /** Issues sem hierarquia — viram Story sem feature. */
+  soltas: number;
+};
+
+const AnalyzeLinearImportSchema = z.object({
+  apiKey: z.string().trim().min(8),
+  linearTeamId: z.string().min(1),
+  linearProjectId: z.string().min(1).optional(),
+});
+
+/**
+ * Prévia da estrutura do import: quantas issues do time (ou do project)
+ * viram Feature, Story linkada e Story solta. Não grava nada — existe para
+ * a segunda etapa do modal mostrar o que o import vai fazer antes de fazer.
+ */
+export async function analyzeLinearImport(
+  input: z.input<typeof AnalyzeLinearImportSchema>
+): Promise<Result<LinearImportPreview>> {
+  return safeAction(async () => {
+    const ctx = await requireTenantSession(await headers());
+    requireRole(["ADMIN", "STE"], ctx);
+    const { apiKey, linearTeamId, linearProjectId } =
+      AnalyzeLinearImportSchema.parse(input);
+
+    const lote = [];
+    let cursor: string | undefined;
+    do {
+      const { issues, nextCursor } = await linearImportTeamIssues(
+        apiKey,
+        linearTeamId,
+        cursor,
+        linearProjectId
+      );
+      lote.push(...issues);
+      cursor = nextCursor ?? undefined;
+    } while (cursor);
+
+    const parentIds = new Set(
+      lote.map((i) => i.parent?.id).filter((id): id is string => Boolean(id))
+    );
+    let features = 0;
+    let comSub = 0;
+    let soltas = 0;
+    for (const issue of lote) {
+      if (parentIds.has(issue.id)) {
+        features += 1;
+      } else if (issue.parent) {
+        comSub += 1;
+      } else {
+        soltas += 1;
+      }
+    }
+    return { features, comSub, soltas };
+  });
+}
 
 const ConnectLinearSchema = z.object({
   name: z.string().min(1).max(120).trim(),

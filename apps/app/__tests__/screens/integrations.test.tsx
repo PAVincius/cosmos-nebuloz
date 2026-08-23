@@ -12,6 +12,7 @@ const listIntegrationsMock = vi.fn();
 const setIntegrationPausedMock = vi.fn();
 const testIntegrationConnectionMock = vi.fn();
 const discoverLinearTeamsMock = vi.fn();
+const analyzeLinearImportMock = vi.fn();
 const connectLinearIntegrationMock = vi.fn();
 const resyncIntegrationMock = vi.fn();
 const listEpicsMock = vi.fn();
@@ -30,6 +31,7 @@ vi.mock("@/app/(cosmos)/actions/integrations", () => ({
   testIntegrationConnection: (...args: unknown[]) =>
     testIntegrationConnectionMock(...args),
   discoverLinearTeams: (...args: unknown[]) => discoverLinearTeamsMock(...args),
+  analyzeLinearImport: (...args: unknown[]) => analyzeLinearImportMock(...args),
   connectLinearIntegration: (...args: unknown[]) =>
     connectLinearIntegrationMock(...args),
   resyncIntegration: (...args: unknown[]) => resyncIntegrationMock(...args),
@@ -55,6 +57,11 @@ describe("IntegrationsScreen", () => {
     setIntegrationPausedMock.mockReset();
     testIntegrationConnectionMock.mockReset();
     discoverLinearTeamsMock.mockReset();
+    analyzeLinearImportMock.mockReset();
+    analyzeLinearImportMock.mockResolvedValue({
+      ok: true,
+      data: { features: 0, comSub: 0, soltas: 0 },
+    });
     listEpicsMock.mockReset();
     listEpicsMock.mockResolvedValue({ ok: true, data: [] });
     connectLinearIntegrationMock.mockReset();
