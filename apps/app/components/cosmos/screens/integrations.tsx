@@ -461,7 +461,7 @@ function ConnectLinearModal({
           : "Conectando...",
         success: (data: { imported: ImportCounts | null }) =>
           data.imported
-            ? `Conectado — ${data.imported.created} criadas, ${data.imported.updated} atualizadas, ${data.imported.skipped} puladas.`
+            ? `Conectado — ${data.imported.created} criadas, ${data.imported.updated} atualizadas, ${data.imported.skipped} puladas${data.imported.reclassified > 0 ? `, ${data.imported.reclassified} reclassificadas` : ""}.`
             : "Conectado. Sincronize quando quiser trazer as issues.",
         error: (e: string) => `Não foi possível conectar: ${e}`,
       }
@@ -840,7 +840,7 @@ function ConnectorCard({
       {
         loading: `Sincronizando ${integration.name}...`,
         success: (data: ImportCounts) =>
-          `${data.created} criadas, ${data.updated} atualizadas, ${data.skipped} puladas.`,
+          `${data.created} criadas, ${data.updated} atualizadas, ${data.skipped} puladas${data.reclassified > 0 ? `, ${data.reclassified} reclassificadas` : ""}.`,
         error: (e: string) => `Sincronização falhou: ${e}`,
       }
     );
