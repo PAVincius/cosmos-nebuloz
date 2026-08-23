@@ -391,4 +391,32 @@ describe("handler — resolveMapping", () => {
     expect(call.data[0].themeId).toBe("theme-1");
     expect(call.data[0].mappingConf).toBe("MAPPED");
   });
+
+  // NEB-185 defeito 1 — resolveMapping já calcula epicId e artId junto com
+  // themeId (tag-rule-engine.ts), mas mapStagedRowToEntry só copiava themeId
+  // para o insert: o custo por épico/ART era calculado e descartado.
+  it("persists epicId and artId returned by resolveMapping onto the BillingEntry insert", async () => {
+    mocks.resolveMapping.mockReturnValue({
+      themeId: "theme-1",
+      artId: "art-1",
+      epicId: "epic-1",
+      mappingRuleId: "rule-1",
+      mappingConf: "MAPPED",
+    });
+    mocks.billingEntryStagingFindMany.mockResolvedValue([
+      makeStagedRow({
+        usageStartDate: "2026-05-01",
+        usageEndDate: "2026-05-02",
+        tags: { CostCenter: "Eng" },
+      }),
+    ]);
+
+    await capturedHandler({ event: baseEvent, step: makeStep() });
+
+    const [[call]] = mocks.billingEntryCreateMany.mock.calls as [
+      [{ data: Record<string, unknown>[] }],
+    ];
+    expect(call.data[0].epicId).toBe("epic-1");
+    expect(call.data[0].artId).toBe("art-1");
+  });
 });

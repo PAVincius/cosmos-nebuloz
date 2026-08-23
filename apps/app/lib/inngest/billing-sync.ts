@@ -39,6 +39,8 @@ type BillingEntryInsert = {
   tenantAmount: string;
   tags: Record<string, string>;
   themeId: string | null;
+  epicId: string | null;
+  artId: string | null;
   mappingRuleId: string | null;
   mappingConf: string;
 };
@@ -99,6 +101,8 @@ function mapStagedRowToEntry(
     fxRate: "1",
     tags,
     themeId: mapping.themeId,
+    epicId: mapping.epicId,
+    artId: mapping.artId,
     mappingRuleId: mapping.mappingRuleId,
     mappingConf: mapping.mappingConf,
   };

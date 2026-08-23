@@ -24,6 +24,7 @@ model ART {
   sequenceCounters ArtSequenceCounter[]
   artMemberships   ARTMembership[]
   solutionTrain    SolutionTrain?       @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
+  billingEntries   BillingEntry[]
 
   @@index([tenantId])
   @@index([solutionTrainId])
@@ -272,6 +273,7 @@ model Epic {
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
   governedEpic   GovernedEpic?
   solutionEpic   SolutionEpic?   @relation(fields: [solutionEpicId], references: [id], onDelete: SetNull)
+  billingEntries BillingEntry[]
 
   @@index([tenantId])
   @@index([strategicThemeId])
