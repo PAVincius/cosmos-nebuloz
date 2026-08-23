@@ -41,6 +41,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual=""
+        canEdit={true}
         onAccepted={vi.fn()}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -72,6 +73,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual=""
+        canEdit={true}
         onAccepted={onAccepted}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -105,6 +107,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual=""
+        canEdit={true}
         onAccepted={vi.fn()}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -129,6 +132,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual=""
+        canEdit={true}
         onAccepted={vi.fn()}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -158,6 +162,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual="Texto já escrito pela equipe."
+        canEdit={true}
         onAccepted={vi.fn()}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -187,6 +192,7 @@ describe("PolicyDraftPreview", () => {
     render(
       <PolicyDraftPreview
         bodyAtual=""
+        canEdit={true}
         onAccepted={vi.fn()}
         sectionId="sec-1"
         sectionName="Classificação de dados"
@@ -195,5 +201,54 @@ describe("PolicyDraftPreview", () => {
     fireEvent.click(screen.getByText("Gerar rascunho"));
 
     expect(await screen.findByText(/Rascunho genérico/)).toBeTruthy();
+  });
+
+  it("sem permissão de edição, Gerar rascunho fica desabilitado com o mesmo idioma dos botões de policy.tsx (M6)", () => {
+    render(
+      <PolicyDraftPreview
+        bodyAtual=""
+        canEdit={false}
+        onAccepted={vi.fn()}
+        sectionId="sec-1"
+        sectionName="Classificação de dados"
+      />
+    );
+
+    const botao = screen.getByText("Gerar rascunho");
+    const wrapper = botao.closest("span");
+    expect(wrapper?.style.pointerEvents).toBe("none");
+    expect(wrapper?.style.opacity).toBe("0.45");
+    expect(wrapper?.title).toBe("Somente Legal ou Compliance edita seção");
+  });
+
+  it("sem exigência fundamentada (grounded vazio), Aceitar rascunho fica desabilitado (M9)", async () => {
+    gerarMock.mockResolvedValue({
+      ok: true,
+      data: {
+        body: "Rascunho sem exigência.",
+        grounded: [],
+        fontes: { casos: 1, fornecedores: 0, exigencias: 0 },
+      },
+    });
+
+    render(
+      <PolicyDraftPreview
+        bodyAtual=""
+        canEdit={true}
+        onAccepted={vi.fn()}
+        sectionId="sec-1"
+        sectionName="Classificação de dados"
+      />
+    );
+    fireEvent.click(screen.getByText("Gerar rascunho"));
+    await screen.findByDisplayValue("Rascunho sem exigência.");
+
+    const botao = screen.getByText("Aceitar rascunho");
+    const wrapper = botao.closest("span");
+    expect(wrapper?.style.pointerEvents).toBe("none");
+    expect(wrapper?.style.opacity).toBe("0.45");
+    expect(wrapper?.title).toBe(
+      "Sem exigência para fundamentar — cadastre cobertura"
+    );
   });
 });

@@ -54,7 +54,6 @@ describe("montarContextoGeracao", () => {
       resumo: "r1",
       categoria: null,
       peso: 1,
-      conjunto: "regulatorio",
     };
     const daSecao = {
       id: "2",
@@ -63,7 +62,6 @@ describe("montarContextoGeracao", () => {
       resumo: "r2",
       categoria: "dados",
       peso: 1,
-      conjunto: "checklist",
     };
     const deOutraSecao = {
       id: "3",
@@ -72,7 +70,6 @@ describe("montarContextoGeracao", () => {
       resumo: "r3",
       categoria: "backend",
       peso: 1,
-      conjunto: "checklist",
     };
 
     const ctx = montarContextoGeracao({
@@ -96,7 +93,6 @@ describe("montarContextoGeracao", () => {
       resumo: "r",
       categoria: null,
       peso: 25 - i,
-      conjunto: "x",
     }));
     const semPeso = Array.from({ length: 10 }, (_, i) => ({
       id: `n-${i}`,
@@ -105,7 +101,6 @@ describe("montarContextoGeracao", () => {
       resumo: "r",
       categoria: null,
       peso: null,
-      conjunto: "x",
     }));
 
     const ctx = montarContextoGeracao({
@@ -132,7 +127,6 @@ describe("montarContextoGeracao", () => {
         resumo: "res-a",
         categoria: null,
         peso: 2,
-        conjunto: "x",
       },
       {
         id: "b",
@@ -141,7 +135,6 @@ describe("montarContextoGeracao", () => {
         resumo: "res-b",
         categoria: null,
         peso: 5,
-        conjunto: "x",
       },
     ];
 
@@ -207,7 +200,6 @@ describe("montarContextoGeracao", () => {
           resumo: longo,
           categoria: null,
           peso: 1,
-          conjunto: "x",
         },
       ],
     });

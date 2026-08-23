@@ -129,7 +129,6 @@ describe("generatePolicyDraft", () => {
             resumo: "Classificar por sensibilidade todo dado.",
             categoria: "dados",
             peso: 5,
-            set: { nome: "Checklist Nebuloz" },
           },
         ]);
       }
@@ -251,5 +250,19 @@ describe("generatePolicyDraft", () => {
 
     expect(res.ok).toBe(true);
     expect(dentroDaTransacaoNaChamada).toBe(false);
+  });
+
+  it("consultas e cota escopadas por tenantId, com os parâmetros certos (M9)", async () => {
+    const res = await generatePolicyDraft({ sectionId: SECTION_ID });
+    expect(res.ok).toBe(true);
+
+    expect(h.sectionFindFirst.mock.calls[0][0].where).toMatchObject({
+      id: SECTION_ID,
+      tenantId: "t-1",
+    });
+    expect(cota.fixedWindow).toHaveBeenCalledWith(30, "30 d");
+    expect(cota.createRateLimiter).toHaveBeenCalledWith(
+      expect.objectContaining({ prefix: "charter:policy-gen" })
+    );
   });
 });

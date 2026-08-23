@@ -4,6 +4,12 @@
 **Data**: 2026-07-28
 **Contexto de origem**: `FR-2.7`
 
+> **Superseded (NEB-156)**: `generatePolicyDraft` agora chama um provedor de
+> LLM de verdade (grounded no inventário do tenant), então a decisão "sem
+> provedor de LLM no V1" abaixo não vale mais. Registro histórico mantido
+> como estava — ver `docs/design-handoff/charter-prototype/HANDOFF.md` e o
+> plano de NEB-156 para o desenho atual.
+
 ## Contexto
 
 `FR-2.7` exige:

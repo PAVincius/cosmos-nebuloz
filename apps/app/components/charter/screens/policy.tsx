@@ -444,6 +444,7 @@ function PolicyInner() {
                     {sel.status === "DRAFT" && (
                       <PolicyDraftPreview
                         bodyAtual={sel.body}
+                        canEdit={data.can.edit}
                         onAccepted={reload}
                         sectionId={sel.id}
                         sectionName={sel.name}

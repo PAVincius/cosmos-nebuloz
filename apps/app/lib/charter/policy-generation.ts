@@ -34,7 +34,6 @@ export type ExigenciaParaGeracao = {
   resumo: string;
   categoria: string | null;
   peso: number | null;
-  conjunto: string;
 };
 
 export type ContextoGeracao = {
@@ -177,7 +176,7 @@ export function montarContextoGeracao(input: {
     .slice(0, MAX_EXIGENCIAS);
 
   const prompt = [
-    `Seção: ${input.secaoNome}`,
+    `Seção: ${sanitizar(input.secaoNome)}`,
     bloco("Casos de uso:", input.casos.map(linhaCaso)),
     bloco("Fornecedores:", input.fornecedores.map(linhaFornecedor)),
     bloco("Exigências aplicáveis:", exigenciasFiltradas.map(linhaExigencia)),

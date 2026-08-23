@@ -148,18 +148,9 @@ async function lerSecaoEInventario(
         resumo: true,
         categoria: true,
         peso: true,
-        set: { select: { nome: true } },
       },
     });
-    const exigencias: ExigenciaParaGeracao[] = exigenciasRows.map((r) => ({
-      id: r.id,
-      codigo: r.codigo,
-      citacao: r.citacao,
-      resumo: r.resumo,
-      categoria: r.categoria,
-      peso: r.peso,
-      conjunto: r.set.nome,
-    }));
+    const exigencias: ExigenciaParaGeracao[] = exigenciasRows;
 
     return {
       section: {

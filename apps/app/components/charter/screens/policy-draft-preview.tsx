@@ -25,11 +25,13 @@ export function PolicyDraftPreview({
   sectionName,
   bodyAtual,
   onAccepted,
+  canEdit,
 }: {
   sectionId: string;
   sectionName: string;
   bodyAtual: string;
   onAccepted: () => void;
+  canEdit: boolean;
 }) {
   const [, startTransition] = useTransition();
   const [estado, setEstado] = useState<Estado>("idle");
@@ -171,13 +173,15 @@ export function PolicyDraftPreview({
 
   // idle | gerando
   const gerando = estado === "gerando";
+  const habilitado = canEdit && !gerando;
   return (
     <div style={{ marginTop: 16 }}>
       <span
         style={{
-          opacity: gerando ? 0.45 : 1,
-          pointerEvents: gerando ? "none" : "auto",
+          opacity: habilitado ? 1 : 0.45,
+          pointerEvents: habilitado ? "auto" : "none",
         }}
+        title={canEdit ? undefined : "Somente Legal ou Compliance edita seção"}
       >
         <Button icon="sparkles" onClick={gerar} size="md" variant="secondary">
           {gerando

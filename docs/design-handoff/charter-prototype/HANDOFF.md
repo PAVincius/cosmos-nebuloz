@@ -120,7 +120,7 @@ Não "corrigir" sem ler o ADR:
 |---|---|---|
 | Sem seletor de persona no topbar | Em produção seria escalada de privilégio | [0004](../../adr/0004-seletor-persona-fora-de-producao.md) |
 | `maxClass` do fornecedor é derivado, não escolhido | O protótipo escreve à mão; FR-9.3 exige recalcular | [0003](../../adr/0003-derivacao-classe-maxima-fornecedor.md) |
-| `GenerateDraftModal` não chama LLM | Falta decisão de provedor/DPA | [0008](../../adr/0008-geracao-rascunho-sem-provedor-llm.md) |
+| `PolicyDraftPreview` chama LLM de verdade (grounded no inventário do tenant) | NEB-156 supersedeu a decisão "sem provedor" — ver nota no topo do ADR | [0008](../../adr/0008-geracao-rascunho-sem-provedor-llm.md) |
 | Toggles de notificação não disparam nada | Job de SLA fora do V1 | [0011](../../adr/0011-notificacoes-e-job-sla-fora-do-v1.md) |
 | `vendor-detail` sem "Solicitar cláusulas" / "Anexar contrato" | No protótipo só emitem toast; não há e-mail nem storage por trás. Portar como botão que não faz nada seria feature falsa | — |
 | Lista de fornecedores sem coluna de score | O protótipo mostra score só no detalhe; a lista usa situação + cláusula ausente. Rótulo "maior = pior" (FR-8.3) vive no KPI do detalhe | — |
