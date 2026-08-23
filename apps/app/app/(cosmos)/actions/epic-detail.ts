@@ -38,6 +38,7 @@ export type EpicDetailFull = {
   mvp: string | null;
   sizeEstimate: string | null;
   leanBudgetAllocation: number | null;
+  npv: number | null;
   // Portfolio context — ART/theme resolved tenant-scoped, owner is the
   // denormalized name already stored on Epic (same field kanban cards read).
   art: { id: string; name: string } | null;
@@ -149,6 +150,7 @@ export async function getEpicDetailFull(
         // schema. Only the allocation itself is returned below, no burn
         // calculation.
         leanBudgetAllocation: true,
+        npv: true,
         // Portfolio context (header + Overview SectionCard). artId has no
         // FK relation on Epic (see kanban.ts's toKanbanEpic for the same
         // pattern) — resolved via a separate tenant-scoped ART lookup
@@ -244,6 +246,10 @@ export async function getEpicDetailFull(
       mvp: epic.mvp,
       sizeEstimate: epic.sizeEstimate,
       leanBudgetAllocation: epic.leanBudgetAllocation,
+      // Decimal → number, null-preserving (never defaulted to 0 — see
+      // apps/app/app/(cosmos)/actions/budgets.ts:24-26): an absent NPV and a
+      // NPV of zero are different claims, the second says the project breaks even.
+      npv: epic.npv !== null ? Number(epic.npv) : null,
       features: epic.features.map(({ piPlanId, ...f }) => f),
       piObjectives,
       governance: {

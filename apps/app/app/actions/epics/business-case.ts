@@ -33,6 +33,7 @@ export type BusinessCaseData = {
   sizeEstimate: string | null;
   descriptionVersions: VersionSnapshot[];
   leanBudgetAllocation: number | null;
+  npv: number | null;
   featureCount: number;
   doneFeatureCount: number;
 };
@@ -44,6 +45,17 @@ const LbcItemSchema = z.object({
   text: z.string().max(500),
 });
 
+// Epic.npv is Decimal(18,6): 12 integer digits + 6 decimal digits. The bound
+// below checks the integer-digit ceiling only (999_999_999_999.999999 isn't
+// exactly representable as a JS double — it rounds to 1e12 at runtime, one
+// digit past the column's capacity — so the fractional headroom is dropped
+// rather than risk overstating what the column accepts).
+// No .positive(): a negative NPV is a legitimate result (a project that
+// destroys value), not an invalid input. No decimal-place limit either —
+// Postgres rounds silently to the column's scale on write, so enforcing it
+// again here would only reject values the database already handles.
+const NPV_BOUND = 999_999_999_999;
+
 const AutosaveBusinessCaseSchema = z.object({
   epicId: z.string().min(1),
   hypothesis: z.string().max(5000).optional().nullable(),
@@ -52,6 +64,7 @@ const AutosaveBusinessCaseSchema = z.object({
   nfrs: z.string().max(2000).optional().nullable(),
   mvp: z.string().max(2000).optional().nullable(),
   sizeEstimate: z.enum(["XS", "S", "M", "L", "XL"]).optional().nullable(),
+  npv: z.number().finite().min(-NPV_BOUND).max(NPV_BOUND).optional().nullable(),
   hypothesisResolution: z
     .enum(["VALIDATED", "PARTIALLY_VALIDATED", "INVALIDATED"])
     .optional()
@@ -103,6 +116,7 @@ export async function getBusinessCase(
         descriptionVersions: true,
         descriptionMd: true,
         leanBudgetAllocation: true,
+        npv: true,
         _count: { select: { features: true } },
         features: {
           select: { statusId: true },
@@ -129,6 +143,10 @@ export async function getBusinessCase(
       descriptionVersions:
         (epic.descriptionVersions as VersionSnapshot[] | null) ?? [],
       leanBudgetAllocation: epic.leanBudgetAllocation,
+      // Decimal → number, null-preserving (never defaulted to 0 — see
+      // apps/app/app/(cosmos)/actions/budgets.ts:24-26): an absent NPV and a
+      // NPV of zero are different claims, the second says the project breaks even.
+      npv: epic.npv !== null ? Number(epic.npv) : null,
       featureCount: epic._count.features,
       doneFeatureCount,
     };
@@ -182,6 +200,7 @@ export async function autosaveBusinessCase(
         ...(input.hypothesisResolution !== undefined && {
           hypothesisResolution: input.hypothesisResolution,
         }),
+        ...(input.npv !== undefined && { npv: input.npv }),
         descriptionVersions: versions,
         ...(input.hypothesis !== undefined &&
           !existing.investScoreOutdated && {

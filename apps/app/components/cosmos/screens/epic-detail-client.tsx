@@ -67,6 +67,14 @@ const RESOLUTIONS = [
   "INVALIDATED",
 ] as const;
 
+function fmtNpv(n: number): string {
+  return n.toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 2,
+  });
+}
+
 export default function EpicDetailClient({
   epicId,
   initial,
@@ -108,6 +116,21 @@ export default function EpicDetailClient({
     setSaveError(null);
     const res = await autosaveBusinessCase({ epicId, [field]: value });
     if (!res.ok) {
+      setSaveError(res.error);
+    }
+  }
+
+  async function saveNpv(value: string) {
+    setSaveError(null);
+    const trimmed = value.trim();
+    const npv = trimmed === "" ? null : Number(trimmed);
+    if (npv !== null && Number.isNaN(npv)) {
+      return;
+    }
+    const res = await autosaveBusinessCase({ epicId, npv });
+    if (res.ok) {
+      setData((d) => ({ ...d, npv }));
+    } else {
       setSaveError(res.error);
     }
   }
@@ -288,6 +311,12 @@ export default function EpicDetailClient({
               tone="blue"
               unit="USD"
               value={data.leanBudgetAllocation ?? "—"}
+            />
+            <KpiCard
+              icon="chart"
+              label="NPV"
+              tone={data.npv !== null && data.npv < 0 ? "red" : "green"}
+              value={data.npv !== null ? fmtNpv(data.npv) : "—"}
             />
           </div>
         )}
@@ -583,6 +612,28 @@ export default function EpicDetailClient({
                     background: "var(--surface)",
                     color: "var(--ink)",
                   }}
+                />
+              </label>
+              <label
+                style={{ display: "flex", flexDirection: "column", gap: 4 }}
+              >
+                <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
+                  NPV (USD) — pode ser negativo
+                </span>
+                <input
+                  defaultValue={data.npv ?? ""}
+                  key={data.npv}
+                  onBlur={(e) => saveNpv(e.target.value)}
+                  step="0.01"
+                  style={{
+                    fontSize: 13,
+                    padding: 8,
+                    borderRadius: "var(--r-md)",
+                    border: "1px solid var(--hairline)",
+                    background: "var(--surface)",
+                    color: "var(--ink)",
+                  }}
+                  type="number"
                 />
               </label>
               <label

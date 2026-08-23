@@ -14,6 +14,7 @@ const epicBase = {
   sizeEstimate: null,
   descriptionVersions: null,
   leanBudgetAllocation: null,
+  npv: null,
   _count: { features: 0 },
   features: [],
 };
@@ -66,6 +67,46 @@ describe("getBusinessCase", () => {
     expect(result.data.descriptionVersions).toEqual([]);
   });
 
+  it("returns npv as a number when the epic has a stored value", async () => {
+    mocks.epicFindFirstOrThrow.mockResolvedValue({
+      ...epicBase,
+      npv: 125_000.5,
+    });
+
+    const result = await getBusinessCase("epic-1");
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.npv).toBe(125_000.5);
+  });
+
+  it("returns npv as a negative number when the epic destroys value", async () => {
+    mocks.epicFindFirstOrThrow.mockResolvedValue({
+      ...epicBase,
+      npv: -50_000,
+    });
+
+    const result = await getBusinessCase("epic-1");
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.npv).toBe(-50_000);
+  });
+
+  it("returns npv as null (never 0) when the epic has no stored value", async () => {
+    const result = await getBusinessCase("epic-1");
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.npv).toBeNull();
+  });
+
   it("queries with tenantId scope", async () => {
     await getBusinessCase("epic-1");
 
@@ -105,6 +146,65 @@ describe("autosaveBusinessCase", () => {
         where: { id: "epic-1" },
         data: expect.objectContaining({
           hypothesis: "We believe X will Y for Z, measured by W",
+        }),
+      })
+    );
+  });
+
+  it("saves npv and returns savedAt", async () => {
+    const result = await autosaveBusinessCase({
+      epicId: "epic-1",
+      npv: 250_000.75,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(result.data.savedAt).toBeDefined();
+    expect(mocks.epicUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { id: "epic-1" },
+        data: expect.objectContaining({
+          npv: 250_000.75,
+        }),
+      })
+    );
+  });
+
+  it("accepts and persists a negative npv (value destruction is a legitimate result)", async () => {
+    const result = await autosaveBusinessCase({
+      epicId: "epic-1",
+      npv: -75_000,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(mocks.epicUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          npv: -75_000,
+        }),
+      })
+    );
+  });
+
+  it("saves npv as null explicitly", async () => {
+    const result = await autosaveBusinessCase({
+      epicId: "epic-1",
+      npv: null,
+    });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) {
+      return;
+    }
+    expect(mocks.epicUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          npv: null,
         }),
       })
     );
