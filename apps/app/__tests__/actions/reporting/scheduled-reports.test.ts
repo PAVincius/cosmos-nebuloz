@@ -170,6 +170,18 @@ describe("createScheduledReport", () => {
       })
     );
   });
+
+  it("COS-93: carimba lastRunAt na criação para não disparar fora do cron", async () => {
+    mocks.scheduledReportCreate.mockResolvedValue({ id: "r1" });
+
+    await createScheduledReport(VALID_REPORT);
+
+    expect(mocks.scheduledReportCreate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ lastRunAt: expect.any(Date) }),
+      })
+    );
+  });
 });
 
 describe("updateScheduledReport", () => {
@@ -227,6 +239,63 @@ describe("updateScheduledReport", () => {
     });
 
     expect(result.ok).toBe(true);
+  });
+
+  it("COS-93: recarimba lastRunAt ao reativar um relatório desabilitado", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({
+      id: "r1",
+      enabled: false,
+    });
+    mocks.scheduledReportUpdate.mockResolvedValue({ id: "r1" });
+
+    await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      enabled: true,
+    });
+
+    expect(mocks.scheduledReportUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          enabled: true,
+          lastRunAt: expect.any(Date),
+        }),
+      })
+    );
+  });
+
+  it("COS-93: não mexe em lastRunAt quando já estava habilitado", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({
+      id: "r1",
+      enabled: true,
+    });
+    mocks.scheduledReportUpdate.mockResolvedValue({ id: "r1" });
+
+    await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      enabled: true,
+    });
+
+    expect(mocks.scheduledReportUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.not.objectContaining({ lastRunAt: expect.anything() }),
+      })
+    );
+  });
+
+  it("COS-93: não mexe em lastRunAt ao desabilitar", async () => {
+    mocks.scheduledReportFindFirst.mockResolvedValue({
+      id: "r1",
+      enabled: true,
+    });
+    mocks.scheduledReportUpdate.mockResolvedValue({ id: "r1" });
+
+    await updateScheduledReport("clxxxxxxxxxxxxxxxxxxxxxxxx", {
+      enabled: false,
+    });
+
+    expect(mocks.scheduledReportUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.not.objectContaining({ lastRunAt: expect.anything() }),
+      })
+    );
   });
 });
 
