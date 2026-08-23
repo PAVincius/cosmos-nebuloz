@@ -40,12 +40,14 @@ import {
 // `listIntegrations` não seleciona `config`. As demais fontes do catálogo
 // seguem sem caminho de conexão e o modal continua dizendo isso em voz alta,
 // em vez de fingir um formulário que não grava nada.
-import { type CSSProperties, useState } from "react";
+import { type CSSProperties, useEffect, useState } from "react";
 import {
+  analyzeLinearImport,
   connectLinearIntegration,
   discoverLinearTeams,
   type ImportCounts,
   type IntegrationView,
+  type LinearImportPreview,
   type LinearTeamOption,
   listIntegrations,
   resyncIntegration,
@@ -341,6 +343,10 @@ function ConnectLinearModal({
   // vivem como projects dentro de um único time. A lista é buscada aqui
   const [projectId, setProjectId] = useState("");
   const [importNow, setImportNow] = useState(true);
+  // Prévia da hierarquia (etapa 2): quantas issues viram Feature e quantas
+  // viram Story. Carrega sob demanda porque pagina o time inteiro no Linear.
+  const [preview, setPreview] = useState<LinearImportPreview | null>(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
   // O Cosmos é épico-cêntrico: feature sem épico não aparece em tela nenhuma.
   // A lista carrega junto com a validação da chave para o select já estar
   // pronto quando o passo do time aparecer.
@@ -384,14 +390,42 @@ function ConnectLinearModal({
     // Projects pertencem ao time anterior — mantê-los selecionados mandaria
     // um linearProjectId de outro time junto do submit.
     setProjectId("");
+    setPreview(null);
     const escolhido = teams?.find((t) => t.id === id);
     if (!nameTouched && escolhido) {
       setName(`${catalog.label} · ${escolhido.name}`);
     }
   };
 
+  const analisar = async () => {
+    if (!(apiKey && teamId) || previewBusy) {
+      return;
+    }
+    setPreviewBusy(true);
+    const res = await analyzeLinearImport({
+      apiKey,
+      linearTeamId: teamId,
+      ...(projectId ? { linearProjectId: projectId } : {}),
+    });
+    setPreviewBusy(false);
+    // Falha em analisar não bloqueia conectar — a prévia é informativa.
+    setPreview(res.ok ? res.data : null);
+  };
+
+  // Reanalisa quando muda o recorte (time/project) ou quando o import é
+  // religado. A prévia só faz sentido depois da chave validada — teamId só
+  // existe nesse ponto.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: analisar é estável o suficiente para o recorte
+  useEffect(() => {
+    if (!(teamId && importNow)) {
+      return;
+    }
+    analisar();
+  }, [teamId, projectId, importNow]);
+
   const escolherProject = (id: string) => {
     setProjectId(id);
+    setPreview(null);
     const time = teams?.find((t) => t.id === teamId);
     const proj = time?.projects.find((p) => p.id === id);
     if (!nameTouched) {
@@ -610,11 +644,91 @@ function ConnectLinearModal({
             <input
               checked={importNow}
               id="linear-import"
-              onChange={(e) => setImportNow(e.target.checked)}
+              onChange={(e) => {
+                setImportNow(e.target.checked);
+                if (e.target.checked) {
+                  analisar();
+                } else {
+                  setPreview(null);
+                }
+              }}
               type="checkbox"
             />
-            Importar as issues deste time agora (vira Feature no COSMOS)
+            Importar as issues agora
           </label>
+        )}
+
+        {teams !== null && importNow && (
+          <div
+            style={{
+              background: "var(--surface-sunken)",
+              border: "1px solid var(--border-subtle)",
+              borderRadius: 8,
+              padding: "10px 12px",
+            }}
+          >
+            <p
+              style={{
+                color: "var(--ink-subtle)",
+                fontSize: 12,
+                fontWeight: 600,
+                letterSpacing: 0.4,
+                margin: "0 0 6px",
+                textTransform: "uppercase",
+              }}
+            >
+              Como esta estrutura vai entrar
+            </p>
+            {previewBusy || preview === null ? (
+              <p
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 12,
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
+                {previewBusy
+                  ? "Lendo a hierarquia das issues..."
+                  : "Analisando ao conectar. Issues com sub-issues viram Features; o resto vira Story."}
+              </p>
+            ) : (
+              <ul
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: 12,
+                  lineHeight: 1.7,
+                  listStyle: "none",
+                  margin: 0,
+                  padding: 0,
+                }}
+              >
+                <li>
+                  <strong>{preview.features}</strong> com sub-issues → Feature
+                </li>
+                <li>
+                  <strong>{preview.comSub}</strong> sub-issues → Story dentro da
+                  Feature do parent
+                </li>
+                <li>
+                  <strong>{preview.soltas}</strong> sem hierarquia → Story sem
+                  feature
+                </li>
+              </ul>
+            )}
+            <p
+              style={{
+                color: "var(--ink-faint)",
+                fontSize: 11,
+                lineHeight: 1.5,
+                margin: "8px 0 0",
+              }}
+            >
+              No SAFe, Feature é o agregado e Story é o item de trabalho. Quem
+              quiser controlar o recorte organiza a hierarquia no Linear antes
+              de conectar.
+            </p>
+          </div>
         )}
 
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
