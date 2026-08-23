@@ -25,10 +25,12 @@ export type LinearWebhookPayload = {
 };
 
 export type HandleLinearWebhookOptions = {
-  // COS-85: Project real do Linear — times no plano free hospedam vários
-  // produtos como projects dentro de um único time, e sem este filtro uma
-  // issue de outro produto entraria como Story deste ART.
-  linearProjectId?: string;
+  // Projects do Linear que esta integração acompanha — times no plano free
+  // hospedam vários produtos como projects dentro de um único time, e sem
+  // este filtro uma issue de outro produto entraria como Story deste ART.
+  // Lista porque a credencial é da conta: uma integração cobre N projects
+  // (ver `linear-scopes.ts`). Ausente ou vazia = sem filtro.
+  linearProjectIds?: string[];
 };
 
 export async function handleLinearWebhook(
@@ -66,7 +68,14 @@ export async function handleLinearWebhook(
   // sync para sempre sem deixar pista. Grava FILTERED reaproveitando o
   // mecanismo de writeSyncEvent já usado para SKIPPED por conflito de
   // merge, com o motivo distinguindo os dois casos operacionais.
-  if (opts?.linearProjectId && data.project?.id !== opts.linearProjectId) {
+  // A lista vem dos escopos da integração: uma credencial cobre vários
+  // projects, e a issue precisa pertencer a um deles.
+  const aceitos = opts?.linearProjectIds;
+  if (
+    aceitos &&
+    aceitos.length > 0 &&
+    !aceitos.includes(data.project?.id ?? "")
+  ) {
     await writeSyncEvent({
       tenantId,
       integrationId,
@@ -80,7 +89,7 @@ export async function handleLinearWebhook(
       linearValue: `filtro linearProjectId: issue ${data.id} pertence a ${
         data.project?.id ?? "nenhum project"
       }`,
-      cosmosValue: opts.linearProjectId,
+      cosmosValue: aceitos.join(","),
     });
     return;
   }

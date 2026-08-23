@@ -1,6 +1,7 @@
 import { database } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { decryptConfigSecrets } from "@repo/security/encrypt";
+import { lerScopes } from "@/app/actions/integrations/linear-scopes";
 import { triggerLinearFullPull } from "@/app/actions/integrations/sync/linear-full-pull";
 import { inngest } from "./client";
 
@@ -51,13 +52,11 @@ export async function dispatchLinearFullPull({
   let disparadas = 0;
 
   for (const integration of integrations) {
-    const mapping = integration.mapping as {
-      projectId?: unknown;
-      linearProjectId?: unknown;
-    } | null;
-    const teamId = mapping?.projectId;
+    // Uma integração cobre vários recortes (a credencial é da conta), e o
+    // full pull é por time — então dispara um por escopo.
+    const scopes = lerScopes(integration.mapping);
 
-    if (typeof teamId !== "string" || teamId.length === 0) {
+    if (scopes.length === 0) {
       log.error("[linear-full-pull-dispatch] integração sem time mapeado", {
         integrationId: integration.id,
       });
@@ -75,29 +74,34 @@ export async function dispatchLinearFullPull({
       continue;
     }
 
-    try {
-      await step.run(`full-pull-${integration.id}`, () =>
-        triggerLinearFullPull({
-          tenantId: integration.tenantId,
+    for (const [i, scope] of scopes.entries()) {
+      try {
+        // O id do step inclui o índice do escopo: dois steps com o mesmo id
+        // na mesma execução fariam o Inngest reusar o resultado do primeiro,
+        // e só um dos produtos sincronizaria.
+        await step.run(`full-pull-${integration.id}-${i}`, () =>
+          triggerLinearFullPull({
+            tenantId: integration.tenantId,
+            integrationId: integration.id,
+            teamId: scope.linearTeamId,
+            apiKey: config.apiKey,
+            ...(scope.linearProjectId
+              ? { linearProjectId: scope.linearProjectId }
+              : {}),
+          })
+        );
+        disparadas += 1;
+      } catch (e) {
+        // Um recorte com falha (Linear fora do ar, apiKey revogada) não pode
+        // travar a reconciliação dos demais — mesmo trade-off de
+        // scheduled-report-dispatch.ts: isolamento preferido a retry
+        // automático, porque a próxima rodada do cron (6h) já tenta de novo.
+        log.error("[linear-full-pull-dispatch] full pull falhou", {
           integrationId: integration.id,
-          teamId,
-          apiKey: config.apiKey,
-          ...(typeof mapping?.linearProjectId === "string"
-            ? { linearProjectId: mapping.linearProjectId }
-            : {}),
-        })
-      );
-      disparadas += 1;
-    } catch (e) {
-      // Uma integração com falha (Linear fora do ar, apiKey revogada) não
-      // pode travar a reconciliação das demais — mesmo trade-off de
-      // scheduled-report-dispatch.ts: isolamento entre integrações
-      // preferido a retry automático desta ocorrência, porque a próxima
-      // rodada do cron (6h) já tenta de novo.
-      log.error("[linear-full-pull-dispatch] full pull falhou", {
-        integrationId: integration.id,
-        error: String(e),
-      });
+          linearTeamId: scope.linearTeamId,
+          error: String(e),
+        });
+      }
     }
   }
 

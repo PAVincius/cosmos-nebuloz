@@ -72,7 +72,10 @@ export function ConnectLinearModal({
   // ausência de um "enquanto isso" que fecha a corrida: não existe janela em
   // que o select possa mostrar projects de um time que não é mais o
   // selecionado.
-  const [projectId, setProjectId] = useState("");
+  // Projects marcados para entrar nesta integração. A credencial é da conta,
+  // então um card cobre vários produtos — marcar quatro aqui cria quatro
+  // recortes, não quatro integrações.
+  const [marcados, setMarcados] = useState<Set<string>>(new Set());
   const [importNow, setImportNow] = useState(true);
   // Prévia da hierarquia (etapa 2): quantas issues viram Feature e quantas
   // viram Story. Carrega sob demanda porque pagina o time inteiro no Linear.
@@ -118,9 +121,9 @@ export function ConnectLinearModal({
 
   const escolherTime = (id: string) => {
     setTeamId(id);
-    // Projects pertencem ao time anterior — mantê-los selecionados mandaria
-    // um linearProjectId de outro time junto do submit.
-    setProjectId("");
+    // Projects pertencem ao time anterior — mantê-los marcados mandaria um
+    // linearProjectId de outro time junto do submit (COS-91).
+    setMarcados(new Set());
     setPreview(null);
     const escolhido = teams?.find((t) => t.id === id);
     if (!nameTouched && escolhido) {
@@ -136,7 +139,7 @@ export function ConnectLinearModal({
     const res = await analyzeLinearImport({
       apiKey,
       linearTeamId: teamId,
-      ...(projectId ? { linearProjectId: projectId } : {}),
+      ...(marcados.size > 0 ? { linearProjectIds: [...marcados] } : {}),
     });
     setPreviewBusy(false);
     // Falha em analisar não bloqueia conectar — a prévia é informativa.
@@ -152,23 +155,7 @@ export function ConnectLinearModal({
       return;
     }
     analisar();
-  }, [teamId, projectId, importNow]);
-
-  const escolherProject = (id: string) => {
-    setProjectId(id);
-    setPreview(null);
-    const time = teams?.find((t) => t.id === teamId);
-    const proj = time?.projects.find((p) => p.id === id);
-    if (!nameTouched) {
-      setName(
-        proj
-          ? `${catalog.label} · ${proj.name}`
-          : time
-            ? `${catalog.label} · ${time.name}`
-            : name
-      );
-    }
-  };
+  }, [teamId, marcados, importNow]);
 
   const connect = async () => {
     if (!(teamId && name.trim()) || busy) {
@@ -181,10 +168,23 @@ export function ConnectLinearModal({
         connectLinearIntegration({
           name: name.trim(),
           apiKey,
-          linearTeamId: teamId,
           importNow,
-          ...(epicId ? { epicId } : {}),
-          ...(projectId ? { linearProjectId: projectId } : {}),
+          // Nenhum project marcado significa acompanhar o time inteiro — o
+          // caso de um time que não usa projects.
+          scopes:
+            marcados.size > 0
+              ? [...marcados].map((pid) => ({
+                  linearTeamId: teamId,
+                  linearProjectId: pid,
+                  label: projectsDoTime.find((p) => p.id === pid)?.name,
+                  criarEpico: true,
+                }))
+              : [
+                  {
+                    linearTeamId: teamId,
+                    ...(epicId ? { epicId } : {}),
+                  },
+                ],
         }),
       {
         loading: importNow
@@ -297,39 +297,69 @@ export function ConnectLinearModal({
         )}
 
         {teams !== null && projectsDoTime.length > 0 && (
-          <div>
-            <label htmlFor="linear-project" style={labelStyle}>
-              Project do Linear
-            </label>
-            <select
-              id="linear-project"
-              onChange={(e) => escolherProject(e.target.value)}
-              style={inputStyle}
-              value={projectId}
+          <fieldset
+            style={{
+              border: "1px solid var(--hairline-strong)",
+              borderRadius: "var(--r-md)",
+              margin: 0,
+              padding: "10px 12px",
+            }}
+          >
+            <legend
+              style={{ ...labelStyle, marginBottom: 0, padding: "0 4px" }}
             >
-              <option value="">— time inteiro —</option>
+              Projects do Linear
+            </legend>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
               {projectsDoTime.map((p) => (
-                <option key={p.id} value={p.id}>
+                <label
+                  key={p.id}
+                  style={{
+                    alignItems: "center",
+                    color: "var(--ink-subtle)",
+                    display: "flex",
+                    fontSize: 13,
+                    gap: 8,
+                  }}
+                >
+                  <input
+                    checked={marcados.has(p.id)}
+                    onChange={(e) => {
+                      // Set novo a cada troca: mutar o do estado não
+                      // dispararia render.
+                      const proximo = new Set(marcados);
+                      if (e.target.checked) {
+                        proximo.add(p.id);
+                      } else {
+                        proximo.delete(p.id);
+                      }
+                      setMarcados(proximo);
+                      setPreview(null);
+                    }}
+                    type="checkbox"
+                  />
                   {p.name}
-                </option>
+                </label>
               ))}
-            </select>
+            </div>
             <p
               style={{
                 color: "var(--ink-faint)",
                 fontSize: 12,
                 lineHeight: 1.5,
-                margin: "6px 0 0",
+                margin: "8px 0 0",
               }}
             >
-              No plano free os produtos vivem como projects de um time só.
-              Escolher um project importa e sincroniza apenas as issues dele — é
-              assim que cada ART de produto conecta sem engolir o time inteiro.
+              {marcados.size > 0
+                ? `${marcados.size} ${marcados.size === 1 ? "project entra" : "projects entram"} nesta integração, cada um com um épico de mesmo nome. Um card só, uma credencial.`
+                : "No plano free os produtos vivem como projects de um time só. Marque os que este Cosmos acompanha — sem marcar nenhum, a integração segue o time inteiro."}
             </p>
-          </div>
+          </fieldset>
         )}
 
-        {teams !== null && teams.length > 0 && (
+        {/* Com projects marcados, cada um ganha um épico de mesmo nome — não
+            há um destino único a escolher. */}
+        {teams !== null && teams.length > 0 && marcados.size === 0 && (
           <div>
             <label htmlFor="linear-epic" style={labelStyle}>
               Épico de destino das features

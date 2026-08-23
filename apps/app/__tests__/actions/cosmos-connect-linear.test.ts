@@ -155,7 +155,7 @@ describe("connectLinearIntegration", () => {
     h.createIntegration.mockResolvedValue({ ok: true, data: { id: ID } });
     h.runImportSnapshot.mockResolvedValue({
       ok: true,
-      data: { created: 12, updated: 0, skipped: 1 },
+      data: { created: 12, updated: 0, skipped: 1, reclassified: 0 },
     });
   });
 
@@ -163,7 +163,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(r.ok).toBe(true);
@@ -179,7 +179,7 @@ describe("connectLinearIntegration", () => {
     await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(h.logAudit).toHaveBeenCalled();
@@ -190,7 +190,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
       importNow: true,
     });
 
@@ -203,6 +203,7 @@ describe("connectLinearIntegration", () => {
       created: 12,
       updated: 0,
       skipped: 1,
+      reclassified: 0,
     });
   });
 
@@ -210,7 +211,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(h.runImportSnapshot).not.toHaveBeenCalled();
@@ -221,9 +222,8 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1", epicId: "clyyyyyyyyyyyyyyyyyyyyyyy" }],
       importNow: true,
-      epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
     });
 
     expect(r.ok).toBe(true);
@@ -239,9 +239,8 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1", linearProjectId: "proj-charter" }],
       importNow: true,
-      linearProjectId: "proj-charter",
     });
 
     expect(r.ok).toBe(true);
@@ -259,7 +258,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(r.ok).toBe(false);
@@ -277,7 +276,7 @@ describe("resyncIntegration", () => {
     });
     h.runImportSnapshot.mockResolvedValue({
       ok: true,
-      data: { created: 3, updated: 4, skipped: 0 },
+      data: { created: 3, updated: 4, skipped: 0, reclassified: 2 },
     });
 
     const r = await resyncIntegration({ id: ID });
@@ -287,7 +286,12 @@ describe("resyncIntegration", () => {
       projectId: "lt_1",
       targetType: "feature",
     });
-    expect(r.ok && r.data).toEqual({ created: 3, updated: 4, skipped: 0 });
+    expect(r.ok && r.data).toEqual({
+      created: 3,
+      updated: 4,
+      skipped: 0,
+      reclassified: 2,
+    });
   });
 
   it("carrega o épico do mapping no re-sync — senão o sync seguinte apagaria a adoção", async () => {
