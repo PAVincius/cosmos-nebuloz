@@ -283,6 +283,8 @@ export type ImportCounts = {
   created: number;
   updated: number;
   skipped: number;
+  /** Features do import antigo que viraram Story neste sync. */
+  reclassified: number;
 };
 
 // `.trim()` porque a chave chega por colagem, e colagem traz quebra de linha

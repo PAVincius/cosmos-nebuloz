@@ -230,6 +230,9 @@ export async function runImportSnapshot(raw: unknown): Promise<
     created: number;
     updated: number;
     skipped: number;
+    /** Features de import antigo convertidas em Story — o import anterior
+     *  criava Feature até para issue folha. */
+    reclassified: number;
   }>
 > {
   try {
@@ -253,6 +256,7 @@ export async function runImportSnapshot(raw: unknown): Promise<
     let created = 0;
     let updated = 0;
     let skipped = 0;
+    let reclassified = 0;
     const errors: unknown[] = [];
 
     if (source === "linear") {
@@ -339,6 +343,48 @@ export async function runImportSnapshot(raw: unknown): Promise<
           const featureId = issue.parent
             ? (featureIdPorExternal.get(issue.parent.id) ?? null)
             : null;
+          // O import antigo criava uma Feature por issue, folha inclusive.
+          // Aqui essa Feature vira Story — mas só quando ninguém no Cosmos
+          // passou a depender dela: story filha, dependência, alocação de PI
+          // ou entrega de fornecedor são trabalho humano em cima, e apagar
+          // isso para arrumar o nível é pior que o nível errado. Nesse caso
+          // a Feature fica e a issue entra em skipped, visível no contador.
+          const featureAntiga = await database.feature.findFirst({
+            where: {
+              tenantId: ctx.tenantId,
+              externalId: issue.id,
+              externalSource: "linear",
+            },
+            select: {
+              id: true,
+              _count: {
+                select: {
+                  stories: true,
+                  blocks: true,
+                  blockedBy: true,
+                  supplierDeliverables: true,
+                },
+              },
+            },
+          });
+          if (featureAntiga) {
+            const alocada = await database.pIPlanFeatureAssignment.count({
+              where: { tenantId: ctx.tenantId, featureId: featureAntiga.id },
+            });
+            const temVinculo =
+              alocada > 0 ||
+              featureAntiga._count.stories > 0 ||
+              featureAntiga._count.blocks > 0 ||
+              featureAntiga._count.blockedBy > 0 ||
+              featureAntiga._count.supplierDeliverables > 0;
+            if (temVinculo) {
+              skipped += 1;
+              continue;
+            }
+            await database.feature.delete({ where: { id: featureAntiga.id } });
+            reclassified += 1;
+          }
+
           const existing = await database.story.findFirst({
             where: {
               tenantId: ctx.tenantId,
@@ -449,7 +495,7 @@ export async function runImportSnapshot(raw: unknown): Promise<
 
     revalidatePath("/integrations");
     revalidatePath("/features");
-    return ok({ created, updated, skipped });
+    return ok({ created, updated, skipped, reclassified });
   } catch (e) {
     return err(e instanceof Error ? e.message : "Erro ao importar");
   }

@@ -17,9 +17,11 @@ const h = vi.hoisted(() => ({
   featureFindFirst: vi.fn(),
   featureCreate: vi.fn(),
   featureUpdate: vi.fn(),
+  featureDelete: vi.fn(),
   storyFindFirst: vi.fn(),
   storyCreate: vi.fn(),
   storyUpdate: vi.fn(),
+  piPlanAssignmentCount: vi.fn(),
   syncLogCreate: vi.fn(),
   linearImportTeamIssues: vi.fn(),
   linearStateToStatus: vi.fn(),
@@ -42,12 +44,14 @@ vi.mock("@repo/database", () => ({
       findFirst: h.featureFindFirst,
       create: h.featureCreate,
       update: h.featureUpdate,
+      delete: h.featureDelete,
     },
     story: {
       findFirst: h.storyFindFirst,
       create: h.storyCreate,
       update: h.storyUpdate,
     },
+    pIPlanFeatureAssignment: { count: h.piPlanAssignmentCount },
     syncLog: { create: h.syncLogCreate },
     pIPlan: { findFirst: vi.fn() },
   },
@@ -91,6 +95,7 @@ describe("runImportSnapshot — filtro de project do Linear (COS-85)", () => {
     h.featureCreate.mockResolvedValue({ id: "feat-1" });
     h.storyFindFirst.mockResolvedValue(null);
     h.storyCreate.mockResolvedValue({ id: "story-1" });
+    h.piPlanAssignmentCount.mockResolvedValue(0);
     h.syncLogCreate.mockResolvedValue({ id: "log-1" });
     h.integrationUpdate.mockResolvedValue({ id: INTEGRATION_ID });
   });
@@ -176,6 +181,7 @@ describe("runImportSnapshot — hierarquia SAFe do import (Feature vs Story)", (
     h.featureCreate.mockResolvedValue({ id: "feat-parent" });
     h.storyFindFirst.mockResolvedValue(null);
     h.storyCreate.mockResolvedValue({ id: "story-1" });
+    h.piPlanAssignmentCount.mockResolvedValue(0);
     h.syncLogCreate.mockResolvedValue({ id: "log-1" });
     h.integrationUpdate.mockResolvedValue({ id: INTEGRATION_ID });
   });
@@ -248,5 +254,91 @@ describe("runImportSnapshot — hierarquia SAFe do import (Feature vs Story)", (
     expect(h.featureCreate).not.toHaveBeenCalled();
     expect(h.storyCreate).toHaveBeenCalledTimes(1);
     expect(h.storyCreate.mock.calls[0][0].data.featureId).toBeNull();
+  });
+
+  it("Feature do import antigo vira Story quando ninguém depende dela", async () => {
+    h.linearImportTeamIssues.mockResolvedValue({
+      issues: [issue("iss-legado", "Task que virou Feature por engano")],
+      nextCursor: null,
+    });
+    // O import anterior deixou esta issue folha como Feature, sem vínculo.
+    h.featureFindFirst.mockResolvedValue({
+      id: "feat-legado",
+      _count: {
+        stories: 0,
+        blocks: 0,
+        blockedBy: 0,
+        supplierDeliverables: 0,
+      },
+    });
+
+    const r = await runImportSnapshot({
+      integrationId: INTEGRATION_ID,
+      projectId: "lt_1",
+      targetType: "feature",
+    });
+
+    expect(h.featureDelete).toHaveBeenCalledWith({
+      where: { id: "feat-legado" },
+    });
+    expect(h.storyCreate).toHaveBeenCalledTimes(1);
+    expect(h.storyCreate.mock.calls[0][0].data.externalId).toBe("iss-legado");
+    expect(r.ok && r.data.reclassified).toBe(1);
+  });
+
+  it("Feature com trabalho humano em cima não é apagada — entra em skipped", async () => {
+    h.linearImportTeamIssues.mockResolvedValue({
+      issues: [issue("iss-usada", "Feature que ganhou stories no Cosmos")],
+      nextCursor: null,
+    });
+    h.featureFindFirst.mockResolvedValue({
+      id: "feat-usada",
+      _count: {
+        // Alguém decompôs esta Feature em stories no Cosmos: apagá-la para
+        // arrumar o nível levaria junto o trabalho de decomposição.
+        stories: 3,
+        blocks: 0,
+        blockedBy: 0,
+        supplierDeliverables: 0,
+      },
+    });
+
+    const r = await runImportSnapshot({
+      integrationId: INTEGRATION_ID,
+      projectId: "lt_1",
+      targetType: "feature",
+    });
+
+    expect(h.featureDelete).not.toHaveBeenCalled();
+    expect(h.storyCreate).not.toHaveBeenCalled();
+    expect(r.ok && r.data.reclassified).toBe(0);
+    expect(r.ok && r.data.skipped).toBe(1);
+  });
+
+  it("Feature alocada num PI Plan também é preservada", async () => {
+    h.linearImportTeamIssues.mockResolvedValue({
+      issues: [issue("iss-alocada", "Feature no board de PI")],
+      nextCursor: null,
+    });
+    h.featureFindFirst.mockResolvedValue({
+      id: "feat-alocada",
+      _count: {
+        stories: 0,
+        blocks: 0,
+        blockedBy: 0,
+        supplierDeliverables: 0,
+      },
+    });
+    // Sem story filha, mas alocada num sprint do PI Planning.
+    h.piPlanAssignmentCount.mockResolvedValue(1);
+
+    const r = await runImportSnapshot({
+      integrationId: INTEGRATION_ID,
+      projectId: "lt_1",
+      targetType: "feature",
+    });
+
+    expect(h.featureDelete).not.toHaveBeenCalled();
+    expect(r.ok && r.data.skipped).toBe(1);
   });
 });
