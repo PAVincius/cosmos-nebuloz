@@ -6,9 +6,24 @@ import { QrCode } from "@repo/design-system/cosmos/qr-code";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { encerrarTodasAsSessoes } from "./actions";
 
 const TOTP_LENGTH = 6;
 const LADO_DO_QR = 168;
+
+/**
+ * Encerra as sessões antigas antes da saída — reforço, não pré-requisito.
+ *
+ * Falhar aqui não pode prender a pessoa numa tela cujo único botão não anda:
+ * sair com uma sessão a mais é melhor do que não sair.
+ */
+async function varrerSessoes(): Promise<void> {
+  try {
+    await encerrarTodasAsSessoes();
+  } catch {
+    // Silencioso de propósito: ver acima.
+  }
+}
 
 /**
  * Cadastro do autenticador, no painel.
@@ -52,19 +67,21 @@ export function CadastroDe2FA() {
   };
 
   /**
-   * Encerra a sessão antes de mandar para o login.
+   * Encerra as sessões antes de mandar para o login.
    *
-   * A sessão em curso nasceu no sign-in, **antes** de o 2FA existir, então ela
-   * não carrega `twoFactorVerified` — e o guard do painel exige esse carimbo.
-   * Sem encerrar, a pessoa acaba de cadastrar o autenticador e é recebida por
-   * "esta sessão não passou pela verificação em dois fatores", que soa como
-   * falha do cadastro que acabou de dar certo.
+   * `signOut` sozinho derruba só este navegador. As sessões abertas antes do
+   * cadastro — em outra máquina, em outro navegador — seguiriam valendo sem
+   * nunca ter passado pelo autenticador, que é exatamente o que o segundo
+   * fator existe para impedir. Por isso a varredura no servidor primeiro, e o
+   * `signOut` depois só para limpar o cookie daqui.
    *
-   * Só o login novo passa pelo desafio de TOTP, e é ele que carimba a sessão.
+   * Falha da varredura não impede a saída: melhor sair com sessões a mais do
+   * que prender a pessoa numa tela sem botão que funcione.
    */
   const sairEEntrar = async () => {
     setSaindo(true);
     try {
+      await varrerSessoes();
       await authClient.signOut();
     } finally {
       // Navegação dura: o cookie acabou de ser invalidado e quem precisa reler

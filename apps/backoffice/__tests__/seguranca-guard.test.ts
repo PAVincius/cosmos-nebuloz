@@ -77,25 +77,15 @@ describe("guard de /seguranca", () => {
     });
   });
 
-  it("cadastrou o 2FA mas a sessão é anterior: motivo próprio", async () => {
-    // O estado logo depois do cadastro. A sessão nasceu no sign-in anterior ao
-    // 2FA e nunca viu o desafio de TOTP — recusar está certo, mas a saída é
-    // encerrar a sessão, não cadastrar de novo nem trocar de conta. Sem motivo
-    // próprio, a tela oferece a ação errada para quem acabou de acertar tudo.
+  // Regressão do laço fechado: o guard exigia `session.twoFactorVerified`, um
+  // campo que o better-auth 1.6.26 não escreve em lugar nenhum — `verifyTotp`
+  // fecha o desafio com `createSession(userId, false, ...)`, sessão comum. Todo
+  // staff com 2FA ligado batia num "saia e entre de novo" que o login seguinte
+  // reproduzia. O verde de antes vinha de um mock que fabricava o campo; por
+  // isso a sessão aqui é a que a lib realmente entrega.
+  it("sessão sem carimbo nenhum passa — é a que a lib entrega após o TOTP", async () => {
     userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
-
-    await expect(requirePlatformStaff()).rejects.toMatchObject({
-      code: "FORBIDDEN",
-      motivo: "SESSAO_SEM_SEGUNDO_FATOR",
-    });
-  });
-
-  it("sessão carimbada passa", async () => {
-    userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
-    getSession.mockResolvedValue({
-      ...STAFF_SEM_2FA,
-      session: { twoFactorVerified: true },
-    });
+    getSession.mockResolvedValue(STAFF_SEM_2FA);
 
     await expect(requirePlatformStaff()).resolves.toMatchObject({
       email: "ana@nebuloz.ai",
