@@ -50,7 +50,7 @@ describe("resolveStaffAccess", () => {
   it("sessão válida de quem não é staff é recusada sem voltar ao login", async () => {
     mocks.getSession.mockResolvedValue({
       user: { id: "user-cliente", email: "ana@vanta.exemplo", name: "Ana" },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     mocks.findFirst.mockResolvedValue(null);
 
@@ -72,7 +72,7 @@ describe("resolveStaffAccess", () => {
         email: "vini@nebuloz.exemplo",
         name: "Vinícius",
       },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     mocks.findFirst.mockResolvedValue({ role: "ADMIN" });
 
@@ -93,7 +93,7 @@ describe("resolveStaffAccess", () => {
   it("staff sem ADMIN entra, mas só para ler", async () => {
     mocks.getSession.mockResolvedValue({
       user: { id: "user-leitor", email: "leitor@nebuloz.exemplo", name: null },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     mocks.findFirst.mockResolvedValue({ role: "MEMBER" });
 

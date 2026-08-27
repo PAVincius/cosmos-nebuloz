@@ -16,9 +16,6 @@ export type StaffAccess =
    *  autenticador. Desfecho separado porque a ação é cadastrar, e oferecer
    *  "entrar com outra conta" aqui manda a pessoa para o mesmo lugar de novo. */
   | { status: "sem_2fa"; message: string }
-  /** Cadastrou o 2FA, mas a sessão atual é anterior ao cadastro. A saída é
-   *  encerrar a sessão — nem cadastrar de novo, nem trocar de conta. */
-  | { status: "sessao_sem_2fa"; message: string }
   | { status: "rate_limited"; message: string };
 
 /**
@@ -41,9 +38,6 @@ export async function resolveStaffAccess(): Promise<StaffAccess> {
     if (error instanceof StaffAuthError && error.code === "FORBIDDEN") {
       if (error.motivo === "SEM_SEGUNDO_FATOR") {
         return { status: "sem_2fa", message: error.message };
-      }
-      if (error.motivo === "SESSAO_SEM_SEGUNDO_FATOR") {
-        return { status: "sessao_sem_2fa", message: error.message };
       }
       return { status: "forbidden", message: error.message };
     }
