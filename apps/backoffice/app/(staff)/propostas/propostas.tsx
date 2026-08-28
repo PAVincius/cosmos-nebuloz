@@ -10,7 +10,7 @@ import {
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
-import { formatarBRL } from "../servicos/catalogo";
+import { formatarBRL } from "@/lib/comercial/formato";
 
 const TOM: Record<string, Tone> = {
   RASCUNHO: "neutral",

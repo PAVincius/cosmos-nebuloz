@@ -8,12 +8,14 @@ import {
   setServiceAtivoAction,
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
 /**
  * Catálogo de serviços.
  *
  * O preço vive em centavos inteiros no banco e é digitado em reais na tela. A
- * conversão fica num lugar só, aqui — espalhá-la é como se erra a unidade, e o
+ * conversão fica num lugar só, em lib/comercial/formato — espalhá-la é como se
+ * erra a unidade, e o
  * sintoma aparece longe da causa, na soma de uma proposta.
  */
 
@@ -22,22 +24,6 @@ const MODALIDADES = [
   { valor: "RETAINER", rotulo: "Retainer" },
   { valor: "LICENCA", rotulo: "Licença" },
 ];
-
-const NAO_DIGITO = /[^\d]/g;
-
-export function formatarBRL(centavos: number): string {
-  return (centavos / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
-
-/** "1.250,00" ou "1250" → 125000. Tudo que não é dígito sai; os dois últimos
- *  são os centavos. Evita depender do separador que a pessoa usou. */
-function paraCentavos(texto: string): number {
-  const so = texto.replace(NAO_DIGITO, "");
-  return so ? Number.parseInt(so, 10) : 0;
-}
 
 /** Uma linha do catálogo. Extraída porque a linha carrega toda a decisão
  *  visual — inativo esmaecido, preço com unidade, ação conforme o papel — e

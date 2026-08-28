@@ -11,7 +11,7 @@ import {
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
-import { formatarBRL } from "../servicos/catalogo";
+import { formatarBRL } from "@/lib/comercial/formato";
 
 const TOM: Record<string, Tone> = {
   PROPOSTO: "accent",
