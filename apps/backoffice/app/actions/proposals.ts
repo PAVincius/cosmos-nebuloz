@@ -34,6 +34,9 @@ export type ProposalRow = {
   status: string;
   descontoPercent: number;
   totalCentavos: number;
+  /** Gravado no escopo — é o que o funil soma. Nulo nas propostas anteriores
+   *  ao gerador, que só tinham itens de serviço. */
+  acvCentavos: number;
   criadoEm: string;
 };
 
@@ -52,6 +55,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
         status: true,
         descontoPercent: true,
         totalCentavos: true,
+        acvCentavos: true,
         criadoEm: true,
       },
     });
@@ -66,6 +70,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
       status: p.status,
       descontoPercent: p.descontoPercent,
       totalCentavos: p.totalCentavos,
+      acvCentavos: p.acvCentavos,
       criadoEm: p.criadoEm.toISOString(),
     }));
   });
