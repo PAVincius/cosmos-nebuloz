@@ -199,9 +199,6 @@ model Tenant {
   charterPolicyLinks        CharterPolicyLink[]
   charterRequirementSets    CharterRequirementSet[]
   charterCoverages          CharterCoverage[]
-  // Meridian — avaliação de prontidão de IA
-  meridianMemberships       MeridianMembership[]
-  meridianAssessments       MeridianAssessment[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
@@ -236,10 +233,6 @@ model User {
   twoFactor               TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
   charterMemberships      CharterMembership[]
-  // Meridian — papel de avaliação, ortogonal ao papel SAFe de TenantMember
-  meridianMemberships     MeridianMembership[]
-  meridianAxisAssignments MeridianAxisAssignment[]
-  meridianResponses       MeridianResponse[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,
