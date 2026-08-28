@@ -242,3 +242,72 @@ export async function salvarEscopoAction(
     return criada;
   });
 }
+
+export type PropostaParaEdicao = {
+  id: string;
+  numero: string;
+  status: string;
+  titulo: string;
+  clienteNome: string | null;
+  contatoEmail: string | null;
+  planoSlug: string | null;
+  assentos: number;
+  modulos: string[];
+  addOnSlugs: string[];
+  termoSlug: string | null;
+  descontoPercent: number;
+  servicoIds: string[];
+};
+
+/**
+ * Lê uma proposta para reabrir no gerador.
+ *
+ * Devolve o escopo, não o preço: o preço se recalcula no cliente a partir do
+ * catálogo atual enquanto a proposta é rascunho. O valor gravado é o que vale
+ * depois de enviada — e proposta enviada não volta para o gerador.
+ */
+export async function getPropostaParaEdicao(
+  id: string
+): Promise<Result<PropostaParaEdicao>> {
+  return await safeAction(async () => {
+    await requirePlatformStaff();
+
+    const p = await database.proposal.findFirst({
+      where: { id, tenantId: SYSTEM_TENANT_ID },
+      select: {
+        id: true,
+        numero: true,
+        status: true,
+        titulo: true,
+        clienteNome: true,
+        contatoEmail: true,
+        planoSlug: true,
+        assentos: true,
+        modulos: true,
+        addOnSlugs: true,
+        termoSlug: true,
+        descontoPercent: true,
+        itens: { select: { serviceId: true }, orderBy: { ordem: "asc" } },
+      },
+    });
+    if (!p) {
+      throw new StaffAuthError("FORBIDDEN", "Proposta não encontrada.");
+    }
+
+    return {
+      id: p.id,
+      numero: p.numero,
+      status: p.status,
+      titulo: p.titulo,
+      clienteNome: p.clienteNome,
+      contatoEmail: p.contatoEmail,
+      planoSlug: p.planoSlug,
+      assentos: p.assentos,
+      modulos: p.modulos.map(String),
+      addOnSlugs: p.addOnSlugs,
+      termoSlug: p.termoSlug,
+      descontoPercent: p.descontoPercent,
+      servicoIds: p.itens.map((i) => i.serviceId),
+    };
+  });
+}
