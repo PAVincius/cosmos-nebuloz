@@ -236,6 +236,10 @@ export async function submitProposalAction(
         alvoLabel: `${p.numero} · ${p.titulo}`,
         motivo: `Desconto de ${p.descontoPercent}% em ${p.numero}, acima do limite de ${LIMITE_DESCONTO_SEM_APROVACAO}% que dispensa aprovação.`,
         impacto: `${p.descontoPercent}% sobre a proposta — total já com desconto: ${(p.totalCentavos / 100).toFixed(2)}.`,
+        // O que a aprovação executa quando alguém liberar. Sem isto o pedido
+        // entrava na fila sem dizer o que fazer com ele, e a proposta ficava
+        // presa em AGUARDANDO_APROVACAO para sempre.
+        payload: { acao: "submitProposal", proposalId: p.id },
         targetTenantId: p.clienteTenantId ?? undefined,
       });
       if (!pedido.ok) {
