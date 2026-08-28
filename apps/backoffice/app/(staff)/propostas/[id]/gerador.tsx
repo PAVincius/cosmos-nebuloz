@@ -175,7 +175,7 @@ export function Gerador({
       contatoEmail: contato.trim() || undefined,
       planoSlug,
       assentos,
-      modulos: modulos as ("COSMOS" | "CHARTER" | "SIGNAL")[],
+      modulos,
       addOnSlugs,
       termoSlug,
       descontoPercent: desconto,
