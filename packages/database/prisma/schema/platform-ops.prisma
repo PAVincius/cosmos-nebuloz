@@ -118,6 +118,37 @@ model Proposal {
   /// contratual, não um detalhe de exibição.
   totalCentavos Int @default(0)
 
+  /// ── Escopo de assinatura ────────────────────────────────────────────────
+  /// Guardado na proposta e não derivado do tenant: a proposta existe antes do
+  /// tenant, e o escopo é justamente o que está sendo negociado. Nulo nas
+  /// propostas anteriores a este campo, que seguem valendo só pelos itens.
+  planoSlug String?
+  assentos  Int     @default(0)
+
+  /// Módulos escolhidos. Lista e não tabela-ponte porque não há atributo por
+  /// linha — é escolha, não relação com dados próprios.
+  modulos ProductModule[] @default([])
+
+  /// Slugs de `AddOnComercial` e de `TermoDeContrato`. Slug e não FK: o
+  /// catálogo pode ser reorganizado, e a proposta enviada continua dizendo o
+  /// que foi vendido mesmo que a linha de catálogo mude de id.
+  addOnSlugs String[] @default([])
+  termoSlug  String?
+
+  /// Congelados junto de `totalCentavos`, pelo mesmo motivo. ACV e TCV são o
+  /// que o pipeline soma; recalculá-los na leitura faria o funil mudar de
+  /// tamanho sozinho quando alguém mexesse no preço de tabela.
+  acvCentavos    Int @default(0)
+  tcvCentavos    Int @default(0)
+  umaVezCentavos Int @default(0)
+
+  /// Destinatário da proposta — FR-13.7 exige e-mail válido para enviar.
+  contatoEmail String?
+
+  /// Slug do tenant que nasceu desta proposta, quando ela virou cliente.
+  /// Fecha o elo comercial → operação sem redigitar escopo.
+  tenantProvisionadoSlug String?
+
   /// Aprovação que destravou o desconto, quando houve.
   aprovacaoId String?
 
