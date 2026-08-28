@@ -135,6 +135,17 @@ export function Catalogo({
         precoBaseCentavos: paraCentavos(form.preco),
         unidade: form.unidade,
         ativo: true,
+        // Espelha os defaults que a action grava. Divergir aqui faria a linha
+        // recém-criada aparecer diferente do que ficou no banco até o próximo
+        // carregamento.
+        trilha: "readiness",
+        unidadeDeCobranca: form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
+        duracao: null,
+        entregaveis: [],
+        papeis: [],
+        preRequisitos: [],
+        moduloVinculado: null,
+        exigeLab: false,
       },
       ...atual,
     ]);

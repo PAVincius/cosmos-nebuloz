@@ -53,6 +53,7 @@ import {
   createServiceAction,
   listServices,
   setServiceAtivoAction,
+  updateServiceAction,
 } from "../app/actions/services";
 
 const staff = {
@@ -208,5 +209,123 @@ describe("setServiceAtivoAction", () => {
 
     const entrada = mocks.logPlatformAudit.mock.calls[0][1];
     expect(entrada.diff).toEqual([["ativo", "true", "false"]]);
+  });
+});
+
+// O catálogo só sabia criar e (des)ativar: corrigir um preço digitado errado
+// exigia SQL. Estes casos guardam a edição e o que ela não pode alcançar.
+describe("updateServiceAction", () => {
+  const existente = {
+    id: "svc-1",
+    codigo: "SV-09",
+    nome: "SLM Fine-tune",
+    descricao: null,
+    modalidade: "PROJETO",
+    precoBaseCentavos: 16_500_000,
+    unidade: "projeto",
+    ativo: true,
+    trilha: "custom",
+    unidadeDeCobranca: "PROJETO",
+    duracao: "10 semanas",
+    entregaveis: ["Modelo treinado"],
+    papeis: ["Cientista de dados"],
+    preRequisitos: ["SV-02"],
+    moduloVinculado: null,
+    exigeLab: true,
+  };
+
+  const edicao = {
+    id: "svc-1",
+    nome: "SLM Domain Fine-tune",
+    precoBaseCentavos: 17_000_000,
+    trilha: "custom" as const,
+    unidadeDeCobranca: "PROJETO" as const,
+    entregaveis: ["Modelo treinado", "Model card"],
+    papeis: ["Cientista de dados"],
+    preRequisitos: ["SV-02", "SV-05"],
+    exigeLab: true,
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // `clearAllMocks` zera chamadas, não implementações: sem esta linha o
+    // `throw` do caso de MEMBER vaza para todos os casos seguintes.
+    mocks.assertCanWrite.mockImplementation(() => undefined);
+    mocks.requirePlatformStaff.mockResolvedValue({
+      userId: "u-1",
+      name: "Marina",
+      canWrite: true,
+    });
+    mocks.findFirst.mockResolvedValue(existente);
+    mocks.update.mockResolvedValue({ id: "svc-1" });
+  });
+
+  it("MEMBER não edita", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+
+    const res = await updateServiceAction(edicao);
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  it("recusa serviço de outro tenant", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+
+    const res = await updateServiceAction(edicao);
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
+  });
+
+  // Quando o preço de um serviço muda, a pergunta que a auditoria precisa
+  // responder é de quanto para quanto — não "serviço atualizado".
+  it("audita o preço campo a campo, com valor antes e depois", async () => {
+    await updateServiceAction(edicao);
+
+    const { diff } = mocks.logPlatformAudit.mock.calls[0][1];
+    expect(diff).toContainEqual([
+      "precoBaseCentavos",
+      "16500000",
+      "17000000",
+    ]);
+  });
+
+  it("não anota no diff o campo que não mudou", async () => {
+    await updateServiceAction(edicao);
+
+    const { diff } = mocks.logPlatformAudit.mock.calls[0][1];
+    expect(diff.map((d: string[]) => d[0])).not.toContain("trilha");
+    expect(diff.map((d: string[]) => d[0])).not.toContain("exigeLab");
+  });
+
+  it("registra lista que mudou de forma legível", async () => {
+    await updateServiceAction(edicao);
+
+    const { diff } = mocks.logPlatformAudit.mock.calls[0][1];
+    expect(diff).toContainEqual(["preRequisitos", "SV-02", "SV-02, SV-05"]);
+  });
+
+  // O código aparece em proposta e contrato já emitidos: renomeá-lo seria
+  // reescrever documento assinado.
+  it("não deixa o código ser trocado pela edição", async () => {
+    await updateServiceAction({
+      ...edicao,
+      codigo: "SV-99",
+    } as unknown as Parameters<typeof updateServiceAction>[0]);
+
+    expect(mocks.update.mock.calls[0][0].data.codigo).toBeUndefined();
+  });
+
+  it("recusa unidade de cobrança fora do vocabulário", async () => {
+    const res = await updateServiceAction({
+      ...edicao,
+      unidadeDeCobranca: "MENSALIDADE",
+    } as unknown as Parameters<typeof updateServiceAction>[0]);
+
+    expect(res.ok).toBe(false);
+    expect(mocks.update).not.toHaveBeenCalled();
   });
 });

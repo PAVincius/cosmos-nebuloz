@@ -38,10 +38,44 @@ model Service {
   /// continua apontando para o serviço que existia quando foi feita.
   ativo Boolean @default(true)
 
+  /// readiness | adoption | enablement | custom — a trilha de consultoria.
+  /// String pelo mesmo motivo de `modalidade`: trilha nova é INSERT, não
+  /// migration.
+  trilha String @default("readiness")
+
+  /// PROJETO | SPRINT | HORA | RETAINER. Sucede `modalidade`, que só
+  /// distinguia três casos e não dizia o que a fórmula precisa saber: se o
+  /// serviço recorre. `RETAINER` é o único que entra na mensalidade; o resto
+  /// cai no setup do projeto.
+  unidadeDeCobranca String @default("PROJETO")
+
+  /// "4 semanas", "por sprint de 2 semanas". Texto porque vai no documento do
+  /// cliente, não em conta — duração aqui não multiplica preço.
+  duracao String?
+
+  /// O que o cliente recebe. Vira anexo da proposta.
+  entregaveis String[] @default([])
+
+  /// Papéis que a entrega aloca — dimensiona o time antes de prometer prazo.
+  papeis String[] @default([])
+
+  /// Códigos de serviços que este pressupõe. A proposta avisa quando um deles
+  /// está fora do escopo, e não bloqueia: o cliente pode já ter o equivalente
+  /// feito por outro fornecedor.
+  preRequisitos String[] @default([])
+
+  /// Módulo que este serviço deixa configurado, quando há. Nulo = serviço
+  /// independente de licença, vendável sozinho.
+  moduloVinculado ProductModule?
+
+  /// Execução depende de capacidade no LAB — a proposta avisa antes de alguém
+  /// prometer data.
+  exigeLab Boolean @default(false)
+
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  tenant      Tenant           @relation("ServiceSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant      Tenant         @relation("ServiceSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
   itens       ProposalItem[]
   engajamento Engagement[]
 
@@ -159,10 +193,10 @@ model Engagement {
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  tenant     Tenant            @relation("EngagementSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
-  service    Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-  alocacoes  StaffAllocation[]
-  ipUsados   IpAsset[]
+  tenant    Tenant            @relation("EngagementSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  service   Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  alocacoes StaffAllocation[]
+  ipUsados  IpAsset[]
 
   @@unique([tenantId, codigo])
   @@index([tenantId])
@@ -215,7 +249,7 @@ model StaffAllocation {
   personId     String
   engagementId String
 
-  percentual Int      @default(0)
+  percentual Int       @default(0)
   inicioEm   DateTime
   fimEm      DateTime?
 
@@ -272,7 +306,7 @@ model IpAsset {
 
 /// Revisão de um ativo. Append-only, igual ao StaffDiagramVersion.
 model IpAssetVersion {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   assetId  String
   versao   Int
   conteudo String  @db.Text
