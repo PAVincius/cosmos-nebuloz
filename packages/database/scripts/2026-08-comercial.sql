@@ -73,13 +73,25 @@ VALUES
 ON CONFLICT ("tenantId", "slug") DO NOTHING;
 
 -- COSMOS entra no preço do assento; os demais são adicionais mensais.
+--
+-- O JOIN com `pg_enum` não é preciosismo: o schema Prisma já declara MERIDIAN e
+-- SCAFFOLD, e o enum deste banco ainda tem só três valores. Listar os cinco
+-- direto derruba a transação inteira por causa dos dois que não existem aqui —
+-- e o preço dos três que existem não entra. Assim, semeia o que o banco
+-- conhece hoje; quando os outros dois forem criados, rodar de novo completa o
+-- catálogo sem tocar no que já está lá.
 INSERT INTO "PrecoDeModulo" ("id", "tenantId", "modulo", "precoMensalCentavos")
-VALUES
-  (gen_random_uuid()::text, 'system', 'COSMOS',        0),
-  (gen_random_uuid()::text, 'system', 'CHARTER',  180000),
-  (gen_random_uuid()::text, 'system', 'SIGNAL',   120000),
-  (gen_random_uuid()::text, 'system', 'MERIDIAN',      0),
-  (gen_random_uuid()::text, 'system', 'SCAFFOLD',      0)
+SELECT gen_random_uuid()::text, 'system', e.enumlabel::"ProductModule", v.preco
+FROM (
+  VALUES
+    ('COSMOS',        0),
+    ('CHARTER',  180000),
+    ('SIGNAL',   120000),
+    ('MERIDIAN',      0),
+    ('SCAFFOLD',      0)
+) AS v(modulo, preco)
+JOIN pg_type t ON t.typname = 'ProductModule'
+JOIN pg_enum e ON e.enumtypid = t.oid AND e.enumlabel = v.modulo
 ON CONFLICT ("tenantId", "modulo") DO NOTHING;
 
 INSERT INTO "TermoDeContrato" ("id", "tenantId", "slug", "nome", "meses", "descontoPercent", "ordem")
