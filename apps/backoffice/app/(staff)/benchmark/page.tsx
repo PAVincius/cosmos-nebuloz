@@ -9,7 +9,7 @@ import {
   listBenchmark,
   type ServicoBenchmark,
 } from "@/app/actions/benchmark";
-import { formatarBRL } from "../servicos/catalogo";
+import { formatarBRL } from "@/lib/comercial/formato";
 
 export const dynamic = "force-dynamic";
 

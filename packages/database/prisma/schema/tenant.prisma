@@ -199,15 +199,23 @@ model Tenant {
   charterPolicyLinks        CharterPolicyLink[]
   charterRequirementSets    CharterRequirementSet[]
   charterCoverages          CharterCoverage[]
+  // Meridian — avaliação de prontidão de IA
+  meridianMemberships       MeridianMembership[]
+  meridianAssessments       MeridianAssessment[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
-  staffDiagrams        StaffDiagram[]   @relation("StaffDiagramSystemTenant")
-  accessLogs           AccessLog[]      @relation("AccessLogSystemTenant")
-  ipAssets             IpAsset[]        @relation("IpAssetSystemTenant")
-  staffPeople          StaffPerson[]    @relation("StaffPersonSystemTenant")
-  engagements          Engagement[]     @relation("EngagementSystemTenant")
-  proposals            Proposal[]       @relation("ProposalSystemTenant")
-  services             Service[]        @relation("ServiceSystemTenant")
+  staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
+  accessLogs                AccessLog[]                @relation("AccessLogSystemTenant")
+  ipAssets                  IpAsset[]                  @relation("IpAssetSystemTenant")
+  staffPeople               StaffPerson[]              @relation("StaffPersonSystemTenant")
+  engagements               Engagement[]               @relation("EngagementSystemTenant")
+  proposals                 Proposal[]                 @relation("ProposalSystemTenant")
+  services                  Service[]                  @relation("ServiceSystemTenant")
+  // Catálogo comercial — o que se cobra e quanto (também no tenant `system`)
+  planosComerciais          PlanoComercial[]           @relation("PlanoComercialSystemTenant")
+  precosDeModulo            PrecoDeModulo[]            @relation("PrecoDeModuloSystemTenant")
+  termosDeContrato          TermoDeContrato[]          @relation("TermoDeContratoSystemTenant")
+  addOnsComerciais          AddOnComercial[]           @relation("AddOnComercialSystemTenant")
 }
 
 model User {
@@ -220,14 +228,18 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  sessions           Session[]
-  accounts           Account[]
-  memberships        TenantMember[]
+  sessions                Session[]
+  accounts                Account[]
+  memberships             TenantMember[]
   // Lista, não opcional-único: o `userId` da TwoFactor deixou de ser `@unique`
   // porque o `enable` do better-auth sempre insere linha nova.
-  twoFactor          TwoFactor[]
+  twoFactor               TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
-  charterMemberships CharterMembership[]
+  charterMemberships      CharterMembership[]
+  // Meridian — papel de avaliação, ortogonal ao papel SAFe de TenantMember
+  meridianMemberships     MeridianMembership[]
+  meridianAxisAssignments MeridianAxisAssignment[]
+  meridianResponses       MeridianResponse[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,

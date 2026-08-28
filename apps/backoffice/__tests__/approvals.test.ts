@@ -15,6 +15,8 @@ const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   auditCreate: vi.fn(),
   logPlatformAudit: vi.fn(),
+  proposalFindFirst: vi.fn(),
+  proposalUpdate: vi.fn(),
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
@@ -43,6 +45,10 @@ vi.mock("@repo/database", () => ({
       create: mocks.create,
     },
     auditLog: { create: mocks.auditCreate },
+    proposal: {
+      findFirst: mocks.proposalFindFirst,
+      update: mocks.proposalUpdate,
+    },
   },
 }));
 
@@ -313,5 +319,128 @@ describe("decidePlatformApprovalAction — separação de quem pede e quem aprov
     if (!res.ok) {
       expect(res.error).toMatch(/pediu|solicit|própri/i);
     }
+  });
+});
+
+// FR-8.4 — aprovar executa a ação original.
+//
+// Antes disto a fila era um beco: submitProposalAction mandava a proposta para
+// AGUARDANDO_APROVACAO, o aprovador clicava em aprovar, e nada acontecia com
+// ela. Nenhuma action no repositório escrevia ENVIADA a partir desse estado, e
+// o pedido nem carregava `payload` para alguém saber o que executar. Uma
+// proposta que entrasse na fila ficava lá.
+describe("decidePlatformApprovalAction — despacho da ação aprovada", () => {
+  const pedidoDeProposta = {
+    id: "ap-1",
+    status: "PENDING_APPROVAL",
+    acao: "submitProposal",
+    alvoTipo: "proposal",
+    alvoId: "prop-1",
+    alvoLabel: "P-ABC · Atlas Energia",
+    solicitanteId: "u-outro",
+    payload: { acao: "submitProposal", proposalId: "prop-1" },
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mocks.assertCanWrite.mockImplementation(() => undefined);
+    mocks.requirePlatformStaff.mockResolvedValue(admin);
+    mocks.findFirst.mockResolvedValue(pedidoDeProposta);
+    mocks.update.mockResolvedValue({});
+    mocks.proposalFindFirst.mockResolvedValue({
+      id: "prop-1",
+      numero: "P-ABC",
+      status: "AGUARDANDO_APROVACAO",
+      tenantId: "system",
+    });
+    mocks.proposalUpdate.mockResolvedValue({});
+  });
+
+  it("aprovar envia a proposta que estava esperando na fila", async () => {
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.proposalUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: "ENVIADA" }),
+      })
+    );
+  });
+
+  // O campo existia no schema e nunca era escrito: a proposta não sabia dizer
+  // qual decisão destravou o desconto dela.
+  it("aprovar grava na proposta a aprovação que a destravou", async () => {
+    await decidePlatformApprovalAction({ id: "ap-1", outcome: "APPROVED" });
+
+    expect(mocks.proposalUpdate.mock.calls[0][0].data.aprovacaoId).toBe("ap-1");
+  });
+
+  // Rejeitada, a proposta volta a ser negociável em vez de morrer na fila —
+  // desconto recusado normalmente vira desconto menor, não fim de conversa.
+  it("rejeitar devolve a proposta para rascunho", async () => {
+    await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "REJECTED",
+      nota: "Margem abaixo do piso do trimestre.",
+    });
+
+    expect(mocks.proposalUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({ status: "RASCUNHO" }),
+      })
+    );
+  });
+
+  it("não mexe em proposta que já saiu de AGUARDANDO_APROVACAO", async () => {
+    mocks.proposalFindFirst.mockResolvedValue({
+      id: "prop-1",
+      numero: "P-ABC",
+      status: "ACEITA",
+      tenantId: "system",
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
+  });
+
+  // As outras quatro operações sensíveis ainda não têm executor. Decidir sobre
+  // elas tem de continuar funcionando: a decisão é o registro, e o despacho é
+  // o efeito — faltar efeito não pode impedir o registro.
+  it("alvo sem despachante decide e audita, sem quebrar", async () => {
+    mocks.findFirst.mockResolvedValue({
+      ...pedidoDeProposta,
+      acao: "exportTenantData",
+      alvoTipo: "export",
+      payload: {},
+    });
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
+    expect(mocks.logPlatformAudit).toHaveBeenCalled();
+  });
+
+  it("proposta que sumiu não derruba a decisão", async () => {
+    mocks.proposalFindFirst.mockResolvedValue(null);
+
+    const res = await decidePlatformApprovalAction({
+      id: "ap-1",
+      outcome: "APPROVED",
+    });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.proposalUpdate).not.toHaveBeenCalled();
   });
 });

@@ -1,16 +1,15 @@
 "use client";
 
 import { Badge, SectionCard, type Tone } from "@repo/design-system/cosmos/kit";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
-  createProposalAction,
   type ProposalRow,
   submitProposalAction,
 } from "@/app/actions/proposals";
-import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
-import { formatarBRL } from "../servicos/catalogo";
+import { formatarBRL } from "@/lib/comercial/formato";
 
 const TOM: Record<string, Tone> = {
   RASCUNHO: "neutral",
@@ -27,8 +26,6 @@ const ROTULO: Record<string, string> = {
   ACEITA: "Aceita",
   RECUSADA: "Recusada",
 };
-
-type ItemForm = { serviceId: string; quantidade: number };
 
 function LinhaProposta({
   p,
@@ -115,60 +112,14 @@ function LinhaProposta({
 
 export function Propostas({
   iniciais,
-  servicos,
   podeEscrever,
 }: {
   iniciais: ProposalRow[];
-  servicos: ServiceRow[];
   podeEscrever: boolean;
 }) {
+  const router = useRouter();
   const [lista, setLista] = useState(iniciais);
-  const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [titulo, setTitulo] = useState("");
-  const [cliente, setCliente] = useState("");
-  const [desconto, setDesconto] = useState(0);
-  const [itens, setItens] = useState<ItemForm[]>([]);
-
-  const disponiveis = servicos.filter((s) => s.ativo);
-  const bruto = itens.reduce((soma, i) => {
-    const s = servicos.find((x) => x.id === i.serviceId);
-    return soma + (s ? s.precoBaseCentavos * i.quantidade : 0);
-  }, 0);
-  const total = Math.round(bruto * (1 - desconto / 100));
-  const precisaAprovacao = desconto > LIMITE_DESCONTO_SEM_APROVACAO;
-
-  const criar = useCallback(async () => {
-    setErro(null);
-    const res = await createProposalAction({
-      titulo,
-      clienteNome: cliente || undefined,
-      descontoPercent: desconto,
-      itens,
-    });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
-    setLista((atual) => [
-      {
-        id: res.data.id,
-        numero: res.data.numero,
-        titulo,
-        cliente: cliente || "—",
-        status: "RASCUNHO",
-        descontoPercent: desconto,
-        totalCentavos: total,
-        criadoEm: new Date().toISOString(),
-      },
-      ...atual,
-    ]);
-    setCriando(false);
-    setTitulo("");
-    setCliente("");
-    setDesconto(0);
-    setItens([]);
-  }, [titulo, cliente, desconto, itens, total]);
 
   const enviar = useCallback(async (id: string) => {
     setErro(null);
@@ -191,10 +142,10 @@ export function Propostas({
           podeEscrever ? (
             <BotaoPrimario
               full={false}
-              onClick={() => setCriando((v) => !v)}
+              onClick={() => router.push("/propostas/nova")}
               type="button"
             >
-              {criando ? "Cancelar" : "Nova proposta"}
+              Nova proposta
             </BotaoPrimario>
           ) : null
         }
@@ -202,149 +153,6 @@ export function Propostas({
         subtitle={`${lista.length} proposta(s)`}
         title="Pipeline"
       >
-        {criando ? (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 10,
-              paddingBottom: 14,
-              marginBottom: 14,
-              borderBottom: "1px solid var(--hairline)",
-            }}
-          >
-            <div
-              style={{
-                display: "grid",
-                gap: 10,
-                gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))",
-              }}
-            >
-              <Campo htmlFor="p-titulo" label="Título">
-                <input
-                  id="p-titulo"
-                  onChange={(e) => setTitulo(e.target.value)}
-                  style={INPUT}
-                  value={titulo}
-                />
-              </Campo>
-              <Campo htmlFor="p-cliente" label="Cliente ou prospect">
-                <input
-                  id="p-cliente"
-                  onChange={(e) => setCliente(e.target.value)}
-                  style={INPUT}
-                  value={cliente}
-                />
-              </Campo>
-              <Campo
-                hint={
-                  precisaAprovacao
-                    ? `acima de ${LIMITE_DESCONTO_SEM_APROVACAO}% — vai para a fila de aprovação`
-                    : `até ${LIMITE_DESCONTO_SEM_APROVACAO}% envia direto`
-                }
-                htmlFor="p-desconto"
-                label="Desconto %"
-              >
-                <input
-                  id="p-desconto"
-                  max={100}
-                  min={0}
-                  onChange={(e) => setDesconto(Number(e.target.value) || 0)}
-                  style={{
-                    ...INPUT,
-                    borderColor: precisaAprovacao
-                      ? "rgba(var(--amber-rgb),.5)"
-                      : "var(--hairline)",
-                  }}
-                  type="number"
-                  value={desconto}
-                />
-              </Campo>
-            </div>
-
-            <div>
-              <span
-                className="mono"
-                style={{
-                  fontSize: 10,
-                  fontWeight: 700,
-                  letterSpacing: ".12em",
-                  textTransform: "uppercase",
-                  color: "var(--ink-faint)",
-                }}
-              >
-                Itens do catálogo
-              </span>
-              <div
-                style={{
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 6,
-                  marginTop: 7,
-                }}
-              >
-                {disponiveis.length === 0 ? (
-                  <span style={{ fontSize: 12, color: "var(--ink-muted)" }}>
-                    Catálogo vazio — cadastre um serviço antes.
-                  </span>
-                ) : (
-                  disponiveis.map((s) => {
-                    const escolhido = itens.some((i) => i.serviceId === s.id);
-                    return (
-                      <button
-                        className="btn"
-                        key={s.id}
-                        onClick={() =>
-                          setItens((atual) =>
-                            escolhido
-                              ? atual.filter((i) => i.serviceId !== s.id)
-                              : [...atual, { serviceId: s.id, quantidade: 1 }]
-                          )
-                        }
-                        style={{
-                          padding: "5px 11px",
-                          borderRadius: "var(--r-pill)",
-                          border: `1px solid ${escolhido ? "rgba(var(--accent-rgb),.5)" : "var(--hairline)"}`,
-                          background: escolhido
-                            ? "var(--accent-soft)"
-                            : "var(--surface-2)",
-                          color: escolhido
-                            ? "var(--accent-text)"
-                            : "var(--ink-muted)",
-                          fontSize: 11.5,
-                          fontWeight: 600,
-                          cursor: "pointer",
-                        }}
-                        type="button"
-                      >
-                        {s.codigo} · {formatarBRL(s.precoBaseCentavos)}
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <span
-                className="mono"
-                style={{ flex: 1, fontSize: 12, color: "var(--ink-muted)" }}
-              >
-                {itens.length} item(ns) · total {formatarBRL(total)}
-                {desconto > 0 ? ` (bruto ${formatarBRL(bruto)})` : ""}
-              </span>
-              <BotaoPrimario
-                disabled={titulo.trim().length < 2 || itens.length === 0}
-                full={false}
-                onClick={criar}
-                type="button"
-              >
-                Criar rascunho
-              </BotaoPrimario>
-            </div>
-          </div>
-        ) : null}
-
         {lista.length === 0 ? (
           <p
             style={{

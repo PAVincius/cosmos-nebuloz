@@ -38,10 +38,44 @@ model Service {
   /// continua apontando para o serviço que existia quando foi feita.
   ativo Boolean @default(true)
 
+  /// readiness | adoption | enablement | custom — a trilha de consultoria.
+  /// String pelo mesmo motivo de `modalidade`: trilha nova é INSERT, não
+  /// migration.
+  trilha String @default("readiness")
+
+  /// PROJETO | SPRINT | HORA | RETAINER. Sucede `modalidade`, que só
+  /// distinguia três casos e não dizia o que a fórmula precisa saber: se o
+  /// serviço recorre. `RETAINER` é o único que entra na mensalidade; o resto
+  /// cai no setup do projeto.
+  unidadeDeCobranca String @default("PROJETO")
+
+  /// "4 semanas", "por sprint de 2 semanas". Texto porque vai no documento do
+  /// cliente, não em conta — duração aqui não multiplica preço.
+  duracao String?
+
+  /// O que o cliente recebe. Vira anexo da proposta.
+  entregaveis String[] @default([])
+
+  /// Papéis que a entrega aloca — dimensiona o time antes de prometer prazo.
+  papeis String[] @default([])
+
+  /// Códigos de serviços que este pressupõe. A proposta avisa quando um deles
+  /// está fora do escopo, e não bloqueia: o cliente pode já ter o equivalente
+  /// feito por outro fornecedor.
+  preRequisitos String[] @default([])
+
+  /// Módulo que este serviço deixa configurado, quando há. Nulo = serviço
+  /// independente de licença, vendável sozinho.
+  moduloVinculado ProductModule?
+
+  /// Execução depende de capacidade no LAB — a proposta avisa antes de alguém
+  /// prometer data.
+  exigeLab Boolean @default(false)
+
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  tenant      Tenant           @relation("ServiceSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  tenant      Tenant         @relation("ServiceSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
   itens       ProposalItem[]
   engajamento Engagement[]
 
@@ -83,6 +117,37 @@ model Proposal {
   /// uma proposta que muda de valor sozinha depois de enviada é um problema
   /// contratual, não um detalhe de exibição.
   totalCentavos Int @default(0)
+
+  /// ── Escopo de assinatura ────────────────────────────────────────────────
+  /// Guardado na proposta e não derivado do tenant: a proposta existe antes do
+  /// tenant, e o escopo é justamente o que está sendo negociado. Nulo nas
+  /// propostas anteriores a este campo, que seguem valendo só pelos itens.
+  planoSlug String?
+  assentos  Int     @default(0)
+
+  /// Módulos escolhidos. Lista e não tabela-ponte porque não há atributo por
+  /// linha — é escolha, não relação com dados próprios.
+  modulos ProductModule[] @default([])
+
+  /// Slugs de `AddOnComercial` e de `TermoDeContrato`. Slug e não FK: o
+  /// catálogo pode ser reorganizado, e a proposta enviada continua dizendo o
+  /// que foi vendido mesmo que a linha de catálogo mude de id.
+  addOnSlugs String[] @default([])
+  termoSlug  String?
+
+  /// Congelados junto de `totalCentavos`, pelo mesmo motivo. ACV e TCV são o
+  /// que o pipeline soma; recalculá-los na leitura faria o funil mudar de
+  /// tamanho sozinho quando alguém mexesse no preço de tabela.
+  acvCentavos    Int @default(0)
+  tcvCentavos    Int @default(0)
+  umaVezCentavos Int @default(0)
+
+  /// Destinatário da proposta — FR-13.7 exige e-mail válido para enviar.
+  contatoEmail String?
+
+  /// Slug do tenant que nasceu desta proposta, quando ela virou cliente.
+  /// Fecha o elo comercial → operação sem redigitar escopo.
+  tenantProvisionadoSlug String?
 
   /// Aprovação que destravou o desconto, quando houve.
   aprovacaoId String?
@@ -159,10 +224,10 @@ model Engagement {
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  tenant     Tenant            @relation("EngagementSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
-  service    Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
-  alocacoes  StaffAllocation[]
-  ipUsados   IpAsset[]
+  tenant    Tenant            @relation("EngagementSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  service   Service?          @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  alocacoes StaffAllocation[]
+  ipUsados  IpAsset[]
 
   @@unique([tenantId, codigo])
   @@index([tenantId])
@@ -215,7 +280,7 @@ model StaffAllocation {
   personId     String
   engagementId String
 
-  percentual Int      @default(0)
+  percentual Int       @default(0)
   inicioEm   DateTime
   fimEm      DateTime?
 
@@ -272,7 +337,7 @@ model IpAsset {
 
 /// Revisão de um ativo. Append-only, igual ao StaffDiagramVersion.
 model IpAssetVersion {
-  id       String @id @default(cuid())
+  id       String  @id @default(cuid())
   assetId  String
   versao   Int
   conteudo String  @db.Text
