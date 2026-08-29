@@ -13,6 +13,22 @@ export {
 export { getCharterRole, invalidateCharterRoleCache } from "./charter-resolve";
 export type { Permission, SaFeRole } from "./matrix";
 export { hasPermission, hasPermissions, PERMISSION_MATRIX } from "./matrix";
-// Contratação modular — Cosmos / Charter / Signal
+// Meridian — diagnóstico de prontidão para IA
+export type { MeridianPermission } from "./meridian-matrix";
+export {
+  hasMeridianPermission,
+  MERIDIAN_MATRIX,
+  MERIDIAN_PERMISSION_LABEL,
+  MERIDIAN_PERMISSIONS,
+  MERIDIAN_ROLE_LABEL,
+  MERIDIAN_ROLE_TONE,
+  meridianDenialReason,
+  meridianRolesGranting,
+} from "./meridian-matrix";
+export {
+  getMeridianRole,
+  invalidateMeridianRoleCache,
+} from "./meridian-resolve";
+// Contratação modular — Cosmos / Charter / Signal / Meridian
 export { hasModule, invalidateModuleCache, listModules } from "./modules";
 export { getEffectiveRole, invalidatePermissionCache } from "./resolve";

@@ -83,7 +83,7 @@ model AuditLog {
   tenantId     String
   userId       String?
   actorId      String?
-  actorType    String? // user | system
+  actorType    String? // user | system | respondent
   action       String
   entityType   String?
   entityId     String?

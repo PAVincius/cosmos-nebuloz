@@ -72,9 +72,14 @@ const CATALOGO: Record<
     resumo: "Métrica de carteira que exige pipeline de dados.",
     href: null,
   },
+  MERIDIAN: {
+    nome: "Meridian",
+    resumo: "Diagnóstico de prontidão para IA — cinco eixos, gaps, plano.",
+    href: "/meridian",
+  },
 };
 
-const ORDEM: ProductModule[] = ["COSMOS", "CHARTER", "SIGNAL"];
+const ORDEM: ProductModule[] = ["COSMOS", "CHARTER", "MERIDIAN", "SIGNAL"];
 
 type LinhaDeModulo = {
   status: string;

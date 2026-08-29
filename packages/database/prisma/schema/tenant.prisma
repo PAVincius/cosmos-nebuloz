@@ -179,7 +179,7 @@ model Tenant {
   meetingInsights           MeetingInsight[]
   // PAE — Personal Access Exception
   accessExceptionRequests   AccessExceptionRequest[]
-  // Contratação modular — Cosmos / Charter / Signal
+  // Contratação modular — Cosmos / Charter / Signal / Meridian
   modules                   TenantModule[]
   // Charter — governança de IA
   charterMemberships        CharterMembership[]
@@ -199,6 +199,22 @@ model Tenant {
   charterPolicyLinks        CharterPolicyLink[]
   charterRequirementSets    CharterRequirementSet[]
   charterCoverages          CharterCoverage[]
+  // Meridian — diagnóstico de prontidão para IA. As duas tabelas de benchmark
+  // ficam de fora: são globais e anônimas por contrato.
+  meridianMemberships       MeridianMembership[]
+  meridianSequences         MeridianSequence[]
+  meridianTemplates         MeridianTemplate[]
+  meridianQuestions         MeridianQuestion[]
+  meridianAssessments       MeridianAssessment[]
+  meridianRespondents       MeridianRespondent[]
+  meridianResponses         MeridianResponse[]
+  meridianEvidence          MeridianEvidence[]
+  meridianAxisScores        MeridianAxisScore[]
+  meridianOverrides         MeridianOverride[]
+  meridianGaps              MeridianGap[]
+  meridianGapDependencies   MeridianGapDependency[]
+  meridianPlanItems         MeridianPlanItem[]
+  meridianGapPromotions     MeridianGapPromotion[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
@@ -225,14 +241,16 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  sessions                Session[]
-  accounts                Account[]
-  memberships             TenantMember[]
+  sessions            Session[]
+  accounts            Account[]
+  memberships         TenantMember[]
   // Lista, não opcional-único: o `userId` da TwoFactor deixou de ser `@unique`
   // porque o `enable` do better-auth sempre insere linha nova.
-  twoFactor               TwoFactor[]
+  twoFactor           TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
-  charterMemberships      CharterMembership[]
+  charterMemberships  CharterMembership[]
+  // Meridian — papel de diagnóstico, ortogonal aos dois anteriores
+  meridianMemberships MeridianMembership[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,
