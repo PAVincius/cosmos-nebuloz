@@ -4,8 +4,8 @@
  * Popula o módulo Meridian (diagnóstico de prontidão para IA) num tenant
  * existente.
  *
- *   pnpm seed:meridian              → tenant "medcore"
- *   pnpm seed:meridian cosmos-dev   → outro slug
+ *   pnpm seed:meridian            → tenant "nebuloz"
+ *   pnpm seed:meridian techcorp-sa → outro slug
  *
  * O que cria:
  *   - TenantModule MERIDIAN + 3 personas com MeridianMembership
@@ -56,7 +56,10 @@ import {
   type ScoringQuestion,
 } from "../lib/meridian/scoring";
 
-const TENANT_SLUG = process.argv[2] ?? "medcore";
+// Default é um dos slugs que `seed:tenants` cria. Apontar para um tenant que
+// nenhum seed produz faria o script falhar na primeira execução de uma base
+// nova, que é justamente quando ele é mais usado.
+const TENANT_SLUG = process.argv[2] ?? "nebuloz";
 
 const PERSONA_PASSWORD = process.env.MERIDIAN_SEED_PASSWORD ?? "meridian123";
 
