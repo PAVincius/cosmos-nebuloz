@@ -29,6 +29,13 @@ import { validarProposta } from "@/lib/comercial/validacoes";
 
 const TROCA = { display: "flex", gap: 8, flexWrap: "wrap" } as const;
 
+const ROTULO_DE_STATUS: Record<string, string> = {
+  AGUARDANDO_APROVACAO: "na fila de aprovação",
+  ENVIADA: "enviada",
+  ACEITA: "aceita",
+  RECUSADA: "recusada",
+};
+
 function botaoDeEscolha(ativo: boolean) {
   return {
     flex: 1,
@@ -55,6 +62,12 @@ export function Gerador({
   podeEscrever: boolean;
 }) {
   const router = useRouter();
+
+  // Rascunho se edita; o resto se lê. Depois de enviada, o documento já saiu
+  // da casa — a action recusa a alteração, e uma tela que deixasse mexer só
+  // levaria a pessoa até o erro em vez de dizer isso de saída.
+  const somenteLeitura = proposta !== null && proposta.status !== "RASCUNHO";
+  const editavel = podeEscrever && !somenteLeitura;
 
   const [titulo, setTitulo] = useState(proposta?.titulo ?? "");
   const [cliente, setCliente] = useState(proposta?.clienteNome ?? "");
@@ -175,7 +188,7 @@ export function Gerador({
       contatoEmail: contato.trim() || undefined,
       planoSlug,
       assentos,
-      modulos: modulos as ("COSMOS" | "CHARTER" | "SIGNAL")[],
+      modulos,
       addOnSlugs,
       termoSlug,
       descontoPercent: desconto,
@@ -223,7 +236,7 @@ export function Gerador({
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Campo htmlFor="g-titulo" label="Título da proposta">
               <input
-                disabled={!podeEscrever}
+                disabled={!editavel}
                 id="g-titulo"
                 onChange={(e) => setTitulo(e.target.value)}
                 placeholder="Ex.: Atlas Energia — plataforma e adoção"
@@ -233,7 +246,7 @@ export function Gerador({
             </Campo>
             <Campo htmlFor="g-cliente" label="Prospect">
               <input
-                disabled={!podeEscrever}
+                disabled={!editavel}
                 id="g-cliente"
                 onChange={(e) => setCliente(e.target.value)}
                 placeholder="Ex.: Atlas Energia"
@@ -247,7 +260,7 @@ export function Gerador({
               label="Contato"
             >
               <input
-                disabled={!podeEscrever}
+                disabled={!editavel}
                 id="g-contato"
                 onChange={(e) => setContato(e.target.value)}
                 placeholder="diretoria@cliente.com.br"
@@ -266,7 +279,7 @@ export function Gerador({
                 {catalogo.planos.map((p) => (
                   <button
                     aria-pressed={p.slug === planoSlug}
-                    disabled={!podeEscrever}
+                    disabled={!editavel}
                     key={p.slug}
                     onClick={() => setPlanoSlug(p.slug)}
                     style={botaoDeEscolha(p.slug === planoSlug)}
@@ -304,7 +317,7 @@ export function Gerador({
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <input
-                  disabled={!podeEscrever}
+                  disabled={!editavel}
                   id="g-assentos"
                   max="500"
                   min="5"
@@ -333,7 +346,7 @@ export function Gerador({
                   return (
                     <button
                       aria-pressed={on}
-                      disabled={!podeEscrever}
+                      disabled={!editavel}
                       key={m.modulo}
                       onClick={() => setModulos(alterna(modulos, m.modulo))}
                       style={{
@@ -373,7 +386,7 @@ export function Gerador({
                     return (
                       <button
                         aria-pressed={on}
-                        disabled={!podeEscrever}
+                        disabled={!editavel}
                         key={a.slug}
                         onClick={() => setAddOnSlugs(alterna(addOnSlugs, a.slug))}
                         style={{
@@ -437,7 +450,7 @@ export function Gerador({
                 return (
                   <button
                     aria-pressed={on}
-                    disabled={!podeEscrever}
+                    disabled={!editavel}
                     key={s.id}
                     onClick={() => setServicoIds(alterna(servicoIds, s.id))}
                     style={{
@@ -505,7 +518,7 @@ export function Gerador({
                 {catalogo.termos.map((t) => (
                   <button
                     aria-pressed={t.slug === termoSlug}
-                    disabled={!podeEscrever}
+                    disabled={!editavel}
                     key={t.slug}
                     onClick={() => setTermoSlug(t.slug)}
                     style={botaoDeEscolha(t.slug === termoSlug)}
@@ -524,7 +537,7 @@ export function Gerador({
             >
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                 <input
-                  disabled={!podeEscrever}
+                  disabled={!editavel}
                   id="g-desconto"
                   max="30"
                   min="0"
@@ -719,7 +732,27 @@ export function Gerador({
 
         {erro && <Erro>{erro}</Erro>}
 
-        {podeEscrever ? (
+        {somenteLeitura && (
+          <SectionCard
+            bodyStyle={{ padding: 14 }}
+            icon="lock"
+            title={`Proposta ${ROTULO_DE_STATUS[proposta.status] ?? proposta.status}`}
+          >
+            <span
+              style={{
+                fontSize: 12,
+                lineHeight: 1.55,
+                color: "var(--ink-muted)",
+              }}
+            >
+              O escopo desta proposta já foi enviado ao cliente e não é mais
+              editável — o que ele recebeu precisa continuar valendo. Para mudar
+              preço ou escopo, monte uma proposta nova.
+            </span>
+          </SectionCard>
+        )}
+
+        {editavel ? (
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             <BotaoPrimario disabled={salvando || !podeEnviar}>
               {salvo ? "Salvar alterações" : "Criar rascunho"}
@@ -741,9 +774,11 @@ export function Gerador({
             )}
           </div>
         ) : (
-          <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
-            Somente leitura — seu papel no back-office é MEMBER.
-          </span>
+          !somenteLeitura && (
+            <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+              Somente leitura — seu papel no back-office é MEMBER.
+            </span>
+          )
         )}
       </div>
     </form>

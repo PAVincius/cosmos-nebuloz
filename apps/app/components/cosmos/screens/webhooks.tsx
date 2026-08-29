@@ -503,7 +503,7 @@ function WebhooksBody() {
           )}
           {hooks.map((h) => {
             const health = healthLabel(h);
-            const leftBorderColor = h.degraded
+            const healthBorderColor = h.degraded
               ? "var(--red)"
               : isFailing(h.lastDeliveryStatus)
                 ? "var(--amber)"
@@ -519,8 +519,7 @@ function WebhooksBody() {
                   gap: 12,
                   padding: "12px 16px",
                   borderRadius: 12,
-                  border: "1px solid var(--hairline)",
-                  borderLeft: `3px solid ${leftBorderColor}`,
+                  border: `1px solid ${healthBorderColor}`,
                   background: "var(--surface)",
                 }}
               >

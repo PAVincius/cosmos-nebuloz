@@ -168,9 +168,8 @@ function SuggestionCard({
           gap: 13,
           alignItems: "center",
           background: "var(--surface)",
-          border: "1px solid var(--hairline)",
+          border: "1px solid rgba(var(--accent-rgb), 0.38)",
           borderRadius: "var(--r-md)",
-          borderLeft: "3px solid var(--accent)",
           padding: "12px 14px",
         }}
       >
@@ -236,9 +235,8 @@ function SuggestionCard({
         flexDirection: "column",
         gap: 10,
         background: "var(--surface)",
-        border: "1px solid var(--hairline)",
+        border: "1px solid rgba(var(--purple-rgb), 0.38)",
         borderRadius: "var(--r-md)",
-        borderLeft: "3px solid var(--purple)",
         padding: "13px 14px",
       }}
     >
@@ -369,9 +367,8 @@ function ReportCard({
       className="lift"
       style={{
         background: "var(--surface)",
-        border: "1px solid var(--hairline)",
+        border: "1px solid rgba(var(--blue-rgb), 0.38)",
         borderRadius: "var(--r-md)",
-        borderLeft: "3px solid var(--blue)",
         padding: "13px 14px",
         overflow: "hidden",
       }}

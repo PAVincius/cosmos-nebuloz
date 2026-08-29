@@ -39,11 +39,17 @@ export function AreaChart({
     .map((v, i) => `${i ? "L" : "M"}${xs(i)} ${ys(v)}`)
     .join(" ");
   const area = `${line} L${xs(data.length - 1)} ${h} L${xs(0)} ${h} Z`;
+  const seriesSummary = data
+    .map((v, i) => `${labels?.[i] ?? `#${i + 1}`}: ${v} SP`)
+    .join(", ");
+
   return (
     <div style={{ position: "relative" }}>
       <svg
+        aria-label={`Velocity por sprint — ${seriesSummary}`}
         height={h}
         preserveAspectRatio="none"
+        role="img"
         style={{ overflow: "visible", display: "block" }}
         viewBox={`0 0 ${w} ${h}`}
         width="100%"
@@ -76,18 +82,33 @@ export function AreaChart({
           style={{
             filter: `drop-shadow(0 4px 8px rgba(var(--${tone}-rgb),.4))`,
           }}
+          vectorEffect="non-scaling-stroke"
         />
         {data.map((v, i) => (
-          <g key={i}>
-            <circle
-              className="chart-hit"
-              cx={xs(i)}
-              cy={ys(v)}
-              fill="transparent"
-              onMouseEnter={() => setHover(i)}
-              onMouseLeave={() => setHover(null)}
-              r="12"
-            />
+          // O valor de cada ponto só existia no hover: em toque o gráfico era
+          // uma silhueta sem um único número, e por teclado não havia como
+          // chegar nele. O <g> é o alvo — foco, toque e mouse abrem o mesmo
+          // ChartTip. Raio 22 (era 12) para o alvo passar o mínimo da SC 2.5.8.
+          // biome-ignore lint/a11y/useSemanticElements: SVG não tem <button>; o alvo precisa viver dentro do <svg> para acompanhar as coordenadas do ponto
+          <g
+            aria-label={`${labels?.[i] ?? `#${i + 1}`}: ${v} SP`}
+            className="chart-hit"
+            key={labels?.[i] ?? i}
+            onBlur={() => setHover(null)}
+            onClick={() => setHover((cur) => (cur === i ? null : i))}
+            onFocus={() => setHover(i)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setHover((cur) => (cur === i ? null : i));
+              }
+            }}
+            onMouseEnter={() => setHover(i)}
+            onMouseLeave={() => setHover(null)}
+            role="button"
+            tabIndex={0}
+          >
+            <circle cx={xs(i)} cy={ys(v)} fill="transparent" r="22" />
             <circle
               cx={xs(i)}
               cy={ys(v)}
@@ -106,8 +127,10 @@ export function AreaChart({
         ))}
       </svg>
       {hover !== null && (
+        // Em painel estreito o tip do primeiro/último ponto saía pela borda:
+        // translate(-50%) sobre left ~1% joga metade dele para fora.
         <ChartTip
-          left={(xs(hover) / w) * 100}
+          left={Math.min(88, Math.max(12, (xs(hover) / w) * 100))}
           top={(ys(data[hover]) / h) * 100}
         >
           <b>{labels ? labels[hover] : `#${hover + 1}`}</b> ·{" "}
@@ -140,7 +163,7 @@ export function VBars({ data }: { data: { label: string; v: number }[] }) {
         return (
           <div
             className="chart-hit"
-            key={i}
+            key={d.label}
             onMouseEnter={() => setHover(i)}
             onMouseLeave={() => setHover(null)}
             style={{
@@ -153,21 +176,27 @@ export function VBars({ data }: { data: { label: string; v: number }[] }) {
               justifyContent: "flex-end",
             }}
           >
-            <div
-              style={{
-                width: "100%",
-                maxWidth: 34,
-                height: `${pct}%`,
-                borderRadius: "6px 6px 2px 2px",
-                background: `var(--${tone})`,
-                boxShadow:
-                  hover === i
-                    ? `0 0 14px rgba(var(--${tone}-rgb),.55)`
-                    : `0 0 8px rgba(var(--${tone}-rgb),.4)`,
-                transition:
-                  "height .6s cubic-bezier(.2,.8,.3,1), box-shadow .15s ease",
-              }}
-            />
+            {/* Track claims whatever height the column has left below the
+                two label rows, so its full height is always the 100% mark —
+                the fill inside only ever scales, it never sets height. */}
+            <div style={{ flex: 1, minHeight: 0, width: "100%", maxWidth: 34 }}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  borderRadius: "6px 6px 2px 2px",
+                  background: `var(--${tone})`,
+                  boxShadow:
+                    hover === i
+                      ? `0 0 14px rgba(var(--${tone}-rgb),.55)`
+                      : `0 0 8px rgba(var(--${tone}-rgb),.4)`,
+                  transform: `scaleY(${pct / 100})`,
+                  transformOrigin: "bottom",
+                  transition:
+                    "transform .6s cubic-bezier(.2,.8,.3,1), box-shadow .15s ease",
+                }}
+              />
+            </div>
             <span
               className="mono"
               style={{
@@ -216,16 +245,28 @@ export function AnomaliesCopilotBar({ children }: { children: ReactNode }) {
 // ── EpicRow — clickable in-flight epic row, navigates to epic detail ──
 export function EpicRow({ id, children }: { id: string; children: ReactNode }) {
   const { navigate } = useNav();
+  const open = () => navigate("epic", id);
+  // Era <div onClick> puro: abrir um épico exigia mouse. Mesmo contrato de
+  // teclado que SectionCard já usa no kit, mais Espaço além de Enter.
   return (
+    // biome-ignore lint/a11y/useSemanticElements: a linha contém CopyId e badges clicáveis; <button> aninhando interativos é HTML inválido e pior que role+tabIndex
     <div
       className="chart-hit"
-      onClick={() => navigate("epic", id)}
+      onClick={open}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          open();
+        }
+      }}
+      role="button"
       style={{
         display: "flex",
         alignItems: "center",
         gap: 12,
         cursor: "pointer",
       }}
+      tabIndex={0}
     >
       {children}
     </div>

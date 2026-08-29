@@ -894,7 +894,7 @@
 
 .cosmos-blocked {
   animation: cosmos-blocked-pulse 2s ease-in-out infinite;
-  border-left: 3px solid var(--red-c) !important;
+  border-color: var(--red-c) !important;
 }
 
 .cosmos-ai-shimmer {
@@ -910,7 +910,7 @@
 
 /* ─── Sheet (Drawer) spring animation override ──────────────────────── */
 [data-slot="sheet-content"][data-state="open"] {
-  animation: sheet-slide-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  animation: sheet-slide-in 0.35s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
 }
 
 [data-slot="sheet-content"][data-state="closed"] {
@@ -938,7 +938,7 @@
 @media (prefers-reduced-motion: reduce) {
   .cosmos-blocked {
     animation: none;
-    border-left: 3px solid var(--red-c) !important;
+    border-color: var(--red-c) !important;
   }
   .cosmos-ai-shimmer {
     animation: none;

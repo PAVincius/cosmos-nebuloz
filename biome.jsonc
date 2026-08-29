@@ -422,6 +422,10 @@
       "!experiments/**/.venv",
       "!apps/app/playwright-report",
       "!apps/app/coverage",
+      // Scripts vendorizados pelo instalador do Impeccable (npx impeccable
+      // install), copiados como vieram do pacote. Lintar aqui só produz
+      // ruído contra um estilo que não é o nosso e trava o pre-commit.
+      "!.claude/skills/impeccable/scripts",
       // Protótipo de design: fonte de verdade visual do port, copiada como
       // veio do projeto de design. Lintar quebraria a fidelidade da referência.
       "!docs/design-handoff",

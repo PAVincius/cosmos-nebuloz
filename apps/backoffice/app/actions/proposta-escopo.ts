@@ -1,6 +1,6 @@
 "use server";
 
-import { database } from "@repo/database";
+import { database, type ProductModule } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -25,8 +25,15 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * seria o cliente, comparando o documento com o contrato.
  */
 
-const MODULOS = ["COSMOS", "CHARTER", "SIGNAL", "MERIDIAN", "SCAFFOLD"] as const;
-
+/**
+ * Os módulos vendáveis não são uma lista repetida aqui: são os que têm preço no
+ * catálogo (`PrecoDeModulo`). Repetir o enum em código foi como este arquivo
+ * quebrou o build de produção — a lista local tinha cinco valores porque o
+ * schema no disco tinha cinco, e o enum do repositório tem três.
+ *
+ * Lendo do banco, a validação acompanha o catálogo sem ninguém precisar
+ * lembrar de sincronizar duas listas.
+ */
 const EscopoSchema = z.object({
   /** Ausente = proposta nova. Presente = rascunho sendo ajustado na call. */
   id: z.string().min(1).optional(),
@@ -37,7 +44,7 @@ const EscopoSchema = z.object({
   contatoEmail: z.string().email().max(160).optional(),
   planoSlug: z.string().min(1),
   assentos: z.number().int().min(0).max(100_000),
-  modulos: z.array(z.enum(MODULOS)).min(1, "Escolha ao menos um módulo."),
+  modulos: z.array(z.string().min(1)).min(1, "Escolha ao menos um módulo."),
   addOnSlugs: z.array(z.string().min(1)).max(20).default([]),
   termoSlug: z.string().min(1),
   descontoPercent: z.number().int().min(0).max(100).default(0),
@@ -82,6 +89,17 @@ export async function salvarEscopoAction(
       throw new StaffAuthError(
         "FORBIDDEN",
         `Prazo ${dados.termoSlug} não está no catálogo.`
+      );
+    }
+
+    const modulosValidos = new Set(precosDeModulo.map((p) => String(p.modulo)));
+    const modulosDesconhecidos = dados.modulos.filter(
+      (m) => !modulosValidos.has(m)
+    );
+    if (modulosDesconhecidos.length > 0) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `Módulo fora do catálogo: ${modulosDesconhecidos.join(", ")}.`
       );
     }
 
@@ -139,7 +157,9 @@ export async function salvarEscopoAction(
       contatoEmail: dados.contatoEmail ?? null,
       planoSlug: plano.slug,
       assentos: dados.assentos,
-      modulos: dados.modulos,
+      // Validado logo acima contra o catálogo; o cast é para o enum do Prisma,
+      // cujos valores são exatamente os que têm preço cadastrado.
+      modulos: dados.modulos as ProductModule[],
       addOnSlugs: dados.addOnSlugs,
       termoSlug: termo.slug,
       descontoPercent: dados.descontoPercent,

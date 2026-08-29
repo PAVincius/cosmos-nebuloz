@@ -484,8 +484,7 @@ export default function RoadmapScreen() {
                           style={{
                             alignItems: "center",
                             background: "var(--surface-2)",
-                            border: "1px solid var(--hairline)",
-                            borderLeft: `3px solid ${item.color}`,
+                            border: `1px solid ${item.color}`,
                             borderRadius: "var(--r-sm)",
                             display: "flex",
                             gap: 6,
