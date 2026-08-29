@@ -44,6 +44,18 @@ const ALLOWED_UNSCOPED_UNIQUE_KEYS = new Set([
   // validates alvoId belongs to the caller's tenant before every write, and
   // cuids don't collide across tenants, so the same transitive argument holds.
   "CharterPolicyLink:policyId,alvoTipo,alvoId",
+  // Meridian (2026-08-29): mesmo argumento de escopo transitivo. Cada campo
+  // não-tenant destas chaves é FK para um modelo que carrega `tenantId` —
+  // templateId → MeridianTemplate, respondentId → MeridianRespondent,
+  // assessmentId → MeridianAssessment, gapId → MeridianGap. Uma colisão entre
+  // tenants exigiria que dois tenants compartilhassem a mesma linha pai, o que
+  // a FK impede. Diferente do caso que a Sec 2 corrigiu: aqui nenhuma chave
+  // permite que um UPDATE case com a linha de outro tenant por id.
+  "MeridianQuestion:templateId,code",
+  "MeridianResponse:respondentId,questionId",
+  "MeridianAxisScore:assessmentId,axis",
+  "MeridianGapDependency:gapId,dependsOnGapId",
+  "MeridianPlanItem:assessmentId,gapId",
 ]);
 
 type ModelUniqueKey = { model: string; fields: string[]; file: string };
