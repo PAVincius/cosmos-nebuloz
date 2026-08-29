@@ -74,12 +74,17 @@ ON CONFLICT ("tenantId", "slug") DO NOTHING;
 
 -- COSMOS entra no preço do assento; os demais são adicionais mensais.
 --
--- O JOIN com `pg_enum` não é preciosismo: o schema Prisma já declara MERIDIAN e
--- SCAFFOLD, e o enum deste banco ainda tem só três valores. Listar os cinco
--- direto derruba a transação inteira por causa dos dois que não existem aqui —
--- e o preço dos três que existem não entra. Assim, semeia o que o banco
--- conhece hoje; quando os outros dois forem criados, rodar de novo completa o
--- catálogo sem tocar no que já está lá.
+-- O JOIN com `pg_enum` não é preciosismo: o schema Prisma pode declarar valores
+-- que o enum deste banco ainda não tem. Listar todos direto derruba a
+-- transação inteira por causa dos que não existem aqui — e o preço dos que
+-- existem não entra. Assim, semeia o que o banco conhece hoje; quando os
+-- outros forem criados, rodar de novo completa o catálogo sem tocar no que já
+-- está lá.
+--
+-- MERIDIAN entrou no enum com a migration 20260829120000_meridian_diagnose, e
+-- é por isso que ele deixa de ser pulado agora. SCAFFOLD continua fora: o
+-- produto não existe no repositório, e preço de algo que ninguém entrega é
+-- promessa, não catálogo.
 INSERT INTO "PrecoDeModulo" ("id", "tenantId", "modulo", "precoMensalCentavos")
 SELECT gen_random_uuid()::text, 'system', e.enumlabel::"ProductModule", v.preco
 FROM (
@@ -87,7 +92,7 @@ FROM (
     ('COSMOS',        0),
     ('CHARTER',  180000),
     ('SIGNAL',   120000),
-    ('MERIDIAN',      0),
+    ('MERIDIAN', 120000),
     ('SCAFFOLD',      0)
 ) AS v(modulo, preco)
 JOIN pg_type t ON t.typname = 'ProductModule'
