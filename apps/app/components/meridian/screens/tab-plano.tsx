@@ -36,7 +36,12 @@ export default function PlanoTab({
     [a.id]
   );
   const { data, loading, error, reload } = useMeridianData<GapRow[]>(fetcher);
-  const [plan, setPlan] = useState<PlanRow[] | null>(null);
+  // O plano já gravado vem no detalhe do assessment. Sem isto a aba mostrava
+  // "ainda não gerado" para um plano que existe no banco, e só aparecia depois
+  // de clicar em gerar — regenerando à toa o que já estava sequenciado.
+  const [plan, setPlan] = useState<PlanRow[] | null>(
+    a.planItems.length > 0 ? a.planItems : null
+  );
   const [busy, setBusy] = useState(false);
 
   const generate = async () => {

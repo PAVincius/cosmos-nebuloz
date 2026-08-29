@@ -14,7 +14,7 @@ import {
   Progress,
   SectionCard,
 } from "@repo/design-system/cosmos/kit";
-import { useCallback, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { AssessmentDetail } from "@/app/(meridian)/actions/assessments";
 import { type GapRow, listGapRegister } from "@/app/(meridian)/actions/gaps";
 import { AXES } from "@/lib/meridian/axes";
@@ -56,8 +56,20 @@ export default function GapsTab({ a }: { a: AssessmentDetail }) {
   >([]);
 
   const gaps = data ?? [];
-  const edges: Edge[] = gaps.flatMap((g) =>
-    g.dependsOn.map((d) => ({ from: g.code, to: d }))
+  // A lista de arestas entra nas dependências do efeito de medição abaixo.
+  // Recalculá-la a cada render criaria referência nova toda vez, o efeito
+  // rodaria de novo, `setEdgeGeom` dispararia outro render — e o React derruba
+  // a tela com "Maximum update depth exceeded". A chave serializada é o que
+  // torna a memo estável de verdade: `gaps` muda de referência sempre que a
+  // action recarrega, mesmo quando o grafo é idêntico.
+  const chaveDoGrafo = gaps
+    .map((g) => `${g.code}>${g.dependsOn.join(",")}`)
+    .join("|");
+  // biome-ignore lint/correctness/useExhaustiveDependencies: `chaveDoGrafo` é a forma estável de `gaps` — usar `gaps` reintroduz o loop
+  const edges: Edge[] = useMemo(
+    () =>
+      gaps.flatMap((g) => g.dependsOn.map((d) => ({ from: g.code, to: d }))),
+    [chaveDoGrafo]
   );
 
   // Mede as arestas depois do layout: a posição dos nós depende do fluxo, e

@@ -71,11 +71,22 @@ export type OverrideView = {
   createdAt: string;
 };
 
+export type PlanItemView = {
+  gapId: string;
+  gapCode: string;
+  quarter: number;
+  seq: number;
+  capacityNote: string | null;
+};
+
 export type AssessmentDetail = AssessmentRow & {
   openedAt: string;
   closedAt: string | null;
   respondents: RespondentView[];
   overrides: OverrideView[];
+  /** Plano já gravado. Vazio quando ainda não foi gerado — a aba precisa
+   *  distinguir "não gerado" de "gerado e vazio". */
+  planItems: PlanItemView[];
   contestedSpread: number;
   gapThreshold: number;
 };
@@ -222,6 +233,10 @@ export async function getAssessment(
           respondents: { orderBy: { createdAt: "asc" } },
           scores: true,
           overrides: { orderBy: { createdAt: "asc" } },
+          planItems: {
+            orderBy: { seq: "asc" },
+            include: { gap: { select: { code: true } } },
+          },
           _count: { select: { evidence: true } },
         },
       });
@@ -292,6 +307,15 @@ export async function getAssessment(
             invitedAt: iso(r.invitedAt),
             lastRemindedAt: iso(r.lastRemindedAt),
             completedAt: iso(r.completedAt),
+          })
+        ),
+        planItems: a.planItems.map(
+          (p): PlanItemView => ({
+            gapId: p.gapId,
+            gapCode: p.gap.code,
+            quarter: p.quarter,
+            seq: p.seq,
+            capacityNote: p.capacityNote,
           })
         ),
         overrides: a.overrides.map(
