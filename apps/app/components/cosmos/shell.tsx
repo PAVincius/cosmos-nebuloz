@@ -18,8 +18,11 @@ import { useTheme } from "next-themes";
 import {
   type CSSProperties,
   type ReactNode,
+  type RefObject,
   useCallback,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { CommandPalette } from "./command-palette";
@@ -272,9 +275,15 @@ export type ShellIdentity = {
 function Sidebar({
   activeId,
   identity,
+  open,
+  onClose,
 }: {
   activeId: string;
   identity: ShellIdentity;
+  // Abaixo de 1024px a aside vira gaveta; no desktop `open` é ignorado
+  // porque a media query não aplica nenhuma das regras de posicionamento.
+  open: boolean;
+  onClose: () => void;
 }) {
   const { isComingSoon } = useNav();
   const childActive = (item: NavItem) =>
@@ -286,6 +295,9 @@ function Sidebar({
 
   return (
     <aside
+      className="cosmos-sidebar"
+      data-open={open ? "true" : "false"}
+      id="cosmos-drawer"
       style={{
         width: 256,
         flexShrink: 0,
@@ -295,6 +307,7 @@ function Sidebar({
         background: "var(--sidebar)",
         borderRight: "1px solid var(--hairline)",
       }}
+      tabIndex={-1}
     >
       <div style={{ padding: "12px 12px 10px" }}>
         <button
@@ -397,8 +410,12 @@ function Sidebar({
         </div>
       </div>
 
+      {/* Clique em qualquer link do nav fecha a gaveta. Um handler no
+          contêiner cobre os ~30 <Link> por bubbling; no desktop a gaveta já
+          está aberta e onClose não muda nada visível. */}
       <nav
         className="scroll"
+        onClick={onClose}
         style={{ flex: 1, overflowY: "auto", padding: "8px 12px 12px" }}
       >
         <div
@@ -546,21 +563,25 @@ function Topbar({
   activeId,
   theme,
   onToggleTheme,
+  onOpenNav,
+  navButtonRef,
 }: {
   activeId: string;
   theme: "light" | "dark";
   onToggleTheme: () => void;
+  onOpenNav: () => void;
+  navButtonRef: RefObject<HTMLButtonElement | null>;
 }) {
   const [title, parent] = TITLES[activeId] || [activeId, "COSMOS"];
   return (
     <header
+      className="cosmos-topbar"
       style={{
         height: 56,
         flexShrink: 0,
         display: "flex",
         alignItems: "center",
         gap: 14,
-        padding: "0 22px",
         borderBottom: "1px solid var(--hairline)",
         background: "var(--canvas)",
         position: "sticky",
@@ -569,6 +590,27 @@ function Topbar({
         backdropFilter: "saturate(1.2)",
       }}
     >
+      <button
+        aria-label="Abrir navegação"
+        className="cosmos-menu-btn btn navitem"
+        onClick={onOpenNav}
+        ref={navButtonRef}
+        style={{
+          alignItems: "center",
+          background: "var(--surface)",
+          border: "1px solid var(--hairline)",
+          borderRadius: "var(--r-sm)",
+          color: "var(--ink-muted)",
+          flexShrink: 0,
+          height: 40,
+          justifyContent: "center",
+          padding: 0,
+          width: 40,
+        }}
+        type="button"
+      >
+        <Icon name="panelLeft" size={18} />
+      </button>
       <div
         style={{
           display: "flex",
@@ -741,18 +783,65 @@ export function CosmosShell({
     (id: string) => !screenIdSet.has(id),
     [screenIdSet]
   );
+  const [navOpen, setNavOpen] = useState(false);
+  const navButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const closeNav = useCallback(() => {
+    setNavOpen((wasOpen) => {
+      // Devolve o foco ao gatilho: sem isso, fechar por Escape ou pelo scrim
+      // deixa o teclado no início do documento.
+      if (wasOpen) {
+        navButtonRef.current?.focus();
+      }
+      return false;
+    });
+  }, []);
+
   const navigate = useCallback(
-    (id: string, param?: string) =>
-      router.push(param ? `${href(id)}/${param}` : href(id)),
+    (id: string, param?: string) => {
+      setNavOpen(false);
+      router.push(param ? `${href(id)}/${param}` : href(id));
+    },
     [router]
   );
+
+  useEffect(() => {
+    if (!navOpen) {
+      return;
+    }
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeNav();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    document.getElementById("cosmos-drawer")?.focus();
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [navOpen, closeNav]);
 
   return (
     <NavCtx.Provider value={{ navigate, isComingSoon }}>
       {/* theme comes from next-themes (data-theme on <html>); toggling is CSS-only, no tree re-render */}
       <div className="cosmos-root" style={{ display: "flex" } as CSSProperties}>
-        <Sidebar activeId={activeId} identity={identity} />
+        <Sidebar
+          activeId={activeId}
+          identity={identity}
+          onClose={closeNav}
+          open={navOpen}
+        />
+        {navOpen && (
+          <button
+            aria-label="Fechar navegação"
+            className="cosmos-scrim"
+            onClick={closeNav}
+            type="button"
+          />
+        )}
         <div
+          // `inert` só existe fisicamente abaixo de 1024px (a media query em
+          // cosmos.css que faz a gaveta flutuar); no desktop `navOpen` nunca
+          // liga, então isto nunca desativa nada ali.
+          inert={navOpen}
           style={{
             flex: 1,
             display: "flex",
@@ -762,6 +851,8 @@ export function CosmosShell({
         >
           <Topbar
             activeId={activeId}
+            navButtonRef={navButtonRef}
+            onOpenNav={() => setNavOpen(true)}
             onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
             theme={theme}
           />
@@ -770,8 +861,8 @@ export function CosmosShell({
               what it is rather than landing on an anonymous group. */}
           <section
             aria-label="Conteúdo da tela"
-            className="scroll"
-            style={{ flex: 1, overflowY: "auto", padding: "24px 28px 40px" }}
+            className="scroll cosmos-content"
+            style={{ flex: 1, overflowY: "auto" }}
             // biome-ignore lint/a11y/noNoninteractiveTabindex: axe's scrollable-region-focusable requires a focusable scroll container
             tabIndex={0}
           >

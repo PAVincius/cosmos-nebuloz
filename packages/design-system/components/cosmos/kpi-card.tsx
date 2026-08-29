@@ -21,12 +21,16 @@ const kpiBg: Record<Tone, string> = {
 
 // Light mode: visible tone tint — enough personality, not overpowering
 const kpiBgLight: Record<Tone, string> = {
-  accent: "radial-gradient(140% 130% at 0% 0%, rgba(94,106,210,.13), transparent 52%)",
-  green:  "radial-gradient(140% 130% at 0% 0%, rgba(22,163,74,.12), transparent 52%)",
-  red:    "radial-gradient(140% 150% at 100% 25%, rgba(225,29,72,.16), transparent 56%)",
-  amber:  "radial-gradient(140% 130% at 0% 0%, rgba(217,119,6,.14), transparent 52%)",
-  blue:   "radial-gradient(140% 130% at 0% 0%, rgba(37,99,235,.13), transparent 52%)",
-  purple: "radial-gradient(140% 130% at 0% 0%, rgba(124,58,237,.13), transparent 52%)",
+  accent:
+    "radial-gradient(140% 130% at 0% 0%, rgba(94,106,210,.13), transparent 52%)",
+  green:
+    "radial-gradient(140% 130% at 0% 0%, rgba(22,163,74,.12), transparent 52%)",
+  red: "radial-gradient(140% 150% at 100% 25%, rgba(225,29,72,.16), transparent 56%)",
+  amber:
+    "radial-gradient(140% 130% at 0% 0%, rgba(217,119,6,.14), transparent 52%)",
+  blue: "radial-gradient(140% 130% at 0% 0%, rgba(37,99,235,.13), transparent 52%)",
+  purple:
+    "radial-gradient(140% 130% at 0% 0%, rgba(124,58,237,.13), transparent 52%)",
 };
 
 const inkCorner: Record<Tone, string> = {
@@ -95,7 +99,7 @@ export function KpiCard({
           boxShadow: hovered ? shadowHover : shadowRest,
           transform: hovered ? "translateY(-4px)" : "translateY(0)",
           transition:
-            "transform 480ms cubic-bezier(0.34,1.28,0.64,1), box-shadow 400ms cubic-bezier(0.25,0.46,0.45,0.94), border-color 300ms ease",
+            "transform 480ms cubic-bezier(0.2,0.8,0.3,1), box-shadow 400ms cubic-bezier(0.25,0.46,0.45,0.94), border-color 300ms ease",
         } as React.CSSProperties
       }
     >
@@ -155,7 +159,7 @@ export function KpiCard({
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative watermark, aria-hidden on parent */}
           <svg
             aria-hidden
-            className="absolute inset-0 opacity-100 transition-opacity duration-[500ms] ease-out group-hover:opacity-20 hidden dark:block"
+            className="absolute inset-0 hidden opacity-100 transition-opacity duration-[500ms] ease-out group-hover:opacity-20 dark:block"
             fill="none"
             height="208"
             strokeWidth="1.15"
@@ -173,7 +177,7 @@ export function KpiCard({
           {/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative watermark, aria-hidden on parent */}
           <svg
             aria-hidden
-            className="absolute inset-0 opacity-0 transition-opacity duration-[500ms] ease-out group-hover:opacity-90 hidden dark:block"
+            className="absolute inset-0 hidden opacity-0 transition-opacity duration-[500ms] ease-out group-hover:opacity-90 dark:block"
             fill="none"
             height="208"
             strokeWidth="1.15"
@@ -210,9 +214,7 @@ export function KpiCard({
 
       {/* Value — unified span, tone-text covers both modes via CSS variables */}
       <div className="relative z-[3] mt-auto mb-3 whitespace-nowrap pt-3.5 font-bold font-mono text-[38px] leading-none tracking-[-0.02em]">
-        <span style={{ color: "var(--tone-text)" }}>
-          {value}
-        </span>
+        <span style={{ color: "var(--tone-text)" }}>{value}</span>
         {!!unit && (
           <span className="ml-1.5 font-semibold text-[24px] opacity-80">
             {unit}
