@@ -41,6 +41,25 @@ export function charterStorageState(role: CharterPersonaRole): string {
   return `./e2e/fixtures/charter/${role}.json`;
 }
 
+/**
+ * Personas do Meridian, semeadas por `seed-meridian.ts` no tenant do e2e.
+ *
+ * Sem sessão de consultor, os specs do Meridian só conseguiriam provar o
+ * default deny: o admin do e2e recebe o módulo contratado mas nenhum
+ * `MeridianMembership`, então ele bate no guard de papel e nunca chega às
+ * telas. É a mesma razão das personas do Charter acima — quem prova que o
+ * portão abre não pode ser quem prova que ele fecha.
+ */
+const MERIDIAN_PERSONAS = [
+  { role: "consultant", email: "marina.duarte@nebuloz.exemplo" },
+] as const;
+export type MeridianPersonaRole = (typeof MERIDIAN_PERSONAS)[number]["role"];
+
+/** Storage state for a seeded Meridian persona, relative to apps/app. */
+export function meridianStorageState(role: MeridianPersonaRole): string {
+  return `./e2e/fixtures/meridian/${role}.json`;
+}
+
 async function signInAndSave(
   browser: Browser,
   opts: {
@@ -113,7 +132,17 @@ async function globalSetup(config: FullConfig) {
     console.warn("⚠️ pnpm seed:charter had warnings/errors but continuing...");
   }
 
+  // O Meridian entra no mesmo tenant do e2e: assim o admin (sem papel de
+  // diagnóstico) exercita o guard de papel, e a consultora exercita as telas.
+  console.log("🌱 Executing seed:meridian before E2E tests...");
+  try {
+    execSync("pnpm seed:meridian cosmos-dev", { stdio: "inherit" });
+  } catch (_err) {
+    console.warn("⚠️ pnpm seed:meridian had warnings/errors but continuing...");
+  }
+
   const charterPassword = process.env.CHARTER_SEED_PASSWORD ?? "charter123";
+  const meridianPassword = process.env.MERIDIAN_SEED_PASSWORD ?? "meridian123";
 
   const browser = await chromium.launch();
   try {
@@ -161,6 +190,30 @@ async function globalSetup(config: FullConfig) {
     } catch (err) {
       console.warn(
         "⚠️ Sessões do Charter não salvas (seed do medcore ausente?) — suítes SAFe seguem:",
+        err instanceof Error ? err.message : err
+      );
+    }
+
+    // Mesma proteção do bloco do Charter: persona sem seed não derruba o resto.
+    try {
+      for (const persona of MERIDIAN_PERSONAS) {
+        console.log(
+          `🔐 Signing in ${persona.email} (Meridian/${persona.role.toUpperCase()})...`
+        );
+        await signInAndSave(browser, {
+          baseURL: baseURL as string,
+          email: persona.email,
+          password: meridianPassword,
+          paths: [meridianStorageState(persona.role)],
+          landingPath: "/meridian",
+        });
+      }
+      console.log(
+        `✅ ${MERIDIAN_PERSONAS.length} sessão(ões) do Meridian salvas em e2e/fixtures/meridian/`
+      );
+    } catch (err) {
+      console.warn(
+        "⚠️ Sessões do Meridian não salvas (seed ausente?) — demais suítes seguem:",
         err instanceof Error ? err.message : err
       );
     }

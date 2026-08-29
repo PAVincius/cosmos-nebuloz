@@ -1,129 +1,144 @@
 import { expect, test } from "@playwright/test";
+import { meridianStorageState } from "./setup/auth.setup";
 
 /**
  * E2E — Meridian V1 (Diagnose).
  *
  * Cobre os cenários de `specs/001-meridian-diagnose/quickstart.md` que só o
- * navegador prova: o guard de módulo, a navegação da carteira, o bloqueio de
- * fechamento de coleta por eixo sem dono, a validação do override e a
- * declaração de retenção do benchmark.
+ * navegador prova: o guard de papel, a navegação da carteira, a validação do
+ * override, o grafo de dependências, a declaração de retenção do benchmark e
+ * o link do respondente.
  *
- * Pré-requisito: banco seedado com `pnpm seed:meridian` no tenant da sessão de
- * e2e. O tenant `cosmos-dev` continua sem o módulo — é o caso de default deny.
+ * Duas sessões, de propósito. O admin do e2e tem o módulo contratado mas
+ * nenhum `MeridianMembership`, então é ele que prova que o portão fecha; a
+ * consultora semeada por `seed-meridian.ts` é quem prova que ele abre. Uma
+ * sessão só não conseguiria fazer as duas coisas.
+ *
+ * Pré-requisito: `globalSetup` roda `seed:meridian cosmos-dev` e salva a
+ * sessão da consultora.
  */
 
-test.describe("Meridian · guard de módulo @auth", () => {
+test.describe("Meridian · guard de papel @auth", () => {
   test.use({ storageState: "./e2e/fixtures/auth-session.json" });
 
-  test("tenant sem o módulo MERIDIAN cai em /meridian-indisponivel", async ({
+  test("admin sem papel de diagnóstico não entra, mesmo com o módulo contratado", async ({
     page,
   }) => {
     await page.goto("/meridian");
-    await page.waitForURL(/\/meridian(-indisponivel)?$/, { timeout: 15_000 });
+    await page.waitForURL(/\/meridian-indisponivel/, { timeout: 30_000 });
 
-    // Sem o módulo, o redirect acontece; com ele, a carteira carrega. As duas
-    // saídas são válidas conforme o tenant da sessão — o que não pode existir é
-    // uma terceira, com tela em branco.
-    const redirected = page.url().includes("meridian-indisponivel");
-    if (redirected) {
-      await expect(
-        page.getByRole("heading", {
-          name: /Meridian não está contratado|papel de diagnóstico/,
-        })
-      ).toBeVisible();
-    } else {
-      await expect(
-        page.getByRole("heading", { name: "Assessments" })
-      ).toBeVisible();
-    }
+    // A mensagem distingue as duas recusas: quem não tem papel resolve com um
+    // consultor, quem não tem módulo resolve com quem assina o contrato.
+    await expect(
+      page.getByRole("heading", { name: /papel de diagnóstico/ })
+    ).toBeVisible();
   });
 
-  test("rota profunda redireciona igual, não só a raiz", async ({ page }) => {
+  test("rota profunda é barrada igual, não só a raiz", async ({ page }) => {
     await page.goto("/meridian/registry");
-    await page.waitForURL(/\/meridian/, { timeout: 15_000 });
-    await expect(page.locator("body")).not.toBeEmpty();
+    await page.waitForURL(/\/meridian-indisponivel/, { timeout: 30_000 });
   });
 });
 
-test.describe("Meridian · carteira e diagnóstico @auth @meridian", () => {
-  test.use({ storageState: "./e2e/fixtures/auth-session.json" });
-  test.skip(
-    ({ baseURL }) => !baseURL,
-    "requer app em execução com seed:meridian"
-  );
+test.describe("Meridian · diagnóstico @auth @meridian", () => {
+  test.use({ storageState: meridianStorageState("consultant") });
 
   test("carteira lista os assessments e filtra por status", async ({
     page,
   }) => {
     await page.goto("/meridian");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
 
     await expect(
       page.getByRole("heading", { name: "Assessments" })
     ).toBeVisible();
     await expect(page.getByText("Eixos contestados")).toBeVisible();
-    await expect(page.getByText("Vanta Saúde")).toBeVisible();
+    await expect(page.getByText("Vanta Saúde").first()).toBeVisible();
 
-    await page.getByRole("button", { name: "Coletando" }).click();
-    await expect(page.getByText("Helix Agro")).toBeVisible();
+    await page.getByRole("button", { name: "Coletando", exact: true }).click();
+    await expect(page.getByText("Helix Agro").first()).toBeVisible();
     await expect(page.getByText("Vanta Saúde")).toHaveCount(0);
   });
 
-  test("detalhe abre nas cinco abas do diagnóstico", async ({ page }) => {
-    await page.goto("/meridian");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
-    await page.getByText("Vanta Saúde").first().click();
-    await page.waitForURL(/\/meridian\/assessment\//, { timeout: 15_000 });
-
-    for (const tab of [
-      "Scoring & Revisão",
-      "Gap register",
-      "Plano 12 meses",
-      "Relatório & Benchmark",
-    ]) {
-      await page.getByRole("button", { name: new RegExp(tab) }).click();
-      await expect(page.locator("main")).toBeVisible();
-    }
-  });
-
-  test("override recusa justificativa curta e aceita a completa", async ({
+  test("detalhe abre em Scoring e mostra o computado ao lado do override", async ({
     page,
   }) => {
     await page.goto("/meridian");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
     await page.getByText("Vanta Saúde").first().click();
-    await page.getByRole("button", { name: /Scoring & Revisão/ }).click();
+    await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
 
-    const decidir = page.getByRole("button", { name: /Revisar e decidir/ });
-    if ((await decidir.count()) === 0) {
-      test.skip(true, "nenhum eixo contestado neste dataset");
-    }
-    await decidir.first().click();
+    // "Governance" aparece no card do eixo e de novo na linha do histórico de
+    // override — o `.first()` mira o card, que é onde o par computado/final
+    // convive.
+    await expect(page.getByText("Governance").first()).toBeVisible();
+    // O override não esconde o número que ele substituiu — é o que sustenta a
+    // resposta a "por que o número mudou?".
+    await expect(page.getByText(/computado: \d+/)).toBeVisible();
+    await expect(page.getByText("Contestado").first()).toBeVisible();
+  });
+
+  test("grafo de dependências renderiza sem derrubar a aba", async ({
+    page,
+  }) => {
+    // Regressão: a lista de arestas entrava nas dependências do efeito de
+    // medição e a aba morria com "Maximum update depth exceeded".
+    const quebras: string[] = [];
+    page.on("pageerror", (e) => quebras.push(e.message));
+
+    await page.goto("/meridian");
+    await page.getByText("Vanta Saúde").first().click();
+    await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
+    await page.getByRole("button", { name: /Gap register/ }).click();
+
+    await expect(page.getByText("Grafo de dependências")).toBeVisible();
+    await expect(page.getByText("Sem pré-requisito")).toBeVisible();
+    expect(quebras.filter((m) => /Maximum update depth/.test(m))).toEqual([]);
+  });
+
+  test("plano gravado aparece sem precisar regerar", async ({ page }) => {
+    await page.goto("/meridian");
+    await page.getByText("Vanta Saúde").first().click();
+    await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
+    await page.getByRole("button", { name: /Plano 12 meses/ }).click();
+
+    await expect(page.getByText("Plano sequenciado")).toBeVisible();
+    await expect(page.getByText("Plano ainda não gerado")).toHaveCount(0);
+  });
+
+  test("override recusa justificativa curta e score sem mudança", async ({
+    page,
+  }) => {
+    await page.goto("/meridian");
+    await page.getByText("Vanta Saúde").first().click();
+    await page.waitForURL(/\/meridian\/assessment\//, { timeout: 30_000 });
+    await page.getByRole("button", { name: /Revisar e decidir/ }).click();
 
     const registrar = page.getByRole("button", { name: "Registrar override" });
     await expect(registrar).toBeDisabled();
 
+    // Justificativa suficiente, mas o score continua igual ao computado:
+    // override sem mudança não é decisão.
     await page
       .getByPlaceholder(/O que a evidência mostra/)
       .fill("Evidência mostra zero casos revisados pelo comitê em seis meses.");
-    // Rationale suficiente mas score igual ao computado: continua desabilitado,
-    // porque override sem mudança não é decisão.
     await expect(registrar).toBeDisabled();
+  });
+
+  test("fila de revisão traz o eixo contestado com o motivo", async ({
+    page,
+  }) => {
+    await page.goto("/meridian/queue");
+
+    await expect(
+      page.getByRole("heading", { name: "Fila de revisão" })
+    ).toBeVisible();
+    await expect(page.getByText(/acima do limiar de \d+/)).toBeVisible();
   });
 
   test("gap register mostra o registro canônico e a regra de fronteira", async ({
     page,
   }) => {
     await page.goto("/meridian/registry");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
+
     await expect(
       page.getByRole("heading", { name: "Gap register" })
     ).toBeVisible();
@@ -135,15 +150,13 @@ test.describe("Meridian · carteira e diagnóstico @auth @meridian", () => {
     page,
   }) => {
     await page.goto("/meridian/benchmark");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
+
     await expect(
       page.getByRole("heading", { name: "Benchmark pool" })
     ).toBeVisible();
-    await expect(page.getByText(/Coortes retidas/)).toBeVisible();
+    await expect(page.getByText("Coortes retidas")).toBeVisible();
     await expect(
-      page.getByText(/agregado existe, leitura bloqueada/).first()
+      page.getByText("agregado existe, leitura bloqueada").first()
     ).toBeVisible();
   });
 
@@ -151,27 +164,29 @@ test.describe("Meridian · carteira e diagnóstico @auth @meridian", () => {
     page,
   }) => {
     await page.goto("/meridian/confidence");
-    if (page.url().includes("indisponivel")) {
-      test.skip(true, "módulo não contratado neste tenant");
-    }
+
     await expect(
       page.getByRole("heading", { name: "Escala de confiança" })
     ).toBeVisible();
-    for (const level of ["Medido", "Estimado", "Declarado"]) {
+    for (const nivel of ["Medido", "Estimado", "Declarado"]) {
       await expect(
-        page.getByText(level, { exact: true }).first()
+        page.getByText(nivel, { exact: true }).first()
       ).toBeVisible();
     }
   });
 });
 
 test.describe("Meridian · link do respondente", () => {
+  // Sem sessão de propósito: o respondente não tem conta na plataforma.
+  test.use({ storageState: { cookies: [], origins: [] } });
+
   test("token inválido devolve a mesma mensagem genérica", async ({ page }) => {
     await page.goto(`/meridian-responder/${"f".repeat(64)}`);
+
     await expect(
       page.getByRole("heading", { name: "Link inválido ou expirado" })
     ).toBeVisible();
-    // A mensagem não pode revelar se o assessment existe.
+    // Não pode revelar se o assessment existe.
     await expect(page.locator("body")).not.toContainText(
       /expirado em|revogado/
     );
