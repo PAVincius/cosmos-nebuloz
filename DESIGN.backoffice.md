@@ -222,4 +222,4 @@ Registradas aqui porque um documento de design honesto inclui o que falta:
 1. **Nenhum estado de carregamento.** Zero `loading.tsx`, zero `error.tsx`, zero `<Suspense>` nas 18 rotas — e 15 são `force-dynamic`. A pessoa clica e a tela anterior congela até o HTML novo chegar. `Skel` e `SkeletonKpi` existem no kit e nunca foram importados.
 2. **Nenhuma responsividade.** Ver Layout.
 3. **Nenhum token de tamanho de tipografia.** Ver Typography.
-4. **Sem skip link** e sem `<h1>` nas telas do shell — o título vem do `PageHeader`.
+4. **Sem skip link.** Quem navega por teclado atravessa os 16 itens da sidebar antes de chegar ao conteúdo, a cada troca de tela. Os landmarks existem (`HEADER`, `NAV`, `MAIN`) e o `<h1>` também — o `PageHeader` o emite —, então falta só a saída rápida.
