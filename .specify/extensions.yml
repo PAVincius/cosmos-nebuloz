@@ -1,8 +1,18 @@
 installed:
 - agent-context
+- intent-gate
 settings:
   auto_execute_hooks: true
 hooks:
+  before_specify:
+  - extension: intent-gate
+    command: speckit.intent-gate.check
+    enabled: true
+    optional: false
+    priority: 10
+    prompt: null
+    description: Block spec generation until intent.md has status approved
+    condition: null
   after_specify:
   - extension: agent-context
     command: speckit.agent-context.update

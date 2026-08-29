@@ -1,0 +1,30 @@
+schema_version: "1.0"
+
+extension:
+  id: intent-gate
+  name: "Intent Approval Gate"
+  version: "1.0.0"
+  description: "Blocks /speckit-specify until the target feature has an approved intent.md"
+  author: cosmos-nebuloz
+  repository: ""
+  license: MIT
+
+requires:
+  speckit_version: ">=0.2.0"
+
+provides:
+  commands:
+    - name: speckit.intent-gate.check
+      file: commands/speckit.intent-gate.check.md
+      description: "Verify the target feature's intent.md is approved before /speckit-specify proceeds"
+
+hooks:
+  before_specify:
+    command: speckit.intent-gate.check
+    optional: false
+    description: "Block spec generation until intent.md has status: approved"
+
+tags:
+  - "intent"
+  - "gate"
+  - "governance"
