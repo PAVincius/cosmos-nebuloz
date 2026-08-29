@@ -124,6 +124,65 @@
   --red-text: #ffa3bd;
 }
 
+/* Grid do shell. Vive aqui, e não em `style` inline no shell.tsx, pelo mesmo
+   motivo que o padding do topbar vive no cosmos.css: inline vence folha de
+   estilo, e a media query abaixo precisa poder sobrepor a coluna da sidebar. */
+.bo-shell {
+  height: 100vh;
+  display: grid;
+  grid-template-areas: "bar bar" "side main";
+  grid-template-columns: 236px 1fr;
+  grid-template-rows: 56px 1fr;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+.bo-shell > main {
+  padding: 26px;
+}
+
+.bo-topbar {
+  padding: 0 20px;
+}
+
+/* Par de rótulos da topbar: um para cada largura. Declarados na base e
+   trocados na media query — media query não soma especificidade, então quem
+   decide é a ordem no arquivo. */
+.bo-so-estreito {
+  display: none;
+}
+
+/* Mesmo ponto de corte da gaveta do Cosmos (cosmos.css), de propósito: são as
+   mesmas regras de `.cosmos-sidebar` e `.cosmos-scrim` que o back-office
+   reusa, e dois breakpoints diferentes para o mesmo componente divergiriam.
+
+   A sidebar vira gaveta flutuante e sai do fluxo do grid — sem colapsar a
+   coluna aqui sobrariam 236px vazios à esquerda, e o conteúdo continuaria
+   espremido, que é justamente o que isto conserta. */
+@media (max-width: 1023px) {
+  .bo-shell {
+    grid-template-areas: "bar" "main";
+    grid-template-columns: 1fr;
+  }
+  .bo-shell > main {
+    padding: 16px 16px 32px;
+  }
+  .bo-topbar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+  /* O que a topbar solta quando a largura acaba. Some o supérfluo primeiro —
+     a trilha (a gaveta já mostra o item ativo), o chip "BIG BANG" e o nome
+     ao lado do avatar — para o selo de permissão caber. Ele é o único aviso
+     de que a sessão só lê, e some por último. */
+  .bo-so-largo {
+    display: none;
+  }
+  .bo-so-estreito {
+    display: inline;
+  }
+}
+
 /* Textura do modo escuro do protótipo: grão e grade. Decorativas — ficam fora
    do fluxo e não recebem eventos. */
 [data-theme="dark"] .grain::after {
