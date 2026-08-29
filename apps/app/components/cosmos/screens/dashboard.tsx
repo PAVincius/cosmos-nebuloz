@@ -7,6 +7,7 @@
 import {
   Badge,
   CopyId,
+  ErrorState,
   KpiCard,
   NavButton,
   PageHeader,
@@ -38,7 +39,9 @@ function HBars({
 }: {
   rows: { label: string; v: number; tone: string }[];
 }) {
-  const max = Math.max(...rows.map((r) => r.v));
+  // `v` é o montante já arredondado para milhares: um portfólio só com
+  // budgets abaixo de US$ 500 zera todas as linhas, e 0/0 viraria scaleX(NaN).
+  const max = Math.max(...rows.map((r) => r.v), 1);
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
       {rows.map((r, i) => (
@@ -51,14 +54,29 @@ function HBars({
               fontSize: 12.5,
             }}
           >
-            <span style={{ color: "var(--ink-muted)", fontWeight: 600 }}>
+            <span
+              style={{
+                color: "var(--ink-muted)",
+                fontWeight: 600,
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+              title={r.label}
+            >
               {r.label}
             </span>
             <span
               className="mono"
-              style={{ color: "var(--ink-subtle)", fontWeight: 700 }}
+              style={{
+                color: "var(--ink-subtle)",
+                flexShrink: 0,
+                fontWeight: 700,
+                paddingLeft: 10,
+              }}
             >
-              US$ {r.v}k
+              US$ {formatThousands(r.v)}k
             </span>
           </div>
           <div
@@ -71,12 +89,14 @@ function HBars({
           >
             <div
               style={{
-                width: `${(r.v / max) * 100}%`,
+                width: "100%",
                 height: "100%",
                 borderRadius: 99,
                 background: `var(--${r.tone})`,
                 boxShadow: `0 0 10px rgba(var(--${r.tone}-rgb),.5)`,
-                transition: "width .7s cubic-bezier(.2,.8,.3,1)",
+                transform: `scaleX(${r.v / max})`,
+                transformOrigin: "left",
+                transition: "transform .7s cubic-bezier(.2,.8,.3,1)",
               }}
             />
           </div>
@@ -96,9 +116,26 @@ function wsjfTone(wsjf: number): Tone {
 
 const THEME_ALLOC_TONES = ["accent", "blue", "purple", "green", "amber"];
 
+// `.toFixed(1).replace(".", ",")` acertava a vírgula decimal e perdia o
+// agrupamento de milhar: US$ 1234,5k em vez de US$ 1.234,5k.
+const COST_FORMAT = new Intl.NumberFormat("pt-BR", {
+  maximumFractionDigits: 1,
+  minimumFractionDigits: 1,
+});
+const THOUSANDS_FORMAT = new Intl.NumberFormat("pt-BR");
+
 function formatCostK(usd: number): string {
-  return (usd / 1000).toFixed(1).replace(".", ",");
+  return COST_FORMAT.format(usd / 1000);
 }
+
+function formatThousands(value: number): string {
+  return THOUSANDS_FORMAT.format(value);
+}
+
+// A lista é um resumo, não o Kanban: sem teto, um portfólio com 200 épicos em
+// implementação faz a tela crescer sem limite. O excedente vira uma linha com
+// contagem, e o botão "Ver Kanban" do cabeçalho já é a saída.
+const MAX_EPIC_ROWS = 8;
 
 export default async function DashboardScreen(_props?: { param?: string }) {
   const [
@@ -119,8 +156,22 @@ export default async function DashboardScreen(_props?: { param?: string }) {
     getActiveArtCount(),
   ]);
 
+  // Cada uma das 7 actions caía em `ok ? data : vazio`, então uma falha ficava
+  // indistinguível de "não há dados" — a tela afirmava zero anomalias e nenhum
+  // PI ativo quando na verdade não tinha conseguido ler nada. ErrorState é o
+  // padrão que as outras 20+ telas do Cosmos já usam para isso.
+  const epicsFailed = !epicsResult.ok;
+  const sprintsFailed = !sprintsResult.ok;
+  const predictabilityFailed = !predictabilityResult.ok;
+  const budgetsFailed = !budgetsResult.ok;
+  const cloudCostFailed = !cloudCostResult.ok;
+  const piHeaderFailed = !piHeaderResult.ok;
+  const artCountFailed = !artCountResult.ok;
+
   const epics = epicsResult.ok ? epicsResult.data : [];
   const inProgress = epics.filter((e) => e.column === "implementing");
+  const visibleEpics = inProgress.slice(0, MAX_EPIC_ROWS);
+  const hiddenEpicCount = inProgress.length - visibleEpics.length;
 
   // ── Velocity — SP delivered per closed sprint, oldest→newest ──
   const closedSprints = (sprintsResult.ok ? sprintsResult.data : []).filter(
@@ -181,7 +232,11 @@ export default async function DashboardScreen(_props?: { param?: string }) {
   const artCount = artCountResult.ok ? artCountResult.data : 0;
   const artCountLabel =
     artCount === 1 ? "1 ART ativo" : `${artCount} ARTs ativos`;
-  const artCountHint = artCount === 1 ? "1 ART" : `${artCount} ARTs`;
+  const artCountHint = artCountFailed
+    ? "ARTs indisponíveis"
+    : artCount === 1
+      ? "1 ART"
+      : `${artCount} ARTs`;
 
   return (
     <div className="fade-in">
@@ -189,16 +244,20 @@ export default async function DashboardScreen(_props?: { param?: string }) {
         eyebrow="Portfolio · Resumo executivo"
         meta={
           <>
-            {piHeader ? (
-              <Badge dot pulse tone="green">
-                {piHeader.activeSprintName
-                  ? `${piHeader.piPlanName} · ${piHeader.activeSprintName}`
-                  : piHeader.piPlanName}
-              </Badge>
-            ) : (
-              <Badge tone="neutral">Sem PI ativo</Badge>
-            )}
-            <Badge tone="neutral">{artCountLabel}</Badge>
+            {piHeaderFailed && <Badge tone="red">PI indisponível</Badge>}
+            {!piHeaderFailed &&
+              (piHeader ? (
+                <Badge dot pulse tone="green">
+                  {piHeader.activeSprintName
+                    ? `${piHeader.piPlanName} · ${piHeader.activeSprintName}`
+                    : piHeader.piPlanName}
+                </Badge>
+              ) : (
+                <Badge tone="neutral">Sem PI ativo</Badge>
+              ))}
+            <Badge tone={artCountFailed ? "red" : "neutral"}>
+              {artCountFailed ? "ARTs indisponíveis" : artCountLabel}
+            </Badge>
           </>
         }
         subtitle="Saúde do portfólio SAFe em um olhar — predictability, throughput, custo e épicos em execução ao longo dos ARTs."
@@ -212,7 +271,9 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           ORBIT
         </strong>{" "}
         ·{" "}
-        {openAnomalyCount > 0 ? (
+        {cloudCostFailed ? (
+          "não foi possível ler o custo de nuvem agora — os guardrails de FinOps não estão sendo verificados nesta visão."
+        ) : openAnomalyCount > 0 ? (
           <>
             custo de nuvem
             {cloudCostDeltaPct !== null
@@ -246,7 +307,13 @@ export default async function DashboardScreen(_props?: { param?: string }) {
               ? "green"
               : "red"
           }
-          hint={prevPi ? `vs. ${prevPi.label}` : "PI mais recente encerrado"}
+          hint={
+            predictabilityFailed
+              ? "dados indisponíveis"
+              : prevPi
+                ? `vs. ${prevPi.label}`
+                : "PI mais recente encerrado"
+          }
           icon="target"
           label="PI Predictability"
           tone={latestPi ? "green" : "neutral"}
@@ -254,11 +321,11 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           value={latestPi ? latestPi.ppmPct : "—"}
         />
         <KpiCard
-          hint={artCountHint}
+          hint={epicsFailed ? "dados indisponíveis" : artCountHint}
           icon="layers"
           label="Épicos em progresso"
-          tone="accent"
-          value={String(inProgress.length)}
+          tone={epicsFailed ? "neutral" : "accent"}
+          value={epicsFailed ? "—" : String(inProgress.length)}
         />
         <KpiCard
           delta={
@@ -271,10 +338,16 @@ export default async function DashboardScreen(_props?: { param?: string }) {
               ? "green"
               : "amber"
           }
-          hint={prevSprint ? `vs. ${prevSprint.name}` : "sem sprint anterior"}
+          hint={
+            sprintsFailed
+              ? "dados indisponíveis"
+              : prevSprint
+                ? `vs. ${prevSprint.name}`
+                : "sem sprint anterior"
+          }
           icon="activity"
           label="Throughput por Sprint"
-          tone="blue"
+          tone={sprintsFailed ? "neutral" : "blue"}
           unit={latestSprintVelocity !== null ? "SP" : undefined}
           value={latestSprintVelocity !== null ? latestSprintVelocity : "—"}
         />
@@ -290,9 +363,11 @@ export default async function DashboardScreen(_props?: { param?: string }) {
               : "green"
           }
           hint={
-            openAnomalyCount > 0
-              ? `${openAnomalyCount} ${openAnomalyCount === 1 ? "anomalia" : "anomalias"}`
-              : "sem anomalias"
+            cloudCostFailed
+              ? "dados indisponíveis"
+              : openAnomalyCount > 0
+                ? `${openAnomalyCount} ${openAnomalyCount === 1 ? "anomalia" : "anomalias"}`
+                : "sem anomalias"
           }
           icon="dollar"
           label="Custo de nuvem · MTD"
@@ -305,7 +380,8 @@ export default async function DashboardScreen(_props?: { param?: string }) {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(340px, 100%), 1fr))",
           gap: 16,
           marginBottom: 16,
         }}
@@ -317,15 +393,23 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           title="Velocity do Programa"
           tone="accent"
         >
-          {velocity.length >= 2 ? (
-            <AreaChart data={velocity} labels={velocityLabels} tone="accent" />
-          ) : (
-            <EmptyState
-              description="Histórico de sprints encerrados insuficiente para exibir a tendência de velocity."
-              icon="activity"
-              title="Sem dados de velocity"
-            />
+          {sprintsFailed && (
+            <ErrorState message="Não foi possível carregar os sprints encerrados." />
           )}
+          {!sprintsFailed &&
+            (velocity.length >= 2 ? (
+              <AreaChart
+                data={velocity}
+                labels={velocityLabels}
+                tone="accent"
+              />
+            ) : (
+              <EmptyState
+                description="Histórico de sprints encerrados insuficiente para exibir a tendência de velocity."
+                icon="activity"
+                title="Sem dados de velocity"
+              />
+            ))}
         </SectionCard>
         <SectionCard
           bodyStyle={{ overflow: "visible" }}
@@ -334,24 +418,29 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           title="Predictability por PI"
           tone="green"
         >
-          {predict.length > 0 ? (
-            <VBars
-              data={predict.map((p) => ({ label: p.label, v: p.ppmPct }))}
-            />
-          ) : (
-            <EmptyState
-              description="Nenhum PI encerrado com PPM calculado ainda."
-              icon="target"
-              title="Sem dados de predictability"
-            />
+          {predictabilityFailed && (
+            <ErrorState message="Não foi possível carregar a predictability dos PIs." />
           )}
+          {!predictabilityFailed &&
+            (predict.length > 0 ? (
+              <VBars
+                data={predict.map((p) => ({ label: p.label, v: p.ppmPct }))}
+              />
+            ) : (
+              <EmptyState
+                description="Nenhum PI encerrado com PPM calculado ainda."
+                icon="target"
+                title="Sem dados de predictability"
+              />
+            ))}
         </SectionCard>
       </div>
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+          gridTemplateColumns:
+            "repeat(auto-fit, minmax(min(340px, 100%), 1fr))",
           gap: 16,
         }}
       >
@@ -361,15 +450,19 @@ export default async function DashboardScreen(_props?: { param?: string }) {
           title="Alocação por Tema Estratégico"
           tone="purple"
         >
-          {themeAlloc.length > 0 ? (
-            <HBars rows={themeAlloc} />
-          ) : (
-            <EmptyState
-              description="Nenhum Lean Budget com tema estratégico associado ainda."
-              icon="compass"
-              title="Sem alocação por tema"
-            />
+          {budgetsFailed && (
+            <ErrorState message="Não foi possível carregar os Lean Budgets." />
           )}
+          {!budgetsFailed &&
+            (themeAlloc.length > 0 ? (
+              <HBars rows={themeAlloc} />
+            ) : (
+              <EmptyState
+                description="Nenhum Lean Budget com tema estratégico associado ainda."
+                icon="compass"
+                title="Sem alocação por tema"
+              />
+            ))}
         </SectionCard>
         <SectionCard
           action={
@@ -383,12 +476,24 @@ export default async function DashboardScreen(_props?: { param?: string }) {
             </NavButton>
           }
           icon="layers"
-          subtitle={`${inProgress.length} em execução`}
+          subtitle={
+            epicsFailed ? "indisponível" : `${inProgress.length} em execução`
+          }
           title="Épicos em Implementação"
           tone="blue"
         >
+          {epicsFailed && (
+            <ErrorState message="Não foi possível carregar os épicos do portfólio." />
+          )}
+          {!epicsFailed && inProgress.length === 0 && (
+            <EmptyState
+              description="Nenhum épico na coluna Implementando. Os que entrarem aparecem aqui."
+              icon="layers"
+              title="Sem épicos em execução"
+            />
+          )}
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {inProgress.map((e) => {
+            {visibleEpics.map((e) => {
               const artTone = e.artTone;
               return (
                 <EpicRow id={e.id} key={e.id}>
@@ -449,6 +554,19 @@ export default async function DashboardScreen(_props?: { param?: string }) {
                 </EpicRow>
               );
             })}
+            {hiddenEpicCount > 0 && (
+              <span
+                style={{
+                  color: "var(--ink-subtle)",
+                  fontSize: 12.5,
+                  paddingTop: 2,
+                }}
+              >
+                {hiddenEpicCount === 1
+                  ? "+1 épico em execução — abra o Kanban para ver todos."
+                  : `+${formatThousands(hiddenEpicCount)} épicos em execução — abra o Kanban para ver todos.`}
+              </span>
+            )}
           </div>
         </SectionCard>
       </div>

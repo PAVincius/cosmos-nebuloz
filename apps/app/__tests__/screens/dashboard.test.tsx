@@ -42,6 +42,7 @@ vi.mock("@/app/(cosmos)/actions/piplanning", () => ({
   listRecentPiPredictability: vi.fn().mockResolvedValue({ ok: true, data: [] }),
 }));
 
+import { listEpics } from "@/app/(cosmos)/actions/kanban";
 import DashboardScreen from "../../components/cosmos/screens/dashboard";
 
 describe("DashboardScreen", () => {
@@ -49,5 +50,22 @@ describe("DashboardScreen", () => {
     const jsx = await DashboardScreen({});
     const html = JSON.stringify(jsx);
     expect(html).toContain("Real Epic");
+  });
+
+  // Toda action caía em `ok ? data : vazio`, então falha de leitura era
+  // renderizada como "não há épicos" — a tela mentia com cara de dado.
+  it("mostra erro, e não estado vazio, quando listEpics falha", async () => {
+    vi.mocked(listEpics).mockResolvedValueOnce({
+      ok: false,
+      error: "conexão recusada",
+    });
+
+    const html = JSON.stringify(await DashboardScreen({}));
+
+    expect(html).toContain("Não foi possível carregar os épicos");
+    expect(html).not.toContain("Sem épicos em execução");
+    // O KPI "Épicos em progresso" lia da mesma falha e mostrava "0" liso —
+    // indistinguível de zero épicos de verdade em execução.
+    expect(html).toContain("dados indisponíveis");
   });
 });
