@@ -29,6 +29,7 @@ import {
   Compass,
   Copy,
   Cpu,
+  Crosshair,
   Database,
   DollarSign,
   Download,
@@ -42,6 +43,7 @@ import {
   Gauge,
   Gavel,
   GitBranch,
+  GitCompareArrows,
   GripVertical,
   Handshake,
   Heart,
@@ -192,6 +194,11 @@ const ICONS = {
   download: Download,
   maximize: Maximize2,
   fileText: FileText,
+  // Glifos exigidos pelo Meridian (meridian-registry.jsx / nebuloz-seams.jsx do
+  // handoff). Adição pura — nada existente muda de nome.
+  crosshair: Crosshair,
+  diff: GitCompareArrows,
+  outbound: ExternalLink,
 } satisfies Record<string, LucideIcon>;
 
 export type IconName = keyof typeof ICONS;

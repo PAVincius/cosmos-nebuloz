@@ -148,6 +148,10 @@ type ButtonProps = {
   onClick?: () => void;
   style?: CSSProperties;
   title?: string;
+  /** Atributo real, não só opacidade: o CSS já cobre `.btn:disabled`, e sem o
+   *  atributo o teclado continua alcançando um controle inerte. */
+  disabled?: boolean;
+  type?: "button" | "submit";
 };
 export function Button({
   children,
@@ -159,6 +163,8 @@ export function Button({
   onClick,
   style,
   title,
+  disabled,
+  type = "button",
 }: ButtonProps) {
   const pad =
     size === "sm" ? "7px 12px" : size === "lg" ? "11px 18px" : "9px 15px";
@@ -204,9 +210,11 @@ export function Button({
   return (
     <button
       className="btn"
+      disabled={disabled}
       onClick={onClick}
       style={{ ...base, ...variants[variant], ...style }}
       title={title}
+      type={type}
     >
       {icon && <Icon name={icon} size={isz} strokeWidth={2.1} />}
       {children}

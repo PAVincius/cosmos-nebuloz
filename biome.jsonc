@@ -82,6 +82,7 @@
         "apps/app/app/actions/**",
         "apps/app/app/(cosmos)/actions/**",
         "apps/app/app/(charter)/actions/**",
+        "apps/app/app/(meridian)/actions/**",
         "apps/app/app/api/**",
         "apps/app/app/hooks/**"
       ],
@@ -239,7 +240,12 @@
       // do Charter (SRD-Charter.md NFR-2), não meta — então linha clicável é
       // <button> de verdade, grupo de filtro é <fieldset> com <legend>, e o
       // backdrop de modal tem controle de fechar anunciável.
-      "includes": ["apps/app/components/charter/**"],
+      "includes": [
+        "apps/app/components/charter/**",
+        // Meridian reusa as primitivas do Charter e a mesma folha reescopada —
+        // as mesmas exceções valem pelos mesmos motivos.
+        "apps/app/components/meridian/**"
+      ],
       "linter": {
         "rules": {
           "nursery": { "noLeakedRender": "off", "noShadow": "off" },

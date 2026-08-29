@@ -1,0 +1,527 @@
+// Meridian — diagnóstico de prontidão para IA.
+//
+// Mapeamento de `specs/001-meridian-diagnose/data-model.md` para Prisma.
+// Convenções desta camada:
+//   • Fórmula não vira coluna. `composite` do assessment e `final` derivado do
+//     último override são calculados na leitura. As exceções são contrato
+//     firmado num momento (`MeridianAxisScore.computed`, congelado no
+//     fechamento da coleta: mudar a regra depois não pode reescrever um
+//     diagnóstico entregue) e cache com invalidação explícita
+//     (`MeridianBenchmarkCohort.percentiles`, recalculado a cada contribuição).
+//   • Auditoria reusa o `AuditLog` existente (system.prisma), append-only.
+//     entityType = "meridian.<entidade>", diff = Array<[campo, antes, depois]>.
+//   • Toda tabela tem `tenantId` — exceto as duas de benchmark, que são globais
+//     e anônimas por contrato. É por isso que nenhuma coluna delas identifica
+//     organização.
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// Os cinco eixos avaliados. A ordem canônica de exibição vive em
+/// `apps/app/lib/meridian/axes.ts`, não aqui — enum não garante ordem estável
+/// e o scoring depende de ordem fixa para ser determinístico.
+enum MeridianAxis {
+  DATA
+  PROCESS
+  PEOPLE
+  GOVERNANCE
+  INFRASTRUCTURE
+}
+
+/// draft → collecting → review → finalised. Sem volta: reabrir um diagnóstico
+/// entregue é um novo assessment, com `reassessmentOfId` apontando para este.
+enum MeridianAssessmentStatus {
+  DRAFT
+  COLLECTING
+  REVIEW
+  FINALISED
+}
+
+enum MeridianRespondentStatus {
+  INVITED
+  PENDING
+  DONE
+  OVERDUE
+  REVOKED
+}
+
+enum MeridianQuestionType {
+  LIKERT
+  YES_NO
+  SCALE
+}
+
+/// computed → contested (dispersão acima do limiar do template) → overridden
+/// (decisão registrada do consultor). O computado nunca some.
+enum MeridianScoreStatus {
+  COMPUTED
+  CONTESTED
+  OVERRIDDEN
+}
+
+enum MeridianSeverity {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum MeridianEffort {
+  S
+  M
+  L
+}
+
+/// open → planned → promoted → resolved. Toda transição entra na trilha.
+/// `RESOLVED` só é alcançável por reavaliação com evidência.
+enum MeridianGapState {
+  OPEN
+  PLANNED
+  PROMOTED
+  RESOLVED
+}
+
+/// Escala de confiança da suíte. O Meridian é dono; Signal, Scaffold e Cosmos
+/// aplicam sem redefinir. Uma segunda nomenclatura em outro produto quebraria
+/// a comparabilidade que esta escala existe para dar.
+enum MeridianConfidence {
+  MEASURED
+  ESTIMATED
+  DECLARED
+}
+
+/// Papéis do Meridian. Ortogonais ao MemberRole (SAFe) e ao CharterRole: a
+/// mesma pessoa pode ser DEV no Cosmos e CONSULTANT aqui. Ausência de
+/// MeridianMembership = sem acesso, mesmo com o módulo contratado — um admin
+/// de plataforma que contorna o papel de consultor invalida a trilha.
+enum MeridianRole {
+  CONSULTANT
+  REVIEWER
+  VIEWER
+}
+
+/// Destino de promoção de gap. Scaffold e Signal ainda não têm entidade no
+/// repositório: a promoção é registrada com `targetEntityId` nulo em vez de
+/// criar stub falso.
+enum MeridianPromotionTarget {
+  COSMOS
+  CHARTER
+  SIGNAL
+  SCAFFOLD
+}
+
+// ── Acesso ────────────────────────────────────────────────────────────────────
+
+model MeridianMembership {
+  id        String       @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      MeridianRole @default(VIEWER)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  updatedBy String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+}
+
+/// Contador por tenant para códigos legíveis (AS-104, G-01). Sequência global
+/// vazaria volume entre tenants.
+model MeridianSequence {
+  id       String @id @default(cuid())
+  tenantId String
+  /// "assessment" | "gap" | "override"
+  kind     String
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, kind])
+}
+
+// ── Template ──────────────────────────────────────────────────────────────────
+
+/// Versão da bateria de perguntas. Imutável após o primeiro uso: `lockedAt`
+/// é gravado quando o primeiro assessment a referencia, e qualquer escrita no
+/// template ou em suas perguntas depois disso é recusada. Sem isso, mudar um
+/// peso reescreveria em silêncio o score de um diagnóstico já entregue.
+model MeridianTemplate {
+  id              String    @id @default(cuid())
+  tenantId        String
+  name            String
+  /// Ex. "v3.2".
+  version         String
+  /// Dispersão, em pontos de 0 a 100, a partir da qual o eixo nasce CONTESTED.
+  contestedSpread Int       @default(25)
+  /// Score final abaixo do qual o eixo deriva gap.
+  gapThreshold    Int       @default(60)
+  lockedAt        DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  tenant      Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  questions   MeridianQuestion[]
+  assessments MeridianAssessment[]
+
+  @@unique([tenantId, version])
+  @@index([tenantId])
+}
+
+model MeridianQuestion {
+  id          String               @id @default(cuid())
+  tenantId    String
+  templateId  String
+  /// Ex. "Q-D01".
+  code        String
+  axis        MeridianAxis
+  /// Ordem canônica dentro do eixo. O motor de scoring itera por ela — nunca
+  /// por chave de objeto, cuja ordem não é garantida e quebraria o
+  /// determinismo exigido pelo produto.
+  ordinal     Int
+  type        MeridianQuestionType
+  text        String               @db.Text
+  /// Peso na média ponderada do eixo.
+  weight      Int                  @default(1)
+  /// True quando a opção mais alta é a pior resposta (ex.: "fração de dado
+  /// fora do ambiente governado"). Inverte a normalização.
+  inverted    Boolean              @default(false)
+  /// Rótulos das faixas, só para type = SCALE.
+  scaleLabels String[]
+
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template  MeridianTemplate   @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  responses MeridianResponse[]
+
+  @@unique([templateId, code])
+  @@index([tenantId])
+  @@index([templateId, axis, ordinal])
+}
+
+// ── Assessment e coleta ───────────────────────────────────────────────────────
+
+model MeridianAssessment {
+  id               String                   @id @default(cuid())
+  tenantId         String
+  /// Código legível, ex. "AS-104".
+  code             String
+  /// Organização avaliada. `sector` + `sizeBand` formam a chave de coorte.
+  orgName          String
+  sector           String
+  sizeBand         String
+  /// Versão de template congelada na criação (FR-006).
+  templateId       String
+  status           MeridianAssessmentStatus @default(DRAFT)
+  consultantId     String
+  openedAt         DateTime                 @default(now())
+  deadline         DateTime
+  closedAt         DateTime?
+  /// Porta da contribuição ao pool anônimo. Default deny.
+  benchmarkOptIn   Boolean                  @default(false)
+  /// Run anterior, quando este assessment é reavaliação. SetNull, não Cascade:
+  /// apagar o run antigo não pode apagar o diagnóstico atual.
+  reassessmentOfId String?
+  createdAt        DateTime                 @default(now())
+  updatedAt        DateTime                 @updatedAt
+
+  tenant         Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template       MeridianTemplate     @relation(fields: [templateId], references: [id])
+  reassessmentOf MeridianAssessment?  @relation("MeridianReassessment", fields: [reassessmentOfId], references: [id], onDelete: SetNull)
+  reassessments  MeridianAssessment[] @relation("MeridianReassessment")
+
+  respondents MeridianRespondent[]
+  scores      MeridianAxisScore[]
+  overrides   MeridianOverride[]
+  gaps        MeridianGap[]
+  planItems   MeridianPlanItem[]
+  evidence    MeridianEvidence[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([templateId])
+  @@index([reassessmentOfId])
+}
+
+/// Pessoa da organização atribuída a um eixo. Não tem conta na plataforma:
+/// o acesso é por link com token de uso individual.
+model MeridianRespondent {
+  id             String                   @id @default(cuid())
+  tenantId       String
+  assessmentId   String
+  name           String
+  /// Papel declarado na organização, ex. "Head de Plataforma".
+  role           String
+  email          String
+  axis           MeridianAxis
+  status         MeridianRespondentStatus @default(INVITED)
+  /// SHA-256 do token de 32 bytes. O token em claro é devolvido uma única vez,
+  /// na atribuição, para montagem do link — guardar o segredo transformaria um
+  /// dump de banco em acesso à bateria inteira.
+  tokenHash      String                   @unique
+  tokenExpiresAt DateTime
+  invitedAt      DateTime?
+  lastRemindedAt DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  responses  MeridianResponse[]
+  evidence   MeridianEvidence[]
+
+  @@index([tenantId])
+  @@index([assessmentId, axis])
+}
+
+model MeridianResponse {
+  id           String   @id @default(cuid())
+  tenantId     String
+  respondentId String
+  questionId   String
+  /// Índice da opção escolhida, no vocabulário do tipo da pergunta.
+  rawValue     Int
+  /// Valor 0–1 derivado de `rawValue` pelo tipo e por `inverted`, calculado na
+  /// escrita. Persistido porque a normalização depende da versão de template,
+  /// que é congelada — recalcular na leitura reintroduziria a versão viva.
+  normalized   Decimal  @db.Decimal(4, 3)
+  answeredAt   DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  respondent MeridianRespondent @relation(fields: [respondentId], references: [id], onDelete: Cascade)
+  question   MeridianQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  evidence   MeridianEvidence[]
+
+  @@unique([respondentId, questionId])
+  @@index([tenantId])
+  @@index([questionId])
+}
+
+/// Metadado do anexo. O arquivo vive no bucket privado `meridian-evidence`,
+/// segregado por tenant — nunca no banco relacional.
+model MeridianEvidence {
+  id                     String   @id @default(cuid())
+  tenantId               String
+  assessmentId           String
+  /// Nulo quando o anexo é do consultor, não de uma resposta.
+  responseId             String?
+  /// `${tenantId}/${assessmentId}/${id}`.
+  storagePath            String
+  fileName               String
+  mimeType               String
+  sizeBytes              Int
+  /// Um dos dois é preenchido: upload por usuário logado ou por token.
+  uploadedById           String?
+  uploadedByRespondentId String?
+  createdAt              DateTime @default(now())
+
+  tenant     Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment  @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  response   MeridianResponse?   @relation(fields: [responseId], references: [id], onDelete: SetNull)
+  respondent MeridianRespondent? @relation(fields: [uploadedByRespondentId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([assessmentId])
+  @@index([responseId])
+}
+
+// ── Scoring e revisão ─────────────────────────────────────────────────────────
+
+model MeridianAxisScore {
+  id              String              @id @default(cuid())
+  tenantId        String
+  assessmentId    String
+  axis            MeridianAxis
+  /// Score determinístico do motor. Write-once: toda mudança de número visível
+  /// passa por MeridianOverride, para a auditoria conseguir ler os dois.
+  computed        Int
+  /// Preenchido apenas por override — é o `toScore` do override mais recente.
+  final           Int?
+  confidence      Decimal             @db.Decimal(3, 2)
+  /// Número de respondentes que contribuíram para o eixo.
+  respondentCount Int
+  /// Maior diferença, em pontos, entre os scores individuais do eixo.
+  spread          Int
+  status          MeridianScoreStatus @default(COMPUTED)
+  /// Motivo legível da contestação ou da confiança baixa. É o que o consultor
+  /// lê antes de decidir.
+  note            String?             @db.Text
+  computedAt      DateTime            @default(now())
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, axis])
+  @@index([tenantId])
+  @@index([tenantId, status])
+}
+
+/// Append-only por construção: sem `updatedAt`, sem delete no código, e o
+/// histórico é a lista inteira. É esta tabela que responde "por que o número
+/// mudou?" quando o patrocinador pergunta.
+model MeridianOverride {
+  id           String       @id @default(cuid())
+  tenantId     String
+  assessmentId String
+  axis         MeridianAxis
+  /// Código legível, ex. "OV-11".
+  code         String
+  fromScore    Int
+  toScore      Int
+  /// Mínimo de 20 caracteres, validado na action. Rationale vazio é override
+  /// sem justificativa, que é o mesmo que número inventado.
+  rationale    String       @db.Text
+  reviewerId   String
+  createdAt    DateTime     @default(now())
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([assessmentId, axis, createdAt])
+}
+
+// ── Gap register ──────────────────────────────────────────────────────────────
+
+/// Registro canônico. Atravessa assessments: o gap nasce num run e continua
+/// existindo, sendo reavaliado e fechado aqui, mesmo depois de virar trabalho
+/// em outro produto. Restrict no assessment de origem — apagar o run não pode
+/// apagar o registro que outros produtos referenciam.
+model MeridianGap {
+  id           String             @id @default(cuid())
+  tenantId     String
+  /// Código legível, ex. "G-01".
+  code         String
+  assessmentId String
+  axis         MeridianAxis
+  statement    String             @db.Text
+  severity     MeridianSeverity
+  effort       MeridianEffort
+  /// Custo de atraso, 0–100.
+  costOfDelay  Int
+  /// Selo da escala da suíte.
+  confidence   MeridianConfidence @default(DECLARED)
+  /// Dono sugerido, texto livre — a organização avaliada não tem usuários aqui.
+  ownerLabel   String
+  state        MeridianGapState   @default(OPEN)
+  /// False quando criado à mão pelo consultor, não derivado do scoring.
+  derived      Boolean            @default(true)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Restrict)
+
+  dependencies MeridianGapDependency[] @relation("MeridianGapDependent")
+  dependents   MeridianGapDependency[] @relation("MeridianGapPrerequisite")
+  planItems    MeridianPlanItem[]
+  promotions   MeridianGapPromotion[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, state])
+  @@index([assessmentId])
+}
+
+/// Aresta dirigida `gap` → `dependsOn`. Ciclo é recusado na escrita, dentro da
+/// mesma transação — um ciclo aceito torna o plano impossível de ordenar e o
+/// erro só aparece meses depois, na geração.
+model MeridianGapDependency {
+  id             String   @id @default(cuid())
+  tenantId       String
+  gapId          String
+  dependsOnGapId String
+  createdAt      DateTime @default(now())
+
+  tenant    Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  gap       MeridianGap @relation("MeridianGapDependent", fields: [gapId], references: [id], onDelete: Cascade)
+  dependsOn MeridianGap @relation("MeridianGapPrerequisite", fields: [dependsOnGapId], references: [id], onDelete: Cascade)
+
+  @@unique([gapId, dependsOnGapId])
+  @@index([tenantId])
+  @@index([dependsOnGapId])
+}
+
+model MeridianPlanItem {
+  id           String   @id @default(cuid())
+  tenantId     String
+  assessmentId String
+  gapId        String
+  /// 1–4.
+  quarter      Int
+  /// Ordem global no plano, estritamente crescente ao longo das dependências.
+  seq          Int
+  /// Premissa de capacidade que sustenta o sequenciamento.
+  capacityNote String?
+  createdAt    DateTime @default(now())
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assessment MeridianAssessment @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  gap        MeridianGap        @relation(fields: [gapId], references: [id], onDelete: Cascade)
+
+  @@unique([assessmentId, gapId])
+  @@index([tenantId])
+  @@index([assessmentId, quarter, seq])
+}
+
+/// Vínculo com o trabalho criado em outro produto. Linha própria, não coluna no
+/// gap: destino removido revoga a promoção sem apagar o registro de que ela
+/// existiu, e o gap volta ao estado anterior.
+model MeridianGapPromotion {
+  id             String                  @id @default(cuid())
+  tenantId       String
+  gapId          String
+  targetProduct  MeridianPromotionTarget
+  /// Nulo enquanto o produto de destino não existe no repositório.
+  targetEntityId String?
+  targetLabel    String
+  promotedById   String
+  promotedAt     DateTime                @default(now())
+  revokedAt      DateTime?
+
+  tenant Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  gap    MeridianGap @relation(fields: [gapId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([gapId, revokedAt])
+}
+
+// ── Benchmark ─────────────────────────────────────────────────────────────────
+
+/// Agregado anônimo por coorte. Sem `tenantId` de propósito: a coorte é global
+/// e nenhuma coluna aqui identifica organização. O limiar de leitura (n ≥ 5) é
+/// aplicado na leitura, não na escrita — o agregado existe, a leitura é que é
+/// retida, e é assim que a coorte volta a ficar disponível ao cruzar o mínimo
+/// sem recomputar do zero.
+model MeridianBenchmarkCohort {
+  id             String   @id @default(cuid())
+  /// "<setor> · <faixa de tamanho>".
+  cohortKey      String   @unique
+  n              Int      @default(0)
+  /// { [axis]: { p25, p50, p75 } }
+  percentiles    Json
+  recalculatedAt DateTime @default(now())
+
+  contributions MeridianBenchmarkContribution[]
+}
+
+/// Linha que alimenta o agregado. `assessmentId` existe para remover a
+/// contribuição quando o opt-in é retirado — sem ele, retirar o consentimento
+/// não teria efeito no pool.
+model MeridianBenchmarkContribution {
+  id           String       @id @default(cuid())
+  cohortKey    String
+  assessmentId String
+  axis         MeridianAxis
+  score        Int
+  createdAt    DateTime     @default(now())
+
+  cohort MeridianBenchmarkCohort @relation(fields: [cohortKey], references: [cohortKey], onDelete: Cascade)
+
+  @@unique([assessmentId, axis])
+  @@index([cohortKey, axis])
+}

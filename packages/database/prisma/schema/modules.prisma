@@ -1,6 +1,6 @@
 // Contratação modular da plataforma Nebuloz.
 //
-// Um tenant contrata Cosmos, Charter, Signal ou qualquer combinação. Isto não é
+// Um tenant contrata Cosmos, Charter, Signal, Meridian ou qualquer combinação. Isto não é
 // feature flag: `contractedAt`/`expiresAt` são rastro comercial, não toggle de
 // rollout. Ausência de linha = módulo não contratado (default deny) — a
 // migration inicial semeia COSMOS para os tenants existentes.
@@ -9,6 +9,7 @@ enum ProductModule {
   COSMOS
   CHARTER
   SIGNAL
+  MERIDIAN
 }
 
 enum ModuleStatus {

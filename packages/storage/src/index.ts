@@ -10,15 +10,20 @@ export const storageClient =
     : createClient("http://localhost:54321", "service_role_key_placeholder");
 
 export const AI_PLAYGROUND_BUCKET = "cosmos-ai-playground";
+/** Evidência anexada a uma resposta de assessment do Meridian. Privado; o
+ *  caminho é sempre prefixado por tenantId. */
+export const MERIDIAN_EVIDENCE_BUCKET = "meridian-evidence";
 
-export async function ensureBucket(): Promise<void> {
+export async function ensureBucket(
+  bucket: string = AI_PLAYGROUND_BUCKET
+): Promise<void> {
   if (!(supabaseUrl && supabaseServiceKey)) {
     return;
   }
   const { data: buckets } = await storageClient.storage.listBuckets();
-  const exists = buckets?.some((b) => b.name === AI_PLAYGROUND_BUCKET);
+  const exists = buckets?.some((b) => b.name === bucket);
   if (!exists) {
-    await storageClient.storage.createBucket(AI_PLAYGROUND_BUCKET, {
+    await storageClient.storage.createBucket(bucket, {
       public: false,
       fileSizeLimit: 10 * 1024 * 1024,
     });
