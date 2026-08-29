@@ -32,25 +32,41 @@ function LinhaProposta({
   podeEscrever,
   primeira,
   onEnviar,
+  onAbrir,
 }: {
   p: ProposalRow;
   podeEscrever: boolean;
   primeira: boolean;
   onEnviar: (id: string) => void;
+  onAbrir: (id: string) => void;
 }) {
   const acimaDoLimite = p.descontoPercent > LIMITE_DESCONTO_SEM_APROVACAO;
   // Só rascunho tem ação: enviada de novo mudaria o que o cliente já recebeu.
   const podeEnviar = podeEscrever && p.status === "RASCUNHO";
 
   return (
+    // A linha inteira abre a proposta. Não é `<button>` porque carrega outros
+    // controles dentro (enviar), e botão dentro de botão não é HTML válido —
+    // daí role, tabIndex e o handler de Enter na mão (NFR-2.3).
     <li
+      aria-label={`Abrir proposta ${p.numero} — ${p.titulo}`}
+      onClick={() => onAbrir(p.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onAbrir(p.id);
+        }
+      }}
+      role="button"
       style={{
         display: "flex",
         alignItems: "center",
         gap: 12,
         padding: "11px 2px",
         borderTop: primeira ? "none" : "1px solid var(--hairline)",
+        cursor: "pointer",
       }}
+      tabIndex={0}
     >
       <span
         className="mono"
@@ -90,7 +106,13 @@ function LinhaProposta({
       {podeEnviar ? (
         <button
           className="btn"
-          onClick={() => onEnviar(p.id)}
+          // `stopPropagation` porque a linha inteira abre a proposta: sem
+          // isto, enviar também navegaria, e a pessoa sairia da lista sem
+          // saber se o envio aconteceu.
+          onClick={(e) => {
+            e.stopPropagation();
+            onEnviar(p.id);
+          }}
           style={{
             padding: "4px 10px",
             borderRadius: "var(--r-sm)",
@@ -174,6 +196,7 @@ export function Propostas({
             {lista.map((p, i) => (
               <LinhaProposta
                 key={p.id}
+                onAbrir={(id) => router.push(`/propostas/${id}`)}
                 onEnviar={enviar}
                 p={p}
                 podeEscrever={podeEscrever}

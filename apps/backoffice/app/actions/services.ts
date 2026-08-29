@@ -1,6 +1,6 @@
 "use server";
 
-import { database } from "@repo/database";
+import { $Enums, database, type ProductModule } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -29,13 +29,16 @@ const UNIDADES = ["PROJETO", "SPRINT", "HORA", "RETAINER"] as const;
 /** Trilhas do catálogo de consultoria (backoffice-services do handoff). */
 const TRILHAS = ["readiness", "adoption", "enablement", "custom"] as const;
 
-const MODULOS = [
-  "COSMOS",
-  "CHARTER",
-  "SIGNAL",
-  "MERIDIAN",
-  "SCAFFOLD",
-] as const;
+/** Módulo a que o serviço se vincula.
+ *
+ *  String livre validada contra o enum do Prisma no momento da escrita, e não
+ *  uma lista repetida aqui: repetir o enum em código quebrou o build de
+ *  produção duas vezes — a cópia local ficou com cinco valores porque o schema
+ *  no disco tinha cinco, enquanto o enum do repositório tem três. */
+const moduloSchema = z.custom<ProductModule>(
+  (v) => typeof v === "string" && Object.hasOwn($Enums.ProductModule, v),
+  { message: "Módulo fora do catálogo da plataforma." }
+);
 
 export type ServiceRow = {
   id: string;
@@ -105,7 +108,7 @@ const CriarSchema = z.object({
   /** Códigos de outros serviços. Não valida existência: um pré-requisito pode
    *  ser cadastrado depois, e travar a ordem de cadastro não protege nada. */
   preRequisitos: z.array(z.string().min(2).max(20)).max(10).optional(),
-  moduloVinculado: z.enum(MODULOS).optional(),
+  moduloVinculado: moduloSchema.optional(),
   exigeLab: z.boolean().optional(),
 });
 
@@ -235,7 +238,7 @@ const EditarSchema = z.object({
   entregaveis: z.array(z.string().min(1).max(200)).max(20),
   papeis: z.array(z.string().min(1).max(80)).max(12),
   preRequisitos: z.array(z.string().min(2).max(20)).max(10),
-  moduloVinculado: z.enum(MODULOS).nullable().optional(),
+  moduloVinculado: moduloSchema.nullable().optional(),
   exigeLab: z.boolean(),
 });
 
