@@ -72,13 +72,19 @@ function FalhaAoCarregar({ motivo }: { motivo: string }) {
         background: "var(--red-soft)",
       }}
     >
-      <p style={{ margin: 0, fontSize: 13, color: "var(--red-text)" }}>
+      <p
+        style={{
+          margin: 0,
+          fontSize: "var(--fs-base)",
+          color: "var(--red-text)",
+        }}
+      >
         Não foi possível abrir o gerador: {motivo}
       </p>
       <p
         style={{
           margin: "6px 0 0",
-          fontSize: 11.5,
+          fontSize: "var(--fs-nota)",
           color: "var(--ink-faint)",
         }}
       >

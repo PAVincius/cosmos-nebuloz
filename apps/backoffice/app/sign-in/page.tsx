@@ -76,7 +76,11 @@ export default function SignInPage() {
           </span>
           <span
             className="display"
-            style={{ fontSize: 15, fontWeight: 700, letterSpacing: ".1em" }}
+            style={{
+              fontSize: "var(--fs-forte)",
+              fontWeight: 700,
+              letterSpacing: ".1em",
+            }}
           >
             NEBULOZ{" "}
             <span
@@ -94,7 +98,7 @@ export default function SignInPage() {
         <h1
           className="display"
           style={{
-            fontSize: 21,
+            fontSize: "var(--fs-display)",
             fontWeight: 700,
             margin: "0 0 6px",
             letterSpacing: "-.01em",
@@ -105,14 +109,14 @@ export default function SignInPage() {
         <p
           style={{
             margin: "0 0 22px",
-            fontSize: 12.5,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-muted)",
             fontWeight: 500,
             lineHeight: 1.6,
           }}
         >
           Sem sessão você não passa do{" "}
-          <span className="mono" style={{ fontSize: 11.5 }}>
+          <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
             requirePlatformStaff
           </span>
           . Acesso restrito à equipe da Nebuloz.

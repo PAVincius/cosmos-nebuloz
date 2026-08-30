@@ -37,11 +37,14 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             alignItems: "center",
             gap: 10,
             padding: "9px 6px",
-            fontSize: 12.5,
+            fontSize: "var(--fs-base)",
           }}
         >
           <Badge tone="blue">{evento.tenantSlug}</Badge>
-          <span className="mono" style={{ fontSize: 11.5, fontWeight: 700 }}>
+          <span
+            className="mono"
+            style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
+          >
             {evento.action}
           </span>
           <span style={{ flex: 1, minWidth: 0, color: "var(--ink-muted)" }}>
@@ -49,7 +52,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
           </span>
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {new Date(evento.quando).toLocaleString("pt-BR")}
             {evento.ator ? ` · ${evento.ator}` : ""}
@@ -61,7 +64,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
             <p
               style={{
                 margin: 0,
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
               }}
             >
@@ -69,7 +72,7 @@ function Linha({ evento }: { evento: AuditEventoRow }) {
               anterior.
             </p>
           ) : (
-            <table style={{ width: "100%", fontSize: 11.5 }}>
+            <table style={{ width: "100%", fontSize: "var(--fs-nota)" }}>
               <thead>
                 <tr style={{ textAlign: "left", color: "var(--ink-faint)" }}>
                   <th style={{ paddingBottom: 4 }}>Campo</th>
@@ -136,7 +139,13 @@ export default async function AuditPage({
         {tenants.ok ? (
           <Filtros tenants={tenants.data} />
         ) : (
-          <p style={{ margin: 0, color: "var(--red-text)", fontSize: 12.5 }}>
+          <p
+            style={{
+              margin: 0,
+              color: "var(--red-text)",
+              fontSize: "var(--fs-base)",
+            }}
+          >
             {tenants.error}
           </p>
         )}
@@ -174,7 +183,7 @@ function renderEventos(pagina: Awaited<ReturnType<typeof listAuditEvents>>) {
           margin: 0,
           padding: 28,
           textAlign: "center",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           lineHeight: 1.6,
           color: "var(--ink-muted)",
         }}

@@ -31,7 +31,7 @@ const ROTULO_DE_STATUS: Record<string, string> = {
 const CABECALHO: React.CSSProperties = {
   padding: "0 14px 8px",
   textAlign: "left",
-  fontSize: 10,
+  fontSize: "var(--fs-micro)",
   fontWeight: 700,
   letterSpacing: ".12em",
   textTransform: "uppercase",
@@ -41,7 +41,7 @@ const CABECALHO: React.CSSProperties = {
 const CELULA: React.CSSProperties = {
   padding: "11px 14px",
   borderTop: "1px solid var(--hairline)",
-  fontSize: 13,
+  fontSize: "var(--fs-base)",
   verticalAlign: "middle",
 };
 
@@ -91,13 +91,22 @@ export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
               </td>
               <td
                 className="mono"
-                style={{ ...CELULA, color: "var(--ink-subtle)", fontSize: 12 }}
+                style={{
+                  ...CELULA,
+                  color: "var(--ink-subtle)",
+                  fontSize: "var(--fs-base)",
+                }}
               >
                 {cliente.slug}
               </td>
               <td style={CELULA}>
                 {cliente.modules.length === 0 ? (
-                  <span style={{ color: "var(--ink-faint)", fontSize: 12 }}>
+                  <span
+                    style={{
+                      color: "var(--ink-faint)",
+                      fontSize: "var(--fs-base)",
+                    }}
+                  >
                     nenhum módulo contratado
                   </span>
                 ) : (
@@ -119,12 +128,19 @@ export function ClientesTabela({ clientes }: { clientes: ClientRow[] }) {
                   {cliente.plan}
                 </Badge>
               </td>
-              <td className="mono" style={{ ...CELULA, fontSize: 12 }}>
+              <td
+                className="mono"
+                style={{ ...CELULA, fontSize: "var(--fs-base)" }}
+              >
                 {cliente.memberCount}
               </td>
               <td
                 className="mono"
-                style={{ ...CELULA, color: "var(--ink-faint)", fontSize: 12 }}
+                style={{
+                  ...CELULA,
+                  color: "var(--ink-faint)",
+                  fontSize: "var(--fs-base)",
+                }}
               >
                 {new Date(cliente.createdAt).toLocaleDateString("pt-BR")}
               </td>

@@ -39,7 +39,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
           background: "var(--red-soft)",
           border: "1px solid rgba(var(--red-rgb),.3)",
           color: "var(--red-text)",
-          fontSize: 12.5,
+          fontSize: "var(--fs-base)",
           fontWeight: 600,
         }}
       >
@@ -57,7 +57,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
           padding: 28,
           textAlign: "center",
           color: "var(--ink-muted)",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           lineHeight: 1.6,
         }}
       >
@@ -90,8 +90,11 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
         >
           <Avatar name={row.actorName ?? "?"} size={28} />
           <span style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ display: "block", fontSize: 13 }}>
-              <span className="mono" style={{ fontSize: 12, fontWeight: 700 }}>
+            <span style={{ display: "block", fontSize: "var(--fs-base)" }}>
+              <span
+                className="mono"
+                style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+              >
                 {row.action}
               </span>{" "}
               <span style={{ color: "var(--ink-muted)" }}>{row.target}</span>
@@ -100,7 +103,7 @@ function renderTrilha(result: Awaited<ReturnType<typeof listStaffActivity>>) {
               className="mono"
               style={{
                 display: "block",
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
               }}
             >

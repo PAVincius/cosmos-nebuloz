@@ -32,7 +32,7 @@ export default async function DeliveryPage() {
           servicos={servicos.data}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {engajamentos.ok ? "" : engajamentos.error}
           {clientes.ok ? "" : clientes.error}
           {servicos.ok ? "" : servicos.error}

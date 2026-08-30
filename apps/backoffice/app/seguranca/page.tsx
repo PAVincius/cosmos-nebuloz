@@ -1,5 +1,5 @@
-import { Icon } from "@repo/design-system/cosmos/icons";
 import { redirectToSignIn } from "@repo/auth/server";
+import { Icon } from "@repo/design-system/cosmos/icons";
 import {
   requirePlatformStaffSemSegundoFator,
   StaffAuthError,
@@ -85,7 +85,11 @@ export default async function SegurancaPage() {
           </span>
           <span
             className="display"
-            style={{ fontSize: 15, fontWeight: 700, letterSpacing: ".1em" }}
+            style={{
+              fontSize: "var(--fs-forte)",
+              fontWeight: 700,
+              letterSpacing: ".1em",
+            }}
           >
             NEBULOZ{" "}
             <span
@@ -103,7 +107,7 @@ export default async function SegurancaPage() {
         <h1
           className="display"
           style={{
-            fontSize: 21,
+            fontSize: "var(--fs-display)",
             fontWeight: 700,
             margin: "0 0 6px",
             letterSpacing: "-.01em",
@@ -114,7 +118,7 @@ export default async function SegurancaPage() {
         <p
           style={{
             margin: "0 0 22px",
-            fontSize: 12.5,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-muted)",
             fontWeight: 500,
             lineHeight: 1.6,

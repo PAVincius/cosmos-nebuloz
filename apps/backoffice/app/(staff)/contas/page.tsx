@@ -61,12 +61,18 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
             textDecoration: "none",
           }}
         >
-          <span style={{ display: "block", fontSize: 13, fontWeight: 600 }}>
+          <span
+            style={{
+              display: "block",
+              fontSize: "var(--fs-base)",
+              fontWeight: 600,
+            }}
+          >
             {c.nome}
           </span>
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {c.slug} · {c.plano}
           </span>
@@ -74,7 +80,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
         <span
           className="mono"
           style={{
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color:
               c.diasParaRenovar !== null && c.diasParaRenovar < 0
                 ? "var(--red-text)"
@@ -85,7 +91,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
         </span>
         <span
           className="mono"
-          style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+          style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
         >
           {c.ultimaAtividade
             ? `ativo em ${new Date(c.ultimaAtividade).toLocaleDateString("pt-BR")}`
@@ -110,7 +116,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
             <li
               key={s.texto}
               style={{
-                fontSize: 11.5,
+                fontSize: "var(--fs-nota)",
                 color:
                   s.nivel === "RISCO" ? "var(--red-text)" : "var(--amber-text)",
               }}
@@ -125,7 +131,7 @@ function Conta({ c, primeira }: { c: ContaComSaude; primeira: boolean }) {
         <p
           style={{
             margin: "8px 0 0",
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color: "var(--ink-faint)",
           }}
         >
@@ -196,7 +202,7 @@ function Conteudo({ contas }: { contas: ContaComSaude[] }) {
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-muted)",
             }}
           >
@@ -227,7 +233,9 @@ export default async function ContasPage() {
       {res.ok ? (
         <Conteudo contas={res.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>{res.error}</p>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
+          {res.error}
+        </p>
       )}
     </div>
   );

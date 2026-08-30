@@ -62,14 +62,18 @@ function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
     >
       <h1
         className="display"
-        style={{ fontSize: 19, fontWeight: 700, margin: "0 0 10px" }}
+        style={{
+          fontSize: "var(--fs-titulo)",
+          fontWeight: 700,
+          margin: "0 0 10px",
+        }}
       >
         {titulo}
       </h1>
       <p
         style={{
           margin: 0,
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           lineHeight: 1.65,
           color: "var(--ink-muted)",
           fontWeight: 500,
@@ -82,7 +86,7 @@ function PendenteView({ titulo, motivo }: { titulo: string; motivo: string }) {
         style={{
           display: "inline-block",
           marginTop: 20,
-          fontSize: 12.5,
+          fontSize: "var(--fs-base)",
           fontWeight: 700,
           color: "var(--accent-text)",
         }}

@@ -34,7 +34,7 @@ export default async function AprovacoesPage() {
               background: "var(--red-soft)",
               border: "1px solid rgba(var(--red-rgb),.3)",
               color: "var(--red-text)",
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               fontWeight: 600,
             }}
           >
@@ -69,7 +69,7 @@ export default async function AprovacoesPage() {
               padding: 28,
               textAlign: "center",
               color: "var(--ink-muted)",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
             }}
           >
