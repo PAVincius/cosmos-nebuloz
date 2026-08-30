@@ -785,13 +785,17 @@ export function CosmosShell({
   );
   const [navOpen, setNavOpen] = useState(false);
   const navButtonRef = useRef<HTMLButtonElement | null>(null);
+  const restoreFocusRef = useRef(false);
 
   const closeNav = useCallback(() => {
     setNavOpen((wasOpen) => {
       // Devolve o foco ao gatilho: sem isso, fechar por Escape ou pelo scrim
-      // deixa o teclado no início do documento.
+      // deixa o teclado no início do documento. Só marca a intenção aqui — o
+      // botão vive dentro do `inert={navOpen}` abaixo, que só cai no commit, e
+      // `focus()` em subárvore inerte é ignorado em silêncio. Quem foca de
+      // fato é o efeito abaixo, já com o `inert` removido.
       if (wasOpen) {
-        navButtonRef.current?.focus();
+        restoreFocusRef.current = true;
       }
       return false;
     });
@@ -807,6 +811,12 @@ export function CosmosShell({
 
   useEffect(() => {
     if (!navOpen) {
+      // Efeito passivo roda depois do commit, então o `inert` do wrapper já
+      // saiu do DOM e o botão volta a aceitar foco.
+      if (restoreFocusRef.current) {
+        restoreFocusRef.current = false;
+        navButtonRef.current?.focus();
+      }
       return;
     }
     const onKeyDown = (event: KeyboardEvent) => {
@@ -815,8 +825,33 @@ export function CosmosShell({
       }
     };
     document.addEventListener("keydown", onKeyDown);
-    document.getElementById("cosmos-drawer")?.focus();
-    return () => document.removeEventListener("keydown", onKeyDown);
+    // `focus()` em elemento com `visibility: hidden` é ignorado em silêncio, e
+    // fechada a gaveta é exatamente isso — o `[data-open="true"]` do
+    // cosmos.css só vira `visible` alguns quadros depois. Medido aqui: no
+    // primeiro e no segundo quadro após a abertura a visibilidade computada
+    // ainda é `hidden`, só no terceiro ela vira `visible`. Por isso esperamos
+    // a visibilidade em vez de contar quadros fixos — o back-office recalcula
+    // em dois e este shell em três. Um `transitionend` seria exato, mas não
+    // dispara com `prefers-reduced-motion`, onde o cosmos.css zera a
+    // transição. O teto de quadros evita laço eterno se a regra mudar.
+    let frame = 0;
+    let attemptsLeft = 20;
+    const focusDrawer = () => {
+      const drawer = document.getElementById("cosmos-drawer");
+      if (drawer && getComputedStyle(drawer).visibility === "visible") {
+        drawer.focus();
+        return;
+      }
+      if (attemptsLeft > 0) {
+        attemptsLeft -= 1;
+        frame = requestAnimationFrame(focusDrawer);
+      }
+    };
+    frame = requestAnimationFrame(focusDrawer);
+    return () => {
+      cancelAnimationFrame(frame);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, [navOpen, closeNav]);
 
   return (
