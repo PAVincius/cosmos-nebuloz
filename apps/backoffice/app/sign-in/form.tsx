@@ -116,7 +116,7 @@ export function SignInForm() {
             display: "flex",
             alignItems: "center",
             gap: 8,
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-muted)",
             fontWeight: 500,
             cursor: "pointer",

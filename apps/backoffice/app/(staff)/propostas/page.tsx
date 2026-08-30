@@ -32,7 +32,7 @@ export default async function PropostasPage() {
           subtitle="Do escopo ao contrato."
           title="Propostas"
         />
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {propostas.error}
         </p>
       </div>

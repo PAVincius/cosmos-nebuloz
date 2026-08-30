@@ -4,17 +4,17 @@ import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useMemo, useState } from "react";
 import type { CatalogoComercial } from "@/app/actions/catalogo-comercial";
+import { submitProposalAction } from "@/app/actions/proposals";
 import {
   type PropostaParaEdicao,
   salvarEscopoAction,
 } from "@/app/actions/proposta-escopo";
-import { submitProposalAction } from "@/app/actions/proposals";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { formatarBRL } from "@/lib/comercial/formato";
 import {
-  type UnidadeDeCobranca,
   precificarProposta,
+  type UnidadeDeCobranca,
 } from "@/lib/comercial/precificar";
 import { validarProposta } from "@/lib/comercial/validacoes";
 
@@ -73,7 +73,10 @@ export function Gerador({
   const [cliente, setCliente] = useState(proposta?.clienteNome ?? "");
   const [contato, setContato] = useState(proposta?.contatoEmail ?? "");
   const [planoSlug, setPlanoSlug] = useState(
-    proposta?.planoSlug ?? catalogo.planos[1]?.slug ?? catalogo.planos[0]?.slug ?? ""
+    proposta?.planoSlug ??
+      catalogo.planos[1]?.slug ??
+      catalogo.planos[0]?.slug ??
+      ""
   );
   const [assentos, setAssentos] = useState(proposta?.assentos || 40);
   const [modulos, setModulos] = useState<string[]>(
@@ -83,7 +86,9 @@ export function Gerador({
     proposta?.addOnSlugs ?? []
   );
   const [termoSlug, setTermoSlug] = useState(
-    proposta?.termoSlug ?? catalogo.termos.find((t) => t.meses === 12)?.slug ?? ""
+    proposta?.termoSlug ??
+      catalogo.termos.find((t) => t.meses === 12)?.slug ??
+      ""
   );
   const [desconto, setDesconto] = useState(proposta?.descontoPercent ?? 0);
   const [servicoIds, setServicoIds] = useState<string[]>(
@@ -231,8 +236,14 @@ export function Gerador({
       }}
     >
       {/* ── configuração ─────────────────────────────────────────────── */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}>
-        <SectionCard bodyStyle={{ padding: 14 }} icon="building" title="Cliente">
+      <div
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <SectionCard
+          bodyStyle={{ padding: 14 }}
+          icon="building"
+          title="Cliente"
+        >
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <Campo htmlFor="g-titulo" label="Título da proposta">
               <input
@@ -286,7 +297,11 @@ export function Gerador({
                     type="button"
                   >
                     <span
-                      style={{ display: "block", fontSize: 12.5, fontWeight: 800 }}
+                      style={{
+                        display: "block",
+                        fontSize: "var(--fs-base)",
+                        fontWeight: 800,
+                      }}
                     >
                       {p.nome}
                     </span>
@@ -294,7 +309,7 @@ export function Gerador({
                       className="mono"
                       style={{
                         display: "block",
-                        fontSize: 10,
+                        fontSize: "var(--fs-micro)",
                         color: "var(--ink-faint)",
                         marginTop: 2,
                       }}
@@ -358,12 +373,21 @@ export function Gerador({
                       }}
                       type="button"
                     >
-                      <span style={{ flex: 1, fontSize: 12.5, fontWeight: 700 }}>
+                      <span
+                        style={{
+                          flex: 1,
+                          fontSize: "var(--fs-base)",
+                          fontWeight: 700,
+                        }}
+                      >
                         {m.modulo}
                       </span>
                       <span
                         className="mono"
-                        style={{ fontSize: 11, color: "var(--ink-faint)" }}
+                        style={{
+                          fontSize: "var(--fs-nota)",
+                          color: "var(--ink-faint)",
+                        }}
                       >
                         {m.precoMensalCentavos
                           ? `+${formatarBRL(m.precoMensalCentavos)}`
@@ -388,7 +412,9 @@ export function Gerador({
                         aria-pressed={on}
                         disabled={!editavel}
                         key={a.slug}
-                        onClick={() => setAddOnSlugs(alterna(addOnSlugs, a.slug))}
+                        onClick={() =>
+                          setAddOnSlugs(alterna(addOnSlugs, a.slug))
+                        }
                         style={{
                           ...botaoDeEscolha(on),
                           display: "flex",
@@ -402,7 +428,7 @@ export function Gerador({
                           <span
                             style={{
                               display: "block",
-                              fontSize: 12,
+                              fontSize: "var(--fs-base)",
                               fontWeight: 700,
                             }}
                           >
@@ -412,7 +438,7 @@ export function Gerador({
                             <span
                               style={{
                                 display: "block",
-                                fontSize: 10.5,
+                                fontSize: "var(--fs-nota)",
                                 color: "var(--ink-faint)",
                               }}
                             >
@@ -422,7 +448,10 @@ export function Gerador({
                         </span>
                         <span
                           className="mono"
-                          style={{ fontSize: 11, color: "var(--amber-text)" }}
+                          style={{
+                            fontSize: "var(--fs-nota)",
+                            color: "var(--amber-text)",
+                          }}
                         >
                           +{formatarBRL(a.precoCentavos)}
                           {a.recorrente ? "/mês" : ""}
@@ -468,7 +497,7 @@ export function Gerador({
                           display: "flex",
                           alignItems: "center",
                           gap: 6,
-                          fontSize: 12,
+                          fontSize: "var(--fs-base)",
                           fontWeight: 700,
                         }}
                       >
@@ -479,7 +508,7 @@ export function Gerador({
                         className="mono"
                         style={{
                           display: "block",
-                          fontSize: 10.5,
+                          fontSize: "var(--fs-nota)",
                           color: "var(--ink-faint)",
                         }}
                       >
@@ -489,7 +518,7 @@ export function Gerador({
                     <span
                       className="mono"
                       style={{
-                        fontSize: 11,
+                        fontSize: "var(--fs-nota)",
                         color: recorrente
                           ? "var(--amber-text)"
                           : "var(--ink-muted)",
@@ -509,7 +538,9 @@ export function Gerador({
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
             <Campo
               hint={
-                termo ? `desconto de prazo: ${termo.descontoPercent}%` : undefined
+                termo
+                  ? `desconto de prazo: ${termo.descontoPercent}%`
+                  : undefined
               }
               htmlFor="g-termo"
               label="Prazo de contrato"
@@ -524,7 +555,11 @@ export function Gerador({
                     style={botaoDeEscolha(t.slug === termoSlug)}
                     type="button"
                   >
-                    <span style={{ fontSize: 12, fontWeight: 700 }}>{t.nome}</span>
+                    <span
+                      style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+                    >
+                      {t.nome}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -590,12 +625,16 @@ export function Gerador({
               borderBottom: "1px solid var(--hairline)",
             }}
           >
-            <div style={{ fontSize: 18, fontWeight: 700 }}>
+            <div style={{ fontSize: "var(--fs-titulo)", fontWeight: 700 }}>
               {cliente || "— nome do prospect —"}
             </div>
             <div
               className="mono"
-              style={{ fontSize: 11, color: "var(--ink-faint)", marginTop: 3 }}
+              style={{
+                fontSize: "var(--fs-nota)",
+                color: "var(--ink-faint)",
+                marginTop: 3,
+              }}
             >
               {contato || "contato@cliente"} · {plano?.nome ?? "—"} ·{" "}
               {termo?.nome ?? "—"}
@@ -667,10 +706,12 @@ export function Gerador({
                   border: "1px solid var(--hairline)",
                 }}
               >
-                <span style={{ fontSize: 12.5, fontWeight: 700 }}>
+                <span style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
                   Mensal recorrente
                 </span>
-                <span style={{ fontSize: 22, fontWeight: 700 }}>
+                <span
+                  style={{ fontSize: "var(--fs-display)", fontWeight: 700 }}
+                >
                   {formatarBRL(preco.liquidoMensalCentavos)}
                 </span>
               </div>
@@ -712,7 +753,7 @@ export function Gerador({
                 <span
                   key={a.chave + a.texto}
                   style={{
-                    fontSize: 11.5,
+                    fontSize: "var(--fs-nota)",
                     fontWeight: 600,
                     lineHeight: 1.5,
                     color:
@@ -740,7 +781,7 @@ export function Gerador({
           >
             <span
               style={{
-                fontSize: 12,
+                fontSize: "var(--fs-base)",
                 lineHeight: 1.55,
                 color: "var(--ink-muted)",
               }}
@@ -767,7 +808,12 @@ export function Gerador({
               </BotaoPrimario>
             )}
             {!podeEnviar && (
-              <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+              <span
+                style={{
+                  fontSize: "var(--fs-nota)",
+                  color: "var(--ink-faint)",
+                }}
+              >
                 Para enviar: título, contato com e-mail válido e ao menos um
                 módulo.
               </span>
@@ -775,7 +821,9 @@ export function Gerador({
           </div>
         ) : (
           !somenteLeitura && (
-            <span style={{ fontSize: 11.5, color: "var(--ink-faint)" }}>
+            <span
+              style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
+            >
               Somente leitura — seu papel no back-office é MEMBER.
             </span>
           )
@@ -811,7 +859,7 @@ function LinhaDoDocumento({
         <span
           style={{
             display: "block",
-            fontSize: 12.5,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: tom,
           }}
@@ -822,7 +870,7 @@ function LinhaDoDocumento({
           <span
             style={{
               display: "block",
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
             }}
           >
@@ -832,7 +880,7 @@ function LinhaDoDocumento({
       </span>
       <span
         className="mono"
-        style={{ fontSize: 12.5, fontWeight: 700, color: tom }}
+        style={{ fontSize: "var(--fs-base)", fontWeight: 700, color: tom }}
       >
         {valor}
       </span>
@@ -852,7 +900,7 @@ function Celula({ rotulo, valor }: { rotulo: string; valor: string }) {
     >
       <div
         style={{
-          fontSize: 10,
+          fontSize: "var(--fs-micro)",
           fontWeight: 700,
           letterSpacing: ".05em",
           textTransform: "uppercase",
@@ -861,7 +909,10 @@ function Celula({ rotulo, valor }: { rotulo: string; valor: string }) {
       >
         {rotulo}
       </div>
-      <div className="mono" style={{ fontSize: 13, fontWeight: 700, marginTop: 3 }}>
+      <div
+        className="mono"
+        style={{ fontSize: "var(--fs-base)", fontWeight: 700, marginTop: 3 }}
+      >
         {valor}
       </div>
     </div>

@@ -44,7 +44,7 @@ export function ConfirmarAcao({
     borderRadius: "var(--r-sm)",
     border: "1px solid var(--hairline)",
     background: "none",
-    fontSize: 11.5,
+    fontSize: "var(--fs-nota)",
     fontWeight: 600,
     cursor: "pointer",
   } as const;
@@ -80,10 +80,10 @@ export function ConfirmarAcao({
         background: "var(--red-soft, var(--surface-2))",
       }}
     >
-      <span style={{ fontSize: 12.5, fontWeight: 600 }}>
+      <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
         {rotulo} — <span className="mono">{alvo}</span>
       </span>
-      <span style={{ fontSize: 11.5, color: "var(--ink-muted)" }}>
+      <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-muted)" }}>
         {consequencia}
       </span>
       <div style={{ display: "flex", gap: 8 }}>

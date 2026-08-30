@@ -29,7 +29,7 @@ export default async function IpPage() {
           podeEscrever={staff.canWrite}
         />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {ativos.ok ? "" : ativos.error}
           {engajamentos.ok ? "" : engajamentos.error}
         </p>

@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 const CABECALHO = {
   padding: "0 10px 7px",
   textAlign: "left" as const,
-  fontSize: 10,
+  fontSize: "var(--fs-micro)",
   fontWeight: 700,
   letterSpacing: ".12em",
   textTransform: "uppercase" as const,
@@ -26,7 +26,7 @@ const CABECALHO = {
 const CELULA = {
   padding: "9px 10px",
   borderTop: "1px solid var(--hairline)",
-  fontSize: 12.5,
+  fontSize: "var(--fs-base)",
 };
 
 /**
@@ -67,7 +67,11 @@ function LinhaCliente({ c, maximo }: { c: ClienteBenchmark; maximo: number }) {
         <span style={{ fontWeight: 600 }}>{c.nome}</span>
         <span
           className="mono"
-          style={{ display: "block", fontSize: 10, color: "var(--ink-faint)" }}
+          style={{
+            display: "block",
+            fontSize: "var(--fs-micro)",
+            color: "var(--ink-faint)",
+          }}
         >
           {c.slug}
         </span>
@@ -78,7 +82,11 @@ function LinhaCliente({ c, maximo }: { c: ClienteBenchmark; maximo: number }) {
       <td style={{ ...CELULA, minWidth: 140 }}>
         <span
           className="mono"
-          style={{ display: "block", marginBottom: 4, fontSize: 12 }}
+          style={{
+            display: "block",
+            marginBottom: 4,
+            fontSize: "var(--fs-base)",
+          }}
         >
           {formatarBRL(c.receitaCentavos)}
         </span>
@@ -98,7 +106,10 @@ function LinhaServico({ s, maximo }: { s: ServicoBenchmark; maximo: number }) {
   return (
     <tr>
       <td style={CELULA}>
-        <span className="mono" style={{ fontWeight: 700, fontSize: 11.5 }}>
+        <span
+          className="mono"
+          style={{ fontWeight: 700, fontSize: "var(--fs-nota)" }}
+        >
           {s.codigo}
         </span>
         <span style={{ marginLeft: 8 }}>{s.nome}</span>
@@ -109,7 +120,11 @@ function LinhaServico({ s, maximo }: { s: ServicoBenchmark; maximo: number }) {
       <td style={{ ...CELULA, minWidth: 140 }}>
         <span
           className="mono"
-          style={{ display: "block", marginBottom: 4, fontSize: 12 }}
+          style={{
+            display: "block",
+            marginBottom: 4,
+            fontSize: "var(--fs-base)",
+          }}
         >
           {formatarBRL(s.receitaCentavos)}
         </span>
@@ -233,7 +248,9 @@ export default async function BenchmarkPage() {
       {res.ok ? (
         <Conteudo dados={res.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>{res.error}</p>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
+          {res.error}
+        </p>
       )}
     </div>
   );

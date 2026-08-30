@@ -70,15 +70,21 @@ function LinhaProposta({
     >
       <span
         className="mono"
-        style={{ fontSize: 11, fontWeight: 700, width: 84 }}
+        style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 84 }}
       >
         {p.numero}
       </span>
       <span style={{ flex: 1, minWidth: 0 }}>
-        <span style={{ display: "block", fontSize: 13, fontWeight: 600 }}>
+        <span
+          style={{
+            display: "block",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
           {p.titulo}
         </span>
-        <span style={{ fontSize: 11, color: "var(--ink-faint)" }}>
+        <span style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}>
           {p.cliente}
         </span>
       </span>
@@ -92,7 +98,7 @@ function LinhaProposta({
       <span
         className="mono"
         style={{
-          fontSize: 12,
+          fontSize: "var(--fs-base)",
           color: "var(--accent-text)",
           width: 110,
           textAlign: "right",
@@ -119,7 +125,7 @@ function LinhaProposta({
             border: "1px solid var(--hairline)",
             background: "none",
             color: "var(--ink-muted)",
-            fontSize: 11,
+            fontSize: "var(--fs-nota)",
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -181,7 +187,7 @@ export function Propostas({
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}

@@ -78,7 +78,7 @@ export function NewClientForm() {
           <p
             style={{
               margin: 0,
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
               color: "var(--amber-text)",
             }}
@@ -88,7 +88,7 @@ export function NewClientForm() {
           <p
             style={{
               margin: "6px 0 0",
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}
@@ -101,7 +101,7 @@ export function NewClientForm() {
             style={{
               display: "inline-block",
               marginTop: 9,
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               fontWeight: 700,
               color: "var(--accent-text)",
             }}
@@ -148,7 +148,7 @@ export function NewClientForm() {
         <legend
           className="mono"
           style={{
-            fontSize: 10,
+            fontSize: "var(--fs-micro)",
             fontWeight: 700,
             letterSpacing: ".12em",
             textTransform: "uppercase",
@@ -165,7 +165,7 @@ export function NewClientForm() {
               display: "flex",
               alignItems: "center",
               gap: 9,
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               fontWeight: 600,
               cursor: "pointer",
             }}

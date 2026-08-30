@@ -79,12 +79,18 @@ function Pessoa({
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <span style={{ flex: 1, minWidth: 0 }}>
-          <span style={{ display: "block", fontSize: 13, fontWeight: 600 }}>
+          <span
+            style={{
+              display: "block",
+              fontSize: "var(--fs-base)",
+              fontWeight: 600,
+            }}
+          >
             {p.nome}
           </span>
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {p.email} · {p.horasSemana}h/semana
           </span>
@@ -107,7 +113,7 @@ function Pessoa({
               border: "1px solid var(--hairline)",
               background: "none",
               color: "var(--ink-muted)",
-              fontSize: 11,
+              fontSize: "var(--fs-nota)",
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -136,7 +142,7 @@ function Pessoa({
               className="mono"
               key={`${a.engajamento}-${a.inicioEm}`}
               style={{
-                fontSize: 10,
+                fontSize: "var(--fs-micro)",
                 padding: "2px 7px",
                 borderRadius: "var(--r-pill)",
                 background: "var(--surface-2)",
@@ -345,7 +351,7 @@ export function Capacidade({
                 border: "1px solid var(--hairline)",
                 background: "none",
                 color: "var(--ink-muted)",
-                fontSize: 13,
+                fontSize: "var(--fs-base)",
                 fontWeight: 600,
                 cursor: "pointer",
               }}
@@ -455,7 +461,7 @@ export function Capacidade({
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}
