@@ -48,7 +48,7 @@ export default async function ClientDetailPage({
       <PageHeader
         eyebrow={`Tenant · ${client.plan}`}
         meta={
-          <span className="mono" style={{ fontSize: 11.5 }}>
+          <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
             {client.slug} · cliente desde{" "}
             {new Date(client.createdAt).toLocaleDateString("pt-BR")} ·{" "}
             {client.memberCount} membro(s)

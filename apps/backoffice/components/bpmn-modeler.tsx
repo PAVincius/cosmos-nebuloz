@@ -196,7 +196,7 @@ export function BpmnModeler({
             borderRadius: "var(--r-md)",
             padding: "9px 12px",
             fontFamily: "inherit",
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
             outline: "none",
@@ -245,7 +245,13 @@ export function BpmnModeler({
       </div>
 
       {carregando ? (
-        <p style={{ margin: 0, fontSize: 12, color: "var(--ink-faint)" }}>
+        <p
+          style={{
+            margin: 0,
+            fontSize: "var(--fs-base)",
+            color: "var(--ink-faint)",
+          }}
+        >
           Carregando o modeler…
         </p>
       ) : null}

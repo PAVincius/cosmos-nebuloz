@@ -205,7 +205,7 @@ export function Biblioteca({
                 style={{
                   margin: 0,
                   padding: "18px 4px",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                   lineHeight: 1.6,
                   color: "var(--ink-muted)",
                 }}
@@ -237,12 +237,17 @@ export function Biblioteca({
                     }}
                     type="button"
                   >
-                    <span style={{ fontSize: 12.5, fontWeight: 700 }}>
+                    <span
+                      style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+                    >
                       {a.nome}
                     </span>
                     <span
                       className="mono"
-                      style={{ fontSize: 10, color: "var(--ink-faint)" }}
+                      style={{
+                        fontSize: "var(--fs-micro)",
+                        color: "var(--ink-faint)",
+                      }}
                     >
                       {a.tipo} · v{a.versoes}
                       {a.origem ? ` · ${a.origem}` : ""}
@@ -303,7 +308,7 @@ export function Biblioteca({
                       border: "1px solid var(--hairline)",
                       borderRadius: "var(--r-md)",
                       padding: 13,
-                      fontSize: 12.5,
+                      fontSize: "var(--fs-base)",
                       lineHeight: 1.65,
                       color: "var(--ink)",
                       outline: "none",
@@ -334,7 +339,13 @@ export function Biblioteca({
                       <Badge tone={i === 0 ? "green" : "neutral"}>
                         v{h.versao}
                       </Badge>
-                      <span style={{ flex: 1, minWidth: 0, fontSize: 12.5 }}>
+                      <span
+                        style={{
+                          flex: 1,
+                          minWidth: 0,
+                          fontSize: "var(--fs-base)",
+                        }}
+                      >
                         {h.nota ?? (
                           <span style={{ color: "var(--ink-faint)" }}>
                             sem nota
@@ -343,7 +354,10 @@ export function Biblioteca({
                       </span>
                       <span
                         className="mono"
-                        style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                        style={{
+                          fontSize: "var(--fs-nota)",
+                          color: "var(--ink-faint)",
+                        }}
                       >
                         {h.autorNome ?? "—"} ·{" "}
                         {new Date(h.criadoEm).toLocaleString("pt-BR")}
@@ -360,7 +374,7 @@ export function Biblioteca({
                   margin: 0,
                   padding: 24,
                   textAlign: "center",
-                  fontSize: 13,
+                  fontSize: "var(--fs-base)",
                   color: "var(--ink-muted)",
                 }}
               >

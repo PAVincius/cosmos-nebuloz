@@ -54,15 +54,17 @@ function LinhaServico({
     >
       <span
         className="mono"
-        style={{ fontSize: 11.5, fontWeight: 700, width: 60 }}
+        style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 60 }}
       >
         {s.codigo}
       </span>
-      <span style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{s.nome}</span>
+      <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
+        {s.nome}
+      </span>
       <Badge tone="neutral">{s.modalidade}</Badge>
       <span
         className="mono"
-        style={{ fontSize: 12, color: "var(--accent-text)" }}
+        style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
       >
         {formatarBRL(s.precoBaseCentavos)}
         <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
@@ -77,7 +79,7 @@ function LinhaServico({
             border: "1px solid var(--hairline)",
             background: "none",
             color: "var(--ink-muted)",
-            fontSize: 11,
+            fontSize: "var(--fs-nota)",
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -139,7 +141,8 @@ export function Catalogo({
         // recém-criada aparecer diferente do que ficou no banco até o próximo
         // carregamento.
         trilha: "readiness",
-        unidadeDeCobranca: form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
+        unidadeDeCobranca:
+          form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
         duracao: null,
         entregaveis: [],
         papeis: [],
@@ -286,7 +289,7 @@ export function Catalogo({
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}

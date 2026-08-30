@@ -21,7 +21,9 @@ export default async function ServicosPage() {
       {res.ok ? (
         <Catalogo iniciais={res.data} podeEscrever={staff.canWrite} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>{res.error}</p>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
+          {res.error}
+        </p>
       )}
     </div>
   );

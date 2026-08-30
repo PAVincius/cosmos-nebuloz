@@ -94,7 +94,7 @@ export function CadastroDe2FA() {
   if (cadastro.backupCodes) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }}>
+        <p style={{ margin: 0, fontSize: "var(--fs-base)", lineHeight: 1.6 }}>
           Autenticador cadastrado. Guarde os códigos de recuperação — eles não
           aparecem de novo.
         </p>
@@ -107,7 +107,7 @@ export function CadastroDe2FA() {
             padding: 12,
             borderRadius: "var(--r-md)",
             border: "1px dashed var(--hairline-strong)",
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
           }}
         >
           {cadastro.backupCodes.map((c) => (
@@ -117,7 +117,7 @@ export function CadastroDe2FA() {
         <p
           style={{
             margin: 0,
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             lineHeight: 1.55,
             color: "var(--ink-faint)",
           }}
@@ -166,7 +166,7 @@ export function CadastroDe2FA() {
               margin: 0,
               maxWidth: 150,
               textAlign: "center",
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               lineHeight: 1.55,
               color: "var(--ink-faint)",
               fontWeight: 500,
@@ -185,7 +185,7 @@ export function CadastroDe2FA() {
               background: "none",
               border: "none",
               padding: 0,
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
               textDecoration: "underline",
               cursor: "pointer",
@@ -205,7 +205,7 @@ export function CadastroDe2FA() {
                 padding: "8px 10px",
                 borderRadius: "var(--r-sm)",
                 border: "1px solid var(--hairline)",
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 letterSpacing: ".08em",
               }}
             >
@@ -222,7 +222,7 @@ export function CadastroDe2FA() {
         <p
           style={{
             margin: 0,
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-faint)",
             fontWeight: 600,
           }}
@@ -234,8 +234,8 @@ export function CadastroDe2FA() {
           <input
             // biome-ignore lint/a11y/noAutofocus: primeiro campo acionável de
             // uma tela cujo propósito único é este formulário.
-            autoFocus
             autoComplete="current-password"
+            autoFocus
             id="senha"
             onChange={(e) => setSenha(e.target.value)}
             style={INPUT}

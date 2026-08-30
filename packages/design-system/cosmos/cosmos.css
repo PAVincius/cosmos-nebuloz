@@ -41,6 +41,30 @@
   --r-pill: 999px;
   --pad: 20px;
   --gap: 16px;
+
+  /* Escala tipográfica.
+   *
+   * Antes disto não havia nenhuma: os tamanhos eram literais nos componentes,
+   * e o back-office acumulou 15 valores distintos em 185 usos. Noventa e três
+   * por cento deles caíam entre 10px e 13px — sete valores numa faixa de três
+   * pixels. Meio pixel de diferença não carrega informação: não separa um
+   * rótulo de um título, só multiplica o vocabulário. O efeito medido era uma
+   * tela com doze tamanhos e a hierarquia sustentada por peso e cor, porque
+   * tamanho havia deixado de significar qualquer coisa.
+   *
+   * Seis degraus, com salto perceptível entre vizinhos. O piso é 10px e é
+   * deliberado: só o eyebrow e o carimbo mono chegam lá, sempre em maiúsculas
+   * e com entreletra aberta, que é o que mantém 10px legível. Texto corrido
+   * começa em --fs-base.
+   *
+   * Estes são os degraus, não uma sugestão de uso: um tamanho fora deles é um
+   * degrau novo, e degrau novo é como os quinze apareceram. */
+  --fs-micro: 10px;
+  --fs-nota: 11.5px;
+  --fs-base: 13px;
+  --fs-forte: 15px;
+  --fs-titulo: 19px;
+  --fs-display: 22px;
   --shell-shadow:
     0 1px 2px rgba(16, 22, 40, 0.04), 0 1px 1px rgba(16, 22, 40, 0.03);
 

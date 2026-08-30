@@ -46,7 +46,7 @@ function Eyebrow({
     <div
       className="mono"
       style={{
-        fontSize: 10,
+        fontSize: "var(--fs-micro)",
         fontWeight: 700,
         letterSpacing: ".12em",
         textTransform: "uppercase",
@@ -181,14 +181,18 @@ function Topbar({
         </span>
         <span
           className="display bo-so-largo"
-          style={{ fontSize: 14, fontWeight: 700, letterSpacing: ".1em" }}
+          style={{
+            fontSize: "var(--fs-forte)",
+            fontWeight: 700,
+            letterSpacing: ".1em",
+          }}
         >
           NEBULOZ
         </span>
         <span
           className="mono bo-so-largo"
           style={{
-            fontSize: 9.5,
+            fontSize: "var(--fs-micro)",
             fontWeight: 700,
             letterSpacing: ".12em",
             padding: "3px 8px",
@@ -208,7 +212,11 @@ function Topbar({
           paga menos ainda: a gaveta já mostra o item ativo. */}
       <span
         className="mono bo-so-largo"
-        style={{ fontSize: 11, color: "var(--ink-faint)", fontWeight: 600 }}
+        style={{
+          fontSize: "var(--fs-nota)",
+          color: "var(--ink-faint)",
+          fontWeight: 600,
+        }}
       >
         {secao} <span style={{ opacity: 0.5 }}>›</span>{" "}
         <span style={{ color: "var(--ink-muted)" }}>{tela}</span>
@@ -266,14 +274,20 @@ function Topbar({
       >
         <Avatar name={staff.name || staff.email} size={26} />
         <span className="bo-so-largo" style={{ minWidth: 0 }}>
-          <span style={{ display: "block", fontSize: 12.5, fontWeight: 700 }}>
+          <span
+            style={{
+              display: "block",
+              fontSize: "var(--fs-base)",
+              fontWeight: 700,
+            }}
+          >
             {staff.name?.split(" ")[0] || "—"}
           </span>
           <span
             className="mono"
             style={{
               display: "block",
-              fontSize: 10,
+              fontSize: "var(--fs-micro)",
               color: "var(--ink-faint)",
             }}
           >
@@ -313,7 +327,7 @@ function ItemDeMenu({
         borderRadius: 9,
         padding: "8.5px 10px",
         color: ativo ? "var(--accent-text)" : "var(--ink-muted)",
-        fontSize: 13,
+        fontSize: "var(--fs-base)",
         fontWeight: ativo ? 700 : 600,
         textDecoration: "none",
       }}
@@ -326,7 +340,7 @@ function ItemDeMenu({
         <span
           className="mono"
           style={{
-            fontSize: 8.5,
+            fontSize: "var(--fs-micro)",
             fontWeight: 700,
             letterSpacing: ".08em",
             padding: "2px 5px",
@@ -417,7 +431,7 @@ function Sidebar({
         <p
           style={{
             margin: "7px 0 0",
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             lineHeight: 1.55,
             color: "var(--ink-subtle)",
             fontWeight: 500,

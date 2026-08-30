@@ -23,7 +23,7 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
           margin: 0,
           padding: 24,
           textAlign: "center",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           color: "var(--green-text)",
         }}
       >
@@ -46,13 +46,13 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
           }}
         >
           <Badge tone="blue">{i.tenantSlug}</Badge>
-          <span style={{ flex: 1, minWidth: 0, fontSize: 13 }}>
+          <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
             {i.name}
             <span
               className="mono"
               style={{
                 marginLeft: 8,
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 color: "var(--ink-faint)",
               }}
             >
@@ -61,7 +61,7 @@ function Integracoes({ linhas }: { linhas: IntegracaoQuebrada[] }) {
           </span>
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {i.ultimoSync
               ? `último sync ${new Date(i.ultimoSync).toLocaleString("pt-BR")}`
@@ -84,7 +84,7 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
           margin: 0,
           padding: 24,
           textAlign: "center",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           lineHeight: 1.6,
           color: "var(--ink-muted)",
         }}
@@ -111,17 +111,22 @@ function Acessos({ linhas }: { linhas: AcessoRow[] }) {
           <Badge dot tone={TOM_EVENTO[a.evento as "LOGIN"] ?? "neutral"}>
             {a.evento}
           </Badge>
-          <span className="mono" style={{ flex: 1, minWidth: 0, fontSize: 12 }}>
+          <span
+            className="mono"
+            style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}
+          >
             {a.email}
           </span>
           {a.motivo ? (
-            <span style={{ fontSize: 11.5, color: "var(--red-text)" }}>
+            <span
+              style={{ fontSize: "var(--fs-nota)", color: "var(--red-text)" }}
+            >
               {a.motivo}
             </span>
           ) : null}
           <span
             className="mono"
-            style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+            style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
           >
             {a.ip ?? "sem ip"} · {new Date(a.quando).toLocaleString("pt-BR")}
           </span>
@@ -165,7 +170,9 @@ export default async function ObservabilidadePage() {
           </SectionCard>
         </>
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>{res.error}</p>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
+          {res.error}
+        </p>
       )}
     </div>
   );

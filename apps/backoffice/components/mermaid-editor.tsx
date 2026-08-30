@@ -56,7 +56,7 @@ function BotaoZoom({
         background: "none",
         border: "1px solid var(--hairline)",
         borderRadius: "var(--r-sm)",
-        fontSize: 14,
+        fontSize: "var(--fs-forte)",
         fontWeight: 700,
         lineHeight: 1,
         color: "var(--ink-muted)",
@@ -169,7 +169,7 @@ export function MermaidEditor({
             borderRadius: "var(--r-md)",
             padding: "9px 12px",
             fontFamily: "inherit",
-            fontSize: 13,
+            fontSize: "var(--fs-base)",
             fontWeight: 600,
             color: "var(--ink)",
             outline: "none",
@@ -199,7 +199,7 @@ export function MermaidEditor({
             className="mono"
             htmlFor="mermaid-source"
             style={{
-              fontSize: 10,
+              fontSize: "var(--fs-micro)",
               fontWeight: 700,
               letterSpacing: ".12em",
               textTransform: "uppercase",
@@ -221,7 +221,7 @@ export function MermaidEditor({
               border: "1px solid var(--hairline)",
               borderRadius: "var(--r-md)",
               padding: 13,
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.65,
               color: "var(--ink)",
               outline: "none",
@@ -236,7 +236,7 @@ export function MermaidEditor({
               className="mono"
               style={{
                 flex: 1,
-                fontSize: 10,
+                fontSize: "var(--fs-micro)",
                 fontWeight: 700,
                 letterSpacing: ".12em",
                 textTransform: "uppercase",
@@ -262,7 +262,7 @@ export function MermaidEditor({
                 border: "1px solid var(--hairline)",
                 borderRadius: "var(--r-sm)",
                 padding: "3px 6px",
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 fontWeight: 700,
                 color: "var(--ink-muted)",
                 cursor: "pointer",
@@ -297,7 +297,7 @@ export function MermaidEditor({
                 className="mono"
                 style={{
                   margin: 0,
-                  fontSize: 11.5,
+                  fontSize: "var(--fs-nota)",
                   color: "var(--red-text)",
                   whiteSpace: "pre-wrap",
                   textAlign: "left",

@@ -37,7 +37,7 @@ export default async function ClientsPage() {
           background: "var(--red-soft)",
           border: "1px solid rgba(var(--red-rgb),.3)",
           color: "var(--red-text)",
-          fontSize: 13,
+          fontSize: "var(--fs-base)",
           fontWeight: 600,
         }}
       >
@@ -68,7 +68,7 @@ export default async function ClientsPage() {
             background: "var(--accent)",
             color: "var(--accent-fg)",
             border: "1px solid var(--accent)",
-            fontSize: 14,
+            fontSize: "var(--fs-forte)",
             fontWeight: 600,
             textDecoration: "none",
             boxShadow:
@@ -128,7 +128,7 @@ export default async function ClientsPage() {
               padding: 28,
               textAlign: "center",
               color: "var(--ink-muted)",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
             }}
           >
             Nenhum cliente provisionado ainda. Comece pelo{" "}
