@@ -122,19 +122,51 @@ linha de `MeetingTranscript` como registro de que a reunião existiu e foi
 revogada. Sem isso, pelo critério que o próprio Meridian escreveu, não é
 revogação.
 
-### Participantes
+### Participantes — campos confirmados em 2026-09-01
 
 Registrar quem estava na sala é **pré-requisito de atender pedido de titular**,
 e hoje não existe. Entra como `MeetingParticipant` vinculado à transcrição.
 
-Duas ressalvas honestas:
+A dúvida que este documento carregava — se o provedor expõe participantes e sob
+que campo — está resolvida. A documentação do Fireflies descreve, no tipo
+`Transcript`:
+
+| Campo | Tipo | O que traz |
+|---|---|---|
+| `participants` | `[String]` | E-mails de participantes e convidados, **incluindo quem não tem conta Fireflies** |
+| `fireflies_users` | `[String]` | Apenas os participantes que têm conta |
+| `workspace_users` | `[String]` | Apenas os do workspace |
+| `meeting_attendees` | `[MeetingAttendee]` | `displayName` e `email` |
+| `meeting_attendance` | `[MeetingAttendance]` | Quando cada um entrou e saiu |
+| `organizer_email` | `String` | Quem organizou |
+
+A query atual (`TRANSCRIPT_QUERY` em `fireflies-normalize.ts`) pede `id`,
+`title` e `summary`. Nenhum destes.
+
+**Isso muda o desenho, e para melhor.** `participants` menos `workspace_users`
+identifica o convidado externo **sem depender de um campo de domínio no
+`Tenant`** — que era exatamente o motivo pelo qual a §4 original descartou
+detecção automática de participante externo.
+
+Com isso, `STANDING` deixa de ser tudo-ou-nada:
+
+> **`STANDING` libera automaticamente apenas reuniões sem participante externo.
+> Havendo qualquer convidado de fora do workspace, a transcrição cai em
+> `PENDING`, independentemente do modo.**
+
+É materialmente mais seguro e não custa a demonstração: a cerimônia interna de
+um RTE — o caso do trial — não tem convidado externo, e continua fluindo
+sozinha. O que passa a exigir decisão humana é exatamente o caso que motivou
+todo este documento.
+
+Duas ressalvas que permanecem:
 
 - **É mais dado pessoal do que se guarda hoje.** Só se justifica dentro deste
   desenho — como o registro que torna o consentimento escopável e o direito do
   titular exercível. Guardar participante sem o portão seria piorar o problema.
-- **O campo exato do provedor precisa ser confirmado na documentação do
-  Fireflies** antes de implementar. A query atual não pede participantes; não
-  afirmo aqui qual é o nome do campo.
+- **A lista de participantes é do provedor, não da sala.** Quem entrou por link
+  sem estar no convite pode não aparecer. A detecção reduz o risco; não o zera,
+  e a afirmação humana continua sendo o que sustenta o consentimento.
 
 Isso obriga a atualizar a finalidade 7 do RoPA — o que é bom sinal: significa
 que o tratamento passou a ser descritível.
@@ -196,9 +228,19 @@ Junto disso, e sem depender dele:
 4. Revogação apagando insights e zerando `rawSummary`.
 5. Tela: fila de transcrições em `PENDING`, com quem estava na sala à vista de
    quem vai liberar.
-6. `MeetingParticipant`, depois de confirmar o campo do provedor.
-7. Atualizar a finalidade 7 do RoPA e o UC-07 no Charter — o caso sai de
+6. `MeetingParticipant` — campos do provedor confirmados, ver §4. Inclui
+   estender a `TRANSCRIPT_QUERY`, que hoje não pede nenhum deles, e marcar quem
+   é externo por `participants` menos `workspace_users`.
+7. **`STANDING` ciente de participante externo** — só libera sozinho reunião
+   sem convidado de fora. Depende do 6, e é o que torna `STANDING` defensável.
+8. Estender a eliminação de LGPD a `MeetingTranscript` e `MeetingParticipant`.
+   Hoje o expurgo de titular não os alcança, o que é coerente enquanto não se
+   sabe quem estava na sala — e deixa de ser assim que o 6 entrar.
+9. Atualizar a finalidade 7 do RoPA e o UC-07 no Charter — o caso sai de
    `BLOCKED` para `RESTRICTED`, com as condições sendo estes controles.
 
-Os passos 1 a 4 são o que efetivamente destrava. O 5 é usabilidade, o 6 é
-pré-requisito de DSR, e o 7 é o que faz os três documentos pararem de discordar.
+Os passos 1 a 4 são o que efetivamente destrava, e estão entregues. O 5 é
+usabilidade. O 6 é pré-requisito de DSR e habilita o 7. O 8 é a consequência
+que o 6 cria: **registrar participante sem estender a eliminação seria guardar
+dado pessoal novo sem caminho de apagar** — trocar um problema por outro. O 9 é
+o que faz os três documentos pararem de discordar.
