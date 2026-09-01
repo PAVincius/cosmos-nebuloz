@@ -39,6 +39,11 @@ import { createHash, randomBytes } from "node:crypto";
 import { realpathSync } from "node:fs";
 import { pathToFileURL } from "node:url";
 import { PrismaPg } from "@prisma/adapter-pg";
+import {
+  MERIDIAN_BATTERY,
+  MERIDIAN_TEMPLATE_NAME,
+  MERIDIAN_TEMPLATE_VERSION,
+} from "@repo/provisioning";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Pool } from "pg";
@@ -88,132 +93,11 @@ const PERSONAS = [
 ];
 
 // ── Bateria v3.2 ──────────────────────────────────────────────────────────────
-// Três perguntas por eixo. Data leva a pergunta invertida (fração fora do
-// ambiente governado), que é o caso onde a normalização erraria em silêncio se
-// `inverted` não existisse.
+// A lista mora em `@repo/provisioning`, que é de onde o back-office também a
+// cria: uma segunda cópia aqui envelheceria sozinha, e a divergência entre
+// banco semeado e banco provisionado é invisível na leitura.
 
-type SeedQuestion = {
-  code: string;
-  axis: MeridianAxis;
-  ordinal: number;
-  type: "LIKERT" | "YES_NO" | "SCALE";
-  text: string;
-  weight?: number;
-  inverted?: boolean;
-  scaleLabels?: string[];
-};
-
-const QUESTIONS: SeedQuestion[] = [
-  {
-    code: "Q-D01",
-    axis: "DATA",
-    ordinal: 1,
-    type: "LIKERT",
-    text: "As fontes de dado críticas do negócio estão catalogadas, com dono e descrição atualizados.",
-    weight: 2,
-  },
-  {
-    code: "Q-D02",
-    axis: "DATA",
-    ordinal: 2,
-    type: "LIKERT",
-    text: "Existe medição automática de qualidade (completude, frescor, consistência) nas fontes principais.",
-  },
-  {
-    code: "Q-D03",
-    axis: "DATA",
-    ordinal: 3,
-    type: "SCALE",
-    text: "Que fração dos dados usados em análises vive fora do ambiente governado (planilhas, exports locais)?",
-    inverted: true,
-    scaleLabels: ["0–10%", "10–25%", "25–50%", "50%+"],
-  },
-  {
-    code: "Q-P01",
-    axis: "PROCESS",
-    ordinal: 1,
-    type: "LIKERT",
-    text: "Os processos candidatos a IA estão mapeados com baseline de tempo e custo.",
-  },
-  {
-    code: "Q-P02",
-    axis: "PROCESS",
-    ordinal: 2,
-    type: "YES_NO",
-    text: "Existe critério econômico comparável para priorizar casos de uso?",
-  },
-  {
-    code: "Q-P03",
-    axis: "PROCESS",
-    ordinal: 3,
-    type: "LIKERT",
-    text: "As exceções do processo são registradas e revisadas periodicamente.",
-  },
-  {
-    code: "Q-E01",
-    axis: "PEOPLE",
-    ordinal: 1,
-    type: "LIKERT",
-    text: "Existe trilha de capacitação em IA por persona, com participação medida.",
-  },
-  {
-    code: "Q-E02",
-    axis: "PEOPLE",
-    ordinal: 2,
-    type: "YES_NO",
-    text: "Os papéis de dado (steward, owner) estão formalizados nas descrições de cargo?",
-  },
-  {
-    code: "Q-E03",
-    axis: "PEOPLE",
-    ordinal: 3,
-    type: "LIKERT",
-    text: "O conhecimento de IA está distribuído além de um pequeno grupo de campeões.",
-  },
-  {
-    code: "Q-G01",
-    axis: "GOVERNANCE",
-    ordinal: 1,
-    type: "LIKERT",
-    text: "A política de uso de IA está aprovada, versionada e comunicada.",
-  },
-  {
-    code: "Q-G02",
-    axis: "GOVERNANCE",
-    ordinal: 2,
-    type: "YES_NO",
-    text: "O comitê de IA revisou algum caso nos últimos seis meses?",
-    weight: 2,
-  },
-  {
-    code: "Q-G03",
-    axis: "GOVERNANCE",
-    ordinal: 3,
-    type: "LIKERT",
-    text: "Dados sensíveis têm classificação e controle de acesso aplicados na prática.",
-  },
-  {
-    code: "Q-I01",
-    axis: "INFRASTRUCTURE",
-    ordinal: 1,
-    type: "LIKERT",
-    text: "Existe ambiente segregado para experimentação com dado sensível.",
-  },
-  {
-    code: "Q-I02",
-    axis: "INFRASTRUCTURE",
-    ordinal: 2,
-    type: "LIKERT",
-    text: "O ciclo de vida de modelos tem versionamento e rollback.",
-  },
-  {
-    code: "Q-I03",
-    axis: "INFRASTRUCTURE",
-    ordinal: 3,
-    type: "YES_NO",
-    text: "O custo de inferência é observável por caso de uso?",
-  },
-];
+const QUESTIONS = MERIDIAN_BATTERY;
 
 // ── Respondentes e respostas ──────────────────────────────────────────────────
 // Jonas e Ana divergem em Data de propósito: é a divergência que faz o eixo
@@ -425,9 +309,9 @@ function toScoringQuestions(axis: MeridianAxis): ScoringQuestion[] {
     code: q.code,
     ordinal: q.ordinal,
     type: q.type,
-    weight: q.weight ?? 1,
-    inverted: q.inverted ?? false,
-    scaleLabels: q.scaleLabels ?? [],
+    weight: q.weight,
+    inverted: q.inverted,
+    scaleLabels: q.scaleLabels,
   }));
 }
 
@@ -536,8 +420,8 @@ async function main() {
   const template = await db.meridianTemplate.create({
     data: {
       tenantId,
-      name: "Bateria de prontidão para IA",
-      version: "v3.2",
+      name: MERIDIAN_TEMPLATE_NAME,
+      version: MERIDIAN_TEMPLATE_VERSION,
       contestedSpread: 25,
       gapThreshold: 60,
       lockedAt: d("2026-04-02"),
@@ -553,9 +437,9 @@ async function main() {
         ordinal: q.ordinal,
         type: q.type,
         text: q.text,
-        weight: q.weight ?? 1,
-        inverted: q.inverted ?? false,
-        scaleLabels: q.scaleLabels ?? [],
+        weight: q.weight,
+        inverted: q.inverted,
+        scaleLabels: q.scaleLabels,
       },
     });
   }
@@ -705,9 +589,9 @@ async function main() {
                 code: meta.code,
                 ordinal: meta.ordinal,
                 type: meta.type,
-                weight: meta.weight ?? 1,
-                inverted: meta.inverted ?? false,
-                scaleLabels: meta.scaleLabels ?? [],
+                weight: meta.weight,
+                inverted: meta.inverted,
+                scaleLabels: meta.scaleLabels,
               },
               rawValue
             ),

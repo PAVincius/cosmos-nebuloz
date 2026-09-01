@@ -7,6 +7,15 @@ export {
 } from "./charter";
 export { ProvisioningError, type ProvisioningErrorCode } from "./errors";
 export {
+  type BootstrapMeridianDeps,
+  type BootstrapMeridianInput,
+  bootstrapMeridian,
+  MERIDIAN_BATTERY,
+  MERIDIAN_TEMPLATE_NAME,
+  MERIDIAN_TEMPLATE_VERSION,
+  type MeridianBatteryQuestion,
+} from "./meridian";
+export {
   type ContractModuleInput,
   contractModule,
   type ModuleDeps,

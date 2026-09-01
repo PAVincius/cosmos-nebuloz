@@ -1,4 +1,4 @@
-import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import { PageHeader } from "@repo/design-system/cosmos/kit";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
 import { listTenantMembers } from "@/app/actions/tenant-members";
@@ -10,8 +10,10 @@ import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
 import { Membros } from "./membros";
+import { MeridianBootstrap } from "./meridian-bootstrap";
 import { ModuleForm } from "./module-form";
 import { AuditTimeline, Integracoes } from "./observabilidade";
+import { faltaPreparar, ProntidaoDoModulo } from "./prontidao";
 import { Secao, SecaoSimples } from "./secao";
 
 export default async function ClientDetailPage({
@@ -38,11 +40,14 @@ export default async function ClientDetailPage({
   }
 
   const client = result.data;
-  // Cliente com tudo pronto não vê ação que não faz nada: só aparece quando
-  // o módulo está contratado e falta papel ou política.
-  const needsCharterBootstrap: boolean =
-    client.charter.moduleContracted &&
-    !(client.charter.hasCompliance && client.charter.hasPolicy);
+  const needsCharterBootstrap = faltaPreparar({
+    moduleContracted: client.charter.moduleContracted,
+    requisitos: [client.charter.hasCompliance, client.charter.hasPolicy],
+  });
+  const needsMeridianBootstrap = faltaPreparar({
+    moduleContracted: client.meridian.moduleContracted,
+    requisitos: [client.meridian.hasConsultant, client.meridian.hasTemplate],
+  });
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -108,28 +113,41 @@ export default async function ClientDetailPage({
         {(dados) => <AuditTimeline eventos={dados} />}
       </Secao>
 
-      <SecaoSimples
+      <ProntidaoDoModulo
+        acao={
+          needsCharterBootstrap ? <CharterBootstrap slug={client.slug} /> : null
+        }
         icone="approve"
+        selos={[
+          {
+            rotulo: "Módulo contratado",
+            ok: client.charter.moduleContracted,
+          },
+          { rotulo: "Papel Compliance", ok: client.charter.hasCompliance },
+          { rotulo: "Política criada", ok: client.charter.hasPolicy },
+        ]}
         subtitulo="o que o módulo de governança precisa para funcionar"
         titulo="Charter"
-      >
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          <Badge dot tone={client.charter.moduleContracted ? "green" : "amber"}>
-            Módulo contratado: {client.charter.moduleContracted ? "sim" : "não"}
-          </Badge>
-          <Badge dot tone={client.charter.hasCompliance ? "green" : "amber"}>
-            Papel Compliance: {client.charter.hasCompliance ? "sim" : "não"}
-          </Badge>
-          <Badge dot tone={client.charter.hasPolicy ? "green" : "amber"}>
-            Política criada: {client.charter.hasPolicy ? "sim" : "não"}
-          </Badge>
-        </div>
-        {needsCharterBootstrap ? (
-          <div style={{ marginTop: 12 }}>
-            <CharterBootstrap slug={client.slug} />
-          </div>
-        ) : null}
-      </SecaoSimples>
+      />
+
+      <ProntidaoDoModulo
+        acao={
+          needsMeridianBootstrap ? (
+            <MeridianBootstrap slug={client.slug} />
+          ) : null
+        }
+        icone="target"
+        selos={[
+          {
+            rotulo: "Módulo contratado",
+            ok: client.meridian.moduleContracted,
+          },
+          { rotulo: "Papel Consultor", ok: client.meridian.hasConsultant },
+          { rotulo: "Template criado", ok: client.meridian.hasTemplate },
+        ]}
+        subtitulo="o que o módulo de diagnóstico precisa para funcionar"
+        titulo="Meridian"
+      />
     </div>
   );
 }
