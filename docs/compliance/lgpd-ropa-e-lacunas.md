@@ -98,7 +98,7 @@ Derivado do schema, não de template. Uma linha por finalidade.
 | 4 | Execução de portfólio | nome, avatar, conteúdo de standup | Usuário e membro de time | Execução de contrato | Duração do contrato + 30 dias |
 | 5 | Diagnóstico de maturidade | **nome, e-mail e cargo de respondente** | **Terceiro sem conta** | A definir — ver §4 | **Não definida** |
 | 6 | Governança de IA | nome livre de dono de caso, aceites | Usuário e terceiro nomeado | Execução de contrato | Duração do contrato |
-| 7 | Inteligência de reunião | **fala transcrita e resumo** | **Participante, inclusive externo** | **Consentimento — não coletado hoje** | **Não definida** |
+| 7 | Inteligência de reunião | fala transcrita, resumo, **e-mail e nome de participante** | Participante, inclusive externo | Consentimento — **coletado e verificado antes do processamento** (ver §7) | **Não definida** |
 | 8 | Copiloto e geração por IA | conteúdo de conversa, dado de contexto do tenant | Usuário | Execução de contrato | Duração do contrato |
 | 9 | Operação comercial | nome e e-mail de contato do prospect | Contato em organização-alvo | Legítimo interesse — prospecção | **Não definida** |
 | 10 | Gestão de pessoal | nome e custo de colaborador | Colaborador | Execução de contrato de trabalho | Vínculo + prazo legal |
@@ -126,28 +126,34 @@ que é o enquadramento coerente com o produto — a base legal é a do cliente, 
 pedido do titular vai para ele, e o que a Nebuloz precisa é do DPA que a
 descreva como operadora. Isso muda o texto do contrato, não o código.
 
-**Participantes de reunião.** `MeetingTranscript.rawSummary` guarda resumo e
-itens de ação derivados de fala. Quem falou numa cerimônia com convidado externo
-tem dado tratado sem ter relação com a Nebuloz nem, provavelmente, ciência dela.
-É o mesmo ponto que travou UC-07 no Charter, visto do outro lado: lá era risco
-de governança, aqui é base legal ausente.
+**Participantes de reunião.** Era a lacuna mais grave deste documento e **foi
+fechada em parte** — ver §7. O tratamento agora tem portão de consentimento
+default deny antes de qualquer conteúdo alcançar um LLM, os participantes são
+registrados, e a eliminação alcança transcrição e participante.
+
+O que **não** foi fechado é o canal: o participante externo continua sem ter
+como pedir nada, porque não tem conta e o fluxo de DSR exige sessão. É o mesmo
+problema do respondente do Meridian, e tem a mesma solução — **não é código, é o
+DPA que descreva a Nebuloz como operadora**, com o pedido do titular indo ao
+cliente.
 
 ---
 
 ## 5. Cobertura da eliminação
 
-`processErasureRequest` anonimiza três tabelas: `User`, `StandupEntry` e
-`CopilotMessage`. Dado pessoal vive em mais que isso.
+`processErasureRequest` alcança cinco tabelas. Dado pessoal vive em mais que
+isso.
 
 | Tabela | Dado | Coberto |
 |---|---|---|
 | `User` | e-mail, nome | sim |
 | `StandupEntry` | texto livre | sim |
 | `CopilotMessage` | conteúdo de conversa | sim |
+| `MeetingParticipant` | e-mail, nome | **sim** — casado pelo e-mail do `User` |
+| `MeetingTranscript` | fala transcrita | **sim** — `rawSummary` zerado, insight derivado apagado ou redigido |
 | `AccessLog` | e-mail, IP, user-agent | não |
 | `AuditLog` | IP, user-agent, `targetUserId` | não — e provavelmente **não deve ser**, por imutabilidade (ADR-0009) |
 | `MeridianRespondent` | nome, e-mail, cargo | não |
-| `MeetingTranscript` | fala transcrita | não |
 | `CharterUseCase.ownerName` | nome livre | não |
 | `Proposal` | `clienteNome`, `contatoEmail` | não |
 | `StaffPerson` | dado de colaborador | não |
@@ -155,14 +161,17 @@ de governança, aqui é base legal ausente.
 
 Nem toda linha "não" é defeito. `AuditLog` é imutável por decisão registrada, e
 retenção de trilha sob legítimo interesse é exceção prevista no próprio Art. 18.
-O que **é** defeito é a diferença não estar documentada: hoje um pedido de
-eliminação é respondido como completo quando oito lugares continuam com o dado.
+O que **é** defeito é a diferença não estar documentada.
 
-Mínimo para fechar o buraco sem virar projeto: estender a eliminação a
-`AccessLog`, `MeridianRespondent` e `MeetingTranscript` — os três onde o dado é
-identificável e não há base para retê-lo — e **documentar as exceções restantes
-com a base que as sustenta**. Documentar é metade do trabalho e vale mais que a
-outra metade numa auditoria.
+Das três que este documento apontou como mínimo — `AccessLog`,
+`MeridianRespondent` e `MeetingTranscript` — **uma foi fechada**, junto com
+`MeetingParticipant`, que nem existia quando a lista foi escrita. Faltam
+`AccessLog` e `MeridianRespondent`.
+
+Uma ressalva que a cobertura nova não elimina: a correspondência é feita pelo
+**e-mail do `User`**, então só alcança o participante que também é usuário da
+plataforma. O externo não tem `User.id` para disparar o fluxo — está registrado
+em comentário no próprio `lgpd-dsr.ts`, e é a mesma lacuna de canal da §4.
 
 ---
 
@@ -181,15 +190,46 @@ outra metade numa auditoria.
 
 ---
 
-## 7. Ordem sugerida
+## 7. Controles da finalidade 7 — inteligência de reunião
+
+Era a finalidade sem base legal deste documento. Os controles existem hoje, e
+estão aqui reunidos porque é o que um auditor pede quando a linha da tabela diz
+"consentimento".
+
+Desenho completo em
+[`consentimento-de-gravacao.md`](consentimento-de-gravacao.md).
+
+| Controle | Onde |
+|---|---|
+| Consentimento default deny no schema | `MeetingTranscript.consentState` nasce `PENDING` |
+| Portão antes de o conteúdo alcançar um LLM | `fireflies-transcript`, `fathom-transcript` e, redundantemente, `fireflies-insights` |
+| Liberação exige ato humano com papel | `grantConsent`, restrito a `ADMIN`/`STE`/`RTE`, com trilha de auditoria |
+| Liberação automática só sem participante externo | `STANDING` exige `participantsKnown` **e** nenhum externo |
+| Desconhecido não é permissão | `participantsKnown` nasce `false`; provedor sem os campos cai em `PENDING` |
+| Registro de quem estava na sala | `MeetingParticipant`, externo por `participants` menos `workspace_users` |
+| Revogação com efeito | apaga insight derivado e zera `rawSummary`, preservando a linha |
+| Eliminação do titular alcança o tratamento | `processErasureRequest`, §5 |
+
+**O que estes controles não fazem**, e precisa estar dito: eles garantem que
+alguém com papel afirmou ter obtido o consentimento, não que o consentimento
+existiu. A lista de participantes é do provedor, não da sala. E o participante
+externo continua sem canal próprio — §4.
+
+## 8. Ordem sugerida
 
 1. Corrigir as quatro contradições da §2. É reescrita de documento, resolve em
    horas, e é o que transforma a policy de passivo em ativo.
-2. Decidir operadora × controladora para o dado de respondente (§4). Trava o
-   DPA-modelo e o texto do contrato.
-3. Fechar as cinco retenções da §3.
-4. Estender a eliminação às três tabelas da §5 e documentar as exceções.
+2. Decidir operadora × controladora (§4). Trava o DPA-modelo e o texto do
+   contrato, e agora vale para **dois** grupos de titular: respondente do
+   Meridian e participante externo de reunião.
+3. Fechar as cinco retenções da §3 — incluindo a da finalidade 7, que segue sem
+   prazo mesmo com os controles da §7 no lugar.
+4. Estender a eliminação a `AccessLog` e `MeridianRespondent`, as duas que
+   sobraram da §5.
 5. Publicar `/legal/privacy` e nomear o encarregado.
+6. **Parecer sobre `STANDING`** — se um aviso verbal na abertura da cerimônia,
+   apoiado em declaração escrita, sustenta a base legal. Não bloqueia nada: o
+   modo continua desabilitado em todo tenant até haver resposta.
 
-Os passos 1, 2 e 5 não dependem de engenharia. O 4 é o único com código, e é o
-menor deles.
+Os passos 1, 2, 5 e 6 não dependem de engenharia. O 4 é o único com código, e é
+o menor deles.
