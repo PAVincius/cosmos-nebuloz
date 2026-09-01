@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@repo/design-system/cosmos/icons";
-import { Avatar, Badge, IconButton } from "@repo/design-system/cosmos/kit";
+import { Badge, IconButton } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
@@ -14,6 +14,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { MenuDoPerfil } from "./menu-do-perfil";
 import { BO_NAV, FORA_DO_PAINEL, type NavItem } from "./nav";
 
 /**
@@ -257,44 +258,9 @@ function Topbar({
       />
 
       {/* O protótipo troca de conta por aqui — era simulação. Com sessão de
-          verdade, o que vale mostrar é quem está logado. */}
-      <span
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 9,
-          flexShrink: 0,
-          border: "1px solid var(--hairline)",
-          borderRadius: 99,
-          padding: "4px 12px 4px 4px",
-        }}
-        // O avatar carrega o nome no `title`, então esconder o texto ao lado
-        // não deixa a pessoa sem saber quem está logado.
-        title={`${staff.name ?? ""} ${staff.email}`.trim()}
-      >
-        <Avatar name={staff.name || staff.email} size={26} />
-        <span className="bo-so-largo" style={{ minWidth: 0 }}>
-          <span
-            style={{
-              display: "block",
-              fontSize: "var(--fs-base)",
-              fontWeight: 700,
-            }}
-          >
-            {staff.name?.split(" ")[0] || "—"}
-          </span>
-          <span
-            className="mono"
-            style={{
-              display: "block",
-              fontSize: "var(--fs-micro)",
-              color: "var(--ink-faint)",
-            }}
-          >
-            {staff.email}
-          </span>
-        </span>
-      </span>
+          verdade, o que vale é quem está logado e o que dá para fazer com essa
+          conta: ver o autenticador e sair. */}
+      <MenuDoPerfil staff={staff} />
     </header>
   );
 }
