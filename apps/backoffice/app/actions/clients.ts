@@ -45,6 +45,11 @@ export type ClientDetail = ClientRow & {
     hasCompliance: boolean;
     hasPolicy: boolean;
   };
+  meridian: {
+    moduleContracted: boolean;
+    hasConsultant: boolean;
+    hasTemplate: boolean;
+  };
 };
 
 export async function getClient(slug: string): Promise<Result<ClientDetail>> {
@@ -86,6 +91,16 @@ export async function getClient(slug: string): Promise<Result<ClientDetail>> {
           (m) => m.role === "COMPLIANCE"
         ),
         hasPolicy: tenant.charterPolicies.length > 0,
+      },
+      meridian: {
+        moduleContracted: tenant.modules.some(
+          (m) =>
+            m.module === "MERIDIAN" && ["ACTIVE", "TRIAL"].includes(m.status)
+        ),
+        hasConsultant: tenant.meridianMemberships.some(
+          (m) => m.role === "CONSULTANT"
+        ),
+        hasTemplate: tenant.meridianTemplates.length > 0,
       },
     };
   });

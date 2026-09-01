@@ -3,6 +3,7 @@
 import { type ProductModule, withTenantDb } from "@repo/database";
 import {
   bootstrapCharter,
+  bootstrapMeridian,
   contractModule,
   ProvisioningError,
   platformDb,
@@ -103,6 +104,34 @@ export async function bootstrapCharterAction(input: {
       {
         tenantId,
         complianceEmail: input.complianceEmail,
+        actorUserId: staff.userId,
+        actorName: staff.name,
+      }
+    );
+
+    revalidatePath(`/clientes/${input.slug}`);
+    return { created: result.created };
+  });
+}
+
+export async function bootstrapMeridianAction(input: {
+  slug: string;
+  consultantEmail: string;
+}): Promise<Result<{ created: boolean }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+    // Mesma cota do bootstrap do Charter: escreve papel e template, e o teto de
+    // navegação seria teto nenhum para ela.
+    await assertDentroDoLimite("provisionamento", staff.userId);
+
+    const tenantId = await tenantIdBySlug(input.slug);
+
+    const result = await bootstrapMeridian(
+      { withTenantDb },
+      {
+        tenantId,
+        consultantEmail: input.consultantEmail,
         actorUserId: staff.userId,
         actorName: staff.name,
       }
