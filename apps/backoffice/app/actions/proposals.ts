@@ -5,7 +5,10 @@ import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requestPlatformApproval } from "@/app/actions/approvals";
-import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
+import {
+  gerarNumeroProposta,
+  LIMITE_DESCONTO_SEM_APROVACAO,
+} from "@/lib/comercial";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -102,14 +105,6 @@ function calcularTotal(
     0
   );
   return Math.round(bruto * (1 - descontoPercent / 100));
-}
-
-/** Número da proposta. Extraído para fora de `createProposalAction` porque
- *  `converterEmProposta`, em `app/actions/leads.ts`, também cria uma
- *  `Proposal` — e duas rotinas gerando número por lógicas diferentes seria
- *  dois jeitos de quebrar um identificador que precisa ser exato. */
-export function gerarNumeroProposta(): string {
-  return `P-${Date.now().toString(36).toUpperCase()}`;
 }
 
 export async function createProposalAction(

@@ -1,10 +1,10 @@
 "use server";
 
 import { database } from "@repo/database";
+import { gerarNumeroProposta } from "@/lib/comercial";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { gerarNumeroProposta } from "@/app/actions/proposals";
 import {
   assertCanWrite,
   requirePlatformStaff,
