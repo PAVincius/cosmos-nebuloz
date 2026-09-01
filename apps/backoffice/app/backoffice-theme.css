@@ -183,6 +183,27 @@
   }
 }
 
+/* As telas de detalhe do handoff (tenant e serviço) são de duas colunas: a
+   larga com o conteúdo, a estreita com as leituras curtas. Vive aqui e não em
+   `style` inline pelo motivo de sempre — inline vence folha de estilo, e a
+   media query precisa poder empilhar.
+
+   Sem empilhar, medido a 375px, as colunas viravam 196px e 130px. O protótipo
+   é desktop-only e podia ignorar isso; desde a gaveta o painel promete
+   funcionar estreito, e 130px de coluna é a mesma falha que ela consertou. */
+.bo-detalhe {
+  display: grid;
+  gap: var(--gap);
+  grid-template-columns: 1.5fr 1fr;
+  align-items: start;
+}
+
+@media (max-width: 1023px) {
+  .bo-detalhe {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Textura do modo escuro do protótipo: grão e grade. Decorativas — ficam fora
    do fluxo e não recebem eventos. */
 [data-theme="dark"] .grain::after {
