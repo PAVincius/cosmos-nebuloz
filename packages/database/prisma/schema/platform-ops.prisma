@@ -84,6 +84,68 @@ model Service {
   @@index([tenantId, ativo])
 }
 
+// ─────────────────────────── Funil ───────────────────────────
+
+/// A metade inicial do funil comercial: LEAD, DISCOVERY, EVALUATION. Os dois
+/// estágios seguintes (proposta enviada, fechado) já têm onde morar — são
+/// `Proposal.status`.
+///
+/// Modelo separado de Proposal, e não três estágios novos nela, por decisão:
+/// `Proposal.numero` aparece em contrato, e gastar um número em lead que ainda
+/// pode não virar nada corromperia um identificador que precisa ser exato. Um
+/// Lead converte numa Proposal — ele não se torna uma.
+model Lead {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Organização-alvo. Sem tenant ainda — é assim que se ganha o cliente,
+  /// igual ao `clienteNome` de Proposal antes do aceite.
+  nome String
+
+  /// Contato do lado do prospect. Opcionais porque um lead nasce muitas vezes
+  /// só com o nome da organização — o contato certo é parte do que se
+  /// descobre no próprio estágio DISCOVERY.
+  contatoNome  String?
+  contatoEmail String?
+
+  /// LEAD | DISCOVERY | EVALUATION.
+  estagio String @default("LEAD")
+
+  /// De onde veio o lead. Texto livre: a lista de canais muda mais rápido do
+  /// que uma migration acompanharia.
+  origem String?
+
+  /// Quem toca o lead. Nome ao lado do id pelo mesmo motivo de
+  /// `criadoPorNome` em Proposal: a linha continua legível se a pessoa sair.
+  donoId   String
+  donoNome String?
+
+  /// Sem isto um funil é uma lista morta: nada diz o que fazer a seguir nem
+  /// quando. `proximaAcaoEm` é o que a tela usa para destacar atraso.
+  proximaAcao   String?
+  proximaAcaoEm DateTime?
+
+  /// Vínculo de conversão. Único: uma proposta nasce de no máximo um lead, e
+  /// duas linhas do funil apontando para o mesmo documento comercial seria o
+  /// funil contando a mesma venda duas vezes. SetNull porque o lead é
+  /// histórico do funil e não deve desaparecer se a proposta um dia sumir.
+  propostaId String? @unique
+
+  /// Preenchidos juntos: lead que sai sem dizer por quê não ensina nada sobre
+  /// preço nem ICP para o próximo.
+  perdidoEm   DateTime?
+  motivoPerda String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant   Tenant    @relation("LeadSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  proposta Proposal? @relation(fields: [propostaId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([tenantId, estagio])
+}
+
 // ─────────────────────────── Propostas ───────────────────────────
 
 /// Proposta comercial para um cliente.
@@ -159,6 +221,9 @@ model Proposal {
 
   tenant Tenant         @relation("ProposalSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
   itens  ProposalItem[]
+  /// Lead que converteu nesta proposta, quando houve. Nulo nas propostas
+  /// criadas direto pelo gerador, sem passar pelo funil.
+  lead   Lead?
 
   @@unique([tenantId, numero])
   @@index([tenantId])

@@ -83,6 +83,11 @@ export const BO_NAV: NavSection[] = [
     section: "Comercial",
     items: [
       {
+        href: "/funil",
+        icon: "filter",
+        label: "Funil",
+      },
+      {
         href: "/propostas",
         icon: "tag",
         label: "Propostas",
