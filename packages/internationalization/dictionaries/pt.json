@@ -1,5 +1,465 @@
 {
   "web": {
+    "readiness": {
+      "meta": {
+        "title": "Prontidão para IA, na ordem certa",
+        "description": "A Nebuloz deixa organizações prontas para IA numa ordem fixa: diagnosticar a lacuna, estruturar a adoção, medir o retorno, governar o risco. O método fica com o seu time."
+      },
+      "nav": {
+        "primary": "Principal",
+        "mobile": "Menu",
+        "openMenu": "Abrir menu",
+        "closeMenu": "Fechar menu",
+        "cta": "Agendar diagnóstico",
+        "links": [
+          { "label": "A lacuna", "href": "#gap" },
+          { "label": "A escada", "href": "#ladder" },
+          { "label": "Sua forma", "href": "#shape" },
+          { "label": "Produtos", "href": "#products" },
+          { "label": "Diagnóstico", "href": "#assessment" }
+        ]
+      },
+      "hero": {
+        "badge": "Prontidão e adoção de IA",
+        "lines": [
+          "Seus times não",
+          "precisam de mais IA.",
+          "Precisam de um plano."
+        ],
+        "lead": "A Nebuloz deixa organizações prontas para IA numa ordem fixa: diagnosticar a lacuna, estruturar a adoção, medir o retorno, governar o risco. O método fica com o seu time.",
+        "primaryCta": "Agendar o diagnóstico",
+        "secondaryCta": "Ver os cinco estágios",
+        "sequenceLabel": "A SEQUÊNCIA",
+        "sequence": [
+          "Diagnosticar",
+          "Estruturar",
+          "Medir",
+          "Governar",
+          "Operar"
+        ],
+        "sceneAlt": "Uma nebulosa animada de luz que se condensa de poeira até virar uma esfera densa de vidro"
+      },
+      "gap": {
+        "eyebrow": "A LACUNA · 01",
+        "titleA": "A maioria das empresas não",
+        "titleB": "está travada por tecnologia.",
+        "desc": "Está travada por sequência. Prontidão não é ferramenta que se instala — é uma ordem de operações que quase ninguém mostrou a elas.",
+        "items": [
+          {
+            "title": "Ninguém é dono do ponto de partida",
+            "text": "A liderança concorda que IA importa. Ninguém sabe dizer qual processo mudar primeiro, nem o que precisa ser verdade antes de funcionar."
+          },
+          {
+            "title": "Piloto nunca vira prática",
+            "text": "Um time entrega um piloto promissor. Ele morre na passagem de bastão, porque não há método que o carregue para a operação do dia a dia."
+          },
+          {
+            "title": "Ninguém consegue provar que deu certo",
+            "text": "O gasto é visível, o retorno é anedota. Sem linha de base medida, a próxima conversa de orçamento vira questão de fé."
+          },
+          {
+            "title": "O jurídico é o bloqueio silencioso",
+            "text": "Sem política de uso, sem matriz de risco, sem cláusula de fornecedor. Então a decisão mais segura é sempre esperar mais um trimestre."
+          }
+        ]
+      },
+      "ladder": {
+        "eyebrow": "A ESCADA · 02",
+        "titleA": "Cinco estágios.",
+        "titleB": "Nesta ordem.",
+        "desc": "Cada estágio é um produto que se compra sozinho — e cada um deixa o seu time mais capaz do que encontrou. Rodados em sequência, prontidão deixa de ser questão de opinião.",
+        "stages": [
+          {
+            "name": "Meridian",
+            "role": "Diagnosticar",
+            "claim": "Saiba exatamente onde você está.",
+            "desc": "Um diagnóstico estruturado de prontidão em cinco eixos. Nota por eixo, roadmap ordenado por lacuna, e um ponto de partida que se sustenta.",
+            "itemsCap": "CINCO EIXOS",
+            "items": [
+              "Dados",
+              "Processo",
+              "Pessoas",
+              "Governança",
+              "Infraestrutura"
+            ]
+          },
+          {
+            "name": "Scaffold",
+            "role": "Estruturar",
+            "claim": "Um método, não um workshop.",
+            "desc": "A metodologia como trilhas guiadas que seus times percorrem sozinhos — checklists, modelos e portões de validação em cada passo.",
+            "itemsCap": "QUATRO FASES",
+            "items": ["Avaliar", "Pilotar", "Escalar", "Incorporar"]
+          },
+          {
+            "name": "Signal",
+            "role": "Medir",
+            "claim": "Prove o retorno em número de verdade.",
+            "desc": "Conecta às ferramentas que você já usa e transforma adoção em linha de base medida — horas recuperadas, taxa de erro, tempo de ciclo.",
+            "itemsCap": "O QUE ELE ACOMPANHA",
+            "items": [
+              "Taxa de adoção",
+              "Horas recuperadas",
+              "Tempo de ciclo",
+              "Custo por resultado"
+            ]
+          },
+          {
+            "name": "Charter",
+            "role": "Governar",
+            "claim": "Política em minutos, não em meses.",
+            "desc": "Gera a camada de governança que destrava o jurídico — política de uso, matriz de risco, cláusulas de fornecedor e guia de integração para a equipe.",
+            "itemsCap": "ARTEFATOS GERADOS",
+            "items": [
+              "Política de uso",
+              "Matriz de risco",
+              "Cláusulas de fornecedor",
+              "Guia de integração"
+            ]
+          }
+        ],
+        "cosmos": {
+          "stage": "05",
+          "name": "Cosmos",
+          "role": "Operar",
+          "claim": "Onde quem está pronto opera.",
+          "desc": "O Cosmos é a nossa plataforma de entrega em SAFe 6.0 — planejamento de portfólio, programa e time numa superfície só, com assistência de IA dentro das cerimônias que seus times já rodam. É o último estágio de propósito: ele recompensa quem chega estruturado.",
+          "bestFitCap": "MELHOR ENCAIXE QUANDO",
+          "bestFit": [
+            "O diagnóstico está feito",
+            "Há um método no lugar",
+            "A linha de base está medida",
+            "A política está assinada"
+          ]
+        }
+      },
+      "shape": {
+        "eyebrow": "SUA FORMA · AO VIVO",
+        "titleA": "Responda cinco perguntas.",
+        "titleB": "Veja sua forma se desenhar.",
+        "lead": "A esfera ao lado é a sua organização. Cada resposta condensa ou afrouxa um setor. Isto é uma amostra do diagnóstico Meridian — o de verdade desce cinco camadas.",
+        "axesLabel": "Eixos do diagnóstico",
+        "answered": "respondidas",
+        "scoreLabel": "NOTA PROVISÓRIA",
+        "scoreSuffix": "/100",
+        "cta": "Fazer o diagnóstico de verdade",
+        "verdicts": {
+          "high": "Estruturado. O diagnóstico completo afinaria a sequência, não a direção.",
+          "mid": "Forma típica: a capacidade existe, a ordem não. É exatamente o que o diagnóstico sequencia.",
+          "low": "Resposta honesta — e a mais comum. A lacuna é de plano, não de talento."
+        },
+        "questions": [
+          {
+            "axis": "Dados",
+            "q": "Se um modelo precisasse do histórico dos seus clientes amanhã, ele conseguiria chegar nele?",
+            "options": [
+              "Uma fonte limpa, com dono e documentada",
+              "Existe, mas espalhado por vários sistemas",
+              "Em algum lugar entre planilhas e caixas de entrada"
+            ]
+          },
+          {
+            "axis": "Processo",
+            "q": "Você saberia dizer qual processo automatizaria primeiro?",
+            "options": [
+              "Sim — mapeado, medido e com dono",
+              "Temos candidatos, sem ordem entre eles",
+              "Cada time diria um diferente"
+            ]
+          },
+          {
+            "axis": "Pessoas",
+            "q": "Quem na sua empresa usou uma ferramenta de IA para trabalho de verdade na semana passada?",
+            "options": [
+              "A maioria dos times, abertamente",
+              "Alguns entusiastas, discretamente",
+              "Ninguém — ou ninguém admite"
+            ]
+          },
+          {
+            "axis": "Governança",
+            "q": "Um funcionário pergunta “posso colar isto no ChatGPT?” — o que acontece?",
+            "options": [
+              "Ele consulta a política. Existe uma.",
+              "Ele pergunta ao gestor, que chuta",
+              "Ele cola assim mesmo. Ninguém fica sabendo."
+            ]
+          },
+          {
+            "axis": "Infraestrutura",
+            "q": "Onde os seus dados têm permissão de morar?",
+            "options": [
+              "Definido por classe, exigido em contrato",
+              "Sabemos mais ou menos, nada escrito",
+              "Onde o fornecedor colocou"
+            ]
+          }
+        ]
+      },
+      "method": {
+        "eyebrow": "MÉTODO · 03",
+        "titleA": "Como são as",
+        "titleB": "primeiras oito semanas.",
+        "desc": "Sem teatro de descoberta. O diagnóstico é produtizado, então a parte cara de um projeto tradicional termina antes da segunda semana.",
+        "facts": [
+          "semanas até um diagnóstico com nota",
+          "semanas até um padrão repetível",
+          "método que o seu time fica"
+        ],
+        "steps": [
+          {
+            "when": "Semana 01",
+            "title": "Diagnóstico",
+            "desc": "Entrevistas estruturadas e revisão de sistemas nos cinco eixos. Você sai com uma nota e uma lista de lacunas ordenada."
+          },
+          {
+            "when": "Semana 02–03",
+            "title": "Sequenciamento",
+            "desc": "Transformamos a lista de lacunas num plano ordenado — o que muda primeiro, o que precisa ser verdade antes, quem é o dono."
+          },
+          {
+            "when": "Semana 04–08",
+            "title": "Primeira trilha",
+            "desc": "Um processo, levado de ponta a ponta com o seu time dentro do Scaffold. O objetivo é um padrão repetível, não uma demonstração."
+          },
+          {
+            "when": "Contínuo",
+            "title": "Linha de base",
+            "desc": "O Signal mede a mudança contra a linha de base anterior ao trabalho, para a segunda decisão ser tomada com evidência."
+          }
+        ]
+      },
+      "products": {
+        "eyebrow": "OS PRODUTOS · 04",
+        "titleA": "Cinco produtos.",
+        "titleB": "Cada um se sustenta sozinho.",
+        "desc": "A escada é a ordem recomendada, não um pacote. Cada produto resolve um problema que você sabe nomear hoje, e deixa o seu time mais capaz — continuando ou não.",
+        "tablistLabel": "Produtos",
+        "whoCap": "QUEM ABRE",
+        "cadenceCap": "CADÊNCIA",
+        "outputsCap": "O QUE VOCÊ RECEBE",
+        "aloneCap": "COMPRE SOZINHO QUANDO",
+        "talk": "Falar sobre {name}",
+        "orderLabel": "Ordem recomendada",
+        "orderNote": "A maioria começa no Meridian e para quando a lacuna fecha",
+        "stopRotation": "Parar de avançar sozinho",
+        "items": [
+          {
+            "name": "Meridian",
+            "role": "Diagnosticar",
+            "line": "O diagnóstico de prontidão, produtizado.",
+            "who": "Patrocinador executivo · Líder de transformação",
+            "desc": "Entrevistas estruturadas e revisão de sistemas nos cinco eixos. Substitui a fase de descoberta de um projeto tradicional — a parte cara — por um instrumento repetível.",
+            "outputs": [
+              "Nota por eixo, 0–100",
+              "Lista de lacunas ordenada por custo de atraso",
+              "Plano sequenciado de 12 meses",
+              "Comparativo com pares"
+            ],
+            "alone": "Compre sozinho quando a liderança discorda sobre por onde começar.",
+            "cadence": "Duas semanas"
+          },
+          {
+            "name": "Scaffold",
+            "role": "Estruturar",
+            "line": "O método de adoção que seu time roda sem a gente.",
+            "who": "Líderes de time · Donos de processo",
+            "desc": "Trilhas guiadas que levam um processo do piloto à prática. Checklists, modelos de prompt e portões de validação em cada fase, para o avanço não depender de quem está na sala.",
+            "outputs": [
+              "Trilha guiada por processo",
+              "Modelos de prompt e de política",
+              "Portões de validação",
+              "Pacote de passagem de bastão"
+            ],
+            "alone": "Compre sozinho quando os pilotos morrem na passagem de bastão.",
+            "cadence": "Por workspace"
+          },
+          {
+            "name": "Signal",
+            "role": "Medir",
+            "line": "O número que o seu CFO aceita.",
+            "who": "Financeiro · Liderança de operações",
+            "desc": "Conecta às ferramentas que você já usa e mede a adoção contra uma linha de base anterior ao trabalho. Transforma “a IA está ajudando” em horas recuperadas, tempo de ciclo e custo por resultado.",
+            "outputs": [
+              "Telemetria de adoção por time",
+              "Registro de horas recuperadas",
+              "Variação de tempo de ciclo",
+              "Relatório pronto para o conselho"
+            ],
+            "alone": "Compre sozinho quando o próximo orçamento pedir evidência, não anedota.",
+            "cadence": "Contínuo"
+          },
+          {
+            "name": "Charter",
+            "role": "Governar",
+            "line": "A camada de governança que destrava o jurídico.",
+            "who": "Jurídico · Riscos · Segurança",
+            "desc": "Gera as regras escritas que impedem “posso usar?” de virar “espera”. Redigidas contra as suas obrigações, revisadas com o seu jurídico, versionadas conforme a regulação anda.",
+            "outputs": [
+              "Política de uso de IA",
+              "Matriz de risco por classe de dado",
+              "Biblioteca de cláusulas de fornecedor",
+              "Guia de integração da equipe"
+            ],
+            "alone": "Compre sozinho quando o jurídico é o motivo de nada ter saído do papel.",
+            "cadence": "Uma vez + atualizações"
+          },
+          {
+            "name": "Cosmos",
+            "role": "Operar",
+            "line": "Entrega em SAFe 6.0, com IA dentro das cerimônias.",
+            "who": "RTEs · Líderes de portfólio e programa",
+            "desc": "Nossa plataforma de entrega para quem roda SAFe: planejamento de portfólio, programa e time numa superfície só, com assistência de IA dentro do PI Planning, do refinamento de backlog e do mapeamento de dependências.",
+            "outputs": [
+              "Do portfólio ao planejamento de time",
+              "PI Planning assistido por IA",
+              "Mapa de dependências e riscos",
+              "Métricas de fluxo"
+            ],
+            "alone": "Compre sozinho apenas se você já roda SAFe e os quatro primeiros estão resolvidos.",
+            "cadence": "Por ART"
+          }
+        ]
+      },
+      "proof": {
+        "eyebrow": "O DIAGNÓSTICO · 05",
+        "titleA": "Cinco perguntas",
+        "titleB": "que a maioria dos roadmaps pula.",
+        "desc": "Isto é a substância do Meridian. Se um fornecedor não sabe responder estas sobre a sua organização, ele está vendendo software, não prontidão.",
+        "axes": [
+          {
+            "title": "Dados",
+            "q": "Um modelo consegue chegar ao dado certo, com a permissão certa, no formato certo?",
+            "desc": "Auditamos fontes, propriedade, atualidade e controle de acesso. A saída é a lista do que precisa ser corrigido antes de qualquer modelo ser útil — normalmente mais curta do que os times esperam."
+          },
+          {
+            "title": "Processo",
+            "q": "Qual processo, mudado primeiro, devolve mais com menos ruptura?",
+            "desc": "Mapeamos os candidatos por volume, variação e reversibilidade. Alto volume e reversível ganha primeiro; irreversível e político espera."
+          },
+          {
+            "title": "Pessoas",
+            "q": "Quem vai de fato usar isso numa terça à tarde?",
+            "desc": "Adoção falha no indivíduo, não na organização. Identificamos os operadores, o contorno que eles usam hoje, e o que tornaria o caminho novo mais fácil que o antigo."
+          },
+          {
+            "title": "Governança",
+            "q": "Qual é a regra escrita quando alguém pergunta “posso usar?”",
+            "desc": "Ausência de política é lida como proibição. Produzimos a política de uso, a matriz de risco e o caminho de escalonamento, para a resposta padrão deixar de ser “espera”."
+          },
+          {
+            "title": "Infraestrutura",
+            "q": "Isso pode rodar onde os seus dados têm permissão de morar?",
+            "desc": "Residência, retenção e postura do fornecedor, avaliadas contra as suas obrigações atuais — antes da conversa de compras, não depois."
+          }
+        ]
+      },
+      "position": {
+        "eyebrow": "POSIÇÃO · 06",
+        "titleA": "Como trabalhamos,",
+        "titleB": "dito sem rodeio.",
+        "rows": [
+          {
+            "yes": "Diagnosticamos antes de construir",
+            "no": "Não começamos escolhendo ferramenta"
+          },
+          {
+            "yes": "Entregamos o método ao seu time",
+            "no": "Não viramos dependência permanente"
+          },
+          {
+            "yes": "Medimos contra uma linha de base",
+            "no": "Não reportamos atividade como resultado"
+          },
+          {
+            "yes": "Escrevemos a política que você assina",
+            "no": "Não deixamos a governança só com o jurídico"
+          }
+        ]
+      },
+      "cta": {
+        "eyebrow": "COMECE PELO DIAGNÓSTICO",
+        "titleA": "Descubra onde",
+        "titleB": "você está de verdade.",
+        "lead": "O diagnóstico de prontidão leva duas semanas e termina com uma nota, uma lista de lacunas ordenada e um plano sequenciado. Os três são seus, continuando conosco ou não.",
+        "primaryCta": "Agendar o diagnóstico",
+        "secondaryCta": "Ver o que ele cobre",
+        "notes": [
+          "Diagnóstico de duas semanas",
+          "Os entregáveis são seus",
+          "Sem compromisso de ferramenta"
+        ]
+      },
+      "contact": {
+        "eyebrow": "CONTATO",
+        "titleA": "Quatro portas.",
+        "titleB": "Escolha uma direção.",
+        "lead": "Todos os canais chegam às mesmas duas pessoas. Use o que custar menos esforço — nenhum deles passa por fila.",
+        "groupLabel": "Canal de contato",
+        "hint": "Use as setas, ou aponte para um cartão.",
+        "idleTitle": "Nenhuma direção ainda",
+        "idleDesc": "Aponte para um cartão, ou pressione uma seta.",
+        "open": "Abrir",
+        "pick": "Escolher este",
+        "close": "Fechar",
+        "formFor": "Escrevendo para",
+        "fieldName": "NOME",
+        "fieldEmail": "E-MAIL",
+        "fieldCompany": "EMPRESA (OPCIONAL)",
+        "fieldMessage": "MENSAGEM",
+        "send": "Enviar",
+        "sending": "Enviando",
+        "formError": "Isso não foi enviado. Tente de novo, ou use uma das outras três portas.",
+        "sentTitle": "Enviado",
+        "sentDesc": "Cai numa caixa de entrada que duas pessoas leem. Espere resposta em um dia útil.",
+        "channels": [
+          {
+            "label": "E-mail",
+            "value": "NEBULOZ_EMAIL_AQUI",
+            "desc": "Melhor para escopo, documentos e qualquer coisa que você queira por escrito.",
+            "href": "mailto:NEBULOZ_EMAIL_AQUI",
+            "tone": "cyan"
+          },
+          {
+            "label": "WhatsApp",
+            "value": "NEBULOZ_WHATSAPP_AQUI",
+            "desc": "Resposta mais rápida em horário comercial, e áudio serve.",
+            "href": "https://wa.me/NEBULOZ_WHATSAPP_AQUI",
+            "tone": "success"
+          },
+          {
+            "label": "Formulário de diagnóstico",
+            "value": "Nesta página",
+            "desc": "Pule as apresentações — agende o diagnóstico de prontidão de duas semanas.",
+            "href": "#start",
+            "tone": "violet"
+          },
+          {
+            "label": "LinkedIn",
+            "value": "NEBULOZ_LINKEDIN_AQUI",
+            "desc": "Para uma apresentação, uma indicação, ou se você preferir ver quem somos antes.",
+            "href": "https://www.linkedin.com/company/NEBULOZ_LINKEDIN_AQUI",
+            "tone": "indigo"
+          }
+        ]
+      },
+      "footer": {
+        "tagline": "Prontidão e adoção de IA, entregues como uma sequência que o seu time consegue rodar.",
+        "nav": "Rodapé",
+        "copyright": "© 2026 Nebuloz",
+        "products": "Meridian · Scaffold · Signal · Charter · Cosmos",
+        "links": [
+          { "label": "A lacuna", "href": "#gap" },
+          { "label": "A escada", "href": "#ladder" },
+          { "label": "Produtos", "href": "#products" },
+          { "label": "Método", "href": "#method" },
+          { "label": "Diagnóstico", "href": "#assessment" },
+          { "label": "Agendar", "href": "#start" },
+          { "label": "Privacidade", "href": "/legal/privacy" },
+          { "label": "Termos", "href": "/legal/terms" }
+        ]
+      }
+    },
     "global": {
       "primaryCta": "Agende uma chamada",
       "secondaryCta": "Inscreva-se"
