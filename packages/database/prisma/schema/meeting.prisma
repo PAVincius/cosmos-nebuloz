@@ -15,6 +15,15 @@ model MeetingIntegration {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // Consentimento de gravação (docs/compliance/consentimento-de-gravacao.md
+  // §4, nível 1). Default deny: PER_MEETING exige liberação manual por
+  // transcrição. STANDING libera automaticamente, mas não é uma caixa de
+  // seleção — habilitá-lo sem `standingConsentRef` é impedido por CHECK
+  // constraint na migration (ver 20260901130000_meeting_consent), não só
+  // validado na aplicação.
+  consentMode        String  @default("PER_MEETING") // PER_MEETING | STANDING
+  standingConsentRef String? // referência/texto da declaração escrita que autoriza STANDING
+
   tenant      Tenant              @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   transcripts MeetingTranscript[]
 
@@ -35,6 +44,28 @@ model MeetingTranscript {
   status        String   @default("RECEIVED") // RECEIVED | MAPPED | ERROR
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  // Consentimento de gravação (docs/compliance/consentimento-de-gravacao.md
+  // §4, nível 2). Default deny: toda transcrição nasce PENDING — inclusive as
+  // que já existiam no banco antes desta coluna existir (o ADD COLUMN com
+  // DEFAULT na migration aplica 'PENDING' a elas retroativamente). Isso é
+  // default deny aplicado com efeito retroativo, e é o comportamento
+  // correto — nenhuma transcrição histórica tinha consentimento registrado,
+  // então nenhuma pode virar GRANTED por omissão. Não "consertar" depois
+  // migrando essas linhas para GRANTED achando que foi descuido.
+  //
+  // O mapeador de IA (fireflies-insights-map) só roda com GRANTED.
+  consentState String @default("PENDING") // PENDING | GRANTED | DENIED | REVOKED
+
+  // Quem liberou e quando. Sob PER_MEETING, `consentGrantedBy` é o userId de
+  // quem clicou liberar. Sob STANDING, o "quem" é a declaração — não uma
+  // pessoa — e fica em `consentGrantedRef` (cópia da `standingConsentRef`
+  // vigente no instante da liberação automática); `consentGrantedBy` fica
+  // null nesse caso. Os dois campos são mutuamente exclusivos e é assim que
+  // a auditoria distingue liberação manual de liberação automática.
+  consentGrantedBy  String?
+  consentGrantedRef String?
+  consentGrantedAt  DateTime?
 
   tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   integration MeetingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)

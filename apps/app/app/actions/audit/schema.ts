@@ -17,6 +17,9 @@ export const AuditActionSchema = z.enum([
   "kr_deleted",
   "risk_linked",
   "risk_unlinked",
+  "consent_granted",
+  "consent_denied",
+  "consent_revoked",
 ]);
 export type AuditAction = z.infer<typeof AuditActionSchema>;
 

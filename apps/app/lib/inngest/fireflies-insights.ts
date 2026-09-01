@@ -72,12 +72,33 @@ export const mapFirefliesInsightsFn = inngest.createFunction(
     const transcript = await step.run("fetch-transcript", () =>
       database.meetingTranscript.findFirst({
         where: { id: transcriptId, tenantId },
-        select: { id: true, rawSummary: true, status: true },
+        select: {
+          id: true,
+          rawSummary: true,
+          status: true,
+          consentState: true,
+        },
       })
     );
 
     if (!transcript) {
       return { skipped: true, reason: "transcript not found" };
+    }
+
+    // Portão de consentimento, redundante de propósito. O caminho normal
+    // (fireflies-transcript.ts / fathom-transcript.ts) só envia este evento
+    // quando GRANTED — mas este consumidor não pode confiar só nisso: se ele
+    // puder ser disparado por qualquer outro caminho (retry manual, replay
+    // de evento, um futuro terceiro produtor do mesmo evento), conteúdo de
+    // fala sem base legal chegaria ao provedor de LLM em `classifyInsights`
+    // logo abaixo. Um portão que só existe em um caminho não é portão — ver
+    // docs/compliance/consentimento-de-gravacao.md §7.2.
+    if (transcript.consentState !== "GRANTED") {
+      return {
+        skipped: true,
+        reason: "consent not granted",
+        consentState: transcript.consentState,
+      };
     }
 
     const summaryRaw = (transcript.rawSummary ?? {}) as StoredSummary;
