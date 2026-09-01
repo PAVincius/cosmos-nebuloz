@@ -205,12 +205,32 @@ Onde os números vieram de um julgamento que vale discutir:
 Caso `RESTRICTED` exige ao menos uma condição; `BLOCKED` exige motivo. Os três
 que não devem ser aprovados sem mitigação escrita:
 
-**UC-07 — Insights de reunião.** Não aprovar antes de resolver consentimento.
-Mitigações: consentimento explícito de gravação de todos os participantes antes
-do processamento; retenção máxima da transcrição definida e aplicada; supressão
-do processamento quando houver participante externo sem consentimento
-registrado. Enquanto o consentimento não estiver resolvido, o estado correto é
-`BLOCKED` com motivo — não `APPROVED` com ressalva.
+**UC-07 — Insights de reunião.** Este caso mudou de estado. Quando o inventário
+foi escrito, o pipeline processava transcrição sem verificação nenhuma, e o
+estado correto era `BLOCKED` com motivo. Os controles pedidos aqui foram
+implementados — ver
+[`compliance/consentimento-de-gravacao.md`](../compliance/consentimento-de-gravacao.md)
+e a §7 do
+[RoPA](../compliance/lgpd-ropa-e-lacunas.md).
+
+**Estado a registrar agora: `RESTRICTED`**, com estas condições, que são os
+controles que passaram a existir:
+
+1. Nenhum conteúdo alcança um provedor de LLM sem consentimento `GRANTED` —
+   portão default deny nos três caminhos do pipeline.
+2. Liberação exige ato humano com papel de governança, com trilha de auditoria.
+3. Liberação automática (`STANDING`) só ocorre em reunião comprovadamente sem
+   participante externo; desconhecido cai em revisão humana.
+4. Revogar apaga o conteúdo derivado e zera o resumo bruto.
+5. A eliminação de titular alcança transcrição e participante.
+
+**O que sustenta a restrição em vez da aprovação**, e é o que o auditor vai
+perguntar: os controles garantem que alguém com papel **afirmou** ter obtido o
+consentimento — não que ele existiu. A lista de participantes vem do provedor,
+não da sala. E o participante externo continua sem canal próprio para exercer
+direito, o que depende da decisão operadora × controladora, não de código.
+
+`APPROVED` só quando essas duas frases deixarem de ser verdadeiras.
 
 **UC-01 — Geração de rascunho de política.** O inventário de governança do
 cliente vai para um LLM de terceiro. Mitigações: `sanitizar()` já corta em 200
@@ -260,5 +280,7 @@ qualquer proposta sem edição manual.
 
 - Confirmar DPA, retenção e subprocessadores de cada fornecedor — é trabalho
   contratual, e é o gargalo real do item 5.
-- Consentimento de gravação de reunião (V-11 / UC-07) antes de aprovar o caso.
+- Consentimento de gravação (V-11 / UC-07): os controles técnicos existem e o
+  caso vai como `RESTRICTED`. O que falta é fora do código — o texto do aviso
+  lido na abertura da cerimônia, e o parecer sobre se ele sustenta a base legal.
 - ADR-0012: mover a aplicação para `cosmos_app` sem `BYPASSRLS`.
