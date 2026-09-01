@@ -21,13 +21,26 @@ export const fetchFathomTranscriptFn = inngest.createFunction(
     const integration = await step.run("fetch-integration", () =>
       database.meetingIntegration.findFirst({
         where: { id: integrationId, tenantId },
-        select: { id: true, status: true, config: true },
+        select: {
+          id: true,
+          status: true,
+          config: true,
+          consentMode: true,
+          standingConsentRef: true,
+        },
       })
     );
 
     if (!integration || integration.status !== "ACTIVE") {
       return { skipped: true, reason: "integration not active" };
     }
+
+    // Portão de consentimento — mesmo mecanismo do caminho Fireflies, ver
+    // fireflies-transcript.ts e docs/compliance/consentimento-de-gravacao.md
+    // §4/§7.
+    const isStandingConsent =
+      integration.consentMode === "STANDING" &&
+      Boolean(integration.standingConsentRef);
 
     const { decryptConfigSecrets } = await import("@repo/security/encrypt");
     const config = decryptConfigSecrets(
@@ -52,6 +65,7 @@ export const fetchFathomTranscriptFn = inngest.createFunction(
 
     const normalized = adapter.normalizeSummary(raw);
 
+    // Consent fields only set on `create` — see fireflies-transcript.ts for why.
     const persisted = await step.run("persist-transcript", () =>
       database.meetingTranscript.upsert({
         where: { tenantId_meetingId: { tenantId, meetingId } },
@@ -62,14 +76,32 @@ export const fetchFathomTranscriptFn = inngest.createFunction(
           title: normalized.title,
           rawSummary: normalized.rawSummary,
           status: "RECEIVED",
+          ...(isStandingConsent
+            ? {
+                consentState: "GRANTED",
+                consentGrantedRef: integration.standingConsentRef,
+                consentGrantedAt: new Date(),
+              }
+            : {}),
         },
         update: {
           title: normalized.title,
           rawSummary: normalized.rawSummary,
         },
-        select: { id: true },
+        select: { id: true, consentState: true },
       })
     );
+
+    if (persisted.consentState !== "GRANTED") {
+      return {
+        ok: true,
+        meetingId,
+        transcriptId: persisted.id,
+        skipped: true,
+        reason: "consent not granted",
+        consentState: persisted.consentState,
+      };
+    }
 
     await step.run("enqueue-mapping", () =>
       inngest.send({
