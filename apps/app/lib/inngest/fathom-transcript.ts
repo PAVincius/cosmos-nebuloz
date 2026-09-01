@@ -38,9 +38,15 @@ export const fetchFathomTranscriptFn = inngest.createFunction(
     // Portão de consentimento — mesmo mecanismo do caminho Fireflies, ver
     // fireflies-transcript.ts e docs/compliance/consentimento-de-gravacao.md
     // §4/§7.
-    const isStandingConsent =
-      integration.consentMode === "STANDING" &&
-      Boolean(integration.standingConsentRef);
+    //
+    // Passo 7: STANDING só libera sozinho quando se sabe que não há
+    // participante externo. O Fathom não expõe participantes — nem em
+    // FathomCall nem no adapter (lib/meeting/providers/fathom.ts) — então
+    // aqui a externalidade é sempre desconhecida, nunca "sem externo". Fail
+    // closed: mesmo com STANDING configurado e standingConsentRef presente,
+    // a transcrição cai em PENDING até que a API do Fathom exponha um
+    // equivalente de `participants`/`workspace_users`.
+    const isStandingGranted = false;
 
     const { decryptConfigSecrets } = await import("@repo/security/encrypt");
     const config = decryptConfigSecrets(
@@ -76,7 +82,7 @@ export const fetchFathomTranscriptFn = inngest.createFunction(
           title: normalized.title,
           rawSummary: normalized.rawSummary,
           status: "RECEIVED",
-          ...(isStandingConsent
+          ...(isStandingGranted
             ? {
                 consentState: "GRANTED",
                 consentGrantedRef: integration.standingConsentRef,

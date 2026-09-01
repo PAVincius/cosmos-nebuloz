@@ -177,6 +177,7 @@ model Tenant {
   meetingIntegrations       MeetingIntegration[]
   meetingTranscripts        MeetingTranscript[]
   meetingInsights           MeetingInsight[]
+  meetingParticipants       MeetingParticipant[]
   // PAE — Personal Access Exception
   accessExceptionRequests   AccessExceptionRequest[]
   // Contratação modular — Cosmos / Charter / Signal / Meridian
