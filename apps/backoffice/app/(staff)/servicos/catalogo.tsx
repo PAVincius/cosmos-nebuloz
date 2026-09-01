@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import {
   createServiceAction,
@@ -45,33 +46,54 @@ function LinhaServico({
         display: "flex",
         alignItems: "center",
         gap: 12,
-        padding: "11px 2px",
         borderTop: primeira ? "none" : "1px solid var(--hairline)",
         // Fora de catálogo continua visível, só apagado: sumir faria o
         // operador cadastrar um duplicado com o mesmo código.
         opacity: s.ativo ? 1 : 0.55,
       }}
     >
-      <span
-        className="mono"
-        style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 60 }}
+      {/* A linha inteira leva ao detalhe. O código é a chave da rota porque é
+          o que aparece em proposta e contrato — a URL fica legível e a pessoa
+          consegue digitá-la a partir do documento que tem na mão. */}
+      <Link
+        className="navitem"
+        href={`/servicos/${encodeURIComponent(s.codigo)}`}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          flex: 1,
+          minWidth: 0,
+          padding: "11px 8px",
+          margin: "0 -6px",
+          borderRadius: "var(--r-sm)",
+          color: "var(--ink)",
+          textDecoration: "none",
+        }}
       >
-        {s.codigo}
-      </span>
-      <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
-        {s.nome}
-      </span>
-      <Badge tone="neutral">{s.modalidade}</Badge>
-      <span
-        className="mono"
-        style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
-      >
-        {formatarBRL(s.precoBaseCentavos)}
-        <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
-      </span>
+        <span
+          className="mono"
+          style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 60 }}
+        >
+          {s.codigo}
+        </span>
+        <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
+          {s.nome}
+        </span>
+        <Badge tone="neutral">{s.modalidade}</Badge>
+        <span
+          className="mono"
+          style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
+        >
+          {formatarBRL(s.precoBaseCentavos)}
+          <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
+        </span>
+      </Link>
       {podeEscrever ? (
         <button
           className="btn"
+          // `stopPropagation` não basta aqui: o alvo é irmão do <Link>, não
+          // filho. O que o mantém fora da navegação é estar fora dele.
           onClick={() => onAlternar(s.id, !s.ativo)}
           style={{
             padding: "4px 10px",

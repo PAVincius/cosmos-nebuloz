@@ -289,7 +289,9 @@ export async function updateServiceAction(
     const diff: [string, string, string][] = [];
     const anota = (campo: string, antes: unknown, depois: unknown) => {
       const a = Array.isArray(antes) ? antes.join(", ") : String(antes ?? "");
-      const d = Array.isArray(depois) ? depois.join(", ") : String(depois ?? "");
+      const d = Array.isArray(depois)
+        ? depois.join(", ")
+        : String(depois ?? "");
       if (a !== d) {
         diff.push([campo, a, d]);
       }
@@ -332,5 +334,116 @@ export async function updateServiceAction(
     revalidatePath("/servicos");
     revalidatePath(`/servicos/${atual.id}`);
     return { id: atual.id };
+  });
+}
+
+/** Onde um serviço aparece vendido ou sendo entregue. */
+export type UsoDoServico = {
+  propostas: {
+    id: string;
+    numero: string;
+    cliente: string;
+    status: string;
+    quantidade: number;
+    precoUnitCentavos: number;
+  }[];
+  engajamentos: { id: string; nome: string; status: string }[];
+};
+
+export type ServiceDetail = ServiceRow & { uso: UsoDoServico };
+
+/**
+ * Um serviço, com o que a lista não cabe mostrar.
+ *
+ * Os três arrays (entregáveis, papéis, pré-requisitos) já vinham no `ServiceRow`
+ * e não tinham onde aparecer. O que é novo aqui é o **uso**: quais propostas
+ * vendem este serviço e quais engajamentos o executam.
+ *
+ * Isso não é enfeite de tela. A ação que o catálogo oferece é "tirar do
+ * catálogo", e ela é tomada às cegas: sem saber que há proposta aberta com o
+ * item dentro, o operador tira e descobre depois. `ProposalItem` copia preço e
+ * descrição, então a proposta antiga sobrevive — mas a nova, que alguém estava
+ * montando, perde a opção no meio do caminho.
+ *
+ * Busca por `codigo` e não por `id`: é o que aparece em proposta e contrato, o
+ * que a pessoa tem na mão quando vai procurar, e é único por tenant.
+ */
+export async function getServiceDetail(
+  codigo: string
+): Promise<Result<ServiceDetail>> {
+  return await safeAction(async () => {
+    await requirePlatformStaff();
+
+    const servico = await database.service.findUnique({
+      where: { tenantId_codigo: { tenantId: SYSTEM_TENANT_ID, codigo } },
+      select: {
+        id: true,
+        codigo: true,
+        nome: true,
+        descricao: true,
+        modalidade: true,
+        precoBaseCentavos: true,
+        unidade: true,
+        ativo: true,
+        trilha: true,
+        unidadeDeCobranca: true,
+        duracao: true,
+        entregaveis: true,
+        papeis: true,
+        preRequisitos: true,
+        moduloVinculado: true,
+        exigeLab: true,
+      },
+    });
+
+    if (!servico) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `Nenhum serviço com o código ${codigo} neste catálogo.`
+      );
+    }
+
+    const [itens, engajamentos] = await Promise.all([
+      database.proposalItem.findMany({
+        where: { serviceId: servico.id },
+        orderBy: { proposal: { criadoEm: "desc" } },
+        take: 50,
+        select: {
+          id: true,
+          quantidade: true,
+          precoUnitCentavos: true,
+          proposal: {
+            select: {
+              id: true,
+              numero: true,
+              titulo: true,
+              clienteNome: true,
+              status: true,
+            },
+          },
+        },
+      }),
+      database.engagement.findMany({
+        where: { serviceId: servico.id, tenantId: SYSTEM_TENANT_ID },
+        orderBy: { criadoEm: "desc" },
+        take: 50,
+        select: { id: true, nome: true, status: true },
+      }),
+    ]);
+
+    return {
+      ...servico,
+      uso: {
+        propostas: itens.map((i) => ({
+          id: i.proposal.id,
+          numero: i.proposal.numero,
+          cliente: i.proposal.clienteNome ?? i.proposal.titulo,
+          status: i.proposal.status,
+          quantidade: i.quantidade,
+          precoUnitCentavos: i.precoUnitCentavos,
+        })),
+        engajamentos,
+      },
+    };
   });
 }
