@@ -1,20 +1,27 @@
+import { Badge, type Tone } from "@repo/design-system/cosmos/kit";
 import type {
   AuditRow,
   IntegracaoRow,
 } from "@/app/actions/tenant-observability";
+import { Vazio } from "@/components/vazio";
 
-/** Cor sozinha nunca carrega estado — cor + palavra, sempre (NFR-2.2). */
-const TOM_STATUS: Record<string, string> = {
-  ACTIVE:
-    "border-emerald-500/30 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  INACTIVE: "border-border bg-muted text-muted-foreground",
-  ERROR: "border-red-500/30 bg-red-500/10 text-red-600 dark:text-red-400",
+/** Cor sozinha nunca carrega estado — cor + palavra, sempre (NFR-2.2). O
+ *  `Badge` do kit já é isso: o tom pinta, o texto informa. */
+const TOM_STATUS: Record<string, Tone> = {
+  ACTIVE: "green",
+  INACTIVE: "neutral",
+  ERROR: "red",
 };
 
 const ROTULO_STATUS: Record<string, string> = {
   ACTIVE: "OK",
   INACTIVE: "Não conectado",
   ERROR: "Erro",
+};
+
+const CELULA_META: React.CSSProperties = {
+  padding: "2px 0",
+  color: "var(--ink-faint)",
 };
 
 function formatar(iso: string): string {
@@ -24,36 +31,77 @@ function formatar(iso: string): string {
 export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {
   if (integracoes.length === 0) {
     return (
-      <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground text-sm">
+      <Vazio>
         Nenhuma integração configurada para este tenant. Elas são criadas dentro
         do produto, pelo próprio cliente — o back-office observa, não conecta.
-      </p>
+      </Vazio>
     );
   }
 
   return (
-    <ul className="grid gap-2 sm:grid-cols-2">
+    <ul
+      style={{
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        display: "grid",
+        gap: 8,
+        gridTemplateColumns: "repeat(auto-fit,minmax(240px,1fr))",
+      }}
+    >
       {integracoes.map((i) => (
-        <li className="rounded-md border p-3" key={i.id}>
-          <div className="flex items-center justify-between gap-2">
-            <span className="font-medium text-sm">{i.name}</span>
-            <span
-              className={`shrink-0 rounded-full border px-2 py-0.5 font-semibold text-xs ${
-                TOM_STATUS[i.status] ?? TOM_STATUS.INACTIVE
-              }`}
-            >
-              {ROTULO_STATUS[i.status] ?? i.status}
+        <li
+          key={i.id}
+          style={{
+            padding: 12,
+            borderRadius: "var(--r-md)",
+            border: "1px solid var(--hairline)",
+            background: "var(--surface-2)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+            }}
+          >
+            <span style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
+              {i.name}
             </span>
+            <Badge tone={TOM_STATUS[i.status] ?? "neutral"}>
+              {ROTULO_STATUS[i.status] ?? i.status}
+            </Badge>
           </div>
-          <p className="mt-1 font-mono text-muted-foreground text-xs">
+          <p
+            className="mono"
+            style={{
+              margin: "6px 0 0",
+              fontSize: "var(--fs-nota)",
+              color: "var(--ink-faint)",
+            }}
+          >
             {i.source} ·{" "}
             {i.ultimoSync
               ? `último sync ${formatar(i.ultimoSync)}`
               : "nunca sincronizou"}
           </p>
-          {/* FR-4.4.2 — a causa concreta, não só o status. */}
+          {/* FR-4.4.2 — a causa concreta, não só o status. Mesma moldura do
+              `Erro`, um degrau menor porque vive dentro do cartão. */}
           {i.mensagem ? (
-            <p className="mt-2 rounded border border-red-500/30 bg-red-500/5 p-2 text-red-600 text-xs dark:text-red-400">
+            <p
+              style={{
+                margin: "8px 0 0",
+                padding: "7px 9px",
+                borderRadius: "var(--r-sm)",
+                background: "var(--red-soft)",
+                border: "1px solid rgba(var(--red-rgb),.3)",
+                color: "var(--red-text)",
+                fontSize: "var(--fs-nota)",
+                fontWeight: 600,
+              }}
+            >
               {i.mensagem}
             </p>
           ) : null}
@@ -71,66 +119,139 @@ export function Integracoes({ integracoes }: { integracoes: IntegracaoRow[] }) {
  */
 export function AuditTimeline({ eventos }: { eventos: AuditRow[] }) {
   if (eventos.length === 0) {
-    return (
-      <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground text-sm">
-        Nenhum evento auditado para este tenant ainda.
-      </p>
-    );
+    return <Vazio>Nenhum evento auditado para este tenant ainda.</Vazio>;
   }
 
   return (
-    <ul className="flex flex-col gap-1.5">
+    <ul
+      style={{
+        listStyle: "none",
+        margin: 0,
+        padding: 0,
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+      }}
+    >
       {eventos.map((e) => {
         const tuplas = Array.isArray(e.diff)
           ? (e.diff as [string, string, string][])
           : null;
         return (
-          <li className="rounded-md border" key={e.id}>
+          <li
+            key={e.id}
+            style={{
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--hairline)",
+              overflow: "hidden",
+            }}
+          >
             <details>
-              <summary className="cursor-pointer list-none p-3 text-sm hover:bg-muted">
-                <span className="font-mono text-xs">{e.action}</span>
-                <span className="ml-2 text-muted-foreground">
+              <summary
+                className="navitem"
+                style={{
+                  cursor: "pointer",
+                  listStyle: "none",
+                  padding: 12,
+                  fontSize: "var(--fs-base)",
+                  display: "flex",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: 8,
+                }}
+              >
+                <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
+                  {e.action}
+                </span>
+                <span style={{ color: "var(--ink-muted)" }}>
                   {e.alvo ?? e.entityType ?? "—"}
                 </span>
-                <span className="ml-2 text-muted-foreground text-xs">
+                <span
+                  style={{
+                    fontSize: "var(--fs-nota)",
+                    color: "var(--ink-faint)",
+                  }}
+                >
                   {formatar(e.quando)}
                   {e.ator ? ` · ${e.ator}` : ""}
                 </span>
               </summary>
-              <div className="border-t p-3">
+              <div
+                style={{ borderTop: "1px solid var(--hairline)", padding: 12 }}
+              >
                 {e.semDiff ? (
                   // Afirmação explícita: linha que abre vazia parece quebrada.
-                  <p className="text-muted-foreground text-xs">
+                  <p
+                    style={{
+                      margin: 0,
+                      fontSize: "var(--fs-nota)",
+                      color: "var(--ink-faint)",
+                    }}
+                  >
                     Evento de criação — não tem diff, porque não havia estado
                     anterior.
                   </p>
                 ) : (
-                  <table className="w-full text-xs">
+                  <table
+                    style={{
+                      width: "100%",
+                      borderCollapse: "collapse",
+                      fontSize: "var(--fs-nota)",
+                    }}
+                  >
                     <thead>
-                      <tr className="text-left text-muted-foreground">
-                        <th className="pb-1 font-medium">Campo</th>
-                        <th className="pb-1 font-medium">Antes</th>
-                        <th className="pb-1 font-medium">Depois</th>
+                      <tr>
+                        <th
+                          style={{
+                            ...CELULA_META,
+                            textAlign: "left",
+                            fontWeight: 700,
+                            paddingBottom: 5,
+                          }}
+                        >
+                          Campo
+                        </th>
+                        <th
+                          style={{
+                            ...CELULA_META,
+                            textAlign: "left",
+                            fontWeight: 700,
+                            paddingBottom: 5,
+                          }}
+                        >
+                          Antes
+                        </th>
+                        <th
+                          style={{
+                            ...CELULA_META,
+                            textAlign: "left",
+                            fontWeight: 700,
+                            paddingBottom: 5,
+                          }}
+                        >
+                          Depois
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
                       {tuplas ? (
                         tuplas.map(([campo, antes, depois]) => (
                           <tr key={campo}>
-                            <td className="py-0.5 font-mono">{campo}</td>
-                            <td className="py-0.5 text-muted-foreground">
-                              {String(antes)}
+                            <td className="mono" style={{ padding: "2px 0" }}>
+                              {campo}
                             </td>
-                            <td className="py-0.5">{String(depois)}</td>
+                            <td style={CELULA_META}>{String(antes)}</td>
+                            <td style={{ padding: "2px 0" }}>
+                              {String(depois)}
+                            </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
-                          <td
-                            className="py-0.5 text-muted-foreground"
-                            colSpan={3}
-                          >
-                            <code>{JSON.stringify(e.diff)}</code>
+                          <td colSpan={3} style={CELULA_META}>
+                            <code className="mono">
+                              {JSON.stringify(e.diff)}
+                            </code>
                           </td>
                         </tr>
                       )}

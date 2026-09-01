@@ -5,6 +5,8 @@ import {
   type TenantMemberRow,
   updateTenantMemberRoleAction,
 } from "@/app/actions/tenant-members";
+import { Erro, INPUT } from "@/components/campo";
+import { Vazio } from "@/components/vazio";
 
 const PAPEIS = ["ADMIN", "STE", "RTE", "SM", "PO", "DEV", "MEMBER"] as const;
 type Papel = (typeof PAPEIS)[number];
@@ -50,24 +52,51 @@ export function Membros({
 
   if (membros.length === 0) {
     return (
-      <p className="rounded-md border border-dashed p-6 text-center text-muted-foreground text-sm">
+      <Vazio>
         Este tenant não tem membro algum. Quem foi convidado no provisionamento
         aparece aqui depois de criar a conta.
-      </p>
+      </Vazio>
     );
   }
 
   return (
-    <div>
-      <ul className="flex flex-col gap-2">
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <ul
+        style={{
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 8,
+        }}
+      >
         {membros.map((m) => (
           <li
-            className="flex items-center justify-between gap-3 rounded-md border p-3"
             key={m.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 12,
+              padding: 12,
+              borderRadius: "var(--r-md)",
+              border: "1px solid var(--hairline)",
+              background: "var(--surface-2)",
+            }}
           >
-            <div className="min-w-0">
-              <div className="font-medium text-sm">{m.nome ?? "—"}</div>
-              <div className="font-mono text-muted-foreground text-xs">
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}>
+                {m.nome ?? "—"}
+              </div>
+              <div
+                className="mono"
+                style={{
+                  fontSize: "var(--fs-nota)",
+                  color: "var(--ink-faint)",
+                  overflowWrap: "anywhere",
+                }}
+              >
                 {m.email}
               </div>
             </div>
@@ -75,10 +104,17 @@ export function Membros({
               Papel de {m.email}
             </label>
             <select
-              className="rounded-md border bg-background px-2 py-1.5 text-sm disabled:opacity-50"
               disabled={!canWrite || pendente}
               id={`papel-${m.id}`}
               onChange={(e) => mudar(m.id, e.target.value)}
+              style={{
+                ...INPUT,
+                width: "auto",
+                flexShrink: 0,
+                padding: "7px 10px",
+                opacity: canWrite ? 1 : 0.5,
+                cursor: canWrite ? "pointer" : "not-allowed",
+              }}
               title={
                 canWrite
                   ? undefined
@@ -95,11 +131,7 @@ export function Membros({
           </li>
         ))}
       </ul>
-      {erro ? (
-        <p className="mt-3 rounded-md border border-red-500/30 bg-red-500/5 p-3 text-red-600 text-sm dark:text-red-400">
-          {erro}
-        </p>
-      ) : null}
+      {erro ? <Erro>{erro}</Erro> : null}
     </div>
   );
 }
