@@ -1,6 +1,6 @@
 "use server";
 
-import { withTenantDb } from "@repo/database";
+import { type ProductModule, withTenantDb } from "@repo/database";
 import {
   bootstrapCharter,
   contractModule,
@@ -31,7 +31,7 @@ async function tenantIdBySlug(slug: string): Promise<string> {
 
 export async function contractModuleAction(input: {
   slug: string;
-  module: "COSMOS" | "CHARTER" | "SIGNAL";
+  module: ProductModule;
   status: "ACTIVE" | "TRIAL" | "SUSPENDED" | "CANCELED";
 }): Promise<Result<null>> {
   return await safeAction(async () => {
@@ -59,7 +59,7 @@ export async function contractModuleAction(input: {
 
 export async function setModuleStatusAction(input: {
   slug: string;
-  module: "COSMOS" | "CHARTER" | "SIGNAL";
+  module: ProductModule;
   status: "ACTIVE" | "TRIAL" | "SUSPENDED" | "CANCELED";
 }): Promise<Result<null>> {
   return await safeAction(async () => {
@@ -117,7 +117,7 @@ export async function provisionTenantAction(input: {
   name: string;
   ownerEmail: string;
   modules: {
-    module: "COSMOS" | "CHARTER" | "SIGNAL";
+    module: ProductModule;
     status: "ACTIVE" | "TRIAL";
   }[];
 }): Promise<Result<{ slug: string; ownerLinked: boolean }>> {

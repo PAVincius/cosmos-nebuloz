@@ -1,11 +1,11 @@
 "use client";
 
+import type { ProductModule } from "@repo/database";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useState, useTransition } from "react";
 import { contractModuleAction } from "@/app/actions/provisioning";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 
-const MODULES = ["COSMOS", "CHARTER", "SIGNAL"] as const;
 const STATUSES = ["ACTIVE", "TRIAL", "SUSPENDED", "CANCELED"] as const;
 
 /** Liberar acesso é reversível e barato de errar: segue como clique direto.
@@ -24,17 +24,16 @@ type ModuleRow = { module: string; status: string; expiresAt: string | null };
 export function ModuleForm({
   slug,
   modules,
+  modulos,
 }: {
   slug: string;
   modules: ModuleRow[];
+  modulos: ProductModule[];
 }) {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
-  const apply = (
-    module: (typeof MODULES)[number],
-    status: (typeof STATUSES)[number]
-  ) =>
+  const apply = (module: ProductModule, status: (typeof STATUSES)[number]) =>
     startTransition(async () => {
       setError(null);
       const result = await contractModuleAction({ slug, module, status });
@@ -53,7 +52,7 @@ export function ModuleForm({
 
       <table className="w-full text-sm">
         <tbody>
-          {MODULES.map((module) => {
+          {modulos.map((module) => {
             const current = modules.find((m) => m.module === module);
             return (
               <tr className="border-b" key={module}>

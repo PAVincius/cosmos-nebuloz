@@ -7,6 +7,7 @@ import {
   listTenantIntegrations,
 } from "@/app/actions/tenant-observability";
 import { requirePlatformStaff } from "@/lib/guard";
+import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
 import { Membros } from "./membros";
 import { ModuleForm } from "./module-form";
@@ -62,7 +63,11 @@ export default async function ClientDetailPage({
         subtitulo="contractModule() — o que este cliente comprou"
         titulo="Módulos contratados"
       >
-        <ModuleForm modules={client.modules} slug={client.slug} />
+        <ModuleForm
+          modules={client.modules}
+          modulos={MODULOS_DA_PLATAFORMA}
+          slug={client.slug}
+        />
       </SecaoSimples>
 
       {/* FR-4.2 — aba Usuários. O guard de último ADMIN (FR-4.2.4) mora no
