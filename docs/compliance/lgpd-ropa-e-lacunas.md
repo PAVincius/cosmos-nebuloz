@@ -141,7 +141,7 @@ cliente.
 
 ## 5. Cobertura da eliminação
 
-`processErasureRequest` alcança cinco tabelas. Dado pessoal vive em mais que
+`processErasureRequest` alcança sete tabelas. Dado pessoal vive em mais que
 isso.
 
 | Tabela | Dado | Coberto |
@@ -151,9 +151,9 @@ isso.
 | `CopilotMessage` | conteúdo de conversa | sim |
 | `MeetingParticipant` | e-mail, nome | **sim** — casado pelo e-mail do `User` |
 | `MeetingTranscript` | fala transcrita | **sim** — `rawSummary` zerado, insight derivado apagado ou redigido |
-| `AccessLog` | e-mail, IP, user-agent | não |
+| `AccessLog` | e-mail, IP, user-agent | **sim** — evento e motivo preservados, identificador anonimizado (§7 abaixo explica por quê) |
 | `AuditLog` | IP, user-agent, `targetUserId` | não — e provavelmente **não deve ser**, por imutabilidade (ADR-0009) |
-| `MeridianRespondent` | nome, e-mail, cargo | não |
+| `MeridianRespondent` | nome, e-mail, cargo | **sim** — `MeridianResponse` preservado, token invalidado |
 | `CharterUseCase.ownerName` | nome livre | não |
 | `Proposal` | `clienteNome`, `contatoEmail` | não |
 | `StaffPerson` | dado de colaborador | não |
@@ -164,14 +164,24 @@ retenção de trilha sob legítimo interesse é exceção prevista no próprio A
 O que **é** defeito é a diferença não estar documentada.
 
 Das três que este documento apontou como mínimo — `AccessLog`,
-`MeridianRespondent` e `MeetingTranscript` — **uma foi fechada**, junto com
-`MeetingParticipant`, que nem existia quando a lista foi escrita. Faltam
-`AccessLog` e `MeridianRespondent`.
+`MeridianRespondent` e `MeetingTranscript` — as três estão fechadas agora, junto
+com `MeetingParticipant`, que nem existia quando a lista foi escrita.
 
-Uma ressalva que a cobertura nova não elimina: a correspondência é feita pelo
-**e-mail do `User`**, então só alcança o participante que também é usuário da
-plataforma. O externo não tem `User.id` para disparar o fluxo — está registrado
-em comentário no próprio `lgpd-dsr.ts`, e é a mesma lacuna de canal da §4.
+`AccessLog` não é apagado, é anonimizado: o RoPA classifica esse tratamento como
+legítimo interesse de segurança, e o Art. 18 prevê a exceção — a linha
+(`evento`, `motivo`, `criadoEm`) fica, só o e-mail/IP/user-agent em claro some.
+`MeridianRespondent` também não é apagado — `MeridianResponse` tem
+`onDelete: Cascade` a partir dele e alimenta `MeridianAxisScore`, que é
+diagnóstico do cliente, não dado do titular — só nome/e-mail somem e o token de
+acesso é invalidado. `MeridianEvidence.storagePath` fica de fora: o arquivo vive
+no bucket, fora do banco, e apagar o objeto pede uma rotina própria de limpeza
+de storage que ainda não existe.
+
+Uma ressalva que a cobertura nova não elimina: `MeetingParticipant` e
+`MeridianRespondent` são casados pelo **e-mail do `User`**, então só alcançam
+quem também é usuário da plataforma. O externo não tem `User.id` para disparar
+o fluxo — está registrado em comentário no próprio `lgpd-dsr.ts`, e é a mesma
+lacuna de canal da §4.
 
 ---
 
