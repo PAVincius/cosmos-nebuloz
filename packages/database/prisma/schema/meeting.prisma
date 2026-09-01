@@ -67,9 +67,21 @@ model MeetingTranscript {
   consentGrantedRef String?
   consentGrantedAt  DateTime?
 
-  tenant      Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  integration MeetingIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
-  insights    MeetingInsight[]
+  // Passo 6/7 do §7: sabemos se o provedor devolveu os campos necessários
+  // para dizer quem estava na sala? Default false (fail closed) — o mesmo
+  // princípio de default deny do consentimento, aplicado ao conhecimento
+  // sobre participantes. STANDING (ver fireflies-transcript.ts /
+  // fathom-transcript.ts) só libera sozinho quando participantsKnown = true
+  // E nenhum MeetingParticipant desta transcrição tem isExternal = true.
+  // participantsKnown = false não é "sem externo": é "não sabemos", e cai em
+  // PENDING como PER_MEETING. Fathom nunca preenche isto — o adapter não
+  // expõe participantes.
+  participantsKnown Boolean @default(false)
+
+  tenant       Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  integration  MeetingIntegration   @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  insights     MeetingInsight[]
+  participants MeetingParticipant[]
 
   @@unique([tenantId, meetingId]) // idempotency: 1 transcript por meeting/tenant
   @@index([tenantId])
@@ -95,4 +107,33 @@ model MeetingInsight {
 
   @@index([tenantId])
   @@index([transcriptId])
+}
+
+/// Participante de uma cerimônia gravada (docs/compliance/consentimento-de-gravacao.md
+/// §4/§7, passo 6). Pré-requisito de DSR: sem isto não há como saber que
+/// dados de um titular estão numa reunião nem escopar consentimento a quem
+/// estava na sala. Identificado por e-mail, não por User.id — a maioria não
+/// é usuário da plataforma (ver processErasureRequest em lib/inngest/lgpd-dsr.ts,
+/// que resolve a correspondência pelo e-mail do User sendo apagado).
+///
+/// `isExternal` só existe como dado confiável quando `MeetingTranscript.participantsKnown`
+/// é true — é a subtração `participants` menos `workspace_users` da API do
+/// Fireflies (ver fireflies-normalize.ts), nunca uma heurística de domínio.
+model MeetingParticipant {
+  id           String   @id @default(cuid())
+  tenantId     String
+  transcriptId String
+  email        String
+  name         String?
+  isOrganizer  Boolean  @default(false)
+  isExternal   Boolean  @default(false) // só significativo quando transcript.participantsKnown = true
+  createdAt    DateTime @default(now())
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  transcript MeetingTranscript  @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, transcriptId, email])
+  @@index([tenantId])
+  @@index([transcriptId])
+  @@index([tenantId, email])
 }

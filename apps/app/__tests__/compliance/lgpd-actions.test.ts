@@ -9,6 +9,7 @@ const dbMocks = vi.hoisted(() => ({
   userFindUnique: vi.fn(),
   standupFindMany: vi.fn(),
   copilotFindMany: vi.fn(),
+  meetingParticipantFindMany: vi.fn().mockResolvedValue([]),
 }));
 
 vi.mock("@repo/database", () => ({
@@ -20,6 +21,7 @@ vi.mock("@repo/database", () => ({
     user: { findUnique: dbMocks.userFindUnique },
     standupEntry: { findMany: dbMocks.standupFindMany },
     copilotSession: { findMany: dbMocks.copilotFindMany },
+    meetingParticipant: { findMany: dbMocks.meetingParticipantFindMany },
   },
 }));
 

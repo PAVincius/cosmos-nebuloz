@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { database } from "@repo/database";
+import { database, Prisma } from "@repo/database";
 import { log } from "@repo/observability/log";
 import { inngest } from "./client";
 
@@ -29,6 +29,19 @@ export const processErasureRequest = inngest.createFunction(
       })
     );
 
+    // ORDEM IMPORTA: o e-mail tem de ser lido antes de `anonymize-user-profile`
+    // sobrescrevê-lo. `MeetingParticipant` é identificado por e-mail, não por
+    // `User.id`, e depois da anonimização o único e-mail disponível seria
+    // `${hash}@erased.cosmos` — que não corresponde a participante nenhum, e a
+    // eliminação de reunião viraria silenciosamente um no-op.
+    const subjectEmail = await step.run("fetch-subject-email", async () => {
+      const user = await database.user.findUnique({
+        where: { id: subjectId },
+        select: { email: true },
+      });
+      return user?.email ?? null;
+    });
+
     await step.run("anonymize-user-profile", () =>
       database.user.update({
         where: { id: subjectId },
@@ -56,6 +69,79 @@ export const processErasureRequest = inngest.createFunction(
         data: { content: "[Erased: LGPD Art.18 request]" },
       })
     );
+
+    // Passo 8 do §7: a eliminação alcança MeetingParticipant e
+    // MeetingTranscript. Participante de reunião é identificado por e-mail,
+    // não por User.id — a maioria não é usuário da plataforma. O e-mail do
+    // User sendo apagado — lido lá em cima, antes da anonimização do perfil,
+    // pelo motivo explicado naquele ponto — é o elo natural entre os dois.
+    //
+    // O participante externo que não é usuário da Nebuloz não tem User.id
+    // nenhum para disparar este fluxo — não tem caminho de DSR pela
+    // aplicação. É a mesma lacuna já documentada para o respondente do
+    // Meridian (docs/compliance/consentimento-de-gravacao.md §6); não é
+    // este código que a fecha, só o participante que também é usuário da
+    // plataforma é alcançado aqui.
+    if (subjectEmail) {
+      const participantTranscriptIds = await step.run(
+        "find-participant-transcripts",
+        async () => {
+          const rows = await database.meetingParticipant.findMany({
+            where: { tenantId, email: subjectEmail },
+            select: { transcriptId: true },
+          });
+          return Array.from(new Set(rows.map((r) => r.transcriptId)));
+        }
+      );
+
+      await step.run("anonymize-meeting-participant", () =>
+        database.meetingParticipant.updateMany({
+          where: { tenantId, email: subjectEmail },
+          data: { email: `${hash}@erased.cosmos`, name: replacement },
+        })
+      );
+
+      // Mesmo espírito de revokeConsent (actions/meeting/consent.ts): o
+      // conteúdo derivado da fala precisa sair. Insight ainda
+      // PENDING/DISMISSED é rascunho que nunca virou dado do produto —
+      // apagar é a eliminação em si. Insight já APPLIED vira entidade de
+      // domínio real (Risk/Impediment/DecisionLog) por decisão humana, sem
+      // FK de volta para cá — a linha fica, com status e appliedEntityId
+      // intactos, mas com o texto redigido, preservando a prova de que
+      // aquela entidade veio de uma reunião cujo participante foi
+      // eliminado. `rawSummary` da transcrição é zerado, igual à
+      // revogação — o conteúdo bruto não pode sobreviver à eliminação do
+      // titular.
+      if (participantTranscriptIds.length > 0) {
+        await step.run("erase-meeting-transcript-content", () =>
+          database.$transaction(async (tx) => {
+            await tx.meetingInsight.deleteMany({
+              where: {
+                tenantId,
+                transcriptId: { in: participantTranscriptIds },
+                status: { in: ["PENDING", "DISMISSED"] },
+              },
+            });
+
+            await tx.meetingInsight.updateMany({
+              where: {
+                tenantId,
+                transcriptId: { in: participantTranscriptIds },
+                status: "APPLIED",
+              },
+              data: {
+                text: "[conteúdo removido — solicitação de eliminação LGPD]",
+              },
+            });
+
+            await tx.meetingTranscript.updateMany({
+              where: { tenantId, id: { in: participantTranscriptIds } },
+              data: { rawSummary: Prisma.DbNull },
+            });
+          })
+        );
+      }
+    }
 
     await step.run("complete-request", async () => {
       await database.dataSubjectRequest.update({
@@ -104,6 +190,17 @@ export type PortabilityPayload = {
     createdAt: Date;
     messageCount: number;
   }>;
+  // Passo 8 do §7: participação em reunião é dado do titular. Vazio quando
+  // o usuário não tem e-mail conhecido (subject null) — mesma correspondência
+  // por e-mail usada em processErasureRequest, acima.
+  meetingParticipations: Array<{
+    transcriptId: string;
+    meetingId: string;
+    title: string | null;
+    isOrganizer: boolean;
+    isExternal: boolean;
+    createdAt: Date;
+  }>;
 };
 
 export async function buildPortabilityExport(
@@ -134,11 +231,37 @@ export async function buildPortabilityExport(
     }),
   ]);
 
+  const participantRows = profile?.email
+    ? await database.meetingParticipant.findMany({
+        where: { tenantId, email: profile.email },
+        select: {
+          isOrganizer: true,
+          isExternal: true,
+          transcript: {
+            select: {
+              id: true,
+              meetingId: true,
+              title: true,
+              createdAt: true,
+            },
+          },
+        },
+      })
+    : [];
+
   return {
     schemaVersion: "1.0",
     exportedAt,
     subject: profile,
     standupEntries,
     copilotSessions,
+    meetingParticipations: participantRows.map((p) => ({
+      transcriptId: p.transcript.id,
+      meetingId: p.transcript.meetingId,
+      title: p.transcript.title,
+      isOrganizer: p.isOrganizer,
+      isExternal: p.isExternal,
+      createdAt: p.transcript.createdAt,
+    })),
   };
 }

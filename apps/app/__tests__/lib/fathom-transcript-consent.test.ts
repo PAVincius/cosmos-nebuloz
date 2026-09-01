@@ -106,7 +106,14 @@ describe("fathom-transcript consent gate", () => {
     expect(result.reason).toBe("consent not granted");
   });
 
-  it("STANDING with standingConsentRef → transcript created GRANTED, mapper IS enqueued", async () => {
+  // docs/compliance/consentimento-de-gravacao.md §7, passo 7: STANDING só
+  // libera sozinho quando se sabe que não há participante externo. O
+  // adapter do Fathom (lib/meeting/providers/fathom.ts) não expõe
+  // participantes — nem equivalente de `participants`/`workspace_users` —
+  // então esse conhecimento nunca existe neste caminho, e a transcrição
+  // fica PENDING mesmo sob STANDING com standingConsentRef presente. Fail
+  // closed: ausência de dado não é "sem externo".
+  it("STANDING with standingConsentRef → still PENDING (Fathom never knows about external participants), mapper NOT enqueued", async () => {
     mocks.integrationFindFirst.mockResolvedValue({
       id: "int1",
       status: "ACTIVE",
@@ -116,26 +123,21 @@ describe("fathom-transcript consent gate", () => {
     });
     mocks.transcriptUpsert.mockResolvedValue({
       id: "tx1",
-      consentState: "GRANTED",
+      consentState: "PENDING",
     });
 
     const result = (await handler({ event: baseEvent, step: makeStep() })) as {
-      ok?: boolean;
+      skipped?: boolean;
+      reason?: string;
     };
 
     expect(mocks.transcriptUpsert).toHaveBeenCalledWith(
       expect.objectContaining({
-        create: expect.objectContaining({
-          consentState: "GRANTED",
-          consentGrantedRef: "policy-doc-42",
-          consentGrantedAt: expect.any(Date),
-        }),
+        create: expect.not.objectContaining({ consentState: "GRANTED" }),
       })
     );
-    expect(mocks.send).toHaveBeenCalledWith({
-      name: "integration/fireflies.transcript.ready",
-      data: { tenantId: "t1", transcriptId: "tx1" },
-    });
-    expect(result.ok).toBe(true);
+    expect(mocks.send).not.toHaveBeenCalled();
+    expect(result.skipped).toBe(true);
+    expect(result.reason).toBe("consent not granted");
   });
 });
