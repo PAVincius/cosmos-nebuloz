@@ -16,11 +16,15 @@ const mocks = vi.hoisted(() => ({
   userFindUnique: vi.fn(),
   standupUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   copilotUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
+  accessLogUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   meetingParticipantFindMany: vi.fn().mockResolvedValue([]),
   meetingParticipantUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   meetingInsightDeleteMany: vi.fn().mockResolvedValue({ count: 0 }),
   meetingInsightUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   meetingTranscriptUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
+  meridianRespondentFindMany: vi.fn().mockResolvedValue([]),
+  meridianRespondentUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
+  meridianEvidenceUpdateMany: vi.fn().mockResolvedValue({ count: 0 }),
   auditCreate: vi.fn().mockResolvedValue({}),
   transaction: vi.fn(),
 }));
@@ -39,10 +43,16 @@ vi.mock("@repo/database", () => ({
     user: { update: mocks.userUpdate, findUnique: mocks.userFindUnique },
     standupEntry: { updateMany: mocks.standupUpdateMany },
     copilotMessage: { updateMany: mocks.copilotUpdateMany },
+    accessLog: { updateMany: mocks.accessLogUpdateMany },
     meetingParticipant: {
       findMany: mocks.meetingParticipantFindMany,
       updateMany: mocks.meetingParticipantUpdateMany,
     },
+    meridianRespondent: {
+      findMany: mocks.meridianRespondentFindMany,
+      updateMany: mocks.meridianRespondentUpdateMany,
+    },
+    meridianEvidence: { updateMany: mocks.meridianEvidenceUpdateMany },
     auditLog: { create: mocks.auditCreate },
     $transaction: mocks.transaction,
   },
@@ -79,8 +89,12 @@ beforeEach(() => {
   mocks.userUpdate.mockResolvedValue({});
   mocks.standupUpdateMany.mockResolvedValue({ count: 0 });
   mocks.copilotUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.accessLogUpdateMany.mockResolvedValue({ count: 0 });
   mocks.meetingParticipantFindMany.mockResolvedValue([]);
   mocks.meetingParticipantUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.meridianRespondentFindMany.mockResolvedValue([]);
+  mocks.meridianRespondentUpdateMany.mockResolvedValue({ count: 0 });
+  mocks.meridianEvidenceUpdateMany.mockResolvedValue({ count: 0 });
   mocks.auditCreate.mockResolvedValue({});
   mocks.transaction.mockImplementation(async (fn: (tx: unknown) => unknown) =>
     fn({
