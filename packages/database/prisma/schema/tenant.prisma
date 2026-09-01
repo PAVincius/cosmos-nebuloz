@@ -223,6 +223,7 @@ model Tenant {
   staffPeople               StaffPerson[]              @relation("StaffPersonSystemTenant")
   engagements               Engagement[]               @relation("EngagementSystemTenant")
   proposals                 Proposal[]                 @relation("ProposalSystemTenant")
+  leads                     Lead[]                     @relation("LeadSystemTenant")
   services                  Service[]                  @relation("ServiceSystemTenant")
   // Catálogo comercial — o que se cobra e quanto (também no tenant `system`)
   planosComerciais          PlanoComercial[]           @relation("PlanoComercialSystemTenant")

@@ -104,6 +104,14 @@ function calcularTotal(
   return Math.round(bruto * (1 - descontoPercent / 100));
 }
 
+/** Número da proposta. Extraído para fora de `createProposalAction` porque
+ *  `converterEmProposta`, em `app/actions/leads.ts`, também cria uma
+ *  `Proposal` — e duas rotinas gerando número por lógicas diferentes seria
+ *  dois jeitos de quebrar um identificador que precisa ser exato. */
+export function gerarNumeroProposta(): string {
+  return `P-${Date.now().toString(36).toUpperCase()}`;
+}
+
 export async function createProposalAction(
   input: z.input<typeof CriarSchema>
 ): Promise<Result<{ id: string; numero: string }>> {
@@ -147,7 +155,7 @@ export async function createProposalAction(
     });
 
     const total = calcularTotal(linhas, desconto);
-    const numero = `P-${Date.now().toString(36).toUpperCase()}`;
+    const numero = gerarNumeroProposta();
 
     const criada = await database.$transaction(async (tx) => {
       const p = await tx.proposal.create({
