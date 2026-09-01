@@ -36,11 +36,11 @@ vi.mock("@repo/provisioning", () => ({
   logPlatformAudit: mocks.logPlatformAudit,
   ProvisioningError: class extends Error {},
 }));
-// leads.ts reaproveita a numeração de proposals.ts em vez de duplicá-la —
-// mockar o módulo inteiro evita puxar `approvals.ts` e `lib/comercial`
-// (dependências transitivas de proposals.ts que nada têm a ver com este
-// arquivo) para dentro do teste.
-vi.mock("@/app/actions/proposals", () => ({
+// leads.ts reaproveita a numeração de `lib/comercial` em vez de duplicá-la.
+// O módulo é puro — daria para deixar rodar de verdade —, mas o mock fixa o
+// número e mantém a asserção de que a rotina compartilhada foi usada, que é o
+// que impede alguém de reintroduzir uma segunda numeração aqui.
+vi.mock("@/lib/comercial", () => ({
   gerarNumeroProposta: mocks.gerarNumeroProposta,
 }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
