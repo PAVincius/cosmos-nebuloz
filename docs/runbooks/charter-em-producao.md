@@ -5,6 +5,16 @@ documento cobre o que ainda precisa acontecer **no banco e na operação** para 
 telas saírem do `/charter-indisponivel`, e registra três lacunas que não são
 tarefa de deploy, são decisão de produto.
 
+> **Revisão de 2026-08-31 — os itens 3, 4 e 7 foram resolvidos.**
+> `bootstrapCharter` (`packages/provisioning/src/charter.ts`) cria papel
+> `COMPLIANCE`, `CharterSettings` e a política com as nove seções em `DRAFT`;
+> `provisionTenant` cria o tenant já com os módulos contratados; e o backoffice
+> tem UI para os dois (`/clientes/novo` e `/clientes/<slug>`). **Nenhum dos
+> SQLs abaixo é mais necessário** — ficam como referência de o que as actions
+> fazem. A [PR #34](https://github.com/PAVincius/cosmos-nebuloz/pull/34) foi
+> mergeada em 2026-07-31. O item 6 (ADR-0012) segue aberto.
+> Para provisionar a própria Nebuloz, use `charter-nebuloz.md`.
+
 ---
 
 ## 0. Pré-requisitos do deploy
@@ -176,12 +186,15 @@ do tenant.
 
 ## Sequência mínima para um cliente
 
-1. `ENCRYPTION_KEY` na Vercel · merge da #34 · deploy verde
-2. `prisma migrate deploy` no banco de produção
-3. INSERT em `TenantModule` (`CHARTER`, `ACTIVE`) — item 2
-4. INSERT em `CharterMembership` (`COMPLIANCE`) para o responsável — item 3
-5. Criar a política inicial — hoje só por SQL ou pela action que ainda não
-   existe (item 4)
-6. Smoke manual das telas
+Atualizada em 2026-08-31 — três passos manuais viraram dois cliques.
 
-Os itens 6 e 7 não bloqueiam o primeiro cliente, mas bloqueiam o segundo.
+1. `ENCRYPTION_KEY` na Vercel · deploy verde
+2. `prisma migrate deploy` no banco de produção
+3. `/clientes/novo` — provisiona o tenant já com `CHARTER` contratado
+   (substitui os INSERTs dos itens 2 e 3)
+4. `/clientes/<slug>` — bootstrap do Charter com o e-mail do responsável:
+   papel `COMPLIANCE`, configurações e a política com as nove seções em `DRAFT`
+   (substitui o item 4). O responsável precisa ter entrado ao menos uma vez.
+5. Smoke manual das telas
+
+O item 6 (ADR-0012) não bloqueia o primeiro cliente, mas bloqueia o segundo.
