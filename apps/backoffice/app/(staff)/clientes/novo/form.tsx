@@ -1,5 +1,6 @@
 "use client";
 
+import type { ProductModule } from "@repo/database";
 import { Badge } from "@repo/design-system/cosmos/kit";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,15 +8,17 @@ import { useState, useTransition } from "react";
 import { provisionTenantAction } from "@/app/actions/provisioning";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 
-const MODULES = ["COSMOS", "CHARTER", "SIGNAL"] as const;
-
-export function NewClientForm() {
+export function NewClientForm({ modulos }: { modulos: ProductModule[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [name, setName] = useState("");
   const [ownerEmail, setOwnerEmail] = useState("");
-  const [selected, setSelected] = useState<string[]>(["COSMOS"]);
+  // COSMOS é o default histórico do provisionamento; se um dia sair do enum,
+  // cai no primeiro que existir em vez de deixar o form sem nada marcado.
+  const [selected, setSelected] = useState<string[]>(
+    modulos.includes("COSMOS") ? ["COSMOS"] : modulos.slice(0, 1)
+  );
   const [pendingOwner, setPendingOwner] = useState<{
     slug: string;
     email: string;
@@ -35,7 +38,7 @@ export function NewClientForm() {
         name,
         ownerEmail,
         modules: selected.map((module) => ({
-          module: module as (typeof MODULES)[number],
+          module: module as ProductModule,
           status: "ACTIVE" as const,
         })),
       });
@@ -158,7 +161,7 @@ export function NewClientForm() {
         >
           Módulos contratados
         </legend>
-        {MODULES.map((module) => (
+        {modulos.map((module) => (
           <label
             key={module}
             style={{
