@@ -70,6 +70,35 @@ export const processErasureRequest = inngest.createFunction(
       })
     );
 
+    // §5 de docs/compliance/lgpd-ropa-e-lacunas.md: AccessLog é anonimizado,
+    // nunca apagado. O RoPA classifica esse tratamento como legítimo
+    // interesse de segurança, e o Art. 18 prevê a exceção — reter o evento
+    // (tantas tentativas RECUSADO naquele horário, daquele IP) é o sinal de
+    // segurança do tenant, não dado que existe para o titular. Por isso a
+    // linha fica: `evento`, `motivo` e `criadoEm` preservados, só o
+    // identificador em claro (email, ip, userAgent) some. Sem este comentário,
+    // alguém troca por `deleteMany` na próxima limpeza e apaga o sinal junto
+    // com o titular.
+    //
+    // Casamento por `userId` (quando existe) OU por `email`: as linhas
+    // RECUSADO tipicamente não têm `userId` — é login que falhou antes de
+    // sessão existir — e são justamente as que identificam alguém que talvez
+    // nem seja usuário da plataforma. `subjectEmail` é o mesmo e-mail lido lá
+    // em cima, antes de `anonymize-user-profile` sobrescrevê-lo; não é uma
+    // segunda leitura.
+    await step.run("anonymize-access-log", () =>
+      database.accessLog.updateMany({
+        where: subjectEmail
+          ? { tenantId, OR: [{ userId: subjectId }, { email: subjectEmail }] }
+          : { tenantId, userId: subjectId },
+        data: {
+          email: `${hash}@erased.cosmos`,
+          ip: null,
+          userAgent: null,
+        },
+      })
+    );
+
     // Passo 8 do §7: a eliminação alcança MeetingParticipant e
     // MeetingTranscript. Participante de reunião é identificado por e-mail,
     // não por User.id — a maioria não é usuário da plataforma. O e-mail do
@@ -138,6 +167,68 @@ export const processErasureRequest = inngest.createFunction(
               where: { tenantId, id: { in: participantTranscriptIds } },
               data: { rawSummary: Prisma.DbNull },
             });
+          })
+        );
+      }
+    }
+
+    // §5: a eliminação alcança MeridianRespondent. Diferente de
+    // MeetingParticipant, aqui não apagamos a linha nem `MeridianResponse` —
+    // `MeridianResponse` tem `onDelete: Cascade` a partir de
+    // MeridianRespondent, e as respostas alimentam MeridianAxisScore: apagar
+    // o respondente destruiria as respostas e corromperia o diagnóstico do
+    // cliente, que é dado do cliente, não do titular. Por isso: anonimizar
+    // `name`/`email`, preservar `MeridianResponse` intacto, e invalidar o
+    // acesso — quem exerceu eliminação não pode deixar um link funcionando
+    // para trás. Casamento só por `subjectEmail`: MeridianRespondent não tem
+    // `userId`, não há caminho por `User.id` aqui.
+    //
+    // Invalidação por `tokenExpiresAt`, não por `tokenHash`: `tokenHash` é
+    // `@unique`, e um mesmo `subjectEmail` pode ter mais de um respondente
+    // (assessments diferentes) — um `updateMany` gravando o mesmo hash em
+    // duas linhas violaria a constraint, e gerar um hash por linha custaria
+    // uma query por respondente. Expirar `tokenExpiresAt` para o passado tem
+    // o mesmo efeito prático por `isTokenUsable`
+    // (lib/meridian/respondent-token.ts checa `tokenExpiresAt.getTime() >
+    // now.getTime()`), sem risco de colisão em lote.
+    if (subjectEmail) {
+      const respondentIds = await step.run(
+        "find-meridian-respondents",
+        async () => {
+          const rows = await database.meridianRespondent.findMany({
+            where: { tenantId, email: subjectEmail },
+            select: { id: true },
+          });
+          return rows.map((r) => r.id);
+        }
+      );
+
+      if (respondentIds.length > 0) {
+        await step.run("anonymize-meridian-respondent", () =>
+          database.meridianRespondent.updateMany({
+            where: { tenantId, id: { in: respondentIds } },
+            data: {
+              name: replacement,
+              email: `${hash}@erased.cosmos`,
+              tokenExpiresAt: new Date(0),
+            },
+          })
+        );
+
+        // MeridianEvidence: `fileName` é metadado barato de anonimizar aqui
+        // — pode conter dado pessoal (ex. nome do titular no arquivo). O
+        // objeto em si, em `storagePath`, vive no bucket privado
+        // `meridian-evidence`, fora do banco e fora do alcance deste job.
+        // Apagá-lo pede uma rotina própria de limpeza de storage; até lá, o
+        // arquivo permanece no bucket mesmo com o respondente anonimizado —
+        // lacuna real, registrada aqui em vez de fingida como coberta.
+        await step.run("anonymize-meridian-evidence-filename", () =>
+          database.meridianEvidence.updateMany({
+            where: { tenantId, uploadedByRespondentId: { in: respondentIds } },
+            // `replacement`, o mesmo substituto dos demais campos: um marcador
+            // de eliminação diferente por tabela obrigaria quem audita a
+            // conhecer cada variação para reconhecer o que foi apagado.
+            data: { fileName: replacement },
           })
         );
       }
