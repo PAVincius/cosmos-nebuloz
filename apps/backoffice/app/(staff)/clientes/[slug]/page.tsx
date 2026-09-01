@@ -1,4 +1,6 @@
-import { PageHeader } from "@repo/design-system/cosmos/kit";
+import { Icon } from "@repo/design-system/cosmos/icons";
+import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getClient } from "@/app/actions/clients";
 import { listTenantMembers } from "@/app/actions/tenant-members";
@@ -9,12 +11,18 @@ import {
 import { requirePlatformStaff } from "@/lib/guard";
 import { MODULOS_DA_PLATAFORMA } from "@/lib/modulos";
 import { CharterBootstrap } from "./charter-bootstrap";
-import { Membros } from "./membros";
+import { DetalheDoTenant } from "./detalhe";
 import { MeridianBootstrap } from "./meridian-bootstrap";
 import { ModuleForm } from "./module-form";
-import { AuditTimeline, Integracoes } from "./observabilidade";
 import { faltaPreparar, ProntidaoDoModulo } from "./prontidao";
-import { Secao, SecaoSimples } from "./secao";
+
+export const dynamic = "force-dynamic";
+
+const TOM_DO_PLANO: Record<string, "green" | "amber" | "blue" | "purple"> = {
+  ORBIT: "blue",
+  SCALE: "purple",
+  ENTERPRISE: "green",
+};
 
 export default async function ClientDetailPage({
   params,
@@ -40,6 +48,8 @@ export default async function ClientDetailPage({
   }
 
   const client = result.data;
+  // Cliente com tudo pronto não vê ação que não faz nada: só aparece quando
+  // o módulo está contratado e falta papel ou política.
   const needsCharterBootstrap = faltaPreparar({
     moduleContracted: client.charter.moduleContracted,
     requisitos: [client.charter.hasCompliance, client.charter.hasPolicy],
@@ -49,104 +59,113 @@ export default async function ClientDetailPage({
     requisitos: [client.meridian.hasConsultant, client.meridian.hasTemplate],
   });
 
+  // Só o que está de fato contratado abre aba de módulo. `CANCELED` continua na
+  // lista de módulos (o histórico importa) mas não devolve a aba: ela leria um
+  // módulo que o cliente não tem mais.
+  const contratados = new Set(
+    client.modules
+      .filter((m) => m.status !== "CANCELED")
+      .map((m) => m.module as string)
+  );
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <PageHeader
-        eyebrow={`Tenant · ${client.plan}`}
-        meta={
-          <span className="mono" style={{ fontSize: "var(--fs-nota)" }}>
-            {client.slug} · cliente desde{" "}
-            {new Date(client.createdAt).toLocaleDateString("pt-BR")} ·{" "}
-            {client.memberCount} membro(s)
-          </span>
-        }
-        title={client.name}
-      />
+    <div
+      style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+    >
+      <div>
+        {/* Volta acima do cabeçalho, como no handoff. */}
+        <Link
+          href="/"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            marginBottom: 10,
+            color: "var(--ink-subtle)",
+            fontSize: "var(--fs-nota)",
+            fontWeight: 700,
+            textDecoration: "none",
+          }}
+        >
+          <Icon name="arrowLeft" size={14} />
+          Tenants
+        </Link>
 
-      <SecaoSimples
-        icone="layers"
-        subtitulo="contractModule() — o que este cliente comprou"
-        titulo="Módulos contratados"
-      >
-        <ModuleForm
-          modules={client.modules}
-          modulos={MODULOS_DA_PLATAFORMA}
-          slug={client.slug}
+        <PageHeader
+          eyebrow={`tenant · ${client.slug}`}
+          meta={
+            <>
+              <Badge tone={TOM_DO_PLANO[client.plan] ?? "neutral"}>
+                {client.plan}
+              </Badge>
+              <Badge tone="neutral">
+                {client.memberCount} membro
+                {client.memberCount === 1 ? "" : "s"}
+              </Badge>
+            </>
+          }
+          subtitle={`Cliente desde ${new Date(client.createdAt).toLocaleDateString("pt-BR")}`}
+          title={client.name}
+          tone={TOM_DO_PLANO[client.plan] ?? "accent"}
         />
-      </SecaoSimples>
+      </div>
 
-      {/* FR-4.2 — aba Usuários. O guard de último ADMIN (FR-4.2.4) mora no
-          servidor; aqui só se mostra o que ele devolve. */}
-      <Secao
-        icone="userCheck"
-        resultado={membros}
-        subtitulo="listTenantMembers() — papel dentro do tenant do cliente"
-        titulo="Usuários"
-      >
-        {(dados) => (
-          <Membros
-            canWrite={staff.canWrite}
-            membros={dados}
+      <DetalheDoTenant
+        acoesDeModulo={
+          <ModuleForm
+            modules={client.modules}
+            modulos={MODULOS_DA_PLATAFORMA}
             slug={client.slug}
           />
-        )}
-      </Secao>
-
-      {/* FR-4.4 — credencial nunca chega aqui: a action não a seleciona
-          (NFR-1.7). */}
-      <Secao
-        icone="eye"
-        resultado={integracoes}
-        subtitulo="o back-office observa a integração; quem conecta é o cliente"
-        titulo="Integrações e sincronização"
-      >
-        {(dados) => <Integracoes integracoes={dados} />}
-      </Secao>
-
-      {/* FR-4.9 — timeline do tenant com diff campo-a-campo. */}
-      <Secao
-        icone="history"
-        resultado={auditoria}
-        subtitulo="cada linha expande no diff campo-a-campo"
-        titulo="Auditoria"
-      >
-        {(dados) => <AuditTimeline eventos={dados} />}
-      </Secao>
-
-      <ProntidaoDoModulo
-        acao={
-          needsCharterBootstrap ? <CharterBootstrap slug={client.slug} /> : null
         }
-        icone="approve"
-        selos={[
-          {
-            rotulo: "Módulo contratado",
-            ok: client.charter.moduleContracted,
-          },
-          { rotulo: "Papel Compliance", ok: client.charter.hasCompliance },
-          { rotulo: "Política criada", ok: client.charter.hasPolicy },
-        ]}
-        subtitulo="o que o módulo de governança precisa para funcionar"
-        titulo="Charter"
-      />
-
-      <ProntidaoDoModulo
-        acao={
-          needsMeridianBootstrap ? (
-            <MeridianBootstrap slug={client.slug} />
-          ) : null
+        auditoria={auditoria}
+        canWrite={staff.canWrite}
+        charter={
+          <ProntidaoDoModulo
+            acao={
+              needsCharterBootstrap ? (
+                <CharterBootstrap slug={client.slug} />
+              ) : null
+            }
+            icone="approve"
+            selos={[
+              {
+                rotulo: "Módulo contratado",
+                ok: client.charter.moduleContracted,
+              },
+              { rotulo: "Papel Compliance", ok: client.charter.hasCompliance },
+              { rotulo: "Política criada", ok: client.charter.hasPolicy },
+            ]}
+            subtitulo="o que o módulo de governança precisa para funcionar"
+            titulo="Charter"
+          />
         }
-        icone="target"
-        selos={[
-          {
-            rotulo: "Módulo contratado",
-            ok: client.meridian.moduleContracted,
-          },
-          { rotulo: "Papel Consultor", ok: client.meridian.hasConsultant },
-          { rotulo: "Template criado", ok: client.meridian.hasTemplate },
-        ]}
-        subtitulo="o que o módulo de diagnóstico precisa para funcionar"
-        titulo="Meridian"
+        contratados={contratados}
+        integracoes={integracoes}
+        membros={membros}
+        meridian={
+          <ProntidaoDoModulo
+            acao={
+              needsMeridianBootstrap ? (
+                <MeridianBootstrap slug={client.slug} />
+              ) : null
+            }
+            icone="target"
+            selos={[
+              {
+                rotulo: "Módulo contratado",
+                ok: client.meridian.moduleContracted,
+              },
+              { rotulo: "Papel Consultor", ok: client.meridian.hasConsultant },
+              { rotulo: "Template criado", ok: client.meridian.hasTemplate },
+            ]}
+            subtitulo="o que o módulo de diagnóstico precisa para funcionar"
+            titulo="Meridian"
+          />
+        }
+        modulos={client.modules}
+        plano={client.plan}
+        slug={client.slug}
       />
     </div>
   );
