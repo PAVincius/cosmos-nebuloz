@@ -1,10 +1,8 @@
 "use client";
 
-import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import { useState, useTransition } from "react";
 import { bootstrapCharterAction } from "@/app/actions/provisioning";
+import { BotaoPrimario, Erro, INPUT } from "@/components/campo";
 
 export function CharterBootstrap({ slug }: { slug: string }) {
   const [pending, startTransition] = useTransition();
@@ -33,36 +31,78 @@ export function CharterBootstrap({ slug }: { slug: string }) {
     });
 
   return (
-    <div className="space-y-2 rounded-lg border p-4">
-      <p className="font-medium text-sm">Preparar o Charter</p>
-      <p className="text-muted-foreground text-xs">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10,
+        padding: 16,
+        borderRadius: "var(--r-md)",
+        border: "1px solid var(--hairline)",
+        background: "var(--surface-2)",
+      }}
+    >
+      <p style={{ margin: 0, fontSize: "var(--fs-base)", fontWeight: 700 }}>
+        Preparar o Charter
+      </p>
+      <p
+        style={{
+          margin: 0,
+          fontSize: "var(--fs-nota)",
+          color: "var(--ink-subtle)",
+          lineHeight: 1.55,
+        }}
+      >
         Atribui o papel Compliance e cria a política inicial. Rodar de novo não
         duplica nada.
       </p>
-      {error ? (
-        <p className="text-destructive text-sm" role="alert">
-          {error}
-        </p>
+
+      {error ? <Erro>{error}</Erro> : null}
+      {/* O sucesso ganha a mesma moldura do erro, em verde: sem ela a
+          confirmação virava um parágrafo solto e lia como legenda do campo.
+          `<output>` traz `role="status"` de fábrica — mesmo padrão do esqueleto
+          de carregamento. */}
+      {message ? (
+        <output
+          style={{
+            display: "block",
+            margin: 0,
+            padding: "9px 11px",
+            borderRadius: "var(--r-md)",
+            background: "var(--green-soft)",
+            border: "1px solid rgba(var(--green-rgb),.3)",
+            color: "var(--green-text)",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
+          {message}
+        </output>
       ) : null}
-      {message ? <p className="text-sm">{message}</p> : null}
-      <div className="flex gap-2">
-        <Label className="sr-only" htmlFor="compliance-email">
+
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        {/* `sr-only` é a convenção da casa para rótulo invisível — mesma do
+            write-button.tsx e da tela de aprovações. */}
+        <label className="sr-only" htmlFor="compliance-email">
           E-mail do responsável pelo Compliance
-        </Label>
-        <Input
+        </label>
+        <input
           id="compliance-email"
           onChange={(e) => setEmail(e.target.value)}
           placeholder="e-mail do responsável pelo Compliance"
+          style={INPUT}
           type="email"
           value={email}
         />
-        <Button
-          aria-label="Preparar o Charter deste cliente"
+        <BotaoPrimario
           disabled={pending || !email.includes("@")}
+          full={false}
           onClick={run}
+          rotulo="Preparar o Charter deste cliente"
+          type="button"
         >
           {pending ? "Preparando…" : "Preparar"}
-        </Button>
+        </BotaoPrimario>
       </div>
     </div>
   );

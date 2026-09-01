@@ -163,3 +163,51 @@ export function BotaoPrimario({
     </button>
   );
 }
+
+/**
+ * Ação secundária, em linha — o par do `BotaoPrimario` para escolhas que não
+ * são a principal da tela.
+ *
+ * Aceita `rotulo` pelo mesmo motivo que o primário: quando o texto visível é um
+ * enum curto ("ACTIVE", "TRIAL"), ele se repete em cada linha da tabela e
+ * sozinho não diz qual módulo será alterado. `title` não resolveria — com texto
+ * dentro do botão, o conteúdo vence o title no nome acessível.
+ */
+export function BotaoSecundario({
+  children,
+  disabled,
+  onClick,
+  rotulo,
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  rotulo?: string;
+}) {
+  return (
+    <button
+      aria-label={rotulo}
+      className="btn"
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "6px 11px",
+        fontSize: "var(--fs-nota)",
+        fontWeight: 700,
+        fontFamily: "inherit",
+        borderRadius: "var(--r-sm)",
+        border: "1px solid var(--hairline-strong)",
+        background: "var(--surface-2)",
+        color: "var(--ink-muted)",
+        opacity: disabled ? 0.45 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}

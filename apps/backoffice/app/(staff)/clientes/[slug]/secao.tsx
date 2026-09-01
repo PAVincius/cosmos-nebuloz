@@ -1,6 +1,7 @@
 import type { IconName } from "@repo/design-system/cosmos/icons";
 import { SectionCard } from "@repo/design-system/cosmos/kit";
 import type { ReactNode } from "react";
+import { Erro } from "@/components/campo";
 
 /**
  * Uma seção do detalhe do tenant, no formato do `backoffice-tenant-detail.jsx`.
@@ -9,6 +10,10 @@ import type { ReactNode } from "react";
  * moldura. Antes o erro saía como um parágrafo vermelho solto, fora do card —
  * a tela parecia ter uma seção a menos em vez de uma seção com problema, que é
  * uma diferença que muda o que o operador faz em seguida.
+ *
+ * O erro em si vem do `Erro` compartilhado. Esta seção tinha uma cópia inline
+ * idêntica a ele, o que dava quatro implementações da mesma caixa vermelha
+ * nesta rota — e a cópia daqui era a única sem `role="alert"`.
  */
 export function Secao<T>({
   titulo,
@@ -26,24 +31,7 @@ export function Secao<T>({
 }) {
   return (
     <SectionCard icon={icone} subtitle={subtitulo} title={titulo}>
-      {resultado.ok ? (
-        children(resultado.data)
-      ) : (
-        <p
-          style={{
-            margin: 0,
-            padding: "11px 13px",
-            borderRadius: "var(--r-md)",
-            background: "var(--red-soft)",
-            border: "1px solid rgba(var(--red-rgb),.3)",
-            color: "var(--red-text)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {resultado.error}
-        </p>
-      )}
+      {resultado.ok ? children(resultado.data) : <Erro>{resultado.error}</Erro>}
     </SectionCard>
   );
 }
