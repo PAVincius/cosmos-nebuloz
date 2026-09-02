@@ -43,6 +43,8 @@ O que fica mais fácil, o que fica mais difícil, e o que precisa ser revisitado
 | [0010](0010-tema-proprio-reusando-kit.md) | Tema próprio do Charter reusando o kit do Cosmos | Accepted |
 | [0011](0011-notificacoes-e-job-sla-fora-do-v1.md) | Notificações e job de SLA fora do V1 | Accepted · **escopo reduzido** |
 | [0012](0012-rls-anulada-por-conexao-superuser.md) | RLS anulada pela conexão como superuser | Accepted · **risco aberto** |
+| [0013](0013-porta-unica-de-acesso-cross-tenant.md) | Porta única de acesso cross-tenant | Accepted |
+| [0014](0014-promocao-scaffold-materializa-no-backoffice.md) | Promoção para Scaffold materializa no back-office | Accepted |
 
 **Lacuna de spec** = o handoff (`SRD-Charter.md` / `DATA-MODEL.md` / `DESIGN.md`)
 exige um comportamento sem definir como produzi-lo. A decisão foi tomada na
