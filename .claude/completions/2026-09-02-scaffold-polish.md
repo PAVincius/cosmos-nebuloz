@@ -100,9 +100,59 @@ que o contrato.
 
 ---
 
+## Migration — gerada e validada num Postgres de verdade
+
+Postgres 16 descartável em container (`pgvector/pgvector:pg16`, porta 55432),
+banco zerado, `prisma migrate deploy` das 99 migrations existentes como base.
+Nenhum banco real foi tocado.
+
+Duas migrations saíram daí, e a separação é o ponto:
+
+**`20260902170000_catalogo_comercial_e_meeting`** (136 linhas) — não é do
+Scaffold. `main` já estava com schema sem migration: os modelos do catálogo
+comercial (`PlanoComercial`, `PrecoDeModulo`, `TermoDeContrato`,
+`AddOnComercial`), colunas novas de `Proposal` e `Service`, e churn de
+constraint em `MeetingParticipant`, todos vindos de `33513541`. Quem rodasse
+`migrate deploy` em `main` hoje não produziria esse schema. O primeiro diff que
+gerei juntava isso com o Scaffold num arquivo só; separar deixa a revisão do
+gate engine fora de 136 linhas de tabela de preço, e o histórico deixa de dizer
+que o catálogo comercial nasceu com a adoção assistida.
+
+**`20260902170100_scaffold_adocao`** (588 linhas) — 19 tabelas, 12 enums,
+`SCAFFOLD` no `ProductModule`, 38 FKs, 54 índices.
+
+Verificação, com banco recriado do zero:
+
+| Checagem | Resultado |
+|---|---|
+| `migrate deploy` do zero | 101 aplicadas, sem falha |
+| Tabelas `Scaffold*` | 19 — bate com os 19 `model` do schema |
+| Enums `Scaffold*` | 12 — bate com os 12 `enum` do schema |
+| `SCAFFOLD` em `ProductModule` | presente |
+| Tabelas do catálogo | 4 |
+| `seed:scaffold` | 6 versões (triage v3/v4, docreview v1/v2, reporting v2/v3), 80 passos, 57 critérios |
+| Seed rodado 2× | idempotente — "0 criadas, 2 existentes" |
+| Drift residual (`migrate diff`) | vazio |
+
+### Erro no caminho, que vale registrar
+
+O primeiro split saiu quebrado: gerei os dois diffs com a migration combinada
+antiga **ainda na pasta**, então o lado "from" já continha o Scaffold. O
+resultado foi um `catalogo` cheio de `DROP CONSTRAINT "ScaffoldArtefact_…"` e
+um `ALTER TABLE "Proposal" ALTER COLUMN "modulos"` antes de a coluna existir.
+`migrate deploy` do zero pegou: *"column `modulos` of relation `Proposal` does
+not exist"*.
+
+`prisma migrate diff --from-migrations` lê a pasta como ela está no disco. Se
+sobrou migration de tentativa anterior lá dentro, o diff sai contra um passado
+que não existe. Regenerar exige a pasta no estado exato do baseline — e a prova
+é sempre o deploy do zero, nunca o diff que acabou de ser gerado.
+
+---
+
 ## O que ficou aberto, e por quê
 
-Três itens dependem de coisa que este worktree não tem. Nenhum foi marcado
+Dois itens dependem de coisa que este worktree não tem. Nenhum foi marcado
 como feito.
 
 **T133 — axe nas seis telas (SN-10).** Precisa do app rodando. O layout do
@@ -113,10 +163,6 @@ na rota única.
 
 **T124 — e2e `scaffold-track-lifecycle.spec.ts` (SC-001).** Mesmo motivo:
 precisa de Postgres.
-
-**Migration real.** `prisma validate` passou e o client foi gerado, mas
-`db push` nunca rodou — não há `.env` aqui. O schema está validado, não
-aplicado.
 
 Fora do escopo dos gates, herdado das fatias e já registrado nos docs delas:
 `publishVersion` e `exportBusinessCase` não têm gatilho de UI; edição de
