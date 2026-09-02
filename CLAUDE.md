@@ -105,9 +105,9 @@ Graph built from full repo: 10.189 nodes · 15.392 edges · 871 communities.
 ---
 
 <!-- SPECKIT START -->
-## Spec Kit
-
-Active plan: [`specs/001-add-intent-stage/plan.md`](specs/001-add-intent-stage/plan.md)
+For additional context about technologies to be used, project structure,
+shell commands, and other important information, read the current plan
+at specs/002-scaffold-adoption/plan.md
 <!-- SPECKIT END -->
 
 ---

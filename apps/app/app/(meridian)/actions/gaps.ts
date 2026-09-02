@@ -485,12 +485,28 @@ export async function revokePromotion(
           "Promoção não encontrada nesta organização."
         );
       }
-      if (p.targetEntityId != null) {
-        throw new MeridianRuleError(
-          "promotion.materialized",
-          `${p.gap.code} já foi materializado em um Engagement no back-office — revogar aqui deixaria o engajamento sem a promoção que o originou. Encerre o engajamento no back-office antes de revogar.`
-        );
+      // Promoção que aterrissou numa trilha ativa do Scaffold não se revoga em
+      // silêncio: revogar aqui deixaria trabalho em curso sem origem. Mesmo
+      // princípio do `Restrict` do `Engagement` — decisão destrutiva com
+      // trabalho em andamento obriga escolha explícita, que aqui é cancelar a
+      // trilha antes.
+      if (p.targetEntityId && p.targetProduct === "SCAFFOLD") {
+        const track = await db.scaffoldTrack.findFirst({
+          where: {
+            id: p.targetEntityId,
+            tenantId: ctx.tenantId,
+            status: { in: ["ACTIVE", "STALLED"] },
+          },
+          select: { code: true },
+        });
+        if (track) {
+          throw new MeridianRuleError(
+            "promotion.has-active-track",
+            `${p.gap.code} tem a trilha ${track.code} em curso no Scaffold. Cancele a trilha antes de revogar a promoção.`
+          );
+        }
       }
+
       await db.meridianGapPromotion.update({
         where: { id: p.id },
         data: { revokedAt: new Date() },

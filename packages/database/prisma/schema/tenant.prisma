@@ -216,6 +216,21 @@ model Tenant {
   meridianGapDependencies   MeridianGapDependency[]
   meridianPlanItems         MeridianPlanItem[]
   meridianGapPromotions     MeridianGapPromotion[]
+  // Scaffold — framework de adoção. `ScaffoldTemplate` e suas versões ficam de
+  // fora: o template é o método da Nebuloz, global; o que é do cliente é o
+  // overlay, e a trilha.
+  scaffoldMemberships       ScaffoldMembership[]
+  scaffoldSequences         ScaffoldSequence[]
+  scaffoldSettings          ScaffoldSettings?
+  scaffoldTracks            ScaffoldTrack[]
+  scaffoldGateResults       ScaffoldGateResult[]
+  scaffoldGateOverrides     ScaffoldGateOverride[]
+  scaffoldBusinessCases     ScaffoldBusinessCase[]
+  scaffoldBcVersions        ScaffoldBusinessCaseVersion[]
+  scaffoldBcMetrics         ScaffoldBusinessCaseMetric[]
+  scaffoldBcContests        ScaffoldBusinessCaseContest[]
+  scaffoldOverlays          ScaffoldTemplateOverlay[]
+  scaffoldOverlayConflicts  ScaffoldOverlayConflict[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
@@ -253,6 +268,8 @@ model User {
   charterMemberships  CharterMembership[]
   // Meridian — papel de diagnóstico, ortogonal aos dois anteriores
   meridianMemberships MeridianMembership[]
+  // Scaffold — papel de adoção, ortogonal aos três anteriores
+  scaffoldMemberships ScaffoldMembership[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,

@@ -1,0 +1,300 @@
+/* scaffold.css — tokens + primitivas do Scaffold (framework de adoção).
+   Escopado em `.scaffold-root` para nunca vazar no resto do app: um tenant pode
+   ter Cosmos, Charter, Meridian e Scaffold, e as quatro raízes coexistem na
+   mesma sessão.
+
+   Mesma razão do `meridian.css`: `kit.tsx` é compartilhado e depende destes
+   nomes de classe (.btn, .lift, .navitem, .kpi, .skeleton, .scroll). Sem raiz
+   própria, tela do Scaffold herda estilo nenhum.
+
+   A paleta é a da suíte (sky #5CB4E4 -> baby #89CFF0 -> butter #F6F2C3 sobre
+   canvas #07080c), portada de `scaffold.html` do projeto Claude Design
+   691f7fe5-e623-458e-aa9f-92b8c46dbbd9. Identidade de suite, escopo por modulo.
+
+   Fontes vem de @repo/design-system/lib/fonts, ja carregadas no <html>. */
+
+.scaffold-root {
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-pill: 999px;
+  --pad: 20px;
+  --gap: 16px;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.4, 0, 0.2, 1);
+  --fx: 1;
+}
+
+.scaffold-root[data-theme="light"],
+[data-theme="light"] .scaffold-root {
+  --canvas: #f5f6f8;
+  --surface: #fff;
+  --surface-2: #f7f8fa;
+  --surface-3: #edeff3;
+  --sidebar: #fbfbfd;
+  --hairline: #e5e7ec;
+  --hairline-strong: #d4d8e0;
+  --ink: #0d1017;
+  --ink-muted: #565e6e;
+  --ink-subtle: #5f6878;
+  --ink-faint: #636c7b;
+  --chip-bg: #eff1f5;
+  --card-shadow:
+    0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1);
+  --hover-shadow:
+    0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px
+    rgba(var(--accent-rgb), 0.3);
+  --accent: #1d6a97;
+  --accent-rgb: 29, 106, 151;
+  --accent-soft: rgba(29, 106, 151, 0.1);
+  --accent-text: #145275;
+  --accent-fg: #fff;
+  --blue: #3f8fc4;
+  --blue-rgb: 63, 143, 196;
+  --blue-soft: rgba(63, 143, 196, 0.11);
+  --blue-text: #276592;
+  --purple: #7a68d8;
+  --purple-rgb: 122, 104, 216;
+  --purple-soft: rgba(122, 104, 216, 0.1);
+  --purple-text: #5f4dbd;
+  --green: #12915a;
+  --green-rgb: 18, 145, 90;
+  --green-soft: rgba(18, 145, 90, 0.1);
+  --green-text: #0c6941;
+  --amber: #9a7415;
+  --amber-rgb: 154, 116, 21;
+  --amber-soft: rgba(154, 116, 21, 0.13);
+  --amber-text: #76570e;
+  --red: #d63a63;
+  --red-rgb: 214, 58, 99;
+  --red-soft: rgba(214, 58, 99, 0.1);
+  --red-text: #a7244a;
+  --neutral: #8a93a3;
+  --neutral-rgb: 138, 147, 163;
+  --neutral-soft: rgba(138, 147, 163, 0.12);
+  --neutral-text: #596170;
+}
+
+.scaffold-root[data-theme="dark"],
+[data-theme="dark"] .scaffold-root {
+  --canvas: #07080c;
+  --surface: #0c0f17;
+  --surface-2: #10131e;
+  --surface-3: #181d2c;
+  --sidebar: #0a0c14;
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+  --ink: #f5f7fb;
+  --ink-muted: #b8c0d0;
+  --ink-subtle: #a2acc0;
+  --ink-faint: #8b95a9;
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --card-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
+    rgba(0, 0, 0, 0.9);
+  --hover-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px
+    rgba(var(--accent-rgb), 0.5);
+  --accent: #5cb4e4;
+  --accent-rgb: 92, 180, 228;
+  --accent-text: #a8dbf4;
+  --accent-fg: #07080c;
+  --accent-soft: rgba(92, 180, 228, 0.14);
+  --blue: #89cff0;
+  --blue-rgb: 137, 207, 240;
+  --blue-soft: rgba(137, 207, 240, 0.14);
+  --blue-text: #bde5f8;
+  --purple: #b2a5ff;
+  --purple-rgb: 178, 165, 255;
+  --purple-soft: rgba(178, 165, 255, 0.14);
+  --purple-text: #d6cfff;
+  --green: #29cc7a;
+  --green-rgb: 41, 204, 122;
+  --green-soft: rgba(41, 204, 122, 0.13);
+  --green-text: #7ce8ad;
+  --amber: #ecd06a;
+  --amber-rgb: 236, 208, 106;
+  --amber-soft: rgba(236, 208, 106, 0.13);
+  --amber-text: #f6f2c3;
+  --red: #ff5c8a;
+  --red-rgb: 255, 92, 138;
+  --red-soft: rgba(255, 92, 138, 0.14);
+  --red-text: #ffa3bd;
+  --neutral: #6b7688;
+  --neutral-rgb: 107, 118, 136;
+  --neutral-soft: rgba(107, 118, 136, 0.16);
+  --neutral-text: #a2acc0;
+}
+
+/* Grão e grade: só no escuro. No claro viram sujeira, não textura. */
+.scaffold-root[data-theme="dark"] .grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.scaffold-root[data-theme="dark"] .bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+.scaffold-root .mono {
+  font-family:
+    var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
+}
+
+.scaffold-root .display {
+  font-family: var(--font-space-grotesk), "Inter Tight", Inter, sans-serif;
+  letter-spacing: -0.035em;
+}
+
+.scaffold-root .scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--hairline-strong) transparent;
+}
+.scaffold-root .scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.scaffold-root .scroll::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+.scaffold-root .scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
+  background-clip: padding-box;
+}
+
+.scaffold-root .lift {
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+.scaffold-root .lift:hover {
+  transform: translateY(-2px);
+}
+.scaffold-root[data-theme="dark"] .lift:hover {
+  border-color: var(--hairline-strong);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.9);
+}
+.scaffold-root[data-theme="light"] .lift:hover {
+  box-shadow: var(--hover-shadow);
+  border-color: var(--hairline-strong);
+}
+
+.scaffold-root .navitem {
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.scaffold-root .navitem:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.scaffold-root .btn {
+  transition:
+    background 0.15s var(--ease-out),
+    border-color 0.15s var(--ease-out),
+    transform 0.06s var(--ease-io),
+    box-shadow 0.15s var(--ease-out);
+  cursor: pointer;
+}
+.scaffold-root .btn:active {
+  transform: scale(0.985);
+}
+.scaffold-root .btn:disabled,
+.scaffold-root .btn[aria-disabled="true"] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.scaffold-root .btn:disabled:active {
+  transform: none;
+}
+
+/* Alvo de toque: 44px em ponteiro grosso (WCAG 2.5.8 / piso do DS · SN-10).
+ * O axe cobra isto em toda superfície de cliente. */
+@media (pointer: coarse) {
+  .scaffold-root .btn,
+  .scaffold-root button,
+  .scaffold-root [role="button"],
+  .scaffold-root a.navitem {
+    min-height: 44px;
+  }
+  .scaffold-root .btn {
+    padding-top: max(9px, calc((44px - 1.1em) / 2));
+    padding-bottom: max(9px, calc((44px - 1.1em) / 2));
+  }
+}
+
+.scaffold-root .fade-in {
+  animation: scaffoldFadeIn 0.45s var(--ease-out);
+}
+@keyframes scaffoldFadeIn {
+  from {
+    transform: translateY(7px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes scaffoldShimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+.scaffold-root .skeleton {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-3) 25%,
+    var(--surface-2) 50%,
+    var(--surface-3) 75%
+  );
+  background-size: 600px 100%;
+  animation: scaffoldShimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes scaffoldPulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, var(--green-rgb)), 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(var(--pulse-rgb, var(--green-rgb)), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, var(--green-rgb)), 0);
+  }
+}
+.scaffold-root .pulse-dot {
+  animation: scaffoldPulseRing 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scaffold-root .pulse-dot,
+  .scaffold-root .skeleton,
+  .scaffold-root .fade-in {
+    animation: none;
+  }
+}
