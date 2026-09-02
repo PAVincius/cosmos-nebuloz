@@ -485,24 +485,39 @@ export async function revokePromotion(
           "Promoção não encontrada nesta organização."
         );
       }
-      // Promoção que aterrissou numa trilha ativa do Scaffold não se revoga em
-      // silêncio: revogar aqui deixaria trabalho em curso sem origem. Mesmo
-      // princípio do `Restrict` do `Engagement` — decisão destrutiva com
-      // trabalho em andamento obriga escolha explícita, que aqui é cancelar a
-      // trilha antes.
-      if (p.targetEntityId && p.targetProduct === "SCAFFOLD") {
-        const track = await db.scaffoldTrack.findFirst({
-          where: {
-            id: p.targetEntityId,
-            tenantId: ctx.tenantId,
-            status: { in: ["ACTIVE", "STALLED"] },
-          },
-          select: { code: true },
-        });
-        if (track) {
+      // Promoção que já aterrissou em algum lugar não se revoga em silêncio:
+      // revogar aqui deixaria trabalho em curso sem origem. Duas regras, e a
+      // diferença entre elas é o que `apps/app` consegue enxergar.
+      //
+      // Trilha do Scaffold vive no tenant do cliente, então dá para perguntar
+      // se ela ainda está em curso — e só bloquear nesse caso. Trilha cancelada
+      // não precisa segurar a revogação.
+      //
+      // Engagement vive no tenant de sistema e `apps/app` não o enxerga
+      // (ADR-0014). Sem poder ler o status, o único caminho honesto é recusar:
+      // `targetEntityId` diz que existe, não se está ativo. Quem destrava é o
+      // back-office limpando o campo ao encerrar, não este app tentando espiar
+      // entidade que não é dele.
+      if (p.targetEntityId) {
+        if (p.targetProduct === "SCAFFOLD") {
+          const track = await db.scaffoldTrack.findFirst({
+            where: {
+              id: p.targetEntityId,
+              tenantId: ctx.tenantId,
+              status: { in: ["ACTIVE", "STALLED"] },
+            },
+            select: { code: true },
+          });
+          if (track) {
+            throw new MeridianRuleError(
+              "promotion.has-active-track",
+              `${p.gap.code} tem a trilha ${track.code} em curso no Scaffold. Cancele a trilha antes de revogar a promoção.`
+            );
+          }
+        } else {
           throw new MeridianRuleError(
-            "promotion.has-active-track",
-            `${p.gap.code} tem a trilha ${track.code} em curso no Scaffold. Cancele a trilha antes de revogar a promoção.`
+            "promotion.materialized",
+            `${p.gap.code} já foi materializado em um Engagement no back-office — revogar aqui deixaria o engajamento sem a promoção que o originou. Encerre o engajamento no back-office antes de revogar.`
           );
         }
       }
