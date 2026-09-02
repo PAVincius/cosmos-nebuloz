@@ -164,7 +164,6 @@ export default async function ClientDetailPage({
           />
         }
         modulos={client.modules}
-        plano={client.plan}
         slug={client.slug}
       />
     </div>

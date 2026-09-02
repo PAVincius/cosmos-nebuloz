@@ -9,12 +9,6 @@ import type {
 } from "@/app/actions/tenant-observability";
 import { Erro } from "@/components/campo";
 import { AbaResumo } from "./abas/resumo";
-import {
-  AbaBilling,
-  AbaMcp,
-  AbaPoliticas,
-  AbaSignal,
-} from "./abas/sem-backend";
 import { AbaUsuarios } from "./abas/usuarios";
 import { AuditTimeline, Integracoes } from "./observabilidade";
 import { SecaoSimples } from "./secao";
@@ -34,6 +28,12 @@ import { SecaoSimples } from "./secao";
  * A contagem vai no rótulo (`Usuários · 4`) porque o `Tabs` do kit não tem slot
  * de contador como o do protótipo. Estender o kit por isso mexeria no Cosmos
  * junto; o rótulo resolve com o mesmo resultado para quem lê.
+ *
+ * O handoff desenha nove abas. Quatro ficaram de fora — MCP, Políticas,
+ * Ambientes e defaults do Signal — porque leem de estruturas que não existem no
+ * schema: no protótipo os valores vêm de um objeto de mock. Aba que não lê nada
+ * é promessa que a navegação não cumpre, e custa uma parada a cada vez que
+ * alguém a abre para conferir. Elas voltam quando o modelo existir.
  */
 
 type Aba = {
@@ -44,7 +44,6 @@ type Aba = {
 
 export function DetalheDoTenant({
   slug,
-  plano,
   modulos,
   membros,
   integracoes,
@@ -56,7 +55,6 @@ export function DetalheDoTenant({
   contratados,
 }: {
   slug: string;
-  plano: string;
   modulos: { module: string; status: string; expiresAt: string | null }[];
   membros: { ok: true; data: TenantMemberRow[] } | { ok: false; error: string };
   integracoes:
@@ -87,9 +85,7 @@ export function DetalheDoTenant({
         <AbaResumo
           acoesDeModulo={acoesDeModulo}
           integracoes={listaDeIntegracoes}
-          membros={listaDeMembros.length}
           modulos={modulos}
-          plano={plano}
         />
       ),
     },
@@ -101,11 +97,6 @@ export function DetalheDoTenant({
       ) : (
         <Erro>{membros.error}</Erro>
       ),
-    },
-    {
-      id: "billing",
-      label: "Planos & Billing",
-      conteudo: <AbaBilling membros={listaDeMembros.length} plano={plano} />,
     },
     {
       id: "integracoes",
@@ -124,11 +115,6 @@ export function DetalheDoTenant({
         </SecaoSimples>
       ),
     },
-    { id: "politicas", label: "Políticas", conteudo: <AbaPoliticas /> },
-    { id: "mcp", label: "MCP", conteudo: <AbaMcp /> },
-    ...(contratados.has("SIGNAL")
-      ? [{ id: "signal", label: "Signal", conteudo: <AbaSignal /> }]
-      : []),
     ...(contratados.has("CHARTER")
       ? [{ id: "charter", label: "Charter", conteudo: charter }]
       : []),
@@ -158,11 +144,17 @@ export function DetalheDoTenant({
 
   return (
     <div>
-      {/* O `Tabs` do kit é `flex` com `nowrap` e `overflow: visible`. Com nove
-          abas isso transborda a 375px — medido: 357px de conteúdo em 343px de
-          caixa, e a última aba fica inalcançável, sem rolagem que a traga.
-          O envelope rola em vez de cortar. Não mexo no kit: ele é do Cosmos
-          também, e lá as abas são poucas. */}
+      {/* O `Tabs` do kit é `flex` com `nowrap` e `overflow: visible` — quando
+          o conteúdo passa da caixa, ele corta e não há rolagem que traga a
+          última aba de volta.
+
+          Com as seis abas de hoje não transborda, mas por nada: medido a 375px,
+          343px de conteúdo em 343px de caixa. O número de abas é variável
+          (Charter, Meridian e Signal aparecem por contrato) e as contagens
+          crescem no rótulo — "Usuários · 128" é mais largo que "Usuários · 3".
+          O envelope rola em vez de cortar.
+
+          Não mexo no kit: ele é do Cosmos também, e lá as abas são poucas. */}
       <div className="scroll" style={{ overflowX: "auto", marginBottom: 16 }}>
         <Tabs
           active={aba}
