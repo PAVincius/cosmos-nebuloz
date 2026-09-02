@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { decidePlatformApprovalAction } from "@/app/actions/approvals";
+import { Erro, INPUT } from "@/components/campo";
 import { WriteButton } from "@/components/write-button";
 
 /**
@@ -35,19 +36,26 @@ export function Decisao({ id, canWrite }: { id: string; canWrite: boolean }) {
   };
 
   return (
-    <div className="mt-3 flex flex-col gap-2">
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        marginTop: 12,
+      }}
+    >
       <label className="sr-only" htmlFor={`nota-${id}`}>
         Nota da decisão
       </label>
       <textarea
-        className="w-full rounded-md border bg-background p-2 text-sm"
         id={`nota-${id}`}
         onChange={(e) => setNota(e.target.value)}
         placeholder="Nota da decisão (a rejeição costuma precisar mais que a aprovação)"
         rows={2}
+        style={{ ...INPUT, fontWeight: 500, resize: "vertical" }}
         value={nota}
       />
-      <div className="flex items-center gap-2">
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <WriteButton
           canWrite={canWrite}
           disabled={pendente}
@@ -63,9 +71,7 @@ export function Decisao({ id, canWrite }: { id: string; canWrite: boolean }) {
           Rejeitar
         </WriteButton>
       </div>
-      {erro ? (
-        <p className="text-red-600 text-xs dark:text-red-400">{erro}</p>
-      ) : null}
+      {erro ? <Erro>{erro}</Erro> : null}
     </div>
   );
 }
