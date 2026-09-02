@@ -7,6 +7,14 @@ UNIDADE_TEXTO    = {"fixed":"projeto","sprint":"sprint","hourly":"hora","retaine
 MODALIDADE       = {"fixed":"PROJETO","sprint":"PROJETO","hourly":"PROJETO","retainer":"RETAINER"}
 NOME_PLANO       = {"starter":"Starter","scale":"Scale","enterprise":"Enterprise"}
 
+# Os ids de prazo do JSON (monthly/annual/biennial) NÃO são os slugs do banco.
+# O 2026-08-comercial.sql já criou os mesmos três prazos como MENSAL/ANUAL/
+# BIENAL, e `Proposal.termoSlug` guarda esse texto — toda proposta feita aponta
+# para eles. Gerar os ids do JSON como slug criou três duplicatas na primeira
+# carga; o mapa existe para que a chave natural continue sendo a que o
+# histórico já usa.
+SLUG_PRAZO       = {"monthly":"MENSAL","annual":"ANUAL","biennial":"BIENAL"}
+
 def q(v):
     if v is None: return "NULL"
     return "'" + str(v).replace("'", "''") + "'"
@@ -97,7 +105,7 @@ w("VALUES")
 linhas=[]
 for i,t in enumerate(cat["plataforma"]["prazos"]):
     linhas.append("  (gen_random_uuid()::text, 'system', {slug}, {nome}, {meses}, {desc}, {ordem})".format(
-        slug=q(t["id"]), nome=q(t["nome"]), meses=t["meses"],
+        slug=q(SLUG_PRAZO.get(t["id"], t["id"])), nome=q(t["nome"]), meses=t["meses"],
         desc=round(t["desconto"]*100), ordem=i))
 w(",\n".join(linhas))
 w('ON CONFLICT ("tenantId", slug) DO UPDATE SET')
