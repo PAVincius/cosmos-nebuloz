@@ -1,4 +1,5 @@
-// deploy-migrations-url.test.ts — a URL que `prisma migrate deploy` recebe.
+// deploy-migrations-url.test.ts — as duas regras de `scripts/migration-target.ts`:
+// se este build pode migrar, e contra qual URL.
 //
 // `migrate deploy` adquire advisory lock antes de aplicar migration, e
 // advisory lock não sobrevive ao pooler do Supabase em modo transaction
@@ -7,30 +8,17 @@
 // foi um build de produção parado por mais de 12 minutos logo depois de
 // imprimir o Datasource — sem erro, sem timeout.
 import { describe, expect, it } from "vitest";
-
-/** Cópia da regra de `scripts/deploy-migrations.mts`. O script roda como
- *  processo de build (lê env e chama process.exit), então a regra é testada
- *  aqui na forma pura; qualquer mudança lá precisa vir junto. */
-function urlDeMigration(databaseUrl: string, directUrl?: string): string {
-  if (directUrl) {
-    return directUrl;
-  }
-  let url: URL;
-  try {
-    url = new URL(databaseUrl);
-  } catch {
-    return databaseUrl;
-  }
-  if (url.port !== "6543") {
-    return databaseUrl;
-  }
-  url.port = "5432";
-  url.searchParams.delete("pgbouncer");
-  return url.toString();
-}
+import {
+  decidirMigration,
+  urlDeMigration,
+} from "../scripts/migration-target.ts";
 
 const POOLER =
   "postgresql://postgres.abc:senha@aws-0-us-east-1.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1";
+
+const BRANCH_NEON =
+  "postgresql://user:pw@ep-cool-name-123.us-east-2.aws.neon.tech/cosmos?sslmode=require";
+const HOST_BRANCH = "ep-cool-name-123.us-east-2.aws.neon.tech";
 
 describe("urlDeMigration", () => {
   it("troca o pooler de transaction (6543) pela sessão (5432)", () => {
@@ -67,12 +55,82 @@ describe("urlDeMigration", () => {
   it("não mexe em banco local nem em outro provedor", () => {
     const local = "postgresql://postgres:postgres@localhost:5434/cosmos_dev";
     expect(urlDeMigration(local)).toBe(local);
-    const neon =
-      "postgresql://user:pw@ep-cool-name.us-east-2.aws.neon.tech/db?sslmode=require";
-    expect(urlDeMigration(neon)).toBe(neon);
+    expect(urlDeMigration(BRANCH_NEON)).toBe(BRANCH_NEON);
   });
 
   it("devolve intacta a URL que nem parseia — o Prisma reclama, não este script", () => {
     expect(urlDeMigration("isto-nao-e-url")).toBe("isto-nao-e-url");
+  });
+});
+
+describe("decidirMigration — produção", () => {
+  it("migra", () => {
+    expect(
+      decidirMigration({ VERCEL_ENV: "production", DATABASE_URL: POOLER })
+    ).toEqual({ acao: "migrar" });
+  });
+
+  it("derruba o build sem DATABASE_URL, em vez de publicar contra schema não verificado", () => {
+    expect(decidirMigration({ VERCEL_ENV: "production" }).acao).toBe("falhar");
+  });
+});
+
+describe("decidirMigration — preview do Dark Matter", () => {
+  it("migra quando o host do DATABASE_URL é o do branch efêmero", () => {
+    expect(
+      decidirMigration({
+        VERCEL_ENV: "preview",
+        DATABASE_URL: BRANCH_NEON,
+        DARK_MATTER_DB_HOST: HOST_BRANCH,
+      })
+    ).toEqual({ acao: "migrar" });
+  });
+
+  it("recusa quando o DATABASE_URL aponta para outro host — este é o guard que protege o banco compartilhado", () => {
+    // Cenário real: a Vercel iniciou o build antes de a Action escrever as
+    // vars do branch, então DATABASE_URL veio do valor global de preview.
+    const d = decidirMigration({
+      VERCEL_ENV: "preview",
+      DATABASE_URL: POOLER,
+      DARK_MATTER_DB_HOST: HOST_BRANCH,
+    });
+    expect(d.acao).toBe("pular");
+  });
+
+  it("recusa preview sem DARK_MATTER_DB_HOST — PR sem branch efêmero", () => {
+    expect(
+      decidirMigration({ VERCEL_ENV: "preview", DATABASE_URL: BRANCH_NEON })
+        .acao
+    ).toBe("pular");
+  });
+
+  it("recusa preview cujo DATABASE_URL não parseia — sem host, não há prova", () => {
+    expect(
+      decidirMigration({
+        VERCEL_ENV: "preview",
+        DATABASE_URL: "isto-nao-e-url",
+        DARK_MATTER_DB_HOST: HOST_BRANCH,
+      }).acao
+    ).toBe("pular");
+  });
+});
+
+describe("decidirMigration — fora da Vercel", () => {
+  it("pula sem VERCEL_ENV, que é o caso do job de build do CI", () => {
+    expect(
+      decidirMigration({
+        DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/cosmos",
+      }).acao
+    ).toBe("pular");
+  });
+
+  it("pula em development, mesmo com o sentinela setado", () => {
+    expect(
+      decidirMigration({
+        VERCEL_ENV: "development",
+        DATABASE_URL: BRANCH_NEON,
+        DARK_MATTER_DB_HOST: HOST_BRANCH,
+      }).acao
+    ).toBe("pular");
   });
 });

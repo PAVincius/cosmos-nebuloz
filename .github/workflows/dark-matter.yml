@@ -1,0 +1,146 @@
+# Dark Matter — ambiente efêmero por PR.
+#
+# Cada PR ganha um branch Neon copy-on-write, migrations aplicadas e seed;
+# tudo some no close. Fica fora do ci.yml de propósito: precisa de eventos que
+# aquele workflow não escuta (`closed`), o teardown nunca pode ser cancelado
+# por um push, e uma falha aqui não deve travar o merge gate.
+#
+# Configuração (GitHub Environment `dark-matter`):
+#   secrets   NEON_API_KEY (escopado ao projeto, nunca à org), VERCEL_TOKEN
+#   variables NEON_PROJECT_ID, NEON_PARENT_BRANCH_ID, VERCEL_TEAM_ID,
+#             VERCEL_PROJECT_IDS (ids separados por vírgula)
+name: Dark Matter
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+  schedule:
+    # Segunda garantia contra órfão. O handler de `closed` é a primeira, e uma
+    # hora ela falha — job cancelado, evento perdido, PR abandonado aberto.
+    - cron: "0 4 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Só listar os órfãos, sem apagar"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+  pull-requests: read
+
+env:
+  NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+  NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+  NEON_PARENT_BRANCH_ID: ${{ vars.NEON_PARENT_BRANCH_ID }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_TEAM_ID: ${{ vars.VERCEL_TEAM_ID }}
+  VERCEL_PROJECT_IDS: ${{ vars.VERCEL_PROJECT_IDS }}
+
+jobs:
+  up:
+    name: Provisionar ambiente do PR
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    environment: dark-matter
+    # Push novo cancela o provisionamento anterior — o último commit é o que
+    # vale, e dois `migrate deploy` concorrentes no mesmo branch disputariam
+    # o advisory lock.
+    concurrency:
+      group: dark-matter-up-${{ github.event.number }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Cria o branch (ou reaproveita, no caso de push num PR já aberto) e
+      # escreve DATABASE_URL, DIRECT_URL e DARK_MATTER_DB_HOST escopadas ao
+      # git branch nos projetos da Vercel.
+      - name: Branch Neon + env vars da Vercel
+        id: provisionar
+        run: pnpm dark-matter up --pr "${{ github.event.number }}" --branch "${{ github.head_ref }}"
+
+      # Roda aqui, e não só no build da Vercel: o resultado aparece no PR e a
+      # falha é legível. O build de preview repete por segurança.
+      - name: Aplicar migrations no branch
+        env:
+          DATABASE_URL: ${{ steps.provisionar.outputs.direct_url }}
+        run: pnpm --filter @repo/database exec prisma migrate deploy
+
+      # Só em abertura: dado que o reviewer digitou à mão sobrevive aos pushes.
+      - name: Seed
+        if: github.event.action != 'synchronize'
+        env:
+          DATABASE_URL: ${{ steps.provisionar.outputs.direct_url }}
+        run: pnpm --filter app seed:e2e
+
+      # A Vercel começou a buildar antes de as vars existirem. Um build
+      # desperdiçado por PR aberto é o preço do v0.
+      - name: Redeploy do preview com as vars do branch
+        run: pnpm dark-matter redeploy --pr "${{ github.event.number }}" --branch "${{ github.head_ref }}" --sha "${{ github.event.pull_request.head.sha }}"
+
+  down:
+    name: Destruir ambiente do PR
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    environment: dark-matter
+    # `cancel-in-progress: false`: teardown cancelado é custo vazando em
+    # silêncio, que é exatamente o que o reaper existe para não precisar caçar.
+    concurrency:
+      group: dark-matter-down-${{ github.event.number }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Apagar env vars e branch Neon
+        run: pnpm dark-matter down --pr "${{ github.event.number }}" --branch "${{ github.head_ref }}"
+
+  reap:
+    name: Varrer ambientes órfãos
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment: dark-matter
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # Falha de propósito quando sobram branches demais: cota do Neon
+      # estourada vira PR que não provisiona, e ninguém liga uma coisa na outra.
+      - name: Reaper
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: pnpm dark-matter reap ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}
