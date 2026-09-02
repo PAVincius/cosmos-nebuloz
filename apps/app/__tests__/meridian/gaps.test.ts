@@ -263,4 +263,22 @@ describe("revokePromotion", () => {
     };
     expect(update.data.revokedAt).toBeInstanceOf(Date);
   });
+
+  // ADR-0014: uma vez que o back-office materializa a promoção num
+  // Engagement, apps/app não pode enxergar aquela entidade — mas
+  // targetEntityId já mora na própria MeridianGapPromotion, dentro do tenant
+  // do cliente, então a checagem não atravessa tenant nenhum.
+  it("recusa revogar promoção já materializada em Engagement", async () => {
+    h.promotionFindFirst.mockResolvedValue({
+      id: P1,
+      targetEntityId: "eng-1",
+      gap: { id: G1, code: "G-01" },
+    });
+
+    const res = await revokePromotion({ promotionId: P1 });
+
+    expect(res.ok).toBe(false);
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+    expect(h.gapUpdate).not.toHaveBeenCalled();
+  });
 });

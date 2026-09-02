@@ -350,7 +350,20 @@ export type UsoDoServico = {
   engajamentos: { id: string; nome: string; status: string }[];
 };
 
-export type ServiceDetail = ServiceRow & { uso: UsoDoServico };
+/** Pré-requisito com o nome resolvido. `existe: false` quando o código aponta
+ *  para um serviço que não está no catálogo — o cadastro não valida a
+ *  existência de propósito (um pré-requisito pode ser cadastrado depois), então
+ *  a tela precisa saber a diferença entre "vem antes" e "código órfão". */
+export type PreRequisito = {
+  codigo: string;
+  nome: string | null;
+  existe: boolean;
+};
+
+export type ServiceDetail = Omit<ServiceRow, "preRequisitos"> & {
+  preRequisitos: PreRequisito[];
+  uso: UsoDoServico;
+};
 
 /**
  * Um serviço, com o que a lista não cabe mostrar.
@@ -403,7 +416,7 @@ export async function getServiceDetail(
       );
     }
 
-    const [itens, engajamentos] = await Promise.all([
+    const [itens, engajamentos, antecedentes] = await Promise.all([
       database.proposalItem.findMany({
         where: { serviceId: servico.id },
         orderBy: { proposal: { criadoEm: "desc" } },
@@ -429,10 +442,29 @@ export async function getServiceDetail(
         take: 50,
         select: { id: true, nome: true, status: true },
       }),
+      // Um SELECT só para todos os pré-requisitos, em vez de um por código: a
+      // lista tem no máximo dez, mas dez idas ao banco por render de tela é o
+      // tipo de coisa que ninguém percebe até a tela ficar lenta.
+      servico.preRequisitos.length > 0
+        ? database.service.findMany({
+            where: {
+              tenantId: SYSTEM_TENANT_ID,
+              codigo: { in: servico.preRequisitos },
+            },
+            select: { codigo: true, nome: true },
+          })
+        : Promise.resolve([]),
     ]);
+
+    const nomePorCodigo = new Map(antecedentes.map((a) => [a.codigo, a.nome]));
 
     return {
       ...servico,
+      preRequisitos: servico.preRequisitos.map((codigoAntecedente) => ({
+        codigo: codigoAntecedente,
+        nome: nomePorCodigo.get(codigoAntecedente) ?? null,
+        existe: nomePorCodigo.has(codigoAntecedente),
+      })),
       uso: {
         propostas: itens.map((i) => ({
           id: i.proposal.id,
