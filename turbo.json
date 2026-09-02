@@ -16,7 +16,7 @@
     },
     "@repo/database#migrate:deploy": {
       "cache": false,
-      "env": ["DATABASE_URL", "VERCEL_ENV"]
+      "env": ["DATABASE_URL", "DIRECT_URL", "DARK_MATTER_DB_HOST", "VERCEL_ENV"]
     },
     "docs#build": {
       "dependsOn": ["^build"],
