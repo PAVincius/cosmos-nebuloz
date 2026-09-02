@@ -97,6 +97,11 @@ export const BO_NAV: NavSection[] = [
         icon: "briefcase",
         label: "Serviços",
       },
+      {
+        href: "/scaffold",
+        icon: "puzzle",
+        label: "Scaffold",
+      },
       { href: "/contas", icon: "heart", label: "Health e renovação" },
       {
         href: "/benchmark",
