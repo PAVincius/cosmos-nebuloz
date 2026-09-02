@@ -1,4 +1,5 @@
 import { expect, type Page, test } from "@playwright/test";
+import { charterStorageState } from "./setup/auth.setup";
 
 /**
  * E2E — Charter intake (FR-4).
@@ -14,7 +15,7 @@ import { expect, type Page, test } from "@playwright/test";
  * Persona: Marina Alves (Compliance, tenant `medcore`) — has `case.submit`.
  */
 test.describe("Charter intake @auth", () => {
-  test.use({ storageState: "./e2e/fixtures/charter/compliance.json" });
+  test.use({ storageState: charterStorageState("compliance") });
 
   async function openIntakeModal(page: Page) {
     await page.goto("/charter/cases");

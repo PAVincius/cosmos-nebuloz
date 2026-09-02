@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { charterStorageState } from "./setup/auth.setup";
 
 /**
  * E2E — Charter policy publish gate (FR-2.3).
@@ -11,7 +12,7 @@ import { expect, test } from "@playwright/test";
  * Persona: Marina Alves (Compliance, tenant `medcore`) — has `policy.publish`.
  */
 test.describe("Charter policy publish gate @auth", () => {
-  test.use({ storageState: "./e2e/fixtures/charter/compliance.json" });
+  test.use({ storageState: charterStorageState("compliance") });
 
   const BLOCKED_SECTIONS = [
     "Usos restritos",

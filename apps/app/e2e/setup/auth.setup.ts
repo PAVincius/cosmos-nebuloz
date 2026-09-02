@@ -3,6 +3,10 @@ import { type Browser, chromium, type FullConfig } from "@playwright/test";
 
 // ponytail: no direct DB — requireTenantSession auto-sets activeTenantId on first request
 
+/** Storage state de um papel semeado, relativo a apps/app. */
+const fixture = (dir: string, role: string) =>
+  `./e2e/fixtures/${dir}/${role}.json`;
+
 /**
  * Roles seeded with real credentials by scripts/seed-e2e.ts. One signed-in
  * storage state is written per role so specs can pick who they act as —
@@ -13,11 +17,7 @@ import { type Browser, chromium, type FullConfig } from "@playwright/test";
  */
 const ROLES = ["admin", "ste", "rte", "po", "sm", "dev"] as const;
 export type SeededRole = (typeof ROLES)[number];
-
-/** Storage state for a seeded role, relative to apps/app. */
-export function roleStorageState(role: SeededRole): string {
-  return `./e2e/fixtures/roles/${role}.json`;
-}
+export const roleStorageState = (role: SeededRole) => fixture("roles", role);
 
 /** The admin state, kept at its original path so existing specs keep working. */
 const ADMIN_STATE = "./e2e/fixtures/auth-session.json";
@@ -28,18 +28,15 @@ const ADMIN_STATE = "./e2e/fixtures/auth-session.json";
  * Charter (`case.decide`, `policy.publish`, ...) não teriam quem fazer os
  * gates falharem ou passarem — mesmo motivo dos papéis SAFe acima.
  */
-const CHARTER_PERSONAS = [
-  { role: "compliance", email: "marina.alves@vanta.exemplo" },
-  { role: "security", email: "diego.prado@vanta.exemplo" },
-  { role: "hr", email: "ana.beatriz@vanta.exemplo" },
-  { role: "requester", email: "rafael.lima@vanta.exemplo" },
-] as const;
-export type CharterPersonaRole = (typeof CHARTER_PERSONAS)[number]["role"];
-
-/** Storage state for a seeded Charter persona, relative to apps/app. */
-export function charterStorageState(role: CharterPersonaRole): string {
-  return `./e2e/fixtures/charter/${role}.json`;
-}
+const CHARTER_PERSONAS = {
+  compliance: "marina.alves@vanta.exemplo",
+  security: "diego.prado@vanta.exemplo",
+  hr: "ana.beatriz@vanta.exemplo",
+  requester: "rafael.lima@vanta.exemplo",
+} as const;
+export type CharterPersonaRole = keyof typeof CHARTER_PERSONAS;
+export const charterStorageState = (role: CharterPersonaRole) =>
+  fixture("charter", role);
 
 /**
  * Personas do Meridian, semeadas por `seed-meridian.ts` no tenant do e2e.
@@ -50,15 +47,44 @@ export function charterStorageState(role: CharterPersonaRole): string {
  * telas. É a mesma razão das personas do Charter acima — quem prova que o
  * portão abre não pode ser quem prova que ele fecha.
  */
-const MERIDIAN_PERSONAS = [
-  { role: "consultant", email: "marina.duarte@nebuloz.exemplo" },
-] as const;
-export type MeridianPersonaRole = (typeof MERIDIAN_PERSONAS)[number]["role"];
+const MERIDIAN_PERSONAS = {
+  consultant: "marina.duarte@nebuloz.exemplo",
+} as const;
+export type MeridianPersonaRole = keyof typeof MERIDIAN_PERSONAS;
+export const meridianStorageState = (role: MeridianPersonaRole) =>
+  fixture("meridian", role);
 
-/** Storage state for a seeded Meridian persona, relative to apps/app. */
-export function meridianStorageState(role: MeridianPersonaRole): string {
-  return `./e2e/fixtures/meridian/${role}.json`;
-}
+/** Erro vira aviso: o seed pode já estar aplicado, e abortar aqui jogaria
+ *  fora as suítes que não dependem dele. */
+const SEEDS = ["seed:e2e", "seed:charter", "seed:meridian cosmos-dev"] as const;
+
+/**
+ * Grupos de persona que dependem de um seed opcional.
+ *
+ * Sem o seed, as sessões do grupo não são salvas e os specs daquele módulo
+ * falham sozinhos, com contexto — em vez de derrubar as suítes SAFe, cujas
+ * sessões já foram gravadas antes e seriam jogadas fora por um throw aqui.
+ */
+const GRUPOS_OPCIONAIS = [
+  {
+    nome: "Charter",
+    dir: "charter",
+    personas: CHARTER_PERSONAS,
+    landingPath: "/charter",
+    envSenha: "CHARTER_SEED_PASSWORD",
+    senhaPadrao: "charter123",
+    ausente: "seed do medcore ausente?",
+  },
+  {
+    nome: "Meridian",
+    dir: "meridian",
+    personas: MERIDIAN_PERSONAS,
+    landingPath: "/meridian",
+    envSenha: "MERIDIAN_SEED_PASSWORD",
+    senhaPadrao: "meridian123",
+    ausente: "seed ausente?",
+  },
+] as const;
 
 async function signInAndSave(
   browser: Browser,
@@ -118,31 +144,14 @@ async function globalSetup(config: FullConfig) {
   const { baseURL } = config.projects[0].use;
   const password = process.env.E2E_PASSWORD ?? "Cosmos@2026!";
 
-  console.log("🌱 Executing seed:e2e before E2E tests...");
-  try {
-    execSync("pnpm seed:e2e", { stdio: "inherit" });
-  } catch (_err) {
-    console.warn("⚠️ pnpm seed:e2e had warnings/errors but continuing...");
+  for (const seed of SEEDS) {
+    console.log(`🌱 Executing ${seed} before E2E tests...`);
+    try {
+      execSync(`pnpm ${seed}`, { stdio: "inherit" });
+    } catch (_err) {
+      console.warn(`⚠️ pnpm ${seed} had warnings/errors but continuing...`);
+    }
   }
-
-  console.log("🌱 Executing seed:charter before E2E tests...");
-  try {
-    execSync("pnpm seed:charter", { stdio: "inherit" });
-  } catch (_err) {
-    console.warn("⚠️ pnpm seed:charter had warnings/errors but continuing...");
-  }
-
-  // O Meridian entra no mesmo tenant do e2e: assim o admin (sem papel de
-  // diagnóstico) exercita o guard de papel, e a consultora exercita as telas.
-  console.log("🌱 Executing seed:meridian before E2E tests...");
-  try {
-    execSync("pnpm seed:meridian cosmos-dev", { stdio: "inherit" });
-  } catch (_err) {
-    console.warn("⚠️ pnpm seed:meridian had warnings/errors but continuing...");
-  }
-
-  const charterPassword = process.env.CHARTER_SEED_PASSWORD ?? "charter123";
-  const meridianPassword = process.env.MERIDIAN_SEED_PASSWORD ?? "meridian123";
 
   const browser = await chromium.launch();
   try {
@@ -168,54 +177,30 @@ async function globalSetup(config: FullConfig) {
     }
     console.log(`✅ ${ROLES.length} sessões salvas em e2e/fixtures/`);
 
-    // Persona do Charter sem seed (tenant medcore ausente) não pode derrubar
-    // as suítes SAFe: as sessões de papel já foram salvas acima, e abortar
-    // aqui jogaria tudo fora. Specs do Charter falham sozinhos, com contexto.
-    try {
-      for (const persona of CHARTER_PERSONAS) {
+    for (const grupo of GRUPOS_OPCIONAIS) {
+      const personas = Object.entries(grupo.personas);
+      try {
+        for (const [role, email] of personas) {
+          console.log(
+            `🔐 Signing in ${email} (${grupo.nome}/${role.toUpperCase()})...`
+          );
+          await signInAndSave(browser, {
+            baseURL: baseURL as string,
+            email,
+            password: process.env[grupo.envSenha] ?? grupo.senhaPadrao,
+            paths: [fixture(grupo.dir, role)],
+            landingPath: grupo.landingPath,
+          });
+        }
         console.log(
-          `🔐 Signing in ${persona.email} (Charter/${persona.role.toUpperCase()})...`
+          `✅ ${personas.length} sessão(ões) do ${grupo.nome} salvas em e2e/fixtures/${grupo.dir}/`
         );
-        await signInAndSave(browser, {
-          baseURL: baseURL as string,
-          email: persona.email,
-          password: charterPassword,
-          paths: [charterStorageState(persona.role)],
-          landingPath: "/charter",
-        });
-      }
-      console.log(
-        `✅ ${CHARTER_PERSONAS.length} sessões do Charter salvas em e2e/fixtures/charter/`
-      );
-    } catch (err) {
-      console.warn(
-        "⚠️ Sessões do Charter não salvas (seed do medcore ausente?) — suítes SAFe seguem:",
-        err instanceof Error ? err.message : err
-      );
-    }
-
-    // Mesma proteção do bloco do Charter: persona sem seed não derruba o resto.
-    try {
-      for (const persona of MERIDIAN_PERSONAS) {
-        console.log(
-          `🔐 Signing in ${persona.email} (Meridian/${persona.role.toUpperCase()})...`
+      } catch (err) {
+        console.warn(
+          `⚠️ Sessões do ${grupo.nome} não salvas (${grupo.ausente}) — demais suítes seguem:`,
+          err instanceof Error ? err.message : err
         );
-        await signInAndSave(browser, {
-          baseURL: baseURL as string,
-          email: persona.email,
-          password: meridianPassword,
-          paths: [meridianStorageState(persona.role)],
-          landingPath: "/meridian",
-        });
       }
-      console.log(
-        `✅ ${MERIDIAN_PERSONAS.length} sessão(ões) do Meridian salvas em e2e/fixtures/meridian/`
-      );
-    } catch (err) {
-      console.warn(
-        "⚠️ Sessões do Meridian não salvas (seed ausente?) — demais suítes seguem:",
-        err instanceof Error ? err.message : err
-      );
     }
   } catch (err) {
     console.error("❌ Auth setup failed:", err);
