@@ -43,6 +43,14 @@ O que fica mais fácil, o que fica mais difícil, e o que precisa ser revisitado
 | [0010](0010-tema-proprio-reusando-kit.md) | Tema próprio do Charter reusando o kit do Cosmos | Accepted |
 | [0011](0011-notificacoes-e-job-sla-fora-do-v1.md) | Notificações e job de SLA fora do V1 | Accepted · **escopo reduzido** |
 | [0012](0012-rls-anulada-por-conexao-superuser.md) | RLS anulada pela conexão como superuser | Accepted · **risco aberto** |
+| [0013](0013-porta-unica-de-acesso-cross-tenant.md) | Porta única de acesso cross-tenant (`platformDb`) | Accepted |
+| [0014](0014-scaffold-supervisao-no-backoffice.md) | Fila de supervisão do Scaffold vive no back-office | Accepted |
+| [0015](0015-caso-de-negocio-versionado.md) | Caso de negócio versionado vence o baseline plano do SRD | Accepted · **conflito de spec** |
+| [0016](0016-residencia-de-dado-fora-do-v1.md) | Residência de dado configurável fora do V1 do Scaffold | Accepted · **escopo reduzido** |
+
+**Conflito de spec** = dois documentos do handoff descrevem a mesma entidade de
+formas incompatíveis, e a implementação escolheu uma. A escolha está no corpo
+do ADR.
 
 **Lacuna de spec** = o handoff (`SRD-Charter.md` / `DATA-MODEL.md` / `DESIGN.md`)
 exige um comportamento sem definir como produzi-lo. A decisão foi tomada na

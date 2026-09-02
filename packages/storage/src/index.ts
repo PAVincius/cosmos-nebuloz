@@ -13,6 +13,10 @@ export const AI_PLAYGROUND_BUCKET = "cosmos-ai-playground";
 /** Evidência anexada a uma resposta de assessment do Meridian. Privado; o
  *  caminho é sempre prefixado por tenantId. */
 export const MERIDIAN_EVIDENCE_BUCKET = "meridian-evidence";
+/** Artefato entregue por um passo de trilha do Scaffold. Privado; o caminho é
+ *  sempre prefixado por tenantId, e a leitura passa por server action que grava
+ *  a trilha de auditoria antes de emitir a URL assinada (SN-02). */
+export const SCAFFOLD_ARTEFACT_BUCKET = "scaffold-artefacts";
 
 export async function ensureBucket(
   bucket: string = AI_PLAYGROUND_BUCKET

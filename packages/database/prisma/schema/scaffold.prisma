@@ -1,0 +1,741 @@
+// Scaffold — framework de adoção em trilhas guiadas.
+//
+// Mapeamento de `specs/002-scaffold-adoption/data-model.md` para Prisma.
+// Convenções desta camada:
+//   • O bloqueio de gate É o produto. `ScaffoldPhaseInstance.state = CLOSED` só
+//     pode ser escrito por `closePhase()` em `app/(scaffold)/actions/gates.ts`;
+//     um teste de arquitetura falha se a atribuição aparecer em outro arquivo.
+//   • Texto de passo é COPIADO do template na instanciação, não lido por join.
+//     É o que sustenta ST-03 na prática: publicar versão nova não pode
+//     reescrever o enunciado de um passo que alguém já executou.
+//   • Versão publicada de template não tem `updatedAt`, de propósito (ST-01).
+//     Publicar cria linha; nada atualiza.
+//   • Auditoria reusa o `AuditLog` existente (system.prisma), append-only.
+//     entityType = "scaffold.<entidade>", diff = Array<[campo, antes, depois]>.
+//   • Toda tabela tem `tenantId`. A única superfície cross-tenant do produto é
+//     a fila de supervisão, e ela vive em `apps/backoffice` via `platformDb` —
+//     ADR-0013. Nada aqui a atende.
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// As quatro fases, em ordem de progressão. A ordem É a regra: uma fase não
+/// pula para a frente. A ordem canônica de exibição vive em
+/// `apps/app/lib/scaffold/phases.ts` — enum não garante ordem estável.
+enum ScaffoldPhase {
+  ASSESS
+  PILOT
+  SCALE
+  EMBED
+}
+
+/// Ciclo de vida da fase (SRD §4).
+///
+///   IDLE → OPEN → GATE_READY → CLOSED
+///                     ↓ critério não atendido
+///                  BLOCKED → (override atribuído) → CLOSED
+///   CLOSED → REOPENED → OPEN
+///   CLOSED (EMBED) → OBSERVING (30d) → trilha EMBEDDED
+enum ScaffoldPhaseState {
+  IDLE
+  OPEN
+  GATE_READY
+  BLOCKED
+  CLOSED
+  OBSERVING
+  REOPENED
+}
+
+enum ScaffoldStepState {
+  TODO
+  ACTIVE
+  DONE
+}
+
+/// PASSED = todos os critérios atendidos. OVERRIDDEN = fechado com override
+/// atribuído. PENDING = avaliado, aguardando decisão.
+///
+/// FAILED não existe de propósito: gate que não passa deixa a fase BLOCKED e
+/// NÃO produz resultado. Resultado é append-only (SG-07) e só nasce ao fechar.
+enum ScaffoldGateOutcome {
+  PENDING
+  PASSED
+  OVERRIDDEN
+}
+
+enum ScaffoldTrackStatus {
+  ACTIVE
+  STALLED
+  EMBEDDED
+  CANCELLED
+}
+
+/// SN-05. Ortogonal ao papel SAFe, ao do Charter e ao do Meridian: a mesma
+/// pessoa pode ser DEV no Cosmos e PROCESS_OWNER aqui.
+///
+/// O protótipo tem cinco personas, mas o seletor de persona NÃO é portado —
+/// ADR-0004 o mantém fora de produção. O papel vem da sessão. `sponsor` do
+/// protótipo lê como TRANSFORMATION_LEAD com direito de assinar caso de
+/// negócio; não é papel separado porque o que o distingue é o ato, não o acesso.
+enum ScaffoldRole {
+  TEAM_MEMBER
+  PROCESS_OWNER
+  TRANSFORMATION_LEAD
+  CONSULTANT
+  ADMIN
+}
+
+/// S-12 — arquétipo de processo. Define qual template seed a trilha usa.
+enum ScaffoldArchetype {
+  TRIAGE
+  DOC_REVIEW
+  REPORTING
+}
+
+/// Como o critério é avaliado no gate. MANUAL = alguém marca. DERIVED = o
+/// sistema calcula (ex.: "baseline assinado existe").
+enum ScaffoldCriterionEvaluation {
+  MANUAL
+  DERIVED
+}
+
+// ── Acesso ────────────────────────────────────────────────────────────────────
+
+model ScaffoldMembership {
+  id        String       @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      ScaffoldRole @default(TEAM_MEMBER)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  updatedBy String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+  @@index([userId])
+}
+
+/// Contador por tenant para códigos legíveis (TR-104, BC-104). Sequência global
+/// vazaria volume entre tenants — mesmo motivo do `MeridianSequence`.
+model ScaffoldSequence {
+  id       String @id @default(cuid())
+  tenantId String
+  /// "track" | "businesscase"
+  kind     String
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, kind])
+}
+
+/// Configuração por tenant. Existe hoje por um campo só; a alternativa era
+/// constante no código, e limiar de estagnação é exatamente o tipo de número
+/// que um cliente pede para mudar (S-09).
+model ScaffoldSettings {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  /// Dias sem movimento de gate a partir dos quais a trilha é sinalizada.
+  stallThresholdDays Int      @default(14)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+// ── Biblioteca de templates ───────────────────────────────────────────────────
+
+/// Template do método, por arquétipo de processo. O template é global (sem
+/// `tenantId`): é o método da Nebuloz, não o do cliente. A customização de
+/// cliente entra por overlay, que é por tenant — e overlay chega em US5.
+model ScaffoldTemplate {
+  id        String            @id @default(cuid())
+  /// "triage" | "docreview" | "reporting"
+  key       String            @unique
+  name      String
+  archetype ScaffoldArchetype
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  versions ScaffoldTemplateVersion[]
+  overlays ScaffoldTemplateOverlay[]
+}
+
+/// Versão publicada. IMUTÁVEL (ST-01).
+///
+/// Sem `updatedAt` de propósito: nenhuma action atualiza esta tabela. Publicar
+/// cria linha nova. Se alguém acrescentar `updatedAt` aqui, o teste
+/// `template-immutability.test.ts` falha — e deve falhar.
+model ScaffoldTemplateVersion {
+  id          String   @id @default(cuid())
+  templateId  String
+  /// "v3", "v4".
+  label       String
+  /// Quem publicou: pessoa, ou "método Nebuloz" quando veio do baseline do
+  /// método. Texto porque a origem nem sempre é um usuário da plataforma.
+  authorLabel String
+  note        String   @db.Text
+  publishedAt DateTime @default(now())
+  publishedBy String?
+
+  template       ScaffoldTemplate          @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  steps          ScaffoldStepTemplate[]
+  criteria       ScaffoldGateCriterion[]
+  tracks         ScaffoldTrack[]
+  overlayBases   ScaffoldTemplateOverlay[] @relation("OverlayBase")
+  conflictsAgainst ScaffoldOverlayConflict[] @relation("ConflictVersion")
+
+  @@unique([templateId, label])
+  @@index([templateId])
+}
+
+/// Passo guiado dentro de uma fase (S-04). `key` é estável entre versões — é
+/// o alvo das operações de overlay (US5) e o que permite dizer "este passo
+/// mudou da v3 para a v4" em vez de "sumiu um e apareceu outro".
+model ScaffoldStepTemplate {
+  id               String        @id @default(cuid())
+  versionId        String
+  phase            ScaffoldPhase
+  seq              Int
+  key              String
+  statement        String        @db.Text
+  /// Artefato esperado ao concluir. É o que separa passo de instrução: o passo
+  /// entrega alguma coisa.
+  expectedArtefact String
+  required         Boolean       @default(true)
+  estimateMinutes  Int?
+
+  version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, key])
+  @@index([versionId, phase])
+}
+
+/// Customização de um cliente sobre uma versão base — ST-02.
+///
+/// `ops` é uma LISTA DE OPERAÇÕES, não uma cópia da árvore. Cópia seria fork, e
+/// fork não sabe dizer o que mudou: publicar uma versão nova do método nunca
+/// chegaria a quem customizou. Operação se reaplica — é o que faz a
+/// customização sobreviver ao upgrade, ou levantar conflito.
+///
+/// Formato de `ops` (ver `lib/scaffold/overlay-merge.ts`):
+///   [{ op: "ADD"|"REMOVE"|"REPLACE", target: "step"|"criterion", key, patch }]
+///
+/// Este É por tenant: o template é o método da Nebuloz, o overlay é do cliente.
+model ScaffoldTemplateOverlay {
+  id            String @id @default(cuid())
+  tenantId      String
+  templateId    String
+  /// Versão contra a qual as operações foram escritas. Reaplica-se a partir
+  /// dela; sem ela não há como saber o que o cliente estava customizando.
+  baseVersionId String
+  name          String
+  ops           Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant      Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template    ScaffoldTemplate          @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  baseVersion ScaffoldTemplateVersion   @relation("OverlayBase", fields: [baseVersionId], references: [id], onDelete: Restrict)
+  conflicts   ScaffoldOverlayConflict[]
+  tracks      ScaffoldTrack[]
+
+  @@unique([tenantId, templateId, name])
+  @@index([tenantId])
+  @@index([templateId])
+}
+
+/// Discordância entre o overlay do cliente e uma versão nova do método.
+///
+/// Existe porque não há resposta certa automática: afrouxar por decisão
+/// comercial e endurecer por decisão de método são as duas legítimas. Escolher
+/// sozinho seria decidir por alguém — e em silêncio.
+///
+/// Enquanto houver conflito pendente, nenhuma trilha nova pode ser criada com
+/// este overlay: uma trilha criada sobre conflito não sabe quais passos são os
+/// seus.
+model ScaffoldOverlayConflict {
+  id               String @id @default(cuid())
+  tenantId         String
+  overlayId        String
+  /// Versão nova que provocou o conflito.
+  againstVersionId String
+
+  /// "step" | "criterion"
+  targetType String
+  targetKey  String
+  /// Campo em disputa, quando houver um só.
+  field      String?
+  /// TARGET_REMOVED | TARGET_ADDED_UPSTREAM | BOTH_EDITED
+  reason     String
+  note       String  @db.Text
+
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+  /// "keep_overlay" | "take_upstream" | "drop_operation"
+  resolution   String?
+
+  tenant         Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  overlay        ScaffoldTemplateOverlay @relation(fields: [overlayId], references: [id], onDelete: Cascade)
+  againstVersion ScaffoldTemplateVersion @relation("ConflictVersion", fields: [againstVersionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([overlayId, resolvedAt])
+}
+
+/// Critério bloqueante do gate da fase. `key` estável pelo mesmo motivo do
+/// passo.
+model ScaffoldGateCriterion {
+  id             String                      @id @default(cuid())
+  versionId      String
+  phase          ScaffoldPhase
+  seq            Int
+  key            String
+  statement      String                      @db.Text
+  evaluationType ScaffoldCriterionEvaluation @default(MANUAL)
+
+  version ScaffoldTemplateVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@unique([versionId, key])
+  @@index([versionId, phase])
+}
+
+// ── Trilha ────────────────────────────────────────────────────────────────────
+
+/// Um processo do cliente atravessando as quatro fases.
+model ScaffoldTrack {
+  id       String @id @default(cuid())
+  tenantId String
+  /// Código legível, ex. "TR-104".
+  code     String
+
+  processName String
+  archetype   ScaffoldArchetype?
+
+  /// Dono do processo, do lado do cliente.
+  ownerId      String
+  /// Staff da Nebuloz que supervisiona. Nulo enquanto ninguém assumiu.
+  consultantId String?
+
+  /// Versão do template PINADA na criação. Nunca migra automaticamente (ST-03).
+  /// Junto com o overlay (US5), responde ST-04 em duas colunas, sem
+  /// reconstrução.
+  templateVersionId String
+
+  /// Lacuna do Meridian que originou a trilha (S-01).
+  ///
+  /// `String?` e NÃO relação FK, de propósito: relação forte acoplaria os dois
+  /// schemas e faria a exclusão de um diagnóstico derrubar trilhas em curso.
+  /// A promoção é o registro canônico do vínculo, e ela vive do lado do
+  /// Meridian.
+  /// Overlay do cliente aplicado na criação. Junto com `templateVersionId`,
+  /// responde ST-04 em duas colunas, sem reconstrução.
+  overlayId         String?
+
+  sourceGapId       String?
+  sourcePromotionId String?
+
+  status       ScaffoldTrackStatus @default(ACTIVE)
+  /// Materializado, embora derivável das fases: o portfólio ordena e filtra por
+  /// ele em toda leitura, e derivar exigiria carregar as quatro fases de cada
+  /// trilha para montar uma lista.
+  currentPhase ScaffoldPhase       @default(ASSESS)
+
+  startedAt DateTime @default(now())
+  /// Último movimento de gate. É a coluna que a varredura de estagnação
+  /// percorre (S-09) — por isso o índice composto abaixo.
+  lastGateAt  DateTime?
+  embeddedAt  DateTime?
+  cancelledAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant          Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  templateVersion ScaffoldTemplateVersion  @relation(fields: [templateVersionId], references: [id], onDelete: Restrict)
+  overlay         ScaffoldTemplateOverlay? @relation(fields: [overlayId], references: [id], onDelete: Restrict)
+  phases          ScaffoldPhaseInstance[]
+  businessCase    ScaffoldBusinessCase?
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, lastGateAt])
+  @@index([sourceGapId])
+}
+
+/// Uma das quatro fases de uma trilha. As quatro nascem juntas no seed da
+/// trilha — ASSESS em OPEN, as demais IDLE.
+model ScaffoldPhaseInstance {
+  id      String        @id @default(cuid())
+  trackId String
+  phase   ScaffoldPhase
+  state   ScaffoldPhaseState @default(IDLE)
+
+  openedAt DateTime?
+  closedAt DateTime?
+
+  /// SG-06 — só na EMBED. Fechar a EMBED não marca a trilha como EMBEDDED:
+  /// abre a janela de observação de 30 dias, e a trilha só é entregue ao fim
+  /// dela sem reabertura.
+  observationEndsAt DateTime?
+
+  /// SG-05 — só na SCALE. Política do Charter aceita para este fluxo.
+  /// `CharterPolicy.id`, sem FK: o Charter pode não estar contratado, e relação
+  /// forte obrigaria o Scaffold a depender de um produto que pode não existir
+  /// no tenant (SRD §8, degradação graciosa).
+  charterPolicyId    String?
+  charterPolicyAckAt DateTime?
+
+  reopenedAt  DateTime?
+  reopenCount Int       @default(0)
+  /// `reopenCount` no momento em que a janela de observação abriu — SG-06.
+  ///
+  /// A comparação com o contador atual é o que distingue "esta fase já foi
+  /// reaberta no passado" (normal, não invalida nada) de "alguém reabriu DEPOIS
+  /// que a contagem começou", que desqualifica a entrega. Sem esse par, uma
+  /// trilha que tropeçou uma vez em janeiro jamais poderia ser entregue.
+  reopenCountAtClose Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  track   ScaffoldTrack        @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  steps   ScaffoldStepInstance[]
+  results ScaffoldGateResult[]
+
+  @@unique([trackId, phase])
+  @@index([trackId])
+  @@index([state])
+}
+
+/// Passo instanciado numa fase.
+///
+/// `statement` e `expectedArtefact` são CÓPIA do `ScaffoldStepTemplate`, não
+/// join. É o que sustenta ST-03: publicar uma versão nova do template não pode
+/// reescrever o texto de um passo que alguém já executou. `stepTemplateKey`
+/// guarda a proveniência sem criar a dependência de leitura.
+model ScaffoldStepInstance {
+  id              String @id @default(cuid())
+  phaseInstanceId String
+  /// `key` do ScaffoldStepTemplate de origem. Não é FK: a versão pode ser
+  /// arquivada e o passo executado permanece legível.
+  stepTemplateKey String
+  seq             Int
+
+  statement        String  @db.Text
+  expectedArtefact String
+  required         Boolean @default(true)
+
+  state         ScaffoldStepState @default(TODO)
+  completedById String?
+  completedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  phaseInstance ScaffoldPhaseInstance @relation(fields: [phaseInstanceId], references: [id], onDelete: Cascade)
+  artefacts     ScaffoldArtefact[]
+
+  @@unique([phaseInstanceId, stepTemplateKey])
+  @@index([phaseInstanceId])
+}
+
+/// Artefato entregue por um passo (S-04, SN-02).
+///
+/// `objectKey` é chave opaca no bucket privado `scaffold-artefacts`, sempre
+/// prefixada por tenantId. A URL do bucket NUNCA vai para o HTML: toda leitura
+/// passa por `readArtefact`, que grava a trilha de auditoria antes de emitir uma
+/// URL assinada de curta duração. Expor a URL direta tornaria o log decorativo.
+///
+/// Sem `tenantId` próprio: o tenant vem por `stepInstance → phaseInstance →
+/// track`. Duplicá-lo aqui criaria uma segunda fonte de verdade para a mesma
+/// pergunta, e as duas divergem no dia em que alguém mover um passo.
+model ScaffoldArtefact {
+  id              String   @id @default(cuid())
+  stepInstanceId  String
+  objectKey       String   @unique
+  /// MIME type declarado no upload.
+  kind            String
+  filename        String
+  sizeBytes       Int
+  uploadedById    String
+  uploadedAt      DateTime @default(now())
+
+  stepInstance ScaffoldStepInstance @relation(fields: [stepInstanceId], references: [id], onDelete: Cascade)
+
+  @@index([stepInstanceId])
+}
+
+// ── Gate ──────────────────────────────────────────────────────────────────────
+
+/// Decisão de fechamento de uma fase. APPEND-ONLY (SG-07).
+///
+/// Sem `updatedAt` e sem delete: nenhuma action do Scaffold chama
+/// `scaffoldGateResult.update` ou `.delete`, e um teste de arquitetura falha se
+/// alguém adicionar.
+///
+/// `cycle` é o `reopenCount` da fase no momento da decisão, e é por isso que a
+/// unicidade inclui `cycle` e NÃO é `phaseInstanceId` sozinho: reabrir uma fase
+/// e fechá-la de novo produz um SEGUNDO resultado. Com unicidade simples, o
+/// segundo fechamento teria de sobrescrever o primeiro — que é exatamente a
+/// edição destrutiva que SG-07 proíbe. A história de um gate reaberto três
+/// vezes são três linhas, não uma linha reescrita três vezes.
+///
+/// `tenantId` abre a chave porque `tenant-unique-keys.test.ts` exige que toda
+/// `@@unique` de modelo com tenant seja escopada. Aqui é redundante —
+/// `phaseInstanceId` é cuid global e já implica o tenant — mas a regra vale
+/// pelo caso em que não é redundante, e abrir exceção para o caso fácil é como
+/// as regras morrem.
+model ScaffoldGateResult {
+  id              String              @id @default(cuid())
+  tenantId        String
+  phaseInstanceId String
+  /// reopenCount da fase quando a decisão foi tomada. 0 no primeiro
+  /// fechamento.
+  cycle           Int                 @default(0)
+  outcome         ScaffoldGateOutcome
+  approverId      String
+  decidedAt       DateTime            @default(now())
+
+  /// Cada critério com `met` e `note`, congelados NO MOMENTO da decisão.
+  ///
+  /// Snapshot e não join, pelo mesmo motivo que o passo é copiado: editar o
+  /// template depois reescreveria a história do gate, e SG-07 diz que ela é
+  /// append-only. Um auditor precisa ver o que foi avaliado, não o que o
+  /// critério virou.
+  criteriaSnapshot Json
+
+  tenant        Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  phaseInstance ScaffoldPhaseInstance   @relation(fields: [phaseInstanceId], references: [id], onDelete: Cascade)
+  override      ScaffoldGateOverride?
+
+  @@unique([tenantId, phaseInstanceId, cycle])
+  @@index([tenantId])
+  @@index([phaseInstanceId])
+}
+
+// ── Caso de negócio (âncora) ──────────────────────────────────────────────────
+
+/// Caso de negócio — o baseline como artefato de primeira classe (S-06).
+///
+/// O Scaffold é a FONTE DA VERDADE: emite o artefato assinado, imutável e
+/// versionado; o Signal apura contra ele e nunca o edita.
+///
+/// O SRD §3 esboçou `baseline` como linha plana com três métricas fixas
+/// (volume, cycle_time, error_rate). Não serve: três colunas não descrevem
+/// "laudos dentro da janela de plantio" nem "casos por analista/semana", e sem
+/// `confidence` some a distinção entre número medido e número declarado — que é
+/// exatamente sobre o que patrocinadores contestam. Ver research §R3.
+model ScaffoldBusinessCase {
+  id       String                    @id @default(cuid())
+  tenantId String
+  trackId  String                    @unique
+  /// Código legível, ex. "BC-104".
+  code     String
+  state    ScaffoldBusinessCaseState @default(DRAFT)
+
+  /// Versão em edição, e versão que o Signal apura. SEPARADAS de propósito: é o
+  /// que faz o painel dizer "v2 vigente · v3 em edição". O Signal continua
+  /// apurando contra a assinada enquanto um rascunho existe por cima; uma
+  /// coluna só perderia a distinção e o rascunho passaria a valer sozinho.
+  currentVersionId String? @unique
+  signedVersionId  String? @unique
+
+  sponsorId       String
+  sponsorRoleLabel String
+  authorId        String
+
+  /// Iniciativa correspondente do lado do Signal. Texto e nulo enquanto o
+  /// Signal não existe no repositório (research §R10).
+  signalInitiativeRef String?
+
+  /// Janela de apuração. Nula enquanto o artefato não foi assinado: quem define
+  /// o início é a assinatura, não o rascunho.
+  windowStart  DateTime?
+  windowMonths Int?
+  /// "monthly" | "quarterly"
+  cadence      String?
+  firstReadAt  DateTime?
+
+  benefitKind       ScaffoldBenefitKind @default(COST_AVOIDED)
+  /// Hard = cai no razão contábil. Soft = plausível e não rastreável ali.
+  /// A distinção é do CFO, não nossa, e escondê-la faria toda promessa parecer
+  /// hard.
+  benefitHard       Boolean             @default(false)
+  benefitAnnualCents BigInt?
+  benefitBasis      String              @db.Text
+  financeReviewedAt DateTime?
+  financeReviewedBy String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant   Tenant                         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  track    ScaffoldTrack                  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  versions ScaffoldBusinessCaseVersion[]  @relation("BusinessCaseVersions")
+  contests ScaffoldBusinessCaseContest[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, state])
+}
+
+/// Uma versão do artefato. Assinada é IMUTÁVEL: alterar cria versão nova.
+///
+/// `contentHash` é o `ref` do protótipo (`a7f3c2e9`) — prova de que os números
+/// contra os quais o Signal apura são os que o patrocinador aprovou. Nulo
+/// enquanto não assinado, porque não há o que provar antes disso.
+model ScaffoldBusinessCaseVersion {
+  id             String                    @id @default(cuid())
+  tenantId       String
+  businessCaseId String
+  /// "v1", "v2".
+  label          String
+  state          ScaffoldBusinessCaseState @default(DRAFT)
+  note           String                    @db.Text
+
+  authoredById String
+  authoredAt   DateTime  @default(now())
+  signedById   String?
+  signedAt     DateTime?
+  /// Nome digitado na superfície de assinatura. O patrocinador do cliente pode
+  /// não ter conta na plataforma — o Scaffold registra o ato, não a identidade.
+  signedByLabel String?
+  contentHash   String?
+
+  tenant       Tenant                       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  businessCase ScaffoldBusinessCase         @relation("BusinessCaseVersions", fields: [businessCaseId], references: [id], onDelete: Cascade)
+  metrics      ScaffoldBusinessCaseMetric[]
+  contests     ScaffoldBusinessCaseContest[]
+
+  /// `tenantId` abre a chave por exigência de `tenant-unique-keys.test.ts`:
+  /// toda `@@unique` de modelo com tenant é escopada. Aqui é redundante —
+  /// `businessCaseId` é cuid global — mas a regra vale pelo caso em que não é.
+  @@unique([tenantId, businessCaseId, label])
+  @@index([tenantId])
+  @@index([businessCaseId])
+}
+
+/// Métrica pendurada na VERSÃO, não no caso.
+///
+/// É o que sustenta a imutabilidade na prática: alterar uma meta não pode ser
+/// um `update` — cria versão nova, com métricas novas. Se elas pendessem do
+/// caso, editar uma reescreveria em silêncio o que já foi assinado.
+model ScaffoldBusinessCaseMetric {
+  id        String @id @default(cuid())
+  tenantId  String
+  versionId String
+
+  key   String
+  label String
+  unit  String
+
+  baseValue   Decimal @db.Decimal(18, 4)
+  targetValue Decimal @db.Decimal(18, 4)
+
+  direction  ScaffoldMetricDirection
+  confidence ScaffoldMetricConfidence @default(DECLARED)
+
+  /// De onde veio o número, e sobre quanto dado. Prosa: é o que o patrocinador
+  /// lê para decidir se acredita, e estruturar obrigaria a inventar taxonomia
+  /// de fonte de dado de cliente.
+  sourceLabel String
+  sampleLabel String
+
+  tenant  Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  version ScaffoldBusinessCaseVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  /// Idem: escopada por tenant, ver o comentário em ScaffoldBusinessCaseVersion.
+  @@unique([tenantId, versionId, key])
+  @@index([tenantId])
+  @@index([versionId])
+}
+
+/// Objeção do patrocinador. Ramo de AWAITING, não fim de linha.
+///
+/// Fica registrada mesmo depois de resolvida: a objeção de BC-105 — "a taxa de
+/// 12% mistura divergência clínica com erro de transcrição" — é a razão pela
+/// qual a v2 tem duas métricas onde a v1 tinha uma. Apagar a objeção apagaria o
+/// porquê.
+model ScaffoldBusinessCaseContest {
+  id             String @id @default(cuid())
+  tenantId       String
+  businessCaseId String
+  versionId      String
+
+  byId      String?
+  byLabel   String
+  roleLabel String
+  objection String    @db.Text
+  asks      String    @db.Text
+  createdAt DateTime  @default(now())
+  resolvedAt DateTime?
+
+  tenant       Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  businessCase ScaffoldBusinessCase        @relation(fields: [businessCaseId], references: [id], onDelete: Cascade)
+  version      ScaffoldBusinessCaseVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([businessCaseId])
+}
+
+/// Estado do artefato: draft → awaiting → signed → superseded.
+/// `contested` é ramo de awaiting: o patrocinador devolveu com objeção.
+enum ScaffoldBusinessCaseState {
+  DRAFT
+  AWAITING
+  CONTESTED
+  SIGNED
+  SUPERSEDED
+}
+
+/// Sentido da meta. Reduzir cycle time e aumentar casos por analista são as
+/// duas formas de melhorar, e sem isto o sinal do delta seria adivinhação.
+enum ScaffoldMetricDirection {
+  DOWN
+  UP
+}
+
+/// Quanto o número vale como evidência. MEASURED tem série; ESTIMATED tem
+/// cálculo; DECLARED tem alguém dizendo. Achatar os três faria toda promessa
+/// parecer medida.
+enum ScaffoldMetricConfidence {
+  MEASURED
+  ESTIMATED
+  DECLARED
+}
+
+enum ScaffoldBenefitKind {
+  COST_AVOIDED
+  REVENUE_PROTECTED
+  REVENUE_NEW
+}
+
+/// Decisão de passar por cima de critério não atendido. APPEND-ONLY.
+///
+/// Os três campos abaixo são o produto inteiro num registro: quem decidiu, o
+/// que não foi atendido, e por quê. O PRD §7 nomeia "gate vira formalidade que
+/// todo mundo waiva" como o risco número um, e a mitigação escrita lá é
+/// exatamente esta linha — atribuída e com justificativa.
+///
+/// Um override sem `rationale` não é decisão registrada: é gate desligado.
+model ScaffoldGateOverride {
+  id            String   @id @default(cuid())
+  tenantId      String
+  gateResultId  String   @unique
+  actorId       String
+  /// `key` dos critérios dispensados. Sem isto não há o que auditar depois.
+  unmetCriteria String[]
+  rationale     String   @db.Text
+  createdAt     DateTime @default(now())
+
+  tenant     Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  gateResult ScaffoldGateResult @relation(fields: [gateResultId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+}

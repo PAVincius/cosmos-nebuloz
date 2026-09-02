@@ -83,6 +83,7 @@
         "apps/app/app/(cosmos)/actions/**",
         "apps/app/app/(charter)/actions/**",
         "apps/app/app/(meridian)/actions/**",
+        "apps/app/app/(scaffold)/actions/**",
         "apps/app/app/api/**",
         "apps/app/app/hooks/**"
       ],
@@ -244,7 +245,10 @@
         "apps/app/components/charter/**",
         // Meridian reusa as primitivas do Charter e a mesma folha reescopada —
         // as mesmas exceções valem pelos mesmos motivos.
-        "apps/app/components/meridian/**"
+        "apps/app/components/meridian/**",
+        // Scaffold: idem. E a a11y também continua ligada aqui — SN-10 exige
+        // WCAG 2.2 AA em toda superfície voltada ao cliente.
+        "apps/app/components/scaffold/**"
       ],
       "linter": {
         "rules": {
