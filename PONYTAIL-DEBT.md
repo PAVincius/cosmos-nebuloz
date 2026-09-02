@@ -9,23 +9,9 @@ Regerar:
 grep -rnE '(#|//) ?ponytail:' . --exclude-dir=node_modules --exclude-dir=.git --exclude-dir=.next
 ```
 
-Levantado em 2026-09-02 · 4 marcadores · 2 sem gatilho.
+Levantado em 2026-09-02 · 2 marcadores · 2 sem gatilho.
 
 ---
-
-## apps/app/lib/analytics/release-forecast.ts
-
-**`:16`** — `MIN_SPRINTS_HISTORY = 3` fixo, em vez de config por org.
-_teto:_ um único piso global para todos os tenants.
-_upgrade:_ quando um cliente pedir piso diferente.
-_dono:_ PAVincius · 2026-06-16
-
-## apps/app/app/actions/analytics/epic-confidence.ts
-
-**`:54`** — N+1: uma query `computeEpicConfidence` por epic, em loop.
-_teto:_ aceitável enquanto epics IMPLEMENTING forem dezenas.
-_upgrade:_ batch das queries de feature/throughput quando essa cardinalidade crescer.
-_dono:_ PAVincius · 2026-06-16
 
 ## apps/app/\_\_tests\_\_/scripts/seed-entrypoint-guard.test.ts
 
@@ -47,11 +33,20 @@ _dono:_ PAVincius · 2026-07-10
 
 ## Cobertura
 
-O ledger cobre **cosmos analytics + e2e**. Charter, backoffice e meridian têm
-**zero** marcadores `ponytail:` — isso quer dizer não-marcado, não limpo.
+O ledger cobre **e2e do app**. Charter, backoffice e meridian têm **zero**
+marcadores `ponytail:` — isso quer dizer não-marcado, não limpo.
 `lib/meridian/*` e `packages/rbac/meridian-*` subiram sem nenhuma anotação de
 atalho deliberado.
 
-`docs/superpowers/plans/2026-06-16-executive-confidence-index.md:95,614` repete
-os dois marcadores de analytics dentro do plano. É cópia em doc, não código
-vivo — não conta como dívida separada.
+## Retirados
+
+Os dois marcadores de analytics (`release-forecast.ts:16`, piso de sprints
+fixo; `epic-confidence.ts:54`, N+1 por epic) saíram junto com o Executive
+Confidence Index. Era dívida em cima de código morto: nenhuma tela consumia
+`getPortfolioConfidence`, então nem o piso podia ser questionado por um
+cliente nem a cardinalidade do N+1 podia crescer.
+
+`docs/superpowers/plans/2026-06-16-executive-confidence-index.md:95,614` ainda
+contém os dois comentários dentro de blocos de código do plano. O grep de
+regeneração acima os encontra; são cópias em doc de código que não existe
+mais, não dívida.
