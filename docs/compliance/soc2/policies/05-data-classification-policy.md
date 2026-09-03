@@ -1,9 +1,17 @@
 # Data Classification and Retention Policy
 
-**Version:** 1.0
-**Effective date:** 2026-05-19
+**Version:** 1.1
+**Effective date:** 2026-05-19 · **Revised:** 2026-09-02
 **Owner:** CTO
 **Review cycle:** Annual
+
+> **Revision 1.1.** Four statements in v1.0 described a system that does not
+> exist: the sub-processor list named vendors not in the stack and omitted every
+> AI provider; every DPA was marked signed without evidence; audit logs were
+> said to hold "no personal data except user IDs" while storing IP and
+> user-agent; and a "Day 30 automated deletion job" was described that was never
+> built. Each is corrected below to describe what actually runs. Findings and
+> evidence: `docs/compliance/lgpd-ropa-e-lacunas.md` §2.
 
 ---
 
@@ -66,9 +74,9 @@ Define how Cosmos classifies, handles, and retains data to protect customer info
 - Certificate rotation automated (provider-managed)
 
 ### At Rest
-- Database: AES-256 (Supabase/PostgreSQL provider encryption)
+- Database: AES-256 (Neon/PostgreSQL provider encryption)
 - Object storage: AES-256 (provider-managed)
-- Secrets: Stored in environment variables; production secrets in Vercel/Railway encrypted secret store
+- Secrets: Stored in environment variables; production secrets in Vercel's encrypted secret store. Integration credentials (`MeetingIntegration.config`, `Integration` tokens) are additionally encrypted at the application layer with `ENCRYPTION_KEY`
 - Backups: Encrypted before storage
 
 ### Credentials and Tokens
@@ -93,20 +101,21 @@ Define how Cosmos classifies, handles, and retains data to protect customer info
 ### Deletion Process
 
 On customer account deletion or contract end:
-1. Day 0: Tenant marked inactive (no new access)
-2. Day 30: Automated deletion job removes all tenant data from active database
+1. Day 0: Tenant modules set to `CANCELED` via the back-office (`setModuleStatus`), which closes access without deleting data
+2. By Day 30: **Manual** deletion of tenant data by platform staff, executed against the production database and recorded in the platform audit trail. **There is no automated tenant-deletion job.** v1.0 described one; it was never built. Until it exists, this step is a human procedure with a named owner, and the 30-day commitment is met by calendar, not by scheduler.
 3. Day 30: Backups containing tenant data aged out within backup retention window (30 days)
-4. Audit logs retained for 12 months (no personal data except user IDs)
+4. Audit logs retained for 12 months. **They contain personal data**: `AuditLog` stores IP address and user-agent alongside user IDs, and `AccessLog` stores email, IP and user-agent for every login attempt, including refused ones. Retention rests on legitimate interest (security and accountability) and on the audit-log immutability decision (ADR-0009). Erasure requests anonymize the identifiers in `AccessLog` while preserving the event; `AuditLog` is not modified by erasure, by design.
 5. Deletion confirmation email sent to tenant owner
 
 ### Right to Erasure (LGPD Art. 18 / GDPR Art. 17)
 
 Upon verified request:
 - Process within 15 business days
-- Delete personal data from active systems immediately
+- Anonymize personal data in active systems (the platform anonymizes rather than hard-deletes, using a stable hash as the replacement so referential integrity survives). Implemented in `processErasureRequest`, triggered from the user's settings, tracked in `DataSubjectRequest`, and audited on completion. Coverage: user profile, standup entries, copilot messages, meeting participants and transcript-derived content, access logs (identifiers only), and Meridian respondent records.
 - Remove from backups at next backup cycle
 - Confirm deletion in writing
-- Exceptions: legal hold, legitimate interest basis documented
+- Exceptions: legal hold, legitimate interest basis documented — concretely, `AuditLog` (immutable, ADR-0009) and the event/timestamp columns of `AccessLog`
+- **Known gap:** the in-app request requires an authenticated session. Data subjects who never had an account — Meridian respondents invited by link, meeting participants — can only request via `privacy@nebuloz.com`, and resolution depends on the processor/controller determination pending in the DPA.
 
 ## 6. Data Subject Rights (LGPD/GDPR)
 
@@ -121,17 +130,34 @@ Upon verified request:
 
 ## 7. Sub-Processors
 
-All sub-processors handling Level 3/4 data have signed Data Processing Agreements (DPAs):
+Sub-processors are listed from the platform's actual dependencies, not from a template. **The DPA column reflects verified contract status, not intent.** v1.0 marked every row as signed; none of those marks had evidence behind them. A DPA is a contractual fact and is recorded here only once confirmed. Full inventory with what each vendor processes: `docs/runbooks/charter-nebuloz.md` §5.
+
+### AI sub-processors — receive customer content
 
 | Sub-Processor | Purpose | Location | DPA |
 |--------------|---------|---------|-----|
-| Supabase / Railway | Primary database | US (+ EU option) | ✅ |
-| Vercel | Application hosting | US + Edge | ✅ |
-| Upstash | Rate limiting cache | US + EU | ✅ |
-| BetterStack | Logging + monitoring | EU | ✅ |
-| Stripe | Payment processing | US | ✅ |
-| PostHog | Product analytics | EU (self-hostable) | ✅ |
-| Resend | Transactional email | US | ✅ |
+| Anthropic | LLM — default route for AI features (policy drafting, copilot, epic analysis, cost narratives) | US | To confirm |
+| OpenAI | LLM — secondary route | US | To confirm |
+| Google | LLM — tertiary route | US | To confirm |
+| Langfuse | LLM observability. Prompt/response content is masked unless `LANGFUSE_CAPTURE_CONTENT` is explicitly enabled; must never be enabled where customer data is present | To confirm | To confirm |
+| Fireflies | Meeting transcription. Transcript-derived content is processed only after consent is `GRANTED` (default deny) | To confirm | To confirm |
+
+### Infrastructure sub-processors
+
+| Sub-Processor | Purpose | Location | DPA |
+|--------------|---------|---------|-----|
+| Neon | Primary database (PostgreSQL) | To confirm | To confirm |
+| Vercel | Application hosting and execution | US + Edge | To confirm |
+| Upstash | Rate limiting and module cache | US + EU | To confirm |
+| Sentry | Error monitoring — stack traces may carry incidental personal data | To confirm | To confirm |
+| Liveblocks | Real-time collaboration — document content in transit | To confirm | To confirm |
+| Resend | Transactional email | US | To confirm |
+| Arcjet | Edge security | To confirm | To confirm |
+| Inngest | Background job execution — orchestrates the Fireflies pipeline and inherits its exposure | To confirm | To confirm |
+| BetterStack | Logging (configured; verify active use) | EU | To confirm |
+| PostHog | Product analytics (verify what is sent per event) | EU | To confirm |
+
+Removed from v1.0: **Supabase / Railway** (not in the stack — the database is Neon and hosting is Vercel) and **Stripe** (dependency present, active use unconfirmed; re-add once payments are live).
 
 ---
 
