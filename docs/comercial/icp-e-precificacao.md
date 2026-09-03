@@ -189,6 +189,29 @@ inovar" não qualifica nada e não desqualifica ninguém.
 | **Gatilho** | Adoção de SAFe em curso; ou Jira Align avaliado e recusado por preço ou por adoção. |
 | **Anti-ICP** | Sem framework definido; time único; Scrum puro sem camada de portfólio. |
 
+### Signal — medição
+
+Ausente das versões anteriores deste documento, que falavam em quatro
+produtos. São cinco, e o Signal é o único sem uma linha de código — decisão de
+2026-09-02 o confirma como produto, com preço a definir junto com os demais.
+
+| | |
+|---|---|
+| **Porte** | Quem já rodou uma trilha de adoção — o Signal mede contra linha de base, e sem trabalho anterior não há o que medir. Na prática, o cliente do Scaffold ou do Meridian. |
+| **Setor** | Qualquer um. O argumento é financeiro, não setorial. |
+| **Quem assina** | CFO, ou o Head de Operações a quem o CFO delega. A promessa do site é literal: *"o número que o seu CFO aceita"*. |
+| **Usuário real** | Quem monta a próxima rodada de orçamento. Não é o time de engenharia; é quem precisa defender a linha de IA no comitê. |
+| **Verba** | A mesma que já paga a adoção — Signal é o que justifica renová-la. É expansão, não entrada. |
+| **Dor** | "A IA está ajudando" sem número. Gasto visível, retorno anedótico, e a próxima conversa de orçamento virando questão de fé. |
+| **Gatilho** | Rodada de orçamento se aproximando; conselho pedindo ROI; ou o Scaffold terminando uma trilha e o cliente perguntando "e aí, valeu?". |
+| **Sinal de qualificação** | Já mediu alguma coisa e não confiou no número. Quem nunca mediu não sente a dor ainda. |
+| **Anti-ICP** | Quem não tem linha de base — nem trabalho anterior nem intenção de fazer. Signal sem "antes" é dashboard bonito de nada. E quem quer telemetria de time como vigilância: o produto mede adoção, não pessoas, e a fronteira é de propósito. |
+
+**Dependência que o ICP expõe:** o Signal só faz sentido depois de outro produto
+ter estabelecido a linha de base. Isso o coloca como **o produto de renovação da
+suíte**, não de entrada — e explica por que ele é o terceiro degrau da escada,
+não o primeiro.
+
 ### Scaffold — implementação
 
 Não tem ICP próprio, e isso é a definição, não uma lacuna. **O ICP do Scaffold é
