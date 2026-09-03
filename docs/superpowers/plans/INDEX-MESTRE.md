@@ -36,17 +36,42 @@ de quatro produtos. O site e o catálogo comercial falam de cinco.
 | # | Produto | Papel | Estado |
 |---|---|---|---|
 | 01 | Meridian | Diagnose | Em produção — spec kit, 27 modelos, rotas no ar |
-| 02 | Scaffold | Structure | PRD escrito, sem implementação |
-| 03 | **Signal** | **Measure** | **Precificado (R$ 1.200/mês), no site, sem ICP e sem backlog** |
+| 02 | Scaffold | Structure | **Em produção** — 19 modelos, gate engine, templates versionados |
+| 03 | **Signal** | **Measure** | Precificado (R$ 1.200/mês), no site, **sem schema, rota, ICP ou backlog** |
 | 04 | Charter | Govern | Em produção — 18 modelos, geração de rascunho, export |
 | 05 | Cosmos | Operate | Em produção — o destino, deliberadamente fora da escada |
 
-**O Signal é o buraco.** Está no `PrecoDeModulo`, está na narrativa do site como
-o terceiro degrau, e não aparece em nenhum documento da Onda 0 ou 1 — nem ICP,
-nem inventário de risco, nem RoPA. Antes de priorizar qualquer coisa aqui,
-resolver o que ele é: produto vendável com backlog próprio, ou capacidade do
-Cosmos com nome de marca. As duas respostas são legítimas; a ausência de
-resposta é que não é.
+### Decisão de 2026-09-02: Signal e Scaffold são produtos
+
+A pergunta que este índice mantinha aberta — se o Signal é produto vendável com
+backlog próprio ou capacidade do Cosmos com nome de marca — **está respondida:
+produto**. O mesmo vale para o Scaffold, que já foi implementado como tal.
+
+A precificação de ambos fica para depois, deliberadamente. Não é omissão: o
+preço depende do CAC totalmente carregado, que continua sendo pendência
+financeira, e fixá-lo antes seria chute.
+
+### A decisão fecha a taxonomia, não a exposição
+
+Signal ser produto não o torna entregável. Enquanto ele não existir, permanece
+o que já estava registrado aqui: **está em `ProductModule`, logo é contratável
+pelo back-office hoje, e está em `PrecoDeModulo` a R$ 1.200/mês, logo é
+cobrável** — com nada do outro lado. A home promete quatro métricas
+(taxa de adoção, horas recuperadas, tempo de ciclo, custo por resultado) que
+nenhum código produz.
+
+Nenhum outro produto da suíte tem esse formato de risco, e ele não decorre de
+indefinição — decorre de estar no catálogo antes de existir. Duas saídas, e a
+escolha é de quem vende:
+
+- **Tirar do `PrecoDeModulo` até haver entrega.** Uma linha de SQL. O produto
+  segue existindo na estratégia e no site; só deixa de ser contratável por
+  engano. É o que este índice recomenda.
+- **Manter e assumir o risco conscientemente**, com a regra de que ninguém
+  contrata `SIGNAL` sem aprovação explícita. Legítimo, desde que escrito — a
+  alçada de desconto já mostra que o back-office sabe implementar regra assim.
+
+O que não é saída é deixar como está sem decidir, que é o estado atual.
 
 ---
 
@@ -124,7 +149,7 @@ risco teórico; com dois, não.
 
 | Produto | Situação |
 |---|---|
-| Signal | Nada. Ver §2 — precisa de decisão antes de fila. |
+| Signal | Nada — e agora com decisão tomada (§2), é o **único produto da suíte sem uma linha de código**. Precisa de spec antes de fila, no padrão de `specs/001-meridian-diagnose` e `specs/002-scaffold-adoption`. |
 | Meridian | Em produção, sem roadmap pós-V1. |
 | Charter | Em produção, sem roadmap pós-V1. |
 
@@ -146,7 +171,9 @@ porque promete consolidação. Três regras curtas:
 
 ## 6. Pendências deste índice
 
-- **Decidir o que é o Signal** (§2). Trava a fila dele e o ICP que falta.
+- ~~Decidir o que é o Signal~~ — **resolvido em 2026-09-02: é produto** (§2).
+  O que sucede essa pendência: escrever a spec do Signal, e decidir se ele sai
+  do `PrecoDeModulo` até haver entrega.
 - **Desmarcar a Phase 0** do índice de MRR e registrar o bloqueador jurídico que
   a substituiu (§3).
 - **Rodar PI Planning interno com esta fila.** O SAFe que o Cosmos vende vale
