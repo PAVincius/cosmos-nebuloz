@@ -47,8 +47,14 @@ disso.
 
 Registrado aqui porque é a mesma classe de problema que o ADR-0012 descreve: um
 controle declarado que não está valendo. **Este ADR não o conserta** — decide
-sem depender dele, e a decisão abaixo continua correta com ou sem o teste. Criar
-o guard é trabalho próprio, e agora tem um lugar que o justifica.
+sem depender dele, e a decisão abaixo continua correta com ou sem o teste.
+
+> **Atualização de 2026-09-02.** O guard passou a existir depois deste ADR ser
+> escrito: `apps/app/__tests__/scaffold/adr-0013-boundary.test.ts`, criado no
+> #168 e estendido em seguida para também proibir o import do índice de
+> `@repo/provisioning` — o acoplamento que quebrou `seed:meridian` e obrigava
+> testes a mockar `platformDb`. A lacuna descrita acima era verdadeira quando
+> registrada e está fechada; fica o registro porque a ordem dos fatos importa.
 
 ## Decisão
 

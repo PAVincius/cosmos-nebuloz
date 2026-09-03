@@ -2,7 +2,11 @@
 
 import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
-import { provisionTenant } from "@repo/provisioning";
+// Import de "@repo/provisioning/src/tenant" (não do índice público do
+// pacote): o índice reexporta platform-db.ts, que importa "server-only" e
+// puxa `platformDb` — proibido em apps/app pelo ADR-0013. tenant.ts não
+// importa nenhum dos dois.
+import { provisionTenant } from "@repo/provisioning/src/tenant";
 import { invalidateModuleCache } from "@repo/rbac";
 import { headers } from "next/headers";
 import { SELF_SERVICE_MODULES } from "./onboarding-modules";
