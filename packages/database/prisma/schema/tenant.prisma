@@ -216,6 +216,25 @@ model Tenant {
   meridianGapDependencies   MeridianGapDependency[]
   meridianPlanItems         MeridianPlanItem[]
   meridianGapPromotions     MeridianGapPromotion[]
+  // Signal — medição de adoção e valor de iniciativas de IA
+  signalMembers             SignalMember[]
+  signalSettings            SignalSettings?
+  signalSequences           SignalSequence[]
+  signalInitiatives         SignalInitiative[]
+  signalBaselines           SignalBaseline[]
+  signalBaselineDimensions  SignalBaselineDimension[]
+  signalConnections         SignalConnection[]
+  signalMetricMappings      SignalMetricMapping[]
+  signalObservations        SignalMetricObservation[]
+  signalRoiFormulas         SignalRoiFormula[]
+  signalRoiEntries          SignalRoiEntry[]
+  signalRoiAssumptions      SignalRoiAssumption[]
+  signalAdoptionSnapshots   SignalAdoptionSnapshot[]
+  signalOutcomeSnapshots    SignalOutcomeSnapshot[]
+  signalConfidenceRules     SignalConfidenceRule[]
+  signalConfidenceScores    SignalConfidenceScore[]
+  signalAlerts              SignalAlert[]
+  signalReports             SignalReportSnapshot[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
   platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
   staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
@@ -243,16 +262,31 @@ model User {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  sessions            Session[]
-  accounts            Account[]
-  memberships         TenantMember[]
+  sessions                Session[]
+  accounts                Account[]
+  memberships             TenantMember[]
   // Lista, não opcional-único: o `userId` da TwoFactor deixou de ser `@unique`
   // porque o `enable` do better-auth sempre insere linha nova.
-  twoFactor           TwoFactor[]
+  twoFactor               TwoFactor[]
   // Charter — papel de governança, ortogonal ao papel SAFe de TenantMember
-  charterMemberships  CharterMembership[]
+  charterMemberships      CharterMembership[]
   // Meridian — papel de diagnóstico, ortogonal aos dois anteriores
-  meridianMemberships MeridianMembership[]
+  meridianMemberships     MeridianMembership[]
+  // Signal — papel de medição, ortogonal aos três anteriores.
+  // As relações nomeadas existem porque a mesma pessoa aparece em dois papéis
+  // distintos na mesma tabela (dona e encerradora da iniciativa; dona e
+  // resolvedora do alerta) — sem nome, o Prisma não sabe qual FK é qual.
+  signalMemberships       SignalMember[]
+  signalOwnedInitiatives  SignalInitiative[]        @relation("SignalInitiativeOwner")
+  signalClosedInitiatives SignalInitiative[]        @relation("SignalInitiativeCloser")
+  signalSignedBaselines   SignalBaseline[]
+  signalOwnedConnections  SignalConnection[]
+  signalChangedMappings   SignalMetricMapping[]
+  signalRecordedObs       SignalMetricObservation[]
+  signalChangedFormulas   SignalRoiFormula[]
+  signalOwnedAlerts       SignalAlert[]             @relation("SignalAlertOwner")
+  signalResolvedAlerts    SignalAlert[]             @relation("SignalAlertResolver")
+  signalGeneratedReports  SignalReportSnapshot[]
 }
 
 /// Tabela do plugin `twoFactor` do better-auth. Os campos são ditados por ele,

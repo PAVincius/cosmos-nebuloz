@@ -107,7 +107,7 @@ Graph built from full repo: 10.189 nodes · 15.392 edges · 871 communities.
 <!-- SPECKIT START -->
 ## Spec Kit
 
-Active plan: [`specs/001-add-intent-stage/plan.md`](specs/001-add-intent-stage/plan.md)
+Active plan: [`specs/003-signal-measure/plan.md`](specs/003-signal-measure/plan.md)
 <!-- SPECKIT END -->
 
 ---

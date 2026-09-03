@@ -32,3 +32,17 @@ export {
 // Contratação modular — Cosmos / Charter / Signal / Meridian
 export { hasModule, invalidateModuleCache, listModules } from "./modules";
 export { getEffectiveRole, invalidatePermissionCache } from "./resolve";
+// Signal — medição de adoção e valor de iniciativas de IA
+export type { SignalPermission } from "./signal-matrix";
+export {
+  hasSignalPermission,
+  ownsOrOutranksInitiative,
+  SIGNAL_MATRIX,
+  SIGNAL_PERMISSION_LABEL,
+  SIGNAL_PERMISSIONS,
+  SIGNAL_ROLE_LABEL,
+  SIGNAL_ROLE_TONE,
+  signalDenialReason,
+  signalRolesGranting,
+} from "./signal-matrix";
+export { getSignalRole, invalidateSignalRoleCache } from "./signal-resolve";
