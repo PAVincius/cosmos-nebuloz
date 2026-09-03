@@ -120,7 +120,12 @@ Direção única: **arquivo → note**. A rotina reescreve a note a partir do
 que o especialista escreveu — o script lê a note atual, extrai as duas seções,
 regenera o resto, recompõe. Note nunca alimenta arquivo.
 
-Comandos (executados de um terminal Maestro):
+Comandos (executados de um terminal Maestro). **Sintaxe a confirmar** com
+`maestri note --help` na primeira execução dentro do Maestri — o CLI só
+responde com `MAESTRI_SOCKET`, e as skills que documentam `note` não estavam
+acessíveis quando esta spec foi escrita. A forma abaixo é a intenção; se o
+comando receber conteúdo por argumento em vez de `--file`, o exportador passa a
+imprimir o `note.md` e a rotina faz `note write "<p>" "$(cat …)"`:
 
 ```
 maestri note create "meridian" --file .maestri/knowledge/meridian/note.md
