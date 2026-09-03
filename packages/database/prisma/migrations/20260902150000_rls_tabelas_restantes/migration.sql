@@ -66,6 +66,18 @@ BEGIN
     'StaffPerson',
     'AccessLog'
   ] LOOP
+    -- Guarda de banco novo. As quatro tabelas do catálogo comercial
+    -- (PlanoComercial, PrecoDeModulo, AddOnComercial, TermoDeContrato) só
+    -- ganham migration de criação em 20260902170000 — em produção elas já
+    -- existiam por script manual, e por isso esta migration passou lá e quebra
+    -- em qualquer banco que parta do zero ("relation does not exist"). Pular
+    -- o que ainda não existe é no-op onde a tabela existe, e a RLS das quatro
+    -- é reaplicada em 20260902190000, depois de criadas. Esta é a única linha
+    -- alterada numa migration já aplicada, e é deliberadamente inerte onde ela
+    -- já rodou.
+    IF to_regclass(format('%I', t)) IS NULL THEN
+      CONTINUE;
+    END IF;
     EXECUTE format('ALTER TABLE %I ENABLE ROW LEVEL SECURITY', t);
     EXECUTE format('ALTER TABLE %I FORCE ROW LEVEL SECURITY', t);
     EXECUTE format('DROP POLICY IF EXISTS "tenant_isolation" ON %I', t);
