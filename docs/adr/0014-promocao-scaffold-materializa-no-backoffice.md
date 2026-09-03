@@ -126,9 +126,13 @@ não esperar que alguém lembre.
 - **O papel de aplicação sem `BYPASSRLS` existir** (ADR-0012). Hoje a fronteira
   entre os dois apps é convenção sustentada por revisão de código; com o papel,
   vira permissão de banco.
-- **`Engagement`, `Service` e `Proposal` ganharem RLS.** Nenhuma das três tem
-  hoje — verificado nas migrations. O Scaffold nasce com o mesmo isolamento só
-  de aplicação do resto do `platform-ops`. Não é regressão introduzida aqui,
-  mas é o momento de decidir se ele nasce diferente.
+- ~~**`Engagement`, `Service` e `Proposal` ganharem RLS.** Nenhuma das três tem
+  hoje — verificado nas migrations.~~ **Atualização de 2026-09-02:** era
+  verdade quando escrito; o #170 (`20260902150000_rls_tabelas_restantes`)
+  declarou RLS nas três e em `IpAsset`. Continua valendo o ponto de fundo: a
+  policy fica inerte enquanto a aplicação conectar como superuser (ADR-0012),
+  e o back-office lê essas tabelas via `platformDb` sem `app.tenant_id` — na
+  virada de papel ele vai precisar de caminho próprio. Registrado no comentário
+  de `20260902190000_rls_catalogo_comercial`.
 - **O guard de import do ADR-0013 for escrito.** Este ADR passa a depender dele
   para valer como fronteira, em vez de como acordo.
