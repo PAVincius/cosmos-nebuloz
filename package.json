@@ -26,6 +26,8 @@
     "size:guard": "tsx scripts/file-size-guard.mts",
     "coverage:gaps": "tsx scripts/coverage-gaps.mts",
     "cosmos:graph": "tsx scripts/cosmos-graph.mts",
+    "knowledge:refresh": "tsx scripts/knowledge/exportar.mts",
+    "test:knowledge": "vitest run scripts/knowledge",
     "dark-matter": "tsx scripts/dark-matter.mts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
