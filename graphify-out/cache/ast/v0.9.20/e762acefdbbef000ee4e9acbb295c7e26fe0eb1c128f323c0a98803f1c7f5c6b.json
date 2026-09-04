@@ -1,0 +1,559 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_md",
+      "label": "2026-05-24-copilot-ui-llmchat.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "label": "PRD \u2014 Copilot UI: Alinhamento com llmchat",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_objetivo",
+      "label": "Objetivo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_estado_atual",
+      "label": "Estado Atual",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_estado_alvo",
+      "label": "Estado Alvo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "label": "Fases de Implementa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1_message_layout_sem_mudan\u00e7a_de_backend",
+      "label": "Fase 1 \u2014 Message Layout (sem mudan\u00e7a de backend)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec",
+      "label": "Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias_novas",
+      "label": "Depend\u00eancias novas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2_tool_calls_steps_timeline",
+      "label": "Fase 2 \u2014 Tool Calls / Steps Timeline",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L131"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_mudan\u00e7a_de_backend",
+      "label": "Mudan\u00e7a de Backend",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_160",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_169",
+      "label": "Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3_tiptap_input",
+      "label": "Fase 3 \u2014 TipTap Input",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L240"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_246",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L246"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias",
+      "label": "Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L253"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_258",
+      "label": "Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L258"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4_sidebar_colaps\u00e1vel_agrupamento_temporal",
+      "label": "Fase 4 \u2014 Sidebar Colaps\u00e1vel + Agrupamento Temporal",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L314"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_320",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L320"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_329",
+      "label": "Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L329"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias_401",
+      "label": "Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L401"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5_side_drawer_tool_results_fontes",
+      "label": "Fase 5 \u2014 Side Drawer (Tool Results / Fontes)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L407"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_413",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L413"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_420",
+      "label": "Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L420"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_ordem_de_execu\u00e7\u00e3o",
+      "label": "Ordem de Execu\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L469"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_decis\u00f5es_t\u00e9cnicas",
+      "label": "Decis\u00f5es T\u00e9cnicas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L483"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_o_que_n\u00e3o_mudar",
+      "label": "O que N\u00c3O mudar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L498"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "label": "Checklist por Fase",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L508"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1",
+      "label": "Fase 1",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L510"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2",
+      "label": "Fase 2",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L518"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3",
+      "label": "Fase 3",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L527"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4",
+      "label": "Fase 4",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L535"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5",
+      "label": "Fase 5",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L543"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_refer\u00eancias",
+      "label": "Refer\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L552"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_objetivo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_estado_atual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_estado_alvo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1_message_layout_sem_mudan\u00e7a_de_backend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1_message_layout_sem_mudan\u00e7a_de_backend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1_message_layout_sem_mudan\u00e7a_de_backend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1_message_layout_sem_mudan\u00e7a_de_backend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias_novas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2_tool_calls_steps_timeline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2_tool_calls_steps_timeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_mudan\u00e7a_de_backend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2_tool_calls_steps_timeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_160",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2_tool_calls_steps_timeline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_169",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3_tiptap_input",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L240",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3_tiptap_input",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_246",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3_tiptap_input",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L253",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3_tiptap_input",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_258",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L258",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4_sidebar_colaps\u00e1vel_agrupamento_temporal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L314",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4_sidebar_colaps\u00e1vel_agrupamento_temporal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_320",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L320",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4_sidebar_colaps\u00e1vel_agrupamento_temporal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_329",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L329",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4_sidebar_colaps\u00e1vel_agrupamento_temporal",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_depend\u00eancias_401",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L401",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fases_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5_side_drawer_tool_results_fontes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L407",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5_side_drawer_tool_results_fontes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_arquivos_413",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L413",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5_side_drawer_tool_results_fontes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_spec_420",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L420",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_ordem_de_execu\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L469",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_decis\u00f5es_t\u00e9cnicas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L483",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_o_que_n\u00e3o_mudar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L498",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L508",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L510",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L518",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L527",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L535",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_checklist_por_fase",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_fase_5",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L543",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_prd_copilot_ui_alinhamento_com_llmchat",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_24_copilot_ui_llmchat_refer\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-24-copilot-ui-llmchat.md",
+      "source_location": "L552",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

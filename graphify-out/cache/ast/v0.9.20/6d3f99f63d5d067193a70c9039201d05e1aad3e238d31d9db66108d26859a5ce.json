@@ -1,0 +1,200 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_md",
+      "label": "2026-08-28-meridian-diagnose.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "label": "Meridian V1 \u00b7 Diagnose \u2014 implementa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_dados",
+      "label": "Dados",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_dom\u00ednio_fun\u00e7\u00f5es_puras_testadas_primeiro",
+      "label": "Dom\u00ednio (fun\u00e7\u00f5es puras, testadas primeiro)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_superf\u00edcie",
+      "label": "Superf\u00edcie",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_reuso",
+      "label": "Reuso",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_testes",
+      "label": "Testes",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_altera\u00e7\u00f5es_fora_do_m\u00f3dulo",
+      "label": "Altera\u00e7\u00f5es fora do m\u00f3dulo",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_seed",
+      "label": "Seed",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_ficou_de_fora_e_por_qu\u00ea",
+      "label": "O que ficou de fora, e por qu\u00ea",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_comandos_de_confer\u00eancia",
+      "label": "Comandos de confer\u00eancia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L149"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_dom\u00ednio_fun\u00e7\u00f5es_puras_testadas_primeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_superf\u00edcie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_entrou",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_reuso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_altera\u00e7\u00f5es_fora_do_m\u00f3dulo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_seed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_o_que_ficou_de_fora_e_por_qu\u00ea",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_meridian_v1_diagnose_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_28_meridian_diagnose_comandos_de_confer\u00eancia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-28-meridian-diagnose.md",
+      "source_location": "L149",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

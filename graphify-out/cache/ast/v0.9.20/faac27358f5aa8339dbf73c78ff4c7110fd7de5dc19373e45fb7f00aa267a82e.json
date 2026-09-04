@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_md",
+      "label": "STACK-AND-METHODOLOGY.md",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cosmos_stack_feature_methodology",
+      "label": "Cosmos \u2014 Stack & Feature Methodology",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_tech_stack",
+      "label": "Tech Stack",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_feature_methodology_mapping",
+      "label": "Feature \u2192 Methodology Mapping",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_design_system_core_principles",
+      "label": "Design System \u2014 Core Principles",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_1_marketing_layer_docs_design_md",
+      "label": "1. Marketing layer (`docs/design.md`)",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_2_product_ui_layer_docs_design_design_cosmos_product_md_docs_design_system_description_md",
+      "label": "2. Product UI layer (`docs/design/DESIGN-COSMOS-PRODUCT.md`, `docs/design-system-description.md`)",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cross_cutting_ux_accessibility_stance_docs_design_design_excellence_checklist_md",
+      "label": "Cross-cutting UX/accessibility stance (`docs/design/DESIGN-EXCELLENCE-CHECKLIST.md`)",
+      "file_type": "document",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L103"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cosmos_stack_feature_methodology",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cosmos_stack_feature_methodology",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_tech_stack",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cosmos_stack_feature_methodology",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_feature_methodology_mapping",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cosmos_stack_feature_methodology",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_design_system_core_principles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_design_system_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_1_marketing_layer_docs_design_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_design_system_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_2_product_ui_layer_docs_design_design_cosmos_product_md_docs_design_system_description_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_design_system_core_principles",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stack_and_methodology_cross_cutting_ux_accessibility_stance_docs_design_design_excellence_checklist_md",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/STACK-AND-METHODOLOGY.md",
+      "source_location": "L103",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

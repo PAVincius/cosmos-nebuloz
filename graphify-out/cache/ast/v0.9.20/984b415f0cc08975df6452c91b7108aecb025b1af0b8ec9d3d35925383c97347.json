@@ -1,0 +1,79 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_md",
+      "label": "research.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_research_est\u00e1gio_de_intent",
+      "label": "Research: Est\u00e1gio de Intent",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_parsing_de_frontmatter_sem_yq",
+      "label": "Decision: parsing de frontmatter sem `yq`",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_reusar_create_new_feature_sh_em_vez_de_duplicar",
+      "label": "Decision: reusar `create-new-feature.sh` em vez de duplicar",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_gate_via_extens\u00e3o_before_specify_hook_n\u00e3o_edi\u00e7\u00e3o_de_template_vendored",
+      "label": "Decision: gate via extens\u00e3o (`before_specify` hook), n\u00e3o edi\u00e7\u00e3o de template vendored",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L24"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_research_est\u00e1gio_de_intent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_research_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_parsing_de_frontmatter_sem_yq",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_research_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_reusar_create_new_feature_sh_em_vez_de_duplicar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_research_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_research_decision_gate_via_extens\u00e3o_before_specify_hook_n\u00e3o_edi\u00e7\u00e3o_de_template_vendored",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/research.md",
+      "source_location": "L24",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

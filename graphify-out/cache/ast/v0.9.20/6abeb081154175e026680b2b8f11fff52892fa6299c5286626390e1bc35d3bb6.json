@@ -1,0 +1,211 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "label": "HANDOFF.md",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "label": "Charter \u2014 handoff de continua\u00e7\u00e3o do port de UI",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_1_como_recuperar_o_prot\u00f3tipo",
+      "label": "1. Como recuperar o prot\u00f3tipo",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_2_o_que_j\u00e1_est\u00e1_pronto",
+      "label": "2. O que j\u00e1 est\u00e1 pronto",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_camadas_fechadas_n\u00e3o_mexer_sem_motivo",
+      "label": "Camadas fechadas (n\u00e3o mexer sem motivo)",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_infra_de_ui_nova_\u00e9_a_funda\u00e7\u00e3o_do_port",
+      "label": "Infra de UI (nova, \u00e9 a funda\u00e7\u00e3o do port)",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_telas_j\u00e1_portadas",
+      "label": "Telas j\u00e1 portadas",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_3_armadilhas_j\u00e1_pagas_n\u00e3o_repetir",
+      "label": "3. Armadilhas j\u00e1 pagas \u2014 n\u00e3o repetir",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_4_diverg\u00eancias_deliberadas_do_prot\u00f3tipo",
+      "label": "4. Diverg\u00eancias deliberadas do prot\u00f3tipo",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_5_comandos",
+      "label": "5. Comandos",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_6_e2e",
+      "label": "6. E2E",
+      "file_type": "document",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L151"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_1_como_recuperar_o_prot\u00f3tipo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_2_o_que_j\u00e1_est\u00e1_pronto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_2_o_que_j\u00e1_est\u00e1_pronto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_camadas_fechadas_n\u00e3o_mexer_sem_motivo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_2_o_que_j\u00e1_est\u00e1_pronto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_infra_de_ui_nova_\u00e9_a_funda\u00e7\u00e3o_do_port",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_2_o_que_j\u00e1_est\u00e1_pronto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_telas_j\u00e1_portadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_3_armadilhas_j\u00e1_pagas_n\u00e3o_repetir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_4_diverg\u00eancias_deliberadas_do_prot\u00f3tipo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0003_derivacao_classe_maxima_fornecedor_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0011_notificacoes_e_job_sla_fora_do_v1_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_5_comandos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_charter_handoff_de_continua\u00e7\u00e3o_do_port_de_ui",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_handoff_charter_prototype_handoff_6_e2e",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design-handoff/charter-prototype/HANDOFF.md",
+      "source_location": "L151",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

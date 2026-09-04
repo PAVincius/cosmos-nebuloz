@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_md",
+      "label": "2026-05-26-t02-ai-invest-scoring.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "label": "T02 \u2014 AI INVEST Scoring em Epic \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_1_schema_zod_do_output_invest",
+      "label": "Task 1: Schema Zod do output INVEST",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_2_prompts_do_llm_com_few_shot",
+      "label": "Task 2: Prompts do LLM com few-shot",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_3_core_scoring_lib_com_cache_por_hash",
+      "label": "Task 3: Core scoring lib com cache por hash",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_4_hook_scoring_no_create_epic_e_update_epic",
+      "label": "Task 4: Hook scoring no create-epic e update-epic",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L280"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_5_server_action_recompute_manual",
+      "label": "Task 5: Server action recompute manual",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L325"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_6_ui_badge_breakdown_panel",
+      "label": "Task 6: UI \u2014 badge + breakdown panel",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L356"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_7_e2e_recompute_button_breakdown_drawer",
+      "label": "Task 7: E2E \u2014 recompute button + breakdown drawer",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L424"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L437"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_1_schema_zod_do_output_invest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_2_prompts_do_llm_com_few_shot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_3_core_scoring_lib_com_cache_por_hash",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_4_hook_scoring_no_create_epic_e_update_epic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L280",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_5_server_action_recompute_manual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L325",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_6_ui_badge_breakdown_panel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L356",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_task_7_e2e_recompute_button_breakdown_drawer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L424",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_t02_ai_invest_scoring_em_epic_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t02_ai_invest_scoring_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t02-ai-invest-scoring.md",
+      "source_location": "L437",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

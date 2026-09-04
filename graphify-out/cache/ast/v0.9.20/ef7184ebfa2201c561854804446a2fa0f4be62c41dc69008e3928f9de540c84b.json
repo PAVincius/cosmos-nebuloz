@@ -1,0 +1,255 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_md",
+      "label": "2026-05-22-flow-intelligence-automation.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "label": "Flow Intelligence Automation Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_context_read_before_starting",
+      "label": "Context (read before starting)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "label": "Subsystem A \u2014 Cron Layer",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_1_scoresnapshotstaleness_session_free_service",
+      "label": "Task 1: scoreSnapshotStaleness (session-free service)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_2_refactor_staleness_check_cron",
+      "label": "Task 2: Refactor staleness-check cron",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L261"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_3_anomaly_detection_cron_route",
+      "label": "Task 3: Anomaly detection cron route",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L329"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_4_configure_vercel_cron",
+      "label": "Task 4: Configure Vercel Cron",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L636"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_b_sprint_close_event",
+      "label": "Subsystem B \u2014 Sprint Close Event",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L685"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_5_snapshotsprintflowmetrics",
+      "label": "Task 5: snapshotSprintFlowMetrics",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L687"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_6_closesprintandsnapshot_server_action",
+      "label": "Task 6: closeSprintAndSnapshot server action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L915"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_7_close_sprint_button_ui",
+      "label": "Task 7: Close Sprint button UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_c_dashboard_tabs_wire_up",
+      "label": "Subsystem C \u2014 Dashboard Tabs Wire-up",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1348"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_8_flow_page_tsx_capacity_synergy_fetches",
+      "label": "Task 8: flow/page.tsx \u2014 capacity + synergy fetches",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1350"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_9_flowmetricsdashboard_capacity_synergy_tabs",
+      "label": "Task 9: FlowMetricsDashboard \u2014 Capacity + Synergy tabs",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1424"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_self_review",
+      "label": "Self-Review",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1573"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_context_read_before_starting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_1_scoresnapshotstaleness_session_free_service",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_2_refactor_staleness_check_cron",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L261",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_3_anomaly_detection_cron_route",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L329",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_a_cron_layer",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_4_configure_vercel_cron",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L636",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_b_sprint_close_event",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L685",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_b_sprint_close_event",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_5_snapshotsprintflowmetrics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L687",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_b_sprint_close_event",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_6_closesprintandsnapshot_server_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L915",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_b_sprint_close_event",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_7_close_sprint_button_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_c_dashboard_tabs_wire_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1348",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_c_dashboard_tabs_wire_up",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_8_flow_page_tsx_capacity_synergy_fetches",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1350",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_subsystem_c_dashboard_tabs_wire_up",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_task_9_flowmetricsdashboard_capacity_synergy_tabs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1424",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_flow_intelligence_automation_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_22_flow_intelligence_automation_self_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-22-flow-intelligence-automation.md",
+      "source_location": "L1573",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

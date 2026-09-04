@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_md",
+      "label": "0002-papel-governanca-ortogonal-safe.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "label": "ADR-0002 \u2014 Papel de governan\u00e7a ortogonal ao papel SAFe",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L51"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_adr_0002_papel_de_governan\u00e7a_ortogonal_ao_papel_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0002_papel_governanca_ortogonal_safe_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0002-papel-governanca-ortogonal-safe.md",
+      "source_location": "L51",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

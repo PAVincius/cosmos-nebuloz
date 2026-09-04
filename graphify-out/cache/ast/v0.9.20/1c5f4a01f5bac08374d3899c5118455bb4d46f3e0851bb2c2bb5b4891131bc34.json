@@ -1,0 +1,559 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_md",
+      "label": "CLAUDE.md",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "label": "COSMOS Design System \u2014 Spec para Claude Code",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "label": "1. Tokens CSS",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_temas",
+      "label": "Temas",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_tokens_base_theme_independent",
+      "label": "Tokens base (theme-independent)",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_light",
+      "label": "Cores light",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_dark_tecno_ui",
+      "label": "Cores dark (tecno-UI)",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_marketing_linear_canvas",
+      "label": "Cores marketing (Linear canvas)",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_2_tailwind_config",
+      "label": "2. Tailwind Config",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_3_tipografia",
+      "label": "3. Tipografia",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_4_arts_identidade_de_trem",
+      "label": "4. ARTs \u2014 Identidade de Trem",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "label": "5. Componentes \u2014 Receitas TSX",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L158"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_button",
+      "label": "Button",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_iconbutton",
+      "label": "IconButton",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L184"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_badge",
+      "label": "Badge",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L191"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_avatar",
+      "label": "Avatar",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L212"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_card",
+      "label": "Card",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L228"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_sectioncard",
+      "label": "SectionCard",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L235"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_kpicard_assinatura_tecno_ui",
+      "label": "KpiCard (assinatura tecno-UI)",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L253"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_css_do_kpi_fora_do_tailwind",
+      "label": "CSS do KPI (fora do Tailwind)",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L347"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_progress",
+      "label": "Progress",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L356"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_switch",
+      "label": "Switch",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L370"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_nav_item",
+      "label": "Nav Item",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L385"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_input",
+      "label": "Input",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L406"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_empty_state",
+      "label": "Empty State",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L413"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_skeleton",
+      "label": "Skeleton",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L425"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_6_layout_do_app_shell",
+      "label": "6. Layout do App Shell",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L439"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_7_padr\u00e3o_de_tela_dashboard_de_m\u00e9tricas",
+      "label": "7. Padr\u00e3o de Tela \u2014 Dashboard de M\u00e9tricas",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L485"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_8_wsjf_c\u00e1lculo_e_display",
+      "label": "8. WSJF \u2014 C\u00e1lculo e Display",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L524"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_9_motion_regras",
+      "label": "9. Motion \u2014 Regras",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L550"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_10_regras_globais_n\u00e3o_quebrar",
+      "label": "10. Regras Globais \u2014 N\u00e3o Quebrar",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L570"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_fazer",
+      "label": "\u2705 Fazer",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L572"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_nunca",
+      "label": "\u274c Nunca",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L581"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_11_densidade",
+      "label": "11. Densidade",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L592"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_12_sem\u00e2ntica_safe_classes_utilit\u00e1rias",
+      "label": "12. Sem\u00e2ntica SAFe \u2014 Classes utilit\u00e1rias",
+      "file_type": "document",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L609"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_temas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_tokens_base_theme_independent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_light",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_dark_tecno_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_1_tokens_css",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cores_marketing_linear_canvas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_2_tailwind_config",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_3_tipografia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_4_arts_identidade_de_trem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_button",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_iconbutton",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L184",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_badge",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_avatar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L212",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L228",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_sectioncard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_kpicard_assinatura_tecno_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L253",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_css_do_kpi_fora_do_tailwind",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L347",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_progress",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L356",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_switch",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L370",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_nav_item",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L385",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_input",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L406",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_empty_state",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L413",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_5_componentes_receitas_tsx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_skeleton",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L425",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_6_layout_do_app_shell",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L439",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_7_padr\u00e3o_de_tela_dashboard_de_m\u00e9tricas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_8_wsjf_c\u00e1lculo_e_display",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L524",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_9_motion_regras",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L550",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_10_regras_globais_n\u00e3o_quebrar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L570",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_10_regras_globais_n\u00e3o_quebrar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_fazer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L572",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_10_regras_globais_n\u00e3o_quebrar",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_nunca",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L581",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_11_densidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L592",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_cosmos_design_system_spec_para_claude_code",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_cosmos_ds_claude_12_sem\u00e2ntica_safe_classes_utilit\u00e1rias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/cosmos-ds/CLAUDE.md",
+      "source_location": "L609",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

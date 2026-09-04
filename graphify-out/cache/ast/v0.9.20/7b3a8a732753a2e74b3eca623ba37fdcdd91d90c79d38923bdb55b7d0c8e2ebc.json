@@ -1,0 +1,1391 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_md",
+      "label": "2026-05-26-cosmos-market-research-framework.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "label": "Cosmos \u2014 Market Research Framework",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_como_usar_este_documento",
+      "label": "Como usar este documento",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_mapa_de_t\u00f3picos",
+      "label": "Mapa de T\u00f3picos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t01_safe_como_framework_base_pesquisado",
+      "label": "T01 \u2014 SAFe como Framework-Base \u2705 PESQUISADO",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_veredito",
+      "label": "Veredito",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_dados_encontrados",
+      "label": "Dados Encontrados",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_implica\u00e7\u00f5es_estrat\u00e9gicas",
+      "label": "Implica\u00e7\u00f5es Estrat\u00e9gicas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "label": "T02 \u2014 AI INVEST Scoring em Epic",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L116"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L131"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "label": "T03 \u2014 RAG Contextual na PI Planning",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_144",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L144"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_154",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L154"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_163",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_172",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_177",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "label": "T04 \u2014 Flow Metrics (6 Dimens\u00f5es SAFe)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L184"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_as_6_m\u00e9tricas",
+      "label": "As 6 M\u00e9tricas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L191"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_202",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L202"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_225",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L225"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_hip\u00f3teses_de_resultado_calibrar_com_dados",
+      "label": "Hip\u00f3teses de Resultado (calibrar com dados)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L237"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_244",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L244"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_250",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L250"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "label": "T05 \u2014 Anomaly Detection Proativo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L257"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_263",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L263"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_280",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L280"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_289",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L289"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_299",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L299"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_304",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "label": "T06 \u2014 Synergy Detection de Times",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L311"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_317",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L317"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_329",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L329"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_338",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L338"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_347",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L347"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_352",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L352"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "label": "T07 \u2014 FinOps Integrado ao Portfolio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L359"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_367",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L367"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_381",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L381"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_402",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L402"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_hip\u00f3teses_de_resultado_calibrar_com_dados_413",
+      "label": "Hip\u00f3teses de Resultado (calibrar com dados)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L413"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_420",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L420"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_426",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L426"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "label": "T08 \u2014 Confidence Vote Digitalizada",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L434"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_440",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L440"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_449",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L449"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_458",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L458"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_467",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L467"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_472",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L472"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "label": "T09 \u2014 Governance de Epic (LPM Digital)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L479"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_485",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L485"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_499",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L499"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_508",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L508"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_518",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L518"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_523",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L523"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "label": "T10 \u2014 Large Solution Level (LST)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L529"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_534",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L534"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_542",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L542"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_551",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L551"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_559",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L559"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_564",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L564"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "label": "T11 \u2014 Colabora\u00e7\u00e3o Real-Time em Epic (Yjs CRDT)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L571"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_577",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L577"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_585",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L585"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_593",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L593"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_602",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L602"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_607",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L607"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "label": "T12 \u2014 Sync Bidirecional Linear / GitHub",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L613"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_619",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L619"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_636",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L636"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_645",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L645"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_653",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L653"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_658",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L658"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "label": "T13 \u2014 Multi-Tenant com Roles SAFe Nativos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L665"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_671",
+      "label": "O que o Cosmos faz",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L671"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_686",
+      "label": "Perguntas de Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L686"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_694",
+      "label": "Concorrentes a Benchmarkar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L694"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_702",
+      "label": "Sinais de Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L702"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_707",
+      "label": "Sinais de Invalida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L707"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_prioriza\u00e7\u00e3o_para_pesquisa",
+      "label": "Prioriza\u00e7\u00e3o para Pesquisa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L713"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_fontes_de_pesquisa_recomendadas",
+      "label": "Fontes de Pesquisa Recomendadas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L735"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_dados_de_mercado",
+      "label": "Dados de Mercado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L737"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_entrevistas_icp",
+      "label": "Entrevistas (ICP)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L744"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_comunidades_para_pesquisa_qualitativa",
+      "label": "Comunidades para pesquisa qualitativa",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L750"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_como_usar_este_documento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_mapa_de_t\u00f3picos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t01_safe_como_framework_base_pesquisado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t01_safe_como_framework_base_pesquisado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_veredito",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t01_safe_como_framework_base_pesquisado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_dados_encontrados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t01_safe_como_framework_base_pesquisado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_implica\u00e7\u00f5es_estrat\u00e9gicas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t02_ai_invest_scoring_em_epic",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_144",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_154",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_163",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_172",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t03_rag_contextual_na_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_177",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L184",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_as_6_m\u00e9tricas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L191",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_202",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_225",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L225",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_hip\u00f3teses_de_resultado_calibrar_com_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L237",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_244",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t04_flow_metrics_6_dimens\u00f5es_safe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_250",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L257",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_263",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_280",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L280",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_289",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L289",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_299",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L299",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t05_anomaly_detection_proativo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_304",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L311",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_317",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L317",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_329",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L329",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_338",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L338",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_347",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L347",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t06_synergy_detection_de_times",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_352",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L352",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L359",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_367",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L367",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_381",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L381",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_402",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L402",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_hip\u00f3teses_de_resultado_calibrar_com_dados_413",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L413",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_420",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L420",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t07_finops_integrado_ao_portfolio",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_426",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L426",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L434",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_440",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L440",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_449",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L449",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_458",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L458",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_467",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L467",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t08_confidence_vote_digitalizada",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_472",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L472",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L479",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_485",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_499",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L499",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_508",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L508",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_518",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L518",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t09_governance_de_epic_lpm_digital",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_523",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L523",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L529",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_534",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L534",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_542",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L542",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_551",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_559",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L559",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t10_large_solution_level_lst",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_564",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L564",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L571",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_577",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L577",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_585",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L585",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_593",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L593",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_602",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L602",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t11_colabora\u00e7\u00e3o_real_time_em_epic_yjs_crdt",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_607",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L607",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L613",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_619",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L619",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_636",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L636",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_645",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L645",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_653",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L653",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t12_sync_bidirecional_linear_github",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_658",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L658",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L665",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_o_que_o_cosmos_faz_671",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L671",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_perguntas_de_pesquisa_686",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L686",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_concorrentes_a_benchmarkar_694",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L694",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_valida\u00e7\u00e3o_702",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L702",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_t13_multi_tenant_com_roles_safe_nativos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_sinais_de_invalida\u00e7\u00e3o_707",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L707",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_prioriza\u00e7\u00e3o_para_pesquisa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L713",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_cosmos_market_research_framework",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_fontes_de_pesquisa_recomendadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L735",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_fontes_de_pesquisa_recomendadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_dados_de_mercado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L737",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_fontes_de_pesquisa_recomendadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_entrevistas_icp",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L744",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_fontes_de_pesquisa_recomendadas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_cosmos_market_research_framework_comunidades_para_pesquisa_qualitativa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-cosmos-market-research-framework.md",
+      "source_location": "L750",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

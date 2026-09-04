@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_md",
+      "label": "2026-08-08-cosmos-settings-abas.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "label": "Settings do Cosmos \u2014 as quatro lacunas \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_1_aba_relat\u00f3rios",
+      "label": "Task 1: Aba Relat\u00f3rios",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_2_aba_integra\u00e7\u00f5es",
+      "label": "Task 2: Aba Integra\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L269"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_3_se\u00e7\u00e3o_pap\u00e9is_customizados_em_membros",
+      "label": "Task 3: Se\u00e7\u00e3o Pap\u00e9is customizados em Membros",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L455"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_4_se\u00e7\u00e3o_provedor_de_identidade_em_seguran\u00e7a",
+      "label": "Task 4: Se\u00e7\u00e3o Provedor de identidade em Seguran\u00e7a",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L621"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_5_verifica\u00e7\u00e3o_e_a_decis\u00e3o_sobre_settings",
+      "label": "Task 5: Verifica\u00e7\u00e3o e a decis\u00e3o sobre `/settings/*`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L789"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_self_review",
+      "label": "Self-Review",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L827"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_1_aba_relat\u00f3rios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_2_aba_integra\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L269",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_3_se\u00e7\u00e3o_pap\u00e9is_customizados_em_membros",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L455",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_4_se\u00e7\u00e3o_provedor_de_identidade_em_seguran\u00e7a",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L621",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_task_5_verifica\u00e7\u00e3o_e_a_decis\u00e3o_sobre_settings",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L789",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_settings_do_cosmos_as_quatro_lacunas_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_08_08_cosmos_settings_abas_self_review",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-08-08-cosmos-settings-abas.md",
+      "source_location": "L827",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

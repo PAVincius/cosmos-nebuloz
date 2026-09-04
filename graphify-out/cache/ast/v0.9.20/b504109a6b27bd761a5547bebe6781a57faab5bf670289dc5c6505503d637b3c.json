@@ -1,0 +1,719 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_md",
+      "label": "DESIGN-EXCELLENCE-CHECKLIST.md",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "label": "Cosmos Nebuloz \u2014 Design Excellence Master Checklist",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "label": "1. DESIGN TOKENS \u2014 Funda\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_1_cor",
+      "label": "1.1 Cor",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L12"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_2_tipografia",
+      "label": "1.2 Tipografia",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_3_espa\u00e7amento",
+      "label": "1.3 Espa\u00e7amento",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_4_borders_radius",
+      "label": "1.4 Borders & Radius",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_5_sombras_elevation",
+      "label": "1.5 Sombras (Elevation)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "label": "2. SISTEMA DE MOTION",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_1_princ\u00edpios",
+      "label": "2.1 Princ\u00edpios",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_2_curvas_de_easing_definir_como_tokens",
+      "label": "2.2 Curvas de Easing (definir como tokens)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_3_durations",
+      "label": "2.3 Durations",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_4_micro_intera\u00e7\u00f5es_priorit\u00e1rias",
+      "label": "2.4 Micro-intera\u00e7\u00f5es Priorit\u00e1rias",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_5_matriz_frequ\u00eancia_expressividade",
+      "label": "2.5 Matriz Frequ\u00eancia \u00d7 Expressividade \u26a1",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L99"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "label": "3. ESTADOS DE COMPONENTE \u2014 TODOS os 8",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_1_cards_epic_feature_story_task",
+      "label": "3.1 Cards (Epic, Feature, Story, Task)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_2_bot\u00f5es",
+      "label": "3.2 Bot\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_3_inputs_forms",
+      "label": "3.3 Inputs & Forms",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_4_tabelas_listas_densas_lpm_rte",
+      "label": "3.4 Tabelas & Listas Densas (LPM, RTE)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_5_badges_status_pills",
+      "label": "3.5 Badges & Status Pills",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "label": "4. LAYOUT & COMPOSI\u00c7\u00c3O",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L157"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_1_shell_do_app",
+      "label": "4.1 Shell do App",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_2_kanban_board",
+      "label": "4.2 Kanban Board",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_3_drawers_pain\u00e9is_laterais",
+      "label": "4.3 Drawers & Pain\u00e9is Laterais",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L179"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_4_modais",
+      "label": "4.4 Modais",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L185"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "label": "5. UX POR PERSONA",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L193"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_1_rte_release_train_engineer_vis\u00e3o_sist\u00eamica_velocidade_de_rea\u00e7\u00e3o",
+      "label": "5.1 RTE (Release Train Engineer) \u2014 \"Vis\u00e3o sist\u00eamica, velocidade de rea\u00e7\u00e3o\"",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_2_lpm_lean_portfolio_manager_decis\u00e3o_financeira_prioriza\u00e7\u00e3o_estrat\u00e9gica",
+      "label": "5.2 LPM (Lean Portfolio Manager) \u2014 \"Decis\u00e3o financeira, prioriza\u00e7\u00e3o estrat\u00e9gica\"",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_3_po_product_owner_clareza_do_backlog_alinhamento_de_valor",
+      "label": "5.3 PO (Product Owner) \u2014 \"Clareza do backlog, alinhamento de valor\"",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L217"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_4_sm_scrum_master_cad\u00eancia_impedimentos_melhoria_cont\u00ednua",
+      "label": "5.4 SM (Scrum Master) \u2014 \"Cad\u00eancia, impedimentos, melhoria cont\u00ednua\"",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L226"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_5_devops_visibilidade_de_pipeline_detec\u00e7\u00e3o_r\u00e1pida_de_problemas",
+      "label": "5.5 DevOps \u2014 \"Visibilidade de pipeline, detec\u00e7\u00e3o r\u00e1pida de problemas\"",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L235"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_ai_ux_padr\u00f5es_espec\u00edficos",
+      "label": "6. AI UX \u2014 PADR\u00d5ES ESPEC\u00cdFICOS",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L246"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_1_ai_sempre_passiva_primeiro",
+      "label": "6.1 AI sempre passiva primeiro",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L248"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_2_ai_visual_identity",
+      "label": "6.2 AI Visual Identity",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L259"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_3_ai_actions_expandable_pill_pattern_j\u00e1_implementado",
+      "label": "6.3 AI Actions (expandable pill pattern \u2014 j\u00e1 implementado)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L265"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_7_acessibilidade",
+      "label": "7. ACESSIBILIDADE",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L272"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_8_performance_percebida",
+      "label": "8. PERFORMANCE PERCEBIDA",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L284"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_9_consist\u00eancia_de_linguagem_visual",
+      "label": "9. CONSIST\u00caNCIA DE LINGUAGEM VISUAL",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_\u00edcones",
+      "label": "\u00cdcones",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L298"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_linguagem_de_dados",
+      "label": "Linguagem de Dados",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_10_dark_light_mode",
+      "label": "10. DARK/LIGHT MODE",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L313"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_prioriza\u00e7\u00e3o_de_implementa\u00e7\u00e3o",
+      "label": "PRIORIZA\u00c7\u00c3O DE IMPLEMENTA\u00c7\u00c3O",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L324"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_impacto_imediato_fazer_antes_de_demo_trial",
+      "label": "Impacto imediato (fazer antes de demo/trial)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L326"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_impacto_m\u00e9dio_sprint_seguinte",
+      "label": "Impacto m\u00e9dio (sprint seguinte)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L333"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_polimento_para_v1_0_p\u00fablico",
+      "label": "Polimento (para v1.0 p\u00fablico)",
+      "file_type": "document",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L339"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_1_cor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L12",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_2_tipografia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_3_espa\u00e7amento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_4_borders_radius",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_design_tokens_funda\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_1_5_sombras_elevation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_1_princ\u00edpios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_2_curvas_de_easing_definir_como_tokens",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_3_durations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_4_micro_intera\u00e7\u00f5es_priorit\u00e1rias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_sistema_de_motion",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_2_5_matriz_frequ\u00eancia_expressividade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_1_cards_epic_feature_story_task",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_2_bot\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_3_inputs_forms",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_4_tabelas_listas_densas_lpm_rte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_estados_de_componente_todos_os_8",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_3_5_badges_status_pills",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_1_shell_do_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_2_kanban_board",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_3_drawers_pain\u00e9is_laterais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L179",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_layout_composi\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_4_4_modais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L185",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_1_rte_release_train_engineer_vis\u00e3o_sist\u00eamica_velocidade_de_rea\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_2_lpm_lean_portfolio_manager_decis\u00e3o_financeira_prioriza\u00e7\u00e3o_estrat\u00e9gica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_3_po_product_owner_clareza_do_backlog_alinhamento_de_valor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_4_sm_scrum_master_cad\u00eancia_impedimentos_melhoria_cont\u00ednua",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_ux_por_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_5_5_devops_visibilidade_de_pipeline_detec\u00e7\u00e3o_r\u00e1pida_de_problemas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L235",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_ai_ux_padr\u00f5es_espec\u00edficos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_ai_ux_padr\u00f5es_espec\u00edficos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_1_ai_sempre_passiva_primeiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_ai_ux_padr\u00f5es_espec\u00edficos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_2_ai_visual_identity",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L259",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_ai_ux_padr\u00f5es_espec\u00edficos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_6_3_ai_actions_expandable_pill_pattern_j\u00e1_implementado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L265",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_7_acessibilidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L272",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_8_performance_percebida",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L284",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_9_consist\u00eancia_de_linguagem_visual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_9_consist\u00eancia_de_linguagem_visual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_\u00edcones",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L298",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_9_consist\u00eancia_de_linguagem_visual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_linguagem_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_10_dark_light_mode",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L313",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_cosmos_nebuloz_design_excellence_master_checklist",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_prioriza\u00e7\u00e3o_de_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L324",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_prioriza\u00e7\u00e3o_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_impacto_imediato_fazer_antes_de_demo_trial",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_prioriza\u00e7\u00e3o_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_impacto_m\u00e9dio_sprint_seguinte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L333",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_prioriza\u00e7\u00e3o_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_design_design_excellence_checklist_polimento_para_v1_0_p\u00fablico",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/design/DESIGN-EXCELLENCE-CHECKLIST.md",
+      "source_location": "L339",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

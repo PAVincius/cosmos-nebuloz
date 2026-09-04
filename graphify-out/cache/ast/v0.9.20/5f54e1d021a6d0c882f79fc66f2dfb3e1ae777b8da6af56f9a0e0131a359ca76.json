@@ -1,0 +1,543 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_md",
+      "label": "PI_PLANNING_WORKSPACE.md",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "label": "PI_PLANNING_WORKSPACE \u2013 Workspace de PI Planning do ART",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_1_prop\u00f3sito",
+      "label": "1. Prop\u00f3sito",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_escopo_do_workspace",
+      "label": "2. Escopo do Workspace",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_1_n\u00edvel_de_atua\u00e7\u00e3o",
+      "label": "2.1. N\u00edvel de atua\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_2_artefatos_cobertos",
+      "label": "2.2. Artefatos cobertos",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_estrutura_visual_do_workspace",
+      "label": "3. Estrutura visual do Workspace",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_1_layout_macro",
+      "label": "3.1. Layout macro",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_2_tabs_do_workspace",
+      "label": "3.2. Tabs do workspace",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L52"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_team_breakout_planejamento_por_time",
+      "label": "4. Team Breakout \u2013 Planejamento por Time",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_1_backlog_de_pi_do_time",
+      "label": "4.1. Backlog de PI do Time",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_2_dados_por_sprint",
+      "label": "4.2. Dados por sprint",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_program_board_features_depend\u00eancias_e_marcos",
+      "label": "5. Program Board \u2013 Features, Depend\u00eancias e Marcos",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_1_estrutura",
+      "label": "5.1. Estrutura",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_2_l\u00f3gica_de_depend\u00eancias",
+      "label": "5.2. L\u00f3gica de depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_objetivos_de_pi",
+      "label": "6. Objetivos de PI",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_1_objetivos_do_time",
+      "label": "6.1. Objetivos do Time",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_2_objetivos_de_art",
+      "label": "6.2. Objetivos de ART",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_riscos_program_level_com_roam",
+      "label": "7. Riscos Program-Level com ROAM",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_1_captura_e_categoriza\u00e7\u00e3o",
+      "label": "7.1. Captura e categoriza\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_2_integra\u00e7\u00e3o_com_execu\u00e7\u00e3o",
+      "label": "7.2. Integra\u00e7\u00e3o com execu\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L137"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_confidence_vote_e_sa\u00edda_do_pi_planning",
+      "label": "8. Confidence Vote e sa\u00edda do PI Planning",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_1_confidence_vote",
+      "label": "8.1. Confidence Vote",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_2_artefatos_finais",
+      "label": "8.2. Artefatos finais",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_9_integra\u00e7\u00f5es_com_outros_m\u00f3dulos_do_cosmos",
+      "label": "9. Integra\u00e7\u00f5es com outros m\u00f3dulos do COSMOS",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L162"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "label": "10. Frontend \u2013 Arquitetura de Componentes",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L173"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_1_hierarquia_de_componentes",
+      "label": "10.1. Hierarquia de componentes",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L175"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_2_estrat\u00e9gia_de_dados",
+      "label": "10.2. Estrat\u00e9gia de dados",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L217"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_3_program_board_implementa\u00e7\u00e3o",
+      "label": "10.3. Program Board \u2013 Implementa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L239"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_4_state_management_workspace",
+      "label": "10.4. State management \u2013 Workspace",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L274"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_5_roamboard_quadrantes_dnd",
+      "label": "10.5. RoamBoard \u2013 Quadrantes DnD",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L312"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_6_confidencevotepanel",
+      "label": "10.6. ConfidenceVotePanel",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L334"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_7_performance_code_splitting",
+      "label": "10.7. Performance \u2013 Code splitting",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L357"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_8_acessibilidade",
+      "label": "10.8. Acessibilidade",
+      "file_type": "document",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L368"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_1_prop\u00f3sito",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_escopo_do_workspace",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_escopo_do_workspace",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_1_n\u00edvel_de_atua\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_escopo_do_workspace",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_2_2_artefatos_cobertos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_estrutura_visual_do_workspace",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_estrutura_visual_do_workspace",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_1_layout_macro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_estrutura_visual_do_workspace",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_3_2_tabs_do_workspace",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_team_breakout_planejamento_por_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_team_breakout_planejamento_por_time",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_1_backlog_de_pi_do_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_team_breakout_planejamento_por_time",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_4_2_dados_por_sprint",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_program_board_features_depend\u00eancias_e_marcos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_program_board_features_depend\u00eancias_e_marcos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_1_estrutura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_program_board_features_depend\u00eancias_e_marcos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_5_2_l\u00f3gica_de_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_objetivos_de_pi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_objetivos_de_pi",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_1_objetivos_do_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_objetivos_de_pi",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_6_2_objetivos_de_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_riscos_program_level_com_roam",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_riscos_program_level_com_roam",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_1_captura_e_categoriza\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_riscos_program_level_com_roam",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_7_2_integra\u00e7\u00e3o_com_execu\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L137",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_confidence_vote_e_sa\u00edda_do_pi_planning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_confidence_vote_e_sa\u00edda_do_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_1_confidence_vote",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_confidence_vote_e_sa\u00edda_do_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_8_2_artefatos_finais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_9_integra\u00e7\u00f5es_com_outros_m\u00f3dulos_do_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_pi_planning_workspace_workspace_de_pi_planning_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L173",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_1_hierarquia_de_componentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_2_estrat\u00e9gia_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_3_program_board_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L239",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_4_state_management_workspace",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L274",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_5_roamboard_quadrantes_dnd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L312",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_6_confidencevotepanel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L334",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_7_performance_code_splitting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L357",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_pi_planning_pi_planning_workspace_10_8_acessibilidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/pi-planning/PI_PLANNING_WORKSPACE.md",
+      "source_location": "L368",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

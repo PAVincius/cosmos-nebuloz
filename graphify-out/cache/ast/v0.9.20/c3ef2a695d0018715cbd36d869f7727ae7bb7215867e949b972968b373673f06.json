@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_md",
+      "label": "COMMON_MISTAKES.md",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "label": "Common Mistakes",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_1_missing_tenantid_filter_in_db_queries",
+      "label": "1. Missing `tenantId` filter in DB queries",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_2_throwing_instead_of_returning_result_t",
+      "label": "2. Throwing instead of returning `Result<T>`",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_3_forgetting_await_headers_in_requiretenantsession",
+      "label": "3. Forgetting `await headers()` in `requireTenantSession`",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_4_duplicating_zod_primitives_already_in_base_ts",
+      "label": "4. Duplicating Zod primitives already in `_base.ts`",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_5_importing_action_before_vi_mock_in_tests",
+      "label": "5. Importing action BEFORE `vi.mock()` in tests",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_6_using_npm_yarn_instead_of_pnpm",
+      "label": "6. Using `npm`/`yarn` instead of `pnpm`",
+      "file_type": "document",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L99"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_1_missing_tenantid_filter_in_db_queries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_2_throwing_instead_of_returning_result_t",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_3_forgetting_await_headers_in_requiretenantsession",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_4_duplicating_zod_primitives_already_in_base_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_5_importing_action_before_vi_mock_in_tests",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_common_mistakes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_common_mistakes_6_using_npm_yarn_instead_of_pnpm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/COMMON_MISTAKES.md",
+      "source_location": "L99",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

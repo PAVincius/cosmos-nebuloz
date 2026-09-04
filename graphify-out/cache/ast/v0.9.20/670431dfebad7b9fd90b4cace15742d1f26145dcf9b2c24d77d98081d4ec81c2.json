@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_md",
+      "label": "2026-06-16-executive-confidence-index-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "label": "Executive Confidence Index \u2014 Design Spec",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_1_overview",
+      "label": "1. Overview",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_2_goals_non_goals",
+      "label": "2. Goals / Non-Goals",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_architecture",
+      "label": "3. Architecture",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_1_pure_module_apps_app_lib_analytics_release_forecast_ts",
+      "label": "3.1 Pure module \u2014 `apps/app/lib/analytics/release-forecast.ts`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_2_server_action_apps_app_app_actions_analytics_epic_confidence_ts",
+      "label": "3.2 Server action \u2014 `apps/app/app/actions/analytics/epic-confidence.ts`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_3_ui",
+      "label": "3.3 UI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_4_data_flow",
+      "label": "4. Data Flow",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_5_rag_semantics_hardcoded_defaults",
+      "label": "5. RAG Semantics (hardcoded defaults)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_6_business_language_layer_jargon_impact",
+      "label": "6. Business-Language Layer (jargon \u2192 impact)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L136"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_7_error_handling",
+      "label": "7. Error Handling",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_8_testing_vitest",
+      "label": "8. Testing (vitest)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_9_file_list",
+      "label": "9. File List",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L164"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_10_yagni_cuts_explicit",
+      "label": "10. YAGNI Cuts (explicit)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L178"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_1_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_2_goals_non_goals",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_1_pure_module_apps_app_lib_analytics_release_forecast_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_2_server_action_apps_app_app_actions_analytics_epic_confidence_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_3_3_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_4_data_flow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_5_rag_semantics_hardcoded_defaults",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_6_business_language_layer_jargon_impact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_7_error_handling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_8_testing_vitest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_9_file_list",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_executive_confidence_index_design_spec",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_executive_confidence_index_design_10_yagni_cuts_explicit",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-executive-confidence-index-design.md",
+      "source_location": "L178",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

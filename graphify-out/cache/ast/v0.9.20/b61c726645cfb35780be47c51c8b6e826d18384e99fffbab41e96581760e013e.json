@@ -1,0 +1,543 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_md",
+      "label": "LEAN_BUDGET.md",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "label": "LEAN_BUDGET \u2013 Modelo de Lean Budget no COSMOS",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_1_prop\u00f3sito",
+      "label": "1. Prop\u00f3sito",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_2_conceitos_b\u00e1sicos_safe_6_0",
+      "label": "2. Conceitos b\u00e1sicos (SAFe 6.0)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_entidades_principais",
+      "label": "3. Entidades principais",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_1_portfolio",
+      "label": "3.1. Portfolio",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_2_valuestream_art",
+      "label": "3.2. ValueStream / ART",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_3_budgetguardrail",
+      "label": "3.3. BudgetGuardrail",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_integra\u00e7\u00f5es_pagas_e_contratos",
+      "label": "4. Integra\u00e7\u00f5es pagas e contratos",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_1_integrationprovider",
+      "label": "4.1. IntegrationProvider",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L79"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_2_subscriptioncontract",
+      "label": "4.2. SubscriptionContract",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_5_faturas_notas_e_despesas",
+      "label": "5. Faturas, notas e despesas",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_5_1_invoice_expense",
+      "label": "5.1. Invoice / Expense",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_6_aloca\u00e7\u00e3o_de_custos_costallocation",
+      "label": "6. Aloca\u00e7\u00e3o de Custos (CostAllocation)",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L128"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_6_1_costallocation",
+      "label": "6.1. CostAllocation",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L130"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_fluxos_de_uso",
+      "label": "7. Fluxos de uso",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L155"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_1_onboarding_de_integra\u00e7\u00f5es_e_contratos",
+      "label": "7.1. Onboarding de integra\u00e7\u00f5es e contratos",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L157"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_2_importa\u00e7\u00e3o_e_classifica\u00e7\u00e3o_de_invoices",
+      "label": "7.2. Importa\u00e7\u00e3o e classifica\u00e7\u00e3o de invoices",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_3_ajuste_manual_de_aloca\u00e7\u00e3o",
+      "label": "7.3. Ajuste manual de aloca\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L172"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_8_aplica\u00e7\u00e3o_de_lean_budget_guardrails",
+      "label": "8. Aplica\u00e7\u00e3o de Lean Budget Guardrails",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L181"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_relat\u00f3rios_e_visualiza\u00e7\u00f5es",
+      "label": "9. Relat\u00f3rios e visualiza\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L198"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_1_portf\u00f3lio_value_stream",
+      "label": "9.1. Portf\u00f3lio / Value Stream",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_2_tema_estrat\u00e9gico_\u00e9pico_projeto",
+      "label": "9.2. Tema Estrat\u00e9gico / \u00c9pico / Projeto",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_3_pi_art",
+      "label": "9.3. PI / ART",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L211"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_10_pol\u00edticas_e_boas_pr\u00e1ticas",
+      "label": "10. Pol\u00edticas e boas pr\u00e1ticas",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L218"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "label": "11. Frontend \u2013 Arquitetura de Componentes",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L226"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_1_hierarquia_de_p\u00e1ginas",
+      "label": "11.1. Hierarquia de p\u00e1ginas",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L228"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_2_estrat\u00e9gia_de_busca_de_dados",
+      "label": "11.2. Estrat\u00e9gia de busca de dados",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L250"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_3_state_management_costallocation",
+      "label": "11.3. State management \u2013 CostAllocation",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L281"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_4_invoicetable_virtualiza\u00e7\u00e3o",
+      "label": "11.4. InvoiceTable \u2013 Virtualiza\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L306"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_5_costallocationform_valida\u00e7\u00e3o",
+      "label": "11.5. CostAllocationForm \u2013 Valida\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L339"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_6_guardrail_feedback_visual",
+      "label": "11.6. Guardrail \u2013 Feedback visual",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L359"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_7_performance_code_splitting",
+      "label": "11.7. Performance \u2013 Code splitting",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L374"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_8_acessibilidade_tabelas_de_budget",
+      "label": "11.8. Acessibilidade \u2013 tabelas de budget",
+      "file_type": "document",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L385"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_1_prop\u00f3sito",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_2_conceitos_b\u00e1sicos_safe_6_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_entidades_principais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_entidades_principais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_1_portfolio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_entidades_principais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_2_valuestream_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_entidades_principais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_3_3_budgetguardrail",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_integra\u00e7\u00f5es_pagas_e_contratos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_integra\u00e7\u00f5es_pagas_e_contratos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_1_integrationprovider",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_integra\u00e7\u00f5es_pagas_e_contratos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_4_2_subscriptioncontract",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_5_faturas_notas_e_despesas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_5_faturas_notas_e_despesas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_5_1_invoice_expense",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_6_aloca\u00e7\u00e3o_de_custos_costallocation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_6_aloca\u00e7\u00e3o_de_custos_costallocation",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_6_1_costallocation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_fluxos_de_uso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_fluxos_de_uso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_1_onboarding_de_integra\u00e7\u00f5es_e_contratos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L157",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_fluxos_de_uso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_2_importa\u00e7\u00e3o_e_classifica\u00e7\u00e3o_de_invoices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_fluxos_de_uso",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_7_3_ajuste_manual_de_aloca\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L172",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_8_aplica\u00e7\u00e3o_de_lean_budget_guardrails",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L181",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_relat\u00f3rios_e_visualiza\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L198",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_relat\u00f3rios_e_visualiza\u00e7\u00f5es",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_1_portf\u00f3lio_value_stream",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_relat\u00f3rios_e_visualiza\u00e7\u00f5es",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_2_tema_estrat\u00e9gico_\u00e9pico_projeto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_relat\u00f3rios_e_visualiza\u00e7\u00f5es",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_9_3_pi_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_10_pol\u00edticas_e_boas_pr\u00e1ticas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L218",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_lean_budget_modelo_de_lean_budget_no_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_1_hierarquia_de_p\u00e1ginas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L228",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_2_estrat\u00e9gia_de_busca_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_3_state_management_costallocation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L281",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_4_invoicetable_virtualiza\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L306",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_5_costallocationform_valida\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L339",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_6_guardrail_feedback_visual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L359",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_7_performance_code_splitting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_frontend_arquitetura_de_componentes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_lean_budget_lean_budget_11_8_acessibilidade_tabelas_de_budget",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/lean-budget/LEAN_BUDGET.md",
+      "source_location": "L385",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

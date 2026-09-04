@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_md",
+      "label": "0004-seletor-persona-fora-de-producao.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "label": "ADR-0004 \u2014 Seletor de persona do prot\u00f3tipo n\u00e3o vai para produ\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L57"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_adr_0004_seletor_de_persona_do_prot\u00f3tipo_n\u00e3o_vai_para_produ\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0004_seletor_persona_fora_de_producao_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0004-seletor-persona-fora-de-producao.md",
+      "source_location": "L57",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_md",
+      "label": "spec.md",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "label": "Feature Specification: Signal V1 \u00b7 Measure",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_por_que_o_signal_n\u00e3o_parte_do_zero",
+      "label": "Por que o Signal n\u00e3o parte do zero",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "label": "User Scenarios & Testing *(mandatory)*",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_1_linha_de_base_antes_do_trabalho_priority_p1",
+      "label": "User Story 1 \u2014 Linha de base antes do trabalho (Priority: P1)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_2_ado\u00e7\u00e3o_por_time_sem_vigil\u00e2ncia_priority_p1",
+      "label": "User Story 2 \u2014 Ado\u00e7\u00e3o por time, sem vigil\u00e2ncia (Priority: P1)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_3_horas_recuperadas_com_a_conta_aberta_priority_p2",
+      "label": "User Story 3 \u2014 Horas recuperadas, com a conta aberta (Priority: P2)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L121"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_4_relat\u00f3rio_para_o_conselho_priority_p2",
+      "label": "User Story 4 \u2014 Relat\u00f3rio para o conselho (Priority: P2)",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_requirements_mandatory",
+      "label": "Requirements *(mandatory)*",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_functional_requirements",
+      "label": "Functional Requirements",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L184"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_key_entities_draft",
+      "label": "Key Entities *(draft)*",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L198"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_o_que_esta_spec_deliberadamente_n\u00e3o_decide",
+      "label": "O que esta spec deliberadamente n\u00e3o decide",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L214"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_success_criteria_draft",
+      "label": "Success Criteria *(draft)*",
+      "file_type": "document",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L228"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_por_que_o_signal_n\u00e3o_parte_do_zero",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_1_linha_de_base_antes_do_trabalho_priority_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_2_ado\u00e7\u00e3o_por_time_sem_vigil\u00e2ncia_priority_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_3_horas_recuperadas_com_a_conta_aberta_priority_p2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_scenarios_testing_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_user_story_4_relat\u00f3rio_para_o_conselho_priority_p2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_requirements_mandatory",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_requirements_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_functional_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L184",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_requirements_mandatory",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_key_entities_draft",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L198",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_o_que_esta_spec_deliberadamente_n\u00e3o_decide",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L214",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_feature_specification_signal_v1_measure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_003_signal_measure_spec_success_criteria_draft",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/003-signal-measure/spec.md",
+      "source_location": "L228",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_md",
+      "label": "2026-08-06-charter-onboarding-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "label": "Charter \u2014 Montagem guiada pelo pr\u00f3prio dado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_1_por_que_este_trabalho_existe",
+      "label": "1. Por que este trabalho existe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_o_que_a_tela_de_entrada_diz_hoje",
+      "label": "O que a tela de entrada diz hoje",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_2_escopo",
+      "label": "2. Escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_3_os_cinco_passos",
+      "label": "3. Os cinco passos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "label": "4. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_1_a_action",
+      "label": "4.1 A action",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_2_custo",
+      "label": "4.2 Custo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_3_visibilidade_e_permiss\u00e3o",
+      "label": "4.3 Visibilidade e permiss\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L112"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_4_o_componente",
+      "label": "4.4 O componente",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_5_a_corre\u00e7\u00e3o_dos_estados_vazios",
+      "label": "4.5 A corre\u00e7\u00e3o dos estados vazios",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_5_fluxo",
+      "label": "5. Fluxo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_6_erro",
+      "label": "6. Erro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L148"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_7_teste",
+      "label": "7. Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L164"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_8_depend\u00eancia_de_outro_trabalho",
+      "label": "8. Depend\u00eancia de outro trabalho",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_9_lacunas_conhecidas",
+      "label": "9. Lacunas conhecidas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L190"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_1_por_que_este_trabalho_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_1_por_que_este_trabalho_existe",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_o_que_a_tela_de_entrada_diz_hoje",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_2_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_3_os_cinco_passos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_1_a_action",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_2_custo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_3_visibilidade_e_permiss\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_4_o_componente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_4_5_a_corre\u00e7\u00e3o_dos_estados_vazios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_5_fluxo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_6_erro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_7_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_8_depend\u00eancia_de_outro_trabalho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_charter_montagem_guiada_pelo_pr\u00f3prio_dado",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_06_charter_onboarding_design_9_lacunas_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-06-charter-onboarding-design.md",
+      "source_location": "L190",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

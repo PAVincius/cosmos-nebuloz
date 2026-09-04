@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_md",
+      "label": "resposta-bloco-c-backoffice.md",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "label": "Bloco C respondido \u2014 back office (`apps/backoffice`)",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_1_acesso_e_superf\u00edcie",
+      "label": "C.1 Acesso e superf\u00edcie",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_2_opera\u00e7\u00f5es_de_alto_impacto",
+      "label": "C.2 Opera\u00e7\u00f5es de alto impacto",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_3_isolamento_de_dados_de_cliente",
+      "label": "C.3 Isolamento de dados de cliente",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_4_testes",
+      "label": "C.4 Testes",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_5_cobertura_e_monitora\u00e7\u00e3o",
+      "label": "C.5 Cobertura e monitora\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_6_go_no_go",
+      "label": "C.6 Go / no-go",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_contagem",
+      "label": "Contagem",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_leitura",
+      "label": "Leitura",
+      "file_type": "document",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L103"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_1_acesso_e_superf\u00edcie",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_2_opera\u00e7\u00f5es_de_alto_impacto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_3_isolamento_de_dados_de_cliente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_4_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_5_cobertura_e_monitora\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_c_6_go_no_go",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_contagem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_bloco_c_respondido_back_office_apps_backoffice",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_qualidade_resposta_bloco_c_backoffice_leitura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/qualidade/resposta-bloco-c-backoffice.md",
+      "source_location": "L103",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

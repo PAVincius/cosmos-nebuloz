@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_md",
+      "label": "0008-geracao-rascunho-sem-provedor-llm.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "label": "ADR-0008 \u2014 Gera\u00e7\u00e3o de rascunho sem provedor de LLM no V1",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L65"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_adr_0008_gera\u00e7\u00e3o_de_rascunho_sem_provedor_de_llm_no_v1",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0008_geracao_rascunho_sem_provedor_llm_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0008-geracao-rascunho-sem-provedor-llm.md",
+      "source_location": "L65",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

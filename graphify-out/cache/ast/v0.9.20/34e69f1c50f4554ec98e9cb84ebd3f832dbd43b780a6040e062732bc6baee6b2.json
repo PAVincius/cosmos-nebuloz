@@ -1,0 +1,751 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_md",
+      "label": "architecture-epics-6-8.md",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "label": "Architecture Notes \u2014 Epics 006, 007, 008",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "label": "Epic 006: Enhanced Portfolio & ART",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "label": "Schema Changes (`packages/database/prisma/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_art_core_prisma_extend_existing_models",
+      "label": "`schema/art-core.prisma` \u2014 Extend existing models",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_planning_prisma_extend",
+      "label": "`schema/planning.prisma` \u2014 Extend",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L175"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_portfolio_prisma_extend_new",
+      "label": "`schema/portfolio.prisma` \u2014 Extend + New",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L222"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_flow_intelligence_prisma_extend_anomaly_types",
+      "label": "`schema/flow-intelligence.prisma` \u2014 Extend Anomaly types",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L263"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_finops_prisma_new_model_for_lean_budget_reallocation",
+      "label": "`schema/finops.prisma` \u2014 New model for lean budget reallocation",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L281"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_apps_app_app_api",
+      "label": "New API Routes (`apps/app/app/api/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L298"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_apps_app_app_actions",
+      "label": "New Server Actions (`apps/app/app/actions/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L337"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_pages_components_apps_app_app_authenticated",
+      "label": "New Pages & Components (`apps/app/app/(authenticated)/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L378"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_package_dependencies_add_to_apps_app_package_json",
+      "label": "Package Dependencies (add to `apps/app/package.json`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L403"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_006",
+      "label": "Breaking Changes (Epic 006)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L423"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_006",
+      "label": "Implementation Sequence (Epic 006)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L431"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "label": "Epic 007: Solution Train & Advanced Features",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L452"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "label": "Schema Changes (`packages/database/prisma/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L454"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_finops_prisma_new_models_focus_1_1",
+      "label": "`schema/finops.prisma` \u2014 New models (FOCUS 1.1)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L456"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_art_core_prisma_extend_for_large_solution_workflow",
+      "label": "`schema/art-core.prisma` \u2014 Extend for Large Solution + Workflow",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L626"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_planning_prisma_extend_for_okrs_krsnapshots_scheduledreports",
+      "label": "`schema/planning.prisma` \u2014 Extend for OKRs, KRSnapshots, ScheduledReports",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L678"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_system_prisma_copilot_documents",
+      "label": "`schema/system.prisma` \u2014 Copilot Documents",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L724"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_epic_007",
+      "label": "New API Routes (Epic 007)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L747"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_epic_007",
+      "label": "New Server Actions (Epic 007)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L770"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_package_dependencies_add_to_apps_app_package_json_epic_007",
+      "label": "Package Dependencies (add to `apps/app/package.json` \u2014 Epic 007)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L807"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_007",
+      "label": "Breaking Changes (Epic 007)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L822"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_007",
+      "label": "Implementation Sequence (Epic 007)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L832"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "label": "Epic 008: Enterprise & Scale",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L853"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "label": "Schema Changes (`packages/database/prisma/`)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L855"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_security_prisma_new",
+      "label": "`schema/security.prisma` \u2014 New",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L857"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_notifications_prisma_new",
+      "label": "`schema/notifications.prisma` \u2014 New",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L958"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_webhooks_prisma_new",
+      "label": "`schema/webhooks.prisma` \u2014 New",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L986"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_large_solution_prisma_new",
+      "label": "`schema/large-solution.prisma` \u2014 New",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1035"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_extend_existing_models_for_epic_008",
+      "label": "Extend existing models for Epic 008",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_composite_indexes_add_across_all_schemas",
+      "label": "Composite Indexes (add across all schemas)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1190"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_epic_008",
+      "label": "New API Routes (Epic 008)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1224"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_epic_008",
+      "label": "New Server Actions (Epic 008)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1260"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_008",
+      "label": "Breaking Changes (Epic 008)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1284"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_008",
+      "label": "Implementation Sequence (Epic 008)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1294"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "label": "Cross-Cutting Architecture Decisions",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1325"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_withsecureaction_hof_contract",
+      "label": "`withSecureAction` HOF Contract",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1327"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_liveblocks_room_namespace_convention",
+      "label": "Liveblocks Room Namespace Convention",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1348"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_ai_copilot_rate_limit_tiers_upstash",
+      "label": "AI/Copilot Rate Limit Tiers (Upstash)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1367"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_pgvector_index_configuration",
+      "label": "pgvector Index Configuration",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1375"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_inngest_job_registry_all_three_epics",
+      "label": "Inngest Job Registry (all three epics)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1390"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_rls_policy_template_all_new_tables",
+      "label": "RLS Policy Template (all new tables)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1410"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_anomaly_deduplication_query_pattern",
+      "label": "Anomaly Deduplication Query Pattern",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1422"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_content_hash_cache_key_ai",
+      "label": "Content-Hash Cache Key (AI)",
+      "file_type": "document",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1436"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_art_core_prisma_extend_existing_models",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_planning_prisma_extend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L175",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_portfolio_prisma_extend_new",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_flow_intelligence_prisma_extend_anomaly_types",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_finops_prisma_new_model_for_lean_budget_reallocation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L281",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_apps_app_app_api",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L298",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_apps_app_app_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L337",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_pages_components_apps_app_app_authenticated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L378",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_package_dependencies_add_to_apps_app_package_json",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L403",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_006",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L423",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_006_enhanced_portfolio_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_006",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L431",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L452",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L454",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_finops_prisma_new_models_focus_1_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L456",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_art_core_prisma_extend_for_large_solution_workflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L626",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_planning_prisma_extend_for_okrs_krsnapshots_scheduledreports",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L678",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_454",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_system_prisma_copilot_documents",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L724",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_epic_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L747",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_epic_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L770",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_package_dependencies_add_to_apps_app_package_json_epic_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L807",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L822",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L832",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L853",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L855",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_security_prisma_new",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L857",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_notifications_prisma_new",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L958",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_webhooks_prisma_new",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L986",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_large_solution_prisma_new",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1035",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_schema_changes_packages_database_prisma_855",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_extend_existing_models_for_epic_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_composite_indexes_add_across_all_schemas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1190",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_api_routes_epic_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1224",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_new_server_actions_epic_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1260",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_breaking_changes_epic_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1284",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_epic_008_enterprise_scale",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_implementation_sequence_epic_008",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1294",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_architecture_notes_epics_006_007_008",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1325",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_withsecureaction_hof_contract",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1327",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_liveblocks_room_namespace_convention",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1348",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_ai_copilot_rate_limit_tiers_upstash",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1367",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_pgvector_index_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1375",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_inngest_job_registry_all_three_epics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1390",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_rls_policy_template_all_new_tables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1410",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_anomaly_deduplication_query_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1422",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_cross_cutting_architecture_decisions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_architecture_epics_6_8_content_hash_cache_key_ai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/architecture-epics-6-8.md",
+      "source_location": "L1436",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_md",
+      "label": "quickstart.md",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "label": "Quickstart: validar o Est\u00e1gio de Intent",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_1_capturar_ideia_nova_us1_fr_001_002",
+      "label": "Cen\u00e1rio 1 \u2014 capturar ideia nova (US1, FR-001/002)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_2_roast_me_us2_fr_003",
+      "label": "Cen\u00e1rio 2 \u2014 roast me (US2, FR-003)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_3_aprova\u00e7\u00e3o_expl\u00edcita_us3_fr_004_005_006_007",
+      "label": "Cen\u00e1rio 3 \u2014 aprova\u00e7\u00e3o expl\u00edcita (US3, FR-004/005/006/007)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_4_gate_bloqueia_specify_sem_intent_aprovado_us4_fr_008_009_010",
+      "label": "Cen\u00e1rio 4 \u2014 gate bloqueia specify sem intent aprovado (US4, FR-008/009/010)",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_verifica\u00e7\u00e3o_de_n\u00e3o_regress\u00e3o",
+      "label": "Verifica\u00e7\u00e3o de n\u00e3o-regress\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L38"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_1_capturar_ideia_nova_us1_fr_001_002",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_2_roast_me_us2_fr_003",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_3_aprova\u00e7\u00e3o_expl\u00edcita_us3_fr_004_005_006_007",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_cen\u00e1rio_4_gate_bloqueia_specify_sem_intent_aprovado_us4_fr_008_009_010",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_quickstart_validar_o_est\u00e1gio_de_intent",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_add_intent_stage_quickstart_verifica\u00e7\u00e3o_de_n\u00e3o_regress\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-add-intent-stage/quickstart.md",
+      "source_location": "L38",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

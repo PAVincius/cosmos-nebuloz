@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_md",
+      "label": "0006-sla-dias-uteis-sem-feriados.md",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "label": "ADR-0006 \u2014 SLA em dias \u00fateis sem calend\u00e1rio de feriados",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_decis\u00e3o",
+      "label": "Decis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_alternativas_consideradas",
+      "label": "Alternativas consideradas",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L29"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_consequ\u00eancias",
+      "label": "Consequ\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L43"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_decis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_alternativas_consideradas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L29",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_adr_0006_sla_em_dias_\u00fateis_sem_calend\u00e1rio_de_feriados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_adr_0006_sla_dias_uteis_sem_feriados_consequ\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/adr/0006-sla-dias-uteis-sem-feriados.md",
+      "source_location": "L43",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

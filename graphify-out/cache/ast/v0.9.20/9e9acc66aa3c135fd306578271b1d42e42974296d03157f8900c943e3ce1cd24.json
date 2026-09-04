@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_md",
+      "label": "plan-export.md",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/contracts/plan-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_contrato_export_do_plano_leg\u00edvel_por_m\u00e1quina",
+      "label": "Contrato \u00b7 Export do plano (leg\u00edvel por m\u00e1quina)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/contracts/plan-export.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_regras",
+      "label": "Regras",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/contracts/plan-export.md",
+      "source_location": "L39"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_contrato_export_do_plano_leg\u00edvel_por_m\u00e1quina",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/contracts/plan-export.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_contrato_export_do_plano_leg\u00edvel_por_m\u00e1quina",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_regras",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/contracts/plan-export.md",
+      "source_location": "L39",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

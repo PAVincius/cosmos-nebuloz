@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_md",
+      "label": "KPI_CARDS_HIERARCHY.md",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "label": "KPI Cards \u2014 Regras de Hierarquia (tecno-UI \u00b7 tema escuro)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "label": "01 \u00b7 Anatomia & ordem de leitura",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_1_valor_prim\u00e1rio",
+      "label": "N\u00edvel 1 \u2014 Valor (prim\u00e1rio)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_2_label_chip_secund\u00e1rio",
+      "label": "N\u00edvel 2 \u2014 Label + Chip (secund\u00e1rio)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_3_badge_terci\u00e1rio",
+      "label": "N\u00edvel 3 \u2014 Badge (terci\u00e1rio)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_0_decora\u00e7\u00e3o_hierarquia_zero",
+      "label": "N\u00edvel 0 \u2014 Decora\u00e7\u00e3o (hierarquia zero)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_02_pilha_de_camadas_z_index",
+      "label": "02 \u00b7 Pilha de camadas (z-index)",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_03_estados_tokens_de_cor",
+      "label": "03 \u00b7 Estados & tokens de cor",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_gradiente_radial_do_fundo_por_estado",
+      "label": "Gradiente radial do fundo por estado",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_04_medidas_fixas",
+      "label": "04 \u00b7 Medidas fixas",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L100"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_05_efeito_cravado_letterpress_como_funciona",
+      "label": "05 \u00b7 Efeito \"cravado\" (letterpress) \u2014 como funciona",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_06_sinal_ecg_como_funciona",
+      "label": "06 \u00b7 Sinal ECG \u2014 como funciona",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L165"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_07_textura_de_bolinhas_como_funciona",
+      "label": "07 \u00b7 Textura de bolinhas \u2014 como funciona",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L194"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_08_regras_inquebr\u00e1veis",
+      "label": "08 \u00b7 Regras inquebr\u00e1veis",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L217"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_fazer",
+      "label": "\u2705 Fazer",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L219"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00e3o_fazer",
+      "label": "\u274c N\u00e3o fazer",
+      "file_type": "document",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L229"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_1_valor_prim\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_2_label_chip_secund\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_3_badge_terci\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_01_anatomia_ordem_de_leitura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00edvel_0_decora\u00e7\u00e3o_hierarquia_zero",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_02_pilha_de_camadas_z_index",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_03_estados_tokens_de_cor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_03_estados_tokens_de_cor",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_gradiente_radial_do_fundo_por_estado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_04_medidas_fixas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_05_efeito_cravado_letterpress_como_funciona",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_06_sinal_ecg_como_funciona",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_07_textura_de_bolinhas_como_funciona",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L194",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_kpi_cards_regras_de_hierarquia_tecno_ui_tema_escuro",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_08_regras_inquebr\u00e1veis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_08_regras_inquebr\u00e1veis",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_fazer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L219",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_08_regras_inquebr\u00e1veis",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_design_components_kpi_cards_hierarchy_n\u00e3o_fazer",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "design/components/KPI_CARDS_HIERARCHY.md",
+      "source_location": "L229",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

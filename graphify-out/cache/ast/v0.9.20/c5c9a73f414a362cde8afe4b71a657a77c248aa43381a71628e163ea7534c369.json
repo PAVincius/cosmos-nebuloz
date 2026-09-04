@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_md",
+      "label": "create-architecture.md",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-architecture.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_task_create_architecture",
+      "label": "Task: Create Architecture",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-architecture.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_instructions",
+      "label": "Instructions",
+      "file_type": "document",
+      "source_file": ".bmad-core/tasks/create-architecture.md",
+      "source_location": "L7"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_task_create_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/create-architecture.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_task_create_architecture",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_bmad_core_tasks_create_architecture_instructions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".bmad-core/tasks/create-architecture.md",
+      "source_location": "L7",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

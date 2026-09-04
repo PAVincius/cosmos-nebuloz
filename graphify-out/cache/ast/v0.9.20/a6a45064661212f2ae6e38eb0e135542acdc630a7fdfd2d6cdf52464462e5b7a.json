@@ -1,0 +1,31 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_extensions_intent_gate_scripts_bash_check_intent_approved_sh",
+      "label": "check-intent-approved.sh",
+      "file_type": "code",
+      "source_file": ".specify/extensions/intent-gate/scripts/bash/check-intent-approved.sh",
+      "source_location": "L1",
+      "metadata": { "language": "bash", "kind": "file" }
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_extensions_intent_gate_scripts_bash_check_intent_approved_sh__entry",
+      "label": "check-intent-approved.sh script",
+      "file_type": "code",
+      "source_file": ".specify/extensions/intent-gate/scripts/bash/check-intent-approved.sh",
+      "source_location": "L1",
+      "metadata": { "language": "bash", "kind": "bash_entrypoint" }
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_extensions_intent_gate_scripts_bash_check_intent_approved_sh",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_extensions_intent_gate_scripts_bash_check_intent_approved_sh__entry",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/extensions/intent-gate/scripts/bash/check-intent-approved.sh",
+      "source_location": "L1",
+      "weight": 1.0
+    }
+  ]
+}

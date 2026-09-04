@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_md",
+      "label": "QA_REPORT.md",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "label": "QA Report \u2014 E2E Coverage Expansion + A11y/Contrast Audit",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_summary",
+      "label": "Summary",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_specs_created",
+      "label": "Specs created",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_results_by_screen",
+      "label": "E2E results by screen",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_pre_existing_specs_full_suite_run_observations_not_created_by_me_not_modified",
+      "label": "Pre-existing specs \u2014 full-suite run observations (not created by me, not modified)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_session_ttl_note_test_infra_not_an_app_bug_in_scope_here",
+      "label": "Session TTL note (test infra, not an app bug in scope here)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L79"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_accessibility_contrast_audit_axe_core_wcag_2_1_aa_critical_serious_only",
+      "label": "Accessibility / contrast audit (axe-core, WCAG 2.1 AA, critical+serious only)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_prioritized_fix_list_for_the_app_team",
+      "label": "Prioritized fix list for the app team",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_post_fix_verification_2026_07_06",
+      "label": "Post-fix verification (2026-07-06)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L113"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_full_suite_78_115_82_129_passed_then_83_129_after_test_fix",
+      "label": "E2E full suite: 78/115 \u2192 82/129 passed, then 83/129 after test fix",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_a11y_re_run_quantified_before_after",
+      "label": "A11y re-run: quantified before \u2192 after",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L135"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_production_build_next_build_turbopack_still_fails",
+      "label": "Production build (`next build`, Turbopack): still FAILS",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L153"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_summary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_specs_created",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_results_by_screen",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_results_by_screen",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_pre_existing_specs_full_suite_run_observations_not_created_by_me_not_modified",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_results_by_screen",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_session_ttl_note_test_infra_not_an_app_bug_in_scope_here",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_accessibility_contrast_audit_axe_core_wcag_2_1_aa_critical_serious_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_prioritized_fix_list_for_the_app_team",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_qa_report_e2e_coverage_expansion_a11y_contrast_audit",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_post_fix_verification_2026_07_06",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L113",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_post_fix_verification_2026_07_06",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_e2e_full_suite_78_115_82_129_passed_then_83_129_after_test_fix",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_post_fix_verification_2026_07_06",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_a11y_re_run_quantified_before_after",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L135",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_post_fix_verification_2026_07_06",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_qa_report_production_build_next_build_turbopack_still_fails",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/QA_REPORT.md",
+      "source_location": "L153",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,0 +1,751 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_md",
+      "label": "SCREEN_MANIFEST.md",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "label": "COSMOS \u2014 Screen Manifest (Re-skin Porting Contract)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_tabela_resumo",
+      "label": "Tabela-resumo",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_componente_compartilhado_relation_chip_relchip_design_md_3",
+      "label": "Componente compartilhado: Relation Chip (`relChip`) \u2014 DESIGN.md \u00a73",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "label": "Detalhamento por tela",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_1_vis\u00e3o_geral_dashboard_dashboard_dashboard_page_tsx",
+      "label": "1. Vis\u00e3o Geral / Dashboard (`#/dashboard` \u2192 `dashboard/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L82"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_2_\u00e9picos_portfolio_kanban_epics_portfolio_page_tsx",
+      "label": "2. \u00c9picos \u2014 Portfolio Kanban (`#/epics` \u2192 `portfolio/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_3_wsjf_wsjf_portfolio_wsjf_page_tsx",
+      "label": "3. WSJF (`#/wsjf` \u2192 `portfolio/wsjf/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_4_okrs_okrs_portfolio_okrs_page_tsx",
+      "label": "4. OKRs (`#/okrs` \u2192 `portfolio/okrs/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_5_strategy_map_strategy_portfolio_strategy_map_page_tsx",
+      "label": "5. Strategy Map (`#/strategy` \u2192 `portfolio/strategy-map/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_6_roadmap_roadmap_portfolio_roadmap_page_tsx",
+      "label": "6. Roadmap (`#/roadmap` \u2192 `portfolio/roadmap/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_7_governance_governance_portfolio_governance_page_tsx",
+      "label": "7. Governance (`#/governance` \u2192 `portfolio/governance/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_8_lean_budget_budget_flow_budget_scoped_budget_art_x_artid_portfolio_budgets_page_tsx",
+      "label": "8. Lean Budget / Budget Flow (`#/budget`, scoped `#/budget/ART-x` \u2259 `?artId=`) \u2192 `portfolio/budgets/page.tsx`",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L147"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_9_anomalies_anomalies_portfolio_budgets_anomalies_page_tsx",
+      "label": "9. Anomalies (`#/anomalies` \u2192 `portfolio/budgets/anomalies/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_10_art_detail_art_art_pay_arts_artid_page_tsx",
+      "label": "10. ART Detail (`#/art/ART-PAY` \u2192 `arts/[artId]/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L167"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_11_pi_planning_detail_4_tabs_pi_pi_2026_q2_tab_arts_artid_pi_planning_page_tsx_pi_planning_page_tsx",
+      "label": "11. PI Planning Detail \u2014 4 tabs (`#/pi/PI-2026-Q2/{tab}` \u2192 `arts/[artId]/pi-planning/page.tsx` + `pi-planning/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L180"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_12_solution_trains_solutions_solution_trains_page_tsx",
+      "label": "12. Solution Trains (`#/solutions` \u2192 `solution-trains/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L189"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_13_hist\u00f3rico_history_sem_rota_gap",
+      "label": "13. Hist\u00f3rico (`#/history` \u2192 **SEM ROTA** / gap)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L197"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_14_dependencies_deps_dependencies_page_tsx",
+      "label": "14. Dependencies (`#/deps` \u2192 `dependencies/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L206"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_15_risks_roam_board_risks_risks_page_tsx",
+      "label": "15. Risks \u2014 ROAM Board (`#/risks` \u2192 `risks/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L215"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_16_flow_metrics_flow_analytics_flow_page_tsx",
+      "label": "16. Flow Metrics (`#/flow` \u2192 `analytics/flow/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L223"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_17_velocity_velocity_analytics_velocity_page_tsx",
+      "label": "17. Velocity (`#/velocity` \u2192 `analytics/velocity/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L231"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_18_measure_grow_maturity_maturity_analytics_measure_grow_page_tsx",
+      "label": "18. Measure & Grow / Maturity (`#/maturity` \u2192 `analytics/measure-grow/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L239"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_19_teams_teams_teams_page_tsx",
+      "label": "19. Teams (`#/teams` \u2192 `teams/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L247"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_20_copilot_copilot_copilot_page_tsx",
+      "label": "20. Copilot (`#/copilot` \u2192 `copilot/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L255"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_21_workflows_workflows_workflows_page_tsx_workflows_teamid_bpmn",
+      "label": "21. Workflows (`#/workflows` \u2192 `workflows/page.tsx` + `workflows/[teamId]/bpmn`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L263"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_22_integra\u00e7\u00f5es_integrations_integrations_page_tsx_settings_integrations",
+      "label": "22. Integra\u00e7\u00f5es (`#/integrations` \u2192 `integrations/page.tsx` + `settings/integrations`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L271"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_23_members_members_settings_members_page_tsx",
+      "label": "23. Members (`#/members` \u2192 `settings/members/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L279"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_24_audit_log_audit_settings_audit_page_tsx",
+      "label": "24. Audit Log (`#/audit` \u2192 `settings/audit/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L287"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_25_epic_detail_epic_ep_0042_epics_epicid_page_tsx",
+      "label": "25. Epic Detail (`#/epic/EP-0042` \u2192 `epics/[epicId]/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L295"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_26_standup_standup_sq_auth_teams_teamid_standup_page_tsx",
+      "label": "26. Standup (`#/standup/SQ-AUTH` \u2192 `teams/[teamId]/standup/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_27_decision_log_decisions_portfolio_governance_decision_log_page_tsx",
+      "label": "27. Decision Log (`#/decisions` \u2192 `portfolio/governance/decision-log/page.tsx`)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L312"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_28_value_stream_detail_vs_vs_pay_sem_rota_gap",
+      "label": "28. Value Stream Detail (`#/vs/VS-PAY` \u2192 **SEM ROTA** / gap)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L320"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_29_investment_horizon_detail_horizon_h1_sem_rota_gap",
+      "label": "29. Investment Horizon Detail (`#/horizon/H1` \u2192 **SEM ROTA** / gap)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L328"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "label": "Modais / Forms (replicar id\u00eanticos)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L338"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m1_criar_\u00e9pico_openepicmodal_modal_js_72",
+      "label": "M1 \u2014 Criar \u00c9pico (`openEpicModal`, modal.js:72)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L342"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m2_nova_feature_openfeaturemodal_feature_modal_js_86",
+      "label": "M2 \u2014 Nova Feature (`openFeatureModal`, feature-modal.js:86)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L348"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m3_nova_story_openstorymodal_story_modal_js_48",
+      "label": "M3 \u2014 Nova Story (`openStoryModal`, story-modal.js:48)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L353"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m4_novo_risco_roam_openriskmodal_risk_modal_js_31",
+      "label": "M4 \u2014 Novo Risco ROAM (`openRiskModal`, risk-modal.js:31)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L357"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m5_pi_planning_wizard_openpiplanmodal_pi_modal_js_122_5_etapas",
+      "label": "M5 \u2014 PI Planning Wizard (`openPiPlanModal`, pi-modal.js:122) \u2014 5 etapas",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L361"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m6_novo_value_stream_opennewvaluestreammodal_budget_modal_js_6",
+      "label": "M6 \u2014 Novo Value Stream (`openNewValueStreamModal`, budget-modal.js:6)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L370"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m7_novo_investment_horizon_opennewhorizonmodal_budget_modal_js_149",
+      "label": "M7 \u2014 Novo Investment Horizon (`openNewHorizonModal`, budget-modal.js:149)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L373"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m8_strategic_theme_modals_opennewthememodal_openaddepicmodal_screens_analytics_js_260_222",
+      "label": "M8 \u2014 Strategic Theme modals (`openNewThemeModal` / `openAddEpicModal`, screens-analytics.js:260/222)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L376"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m9_rebalance_wsjf_openrebalancedialog_screens_portfolio_js_51",
+      "label": "M9 \u2014 Rebalance WSJF (`openRebalanceDialog`, screens-portfolio.js:51)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L379"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_grafo_de_navega\u00e7\u00e3o_tela_chip_card_destino",
+      "label": "Grafo de navega\u00e7\u00e3o (tela \u2192 [chip/card \u2192 destino])",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L384"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_gaps_telas_do_prot\u00f3tipo_sem_rota_no_apps_app",
+      "label": "GAPS \u2014 telas do prot\u00f3tipo SEM rota no apps/app",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L404"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_rotas_apps_app_sem_equivalente_no_prot\u00f3tipo_extras_a_preservar_ignorar",
+      "label": "Rotas apps/app SEM equivalente no prot\u00f3tipo (extras a preservar/ignorar)",
+      "file_type": "document",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L411"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_tabela_resumo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_componente_compartilhado_relation_chip_relchip_design_md_3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_1_vis\u00e3o_geral_dashboard_dashboard_dashboard_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L82",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_2_\u00e9picos_portfolio_kanban_epics_portfolio_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_3_wsjf_wsjf_portfolio_wsjf_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_4_okrs_okrs_portfolio_okrs_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_5_strategy_map_strategy_portfolio_strategy_map_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_6_roadmap_roadmap_portfolio_roadmap_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_7_governance_governance_portfolio_governance_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_8_lean_budget_budget_flow_budget_scoped_budget_art_x_artid_portfolio_budgets_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_9_anomalies_anomalies_portfolio_budgets_anomalies_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_10_art_detail_art_art_pay_arts_artid_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L167",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_11_pi_planning_detail_4_tabs_pi_pi_2026_q2_tab_arts_artid_pi_planning_page_tsx_pi_planning_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_12_solution_trains_solutions_solution_trains_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_13_hist\u00f3rico_history_sem_rota_gap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L197",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_14_dependencies_deps_dependencies_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L206",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_15_risks_roam_board_risks_risks_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L215",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_16_flow_metrics_flow_analytics_flow_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L223",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_17_velocity_velocity_analytics_velocity_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_18_measure_grow_maturity_maturity_analytics_measure_grow_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L239",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_19_teams_teams_teams_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L247",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_20_copilot_copilot_copilot_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L255",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_21_workflows_workflows_workflows_page_tsx_workflows_teamid_bpmn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_22_integra\u00e7\u00f5es_integrations_integrations_page_tsx_settings_integrations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L271",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_23_members_members_settings_members_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L279",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_24_audit_log_audit_settings_audit_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L287",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_25_epic_detail_epic_ep_0042_epics_epicid_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L295",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_26_standup_standup_sq_auth_teams_teamid_standup_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_27_decision_log_decisions_portfolio_governance_decision_log_page_tsx",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L312",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_28_value_stream_detail_vs_vs_pay_sem_rota_gap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L320",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_detalhamento_por_tela",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_29_investment_horizon_detail_horizon_h1_sem_rota_gap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L328",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L338",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m1_criar_\u00e9pico_openepicmodal_modal_js_72",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L342",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m2_nova_feature_openfeaturemodal_feature_modal_js_86",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L348",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m3_nova_story_openstorymodal_story_modal_js_48",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L353",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m4_novo_risco_roam_openriskmodal_risk_modal_js_31",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L357",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m5_pi_planning_wizard_openpiplanmodal_pi_modal_js_122_5_etapas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L361",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m6_novo_value_stream_opennewvaluestreammodal_budget_modal_js_6",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L370",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m7_novo_investment_horizon_opennewhorizonmodal_budget_modal_js_149",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L373",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m8_strategic_theme_modals_opennewthememodal_openaddepicmodal_screens_analytics_js_260_222",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L376",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_modais_forms_replicar_id\u00eanticos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_m9_rebalance_wsjf_openrebalancedialog_screens_portfolio_js_51",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L379",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_grafo_de_navega\u00e7\u00e3o_tela_chip_card_destino",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L384",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_gaps_telas_do_prot\u00f3tipo_sem_rota_no_apps_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L404",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_cosmos_screen_manifest_re_skin_porting_contract",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_app_design_ref_screen_manifest_rotas_apps_app_sem_equivalente_no_prot\u00f3tipo_extras_a_preservar_ignorar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/app/.design-ref/SCREEN_MANIFEST.md",
+      "source_location": "L411",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}
