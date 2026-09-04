@@ -100,4 +100,15 @@ describe("recortar", () => {
     recortar(fixture, ["apps/x"]);
     expect(JSON.stringify(fixture)).toBe(antes);
   });
+
+  it("aresta pendurada (target sem nó) não vaza id ausente do resultado", () => {
+    const g: Grafo = {
+      directed: false,
+      nodes: [{ id: "a", source_file: "apps/x/a.ts" }],
+      links: [{ source: "a", target: "ghost" }],
+    };
+    const r = recortar(g, ["apps/x"], { hops: 1 });
+    expect(ids(r)).toEqual(["a"]);
+    expect(r.links).toEqual([]);
+  });
 });

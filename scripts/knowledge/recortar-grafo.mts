@@ -66,8 +66,9 @@ export function recortar(
   }
 
   const nodes: No[] = grafo.nodes.filter((n) => selecionados.has(n.id));
+  const nodeIds = new Set(nodes.map((n) => n.id));
   const links: Aresta[] = grafo.links.filter(
-    (l) => selecionados.has(l.source) && selecionados.has(l.target)
+    (l) => nodeIds.has(l.source) && nodeIds.has(l.target)
   );
 
   const { nodes: _n, links: _l, ...topo } = grafo;
