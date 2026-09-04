@@ -76,3 +76,37 @@ describe("preservarSecoes", () => {
     expect(duas).toBe(uma);
   });
 });
+
+describe("limites de seção", () => {
+  it("`## ` dentro de bloco de código não encerra a seção", () => {
+    const atual = [
+      "# m",
+      "",
+      "## Estado de tarefa",
+      "exemplo de markdown que o especialista colou:",
+      "```md",
+      "## isto é conteúdo, não título",
+      "```",
+      "depois do bloco",
+      "",
+      "## Obstáculos",
+      "y",
+      "",
+    ].join("\n");
+    expect(extrairSecao(atual, "## Estado de tarefa")).toBe(
+      "exemplo de markdown que o especialista colou:\n```md\n## isto é conteúdo, não título\n```\ndepois do bloco"
+    );
+    expect(extrairSecao(atual, "## Obstáculos")).toBe("y");
+  });
+
+  it("ordem das seções vem da note gerada, não da atual", () => {
+    const atualInvertida =
+      "# m\n\n## Obstáculos\nobs\n\n## Estado de tarefa\nest\n";
+    const { note } = preservarSecoes(atualInvertida, gerada);
+    expect(note.indexOf("## Estado de tarefa")).toBeLessThan(
+      note.indexOf("## Obstáculos")
+    );
+    expect(extrairSecao(note, "## Estado de tarefa")).toBe("est");
+    expect(extrairSecao(note, "## Obstáculos")).toBe("obs");
+  });
+});
