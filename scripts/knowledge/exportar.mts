@@ -85,7 +85,10 @@ function resumir(corpo: string, maxPalavras: number): string {
 }
 
 function rotearTodos(dir: string): Doc[] {
-  return lerMd(dir).map((d) => ({ ...d, ...rotear(d.arquivo, d.titulo) }));
+  return lerMd(dir).map((d) => {
+    const dica = `${d.titulo} ${d.corpo.slice(0, 600)}`;
+    return { ...d, ...rotear(d.arquivo, dica) };
+  });
 }
 
 function escrever(caminho: string, conteudo: string): void {
@@ -209,6 +212,12 @@ function main(): void {
       noteAtual,
       noteMd(p, ctx)
     );
+    const linhasFinais = note.split("\n").length;
+    if (linhasFinais > MAX_LINHAS_NOTE) {
+      avisosNote.push(
+        `note.md com ${linhasFinais} linhas — as seções do especialista passaram do teto de ${MAX_LINHAS_NOTE}`
+      );
+    }
     escrever(join(dir, "note.md"), note);
 
     relatorio.push(

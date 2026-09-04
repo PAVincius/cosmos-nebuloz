@@ -18,8 +18,15 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/charter/graph.json
 ```
 
 ## ADRs que valem aqui
+- [ADR-0012 — RLS anulada pela conexão como superuser](../../../docs/adr/0012-rls-anulada-por-conexao-superuser.md)
 - [ADR-0010 — Tema próprio do Charter reusando o kit do Cosmos](../../../docs/adr/0010-tema-proprio-reusando-kit.md)
 - [ADR-0009 — Auditoria do Charter reusa `AuditLog`](../../../docs/adr/0009-auditoria-reusa-auditlog.md)
+- [ADR-0008 — Geração de rascunho sem provedor de LLM no V1](../../../docs/adr/0008-geracao-rascunho-sem-provedor-llm.md)
+- [ADR-0005 — Congelamento do caminho de aprovação na submissão](../../../docs/adr/0005-congelamento-caminho-aprovacao.md)
+- [ADR-0004 — Seletor de persona do protótipo não vai para produção](../../../docs/adr/0004-seletor-persona-fora-de-producao.md)
+- [ADR-0003 — Derivação da classe máxima do fornecedor](../../../docs/adr/0003-derivacao-classe-maxima-fornecedor.md)
+- [ADR-0002 — Papel de governança ortogonal ao papel SAFe](../../../docs/adr/0002-papel-governanca-ortogonal-safe.md)
+- [ADR-0001 — Contratação modular via `TenantModule`](../../../docs/adr/0001-contratacao-modular-tenant-module.md)
 
 ## Memória de execução
-- 2 completions em `memory.md`
+- 3 completions em `memory.md`

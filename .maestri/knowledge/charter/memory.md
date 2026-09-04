@@ -1,5 +1,10 @@
 # charter — memória de execução
 
+## Meridian V1 · Diagnose — implementação
+*2026-08-28-meridian-diagnose.md* · roteado por "charter"
+
+**Data**: 2026-08-28 **Branch**: `claude/meridian-design-impl-70bdd2` **Spec**: [specs/001-meridian-diagnose/](../../specs/001-meridian-diagnose/) **Origem**: handoff `meridian.html` + `meridian-*.jsx` + `nebuloz-seams.jsx` (Claude Design, projeto `cards`) |---| | `lib/meridian/scoring.ts` | score 0–100 e confiança 0–1 por eixo. Sem relógio, sem aleatório, iterando pela ordem canônica — determinismo é requisito, não estilo | | `lib/meridian/graph.ts` | DFS tri-estado para ciclo (nomeando o ciclo) e Kahn com desempate explícito | | `lib/meridian/plan.ts` | ordenação topológica → quatro trimestres | | `lib/meridian/benchmark.ts` | coorte, percentis por interpolação, e o único ponto onde o limiar de leitura é aplicado | | `lib/meridian/respondent-token.ts` | token de 32 bytes, persistido só como hash | | `lib/meridian/guards.ts` | sessão → módulo → papel, nessa ordem | ### Superfície `app/(meridian)/` com layout guardado, rota única `/meridian/[[...seg]]` e registry de telas — mesmo padrão do Charter. Nove telas portadas: carteira, detalhe com cinco abas, fila de revisão, benchmark pool, gap register, escala de confiança e visão do respondente. A visão do respondente é a única rota fora do guard: vive em `app/meridian-responder/[token]`, **fora** do route group. O layout de um group envolve tudo sob ele, então bastaria estar lá dentro para o guard disparar contra alguém que, por definição, não tem conta — o build foi o que …
+
 ## Charter — E2E dos 5 fluxos prioritários — Complete
 *2026-07-30-charter-e2e.md* · roteado por "charter"
 

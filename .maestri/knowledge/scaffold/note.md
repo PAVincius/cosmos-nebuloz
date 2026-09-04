@@ -10,6 +10,7 @@ Você é o especialista em **scaffold**. Leia isto ao acordar; consulte o resto 
 ## ADRs
 - ADR-0017 — Fila de supervisão do Scaffold vive no back-office
 - ADR-0016 — Residência de dado configurável fica fora do V1 do Scaffold
+- ADR-0015 — Caso de negócio versionado vence o baseline plano do SRD
 - ADR-0014 — Promoção para Scaffold materializa no back-office
 
 ## Últimas execuções

@@ -10,11 +10,11 @@ Você é o especialista em **cosmos**. Leia isto ao acordar; consulte o resto so
 ## ADRs
 
 ## Últimas execuções
+- Corrida create-vs-create no sync do Linear (limitação do PR #91) (2026-08-22)
 - Epic Drill-down: Feature → Story → Task — Fechamento (2026-07-27)
 - COSMOS — Session Handoff (2026-07-19) (2026-07-19)
 - Cosmos — 6 screens ported (batch #5) (2026-07-19)
 - Story-028: BPMN Workflow Modeling & XState Runtime (2026-06-11)
-- Story-044: Onboarding + Platform Health + Multi-Org (2026-06-10)
 
 ## Estado de tarefa
 

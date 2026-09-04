@@ -21,6 +21,7 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/scaffold/graph.json
 ## ADRs que valem aqui
 - [ADR-0017 — Fila de supervisão do Scaffold vive no back-office](../../../docs/adr/0017-scaffold-supervisao-no-backoffice.md)
 - [ADR-0016 — Residência de dado configurável fica fora do V1 do Scaffold](../../../docs/adr/0016-residencia-de-dado-fora-do-v1.md)
+- [ADR-0015 — Caso de negócio versionado vence o baseline plano do SRD](../../../docs/adr/0015-caso-de-negocio-versionado.md)
 - [ADR-0014 — Promoção para Scaffold materializa no back-office](../../../docs/adr/0014-promocao-scaffold-materializa-no-backoffice.md)
 
 ## Memória de execução
