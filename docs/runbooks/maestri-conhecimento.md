@@ -28,6 +28,8 @@ done
 maestri note create "maestro" "$(cat .maestri/knowledge/maestro/mapa.md)"
 ```
 
+Escreva Estado de tarefa e Obstáculos no arquivo `.maestri/knowledge/<produto>/note.md`, não na note do canvas — a rotina empurra o arquivo para a note, e o que for escrito só no canvas é sobrescrito no próximo refresh.
+
 ## 2. Floor e terminal da rotina
 
 A rotina precisa de um terminal próprio, para não disputar com o trabalho
@@ -45,6 +47,8 @@ se o floor `--no-git` não compartilhar o checkout. Conferir com
 `maestri list` que o terminal `conhecimento` aparece antes de criar a rotina.
 
 ## 3. A rotina
+
+**Não crie a rotina antes de decidir o versionamento dos `graph.json`.** Cada refresh regenera ~24 MB de recortes mais o grafo mestre de ~36 MB; a spec §3.3 manda versionar tudo, e essa decisão está sendo revista (candidato: ignorar só os `graph.json`, versionar os `.md`). Ligar a rotina antes torna o custo de histórico irreversível.
 
 ```bash
 maestri routine create "refresh-conhecimento" \
@@ -66,7 +70,9 @@ maestri routine run "refresh-conhecimento"
   graphify recusa, o exportador roda com o mestre anterior, e o
   `refresh-<data>.md` registra a contagem.
 - As seções `## Estado de tarefa` e `## Obstáculos` de cada note sobrevivem
-  ao `note write`, porque o exportador as preserva antes de escrever.
+  ao `note write`, porque o exportador as lê do `.maestri/knowledge/<produto>/note.md`
+  atual (o arquivo do repositório, não a note do canvas) e as reinjeta no
+  `note.md` gerado antes do `note write` empurrar o resultado para o canvas.
 - Um `refresh-<data>.md` por dia em `.maestri/knowledge/`; o de ontem não é
   sobrescrito.
 - Se um especialista escrever muito nas suas duas seções, a note pode passar de 60 linhas; o refresh não corta — avisa no `refresh-<data>.md` com "passaram do teto".

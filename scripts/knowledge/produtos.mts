@@ -69,10 +69,27 @@ export const PALAVRAS_CHAVE: Array<{ produto: Produto; termos: string[] }> = [
   { produto: "meridian", termos: ["meridian"] },
   {
     produto: "plataforma",
-    termos: ["lgpd", "rbac", "isolamento", "tenant", "rls", "platformdb", "backoffice", "seed"],
+    termos: [
+      "lgpd",
+      "rbac",
+      "isolamento",
+      "tenant",
+      "rls",
+      "platformdb",
+      "backoffice",
+      "seed",
+    ],
   },
   {
     produto: "cosmos",
-    termos: ["kanban", "pi-planning", "epic", "meeting", "cosmos", "story-0", "wsjf"],
+    termos: [
+      "kanban",
+      "pi-planning",
+      "epic",
+      "meeting",
+      "cosmos",
+      "story-0",
+      "wsjf",
+    ],
   },
 ];

@@ -5,15 +5,16 @@ Você é o especialista em **plataforma**. Leia isto ao acordar; consulte o rest
 - Código: `apps/backoffice`, `packages/provisioning`, `packages/auth`, `packages/database`
 - Grafo: 7304 nós — `graphify explain "<nó>" --graph .maestri/knowledge/plataforma/graph.json`
 - Índice completo: `.maestri/knowledge/plataforma/index.md`
-- Memória: `.maestri/knowledge/plataforma/memory.md` (6 completions)
+- Memória: `.maestri/knowledge/plataforma/memory.md` (4 completions)
 
 ## ADRs
 - ADR-0013 — Porta única de acesso cross-tenant
+- ADR-0012 — RLS anulada pela conexão como superuser
+- ADR-0001 — Contratação modular via `TenantModule`
 
 ## Últimas execuções
 - Guarda de entrypoint nos scripts de seed (2026-07-28)
 - Isolamento de tenant — Fechamento do plano de remediação (2026-07-28)
-- Story-044: Onboarding + Platform Health + Multi-Org (2026-06-10)
 - Story-038 — RBAC Enforcement (Complete) (2026-06-10)
 - Story-034 — LGPD + Audit + Tenant Isolation (Complete) (2026-06-10)
 

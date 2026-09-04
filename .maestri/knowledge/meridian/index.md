@@ -22,4 +22,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/meridian/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 0 completions em `memory.md`
+- 1 completions em `memory.md`

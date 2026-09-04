@@ -22,4 +22,4 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/cosmos/graph.json
 - nenhum roteado
 
 ## Memória de execução
-- 10 completions em `memory.md`
+- 12 completions em `memory.md`

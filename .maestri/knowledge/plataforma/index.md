@@ -19,6 +19,8 @@ graphify path "<a>" "<b>" --graph .maestri/knowledge/plataforma/graph.json
 
 ## ADRs que valem aqui
 - [ADR-0013 — Porta única de acesso cross-tenant](../../../docs/adr/0013-porta-unica-de-acesso-cross-tenant.md)
+- [ADR-0012 — RLS anulada pela conexão como superuser](../../../docs/adr/0012-rls-anulada-por-conexao-superuser.md)
+- [ADR-0001 — Contratação modular via `TenantModule`](../../../docs/adr/0001-contratacao-modular-tenant-module.md)
 
 ## Memória de execução
-- 6 completions em `memory.md`
+- 4 completions em `memory.md`

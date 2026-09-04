@@ -1,4 +1,9 @@
-export const SECOES_RESERVADAS = ["## Estado de tarefa", "## Obstáculos"] as const;
+export const SECOES_RESERVADAS = [
+  "## Estado de tarefa",
+  "## Obstáculos",
+] as const;
+
+const RE_QUEBRAS_FINAIS = /\n*$/;
 
 /** Índices [inicio, fim) do corpo da seção `titulo`: da linha após o título
  *  até a próxima linha `## ` FORA de bloco de código, ou o fim. Uma linha que
@@ -40,20 +45,28 @@ export function extrairSecao(markdown: string, titulo: string): string | null {
   while (corpo.length && corpo[0].trim() === "") {
     corpo.shift();
   }
-  while (corpo.length && corpo[corpo.length - 1].trim() === "") {
+  while (corpo.length && corpo.at(-1)?.trim() === "") {
     corpo.pop();
   }
   return corpo.join("\n");
 }
 
-function substituirSecao(markdown: string, titulo: string, corpo: string): string {
+function substituirSecao(
+  markdown: string,
+  titulo: string,
+  corpo: string
+): string {
   const linhas = markdown.split("\n");
   const limites = limitesSecao(linhas, titulo);
   if (limites === null) {
-    return `${markdown.replace(/\n*$/, "")}\n\n${titulo}\n${corpo}\n`;
+    return `${markdown.replace(RE_QUEBRAS_FINAIS, "")}\n\n${titulo}\n${corpo}\n`;
   }
   const novoCorpo = corpo === "" ? [""] : [...corpo.split("\n"), ""];
-  return [...linhas.slice(0, limites.inicio + 1), ...novoCorpo, ...linhas.slice(limites.fim)].join("\n");
+  return [
+    ...linhas.slice(0, limites.inicio + 1),
+    ...novoCorpo,
+    ...linhas.slice(limites.fim),
+  ].join("\n");
 }
 
 /**

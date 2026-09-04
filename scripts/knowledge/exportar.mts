@@ -16,11 +16,11 @@ import {
   writeFileSync,
 } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 import { preservarSecoes, SECOES_RESERVADAS } from "./preservar-secoes.mts";
 import { EXCLUSOES, PREFIXOS, PRODUTOS } from "./produtos.mts";
 import { recortar } from "./recortar-grafo.mts";
-import { rotear } from "./rotear-memoria.mts";
+import { rotearDocumento } from "./rotear-documento.mts";
 import type { Destino, Grafo, Produto } from "./tipos.mts";
 
 const RAIZ = process.cwd();
@@ -29,18 +29,20 @@ const GRAFO_MESTRE = join(RAIZ, "graphify-out", "graph.json");
 const COMPLETIONS = join(RAIZ, ".claude", "completions");
 const SESSOES = join(RAIZ, ".claude", "sessions");
 const ADRS = join(RAIZ, "docs", "adr");
-const MEMORIA_USUARIO = join(
-  homedir(),
-  ".claude",
-  "projects",
-  "-Users-azos-Documents-Github-web-backoffice-my-cosmos-nebuloz",
-  "memory"
-);
+const MEMORIA_USUARIO =
+  process.env.KNOWLEDGE_MEMORIA_USUARIO ??
+  join(
+    homedir(),
+    ".claude",
+    "projects",
+    "-Users-azos-Documents-Github-web-backoffice-my-cosmos-nebuloz",
+    "memory"
+  );
 const MIN_NOS = 20;
 const MAX_PALAVRAS_RESUMO = 200;
 const MAX_LINHAS_NOTE = 60;
 const RE_TITULO_MD = /^#\s+(.+)$/m;
-const RE_TITULO_LINHA = /^#.*$/m;
+const RE_TITULO_LINHA = /^#.*$/gm;
 const RE_FRONTMATTER = /^---[\s\S]*?---/m;
 const RE_ESPACOS = /\s+/;
 
@@ -50,6 +52,7 @@ type Doc = {
   corpo: string;
   destino: Destino;
   motivo: string;
+  origem: string;
 };
 type ContextoProduto = {
   grafo: Grafo;
@@ -84,15 +87,16 @@ function resumir(corpo: string, maxPalavras: number): string {
   return palavras.length > maxPalavras ? `${corte} …` : corte;
 }
 
-function rotearTodos(dir: string): Doc[] {
-  return lerMd(dir).map((d) => {
-    const dica = `${d.titulo} ${d.corpo.slice(0, 600)}`;
-    return { ...d, ...rotear(d.arquivo, dica) };
-  });
+function rotearTodos(dir: string, origem: string): Doc[] {
+  return lerMd(dir).map((d) => ({
+    ...d,
+    ...rotearDocumento(d.arquivo, d.titulo, d.corpo),
+    origem,
+  }));
 }
 
 function escrever(caminho: string, conteudo: string): void {
-  mkdirSync(join(caminho, ".."), { recursive: true });
+  mkdirSync(dirname(caminho), { recursive: true });
   writeFileSync(caminho, conteudo);
 }
 
@@ -130,13 +134,13 @@ function indexMd(p: Produto, ctx: ContextoProduto): string {
   ].join("\n");
 }
 
-function memoryMd(p: Produto, docs: Doc[]): string {
+function memoryMd(p: Destino, docs: Doc[]): string {
   return [
     `# ${p} — memória de execução`,
     "",
     ...docs.flatMap((d) => [
       `## ${d.titulo}`,
-      `*${d.arquivo}* · roteado por "${d.motivo}"`,
+      `[${d.arquivo}](../../../${d.origem}/${d.arquivo}) · roteado por "${d.motivo}"`,
       "",
       resumir(d.corpo, MAX_PALAVRAS_RESUMO),
       "",
@@ -172,9 +176,18 @@ function noteMd(p: Produto, ctx: ContextoProduto): string {
 }
 
 function main(): void {
+  if (!existsSync(GRAFO_MESTRE)) {
+    console.error(
+      `grafo mestre não encontrado em ${GRAFO_MESTRE} — rode: graphify update .`
+    );
+    process.exit(1);
+  }
   const mestre: Grafo = JSON.parse(readFileSync(GRAFO_MESTRE, "utf8"));
-  const completions = [...rotearTodos(COMPLETIONS), ...rotearTodos(SESSOES)];
-  const adrs = rotearTodos(ADRS);
+  const completions = [
+    ...rotearTodos(COMPLETIONS, ".claude/completions"),
+    ...rotearTodos(SESSOES, ".claude/sessions"),
+  ];
+  const adrs = rotearTodos(ADRS, "docs/adr");
   const relatorio: string[] = [
     `# refresh ${new Date().toISOString().slice(0, 10)}`,
     "",
@@ -228,7 +241,6 @@ function main(): void {
   const naoRoteados = [...completions, ...adrs].filter(
     (d) => d.destino === "compartilhado"
   );
-  const memoriaEmpresa = lerMd(MEMORIA_USUARIO);
   const maestro = join(SAIDA, "maestro");
   escrever(
     join(maestro, "mapa.md"),
@@ -241,19 +253,26 @@ function main(): void {
       "",
     ].join("\n")
   );
-  escrever(
-    join(maestro, "memoria-empresa.md"),
-    [
-      "# memória de empresa (do usuário, não de produto)",
-      "",
-      ...memoriaEmpresa.flatMap((m) => [
-        `## ${m.titulo}`,
+  if (existsSync(MEMORIA_USUARIO)) {
+    const memoriaEmpresa = lerMd(MEMORIA_USUARIO);
+    escrever(
+      join(maestro, "memoria-empresa.md"),
+      [
+        "# memória de empresa (do usuário, não de produto)",
         "",
-        resumir(m.corpo, MAX_PALAVRAS_RESUMO),
-        "",
-      ]),
-    ].join("\n")
-  );
+        ...memoriaEmpresa.flatMap((m) => [
+          `## ${m.titulo}`,
+          "",
+          resumir(m.corpo, MAX_PALAVRAS_RESUMO),
+          "",
+        ]),
+      ].join("\n")
+    );
+  } else {
+    relatorio.push(
+      `⚠ memória de empresa não encontrada em ${MEMORIA_USUARIO} — memoria-empresa.md não regenerado`
+    );
+  }
   escrever(
     join(maestro, "nao-roteados.md"),
     [
@@ -264,6 +283,10 @@ function main(): void {
         : ["- nenhum"]),
       "",
     ].join("\n")
+  );
+  escrever(
+    join(SAIDA, "compartilhado", "memory.md"),
+    memoryMd("compartilhado", naoRoteados)
   );
   relatorio.push(
     "",

@@ -41,7 +41,7 @@
     "pre-push": "pnpm turbo test"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "*.{ts,mts,tsx,js,jsx}": [
       "biome check --write --no-errors-on-unmatched"
     ],
     "*.{json,jsonc}": [

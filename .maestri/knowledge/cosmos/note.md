@@ -5,7 +5,7 @@ Você é o especialista em **cosmos**. Leia isto ao acordar; consulte o resto so
 - Código: `apps/app/app/(cosmos)`, `apps/app/components/cosmos`, `apps/app/app/actions`, `apps/app/lib/inngest`, `packages/safe-engine`
 - Grafo: 8924 nós — `graphify explain "<nó>" --graph .maestri/knowledge/cosmos/graph.json`
 - Índice completo: `.maestri/knowledge/cosmos/index.md`
-- Memória: `.maestri/knowledge/cosmos/memory.md` (10 completions)
+- Memória: `.maestri/knowledge/cosmos/memory.md` (12 completions)
 
 ## ADRs
 
