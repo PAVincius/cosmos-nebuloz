@@ -235,21 +235,37 @@ model Tenant {
   signalConfidenceScores    SignalConfidenceScore[]
   signalAlerts              SignalAlert[]
   signalReports             SignalReportSnapshot[]
+
+  // Scaffold — framework de adoção. `ScaffoldTemplate` e suas versões ficam de
+  // fora: o template é o método da Nebuloz, global; o que é do cliente é o
+  // overlay, e a trilha.
+  scaffoldMemberships      ScaffoldMembership[]
+  scaffoldSequences        ScaffoldSequence[]
+  scaffoldSettings         ScaffoldSettings?
+  scaffoldTracks           ScaffoldTrack[]
+  scaffoldGateResults      ScaffoldGateResult[]
+  scaffoldGateOverrides    ScaffoldGateOverride[]
+  scaffoldBusinessCases    ScaffoldBusinessCase[]
+  scaffoldBcVersions       ScaffoldBusinessCaseVersion[]
+  scaffoldBcMetrics        ScaffoldBusinessCaseMetric[]
+  scaffoldBcContests       ScaffoldBusinessCaseContest[]
+  scaffoldOverlays         ScaffoldTemplateOverlay[]
+  scaffoldOverlayConflicts ScaffoldOverlayConflict[]
   // Big Bang — aprovações de operação de plataforma (o tenant aqui é `system`)
-  platformApprovals         PlatformApproval[]         @relation("PlatformApprovalSystemTenant")
-  staffDiagrams             StaffDiagram[]             @relation("StaffDiagramSystemTenant")
-  accessLogs                AccessLog[]                @relation("AccessLogSystemTenant")
-  ipAssets                  IpAsset[]                  @relation("IpAssetSystemTenant")
-  staffPeople               StaffPerson[]              @relation("StaffPersonSystemTenant")
-  engagements               Engagement[]               @relation("EngagementSystemTenant")
-  proposals                 Proposal[]                 @relation("ProposalSystemTenant")
-  leads                     Lead[]                     @relation("LeadSystemTenant")
-  services                  Service[]                  @relation("ServiceSystemTenant")
+  platformApprovals        PlatformApproval[]            @relation("PlatformApprovalSystemTenant")
+  staffDiagrams            StaffDiagram[]                @relation("StaffDiagramSystemTenant")
+  accessLogs               AccessLog[]                   @relation("AccessLogSystemTenant")
+  ipAssets                 IpAsset[]                     @relation("IpAssetSystemTenant")
+  staffPeople              StaffPerson[]                 @relation("StaffPersonSystemTenant")
+  engagements              Engagement[]                  @relation("EngagementSystemTenant")
+  proposals                Proposal[]                    @relation("ProposalSystemTenant")
+  leads                    Lead[]                        @relation("LeadSystemTenant")
+  services                 Service[]                     @relation("ServiceSystemTenant")
   // Catálogo comercial — o que se cobra e quanto (também no tenant `system`)
-  planosComerciais          PlanoComercial[]           @relation("PlanoComercialSystemTenant")
-  precosDeModulo            PrecoDeModulo[]            @relation("PrecoDeModuloSystemTenant")
-  termosDeContrato          TermoDeContrato[]          @relation("TermoDeContratoSystemTenant")
-  addOnsComerciais          AddOnComercial[]           @relation("AddOnComercialSystemTenant")
+  planosComerciais         PlanoComercial[]              @relation("PlanoComercialSystemTenant")
+  precosDeModulo           PrecoDeModulo[]               @relation("PrecoDeModuloSystemTenant")
+  termosDeContrato         TermoDeContrato[]             @relation("TermoDeContratoSystemTenant")
+  addOnsComerciais         AddOnComercial[]              @relation("AddOnComercialSystemTenant")
 }
 
 model User {
@@ -277,6 +293,8 @@ model User {
   // distintos na mesma tabela (dona e encerradora da iniciativa; dona e
   // resolvedora do alerta) — sem nome, o Prisma não sabe qual FK é qual.
   signalMemberships       SignalMember[]
+  // Scaffold — papel de adoção, ortogonal aos anteriores
+  scaffoldMemberships     ScaffoldMembership[]
   signalOwnedInitiatives  SignalInitiative[]        @relation("SignalInitiativeOwner")
   signalClosedInitiatives SignalInitiative[]        @relation("SignalInitiativeCloser")
   signalSignedBaselines   SignalBaseline[]
