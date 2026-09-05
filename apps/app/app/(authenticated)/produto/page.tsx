@@ -3,6 +3,7 @@ import {
   BoxIcon,
   CalendarClockIcon,
   CompassIcon,
+  LayersIcon,
   ShieldCheckIcon,
   SignalIcon,
   UsersIcon,
@@ -31,6 +32,7 @@ const ICONES: Record<ProdutoNoPainel["modulo"], ElementType> = {
   CHARTER: ShieldCheckIcon,
   SIGNAL: SignalIcon,
   MERIDIAN: CompassIcon,
+  SCAFFOLD: LayersIcon,
 };
 
 /** Tom por estado. `SEM_ROTA` fica neutro de propósito: é promessa da

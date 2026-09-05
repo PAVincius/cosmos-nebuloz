@@ -243,6 +243,21 @@ export type ConsentQueueRow = {
   grantedAt: Date | null;
   /** MeetingInsight (qualquer status) derivados desta transcrição. */
   insightCount: number;
+  /** MeetingTranscript.participantsKnown — false quando o provedor não
+   *  devolveu participantes (ex.: Fathom). Nesse caso `participants` vem
+   *  vazio e a tela precisa dizer "não sabemos", não "0 participantes". */
+  participantsKnown: boolean;
+  /** Quem estava na sala, segundo o provedor — nunca a sala em si (ver
+   *  docs/compliance/consentimento-de-gravacao.md §4). Vazio quando
+   *  participantsKnown é false. */
+  participants: ConsentQueueParticipant[];
+};
+
+export type ConsentQueueParticipant = {
+  email: string;
+  name: string | null;
+  isExternal: boolean;
+  isOrganizer: boolean;
 };
 
 export type ConsentQueueView = {
@@ -277,10 +292,21 @@ export async function listConsentQueue(): Promise<Result<ConsentQueueView>> {
         consentGrantedBy: true,
         consentGrantedRef: true,
         consentGrantedAt: true,
+        participantsKnown: true,
         integration: {
           select: { consentMode: true, standingConsentRef: true },
         },
         _count: { select: { insights: true } },
+        // Uma query: Prisma resolve este include com um segundo SELECT em
+        // lote (WHERE transcriptId IN (...)), não um round-trip por linha.
+        participants: {
+          select: {
+            email: true,
+            name: true,
+            isExternal: true,
+            isOrganizer: true,
+          },
+        },
       },
     });
 
@@ -319,6 +345,8 @@ export async function listConsentQueue(): Promise<Result<ConsentQueueView>> {
         grantedByRef: t.consentGrantedRef,
         grantedAt: t.consentGrantedAt,
         insightCount: t._count.insights,
+        participantsKnown: t.participantsKnown,
+        participants: t.participants,
       }))
       // Array.prototype.sort é estável — a ordenação por createdAt desc já
       // vinda do banco é preservada dentro de cada grupo de estado.

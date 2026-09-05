@@ -29,7 +29,7 @@ export {
   getMeridianRole,
   invalidateMeridianRoleCache,
 } from "./meridian-resolve";
-// Contratação modular — Cosmos / Charter / Signal / Meridian
+// Contratação modular — Cosmos / Charter / Signal / Meridian / Scaffold
 export { hasModule, invalidateModuleCache, listModules } from "./modules";
 export { getEffectiveRole, invalidatePermissionCache } from "./resolve";
 // Signal — medição de adoção e valor de iniciativas de IA

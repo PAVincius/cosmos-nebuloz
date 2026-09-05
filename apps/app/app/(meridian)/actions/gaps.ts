@@ -450,8 +450,23 @@ export async function promoteGap(
 
 const RevokeSchema = z.object({ promotionId: cuid });
 
-/** Destino removido no outro produto → gap volta ao estado anterior e o custo
- *  de atraso volta a correr. A linha da promoção fica: ela aconteceu. */
+/**
+ * Destino removido no outro produto → gap volta ao estado anterior e o custo
+ * de atraso volta a correr. A linha da promoção fica: ela aconteceu.
+ *
+ * Recusa quando `targetEntityId` não é nulo — a promoção já aterrissou num
+ * `Engagement` do back-office (ADR-0014). `apps/app` não pode enxergar o
+ * `Engagement`, que vive no tenant de sistema; a checagem funciona porque
+ * `targetEntityId` é gravado na própria `MeridianGapPromotion`, aqui dentro do
+ * tenant do cliente, então não há travessia nenhuma — só um campo que já
+ * existe na linha que a query buscou.
+ *
+ * Limitação registrada, não resolvida aqui: `targetEntityId` só diz que existe
+ * um `Engagement`, não se ele está ativo ou já concluído — um engajamento
+ * concluído também bloqueia a revogação. Se isso incomodar, quem resolve é o
+ * back-office limpando `targetEntityId` ao concluir o engajamento, não
+ * `apps/app` tentando enxergar o status de uma entidade que não é dele.
+ */
 export async function revokePromotion(
   raw: z.input<typeof RevokeSchema>
 ): Promise<Result<void>> {
@@ -470,6 +485,43 @@ export async function revokePromotion(
           "Promoção não encontrada nesta organização."
         );
       }
+      // Promoção que já aterrissou em algum lugar não se revoga em silêncio:
+      // revogar aqui deixaria trabalho em curso sem origem. Duas regras, e a
+      // diferença entre elas é o que `apps/app` consegue enxergar.
+      //
+      // Trilha do Scaffold vive no tenant do cliente, então dá para perguntar
+      // se ela ainda está em curso — e só bloquear nesse caso. Trilha cancelada
+      // não precisa segurar a revogação.
+      //
+      // Engagement vive no tenant de sistema e `apps/app` não o enxerga
+      // (ADR-0014). Sem poder ler o status, o único caminho honesto é recusar:
+      // `targetEntityId` diz que existe, não se está ativo. Quem destrava é o
+      // back-office limpando o campo ao encerrar, não este app tentando espiar
+      // entidade que não é dele.
+      if (p.targetEntityId) {
+        if (p.targetProduct === "SCAFFOLD") {
+          const track = await db.scaffoldTrack.findFirst({
+            where: {
+              id: p.targetEntityId,
+              tenantId: ctx.tenantId,
+              status: { in: ["ACTIVE", "STALLED"] },
+            },
+            select: { code: true },
+          });
+          if (track) {
+            throw new MeridianRuleError(
+              "promotion.has-active-track",
+              `${p.gap.code} tem a trilha ${track.code} em curso no Scaffold. Cancele a trilha antes de revogar a promoção.`
+            );
+          }
+        } else {
+          throw new MeridianRuleError(
+            "promotion.materialized",
+            `${p.gap.code} já foi materializado em um Engagement no back-office — revogar aqui deixaria o engajamento sem a promoção que o originou. Encerre o engajamento no back-office antes de revogar.`
+          );
+        }
+      }
+
       await db.meridianGapPromotion.update({
         where: { id: p.id },
         data: { revokedAt: new Date() },

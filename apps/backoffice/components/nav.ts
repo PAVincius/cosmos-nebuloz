@@ -68,6 +68,15 @@ export const BO_NAV: NavSection[] = [
         label: "Engajamentos",
       },
       {
+        // A única superfície cross-tenant do Scaffold. Ela mora aqui e não no
+        // app do cliente porque a ADR-0013 fez de `platformDb` a porta única
+        // para leitura entre organizações — ver
+        // `specs/002-scaffold-adoption/research.md` §R4.
+        href: "/scaffold",
+        icon: "shield",
+        label: "Fila de gates",
+      },
+      {
         href: "/capacidade",
         icon: "users",
         label: "Capacidade",
@@ -96,6 +105,11 @@ export const BO_NAV: NavSection[] = [
         href: "/servicos",
         icon: "briefcase",
         label: "Serviços",
+      },
+      {
+        href: "/scaffold",
+        icon: "puzzle",
+        label: "Scaffold",
       },
       { href: "/contas", icon: "heart", label: "Health e renovação" },
       {

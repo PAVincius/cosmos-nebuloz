@@ -19,6 +19,7 @@ const h = vi.hoisted(() => ({
   promotionFindFirst: vi.fn(),
   promotionCreate: vi.fn(),
   promotionUpdate: vi.fn(),
+  scaffoldTrackFindFirst: vi.fn(),
   planItemFindFirst: vi.fn(),
   sequenceUpsert: vi.fn(),
   auditCreate: vi.fn(),
@@ -67,6 +68,7 @@ vi.mock("@repo/database", () => ({
         create: h.promotionCreate,
         update: h.promotionUpdate,
       },
+      scaffoldTrack: { findFirst: h.scaffoldTrackFindFirst },
       meridianPlanItem: { findFirst: h.planItemFindFirst },
       meridianSequence: { upsert: h.sequenceUpsert },
       auditLog: { create: h.auditCreate },
@@ -262,5 +264,60 @@ describe("revokePromotion", () => {
       data: { revokedAt: Date };
     };
     expect(update.data.revokedAt).toBeInstanceOf(Date);
+  });
+
+  // ADR-0014: uma vez que o back-office materializa a promoção num
+  // Engagement, apps/app não pode enxergar aquela entidade — mas
+  // targetEntityId já mora na própria MeridianGapPromotion, dentro do tenant
+  // do cliente, então a checagem não atravessa tenant nenhum.
+  it("recusa revogar promoção já materializada em Engagement", async () => {
+    h.promotionFindFirst.mockResolvedValue({
+      id: P1,
+      targetEntityId: "eng-1",
+      gap: { id: G1, code: "G-01" },
+    });
+
+    const res = await revokePromotion({ promotionId: P1 });
+
+    expect(res.ok).toBe(false);
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+    expect(h.gapUpdate).not.toHaveBeenCalled();
+  });
+
+  // Scaffold é a exceção, e a razão é a visibilidade: a trilha vive no tenant
+  // do cliente, então dá para perguntar se ela ainda está em curso em vez de
+  // recusar às cegas como no Engagement.
+  it("recusa revogar quando a trilha do Scaffold está em curso", async () => {
+    h.promotionFindFirst.mockResolvedValue({
+      id: P1,
+      targetEntityId: "trk-1",
+      targetProduct: "SCAFFOLD",
+      gap: { id: G1, code: "G-01" },
+    });
+    h.scaffoldTrackFindFirst.mockResolvedValue({ code: "TR-104" });
+
+    const res = await revokePromotion({ promotionId: P1 });
+
+    expect(res.ok).toBe(false);
+    expect(h.promotionUpdate).not.toHaveBeenCalled();
+  });
+
+  it("permite revogar quando a trilha do Scaffold já foi cancelada", async () => {
+    h.promotionFindFirst.mockResolvedValue({
+      id: P1,
+      targetEntityId: "trk-1",
+      targetProduct: "SCAFFOLD",
+      gap: { id: G1, code: "G-01" },
+    });
+    // `where` filtra por ACTIVE/STALLED, então trilha cancelada não volta.
+    h.scaffoldTrackFindFirst.mockResolvedValue(null);
+    h.promotionUpdate.mockResolvedValue({});
+    h.planItemFindFirst.mockResolvedValue(null);
+    h.gapUpdate.mockResolvedValue({});
+
+    const res = await revokePromotion({ promotionId: P1 });
+
+    expect(res.ok).toBe(true);
+    expect(h.promotionUpdate).toHaveBeenCalled();
   });
 });

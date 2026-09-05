@@ -1,5 +1,217 @@
 {
   "web": {
+    "legal": {
+      "shared": {
+        "updatedLabel": "Última atualização",
+        "backLabel": "Voltar para a Nebuloz",
+        "indexLabel": "Jurídico",
+        "draftHeading": "Rascunho pendente de revisão jurídica",
+        "draftBody": "Este documento é um rascunho estruturado. Não foi revisado por advogado e não constitui aconselhamento jurídico. Os itens entre colchetes duplos são marcadores para fatos que só a Nebuloz pode confirmar.",
+        "contactHeading": "Dúvidas sobre este documento",
+        "contactBody": "Escreva para [[DADO NECESSÁRIO: e-mail de contato — ex. legal@nebuloz.ai]]. Para pedidos de proteção de dados, veja a seção de direitos da Política de Privacidade."
+      },
+      "index": {
+        "meta": {
+          "title": "Jurídico",
+          "description": "Política de Privacidade e Termos de Uso da Nebuloz."
+        },
+        "eyebrow": "JURÍDICO",
+        "titleA": "Os documentos",
+        "titleB": "que regem este site.",
+        "lead": "Dois documentos: o que acontece com os dados que você deixa aqui, e os termos sob os quais o site e o diagnóstico são oferecidos.",
+        "docs": [
+          {
+            "href": "/legal/privacy",
+            "title": "Política de Privacidade",
+            "desc": "O que é coletado, por quê, com que base legal, quem processa, por quanto tempo fica guardado, e como exercer os seus direitos."
+          },
+          {
+            "href": "/legal/terms",
+            "title": "Termos de Uso",
+            "desc": "O que este site é e não é, o que o diagnóstico cobre, de quem é o método, e os limites de responsabilidade."
+          }
+        ]
+      },
+      "privacy": {
+        "meta": {
+          "title": "Política de Privacidade",
+          "description": "Como a Nebuloz coleta, usa e protege dados pessoais, sob a LGPD e o GDPR."
+        },
+        "eyebrow": "PRIVACIDADE · LGPD · GDPR",
+        "title": "Política de Privacidade",
+        "lead": "Esta política cobre o nebuloz.ai. Não cobre os produtos em si depois que você é cliente — esses são regidos pelo contrato e pelo acordo de tratamento de dados assinado com ele.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "Quem é responsável pelos seus dados",
+            "body": [
+              "O controlador dos dados pessoais descritos aqui é [[DADO NECESSÁRIO: razão social completa]], inscrita no CNPJ [[DADO NECESSÁRIO: CNPJ]], com sede em [[DADO NECESSÁRIO: endereço completo]].",
+              "Pelo artigo 41 da LGPD, o controlador deve indicar um encarregado pelo tratamento de dados pessoais. O nosso é [[DADO NECESSÁRIO: nome do encarregado]], que pode ser contatado em [[DADO NECESSÁRIO: e-mail do encarregado]]."
+            ]
+          },
+          {
+            "heading": "O que este site coleta",
+            "body": [
+              "Hoje, uma coisa só: um cookie próprio chamado Next-Locale, que lembra o idioma em que a página foi servida. Ele não carrega identificador e não é usado para analytics. Verificado no site em produção — nenhum outro cookie, nenhum registro em local storage, nenhuma requisição a terceiro.",
+              "Quando o analytics de produto for ligado, o site passará a usar o PostHog, que guarda um identificador no seu navegador (um cookie e um registro em local storage) e registra visualizações de página e interações. O PostHog processa isso em infraestrutura nos Estados Unidos. [[DADO NECESSÁRIO: atualizar esta seção no dia em que o analytics for ligado de verdade — hoje está desativado]]",
+              "Contato: o que você digitar no formulário de contato, mais o seu e-mail, para que possamos responder.",
+              "Logs de servidor mantidos pelo nosso provedor de hospedagem, que incluem endereço IP, user agent e o caminho requisitado."
+            ],
+            "items": [
+              "Não veiculamos publicidade nem rastreamento entre sites.",
+              "Não compramos nem vendemos dados pessoais.",
+              "Não pedimos, e você não deve enviar, dados pessoais sensíveis conforme definidos no artigo 5º, II, da LGPD."
+            ]
+          },
+          {
+            "heading": "Por quê, e com que base legal",
+            "body": [
+              "Responder a você quando entra em contato: execução de contrato ou de procedimentos preliminares a seu pedido — LGPD artigo 7º, V; GDPR artigo 6(1)(b).",
+              "Manter o site seguro e disponível, inclusive os logs: legítimo interesse — LGPD artigo 7º, IX; GDPR artigo 6(1)(f).",
+              "Entender como o site é usado, por meio de analytics: consentimento — LGPD artigo 7º, I; GDPR artigo 6(1)(a). [[DADO NECESSÁRIO: decidir se haverá banner de consentimento; sem ele, analytics não pode rodar antes do consentimento para visitantes na UE]]"
+            ]
+          },
+          {
+            "heading": "Quem mais processa",
+            "body": [
+              "Usamos terceiros para operar o site. Cada um trata dados apenas sob nossas instruções.",
+              "Vercel Inc. — hospedagem, entrega e logs de servidor. Processa nos Estados Unidos. Ativo.",
+              "PostHog Inc. — analytics de produto. Processa nos Estados Unidos. Ainda não ativo; nada é enviado ao PostHog e nenhum identificador de analytics é gravado até que seja configurado.",
+              "[[DADO NECESSÁRIO: confirmar se Resend (envio de e-mail do formulário) e Sentry (monitoramento de erros) estarão ativos em produção — hoje o formulário não envia e o Sentry não tem DSN configurada]]"
+            ]
+          },
+          {
+            "heading": "Transferência internacional",
+            "body": [
+              "Os provedores acima processam dados fora do Brasil e fora do Espaço Econômico Europeu. As transferências se apoiam em cláusulas contratuais padrão e nas salvaguardas que cada provedor publica, conforme permitido pelo artigo 33 da LGPD e pelo Capítulo V do GDPR.",
+              "[[DADO NECESSÁRIO: confirmar qual mecanismo cada fornecedor oferece no contrato assinado, e anexar]]"
+            ]
+          },
+          {
+            "heading": "Por quanto tempo fica guardado",
+            "body": [
+              "[[DADO NECESSÁRIO: prazo de retenção por finalidade — mensagens de contato, logs de servidor, dados de analytics. A LGPD exige eliminação ao fim da finalidade, então cada um precisa de um prazo declarado.]]"
+            ]
+          },
+          {
+            "heading": "Os seus direitos",
+            "body": [
+              "O artigo 18 da LGPD lhe dá o direito de confirmar que tratamos os seus dados, de acessá-los, de corrigi-los, de anonimizar, bloquear ou eliminar dados desnecessários ou excessivos, de portá-los, de eliminar dados tratados com base em consentimento, de saber com quem os compartilhamos, de ser informado sobre as consequências de negar consentimento, e de revogar o consentimento.",
+              "Sob o GDPR você também tem o direito de restringir o tratamento, de se opor a ele, e de apresentar reclamação à sua autoridade supervisora.",
+              "Para exercer qualquer um deles, escreva para [[DADO NECESSÁRIO: e-mail do encarregado]]. Respondemos dentro do prazo que a lei estabelece. No Brasil, você também pode reclamar à ANPD."
+            ]
+          },
+          {
+            "heading": "Cookies e tecnologias semelhantes",
+            "body": [
+              "Hoje o site grava uma coisa no seu navegador: o cookie Next-Locale descrito acima. Não há identificador de analytics, cookie de publicidade nem script de terceiro.",
+              "Se o analytics for ligado depois, ele acrescentará um identificador. Você pode apagá-lo nas configurações do navegador, e bloqueá-lo não afeta o funcionamento do site."
+            ]
+          },
+          {
+            "heading": "Segurança",
+            "body": [
+              "O site é servido apenas por HTTPS. O acesso aos sistemas por trás dele é restrito a quem precisa.",
+              "[[DADO NECESSÁRIO: descrever medidas reais — não afirmar certificação, controle ou auditoria que a empresa não tenha. Afirmação de segurança não comprovada é o tipo de coisa que vira responsabilidade em incidente.]]"
+            ]
+          },
+          {
+            "heading": "Alterações",
+            "body": [
+              "Quando esta política muda, atualizamos a data no topo. Mudanças relevantes serão anunciadas nesta página antes de entrarem em vigor."
+            ]
+          },
+          {
+            "heading": "Lei aplicável",
+            "body": [
+              "Esta política é regida pela lei brasileira, em particular pela Lei 13.709/2018 (LGPD). [[DADO NECESSÁRIO: foro eleito — normalmente a comarca da sede]]"
+            ]
+          }
+        ]
+      },
+      "terms": {
+        "meta": {
+          "title": "Termos de Uso",
+          "description": "Os termos sob os quais a Nebuloz oferece este site e o diagnóstico de prontidão."
+        },
+        "eyebrow": "TERMOS DE USO",
+        "title": "Termos de Uso",
+        "lead": "Estes termos cobrem o seu uso do nebuloz.ai. O diagnóstico e os produtos são contratados separadamente, e aquele contrato prevalece sobre qualquer coisa aqui.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "Com quem você está tratando",
+            "body": [
+              "Este site é operado por [[DADO NECESSÁRIO: razão social completa]], CNPJ [[DADO NECESSÁRIO: CNPJ]], com sede em [[DADO NECESSÁRIO: endereço completo]]."
+            ]
+          },
+          {
+            "heading": "O que este site é",
+            "body": [
+              "Um site informativo que descreve um método e cinco produtos. Nada aqui é oferta, proposta ou compromisso de entregar um resultado.",
+              "O questionário de prontidão na página inicial é ilustrativo. Roda inteiramente no seu navegador, produz uma nota indicativa, e não é o diagnóstico Meridian."
+            ]
+          },
+          {
+            "heading": "O diagnóstico e os produtos",
+            "body": [
+              "Meridian, Scaffold, Signal, Charter e Cosmos são contratados por acordo escrito separado, que define escopo, entregáveis, preço, prazos e confidencialidade.",
+              "As descrições neste site são resumos. Onde um resumo e um contrato assinado divergirem, o contrato prevalece."
+            ]
+          },
+          {
+            "heading": "Propriedade intelectual",
+            "body": [
+              "O método, o modelo de cinco eixos, os nomes dos produtos, os textos, a identidade visual e o código deste site pertencem à Nebuloz e são protegidos pela Lei 9.610/1998 e pela Lei 9.279/1996.",
+              "Entregáveis fornecidos a um cliente sob contrato são licenciados conforme aquele contrato estabelece — e o método foi feito para ficar com o time do cliente, o que o contrato deixa explícito.",
+              "Você pode citar este site e criar links para ele com atribuição. Não pode republicá-lo por inteiro nem apresentá-lo como seu."
+            ]
+          },
+          {
+            "heading": "Uso aceitável",
+            "body": ["Ao usar este site, não:"],
+            "items": [
+              "tente obter acesso a sistemas ou dados aos quais não tem direito;",
+              "interfira na disponibilidade, inclusive com carga automatizada além da leitura normal;",
+              "use-o para enviar conteúdo ilícito ou que viole direitos de terceiros;",
+              "extraia conteúdo de forma que apresente a Nebuloz como fonte de uma afirmação que não fizemos."
+            ]
+          },
+          {
+            "heading": "Sem garantia sobre conteúdo informativo",
+            "body": [
+              "Procuramos manter este site preciso e atualizado, mas não garantimos que esteja livre de erro ou omissão, nem que estará continuamente disponível.",
+              "Nada aqui é aconselhamento jurídico, contábil, tributário ou regulatório. Material de governança descreve uma estrutura, não um parecer de conformidade."
+            ]
+          },
+          {
+            "heading": "Limites de responsabilidade",
+            "body": [
+              "Na medida em que a lei brasileira permitir, a Nebuloz não responde por danos indiretos, lucros cessantes, ou prejuízos decorrentes de decisões tomadas exclusivamente com base em conteúdo publicado neste site.",
+              "Esta cláusula não exclui responsabilidade que não possa ser excluída por lei, inclusive a do Código de Defesa do Consumidor onde ele se aplicar."
+            ]
+          },
+          {
+            "heading": "Links para terceiros",
+            "body": [
+              "Onde apontamos para outros lugares, não controlamos aquele conteúdo e não o endossamos."
+            ]
+          },
+          {
+            "heading": "Alterações",
+            "body": [
+              "Podemos alterar estes termos. A data no topo mostra a versão vigente, e o uso continuado após uma alteração significa que você a aceita."
+            ]
+          },
+          {
+            "heading": "Lei aplicável e foro",
+            "body": [
+              "A lei brasileira rege estes termos. [[DADO NECESSÁRIO: foro eleito]]"
+            ]
+          }
+        ]
+      }
+    },
     "readiness": {
       "meta": {
         "title": "Prontidão para IA, na ordem certa",

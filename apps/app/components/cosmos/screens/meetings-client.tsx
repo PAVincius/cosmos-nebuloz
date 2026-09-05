@@ -6,9 +6,12 @@
 //
 // 1. O rótulo do estágio de PENDING deixa explícito que "Liberar" é uma
 //    afirmação de quem clicou — não uma confirmação de um dado que o
-//    sistema tem. O Cosmos não registra participantes (isso é outro
-//    trabalho, story de MeetingParticipant); quem libera está dizendo que
-//    verificou consentimento fora do sistema.
+//    sistema tem. Quando participantsKnown é true, o Cosmos mostra quem o
+//    provedor viu na sala (MeetingParticipant); quando é false, diz isso
+//    sem rodeio — "não sabemos quem estava na sala". Nos dois casos, quem
+//    libera está afirmando que verificou consentimento fora do sistema: a
+//    lista, quando existe, é do provedor, não da sala (ver
+//    docs/compliance/consentimento-de-gravacao.md §4).
 // 2. RBAC visível: só ADMIN/STE/RTE podem agir (mesmo ADMIN_ROLES de
 //    consent.ts). Quem não tem o papel não vê botão nenhum — vê o estado e
 //    quem pode agir, no espírito de podeAgir/quemPode do
@@ -53,7 +56,13 @@ const HISTORY_TONE: Record<string, "red" | "neutral"> = {
   REVOKED: "neutral",
 };
 
-function RowShell({ row, right }: { row: ConsentQueueRow; right: ReactNode }) {
+function RowContent({
+  row,
+  right,
+}: {
+  row: ConsentQueueRow;
+  right: ReactNode;
+}) {
   return (
     <div
       style={{
@@ -61,8 +70,6 @@ function RowShell({ row, right }: { row: ConsentQueueRow; right: ReactNode }) {
         alignItems: "center",
         justifyContent: "space-between",
         gap: 12,
-        padding: "12px 0",
-        borderBottom: "1px solid var(--hairline)",
       }}
     >
       <div style={{ minWidth: 0, flex: 1 }}>
@@ -108,6 +115,97 @@ function RowShell({ row, right }: { row: ConsentQueueRow; right: ReactNode }) {
   );
 }
 
+function RowShell({ row, right }: { row: ConsentQueueRow; right: ReactNode }) {
+  return (
+    <div
+      style={{ padding: "12px 0", borderBottom: "1px solid var(--hairline)" }}
+    >
+      <RowContent right={right} row={row} />
+    </div>
+  );
+}
+
+// A informação que sustenta a decisão de liberar (docs/compliance/
+// consentimento-de-gravacao.md §4/§7): quem estava na sala, segundo o
+// provedor — nunca a sala em si. participantsKnown = false não é "sem
+// externo", é "não sabemos", e precisa ficar tão visível quanto a lista.
+function ParticipantsInfo({ row }: { row: ConsentQueueRow }) {
+  if (!row.participantsKnown) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          marginTop: 8,
+          fontSize: 12.5,
+        }}
+      >
+        <Icon name="alert" size={13} strokeWidth={1.9} />
+        <span style={{ fontWeight: 600, color: "var(--ink)" }}>
+          Não sabemos quem estava na sala
+        </span>
+        <span style={{ color: "var(--ink-faint)" }}>
+          — o provedor não devolveu participantes desta reunião.
+        </span>
+      </div>
+    );
+  }
+
+  const { participants } = row;
+  const externalCount = participants.filter((p) => p.isExternal).length;
+  const countLabel = `${participants.length} ${
+    participants.length === 1 ? "participante" : "participantes"
+  } · ${
+    externalCount === 0
+      ? "nenhum externo"
+      : `${externalCount} ${externalCount === 1 ? "externo" : "externos"}`
+  }`;
+
+  return (
+    <div style={{ marginTop: 8 }}>
+      <div
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: externalCount > 0 ? "var(--red-text)" : "var(--ink-muted)",
+          marginBottom: participants.length > 0 ? 6 : 0,
+        }}
+      >
+        {countLabel}
+      </div>
+      {participants.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          {participants.map((p) => (
+            <div
+              key={p.email}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                fontSize: 12,
+                color: "var(--ink-subtle)",
+              }}
+            >
+              <span
+                style={{
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {p.name || p.email}
+              </span>
+              {p.isOrganizer && <Badge tone="blue">Organizador</Badge>}
+              {p.isExternal && <Badge tone="red">Externo</Badge>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PendingRow({
   row,
   podeAgir,
@@ -121,38 +219,46 @@ function PendingRow({
   onGrant: () => void;
   onDeny: () => void;
 }) {
+  const grantTitle = row.participantsKnown
+    ? "Você está afirmando que verificou o consentimento fora do sistema — a lista de participantes é a do provedor, não a da sala; quem entrou por link sem convite pode não aparecer."
+    : "Você está afirmando que verificou o consentimento fora do sistema — o provedor não devolveu participantes desta reunião, então sua palavra é o único fundamento.";
   return (
-    <RowShell
-      right={
-        podeAgir ? (
-          <>
-            <Button
-              disabled={busy}
-              icon="ban"
-              onClick={onDeny}
-              size="sm"
-              title="Negar consentimento — a transcrição fica registrada como negada, sem processar por IA."
-              variant="secondary"
-            >
-              Negar
-            </Button>
-            <Button
-              disabled={busy}
-              icon="check"
-              onClick={onGrant}
-              size="sm"
-              title="Você está afirmando que verificou o consentimento fora do sistema — o Cosmos não sabe quem estava na sala."
-              variant="primary"
-            >
-              Liberar
-            </Button>
-          </>
-        ) : (
-          <Badge tone="amber">Pendente</Badge>
-        )
-      }
-      row={row}
-    />
+    <div
+      style={{ padding: "12px 0", borderBottom: "1px solid var(--hairline)" }}
+    >
+      <RowContent
+        right={
+          podeAgir ? (
+            <>
+              <Button
+                disabled={busy}
+                icon="ban"
+                onClick={onDeny}
+                size="sm"
+                title="Negar consentimento — a transcrição fica registrada como negada, sem processar por IA."
+                variant="secondary"
+              >
+                Negar
+              </Button>
+              <Button
+                disabled={busy}
+                icon="check"
+                onClick={onGrant}
+                size="sm"
+                title={grantTitle}
+                variant="primary"
+              >
+                Liberar
+              </Button>
+            </>
+          ) : (
+            <Badge tone="amber">Pendente</Badge>
+          )
+        }
+        row={row}
+      />
+      <ParticipantsInfo row={row} />
+    </div>
   );
 }
 
@@ -350,7 +456,7 @@ export default function MeetingsClient({
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <SectionCard
             icon="shield"
-            subtitle="Liberar aqui é uma afirmação sua — você verificou o consentimento fora do sistema. O Cosmos ainda não registra quem estava na sala."
+            subtitle="Liberar aqui é uma afirmação sua — você verificou o consentimento fora do sistema. Quando a lista de participantes aparece, é a do provedor, não a da sala; quando não aparece, o provedor não devolveu participantes e sua palavra é o único fundamento."
             title="Fila de liberação"
             tone="amber"
           >

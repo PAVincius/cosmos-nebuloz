@@ -42,6 +42,8 @@ function transcript(over: Record<string, unknown>) {
     consentGrantedAt: null,
     integration: { consentMode: "PER_MEETING", standingConsentRef: null },
     _count: { insights: 0 },
+    participantsKnown: false,
+    participants: [],
     ...over,
   };
 }
@@ -160,6 +162,84 @@ describe("listConsentQueue", () => {
     if (!res.ok) return;
     expect(res.data.rows[0].grantedByRef).toBe("Política de IA v2");
     expect(res.data.rows[0].grantedByName).toBeNull();
+  });
+
+  it("selects participants in the same findMany query, not one query per row", async () => {
+    mocks.transcriptFindMany.mockResolvedValue([]);
+
+    await listConsentQueue();
+
+    expect(mocks.transcriptFindMany).toHaveBeenCalledTimes(1);
+    const call = mocks.transcriptFindMany.mock.calls[0][0];
+    expect(call.select.participantsKnown).toBe(true);
+    expect(call.select.participants).toEqual({
+      select: {
+        email: true,
+        name: true,
+        isExternal: true,
+        isOrganizer: true,
+      },
+    });
+  });
+
+  it("passes participantsKnown and the participant list through to the row", async () => {
+    mocks.transcriptFindMany.mockResolvedValue([
+      transcript({
+        id: "tx_participants",
+        participantsKnown: true,
+        participants: [
+          {
+            email: "rte@nebuloz.com",
+            name: "Helena Souza",
+            isExternal: false,
+            isOrganizer: true,
+          },
+          {
+            email: "fornecedor@fora.com",
+            name: null,
+            isExternal: true,
+            isOrganizer: false,
+          },
+        ],
+      }),
+    ]);
+
+    const res = await listConsentQueue();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.data.rows[0].participantsKnown).toBe(true);
+    expect(res.data.rows[0].participants).toEqual([
+      {
+        email: "rte@nebuloz.com",
+        name: "Helena Souza",
+        isExternal: false,
+        isOrganizer: true,
+      },
+      {
+        email: "fornecedor@fora.com",
+        name: null,
+        isExternal: true,
+        isOrganizer: false,
+      },
+    ]);
+  });
+
+  it("participantsKnown false comes through with an empty participant list", async () => {
+    mocks.transcriptFindMany.mockResolvedValue([
+      transcript({
+        id: "tx_unknown",
+        participantsKnown: false,
+        participants: [],
+      }),
+    ]);
+
+    const res = await listConsentQueue();
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.data.rows[0].participantsKnown).toBe(false);
+    expect(res.data.rows[0].participants).toEqual([]);
   });
 
   it("counts derived insights regardless of status", async () => {

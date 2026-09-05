@@ -29,6 +29,8 @@ const row = (over: Record<string, unknown>) => ({
   grantedByRef: null,
   grantedAt: null,
   insightCount: 2,
+  participantsKnown: false,
+  participants: [],
   ...over,
 });
 
@@ -108,6 +110,86 @@ describe("MeetingsClient", () => {
     expect(
       screen.getByText(/você verificou o consentimento fora do sistema/i)
     ).toBeTruthy();
+  });
+
+  it("participantsKnown false mostra 'não sabemos quem estava na sala'", () => {
+    render(
+      <MeetingsClient
+        error={null}
+        initial={{
+          rows: [row({ participantsKnown: false, participants: [] })],
+          podeAgir: true,
+          quemPode: "ADMIN, STE ou RTE",
+        }}
+      />
+    );
+
+    expect(screen.getByText("Não sabemos quem estava na sala")).toBeTruthy();
+  });
+
+  it("participantsKnown true lista participantes, marca externo e mostra a contagem", () => {
+    render(
+      <MeetingsClient
+        error={null}
+        initial={{
+          rows: [
+            row({
+              participantsKnown: true,
+              participants: [
+                {
+                  email: "rte@nebuloz.com",
+                  name: "Helena Souza",
+                  isExternal: false,
+                  isOrganizer: true,
+                },
+                {
+                  email: "fornecedor@fora.com",
+                  name: null,
+                  isExternal: true,
+                  isOrganizer: false,
+                },
+              ],
+            }),
+          ],
+          podeAgir: true,
+          quemPode: "ADMIN, STE ou RTE",
+        }}
+      />
+    );
+
+    expect(screen.getByText("2 participantes · 1 externo")).toBeTruthy();
+    expect(screen.getByText("Helena Souza")).toBeTruthy();
+    expect(screen.getByText("fornecedor@fora.com")).toBeTruthy();
+    expect(screen.getByText("Externo")).toBeTruthy();
+    expect(screen.getByText("Organizador")).toBeTruthy();
+    expect(screen.queryByText("Não sabemos quem estava na sala")).toBeNull();
+  });
+
+  it("participantsKnown true sem externo mostra 'nenhum externo'", () => {
+    render(
+      <MeetingsClient
+        error={null}
+        initial={{
+          rows: [
+            row({
+              participantsKnown: true,
+              participants: [
+                {
+                  email: "rte@nebuloz.com",
+                  name: "Helena Souza",
+                  isExternal: false,
+                  isOrganizer: true,
+                },
+              ],
+            }),
+          ],
+          podeAgir: true,
+          quemPode: "ADMIN, STE ou RTE",
+        }}
+      />
+    );
+
+    expect(screen.getByText("1 participante · nenhum externo")).toBeTruthy();
   });
 
   it("clicar em Liberar chama grantConsent com o transcriptId e recarrega a fila", async () => {
@@ -201,6 +283,31 @@ describe("MeetingsClient", () => {
     await waitFor(() =>
       expect(revokeConsentMock).toHaveBeenCalledWith({ transcriptId: "tx_2" })
     );
+  });
+
+  it("linhas GRANTED sob STANDING mostram a declaração, não uma pessoa", () => {
+    render(
+      <MeetingsClient
+        error={null}
+        initial={{
+          rows: [
+            row({
+              id: "tx_5",
+              consentState: "GRANTED",
+              consentMode: "STANDING",
+              grantedByName: null,
+              grantedByRef: "Política de IA v2",
+              grantedAt: new Date("2026-08-01T12:00:00.000Z"),
+            }),
+          ],
+          podeAgir: true,
+          quemPode: "ADMIN, STE ou RTE",
+        }}
+      />
+    );
+
+    expect(screen.getByText(/Declaração: Política de IA v2/)).toBeTruthy();
+    expect(screen.queryByText(/Liberado por/)).toBeNull();
   });
 
   it("linhas DENIED/REVOKED aparecem como histórico, sem botão de ação", () => {
