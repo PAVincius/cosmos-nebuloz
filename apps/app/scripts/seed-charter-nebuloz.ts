@@ -170,7 +170,10 @@ async function main() {
     );
 
     for (const v of NEBULOZ_VENDORS) {
-      const data: Prisma.CharterVendorUncheckedUpdateInput = {
+      const data: Omit<
+        Prisma.CharterVendorUncheckedCreateInput,
+        "tenantId" | "code"
+      > = {
         name: v.name,
         category: v.category,
         ...(v.tier ? { tier: v.tier } : {}),
@@ -214,7 +217,10 @@ async function main() {
         missingVendorCodes.push(`${uc.code} → ${uc.vendorCode}`);
       }
 
-      const data: Prisma.CharterUseCaseUncheckedUpdateInput = {
+      const data: Omit<
+        Prisma.CharterUseCaseUncheckedCreateInput,
+        "tenantId" | "code"
+      > = {
         title: uc.title,
         objective: uc.objective,
         vendorId: vendorId ?? null,
