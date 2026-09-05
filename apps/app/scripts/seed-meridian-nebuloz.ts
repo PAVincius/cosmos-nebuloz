@@ -78,9 +78,18 @@ async function main() {
   }
   const tenantId = tenant.id;
 
-  const consultant = await db.user.findUnique({
-    where: { email: CONSULTANT_EMAIL },
-  });
+  // Igual ao seed do Charter: o e-mail é preferência, não exigência. Em produção
+  // o admin da Nebuloz não é admin@nebuloz.com, e o script não pode abortar por
+  // isso — cai no primeiro membro ADMIN do tenant.
+  const consultant =
+    (await db.user.findUnique({ where: { email: CONSULTANT_EMAIL } })) ??
+    (
+      await db.tenantMember.findFirst({
+        where: { tenantId, role: "ADMIN" },
+        include: { user: true },
+      })
+    )?.user ??
+    null;
   if (!consultant) {
     throw new Error(
       `Usuário "${CONSULTANT_EMAIL}" não encontrado. Este script não cria usuário — informe um e-mail de conta já existente como segundo argumento.`
