@@ -8,6 +8,18 @@
 > que a eliminação alcança — estão conferidos contra o código e apontam para o
 > [RoPA](lgpd-ropa-e-lacunas.md).
 
+> **v1.1 — o que entrou nesta versão, e por quê.** Sete cláusulas vindas de
+> [`operadora-controladora.md`](operadora-controladora.md) §3, nas seções 1, 3,
+> 5, 8, 9 e 10. Elas fecham a única lacuna que o modelo não cobria: os titulares
+> que aparecem no banco sem nunca terem tido conta — respondentes convidados por
+> link no Meridian e participantes de reunião gravada — não têm sessão para
+> exercer o art. 18, e o modelo dizia para onde o pedido deles vai sem dizer em
+> que prazo, por qual canal, nem o que a Nebuloz faz ao recebê-lo. As cláusulas
+> nomeiam o canal, fixam 5 dias úteis para o repasse e 30 para a eliminação ao
+> fim do contrato, e explicitam subcontratação e cooperação em incidente. O
+> enquadramento operadora × controladora que elas pressupõem continua sendo a
+> decisão pendente do §1 — as cláusulas o assumem, não o decidem.
+
 **Anexo ao contrato de prestação de serviços** celebrado entre
 [[DADO NECESSÁRIO: razão social da Nebuloz]], CNPJ [[DADO NECESSÁRIO: CNPJ]],
 com sede em [[DADO NECESSÁRIO: endereço]] ("**Nebuloz**"), e o cliente
@@ -40,6 +52,14 @@ não diretamente ao titular.
 > separa uma coisa da outra. [[DADO NECESSÁRIO: o jurídico confirmar essa linha
 > divisória; é a decisão "operadora × controladora" que o RoPA §4 deixa aberta,
 > e é a que define para onde vai o pedido de um titular sem conta]]
+
+**1.1 Titulares sem conta.** O Cliente é o controlador também quanto aos dados
+pessoais de pessoas que não possuem conta na plataforma e cujos dados são
+coletados por iniciativa dele — em especial os respondentes convidados por link
+no Meridian e os participantes de reuniões gravadas por integração que o Cliente
+conecte e opere. A Nebuloz trata esses dados exclusivamente como operadora, nos
+termos do art. 5º, VII, da Lei 13.709/2018, e não estabelece relação direta com
+esses titulares.
 
 ## 2. Objeto e finalidades
 
@@ -80,6 +100,14 @@ papel:
   instrução do Cliente é que permaneça desligado em qualquer ambiente com seus
   dados.
 
+**3.1 O que constitui instrução documentada.** Para os fins do art. 39 da Lei
+13.709/2018, constituem instruções documentadas do Cliente: o contrato principal,
+este anexo, e a configuração que o Cliente realiza no produto — inclusive o modo
+de consentimento de gravação, a declaração escrita que o sustenta, e cada
+liberação, negativa ou revogação registrada na trilha de auditoria. A Nebuloz não
+trata os dados fora dessas instruções, e informará o Cliente antes de executar a
+que entenda violar a lei.
+
 ## 4. Confidencialidade e pessoas autorizadas
 
 A Nebuloz garante que as pessoas autorizadas a tratar os dados estão sujeitas a
@@ -95,10 +123,16 @@ prometia controle inexistente]]
 
 ## 5. Subprocessadores
 
-O Cliente autoriza, de forma geral, o uso dos subprocessadores abaixo. A Nebuloz
-informará o Cliente com [[DADO NECESSÁRIO: prazo — usual 30 dias]] de
-antecedência sobre inclusão ou substituição, e o Cliente poderá se opor por
-motivo fundamentado.
+O Cliente autoriza, de forma geral, o uso dos subprocessadores abaixo.
+
+**5.1 Regime da subcontratação.** A Nebuloz pode subcontratar o tratamento aos
+subprocessadores relacionados neste anexo, mediante contrato que lhes imponha
+obrigações não menos protetivas que as aqui assumidas, e permanece integralmente
+responsável perante o Cliente pelos atos e omissões deles. A inclusão ou
+substituição de subprocessador é comunicada com **30 (trinta) dias** de
+antecedência, e o Cliente pode opor-se por motivo fundamentado nesse prazo;
+mantida a oposição, qualquer das partes pode rescindir o contrato quanto ao
+serviço afetado, sem multa.
 
 **Recebem conteúdo do Cliente:**
 
@@ -162,12 +196,28 @@ necessário para ela.
 [[DADO NECESSÁRIO: nomear o canal e a pessoa de contato para incidentes, dos
 dois lados]]
 
+**8.1 Cooperação.** A Nebuloz coopera com o Cliente na apuração e na resposta a
+incidente de segurança, fornecendo, no que estiver ao seu alcance, os registros
+de auditoria e de acesso pertinentes, a identificação dos titulares afetados —
+inclusive os sem conta — e as medidas técnicas adotadas. A comunicação à ANPD e
+aos titulares é decisão e ato do Cliente, como controlador; a Nebuloz não a
+realiza por conta própria quanto a dados tratados em nome dele, salvo instrução
+escrita.
+
 ## 9. Direitos dos titulares
 
-Pedidos de titular recebidos pela Nebuloz que digam respeito a dados do Cliente
-são encaminhados ao Cliente em até [[DADO NECESSÁRIO: prazo — usual 5 dias
-úteis]], e a Nebuloz presta a assistência técnica necessária para o Cliente
-responder no prazo legal.
+**9.1 Canal do titular sem conta.** A Nebuloz mantém canal público para
+recebimento de pedidos de titulares, divulgado em sua Política de Privacidade.
+Pedido recebido por esse canal que diga respeito a dados tratados em nome do
+Cliente não é decidido no mérito pela Nebuloz: é encaminhado ao Cliente, e o
+titular é informado de que o pedido foi encaminhado e a quem, na forma do art.
+18, § 4º, I, da Lei 13.709/2018.
+
+**9.2 Prazo de repasse e assistência.** O encaminhamento ocorre em até **5
+(cinco) dias úteis** do recebimento. A Nebuloz presta ao Cliente a assistência
+técnica necessária para responder no prazo legal — localização dos registros,
+execução de eliminação ou anonimização, geração de export de portabilidade —
+mediante instrução escrita dele.
 
 O que a plataforma faz hoje, tecnicamente, quando um pedido de eliminação é
 executado: anonimiza perfil, entradas de standup, mensagens de copiloto,
@@ -178,13 +228,19 @@ ser retido, documentado no RoPA §5.
 **Titulares sem conta** — respondentes convidados por link e participantes de
 reunião — não têm como acionar esse fluxo pela aplicação, porque ele exige
 sessão. Para eles, o caminho é o Cliente, como controlador, receber o pedido e
-instruir a Nebuloz. É exatamente por isso que o enquadramento da §1 importa.
+instruir a Nebuloz; o canal de §9.1 existe para levá-los até ele. É exatamente
+por isso que o enquadramento da §1 importa.
 
 ## 10. Retenção e eliminação ao fim do contrato
 
-Ao término do contrato, a Nebuloz cessa o tratamento e, em até 30 dias, elimina
-ou devolve os dados do Cliente, conforme instrução escrita, salvo o que a lei
-exigir reter.
+Ao término do contrato, a Nebuloz cessa o tratamento e, em até **30 (trinta)
+dias**, elimina ou devolve os dados pessoais do Cliente, conforme instrução
+escrita dele, salvo o que a lei exigir reter.
+
+**10.1 Alcance e comprovação.** A eliminação alcança os dados de titulares sem
+conta tratados em nome do Cliente — respondentes do Meridian e participantes de
+reunião — e a Nebuloz fornece, ao final, declaração escrita do que foi eliminado,
+devolvido e retido, com a base de cada retenção.
 
 [[DADO NECESSÁRIO: a policy 05 v1.1 diz com todas as letras que essa eliminação
 é hoje um procedimento manual com dono nomeado, não um processo automático. O
@@ -216,10 +272,13 @@ para cumprir a §10. É regido pela lei brasileira, em particular pela Lei
 | Confirmar operadora × controladora por finalidade (§1) | Jurídico |
 | Salvaguarda de cada subprocessador (§5, §6) | Contratual — 18 confirmações |
 | Zero-retention dos provedores de LLM (§2) | Contratual |
-| Canal de incidente (§8), prazos (§5, §9), foro (§12) | Nebuloz |
+| Canal de incidente (§8) e foro (§12) | Nebuloz |
+| Endereço do canal público de titular, citado em §9.1 | Nebuloz — ver `operadora-controladora.md` §4 |
+| Validar os prazos de §5.1, §9.2 e §10 como redigidos | Jurídico |
 | Registro de leitura por staff, se for prometido (§4) | Engenharia — não existe |
 | Eliminação automática ao fim do contrato, se for prometida (§10) | Engenharia — não existe |
 
-Quatro das seis linhas não são código. As duas que são estão marcadas como
-inexistentes, para o anexo não prometer o que o sistema não faz — que foi o
-erro da policy anterior.
+Seis das sete linhas não são código. A que é está marcada como inexistente, para
+o anexo não prometer o que o sistema não faz — que foi o erro da policy anterior.
+Os prazos que estavam em aberto (§5, §9, §10) deixaram de ser lacuna e passaram a
+ser texto: o que se pede agora é validação, não preenchimento.
