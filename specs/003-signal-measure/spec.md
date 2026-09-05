@@ -1,236 +1,160 @@
-# Feature Specification: Signal V1 · Measure
+# Feature Specification: Signal — medição de adoção e valor de IA
 
-**Feature Branch**: a criar
-
-**Created**: 2026-09-02
-
-**Status**: Draft — para reação, não para execução
-
-**Input**: Decisão de 2026-09-02 de que o Signal é produto. O que ele promete
-está publicado na home (`web.readiness.ladder.stages[2]` e
-`products.items[2]`): *"Conecta às ferramentas que você já usa e transforma
-adoção em linha de base medida — horas recuperadas, taxa de erro, tempo de
-ciclo."* Quatro saídas nomeadas: telemetria de adoção por time, registro de
-horas recuperadas, variação de tempo de ciclo, relatório pronto para o
-conselho. Cadência contínua. Comprador: financeiro e liderança de operações.
-
-> **O que esta spec é.** Um esqueleto no padrão de `001-meridian-diagnose`,
-> escrito para transformar "nada" em "algo para discordar". As user stories
-> derivam das quatro saídas que o site já vende. O que está marcado **[aberto]**
-> é decisão de produto que ninguém tomou; o que está marcado **[reusa]** aponta
-> para código do Cosmos que já faz parte do trabalho.
+**Branch**: `claude/signal-html-implementation-636f46` | **Data**: 2026-09-02
+**Fonte de design**: Claude Design · projeto `691f7fe5` · `signal.html` (+ `signal-*.jsx`, `charter-base.jsx`, `charter-modal.jsx`, `cosmos-icons.jsx`, `cosmos-kit.jsx`)
+**Fonte de requisito**: `uploads/signal-prd-detailed.md` (PRD), `uploads/signal-brd.md`, `uploads/signal-mrd.md`
+**Módulo**: `ProductModule.SIGNAL` (já existe em `packages/database/prisma/schema/modules.prisma`)
 
 ---
 
-## Por que o Signal não parte do zero
+## 1. Resumo
 
-O Cosmos já mede boa parte do que o Signal promete:
+Signal é o quarto produto da plataforma Nebuloz (ao lado de Cosmos, Charter e Meridian). Mede **adoção e valor de iniciativas de IA** de um tenant: registra a iniciativa, congela um baseline assinado, conecta fontes de dado, calcula ROI com fórmula versionada e visível, atribui um **score de confiança**, e emite um **veredito** que é a linguagem de decisão do CFO.
 
-| Promessa do site | O que já existe | Onde |
+A regra-mãe do produto, herdada literalmente do design: **adoção e resultado moram juntos; ROI nunca aparece sem fórmula e sem confiança.**
+
+## 2. Problema
+
+Empresas investem em IA sem forma confiável de medir adoção, valor operacional e ROI de modo consistente. O reporte vive espalhado em planilhas, BI e updates ad hoc. Quem decide precisa de uma fonte de verdade que ligue atividade de iniciativa a resultado de negócio — e que sobreviva a contestação em comitê.
+
+## 3. Personas (do design `signal-shell.jsx`)
+
+| Persona | Papel | Lente |
 |---|---|---|
-| Tempo de ciclo | `FlowMetricSnapshot.flowTimeAvgHours` / `flowTimeMedianHours`, por time/ART/value stream, por sprint/PI/trimestre | `flow-metrics.prisma` |
-| Taxa de adoção | Nada direto. `CompetencyAssessment` e `PersonSkillProfile` medem competência, não uso | `flow-metrics.prisma` |
-| Horas recuperadas | Nada. É a métrica nova de verdade | — |
-| Custo por resultado | `BillingEntry`, `CostSnapshot`, `BillingEntryAllocation` medem custo de nuvem por épico/ART | `finops.prisma` |
-| Anomalia / drift | `AnomalyDetectionRun`, `Anomaly`, narrativa por LLM | `flow-intelligence.prisma`, `anomaly-narrative.ts` |
-| Escala de confiança | `measured \| estimated \| declared`, **já concebida como compartilhada com o Signal** | spec do Meridian, `MeridianConfidence` |
+| CFO | Otávio Lins · CFO | Onde o dinheiro rende e onde não rende |
+| CTO | Bruno Sato · CTO | Adoção real e saúde das fontes antes de acreditar no ROI |
+| Program owner | Marina Duarte · AI program owner | Baseline, fórmula e mapeamento defensáveis |
+| PMO | Íris Campos · PMO/transformação | Compara iniciativas entre áreas, prepara o comitê |
+| Gestora | Paula Rocha · Gerente de Operações | Iniciativas da própria área, não o portfólio |
 
-Duas das quatro saídas têm base pronta; uma tem base parcial; **uma — horas
-recuperadas — é inteiramente nova e é a que o CFO mais quer**. A spec precisa
-ser honesta sobre isso: o Signal V1 é 60% repackaging e 40% produto novo, e o
-40% é o mais difícil de medir com credibilidade.
+O switcher de persona do protótipo é **lente de visualização**, não autorização. A autorização real é `SignalRole` (§7.3).
 
----
+## 4. Escopo
 
-## User Scenarios & Testing *(mandatory)*
+### 4.1 Em escopo (V1)
 
-### User Story 1 — Linha de base antes do trabalho (Priority: P1)
+Registro de iniciativas · baseline versionado e assinado · conexões de dado com saúde · mapeamento evento→métrica · métricas de adoção e resultado · ROI com componentes/custos/premissas versionados · score de confiança · veredito · dashboards executivo e de detalhe · alertas · evidências rastreáveis · trilha de auditoria · relatórios congeláveis e exportáveis · paleta ⌘K · preferências (tema, contraste, movimento, idioma).
 
-Antes de uma trilha do Scaffold começar, alguém registra a linha de base: para
-cada processo que vai ser tocado, quanto tempo leva hoje, quantas pessoas
-tocam, com que frequência. Sem isso, nada do que vier depois é medição — é
-opinião com gráfico.
+### 4.2 Fora de escopo
 
-**Why this priority**: É o que separa o Signal de um dashboard. Toda métrica do
-produto é *delta contra a linha de base*; sem ela, o produto não tem o que
-mostrar. E é a única parte que não pode ser feita depois — a linha de base
-capturada após o trabalho começar já está contaminada.
+Substituir compras/billing · treino ou benchmark de modelo · enforcement de política de uso · substituir BI genérico · workflow de GRC/jurídico · motor de recomendação e benchmarking cross-tenant (V2) · ingestão automática real das fontes (V1 entrega o *contrato* de conexão + entrada manual/semi-manual; conectores reais entram por iteração, conforme TR-1).
 
-**Independent Test**: Registrar linha de base para um processo, iniciar uma
-trilha, tentar registrar linha de base de novo para o mesmo processo e ver o
-sistema recusar com o motivo.
+## 5. Telas (10 · IA do design)
 
-**Acceptance Scenarios**:
+Seções do sidebar: **Valor** · **Prova** · **Dado** · **Sistema**.
 
-1. **Given** um processo sem linha de base, **When** alguém a registra, **Then**
-   ela fica congelada com data, autor e confiança (`measured`, `estimated` ou
-   `declared`) — e a confiança aparece em toda métrica derivada dela.
-2. **Given** uma trilha do Scaffold em `PILOT` ou posterior para aquele
-   processo, **When** alguém tenta registrar linha de base, **Then** o sistema
-   recusa: linha de base depois do trabalho começar não é linha de base.
-3. **Given** uma linha de base `declared` (ninguém mediu, alguém disse),
-   **When** o relatório é gerado, **Then** toda métrica derivada carrega o
-   selo `declared`, e o relatório diz em uma frase o que isso significa.
+| id | Tela | Seção | Conteúdo essencial |
+|---|---|---|---|
+| `overview` | Visão geral | Valor | KPIs de portfólio, matriz adoção × valor, ranking, alertas, narrativa |
+| `initiatives` | Iniciativas | Valor | Lista/filtro por BU, categoria, status, veredito |
+| `alerts` | Alertas | Valor | Fila de alertas `low` / `weak` / `stale` com regra, o quê e próximo passo |
+| `initiative` | Iniciativa (detalhe) | Valor | Hipótese, baseline, adoção, resultado, ROI, confiança, evidências, histórico |
+| `evidence` | Evidências | Prova | Observações com fonte, mapeamento, janela, linhas, transformação |
+| `audit` | Trilha de auditoria | Prova | Append-only: quem, quando, de → para, nota |
+| `reports` | Relatórios | Prova | Snapshots congeláveis; bloqueio quando há fonte sem lastro |
+| `connections` | Conexões | Dado | Fonte, saúde, último sync, o que alimenta, erro e impacto |
+| `mapping` | Mapeamento de métricas | Dado | Evento → métrica, transformação, unidade, versão, estado |
+| `settings` | Configurações | Sistema | Preferências, limiares, papéis |
 
-**[aberto]** Quem registra a linha de base — o cliente, a consultora, ou os
-dois com assinatura? Meridian usa respondente por link; Scaffold usa gate com
-aprovação. Signal precisa escolher.
+## 6. Requisitos funcionais
 
-**[reusa]** A escala de confiança do Meridian, sem alteração.
+Mapeados 1:1 do PRD (`FR-n`), com o comportamento observado no protótipo.
 
----
+### 6.1 Iniciativas
+- **FR-1** Criar iniciativa com nome, dono, hipótese de negócio, data de início, categoria (`productivity` | `quality` | `risk` | `revenue`), BU e valor esperado.
+- **FR-2** Editar metadados, métricas esperadas e status (autorizado).
+- **FR-3** Ciclo de vida `draft → active → paused → closed | cancelled`. Encerramento exige **motivo** registrado (`closure` no design: quem, quando, por quê).
 
-### User Story 2 — Adoção por time, sem vigilância (Priority: P1)
+### 6.2 Baseline
+- **FR-4** Capturar baseline **antes** da adoção.
+- **FR-5** Dimensões mínimas: tempo, custo, volume (throughput), qualidade e base de usuários — cada uma com **fonte declarada**.
+- **FR-6** Baseline é **versionado** (`v1`, `v2`, …) e **assinado** (quem assinou, quando, janela de medição). Versão anterior nunca é sobrescrita.
 
-Depois que a trilha entrega, o Signal mostra, por time, se a coisa está sendo
-usada: quantas pessoas usaram na semana, com que frequência, em que processo.
-**Agregado por time, nunca por pessoa.**
+### 6.3 Conexões e mapeamento
+- **FR-7** Conectar fontes: rastreador de tarefas, atendimento, data warehouse, planilha, comunicação, diretório.
+- **FR-8** Mapear evento de origem → métrica de negócio, com transformação e unidade explícitas.
+- **FR-9** Saúde da conexão: `healthy` | `stale` | `down`, com último sync, frequência, **erro acionável** e **impacto declarado** (quais métricas de quais iniciativas congelaram).
+- Estado do mapeamento é derivado da saúde da fonte + revisão humana: `active` | `review` | `broken` | `stale`.
 
-**Why this priority**: É a primeira das quatro saídas do site, e é a que
-responde "o piloto virou prática?" — a pergunta que o próprio site levanta na
-seção da lacuna. Sem adoção medida, horas recuperadas é extrapolação.
+### 6.4 Medição
+- **FR-10** Adoção: % sobre base licenciada, usuários ativos, frequência, **profundidade** de uso (texto qualitativo) e série temporal.
+- **FR-11** Resultado: métrica primária (era → agora → Δ%) + métrica secundária + série temporal.
+- **FR-12** ROI a partir de componentes de retorno e de custo, cada um com quantidade, unitário, total e **fonte**; premissas explícitas com nota. Fórmula **versionada**.
+- **FR-13** Score de confiança 0–100 por fatores ponderados; cada fator carrega peso, obtido e nota do desconto. Faixas: ≥80 Alta · ≥65 Média · >0 Baixa · 0 Sem dado.
+- **FR-14** Tendência de adoção, resultado e ROI ao longo do tempo.
 
-**Independent Test**: Alimentar eventos de uso de três pessoas do mesmo time,
-abrir a tela, ver a contagem agregada e **não** ver nome nenhum.
+### 6.5 Veredito (regra de decisão)
+Cruzamento de dois limiares configuráveis por tenant — `ADOPTION_BAR` (padrão 60%) e `VALUE_BAR` (padrão 1,5×):
 
-**Acceptance Scenarios**:
+| adoção | valor | veredito | ação sugerida |
+|---|---|---|---|
+| ≥ bar | ≥ bar | **Provado** | Escalar orçamento |
+| ≥ bar | < bar | **Uso sem valor** | Investigar método |
+| < bar | ≥ bar | **Promessa parada** | Destravar adoção |
+| < bar | < bar | **Candidata a parada** | Levar ao comitê |
 
-1. **Given** eventos de uso chegando de uma integração, **When** o painel
-   agrega, **Then** mostra por time: usuários ativos, frequência, processos
-   tocados — e nenhum dado individual sai da camada de agregação.
-2. **Given** um time com menos de N pessoas **[aberto: N]**, **When** o painel
-   agrega, **Then** suprime a linha, pelo mesmo motivo que o benchmark do
-   Meridian suprime coorte abaixo de cinco: com poucos, agregado identifica.
-3. **Given** uma pessoa que pede eliminação de dados (LGPD), **When** o pedido
-   é processado, **Then** os eventos dela saem e os agregados históricos
-   **não são recalculados** — o agregado já não a identificava, e recalcular
-   revelaria por diferença.
+### 6.6 Dashboards e relatório
+- **FR-15** Visão geral com portfólio (retorno/investido), iniciativas ativas, valor em risco, alertas.
+- **FR-16** Detalhe da iniciativa com métricas, evidências e histórico.
+- **FR-17** Agrupamento por BU, programa, região ou categoria.
+- **FR-18** Exportar sumário executivo e relatório por iniciativa a partir de **snapshot estruturado** (TR-4) — nunca raspagem de tela.
 
-**[aberto]** De onde vêm os eventos de uso. O site diz "conecta às ferramentas
-que você já usa". Quais? A primeira integração define o produto. Candidatas
-pelo que o Cosmos já integra: Linear, GitHub, e o próprio Cosmos.
+### 6.7 Evidência e auditoria
+- **FR-19** Toda observação de métrica guarda: iniciativa, métrica, valor, janela, conexão, mapeamento, nº de linhas, transformação, quando e por quem; e pode carregar `flag` de ressalva.
+- **FR-20** Auditoria append-only de mudanças em iniciativa, baseline, fórmula, atribuição, alerta e encerramento — com `de → para` e nota.
 
-**[aberto]** A fronteira entre "adoção" e "vigilância" precisa estar escrita
-antes da primeira linha de código, e precisa ser regra de produto, não só de
-UI — porque é exatamente o que um comitê de trabalhadores vai perguntar. O
-Charter da própria Nebuloz deveria ter este caso de uso cadastrado antes de o
-produto existir.
+### 6.8 Alertas
+- **FR-21** `low` — adoção < 40% após 8 semanas.
+- **FR-22** `weak` — adoção ≥ 60% e ROI < 1,0×.
+- **FR-23** `stale` — fonte sem sync há > 48 h.
+Cada alerta traz **o quê**, **próximo passo** e **dono**.
 
----
+## 7. Requisitos não-funcionais e de plataforma
 
-### User Story 3 — Horas recuperadas, com a conta aberta (Priority: P2)
+### 7.1 Multi-tenant (NÃO NEGOCIÁVEL)
+Toda leitura e escrita filtra por `tenantId` de `requireTenantSession(await headers())`. Nunca do body. RLS no banco.
 
-Para cada processo com linha de base e adoção medida, o Signal calcula horas
-recuperadas: (tempo antes − tempo depois) × frequência × pessoas. **E mostra a
-conta**, não só o resultado — cada fator com sua confiança.
+### 7.2 Módulo
+Acesso exige `TenantModule` com `module = SIGNAL` e status ativo. Ausência → `/signal-indisponivel`.
 
-**Why this priority**: É a métrica que o CFO quer e a que mais fácil vira
-mentira. P2 porque depende das duas anteriores e porque a credibilidade dela
-vem inteiramente de a conta estar aberta — um número sem os fatores é o
-"retorno anedótico" que o site promete substituir.
+### 7.3 Papéis (`SignalRole`)
+Ortogonal a `MemberRole`, `CharterRole` e `MeridianRole`:
 
-**Independent Test**: Registrar linha de base `measured` de 40 min, tempo
-depois `estimated` de 15 min, 20 execuções/semana, 3 pessoas; ver 25 horas na
-semana, com a linha de base marcada `measured` e o resultado marcado
-`estimated` (o mais fraco dos fatores manda).
+| Papel | Pode |
+|---|---|
+| `VIEWER` | Ler tudo do tenant; exportar relatório já congelado |
+| `OWNER` | Tudo de VIEWER + criar/editar as **próprias** iniciativas, capturar baseline |
+| `ANALYST` | Tudo de OWNER (em qualquer iniciativa) + mapear métricas, versionar fórmula, recalcular |
+| `ADMIN` | Tudo + conexões, limiares do tenant, congelar relatório, encerrar iniciativa |
 
-**Acceptance Scenarios**:
+### 7.4 Acessibilidade
+Piso do DS, já presente no `signal.html`: skip link (WCAG 2.4.1), alvo de toque 44px em ponteiro grosso (2.5.8), `:focus-visible`, modo alto contraste (`data-contrast="high"`), movimento reduzido explícito (`data-motion="reduced"`) **e** `prefers-reduced-motion`.
 
-1. **Given** todos os fatores presentes, **When** o cálculo roda, **Then** a
-   tela mostra a fórmula preenchida, e a confiança do resultado é a **menor**
-   entre os fatores — nunca a média.
-2. **Given** um fator ausente, **When** o cálculo roda, **Then** não há número:
-   há a lista do que falta. Zero não é resposta.
-3. **Given** horas recuperadas e um custo-hora informado **[aberto: por quem]**,
-   **When** o relatório é gerado, **Then** o valor em dinheiro aparece com a
-   mesma confiança das horas e com o custo-hora declarado ao lado.
+### 7.5 Idioma
+UI em PT-BR com dicionário (`SG_DICT`), preparada para en-US. Termos técnicos em inglês.
 
-**[aberto]** "Tempo depois" é medido como? Amostragem, auto-relato, telemetria?
-Cada um tem uma confiança diferente e a spec precisa nomear.
+## 8. Modelo de dados (entidades)
 
----
+`SignalInitiative` · `SignalBaseline` (versionado) · `SignalBaselineDimension` · `SignalConnection` · `SignalMetricMapping` (versionado) · `SignalMetricObservation` (= evidência) · `SignalRoiFormula` (versionada, com componentes/custos/premissas) · `SignalAdoptionSnapshot` · `SignalOutcomeSnapshot` · `SignalConfidenceFactor` · `SignalAlert` · `SignalReportSnapshot` · `SignalMember` · `SignalSettings` · `SignalSequence`. Auditoria reusa `AuditLog` com `entityType = "signal.<entidade>"`.
 
-### User Story 4 — Relatório para o conselho (Priority: P2)
+Detalhe em [data-model.md](./data-model.md).
 
-Um documento periódico, exportável, que junta as três anteriores em uma página:
-o que foi medido, contra que linha de base, com que confiança, e o que ainda
-não dá para afirmar.
+## 9. Critérios de aceite
 
-**Why this priority**: É a saída que o comprador de fato consome — o CFO não
-abre painel, abre PDF antes da reunião. P2 porque é composição das anteriores.
+1. Um tenant com `SIGNAL` contratado acessa `/signal` e vê a visão geral; um sem o módulo cai em `/signal-indisponivel`.
+2. Criar iniciativa → capturar baseline v1 assinado → conectar fonte → mapear evento → registrar observação → o detalhe mostra adoção, resultado, ROI, confiança e veredito **coerentes entre si**.
+3. Nenhuma tela exibe múltiplo de ROI sem exibir, no mesmo contexto, a versão da fórmula e o score de confiança.
+4. Derrubar uma conexão faz o mapeamento virar `broken`, a evidência afetada ganhar `flag` de congelamento, o alerta `stale` aparecer e a confiança cair pelo fator correspondente.
+5. Congelar relatório produz snapshot imutável: mudar a fonte depois não altera o número do relatório.
+6. Toda alteração de baseline, fórmula, atribuição e status aparece na trilha com `de → para` e autor.
+7. Nenhuma query cruza tenant; toda server action repete o guard (sessão → módulo → papel → permissão).
+8. `biome check`, `test:coverage ≥ 80%`, `build` verdes.
 
-**Independent Test**: Gerar o relatório de um período com um processo
-`measured` e outro `declared`; conferir que o documento distingue os dois e
-tem uma seção "o que não afirmamos".
+## 10. Questões em aberto
 
-**Acceptance Scenarios**:
-
-1. **Given** um período fechado, **When** o relatório é gerado, **Then** ele é
-   congelado — regerar o mesmo período produz o mesmo documento, e o dado que
-   mudou depois vai para o período seguinte.
-2. **Given** métricas de confiança mista, **When** o relatório é gerado,
-   **Then** a primeira página diz quantas são `measured`, quantas `estimated`,
-   quantas `declared`, antes de qualquer número.
-3. **Given** um processo sem linha de base, **When** o relatório é gerado,
-   **Then** ele aparece na seção "não medido", não some.
-
-**[reusa]** O export de conformidade do Charter (`compliance-export.ts`,
-`compliance-pdf.tsx`) como padrão de documento congelado por período.
-
----
-
-## Requirements *(mandatory)*
-
-### Functional Requirements
-
-- **FR-001**: Toda métrica carrega a escala de confiança do Meridian
-  (`measured | estimated | declared`), e a de um cálculo é a menor entre seus
-  fatores.
-- **FR-002**: Linha de base é imutável após a trilha correspondente sair de
-  `ASSESS`.
-- **FR-003**: Adoção é agregada por time; nenhuma leitura individual sai da
-  camada de agregação, e times abaixo de N são suprimidos.
-- **FR-004**: Cálculo com fator ausente não produz número.
-- **FR-005**: Relatório de período fechado é imutável.
-- **FR-006**: Eliminação de titular remove eventos individuais sem recalcular
-  agregados históricos.
-
-### Key Entities *(draft)*
-
-- **Baseline** — processo, medida, confiança, autor, data, congelada.
-- **UsageEvent** — evento de uso vindo de integração; individual; sujeito a
-  eliminação; **nunca lido fora da agregação**.
-- **AdoptionSnapshot** — agregado por time e período, derivado de UsageEvent,
-  sobrevive à eliminação dos eventos.
-- **RecoveryLedger** — horas recuperadas por processo e período, com os fatores
-  e a confiança de cada um.
-- **SignalReport** — documento por período, congelado.
-
-**[reusa]** `FlowMetricSnapshot` para tempo de ciclo; `CostSnapshot` para custo;
-`MeridianConfidence` (ou equivalente compartilhado) para a escala.
-
----
-
-## O que esta spec deliberadamente não decide
-
-- **Preço.** Decisão de 2026-09-02 adia junto com os demais.
-- **A primeira integração.** Define o produto e não está escolhida.
-- **A fronteira adoção/vigilância.** Precisa ser regra escrita, com o caso de
-  uso cadastrado no Charter da Nebuloz antes da primeira linha de código.
-- **Quem registra linha de base e quem informa custo-hora.**
-- **O tamanho de N** para supressão de time pequeno.
-
-Cinco decisões. Nenhuma é de engenharia, e as duas do meio são as que um
-cliente regulado vai perguntar primeiro.
-
----
-
-## Success Criteria *(draft)*
-
-- **SC-001**: Um relatório de período pode ser lido por um CFO sem contexto e
-  responde "quanto recuperamos, com que certeza, e o que não sabemos" na
-  primeira página.
-- **SC-002**: Nenhum caminho do produto expõe uso individual — verificável por
-  teste, não por revisão.
-- **SC-003**: A mesma linha de base e os mesmos eventos produzem o mesmo
-  relatório, sempre.
+| # | Questão | Encaminhamento |
+|---|---|---|
+| Q1 | Quais integrações são obrigatórias no primeiro segmento? | V1 entrega o contrato de conexão + entrada manual; conectores por iteração |
+| Q2 | Quanto de automação é aceitável no baseline? | V1: captura manual com fonte declarada por dimensão |
+| Q3 | Qual modelo de confiança casa com a narrativa? | Adotado o do protótipo: 4 fatores ponderados (30/25/20/25), configurável por tenant |
+| Q4 | Fórmula de ROI padrão por tipo de iniciativa? | V1: templates por categoria, editáveis e versionados |

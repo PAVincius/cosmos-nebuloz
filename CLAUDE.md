@@ -105,9 +105,9 @@ Graph built from full repo: 10.189 nodes · 15.392 edges · 871 communities.
 ---
 
 <!-- SPECKIT START -->
-For additional context about technologies to be used, project structure,
-shell commands, and other important information, read the current plan
-at specs/002-scaffold-adoption/plan.md
+## Spec Kit
+
+Active plan: [`specs/003-signal-measure/plan.md`](specs/003-signal-measure/plan.md)
 <!-- SPECKIT END -->
 
 ---
