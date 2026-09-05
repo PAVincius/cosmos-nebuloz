@@ -32,6 +32,22 @@ export {
 // Contratação modular — Cosmos / Charter / Signal / Meridian / Scaffold
 export { hasModule, invalidateModuleCache, listModules } from "./modules";
 export { getEffectiveRole, invalidatePermissionCache } from "./resolve";
+// Scaffold — framework de adoção em trilhas guiadas
+export type { ScaffoldPermission } from "./scaffold-matrix";
+export {
+  hasScaffoldPermission,
+  SCAFFOLD_MATRIX,
+  SCAFFOLD_PERMISSION_LABEL,
+  SCAFFOLD_PERMISSIONS,
+  SCAFFOLD_ROLE_LABEL,
+  SCAFFOLD_ROLE_TONE,
+  scaffoldDenialReason,
+  scaffoldRolesGranting,
+} from "./scaffold-matrix";
+export {
+  getScaffoldRole,
+  invalidateScaffoldRoleCache,
+} from "./scaffold-resolve";
 // Signal — medição de adoção e valor de iniciativas de IA
 export type { SignalPermission } from "./signal-matrix";
 export {
