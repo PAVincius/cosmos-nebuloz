@@ -156,14 +156,15 @@ grupo estiver sem lançamento no mês). `somarMeses` inalterada; a coluna
 ### 4.4 Aba "Plano de contas" — `/empresa/financeiro?aba=plano`
 
 Tabela por grupo (código, nome, centro, ativa, ações). Formulário de nova
-conta: código (validado no formato e único), nome, grupo (select 1–6), centro
-(derivado do grupo, editável nos grupos 3–6). Ações por linha: renomear
-(inline, `onBlur`), desativar/reativar. Sem excluir — ponytail: desativar
-cobre o caso e não quebra lançamento. Escrita gated por `podeEscrever`.
+conta: código (validado no formato e único), nome, grupo (select 1–6). Centro
+derivado do grupo, só leitura — nada lê `centroDeCusto` fora da própria conta,
+então não há por que editá-lo. Ações por linha: renomear (inline, `onBlur`),
+desativar/reativar. Sem excluir — ponytail: desativar cobre o caso e não
+quebra lançamento. Escrita gated por `podeEscrever`.
 
 Actions em `financeiro.ts`: `listarPlanoDeContas()`, `criarConta(input)`,
-`atualizarConta({ conta, nome?, ativa?, centroDeCusto? })`. `salvarLancamento`
-recusa conta inexistente ou inativa.
+`atualizarConta({ conta, nome?, ativa? })`. `salvarLancamento` recusa conta
+inexistente ou inativa.
 
 ## 5. Leituras por intervalo
 
