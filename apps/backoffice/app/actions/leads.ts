@@ -336,10 +336,20 @@ export async function moverEstagio(
     }
 
     await database.$transaction(async (tx) => {
-      await tx.lead.update({
-        where: { id: lead.id },
+      // `updateMany` (não `update`) porque o `where` precisa carregar o
+      // estado lido — duas submissões concorrentes que leram o mesmo lead
+      // aberto não podem as duas passar: sem isto, a segunda sobrescreve o
+      // estágio da primeira e ainda duplica a linha de histórico.
+      const atualizado = await tx.lead.updateMany({
+        where: { id: lead.id, estagio: lead.estagio, perdidoEm: null },
         data: { estagio: dados.estagio, estagioDesde: new Date() },
       });
+      if (atualizado.count === 0) {
+        throw new StaffAuthError(
+          "FORBIDDEN",
+          "Lead mudou de estado; recarregue e tente de novo"
+        );
+      }
       await tx.historicoDeEstagio.create({
         data: {
           tenantId: SYSTEM_TENANT_ID,
@@ -443,8 +453,11 @@ export async function marcarPerdido(
     }
 
     await database.$transaction(async (tx) => {
-      await tx.lead.update({
-        where: { id: lead.id },
+      // Mesma proteção de `moverEstagio`: o `where` carrega o estado lido, ou
+      // duas chamadas concorrentes marcando o mesmo lead como perdido
+      // duplicariam a linha de histórico.
+      const atualizado = await tx.lead.updateMany({
+        where: { id: lead.id, estagio: lead.estagio, perdidoEm: null },
         data: {
           perdidoEm: new Date(),
           perdidoNoEstagio: lead.estagio,
@@ -452,6 +465,12 @@ export async function marcarPerdido(
           notaPerda: dados.nota,
         },
       });
+      if (atualizado.count === 0) {
+        throw new StaffAuthError(
+          "FORBIDDEN",
+          "Lead mudou de estado; recarregue e tente de novo"
+        );
+      }
       await tx.historicoDeEstagio.create({
         data: {
           tenantId: SYSTEM_TENANT_ID,
@@ -523,14 +542,30 @@ export async function converterEmProposta(
         select: { id: true, numero: true },
       });
 
-      await tx.lead.update({
-        where: { id: lead.id },
+      // Mesma proteção de `moverEstagio`/`marcarPerdido`, mais `propostaId:
+      // null`: sem ele, duas conversões concorrentes do mesmo lead as duas
+      // passariam o `where` (o estágio ainda não mudou na leitura de
+      // nenhuma) e criariam duas propostas para o mesmo lead. A proposta já
+      // criada acima é desfeita pelo rollback da transação se isto recusar.
+      const atualizado = await tx.lead.updateMany({
+        where: {
+          id: lead.id,
+          estagio: lead.estagio,
+          perdidoEm: null,
+          propostaId: null,
+        },
         data: {
           propostaId: p.id,
           estagio: "PROPOSAL",
           estagioDesde: new Date(),
         },
       });
+      if (atualizado.count === 0) {
+        throw new StaffAuthError(
+          "FORBIDDEN",
+          "Lead mudou de estado; recarregue e tente de novo"
+        );
+      }
 
       await tx.historicoDeEstagio.create({
         data: {

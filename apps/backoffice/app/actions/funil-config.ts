@@ -174,10 +174,26 @@ export async function atualizarEstagio(
     }
 
     await database.$transaction(async (tx) => {
-      await tx.estagioDoFunil.update({
-        where: { id: atual.id },
+      // `updateMany` (não `update`) porque o `where` precisa carregar o
+      // estado lido — duas edições concorrentes do mesmo estágio não podem
+      // as duas passar: sem isto, a segunda sobrescreve a primeira e ainda
+      // duplica a linha de `MudancaDeEstagio`. `criterios` é `String[]` no
+      // Prisma — comparar exige `equals`, não `===`.
+      const atualizado = await tx.estagioDoFunil.updateMany({
+        where: {
+          id: atual.id,
+          pesoPercent: atual.pesoPercent,
+          tetoDias: atual.tetoDias,
+          criterios: { equals: atual.criterios },
+        },
         data: update,
       });
+      if (atualizado.count === 0) {
+        throw new StaffAuthError(
+          "FORBIDDEN",
+          "Estágio mudou de configuração; recarregue e tente de novo"
+        );
+      }
       for (const m of mudancas) {
         await tx.mudancaDeEstagio.create({
           data: {

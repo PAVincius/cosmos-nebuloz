@@ -1,7 +1,7 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
-import { type LeadRow, listarFunil } from "@/app/actions/leads";
+import { listarFunil } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
-import { estagnado, type LeadFunil } from "@/lib/comercial/funil";
+import { estagnado, paraLeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Funil } from "./funil";
 
@@ -11,23 +11,6 @@ import { Funil } from "./funil";
  * docs/superpowers/specs/2026-09-06-funil-v2-design.md §4).
  */
 export const dynamic = "force-dynamic";
-
-/** Mesma conversão local de board.tsx/tabela-leads.tsx/funil.tsx — aqui só
- *  para os dois badges do cabeçalho, que precisam de `estagnado()` antes do
- *  cliente montar. */
-function paraLeadFunil(l: LeadRow): LeadFunil {
-  return {
-    id: l.id,
-    estagio: l.estagio,
-    estagioDesde: l.estagioDesde,
-    situacao: l.situacao,
-    acvEstimadoCentavos: l.acvEstimadoCentavos,
-    proposta: l.proposta,
-    entrada: l.entrada,
-    canalSlug: l.canal?.slug ?? null,
-    perdidoNoEstagio: l.perdidoNoEstagio,
-  };
-}
 
 export default async function FunilPage() {
   const [staff, res] = await Promise.all([

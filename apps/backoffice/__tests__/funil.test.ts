@@ -11,6 +11,7 @@ import {
   estagnado,
   type LeadFunil,
   metricasDoEstagio,
+  paraLeadFunil,
   pipelinePonderado,
   podeConverter,
   podeMover,
@@ -39,6 +40,39 @@ const lead = (overrides: Partial<LeadFunil> = {}): LeadFunil => ({
   canalSlug: null,
   perdidoNoEstagio: null,
   ...overrides,
+});
+
+describe("paraLeadFunil", () => {
+  it("canal null vira canalSlug null", () => {
+    const l = paraLeadFunil({
+      id: "L-1",
+      estagio: "DISCOVERY",
+      estagioDesde: "2026-08-01T00:00:00Z",
+      situacao: "ATIVO",
+      acvEstimadoCentavos: 10_000,
+      proposta: null,
+      entrada: "MERIDIAN",
+      canal: null,
+      perdidoNoEstagio: null,
+    });
+    expect(l.canalSlug).toBeNull();
+  });
+
+  it("canal com slug é extraído, e a proposta existente é carregada", () => {
+    const l = paraLeadFunil({
+      id: "L-2",
+      estagio: "PROPOSAL",
+      estagioDesde: "2026-08-01T00:00:00Z",
+      situacao: "ATIVO",
+      acvEstimadoCentavos: null,
+      proposta: { acvCentavos: 50_000, status: "ENVIADA" },
+      entrada: "MERIDIAN",
+      canal: { slug: "indicacao" },
+      perdidoNoEstagio: null,
+    });
+    expect(l.canalSlug).toBe("indicacao");
+    expect(l.proposta).toEqual({ acvCentavos: 50_000, status: "ENVIADA" });
+  });
 });
 
 describe("situacaoDe", () => {

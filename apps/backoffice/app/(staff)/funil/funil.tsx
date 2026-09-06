@@ -23,10 +23,10 @@ import {
   diasNoEstagio,
   type Estagio,
   estagnado,
-  type LeadFunil,
   MOTIVOS_PERDA,
   type MotivoPerda,
   PORTAS,
+  paraLeadFunil,
   pipelinePonderado,
   type Transicao,
   taxaLeadParaProposta,
@@ -52,24 +52,6 @@ export type DadosFunil = {
   historico: Transicao[];
   hoje: string;
 };
-
-/** `LeadRow` → `LeadFunil` para as regras puras — local a cada arquivo que
- *  precisa (também em board.tsx e tabela-leads.tsx) porque cada um é uma
- *  unidade de apresentação independente; a única regra que importa,
- *  `canalSlug: l.canal?.slug ?? null`, é a mesma nas três cópias. */
-function paraLeadFunil(l: LeadRow): LeadFunil {
-  return {
-    id: l.id,
-    estagio: l.estagio,
-    estagioDesde: l.estagioDesde,
-    situacao: l.situacao,
-    acvEstimadoCentavos: l.acvEstimadoCentavos,
-    proposta: l.proposta,
-    entrada: l.entrada,
-    canalSlug: l.canal?.slug ?? null,
-    perdidoNoEstagio: l.perdidoNoEstagio,
-  };
-}
 
 function leadVisivel(
   l: LeadRow,

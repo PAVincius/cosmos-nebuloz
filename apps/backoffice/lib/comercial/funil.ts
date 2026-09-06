@@ -93,6 +93,41 @@ export type LeadFunil = {
   perdidoNoEstagio: string | null;
 };
 
+/** Forma estrutural que `paraLeadFunil` precisa de um lead lido do servidor —
+ *  não importa `LeadRow` de `app/actions/leads`: esta lib fica pura (sem
+ *  Prisma, sem I/O), e `LeadRow` satisfaz este tipo sem precisar de conversão
+ *  explícita nos cinco lugares que chamam a função. */
+export type LeadParaConversao = {
+  id: string;
+  estagio: string;
+  estagioDesde: string;
+  situacao: "ATIVO" | "GANHO" | "PERDIDO";
+  acvEstimadoCentavos: number | null;
+  proposta: { acvCentavos: number; status: string } | null;
+  entrada: string | null;
+  canal: { slug: string } | null;
+  perdidoNoEstagio: string | null;
+};
+
+/** `LeadRow` (leitura do servidor) → `LeadFunil` (regras puras). Era
+ *  reimplementada idêntica em page.tsx, funil.tsx, board.tsx, tabela-leads.tsx
+ *  e lead-dialog.tsx — cinco cópias que só podiam divergir por descuido.
+ *  Centralizada aqui porque `canalSlug: l.canal?.slug ?? null` é a única
+ *  regra que importa, e ela não muda entre apresentações. */
+export function paraLeadFunil(l: LeadParaConversao): LeadFunil {
+  return {
+    id: l.id,
+    estagio: l.estagio,
+    estagioDesde: l.estagioDesde,
+    situacao: l.situacao,
+    acvEstimadoCentavos: l.acvEstimadoCentavos,
+    proposta: l.proposta,
+    entrada: l.entrada,
+    canalSlug: l.canal?.slug ?? null,
+    perdidoNoEstagio: l.perdidoNoEstagio,
+  };
+}
+
 const DIA_MS = 24 * 60 * 60 * 1000;
 
 /** Trunca para meia-noite UTC — é o que faz a fronteira do dia ser a mesma em

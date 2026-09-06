@@ -14,8 +14,8 @@ import {
   type Estagio,
   estagnado,
   INFO_ESTAGIO,
-  type LeadFunil,
   PORTAS,
+  paraLeadFunil,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -24,24 +24,10 @@ import {
  *
  * Componente de apresentação puro: recebe `leads`/`estagios`/`hoje` já lidos
  * pelo controlador (`funil.tsx`) e devolve intenção por callback — nenhuma
- * chamada de action mora aqui. `LeadRow` → `LeadFunil` é convertido localmente
- * (`canalSlug: l.canal?.slug ?? null`) porque as regras puras do funil não
- * conhecem a forma da leitura do servidor.
+ * chamada de action mora aqui. `LeadRow` → `LeadFunil` é convertido por
+ * `paraLeadFunil` (`lib/comercial/funil.ts`) porque as regras puras do funil
+ * não conhecem a forma da leitura do servidor.
  */
-
-function paraLeadFunil(l: LeadRow): LeadFunil {
-  return {
-    id: l.id,
-    estagio: l.estagio,
-    estagioDesde: l.estagioDesde,
-    situacao: l.situacao,
-    acvEstimadoCentavos: l.acvEstimadoCentavos,
-    proposta: l.proposta,
-    entrada: l.entrada,
-    canalSlug: l.canal?.slug ?? null,
-    perdidoNoEstagio: l.perdidoNoEstagio,
-  };
-}
 
 type Coluna = {
   codigo: Estagio;
@@ -156,12 +142,16 @@ function CartaoLead({
     vencido
   );
   const icone = iconeProximoPasso(codigo, tomPasso);
+  // Um lead em PROPOSAL nunca sai de lá pelo board — o servidor sempre
+  // recusa mover um lead que já tem proposta — então soltar o card nunca
+  // teria efeito. Arrastável só induziria a pessoa a tentar.
+  const podeArrastar = podeEscrever && codigo !== "PROPOSAL";
 
   return (
     <button
       aria-label={`Abrir lead ${lead.nome}`}
       className="btn"
-      draggable={podeEscrever}
+      draggable={podeArrastar}
       onClick={() => onAbrirLead(lead.id)}
       onDragEnd={onDragEndCard}
       onDragStart={() => onDragStartCard(lead.id)}

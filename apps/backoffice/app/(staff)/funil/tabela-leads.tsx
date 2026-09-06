@@ -10,10 +10,10 @@ import {
   type Estagio,
   estagnado,
   INFO_ESTAGIO,
-  type LeadFunil,
   MOTIVOS_PERDA,
   type MotivoPerda,
   PORTAS,
+  paraLeadFunil,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -23,20 +23,6 @@ import {
  * avançado, porque um lead perto do fim que travou custa mais do que um lead
  * novo travado no início.
  */
-
-function paraLeadFunil(l: LeadRow): LeadFunil {
-  return {
-    id: l.id,
-    estagio: l.estagio,
-    estagioDesde: l.estagioDesde,
-    situacao: l.situacao,
-    acvEstimadoCentavos: l.acvEstimadoCentavos,
-    proposta: l.proposta,
-    entrada: l.entrada,
-    canalSlug: l.canal?.slug ?? null,
-    perdidoNoEstagio: l.perdidoNoEstagio,
-  };
-}
 
 function ordemDeEstagio(codigo: string): number {
   const i = ESTAGIOS.indexOf(codigo as Estagio);

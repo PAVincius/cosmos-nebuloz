@@ -7,7 +7,7 @@ const mocks = vi.hoisted(() => ({
   assertCanWrite: vi.fn(),
   logPlatformAudit: vi.fn(),
   estagioDoFunilFindFirst: vi.fn(),
-  estagioDoFunilUpdate: vi.fn(),
+  estagioDoFunilUpdateMany: vi.fn(),
   mudancaDeEstagioFindMany: vi.fn(),
   mudancaDeEstagioCreate: vi.fn(),
   canalDeLeadFindFirst: vi.fn(),
@@ -37,7 +37,7 @@ vi.mock("@repo/database", () => ({
   database: {
     estagioDoFunil: {
       findFirst: mocks.estagioDoFunilFindFirst,
-      update: mocks.estagioDoFunilUpdate,
+      updateMany: mocks.estagioDoFunilUpdateMany,
     },
     mudancaDeEstagio: {
       findMany: mocks.mudancaDeEstagioFindMany,
@@ -65,7 +65,7 @@ const staff = {
 };
 
 const tx = {
-  estagioDoFunil: { update: mocks.estagioDoFunilUpdate },
+  estagioDoFunil: { updateMany: mocks.estagioDoFunilUpdateMany },
   mudancaDeEstagio: { create: mocks.mudancaDeEstagioCreate },
 };
 
@@ -75,6 +75,9 @@ function resetar() {
   }
   mocks.requirePlatformStaff.mockResolvedValue(staff);
   mocks.mudancaDeEstagioFindMany.mockResolvedValue([]);
+  // `updateMany` real devolve `{ count }` — `count: 1` é o caminho feliz
+  // (nenhuma concorrência); o teste de corrida sobrescreve para `0`.
+  mocks.estagioDoFunilUpdateMany.mockResolvedValue({ count: 1 });
   mocks.transaction.mockImplementation(
     async (fn: (t: unknown) => Promise<unknown>) => await fn(tx)
   );
@@ -152,7 +155,7 @@ describe("atualizarEstagio", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.estagioDoFunilUpdate).not.toHaveBeenCalled();
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa motivo curto", async () => {
@@ -165,7 +168,7 @@ describe("atualizarEstagio", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.estagioDoFunilUpdate).not.toHaveBeenCalled();
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa quando nada mudou", async () => {
@@ -183,7 +186,7 @@ describe("atualizarEstagio", () => {
     if (!res.ok) {
       expect(res.error).toBe("Nada mudou.");
     }
-    expect(mocks.estagioDoFunilUpdate).not.toHaveBeenCalled();
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
   });
 
   it("grava uma MudancaDeEstagio por campo alterado", async () => {
@@ -202,7 +205,7 @@ describe("atualizarEstagio", () => {
     });
 
     expect(res.ok).toBe(true);
-    expect(mocks.estagioDoFunilUpdate.mock.calls[0][0].data).toMatchObject({
+    expect(mocks.estagioDoFunilUpdateMany.mock.calls[0][0].data).toMatchObject({
       pesoPercent: 40,
       tetoDias: 21,
       criterios: [
@@ -261,7 +264,21 @@ describe("atualizarEstagio", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.estagioDoFunilUpdate).not.toHaveBeenCalled();
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("estágio mudou de configuração entre a leitura e a escrita: recusa sem duplicar a mudança", async () => {
+    mocks.estagioDoFunilFindFirst.mockResolvedValue(estagioAtual());
+    mocks.estagioDoFunilUpdateMany.mockResolvedValue({ count: 0 });
+
+    const res = await atualizarEstagio({
+      codigo: "DISCOVERY",
+      pesoPercent: 40,
+      motivo: "Recalibrado após revisão trimestral do pipeline",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.mudancaDeEstagioCreate).not.toHaveBeenCalled();
   });
 });
 

@@ -14,8 +14,8 @@ import {
   diasNoEstagio,
   type Estagio,
   estagnado,
-  type LeadFunil,
   type MotivoPerda,
+  paraLeadFunil,
   proximoEstagio,
 } from "@/lib/comercial/funil";
 import type { Result } from "@/lib/safe-action";
@@ -41,20 +41,6 @@ import {
  * action: é o que permite o diálogo mostrar o erro **aqui dentro** (em vez de
  * só no topo da página) e desabilitar os botões enquanto a chamada está no ar.
  */
-
-function paraLeadFunil(l: LeadRow): LeadFunil {
-  return {
-    id: l.id,
-    estagio: l.estagio,
-    estagioDesde: l.estagioDesde,
-    situacao: l.situacao,
-    acvEstimadoCentavos: l.acvEstimadoCentavos,
-    proposta: l.proposta,
-    entrada: l.entrada,
-    canalSlug: l.canal?.slug ?? null,
-    perdidoNoEstagio: l.perdidoNoEstagio,
-  };
-}
 
 type Props = {
   lead: LeadRow | null;

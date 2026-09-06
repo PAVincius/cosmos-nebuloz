@@ -172,4 +172,43 @@ describe("Board", () => {
       expect(card.getAttribute("draggable")).not.toBe("true");
     }
   });
+
+  it("card em Proposta não fica arrastável mesmo com podeEscrever — o servidor sempre recusa mover quem já tem proposta", () => {
+    const leadEmProposta = leadFactory({
+      estagio: "PROPOSAL",
+      id: "lead-3",
+      nome: "Charter SA",
+      proposta: {
+        id: "p-1",
+        numero: "P-1",
+        status: "ENVIADA",
+        acvCentavos: 100_000,
+        tenantProvisionadoSlug: null,
+      },
+    });
+
+    render(
+      <Board
+        estagios={ESTAGIOS}
+        hoje={HOJE}
+        leads={[LEAD_EM_LEAD, leadEmProposta]}
+        onAbrirEstagio={vi.fn()}
+        onAbrirLead={vi.fn()}
+        onConverter={vi.fn()}
+        onMover={vi.fn()}
+        onPerder={vi.fn()}
+        podeEscrever={true}
+      />
+    );
+
+    const cardProposta = screen.getByRole("button", {
+      name: "Abrir lead Charter SA",
+    });
+    expect(cardProposta.getAttribute("draggable")).not.toBe("true");
+
+    const cardLead = screen.getByRole("button", {
+      name: "Abrir lead Meridian Corp",
+    });
+    expect(cardLead.getAttribute("draggable")).toBe("true");
+  });
 });

@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   leadFindFirst: vi.fn(),
   leadCreate: vi.fn(),
   leadUpdate: vi.fn(),
+  leadUpdateMany: vi.fn(),
   canalDeLeadFindFirst: vi.fn(),
   canalDeLeadFindMany: vi.fn(),
   estagioDoFunilFindMany: vi.fn(),
@@ -94,7 +95,7 @@ const staff = {
 /** `$transaction` como o vizinho testa: callback recebe o mesmo objeto de
  *  mocks, seja ele chamado `tx` (produção) ou `database` (aqui). */
 const tx = {
-  lead: { create: mocks.leadCreate, update: mocks.leadUpdate },
+  lead: { create: mocks.leadCreate, updateMany: mocks.leadUpdateMany },
   historicoDeEstagio: { create: mocks.historicoDeEstagioCreate },
   proposal: { create: mocks.proposalCreate },
 };
@@ -109,6 +110,9 @@ function resetar() {
   mocks.canalDeLeadFindMany.mockResolvedValue([]);
   mocks.historicoDeEstagioFindMany.mockResolvedValue([]);
   mocks.gerarNumeroProposta.mockReturnValue("P-TESTE");
+  // `updateMany` real devolve `{ count }` — `count: 1` é o caminho feliz
+  // (nenhuma concorrência); os testes de corrida sobrescrevem para `0`.
+  mocks.leadUpdateMany.mockResolvedValue({ count: 1 });
   mocks.transaction.mockImplementation(
     async (fn: (t: unknown) => Promise<unknown>) => await fn(tx)
   );
@@ -322,10 +326,12 @@ describe("moverEstagio", () => {
     const res = await moverEstagio({ id: "l-1", estagio: "DISCOVERY" });
 
     expect(res.ok).toBe(true);
-    expect(mocks.leadUpdate.mock.calls[0][0].data.estagio).toBe("DISCOVERY");
-    expect(mocks.leadUpdate.mock.calls[0][0].data.estagioDesde).toBeInstanceOf(
-      Date
+    expect(mocks.leadUpdateMany.mock.calls[0][0].data.estagio).toBe(
+      "DISCOVERY"
     );
+    expect(
+      mocks.leadUpdateMany.mock.calls[0][0].data.estagioDesde
+    ).toBeInstanceOf(Date);
     expect(mocks.historicoDeEstagioCreate.mock.calls[0][0].data).toMatchObject({
       leadId: "l-1",
       de: "LEAD",
@@ -344,7 +350,7 @@ describe("moverEstagio", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa mover para o mesmo estágio", async () => {
@@ -353,7 +359,7 @@ describe("moverEstagio", () => {
     const res = await moverEstagio({ id: "l-1", estagio: "DISCOVERY" });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("bloqueia lead já convertido — não reabre um funil que já fechou", async () => {
@@ -367,7 +373,7 @@ describe("moverEstagio", () => {
     if (!res.ok) {
       expect(res.code).toBe("FORBIDDEN");
     }
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("bloqueia lead perdido — reabrir esconderia por que ele saiu", async () => {
@@ -378,7 +384,7 @@ describe("moverEstagio", () => {
     const res = await moverEstagio({ id: "l-1", estagio: "DISCOVERY" });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa lead de outro tenant / inexistente", async () => {
@@ -387,7 +393,7 @@ describe("moverEstagio", () => {
     const res = await moverEstagio({ id: "de-outro", estagio: "LEAD" });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("MEMBER não move", async () => {
@@ -398,7 +404,17 @@ describe("moverEstagio", () => {
     const res = await moverEstagio({ id: "l-1", estagio: "DISCOVERY" });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("lead mudou de estágio entre a leitura e a escrita: recusa sem duplicar histórico", async () => {
+    mocks.leadFindFirst.mockResolvedValue(leadAberto({ estagio: "LEAD" }));
+    mocks.leadUpdateMany.mockResolvedValue({ count: 0 });
+
+    const res = await moverEstagio({ id: "l-1", estagio: "DISCOVERY" });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.historicoDeEstagioCreate).not.toHaveBeenCalled();
   });
 });
 
@@ -448,7 +464,7 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("exige nota com pelo menos 12 caracteres", async () => {
@@ -461,7 +477,7 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("marca perdido, grava o estágio da perda e o histórico", async () => {
@@ -474,12 +490,12 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(true);
-    expect(mocks.leadUpdate.mock.calls[0][0].data).toMatchObject({
+    expect(mocks.leadUpdateMany.mock.calls[0][0].data).toMatchObject({
       motivoPerda: "PRECO",
       notaPerda: "Preço acima do orçamento do trimestre",
       perdidoNoEstagio: "DISCOVERY",
     });
-    expect(mocks.leadUpdate.mock.calls[0][0].data.perdidoEm).toBeInstanceOf(
+    expect(mocks.leadUpdateMany.mock.calls[0][0].data.perdidoEm).toBeInstanceOf(
       Date
     );
     expect(mocks.historicoDeEstagioCreate.mock.calls[0][0].data).toMatchObject({
@@ -501,7 +517,7 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(true);
-    expect(mocks.leadUpdate.mock.calls[0][0].data.perdidoNoEstagio).toBe(
+    expect(mocks.leadUpdateMany.mock.calls[0][0].data.perdidoNoEstagio).toBe(
       "PROPOSAL"
     );
     expect(mocks.proposalCreate).not.toHaveBeenCalled();
@@ -519,7 +535,7 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("MEMBER não marca perdido", async () => {
@@ -534,7 +550,21 @@ describe("marcarPerdido", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("lead mudou de estado entre a leitura e a escrita: recusa sem duplicar histórico", async () => {
+    mocks.leadFindFirst.mockResolvedValue(leadAberto({ estagio: "DISCOVERY" }));
+    mocks.leadUpdateMany.mockResolvedValue({ count: 0 });
+
+    const res = await marcarPerdido({
+      id: "l-1",
+      motivo: "PRECO",
+      nota: "Preço acima do orçamento do trimestre",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.historicoDeEstagioCreate).not.toHaveBeenCalled();
   });
 });
 
@@ -557,13 +587,13 @@ describe("converterEmProposta", () => {
       clienteNome: "Vanta Saúde",
       contatoEmail: "ana@vanta.exemplo",
     });
-    expect(mocks.leadUpdate.mock.calls[0][0].data).toMatchObject({
+    expect(mocks.leadUpdateMany.mock.calls[0][0].data).toMatchObject({
       propostaId: "p-1",
       estagio: "PROPOSAL",
     });
-    expect(mocks.leadUpdate.mock.calls[0][0].data.estagioDesde).toBeInstanceOf(
-      Date
-    );
+    expect(
+      mocks.leadUpdateMany.mock.calls[0][0].data.estagioDesde
+    ).toBeInstanceOf(Date);
     expect(mocks.historicoDeEstagioCreate.mock.calls[0][0].data).toMatchObject({
       leadId: "l-1",
       de: "EVALUATION",
@@ -592,7 +622,7 @@ describe("converterEmProposta", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.proposalCreate).not.toHaveBeenCalled();
-    expect(mocks.leadUpdate).not.toHaveBeenCalled();
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa converter lead perdido", async () => {
@@ -615,5 +645,18 @@ describe("converterEmProposta", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.proposalCreate).not.toHaveBeenCalled();
+  });
+
+  it("lead mudou de estado entre a leitura e a escrita: recusa sem duplicar histórico", async () => {
+    mocks.leadFindFirst.mockResolvedValue(
+      leadAberto({ estagio: "EVALUATION" })
+    );
+    mocks.proposalCreate.mockResolvedValue({ id: "p-1", numero: "P-TESTE" });
+    mocks.leadUpdateMany.mockResolvedValue({ count: 0 });
+
+    const res = await converterEmProposta({ id: "l-1" });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.historicoDeEstagioCreate).not.toHaveBeenCalled();
   });
 });
