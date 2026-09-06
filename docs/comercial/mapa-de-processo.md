@@ -35,13 +35,16 @@ depois que ele bate com esse recorte.
 | Entrada | `Lead` no estágio `LEAD` |
 | Saída | Convertido (`propostaId` apontando para a `Proposal` criada) ou perdido (`perdidoEm` + `motivoPerda` preenchidos juntos) |
 | Dono | Dono do lead (`donoId`/`donoNome`) |
-| Onde no back-office | Campo `estagio` do `Lead` (`LEAD → DISCOVERY → EVALUATION`), tela `funil`, roteiro de discovery no [playbook de vendas](playbook-de-vendas.md) §1 |
+| Onde no back-office | Campo `estagio` do `Lead` (`LEAD → DISCOVERY → EVALUATION → PROPOSAL`), tela `funil`, roteiro de discovery no [playbook de vendas](playbook-de-vendas.md) §1 |
 | O que falta | Não há critério escrito de quando um lead passa de `DISCOVERY` para `EVALUATION` — a mudança de estágio é julgamento de quem toca o lead; `proximaAcao`/`proximaAcaoEm` marca atraso na tela, mas não dispara lembrete |
 
-O comentário do próprio `apps/backoffice/app/(staff)/funil/page.tsx` é
-explícito: o funil cobre só a metade inicial — os dois estágios seguintes
-(proposta enviada, fechado) já são `Proposal.status` — e não há KPI de
-conversão nesta tela de propósito, por falta de volume para dizer algo.
+Quarto estágio, `PROPOSAL` ("Proposta"): o lead entra nele ao converter em
+`EVALUATION` (`converterEmProposta`), fica vinculado a uma `Proposal`
+(`propostaId`) e continua perdível até o fechamento. Peso, teto de dias e
+critérios de saída de cada estágio (inclusive `PROPOSAL`) não são constante em
+código — vivem em `EstagioDoFunil`, por tenant, editáveis no painel do
+estágio (clique no cabeçalho da coluna, ADMIN) na tela `funil`; toda edição
+grava uma linha em `MudancaDeEstagio` (campo, de, para, motivo, autor).
 
 ---
 
