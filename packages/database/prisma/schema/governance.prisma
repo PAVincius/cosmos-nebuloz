@@ -218,15 +218,15 @@ model PlatformApproval {
 /// o texto, nunca o contrário — é o que torna o diagrama versionável em git e
 /// diffável numa revisão.
 model StaffDiagram {
-  id   String @id @default(cuid())
+  id       String @id @default(cuid())
   /// Tenant dono da linha. É sempre o tenant `system`: diagrama é artefato da
   /// Nebuloz, não do cliente. O campo existe para a mesma trilha de auditoria
   /// e o mesmo escopo que o resto do painel usa.
   tenantId String
 
-  kind String // BPMN | MERMAID
-  name String
-  slug String
+  kind      String // BPMN | MERMAID
+  name      String
+  slug      String
   /// Para que serve este diagrama — some da tela sem isso e vira arquivo órfão.
   descricao String? @db.Text
 
@@ -242,8 +242,9 @@ model StaffDiagram {
   criadoEm      DateTime @default(now())
   atualizadoEm  DateTime @updatedAt
 
-  tenant   Tenant                @relation("StaffDiagramSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
-  versions StaffDiagramVersion[]
+  tenant    Tenant                @relation("StaffDiagramSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  versions  StaffDiagramVersion[]
+  processos StaffProcess[]
 
   @@unique([tenantId, slug])
   @@index([tenantId])
@@ -256,17 +257,17 @@ model StaffDiagram {
 /// pergunta que o operador realmente faz — o que mudou entre a v3 e a v4 — não
 /// teria como ser respondida.
 model StaffDiagramVersion {
-  id         String @id @default(cuid())
-  diagramId  String
+  id        String   @id @default(cuid())
+  diagramId String
   /// Sequencial por diagrama, começando em 1. É o número que a tela mostra.
-  versao     Int
-  source     String @db.Text
+  versao    Int
+  source    String   @db.Text
   /// Por que mudou. Curto e obrigatório na UI: diff sem motivo obriga a ler o
   /// diff inteiro para descobrir a intenção.
-  nota       String? @db.Text
-  autorId    String
-  autorNome  String?
-  criadoEm   DateTime @default(now())
+  nota      String?  @db.Text
+  autorId   String
+  autorNome String?
+  criadoEm  DateTime @default(now())
 
   diagram StaffDiagram @relation(fields: [diagramId], references: [id], onDelete: Cascade)
 

@@ -7,6 +7,8 @@
  *   - ContaDoPlano: 27 linhas de docs/financeiro/plano-de-contas.md
  *   - EstagioDoFunil: 4 linhas (peso/teto/critérios) do funil v2
  *   - CanalDeLead: 5 linhas (CAC médio nulo) do funil v2
+ *   - StaffProcess: 21 linhas do mapa de processos
+ *   - StaffProcessEdge: 23 linhas do mapa de processos
  *
  *   pnpm seed:empresa:nebuloz
  *
@@ -34,6 +36,10 @@ import {
   ESTAGIOS_NEBULOZ,
 } from "@repo/provisioning/src/funil-nebuloz";
 import { PLANO_DE_CONTAS_NEBULOZ } from "@repo/provisioning/src/plano-de-contas-nebuloz";
+import {
+  LIGACOES_NEBULOZ,
+  PROCESSOS_NEBULOZ,
+} from "@repo/provisioning/src/processos-nebuloz";
 import { Pool } from "pg";
 import { PrismaClient } from "../../../packages/database/generated";
 
@@ -110,6 +116,40 @@ async function main() {
   });
   console.log(
     `  ✓ canais de lead: ${ca.count} criados (${CANAIS_NEBULOZ.length - ca.count} já existiam)`
+  );
+
+  const pr = await db.staffProcess.createMany({
+    skipDuplicates: true,
+    data: PROCESSOS_NEBULOZ.map(({ revisadoEm, ...x }) => ({
+      tenantId: SYSTEM_TENANT_ID,
+      ...x,
+      revisadoEm: revisadoEm ? new Date(`${revisadoEm}T00:00:00Z`) : null,
+    })),
+  });
+  console.log(
+    `  ✓ processos: ${pr.count} criados (${PROCESSOS_NEBULOZ.length - pr.count} já existiam)`
+  );
+
+  const processos = await db.staffProcess.findMany({
+    where: { tenantId: SYSTEM_TENANT_ID },
+    select: { id: true, codigo: true },
+  });
+  const idPorCodigo = new Map(
+    processos.map((processo) => [processo.codigo, processo.id])
+  );
+  const le = await db.staffProcessEdge.createMany({
+    skipDuplicates: true,
+    data: LIGACOES_NEBULOZ.map(({ de, para, rotulo }) => {
+      const deId = idPorCodigo.get(de);
+      const paraId = idPorCodigo.get(para);
+      if (!(deId && paraId)) {
+        throw new Error(`Ligação ${de} → ${para}: processo não encontrado`);
+      }
+      return { tenantId: SYSTEM_TENANT_ID, deId, paraId, rotulo };
+    }),
+  });
+  console.log(
+    `  ✓ ligações de processos: ${le.count} criadas (${LIGACOES_NEBULOZ.length - le.count} já existiam)`
   );
 
   await pool.end();
