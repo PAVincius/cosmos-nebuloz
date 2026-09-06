@@ -1,9 +1,24 @@
 import { Badge, PageHeader } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { listarProcessos } from "@/app/actions/processos";
 import { Erro } from "@/components/campo";
 import { statusDe } from "@/lib/ferramentas/processos";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Mapa } from "./mapa";
+
+const LINK_MODELADOR = {
+  alignItems: "center",
+  background: "var(--surface-2)",
+  border: "1px solid var(--hairline-strong)",
+  borderRadius: "var(--r-sm)",
+  color: "var(--ink-muted)",
+  display: "inline-flex",
+  fontSize: "var(--fs-nota)",
+  fontWeight: 700,
+  gap: 6,
+  padding: "6px 11px",
+  textDecoration: "none",
+} as const;
 
 /**
  * Mapa de processos (spec §4): o grafo de conhecimento aplicado aos processos
@@ -65,7 +80,11 @@ export default async function ProcessosPage() {
         subtitle={SUBTITULO}
         title="Mapa de processos"
         tone="accent"
-      />
+      >
+        <Link href="/ferramentas/bpmn" style={LINK_MODELADOR}>
+          Abrir modelador
+        </Link>
+      </PageHeader>
 
       <Mapa inicial={res.data} podeEscrever={staff.canWrite} />
     </div>

@@ -77,7 +77,7 @@ export type Processo = {
   tags: string[];
   diagramId: string | null;
   docUrl: string | null;
-  diagram: { id: string; name: string; slug: string } | null;
+  diagram: { id: string; name: string; slug: string; versoes: number } | null;
 };
 
 export type Ligacao = {

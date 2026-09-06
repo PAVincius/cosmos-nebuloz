@@ -47,7 +47,7 @@ function processoFactory(over: Partial<ProcessoRow>): ProcessoRow {
 const PROCESSO_A = processoFactory({
   codigo: "PZ-01",
   descricao: "Capta e qualifica leads comerciais.",
-  diagram: { id: "d1", name: "Funil BPMN", slug: "funil-bpmn" },
+  diagram: { id: "d1", name: "Funil BPMN", slug: "funil-bpmn", versoes: 3 },
   diagramId: "d1",
   dominio: "COMERCIAL",
   donoNome: "Ana",

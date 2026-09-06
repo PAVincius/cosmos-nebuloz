@@ -54,7 +54,10 @@ const ProcessoSchema = z.object({
     .array(z.string().trim().min(1).max(30, "Tag com no máximo 30 caracteres."))
     .max(12, "No máximo 12 tags."),
   diagramId: z.string().trim().min(1).nullable(),
-  docUrl: z.url("URL do documento inválida.").max(500).nullable(),
+  docUrl: z
+    .url({ protocol: /^https?$/, error: "URL do documento inválida." })
+    .max(500)
+    .nullable(),
 });
 
 const AtualizarProcessoSchema = ProcessoSchema.extend({
@@ -86,7 +89,7 @@ export type ProcessoRow = {
   tags: string[];
   diagramId: string | null;
   docUrl: string | null;
-  diagram: { id: string; name: string; slug: string } | null;
+  diagram: { id: string; name: string; slug: string; versoes: number } | null;
 };
 
 export type LigacaoRow = {
@@ -145,7 +148,14 @@ export async function listarProcessos(): Promise<Result<PayloadMapa>> {
           tags: true,
           diagramId: true,
           docUrl: true,
-          diagram: { select: { id: true, name: true, slug: true } },
+          diagram: {
+            select: {
+              id: true,
+              name: true,
+              slug: true,
+              _count: { select: { versions: true } },
+            },
+          },
         },
       }),
       database.staffProcessEdge.findMany({
@@ -165,6 +175,14 @@ export async function listarProcessos(): Promise<Result<PayloadMapa>> {
         nivel: p.nivel as Nivel,
         tipo: p.tipo as "CORE" | "APOIO",
         revisadoEm: p.revisadoEm ? p.revisadoEm.toISOString() : null,
+        diagram: p.diagram
+          ? {
+              id: p.diagram.id,
+              name: p.diagram.name,
+              slug: p.diagram.slug,
+              versoes: p.diagram._count.versions,
+            }
+          : null,
       })),
       ligacoes,
       diagramas: diagramas.map((d) => ({

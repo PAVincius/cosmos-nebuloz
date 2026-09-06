@@ -173,36 +173,23 @@ export function Nucleo({ cx, cy }: { cx: number; cy: number }) {
 }
 
 /** Camada 4: a mancha desfocada de um domínio — um círculo por nó do domínio
- *  mais um maior no centroide, todos sob o mesmo `feGaussianBlur`. Clicar
- *  seleciona o primeiro nó do domínio (mesmo alvo do rótulo, camada 5). `<g>`
- *  em SVG não tem equivalente `<button>` nativo — `role`+`tabIndex`+
- *  `onKeyDown` cobrem o teclado, como no nó (camada 7). */
+ *  mais um maior no centroide, todos sob o mesmo `feGaussianBlur`. Puramente
+ *  decorativa: a spec §4 pede o RÓTULO da área como alvo de clique (camada
+ *  5), não a mancha — um blob sem retângulo de hit-test próprio virava uma
+ *  área enorme de canvas vazio que selecionava ao clique. */
 export function Mancha({
   tom,
   nos,
   centro,
   opacidade,
-  rotulo,
-  onSelecionar,
 }: {
   tom: Tone;
   nos: { id: string; pos: Ponto }[];
   centro: Ponto;
   opacidade: number;
-  rotulo: string;
-  onSelecionar: () => void;
 }) {
   return (
-    // biome-ignore lint/a11y/useSemanticElements: <g> dentro de <svg> não vira <button> — a mancha é um blob desfocado sem retângulo de hit-test próprio; role+tabIndex+onKeyDown cobrem o teclado.
-    <g
-      aria-label={rotulo}
-      filter="url(#grafo-mancha)"
-      onClick={onSelecionar}
-      onKeyDown={(e) => aoTeclarComoClique(e, onSelecionar)}
-      role="button"
-      style={{ cursor: "pointer" }}
-      tabIndex={0}
-    >
+    <g filter="url(#grafo-mancha)" style={{ pointerEvents: "none" }}>
       {nos.map((n) => (
         <circle
           cx={n.pos.x}
@@ -324,6 +311,16 @@ export function Aresta({
 /** A pílula do nó (nome + "N2 · Modelado"), aberta em hover ou seleção. Sem
  *  medir texto (jsdom não implementa `getBBox`): a largura é uma estimativa
  *  por número de caracteres, generosa o bastante para não cortar. */
+/** "N2 · Modelado" e, com diagrama, "· BPMN v3" — a versão só aparece quando
+ *  existe modelo para versionar. */
+function linha2DoNo(p: Processo, status: Status): string {
+  const base = `N${p.nivel} · ${STATUS[status].rotulo}`;
+  if (!p.diagram) {
+    return base;
+  }
+  return `${base} · BPMN v${p.diagram.versoes}`;
+}
+
 function PillDoNo({
   p,
   raio,
@@ -333,20 +330,12 @@ function PillDoNo({
   raio: number;
   status: Status;
 }) {
-  const linha2 = `N${p.nivel} · ${STATUS[status].rotulo}`;
+  const linha2 = linha2DoNo(p, status);
   const largura = Math.max(p.nome.length, linha2.length) * 6.1 + 20;
   const x = raio + 10;
   const y = -22;
   return (
-    <g className="pm-pill" pointerEvents="none">
-      <style>{`
-        .pm-pill {
-          transition: opacity 120ms ease, transform 120ms ease;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .pm-pill { transition: none; }
-        }
-      `}</style>
+    <g pointerEvents="none">
       <rect
         fill="var(--surface)"
         height={38}

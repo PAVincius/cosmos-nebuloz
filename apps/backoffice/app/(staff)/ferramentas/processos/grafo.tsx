@@ -15,7 +15,7 @@
  */
 import type { Tone } from "@repo/design-system/cosmos/kit";
 import type { PointerEvent } from "react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   DOMINIOS,
   type Dominio,
@@ -64,6 +64,16 @@ const DISTANCIA_VOLTA_PX = 190;
 
 function clamp(v: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, v));
+}
+
+const SELETOR_INTERATIVO = "button, select, a, input, textarea, [tabindex]";
+
+/** Space é a tecla de ativação de `<button>` (e afins) — sequestrar o evento
+ *  pro "modo mão" enquanto um desses tem foco impede ativar "Novo processo",
+ *  os chips, "Editar"/"Excluir", o × da ligação ou abrir o `<select>` pelo
+ *  teclado. */
+function elementoInterativo(alvo: EventTarget | null): boolean {
+  return alvo instanceof Element && alvo.closest(SELETOR_INTERATIVO) !== null;
 }
 
 /** Raio cresce com o grau do nó (quantas ligações tocam nele) e com nível 1
@@ -179,14 +189,9 @@ export function Grafo({
         onSelecionar(null);
         return;
       }
-      if (e.code === "Space") {
-        const alvo = e.target as HTMLElement | null;
-        const emCampoDeTexto =
-          alvo?.tagName === "INPUT" || alvo?.tagName === "TEXTAREA";
-        if (!emCampoDeTexto) {
-          e.preventDefault();
-          setEspaco(true);
-        }
+      if (e.code === "Space" && !elementoInterativo(e.target)) {
+        e.preventDefault();
+        setEspaco(true);
       }
     }
     function aoTeclarCima(e: globalThis.KeyboardEvent) {
@@ -202,15 +207,26 @@ export function Grafo({
     };
   }, [onSelecionar]);
 
-  const layout = layoutPolar(processos);
-  const porId = new Map(processos.map((p) => [p.id, p]));
-  const ligacoesVisiveis = ligacoes.filter(
-    (l) => porId.has(l.deId) && porId.has(l.paraId)
-  );
-  const graus = construirGraus(processos, ligacoesVisiveis);
-  const raiosPorId = new Map(
-    processos.map((p) => [p.id, raioDoNo(p.nivel, graus.get(p.id) ?? 0)])
-  );
+  // Layout, índice por id, ligações visíveis, grau e raio — nenhum depende de
+  // pan/zoom/arraste, só de `processos`/`ligacoes`. `useMemo` evita refazer
+  // essa conta a cada render, inclusive a cada tick de um arraste em curso.
+  const { layout, porId, ligacoesVisiveis, raiosPorId } = useMemo(() => {
+    const novoLayout = layoutPolar(processos);
+    const novoPorId = new Map(processos.map((p) => [p.id, p]));
+    const novasVisiveis = ligacoes.filter(
+      (l) => novoPorId.has(l.deId) && novoPorId.has(l.paraId)
+    );
+    const novosGraus = construirGraus(processos, novasVisiveis);
+    const novosRaios = new Map(
+      processos.map((p) => [p.id, raioDoNo(p.nivel, novosGraus.get(p.id) ?? 0)])
+    );
+    return {
+      layout: novoLayout,
+      porId: novoPorId,
+      ligacoesVisiveis: novasVisiveis,
+      raiosPorId: novosRaios,
+    };
+  }, [processos, ligacoes]);
 
   function posEfetiva(id: string): Ponto {
     return overrides[id] ?? layout.pos[id];
@@ -230,6 +246,14 @@ export function Grafo({
     setPan({ x: 0, y: 0 });
   }
 
+  // `aoRodar` lê zoom/pan/layout de um ref, não do closure — assim a função
+  // tem identidade estável e o `useEffect` abaixo registra o listener nativo
+  // uma vez só, em vez de remover e recriar a cada tick de pan/zoom.
+  const estadoRodaRef = useRef({ zoom, pan, w: layout.W, h: layout.H });
+  useEffect(() => {
+    estadoRodaRef.current = { zoom, pan, w: layout.W, h: layout.H };
+  });
+
   // ⌘/Ctrl mantém o ponto sob o cursor fixo ao dar zoom; sem o modificador, a
   // roda só faz pan (comportamento padrão de canvas infinito). React 19
   // registra `wheel` como listener passivo quando ligado via prop JSX
@@ -237,33 +261,31 @@ export function Grafo({
   // deixando o pinch do trackpad dar zoom na página e a roda simples rolar o
   // fundo. Por isso o listener é nativo (useEffect abaixo) com
   // `{ passive: false }`, e o parâmetro é o `WheelEvent` do DOM.
-  const aoRodar = useCallback(
-    (e: globalThis.WheelEvent) => {
-      if (!(e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        setPan((p) => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
-        return;
-      }
+  const aoRodar = useCallback((e: globalThis.WheelEvent) => {
+    const { zoom: zoomAtual, pan: panAtual, w, h } = estadoRodaRef.current;
+    if (!(e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      const rect = svgRef.current?.getBoundingClientRect();
-      if (!rect) {
-        return;
-      }
-      const escala = fatorDeEscala(svgRef.current, layout.W, layout.H);
-      const svgX = (e.clientX - rect.left) * escala.x;
-      const svgY = (e.clientY - rect.top) * escala.y;
-      const novoZoom = clamp(
-        zoom * (e.deltaY > 0 ? 1 - FATOR_ZOOM_RODA : 1 + FATOR_ZOOM_RODA),
-        ZOOM_MIN,
-        ZOOM_MAX
-      );
-      const worldX = (svgX - pan.x) / zoom;
-      const worldY = (svgY - pan.y) / zoom;
-      setZoom(novoZoom);
-      setPan({ x: svgX - worldX * novoZoom, y: svgY - worldY * novoZoom });
-    },
-    [zoom, pan, layout.W, layout.H]
-  );
+      setPan((p) => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
+      return;
+    }
+    e.preventDefault();
+    const rect = svgRef.current?.getBoundingClientRect();
+    if (!rect) {
+      return;
+    }
+    const escala = fatorDeEscala(svgRef.current, w, h);
+    const svgX = (e.clientX - rect.left) * escala.x;
+    const svgY = (e.clientY - rect.top) * escala.y;
+    const novoZoom = clamp(
+      zoomAtual * (e.deltaY > 0 ? 1 - FATOR_ZOOM_RODA : 1 + FATOR_ZOOM_RODA),
+      ZOOM_MIN,
+      ZOOM_MAX
+    );
+    const worldX = (svgX - panAtual.x) / zoomAtual;
+    const worldY = (svgY - panAtual.y) / zoomAtual;
+    setZoom(novoZoom);
+    setPan({ x: svgX - worldX * novoZoom, y: svgY - worldY * novoZoom });
+  }, []);
 
   useEffect(() => {
     const el = svgRef.current;
@@ -289,7 +311,7 @@ export function Grafo({
       iniciarPan(e);
       return;
     }
-    (e.target as Element).setPointerCapture(e.pointerId);
+    e.currentTarget.setPointerCapture(e.pointerId);
     arrasteRef.current = {
       id,
       inicioCliente: { x: e.clientX, y: e.clientY },
@@ -352,6 +374,18 @@ export function Grafo({
     panRef.current = null;
   }
 
+  // O arraste de nó captura o ponteiro (`setPointerCapture` acima) e continua
+  // recebendo `pointermove`/`pointerup` mesmo fora do `<svg>` — `pointerleave`
+  // dispara de qualquer jeito (captura não muda essa geometria), mas encerrar
+  // o arraste aqui perderia o destino sem motivo. Só a panorâmica do fundo
+  // (sem captura) precisa parar quando o ponteiro sai.
+  function aoPonteiroSairDoSvg() {
+    if (arrasteRef.current) {
+      return;
+    }
+    panRef.current = null;
+  }
+
   return (
     <div
       style={{
@@ -369,7 +403,7 @@ export function Grafo({
         height="100%"
         onPointerCancel={aoSoltarPonteiro}
         onPointerDown={iniciarPan}
-        onPointerLeave={aoSoltarPonteiro}
+        onPointerLeave={aoPonteiroSairDoSvg}
         onPointerMove={aoMoverPonteiro}
         onPointerUp={aoSoltarPonteiro}
         ref={svgRef}
@@ -388,9 +422,7 @@ export function Grafo({
               centro={g.centro}
               key={g.dominio}
               nos={g.nos}
-              onSelecionar={() => onSelecionar(g.primeiro)}
               opacidade={opacidadeMancha}
-              rotulo={`Selecionar processos de ${DOMINIOS[g.dominio].rotulo}`}
               tom={g.tom}
             />
           ))}

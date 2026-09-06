@@ -176,9 +176,9 @@ export function LinhaLigacao({
           onBlur={() => setArmado(false)}
           onClick={clicarRemover}
           style={{
-            background: armado ? "var(--red-soft, var(--surface-2))" : "none",
+            background: armado ? "var(--red-soft)" : "none",
             border: armado
-              ? "1px solid var(--red-border, var(--hairline-strong))"
+              ? "1px solid var(--red-text)"
               : "1px solid var(--hairline)",
             borderRadius: "var(--r-sm)",
             color: armado ? "var(--red-text)" : "var(--ink-faint)",

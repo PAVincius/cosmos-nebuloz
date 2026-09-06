@@ -139,6 +139,33 @@ describe("Grafo", () => {
     addEventListenerSpy.mockRestore();
   });
 
+  it("Space com um <button> focado não sequestra a ativação nativa (defaultPrevented continua false)", () => {
+    render(
+      <Grafo
+        ligacoes={LIGACOES}
+        onExportar={vi.fn()}
+        onSelecionar={vi.fn()}
+        processos={PROCESSOS}
+        quente={null}
+        selecionado={null}
+      />
+    );
+    const botao = screen.getByRole("button", { name: /\.canvas/i });
+    botao.focus();
+
+    let evento: KeyboardEvent | undefined;
+    window.addEventListener(
+      "keydown",
+      (e) => {
+        evento = e;
+      },
+      { once: true }
+    );
+    fireEvent.keyDown(botao, { code: "Space", key: " " });
+
+    expect(evento?.defaultPrevented).toBe(false);
+  });
+
   it("aresta cujo nó sumiu do filtro não é desenhada", () => {
     render(
       <Grafo

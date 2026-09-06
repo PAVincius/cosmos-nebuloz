@@ -51,6 +51,12 @@ function eyebrowDoProcesso(p: ProcessoRow): string {
 /** `undefined` (não uma função vazia) esconde o × de `LinhaLigacao` sem
  *  permissão — função em vez de ternário para o `&&`/`undefined` não passar
  *  pelo `noLeakedRender` da Biome. */
+/** Sem diagrama, o link convida a começar; com diagrama, a abrir o que já
+ *  existe — dois rótulos para o mesmo destino (spec §4). */
+function rotuloDoLinkModelador(temDiagrama: boolean): string {
+  return temDiagrama ? "Abrir no modelador" : "Modelar agora";
+}
+
 function onRemoverSeEscrever(
   podeEscrever: boolean,
   onExcluirLigacao: (id: string) => void,
@@ -145,7 +151,7 @@ export function Painel({
         </CartaoMetrica>
         <CartaoMetrica label="BPMN">
           {processo.diagram ? (
-            <span>{processo.diagram.name}</span>
+            <span>v{processo.diagram.versoes}</span>
           ) : (
             <Badge tone="amber">sem modelo</Badge>
           )}
@@ -254,7 +260,7 @@ export function Painel({
         }}
       >
         <Link href="/ferramentas/bpmn" style={BOTAO_SECUNDARIO_LINK}>
-          Abrir no modelador
+          {rotuloDoLinkModelador(processo.diagram !== null)}
         </Link>
         {podeEscrever ? (
           <BotaoSecundario onClick={onEditar}>Editar</BotaoSecundario>
