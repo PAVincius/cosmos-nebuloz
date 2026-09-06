@@ -181,7 +181,7 @@ describe("envelhecimento", () => {
   const t = (
     vencimento: string,
     valorCentavos: number,
-    status = "ABERTO"
+    status: TituloRow["status"] = "ABERTO"
   ): TituloRow => ({
     id: vencimento + valorCentavos,
     tipo: "PAGAR",
