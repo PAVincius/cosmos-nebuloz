@@ -10,8 +10,10 @@ import {
   salvarParcelas,
 } from "@/app/actions/empresa/cac";
 import { BotaoPrimario, Erro, INPUT, rotuloSalvar } from "@/components/campo";
+import { SeletorDePeriodo } from "@/components/seletor-de-periodo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
+import { PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
 import type { ContaDoCac } from "@/lib/empresa/plano-de-contas";
 
 /** As oito parcelas da tela, com "como medir" e fonte de cac-modelo.md §2.
@@ -170,7 +172,7 @@ export function Painel({
     }
     aplicar(
       await salvarParcelas({
-        competencia: view.competencia,
+        competencia: view.competenciaEditavel,
         contas,
         entregaDiagnosticoCentavos:
           form.entregaDiagnosticoCentavos.trim() === ""
@@ -180,16 +182,18 @@ export function Painel({
           form.clientesGanhos.trim() === ""
             ? null
             : Number.parseInt(form.clientesGanhos, 10),
+        de: view.intervalo.de,
+        ate: view.intervalo.ate,
       })
     );
     setSalvando(false);
-  }, [form, view.competencia, aplicar]);
+  }, [form, view.competenciaEditavel, view.intervalo, aplicar]);
 
   const salvarConv = useCallback(async () => {
     setErro(null);
     aplicar(
       await salvarConversao({
-        competencia: view.competencia,
+        competencia: view.competenciaEditavel,
         ...Object.fromEntries(
           CONVERSOES.map((c) => [
             c.chave,
@@ -198,53 +202,51 @@ export function Painel({
               : Number.parseInt(conv[c.chave], 10),
           ])
         ),
+        de: view.intervalo.de,
+        ate: view.intervalo.ate,
       })
     );
-  }, [conv, view.competencia, aplicar]);
+  }, [conv, view.competenciaEditavel, view.intervalo, aplicar]);
 
   const salvarPesos = useCallback(async () => {
     setErro(null);
     aplicar(
       await salvarAlocacao({
-        competencia: view.competencia,
+        competencia: view.competenciaEditavel,
         alocacoes: PRODUTOS.filter((p) => pesos[p].trim() !== "").map((p) => ({
           produto: p,
           pesoPercent: Number.parseInt(pesos[p], 10),
         })),
+        de: view.intervalo.de,
+        ate: view.intervalo.ate,
       })
     );
-  }, [pesos, view.competencia, aplicar]);
+  }, [pesos, view.competenciaEditavel, view.intervalo, aplicar]);
 
   const r = view.resultado;
   const faltam = r.total - r.preenchidas;
+  // Fora da árvore JSX (nursery/noLeakedRender): com mais de um mês no
+  // intervalo as escritas ficam indisponíveis mesmo para quem pode escrever.
+  const podeEditar = podeEscrever && view.editavel;
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <label
-          className="mono"
-          htmlFor="competencia"
-          style={{
-            fontSize: "var(--fs-micro)",
-            letterSpacing: ".12em",
-            textTransform: "uppercase",
-            color: "var(--ink-faint)",
-          }}
-        >
-          Período
-        </label>
-        <input
-          id="competencia"
-          onChange={(e) =>
-            router.push(`/empresa/cac?competencia=${e.target.value}`)
-          }
-          style={{ ...INPUT, width: 160 }}
-          type="month"
-          value={view.competencia}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          flexWrap: "wrap",
+        }}
+      >
+        <SeletorDePeriodo
+          onAplicar={(i) => router.push(`/empresa/cac?de=${i.de}&ate=${i.ate}`)}
+          presets={PRESETS_COMPETENCIA}
+          valor={view.intervalo}
         />
         {podeEscrever ? (
           <BotaoPrimario
-            disabled={salvando}
+            disabled={salvando || !view.editavel}
             full={false}
             onClick={salvar}
             type="button"
@@ -253,6 +255,18 @@ export function Painel({
           </BotaoPrimario>
         ) : null}
       </div>
+      {view.editavel ? null : (
+        <p
+          style={{
+            margin: 0,
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-muted)",
+          }}
+        >
+          Selecione um mês para editar — o período atual agrega{" "}
+          {view.competencias.length} meses.
+        </p>
+      )}
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
@@ -292,7 +306,7 @@ export function Painel({
                         ? `sugestão: ${view.sugestaoClientesGanhos}`
                         : "R$ —"
                     }
-                    readOnly={!podeEscrever}
+                    readOnly={!podeEditar}
                     style={{ ...INPUT, textAlign: "right" }}
                     value={form[p.chave]}
                   />
@@ -332,7 +346,7 @@ export function Painel({
                           setPesos({ ...pesos, [p]: e.target.value })
                         }
                         placeholder="— %"
-                        readOnly={!podeEscrever}
+                        readOnly={!podeEditar}
                         style={{ ...INPUT, width: 90, textAlign: "right" }}
                         value={pesos[p]}
                       />
@@ -349,7 +363,12 @@ export function Painel({
           </Tabela>
           {podeEscrever ? (
             <div style={{ marginTop: 10 }}>
-              <BotaoPrimario full={false} onClick={salvarPesos} type="button">
+              <BotaoPrimario
+                disabled={!view.editavel}
+                full={false}
+                onClick={salvarPesos}
+                type="button"
+              >
                 Salvar pesos
               </BotaoPrimario>
             </div>
@@ -357,7 +376,11 @@ export function Painel({
         </SectionCard>
 
         <SectionCard
-          subtitle="Pondera as horas de discovery que não viraram cliente. Lê-se do funil quando houver volume; até lá, entra à mão."
+          subtitle={
+            view.editavel
+              ? "Pondera as horas de discovery que não viraram cliente. Lê-se do funil quando houver volume; até lá, entra à mão."
+              : `Pondera as horas de discovery que não viraram cliente. Valores do mês ${view.competenciaEditavel}.`
+          }
           title="Conversão do funil"
         >
           {CONVERSOES.map((c) => (
@@ -380,7 +403,7 @@ export function Painel({
                   setConv({ ...conv, [c.chave]: e.target.value })
                 }
                 placeholder="— %"
-                readOnly={!podeEscrever}
+                readOnly={!podeEditar}
                 style={{ ...INPUT, width: 90, textAlign: "right" }}
                 value={conv[c.chave]}
               />
@@ -388,7 +411,12 @@ export function Painel({
           ))}
           {podeEscrever ? (
             <div style={{ marginTop: 10 }}>
-              <BotaoPrimario full={false} onClick={salvarConv} type="button">
+              <BotaoPrimario
+                disabled={!view.editavel}
+                full={false}
+                onClick={salvarConv}
+                type="button"
+              >
                 Salvar conversão
               </BotaoPrimario>
             </div>

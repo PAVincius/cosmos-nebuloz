@@ -6,6 +6,7 @@ import { type CaixaView, salvarSemana } from "@/app/actions/empresa/financeiro";
 import { Erro, INPUT } from "@/components/campo";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import type { SemanaEntrada } from "@/lib/empresa/financeiro";
+import { formatarDataBr } from "@/lib/empresa/periodo";
 
 type CampoSemana = Exclude<keyof SemanaEntrada, "semanaInicio">;
 type Semana = CaixaView["semanas"][number];
@@ -94,6 +95,8 @@ export function Caixa({
       setErro(null);
       const res = await salvarSemana({
         semanaInicio,
+        de: view.intervalo.de,
+        ate: view.intervalo.ate,
         ...{ [chave]: texto.trim() === "" ? null : paraCentavos(texto) },
       });
       if (!res.ok) {
@@ -102,7 +105,7 @@ export function Caixa({
       }
       setView(res.data);
     },
-    []
+    [view.intervalo]
   );
 
   const linhaCalc = (
@@ -155,7 +158,7 @@ export function Caixa({
 
   return (
     <SectionCard
-      subtitle={`atualizado toda segunda; a semana 1 é sempre a atual · pipeline ponderado de referência: ${
+      subtitle={`S1 = ${formatarDataBr(view.semanas[0]?.semanaInicio ?? view.intervalo.de)} · atualizado toda segunda · pipeline ponderado de referência: ${
         view.referenciaPipelineCentavos === null
           ? "sem taxa de conversão registrada na tela de CAC"
           : `${formatarBRL(view.referenciaPipelineCentavos)} (${formatarBRL(view.totalPropostasAbertasCentavos)} × ${view.convPropostaAceitaPercent}%)`

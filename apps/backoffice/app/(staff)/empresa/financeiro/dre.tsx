@@ -1,7 +1,6 @@
 "use client";
 
 import { SectionCard } from "@repo/design-system/cosmos/kit";
-import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
   type DreView,
@@ -33,6 +32,55 @@ const dinheiro = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 const pct = (v: number | null | undefined) =>
   v === null || v === undefined ? "—" : `${v}%`;
 
+/** Uma linha de entrada do plano de contas. Extraída para que `editavel`
+ *  vire uma const fora do atributo JSX (nursery/noLeakedRender) — conta
+ *  desativada não recebe lançamento novo, mesmo com `podeEscrever`. */
+function LinhaContaEntrada({
+  c,
+  competencias,
+  podeEscrever,
+  onLancar,
+}: {
+  c: DreView["contas"][number];
+  competencias: string[];
+  podeEscrever: boolean;
+  onLancar: (competencia: string, conta: string, texto: string) => void;
+}) {
+  const editavel = podeEscrever && c.ativa;
+  const opacidade = c.ativa ? 1 : 0.6;
+  return (
+    <TableRow>
+      <Celula style={{ opacity: opacidade }}>
+        <span className="mono" style={{ marginRight: 8 }}>
+          {c.conta}
+        </span>
+        {c.nome}
+      </Celula>
+      {c.valores.map((v, i) => (
+        <Celula key={competencias[i]} style={{ opacity: opacidade }}>
+          <input
+            aria-label={`${c.nome} ${rotuloMes(competencias[i])}`}
+            defaultValue={
+              v === null ? "" : (v / 100).toFixed(2).replace(".", ",")
+            }
+            inputMode="decimal"
+            key={`${c.conta}-${competencias[i]}-${v ?? ""}`}
+            onBlur={(e) => {
+              if (!editavel) {
+                return;
+              }
+              onLancar(competencias[i], c.conta, e.target.value);
+            }}
+            readOnly={!editavel}
+            style={{ ...INPUT, padding: "6px 8px", textAlign: "right" }}
+          />
+        </Celula>
+      ))}
+      <Celula style={{ opacity: opacidade }}>{""}</Celula>
+    </TableRow>
+  );
+}
+
 export function Dre({
   inicial,
   podeEscrever,
@@ -40,19 +88,18 @@ export function Dre({
   inicial: DreView;
   podeEscrever: boolean;
 }) {
-  const router = useRouter();
   const [view, setView] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
-  const ultima = view.competencias.at(-1) ?? "";
 
   const lancar = useCallback(
     async (competencia: string, conta: string, texto: string) => {
       setErro(null);
       const res = await salvarLancamento({
         competencia,
-        competenciaFinal: ultima,
         conta,
         valorCentavos: texto.trim() === "" ? null : paraCentavos(texto),
+        de: view.intervalo.de,
+        ate: view.intervalo.ate,
       });
       if (!res.ok) {
         setErro(res.error);
@@ -60,7 +107,7 @@ export function Dre({
       }
       setView(res.data);
     },
-    [ultima]
+    [view.intervalo]
   );
 
   const larguras = [
@@ -68,33 +115,10 @@ export function Dre({
     ...view.competencias.map((c) => ({ id: c, largura: "16.5%" })),
     { id: "t", largura: "16.5%" },
   ];
-  const cabecalho = ["Linha", ...view.competencias.map(rotuloMes), "Trim."];
+  const cabecalho = ["Linha", ...view.competencias.map(rotuloMes), "Total"];
 
   return (
     <>
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <label
-          className="mono"
-          htmlFor="ate"
-          style={{
-            fontSize: "var(--fs-micro)",
-            letterSpacing: ".12em",
-            textTransform: "uppercase",
-            color: "var(--ink-faint)",
-          }}
-        >
-          Até
-        </label>
-        <input
-          id="ate"
-          onChange={(e) =>
-            router.push(`/empresa/financeiro?aba=dre&ate=${e.target.value}`)
-          }
-          style={{ ...INPUT, width: 160 }}
-          type="month"
-          value={ultima}
-        />
-      </div>
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
@@ -121,9 +145,7 @@ export function Dre({
                 ))}
                 <Celula style={{ textAlign: "right", fontWeight: 700 }}>
                   <span className="mono">
-                    {l.percents
-                      ? pct(l.trimestrePercent)
-                      : dinheiro(l.trimestre)}
+                    {l.percents ? pct(l.totalPercent) : dinheiro(l.total)}
                   </span>
                 </Celula>
               </TableRow>
@@ -142,38 +164,13 @@ export function Dre({
           />
           <tbody>
             {view.contas.map((c) => (
-              <TableRow key={c.conta}>
-                <Celula>
-                  <span className="mono" style={{ marginRight: 8 }}>
-                    {c.conta}
-                  </span>
-                  {c.nome}
-                </Celula>
-                {c.valores.map((v, i) => (
-                  <Celula key={view.competencias[i]}>
-                    <input
-                      aria-label={`${c.nome} ${rotuloMes(view.competencias[i])}`}
-                      defaultValue={
-                        v === null ? "" : (v / 100).toFixed(2).replace(".", ",")
-                      }
-                      inputMode="decimal"
-                      key={`${c.conta}-${view.competencias[i]}-${v ?? ""}`}
-                      onBlur={(e) => {
-                        if (podeEscrever) {
-                          lancar(view.competencias[i], c.conta, e.target.value);
-                        }
-                      }}
-                      readOnly={!podeEscrever}
-                      style={{
-                        ...INPUT,
-                        padding: "6px 8px",
-                        textAlign: "right",
-                      }}
-                    />
-                  </Celula>
-                ))}
-                <Celula>{""}</Celula>
-              </TableRow>
+              <LinhaContaEntrada
+                c={c}
+                competencias={view.competencias}
+                key={c.conta}
+                onLancar={lancar}
+                podeEscrever={podeEscrever}
+              />
             ))}
           </tbody>
         </Tabela>
