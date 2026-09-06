@@ -197,3 +197,5 @@ stateDiagram-v2
 | RACI de quem assina o contrato não preenchido | 5. Contrato | Decisão | Quem dirige a empresa — ver [playbook de vendas](playbook-de-vendas.md) §4 |
 | `ACEITA` não dispara provisionamento — passo manual | 6. Provisionamento | Código | Responsável pela entrega (RACI) |
 | Reavaliação no Meridian não fecha o ciclo do `Engagement` | 7. Entrega | Decisão | Dono do roadmap (RACI, produto Meridian) |
+| `Proposal.aceitaEm` ausente — a tela de CAC conta "clientes ganhos" por `atualizadoEm` das propostas `ACEITA`, que é aproximação: qualquer edição posterior muda o mês; sem timestamp do aceite, o denominador do CAC é sugestão, não contagem (spec das telas Empresa, §2.4) | 4. Proposta | Código | Responsável pela entrega (RACI) |
+| `Proposal.previsaoFechamentoEm` ausente — sem data prevista, o pipeline ponderado do caixa de 13 semanas não se distribui por semana sozinho: entra à mão, com o total ponderado como referência (spec das telas Empresa, §2.5) | 4. Proposta | Código | Responsável pela entrega (RACI) |
