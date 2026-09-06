@@ -33,6 +33,7 @@ import {
 } from "@/lib/comercial/funil";
 import { Barras, type LinhaBarra } from "./barras";
 import { Board } from "./board";
+import { EstagioDialog } from "./estagio-dialog";
 import { LeadDialog } from "./lead-dialog";
 import { NovoLeadDialog } from "./novo-lead-dialog";
 import { TabelaLeads } from "./tabela-leads";
@@ -118,15 +119,18 @@ const FILTROS = [
 export function Funil({
   inicial,
   podeEscrever,
+  isAdmin,
 }: {
   inicial: DadosFunil;
   podeEscrever: boolean;
+  isAdmin: boolean;
 }) {
   const [dados, setDados] = useState(inicial);
   const [filtro, setFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
-  const [aviso, setAviso] = useState<string | null>(null);
   const [leadAbertoId, setLeadAbertoId] = useState<string | null>(null);
+  const [leadAbertoModo, setLeadAbertoModo] = useState<"perda" | null>(null);
+  const [estagioAbertoId, setEstagioAbertoId] = useState<Estagio | null>(null);
   const [novoAberto, setNovoAberto] = useState(false);
 
   const hoje = useMemo(() => new Date(dados.hoje), [dados.hoje]);
@@ -147,7 +151,6 @@ export function Funil({
   const mover = useCallback(
     async (id: string, estagio: Estagio) => {
       setErro(null);
-      setAviso(null);
       const res = await moverEstagio({ id, estagio });
       if (!res.ok) {
         setErro(res.error);
@@ -162,7 +165,6 @@ export function Funil({
   const converter = useCallback(
     async (id: string) => {
       setErro(null);
-      setAviso(null);
       const res = await converterEmProposta({ id });
       if (!res.ok) {
         setErro(res.error);
@@ -211,15 +213,26 @@ export function Funil({
     [recarregar]
   );
 
-  // Abrir o lead e "abrir o formulário de perda" (spec §4, soltar no alvo
-  // Perdido do board) levam ao mesmo diálogo — quem decide motivo e nota é o
-  // botão "Marcar perdido" lá dentro, não um modo separado aqui.
   const abrirLead = useCallback((id: string) => {
     setLeadAbertoId(id);
+    setLeadAbertoModo(null);
   }, []);
 
-  const abrirEstagio = useCallback((_codigo: Estagio) => {
-    setAviso("O painel do estágio chega na próxima tarefa.");
+  // Soltar no alvo Perdido do board (Ruling 8) abre o mesmo diálogo do lead,
+  // mas já em modo perda — quem arrastou até ali já decidiu que o lead
+  // morreu; só falta motivo e nota, não mais um clique para "achar" o botão.
+  const abrirLeadEmModoPerda = useCallback((id: string) => {
+    setLeadAbertoId(id);
+    setLeadAbertoModo("perda");
+  }, []);
+
+  const fecharLead = useCallback(() => {
+    setLeadAbertoId(null);
+    setLeadAbertoModo(null);
+  }, []);
+
+  const abrirEstagio = useCallback((codigo: Estagio) => {
+    setEstagioAbertoId(codigo);
   }, []);
 
   const pipelineCentavos = pipelinePonderado(leadsFunil, dados.estagios);
@@ -252,23 +265,6 @@ export function Funil({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       {erro ? <Erro>{erro}</Erro> : null}
-      {aviso ? (
-        <output
-          style={{
-            display: "block",
-            margin: 0,
-            padding: "9px 11px",
-            borderRadius: "var(--r-md)",
-            background: "var(--surface-2)",
-            border: "1px solid var(--hairline)",
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-base)",
-            fontWeight: 600,
-          }}
-        >
-          {aviso}
-        </output>
-      ) : null}
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <WriteButton
@@ -325,7 +321,7 @@ export function Funil({
           onAbrirLead={abrirLead}
           onConverter={converter}
           onMover={mover}
-          onPerder={abrirLead}
+          onPerder={abrirLeadEmModoPerda}
           podeEscrever={podeEscrever}
         />
       </SectionCard>
@@ -369,7 +365,8 @@ export function Funil({
         estagios={dados.estagios}
         hoje={hoje}
         lead={leadAberto}
-        onClose={() => setLeadAbertoId(null)}
+        modoInicial={leadAbertoModo ?? undefined}
+        onClose={fecharLead}
         onConverter={converter}
         onMover={mover}
         onPerder={perderComMotivo}
@@ -381,6 +378,16 @@ export function Funil({
         canais={dados.canais}
         onClose={() => setNovoAberto(false)}
         onCriar={criarNovoLead}
+      />
+      <EstagioDialog
+        codigo={estagioAbertoId}
+        dados={dados}
+        isAdmin={isAdmin}
+        onAbrirLead={abrirLead}
+        onClose={() => setEstagioAbertoId(null)}
+        onFiltrar={setFiltro}
+        onRecarregar={recarregar}
+        podeEscrever={podeEscrever}
       />
     </div>
   );

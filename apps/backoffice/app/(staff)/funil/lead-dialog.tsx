@@ -47,6 +47,8 @@ type Props = {
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
+  /** Ruling 8: soltar no alvo Perdido do board abre já em modo perda. */
+  modoInicial?: "perda";
   onClose: () => void;
   onMover: (id: string, estagio: Estagio) => Promise<Result<unknown>>;
   onConverter: (id: string) => Promise<Result<unknown>>;
@@ -67,6 +69,7 @@ export function LeadDialog({
   estagios,
   hoje,
   podeEscrever,
+  modoInicial,
   onClose,
   onMover,
   onConverter,
@@ -96,6 +99,7 @@ export function LeadDialog({
             estagios={estagios}
             hoje={hoje}
             lead={lead}
+            modoInicial={modoInicial}
             onClose={onClose}
             onConverter={onConverter}
             onMover={onMover}
@@ -114,6 +118,7 @@ function Conteudo({
   estagios,
   hoje,
   podeEscrever,
+  modoInicial,
   onClose,
   onMover,
   onConverter,
@@ -124,13 +129,14 @@ function Conteudo({
   estagios: ConfigEstagio[];
   hoje: Date;
   podeEscrever: boolean;
+  modoInicial?: "perda";
   onClose: () => void;
   onMover: Props["onMover"];
   onConverter: Props["onConverter"];
   onPerder: Props["onPerder"];
   onProximaAcao: Props["onProximaAcao"];
 }) {
-  const [modoPerda, setModoPerda] = useState(false);
+  const [modoPerda, setModoPerda] = useState(modoInicial === "perda");
   const [motivo, setMotivo] = useState<MotivoPerda | null>(null);
   const [nota, setNota] = useState("");
   const [editandoPasso, setEditandoPasso] = useState(false);

@@ -117,6 +117,33 @@ describe("LeadDialog", () => {
     );
   });
 
+  it("modoInicial 'perda' (Ruling 8: soltar em Perdido no board) já abre com o formulário de perda", () => {
+    const lead = leadFactory({});
+
+    render(
+      <LeadDialog
+        estagios={ESTAGIOS}
+        hoje={HOJE}
+        lead={lead}
+        modoInicial="perda"
+        onClose={vi.fn()}
+        onConverter={vi.fn(() => ok())}
+        onMover={vi.fn(() => ok())}
+        onPerder={vi.fn(() => ok())}
+        onProximaAcao={vi.fn(() => ok())}
+        podeEscrever={true}
+      />
+    );
+
+    expect(
+      screen.getByPlaceholderText("O que aconteceu — mínimo 12 caracteres")
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Registrar perda" })
+    ).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Marcar perdido" })).toBeNull();
+  });
+
   it("lead perdido só mostra Fechar no rodapé", () => {
     const lead = leadFactory({
       motivoPerda: "PRECO",

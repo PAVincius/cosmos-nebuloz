@@ -67,7 +67,11 @@ export default async function FunilPage() {
         tone="amber"
       />
 
-      <Funil inicial={res.data} podeEscrever={staff.canWrite} />
+      <Funil
+        inicial={res.data}
+        isAdmin={staff.canWrite}
+        podeEscrever={staff.canWrite}
+      />
     </div>
   );
 }
