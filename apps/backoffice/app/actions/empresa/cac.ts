@@ -225,23 +225,27 @@ const ParcelasSchema = z.object({
 export async function salvarParcelas(
   input: z.infer<typeof ParcelasSchema>
 ): Promise<Result<CacView>> {
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Transaction requires multiple conditional branches
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
     const { competencia, contas, entregaDiagnosticoCentavos, clientesGanhos } =
       ParcelasSchema.parse(input);
     const diff: [string, string, string][] = [];
+    const escritas: unknown[] = [];
 
     for (const [conta, valor] of Object.entries(contas ?? {})) {
       const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
       if (valor === null) {
-        await database.lancamentoMensal.deleteMany({ where });
+        escritas.push(database.lancamentoMensal.deleteMany({ where }));
       } else {
-        await database.lancamentoMensal.upsert({
-          where: { tenantId_competencia_conta: where },
-          create: { ...where, valorCentavos: valor },
-          update: { valorCentavos: valor },
-        });
+        escritas.push(
+          database.lancamentoMensal.upsert({
+            where: { tenantId_competencia_conta: where },
+            create: { ...where, valorCentavos: valor },
+            update: { valorCentavos: valor },
+          })
+        );
       }
       diff.push([conta, "", valor === null ? "" : String(valor)]);
     }
@@ -254,10 +258,22 @@ export async function salvarParcelas(
       update.clientesGanhos = clientesGanhos;
     }
     if (Object.keys(update).length > 0) {
-      await upsertPeriodo(competencia, update);
+      escritas.push(
+        database.cacPeriodo.upsert({
+          where: chaveCac(competencia),
+          create: { tenantId: SYSTEM_TENANT_ID, competencia, ...update },
+          update,
+          select: { id: true },
+        })
+      );
       for (const [k, v] of Object.entries(update)) {
         diff.push([k, "", String(v ?? "")]);
       }
+    }
+
+    if (escritas.length) {
+      // biome-ignore lint/suspicious/noExplicitAny: Prisma $transaction requires PrismaPromise array
+      await database.$transaction(escritas as any);
     }
 
     await auditar(staff, "empresa.cac.parcelas", competencia, diff);
@@ -318,14 +334,16 @@ export async function salvarAlocacao(
       );
     }
     const cacPeriodoId = await upsertPeriodo(competencia, {});
-    await database.cacAlocacaoProduto.deleteMany({ where: { cacPeriodoId } });
-    await database.cacAlocacaoProduto.createMany({
-      data: alocacoes.map((a) => ({
-        cacPeriodoId,
-        produto: a.produto,
-        pesoPercent: a.pesoPercent,
-      })),
-    });
+    await database.$transaction([
+      database.cacAlocacaoProduto.deleteMany({ where: { cacPeriodoId } }),
+      database.cacAlocacaoProduto.createMany({
+        data: alocacoes.map((a) => ({
+          cacPeriodoId,
+          produto: a.produto,
+          pesoPercent: a.pesoPercent,
+        })),
+      }),
+    ]);
     await auditar(
       staff,
       "empresa.cac.alocacao",
