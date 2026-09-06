@@ -12,6 +12,7 @@ import {
   riskScore,
   slaRemaining,
 } from "@/lib/charter/rules";
+import { feriadosAbertos } from "@/lib/feriados";
 import { type Result, safeAction } from "../../actions/_base";
 
 // Visão Geral de Governança — FR-1.
@@ -161,6 +162,10 @@ export async function getDashboard(): Promise<Result<DashboardData>> {
 
       const highRisk = active.filter((c) => scored(c).score >= 16);
 
+      // Uma busca por render, cacheada por 30 dias e compartilhada por toda
+      // a fila: o SLA de cada linha usa o mesmo calendário.
+      const feriados = await feriadosAbertos();
+
       const queue: QueueRow[] = pending
         .map((c) => {
           const r = scored(c);
@@ -175,7 +180,7 @@ export async function getDashboard(): Promise<Result<DashboardData>> {
             reviewerName: c.reviewerId
               ? (reviewerName.get(c.reviewerId) ?? null)
               : null,
-            sla: slaRemaining(c.submittedAt, c.slaTotal),
+            sla: slaRemaining(c.submittedAt, c.slaTotal, new Date(), feriados),
             slaTotal: c.slaTotal,
           };
         })

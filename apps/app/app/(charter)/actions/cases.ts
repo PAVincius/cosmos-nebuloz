@@ -20,6 +20,7 @@ import {
   slaRemaining,
   vendorEligibility,
 } from "@/lib/charter/rules";
+import { feriadosAbertos } from "@/lib/feriados";
 import { type Result, safeAction } from "../../actions/_base";
 import { buildDiff, FIELD_LABELS, logCharterAudit, nextCode } from "./_shared";
 
@@ -111,7 +112,8 @@ function riskProfile(uc: CharterUseCase) {
 const SLA_RUNNING: CharterUseCaseStatus[] = ["SUBMITTED", "REVIEW", "CHANGES"];
 
 function toRow(
-  uc: CharterUseCase & { vendor?: { name: string; tier?: string } | null }
+  uc: CharterUseCase & { vendor?: { name: string; tier?: string } | null },
+  feriados?: ReadonlySet<string>
 ): UseCaseRow {
   const r = riskScore(riskProfile(uc));
   const slaLive = SLA_RUNNING.includes(uc.status);
@@ -129,7 +131,9 @@ function toRow(
     score: r.score,
     riskLabel: r.label,
     riskTone: r.tone,
-    slaRemaining: slaLive ? slaRemaining(uc.submittedAt, uc.slaTotal) : null,
+    slaRemaining: slaLive
+      ? slaRemaining(uc.submittedAt, uc.slaTotal, new Date(), feriados)
+      : null,
     slaTotal: slaLive ? uc.slaTotal : null,
   };
 }
@@ -187,8 +191,10 @@ export async function listCases(
         distinct: ["department"],
       });
 
+      const feriados = await feriadosAbertos();
+
       return {
-        rows: rows.map(toRow),
+        rows: rows.map((uc) => toRow(uc, feriados)),
         departments: departments
           .map((d) => d.department)
           .filter((d): d is string => d !== null)
@@ -227,8 +233,9 @@ export async function getCase(
       }
       const r = riskScore(riskProfile(uc));
       const now = Date.now();
+      const feriados = await feriadosAbertos();
       return {
-        ...toRow(uc),
+        ...toRow(uc, feriados),
         objective: uc.objective,
         exposure: uc.exposure,
         criticality: uc.criticality,
