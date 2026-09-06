@@ -1,5 +1,9 @@
 # Mapa de processo comercial
 
+> O mapa navegável dos processos da casa (todos os domínios, não só o
+> comercial) agora vive em `/ferramentas/processos`. Este documento continua
+> sendo a descrição em prosa do processo comercial.
+
 Da identificação de ICP até a entrega, ancorado no que o back-office já
 implementa — não no que o processo deveria ser.
 
