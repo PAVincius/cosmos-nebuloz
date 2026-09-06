@@ -75,7 +75,7 @@ const SELECT_CONTA = {
 
 export type ContaView = Conta & { ordem: number };
 
-async function contasDoPlano(): Promise<ContaView[]> {
+export async function contasDoPlano(): Promise<ContaView[]> {
   const linhas = await database.contaDoPlano.findMany({
     where: { tenantId: SYSTEM_TENANT_ID },
     orderBy: [{ grupo: "asc" }, { ordem: "asc" }, { conta: "asc" }],
