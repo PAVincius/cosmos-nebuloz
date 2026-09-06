@@ -6,9 +6,12 @@ import { useCallback, useMemo, useState } from "react";
 import {
   type CanalRow,
   converterEmProposta,
+  criarLead,
   type LeadRow,
   listarFunil,
+  marcarPerdido,
   moverEstagio,
+  registrarProximaAcao,
 } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
 import { FiltroChips } from "@/components/filtro-chips";
@@ -30,6 +33,8 @@ import {
 } from "@/lib/comercial/funil";
 import { Barras, type LinhaBarra } from "./barras";
 import { Board } from "./board";
+import { LeadDialog } from "./lead-dialog";
+import { NovoLeadDialog } from "./novo-lead-dialog";
 import { TabelaLeads } from "./tabela-leads";
 
 /**
@@ -128,35 +133,6 @@ const FILTROS = [
   { id: "PERDIDOS", label: "Perdidos" },
 ];
 
-/** Botão "Novo lead" do cabeçalho. Vive aqui (client) porque `WriteButton`
- *  precisa de `onClick`, que `page.tsx` (server) não pode fornecer. O diálogo
- *  em si é da T5 — por ora o clique só mostra o aviso. */
-export function NovoLeadAcao({ podeEscrever }: { podeEscrever: boolean }) {
-  const [mostrar, setMostrar] = useState(false);
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "flex-end",
-        gap: 6,
-      }}
-    >
-      <WriteButton
-        canWrite={podeEscrever}
-        onClick={() => setMostrar((v) => !v)}
-        type="button"
-      >
-        Novo lead
-      </WriteButton>
-      {mostrar ? (
-        <Erro>Diálogo de novo lead chega na próxima tarefa.</Erro>
-      ) : null}
-    </div>
-  );
-}
-
 export function Funil({
   inicial,
   podeEscrever,
@@ -168,6 +144,8 @@ export function Funil({
   const [filtro, setFiltro] = useState("all");
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const [leadAbertoId, setLeadAbertoId] = useState<string | null>(null);
+  const [novoAberto, setNovoAberto] = useState(false);
 
   const hoje = useMemo(() => new Date(dados.hoje), [dados.hoje]);
   const leadsFunil = useMemo(
@@ -191,9 +169,10 @@ export function Funil({
       const res = await moverEstagio({ id, estagio });
       if (!res.ok) {
         setErro(res.error);
-        return;
+        return res;
       }
       await recarregar();
+      return res;
     },
     [recarregar]
   );
@@ -205,21 +184,56 @@ export function Funil({
       const res = await converterEmProposta({ id });
       if (!res.ok) {
         setErro(res.error);
-        return;
+        return res;
       }
       await recarregar();
+      return res;
     },
     [recarregar]
   );
 
-  const perder = useCallback((_id: string) => {
-    setAviso(
-      "Marcar perdido pelo board pede motivo e nota — o formulário completo chega na próxima tarefa."
-    );
-  }, []);
+  const perderComMotivo = useCallback(
+    async (id: string, motivo: MotivoPerda, nota: string) => {
+      const res = await marcarPerdido({ id, motivo, nota });
+      if (res.ok) {
+        await recarregar();
+      }
+      return res;
+    },
+    [recarregar]
+  );
 
-  const abrirLead = useCallback((_id: string) => {
-    setAviso("O detalhe do lead chega na próxima tarefa.");
+  const salvarProximaAcao = useCallback(
+    async (id: string, texto: string, data: string) => {
+      const res = await registrarProximaAcao({
+        id,
+        proximaAcao: texto,
+        proximaAcaoEm: data,
+      });
+      if (res.ok) {
+        await recarregar();
+      }
+      return res;
+    },
+    [recarregar]
+  );
+
+  const criarNovoLead = useCallback(
+    async (input: Parameters<typeof criarLead>[0]) => {
+      const res = await criarLead(input);
+      if (res.ok) {
+        await recarregar();
+      }
+      return res;
+    },
+    [recarregar]
+  );
+
+  // Abrir o lead e "abrir o formulário de perda" (spec §4, soltar no alvo
+  // Perdido do board) levam ao mesmo diálogo — quem decide motivo e nota é o
+  // botão "Marcar perdido" lá dentro, não um modo separado aqui.
+  const abrirLead = useCallback((id: string) => {
+    setLeadAbertoId(id);
   }, []);
 
   const abrirEstagio = useCallback((_codigo: Estagio) => {
@@ -251,6 +265,7 @@ export function Funil({
   );
   const perdidos = dados.leads.filter((l) => l.situacao === "PERDIDO");
   const hintEstagnados = estagnadosQtd > 0 ? `pior: ${piorDias} d` : undefined;
+  const leadAberto = dados.leads.find((l) => l.id === leadAbertoId) ?? null;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -272,6 +287,15 @@ export function Funil({
           {aviso}
         </output>
       ) : null}
+
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <WriteButton
+          canWrite={podeEscrever}
+          onClick={() => setNovoAberto(true)}
+        >
+          Novo lead
+        </WriteButton>
+      </div>
 
       <div
         style={{
@@ -319,7 +343,7 @@ export function Funil({
           onAbrirLead={abrirLead}
           onConverter={converter}
           onMover={mover}
-          onPerder={perder}
+          onPerder={abrirLead}
           podeEscrever={podeEscrever}
         />
       </SectionCard>
@@ -358,6 +382,24 @@ export function Funil({
           <Barras linhas={linhasMotivos(perdidos)} tom="red" />
         </SectionCard>
       ) : null}
+
+      <LeadDialog
+        estagios={dados.estagios}
+        hoje={hoje}
+        lead={leadAberto}
+        onClose={() => setLeadAbertoId(null)}
+        onConverter={converter}
+        onMover={mover}
+        onPerder={perderComMotivo}
+        onProximaAcao={salvarProximaAcao}
+        podeEscrever={podeEscrever}
+      />
+      <NovoLeadDialog
+        aberto={novoAberto}
+        canais={dados.canais}
+        onClose={() => setNovoAberto(false)}
+        onCriar={criarNovoLead}
+      />
     </div>
   );
 }

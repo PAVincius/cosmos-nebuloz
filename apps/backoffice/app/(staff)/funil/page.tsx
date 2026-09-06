@@ -3,7 +3,7 @@ import { type LeadRow, listarFunil } from "@/app/actions/leads";
 import { Erro } from "@/components/campo";
 import { estagnado, type LeadFunil } from "@/lib/comercial/funil";
 import { requirePlatformStaff } from "@/lib/guard";
-import { Funil, NovoLeadAcao } from "./funil";
+import { Funil } from "./funil";
 
 /**
  * Funil comercial v2 — quatro estágios com peso e teto, porta de entrada na
@@ -82,9 +82,7 @@ export default async function FunilPage() {
         subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
         title="Funil"
         tone="amber"
-      >
-        <NovoLeadAcao podeEscrever={staff.canWrite} />
-      </PageHeader>
+      />
 
       <Funil inicial={res.data} podeEscrever={staff.canWrite} />
     </div>
