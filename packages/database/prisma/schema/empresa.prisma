@@ -1,0 +1,247 @@
+/// Empresa — o que a Nebuloz controla sobre si mesma: contratos com
+/// fornecedores, consentimento de gravação, custo de aquisição e base
+/// financeira. Quatro telas do back-office (spec
+/// docs/superpowers/specs/2026-09-05-telas-empresa-modelo-design.md).
+///
+/// Tudo aqui pertence ao tenant `system`, como platform-ops.prisma e
+/// comercial.prisma: é dado da casa, não do cliente. Dinheiro em centavos
+/// inteiros; percentual inteiro; célula de entrada é `Int?` porque a tela
+/// distingue "não preenchido" de zero.
+
+// ─────────────────────────── Fornecedores e DPA ───────────────────────────
+
+/// Estado do DPA por fonte primária (dpa-fornecedores.md §0).
+enum EstadoDpa {
+  /// Vale pelo contrato comercial; nada a assinar, só guardar o link.
+  EMBUTIDO
+  /// Existe documento; só produz efeito quando a Nebuloz aceita ou assina.
+  A_ASSINAR
+  /// Aceito no portal ou assinado. Exige `evidenciaUrl` (validado na action).
+  ASSINADO
+  /// Nenhum DPA público localizado. Não quer dizer que não exista sob NDA.
+  SEM_DOCUMENTO
+}
+
+/// Estado do acordo de tratamento de dados com cada fornecedor do Charter
+/// interno. Vínculo com `CharterVendor` (tenant nebuloz) pelo `codigo`, não
+/// por FK: são tenants diferentes (ADR-0013).
+model FornecedorDpa {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Mesmo código do `CharterVendor` no tenant nebuloz ("V-01").
+  codigo String
+  nome   String
+
+  estado                  EstadoDpa
+  /// O asterisco de dpa-fornecedores.md §1: documento existe mas o texto não
+  /// pôde ser lido (PDF sem camada de texto, portal dinâmico).
+  classificacaoProvisoria Boolean   @default(false)
+
+  regiao        String?
+  retencao      String?
+  /// Mecanismo de transferência declarado: "SCCs + DPF", "SCCs + UK IDTA".
+  transferencia String?
+
+  dpaUrl              String?
+  subprocessadoresUrl String?
+  /// Via assinada ou registro do aceite. Obrigatório quando `estado = ASSINADO`.
+  evidenciaUrl        String?
+
+  /// Data da última leitura da fonte primária.
+  verificadoEm DateTime
+
+  /// Texto da ação (dpa-fornecedores.md §3). Nulo = nada a fazer.
+  acaoPendente  String?
+  /// Papel do RACI do playbook, não pessoa — os nomes ainda estão em branco.
+  donoPapel     String?
+  bloqueiaVenda Boolean @default(false)
+
+  /// Quando se pediu o DPA ao fornecedor ("Registrar pedido").
+  pedidoEm             DateTime?
+  /// Quando foi aceito/assinado ("Marcar aceito", "Anexar assinado").
+  assinadoEm           DateTime?
+  /// Última exportação para o `CharterVendor` do tenant nebuloz. Nulo = nunca.
+  exportadoAoCharterEm DateTime?
+
+  notas String? @db.Text
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("FornecedorDpaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, codigo])
+  @@index([tenantId, estado])
+}
+
+// ─────────────────────────── Consentimento ───────────────────────────
+
+enum BaseLegal {
+  SEM_DECISAO
+  /// art. 7º, I — exige aviso inequívoco e cláusula destacada.
+  CONSENTIMENTO
+  /// art. 7º, IX — exige teste do art. 10 e relatório de impacto.
+  LEGITIMO_INTERESSE
+}
+
+enum StatusParecer {
+  PENDENTE
+  ENVIADO
+  RECEBIDO
+}
+
+/// Singleton do tenant system: o que faz o consentimento existir do lado da
+/// Nebuloz. Os textos do aviso ficam em código
+/// (apps/backoffice/lib/empresa/aviso.ts); aqui só o que os preenche.
+model DecisaoDeConsentimento {
+  id       String @id @default(cuid())
+  tenantId String @unique
+
+  /// `[ferramenta]` — ex. "Fireflies".
+  ferramenta     String?
+  /// `[prazo]` — resposta à pergunta 6; nulo enquanto o RoPA disser
+  /// "não definida".
+  prazoRetencao  String?
+  /// `[contato]` — canal do titular (operadora-controladora.md §4).
+  contatoTitular String?
+
+  baseLegal           BaseLegal @default(SEM_DECISAO)
+  /// Pergunta 4. Nulo = sem resposta; `false` mantém STANDING desabilitado.
+  standingHabilitavel Boolean?
+
+  parecer           StatusParecer @default(PENDENTE)
+  parecerEnviadoEm  DateTime?
+  parecerRecebidoEm DateTime?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("DecisaoDeConsentimentoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+/// Uma linha por pergunta de aviso-de-gravacao.md §4. Semeadas; a tela só
+/// responde.
+model PerguntaAoParecer {
+  id       String @id @default(cuid())
+  tenantId String
+
+  numero    Int
+  pergunta  String @db.Text
+  /// "responsável jurídico" | "Dono do SLA" — papel, pelo mesmo motivo de
+  /// `FornecedorDpa.donoPapel`.
+  donoPapel String
+
+  resposta     String?   @db.Text
+  respondidaEm DateTime?
+
+  tenant Tenant @relation("PerguntaAoParecerSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, numero])
+}
+
+// ─────────────────────────── Financeiro ───────────────────────────
+
+/// Um valor por conta do plano de contas por mês de competência. As linhas
+/// calculadas do DRE (totais, margens, EBITDA) não existem aqui.
+model LancamentoMensal {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "2026-09". String e não Date: competência é mês, e Date obrigaria a
+  /// convencionar "dia 1" em toda query.
+  competencia String
+  /// Código do plano de contas ("1.1" … "6.3"), validado contra
+  /// PLANO_DE_CONTAS em código. String porque conta nova é constante nova,
+  /// não migration.
+  conta       String
+
+  valorCentavos Int
+  nota          String?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("LancamentoMensalSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, competencia, conta])
+  @@index([tenantId, competencia])
+}
+
+// ─────────────────────────── CAC ───────────────────────────
+
+/// Das oito parcelas do CAC, seis são contas 4.1–4.6 de LancamentoMensal da
+/// mesma competência. Aqui fica só o que não é conta do DRE.
+model CacPeriodo {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Mesma chave de LancamentoMensal — é de lá que vêm as seis parcelas 4.x.
+  competencia String
+
+  /// Horas de entrega do diagnóstico vendido no período × custo-hora +
+  /// ferramentas da entrega. Não é a conta 3.1: aquela inclui acompanhamento
+  /// contínuo; esta é só a parcela que é custo de aquisição.
+  entregaDiagnosticoCentavos Int?
+  /// Denominador. Entrada manual em v1 — Proposal não tem `aceitaEm`.
+  clientesGanhos             Int?
+
+  /// Conversão do funil no período, percentual inteiro. Nulo = ainda à mão.
+  convLeadDiscoveryPercent       Int?
+  convDiscoveryEvaluationPercent Int?
+  convEvaluationPropostaPercent  Int?
+  convPropostaAceitaPercent      Int?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant    Tenant               @relation("CacPeriodoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  alocacoes CacAlocacaoProduto[]
+
+  @@unique([tenantId, competencia])
+}
+
+/// Peso de cada produto no rateio do CAC (cac-modelo.md §4). Tabela e não
+/// quatro colunas: Signal já está no enum e não na tela.
+model CacAlocacaoProduto {
+  id           String @id @default(cuid())
+  cacPeriodoId String
+
+  produto     ProductModule
+  pesoPercent Int
+
+  periodo CacPeriodo @relation(fields: [cacPeriodoId], references: [id], onDelete: Cascade)
+
+  @@unique([cacPeriodoId, produto])
+}
+
+// ─────────────────────────── Caixa ───────────────────────────
+
+/// Uma linha por semana de caixa. A janela de 13 é a leitura; a tabela guarda
+/// também as semanas que já saíram dela — histórico realizado.
+model SemanaDeCaixa {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Segunda-feira da semana. Date, não DateTime: semana não tem hora.
+  semanaInicio DateTime @db.Date
+
+  /// Só é lido na primeira semana da janela: saldo de extrato, realizado.
+  /// Nas demais, o saldo inicial é o final calculado da anterior.
+  saldoInicialCentavos Int?
+
+  recebiveisCentavos         Int?
+  contratosAssinadosCentavos Int?
+  /// Entrada manual em v1, com o total ponderado como referência — Proposal
+  /// não tem previsão de fechamento para alocar por semana sozinha.
+  pipelinePonderadoCentavos  Int?
+
+  saidasPessoalCentavos      Int?
+  saidasFornecedoresCentavos Int?
+  saidasComercialCentavos    Int?
+  saidasImpostosCentavos     Int?
+  saidasOutrasCentavos       Int?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("SemanaDeCaixaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, semanaInicio])
+}
