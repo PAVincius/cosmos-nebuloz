@@ -33,7 +33,7 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * grava a entrada.
  */
 
-export const ROTA_FINANCEIRO = "/empresa/financeiro";
+const ROTA_FINANCEIRO = "/empresa/financeiro";
 
 const MESES_DRE = 3;
 const STATUS_PIPELINE = ["ENVIADA", "AGUARDANDO_APROVACAO"];

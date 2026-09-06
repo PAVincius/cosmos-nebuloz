@@ -33,7 +33,7 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * fora de casa deste diretório (ADR-0013).
  */
 
-export const ROTA_FORNECEDORES = "/empresa/fornecedores";
+const ROTA_FORNECEDORES = "/empresa/fornecedores";
 
 /** Slug do tenant que carrega o Charter interno (seed:charter:nebuloz). */
 const TENANT_CHARTER_NEBULOZ = "nebuloz";

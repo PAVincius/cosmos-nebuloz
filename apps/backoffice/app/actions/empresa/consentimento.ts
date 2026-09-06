@@ -25,7 +25,7 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * cláusula e a base legal que o parecer ainda não escolheu.
  */
 
-export const ROTA_CONSENTIMENTO = "/empresa/consentimento";
+const ROTA_CONSENTIMENTO = "/empresa/consentimento";
 
 const BASES = ["SEM_DECISAO", "CONSENTIMENTO", "LEGITIMO_INTERESSE"] as const;
 const PARECERES = ["PENDENTE", "ENVIADO", "RECEBIDO"] as const;

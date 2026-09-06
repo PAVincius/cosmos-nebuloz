@@ -29,7 +29,7 @@ import { type Result, safeAction } from "@/lib/safe-action";
  * linha "Comercial" do DRE baterem por construção.
  */
 
-export const ROTA_CAC = "/empresa/cac";
+const ROTA_CAC = "/empresa/cac";
 
 /** Plano e termo que dão a mensalidade de referência do payback
  *  (cac-modelo.md §3): Scale, mínimo de assentos, termo anual. */
