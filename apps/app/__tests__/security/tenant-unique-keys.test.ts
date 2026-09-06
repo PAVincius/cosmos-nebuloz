@@ -56,6 +56,14 @@ const ALLOWED_UNSCOPED_UNIQUE_KEYS = new Set([
   "MeridianAxisScore:assessmentId,axis",
   "MeridianGapDependency:gapId,dependsOnGapId",
   "MeridianPlanItem:assessmentId,gapId",
+  // Mapa de processos (2026-09-06): mesmo argumento de escopo transitivo.
+  // `deId` e `paraId` são FK para `StaffProcess`, que carrega `tenantId`, então
+  // uma colisão entre tenants exigiria que dois tenants compartilhassem a mesma
+  // linha de processo — a FK impede. Aqui o argumento é ainda mais forte que
+  // nas entradas acima: `criarLigacao` lê os dois extremos com o `where`
+  // escopado em `tenantId` e recusa antes de gravar, então nem um id vindo do
+  // cliente alcança o `create` sem passar pelo tenant.
+  "StaffProcessEdge:deId,paraId",
 ]);
 
 type ModelUniqueKey = { model: string; fields: string[]; file: string };
