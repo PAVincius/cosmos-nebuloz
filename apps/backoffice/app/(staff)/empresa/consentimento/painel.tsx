@@ -130,6 +130,11 @@ export function Painel({
       return;
     }
     await recarregar();
+    setForm({
+      ferramenta: form.ferramenta.trim() || "",
+      prazoRetencao: form.prazoRetencao.trim() || "",
+      contatoTitular: form.contatoTitular.trim() || "",
+    });
   }, [form, recarregar]);
 
   const decidir = useCallback(
@@ -423,6 +428,7 @@ export function Painel({
               <textarea
                 aria-label={`Resposta à pergunta ${p.numero}`}
                 defaultValue={p.resposta ?? ""}
+                key={`${p.numero}:${p.resposta ?? ""}`}
                 onBlur={responderSeMudou(p)}
                 readOnly={!podeEscrever}
                 rows={2}
