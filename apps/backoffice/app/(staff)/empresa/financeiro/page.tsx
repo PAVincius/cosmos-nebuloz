@@ -11,8 +11,6 @@ import {
   intervaloPadraoCaixa,
   intervaloPadraoCompetencia,
   lerIntervaloDaUrl,
-  PRESETS_CAIXA,
-  PRESETS_COMPETENCIA,
 } from "@/lib/empresa/periodo";
 import { requirePlatformStaff } from "@/lib/guard";
 import { Caixa } from "./caixa";
@@ -107,7 +105,6 @@ export default async function FinanceiroPage({
     aba === "plano" ? listarPlanoDeContas() : null,
   ]);
   const chaveDoPainel = `${aba}:${intervalo.de}:${intervalo.ate}`;
-  const presets = aba === "caixa" ? PRESETS_CAIXA : PRESETS_COMPETENCIA;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -126,9 +123,7 @@ export default async function FinanceiroPage({
         }}
       >
         <Abas aba={aba} />
-        {aba === "plano" ? null : (
-          <SeletorDaAba aba={aba} presets={presets} valor={intervalo} />
-        )}
+        {aba === "plano" ? null : <SeletorDaAba aba={aba} valor={intervalo} />}
       </div>
       <ErroDaAba erro={dre !== null && !dre.ok ? dre.error : null} />
       {dre?.ok ? (
