@@ -20,7 +20,9 @@ export const ESTAGIOS = [
 export type Estagio = (typeof ESTAGIOS)[number];
 
 /** Os três estágios que aceitam arrastar entre si. PROPOSAL só via conversão. */
-export const ABERTOS: Estagio[] = ["LEAD", "DISCOVERY", "EVALUATION"];
+export const ABERTOS = ["LEAD", "DISCOVERY", "EVALUATION"] as const;
+/** Subtipo de `Estagio` que aceita mover pelo board — os três de `ABERTOS`. */
+export type EstagioAberto = (typeof ABERTOS)[number];
 
 export const INFO_ESTAGIO: Record<
   Estagio,
@@ -51,6 +53,14 @@ export const INFO_ESTAGIO: Record<
     tom: "amber",
   },
 };
+
+/** "neutral" (LEAD) não tem variável de cor própria no kit — cai no azul. Um
+ *  mapeamento só: board, stepper do lead e critérios de saída do painel liam
+ *  isso cada um a seu jeito (duas cópias, e o board nem tinha a correção —
+ *  emitia `var(--neutral)`, que não existe). */
+export function tomCssDoEstagio(tom: Tone): Tone {
+  return tom === "neutral" ? "blue" : tom;
+}
 
 export const MOTIVOS_PERDA = {
   PRECO: "Preço",
@@ -97,16 +107,8 @@ export type LeadFunil = {
  *  não importa `LeadRow` de `app/actions/leads`: esta lib fica pura (sem
  *  Prisma, sem I/O), e `LeadRow` satisfaz este tipo sem precisar de conversão
  *  explícita nos cinco lugares que chamam a função. */
-export type LeadParaConversao = {
-  id: string;
-  estagio: string;
-  estagioDesde: string;
-  situacao: "ATIVO" | "GANHO" | "PERDIDO";
-  acvEstimadoCentavos: number | null;
-  proposta: { acvCentavos: number; status: string } | null;
-  entrada: string | null;
+export type LeadParaConversao = Omit<LeadFunil, "canalSlug"> & {
   canal: { slug: string } | null;
-  perdidoNoEstagio: string | null;
 };
 
 /** `LeadRow` (leitura do servidor) → `LeadFunil` (regras puras). Era
@@ -128,12 +130,41 @@ export function paraLeadFunil(l: LeadParaConversao): LeadFunil {
   };
 }
 
+/** Forma estrutural que `textoEntradaOrigem` precisa — mesma ideia de
+ *  `LeadParaConversao`: `LeadRow` satisfaz isto sem conversão explícita. */
+export type LeadOrigemInfo = {
+  entrada: string | null;
+  canal: { nome: string } | null;
+  origem: string | null;
+};
+
+/** "01 Meridian · Indicação" — era reimplementada idêntica em board.tsx
+ *  (`textoOrigem`) e tabela-leads.tsx (`textoEntradaOrigem`). */
+export function textoEntradaOrigem(l: LeadOrigemInfo): string {
+  const porta = l.entrada ? PORTAS[l.entrada as ProductModule] : undefined;
+  const entradaTexto = porta ? `${porta.degrau} ${porta.rotulo}` : "—";
+  const canalTexto = l.canal?.nome ?? l.origem ?? "—";
+  return `${entradaTexto} · ${canalTexto}`;
+}
+
+/** Rótulo de "sem passo" — três grafias diferentes em board.tsx,
+ *  estagio-dialog-partes.tsx e tabela-leads.tsx viraram uma. */
+export const SEM_PROXIMO_PASSO = "Sem próximo passo";
+
 const DIA_MS = 24 * 60 * 60 * 1000;
 
 /** Trunca para meia-noite UTC — é o que faz a fronteira do dia ser a mesma em
  * qualquer horário, não uma divisão de milissegundos que erra por fuso. */
 const meiaNoiteUtcMs = (d: Date): number =>
   Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
+
+/** Dias inteiros entre duas datas, por fronteira de dia UTC (floor) — mesma
+ *  truncagem para `diasNoEstagio` e para a janela/permanência de
+ *  `metricasDoEstagio`: 23h de um dia para 1h do seguinte são dias UTC
+ *  diferentes, logo 1 dia, não 0 (2h brutas arredondaria para baixo). */
+function diasEntre(a: Date, b: Date): number {
+  return Math.floor((meiaNoiteUtcMs(b) - meiaNoiteUtcMs(a)) / DIA_MS);
+}
 
 /** Situação é derivada na leitura, nunca gravada (spec §1.1). */
 export function situacaoDe(
@@ -151,9 +182,7 @@ export function situacaoDe(
 
 /** Dias inteiros entre estagioDesde e hoje, por fronteira de dia UTC (floor). */
 export function diasNoEstagio(estagioDesde: string, hoje: Date): number {
-  const desdeMs = meiaNoiteUtcMs(new Date(estagioDesde));
-  const hojeMs = meiaNoiteUtcMs(hoje);
-  return Math.floor((hojeMs - desdeMs) / DIA_MS);
+  return diasEntre(new Date(estagioDesde), hoje);
 }
 
 export function estagnado(
@@ -266,9 +295,8 @@ export function metricasDoEstagio(
   perdidos: number;
   permanenciaMediaDias: number | null;
 } {
-  const cutoffMs = hoje.getTime() - janelaDias * DIA_MS;
   const entradas = historico.filter(
-    (t) => t.para === estagio && new Date(t.em).getTime() >= cutoffMs
+    (t) => t.para === estagio && diasEntre(new Date(t.em), hoje) <= janelaDias
   );
 
   let avancaram = 0;
@@ -276,7 +304,8 @@ export function metricasDoEstagio(
   const permanencias: number[] = [];
 
   for (const entrada of entradas) {
-    const entradaMs = new Date(entrada.em).getTime();
+    const entradaEm = new Date(entrada.em);
+    const entradaMs = entradaEm.getTime();
     const proxima = historico
       .filter(
         (t) =>
@@ -288,8 +317,7 @@ export function metricasDoEstagio(
       continue; // ainda no estágio — não entra na permanência.
     }
 
-    const proximaMs = new Date(proxima.em).getTime();
-    permanencias.push(Math.floor((proximaMs - entradaMs) / DIA_MS));
+    permanencias.push(diasEntre(entradaEm, new Date(proxima.em)));
 
     if (proxima.para === "PERDIDO") {
       perdidos += 1;
@@ -321,7 +349,7 @@ export function proximoEstagio(e: Estagio): Estagio | null {
 }
 
 export function podeMover(l: LeadFunil): boolean {
-  return l.situacao === "ATIVO" && ABERTOS.includes(l.estagio as Estagio);
+  return l.situacao === "ATIVO" && ABERTOS.includes(l.estagio as EstagioAberto);
 }
 
 export function podeConverter(l: LeadFunil): boolean {

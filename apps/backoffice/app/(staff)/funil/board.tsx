@@ -1,6 +1,5 @@
 "use client";
 
-import type { ProductModule } from "@repo/database";
 import { Icon, type IconName } from "@repo/design-system/cosmos/icons";
 import { Avatar, type Tone } from "@repo/design-system/cosmos/kit";
 import { type DragEvent, useState } from "react";
@@ -12,10 +11,13 @@ import {
   diasNoEstagio,
   ESTAGIOS,
   type Estagio,
+  type EstagioAberto,
   estagnado,
   INFO_ESTAGIO,
-  PORTAS,
   paraLeadFunil,
+  SEM_PROXIMO_PASSO,
+  textoEntradaOrigem,
+  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -102,14 +104,7 @@ function textoProximoPasso(l: LeadRow): string {
   if (l.estagio === "PROPOSAL" && l.proposta) {
     return `lê ${l.proposta.numero}`;
   }
-  return "sem passo";
-}
-
-function textoOrigem(l: LeadRow): string {
-  const porta = l.entrada ? PORTAS[l.entrada as ProductModule] : undefined;
-  const entradaTexto = porta ? `${porta.degrau} ${porta.rotulo}` : "—";
-  const canalTexto = l.canal?.nome ?? l.origem ?? "—";
-  return `${entradaTexto} · ${canalTexto}`;
+  return SEM_PROXIMO_PASSO;
 }
 
 function CartaoLead({
@@ -196,7 +191,7 @@ function CartaoLead({
               whiteSpace: "nowrap",
             }}
           >
-            {textoOrigem(lead)}
+            {textoEntradaOrigem(lead)}
           </span>
         </span>
         {vencido ? (
@@ -360,7 +355,7 @@ function ColunaDoEstagio({
                 width: 7,
                 height: 7,
                 borderRadius: 99,
-                background: `var(--${coluna.tom})`,
+                background: `var(--${tomCssDoEstagio(coluna.tom)})`,
                 flexShrink: 0,
               }}
             />
@@ -465,7 +460,7 @@ export function Board({
   podeEscrever: boolean;
   onAbrirEstagio: (codigo: Estagio) => void;
   onAbrirLead: (id: string) => void;
-  onMover: (id: string, estagio: Estagio) => void;
+  onMover: (id: string, estagio: EstagioAberto) => void;
   onConverter: (id: string) => void;
   onPerder: (id: string) => void;
 }) {
@@ -530,6 +525,9 @@ export function Board({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
       {mensagem ? <Erro>{mensagem}</Erro> : null}
+      {estagios.length === 0 ? (
+        <Erro>Estágios não configurados — rode o seed.</Erro>
+      ) : null}
       <div
         style={{
           display: "grid",

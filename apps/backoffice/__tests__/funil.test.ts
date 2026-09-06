@@ -139,6 +139,15 @@ describe("estagnado", () => {
     expect(estagnado(l, CFG, hoje)).toBe(false);
   });
 
+  it("exatamente no teto (dias === tetoDias) não é estagnado — só acima", () => {
+    // DISCOVERY tem tetoDias: 14; de 2026-08-01 a 2026-08-15 são 14 dias.
+    const l = lead({
+      estagio: "DISCOVERY",
+      estagioDesde: "2026-08-01T00:00:00Z",
+    });
+    expect(estagnado(l, CFG, new Date("2026-08-15T00:00:00Z"))).toBe(false);
+  });
+
   it("perdido acima do teto não conta como estagnado", () => {
     const l = lead({
       estagio: "DISCOVERY",
@@ -258,6 +267,22 @@ describe("cacSobreAcvGanho", () => {
     expect(r.percent).toBe(Math.round((4200 / 150_000) * 100));
   });
 
+  it("canal com cacMedioCentavos: 0 conta como medido — zero não é 'não medido'", () => {
+    const leads: LeadFunil[] = [
+      lead({
+        id: "L-1",
+        estagio: "PROPOSAL",
+        situacao: "GANHO",
+        canalSlug: "indicacao",
+        proposta: { acvCentavos: 100_000, status: "ACEITA" },
+      }),
+    ];
+    const r = cacSobreAcvGanho(leads, canais);
+    expect(r.cacCentavos).toBe(0);
+    expect(r.acvGanhoCentavos).toBe(100_000);
+    expect(r.percent).toBe(0);
+  });
+
   it("sem ganho, percent nulo", () => {
     const r = cacSobreAcvGanho([lead({ estagio: "LEAD" })], canais);
     expect(r.acvGanhoCentavos).toBe(0);
@@ -358,6 +383,63 @@ describe("metricasDoEstagio", () => {
       perdidos: 0,
       permanenciaMediaDias: null,
     });
+  });
+
+  it("permanência em dias UTC inteiros: 23h de um dia para 1h do seguinte é 1 dia, não 0", () => {
+    const historicoCurto: Transicao[] = [
+      {
+        leadId: "L-5",
+        de: "LEAD",
+        para: "DISCOVERY",
+        em: "2026-09-01T23:00:00Z",
+      },
+      {
+        leadId: "L-5",
+        de: "DISCOVERY",
+        para: "EVALUATION",
+        em: "2026-09-02T01:00:00Z",
+      },
+    ];
+    const r = metricasDoEstagio(historicoCurto, "DISCOVERY", hoje, 90);
+    expect(r.permanenciaMediaDias).toBe(1);
+  });
+
+  it("lead que reentra no mesmo estágio duas vezes na janela conta duas entradas com as saídas certas", () => {
+    // L-5 entra em DISCOVERY, avança para EVALUATION (3 d), volta a
+    // DISCOVERY, e sai de novo para LEAD (6 d) — duas entradas distintas,
+    // cada uma pareada com a sua própria saída seguinte, não a saída da
+    // outra entrada.
+    const historicoReentrada: Transicao[] = [
+      {
+        leadId: "L-5",
+        de: "LEAD",
+        para: "DISCOVERY",
+        em: "2026-07-01T00:00:00Z",
+      },
+      {
+        leadId: "L-5",
+        de: "DISCOVERY",
+        para: "EVALUATION",
+        em: "2026-07-04T00:00:00Z",
+      },
+      {
+        leadId: "L-5",
+        de: "EVALUATION",
+        para: "DISCOVERY",
+        em: "2026-07-10T00:00:00Z",
+      },
+      {
+        leadId: "L-5",
+        de: "DISCOVERY",
+        para: "LEAD",
+        em: "2026-07-16T00:00:00Z",
+      },
+    ];
+    const r = metricasDoEstagio(historicoReentrada, "DISCOVERY", hoje, 90);
+    expect(r.entraram).toBe(2);
+    expect(r.avancaram).toBe(1); // só a 1ª entrada avançou (para EVALUATION).
+    expect(r.perdidos).toBe(0);
+    expect(r.permanenciaMediaDias).toBe(5); // (3 + 6) / 2 = 4.5 -> arredonda 5.
   });
 });
 

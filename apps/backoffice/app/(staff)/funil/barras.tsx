@@ -15,7 +15,6 @@ export type LinhaBarra = {
   quantidade: number;
   /** Texto livre à direita da barra — ex.: "CAC R$ 4.200" ou "CAC —". */
   direita?: string;
-  tom?: Tone;
 };
 
 export function Barras({
@@ -68,7 +67,7 @@ export function Barras({
                   {l.quantidade} · {percent}%
                 </span>
               </div>
-              <Progress height={4} tone={l.tom ?? tom} value={percent} />
+              <Progress height={4} tone={tom} value={percent} />
             </div>
             {l.direita ? (
               <span

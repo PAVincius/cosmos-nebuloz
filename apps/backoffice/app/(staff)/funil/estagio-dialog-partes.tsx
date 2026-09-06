@@ -15,6 +15,8 @@ import {
   type ConfigEstagio,
   diasNoEstagio,
   paraLeadFunil,
+  SEM_PROXIMO_PASSO,
+  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -31,13 +33,6 @@ const ROTULO_CAMPO: Record<string, string> = {
   CRITERIOS: "Critérios de saída",
 };
 
-/** "neutral" (LEAD) não tem variável de cor própria no kit — mesmo problema
- *  que lead-dialog-partes.tsx resolve com `tomDoPasso`: aqui não há o caso de
- *  perda para combinar, só a ausência de `--neutral-text`. */
-function tomCss(tone: Tone): Tone {
-  return tone === "neutral" ? "blue" : tone;
-}
-
 function Rotulo({ children, tone }: { children: string; tone?: Tone }) {
   return (
     <span
@@ -48,7 +43,9 @@ function Rotulo({ children, tone }: { children: string; tone?: Tone }) {
         fontWeight: 700,
         letterSpacing: ".1em",
         textTransform: "uppercase",
-        color: tone ? `var(--${tomCss(tone)}-text)` : "var(--ink-faint)",
+        color: tone
+          ? `var(--${tomCssDoEstagio(tone)}-text)`
+          : "var(--ink-faint)",
       }}
     >
       {children}
@@ -66,7 +63,7 @@ function textoProximoPasso(l: LeadRow): string {
   if (l.proposta) {
     return `lê ${l.proposta.numero}`;
   }
-  return "sem próximo passo";
+  return SEM_PROXIMO_PASSO;
 }
 
 function infoPermanencia(
@@ -128,6 +125,12 @@ export function CartoesEstagio({
     0
   );
   const ponderado = Math.round((valorAgora * cfg.pesoPercent) / 100);
+  // PROPOSAL ainda não tem GANHO no histórico — "avançar" a partir dali é a
+  // proposta virar cliente, e isso não é uma transição de HistoricoDeEstagio
+  // que `metricasDoEstagio` enxergue. Mostrar 0% seria dizer que nada avança,
+  // o que não é verdade — é "—", não medido.
+  const temConversaoMedida = cfg.codigo !== "PROPOSAL";
+  const unidadeConversao = temConversaoMedida ? "%" : undefined;
   const conversaoPercent =
     metricas.entraram === 0
       ? 0
@@ -154,12 +157,16 @@ export function CartoesEstagio({
         value={leads.length}
       />
       <KpiCard
-        hint={`${metricas.avancaram} de ${metricas.entraram} avançaram · ${metricas.perdidos} perdidos`}
+        hint={
+          temConversaoMedida
+            ? `${metricas.avancaram} de ${metricas.entraram} avançaram · ${metricas.perdidos} perdidos`
+            : "sem GANHO no histórico ainda"
+        }
         icon="trendingUp"
         label="Conversão 90 d"
         tone="green"
-        unit="%"
-        value={conversaoPercent}
+        unit={unidadeConversao}
+        value={temConversaoMedida ? conversaoPercent : "—"}
       />
       <KpiCard
         hint={permanencia.hint}
@@ -244,7 +251,7 @@ export function CriteriosDeSaida({
                 className="mono"
                 style={{
                   fontSize: 11,
-                  color: `var(--${tomCss(tone)}-text)`,
+                  color: `var(--${tomCssDoEstagio(tone)}-text)`,
                   fontWeight: 700,
                   flexShrink: 0,
                 }}

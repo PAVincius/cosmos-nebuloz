@@ -52,6 +52,7 @@ function formInicial(canais: CanalRow[]): FormNovoLead {
 function podeCriar(f: FormNovoLead): boolean {
   return (
     f.nome.trim().length >= 2 &&
+    f.canalSlug.length > 0 &&
     f.proximaAcao.trim().length > 0 &&
     f.proximaAcaoEm.length > 0
   );
@@ -277,25 +278,29 @@ function Formulario({
         })}
       </GrupoChips>
 
-      <GrupoChips
-        dica="Cada canal carrega seu custo médio — é isso que vira CAC."
-        titulo="Origem"
-      >
-        {canais.map((c) => (
-          <button
-            aria-pressed={form.canalSlug === c.slug}
-            key={c.slug}
-            onClick={() => mudar("canalSlug", c.slug)}
-            style={estiloChip(form.canalSlug === c.slug)}
-            type="button"
-          >
-            {c.nome}
-            {c.cacMedioCentavos === null
-              ? ""
-              : ` · CAC ${formatarBRL(c.cacMedioCentavos)}`}
-          </button>
-        ))}
-      </GrupoChips>
+      {canais.length === 0 ? (
+        <Erro>Nenhum canal cadastrado — rode o seed de canais.</Erro>
+      ) : (
+        <GrupoChips
+          dica="Cada canal carrega seu custo médio — é isso que vira CAC."
+          titulo="Origem"
+        >
+          {canais.map((c) => (
+            <button
+              aria-pressed={form.canalSlug === c.slug}
+              key={c.slug}
+              onClick={() => mudar("canalSlug", c.slug)}
+              style={estiloChip(form.canalSlug === c.slug)}
+              type="button"
+            >
+              {c.nome}
+              {c.cacMedioCentavos === null
+                ? ""
+                : ` · CAC ${formatarBRL(c.cacMedioCentavos)}`}
+            </button>
+          ))}
+        </GrupoChips>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         <Campo htmlFor="nl-passo" label="Próximo passo">

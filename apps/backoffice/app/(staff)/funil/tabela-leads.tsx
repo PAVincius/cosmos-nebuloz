@@ -1,4 +1,3 @@
-import type { ProductModule } from "@repo/database";
 import { Badge } from "@repo/design-system/cosmos/kit";
 import type { LeadRow } from "@/app/actions/leads";
 import { Celula, Tabela, TableHead } from "@/components/tabela";
@@ -12,8 +11,9 @@ import {
   INFO_ESTAGIO,
   MOTIVOS_PERDA,
   type MotivoPerda,
-  PORTAS,
   paraLeadFunil,
+  SEM_PROXIMO_PASSO,
+  textoEntradaOrigem,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -52,13 +52,6 @@ const LARGURAS = [
   { id: "tempo", largura: "12%" },
 ];
 
-function textoEntradaOrigem(l: LeadRow): string {
-  const porta = l.entrada ? PORTAS[l.entrada as ProductModule] : undefined;
-  const entradaTexto = porta ? `${porta.degrau} ${porta.rotulo}` : "—";
-  const canalTexto = l.canal?.nome ?? l.origem ?? "—";
-  return `${entradaTexto} · ${canalTexto}`;
-}
-
 function EstagioBadge({ lead }: { lead: LeadRow }) {
   if (lead.situacao === "GANHO") {
     return <Badge tone="green">Ganho</Badge>;
@@ -94,7 +87,7 @@ function TextoProximoPasso({
   if (!lead.proximaAcao) {
     return (
       <span style={{ color: "var(--amber-text)", fontWeight: 700 }}>
-        Sem próximo passo
+        {SEM_PROXIMO_PASSO}
       </span>
     );
   }

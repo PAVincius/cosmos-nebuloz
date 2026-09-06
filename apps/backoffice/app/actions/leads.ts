@@ -72,7 +72,6 @@ export type CanalRow = {
   slug: string;
   nome: string;
   cacMedioCentavos: number | null;
-  ativo: boolean;
 };
 
 const NOVENTA_DIAS_MS = 90 * 24 * 60 * 60 * 1000;
@@ -141,7 +140,7 @@ export async function listarFunil(): Promise<
       database.canalDeLead.findMany({
         where: { tenantId: SYSTEM_TENANT_ID, ativo: true },
         orderBy: { ordem: "asc" },
-        select: { slug: true, nome: true, cacMedioCentavos: true, ativo: true },
+        select: { slug: true, nome: true, cacMedioCentavos: true },
       }),
       database.historicoDeEstagio.findMany({
         where: { tenantId: SYSTEM_TENANT_ID, em: { gte: desde } },

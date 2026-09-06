@@ -45,7 +45,6 @@ type Props = {
   codigo: Estagio | null;
   dados: DadosFunil;
   podeEscrever: boolean;
-  isAdmin: boolean;
   onClose: () => void;
   onAbrirLead: (id: string) => void;
   onFiltrar: (codigo: Estagio) => void;
@@ -56,7 +55,6 @@ export function EstagioDialog({
   codigo,
   dados,
   podeEscrever,
-  isAdmin,
   onClose,
   onAbrirLead,
   onFiltrar,
@@ -84,7 +82,7 @@ export function EstagioDialog({
           <Conteudo
             codigo={codigo}
             dados={dados}
-            isAdmin={isAdmin}
+            key={codigo}
             onAbrirLead={onAbrirLead}
             onClose={onClose}
             onFiltrar={onFiltrar}
@@ -109,7 +107,6 @@ function Conteudo({
   codigo,
   dados,
   podeEscrever,
-  isAdmin,
   onClose,
   onAbrirLead,
   onFiltrar,
@@ -118,16 +115,12 @@ function Conteudo({
   codigo: Estagio;
   dados: DadosFunil;
   podeEscrever: boolean;
-  isAdmin: boolean;
   onClose: () => void;
   onAbrirLead: (id: string) => void;
   onFiltrar: (codigo: Estagio) => void;
   onRecarregar: () => Promise<void>;
 }) {
-  // ADMIN no papel do tenant `system` já é `canWrite` (lib/guard.ts) — as duas
-  // props existem para o dia em que essa equivalência deixar de valer; até
-  // lá, exigir as duas juntas é só defesa a mais, não uma regra nova.
-  const podeEditar = isAdmin && podeEscrever;
+  const podeEditar = podeEscrever;
   const hoje = new Date(dados.hoje);
   const info = INFO_ESTAGIO[codigo];
   const cfg = dados.estagios.find((e) => e.codigo === codigo);
@@ -272,7 +265,9 @@ function Conteudo({
         />
       </div>
 
-      <RegistroDeMudancas carregando={carregando} mudancas={mudancas} />
+      {erroCarga ? null : (
+        <RegistroDeMudancas carregando={carregando} mudancas={mudancas} />
+      )}
 
       {editando ? null : (
         <div

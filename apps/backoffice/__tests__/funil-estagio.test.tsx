@@ -140,7 +140,7 @@ const MUDANCAS = [
   },
 ];
 
-function montar(isAdmin = true) {
+function montar(podeEscrever = true) {
   const onAbrirLead = vi.fn();
   const onClose = vi.fn();
   const onFiltrar = vi.fn();
@@ -150,12 +150,11 @@ function montar(isAdmin = true) {
     <EstagioDialog
       codigo="DISCOVERY"
       dados={DADOS}
-      isAdmin={isAdmin}
       onAbrirLead={onAbrirLead}
       onClose={onClose}
       onFiltrar={onFiltrar}
       onRecarregar={onRecarregar}
-      podeEscrever={true}
+      podeEscrever={podeEscrever}
     />
   );
 
@@ -252,7 +251,7 @@ describe("EstagioDialog", () => {
     expect(onRecarregar).toHaveBeenCalled();
   });
 
-  it("sem isAdmin não mostra o formulário de edição", async () => {
+  it("sem podeEscrever não mostra o formulário de edição", async () => {
     montar(false);
     await screen.findByText(/Agenda de CFO/);
 

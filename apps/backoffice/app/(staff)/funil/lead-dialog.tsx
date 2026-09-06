@@ -13,6 +13,7 @@ import {
   type ConfigEstagio,
   diasNoEstagio,
   type Estagio,
+  type EstagioAberto,
   estagnado,
   type MotivoPerda,
   paraLeadFunil,
@@ -50,7 +51,7 @@ type Props = {
   /** Ruling 8: soltar no alvo Perdido do board abre já em modo perda. */
   modoInicial?: "perda";
   onClose: () => void;
-  onMover: (id: string, estagio: Estagio) => Promise<Result<unknown>>;
+  onMover: (id: string, estagio: EstagioAberto) => Promise<Result<unknown>>;
   onConverter: (id: string) => Promise<Result<unknown>>;
   onPerder: (
     id: string,
@@ -244,8 +245,12 @@ function Conteudo({
         motivo={motivo}
         nota={nota}
         onAvancar={() => {
+          // `onAvancar` só aparece quando `podeMover` é true (AcaoPrincipal),
+          // e isso já garante `proximo` ∈ ABERTOS — PROPOSAL sai por
+          // `onConverter`, não por aqui. O tipo de `proximoEstagio` não
+          // carrega essa garantia (é `Estagio | null` para qualquer estágio).
           if (proximo) {
-            executar(() => onMover(lead.id, proximo));
+            executar(() => onMover(lead.id, proximo as EstagioAberto));
           }
         }}
         onConverter={() => executar(() => onConverter(lead.id))}

@@ -38,12 +38,13 @@ export default async function FunilPage() {
   const estagnados = ativos.filter((l) =>
     estagnado(paraLeadFunil(l), estagios, hojeData)
   ).length;
+  const comEntrada = leads.filter((l) => l.entrada !== null);
   const pelaEscada =
-    leads.length === 0
-      ? 0
+    comEntrada.length === 0
+      ? null
       : Math.round(
-          (leads.filter((l) => l.entrada === "MERIDIAN").length /
-            leads.length) *
+          (comEntrada.filter((l) => l.entrada === "MERIDIAN").length /
+            comEntrada.length) *
             100
         );
 
@@ -59,7 +60,9 @@ export default async function FunilPage() {
                 {estagnados} estagnados
               </Badge>
             ) : null}
-            <Badge tone="blue">{pelaEscada}% entram pelo assessment</Badge>
+            {pelaEscada === null ? null : (
+              <Badge tone="blue">{pelaEscada}% entram pelo assessment</Badge>
+            )}
           </>
         }
         subtitle="Quatro estágios com peso e teto. O funil promete, a proposta precifica, a capacidade aloca."
@@ -67,11 +70,7 @@ export default async function FunilPage() {
         tone="amber"
       />
 
-      <Funil
-        inicial={res.data}
-        isAdmin={staff.canWrite}
-        podeEscrever={staff.canWrite}
-      />
+      <Funil inicial={res.data} podeEscrever={staff.canWrite} />
     </div>
   );
 }

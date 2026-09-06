@@ -2,6 +2,7 @@
 
 import type { ProductModule } from "@repo/database";
 import { Icon } from "@repo/design-system/cosmos/icons";
+import type { Tone } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import type { LeadRow } from "@/app/actions/leads";
 import { BotaoPrimario, BotaoSecundario, INPUT } from "@/components/campo";
@@ -18,6 +19,7 @@ import {
   PORTAS,
   podeConverter,
   podeMover,
+  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
 
@@ -46,17 +48,14 @@ const LINK_PRIMARIO: CSSProperties = {
   textDecoration: "none",
 };
 
-/** Tom do passo do stepper: perda vence tudo; "neutral" (LEAD) não tem
- *  variável de cor própria no kit, então cai no azul — dois casos
+/** Tom do passo do stepper: perda vence tudo; senão o tom do estágio, com
+ *  "neutral" (LEAD) mapeado para azul por `tomCssDoEstagio` — dois casos
  *  independentes, não uma escala (por isso `if`, não ternário encadeado). */
-function tomDoPasso(perdeuAqui: boolean, tomDoEstagio: string): string {
+function tomDoPasso(perdeuAqui: boolean, tomDoEstagio: Tone): Tone {
   if (perdeuAqui) {
     return "red";
   }
-  if (tomDoEstagio === "neutral") {
-    return "blue";
-  }
-  return tomDoEstagio;
+  return tomCssDoEstagio(tomDoEstagio);
 }
 
 function PassoDoStepper({

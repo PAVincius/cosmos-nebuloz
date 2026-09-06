@@ -164,7 +164,7 @@ describe("LeadDialog", () => {
 });
 
 const CANAIS: CanalRow[] = [
-  { ativo: true, cacMedioCentavos: null, nome: "Indicação", slug: "indicacao" },
+  { cacMedioCentavos: null, nome: "Indicação", slug: "indicacao" },
 ];
 
 describe("NovoLeadDialog", () => {
@@ -217,5 +217,35 @@ describe("NovoLeadDialog", () => {
         proximaAcaoEm: "2026-09-20",
       })
     );
+  });
+
+  it("sem canais o botão fica desabilitado mesmo com org/passo/data preenchidos", () => {
+    const onCriar = vi.fn(() =>
+      Promise.resolve({ data: { id: "novo" }, ok: true as const })
+    );
+
+    render(
+      <NovoLeadDialog aberto canais={[]} onClose={vi.fn()} onCriar={onCriar} />
+    );
+
+    expect(
+      screen.getByText("Nenhum canal cadastrado — rode o seed de canais.")
+    ).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText("Organização"), {
+      target: { value: "Acme" },
+    });
+    fireEvent.change(screen.getByLabelText("Próximo passo"), {
+      target: { value: "Ligar amanhã" },
+    });
+    fireEvent.change(screen.getByLabelText("Quando"), {
+      target: { value: "2026-09-20" },
+    });
+
+    expect(
+      screen
+        .getByRole("button", { name: "Criar lead" })
+        .hasAttribute("disabled")
+    ).toBe(true);
   });
 });

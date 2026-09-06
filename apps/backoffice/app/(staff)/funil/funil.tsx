@@ -116,14 +116,27 @@ const FILTROS = [
   { id: "PERDIDOS", label: "Perdidos" },
 ];
 
+/** "—" no lugar do valor quando não há `EstagioDoFunil` — sem peso/teto por
+ *  estágio, pipeline ponderado e estagnados não têm o que calcular. */
+function valorKpiOuTraco(
+  semEstagios: boolean,
+  valor: string | number
+): string | number {
+  return semEstagios ? "—" : valor;
+}
+
+/** Unidade do KPI de pipeline ponderado — some junto com o valor quando sem
+ *  estágios configurados. */
+function unidadeKpiPipeline(semEstagios: boolean): "k" | undefined {
+  return semEstagios ? undefined : "k";
+}
+
 export function Funil({
   inicial,
   podeEscrever,
-  isAdmin,
 }: {
   inicial: DadosFunil;
   podeEscrever: boolean;
-  isAdmin: boolean;
 }) {
   const [dados, setDados] = useState(inicial);
   const [filtro, setFiltro] = useState("all");
@@ -235,6 +248,7 @@ export function Funil({
     setEstagioAbertoId(codigo);
   }, []);
 
+  const semEstagios = dados.estagios.length === 0;
   const pipelineCentavos = pipelinePonderado(leadsFunil, dados.estagios);
   const pipelineTexto = (pipelineCentavos / 100_000)
     .toFixed(1)
@@ -286,8 +300,8 @@ export function Funil({
           icon="wallet"
           label="Pipeline ponderado"
           tone="accent"
-          unit="k"
-          value={pipelineTexto}
+          unit={unidadeKpiPipeline(semEstagios)}
+          value={valorKpiOuTraco(semEstagios, pipelineTexto)}
         />
         <KpiCard
           icon="trendingUp"
@@ -301,7 +315,7 @@ export function Funil({
           icon="clock"
           label="Estagnados"
           tone={estagnadosQtd > 0 ? "red" : "neutral"}
-          value={estagnadosQtd}
+          value={valorKpiOuTraco(semEstagios, estagnadosQtd)}
         />
         <KpiCard
           icon="dollar"
@@ -382,7 +396,6 @@ export function Funil({
       <EstagioDialog
         codigo={estagioAbertoId}
         dados={dados}
-        isAdmin={isAdmin}
         onAbrirLead={abrirLead}
         onClose={() => setEstagioAbertoId(null)}
         onFiltrar={setFiltro}
