@@ -206,6 +206,21 @@ describe("atualizarProcesso", () => {
     expect(res.ok).toBe(false);
   });
 
+  it("código já usado por outro processo devolve ok:false sem chamar updateMany", async () => {
+    mocks.staffProcessFindFirst.mockResolvedValue({ id: "p-outro" });
+
+    const res = await atualizarProcesso({
+      id: "p-1",
+      ...processoValido({ codigo: "PZ-01" }),
+    });
+
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toBe("Já existe PZ-01.");
+    }
+    expect(mocks.staffProcessUpdateMany).not.toHaveBeenCalled();
+  });
+
   it("MEMBER não atualiza", async () => {
     refusaLeitura();
 
@@ -262,6 +277,10 @@ describe("criarLigacao", () => {
   });
 
   it("par já existente devolve 'Ligação já existe.'", async () => {
+    mocks.staffProcessFindMany.mockResolvedValue([
+      { id: "p-1", codigo: "PZ-01" },
+      { id: "p-2", codigo: "PZ-02" },
+    ]);
     mocks.staffProcessEdgeFindFirst.mockResolvedValue({ id: "e-0" });
 
     const res = await criarLigacao({
@@ -275,6 +294,38 @@ describe("criarLigacao", () => {
       expect(res.error).toBe("Ligação já existe.");
     }
     expect(mocks.staffProcessEdgeCreate).not.toHaveBeenCalled();
+  });
+
+  it("id de outro tenant (não vem na leitura escopada) devolve ok:false sem chamar create", async () => {
+    mocks.staffProcessFindMany.mockResolvedValue([
+      { id: "p-1", codigo: "PZ-01" },
+    ]);
+
+    const res = await criarLigacao({
+      deId: "p-1",
+      paraId: "p-de-outro-tenant",
+      rotulo: "converte em",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.staffProcessEdgeCreate).not.toHaveBeenCalled();
+  });
+
+  it("grava a auditoria com os códigos dos dois processos, não os ids", async () => {
+    mocks.staffProcessFindMany.mockResolvedValue([
+      { id: "p-1", codigo: "PZ-01" },
+      { id: "p-2", codigo: "PZ-02" },
+    ]);
+
+    const res = await criarLigacao({
+      deId: "p-1",
+      paraId: "p-2",
+      rotulo: "converte em",
+    });
+
+    expect(res.ok).toBe(true);
+    const entrada = mocks.logPlatformAudit.mock.calls[0][1];
+    expect(entrada.target).toBe("PZ-01 → PZ-02");
   });
 
   it("MEMBER não cria ligação", async () => {

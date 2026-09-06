@@ -29,7 +29,11 @@ const CODIGO = /^PZ-\d{2,3}$/;
 const ProcessoSchema = z.object({
   codigo: z.string().trim().regex(CODIGO, "Código no formato PZ-01."),
   nome: z.string().trim().min(2).max(80),
-  descricao: z.string().trim().min(1).max(500),
+  descricao: z
+    .string()
+    .trim()
+    .min(1)
+    .max(500, "Descrição com no máximo 500 caracteres."),
   dominio: z.enum([
     "COMERCIAL",
     "DELIVERY",
@@ -40,11 +44,17 @@ const ProcessoSchema = z.object({
   ]),
   nivel: z.number().int().min(1).max(3),
   tipo: z.enum(["CORE", "APOIO"]),
-  donoNome: z.string().trim().max(60).nullable(),
+  donoNome: z
+    .string()
+    .trim()
+    .max(60, "Nome do dono com no máximo 60 caracteres.")
+    .nullable(),
   revisadoEm: z.iso.date().nullable(),
-  tags: z.array(z.string().trim().min(1).max(30)).max(12),
+  tags: z
+    .array(z.string().trim().min(1).max(30, "Tag com no máximo 30 caracteres."))
+    .max(12, "No máximo 12 tags."),
   diagramId: z.string().trim().min(1).nullable(),
-  docUrl: z.url().max(500).nullable(),
+  docUrl: z.url("URL do documento inválida.").max(500).nullable(),
 });
 
 const AtualizarProcessoSchema = ProcessoSchema.extend({
@@ -56,7 +66,11 @@ const IdSchema = z.object({ id: z.string().trim().min(1) });
 const LigacaoSchema = z.object({
   deId: z.string().trim().min(1),
   paraId: z.string().trim().min(1),
-  rotulo: z.string().trim().min(2).max(40),
+  rotulo: z
+    .string()
+    .trim()
+    .min(2)
+    .max(40, "Rótulo com no máximo 40 caracteres."),
 });
 
 export type ProcessoRow = {
@@ -223,6 +237,18 @@ export async function atualizarProcesso(
     assertCanWrite(staff);
     const dados = AtualizarProcessoSchema.parse(input);
 
+    const conflito = await database.staffProcess.findFirst({
+      where: {
+        tenantId: SYSTEM_TENANT_ID,
+        codigo: dados.codigo,
+        NOT: { id: dados.id },
+      },
+      select: { id: true },
+    });
+    if (conflito) {
+      throw new StaffAuthError("FORBIDDEN", `Já existe ${dados.codigo}.`);
+    }
+
     if (dados.diagramId) {
       await assertDiagramaBpmn(dados.diagramId);
     }
@@ -314,6 +340,23 @@ export async function criarLigacao(
       );
     }
 
+    // A FK só prova que o id existe em algum tenant, não que é este — a spec
+    // §3 pede os dois extremos do tenant, então lê os dois escopados e recusa
+    // se algum não vier. Os códigos vêm da mesma leitura, para a auditoria.
+    const processos = await database.staffProcess.findMany({
+      where: {
+        tenantId: SYSTEM_TENANT_ID,
+        id: { in: [dados.deId, dados.paraId] },
+      },
+      select: { id: true, codigo: true },
+    });
+    if (processos.length !== 2) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Os dois processos precisam existir no tenant."
+      );
+    }
+
     const existente = await database.staffProcessEdge.findFirst({
       where: {
         tenantId: SYSTEM_TENANT_ID,
@@ -336,6 +379,9 @@ export async function criarLigacao(
       select: { id: true },
     });
 
+    const codigoDe = processos.find((p) => p.id === dados.deId)?.codigo;
+    const codigoPara = processos.find((p) => p.id === dados.paraId)?.codigo;
+
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,
       actorUserId: staff.userId,
@@ -343,7 +389,7 @@ export async function criarLigacao(
       action: "created",
       entityType: "StaffProcessEdge",
       entityId: criada.id,
-      target: `${dados.deId} → ${dados.paraId}`,
+      target: `${codigoDe} → ${codigoPara}`,
     });
 
     revalidatePath(ROTA_MAPA);
@@ -361,7 +407,11 @@ export async function excluirLigacao(
 
     const ligacao = await database.staffProcessEdge.findFirst({
       where: { id, tenantId: SYSTEM_TENANT_ID },
-      select: { id: true, deId: true, paraId: true },
+      select: {
+        id: true,
+        de: { select: { codigo: true } },
+        para: { select: { codigo: true } },
+      },
     });
     if (!ligacao) {
       throw new StaffAuthError("FORBIDDEN", "Ligação não encontrada.");
@@ -376,7 +426,7 @@ export async function excluirLigacao(
       action: "deleted",
       entityType: "StaffProcessEdge",
       entityId: ligacao.id,
-      target: `${ligacao.deId} → ${ligacao.paraId}`,
+      target: `${ligacao.de.codigo} → ${ligacao.para.codigo}`,
     });
 
     revalidatePath(ROTA_MAPA);

@@ -327,7 +327,7 @@ export function Mapa({
             margin: 0,
           }}
         >
-          {tituloDaBusca(resultado.ids?.size ?? 0, q)}
+          {tituloDaBusca(visiveis.length, q)}
         </p>
       ) : null}
 

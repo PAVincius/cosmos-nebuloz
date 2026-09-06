@@ -136,6 +136,21 @@ describe("buscar", () => {
   it("palavra de menos de três letras não conta como termo", () => {
     expect(buscar("de", nos).ids).toBeNull();
   });
+
+  it("consulta só de stop-words devolve ids: null", () => {
+    expect(buscar("para com que", nos).ids).toBeNull();
+  });
+
+  it("bater no nome coloca o processo primeiro que um achado só nas tags", () => {
+    const doTagSó = p({
+      codigo: "PZ-05",
+      nome: "Processo qualquer",
+      tags: ["funil"],
+    });
+    const doNome = p({ codigo: "PZ-06", nome: "Funil comercial" });
+    const r = buscar("funil", [doTagSó, doNome]);
+    expect(r.primeiro).toBe("PZ-06");
+  });
 });
 
 describe("paraJsonCanvas", () => {

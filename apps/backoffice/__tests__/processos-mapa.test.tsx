@@ -103,6 +103,16 @@ describe("Mapa", () => {
     expect(screen.getByText("1 processo para “funil”")).toBeTruthy();
   });
 
+  it("busca só de palavra curta não filtra nada, mas a contagem mostra os processos reais, não zero", () => {
+    render(<Mapa inicial={DADOS} podeEscrever={true} />);
+
+    fireEvent.change(screen.getByRole("textbox", { name: /buscar/i }), {
+      target: { value: "de" },
+    });
+
+    expect(screen.getByText("3 processos para “de”")).toBeTruthy();
+  });
+
   it("filtrar por domínio esconde os nós dos outros domínios", () => {
     render(<Mapa inicial={DADOS} podeEscrever={true} />);
 

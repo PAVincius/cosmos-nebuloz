@@ -222,14 +222,88 @@ const ESPACOS = /\s+/;
 const NAO_ALFANUM = /[^a-z0-9]+/g;
 const BORDA_HIFEN = /(^-|-$)/g;
 
+/** Palavras do português que não carregam sentido de busca — sem isso, uma
+ *  consulta como "processo de vendas" vira "todos os termos precisam bater",
+ *  incluindo "de", que está em quase todo texto e não filtra nada de útil.
+ *  Lista curta e local, no espírito do `PROC_STOP` do design. */
+const PROC_STOP = new Set(
+  [
+    "a",
+    "o",
+    "e",
+    "um",
+    "uma",
+    "de",
+    "da",
+    "do",
+    "das",
+    "dos",
+    "em",
+    "no",
+    "na",
+    "nos",
+    "nas",
+    "que",
+    "como",
+    "para",
+    "pra",
+    "por",
+    "com",
+    "se",
+    "ao",
+    "os",
+    "as",
+    "qual",
+    "quem",
+    "onde",
+    "quando",
+    "antes",
+    "depois",
+    "roda",
+    "faz",
+    "fazer",
+    "ser",
+    "é",
+    "nosso",
+    "nossa",
+    "meu",
+    "minha",
+    "isso",
+    "esse",
+    "essa",
+    "gente",
+  ].map(normalizar)
+);
+
 function termosDe(q: string): string[] {
   return normalizar(q)
     .split(ESPACOS)
-    .filter((t) => t.length >= 3);
+    .filter((t) => t.length >= 3 && !PROC_STOP.has(t));
 }
 
 function textoBuscavel(p: Processo): string {
   return normalizar(`${p.nome} ${p.descricao} ${p.tags.join(" ")}`);
+}
+
+/** Pontos de relevância por campo atingido, contados separado (nome pesa mais
+ *  que descrição, que pesa mais que tags) — é o que faz um processo achado
+ *  pelo nome vir antes de um achado só nas tags, mesmo quando os dois batem o
+ *  mesmo número de termos. */
+function pontosDeRelevancia(termos: string[], p: Processo): number {
+  const nome = normalizar(p.nome);
+  const descricao = normalizar(p.descricao);
+  const tags = normalizar(p.tags.join(" "));
+  let pontos = 0;
+  if (termos.some((t) => nome.includes(t))) {
+    pontos += 4;
+  }
+  if (termos.some((t) => descricao.includes(t))) {
+    pontos += 2;
+  }
+  if (termos.some((t) => tags.includes(t))) {
+    pontos += 1;
+  }
+  return pontos;
 }
 
 export type ResultadoBusca = {
@@ -237,10 +311,10 @@ export type ResultadoBusca = {
   primeiro: string | null;
 };
 
-/** Consulta vazia (ou só de termos curtos) não filtra nada — `ids: null` é o
- *  sinal para a tela mostrar todo mundo. Com termos, um processo só entra se
- *  TODOS aparecerem em nome + descrição + tags; entre os que entram, o mais
- *  batido vem primeiro. */
+/** Consulta vazia (ou só de termos curtos/stop-words) não filtra nada —
+ *  `ids: null` é o sinal para a tela mostrar todo mundo. Com termos, um
+ *  processo só entra se TODOS aparecerem em nome + descrição + tags; entre os
+ *  que entram, o mais relevante (campo mais forte atingido) vem primeiro. */
 export function buscar(q: string, processos: Processo[]): ResultadoBusca {
   const termos = termosDe(q);
   if (termos.length === 0) {
@@ -248,14 +322,11 @@ export function buscar(q: string, processos: Processo[]): ResultadoBusca {
   }
 
   const bateram = processos
-    .map((p) => {
+    .filter((p) => {
       const texto = textoBuscavel(p);
-      return {
-        id: p.id,
-        pontos: termos.filter((t) => texto.includes(t)).length,
-      };
+      return termos.every((t) => texto.includes(t));
     })
-    .filter((r) => r.pontos === termos.length)
+    .map((p) => ({ id: p.id, pontos: pontosDeRelevancia(termos, p) }))
     .sort((a, b) => b.pontos - a.pontos);
 
   return {
