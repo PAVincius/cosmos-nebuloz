@@ -4,6 +4,7 @@
  * Semeia as telas Empresa do back-office no tenant `system`:
  *   - FornecedorDpa: 18 linhas de docs/compliance/dpa-fornecedores.md
  *   - PerguntaAoParecer: 7 linhas de docs/compliance/aviso-de-gravacao.md §4
+ *   - ContaDoPlano: 27 linhas de docs/financeiro/plano-de-contas.md
  *
  *   pnpm seed:empresa:nebuloz
  *
@@ -26,6 +27,7 @@ import {
   PERGUNTAS_AO_PARECER,
   VERIFICADO_EM,
 } from "@repo/provisioning/src/empresa-nebuloz";
+import { PLANO_DE_CONTAS_NEBULOZ } from "@repo/provisioning/src/plano-de-contas-nebuloz";
 import { Pool } from "pg";
 import { PrismaClient } from "../../../packages/database/generated";
 
@@ -69,6 +71,17 @@ async function main() {
   });
   console.log(
     `  ✓ perguntas: ${p.count} criadas (${PERGUNTAS_AO_PARECER.length - p.count} já existiam)`
+  );
+
+  const c = await db.contaDoPlano.createMany({
+    skipDuplicates: true,
+    data: PLANO_DE_CONTAS_NEBULOZ.map((x) => ({
+      tenantId: SYSTEM_TENANT_ID,
+      ...x,
+    })),
+  });
+  console.log(
+    `  ✓ plano de contas: ${c.count} criadas (${PLANO_DE_CONTAS_NEBULOZ.length - c.count} já existiam)`
   );
 
   await pool.end();

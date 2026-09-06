@@ -273,6 +273,7 @@ model Tenant {
   lancamentosMensais       LancamentoMensal[]            @relation("LancamentoMensalSystemTenant")
   cacPeriodos              CacPeriodo[]                  @relation("CacPeriodoSystemTenant")
   semanasDeCaixa           SemanaDeCaixa[]               @relation("SemanaDeCaixaSystemTenant")
+  contasDoPlano            ContaDoPlano[]                @relation("ContaDoPlanoSystemTenant")
 }
 
 model User {

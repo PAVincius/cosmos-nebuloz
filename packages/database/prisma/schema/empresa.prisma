@@ -245,3 +245,32 @@ model SemanaDeCaixa {
 
   @@unique([tenantId, semanaInicio])
 }
+
+/// Plano de contas da Nebuloz (docs/financeiro/plano-de-contas.md). Era
+/// constante em código; virou tabela em 6 set porque a operação precisa
+/// abrir conta sem deploy. As 27 do documento entram por seed.
+model ContaDoPlano {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "1.1" … "6.3", ou o que o operador criar ("4.7"). Formato `^\d\.\d{1,2}$`.
+  conta         String
+  nome          String
+  /// 1 receita · 2 deduções · 3 custo de entrega · 4 comercial ·
+  /// 5 produto/engenharia · 6 G&A. Define onde a conta soma no DRE.
+  grupo         Int
+  /// comercial | produto-engenharia | entrega | ga; nulo nos grupos 1 e 2.
+  centroDeCusto String?
+  /// Desativada some da entrada e do DRE dos meses seguintes; os lançamentos
+  /// já feitos continuam somando onde estão. Não há exclusão.
+  ativa         Boolean @default(true)
+  ordem         Int     @default(0)
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("ContaDoPlanoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, conta])
+  @@index([tenantId, grupo])
+}
