@@ -12,6 +12,13 @@ import {
   type ResultadoCac,
 } from "@/lib/empresa/cac";
 import { competenciaValida } from "@/lib/empresa/financeiro";
+import {
+  competenciasNoIntervalo,
+  type Intervalo,
+  IntervaloExcedido,
+  IntervaloSchema,
+  intervaloValido,
+} from "@/lib/empresa/periodo";
 import { CONTAS_DO_CAC, type ContaDoCac } from "@/lib/empresa/plano-de-contas";
 import {
   assertCanWrite,
@@ -44,13 +51,18 @@ export type ConversaoView = {
 };
 
 export type CacView = {
-  competencia: string;
+  intervalo: Intervalo;
+  competencias: string[];
+  /** Só um mês no intervalo: as escritas ficam disponíveis. */
+  editavel: boolean;
+  /** Última competência do intervalo — é nela que as escritas gravam. */
+  competenciaEditavel: string;
   parcelas: ParcelasCac;
   conversao: ConversaoView;
   alocacoes: { produto: string; pesoPercent: number }[];
   resultado: ResultadoCac;
   mensalidadeReferenciaCentavos: number | null;
-  /** Propostas ACEITA atualizadas no mês — sugestão, não valor. */
+  /** Propostas ACEITA atualizadas no intervalo — sugestão, não valor. */
   sugestaoClientesGanhos: number;
 };
 
@@ -59,6 +71,18 @@ const Competencia = z
   .refine(competenciaValida, "Competência no formato AAAA-MM.");
 const Centavos = z.number().int().min(0).nullable();
 const Percent = z.number().int().min(0).max(100).nullable();
+
+/** Traduz o teto do lib para o erro que a tela mostra (mesmo padrão de financeiro.ts). */
+function competencias(i: Intervalo): string[] {
+  try {
+    return competenciasNoIntervalo(i);
+  } catch (e) {
+    if (e instanceof IntervaloExcedido) {
+      throw new StaffAuthError("FORBIDDEN", e.message);
+    }
+    throw e;
+  }
+}
 
 function chaveCac(competencia: string) {
   return { tenantId_competencia: { tenantId: SYSTEM_TENANT_ID, competencia } };
@@ -88,29 +112,106 @@ async function mensalidadeReferencia(): Promise<number | null> {
   ).liquidoMensalCentavos;
 }
 
-function limitesDoMes(competencia: string): { inicio: Date; fim: Date } {
-  const [ano, mes] = competencia.split("-").map(Number);
+/** Do dia 1 do primeiro mês ao dia 1 do mês seguinte ao último (spec §5.2). */
+function limitesDoIntervalo(comps: string[]): { inicio: Date; fim: Date } {
+  const [anoIni, mesIni] = (comps[0] as string).split("-").map(Number);
+  const [anoFim, mesFim] = (comps.at(-1) as string).split("-").map(Number);
   return {
-    inicio: new Date(Date.UTC(ano, mes - 1, 1)),
-    fim: new Date(Date.UTC(ano, mes, 1)),
+    inicio: new Date(Date.UTC(anoIni, mesIni - 1, 1)),
+    fim: new Date(Date.UTC(anoFim, mesFim, 1)),
   };
 }
 
-async function montar(competencia: string): Promise<CacView> {
-  const { inicio, fim } = limitesDoMes(competencia);
-  const [lancamentos, periodo, mensalidade, sugestao] = await Promise.all([
+type LancamentoDoCac = {
+  competencia: string;
+  conta: string;
+  valorCentavos: number;
+};
+type CacPeriodoDoMes = {
+  competencia: string;
+  entregaDiagnosticoCentavos: number | null;
+  clientesGanhos: number | null;
+  convLeadDiscoveryPercent: number | null;
+  convDiscoveryEvaluationPercent: number | null;
+  convEvaluationPropostaPercent: number | null;
+  convPropostaAceitaPercent: number | null;
+  alocacoes: { produto: string; pesoPercent: number }[];
+};
+
+/** Soma os meses do intervalo — nula se faltar valor em qualquer um deles
+ *  (total parcial mentiria com cara de número, spec §5.2). */
+function somaOuNula(
+  valores: (number | null | undefined)[],
+  esperado: number
+): number | null {
+  if (
+    valores.length < esperado ||
+    valores.some((v) => v === null || v === undefined)
+  ) {
+    return null;
+  }
+  return valores.reduce<number>((acc, v) => acc + (v as number), 0);
+}
+
+/** Parcelas do CAC agregadas pelo intervalo: contas 4.x somam os lançamentos,
+ *  entrega/clientes somam o `CacPeriodo` de cada mês — nulas se algum mês
+ *  faltar (spec §5.2). */
+function parcelasAgregadas(
+  comps: string[],
+  lancamentos: LancamentoDoCac[],
+  periodos: CacPeriodoDoMes[]
+): ParcelasCac {
+  const porContaEMes = new Map<string, Map<string, number>>();
+  for (const l of lancamentos) {
+    const porMes = porContaEMes.get(l.conta) ?? new Map<string, number>();
+    porMes.set(l.competencia, l.valorCentavos);
+    porContaEMes.set(l.conta, porMes);
+  }
+  const porMesPeriodo = new Map(periodos.map((p) => [p.competencia, p]));
+
+  const contas = Object.fromEntries(
+    CONTAS_DO_CAC.map((c) => [
+      c,
+      somaOuNula(
+        comps.map((comp) => porContaEMes.get(c)?.get(comp) ?? null),
+        comps.length
+      ),
+    ])
+  ) as Record<ContaDoCac, number | null>;
+
+  return {
+    ...contas,
+    entregaDiagnosticoCentavos: somaOuNula(
+      comps.map(
+        (comp) => porMesPeriodo.get(comp)?.entregaDiagnosticoCentavos ?? null
+      ),
+      comps.length
+    ),
+    clientesGanhos: somaOuNula(
+      comps.map((comp) => porMesPeriodo.get(comp)?.clientesGanhos ?? null),
+      comps.length
+    ),
+  };
+}
+
+async function montar(intervalo: Intervalo): Promise<CacView> {
+  const comps = competencias(intervalo);
+  const ultima = comps.at(-1) as string;
+  const { inicio, fim } = limitesDoIntervalo(comps);
+  const [lancamentos, periodos, mensalidade, sugestao] = await Promise.all([
     database.lancamentoMensal.findMany({
       where: {
         tenantId: SYSTEM_TENANT_ID,
-        competencia,
+        competencia: { in: comps },
         conta: { in: [...CONTAS_DO_CAC] },
       },
-      select: { conta: true, valorCentavos: true },
+      select: { competencia: true, conta: true, valorCentavos: true },
     }),
-    database.cacPeriodo.findUnique({
-      where: chaveCac(competencia),
+    database.cacPeriodo.findMany({
+      where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
       select: {
         id: true,
+        competencia: true,
         entregaDiagnosticoCentavos: true,
         clientesGanhos: true,
         convLeadDiscoveryPercent: true,
@@ -122,6 +223,7 @@ async function montar(competencia: string): Promise<CacView> {
           orderBy: { produto: "asc" },
         },
       },
+      orderBy: { competencia: "asc" },
     }),
     mensalidadeReferencia(),
     database.proposal.count({
@@ -133,29 +235,26 @@ async function montar(competencia: string): Promise<CacView> {
     }),
   ]);
 
-  const porConta = new Map(lancamentos.map((l) => [l.conta, l.valorCentavos]));
-  const parcelas = {
-    ...(Object.fromEntries(
-      CONTAS_DO_CAC.map((c) => [c, porConta.get(c) ?? null])
-    ) as Record<ContaDoCac, number | null>),
-    entregaDiagnosticoCentavos: periodo?.entregaDiagnosticoCentavos ?? null,
-    clientesGanhos: periodo?.clientesGanhos ?? null,
-  };
+  const parcelas = parcelasAgregadas(comps, lancamentos, periodos);
+  const ultimo = periodos.find((p) => p.competencia === ultima);
   const conversao: ConversaoView = {
-    convLeadDiscoveryPercent: periodo?.convLeadDiscoveryPercent ?? null,
+    convLeadDiscoveryPercent: ultimo?.convLeadDiscoveryPercent ?? null,
     convDiscoveryEvaluationPercent:
-      periodo?.convDiscoveryEvaluationPercent ?? null,
+      ultimo?.convDiscoveryEvaluationPercent ?? null,
     convEvaluationPropostaPercent:
-      periodo?.convEvaluationPropostaPercent ?? null,
-    convPropostaAceitaPercent: periodo?.convPropostaAceitaPercent ?? null,
+      ultimo?.convEvaluationPropostaPercent ?? null,
+    convPropostaAceitaPercent: ultimo?.convPropostaAceitaPercent ?? null,
   };
-  const alocacoes = (periodo?.alocacoes ?? []).map((a) => ({
+  const alocacoes = (ultimo?.alocacoes ?? []).map((a) => ({
     produto: String(a.produto),
     pesoPercent: a.pesoPercent,
   }));
 
   return {
-    competencia,
+    intervalo,
+    competencias: comps,
+    editavel: comps.length === 1,
+    competenciaEditavel: ultima,
     parcelas,
     conversao,
     alocacoes,
@@ -166,11 +265,12 @@ async function montar(competencia: string): Promise<CacView> {
 }
 
 export async function lerCac(input: {
-  competencia: string;
+  de: string;
+  ate: string;
 }): Promise<Result<CacView>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    return await montar(Competencia.parse(input.competencia));
+    return await montar(IntervaloSchema.parse(input));
   });
 }
 
@@ -207,12 +307,19 @@ async function upsertPeriodo(
   return p.id;
 }
 
-const ParcelasSchema = z.object({
-  competencia: Competencia,
-  contas: z.partialRecord(z.enum(CONTAS_DO_CAC), Centavos).optional(),
-  entregaDiagnosticoCentavos: Centavos.optional(),
-  clientesGanhos: z.number().int().min(0).nullable().optional(),
-});
+const ParcelasSchema = z
+  .object({
+    competencia: Competencia,
+    contas: z.partialRecord(z.enum(CONTAS_DO_CAC), Centavos).optional(),
+    entregaDiagnosticoCentavos: Centavos.optional(),
+    clientesGanhos: z.number().int().min(0).nullable().optional(),
+    de: z.iso.date(),
+    ate: z.iso.date(),
+  })
+  .refine(
+    (v) => intervaloValido({ de: v.de, ate: v.ate }),
+    "Intervalo inválido."
+  );
 
 export async function salvarParcelas(
   input: z.infer<typeof ParcelasSchema>
@@ -221,8 +328,14 @@ export async function salvarParcelas(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { competencia, contas, entregaDiagnosticoCentavos, clientesGanhos } =
-      ParcelasSchema.parse(input);
+    const {
+      competencia,
+      contas,
+      entregaDiagnosticoCentavos,
+      clientesGanhos,
+      de,
+      ate,
+    } = ParcelasSchema.parse(input);
     const diff: [string, string, string][] = [];
     const escritas: unknown[] = [];
 
@@ -269,17 +382,24 @@ export async function salvarParcelas(
     }
 
     await auditar(staff, "empresa.cac.parcelas", competencia, diff);
-    return await montar(competencia);
+    return await montar({ de, ate });
   });
 }
 
-const ConversaoSchema = z.object({
-  competencia: Competencia,
-  convLeadDiscoveryPercent: Percent.optional(),
-  convDiscoveryEvaluationPercent: Percent.optional(),
-  convEvaluationPropostaPercent: Percent.optional(),
-  convPropostaAceitaPercent: Percent.optional(),
-});
+const ConversaoSchema = z
+  .object({
+    competencia: Competencia,
+    convLeadDiscoveryPercent: Percent.optional(),
+    convDiscoveryEvaluationPercent: Percent.optional(),
+    convEvaluationPropostaPercent: Percent.optional(),
+    convPropostaAceitaPercent: Percent.optional(),
+    de: z.iso.date(),
+    ate: z.iso.date(),
+  })
+  .refine(
+    (v) => intervaloValido({ de: v.de, ate: v.ate }),
+    "Intervalo inválido."
+  );
 
 export async function salvarConversao(
   input: z.infer<typeof ConversaoSchema>
@@ -287,7 +407,7 @@ export async function salvarConversao(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { competencia, ...campos } = ConversaoSchema.parse(input);
+    const { competencia, de, ate, ...campos } = ConversaoSchema.parse(input);
     const update = Object.fromEntries(
       Object.entries(campos).filter(([, v]) => v !== undefined)
     );
@@ -298,19 +418,26 @@ export async function salvarConversao(
       competencia,
       Object.entries(update).map(([k, v]) => [k, "", String(v ?? "")])
     );
-    return await montar(competencia);
+    return await montar({ de, ate });
   });
 }
 
-const AlocacaoSchema = z.object({
-  competencia: Competencia,
-  alocacoes: z.array(
-    z.object({
-      produto: z.enum(ProductModule),
-      pesoPercent: z.number().int().min(0).max(100),
-    })
-  ),
-});
+const AlocacaoSchema = z
+  .object({
+    competencia: Competencia,
+    alocacoes: z.array(
+      z.object({
+        produto: z.enum(ProductModule),
+        pesoPercent: z.number().int().min(0).max(100),
+      })
+    ),
+    de: z.iso.date(),
+    ate: z.iso.date(),
+  })
+  .refine(
+    (v) => intervaloValido({ de: v.de, ate: v.ate }),
+    "Intervalo inválido."
+  );
 
 export async function salvarAlocacao(
   input: z.infer<typeof AlocacaoSchema>
@@ -318,7 +445,7 @@ export async function salvarAlocacao(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { competencia, alocacoes } = AlocacaoSchema.parse(input);
+    const { competencia, alocacoes, de, ate } = AlocacaoSchema.parse(input);
     if (!pesosSomam100(alocacoes)) {
       throw new StaffAuthError(
         "FORBIDDEN",
@@ -342,6 +469,6 @@ export async function salvarAlocacao(
       competencia,
       alocacoes.map((a) => [a.produto, "", `${a.pesoPercent}%`])
     );
-    return await montar(competencia);
+    return await montar({ de, ate });
   });
 }

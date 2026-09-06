@@ -1,5 +1,7 @@
 // empresa-cac-action.test.ts — as seis parcelas 4.x moram em LancamentoMensal:
-// salvar parcela é escrever no DRE. Nulo apaga o lançamento.
+// salvar parcela é escrever no DRE. Nulo apaga o lançamento. lerCac agrega por
+// intervalo de competências (spec 2026-09-06 §5.2): soma dos meses, nula se
+// algum mês faltar; conversão e alocação são as do último mês.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -10,7 +12,7 @@ const mocks = vi.hoisted(() => ({
   lancFindMany: vi.fn(),
   lancUpsert: vi.fn(),
   lancDeleteMany: vi.fn(),
-  cacFindUnique: vi.fn(),
+  cacFindMany: vi.fn(),
   cacUpsert: vi.fn(),
   alocDeleteMany: vi.fn(),
   alocCreateMany: vi.fn(),
@@ -43,7 +45,7 @@ vi.mock("@repo/database", () => ({
       upsert: mocks.lancUpsert,
       deleteMany: mocks.lancDeleteMany,
     },
-    cacPeriodo: { findUnique: mocks.cacFindUnique, upsert: mocks.cacUpsert },
+    cacPeriodo: { findMany: mocks.cacFindMany, upsert: mocks.cacUpsert },
     cacAlocacaoProduto: {
       deleteMany: mocks.alocDeleteMany,
       createMany: mocks.alocCreateMany,
@@ -79,17 +81,22 @@ const staff = {
 function resetar() {
   for (const m of Object.values(mocks)) m.mockReset();
   mocks.requirePlatformStaff.mockResolvedValue(staff);
-  mocks.lancFindMany.mockResolvedValue([{ conta: "4.1", valorCentavos: 100 }]);
-  mocks.cacFindUnique.mockResolvedValue({
-    id: "cac-1",
-    entregaDiagnosticoCentavos: null,
-    clientesGanhos: null,
-    convLeadDiscoveryPercent: null,
-    convDiscoveryEvaluationPercent: null,
-    convEvaluationPropostaPercent: null,
-    convPropostaAceitaPercent: 25,
-    alocacoes: [{ produto: "MERIDIAN", pesoPercent: 100 }],
-  });
+  mocks.lancFindMany.mockResolvedValue([
+    { competencia: "2026-09", conta: "4.1", valorCentavos: 100 },
+  ]);
+  mocks.cacFindMany.mockResolvedValue([
+    {
+      competencia: "2026-09",
+      id: "cac-1",
+      entregaDiagnosticoCentavos: null,
+      clientesGanhos: null,
+      convLeadDiscoveryPercent: null,
+      convDiscoveryEvaluationPercent: null,
+      convEvaluationPropostaPercent: null,
+      convPropostaAceitaPercent: 25,
+      alocacoes: [{ produto: "MERIDIAN", pesoPercent: 100 }],
+    },
+  ]);
   mocks.cacUpsert.mockResolvedValue({ id: "cac-1" });
   mocks.planoFindUnique.mockResolvedValue({
     precoAssentoCentavos: 14_900,
@@ -103,9 +110,12 @@ describe("lerCac", () => {
   beforeEach(resetar);
 
   it("monta as parcelas do DRE + CacPeriodo e a mensalidade de referência do catálogo", async () => {
-    const res = await lerCac({ competencia: "2026-09" });
+    const res = await lerCac({ de: "2026-09-01", ate: "2026-09-30" });
     expect(res.ok).toBe(true);
     if (!res.ok) return;
+    expect(res.data.competencias).toEqual(["2026-09"]);
+    expect(res.data.editavel).toBe(true);
+    expect(res.data.competenciaEditavel).toBe("2026-09");
     expect(res.data.parcelas["4.1"]).toBe(100);
     expect(res.data.parcelas["4.2"]).toBeNull();
     expect(res.data.resultado.preenchidas).toBe(1);
@@ -115,19 +125,81 @@ describe("lerCac", () => {
     expect(res.data.sugestaoClientesGanhos).toBe(1);
     expect(mocks.lancFindMany.mock.calls[0][0].where).toMatchObject({
       tenantId: "system",
-      competencia: "2026-09",
+      competencia: { in: ["2026-09"] },
     });
   });
 
   it("sem plano scale no catálogo, a referência é nula e nada quebra", async () => {
     mocks.planoFindUnique.mockResolvedValue(null);
-    const res = await lerCac({ competencia: "2026-09" });
+    const res = await lerCac({ de: "2026-09-01", ate: "2026-09-30" });
     expect(res.ok && res.data.mensalidadeReferenciaCentavos).toBeNull();
   });
 
-  it("competência inválida", async () => {
-    const res = await lerCac({ competencia: "set/26" });
+  it("intervalo inválido", async () => {
+    const res = await lerCac({ de: "2026-09-30", ate: "2026-09-01" });
     expect(res.ok).toBe(false);
+  });
+
+  it("dois meses: soma as parcelas, nulo se um mês falta, conversão do último mês, editavel=false", async () => {
+    mocks.lancFindMany.mockResolvedValue([
+      { competencia: "2026-08", conta: "4.1", valorCentavos: 100 },
+      { competencia: "2026-09", conta: "4.1", valorCentavos: 200 },
+      { competencia: "2026-09", conta: "4.2", valorCentavos: 50 },
+    ]);
+    mocks.cacFindMany.mockResolvedValue([
+      {
+        competencia: "2026-08",
+        entregaDiagnosticoCentavos: 10,
+        clientesGanhos: 1,
+        convLeadDiscoveryPercent: null,
+        convDiscoveryEvaluationPercent: null,
+        convEvaluationPropostaPercent: null,
+        convPropostaAceitaPercent: 20,
+        alocacoes: [],
+      },
+      {
+        competencia: "2026-09",
+        entregaDiagnosticoCentavos: 20,
+        clientesGanhos: 2,
+        convLeadDiscoveryPercent: null,
+        convDiscoveryEvaluationPercent: null,
+        convEvaluationPropostaPercent: null,
+        convPropostaAceitaPercent: 30,
+        alocacoes: [{ produto: "MERIDIAN", pesoPercent: 100 }],
+      },
+    ]);
+    const res = await lerCac({ de: "2026-08-01", ate: "2026-09-30" });
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.data.competencias).toEqual(["2026-08", "2026-09"]);
+    expect(res.data.editavel).toBe(false);
+    expect(res.data.competenciaEditavel).toBe("2026-09");
+    expect(res.data.parcelas["4.1"]).toBe(300);
+    expect(res.data.parcelas["4.2"]).toBeNull(); // agosto sem 4.2
+    expect(res.data.parcelas.entregaDiagnosticoCentavos).toBe(30);
+    expect(res.data.parcelas.clientesGanhos).toBe(3);
+    expect(res.data.conversao.convPropostaAceitaPercent).toBe(30);
+    expect(res.data.alocacoes).toEqual([
+      { produto: "MERIDIAN", pesoPercent: 100 },
+    ]);
+    expect(mocks.proposalCount.mock.calls[0][0].where.atualizadoEm).toEqual({
+      gte: new Date("2026-08-01T00:00:00Z"),
+      lt: new Date("2026-10-01T00:00:00Z"),
+    });
+  });
+
+  it("um mês: editavel=true e comportamento de antes", async () => {
+    const res = await lerCac({ de: "2026-09-01", ate: "2026-09-30" });
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.data.editavel).toBe(true);
+    expect(res.data.competenciaEditavel).toBe("2026-09");
+  });
+
+  it("recusa acima de 12 meses", async () => {
+    expect((await lerCac({ de: "2025-08-01", ate: "2026-09-30" })).ok).toBe(
+      false
+    );
   });
 });
 
@@ -141,6 +213,8 @@ describe("salvarParcelas", () => {
     const res = await salvarParcelas({
       competencia: "2026-09",
       contas: { "4.1": 5 },
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(res.ok).toBe(false);
   });
@@ -149,6 +223,8 @@ describe("salvarParcelas", () => {
     await salvarParcelas({
       competencia: "2026-09",
       contas: { "4.1": 500, "4.2": null },
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(mocks.lancUpsert.mock.calls[0][0].where).toEqual({
       tenantId_competencia_conta: {
@@ -171,6 +247,8 @@ describe("salvarParcelas", () => {
     const res = await salvarParcelas({
       competencia: "2026-09",
       contas: { "5.1": 5 } as never,
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(res.ok).toBe(false);
     expect(mocks.lancUpsert).not.toHaveBeenCalled();
@@ -181,6 +259,8 @@ describe("salvarParcelas", () => {
       competencia: "2026-09",
       entregaDiagnosticoCentavos: 600_000,
       clientesGanhos: 2,
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     const a = mocks.cacUpsert.mock.calls[0][0];
     expect(a.where).toEqual({
@@ -194,11 +274,24 @@ describe("salvarParcelas", () => {
 
   it("centavos fracionados e negativos são recusados", async () => {
     expect(
-      (await salvarParcelas({ competencia: "2026-09", contas: { "4.1": 1.5 } }))
-        .ok
+      (
+        await salvarParcelas({
+          competencia: "2026-09",
+          contas: { "4.1": 1.5 },
+          de: "2026-09-01",
+          ate: "2026-09-30",
+        })
+      ).ok
     ).toBe(false);
     expect(
-      (await salvarParcelas({ competencia: "2026-09", clientesGanhos: -1 })).ok
+      (
+        await salvarParcelas({
+          competencia: "2026-09",
+          clientesGanhos: -1,
+          de: "2026-09-01",
+          ate: "2026-09-30",
+        })
+      ).ok
     ).toBe(false);
   });
 });
@@ -212,12 +305,16 @@ describe("salvarConversao", () => {
         await salvarConversao({
           competencia: "2026-09",
           convPropostaAceitaPercent: 101,
+          de: "2026-09-01",
+          ate: "2026-09-30",
         })
       ).ok
     ).toBe(false);
     await salvarConversao({
       competencia: "2026-09",
       convPropostaAceitaPercent: 30,
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(mocks.cacUpsert.mock.calls[0][0].update).toEqual({
       convPropostaAceitaPercent: 30,
@@ -232,6 +329,8 @@ describe("salvarAlocacao", () => {
     const res = await salvarAlocacao({
       competencia: "2026-09",
       alocacoes: [{ produto: "MERIDIAN", pesoPercent: 50 }],
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(res.ok).toBe(false);
     expect(mocks.alocCreateMany).not.toHaveBeenCalled();
@@ -244,6 +343,8 @@ describe("salvarAlocacao", () => {
         { produto: "MERIDIAN", pesoPercent: 40 },
         { produto: "CHARTER", pesoPercent: 60 },
       ],
+      de: "2026-09-01",
+      ate: "2026-09-30",
     });
     expect(mocks.alocDeleteMany.mock.calls[0][0].where).toEqual({
       cacPeriodoId: "cac-1",
