@@ -10,10 +10,11 @@ import {
 } from "../lib/empresa/plano-de-contas";
 
 describe("PLANO_DE_CONTAS", () => {
-  it("tem as 25 contas de plano-de-contas.md, sem código repetido", () => {
+  it("tem as 27 contas de plano-de-contas.md, sem código repetido", () => {
     const codigos = PLANO_DE_CONTAS.map((c) => c.conta);
-    expect(codigos).toHaveLength(25);
-    expect(new Set(codigos).size).toBe(25);
+    expect(codigos).toHaveLength(27);
+    expect(new Set(codigos).size).toBe(27);
+    expect(contasDoGrupo(2)).toEqual(["2.1", "2.2"]);
   });
 
   it("valida código conhecido e recusa desconhecido", () => {

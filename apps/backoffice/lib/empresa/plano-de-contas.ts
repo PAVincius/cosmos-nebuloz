@@ -71,6 +71,19 @@ export const PLANO_DE_CONTAS: readonly Conta[] = [
     grupo: 1,
     centroDeCusto: null,
   },
+  // 2 — Deduções
+  {
+    conta: "2.1",
+    nome: "Impostos sobre serviço/receita",
+    grupo: 2,
+    centroDeCusto: null,
+  },
+  {
+    conta: "2.2",
+    nome: "Cancelamentos e estornos",
+    grupo: 2,
+    centroDeCusto: null,
+  },
   // 3 — Custo de entrega
   {
     conta: "3.1",
