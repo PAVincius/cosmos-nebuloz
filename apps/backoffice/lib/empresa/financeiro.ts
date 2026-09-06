@@ -128,7 +128,7 @@ export function somarMeses(meses: LinhaCalculada[][]): LinhaCalculada[] {
   if (!primeiro) {
     return [];
   }
-  const somado = primeiro.map((linha, i) => ({
+  const somado: LinhaCalculada[] = primeiro.map((linha, i) => ({
     ...linha,
     valorCentavos: soma(meses.map((m) => m[i]?.valorCentavos ?? null)),
     percent: linha.percent === undefined ? undefined : null,
