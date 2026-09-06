@@ -403,9 +403,20 @@ FEATURES: ${JSON.stringify(features)}`;
         {
           type: "text" as const,
           text: STATIC_WSJF_RULES,
-          // Anthropic ephemeral cache: TTL 5 min, mín 1024 tokens
-          // Outros providers ignoram este campo
-          experimental_providerMetadata: {
+          // Cache efêmero da Anthropic (TTL 5 min). Outros providers ignoram.
+          //
+          // O campo era `experimental_providerMetadata`, que é o nome do AI SDK
+          // v4 — removido na v5, que este repo usa. A chave não existia no tipo
+          // nem no runtime, então o `cache_control` nunca chegou a ser enviado:
+          // dois anos de marcador inerte sem nenhum erro para denunciá-lo.
+          //
+          // Atenção ao mínimo de prefixo: no Haiku 4.5 são 4096 tokens, não os
+          // 1024 que o comentário antigo afirmava. Abaixo disso a Anthropic
+          // ignora o marcador em silêncio (`cache_creation_input_tokens: 0`).
+          // STATIC_WSJF_RULES sozinho fica perto de 2,4k — só passa do mínimo
+          // somando o schema de tool que o `generateObject` injeta. Confirme
+          // em `usage.cachedInputTokens` antes de contar com a economia.
+          providerOptions: {
             anthropic: { cacheControl: { type: "ephemeral" } },
           },
         },
@@ -491,7 +502,11 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
     },
   });
 
-  const { object: raw, usage } = await generateObject({
+  const {
+    object: raw,
+    usage,
+    providerMetadata,
+  } = await generateObject({
     model,
     schema: RebalancingLLMSchema,
     messages,
@@ -516,6 +531,14 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
       unit: "TOKENS",
     },
   });
+
+  // Instrumentação do cache — é o que diz se `cacheControl` em buildMessages
+  // está pegando. Falha de cache não gera erro: só zera silenciosamente.
+  const cacheRead = usage.cachedInputTokens ?? 0;
+  const cacheWrite = Number(
+    (providerMetadata?.anthropic as Record<string, unknown> | undefined)
+      ?.cacheCreationInputTokens ?? 0
+  );
 
   // Enrich with titles + filter low-confidence suggestions (< 0.6 descartadas)
   const CONFIDENCE_THRESHOLD = 0.6;
@@ -546,6 +569,8 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
         : 0,
   });
   trace?.score({ name: "total_tokens_used", value: totalTokens });
+  trace?.score({ name: "cache_read_tokens", value: cacheRead });
+  trace?.score({ name: "cache_write_tokens", value: cacheWrite });
   trace?.update({
     output: {
       modifiedCount: result.modifiedCount,
@@ -553,6 +578,8 @@ export async function rebalanceWSJFWithAI(): Promise<RebalancingResult> {
       totalTokens,
     },
     metadata: {
+      cacheRead,
+      cacheWrite,
       avgDelta:
         result.suggestions.length > 0
           ? Math.round(
