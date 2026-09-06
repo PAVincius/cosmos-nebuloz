@@ -74,7 +74,12 @@ function diasNoMes(ano: number, mes: number): number {
 }
 
 function incrementarAno(atual: Partes, delta: 1 | -1): Partes {
-  return { ...atual, ano: String((Number(atual.ano) || 1000) + delta) };
+  const ano = (Number(atual.ano) || 1000) + delta;
+  const mes = Number(atual.mes) || 1;
+  // Clampa o dia (29 fev de ano bissexto vira 28 num ano comum) — sem isso o
+  // resultado pode não existir (dataReal rejeitaria e a subida ficaria presa).
+  const dia = Math.min(Number(atual.dia) || 1, diasNoMes(ano, mes));
+  return { ano: String(ano), dia: String(dia), mes: atual.mes };
 }
 
 function incrementarMes(atual: Partes, delta: 1 | -1): Partes {
@@ -88,7 +93,9 @@ function incrementarMes(atual: Partes, delta: 1 | -1): Partes {
     mes = 12;
     ano -= 1;
   }
-  return { ...atual, ano: String(ano), mes: String(mes) };
+  // Mesmo clamp: 31/01 subindo o mês vira 28 (ou 29) /02, não 31/02.
+  const dia = Math.min(Number(atual.dia) || 1, diasNoMes(ano, mes));
+  return { ano: String(ano), dia: String(dia), mes: String(mes) };
 }
 
 function incrementarDia(atual: Partes, delta: 1 | -1): Partes {
@@ -202,8 +209,13 @@ export function EntradaDeData({
   const aplicarIncremento = (campo: Campo, delta: 1 | -1) => {
     const novasPartes = incrementarPartes(partes, campo, delta);
     setPartes(novasPartes);
-    ultimoValido.current = novasPartes;
-    onChange(paraIso(novasPartes));
+    // O incremento em mês/ano já clampa o dia para um mês existente, mas só
+    // propaga (e só vira o "último válido" para o blur restaurar) se a
+    // tripla resultante for mesmo uma data real.
+    if (dataReal(novasPartes)) {
+      ultimoValido.current = novasPartes;
+      onChange(paraIso(novasPartes));
+    }
   };
 
   const navegar = (

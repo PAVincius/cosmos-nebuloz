@@ -24,19 +24,18 @@ import {
  * da URL; `onAplicar` só dispara quando o intervalo muda.
  */
 
-const utc = (valorIso: string) => new Date(`${valorIso}T00:00:00Z`);
 const iso = (d: Date) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
     d.getDate()
   ).padStart(2, "0")}`;
 
+// Data local ao meio-dia: o react-day-picker compara em horário local, e um
+// Date UTC à meia-noite (ou ao meio-dia UTC, a oeste de fusos > UTC-12) vira
+// "ontem" a oeste de Greenwich.
+const local = (valorIso: string) => new Date(`${valorIso}T12:00:00`);
+
 function paraRange(i: Intervalo): DateRange {
-  // Datas locais ao meio-dia: o react-day-picker compara em horário local, e
-  // um Date UTC à meia-noite vira "ontem" a oeste de Greenwich.
-  return {
-    from: new Date(`${i.de}T12:00:00`),
-    to: new Date(`${i.ate}T12:00:00`),
-  };
+  return { from: local(i.de), to: local(i.ate) };
 }
 
 export function SeletorDePeriodo({
@@ -55,11 +54,16 @@ export function SeletorDePeriodo({
   const [estreito, setEstreito] = useState(false);
   const hoje = new Date();
 
+  // Reseta só na transição fechado→aberto: `valor.de`/`valor.ate` (não
+  // `valor`) na lista de deps evita que um novo objeto literal
+  // referencialmente distinto, mas com o mesmo intervalo, apague o
+  // rascunho enquanto o popover já está aberto.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: valor.de/valor.ate cobrem todo o conteúdo relevante de `valor`
   useEffect(() => {
     if (aberto) {
       setRascunho(valor);
     }
-  }, [aberto, valor]);
+  }, [aberto, valor.de, valor.ate]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) {
@@ -73,6 +77,9 @@ export function SeletorDePeriodo({
   }, []);
 
   const aplicar = () => {
+    if (!intervaloValido(rascunho)) {
+      return;
+    }
     setAberto(false);
     if (rascunho.de !== valor.de || rascunho.ate !== valor.ate) {
       onAplicar(rascunho);
@@ -143,7 +150,7 @@ export function SeletorDePeriodo({
               />
             </div>
             <Calendar
-              defaultMonth={utc(rascunho.de)}
+              defaultMonth={local(rascunho.de)}
               locale={ptBR}
               mode="range"
               numberOfMonths={estreito ? 1 : 2}

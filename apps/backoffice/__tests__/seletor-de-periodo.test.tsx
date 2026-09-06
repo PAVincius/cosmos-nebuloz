@@ -13,7 +13,11 @@ import { describe, expect, it, vi } from "vitest";
 import { PRESETS_COMPETENCIA } from "../lib/empresa/periodo";
 
 vi.mock("@repo/design-system/components/ui/calendar", () => ({
-  Calendar: () => <div data-testid="calendar" />,
+  // Grava o mês de `defaultMonth` recebido para o teste de fuso (Fix round 1,
+  // achado 2) poder inspecionar sem precisar do react-day-picker real.
+  Calendar: (props: { defaultMonth?: Date }) => (
+    <div data-month={props.defaultMonth?.getMonth()} data-testid="calendar" />
+  ),
 }));
 
 // O Popover real do Radix não renderiza PopoverContent sob jsdom sem portal
@@ -84,6 +88,21 @@ describe("SeletorDePeriodo", () => {
     expect(screen.getByTestId("calendar")).toBeTruthy();
   });
 
+  it("defaultMonth do calendário usa o mês local de `de`, não UTC (Fix round 1)", () => {
+    // `de` = "2026-07-01": interpretado como UTC meia-noite ele vira 30/06 em
+    // qualquer fuso a oeste de Greenwich, ou seja mês 5 (junho) em vez de 6
+    // (julho). O componente deve passar o mês local.
+    render(
+      <SeletorDePeriodo
+        onAplicar={() => {}}
+        presets={PRESETS_COMPETENCIA}
+        valor={valor}
+      />
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Últimos 3 meses/ }));
+    expect(screen.getByTestId("calendar").getAttribute("data-month")).toBe("6");
+  });
+
   it("preset + Aplicar chama onAplicar com o intervalo do preset", () => {
     const onAplicar = vi.fn();
     render(
@@ -141,5 +160,40 @@ describe("SeletorDePeriodo", () => {
       ate: "2026-09-30",
       de: "2026-07-31",
     });
+  });
+
+  it("um novo objeto de `valor` com o mesmo intervalo não reseta o rascunho enquanto aberto (Fix round 1)", () => {
+    const onAplicar = vi.fn();
+    const { rerender } = render(
+      <SeletorDePeriodo
+        onAplicar={onAplicar}
+        presets={PRESETS_COMPETENCIA}
+        valor={valor}
+      />
+    );
+    fireEvent.click(screen.getByRole("button", { name: /Últimos 3 meses/ }));
+    fireEvent.click(screen.getByRole("button", { name: "Este mês" }));
+
+    // Mesmo `de`/`ate` de `valor`, mas um objeto NOVO — só a referência
+    // muda. Antes do fix, o useEffect via isso como "valor mudou" e
+    // reescrevia o rascunho por cima da escolha do preset.
+    rerender(
+      <SeletorDePeriodo
+        onAplicar={onAplicar}
+        presets={PRESETS_COMPETENCIA}
+        valor={{ ate: valor.ate, de: valor.de }}
+      />
+    );
+
+    expect(
+      screen
+        .getByRole("button", { name: "Este mês" })
+        .getAttribute("aria-pressed")
+    ).toBe("true");
+
+    fireEvent.click(screen.getByRole("button", { name: "Aplicar" }));
+    expect(onAplicar).toHaveBeenCalledWith(
+      PRESETS_COMPETENCIA[0].intervalo(new Date())
+    );
   });
 });
