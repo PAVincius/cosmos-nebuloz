@@ -11,19 +11,19 @@ import Link from "next/link";
 import type { LigacaoRow, ProcessoRow } from "@/app/actions/processos";
 import { BotaoSecundario } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
+import { formatarData } from "@/lib/empresa/formato";
 import {
   DOMINIOS,
   NIVEIS,
   STATUS,
   statusDe,
-  tomCssDoDominio,
   vizinhos,
 } from "@/lib/ferramentas/processos";
 import type { Result } from "@/lib/safe-action";
+import { tomCss } from "@/lib/tom";
 import {
   CartaoMetrica,
   FormularioNovaLigacao,
-  formatarDataCurta,
   LinhaLigacao,
   Pilula,
 } from "./painel-partes";
@@ -48,15 +48,15 @@ function eyebrowDoProcesso(p: ProcessoRow): string {
   return `${p.codigo} · ${DOMINIOS[p.dominio].rotulo} · nível ${p.nivel} ${NIVEIS[p.nivel].rotulo.toLowerCase()} · ${tipo}`;
 }
 
-/** `undefined` (não uma função vazia) esconde o × de `LinhaLigacao` sem
- *  permissão — função em vez de ternário para o `&&`/`undefined` não passar
- *  pelo `noLeakedRender` da Biome. */
 /** Sem diagrama, o link convida a começar; com diagrama, a abrir o que já
  *  existe — dois rótulos para o mesmo destino (spec §4). */
 function rotuloDoLinkModelador(temDiagrama: boolean): string {
   return temDiagrama ? "Abrir no modelador" : "Modelar agora";
 }
 
+/** `undefined` (não uma função vazia) esconde o × de `LinhaLigacao` sem
+ *  permissão — função em vez de ternário para o `&&`/`undefined` não passar
+ *  pelo `noLeakedRender` da Biome. */
 function onRemoverSeEscrever(
   podeEscrever: boolean,
   onExcluirLigacao: (id: string) => void,
@@ -95,7 +95,7 @@ export function Painel({
   onCriarLigacao,
 }: PainelProps) {
   const status = statusDe(processo);
-  const tom = tomCssDoDominio(DOMINIOS[processo.dominio].tom);
+  const tom = tomCss(DOMINIOS[processo.dominio].tom);
   const porId = new Map(processos.map((p) => [p.id, p]));
   const ligacoesDoProcesso = vizinhos(processo.id, ligacoes);
   const candidatosLigacao = processos
@@ -158,7 +158,7 @@ export function Painel({
         </CartaoMetrica>
         <CartaoMetrica label="Dono">{processo.donoNome ?? "—"}</CartaoMetrica>
         <CartaoMetrica label="Revisado">
-          {formatarDataCurta(processo.revisadoEm)}
+          {formatarData(processo.revisadoEm)}
         </CartaoMetrica>
       </div>
 

@@ -17,9 +17,9 @@ import {
   paraLeadFunil,
   SEM_PROXIMO_PASSO,
   textoEntradaOrigem,
-  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { tomCss } from "@/lib/tom";
 
 /**
  * Pipeline board (spec §4, design `PipelineBoard` de backoffice-funnel.jsx).
@@ -355,7 +355,7 @@ function ColunaDoEstagio({
                 width: 7,
                 height: 7,
                 borderRadius: 99,
-                background: `var(--${tomCssDoEstagio(coluna.tom)})`,
+                background: `var(--${tomCss(coluna.tom)})`,
                 flexShrink: 0,
               }}
             />

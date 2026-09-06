@@ -25,9 +25,9 @@ import {
   type Ponto,
   type Processo,
   statusDe,
-  tomCssDoDominio,
   vizinhos,
 } from "@/lib/ferramentas/processos";
+import { tomCss } from "@/lib/tom";
 import {
   AneisDeNivel,
   Aresta,
@@ -137,7 +137,7 @@ function construirGrupos(
     );
     grupos.push({
       dominio,
-      tom: tomCssDoDominio(DOMINIOS[dominio].tom),
+      tom: tomCss(DOMINIOS[dominio].tom),
       nos,
       centro: centroDeMassa(nos.map((n) => n.pos)),
       primeiro: doDominio[0].id,
@@ -469,7 +469,7 @@ export function Grafo({
               raio={raiosPorId.get(p.id) ?? 14}
               selecionado={selecionado === p.id}
               status={statusDe(p)}
-              tom={tomCssDoDominio(DOMINIOS[p.dominio].tom)}
+              tom={tomCss(DOMINIOS[p.dominio].tom)}
             />
           ))}
         </g>

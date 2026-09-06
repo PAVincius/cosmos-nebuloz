@@ -19,9 +19,9 @@ import {
   PORTAS,
   podeConverter,
   podeMover,
-  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { tomCss } from "@/lib/tom";
 
 /**
  * Peças do diálogo do lead — extraídas de lead-dialog.tsx para o arquivo
@@ -49,13 +49,13 @@ const LINK_PRIMARIO: CSSProperties = {
 };
 
 /** Tom do passo do stepper: perda vence tudo; senão o tom do estágio, com
- *  "neutral" (LEAD) mapeado para azul por `tomCssDoEstagio` — dois casos
+ *  "neutral" (LEAD) mapeado para azul por `tomCss` — dois casos
  *  independentes, não uma escala (por isso `if`, não ternário encadeado). */
 function tomDoPasso(perdeuAqui: boolean, tomDoEstagio: Tone): Tone {
   if (perdeuAqui) {
     return "red";
   }
-  return tomCssDoEstagio(tomDoEstagio);
+  return tomCss(tomDoEstagio);
 }
 
 function PassoDoStepper({

@@ -16,9 +16,9 @@ import {
   diasNoEstagio,
   paraLeadFunil,
   SEM_PROXIMO_PASSO,
-  tomCssDoEstagio,
   valorDoLead,
 } from "@/lib/comercial/funil";
+import { tomCss } from "@/lib/tom";
 
 /**
  * Peças do painel do estágio — extraídas de estagio-dialog.tsx pelo mesmo
@@ -43,9 +43,7 @@ function Rotulo({ children, tone }: { children: string; tone?: Tone }) {
         fontWeight: 700,
         letterSpacing: ".1em",
         textTransform: "uppercase",
-        color: tone
-          ? `var(--${tomCssDoEstagio(tone)}-text)`
-          : "var(--ink-faint)",
+        color: tone ? `var(--${tomCss(tone)}-text)` : "var(--ink-faint)",
       }}
     >
       {children}
@@ -251,7 +249,7 @@ export function CriteriosDeSaida({
                 className="mono"
                 style={{
                   fontSize: 11,
-                  color: `var(--${tomCssDoEstagio(tone)}-text)`,
+                  color: `var(--${tomCss(tone)}-text)`,
                   fontWeight: 700,
                   flexShrink: 0,
                 }}

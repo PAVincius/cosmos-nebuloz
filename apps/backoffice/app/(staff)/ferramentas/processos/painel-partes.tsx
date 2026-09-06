@@ -9,16 +9,6 @@ import { type ReactNode, useState } from "react";
 import { BotaoSecundario, Erro, INPUT } from "@/components/campo";
 import type { Result } from "@/lib/safe-action";
 
-/** Mesmas etapas de `lib/empresa/formato.ts:formatarData`, mas local: aquele
- *  módulo é do domínio "empresa", e o mapa de processos não depende dele. */
-export function formatarDataCurta(iso: string | null): string {
-  if (!iso) {
-    return "—";
-  }
-  const d = new Date(iso);
-  return `${String(d.getUTCDate()).padStart(2, "0")}/${String(d.getUTCMonth() + 1).padStart(2, "0")}/${d.getUTCFullYear()}`;
-}
-
 export function CartaoMetrica({
   label,
   children,

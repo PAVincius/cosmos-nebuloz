@@ -54,14 +54,6 @@ export const INFO_ESTAGIO: Record<
   },
 };
 
-/** "neutral" (LEAD) não tem variável de cor própria no kit — cai no azul. Um
- *  mapeamento só: board, stepper do lead e critérios de saída do painel liam
- *  isso cada um a seu jeito (duas cópias, e o board nem tinha a correção —
- *  emitia `var(--neutral)`, que não existe). */
-export function tomCssDoEstagio(tom: Tone): Tone {
-  return tom === "neutral" ? "blue" : tom;
-}
-
 export const MOTIVOS_PERDA = {
   PRECO: "Preço",
   TIMING: "Timing / orçamento adiado",

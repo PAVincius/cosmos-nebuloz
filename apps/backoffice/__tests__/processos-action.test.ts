@@ -62,6 +62,7 @@ import {
   atualizarProcesso,
   criarLigacao,
   criarProcesso,
+  excluirLigacao,
   excluirProcesso,
   listarProcessos,
 } from "../app/actions/processos";
@@ -130,6 +131,46 @@ describe("listarProcessos", () => {
       tenantId: "system",
       kind: "BPMN",
     });
+  });
+
+  it("mapeia a linha: revisadoEm vira ISO, diagram.name e versoes do _count", async () => {
+    const revisadoEm = new Date("2026-08-01T00:00:00.000Z");
+    mocks.staffProcessFindMany.mockResolvedValue([
+      {
+        id: "p-1",
+        codigo: "PZ-01",
+        nome: "Funil de leads",
+        descricao: "Do primeiro contato até o discovery qualificado.",
+        dominio: "COMERCIAL",
+        nivel: 2,
+        tipo: "CORE",
+        donoNome: "Ana",
+        revisadoEm,
+        tags: ["cac"],
+        diagramId: "d-1",
+        docUrl: null,
+        diagram: {
+          id: "d-1",
+          name: "Funil BPMN",
+          slug: "funil-bpmn",
+          _count: { versions: 3 },
+        },
+      },
+    ]);
+
+    const res = await listarProcessos();
+
+    expect(res.ok).toBe(true);
+    if (res.ok) {
+      const linha = res.data.processos[0];
+      expect(linha.revisadoEm).toBe(revisadoEm.toISOString());
+      expect(linha.diagram).toEqual({
+        id: "d-1",
+        name: "Funil BPMN",
+        slug: "funil-bpmn",
+        versoes: 3,
+      });
+    }
   });
 });
 
@@ -339,5 +380,44 @@ describe("criarLigacao", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.staffProcessEdgeCreate).not.toHaveBeenCalled();
+  });
+});
+
+describe("excluirLigacao", () => {
+  beforeEach(resetar);
+
+  it("exclui e grava a auditoria com os códigos dos dois processos", async () => {
+    mocks.staffProcessEdgeFindFirst.mockResolvedValue({
+      id: "e-1",
+      de: { codigo: "PZ-01" },
+      para: { codigo: "PZ-02" },
+    });
+
+    const res = await excluirLigacao({ id: "e-1" });
+
+    expect(res.ok).toBe(true);
+    expect(mocks.staffProcessEdgeDelete).toHaveBeenCalledWith({
+      where: { id: "e-1" },
+    });
+    const entrada = mocks.logPlatformAudit.mock.calls[0][1];
+    expect(entrada.target).toBe("PZ-01 → PZ-02");
+  });
+
+  it("ligação não encontrada nesse tenant devolve ok:false sem chamar delete", async () => {
+    mocks.staffProcessEdgeFindFirst.mockResolvedValue(null);
+
+    const res = await excluirLigacao({ id: "e-x" });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.staffProcessEdgeDelete).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não exclui", async () => {
+    refusaLeitura();
+
+    const res = await excluirLigacao({ id: "e-1" });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.staffProcessEdgeDelete).not.toHaveBeenCalled();
   });
 });

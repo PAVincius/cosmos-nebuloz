@@ -4,7 +4,7 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import type { Dominio, Nivel } from "@/lib/ferramentas/processos";
+import { CODIGO, type Dominio, type Nivel } from "@/lib/ferramentas/processos";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -23,8 +23,6 @@ import { type Result, safeAction } from "@/lib/safe-action";
  */
 
 const ROTA_MAPA = "/ferramentas/processos";
-
-const CODIGO = /^PZ-\d{2,3}$/;
 
 const ProcessoSchema = z.object({
   codigo: z.string().trim().regex(CODIGO, "Código no formato PZ-01."),

@@ -4,10 +4,10 @@ import {
   DOMINIOS,
   layoutPolar,
   type Processo,
-  paraJsonCanvas,
   statusDe,
   vizinhos,
 } from "@/lib/ferramentas/processos";
+import { paraJsonCanvas } from "@/lib/ferramentas/processos-canvas";
 
 function p(over: Partial<Processo> & { codigo: string }): Processo {
   return {
@@ -207,9 +207,15 @@ describe("DOMINIOS", () => {
       "LAB",
       "MEDICAO",
     ]);
-    for (const d of Object.values(DOMINIOS)) {
-      expect(d.rotulo.length).toBeGreaterThan(0);
-      expect(d.tom.length).toBeGreaterThan(0);
-    }
+    expect(
+      Object.fromEntries(Object.entries(DOMINIOS).map(([id, d]) => [id, d.tom]))
+    ).toEqual({
+      COMERCIAL: "amber",
+      DELIVERY: "blue",
+      GOVERNANCA: "accent",
+      PLATAFORMA: "purple",
+      LAB: "green",
+      MEDICAO: "neutral",
+    });
   });
 });

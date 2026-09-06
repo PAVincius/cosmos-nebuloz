@@ -21,6 +21,7 @@ import { useState } from "react";
 import type { DiagramaRow, ProcessoRow } from "@/app/actions/processos";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import {
+  CODIGO,
   DOMINIOS,
   type Dominio,
   type Nivel,
@@ -32,12 +33,6 @@ import {
   ChipsNivel,
   ChipsTipo,
 } from "./processo-dialog-partes";
-
-/** Mesmo padrão de `ProcessoSchema.codigo` em `app/actions/processos.ts`, mas
- *  sem `z`: aquele arquivo tem `"use server"` e não pode exportar uma
- *  constante para um client component importar. Isto é só validação de UI —
- *  o servidor valida de novo antes de gravar. */
-const CODIGO = /^PZ-\d{2,3}$/;
 
 export type ProcessoFormInput = {
   codigo: string;

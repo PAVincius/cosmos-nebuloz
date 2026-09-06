@@ -29,11 +29,11 @@ import {
   layoutPolar,
   NIVEIS,
   type Nivel,
-  paraJsonCanvas,
   STATUS,
   type Status,
   statusDe,
 } from "@/lib/ferramentas/processos";
+import { paraJsonCanvas } from "@/lib/ferramentas/processos-canvas";
 import { Grafo } from "./grafo";
 import { Painel } from "./painel";
 import { ProcessoDialog, type ProcessoFormInput } from "./processo-dialog";
