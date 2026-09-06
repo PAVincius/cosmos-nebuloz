@@ -6,11 +6,9 @@
  * depende dele. Um total que some "o que tem" mentiria com cara de número.
  */
 import {
-  contasDoGrupo,
-  LINHAS_CUSTO,
-  LINHAS_DESPESA,
-  LINHAS_RECEITA,
-  type LinhaDre,
+  type CentroDeCusto,
+  type Conta,
+  ROTULO_CENTRO,
 } from "./plano-de-contas";
 
 export type LancamentosDoMes = Record<string, number>;
@@ -50,30 +48,82 @@ function pct(parte: number | null, todo: number | null): number | null {
   return Math.round((parte / todo) * 100);
 }
 
-function agregadas(
+/** Contas que entram no mês: ativas sempre; inativas só quando têm lançamento. */
+function contasDoMes(
+  contas: Conta[],
   l: LancamentosDoMes,
-  linhas: readonly LinhaDre[]
+  grupo: Conta["grupo"]
+): Conta[] {
+  return contas.filter(
+    (c) => c.grupo === grupo && (c.ativa || l[c.conta] !== undefined)
+  );
+}
+
+function rotuloConta(c: Conta): string {
+  return c.ativa ? c.nome : `${c.nome} (desativada)`;
+}
+
+function linhasPorConta(
+  contas: Conta[],
+  l: LancamentosDoMes,
+  grupo: Conta["grupo"]
 ): LinhaCalculada[] {
-  return linhas.map((x) => ({
-    id: x.id,
-    rotulo: x.rotulo,
-    valorCentavos: somaContas(l, x.contas),
+  return contasDoMes(contas, l, grupo).map((c) => ({
+    id: `c-${c.conta}`,
+    rotulo: rotuloConta(c),
+    valorCentavos: l[c.conta] ?? null,
     calculada: false,
   }));
 }
 
-/** As 20 linhas do DRE da tela, na ordem. */
-export function calcularDre(l: LancamentosDoMes): LinhaCalculada[] {
-  const receita = agregadas(l, LINHAS_RECEITA);
+const CENTROS: { id: string; centro: CentroDeCusto; grupo: Conta["grupo"] }[] =
+  [
+    { id: "comercial", centro: "comercial", grupo: 4 },
+    { id: "produto", centro: "produto-engenharia", grupo: 5 },
+    { id: "ga", centro: "ga", grupo: 6 },
+  ];
+
+function linhasPorCentro(
+  contas: Conta[],
+  l: LancamentosDoMes
+): LinhaCalculada[] {
+  return CENTROS.flatMap(({ id, centro, grupo }) => {
+    const doCentro = contasDoMes(contas, l, grupo);
+    if (doCentro.length === 0) {
+      return [];
+    }
+    return [
+      {
+        id,
+        rotulo: ROTULO_CENTRO[centro],
+        valorCentavos: somaContas(
+          l,
+          doCentro.map((c) => c.conta)
+        ),
+        calculada: false,
+      },
+    ];
+  });
+}
+
+/** As linhas do DRE, derivadas das contas do plano (spec 2026-09-06 §4.3). */
+export function calcularDre(
+  contas: Conta[],
+  l: LancamentosDoMes
+): LinhaCalculada[] {
+  const receita = linhasPorConta(contas, l, 1);
   const receitaBruta = soma(receita.map((x) => x.valorCentavos));
-  const deducoes = somaContas(l, contasDoGrupo(2));
+  const deducoes = somaContas(
+    l,
+    contasDoMes(contas, l, 2).map((c) => c.conta)
+  );
   const receitaLiquida = sub(receitaBruta, deducoes);
 
-  const custo = agregadas(l, LINHAS_CUSTO);
+  const custo = linhasPorConta(contas, l, 3);
   const custoTotal = soma(custo.map((x) => x.valorCentavos));
   const margemBruta = sub(receitaLiquida, custoTotal);
 
-  const despesa = agregadas(l, LINHAS_DESPESA);
+  const despesa = linhasPorCentro(contas, l);
   const despesasTotal = soma(despesa.map((x) => x.valorCentavos));
   const ebitda = sub(margemBruta, despesasTotal);
 

@@ -12,6 +12,34 @@ import {
   semanaVazia,
   somarMeses,
 } from "../lib/empresa/financeiro";
+import type { Conta } from "../lib/empresa/plano-de-contas";
+
+const conta = (
+  c: string,
+  nome: string,
+  grupo: Conta["grupo"],
+  centro: Conta["centroDeCusto"]
+): Conta => ({ conta: c, nome, grupo, centroDeCusto: centro, ativa: true });
+const CONTAS: Conta[] = [
+  conta("1.1", "Assinatura A", 1, null),
+  conta("1.2", "Assinatura B", 1, null),
+  conta("2.1", "Impostos", 2, null),
+  conta("3.1", "Entrega A", 3, "entrega"),
+  conta("4.1", "Vendas", 4, "comercial"),
+  conta("4.7", "Eventos", 4, "comercial"),
+  conta("5.1", "Engenharia", 5, "produto-engenharia"),
+  conta("6.1", "Admin", 6, "ga"),
+];
+const MES: Record<string, number> = {
+  "1.1": 1000,
+  "1.2": 500,
+  "2.1": 100,
+  "3.1": 300,
+  "4.1": 100,
+  "4.7": 50,
+  "5.1": 200,
+  "6.1": 100,
+};
 
 function linha(dre: ReturnType<typeof calcularDre>, id: string) {
   const l = dre.find((x) => x.id === id);
@@ -19,80 +47,68 @@ function linha(dre: ReturnType<typeof calcularDre>, id: string) {
   return l;
 }
 
-const MES_CHEIO: Record<string, number> = {
-  "1.1": 100,
-  "1.2": 200,
-  "1.3": 300,
-  "1.4": 0,
-  "1.5": 400,
-  "1.6": 500,
-  "1.7": 50,
-  "1.8": 50,
-  "2.1": 100,
-  "2.2": 0,
-  "3.1": 100,
-  "3.2": 100,
-  "3.3": 50,
-  "3.4": 0,
-  "3.5": 50,
-  "4.1": 100,
-  "4.2": 100,
-  "4.3": 0,
-  "4.4": 10,
-  "4.5": 10,
-  "4.6": 30,
-  "5.1": 200,
-  "5.2": 150,
-  "5.3": 50,
-  "6.1": 100,
-  "6.2": 20,
-  "6.3": 30,
-};
-
-describe("calcularDre", () => {
-  it("fecha receita bruta, líquida, margem e EBITDA", () => {
-    const dre = calcularDre(MES_CHEIO);
-    expect(linha(dre, "receita-bruta").valorCentavos).toBe(1600);
-    expect(linha(dre, "deducoes").valorCentavos).toBe(100);
-    expect(linha(dre, "receita-liquida").valorCentavos).toBe(1500);
-    expect(linha(dre, "custo-total").valorCentavos).toBe(300);
-    expect(linha(dre, "margem-bruta").valorCentavos).toBe(1200);
-    expect(linha(dre, "margem-bruta-pct").percent).toBe(80);
-    expect(linha(dre, "comercial").valorCentavos).toBe(250);
-    expect(linha(dre, "despesas-total").valorCentavos).toBe(800);
-    expect(linha(dre, "ebitda").valorCentavos).toBe(400);
-    expect(linha(dre, "ebitda-pct").percent).toBe(27);
+describe("calcularDre com contas dinâmicas", () => {
+  it("uma linha por conta de receita e de custo; uma por centro nas despesas", () => {
+    const dre = calcularDre(CONTAS, MES);
+    expect(dre.map((l) => l.id)).toEqual([
+      "c-1.1",
+      "c-1.2",
+      "receita-bruta",
+      "deducoes",
+      "receita-liquida",
+      "c-3.1",
+      "custo-total",
+      "margem-bruta",
+      "margem-bruta-pct",
+      "comercial",
+      "produto",
+      "ga",
+      "despesas-total",
+      "ebitda",
+      "ebitda-pct",
+    ]);
+    expect(linha(dre, "receita-bruta").valorCentavos).toBe(1500);
+    expect(linha(dre, "receita-liquida").valorCentavos).toBe(1400);
+    expect(linha(dre, "comercial").valorCentavos).toBe(150); // 4.1 + a conta nova 4.7
+    expect(linha(dre, "despesas-total").valorCentavos).toBe(450);
+    expect(linha(dre, "ebitda").valorCentavos).toBe(650);
+    expect(linha(dre, "ebitda-pct").percent).toBe(46);
   });
-
-  it("linha agregada com conta faltando fica nula, e puxa os totais junto", () => {
-    const { "1.8": _omitida, ...semUmaConta } = MES_CHEIO;
-    const dre = calcularDre(semUmaConta);
-    expect(linha(dre, "serv-outros").valorCentavos).toBeNull();
-    expect(linha(dre, "receita-bruta").valorCentavos).toBeNull();
-    expect(linha(dre, "ebitda").valorCentavos).toBeNull();
-    // As linhas que não dependem dela seguem calculadas.
-    expect(linha(dre, "custo-total").valorCentavos).toBe(300);
+  it("conta ativa sem lançamento anula a linha agregada; conta inativa sem lançamento é ignorada", () => {
+    const { "4.7": _x, ...semEventos } = MES;
+    expect(
+      linha(calcularDre(CONTAS, semEventos), "comercial").valorCentavos
+    ).toBeNull();
+    const inativa = CONTAS.map((c) =>
+      c.conta === "4.7" ? { ...c, ativa: false } : c
+    );
+    expect(
+      linha(calcularDre(inativa, semEventos), "comercial").valorCentavos
+    ).toBe(100);
   });
-
-  it("mês vazio é tudo nulo, sem lançar", () => {
-    const dre = calcularDre({});
-    expect(dre.every((l) => l.valorCentavos === null)).toBe(true);
+  it("conta inativa com lançamento entra, marcada", () => {
+    const inativa = CONTAS.map((c) =>
+      c.conta === "1.2" ? { ...c, ativa: false } : c
+    );
+    const dre = calcularDre(inativa, MES);
+    expect(linha(dre, "c-1.2").rotulo).toBe("Assinatura B (desativada)");
+    expect(linha(dre, "receita-bruta").valorCentavos).toBe(1500);
   });
-
-  it("percentual é nulo quando a receita líquida é zero", () => {
-    const zero = Object.fromEntries(Object.keys(MES_CHEIO).map((k) => [k, 0]));
-    const dre = calcularDre(zero);
-    expect(linha(dre, "ebitda-pct").percent).toBeNull();
+  it("centro sem conta não gera linha; percentual nulo com receita zero", () => {
+    const semGa = CONTAS.filter((c) => c.grupo !== 6);
+    expect(calcularDre(semGa, MES).some((l) => l.id === "ga")).toBe(false);
+    const zero = Object.fromEntries(Object.keys(MES).map((k) => [k, 0]));
+    expect(linha(calcularDre(CONTAS, zero), "ebitda-pct").percent).toBeNull();
   });
 });
 
 describe("somarMeses", () => {
   it("soma linha a linha e propaga nulo", () => {
-    const a = calcularDre(MES_CHEIO);
-    const b = calcularDre({});
-    const tri = somarMeses([a, a, a]);
-    expect(linha(tri, "ebitda").valorCentavos).toBe(1200);
-    expect(linha(somarMeses([a, b]), "ebitda").valorCentavos).toBeNull();
+    const a = calcularDre(CONTAS, MES);
+    expect(linha(somarMeses([a, a, a]), "ebitda").valorCentavos).toBe(1950);
+    expect(
+      linha(somarMeses([a, calcularDre(CONTAS, {})]), "ebitda").valorCentavos
+    ).toBeNull();
   });
 });
 
