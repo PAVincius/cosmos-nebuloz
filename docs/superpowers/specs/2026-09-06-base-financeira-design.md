@@ -127,8 +127,9 @@ model Titulo {
   competenciaBaixa String?
   motivoCancelamento String?
 
-  /// Cliente que deve, quando é um RECEBER de assinatura ou serviço.
-  clienteTenantId String?
+  /// Slug do tenant cliente, quando é um RECEBER de assinatura ou serviço.
+  /// Slug e não FK, pelo mesmo motivo de `AssinaturaDoTenant`.
+  clienteSlug String?
 
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
