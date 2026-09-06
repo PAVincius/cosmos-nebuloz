@@ -327,4 +327,42 @@ describe("slaRemaining", () => {
   it("retorna null quando o caso ainda não foi submetido", () => {
     expect(slaRemaining(null, 10, new Date())).toBeNull();
   });
+
+  // Carnaval de 2026 cai em 16 e 17 de fevereiro, segunda e terça. É o caso que
+  // motivou os feriados entrarem na conta: sem eles, a semana inteira contava
+  // como útil e o Charter prometia ao cliente um prazo que ninguém ia cumprir.
+  const CARNAVAL_2026 = new Set(["2026-02-16", "2026-02-17"]);
+
+  it("desconta feriado quando o calendário é passado", () => {
+    // sex 2026-02-13 → sex 2026-02-20. Cinco dias úteis por calendário puro;
+    // três descontando segunda e terça de Carnaval.
+    const submitted = new Date("2026-02-13T12:00:00Z");
+    const now = new Date("2026-02-20T12:00:00Z");
+
+    expect(slaRemaining(submitted, 10, now)).toBe(5);
+    expect(slaRemaining(submitted, 10, now, CARNAVAL_2026)).toBe(7);
+  });
+
+  it("sem calendário, calcula exatamente como antes", () => {
+    // A garantia que permite a API de feriados falhar sem derrubar o SLA:
+    // conjunto vazio e argumento ausente têm que dar o mesmo número.
+    const submitted = new Date("2026-02-13T12:00:00Z");
+    const now = new Date("2026-02-20T12:00:00Z");
+
+    expect(slaRemaining(submitted, 10, now, new Set())).toBe(
+      slaRemaining(submitted, 10, now)
+    );
+  });
+
+  it("ignora feriado que cai em fim de semana — não desconta duas vezes", () => {
+    // 2026-09-07 é segunda, mas 2026-11-15 (Proclamação) é domingo. Contar o
+    // domingo como feriado descontaria um dia que já não era útil.
+    const submitted = new Date("2026-11-13T12:00:00Z");
+    const now = new Date("2026-11-17T12:00:00Z");
+    const comDomingo = new Set(["2026-11-15"]);
+
+    expect(slaRemaining(submitted, 10, now, comDomingo)).toBe(
+      slaRemaining(submitted, 10, now)
+    );
+  });
 });

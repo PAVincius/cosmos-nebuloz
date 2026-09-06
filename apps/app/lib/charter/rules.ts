@@ -366,9 +366,27 @@ export {
 
 // ── SLA em dias úteis ─────────────────────────────────────────────────────────
 
-/** Dias úteis decorridos entre duas datas (exclui sábado e domingo). Feriado
- *  não entra: exigiria calendário por geografia do tenant, que o V1 não modela. */
-function businessDaysBetween(from: Date, to: Date): number {
+/** Conjunto vazio compartilhado: o padrão de "não sei os feriados", que faz o
+ *  cálculo cair no comportamento anterior em vez de falhar. */
+const EMPTY_HOLIDAYS: ReadonlySet<string> = new Set<string>();
+
+/** Dias úteis decorridos entre duas datas (exclui sábado, domingo e feriado).
+ *
+ *  `holidays` é um conjunto de `YYYY-MM-DD` em UTC, montado por
+ *  `lib/feriados`. Fica como parâmetro, e não como import, para esta função
+ *  continuar pura: ela é o núcleo do SLA e precisa ser testável sem rede.
+ *
+ *  O padrão vazio preserva o comportamento antigo — só fim de semana. Quem não
+ *  passar feriado nenhum calcula exatamente o que calculava antes, o que
+ *  importa porque a API que alimenta o conjunto pode falhar e devolver vazio.
+ *
+ *  Feriado municipal e estadual continuam de fora: exigiriam calendário por
+ *  geografia do tenant, que o schema não modela. */
+function businessDaysBetween(
+  from: Date,
+  to: Date,
+  holidays: ReadonlySet<string> = EMPTY_HOLIDAYS
+): number {
   if (to <= from) {
     return 0;
   }
@@ -381,7 +399,8 @@ function businessDaysBetween(from: Date, to: Date): number {
   while (cursor < end) {
     cursor.setUTCDate(cursor.getUTCDate() + 1);
     const weekday = cursor.getUTCDay();
-    if (weekday !== 0 && weekday !== 6) {
+    const feriado = holidays.has(cursor.toISOString().slice(0, 10));
+    if (weekday !== 0 && weekday !== 6 && !feriado) {
       days += 1;
     }
   }
@@ -397,12 +416,13 @@ function businessDaysBetween(from: Date, to: Date): number {
 export function slaRemaining(
   submittedAt: Date | null,
   slaTotal: number | null,
-  now: Date = new Date()
+  now: Date = new Date(),
+  holidays: ReadonlySet<string> = EMPTY_HOLIDAYS
 ): number | null {
   if (!(submittedAt && slaTotal)) {
     return null;
   }
-  return slaTotal - businessDaysBetween(submittedAt, now);
+  return slaTotal - businessDaysBetween(submittedAt, now, holidays);
 }
 
 /** Tom do SLA por proximidade do vencimento (FR-3.3). */
