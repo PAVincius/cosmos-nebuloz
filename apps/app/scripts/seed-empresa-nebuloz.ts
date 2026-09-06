@@ -1,10 +1,12 @@
 /**
  * scripts/seed-empresa-nebuloz.ts
  *
- * Semeia as telas Empresa do back-office no tenant `system`:
+ * Semeia as telas Empresa e Funil do back-office no tenant `system`:
  *   - FornecedorDpa: 18 linhas de docs/compliance/dpa-fornecedores.md
  *   - PerguntaAoParecer: 7 linhas de docs/compliance/aviso-de-gravacao.md §4
  *   - ContaDoPlano: 27 linhas de docs/financeiro/plano-de-contas.md
+ *   - EstagioDoFunil: 4 linhas (peso/teto/critérios) do funil v2
+ *   - CanalDeLead: 5 linhas (CAC médio nulo) do funil v2
  *
  *   pnpm seed:empresa:nebuloz
  *
@@ -27,6 +29,10 @@ import {
   PERGUNTAS_AO_PARECER,
   VERIFICADO_EM,
 } from "@repo/provisioning/src/empresa-nebuloz";
+import {
+  CANAIS_NEBULOZ,
+  ESTAGIOS_NEBULOZ,
+} from "@repo/provisioning/src/funil-nebuloz";
 import { PLANO_DE_CONTAS_NEBULOZ } from "@repo/provisioning/src/plano-de-contas-nebuloz";
 import { Pool } from "pg";
 import { PrismaClient } from "../../../packages/database/generated";
@@ -82,6 +88,28 @@ async function main() {
   });
   console.log(
     `  ✓ plano de contas: ${c.count} criadas (${PLANO_DE_CONTAS_NEBULOZ.length - c.count} já existiam)`
+  );
+
+  const e = await db.estagioDoFunil.createMany({
+    skipDuplicates: true,
+    data: ESTAGIOS_NEBULOZ.map((x) => ({
+      tenantId: SYSTEM_TENANT_ID,
+      ...x,
+    })),
+  });
+  console.log(
+    `  ✓ estágios do funil: ${e.count} criados (${ESTAGIOS_NEBULOZ.length - e.count} já existiam)`
+  );
+
+  const ca = await db.canalDeLead.createMany({
+    skipDuplicates: true,
+    data: CANAIS_NEBULOZ.map((x) => ({
+      tenantId: SYSTEM_TENANT_ID,
+      ...x,
+    })),
+  });
+  console.log(
+    `  ✓ canais de lead: ${ca.count} criados (${CANAIS_NEBULOZ.length - ca.count} já existiam)`
   );
 
   await pool.end();

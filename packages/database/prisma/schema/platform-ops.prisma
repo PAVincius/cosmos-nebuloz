@@ -108,12 +108,24 @@ model Lead {
   contatoNome  String?
   contatoEmail String?
 
-  /// LEAD | DISCOVERY | EVALUATION.
+  /// LEAD | DISCOVERY | EVALUATION | PROPOSAL. É gravado por
+  /// `converterEmProposta`; nunca por `moverEstagio`.
   estagio String @default("LEAD")
+
+  /// "Dias no estágio". Zera a cada mudança de `estagio`. Migration do funil
+  /// v2 faz `UPDATE … SET "estagioDesde" = "criadoEm"` nas linhas existentes.
+  estagioDesde DateTime @default(now())
+
+  /// Porta de entrada na Escada (Meridian 01 … Cosmos 05). Nulo nos leads
+  /// antigos.
+  entrada ProductModule?
 
   /// De onde veio o lead. Texto livre: a lista de canais muda mais rápido do
   /// que uma migration acompanharia.
   origem String?
+
+  /// Canal com CAC médio. `origem` (texto) fica como legado, só leitura.
+  canalId String?
 
   /// Quem toca o lead. Nome ao lado do id pelo mesmo motivo de
   /// `criadoPorNome` em Proposal: a linha continua legível se a pessoa sair.
@@ -125,6 +137,10 @@ model Lead {
   proximaAcao   String?
   proximaAcaoEm DateTime?
 
+  /// Valor até virar proposta; depois o valor é o ACV da proposta (uma
+  /// verdade só).
+  acvEstimadoCentavos Int?
+
   /// Vínculo de conversão. Único: uma proposta nasce de no máximo um lead, e
   /// duas linhas do funil apontando para o mesmo documento comercial seria o
   /// funil contando a mesma venda duas vezes. SetNull porque o lead é
@@ -132,18 +148,119 @@ model Lead {
   propostaId String? @unique
 
   /// Preenchidos juntos: lead que sai sem dizer por quê não ensina nada sobre
-  /// preço nem ICP para o próximo.
+  /// preço nem ICP para o próximo. `motivoPerda` guarda o código do motivo
+  /// (PRECO, TIMING, SEM_SPONSOR, CONCORRENTE, SEM_FIT, OUTRO); linhas
+  /// antigas com texto livre são lidas como OUTRO com o texto em `notaPerda`.
   perdidoEm   DateTime?
   motivoPerda String?
+
+  /// Em que estágio a perda aconteceu — a tela mostra "Perdido · Aval.".
+  perdidoNoEstagio String?
+
+  /// O que aconteceu, mínimo 12 caracteres.
+  notaPerda String? @db.Text
 
   criadoEm     DateTime @default(now())
   atualizadoEm DateTime @updatedAt
 
-  tenant   Tenant    @relation("LeadSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
-  proposta Proposal? @relation(fields: [propostaId], references: [id], onDelete: SetNull)
+  tenant    Tenant               @relation("LeadSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  proposta  Proposal?            @relation(fields: [propostaId], references: [id], onDelete: SetNull)
+  canal     CanalDeLead?         @relation(fields: [canalId], references: [id], onDelete: SetNull)
+  historico HistoricoDeEstagio[]
 
   @@index([tenantId])
   @@index([tenantId, estagio])
+}
+
+/// Configuração de estágio do funil, por tenant. Peso e teto vêm daqui, não
+/// de constante em código: mudar a fórmula sem registro é número que ninguém
+/// aceita (design, backoffice-funnel-stage.jsx).
+model EstagioDoFunil {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// LEAD | DISCOVERY | EVALUATION | PROPOSAL
+  codigo String
+
+  pesoPercent Int
+  tetoDias    Int
+
+  /// Critérios de saída, um por linha.
+  criterios String[] @default([])
+
+  /// Ordem de exibição no board — mesmo papel de `ordem` em `CanalDeLead`.
+  ordem Int @default(0)
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("EstagioDoFunilSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, codigo])
+}
+
+/// Append-only. Mudar o peso muda o pipeline ponderado; fórmula que muda sem
+/// registro é número que ninguém aceita (design, backoffice-funnel-stage.jsx).
+model MudancaDeEstagio {
+  id       String @id @default(cuid())
+  tenantId String
+  codigo   String
+
+  /// PESO | TETO | CRITERIOS
+  campo String
+
+  de     String
+  para   String
+  motivo String @db.Text
+
+  autorId   String
+  autorNome String?
+
+  criadoEm DateTime @default(now())
+
+  tenant Tenant @relation("MudancaDeEstagioSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, codigo, criadoEm])
+}
+
+/// Canal de aquisição do lead, com CAC médio — o que `origem` (texto livre em
+/// `Lead`) não sustentava.
+model CanalDeLead {
+  id       String @id @default(cuid())
+  tenantId String
+  slug     String
+  nome     String
+
+  /// CAC médio do canal em centavos. Nulo = ainda não medido — a tela mostra
+  /// "CAC —" e não soma. Sem chute.
+  cacMedioCentavos Int?
+
+  ativo Boolean @default(true)
+  ordem Int     @default(0)
+
+  tenant Tenant @relation("CanalDeLeadSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  leads  Lead[]
+
+  @@unique([tenantId, slug])
+}
+
+/// Uma linha por transição (inclusive entrada em LEAD, conversão e perda).
+/// É o que sustenta "conversão 90 d" e "permanência média" do painel.
+model HistoricoDeEstagio {
+  id       String  @id @default(cuid())
+  tenantId String
+  leadId   String
+  de       String?
+
+  /// LEAD | DISCOVERY | EVALUATION | PROPOSAL | GANHO | PERDIDO
+  para String
+
+  em DateTime @default(now())
+
+  lead   Lead   @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  tenant Tenant @relation("HistoricoDeEstagioSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, para, em])
+  @@index([leadId])
 }
 
 // ─────────────────────────── Propostas ───────────────────────────
