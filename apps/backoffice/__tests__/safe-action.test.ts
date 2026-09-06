@@ -7,6 +7,7 @@
 // nela. O que se prova aqui é que o código sobrevive — e que a mensagem, que
 // carrega dado de cliente, não.
 import { describe, expect, it, vi } from "vitest";
+import { z } from "zod";
 
 const erroDeLog = vi.fn();
 
@@ -84,6 +85,25 @@ describe("safeAction — sucesso e erros nomeados", () => {
     expect(r).toMatchObject({
       error: "Nenhum cliente com o slug atlas.",
       code: "TENANT_NOT_FOUND",
+    });
+  });
+});
+
+describe("safeAction — ZodError chega na tela", () => {
+  it("mensagem de .refine não vira a genérica", async () => {
+    // Sem o ramo `ZodError`, isto caía em GENERICA — a mensagem escrita para
+    // o operador ("Conta no formato N.N…") nunca chegava à tela.
+    const schema = z
+      .object({ conta: z.string() })
+      .refine(() => false, "Conta no formato N.N (grupo 1 a 6).");
+    const r = await safeAction(() => {
+      schema.parse({ conta: "47" });
+      return Promise.resolve(undefined);
+    });
+    expect(r).toMatchObject({
+      ok: false,
+      error: "Conta no formato N.N (grupo 1 a 6).",
+      code: "VALIDACAO",
     });
   });
 });

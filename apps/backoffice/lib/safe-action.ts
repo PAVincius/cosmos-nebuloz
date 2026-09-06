@@ -1,5 +1,6 @@
 import { log } from "@repo/observability/log";
 import { ProvisioningError } from "@repo/provisioning";
+import { z } from "zod";
 import { StaffAuthError } from "./guard";
 import { RateLimitError } from "./rate-limit";
 
@@ -94,6 +95,12 @@ export async function safeAction<T>(fn: () => Promise<T>): Promise<Result<T>> {
     // pessoa perderia a única informação útil: em quantos segundos voltar.
     if (e instanceof RateLimitError) {
       return err(e.message, e.code);
+    }
+    // Sem isto, toda mensagem de `.refine` escrita para a tela (formato de
+    // conta, intervalo inválido, semana fora de segunda) cai na genérica —
+    // o `ZodError` não tem `.code` e não bate em nenhum ramo acima.
+    if (e instanceof z.ZodError) {
+      return err(e.issues[0]?.message ?? "Dados inválidos.", "VALIDACAO");
     }
 
     const codigo = codigoDoErro(e);

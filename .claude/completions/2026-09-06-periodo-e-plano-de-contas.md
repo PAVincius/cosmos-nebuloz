@@ -52,8 +52,13 @@ Decisões em execução:
   `PRESETS_COMPETENCIA`/`PRESETS_CAIXA` em `periodo.ts`.
 
 Pendente:
-- Rodar `seed-contas-prod.sql` (`/private/tmp/claude-501/-Users-azos-Documents-Github-web-backoffice-my-cosmos-nebuloz--claude-worktrees-mapa-pendencias-criticas-803c5f/528f958c-2471-4cdc-b0fa-bbd55bfc6323/scratchpad/seed-contas-prod.sql`)
-  contra produção só com "vai" do usuário.
+- Rodar `packages/database/scripts/2026-09-seed-contas-do-plano.sql` contra
+  produção só com "vai" do usuário. Ordem de deploy: (1) o deploy da Vercel
+  aplica a migration `20260907000000_conta_do_plano` — cria `ContaDoPlano`
+  vazia; (2) rodar este script no SQL Editor do Supabase; (3) confirmar
+  `SELECT count(*) FROM "ContaDoPlano" WHERE "tenantId"='system';` = 27. Até o
+  passo 2, a tela recusa todo lançamento ("Conta desativada ou fora do
+  plano.").
 - Percurso no navegador (Task 8, passo 3 — `/empresa/financeiro` com os
   presets, criar/desativar conta do plano, `/empresa/cac` com um e dois
   meses) fica para o controller, que tem sessão de staff.

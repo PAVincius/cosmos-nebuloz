@@ -9,7 +9,7 @@ import {
   type ReactNode,
   useContext,
 } from "react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PRESETS_COMPETENCIA } from "../lib/empresa/periodo";
 
 vi.mock("@repo/design-system/components/ui/calendar", () => ({
@@ -74,6 +74,18 @@ const { SeletorDePeriodo } = await import("../components/seletor-de-periodo");
 describe("SeletorDePeriodo", () => {
   const valor = { ate: "2026-09-30", de: "2026-07-01" };
 
+  // "Últimos 3 meses" (o preset usado como gatilho em quase todo teste
+  // abaixo) só rotula `valor` assim enquanto hoje está em setembro de 2026 —
+  // congelar o relógio é o que separa isto de virar time-bomb em 1º de
+  // outubro (final-review.md, Important 2).
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-09-06T15:00:00"));
+  });
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("mostra o rótulo do preset no gatilho e abre com os presets", () => {
     render(
       <SeletorDePeriodo
@@ -115,10 +127,9 @@ describe("SeletorDePeriodo", () => {
     fireEvent.click(screen.getByRole("button", { name: /Últimos 3 meses/ }));
     fireEvent.click(screen.getByRole("button", { name: "Este ano" }));
     fireEvent.click(screen.getByRole("button", { name: "Aplicar" }));
-    const ano = new Date().getUTCFullYear();
     expect(onAplicar).toHaveBeenCalledWith({
-      ate: `${ano}-12-31`,
-      de: `${ano}-01-01`,
+      ate: "2026-12-31",
+      de: "2026-01-01",
     });
   });
 
@@ -192,8 +203,9 @@ describe("SeletorDePeriodo", () => {
     ).toBe("true");
 
     fireEvent.click(screen.getByRole("button", { name: "Aplicar" }));
-    expect(onAplicar).toHaveBeenCalledWith(
-      PRESETS_COMPETENCIA[0].intervalo(new Date())
-    );
+    expect(onAplicar).toHaveBeenCalledWith({
+      de: "2026-09-01",
+      ate: "2026-09-30",
+    });
   });
 });
