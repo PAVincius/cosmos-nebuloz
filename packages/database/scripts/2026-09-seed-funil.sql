@@ -21,7 +21,9 @@
 --   3. Confira o SELECT final: deve devolver `4 | 5`.
 --   Até o passo 2 rodar, o board do funil funciona (estágio embutido no
 --   `Lead`), mas o painel do estágio (peso/teto/critérios) e o filtro por
---   canal aparecem vazios.
+--   canal aparecem vazios: sem canal cadastrado é impossível criar lead
+--   (`NovoLeadDialog` bloqueia o formulário) e, sem `EstagioDoFunil`, os KPIs
+--   "Pipeline ponderado" e "Estagnados" mostram "—" em vez de 0.
 
 BEGIN;
 

@@ -43,8 +43,9 @@ Quarto estágio, `PROPOSAL` ("Proposta"): o lead entra nele ao converter em
 (`propostaId`) e continua perdível até o fechamento. Peso, teto de dias e
 critérios de saída de cada estágio (inclusive `PROPOSAL`) não são constante em
 código — vivem em `EstagioDoFunil`, por tenant, editáveis no painel do
-estágio (clique no cabeçalho da coluna, ADMIN) na tela `funil`; toda edição
-grava uma linha em `MudancaDeEstagio` (campo, de, para, motivo, autor).
+estágio (clique no cabeçalho da coluna, staff com escrita) na tela `funil`;
+toda edição grava uma linha em `MudancaDeEstagio` (campo, de, para, motivo,
+autor).
 
 ---
 
@@ -146,6 +147,7 @@ stateDiagram-v2
     state Lead {
         LEAD --> DISCOVERY
         DISCOVERY --> EVALUATION
+        EVALUATION --> PROPOSAL
     }
 
     Lead --> Convertido: propostaId
