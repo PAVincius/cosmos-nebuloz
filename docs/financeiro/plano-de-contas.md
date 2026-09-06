@@ -1,5 +1,12 @@
 # Plano de contas — base mínima
 
+> O plano de contas vive na tabela `ContaDoPlano` do back-office (aba
+> Financeiro → Plano de contas, em `/empresa/financeiro`), onde novas contas
+> são criadas e as existentes ativadas/desativadas. Este documento é a origem
+> do seed: as 27 contas abaixo foram carregadas de
+> [`plano-de-contas-nebuloz.ts`](../../packages/provisioning/src/plano-de-contas-nebuloz.ts)
+> para o tenant `system`.
+
 Base para o [DRE mensal](dre-modelo.md) e o [caixa de 13 semanas](caixa-13-semanas.md)
 lerem, e para o [modelo de CAC](../comercial/cac-modelo.md) ter de onde tirar
 as contas de despesa comercial. Códigos numéricos simples, sem a
