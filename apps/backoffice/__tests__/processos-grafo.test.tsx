@@ -105,6 +105,40 @@ describe("Grafo", () => {
     expect(screen.getByText(/1 ARESTA/)).toBeTruthy();
   });
 
+  it("liga o wheel nativamente com { passive: false }, não via onWheel do React", () => {
+    // React 19 registra `onWheel` como listener passivo, o que silenciaria o
+    // preventDefault que impede o pinch/scroll da página por baixo do SVG.
+    // jsdom não expõe o flag `passive` de volta para leitura, mas expõe a
+    // chamada a `addEventListener` — o suficiente para provar que o listener
+    // é nativo e não-passivo, em vez de depender da prop JSX.
+    const addEventListenerSpy = vi.spyOn(
+      EventTarget.prototype,
+      "addEventListener"
+    );
+    render(
+      <Grafo
+        ligacoes={LIGACOES}
+        onExportar={vi.fn()}
+        onSelecionar={vi.fn()}
+        processos={PROCESSOS}
+        quente={null}
+        selecionado={null}
+      />
+    );
+    // React também registra um listener de "wheel" próprio (passivo, no
+    // container raiz) — por isso procura-se especificamente a chamada não
+    // passiva, em vez de assumir a primeira ou única ocorrência.
+    const chamadaNaoPassiva = addEventListenerSpy.mock.calls.find(
+      ([tipo, , opcoes]) =>
+        tipo === "wheel" &&
+        typeof opcoes === "object" &&
+        opcoes !== null &&
+        (opcoes as AddEventListenerOptions).passive === false
+    );
+    expect(chamadaNaoPassiva).toBeDefined();
+    addEventListenerSpy.mockRestore();
+  });
+
   it("aresta cujo nó sumiu do filtro não é desenhada", () => {
     render(
       <Grafo

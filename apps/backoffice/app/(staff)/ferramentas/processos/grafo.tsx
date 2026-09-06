@@ -14,8 +14,8 @@
  * página, e a mancha desfocada por área é a única sobra da metáfora estelar.
  */
 import type { Tone } from "@repo/design-system/cosmos/kit";
-import type { PointerEvent, WheelEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import type { PointerEvent } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   DOMINIOS,
   type Dominio,
@@ -231,30 +231,48 @@ export function Grafo({
   }
 
   // ⌘/Ctrl mantém o ponto sob o cursor fixo ao dar zoom; sem o modificador, a
-  // roda só faz pan (comportamento padrão de canvas infinito).
-  function aoRodar(e: WheelEvent<SVGSVGElement>) {
-    if (!(e.ctrlKey || e.metaKey)) {
-      setPan((p) => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
+  // roda só faz pan (comportamento padrão de canvas infinito). React 19
+  // registra `wheel` como listener passivo quando ligado via prop JSX
+  // `onWheel` — `preventDefault` dentro dele seria ignorado silenciosamente,
+  // deixando o pinch do trackpad dar zoom na página e a roda simples rolar o
+  // fundo. Por isso o listener é nativo (useEffect abaixo) com
+  // `{ passive: false }`, e o parâmetro é o `WheelEvent` do DOM.
+  const aoRodar = useCallback(
+    (e: globalThis.WheelEvent) => {
+      if (!(e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        setPan((p) => ({ x: p.x - e.deltaX, y: p.y - e.deltaY }));
+        return;
+      }
+      e.preventDefault();
+      const rect = svgRef.current?.getBoundingClientRect();
+      if (!rect) {
+        return;
+      }
+      const escala = fatorDeEscala(svgRef.current, layout.W, layout.H);
+      const svgX = (e.clientX - rect.left) * escala.x;
+      const svgY = (e.clientY - rect.top) * escala.y;
+      const novoZoom = clamp(
+        zoom * (e.deltaY > 0 ? 1 - FATOR_ZOOM_RODA : 1 + FATOR_ZOOM_RODA),
+        ZOOM_MIN,
+        ZOOM_MAX
+      );
+      const worldX = (svgX - pan.x) / zoom;
+      const worldY = (svgY - pan.y) / zoom;
+      setZoom(novoZoom);
+      setPan({ x: svgX - worldX * novoZoom, y: svgY - worldY * novoZoom });
+    },
+    [zoom, pan, layout.W, layout.H]
+  );
+
+  useEffect(() => {
+    const el = svgRef.current;
+    if (!el) {
       return;
     }
-    e.preventDefault();
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) {
-      return;
-    }
-    const escala = fatorDeEscala(svgRef.current, layout.W, layout.H);
-    const svgX = (e.clientX - rect.left) * escala.x;
-    const svgY = (e.clientY - rect.top) * escala.y;
-    const novoZoom = clamp(
-      zoom * (e.deltaY > 0 ? 1 - FATOR_ZOOM_RODA : 1 + FATOR_ZOOM_RODA),
-      ZOOM_MIN,
-      ZOOM_MAX
-    );
-    const worldX = (svgX - pan.x) / zoom;
-    const worldY = (svgY - pan.y) / zoom;
-    setZoom(novoZoom);
-    setPan({ x: svgX - worldX * novoZoom, y: svgY - worldY * novoZoom });
-  }
+    el.addEventListener("wheel", aoRodar, { passive: false });
+    return () => el.removeEventListener("wheel", aoRodar);
+  }, [aoRodar]);
 
   // Aceita qualquer `PointerEvent` do React (nó ou fundo), não só o do
   // `<svg>` raiz — só `clientX`/`clientY` importam aqui.
@@ -349,11 +367,11 @@ export function Grafo({
     >
       <svg
         height="100%"
+        onPointerCancel={aoSoltarPonteiro}
         onPointerDown={iniciarPan}
         onPointerLeave={aoSoltarPonteiro}
         onPointerMove={aoMoverPonteiro}
         onPointerUp={aoSoltarPonteiro}
-        onWheel={aoRodar}
         ref={svgRef}
         style={{ display: "block", cursor: espaco ? "grab" : "default" }}
         viewBox={`0 0 ${layout.W} ${layout.H}`}

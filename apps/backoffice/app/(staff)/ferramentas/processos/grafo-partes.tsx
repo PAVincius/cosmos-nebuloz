@@ -338,7 +338,15 @@ function PillDoNo({
   const x = raio + 10;
   const y = -22;
   return (
-    <g pointerEvents="none">
+    <g className="pm-pill" pointerEvents="none">
+      <style>{`
+        .pm-pill {
+          transition: opacity 120ms ease, transform 120ms ease;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .pm-pill { transition: none; }
+        }
+      `}</style>
       <rect
         fill="var(--surface)"
         height={38}
