@@ -167,6 +167,8 @@ model Lead {
   proposta  Proposal?            @relation(fields: [propostaId], references: [id], onDelete: SetNull)
   canal     CanalDeLead?         @relation(fields: [canalId], references: [id], onDelete: SetNull)
   historico HistoricoDeEstagio[]
+  /// Diagnósticos de maturidade feitos para este lead (degrau 01 da Escada).
+  avaliacoes AvaliacaoDeMaturidade[]
 
   @@index([tenantId])
   @@index([tenantId, estagio])
@@ -567,4 +569,89 @@ model AccessLog {
   @@index([tenantId])
   @@index([tenantId, criadoEm])
   @@index([email])
+}
+
+// ─────────────────── Growth · maturidade de IA ───────────────────
+
+/// Uma avaliação de maturidade de IA de uma organização — o diagnóstico que a
+/// Nebuloz vende no degrau 01 da Escada (Meridian).
+///
+/// `organizacao` é texto e não `tenantId` pelo mesmo motivo de `Lead.nome`: a
+/// avaliação é justamente o que se faz *antes* de a organização virar cliente.
+/// Quando ela nasce do funil, `leadId` liga as duas pontas — e é assim que o
+/// diagnóstico deixa de ser PDF solto e passa a justificar por qual degrau o
+/// lead entra.
+model AvaliacaoDeMaturidade {
+  id       String @id @default(cuid())
+  tenantId String
+
+  organizacao String
+  leadId      String?
+
+  /// Versão da rubrica que pontuou esta avaliação. Existe porque a rubrica é
+  /// IP da Nebuloz e vai evoluir: sem carimbar a versão, mudar um peso amanhã
+  /// reescreveria em silêncio o score que já foi apresentado ao cliente.
+  rubricaVersao String
+
+  /// RASCUNHO | CONCLUIDA. Rascunho aceita resposta; concluída, não.
+  status String @default("RASCUNHO")
+
+  /// 0-100 e o nível derivado dele (INICIAL … OTIMIZADO). Gravados no fecho,
+  /// não recalculados na leitura: o número que o cliente viu é o que fica,
+  /// mesmo depois de a rubrica mudar. Nulos enquanto rascunho — "sem número,
+  /// sem chute", a mesma regra do CAC.
+  scoreGeral Int?
+  nivelGeral String?
+
+  concluidaEm DateTime?
+
+  /// Quem conduziu. Nome ao lado do id pelo mesmo motivo de `criadoPorNome` em
+  /// Proposal: a linha continua legível se a pessoa sair.
+  autorId   String
+  autorNome String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant    Tenant                 @relation("AvaliacaoDeMaturidadeSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  lead      Lead?                  @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  respostas RespostaDeMaturidade[]
+
+  @@index([tenantId, status])
+  @@index([tenantId, criadoEm])
+}
+
+/// Uma linha por critério respondido.
+///
+/// Linha e não JSON porque a pergunta que paga a conta é cross-organização
+/// ("qual critério é o mais fraco da carteira?"), e isso é agregação sobre
+/// coluna — não desempacote de documento em cada leitura.
+model RespostaDeMaturidade {
+  id          String @id @default(cuid())
+  avaliacaoId String
+
+  /// Repetido da avaliação-mãe, como `HistoricoDeEstagio` repete o do lead: a
+  /// policy de RLS desta casa é `"tenantId" = current_tenant_id()`, e uma
+  /// tabela sem a coluna ficaria fora do isolamento por não caber na regra.
+  tenantId String
+
+  /// Id do critério na rubrica (`estrategia.patrocinio`, …). Texto e não enum:
+  /// a rubrica versiona em código, e um enum no banco pediria migration a cada
+  /// critério novo — exatamente o acoplamento que `rubricaVersao` evita.
+  criterioId String
+
+  /// 0 (Inicial) … 4 (Otimizado), escala MITRE.
+  nivel Int
+
+  /// Evidência do avaliador. É o que separa diagnóstico de chute — e é o que
+  /// o relatório cita quando o sponsor pergunta "por que nível 1?".
+  nota String? @db.Text
+
+  atualizadoEm DateTime @updatedAt
+
+  avaliacao AvaliacaoDeMaturidade @relation(fields: [avaliacaoId], references: [id], onDelete: Cascade)
+  tenant    Tenant                @relation("RespostaDeMaturidadeSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([avaliacaoId, criterioId])
+  @@index([tenantId])
 }
