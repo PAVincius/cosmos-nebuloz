@@ -5,7 +5,7 @@
  * tamanho de arquivo — nenhuma peça aqui guarda estado próprio.
  */
 import { Icon } from "@repo/design-system/cosmos/icons";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 
 /** Mesmas etapas de `lib/empresa/formato.ts:formatarData`, mas local: aquele
  *  módulo é do domínio "empresa", e o mapa de processos não depende dele. */
@@ -79,6 +79,15 @@ export function Pilula({ children }: { children: ReactNode }) {
   );
 }
 
+/** Rótulo do × muda com o estado (review): dá pra tela quem lê que o próximo
+ *  clique confirma, não só um `title` que passa despercebido. */
+function rotuloDoRemover(armado: boolean, nome: string): string {
+  if (armado) {
+    return `Confirmar remoção da ligação com ${nome}`;
+  }
+  return `Remover ligação com ${nome}`;
+}
+
 export function LinhaLigacao({
   dir,
   nome,
@@ -92,6 +101,24 @@ export function LinhaLigacao({
   onSelecionar: () => void;
   onRemover?: () => void;
 }) {
+  // × pede confirmação em duas etapas, igual `ConfirmarAcao` — o card cheio
+  // daquele componente não cabe numa linha de lista, então o "armado" é
+  // estado local por linha (achado de review). Cai sozinho quando o botão
+  // perde o foco, e trocar de seleção já remonta `Painel` inteiro.
+  const [armado, setArmado] = useState(false);
+
+  const clicarRemover = () => {
+    if (!onRemover) {
+      return;
+    }
+    if (armado) {
+      setArmado(false);
+      onRemover();
+      return;
+    }
+    setArmado(true);
+  };
+
   return (
     <div style={{ alignItems: "center", display: "flex", gap: 6 }}>
       <button
@@ -142,20 +169,23 @@ export function LinhaLigacao({
       </button>
       {onRemover ? (
         <button
-          aria-label={`Remover ligação com ${nome}`}
+          aria-label={rotuloDoRemover(armado, nome)}
           className="btn"
-          onClick={onRemover}
+          onBlur={() => setArmado(false)}
+          onClick={clicarRemover}
           style={{
-            background: "none",
-            border: "1px solid var(--hairline)",
+            background: armado ? "var(--red-soft, var(--surface-2))" : "none",
+            border: armado
+              ? "1px solid var(--red-border, var(--hairline-strong))"
+              : "1px solid var(--hairline)",
             borderRadius: "var(--r-sm)",
-            color: "var(--ink-faint)",
+            color: armado ? "var(--red-text)" : "var(--ink-faint)",
             cursor: "pointer",
             padding: 6,
           }}
           type="button"
         >
-          <Icon name="x" size={12} />
+          <Icon name={armado ? "check" : "x"} size={12} />
         </button>
       ) : null}
     </div>

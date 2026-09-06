@@ -155,4 +155,36 @@ describe("Mapa", () => {
     fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
     expect(excluirProcessoMock).toHaveBeenCalledWith({ id: "a" });
   });
+
+  it("trocar de processo com a exclusão armada não deixa a confirmação presa no processo antigo", () => {
+    render(<Mapa inicial={DADOS} podeEscrever={true} />);
+
+    fireEvent.click(screen.getByLabelText("PZ-01 Funil de leads"));
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
+    expect(screen.getByRole("button", { name: "Confirmar" })).toBeTruthy();
+
+    fireEvent.click(screen.getByLabelText("PZ-03 Medição de CAC"));
+
+    expect(
+      screen.getByRole("heading", { name: "Medição de CAC" })
+    ).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Confirmar" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Excluir" })).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "Excluir" }));
+    expect(excluirProcessoMock).not.toHaveBeenCalled();
+  });
+
+  it("remover ligação pede confirmação: o primeiro clique no × não chama a action, o segundo chama com o id certo", () => {
+    render(<Mapa inicial={DADOS} podeEscrever={true} />);
+
+    fireEvent.click(screen.getByLabelText("PZ-01 Funil de leads"));
+    fireEvent.click(screen.getByLabelText("Remover ligação com Gate de fase"));
+    expect(excluirLigacaoMock).not.toHaveBeenCalled();
+
+    fireEvent.click(
+      screen.getByLabelText("Confirmar remoção da ligação com Gate de fase")
+    );
+    expect(excluirLigacaoMock).toHaveBeenCalledWith({ id: "e1" });
+  });
 });

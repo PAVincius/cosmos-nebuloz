@@ -31,6 +31,7 @@ export type PainelProps = {
   processos: ProcessoRow[];
   ligacoes: LigacaoRow[];
   podeEscrever: boolean;
+  executando: boolean;
   onSelecionar: (id: string) => void;
   onEditar: () => void;
   onExcluirProcesso: (id: string) => void;
@@ -77,6 +78,7 @@ export function Painel({
   processos,
   ligacoes,
   podeEscrever,
+  executando,
   onSelecionar,
   onEditar,
   onExcluirProcesso,
@@ -248,6 +250,7 @@ export function Painel({
           <ConfirmarAcao
             alvo={`${processo.codigo} · ${processo.nome}`}
             consequencia="O processo e as ligações dele somem. Não tem como desfazer."
+            executando={executando}
             onConfirmar={() => onExcluirProcesso(processo.id)}
             rotulo="Excluir"
           />

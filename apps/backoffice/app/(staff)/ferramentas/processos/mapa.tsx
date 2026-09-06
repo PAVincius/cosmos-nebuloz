@@ -156,6 +156,7 @@ export function Mapa({
   const [nivel, setNivel] = useState("all");
   const [status, setStatus] = useState("all");
   const [selecionado, setSelecionado] = useState<string | null>(null);
+  const [excluindo, setExcluindo] = useState(false);
   const empilhado = useEmpilhado(1100);
 
   const recarregar = useCallback(async () => {
@@ -196,13 +197,18 @@ export function Mapa({
   const excluirProcessoSelecionado = useCallback(
     async (id: string) => {
       setErro(null);
-      const res = await excluirProcesso({ id });
-      if (!res.ok) {
-        setErro(res.error);
-        return;
+      setExcluindo(true);
+      try {
+        const res = await excluirProcesso({ id });
+        if (!res.ok) {
+          setErro(res.error);
+          return;
+        }
+        setSelecionado(null);
+        await recarregar();
+      } finally {
+        setExcluindo(false);
       }
-      setSelecionado(null);
-      await recarregar();
     },
     [recarregar]
   );
@@ -380,6 +386,8 @@ export function Mapa({
           />
           {mostrarPainel ? (
             <Painel
+              executando={excluindo}
+              key={processoSelecionado.id}
               ligacoes={dados.ligacoes}
               onEditar={mostrarAviso}
               onExcluirLigacao={removerLigacao}
