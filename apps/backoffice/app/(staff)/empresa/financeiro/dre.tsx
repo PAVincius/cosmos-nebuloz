@@ -1,14 +1,9 @@
-"use client";
-
 import { SectionCard } from "@repo/design-system/cosmos/kit";
-import { useCallback, useState } from "react";
-import {
-  type DreView,
-  salvarLancamento,
-} from "@/app/actions/empresa/financeiro";
-import { Erro, INPUT } from "@/components/campo";
+import Link from "next/link";
+import type { DreView } from "@/app/actions/empresa/financeiro";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
-import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
+import { formatarBRL } from "@/lib/comercial/formato";
+import { intervaloDaCompetencia } from "@/lib/empresa/periodo";
 
 const NOME_MES = [
   "jan",
@@ -32,21 +27,23 @@ const dinheiro = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 const pct = (v: number | null | undefined) =>
   v === null || v === undefined ? "—" : `${v}%`;
 
-/** Uma linha de entrada do plano de contas. Extraída para que `editavel`
- *  vire uma const fora do atributo JSX (nursery/noLeakedRender) — conta
- *  desativada não recebe lançamento novo, mesmo com `podeEscrever`. */
-function LinhaContaEntrada({
+/** Link para a aba Lançamentos filtrada pela conta e pelo mês da célula
+ *  (Task 5): a célula do DRE deixou de aceitar valor digitado. */
+function linkDoLancamento(conta: string, competencia: string): string {
+  const { de, ate } = intervaloDaCompetencia(competencia);
+  return `/empresa/financeiro?aba=lancamentos&de=${de}&ate=${ate}&conta=${conta}`;
+}
+
+/** Uma linha de conta do plano: cada célula é um link para a aba Lançamentos
+ *  filtrada por conta e mês, não mais um campo de entrada — o livro-razão é o
+ *  único escritor de valor por conta. */
+function LinhaConta({
   c,
   competencias,
-  podeEscrever,
-  onLancar,
 }: {
   c: DreView["contas"][number];
   competencias: string[];
-  podeEscrever: boolean;
-  onLancar: (competencia: string, conta: string, texto: string) => void;
 }) {
-  const editavel = podeEscrever && c.ativa;
   const opacidade = c.ativa ? 1 : 0.6;
   return (
     <TableRow>
@@ -56,59 +53,34 @@ function LinhaContaEntrada({
         </span>
         {c.nome}
       </Celula>
-      {c.valores.map((v, i) => (
-        <Celula key={competencias[i]} style={{ opacity: opacidade }}>
-          <input
-            aria-label={`${c.nome} ${rotuloMes(competencias[i])}`}
-            defaultValue={
-              v === null ? "" : (v / 100).toFixed(2).replace(".", ",")
-            }
-            inputMode="decimal"
-            key={`${c.conta}-${competencias[i]}-${v ?? ""}`}
-            onBlur={(e) => {
-              if (!editavel) {
-                return;
-              }
-              onLancar(competencias[i], c.conta, e.target.value);
-            }}
-            readOnly={!editavel}
-            style={{ ...INPUT, padding: "6px 8px", textAlign: "right" }}
-          />
-        </Celula>
-      ))}
+      {c.valores.map((v, i) => {
+        const competencia = competencias[i] as string;
+        return (
+          <Celula
+            key={competencia}
+            style={{ opacity: opacidade, textAlign: "right" }}
+          >
+            <Link
+              aria-label={`${c.nome} ${rotuloMes(competencia)}`}
+              href={linkDoLancamento(c.conta, competencia)}
+              style={{
+                display: "block",
+                color: "var(--ink)",
+                textDecoration: "none",
+              }}
+            >
+              <span className="mono">{dinheiro(v)}</span>
+            </Link>
+          </Celula>
+        );
+      })}
       <Celula style={{ opacity: opacidade }}>{""}</Celula>
     </TableRow>
   );
 }
 
-export function Dre({
-  inicial,
-  podeEscrever,
-}: {
-  inicial: DreView;
-  podeEscrever: boolean;
-}) {
-  const [view, setView] = useState(inicial);
-  const [erro, setErro] = useState<string | null>(null);
-
-  const lancar = useCallback(
-    async (competencia: string, conta: string, texto: string) => {
-      setErro(null);
-      const res = await salvarLancamento({
-        competencia,
-        conta,
-        valorCentavos: texto.trim() === "" ? null : paraCentavos(texto),
-        de: view.intervalo.de,
-        ate: view.intervalo.ate,
-      });
-      if (!res.ok) {
-        setErro(res.error);
-        return;
-      }
-      setView(res.data);
-    },
-    [view.intervalo]
-  );
+export function Dre({ inicial }: { inicial: DreView; podeEscrever: boolean }) {
+  const view = inicial;
 
   const larguras = [
     { id: "l", largura: "34%" },
@@ -119,8 +91,6 @@ export function Dre({
 
   return (
     <>
-      {erro ? <Erro>{erro}</Erro> : null}
-
       <SectionCard
         subtitle="receita por frente · custo de entrega · margem bruta · EBITDA"
         title="DRE por competência"
@@ -155,8 +125,8 @@ export function Dre({
       </SectionCard>
 
       <SectionCard
-        subtitle="uma célula por conta e mês; vazio apaga o lançamento"
-        title="Plano de contas — entrada"
+        subtitle="uma célula por conta e mês; abre a aba Lançamentos filtrada por conta e competência"
+        title="Plano de contas"
       >
         <Tabela larguras={larguras}>
           <TableHead
@@ -164,12 +134,10 @@ export function Dre({
           />
           <tbody>
             {view.contas.map((c) => (
-              <LinhaContaEntrada
+              <LinhaConta
                 c={c}
                 competencias={view.competencias}
                 key={c.conta}
-                onLancar={lancar}
-                podeEscrever={podeEscrever}
               />
             ))}
           </tbody>

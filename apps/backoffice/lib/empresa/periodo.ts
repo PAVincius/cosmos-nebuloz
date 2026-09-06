@@ -103,6 +103,16 @@ function fimDoMes(ano: number, mes0: number): string {
   return iso(new Date(Date.UTC(ano, mes0 + 1, 0)));
 }
 
+/** Primeiro e último dia de uma competência "AAAA-MM" — o link da célula do
+ *  DRE para a aba Lançamentos usa isto, não uma conta de dias reimplementada. */
+export function intervaloDaCompetencia(competencia: string): Intervalo {
+  const [ano, mes] = competencia.split("-").map(Number);
+  return {
+    de: inicioDoMes(ano, mes - 1),
+    ate: fimDoMes(ano, mes - 1),
+  };
+}
+
 export function intervaloPadraoCompetencia(hoje: Date): Intervalo {
   const a = hoje.getUTCFullYear();
   const m = hoje.getUTCMonth();

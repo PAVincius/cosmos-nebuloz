@@ -9,8 +9,6 @@ const mocks = vi.hoisted(() => ({
   logPlatformAudit: vi.fn(),
   revalidatePath: vi.fn(),
   lancFindMany: vi.fn(),
-  lancUpsert: vi.fn(),
-  lancDeleteMany: vi.fn(),
   semanaFindMany: vi.fn(),
   semanaUpsert: vi.fn(),
   cacFindFirst: vi.fn(),
@@ -56,10 +54,8 @@ vi.mock("@repo/provisioning", () => ({
 }));
 vi.mock("@repo/database", () => ({
   database: {
-    lancamentoMensal: {
+    lancamento: {
       findMany: mocks.lancFindMany,
-      upsert: mocks.lancUpsert,
-      deleteMany: mocks.lancDeleteMany,
     },
     semanaDeCaixa: {
       findMany: mocks.semanaFindMany,
@@ -81,7 +77,6 @@ import {
   criarConta,
   lerCaixa,
   lerDre,
-  salvarLancamento,
   salvarSemana,
 } from "../app/actions/empresa/financeiro";
 
@@ -164,73 +159,18 @@ describe("lerDre por intervalo", () => {
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toMatch(/12 meses/);
   });
-});
 
-describe("salvarLancamento", () => {
-  it("recusa conta desconhecida e conta inativa", async () => {
+  it("soma várias linhas da mesma conta e competência", async () => {
     resetar();
-    expect(
-      (
-        await salvarLancamento({
-          competencia: "2026-09",
-          conta: "9.9",
-          valorCentavos: 1,
-          de: "2026-07-01",
-          ate: "2026-09-30",
-        })
-      ).ok
-    ).toBe(false);
-    mocks.contaFindUnique.mockResolvedValue({ ...CONTAS[0], ativa: false });
-    expect(
-      (
-        await salvarLancamento({
-          competencia: "2026-09",
-          conta: "1.1",
-          valorCentavos: 1,
-          de: "2026-07-01",
-          ate: "2026-09-30",
-        })
-      ).ok
-    ).toBe(false);
-    expect(mocks.lancUpsert).not.toHaveBeenCalled();
-  });
-
-  it("grava e devolve a janela pedida", async () => {
-    resetar();
-    const res = await salvarLancamento({
-      competencia: "2026-07",
-      conta: "1.1",
-      valorCentavos: 300,
-      de: "2026-07-01",
-      ate: "2026-09-30",
-    });
-    expect(res.ok && res.data.competencias).toEqual([
-      "2026-07",
-      "2026-08",
-      "2026-09",
+    mocks.lancFindMany.mockResolvedValue([
+      { competencia: "2026-09", conta: "1.1", valorCentavos: 100 },
+      { competencia: "2026-09", conta: "1.1", valorCentavos: 50 },
     ]);
-    expect(mocks.lancUpsert.mock.calls[0][0].where).toEqual({
-      tenantId_competencia_conta: {
-        tenantId: "system",
-        competencia: "2026-07",
-        conta: "1.1",
-      },
-    });
-  });
-
-  it("MEMBER não lança", async () => {
-    resetar();
-    mocks.assertCanWrite.mockImplementation(() => {
-      throw new Error("Somente leitura");
-    });
-    const res = await salvarLancamento({
-      competencia: "2026-09",
-      conta: "1.1",
-      valorCentavos: 1,
-      de: "2026-07-01",
-      ate: "2026-09-30",
-    });
-    expect(res.ok).toBe(false);
+    const res = await lerDre({ de: "2026-09-01", ate: "2026-09-30" });
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    const c11 = res.data.contas.find((c) => c.conta === "1.1");
+    expect(c11?.valores).toEqual([150]);
   });
 });
 

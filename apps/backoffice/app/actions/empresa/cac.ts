@@ -32,9 +32,11 @@ import { type Result, safeAction } from "@/lib/safe-action";
 /**
  * CAC totalmente carregado (docs/comercial/cac-modelo.md).
  *
- * Seis das oito parcelas são as contas 4.1–4.6 do DRE: esta action lê e
- * escreve LancamentoMensal, não uma cópia. É o que faz o numerador do CAC e a
- * linha "Comercial" do DRE baterem por construção.
+ * Seis das oito parcelas são as contas 4.1–4.6 do DRE: esta action lê o
+ * livro-razão (`database.lancamento`), não uma cópia. É o que faz o numerador
+ * do CAC e a linha "Comercial" do DRE baterem por construção. As seis não têm
+ * mais escritor aqui — o lançamento nasce na aba Lançamentos de
+ * /empresa/financeiro.
  */
 
 const ROTA_CAC = "/empresa/cac";
@@ -180,43 +182,50 @@ async function montar(intervalo: Intervalo): Promise<CacView> {
   const comps = competencias(intervalo);
   const ultima = comps.at(-1) as string;
   const { inicio, fim } = limitesDoIntervalo(comps);
-  const [lancamentos, periodos, mensalidade, sugestao] = await Promise.all([
-    database.lancamentoMensal.findMany({
-      where: {
-        tenantId: SYSTEM_TENANT_ID,
-        competencia: { in: comps },
-        conta: { in: [...CONTAS_DO_CAC] },
-      },
-      select: { competencia: true, conta: true, valorCentavos: true },
-    }),
-    database.cacPeriodo.findMany({
-      where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
-      select: {
-        id: true,
-        competencia: true,
-        entregaDiagnosticoCentavos: true,
-        clientesGanhos: true,
-        convLeadDiscoveryPercent: true,
-        convDiscoveryEvaluationPercent: true,
-        convEvaluationPropostaPercent: true,
-        convPropostaAceitaPercent: true,
-        alocacoes: {
-          select: { produto: true, pesoPercent: true },
-          orderBy: { produto: "asc" },
+  const [somasPorContaEMes, periodos, mensalidade, sugestao] =
+    await Promise.all([
+      database.lancamento.groupBy({
+        by: ["competencia", "conta"],
+        where: {
+          tenantId: SYSTEM_TENANT_ID,
+          competencia: { in: comps },
+          conta: { in: [...CONTAS_DO_CAC] },
         },
-      },
-      orderBy: { competencia: "asc" },
-    }),
-    mensalidadeReferencia(),
-    database.proposal.count({
-      where: {
-        tenantId: SYSTEM_TENANT_ID,
-        status: "ACEITA",
-        atualizadoEm: { gte: inicio, lt: fim },
-      },
-    }),
-  ]);
+        _sum: { valorCentavos: true },
+      }),
+      database.cacPeriodo.findMany({
+        where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
+        select: {
+          id: true,
+          competencia: true,
+          entregaDiagnosticoCentavos: true,
+          clientesGanhos: true,
+          convLeadDiscoveryPercent: true,
+          convDiscoveryEvaluationPercent: true,
+          convEvaluationPropostaPercent: true,
+          convPropostaAceitaPercent: true,
+          alocacoes: {
+            select: { produto: true, pesoPercent: true },
+            orderBy: { produto: "asc" },
+          },
+        },
+        orderBy: { competencia: "asc" },
+      }),
+      mensalidadeReferencia(),
+      database.proposal.count({
+        where: {
+          tenantId: SYSTEM_TENANT_ID,
+          status: "ACEITA",
+          atualizadoEm: { gte: inicio, lt: fim },
+        },
+      }),
+    ]);
 
+  const lancamentos: LancamentoDoCac[] = somasPorContaEMes.map((s) => ({
+    competencia: s.competencia,
+    conta: s.conta,
+    valorCentavos: s._sum.valorCentavos ?? 0,
+  }));
   const parcelas = parcelasAgregadas(comps, lancamentos, periodos);
   const ultimo = periodos.find((p) => p.competencia === ultima);
   const conversao: ConversaoView = {
@@ -289,10 +298,12 @@ async function upsertPeriodo(
   return p.id;
 }
 
+// `.strict()`: `contas` era o único jeito de gravar 4.1–4.6 por aqui — sem o
+// campo no schema, um cliente velho que ainda o envie é recusado, não
+// ignorado em silêncio.
 const ParcelasSchema = z
-  .object({
+  .strictObject({
     competencia: Competencia,
-    contas: z.partialRecord(z.enum(CONTAS_DO_CAC), Centavos).optional(),
     entregaDiagnosticoCentavos: Centavos.optional(),
     clientesGanhos: z.number().int().min(0).nullable().optional(),
     ...CAMPOS_INTERVALO,
@@ -302,36 +313,12 @@ const ParcelasSchema = z
 export async function salvarParcelas(
   input: z.infer<typeof ParcelasSchema>
 ): Promise<Result<CacView>> {
-  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Transaction requires multiple conditional branches
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const {
-      competencia,
-      contas,
-      entregaDiagnosticoCentavos,
-      clientesGanhos,
-      de,
-      ate,
-    } = ParcelasSchema.parse(input);
+    const { competencia, entregaDiagnosticoCentavos, clientesGanhos, de, ate } =
+      ParcelasSchema.parse(input);
     const diff: [string, string, string][] = [];
-    const escritas: unknown[] = [];
-
-    for (const [conta, valor] of Object.entries(contas ?? {})) {
-      const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
-      if (valor === null) {
-        escritas.push(database.lancamentoMensal.deleteMany({ where }));
-      } else {
-        escritas.push(
-          database.lancamentoMensal.upsert({
-            where: { tenantId_competencia_conta: where },
-            create: { ...where, valorCentavos: valor },
-            update: { valorCentavos: valor },
-          })
-        );
-      }
-      diff.push([conta, "", valor === null ? "" : String(valor)]);
-    }
 
     const update: Record<string, unknown> = {};
     if (entregaDiagnosticoCentavos !== undefined) {
@@ -341,22 +328,15 @@ export async function salvarParcelas(
       update.clientesGanhos = clientesGanhos;
     }
     if (Object.keys(update).length > 0) {
-      escritas.push(
-        database.cacPeriodo.upsert({
-          where: chaveCac(competencia),
-          create: { tenantId: SYSTEM_TENANT_ID, competencia, ...update },
-          update,
-          select: { id: true },
-        })
-      );
+      await database.cacPeriodo.upsert({
+        where: chaveCac(competencia),
+        create: { tenantId: SYSTEM_TENANT_ID, competencia, ...update },
+        update,
+        select: { id: true },
+      });
       for (const [k, v] of Object.entries(update)) {
         diff.push([k, "", String(v ?? "")]);
       }
-    }
-
-    if (escritas.length) {
-      // biome-ignore lint/suspicious/noExplicitAny: Prisma $transaction requires PrismaPromise array
-      await database.$transaction(escritas as any);
     }
 
     await auditar(staff, "empresa.cac.parcelas", competencia, diff);

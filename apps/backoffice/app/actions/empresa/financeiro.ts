@@ -7,7 +7,6 @@ import { z } from "zod";
 import {
   calcularCaixa,
   calcularDre,
-  competenciaValida,
   type LinhaCalculada,
   referenciaPipeline,
   type SemanaCalculada,
@@ -16,6 +15,7 @@ import {
   semanaVazia,
   somarMeses,
 } from "@/lib/empresa/financeiro";
+import { agregarPorMes } from "@/lib/empresa/livro";
 import {
   CAMPOS_INTERVALO,
   competenciasNoIntervalo,
@@ -49,10 +49,6 @@ import { type Result, safeAction } from "@/lib/safe-action";
 
 const ROTA_FINANCEIRO = "/empresa/financeiro";
 const STATUS_PIPELINE = ["ENVIADA", "AGUARDANDO_APROVACAO"];
-
-const Competencia = z
-  .string()
-  .refine(competenciaValida, "Competência no formato AAAA-MM.");
 
 function competencias(i: Intervalo): string[] {
   return semTeto(() => competenciasNoIntervalo(i));
@@ -223,18 +219,13 @@ export type DreView = {
 async function montarDre(intervalo: Intervalo): Promise<DreView> {
   const comps = competencias(intervalo);
   const contasPlano = await contasDoPlano();
-  const lancamentos = await database.lancamentoMensal.findMany({
+  const linhasDoLivro = await database.lancamento.findMany({
     where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
     select: { competencia: true, conta: true, valorCentavos: true },
   });
+  const agregado = agregarPorMes(linhasDoLivro);
 
-  const porMes = comps.map((c) =>
-    Object.fromEntries(
-      lancamentos
-        .filter((l) => l.competencia === c)
-        .map((l) => [l.conta, l.valorCentavos])
-    )
-  );
+  const porMes = comps.map((c) => agregado[c] ?? {});
   const dres: LinhaCalculada[][] = porMes.map((m) =>
     calcularDre(contasPlano, m)
   );
@@ -255,7 +246,7 @@ async function montarDre(intervalo: Intervalo): Promise<DreView> {
     };
   });
 
-  const contasComLancamento = new Set(lancamentos.map((l) => l.conta));
+  const contasComLancamento = new Set(linhasDoLivro.map((l) => l.conta));
   const contasView = contasPlano
     .filter((c) => c.ativa || contasComLancamento.has(c.conta))
     .map((c) => ({
@@ -277,60 +268,6 @@ export async function lerDre(input: {
   return await safeAction(async () => {
     await requirePlatformStaff();
     return await montarDre(IntervaloSchema.parse(input));
-  });
-}
-
-const LancamentoSchema = z
-  .object({
-    competencia: Competencia,
-    conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
-    valorCentavos: z.number().int().nullable(),
-    ...CAMPOS_INTERVALO,
-  })
-  .refine(...REFINE_INTERVALO);
-
-export async function salvarLancamento(
-  input: z.infer<typeof LancamentoSchema>
-): Promise<Result<DreView>> {
-  return await safeAction(async () => {
-    const staff = await requirePlatformStaff();
-    assertCanWrite(staff);
-    const { competencia, conta, valorCentavos, de, ate } =
-      LancamentoSchema.parse(input);
-
-    const contaDoPlano = await database.contaDoPlano.findUnique({
-      where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
-      select: { ativa: true },
-    });
-    if (!contaDoPlano?.ativa) {
-      throw new StaffAuthError(
-        "FORBIDDEN",
-        "Conta desativada ou fora do plano."
-      );
-    }
-
-    const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
-    if (valorCentavos === null) {
-      await database.lancamentoMensal.deleteMany({ where });
-    } else {
-      await database.lancamentoMensal.upsert({
-        where: { tenantId_competencia_conta: where },
-        create: { ...where, valorCentavos },
-        update: { valorCentavos },
-      });
-    }
-    await logPlatformAudit(database, {
-      tenantId: SYSTEM_TENANT_ID,
-      actorUserId: staff.userId,
-      actorName: staff.name,
-      action: "empresa.financeiro.lancamento",
-      entityType: "LancamentoMensal",
-      entityId: `${competencia}/${conta}`,
-      target: `conta ${conta} · ${competencia}`,
-      diff: [[conta, "", valorCentavos === null ? "" : String(valorCentavos)]],
-    });
-    revalidatePath(ROTA_FINANCEIRO);
-    return await montarDre({ de, ate });
   });
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { SectionCard } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import {
@@ -15,6 +16,8 @@ import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
 import type { ContaDoCac } from "@/lib/empresa/plano-de-contas";
+
+const rotuloValor = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 
 /** As oito parcelas da tela, com "como medir" e fonte de cac-modelo.md §2.
  *  As seis primeiras são contas do DRE; as duas últimas, do CacPeriodo. */
@@ -98,6 +101,22 @@ const CONVERSOES: { chave: keyof CacView["conversao"]; rotulo: string }[] = [
 
 const PRODUTOS = ["MERIDIAN", "CHARTER", "SCAFFOLD", "COSMOS"] as const;
 
+/** As duas parcelas que ainda se digitam aqui — as outras seis (4.1–4.6) são
+ *  leitura do livro-razão. */
+const CAMPOS_FORM = PARCELAS.filter(
+  (
+    p
+  ): p is (typeof PARCELAS)[number] & {
+    chave: "entregaDiagnosticoCentavos" | "clientesGanhos";
+  } => p.chave === "entregaDiagnosticoCentavos" || p.chave === "clientesGanhos"
+);
+
+function ehContabil(
+  chave: (typeof PARCELAS)[number]["chave"]
+): chave is ContaDoCac {
+  return chave !== "entregaDiagnosticoCentavos" && chave !== "clientesGanhos";
+}
+
 function valorInicial(v: number | null, dinheiro: boolean): string {
   if (v === null) {
     return "";
@@ -116,7 +135,7 @@ export function Painel({
   const [view, setView] = useState(inicial);
   const [form, setForm] = useState<Record<string, string>>(
     Object.fromEntries(
-      PARCELAS.map((p) => [
+      CAMPOS_FORM.map((p) => [
         p.chave,
         valorInicial(inicial.parcelas[p.chave], p.dinheiro),
       ])
@@ -159,21 +178,9 @@ export function Painel({
   const salvar = useCallback(async () => {
     setSalvando(true);
     setErro(null);
-    const contas: Partial<Record<ContaDoCac, number | null>> = {};
-    for (const p of PARCELAS) {
-      if (
-        p.chave === "entregaDiagnosticoCentavos" ||
-        p.chave === "clientesGanhos"
-      ) {
-        continue;
-      }
-      contas[p.chave] =
-        form[p.chave].trim() === "" ? null : paraCentavos(form[p.chave]);
-    }
     aplicar(
       await salvarParcelas({
         competencia: view.competenciaEditavel,
-        contas,
         entregaDiagnosticoCentavos:
           form.entregaDiagnosticoCentavos.trim() === ""
             ? null
@@ -270,7 +277,7 @@ export function Painel({
       {erro ? <Erro>{erro}</Erro> : null}
 
       <SectionCard
-        subtitle={`${r.preenchidas} de ${r.total} preenchidas`}
+        subtitle={`${r.preenchidas} de ${r.total} preenchidas · as seis primeiras vêm do livro-razão (aba Lançamentos)`}
         title="Parcelas do período"
       >
         <Tabela
@@ -294,22 +301,38 @@ export function Painel({
                 <Celula>
                   <span className="mono">{p.fonte}</span>
                 </Celula>
-                <Celula>
-                  <input
-                    aria-label={p.rotulo}
-                    inputMode={p.dinheiro ? "decimal" : "numeric"}
-                    onChange={(e) =>
-                      setForm({ ...form, [p.chave]: e.target.value })
-                    }
-                    placeholder={
-                      p.chave === "clientesGanhos"
-                        ? `sugestão: ${view.sugestaoClientesGanhos}`
-                        : "R$ —"
-                    }
-                    readOnly={!podeEditar}
-                    style={{ ...INPUT, textAlign: "right" }}
-                    value={form[p.chave]}
-                  />
+                <Celula style={{ textAlign: "right" }}>
+                  {ehContabil(p.chave) ? (
+                    <Link
+                      aria-label={p.rotulo}
+                      href={`/empresa/financeiro?aba=lancamentos&de=${view.intervalo.de}&ate=${view.intervalo.ate}&conta=${p.chave}`}
+                      style={{
+                        display: "block",
+                        color: "var(--ink)",
+                        textDecoration: "none",
+                      }}
+                    >
+                      <span className="mono">
+                        {rotuloValor(view.parcelas[p.chave])}
+                      </span>
+                    </Link>
+                  ) : (
+                    <input
+                      aria-label={p.rotulo}
+                      inputMode={p.dinheiro ? "decimal" : "numeric"}
+                      onChange={(e) =>
+                        setForm({ ...form, [p.chave]: e.target.value })
+                      }
+                      placeholder={
+                        p.chave === "clientesGanhos"
+                          ? `sugestão: ${view.sugestaoClientesGanhos}`
+                          : "R$ —"
+                      }
+                      readOnly={!podeEditar}
+                      style={{ ...INPUT, textAlign: "right" }}
+                      value={form[p.chave]}
+                    />
+                  )}
                 </Celula>
               </TableRow>
             ))}

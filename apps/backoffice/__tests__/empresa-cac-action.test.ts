@@ -1,7 +1,9 @@
-// empresa-cac-action.test.ts — as seis parcelas 4.x moram em LancamentoMensal:
-// salvar parcela é escrever no DRE. Nulo apaga o lançamento. lerCac agrega por
-// intervalo de competências (spec 2026-09-06 §5.2): soma dos meses, nula se
-// algum mês faltar; conversão e alocação são as do último mês.
+// empresa-cac-action.test.ts — as seis parcelas 4.x vêm do livro-razão
+// (database.lancamento, somado por groupBy): esta action só lê. Nenhuma
+// escrita passa mais por aqui — contas saiu do schema para provar isso.
+// lerCac agrega por intervalo de competências (spec 2026-09-06 §5.2): soma
+// dos meses, nula se algum mês faltar; conversão e alocação são as do
+// último mês.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -9,9 +11,7 @@ const mocks = vi.hoisted(() => ({
   assertCanWrite: vi.fn(),
   logPlatformAudit: vi.fn(),
   revalidatePath: vi.fn(),
-  lancFindMany: vi.fn(),
-  lancUpsert: vi.fn(),
-  lancDeleteMany: vi.fn(),
+  lancGroupBy: vi.fn(),
   cacFindMany: vi.fn(),
   cacUpsert: vi.fn(),
   alocDeleteMany: vi.fn(),
@@ -56,10 +56,8 @@ vi.mock("@repo/provisioning", () => ({
 }));
 vi.mock("@repo/database", () => ({
   database: {
-    lancamentoMensal: {
-      findMany: mocks.lancFindMany,
-      upsert: mocks.lancUpsert,
-      deleteMany: mocks.lancDeleteMany,
+    lancamento: {
+      groupBy: mocks.lancGroupBy,
     },
     cacPeriodo: { findMany: mocks.cacFindMany, upsert: mocks.cacUpsert },
     cacAlocacaoProduto: {
@@ -97,8 +95,8 @@ const staff = {
 function resetar() {
   for (const m of Object.values(mocks)) m.mockReset();
   mocks.requirePlatformStaff.mockResolvedValue(staff);
-  mocks.lancFindMany.mockResolvedValue([
-    { competencia: "2026-09", conta: "4.1", valorCentavos: 100 },
+  mocks.lancGroupBy.mockResolvedValue([
+    { competencia: "2026-09", conta: "4.1", _sum: { valorCentavos: 100 } },
   ]);
   mocks.cacFindMany.mockResolvedValue([
     {
@@ -139,9 +137,10 @@ describe("lerCac", () => {
     // 25 × 14.900 × 0,88 = 327.800 — a fórmula de precificar.test.ts.
     expect(res.data.mensalidadeReferenciaCentavos).toBe(327_800);
     expect(res.data.sugestaoClientesGanhos).toBe(1);
-    expect(mocks.lancFindMany.mock.calls[0][0].where).toMatchObject({
+    expect(mocks.lancGroupBy.mock.calls[0][0].where).toMatchObject({
       tenantId: "system",
       competencia: { in: ["2026-09"] },
+      conta: { in: expect.arrayContaining(["4.1", "4.6"]) },
     });
   });
 
@@ -157,10 +156,10 @@ describe("lerCac", () => {
   });
 
   it("dois meses: soma as parcelas, nulo se um mês falta, conversão do último mês, editavel=false", async () => {
-    mocks.lancFindMany.mockResolvedValue([
-      { competencia: "2026-08", conta: "4.1", valorCentavos: 100 },
-      { competencia: "2026-09", conta: "4.1", valorCentavos: 200 },
-      { competencia: "2026-09", conta: "4.2", valorCentavos: 50 },
+    mocks.lancGroupBy.mockResolvedValue([
+      { competencia: "2026-08", conta: "4.1", _sum: { valorCentavos: 100 } },
+      { competencia: "2026-09", conta: "4.1", _sum: { valorCentavos: 200 } },
+      { competencia: "2026-09", conta: "4.2", _sum: { valorCentavos: 50 } },
     ]);
     mocks.cacFindMany.mockResolvedValue([
       {
@@ -228,46 +227,22 @@ describe("salvarParcelas", () => {
     });
     const res = await salvarParcelas({
       competencia: "2026-09",
-      contas: { "4.1": 5 },
+      entregaDiagnosticoCentavos: 5,
       de: "2026-09-01",
       ate: "2026-09-30",
     });
     expect(res.ok).toBe(false);
   });
 
-  it("conta 4.x vira upsert em LancamentoMensal; nulo apaga", async () => {
-    await salvarParcelas({
-      competencia: "2026-09",
-      contas: { "4.1": 500, "4.2": null },
-      de: "2026-09-01",
-      ate: "2026-09-30",
-    });
-    expect(mocks.lancUpsert.mock.calls[0][0].where).toEqual({
-      tenantId_competencia_conta: {
-        tenantId: "system",
-        competencia: "2026-09",
-        conta: "4.1",
-      },
-    });
-    expect(mocks.lancUpsert.mock.calls[0][0].update).toEqual({
-      valorCentavos: 500,
-    });
-    expect(mocks.lancDeleteMany.mock.calls[0][0].where).toEqual({
-      tenantId: "system",
-      competencia: "2026-09",
-      conta: "4.2",
-    });
-  });
-
-  it("conta fora das seis é recusada", async () => {
+  it("enviar contas é recusado pelo schema — ninguém volta a gravar por ali", async () => {
     const res = await salvarParcelas({
       competencia: "2026-09",
-      contas: { "5.1": 5 } as never,
+      contas: { "4.1": 500 },
       de: "2026-09-01",
       ate: "2026-09-30",
-    });
+    } as never);
     expect(res.ok).toBe(false);
-    expect(mocks.lancUpsert).not.toHaveBeenCalled();
+    expect(mocks.cacUpsert).not.toHaveBeenCalled();
   });
 
   it("entrega e clientes ganhos vão para CacPeriodo, por upsert na competência", async () => {
@@ -293,7 +268,7 @@ describe("salvarParcelas", () => {
       (
         await salvarParcelas({
           competencia: "2026-09",
-          contas: { "4.1": 1.5 },
+          entregaDiagnosticoCentavos: 1.5,
           de: "2026-09-01",
           ate: "2026-09-30",
         })
