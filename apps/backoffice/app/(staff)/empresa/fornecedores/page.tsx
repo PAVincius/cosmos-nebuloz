@@ -19,11 +19,7 @@ export default async function FornecedoresPage() {
         title="DPA dos fornecedores"
       />
       {res.ok ? (
-        <Inventario
-          contadores={res.data.contadores}
-          iniciais={res.data.linhas}
-          podeEscrever={staff.canWrite}
-        />
+        <Inventario iniciais={res.data.linhas} podeEscrever={staff.canWrite} />
       ) : (
         <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {res.error}

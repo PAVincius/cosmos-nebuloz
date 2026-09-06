@@ -1,6 +1,6 @@
 "use server";
 
-import { database } from "@repo/database";
+import { database, ProductModule } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -35,14 +35,6 @@ const ROTA_CAC = "/empresa/cac";
  *  (cac-modelo.md §3): Scale, mínimo de assentos, termo anual. */
 const PLANO_REFERENCIA = "scale";
 const TERMO_REFERENCIA = "ANUAL";
-
-const PRODUTOS = [
-  "COSMOS",
-  "CHARTER",
-  "SIGNAL",
-  "MERIDIAN",
-  "SCAFFOLD",
-] as const;
 
 export type ConversaoView = {
   convLeadDiscoveryPercent: number | null;
@@ -314,7 +306,7 @@ const AlocacaoSchema = z.object({
   competencia: Competencia,
   alocacoes: z.array(
     z.object({
-      produto: z.enum(PRODUTOS),
+      produto: z.enum(ProductModule),
       pesoPercent: z.number().int().min(0).max(100),
     })
   ),

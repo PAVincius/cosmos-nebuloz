@@ -14,9 +14,11 @@ export type ParcelasCac = Record<ContaDoCac, number | null> & {
 
 export type AlocacaoCac = { produto: string; pesoPercent: number };
 
+export const PARCELAS_TOTAL = 8;
+
 export type ResultadoCac = {
   preenchidas: number;
-  total: 8;
+  total: typeof PARCELAS_TOTAL;
   cacCentavos: number | null;
   porProduto: {
     produto: string;
@@ -25,8 +27,6 @@ export type ResultadoCac = {
   }[];
   paybackMeses: number | null;
 };
-
-export const PARCELAS_TOTAL = 8;
 
 export function calcularCac(
   p: ParcelasCac,
@@ -61,7 +61,13 @@ export function calcularCac(
       ? null
       : Math.round((cacCentavos / mensalidadeReferenciaCentavos) * 10) / 10;
 
-  return { preenchidas, total: 8, cacCentavos, porProduto, paybackMeses };
+  return {
+    preenchidas,
+    total: PARCELAS_TOTAL,
+    cacCentavos,
+    porProduto,
+    paybackMeses,
+  };
 }
 
 export function pesosSomam100(alocacoes: AlocacaoCac[]): boolean {

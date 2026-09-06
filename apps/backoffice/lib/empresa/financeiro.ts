@@ -24,18 +24,6 @@ export type LinhaCalculada = {
   percent?: number | null;
 };
 
-function somaContas(l: LancamentosDoMes, contas: string[]): number | null {
-  let total = 0;
-  for (const c of contas) {
-    const v = l[c];
-    if (v === undefined) {
-      return null;
-    }
-    total += v;
-  }
-  return total;
-}
-
 function soma(valores: (number | null)[]): number | null {
   let total = 0;
   for (const v of valores) {
@@ -45,6 +33,10 @@ function soma(valores: (number | null)[]): number | null {
     total += v;
   }
   return total;
+}
+
+function somaContas(l: LancamentosDoMes, contas: string[]): number | null {
+  return soma(contas.map((c) => l[c] ?? null));
 }
 
 function sub(a: number | null, b: number | null): number | null {

@@ -53,6 +53,13 @@ vi.mock("@repo/database", () => ({
     proposal: { count: mocks.proposalCount },
     $transaction: (fns: Promise<unknown>[]) => Promise.all(fns),
   },
+  ProductModule: {
+    COSMOS: "COSMOS",
+    CHARTER: "CHARTER",
+    SIGNAL: "SIGNAL",
+    MERIDIAN: "MERIDIAN",
+    SCAFFOLD: "SCAFFOLD",
+  },
 }));
 
 import {

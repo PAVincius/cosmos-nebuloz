@@ -12,7 +12,7 @@ import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { WriteButton } from "@/components/write-button";
 import { formatarData, ROTULO_ESTADO, TOM_ESTADO } from "@/lib/empresa/formato";
-import type { Contadores } from "@/lib/empresa/fornecedores";
+import { contadores } from "@/lib/empresa/fornecedores";
 
 /**
  * Inventário de fornecedores com o estado do DPA.
@@ -203,11 +203,9 @@ function LinhaFornecedor({
 
 export function Inventario({
   iniciais,
-  contadores: iniciaisContadores,
   podeEscrever,
 }: {
   iniciais: FornecedorDpaRow[];
-  contadores: Contadores;
   podeEscrever: boolean;
 }) {
   const [linhas, setLinhas] = useState(iniciais);
@@ -215,18 +213,7 @@ export function Inventario({
   const [erro, setErro] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
 
-  const contadores = useMemo(
-    () => ({
-      ...iniciaisContadores,
-      embutidos: linhas.filter((l) => l.estado === "EMBUTIDO").length,
-      aAssinar: linhas.filter((l) => l.estado === "A_ASSINAR").length,
-      semDocumento: linhas.filter((l) => l.estado === "SEM_DOCUMENTO").length,
-      bloqueiamVenda: linhas.filter(
-        (l) => l.bloqueiaVenda && l.estado !== "ASSINADO"
-      ).length,
-    }),
-    [linhas, iniciaisContadores]
-  );
+  const kpis = useMemo(() => contadores(linhas), [linhas]);
 
   const visiveis = linhas.filter((l) => linhaVisivel(l, filtro));
 
@@ -285,25 +272,25 @@ export function Inventario({
           icon="check"
           label="DPA embutido nos termos"
           tone="blue"
-          value={contadores.embutidos}
+          value={kpis.embutidos}
         />
         <KpiCard
           icon="edit"
           label="A aceitar ou assinar"
           tone="blue"
-          value={contadores.aAssinar}
+          value={kpis.aAssinar}
         />
         <KpiCard
           icon="eyeOff"
           label="Sem documento público"
           tone="neutral"
-          value={contadores.semDocumento}
+          value={kpis.semDocumento}
         />
         <KpiCard
           icon="alert"
           label="Bloqueiam venda hoje"
           tone="amber"
-          value={contadores.bloqueiamVenda}
+          value={kpis.bloqueiamVenda}
         />
       </div>
 
