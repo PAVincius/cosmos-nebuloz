@@ -140,6 +140,11 @@ export const BO_NAV: NavSection[] = [
     section: "Ferramentas",
     items: [
       {
+        href: "/ferramentas/processos",
+        icon: "graph",
+        label: "Mapa de processos",
+      },
+      {
         href: "/ferramentas/bpmn",
         icon: "fileCode",
         label: "Modelagem BPMN",
