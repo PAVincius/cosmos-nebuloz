@@ -109,14 +109,15 @@ const AtualizarEstagioSchema = z.object({
   codigo: z.enum(ESTAGIOS),
   pesoPercent: z.number().int().min(0).max(100).optional(),
   tetoDias: z.number().int().min(1).optional(),
-  criterios: z.array(z.string().trim().min(1)).optional(),
+  criterios: z.array(z.string().trim().min(1).max(200)).max(20).optional(),
   motivo: z
     .string()
     .trim()
     .min(
       20,
       "Conte por que a fórmula está mudando — peso e teto sem registro é número que ninguém aceita."
-    ),
+    )
+    .max(1000),
 });
 
 export async function atualizarEstagio(
@@ -249,10 +250,18 @@ export async function atualizarCanal(
       throw new StaffAuthError("FORBIDDEN", "Canal não encontrado.");
     }
 
-    await database.canalDeLead.update({
-      where: { id: canal.id },
+    // `updateMany` (não `update`) porque o `where` precisa carregar o estado
+    // lido — mesma proteção de corrida das demais actions deste módulo.
+    const atualizado = await database.canalDeLead.updateMany({
+      where: { id: canal.id, cacMedioCentavos: canal.cacMedioCentavos },
       data: { cacMedioCentavos: dados.cacMedioCentavos },
     });
+    if (atualizado.count === 0) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Canal mudou de configuração; recarregue e tente de novo"
+      );
+    }
 
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,

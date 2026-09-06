@@ -11,7 +11,7 @@ const mocks = vi.hoisted(() => ({
   mudancaDeEstagioFindMany: vi.fn(),
   mudancaDeEstagioCreate: vi.fn(),
   canalDeLeadFindFirst: vi.fn(),
-  canalDeLeadUpdate: vi.fn(),
+  canalDeLeadUpdateMany: vi.fn(),
   transaction: vi.fn(),
   revalidatePath: vi.fn(),
 }));
@@ -45,7 +45,7 @@ vi.mock("@repo/database", () => ({
     },
     canalDeLead: {
       findFirst: mocks.canalDeLeadFindFirst,
-      update: mocks.canalDeLeadUpdate,
+      updateMany: mocks.canalDeLeadUpdateMany,
     },
     $transaction: mocks.transaction,
   },
@@ -78,6 +78,7 @@ function resetar() {
   // `updateMany` real devolve `{ count }` — `count: 1` é o caminho feliz
   // (nenhuma concorrência); o teste de corrida sobrescreve para `0`.
   mocks.estagioDoFunilUpdateMany.mockResolvedValue({ count: 1 });
+  mocks.canalDeLeadUpdateMany.mockResolvedValue({ count: 1 });
   mocks.transaction.mockImplementation(
     async (fn: (t: unknown) => Promise<unknown>) => await fn(tx)
   );
@@ -267,6 +268,32 @@ describe("atualizarEstagio", () => {
     expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
   });
 
+  it("recusa motivo acima de 1000 caracteres", async () => {
+    mocks.estagioDoFunilFindFirst.mockResolvedValue(estagioAtual());
+
+    const res = await atualizarEstagio({
+      codigo: "DISCOVERY",
+      pesoPercent: 40,
+      motivo: "a".repeat(1001),
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("recusa mais de 20 critérios", async () => {
+    mocks.estagioDoFunilFindFirst.mockResolvedValue(estagioAtual());
+
+    const res = await atualizarEstagio({
+      codigo: "DISCOVERY",
+      criterios: Array.from({ length: 21 }, (_, i) => `Critério ${i}`),
+      motivo: "Recalibrado após revisão trimestral do pipeline",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.estagioDoFunilUpdateMany).not.toHaveBeenCalled();
+  });
+
   it("estágio mudou de configuração entre a leitura e a escrita: recusa sem duplicar a mudança", async () => {
     mocks.estagioDoFunilFindFirst.mockResolvedValue(estagioAtual());
     mocks.estagioDoFunilUpdateMany.mockResolvedValue({ count: 0 });
@@ -296,7 +323,7 @@ describe("atualizarCanal", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.canalDeLeadUpdate).not.toHaveBeenCalled();
+    expect(mocks.canalDeLeadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("recusa canal inexistente", async () => {
@@ -308,7 +335,7 @@ describe("atualizarCanal", () => {
     });
 
     expect(res.ok).toBe(false);
-    expect(mocks.canalDeLeadUpdate).not.toHaveBeenCalled();
+    expect(mocks.canalDeLeadUpdateMany).not.toHaveBeenCalled();
   });
 
   it("grava o CAC médio informado", async () => {
@@ -323,7 +350,7 @@ describe("atualizarCanal", () => {
     });
 
     expect(res.ok).toBe(true);
-    expect(mocks.canalDeLeadUpdate.mock.calls[0][0].data).toMatchObject({
+    expect(mocks.canalDeLeadUpdateMany.mock.calls[0][0].data).toMatchObject({
       cacMedioCentavos: 5000,
     });
   });
@@ -340,8 +367,23 @@ describe("atualizarCanal", () => {
     });
 
     expect(res.ok).toBe(true);
-    expect(mocks.canalDeLeadUpdate.mock.calls[0][0].data).toMatchObject({
+    expect(mocks.canalDeLeadUpdateMany.mock.calls[0][0].data).toMatchObject({
       cacMedioCentavos: null,
     });
+  });
+
+  it("canal mudou de configuração entre a leitura e a escrita: recusa", async () => {
+    mocks.canalDeLeadFindFirst.mockResolvedValue({
+      id: "c-1",
+      cacMedioCentavos: null,
+    });
+    mocks.canalDeLeadUpdateMany.mockResolvedValue({ count: 0 });
+
+    const res = await atualizarCanal({
+      slug: "indicacao",
+      cacMedioCentavos: 5000,
+    });
+
+    expect(res.ok).toBe(false);
   });
 });

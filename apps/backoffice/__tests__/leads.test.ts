@@ -523,6 +523,39 @@ describe("marcarPerdido", () => {
     expect(mocks.proposalCreate).not.toHaveBeenCalled();
   });
 
+  it("recusa nota acima de 500 caracteres", async () => {
+    mocks.leadFindFirst.mockResolvedValue(leadAberto());
+
+    const res = await marcarPerdido({
+      id: "l-1",
+      motivo: "PRECO",
+      nota: "a".repeat(501),
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("recusa marcar perdido um lead já GANHO — proposta ACEITA", async () => {
+    mocks.leadFindFirst.mockResolvedValue(
+      leadAberto({
+        estagio: "PROPOSAL",
+        propostaId: "p-0",
+        proposta: { status: "ACEITA" },
+      })
+    );
+
+    const res = await marcarPerdido({
+      id: "l-1",
+      motivo: "PRECO",
+      nota: "Preço acima do orçamento do trimestre",
+    });
+
+    expect(res.ok).toBe(false);
+    expect(mocks.leadUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.historicoDeEstagioCreate).not.toHaveBeenCalled();
+  });
+
   it("recusa marcar perdido um lead já perdido", async () => {
     mocks.leadFindFirst.mockResolvedValue(
       leadAberto({ perdidoEm: new Date("2026-08-01") })

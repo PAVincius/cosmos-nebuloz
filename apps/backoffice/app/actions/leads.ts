@@ -275,7 +275,8 @@ export async function criarLead(
 
 /** Busca o lead escopado ao tenant, sem checar se ele já saiu do funil —
  *  `marcarPerdido` precisa disto puro porque um lead em PROPOSAL (já com
- *  `propostaId` gravado) ainda pode ser perdido pelo funil. */
+ *  `propostaId` gravado) ainda pode ser perdido pelo funil. A `proposta` vem
+ *  junto para `marcarPerdido` recusar um lead já GANHO (proposta ACEITA). */
 async function buscarLead(id: string) {
   const lead = await database.lead.findFirst({
     where: { id, tenantId: SYSTEM_TENANT_ID },
@@ -287,6 +288,7 @@ async function buscarLead(id: string) {
       contatoEmail: true,
       propostaId: true,
       perdidoEm: true,
+      proposta: { select: { status: true } },
     },
   });
   if (!lead) {
@@ -341,7 +343,12 @@ export async function moverEstagio(
       // aberto não podem as duas passar: sem isto, a segunda sobrescreve o
       // estágio da primeira e ainda duplica a linha de histórico.
       const atualizado = await tx.lead.updateMany({
-        where: { id: lead.id, estagio: lead.estagio, perdidoEm: null },
+        where: {
+          id: lead.id,
+          tenantId: SYSTEM_TENANT_ID,
+          estagio: lead.estagio,
+          perdidoEm: null,
+        },
         data: { estagio: dados.estagio, estagioDesde: new Date() },
       });
       if (atualizado.count === 0) {
@@ -430,7 +437,8 @@ const MarcarPerdidoSchema = z.object({
     .min(
       12,
       "Conte o que aconteceu — perda sem nota não ensina nada sobre preço nem ICP para o próximo."
-    ),
+    )
+    .max(500),
 });
 
 /** Permitida também em PROPOSAL: recusa da proposta pelo funil. A proposta em
@@ -452,12 +460,24 @@ export async function marcarPerdido(
       );
     }
 
+    if (situacaoDe(null, lead.proposta?.status ?? null) === "GANHO") {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Lead ganho não pode ser marcado como perdido"
+      );
+    }
+
     await database.$transaction(async (tx) => {
       // Mesma proteção de `moverEstagio`: o `where` carrega o estado lido, ou
       // duas chamadas concorrentes marcando o mesmo lead como perdido
       // duplicariam a linha de histórico.
       const atualizado = await tx.lead.updateMany({
-        where: { id: lead.id, estagio: lead.estagio, perdidoEm: null },
+        where: {
+          id: lead.id,
+          tenantId: SYSTEM_TENANT_ID,
+          estagio: lead.estagio,
+          perdidoEm: null,
+        },
         data: {
           perdidoEm: new Date(),
           perdidoNoEstagio: lead.estagio,
@@ -550,6 +570,7 @@ export async function converterEmProposta(
       const atualizado = await tx.lead.updateMany({
         where: {
           id: lead.id,
+          tenantId: SYSTEM_TENANT_ID,
           estagio: lead.estagio,
           perdidoEm: null,
           propostaId: null,
