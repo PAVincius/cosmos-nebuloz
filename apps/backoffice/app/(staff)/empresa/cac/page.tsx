@@ -29,7 +29,8 @@ export default async function CacPage({
         title="CAC totalmente carregado"
       />
       {res.ok ? (
-        <Painel inicial={res.data} podeEscrever={staff.canWrite} />
+        // key na competência: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
+        <Painel inicial={res.data} key={alvo} podeEscrever={staff.canWrite} />
       ) : (
         <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
           {res.error}

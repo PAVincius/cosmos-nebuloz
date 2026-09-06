@@ -67,7 +67,12 @@ export default async function FinanceiroPage({
         </p>
       ) : null}
       {dre?.ok ? (
-        <Dre inicial={dre.data} podeEscrever={staff.canWrite} />
+        // key na competência: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
+        <Dre
+          inicial={dre.data}
+          key={competenciaFinal}
+          podeEscrever={staff.canWrite}
+        />
       ) : null}
       {caixaErro !== null ? (
         <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
