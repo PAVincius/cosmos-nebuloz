@@ -114,6 +114,7 @@ export async function lerDre(input: {
 
 const LancamentoSchema = z.object({
   competencia: Competencia,
+  competenciaFinal: Competencia.optional(),
   conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
   valorCentavos: z.number().int().nullable(),
 });
@@ -124,7 +125,8 @@ export async function salvarLancamento(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { competencia, conta, valorCentavos } = LancamentoSchema.parse(input);
+    const { competencia, competenciaFinal, conta, valorCentavos } =
+      LancamentoSchema.parse(input);
     const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
 
     if (valorCentavos === null) {
@@ -147,7 +149,7 @@ export async function salvarLancamento(
       diff: [[conta, "", valorCentavos === null ? "" : String(valorCentavos)]],
     });
     revalidatePath(ROTA_FINANCEIRO);
-    return await montarDre(competencia);
+    return await montarDre(competenciaFinal ?? competencia);
   });
 }
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { database, withTenantDb } from "@repo/database";
+import { database, type Prisma, withTenantDb } from "@repo/database";
 import {
   deriveVendorMaxClass,
   logPlatformAudit,
@@ -81,19 +81,7 @@ const SELECT = {
   notas: true,
 } as const;
 
-type Linha = {
-  [K in keyof typeof SELECT]: K extends "verificadoEm"
-    ? Date
-    : K extends "pedidoEm" | "assinadoEm" | "exportadoAoCharterEm"
-      ? Date | null
-      : K extends "estado"
-        ? EstadoDpa
-        : K extends "classificacaoProvisoria" | "bloqueiaVenda"
-          ? boolean
-          : K extends "codigo" | "nome"
-            ? string
-            : string | null;
-};
+type Linha = Prisma.FornecedorDpaGetPayload<{ select: typeof SELECT }>;
 
 const iso = (d: Date | null): string | null => (d ? d.toISOString() : null);
 
@@ -123,7 +111,7 @@ async function buscar(codigo: string): Promise<Linha> {
       `Fornecedor ${codigo} não existe no inventário.`
     );
   }
-  return l as Linha;
+  return l;
 }
 
 export async function listarFornecedoresDpa(): Promise<
@@ -131,11 +119,11 @@ export async function listarFornecedoresDpa(): Promise<
 > {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    const linhas = (await database.fornecedorDpa.findMany({
+    const linhas = await database.fornecedorDpa.findMany({
       where: { tenantId: SYSTEM_TENANT_ID },
       orderBy: { codigo: "asc" },
       select: SELECT,
-    })) as Linha[];
+    });
     return { linhas: linhas.map(paraRow), contadores: contadores(linhas) };
   });
 }
@@ -160,11 +148,11 @@ export async function aplicarAcaoDpa(
       throw new StaffAuthError("FORBIDDEN", r.erro);
     }
 
-    const depois = (await database.fornecedorDpa.update({
+    const depois = await database.fornecedorDpa.update({
       where: chave(codigo),
       data: r.patch,
       select: SELECT,
-    })) as Linha;
+    });
 
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,
@@ -212,11 +200,11 @@ export async function atualizarFornecedorDpa(
       }).filter(([, v]) => v !== undefined)
     );
 
-    const depois = (await database.fornecedorDpa.update({
+    const depois = await database.fornecedorDpa.update({
       where: chave(codigo),
       data,
       select: SELECT,
-    })) as Linha;
+    });
 
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,
@@ -293,10 +281,12 @@ export async function exportarAoCharter(
           dpa,
           clauseCodes: vendor.clauses.map((c) => c.clause.code),
         });
+        const region = f.regiao ?? vendor.region;
+        const retention = f.retencao ?? vendor.retention;
         const data = {
           dpa,
-          region: f.regiao,
-          retention: f.retencao,
+          region,
+          retention,
           renewalAt,
           maxClass,
         };
@@ -312,8 +302,8 @@ export async function exportarAoCharter(
           note: "Exportado da tela Fornecedores e DPA do back-office.",
           diff: [
             ["dpa", String(vendor.dpa), String(dpa)],
-            ["region", vendor.region ?? "", f.regiao ?? ""],
-            ["retention", vendor.retention ?? "", f.retencao ?? ""],
+            ["region", vendor.region ?? "", region ?? ""],
+            ["retention", vendor.retention ?? "", retention ?? ""],
             ["maxClass", vendor.maxClass ?? "", maxClass ?? ""],
           ],
         });

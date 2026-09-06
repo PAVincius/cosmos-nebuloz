@@ -50,6 +50,7 @@ export function Dre({
       setErro(null);
       const res = await salvarLancamento({
         competencia,
+        competenciaFinal: ultima,
         conta,
         valorCentavos: texto.trim() === "" ? null : paraCentavos(texto),
       });
@@ -59,7 +60,7 @@ export function Dre({
       }
       setView(res.data);
     },
-    []
+    [ultima]
   );
 
   const larguras = [

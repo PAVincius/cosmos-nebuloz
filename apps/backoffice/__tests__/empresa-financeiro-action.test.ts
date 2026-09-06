@@ -133,6 +133,18 @@ describe("salvarLancamento", () => {
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/empresa/financeiro");
   });
 
+  it("lançar num mês anterior mantém a janela em competenciaFinal", async () => {
+    const res = await salvarLancamento({
+      competencia: "2026-07",
+      competenciaFinal: "2026-09",
+      conta: "1.1",
+      valorCentavos: 100,
+    });
+    expect(res.ok).toBe(true);
+    if (!res.ok) return;
+    expect(res.data.competencias).toEqual(["2026-07", "2026-08", "2026-09"]);
+  });
+
   it("MEMBER não lança", async () => {
     mocks.assertCanWrite.mockImplementation(() => {
       throw new Error("Somente leitura");

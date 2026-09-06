@@ -43,17 +43,19 @@ const dinheiro = (v: number | null) => (v === null ? "—" : formatarBRL(v));
 function Input({
   s,
   chave,
+  rotulo,
   podeEscrever,
   gravar,
 }: {
   s: Semana;
   chave: CampoSemana;
+  rotulo: string;
   podeEscrever: boolean;
   gravar: (semanaInicio: string, chave: CampoSemana, texto: string) => void;
 }) {
   return (
     <input
-      aria-label={`${chave} ${s.semanaInicio}`}
+      aria-label={`${rotulo} ${s.semanaInicio}`}
       defaultValue={
         s[chave] === null
           ? ""
@@ -141,6 +143,7 @@ export function Caixa({
                 gravar={gravar}
                 key={`${chave}-${s.semanaInicio}-${s[chave] ?? ""}`}
                 podeEscrever={podeEscrever}
+                rotulo={rotulo}
                 s={s}
               />
             )}

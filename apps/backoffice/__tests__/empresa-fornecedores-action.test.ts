@@ -242,6 +242,24 @@ describe("exportarAoCharter", () => {
     expect(Object.keys(data)).not.toContain("tier");
   });
 
+  it("coluna nula no FornecedorDpa não apaga region/retention já confirmados no Charter", async () => {
+    mocks.findUnique.mockResolvedValue({ ...LINHA, regiao: null });
+    mocks.vendorFindUnique.mockResolvedValue({
+      id: "cv-1",
+      code: "V-08",
+      tier: "REVIEW",
+      dpa: false,
+      region: "EU",
+      retention: null,
+      renewalAt: null,
+      maxClass: "PUBLIC",
+      clauses: [{ clause: { code: "CL-01" } }],
+    });
+    await exportarAoCharter({ codigos: ["V-08"] });
+    const data = mocks.vendorUpdate.mock.calls[0][0].data;
+    expect(data.region).toBe("EU");
+  });
+
   it("A_ASSINAR exporta dpa=false e mantém o teto Público", async () => {
     await exportarAoCharter({ codigos: ["V-08"] });
     const data = mocks.vendorUpdate.mock.calls[0][0].data;
