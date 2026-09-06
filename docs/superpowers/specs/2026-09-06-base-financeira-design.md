@@ -7,8 +7,9 @@ receber, orçado contra realizado, e receita recorrente.
 Decisões tomadas com o usuário em 2026-09-06: lançamento vira linha
 individual e o DRE passa a somar as linhas; baixar um título gera o lançamento
 na competência; MRR sai de uma assinatura enxuta por cliente, e crédito de IA
-segue a mecânica da ElevenLabs — franquia mensal por tier, que reseta, com
-excedente cobrado por unidade ou barrado.
+segue a mecânica da ElevenLabs — franquia mensal por tier, que reseta, com o
+excedente cobrado por unidade a uma taxa que cai conforme o tier sobe. Não há
+venda de crédito avulso.
 
 ## 0. Escopo, colisão e cortes
 
@@ -34,6 +35,7 @@ parte arriscada e não pode viajar junto com tela nova:
 |---|---|
 | Medição de crédito por chamada | não existe telemetria de uso hoje. O consumo entra por competência; quando houver medição, ela substitui o número sem mudar o modelo |
 | Conciliação bancária e importação de OFX | livro-razão primeiro. Sem ele não há contra o que conciliar |
+| Venda de crédito avulso | decisão do usuário: crédito só vem por franquia do degrau, e o que passa dela é cobrado por unidade. Sem pacote comprado não há receita diferida, e o excedente é consumo já entregue, reconhecido no mês |
 | Multimoeda | a Nebuloz fatura em real. `CurrencyRate` existe no FinOps do produto e não se aplica aqui |
 | Regime de competência automático para serviço faturado em parcelas | v1 lança na competência informada. Rateio automático quando houver contrato parcelado de verdade |
 | Nota fiscal e integração com prefeitura | fora do escopo do back-office |
@@ -181,9 +183,11 @@ model AssinaturaDoTenant {
   /// Franquia mensal de créditos de IA do degrau. Reseta todo mês e não
   /// acumula — é o que torna a receita da franquia recorrente de verdade.
   creditosMesIncluidos Int @default(0)
-  /// Preço do crédito acima da franquia. Nulo = excedente barrado em vez de
-  /// cobrado, que é o comportamento dos degraus de entrada.
-  precoCreditoExtraCentavos Int?
+  /// Preço do crédito acima da franquia, por unidade. Cai conforme o degrau
+  /// sobe — é o desconto por volume que faz subir de tier valer a pena.
+  /// Acordado como o valor mensal, e não lido do catálogo, pelo mesmo motivo:
+  /// desconto é a regra nas primeiras vendas.
+  precoCreditoExtraCentavos Int
 
   iniciouEm  DateTime  @db.Date
   /// Nulo = ativa. Preenchido = saiu, e sai da conta de MRR a partir daí.
@@ -229,9 +233,9 @@ model MudancaDeAssinatura {
   @@index([tenantId, competencia])
 }
 
-/// Consumo e venda de crédito por cliente e mês. Uma linha por competência,
-/// digitada enquanto não há telemetria. Quando houver medição por chamada,
-/// ela preenche `consumidos` e o resto do modelo não muda.
+/// Consumo de crédito por cliente e mês. Uma linha por competência, digitada
+/// enquanto não há telemetria. Quando houver medição por chamada, ela
+/// preenche `consumidos` e o resto do modelo não muda.
 model CreditoDoMes {
   id       String @id @default(cuid())
   tenantId String
@@ -245,9 +249,12 @@ model CreditoDoMes {
   franquia   Int
   consumidos Int @default(0)
 
-  /// Créditos avulsos vendidos no mês, além da franquia.
-  compradosCentavos Int @default(0)
-  /// Excedente cobrado por unidade, quando o degrau permite.
+  /// Taxa por crédito vigente no mês, copiada da assinatura pelo mesmo motivo
+  /// que a franquia: o degrau muda e o histórico tem que continuar explicável.
+  precoCreditoExtraCentavos Int
+  /// Cobrado pelo que passou da franquia: (consumidos - franquia) x taxa,
+  /// nunca negativo. Guardado e não derivado na leitura porque a taxa do mês
+  /// pode ter mudado depois.
   excedenteCentavos Int @default(0)
 
   atualizadoEm DateTime @updatedAt
@@ -257,10 +264,15 @@ model CreditoDoMes {
 }
 ```
 
-Crédito avulso vendido tem validade. Crédito comprado que não expira é receita
-diferida, ou seja, passivo até o consumo, e reconhecê-lo na venda infla o mês.
-A validade é o que torna honesto reconhecer na venda, e é a razão de a
-franquia mensal que reseta ser o desenho preferido.
+Sem crédito avulso, não existe receita diferida neste modelo: a franquia é
+recorrente e já está no valor mensal, e o excedente é consumo já entregue,
+reconhecido na competência em que aconteceu. Foi o que a decisão de não vender
+pacote comprou de simplicidade.
+
+Fica um risco de negócio registrado, que é decisão sua e não código desta
+entrega: excedente cobrado sem teto significa fatura sem teto. Um cliente que
+dispara consumo gera uma cobrança que ninguém combinou. Se um limite for
+desejado, ele é campo na assinatura e regra no produto, não nesta tela.
 
 ## 2. Regras puras
 
@@ -277,7 +289,8 @@ franquia mensal que reseta ser o desenho preferido.
 
 `apps/backoffice/lib/empresa/recorrente.ts`:
 - `mrr(assinaturas, competencia)` — soma das ativas na competência.
-- `arr(mrr)` — vezes doze. Não inclui serviço nem excedente.
+- `arr(mrr)` — vezes doze. Não inclui serviço nem excedente: excedente varia
+  com uso, e prometer doze meses dele é o jeito mais comum de inflar ARR.
 - `movimento(mudancas, competencia)` — `{novo, expansao, contracao, churn, reativacao, liquido}`.
 - `churnDeReceita(mudancas, mrrInicial)` e `churnDeClientes(assinaturas, competencia)`.
 - `receitaDeServico(contas, lancamentos, competencia)` — soma das contas de
@@ -285,6 +298,8 @@ franquia mensal que reseta ser o desenho preferido.
 - `usoDaFranquia(creditos)` — consumo sobre franquia por cliente, com as duas
   leituras que importam: abaixo de 30% é risco de churn, acima de 100% é
   gatilho de upgrade.
+- `excedenteDoMes(credito)` — `max(0, consumidos - franquia) x taxa`. Uma
+  função só, usada pela action ao gravar e pela tela ao conferir.
 
 ## 3. Actions
 
@@ -317,8 +332,8 @@ Tudo em `/empresa/financeiro`, que ganha três abas, além das três que já tem
   vermelho quando estoura. Total por centro de custo no rodapé.
 - **Receita recorrente** — quatro cartões (MRR, ARR, movimento líquido do mês,
   churn de receita), a cascata do mês, a tabela de assinaturas com valor,
-  degrau, franquia e uso, e a receita de serviço numa faixa própria, rotulada
-  como não recorrente.
+  degrau, franquia, uso e excedente do mês, e a receita de serviço numa faixa
+  própria, rotulada como não recorrente.
 
 A aba DRE não muda de aparência. Muda de origem: passa a somar os lançamentos.
 
@@ -327,7 +342,9 @@ A aba DRE não muda de aparência. Muda de origem: passa a somar os lançamentos
 Regras puras: sinal por grupo, DRE por linha contra a mesma fixture do DRE
 atual (tem que dar o mesmo número), situação e envelhecimento de título,
 MRR com assinatura encerrada no meio do mês, movimento com os cinco tipos,
-ARR não incluindo serviço nem excedente, uso da franquia nos dois extremos.
+ARR não incluindo serviço nem excedente, uso da franquia nos dois extremos,
+excedente zero quando o consumo fica dentro da franquia e proporcional à taxa
+quando passa.
 Actions com Prisma mockado: baixa gera lançamento na competência informada e
 não na data; baixa de título já baixado é recusada; alterar valor grava a
 mudança com o tipo certo; encerrar tira do MRR do mês seguinte.
