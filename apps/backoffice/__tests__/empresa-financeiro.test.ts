@@ -4,9 +4,7 @@ import { describe, expect, it } from "vitest";
 import {
   calcularCaixa,
   calcularDre,
-  competenciasAte,
   competenciaValida,
-  janelaDe13,
   referenciaPipeline,
   segundaFeira,
   semanaVazia,
@@ -113,14 +111,6 @@ describe("somarMeses", () => {
 });
 
 describe("competências", () => {
-  it("lista as n competências até a final", () => {
-    expect(competenciasAte("2026-09", 3)).toEqual([
-      "2026-07",
-      "2026-08",
-      "2026-09",
-    ]);
-    expect(competenciasAte("2026-01", 2)).toEqual(["2025-12", "2026-01"]);
-  });
   it("valida o formato", () => {
     expect(competenciaValida("2026-09")).toBe(true);
     expect(competenciaValida("2026-13")).toBe(false);
@@ -133,13 +123,6 @@ describe("caixa", () => {
     expect(segundaFeira(new Date("2026-09-05T10:00:00Z"))).toBe("2026-08-31"); // sábado
     expect(segundaFeira(new Date("2026-09-06T10:00:00Z"))).toBe("2026-08-31"); // domingo
     expect(segundaFeira(new Date("2026-09-07T10:00:00Z"))).toBe("2026-09-07"); // segunda
-  });
-
-  it("janela de 13 começa na segunda corrente", () => {
-    const j = janelaDe13(new Date("2026-09-05T10:00:00Z"));
-    expect(j).toHaveLength(13);
-    expect(j[0]).toBe("2026-08-31");
-    expect(j[12]).toBe("2026-11-23");
   });
 
   it("encadeia o saldo e respeita o saldo de extrato da semana 1", () => {

@@ -17,15 +17,15 @@ import {
   somarMeses,
 } from "@/lib/empresa/financeiro";
 import {
+  CAMPOS_INTERVALO,
   competenciasNoIntervalo,
   type Intervalo,
-  IntervaloExcedido,
   IntervaloSchema,
-  intervaloValido,
+  REFINE_INTERVALO,
   segundasNoIntervalo,
+  utc,
 } from "@/lib/empresa/periodo";
 import {
-  type CentroDeCusto,
   type Conta,
   centroDoGrupo,
   contaValida,
@@ -36,6 +36,7 @@ import {
   requirePlatformStaff,
   StaffAuthError,
   SYSTEM_TENANT_ID,
+  semTeto,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -53,27 +54,12 @@ const Competencia = z
   .string()
   .refine(competenciaValida, "Competência no formato AAAA-MM.");
 
-/** Traduz o teto do lib para o erro que a tela mostra. */
 function competencias(i: Intervalo): string[] {
-  try {
-    return competenciasNoIntervalo(i);
-  } catch (e) {
-    if (e instanceof IntervaloExcedido) {
-      throw new StaffAuthError("FORBIDDEN", e.message);
-    }
-    throw e;
-  }
+  return semTeto(() => competenciasNoIntervalo(i));
 }
 
 function segundas(i: Intervalo): string[] {
-  try {
-    return segundasNoIntervalo(i);
-  } catch (e) {
-    if (e instanceof IntervaloExcedido) {
-      throw new StaffAuthError("FORBIDDEN", e.message);
-    }
-    throw e;
-  }
+  return semTeto(() => segundasNoIntervalo(i));
 }
 
 // ── Plano de contas ──────────────────────────────────────────────────────
@@ -87,31 +73,15 @@ const SELECT_CONTA = {
   ordem: true,
 } as const;
 
-export type ContaView = {
-  conta: string;
-  nome: string;
-  grupo: number;
-  centroDeCusto: string | null;
-  ativa: boolean;
-  ordem: number;
-};
+export type ContaView = Conta & { ordem: number };
 
 async function contasDoPlano(): Promise<ContaView[]> {
-  return await database.contaDoPlano.findMany({
+  const linhas = await database.contaDoPlano.findMany({
     where: { tenantId: SYSTEM_TENANT_ID },
     orderBy: [{ grupo: "asc" }, { ordem: "asc" }, { conta: "asc" }],
     select: SELECT_CONTA,
   });
-}
-
-function paraConta(c: ContaView): Conta {
-  return {
-    conta: c.conta,
-    nome: c.nome,
-    grupo: c.grupo as Conta["grupo"],
-    centroDeCusto: c.centroDeCusto as CentroDeCusto | null,
-    ativa: c.ativa,
-  };
+  return linhas as ContaView[];
 }
 
 export async function listarPlanoDeContas(): Promise<Result<ContaView[]>> {
@@ -129,12 +99,9 @@ async function proximaOrdem(grupo: number): Promise<number> {
     : Math.max(...doGrupo.map((c) => c.ordem)) + 1;
 }
 
-const CENTROS = ["comercial", "produto-engenharia", "entrega", "ga"] as const;
-
 const CriarContaSchema = z.object({
   conta: z.string().refine(contaValida, "Conta no formato N.N (grupo 1 a 6)."),
   nome: z.string().trim().min(1).max(120),
-  centroDeCusto: z.enum(CENTROS).nullable().optional(),
 });
 
 export async function criarConta(
@@ -143,21 +110,10 @@ export async function criarConta(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { conta, nome, centroDeCusto } = CriarContaSchema.parse(input);
-    const grupo = grupoDoCodigo(conta);
-    if (grupo === null) {
-      throw new StaffAuthError(
-        "FORBIDDEN",
-        "Conta no formato N.N (grupo 1 a 6)."
-      );
-    }
-    if (grupo <= 2 && centroDeCusto) {
-      throw new StaffAuthError(
-        "FORBIDDEN",
-        "Contas de receita e dedução não têm centro de custo."
-      );
-    }
-    const centro = centroDeCusto ?? centroDoGrupo(grupo);
+    const { conta, nome } = CriarContaSchema.parse(input);
+    // `grupoDoCodigo` só devolve null quando `contaValida` já teria recusado
+    // — o schema acima garante o formato antes de chegar aqui.
+    const grupo = grupoDoCodigo(conta) as Conta["grupo"];
     const ordem = await proximaOrdem(grupo);
 
     await database.contaDoPlano.create({
@@ -166,7 +122,7 @@ export async function criarConta(
         conta,
         nome,
         grupo,
-        centroDeCusto: centro,
+        centroDeCusto: centroDoGrupo(grupo),
         ativa: true,
         ordem,
       },
@@ -190,10 +146,9 @@ export async function criarConta(
 }
 
 const AtualizarContaSchema = z.object({
-  conta: z.string(),
+  conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
   nome: z.string().trim().min(1).max(120).optional(),
   ativa: z.boolean().optional(),
-  centroDeCusto: z.enum(CENTROS).nullable().optional(),
 });
 
 export async function atualizarConta(
@@ -205,7 +160,7 @@ export async function atualizarConta(
     const { conta, ...campos } = AtualizarContaSchema.parse(input);
     const existente = await database.contaDoPlano.findUnique({
       where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
-      select: { nome: true, ativa: true, centroDeCusto: true },
+      select: { nome: true, ativa: true },
     });
     if (!existente) {
       throw new StaffAuthError("FORBIDDEN", "Conta não encontrada.");
@@ -268,7 +223,6 @@ export type DreView = {
 async function montarDre(intervalo: Intervalo): Promise<DreView> {
   const comps = competencias(intervalo);
   const contasPlano = await contasDoPlano();
-  const contas = contasPlano.map(paraConta);
   const lancamentos = await database.lancamentoMensal.findMany({
     where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
     select: { competencia: true, conta: true, valorCentavos: true },
@@ -281,7 +235,9 @@ async function montarDre(intervalo: Intervalo): Promise<DreView> {
         .map((l) => [l.conta, l.valorCentavos])
     )
   );
-  const dres: LinhaCalculada[][] = porMes.map((m) => calcularDre(contas, m));
+  const dres: LinhaCalculada[][] = porMes.map((m) =>
+    calcularDre(contasPlano, m)
+  );
   const total = somarMeses(dres);
 
   const linhas = total.map((t, i) => {
@@ -329,13 +285,9 @@ const LancamentoSchema = z
     competencia: Competencia,
     conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
     valorCentavos: z.number().int().nullable(),
-    de: z.iso.date(),
-    ate: z.iso.date(),
+    ...CAMPOS_INTERVALO,
   })
-  .refine(
-    (v) => intervaloValido({ de: v.de, ate: v.ate }),
-    "Intervalo inválido."
-  );
+  .refine(...REFINE_INTERVALO);
 
 export async function salvarLancamento(
   input: z.infer<typeof LancamentoSchema>
@@ -392,10 +344,6 @@ export type CaixaView = {
   totalPropostasAbertasCentavos: number;
 };
 
-function dataUtc(iso: string): Date {
-  return new Date(`${iso}T00:00:00Z`);
-}
-
 async function montarCaixa(intervalo: Intervalo): Promise<CaixaView> {
   const janela = segundas(intervalo);
   const inicio = janela[0] as string;
@@ -404,7 +352,7 @@ async function montarCaixa(intervalo: Intervalo): Promise<CaixaView> {
     database.semanaDeCaixa.findMany({
       where: {
         tenantId: SYSTEM_TENANT_ID,
-        semanaInicio: { gte: dataUtc(inicio), lte: dataUtc(fim) },
+        semanaInicio: { gte: utc(inicio), lte: utc(fim) },
       },
       select: {
         semanaInicio: true,
@@ -473,11 +421,9 @@ const SemanaSchema = z
     semanaInicio: z.iso
       .date()
       .refine(
-        (s) => segundaFeira(dataUtc(s)) === s,
+        (s) => segundaFeira(utc(s)) === s,
         "A semana começa numa segunda-feira."
       ),
-    de: z.iso.date(),
-    ate: z.iso.date(),
     saldoInicialCentavos: Centavos,
     recebiveisCentavos: Centavos,
     contratosAssinadosCentavos: Centavos,
@@ -487,11 +433,9 @@ const SemanaSchema = z
     saidasComercialCentavos: Centavos,
     saidasImpostosCentavos: Centavos,
     saidasOutrasCentavos: Centavos,
+    ...CAMPOS_INTERVALO,
   })
-  .refine(
-    (v) => intervaloValido({ de: v.de, ate: v.ate }),
-    "Intervalo inválido."
-  );
+  .refine(...REFINE_INTERVALO);
 
 export async function salvarSemana(
   input: z.infer<typeof SemanaSchema>
@@ -506,7 +450,7 @@ export async function salvarSemana(
     if (Object.keys(update).length === 0) {
       throw new StaffAuthError("FORBIDDEN", "Nada a salvar.");
     }
-    const dia = dataUtc(semanaInicio);
+    const dia = utc(semanaInicio);
     await database.semanaDeCaixa.upsert({
       where: {
         tenantId_semanaInicio: {

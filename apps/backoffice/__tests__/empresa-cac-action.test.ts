@@ -21,18 +21,34 @@ const mocks = vi.hoisted(() => ({
   proposalCount: vi.fn(),
 }));
 
-vi.mock("@/lib/guard", () => ({
-  requirePlatformStaff: mocks.requirePlatformStaff,
-  assertCanWrite: mocks.assertCanWrite,
-  SYSTEM_TENANT_ID: "system",
-  StaffAuthError: class extends Error {
+vi.mock("@/lib/guard", () => {
+  class StaffAuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
       super(message);
       this.code = code;
     }
-  },
-}));
+  }
+  // Mesma tradução do `semTeto` real (lib/guard.ts): `IntervaloExcedido` vira
+  // `StaffAuthError` — sem isto, o mock some com a função e a action falha
+  // com "erro sem código nenhum" em vez do teto de 12 meses.
+  return {
+    requirePlatformStaff: mocks.requirePlatformStaff,
+    assertCanWrite: mocks.assertCanWrite,
+    SYSTEM_TENANT_ID: "system",
+    StaffAuthError,
+    semTeto: (fn: () => unknown) => {
+      try {
+        return fn();
+      } catch (e) {
+        if (e instanceof Error && e.name === "IntervaloExcedido") {
+          throw new StaffAuthError("FORBIDDEN", e.message);
+        }
+        throw e;
+      }
+    },
+  };
+});
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@repo/provisioning", () => ({
   logPlatformAudit: mocks.logPlatformAudit,

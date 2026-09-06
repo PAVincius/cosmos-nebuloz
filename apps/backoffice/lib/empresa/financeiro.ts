@@ -194,18 +194,6 @@ export function competenciaValida(s: string): boolean {
   return COMPETENCIA.test(s);
 }
 
-export function competenciasAte(final: string, n: number): string[] {
-  const [ano, mes] = final.split("-").map(Number);
-  const out: string[] = [];
-  for (let i = n - 1; i >= 0; i--) {
-    const d = new Date(Date.UTC(ano, mes - 1 - i, 1));
-    out.push(
-      `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`
-    );
-  }
-  return out;
-}
-
 // ── Caixa ──────────────────────────────────────────────────────────────────
 
 export type SemanaEntrada = {
@@ -255,13 +243,6 @@ export function segundaFeira(d: Date): string {
   );
   const recuo = (dia.getUTCDay() + 6) % 7; // segunda = 0
   return iso(new Date(dia.getTime() - recuo * DIA_MS));
-}
-
-export function janelaDe13(hoje: Date): string[] {
-  const inicio = new Date(`${segundaFeira(hoje)}T00:00:00Z`);
-  return Array.from({ length: 13 }, (_, i) =>
-    iso(new Date(inicio.getTime() + i * 7 * DIA_MS))
-  );
 }
 
 /** `semanas` já ordenadas por `semanaInicio`. O saldo inicial de cada semana

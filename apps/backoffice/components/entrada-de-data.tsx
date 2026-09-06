@@ -49,19 +49,13 @@ function dataReal(p: Partes): boolean {
   );
 }
 
-/** Faixa do campo (1–31, 1–12, 1000–9999) e, com isso, se a tripla é real. */
+/** Piso do ano (1000) e, com isso, se a tripla é real — a faixa de dia/mês já
+ *  é coberta por `dataReal` (31/02 não existe, "13" não vira mês nenhum). */
 function validarCampo(atual: Partes, campo: Campo, bruto: string): boolean {
   if (bruto === "") {
     return false;
   }
-  const n = Number(bruto);
-  if (campo === "dia" && (n < 1 || n > 31)) {
-    return false;
-  }
-  if (campo === "mes" && (n < 1 || n > 12)) {
-    return false;
-  }
-  if (campo === "ano" && (n < 1000 || n > 9999)) {
+  if (campo === "ano" && Number(bruto) < 1000) {
     return false;
   }
   return dataReal({ ...atual, [campo]: bruto });

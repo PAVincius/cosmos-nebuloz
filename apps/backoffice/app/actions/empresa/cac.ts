@@ -13,11 +13,11 @@ import {
 } from "@/lib/empresa/cac";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
+  CAMPOS_INTERVALO,
   competenciasNoIntervalo,
   type Intervalo,
-  IntervaloExcedido,
   IntervaloSchema,
-  intervaloValido,
+  REFINE_INTERVALO,
 } from "@/lib/empresa/periodo";
 import { CONTAS_DO_CAC, type ContaDoCac } from "@/lib/empresa/plano-de-contas";
 import {
@@ -25,6 +25,7 @@ import {
   requirePlatformStaff,
   StaffAuthError,
   SYSTEM_TENANT_ID,
+  semTeto,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 
@@ -72,16 +73,8 @@ const Competencia = z
 const Centavos = z.number().int().min(0).nullable();
 const Percent = z.number().int().min(0).max(100).nullable();
 
-/** Traduz o teto do lib para o erro que a tela mostra (mesmo padrão de financeiro.ts). */
 function competencias(i: Intervalo): string[] {
-  try {
-    return competenciasNoIntervalo(i);
-  } catch (e) {
-    if (e instanceof IntervaloExcedido) {
-      throw new StaffAuthError("FORBIDDEN", e.message);
-    }
-    throw e;
-  }
+  return semTeto(() => competenciasNoIntervalo(i));
 }
 
 function chaveCac(competencia: string) {
@@ -140,14 +133,8 @@ type CacPeriodoDoMes = {
 
 /** Soma os meses do intervalo — nula se faltar valor em qualquer um deles
  *  (total parcial mentiria com cara de número, spec §5.2). */
-function somaOuNula(
-  valores: (number | null | undefined)[],
-  esperado: number
-): number | null {
-  if (
-    valores.length < esperado ||
-    valores.some((v) => v === null || v === undefined)
-  ) {
+function somaOuNula(valores: (number | null | undefined)[]): number | null {
+  if (valores.some((v) => v === null || v === undefined)) {
     return null;
   }
   return valores.reduce<number>((acc, v) => acc + (v as number), 0);
@@ -172,10 +159,7 @@ function parcelasAgregadas(
   const contas = Object.fromEntries(
     CONTAS_DO_CAC.map((c) => [
       c,
-      somaOuNula(
-        comps.map((comp) => porContaEMes.get(c)?.get(comp) ?? null),
-        comps.length
-      ),
+      somaOuNula(comps.map((comp) => porContaEMes.get(c)?.get(comp) ?? null)),
     ])
   ) as Record<ContaDoCac, number | null>;
 
@@ -184,12 +168,10 @@ function parcelasAgregadas(
     entregaDiagnosticoCentavos: somaOuNula(
       comps.map(
         (comp) => porMesPeriodo.get(comp)?.entregaDiagnosticoCentavos ?? null
-      ),
-      comps.length
+      )
     ),
     clientesGanhos: somaOuNula(
-      comps.map((comp) => porMesPeriodo.get(comp)?.clientesGanhos ?? null),
-      comps.length
+      comps.map((comp) => porMesPeriodo.get(comp)?.clientesGanhos ?? null)
     ),
   };
 }
@@ -313,13 +295,9 @@ const ParcelasSchema = z
     contas: z.partialRecord(z.enum(CONTAS_DO_CAC), Centavos).optional(),
     entregaDiagnosticoCentavos: Centavos.optional(),
     clientesGanhos: z.number().int().min(0).nullable().optional(),
-    de: z.iso.date(),
-    ate: z.iso.date(),
+    ...CAMPOS_INTERVALO,
   })
-  .refine(
-    (v) => intervaloValido({ de: v.de, ate: v.ate }),
-    "Intervalo inválido."
-  );
+  .refine(...REFINE_INTERVALO);
 
 export async function salvarParcelas(
   input: z.infer<typeof ParcelasSchema>
@@ -393,13 +371,9 @@ const ConversaoSchema = z
     convDiscoveryEvaluationPercent: Percent.optional(),
     convEvaluationPropostaPercent: Percent.optional(),
     convPropostaAceitaPercent: Percent.optional(),
-    de: z.iso.date(),
-    ate: z.iso.date(),
+    ...CAMPOS_INTERVALO,
   })
-  .refine(
-    (v) => intervaloValido({ de: v.de, ate: v.ate }),
-    "Intervalo inválido."
-  );
+  .refine(...REFINE_INTERVALO);
 
 export async function salvarConversao(
   input: z.infer<typeof ConversaoSchema>
@@ -431,13 +405,9 @@ const AlocacaoSchema = z
         pesoPercent: z.number().int().min(0).max(100),
       })
     ),
-    de: z.iso.date(),
-    ate: z.iso.date(),
+    ...CAMPOS_INTERVALO,
   })
-  .refine(
-    (v) => intervaloValido({ de: v.de, ate: v.ate }),
-    "Intervalo inválido."
-  );
+  .refine(...REFINE_INTERVALO);
 
 export async function salvarAlocacao(
   input: z.infer<typeof AlocacaoSchema>

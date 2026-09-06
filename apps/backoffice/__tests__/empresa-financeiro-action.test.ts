@@ -21,18 +21,34 @@ const mocks = vi.hoisted(() => ({
   contaUpdate: vi.fn(),
 }));
 
-vi.mock("@/lib/guard", () => ({
-  requirePlatformStaff: mocks.requirePlatformStaff,
-  assertCanWrite: mocks.assertCanWrite,
-  SYSTEM_TENANT_ID: "system",
-  StaffAuthError: class extends Error {
+vi.mock("@/lib/guard", () => {
+  class StaffAuthError extends Error {
     code: string;
     constructor(code: string, message: string) {
       super(message);
       this.code = code;
     }
-  },
-}));
+  }
+  // Mesma tradução do `semTeto` real (lib/guard.ts): `IntervaloExcedido` vira
+  // `StaffAuthError` — sem isto, o mock some com a função e a action falha
+  // com "erro sem código nenhum" em vez do teto de 12 meses/26 semanas.
+  return {
+    requirePlatformStaff: mocks.requirePlatformStaff,
+    assertCanWrite: mocks.assertCanWrite,
+    SYSTEM_TENANT_ID: "system",
+    StaffAuthError,
+    semTeto: (fn: () => unknown) => {
+      try {
+        return fn();
+      } catch (e) {
+        if (e instanceof Error && e.name === "IntervaloExcedido") {
+          throw new StaffAuthError("FORBIDDEN", e.message);
+        }
+        throw e;
+      }
+    },
+  };
+});
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("@repo/provisioning", () => ({
   logPlatformAudit: mocks.logPlatformAudit,
@@ -233,18 +249,9 @@ describe("plano de contas", () => {
       ordem: 16,
     });
     expect((await criarConta({ conta: "47", nome: "x" })).ok).toBe(false);
-    expect(
-      (
-        await criarConta({
-          conta: "1.9",
-          nome: "x",
-          centroDeCusto: "comercial",
-        })
-      ).ok
-    ).toBe(false); // grupo 1 não tem centro
   });
 
-  it("atualizarConta grava só o enviado e recusa inexistente", async () => {
+  it("atualizarConta grava só o enviado e recusa inexistente e conta fora do formato", async () => {
     resetar();
     mocks.contaUpdate.mockResolvedValue({});
     await atualizarConta({ conta: "4.1", ativa: false });
@@ -252,7 +259,8 @@ describe("plano de contas", () => {
       where: { tenantId_conta: { tenantId: "system", conta: "4.1" } },
       data: { ativa: false },
     });
-    expect((await atualizarConta({ conta: "9.9", nome: "x" })).ok).toBe(false);
+    expect((await atualizarConta({ conta: "3.9", nome: "x" })).ok).toBe(false); // formato ok, conta não existe
+    expect((await atualizarConta({ conta: "47", nome: "x" })).ok).toBe(false); // fora do formato
   });
 
   it("MEMBER não cria", async () => {

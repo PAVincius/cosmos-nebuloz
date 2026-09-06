@@ -28,10 +28,10 @@ export class IntervaloExcedido extends Error {
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 const DIA_MS = 86_400_000;
 
-function utc(isoData: string): Date {
+export function utc(isoData: string): Date {
   return new Date(`${isoData}T00:00:00Z`);
 }
-function iso(d: Date): string {
+export function iso(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 function dataValida(s: string): boolean {
@@ -56,6 +56,16 @@ export function intervaloValido(i: unknown): i is Intervalo {
 export const IntervaloSchema = z
   .object({ de: z.iso.date(), ate: z.iso.date() })
   .refine(intervaloValido, "Intervalo inválido.");
+
+/** As duas peças do intervalo para as actions de escrita: `ZodEffects` (o
+ *  resultado de `.refine`) não tem `.shape`, então `IntervaloSchema` sozinho
+ *  não é spreadable — cada schema de escrita espalha `CAMPOS_INTERVALO` no seu
+ *  próprio `z.object` e aplica `REFINE_INTERVALO` por cima (ponytail 2). */
+export const CAMPOS_INTERVALO = { de: z.iso.date(), ate: z.iso.date() };
+export const REFINE_INTERVALO = [
+  intervaloValido,
+  "Intervalo inválido.",
+] as const;
 
 export function competenciasNoIntervalo(i: Intervalo): string[] {
   const [a1, m1] = i.de.split("-").map(Number);

@@ -14,10 +14,7 @@ import {
   INPUT,
 } from "@/components/campo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
-import {
-  type CentroDeCusto,
-  ROTULO_CENTRO,
-} from "@/lib/empresa/plano-de-contas";
+import { ROTULO_CENTRO } from "@/lib/empresa/plano-de-contas";
 
 /**
  * Aba "Plano de contas" (spec 2026-09-06 §4.4). Renomear é inline (`onBlur`);
@@ -35,7 +32,6 @@ const ROTULO_GRUPO: Record<number, string> = {
   6: "6 · G&A",
 };
 const GRUPOS = [1, 2, 3, 4, 5, 6];
-const CENTROS = Object.keys(ROTULO_CENTRO) as CentroDeCusto[];
 const LARGURAS = [
   { id: "c", largura: "12%" },
   { id: "n", largura: "48%" },
@@ -49,23 +45,17 @@ const RUBRICA = {
   textTransform: "uppercase",
 } as const;
 
-function temCentro(grupo: number): boolean {
-  return grupo >= 3;
-}
-
 type Resultado = Awaited<ReturnType<typeof atualizarConta>>;
 
 function LinhaConta({
   c,
   podeEscrever,
   onRenomear,
-  onCentro,
   onAtivar,
 }: {
   c: ContaView;
   podeEscrever: boolean;
   onRenomear: (conta: string, nome: string) => void;
-  onCentro: (conta: string, centro: CentroDeCusto) => void;
   onAtivar: (conta: string, ativa: boolean) => void;
 }) {
   const opacidade = c.ativa ? 1 : 0.6;
@@ -85,20 +75,8 @@ function LinhaConta({
         />
       </Celula>
       <Celula style={{ opacity: opacidade }}>
-        {temCentro(c.grupo) ? (
-          <select
-            aria-label={`Centro de custo da conta ${c.conta}`}
-            disabled={!podeEscrever}
-            onChange={(e) => onCentro(c.conta, e.target.value as CentroDeCusto)}
-            style={{ ...INPUT, padding: "6px 8px" }}
-            value={c.centroDeCusto ?? ""}
-          >
-            {CENTROS.map((centro) => (
-              <option key={centro} value={centro}>
-                {ROTULO_CENTRO[centro]}
-              </option>
-            ))}
-          </select>
+        {c.centroDeCusto ? (
+          ROTULO_CENTRO[c.centroDeCusto]
         ) : (
           <span style={{ color: "var(--ink-faint)" }}>—</span>
         )}
@@ -123,15 +101,10 @@ function FormularioNovaConta({
   onCriar,
 }: {
   podeEscrever: boolean;
-  onCriar: (input: {
-    conta: string;
-    nome: string;
-    centroDeCusto: CentroDeCusto | null;
-  }) => Promise<boolean>;
+  onCriar: (input: { conta: string; nome: string }) => Promise<boolean>;
 }) {
   const [conta, setConta] = useState("");
   const [nome, setNome] = useState("");
-  const [centro, setCentro] = useState<CentroDeCusto | "">("");
   const [criando, setCriando] = useState(false);
 
   if (!podeEscrever) {
@@ -140,16 +113,11 @@ function FormularioNovaConta({
 
   const enviar = async () => {
     setCriando(true);
-    const ok = await onCriar({
-      conta: conta.trim(),
-      nome: nome.trim(),
-      centroDeCusto: centro === "" ? null : centro,
-    });
+    const ok = await onCriar({ conta: conta.trim(), nome: nome.trim() });
     setCriando(false);
     if (ok) {
       setConta("");
       setNome("");
-      setCentro("");
     }
   };
 
@@ -187,24 +155,6 @@ function FormularioNovaConta({
           style={INPUT}
           value={nome}
         />
-      </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <label className="mono" htmlFor="nova-conta-centro" style={RUBRICA}>
-          Centro
-        </label>
-        <select
-          id="nova-conta-centro"
-          onChange={(e) => setCentro(e.target.value as CentroDeCusto | "")}
-          style={{ ...INPUT, width: 180 }}
-          value={centro}
-        >
-          <option value="">(derivado do grupo)</option>
-          {CENTROS.map((c) => (
-            <option key={c} value={c}>
-              {ROTULO_CENTRO[c]}
-            </option>
-          ))}
-        </select>
       </div>
       <BotaoPrimario
         disabled={criando || conta.trim() === "" || nome.trim() === ""}
@@ -253,16 +203,6 @@ export function Plano({
     [contas, podeEscrever, aplicar]
   );
 
-  const mudarCentro = useCallback(
-    async (conta: string, centroDeCusto: CentroDeCusto) => {
-      if (!podeEscrever) {
-        return;
-      }
-      aplicar(await atualizarConta({ conta, centroDeCusto }));
-    },
-    [podeEscrever, aplicar]
-  );
-
   const ativar = useCallback(
     async (conta: string, ativa: boolean) => {
       if (!podeEscrever) {
@@ -274,11 +214,8 @@ export function Plano({
   );
 
   const criar = useCallback(
-    async (input: {
-      conta: string;
-      nome: string;
-      centroDeCusto: CentroDeCusto | null;
-    }) => aplicar(await criarConta(input)),
+    async (input: { conta: string; nome: string }) =>
+      aplicar(await criarConta(input)),
     [aplicar]
   );
 
@@ -319,7 +256,6 @@ export function Plano({
                   c={c}
                   key={c.conta}
                   onAtivar={ativar}
-                  onCentro={mudarCentro}
                   onRenomear={renomear}
                   podeEscrever={podeEscrever}
                 />
