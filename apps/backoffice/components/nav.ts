@@ -89,6 +89,24 @@ export const BO_NAV: NavSection[] = [
     ],
   },
   {
+    // Growth vem antes de Comercial porque é essa a ordem do processo: o
+    // diagnóstico de maturidade é o degrau 01 da Escada, e é ele que decide
+    // por qual porta o lead entra no funil — não o contrário.
+    //
+    // Uma rota só, e de propósito: a lição do LAB é que seção inteira
+    // prometida antes de existir vira um pedaço do menu que não abre. As
+    // outras superfícies de growth (aquisição, integração com as ferramentas
+    // self-hosted) voltam aqui quando tiverem entidade no schema.
+    section: "Growth",
+    items: [
+      {
+        href: "/growth/readiness",
+        icon: "gauge",
+        label: "AI readiness",
+      },
+    ],
+  },
+  {
     section: "Comercial",
     items: [
       {

@@ -18,12 +18,17 @@
         "eyebrow": "JURÍDICO",
         "titleA": "Os documentos",
         "titleB": "que regem este site.",
-        "lead": "Dois documentos: o que acontece com os dados que você deixa aqui, e os termos sob os quais o site e o diagnóstico são oferecidos.",
+        "lead": "Três documentos: o que acontece com os dados que você deixa aqui, quais cookies o site grava, e os termos sob os quais o site e o diagnóstico são oferecidos.",
         "docs": [
           {
             "href": "/legal/privacy",
             "title": "Política de Privacidade",
             "desc": "O que é coletado, por quê, com que base legal, quem processa, por quanto tempo fica guardado, e como exercer os seus direitos."
+          },
+          {
+            "href": "/legal/cookies",
+            "title": "Política de Cookies",
+            "desc": "O único cookie que este site grava, por que ele dispensa consentimento, e o que teria de mudar para isso deixar de ser verdade."
           },
           {
             "href": "/legal/terms",
@@ -52,8 +57,8 @@
           {
             "heading": "O que este site coleta",
             "body": [
-              "Hoje, uma coisa só: um cookie próprio chamado Next-Locale, que lembra o idioma em que a página foi servida. Ele não carrega identificador e não é usado para analytics. Verificado no site em produção — nenhum outro cookie, nenhum registro em local storage, nenhuma requisição a terceiro.",
-              "Quando o analytics de produto for ligado, o site passará a usar o PostHog, que guarda um identificador no seu navegador (um cookie e um registro em local storage) e registra visualizações de página e interações. O PostHog processa isso em infraestrutura nos Estados Unidos. [[DADO NECESSÁRIO: atualizar esta seção no dia em que o analytics for ligado de verdade — hoje está desativado]]",
+              "Hoje, uma coisa só: um cookie próprio chamado Next-Locale, que lembra o idioma em que a página foi servida. Ele não carrega identificador e não é usado para analytics. Medido em build rodando: nenhum outro cookie e nenhum registro em local storage. Uma requisição sai para terceiro — o script do Vercel Web Analytics, descrito abaixo.",
+              "Contagem agregada de visitas, pelo Vercel Web Analytics. Ele é sem cookie: nada é gravado no seu navegador e você não recebe identificador. A Vercel deriva da requisição um hash curto e não reversível, só para distinguir uma visita de outra dentro do dia, e é só isso. Analytics de produto que identificaria você — PostHog, Google Analytics — não é carregado neste site, e não pode ser: veja packages/analytics/marketing-provider.tsx.",
               "Contato: o que você digitar no formulário de contato, mais o seu e-mail, para que possamos responder.",
               "Logs de servidor mantidos pelo nosso provedor de hospedagem, que incluem endereço IP, user agent e o caminho requisitado."
             ],
@@ -68,16 +73,16 @@
             "body": [
               "Responder a você quando entra em contato: execução de contrato ou de procedimentos preliminares a seu pedido — LGPD artigo 7º, V; GDPR artigo 6(1)(b).",
               "Manter o site seguro e disponível, inclusive os logs: legítimo interesse — LGPD artigo 7º, IX; GDPR artigo 6(1)(f).",
-              "Entender como o site é usado, por meio de analytics: consentimento — LGPD artigo 7º, I; GDPR artigo 6(1)(a). [[DADO NECESSÁRIO: decidir se haverá banner de consentimento; sem ele, analytics não pode rodar antes do consentimento para visitantes na UE]]"
+              "Contar visitas, por analytics sem cookie: legítimo interesse — LGPD artigo 7º, IX. Nenhum tratamento neste site se apoia em consentimento, e é por isso que nada é pedido a você e não existe banner de cookies. Se isso mudar, o consentimento será colhido antes de o script carregar, não depois."
             ]
           },
           {
             "heading": "Quem mais processa",
             "body": [
               "Usamos terceiros para operar o site. Cada um trata dados apenas sob nossas instruções.",
-              "Vercel Inc. — hospedagem, entrega e logs de servidor. Processa nos Estados Unidos. Ativo.",
-              "PostHog Inc. — analytics de produto. Processa nos Estados Unidos. Ainda não ativo; nada é enviado ao PostHog e nenhum identificador de analytics é gravado até que seja configurado.",
-              "[[DADO NECESSÁRIO: confirmar se Resend (envio de e-mail do formulário) e Sentry (monitoramento de erros) estarão ativos em produção — hoje o formulário não envia e o Sentry não tem DSN configurada]]"
+              "Vercel Inc. — hospedagem, entrega, logs de servidor e Web Analytics sem cookie. Processa nos Estados Unidos. Ativo.",
+              "Resend — entrega do e-mail que o formulário de contato nos envia. Trata o nome, o e-mail e a mensagem que você escrever. Processa nos Estados Unidos. Ativo.",
+              "Sentry — monitoramento de erros. Não está ativo neste site: não há DSN configurada, então o SDK não inicia e nenhum relatório de erro sai do seu navegador. Está listado porque o código existe e uma DSN o ativaria."
             ]
           },
           {
@@ -105,7 +110,7 @@
             "heading": "Cookies e tecnologias semelhantes",
             "body": [
               "Hoje o site grava uma coisa no seu navegador: o cookie Next-Locale descrito acima. Não há identificador de analytics, cookie de publicidade nem script de terceiro.",
-              "Se o analytics for ligado depois, ele acrescentará um identificador. Você pode apagá-lo nas configurações do navegador, e bloqueá-lo não afeta o funcionamento do site."
+              "Isso é decisão, não acaso. O analytics que precisa de cookie foi retirado deste site justamente para que visitá-lo não exija concordar com nada. Se um dia quisermos de volta, esta seção e o fluxo de consentimento mudam primeiro, e esta página dirá isso antes de o script rodar."
             ]
           },
           {
@@ -125,6 +130,54 @@
             "heading": "Lei aplicável",
             "body": [
               "Esta política é regida pela lei brasileira, em particular pela Lei 13.709/2018 (LGPD). [[DADO NECESSÁRIO: foro eleito — normalmente a comarca da sede]]"
+            ]
+          }
+        ]
+      },
+      "cookies": {
+        "meta": {
+          "title": "Política de Cookies",
+          "description": "Todos os cookies que o nebuloz.ai grava, para que servem, e por que não existe banner de consentimento."
+        },
+        "eyebrow": "COOKIES · LGPD",
+        "title": "Política de Cookies",
+        "lead": "Curta, porque o site é. Um cookie é gravado, ele é estritamente necessário, e nada aqui rastreia você entre sites ou ao longo do tempo.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "A lista completa",
+            "body": [
+              "Next-Locale — cookie próprio que guarda um código de idioma, para que uma página servida em português continue em português no clique seguinte. Sem identificador, sem perfil, sem compartilhamento. Estritamente necessário, que sob a LGPD e a Diretiva ePrivacy é a categoria que dispensa consentimento.",
+              "É essa a lista. Não há segunda entrada."
+            ]
+          },
+          {
+            "heading": "Por que não há banner de cookies",
+            "body": [
+              "Banner existe para colher consentimento, e consentimento só é necessário para tratamento que dependa dele. Nada aqui depende. O analytics deste site é o Vercel Web Analytics, que é sem cookie — não grava nada no seu navegador e não lhe dá identificador.",
+              "As ferramentas que exigiriam banner foram retiradas, não embrulhadas em um. Google Analytics e PostHog não são carregados neste site e estão estruturalmente impedidos de carregar; o motivo está escrito no código, em packages/analytics/marketing-provider.tsx, para que religá-los seja ato deliberado e não troca de configuração.",
+              "Preferimos não pedir nada a você a pedir que você dispense alguma coisa."
+            ]
+          },
+          {
+            "heading": "O que não é cookie, mas ainda assim fica guardado",
+            "body": [
+              "Nada, no momento. Sem local storage, sem session storage, sem impressão digital de dispositivo. Medido em build rodando, não presumido; os únicos registros que aparecem em desenvolvimento pertencem ao hot reload do servidor de dev e nunca vão para produção.",
+              "A única exceção é transitória e pertence ao seu navegador, não a nós: o cache HTTP padrão de imagens, fontes e scripts, que todo site usa e que não guarda dado pessoal."
+            ]
+          },
+          {
+            "heading": "Recusar ou apagar",
+            "body": [
+              "Todo navegador consegue bloquear ou apagar cookies de um site específico. Bloquear o Next-Locale não custa nada, exceto que o site voltará ao idioma padrão a cada visita.",
+              "Como nada aqui serve a publicidade, não há opt-out para assinar, lista de fornecedores para revisar nem central de preferências para manter."
+            ]
+          },
+          {
+            "heading": "Se isso mudar",
+            "body": [
+              "Acrescentar um cookie que não seja estritamente necessário significa perguntar antes. Nesse caso esta página muda antes de o cookie ser gravado, não depois, e o consentimento é colhido antes de o script carregar.",
+              "A data no topo desta página é como você percebe se isso aconteceu."
             ]
           }
         ]
@@ -620,6 +673,9 @@
         "fieldCompany": "EMPRESA (OPCIONAL)",
         "fieldMessage": "MENSAGEM",
         "send": "Enviar",
+        "privacyNoticeA": "O que você enviar vai para a nossa caixa de entrada para respondermos, e para mais nenhum lugar. Sem lista de marketing, sem compartilhamento. Veja a",
+        "privacyNoticeLink": "Política de Privacidade",
+        "privacyNoticeB": "para prazo de guarda e como pedir a exclusão.",
         "sending": "Enviando",
         "formError": "Isso não foi enviado. Tente de novo, ou use uma das outras três portas.",
         "sentTitle": "Enviado",
@@ -668,6 +724,7 @@
           { "label": "Diagnóstico", "href": "#assessment" },
           { "label": "Agendar", "href": "#start" },
           { "label": "Privacidade", "href": "/legal/privacy" },
+          { "label": "Cookies", "href": "/legal/cookies" },
           { "label": "Termos", "href": "/legal/terms" }
         ]
       }
