@@ -166,6 +166,86 @@ model LancamentoMensal {
   @@index([tenantId, competencia])
 }
 
+/// Uma linha do livro-razão da Nebuloz. Substitui o valor único por conta e
+/// mês de `LancamentoMensal`: o DRE passa a somar estas linhas, e a pergunta
+/// "o que formou a conta 4.2 em setembro" passa a ter resposta.
+model Lancamento {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// "2026-09". Mês de competência, que é o que o DRE agrupa. Não deriva de
+  /// `data`: uma nota de dezembro paga em janeiro é competência de dezembro.
+  competencia String
+  /// Data do fato. Alimenta o caixa, não o DRE.
+  data        DateTime @db.Date
+
+  /// Código do plano de contas ("1.1" … "6.3"), validado contra `ContaDoPlano`.
+  conta     String
+  descricao String
+  /// Positivo sempre. O sinal vem da estrutura do DRE, como já vem hoje.
+  valorCentavos Int
+
+  /// Contraparte, quando há. Texto livre: fornecedor da casa não é entidade
+  /// própria, e `FornecedorDpa` é sobre tratamento de dado, não sobre compra.
+  contraparte String?
+  documento   String?
+  nota        String?
+
+  /// Título que gerou esta linha, quando veio de uma baixa. SetNull: apagar o
+  /// título não apaga o fato contábil.
+  tituloId String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant  @relation("LancamentoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  titulo Titulo? @relation(fields: [tituloId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, competencia])
+  @@index([tenantId, conta])
+}
+
+/// Compromisso a pagar ou receber. O título é a promessa; o lançamento é o
+/// fato. Baixar o título gera a linha no livro-razão.
+model Titulo {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// PAGAR | RECEBER
+  tipo        String
+  descricao   String
+  contraparte String
+
+  /// Conta do plano em que a baixa vai lançar.
+  conta         String
+  valorCentavos Int
+
+  emissao    DateTime @db.Date
+  vencimento DateTime @db.Date
+
+  /// ABERTO | BAIXADO | CANCELADO. Sem "vencido": vencido é `vencimento` no
+  /// passado com status ABERTO, e status derivado não desatualiza sozinho.
+  status String @default("ABERTO")
+
+  baixadoEm          DateTime? @db.Date
+  /// Competência em que a baixa lançou. Guardada porque pode diferir do mês
+  /// da baixa quando se paga uma conta de mês anterior.
+  competenciaBaixa   String?
+  motivoCancelamento String?
+
+  /// Slug do tenant cliente, quando é um RECEBER de assinatura ou serviço.
+  clienteSlug String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant      Tenant       @relation("TituloSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  lancamentos Lancamento[]
+
+  @@index([tenantId, status, vencimento])
+  @@index([tenantId, tipo])
+}
+
 // ─────────────────────────── CAC ───────────────────────────
 
 /// Das oito parcelas do CAC, seis são contas 4.1–4.6 de LancamentoMensal da

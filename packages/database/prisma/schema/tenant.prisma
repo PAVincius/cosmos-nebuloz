@@ -279,6 +279,8 @@ model Tenant {
   decisaoDeConsentimento   DecisaoDeConsentimento?       @relation("DecisaoDeConsentimentoSystemTenant")
   perguntasAoParecer       PerguntaAoParecer[]           @relation("PerguntaAoParecerSystemTenant")
   lancamentosMensais       LancamentoMensal[]            @relation("LancamentoMensalSystemTenant")
+  lancamentos              Lancamento[]                  @relation("LancamentoSystemTenant")
+  titulos                  Titulo[]                      @relation("TituloSystemTenant")
   cacPeriodos              CacPeriodo[]                  @relation("CacPeriodoSystemTenant")
   semanasDeCaixa           SemanaDeCaixa[]               @relation("SemanaDeCaixaSystemTenant")
   contasDoPlano            ContaDoPlano[]                @relation("ContaDoPlanoSystemTenant")
