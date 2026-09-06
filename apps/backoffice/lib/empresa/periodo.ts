@@ -5,6 +5,7 @@
  * segundas-feiras contidas (caixa). Tetos recusam com erro nomeado — truncar
  * em silêncio mostraria um total de menos meses com cara de total.
  */
+import { z } from "zod";
 import { segundaFeira } from "./financeiro";
 
 export type Intervalo = { de: string; ate: string };
@@ -50,6 +51,11 @@ export function intervaloValido(i: unknown): i is Intervalo {
     de <= ate
   );
 }
+
+/** Schema do intervalo para as actions (Task 5, Task 6): datas ISO e `de <= ate`. */
+export const IntervaloSchema = z
+  .object({ de: z.iso.date(), ate: z.iso.date() })
+  .refine(intervaloValido, "Intervalo inválido.");
 
 export function competenciasNoIntervalo(i: Intervalo): string[] {
   const [a1, m1] = i.de.split("-").map(Number);

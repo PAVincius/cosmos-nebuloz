@@ -7,9 +7,7 @@ import { z } from "zod";
 import {
   calcularCaixa,
   calcularDre,
-  competenciasAte,
   competenciaValida,
-  janelaDe13,
   type LinhaCalculada,
   referenciaPipeline,
   type SemanaCalculada,
@@ -18,7 +16,21 @@ import {
   semanaVazia,
   somarMeses,
 } from "@/lib/empresa/financeiro";
-import { contaValida, PLANO_DE_CONTAS } from "@/lib/empresa/plano-de-contas";
+import {
+  competenciasNoIntervalo,
+  type Intervalo,
+  IntervaloExcedido,
+  IntervaloSchema,
+  intervaloValido,
+  segundasNoIntervalo,
+} from "@/lib/empresa/periodo";
+import {
+  type CentroDeCusto,
+  type Conta,
+  centroDoGrupo,
+  contaValida,
+  grupoDoCodigo,
+} from "@/lib/empresa/plano-de-contas";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -28,21 +40,211 @@ import {
 import { type Result, safeAction } from "@/lib/safe-action";
 
 /**
- * Base financeira (docs/financeiro): DRE por competência e caixa de 13 semanas.
+ * Base financeira (docs/financeiro): DRE e caixa por intervalo de datas
+ * escolhido na tela (spec 2026-09-06 §1–§4), mais o CRUD do plano de contas.
  * As linhas calculadas nascem de lib/empresa/financeiro; aqui só se lê e
  * grava a entrada.
  */
 
 const ROTA_FINANCEIRO = "/empresa/financeiro";
-
-const MESES_DRE = 3;
 const STATUS_PIPELINE = ["ENVIADA", "AGUARDANDO_APROVACAO"];
 
 const Competencia = z
   .string()
   .refine(competenciaValida, "Competência no formato AAAA-MM.");
 
+/** Traduz o teto do lib para o erro que a tela mostra. */
+function competencias(i: Intervalo): string[] {
+  try {
+    return competenciasNoIntervalo(i);
+  } catch (e) {
+    if (e instanceof IntervaloExcedido) {
+      throw new StaffAuthError("FORBIDDEN", e.message);
+    }
+    throw e;
+  }
+}
+
+function segundas(i: Intervalo): string[] {
+  try {
+    return segundasNoIntervalo(i);
+  } catch (e) {
+    if (e instanceof IntervaloExcedido) {
+      throw new StaffAuthError("FORBIDDEN", e.message);
+    }
+    throw e;
+  }
+}
+
+// ── Plano de contas ──────────────────────────────────────────────────────
+
+const SELECT_CONTA = {
+  conta: true,
+  nome: true,
+  grupo: true,
+  centroDeCusto: true,
+  ativa: true,
+  ordem: true,
+} as const;
+
+export type ContaView = {
+  conta: string;
+  nome: string;
+  grupo: number;
+  centroDeCusto: string | null;
+  ativa: boolean;
+  ordem: number;
+};
+
+async function contasDoPlano(): Promise<ContaView[]> {
+  return await database.contaDoPlano.findMany({
+    where: { tenantId: SYSTEM_TENANT_ID },
+    orderBy: [{ grupo: "asc" }, { ordem: "asc" }, { conta: "asc" }],
+    select: SELECT_CONTA,
+  });
+}
+
+function paraConta(c: ContaView): Conta {
+  return {
+    conta: c.conta,
+    nome: c.nome,
+    grupo: c.grupo as Conta["grupo"],
+    centroDeCusto: c.centroDeCusto as CentroDeCusto | null,
+    ativa: c.ativa,
+  };
+}
+
+export async function listarPlanoDeContas(): Promise<Result<ContaView[]>> {
+  return await safeAction(async () => {
+    await requirePlatformStaff();
+    return await contasDoPlano();
+  });
+}
+
+/** Maior `ordem` já usada no grupo, mais um — nova conta some no fim da lista. */
+async function proximaOrdem(grupo: number): Promise<number> {
+  const doGrupo = (await contasDoPlano()).filter((c) => c.grupo === grupo);
+  return doGrupo.length === 0
+    ? 0
+    : Math.max(...doGrupo.map((c) => c.ordem)) + 1;
+}
+
+const CENTROS = ["comercial", "produto-engenharia", "entrega", "ga"] as const;
+
+const CriarContaSchema = z.object({
+  conta: z.string().refine(contaValida, "Conta no formato N.N (grupo 1 a 6)."),
+  nome: z.string().trim().min(1).max(120),
+  centroDeCusto: z.enum(CENTROS).nullable().optional(),
+});
+
+export async function criarConta(
+  input: z.infer<typeof CriarContaSchema>
+): Promise<Result<ContaView[]>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+    const { conta, nome, centroDeCusto } = CriarContaSchema.parse(input);
+    const grupo = grupoDoCodigo(conta);
+    if (grupo === null) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Conta no formato N.N (grupo 1 a 6)."
+      );
+    }
+    if (grupo <= 2 && centroDeCusto) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Contas de receita e dedução não têm centro de custo."
+      );
+    }
+    const centro = centroDeCusto ?? centroDoGrupo(grupo);
+    const ordem = await proximaOrdem(grupo);
+
+    await database.contaDoPlano.create({
+      data: {
+        tenantId: SYSTEM_TENANT_ID,
+        conta,
+        nome,
+        grupo,
+        centroDeCusto: centro,
+        ativa: true,
+        ordem,
+      },
+    });
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "empresa.financeiro.conta.criar",
+      entityType: "ContaDoPlano",
+      entityId: conta,
+      target: `conta ${conta}`,
+      diff: [
+        ["conta", "", conta],
+        ["nome", "", nome],
+      ],
+    });
+    revalidatePath(ROTA_FINANCEIRO);
+    return await contasDoPlano();
+  });
+}
+
+const AtualizarContaSchema = z.object({
+  conta: z.string(),
+  nome: z.string().trim().min(1).max(120).optional(),
+  ativa: z.boolean().optional(),
+  centroDeCusto: z.enum(CENTROS).nullable().optional(),
+});
+
+export async function atualizarConta(
+  input: z.infer<typeof AtualizarContaSchema>
+): Promise<Result<ContaView[]>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+    const { conta, ...campos } = AtualizarContaSchema.parse(input);
+    const existente = await database.contaDoPlano.findUnique({
+      where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
+      select: { nome: true, ativa: true, centroDeCusto: true },
+    });
+    if (!existente) {
+      throw new StaffAuthError("FORBIDDEN", "Conta não encontrada.");
+    }
+    const data = Object.fromEntries(
+      Object.entries(campos).filter(([, v]) => v !== undefined)
+    );
+    if (Object.keys(data).length === 0) {
+      throw new StaffAuthError("FORBIDDEN", "Nada a salvar.");
+    }
+
+    await database.contaDoPlano.update({
+      where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
+      data,
+    });
+    const antes = existente as Record<string, unknown>;
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "empresa.financeiro.conta.atualizar",
+      entityType: "ContaDoPlano",
+      entityId: conta,
+      target: `conta ${conta}`,
+      diff: Object.entries(data).map(([k, v]) => [
+        k,
+        String(antes[k] ?? ""),
+        String(v ?? ""),
+      ]),
+    });
+    revalidatePath(ROTA_FINANCEIRO);
+    return await contasDoPlano();
+  });
+}
+
+// ── DRE ──────────────────────────────────────────────────────────────────
+
 export type DreView = {
+  intervalo: Intervalo;
   competencias: string[];
   linhas: {
     id: string;
@@ -50,35 +252,39 @@ export type DreView = {
     calculada: boolean;
     valores: (number | null)[];
     percents?: (number | null)[];
-    trimestre: number | null;
-    trimestrePercent?: number | null;
+    total: number | null;
+    totalPercent?: number | null;
   }[];
   contas: {
     conta: string;
     nome: string;
     grupo: number;
+    centroDeCusto: string | null;
+    ativa: boolean;
     valores: (number | null)[];
   }[];
 };
 
-async function montarDre(competenciaFinal: string): Promise<DreView> {
-  const competencias = competenciasAte(competenciaFinal, MESES_DRE);
+async function montarDre(intervalo: Intervalo): Promise<DreView> {
+  const comps = competencias(intervalo);
+  const contasPlano = await contasDoPlano();
+  const contas = contasPlano.map(paraConta);
   const lancamentos = await database.lancamentoMensal.findMany({
-    where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: competencias } },
+    where: { tenantId: SYSTEM_TENANT_ID, competencia: { in: comps } },
     select: { competencia: true, conta: true, valorCentavos: true },
   });
 
-  const porMes = competencias.map((c) =>
+  const porMes = comps.map((c) =>
     Object.fromEntries(
       lancamentos
         .filter((l) => l.competencia === c)
         .map((l) => [l.conta, l.valorCentavos])
     )
   );
-  const dres: LinhaCalculada[][] = porMes.map(calcularDre);
-  const trimestre = somarMeses(dres);
+  const dres: LinhaCalculada[][] = porMes.map((m) => calcularDre(contas, m));
+  const total = somarMeses(dres);
 
-  const linhas = trimestre.map((t, i) => {
+  const linhas = total.map((t, i) => {
     const ehPercent = t.percent !== undefined;
     return {
       id: t.id,
@@ -88,36 +294,48 @@ async function montarDre(competenciaFinal: string): Promise<DreView> {
       ...(ehPercent
         ? { percents: dres.map((d) => d[i]?.percent ?? null) }
         : {}),
-      trimestre: t.valorCentavos,
-      ...(ehPercent ? { trimestrePercent: t.percent ?? null } : {}),
+      total: t.valorCentavos,
+      ...(ehPercent ? { totalPercent: t.percent ?? null } : {}),
     };
   });
 
-  const contas = PLANO_DE_CONTAS.map((c) => ({
-    conta: c.conta,
-    nome: c.nome,
-    grupo: c.grupo,
-    valores: porMes.map((m) => m[c.conta] ?? null),
-  }));
+  const contasComLancamento = new Set(lancamentos.map((l) => l.conta));
+  const contasView = contasPlano
+    .filter((c) => c.ativa || contasComLancamento.has(c.conta))
+    .map((c) => ({
+      conta: c.conta,
+      nome: c.nome,
+      grupo: c.grupo,
+      centroDeCusto: c.centroDeCusto,
+      ativa: c.ativa,
+      valores: porMes.map((m) => m[c.conta] ?? null),
+    }));
 
-  return { competencias, linhas, contas };
+  return { intervalo, competencias: comps, linhas, contas: contasView };
 }
 
 export async function lerDre(input: {
-  competenciaFinal: string;
+  de: string;
+  ate: string;
 }): Promise<Result<DreView>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    return await montarDre(Competencia.parse(input.competenciaFinal));
+    return await montarDre(IntervaloSchema.parse(input));
   });
 }
 
-const LancamentoSchema = z.object({
-  competencia: Competencia,
-  competenciaFinal: Competencia.optional(),
-  conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
-  valorCentavos: z.number().int().nullable(),
-});
+const LancamentoSchema = z
+  .object({
+    competencia: Competencia,
+    conta: z.string().refine(contaValida, "Conta fora do plano de contas."),
+    valorCentavos: z.number().int().nullable(),
+    de: z.iso.date(),
+    ate: z.iso.date(),
+  })
+  .refine(
+    (v) => intervaloValido({ de: v.de, ate: v.ate }),
+    "Intervalo inválido."
+  );
 
 export async function salvarLancamento(
   input: z.infer<typeof LancamentoSchema>
@@ -125,10 +343,21 @@ export async function salvarLancamento(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { competencia, competenciaFinal, conta, valorCentavos } =
+    const { competencia, conta, valorCentavos, de, ate } =
       LancamentoSchema.parse(input);
-    const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
 
+    const contaDoPlano = await database.contaDoPlano.findUnique({
+      where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
+      select: { ativa: true },
+    });
+    if (!contaDoPlano?.ativa) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Conta desativada ou fora do plano."
+      );
+    }
+
+    const where = { tenantId: SYSTEM_TENANT_ID, competencia, conta };
     if (valorCentavos === null) {
       await database.lancamentoMensal.deleteMany({ where });
     } else {
@@ -149,13 +378,14 @@ export async function salvarLancamento(
       diff: [[conta, "", valorCentavos === null ? "" : String(valorCentavos)]],
     });
     revalidatePath(ROTA_FINANCEIRO);
-    return await montarDre(competenciaFinal ?? competencia);
+    return await montarDre({ de, ate });
   });
 }
 
 // ── Caixa ──────────────────────────────────────────────────────────────────
 
 export type CaixaView = {
+  intervalo: Intervalo;
   semanas: SemanaCalculada[];
   referenciaPipelineCentavos: number | null;
   convPropostaAceitaPercent: number | null;
@@ -166,13 +396,15 @@ function dataUtc(iso: string): Date {
   return new Date(`${iso}T00:00:00Z`);
 }
 
-async function montarCaixa(): Promise<CaixaView> {
-  const janela = janelaDe13(new Date());
+async function montarCaixa(intervalo: Intervalo): Promise<CaixaView> {
+  const janela = segundas(intervalo);
+  const inicio = janela[0] as string;
+  const fim = janela.at(-1) as string;
   const [gravadas, cac, propostas] = await Promise.all([
     database.semanaDeCaixa.findMany({
       where: {
         tenantId: SYSTEM_TENANT_ID,
-        semanaInicio: { gte: dataUtc(janela[0]), lte: dataUtc(janela[12]) },
+        semanaInicio: { gte: dataUtc(inicio), lte: dataUtc(fim) },
       },
       select: {
         semanaInicio: true,
@@ -214,41 +446,52 @@ async function montarCaixa(): Promise<CaixaView> {
   });
 
   const conv = cac?.convPropostaAceitaPercent ?? null;
-  const total = propostas._sum.totalCentavos ?? 0;
+  const totalPropostas = propostas._sum.totalCentavos ?? 0;
   return {
+    intervalo,
     semanas: calcularCaixa(entradas),
-    referenciaPipelineCentavos: referenciaPipeline(total, conv),
+    referenciaPipelineCentavos: referenciaPipeline(totalPropostas, conv),
     convPropostaAceitaPercent: conv,
-    totalPropostasAbertasCentavos: total,
+    totalPropostasAbertasCentavos: totalPropostas,
   };
 }
 
-export async function lerCaixa(): Promise<Result<CaixaView>> {
+export async function lerCaixa(input: {
+  de: string;
+  ate: string;
+}): Promise<Result<CaixaView>> {
   return await safeAction(async () => {
     await requirePlatformStaff();
-    return await montarCaixa();
+    return await montarCaixa(IntervaloSchema.parse(input));
   });
 }
 
 const Centavos = z.number().int().nullable().optional();
 
-const SemanaSchema = z.object({
-  semanaInicio: z.iso
-    .date()
-    .refine(
-      (s) => segundaFeira(dataUtc(s)) === s,
-      "A semana começa numa segunda-feira."
-    ),
-  saldoInicialCentavos: Centavos,
-  recebiveisCentavos: Centavos,
-  contratosAssinadosCentavos: Centavos,
-  pipelinePonderadoCentavos: Centavos,
-  saidasPessoalCentavos: Centavos,
-  saidasFornecedoresCentavos: Centavos,
-  saidasComercialCentavos: Centavos,
-  saidasImpostosCentavos: Centavos,
-  saidasOutrasCentavos: Centavos,
-});
+const SemanaSchema = z
+  .object({
+    semanaInicio: z.iso
+      .date()
+      .refine(
+        (s) => segundaFeira(dataUtc(s)) === s,
+        "A semana começa numa segunda-feira."
+      ),
+    de: z.iso.date(),
+    ate: z.iso.date(),
+    saldoInicialCentavos: Centavos,
+    recebiveisCentavos: Centavos,
+    contratosAssinadosCentavos: Centavos,
+    pipelinePonderadoCentavos: Centavos,
+    saidasPessoalCentavos: Centavos,
+    saidasFornecedoresCentavos: Centavos,
+    saidasComercialCentavos: Centavos,
+    saidasImpostosCentavos: Centavos,
+    saidasOutrasCentavos: Centavos,
+  })
+  .refine(
+    (v) => intervaloValido({ de: v.de, ate: v.ate }),
+    "Intervalo inválido."
+  );
 
 export async function salvarSemana(
   input: z.infer<typeof SemanaSchema>
@@ -256,7 +499,7 @@ export async function salvarSemana(
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
-    const { semanaInicio, ...campos } = SemanaSchema.parse(input);
+    const { semanaInicio, de, ate, ...campos } = SemanaSchema.parse(input);
     const update = Object.fromEntries(
       Object.entries(campos).filter(([, v]) => v !== undefined)
     );
@@ -285,6 +528,6 @@ export async function salvarSemana(
       diff: Object.entries(update).map(([k, v]) => [k, "", String(v ?? "")]),
     });
     revalidatePath(ROTA_FINANCEIRO);
-    return await montarCaixa();
+    return await montarCaixa({ de, ate });
   });
 }
