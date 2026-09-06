@@ -6,6 +6,8 @@
  */
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { type ReactNode, useState } from "react";
+import { BotaoSecundario, Erro, INPUT } from "@/components/campo";
+import type { Result } from "@/lib/safe-action";
 
 /** Mesmas etapas de `lib/empresa/formato.ts:formatarData`, mas local: aquele
  *  módulo é do domínio "empresa", e o mapa de processos não depende dele. */
@@ -188,6 +190,93 @@ export function LinhaLigacao({
           <Icon name={armado ? "check" : "x"} size={12} />
         </button>
       ) : null}
+    </div>
+  );
+}
+
+export type CandidatoLigacao = { id: string; codigo: string; nome: string };
+
+/** Mínimo de 2 caracteres — mesmo piso de `LigacaoSchema.rotulo` em
+ *  `app/actions/processos.ts`; o servidor valida de novo antes de gravar. */
+function podeCriarLigacao(paraId: string, rotulo: string): boolean {
+  return paraId.length > 0 && rotulo.trim().length >= 2;
+}
+
+/** Mini-formulário de "Nova ligação" (Task 6, spec §4). Estado local — igual
+ *  `LinhaLigacao` acima — porque é um rascunho de um clique só: some ao trocar
+ *  de processo selecionado (o `Painel` inteiro remonta, via `key`). */
+export function FormularioNovaLigacao({
+  candidatos,
+  onCriar,
+}: {
+  candidatos: CandidatoLigacao[];
+  onCriar: (paraId: string, rotulo: string) => Promise<Result<unknown>>;
+}) {
+  const [paraId, setParaId] = useState(candidatos[0]?.id ?? "");
+  const [rotulo, setRotulo] = useState("");
+  const [pendente, setPendente] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
+  async function criar() {
+    setErro(null);
+    setPendente(true);
+    const res = await onCriar(paraId, rotulo.trim());
+    setPendente(false);
+    if (!res.ok) {
+      setErro(res.error);
+      return;
+    }
+    setRotulo("");
+  }
+
+  if (candidatos.length === 0) {
+    return null;
+  }
+
+  return (
+    <div
+      style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 8 }}
+    >
+      <span
+        className="mono"
+        style={{
+          color: "var(--ink-faint)",
+          fontSize: "var(--fs-micro)",
+          fontWeight: 700,
+          letterSpacing: ".08em",
+          textTransform: "uppercase",
+        }}
+      >
+        Nova ligação
+      </span>
+      {erro ? <Erro>{erro}</Erro> : null}
+      <select
+        aria-label="Destino da ligação"
+        onChange={(e) => setParaId(e.target.value)}
+        style={INPUT}
+        value={paraId}
+      >
+        {candidatos.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.codigo} · {c.nome}
+          </option>
+        ))}
+      </select>
+      <div style={{ display: "flex", gap: 6 }}>
+        <input
+          aria-label="Rótulo da ligação"
+          onChange={(e) => setRotulo(e.target.value)}
+          placeholder="ex.: alimenta"
+          style={{ ...INPUT, flex: 1 }}
+          value={rotulo}
+        />
+        <BotaoSecundario
+          disabled={pendente || !podeCriarLigacao(paraId, rotulo)}
+          onClick={criar}
+        >
+          Adicionar
+        </BotaoSecundario>
+      </div>
     </div>
   );
 }

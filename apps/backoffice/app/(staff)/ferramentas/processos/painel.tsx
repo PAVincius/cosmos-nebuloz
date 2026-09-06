@@ -19,8 +19,10 @@ import {
   tomCssDoDominio,
   vizinhos,
 } from "@/lib/ferramentas/processos";
+import type { Result } from "@/lib/safe-action";
 import {
   CartaoMetrica,
+  FormularioNovaLigacao,
   formatarDataCurta,
   LinhaLigacao,
   Pilula,
@@ -36,6 +38,7 @@ export type PainelProps = {
   onEditar: () => void;
   onExcluirProcesso: (id: string) => void;
   onExcluirLigacao: (id: string) => void;
+  onCriarLigacao: (paraId: string, rotulo: string) => Promise<Result<unknown>>;
 };
 
 /** "PZ-01 · Comercial · nível 2 tático · núcleo" — único lugar que junta os
@@ -83,11 +86,15 @@ export function Painel({
   onEditar,
   onExcluirProcesso,
   onExcluirLigacao,
+  onCriarLigacao,
 }: PainelProps) {
   const status = statusDe(processo);
   const tom = tomCssDoDominio(DOMINIOS[processo.dominio].tom);
   const porId = new Map(processos.map((p) => [p.id, p]));
   const ligacoesDoProcesso = vizinhos(processo.id, ligacoes);
+  const candidatosLigacao = processos
+    .filter((p) => p.id !== processo.id)
+    .map((p) => ({ codigo: p.codigo, id: p.id, nome: p.nome }));
 
   return (
     <aside
@@ -221,6 +228,12 @@ export function Painel({
             );
           })}
         </div>
+        {podeEscrever ? (
+          <FormularioNovaLigacao
+            candidatos={candidatosLigacao}
+            onCriar={onCriarLigacao}
+          />
+        ) : null}
       </div>
 
       {processo.tags.length > 0 ? (

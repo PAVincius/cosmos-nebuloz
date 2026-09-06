@@ -10,6 +10,9 @@
 import { Icon } from "@repo/design-system/cosmos/icons";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  atualizarProcesso,
+  criarLigacao,
+  criarProcesso,
   type DiagramaRow,
   excluirLigacao,
   excluirProcesso,
@@ -33,6 +36,7 @@ import {
 } from "@/lib/ferramentas/processos";
 import { Grafo } from "./grafo";
 import { Painel } from "./painel";
+import { ProcessoDialog, type ProcessoFormInput } from "./processo-dialog";
 
 export type DadosMapa = {
   processos: ProcessoRow[];
@@ -59,26 +63,6 @@ const TRACO_VERTICAL = (
     style={{ alignSelf: "stretch", background: "var(--hairline)", width: 1 }}
   />
 );
-
-function Aviso({ children }: { children: string }) {
-  return (
-    <output
-      style={{
-        background: "var(--surface-2)",
-        border: "1px solid var(--hairline)",
-        borderRadius: "var(--r-md)",
-        color: "var(--ink-muted)",
-        display: "block",
-        fontSize: "var(--fs-base)",
-        fontWeight: 600,
-        margin: 0,
-        padding: "9px 11px",
-      }}
-    >
-      {children}
-    </output>
-  );
-}
 
 function visivelPorFiltros(
   p: ProcessoRow,
@@ -150,13 +134,16 @@ export function Mapa({
 }) {
   const [dados, setDados] = useState(inicial);
   const [erro, setErro] = useState<string | null>(null);
-  const [aviso, setAviso] = useState<string | null>(null);
   const [q, setQ] = useState("");
   const [dominio, setDominio] = useState("all");
   const [nivel, setNivel] = useState("all");
   const [status, setStatus] = useState("all");
   const [selecionado, setSelecionado] = useState<string | null>(null);
   const [excluindo, setExcluindo] = useState(false);
+  const [dialogoAberto, setDialogoAberto] = useState(false);
+  const [processoEmEdicao, setProcessoEmEdicao] = useState<ProcessoRow | null>(
+    null
+  );
   const empilhado = useEmpilhado(1100);
 
   const recarregar = useCallback(async () => {
@@ -190,9 +177,48 @@ export function Mapa({
     setStatus("all");
   }, []);
 
-  const mostrarAviso = useCallback(() => {
-    setAviso("Diálogo chega na próxima tarefa.");
+  const abrirCriacao = useCallback(() => {
+    setProcessoEmEdicao(null);
+    setDialogoAberto(true);
   }, []);
+
+  const abrirEdicao = useCallback((p: ProcessoRow) => {
+    setProcessoEmEdicao(p);
+    setDialogoAberto(true);
+  }, []);
+
+  const fecharDialogo = useCallback(() => {
+    setDialogoAberto(false);
+  }, []);
+
+  const salvarProcesso = useCallback(
+    async (input: ProcessoFormInput) => {
+      const res = processoEmEdicao
+        ? await atualizarProcesso({ ...input, id: processoEmEdicao.id })
+        : await criarProcesso(input);
+      if (res.ok) {
+        setDialogoAberto(false);
+        setProcessoEmEdicao(null);
+        await recarregar();
+      }
+      return res;
+    },
+    [processoEmEdicao, recarregar]
+  );
+
+  const criarLigacaoDoProcesso = useCallback(
+    async (paraId: string, rotulo: string) => {
+      if (!selecionado) {
+        return { error: "Nenhum processo selecionado.", ok: false as const };
+      }
+      const res = await criarLigacao({ deId: selecionado, paraId, rotulo });
+      if (res.ok) {
+        await recarregar();
+      }
+      return res;
+    },
+    [selecionado, recarregar]
+  );
 
   const excluirProcessoSelecionado = useCallback(
     async (id: string) => {
@@ -239,11 +265,10 @@ export function Mapa({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
-      {aviso ? <Aviso>{aviso}</Aviso> : null}
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         {podeEscrever ? (
-          <BotaoPrimario full={false} onClick={mostrarAviso} type="button">
+          <BotaoPrimario full={false} onClick={abrirCriacao} type="button">
             Novo processo
           </BotaoPrimario>
         ) : null}
@@ -389,7 +414,8 @@ export function Mapa({
               executando={excluindo}
               key={processoSelecionado.id}
               ligacoes={dados.ligacoes}
-              onEditar={mostrarAviso}
+              onCriarLigacao={criarLigacaoDoProcesso}
+              onEditar={() => abrirEdicao(processoSelecionado)}
               onExcluirLigacao={removerLigacao}
               onExcluirProcesso={excluirProcessoSelecionado}
               onSelecionar={setSelecionado}
@@ -400,6 +426,14 @@ export function Mapa({
           ) : null}
         </div>
       )}
+
+      <ProcessoDialog
+        aberto={dialogoAberto}
+        diagramas={dados.diagramas}
+        onFechar={fecharDialogo}
+        onSalvar={salvarProcesso}
+        processo={processoEmEdicao}
+      />
     </div>
   );
 }
