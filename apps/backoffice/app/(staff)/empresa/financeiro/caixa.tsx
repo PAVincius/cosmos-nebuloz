@@ -139,6 +139,7 @@ export function Caixa({
               <Input
                 chave={chave}
                 gravar={gravar}
+                key={`${chave}-${s.semanaInicio}-${s[chave] ?? ""}`}
                 podeEscrever={podeEscrever}
                 s={s}
               />

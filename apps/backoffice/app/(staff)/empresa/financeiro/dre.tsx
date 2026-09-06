@@ -156,6 +156,7 @@ export function Dre({
                         v === null ? "" : (v / 100).toFixed(2).replace(".", ",")
                       }
                       inputMode="decimal"
+                      key={`${c.conta}-${view.competencias[i]}-${v ?? ""}`}
                       onBlur={(e) => {
                         if (podeEscrever) {
                           lancar(view.competencias[i], c.conta, e.target.value);
