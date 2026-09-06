@@ -415,6 +415,9 @@
         "fieldCompany": "COMPANY (OPTIONAL)",
         "fieldMessage": "MESSAGE",
         "send": "Send",
+        "privacyNoticeA": "What you send goes to our inbox so we can reply, and nowhere else. No marketing list, no sharing. See the",
+        "privacyNoticeLink": "Privacy Policy",
+        "privacyNoticeB": "for retention and how to ask us to delete it.",
         "sending": "Sending",
         "formError": "That did not send. Try again, or use one of the other three headings.",
         "sentTitle": "Sent",
@@ -463,6 +466,7 @@
           { "label": "Assessment", "href": "#assessment" },
           { "label": "Book", "href": "#start" },
           { "label": "Privacy", "href": "/legal/privacy" },
+          { "label": "Cookies", "href": "/legal/cookies" },
           { "label": "Terms", "href": "/legal/terms" }
         ]
       }
@@ -653,12 +657,17 @@
         "eyebrow": "LEGAL",
         "titleA": "The documents",
         "titleB": "that govern this site.",
-        "lead": "Two documents: what happens to data you leave here, and the terms under which the site and the assessment are offered.",
+        "lead": "Three documents: what happens to data you leave here, which cookies the site sets, and the terms under which the site and the assessment are offered.",
         "docs": [
           {
             "href": "/legal/privacy",
             "title": "Privacy Policy",
             "desc": "What is collected, why, on what legal basis, who processes it, how long it is kept, and how to exercise your rights."
+          },
+          {
+            "href": "/legal/cookies",
+            "title": "Cookie Policy",
+            "desc": "The one cookie this site sets, why it needs no consent, and what would have to change for that to stop being true."
           },
           {
             "href": "/legal/terms",
@@ -687,8 +696,8 @@
           {
             "heading": "What this site collects",
             "body": [
-              "Right now, one thing: a first-party cookie named Next-Locale, which remembers the language you were served. It carries no identifier and is not used for analytics. Verified on the live site — no other cookie, no local storage entry, and no request to any third party.",
-              "When product analytics is switched on, the site will use PostHog, which stores an identifier in your browser (a cookie and a local storage entry) and records page views and interactions. PostHog processes that on infrastructure in the United States. [[DADO NECESSÁRIO: atualizar esta seção no dia em que o analytics for ligado de verdade — hoje está desativado]]",
+              "Right now, one thing: a first-party cookie named Next-Locale, which remembers the language you were served. It carries no identifier and is not used for analytics. Measured on a running build: no other cookie and no local storage entry. One request does leave for a third party — the Vercel Web Analytics script, described below.",
+              "Aggregate page views, through Vercel Web Analytics. It is cookieless: nothing is written to your browser and you are not given an identifier. Vercel derives a short-lived, non-reversible hash from the request to tell one visit from another within a day, and that is the whole of it. Product analytics that would identify you — PostHog, Google Analytics — is not loaded on this site, and cannot be: see packages/analytics/marketing-provider.tsx.",
               "Contacting us: whatever you type into the contact form, plus your email address, so we can reply.",
               "Server logs kept by our hosting provider, which include IP address, user agent and requested path."
             ],
@@ -703,16 +712,16 @@
             "body": [
               "Replying to you when you make contact: performance of a contract or preliminary steps at your request — LGPD Article 7 V, GDPR Article 6(1)(b).",
               "Keeping the site secure and available, including logs: legitimate interest — LGPD Article 7 IX, GDPR Article 6(1)(f).",
-              "Understanding how the site is used, through analytics: consent — LGPD Article 7 I, GDPR Article 6(1)(a). [[DADO NECESSÁRIO: decidir se haverá banner de consentimento; sem ele, analytics não pode rodar antes do consentimento para visitantes na UE]]"
+              "Counting visits, through cookieless analytics: legitimate interest — LGPD Article 7 IX. No processing on this site rests on consent, which is why you are not asked for any and why there is no cookie banner. If that changes, consent will be collected before the script loads, not after."
             ]
           },
           {
             "heading": "Who else processes it",
             "body": [
               "We use third parties to run the site. Each one processes data only on our instructions.",
-              "Vercel Inc. — hosting, delivery and server logs. Processes in the United States. Active.",
-              "PostHog Inc. — product analytics. Processes in the United States. Not active yet; nothing is sent to PostHog and no analytics identifier is written until it is configured.",
-              "[[DADO NECESSÁRIO: confirmar se Resend (envio de e-mail do formulário) e Sentry (monitoramento de erros) estarão ativos em produção — hoje o formulário não envia e o Sentry não tem DSN configurada]]"
+              "Vercel Inc. — hosting, delivery, server logs and cookieless Web Analytics. Processes in the United States. Active.",
+              "Resend — delivery of the email the contact form sends us. It handles the name, email address and message you submit. Processes in the United States. Active.",
+              "Sentry — error monitoring. Not active on this site: no DSN is configured, so the SDK does not start and no error report leaves your browser. It is listed because the code is present and a DSN would activate it."
             ]
           },
           {
@@ -740,7 +749,7 @@
             "heading": "Cookies and similar technologies",
             "body": [
               "Today the site sets one thing in your browser: the Next-Locale cookie described above. There is no analytics identifier, no advertising cookie and no third-party script.",
-              "If analytics is switched on later, it will add one identifier. You can clear it from your browser settings, and blocking it does not affect how the site works."
+              "That is a decision, not an accident. Analytics that needs a cookie was removed from this site so that visiting it would not require agreeing to anything. Should we ever want it back, this section and the consent flow change first, and this page will say so before the script runs."
             ]
           },
           {
@@ -760,6 +769,54 @@
             "heading": "Governing law",
             "body": [
               "This policy is governed by Brazilian law, in particular Law 13.709/2018 (LGPD). [[DADO NECESSÁRIO: foro eleito — normalmente a comarca da sede]]"
+            ]
+          }
+        ]
+      },
+      "cookies": {
+        "meta": {
+          "title": "Cookie Policy",
+          "description": "Every cookie nebuloz.ai sets, what it is for, and why there is no consent banner."
+        },
+        "eyebrow": "COOKIES · LGPD",
+        "title": "Cookie Policy",
+        "lead": "Short, because the site is. One cookie is set, it is strictly necessary, and nothing here tracks you across sites or over time.",
+        "updated": "[[DADO NECESSÁRIO: data de publicação, definida quando o advogado aprovar]]",
+        "sections": [
+          {
+            "heading": "The complete list",
+            "body": [
+              "Next-Locale — a first-party cookie holding a language code, so a page served in Portuguese stays in Portuguese on the next click. No identifier, no profile, nothing shared with anyone. Strictly necessary, which under the LGPD and the ePrivacy Directive is the category that does not require consent.",
+              "That is the list. There is no second entry."
+            ]
+          },
+          {
+            "heading": "Why there is no cookie banner",
+            "body": [
+              "A banner exists to collect consent, and consent is only needed for processing that depends on it. Nothing here does. Analytics on this site is Vercel Web Analytics, which is cookieless — it writes nothing to your browser and gives you no identifier.",
+              "Tools that would need a banner were removed rather than wrapped in one. Google Analytics and PostHog are not loaded on this site and are structurally prevented from loading; the reasoning is written into the code at packages/analytics/marketing-provider.tsx so that turning them back on is a deliberate act, not a config change.",
+              "We would rather ask you for nothing than ask you to dismiss something."
+            ]
+          },
+          {
+            "heading": "What is not a cookie, but is still stored",
+            "body": [
+              "Nothing, at present. No local storage, no session storage, no device fingerprint. Measured on a running build rather than assumed; the only entries that appear during development belong to the dev server's hot reload and never ship.",
+              "The one exception is transient and belongs to your browser rather than to us: standard HTTP caching of images, fonts and scripts, which every site relies on and which holds no personal data."
+            ]
+          },
+          {
+            "heading": "Refusing or clearing it",
+            "body": [
+              "Every browser can block or delete cookies for a single site. Blocking Next-Locale costs you nothing except that the site will fall back to its default language on each visit.",
+              "Because nothing here is used for advertising, there is no opt-out to sign, no vendor list to review, and no preference centre to keep."
+            ]
+          },
+          {
+            "heading": "If this changes",
+            "body": [
+              "Adding a cookie that is not strictly necessary means asking first. In that case this page changes before the cookie is set, not after, and consent is collected before the script loads.",
+              "The date at the top of this page is how you can tell whether that has happened."
             ]
           }
         ]

@@ -375,7 +375,29 @@ function ContactForm({ channel, copy }: ContactFormProps) {
         </p>
       ) : null}
 
-      <div className="mt-5 flex items-center justify-center">
+      {/* A notice, deliberately not a consent checkbox. Replying to someone who
+          wrote to us rests on LGPD art. 7 V — preliminary steps taken at the
+          data subject's own request — not on consent. A ticked box would
+          declare the wrong legal basis, and a basis of consent is revocable, so
+          it would also hand us an obligation to erase the enquiry the moment
+          anyone changed their mind. What the law does ask for here is art. 9:
+          say what happens to the data, at the point it is collected. A checkbox
+          would only be right if we were also adding people to a marketing list,
+          which we are not. */}
+      <p className="mt-5 text-center text-[12px] text-muted leading-[1.55]">
+        {copy.privacyNoticeA}{" "}
+        <a
+          className="underline decoration-white/25 underline-offset-2 transition-colors hover:text-white"
+          href="/legal/privacy"
+          rel="noreferrer noopener"
+          target="_blank"
+        >
+          {copy.privacyNoticeLink}
+        </a>{" "}
+        {copy.privacyNoticeB}
+      </p>
+
+      <div className="mt-4 flex items-center justify-center">
         <button
           className="btn-primary"
           disabled={status === "sending"}
