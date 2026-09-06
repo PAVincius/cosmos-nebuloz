@@ -219,6 +219,8 @@ function normalizar(s: string): string {
 }
 
 const ESPACOS = /\s+/;
+const NAO_ALFANUM = /[^a-z0-9]+/g;
+const BORDA_HIFEN = /(^-|-$)/g;
 
 function termosDe(q: string): string[] {
   return normalizar(q)
@@ -362,12 +364,17 @@ type ArquivoCanvas = {
   color: string;
 };
 
+/** Mesmas etapas de `lib/slug.ts`, inclusive a poda de hífen nas bordas: um
+ * nome com pontuação na ponta ("(Legado) Funil") viraria `-legado-funil` e o
+ * arquivo do `.canvas` sairia malformado. Não dá para reusar `slugificar` de
+ * lá — este módulo é puro e só importa tipo. */
 function slugify(nome: string): string {
   return nome
     .normalize("NFD")
     .replace(ACENTOS, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-");
+    .replace(NAO_ALFANUM, "-")
+    .replace(BORDA_HIFEN, "");
 }
 
 /** O nó do `.canvas` e o nome do arquivo usam `codigo`, não `id`: o arquivo

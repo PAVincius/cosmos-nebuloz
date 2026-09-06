@@ -66,6 +66,18 @@ describe("layoutPolar", () => {
     expect(pos["PZ-02"]).not.toEqual(pos["PZ-03"]);
   });
 
+  it("crava a posição de um nó só no seu setor e anel", () => {
+    // COMERCIAL é o primeiro setor, com centro em -60°. Nível 1 tem raio
+    // 250×128 e, com um nó só, nenhum desvio de raio: x = 780 + cos(-60°)·250
+    // = 905, y = 470 + sen(-60°)·128 = 359. Número cravado de propósito —
+    // erro de sinal ou troca de anel por setor passa despercebido em teste
+    // que só compara nós entre si.
+    const { pos } = layoutPolar([
+      p({ codigo: "PZ-01", dominio: "COMERCIAL", nivel: 1 }),
+    ]);
+    expect(pos["PZ-01"]).toEqual({ x: 905, y: 359 });
+  });
+
   it("devolve uma posição para cada nó, e só para eles", () => {
     const { pos } = layoutPolar(nos);
     expect(Object.keys(pos).sort()).toEqual([
@@ -147,6 +159,13 @@ describe("paraJsonCanvas", () => {
     const doc = paraJsonCanvas(nos, ligacoes, layoutPolar(nos).pos);
     const no = doc.nodes.find((n) => n.id === "PZ-01");
     expect(no?.file).toBe("processos/PZ-01-funil-de-leads.md");
+  });
+
+  it("nome com pontuação na ponta não deixa hífen solto no arquivo", () => {
+    const nos2 = [p({ codigo: "PZ-09", nome: "(Legado) Publicação!" })];
+    const doc = paraJsonCanvas(nos2, [], layoutPolar(nos2).pos);
+    const no = doc.nodes.find((n) => n.id === "PZ-09");
+    expect(no?.file).toBe("processos/PZ-09-legado-publicacao.md");
   });
 
   it("cada aresta carrega rótulo e seta, com lados vindos da geometria", () => {
