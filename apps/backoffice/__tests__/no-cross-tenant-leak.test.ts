@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
 // Mesma armadilha das outras suítes: o módulo importa requirePlatformStaff, que
@@ -42,4 +44,31 @@ describe("fronteira cross-tenant", () => {
       })
     );
   });
+});
+
+describe("actions/empresa — só fornecedores.ts atravessa tenants", () => {
+  const dir = path.resolve(__dirname, "../app/actions/empresa");
+  const arquivos = readdirSync(dir).filter((f) => f.endsWith(".ts"));
+
+  it("os quatro arquivos existem", () => {
+    expect(arquivos.sort()).toEqual([
+      "cac.ts",
+      "consentimento.ts",
+      "financeiro.ts",
+      "fornecedores.ts",
+    ]);
+  });
+
+  for (const f of arquivos) {
+    const fonte = readFileSync(path.join(dir, f), "utf8");
+
+    it(`${f} filtra pelo tenant system`, () => {
+      expect(fonte).toContain("SYSTEM_TENANT_ID");
+    });
+
+    it(`${f} ${f === "fornecedores.ts" ? "é o único que" : "não"} importa platformDb/withTenantDb`, () => {
+      const atravessa = /platformDb|withTenantDb/.test(fonte);
+      expect(atravessa).toBe(f === "fornecedores.ts");
+    });
+  }
 });
