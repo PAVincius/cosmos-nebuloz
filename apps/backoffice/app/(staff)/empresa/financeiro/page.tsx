@@ -74,7 +74,7 @@ function Abas({ aba }: { aba: Aba }) {
         href="/empresa/financeiro?aba=caixa"
         style={abaStyle(aba === "caixa")}
       >
-        Caixa 13 semanas
+        Caixa
       </Link>
       <Link
         href="/empresa/financeiro?aba=plano"

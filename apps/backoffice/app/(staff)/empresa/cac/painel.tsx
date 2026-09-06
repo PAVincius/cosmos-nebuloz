@@ -319,7 +319,11 @@ export function Painel({
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
         <SectionCard
-          subtitle="o Meridian é a porta de entrada; o custo dele segue para quem ele puxa"
+          subtitle={
+            view.editavel
+              ? "o Meridian é a porta de entrada; o custo dele segue para quem ele puxa"
+              : `Valores do mês ${view.competenciaEditavel} — o rateio não se soma entre meses`
+          }
           title="Alocação por produto"
         >
           <Tabela

@@ -35,12 +35,7 @@ const ROTULO_GRUPO: Record<number, string> = {
   6: "6 · G&A",
 };
 const GRUPOS = [1, 2, 3, 4, 5, 6];
-const CENTROS: CentroDeCusto[] = [
-  "comercial",
-  "produto-engenharia",
-  "entrega",
-  "ga",
-];
+const CENTROS = Object.keys(ROTULO_CENTRO) as CentroDeCusto[];
 const LARGURAS = [
   { id: "c", largura: "12%" },
   { id: "n", largura: "48%" },
@@ -92,6 +87,7 @@ function LinhaConta({
       <Celula style={{ opacity: opacidade }}>
         {temCentro(c.grupo) ? (
           <select
+            aria-label={`Centro de custo da conta ${c.conta}`}
             disabled={!podeEscrever}
             onChange={(e) => onCentro(c.conta, e.target.value as CentroDeCusto)}
             style={{ ...INPUT, padding: "6px 8px" }}
@@ -259,16 +255,22 @@ export function Plano({
 
   const mudarCentro = useCallback(
     async (conta: string, centroDeCusto: CentroDeCusto) => {
+      if (!podeEscrever) {
+        return;
+      }
       aplicar(await atualizarConta({ conta, centroDeCusto }));
     },
-    [aplicar]
+    [podeEscrever, aplicar]
   );
 
   const ativar = useCallback(
     async (conta: string, ativa: boolean) => {
+      if (!podeEscrever) {
+        return;
+      }
       aplicar(await atualizarConta({ conta, ativa }));
     },
-    [aplicar]
+    [podeEscrever, aplicar]
   );
 
   const criar = useCallback(
