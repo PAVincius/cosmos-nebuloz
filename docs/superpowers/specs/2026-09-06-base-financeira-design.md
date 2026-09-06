@@ -7,8 +7,10 @@ receber, orçado contra realizado, e receita recorrente.
 Decisões tomadas com o usuário em 2026-09-06: lançamento vira linha
 individual e o DRE passa a somar as linhas; baixar um título gera o lançamento
 na competência; MRR sai de uma assinatura enxuta por cliente, e crédito de IA
-segue a mecânica da ElevenLabs — franquia mensal por tier, que reseta, com o
-excedente cobrado por unidade a uma taxa que cai conforme o tier sobe. Não há
+segue o padrão licença + franquia do GitHub Copilot e do Microsoft 365
+Copilot — o assento inclui uma cota mensal de créditos, que reseta, e o que
+passa é cobrado por unidade a uma taxa que cai conforme o tier sobe, dentro de
+um orçamento de excedente que o cliente define e que por padrão é zero. Não há
 venda de crédito avulso.
 
 ## 0. Escopo, colisão e cortes
@@ -180,14 +182,23 @@ model AssinaturaDoTenant {
   /// a regra e não a exceção nas primeiras vendas.
   valorMensalCentavos Int
 
-  /// Franquia mensal de créditos de IA do degrau. Reseta todo mês e não
-  /// acumula — é o que torna a receita da franquia recorrente de verdade.
+  /// Franquia mensal de créditos de IA, agregada por conta: assentos vezes
+  /// créditos por assento do degrau, calculada na venda e congelada aqui.
+  /// Agregada e não por assento porque num portfólio poucos RTEs usam quase
+  /// toda a IA, e o uso pesado deve consumir a sobra dos leves. Reseta todo
+  /// mês e não acumula — é o que torna a receita da franquia recorrente.
   creditosMesIncluidos Int @default(0)
   /// Preço do crédito acima da franquia, por unidade. Cai conforme o degrau
   /// sobe — é o desconto por volume que faz subir de tier valer a pena.
   /// Acordado como o valor mensal, e não lido do catálogo, pelo mesmo motivo:
   /// desconto é a regra nas primeiras vendas.
   precoCreditoExtraCentavos Int
+  /// Orçamento mensal de excedente que o cliente aceitou. Nulo = excedente
+  /// não cobrado: o consumo acima da franquia é medido e aparece como sinal,
+  /// mas não vira fatura até o cliente definir um teto. É o padrão do GitHub
+  /// Copilot (orçamento zero) e é o que faz compras de empresa grande aceitar
+  /// um componente variável: a variação tem limite escrito.
+  tetoExcedenteCentavos Int?
 
   iniciouEm  DateTime  @db.Date
   /// Nulo = ativa. Preenchido = saiu, e sai da conta de MRR a partir daí.
@@ -252,10 +263,14 @@ model CreditoDoMes {
   /// Taxa por crédito vigente no mês, copiada da assinatura pelo mesmo motivo
   /// que a franquia: o degrau muda e o histórico tem que continuar explicável.
   precoCreditoExtraCentavos Int
-  /// Cobrado pelo que passou da franquia: (consumidos - franquia) x taxa,
-  /// nunca negativo. Guardado e não derivado na leitura porque a taxa do mês
-  /// pode ter mudado depois.
+  /// Cobrado pelo que passou da franquia: min((consumidos - franquia) x taxa,
+  /// teto), nunca negativo, e zero quando a assinatura não tem teto definido.
+  /// Guardado e não derivado na leitura porque taxa e teto do mês podem ter
+  /// mudado depois.
   excedenteCentavos Int @default(0)
+  /// O que teria sido cobrado sem o teto. É o sinal de upgrade: excedente
+  /// reprimido todo mês é cliente pedindo um degrau acima.
+  excedenteReprimidoCentavos Int @default(0)
 
   atualizadoEm DateTime @updatedAt
 
@@ -269,10 +284,12 @@ recorrente e já está no valor mensal, e o excedente é consumo já entregue,
 reconhecido na competência em que aconteceu. Foi o que a decisão de não vender
 pacote comprou de simplicidade.
 
-Fica um risco de negócio registrado, que é decisão sua e não código desta
-entrega: excedente cobrado sem teto significa fatura sem teto. Um cliente que
-dispara consumo gera uma cobrança que ninguém combinou. Se um limite for
-desejado, ele é campo na assinatura e regra no produto, não nesta tela.
+O teto de excedente é o que torna o componente variável vendável a compras:
+sem teto, excedente é fatura sem limite, e é onde a negociação trava. Com o
+padrão em zero, o cliente entra pagando só a licença, vê o consumo acima da
+franquia como número, e decide quando liga a cobrança ou quando sobe de
+degrau. A franquia deve ser dimensionada para que o usuário mediano nunca
+encoste nela — o medidor existe para a cauda, não para o meio.
 
 ## 2. Regras puras
 
@@ -298,8 +315,10 @@ desejado, ele é campo na assinatura e regra no produto, não nesta tela.
 - `usoDaFranquia(creditos)` — consumo sobre franquia por cliente, com as duas
   leituras que importam: abaixo de 30% é risco de churn, acima de 100% é
   gatilho de upgrade.
-- `excedenteDoMes(credito)` — `max(0, consumidos - franquia) x taxa`. Uma
-  função só, usada pela action ao gravar e pela tela ao conferir.
+- `excedenteDoMes(credito, teto)` — devolve `{cobrado, reprimido}`:
+  `bruto = max(0, consumidos - franquia) x taxa`; `cobrado = teto === null ? 0
+  : min(bruto, teto)`; `reprimido = bruto - cobrado`. Uma função só, usada pela
+  action ao gravar e pela tela ao conferir.
 
 ## 3. Actions
 
@@ -343,8 +362,9 @@ Regras puras: sinal por grupo, DRE por linha contra a mesma fixture do DRE
 atual (tem que dar o mesmo número), situação e envelhecimento de título,
 MRR com assinatura encerrada no meio do mês, movimento com os cinco tipos,
 ARR não incluindo serviço nem excedente, uso da franquia nos dois extremos,
-excedente zero quando o consumo fica dentro da franquia e proporcional à taxa
-quando passa.
+excedente zero quando o consumo fica dentro da franquia, proporcional à taxa
+quando passa, cortado no teto quando há teto, e inteiro em reprimido quando a
+assinatura não tem teto.
 Actions com Prisma mockado: baixa gera lançamento na competência informada e
 não na data; baixa de título já baixado é recusada; alterar valor grava a
 mudança com o tipo certo; encerrar tira do MRR do mês seguinte.
