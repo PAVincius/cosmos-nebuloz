@@ -120,6 +120,23 @@ export const BO_NAV: NavSection[] = [
     ],
   },
   {
+    section: "Empresa",
+    items: [
+      {
+        href: "/empresa/fornecedores",
+        icon: "shield",
+        label: "Fornecedores e DPA",
+      },
+      {
+        href: "/empresa/consentimento",
+        icon: "userCheck",
+        label: "Consentimento",
+      },
+      { href: "/empresa/cac", icon: "target", label: "CAC" },
+      { href: "/empresa/financeiro", icon: "wallet", label: "Financeiro" },
+    ],
+  },
+  {
     section: "Ferramentas",
     items: [
       {
