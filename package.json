@@ -24,6 +24,7 @@
     "risk:score": "tsx scripts/risk-score.ts",
     "audit:runtime": "tsx scripts/audit-runtime.mts",
     "size:guard": "tsx scripts/file-size-guard.mts",
+    "legal:guard": "tsx scripts/legal-placeholders-guard.mts",
     "coverage:gaps": "tsx scripts/coverage-gaps.mts",
     "cosmos:graph": "tsx scripts/cosmos-graph.mts",
     "knowledge:refresh": "tsx scripts/knowledge/exportar.mts",
