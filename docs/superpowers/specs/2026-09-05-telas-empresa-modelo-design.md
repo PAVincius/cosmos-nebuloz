@@ -475,6 +475,9 @@ tela. A exportação escreve, por `codigo`:
 | `retencao` | `retention` |
 | `assinadoEm + 12 meses`, quando houver | `renewalAt` |
 
+Coluna nula no `FornecedorDpa` não sobrescreve o `CharterVendor`: o valor
+confirmado no Charter sobrevive a uma exportação sem dado.
+
 `notes`, `tier`, `score` e `subprocessors` não são tocados: são do produto e
 de quem opera o Charter. `maxClass` é cache derivado de `dpa`, `tier` e
 cláusulas (ADR-0003) — mudar `dpa` sem recomputá-lo deixaria o teto mentindo.
