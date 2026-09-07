@@ -299,7 +299,24 @@ function CelulaExcedente({
   );
   return (
     <Celula style={{ textAlign: "right" }}>
-      <span className="mono">{formatarBRL(excedente.cobrado)}</span>
+      <div
+        style={{
+          alignItems: "flex-end",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        <span className="mono">{formatarBRL(excedente.cobrado)}</span>
+        {excedente.reprimido === 0 ? null : (
+          <span
+            className="mono"
+            style={{ color: "var(--ink-faint)", fontSize: "var(--fs-micro)" }}
+          >
+            {formatarBRL(excedente.reprimido)} reprimido
+          </span>
+        )}
+      </div>
     </Celula>
   );
 }

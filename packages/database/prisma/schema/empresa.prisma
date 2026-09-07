@@ -318,6 +318,11 @@ model AssinaturaDoTenant {
 
   @@index([tenantId, encerradaEm])
   @@index([tenantId, clienteSlug])
+  // Índice único parcial não cabe na sintaxe do Prisma (`@@unique` não aceita
+  // `WHERE`): "AssinaturaDoTenant_ativa_por_cliente" — único em
+  // (tenantId, clienteSlug) WHERE encerradaEm IS NULL — mora só na migration
+  // 20260911000000_orcamento_e_recorrente. É o que impede duas assinaturas
+  // ativas do mesmo cliente ao mesmo tempo.
 }
 
 /// Append-only, no padrão de `MudancaDeEstagio`. Sem isto, MRR é um número

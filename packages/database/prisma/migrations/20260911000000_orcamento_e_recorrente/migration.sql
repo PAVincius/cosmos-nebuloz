@@ -78,6 +78,14 @@ CREATE INDEX "AssinaturaDoTenant_tenantId_encerradaEm_idx" ON "AssinaturaDoTenan
 CREATE INDEX "AssinaturaDoTenant_tenantId_clienteSlug_idx" ON "AssinaturaDoTenant"("tenantId", "clienteSlug");
 
 -- CreateIndex
+-- Índice único parcial: no máximo uma assinatura ativa (encerradaEm IS NULL)
+-- por cliente. Não cabe no schema Prisma (`@@unique` não aceita `WHERE`) —
+-- comentário apontando para cá mora perto do model AssinaturaDoTenant.
+CREATE UNIQUE INDEX "AssinaturaDoTenant_ativa_por_cliente"
+  ON "AssinaturaDoTenant" ("tenantId", "clienteSlug")
+  WHERE "encerradaEm" IS NULL;
+
+-- CreateIndex
 CREATE INDEX "MudancaDeAssinatura_tenantId_competencia_idx" ON "MudancaDeAssinatura"("tenantId", "competencia");
 
 -- CreateIndex

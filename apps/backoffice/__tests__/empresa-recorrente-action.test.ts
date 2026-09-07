@@ -230,7 +230,14 @@ describe("listarRecorrente", () => {
 });
 
 describe("criarAssinatura", () => {
-  beforeEach(resetar);
+  beforeEach(() => {
+    resetar();
+    // Ao contrário de alterarValor/encerrarAssinatura/salvarCreditoDoMes,
+    // criarAssinatura consulta `findFirst` para checar se o cliente já tem
+    // assinatura ativa (B4) — sem cliente ativo por padrão, senão toda
+    // gravação bem-sucedida deste describe seria recusada.
+    mocks.assinaturaFindFirst.mockResolvedValue(null);
+  });
 
   it("grava a assinatura E a linha NOVO do histórico na mesma $transaction", async () => {
     const res = await criarAssinatura(ASSINATURA_VALIDA);
@@ -294,6 +301,16 @@ describe("criarAssinatura", () => {
     });
     const res = await criarAssinatura(ASSINATURA_VALIDA);
     expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+
+  it("cliente já com assinatura ativa é recusado com erro legível, antes do banco reclamar", async () => {
+    mocks.assinaturaFindFirst.mockResolvedValue({ id: "a-0" });
+    const res = await criarAssinatura(ASSINATURA_VALIDA);
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error).toBe("Cliente já tem assinatura ativa.");
+    }
     expect(mocks.transaction).not.toHaveBeenCalled();
   });
 });
@@ -497,12 +514,28 @@ describe("encerrarAssinatura", () => {
 describe("salvarCreditoDoMes", () => {
   beforeEach(resetar);
 
-  it("calcula excedenteCentavos e excedenteReprimidoCentavos com excedenteDoMes, congelando franquia e precoCreditoExtraCentavos da assinatura", async () => {
-    mocks.assinaturaFindFirst.mockResolvedValue({
+  function assinaturaRaw(over: {
+    encerradaEm?: Date | null;
+    iniciouEm?: Date;
+  }) {
+    return {
+      id: "a-1",
+      clienteSlug: "vanta-saude",
+      clienteNome: "Vanta Saúde",
+      planoSlug: "growth",
+      valorMensalCentavos: 500_000,
       creditosMesIncluidos: 100,
       precoCreditoExtraCentavos: 200,
       tetoExcedenteCentavos: 5000,
-    });
+      iniciouEm: over.iniciouEm ?? new Date("2026-01-01T00:00:00Z"),
+      encerradaEm: over.encerradaEm ?? null,
+      motivoEncerramento: null,
+      propostaId: null,
+    };
+  }
+
+  it("calcula excedenteCentavos e excedenteReprimidoCentavos com excedenteDoMes, congelando franquia e precoCreditoExtraCentavos da assinatura", async () => {
+    mocks.assinaturaFindMany.mockResolvedValue([assinaturaRaw({})]);
     const res = await salvarCreditoDoMes({
       clienteSlug: "vanta-saude",
       competencia: "2026-09",
@@ -531,7 +564,36 @@ describe("salvarCreditoDoMes", () => {
   });
 
   it("cliente sem assinatura ativa recusa, sem upsert", async () => {
-    mocks.assinaturaFindFirst.mockResolvedValue(null);
+    mocks.assinaturaFindMany.mockResolvedValue([]);
+    const res = await salvarCreditoDoMes({
+      clienteSlug: "vanta-saude",
+      competencia: "2026-09",
+      consumidos: 150,
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.creditoUpsert).not.toHaveBeenCalled();
+  });
+
+  it("fecha o mês de um cliente que já saiu, desde que estivesse ativo naquela competência", async () => {
+    // Encerrou em outubro; fechar o consumo de setembro (mês em que ainda
+    // estava ativa) não pode ser recusado por falta de assinatura "ativa" no
+    // sentido de hoje (`encerradaEm: null`).
+    mocks.assinaturaFindMany.mockResolvedValue([
+      assinaturaRaw({ encerradaEm: new Date("2026-10-05T00:00:00Z") }),
+    ]);
+    const res = await salvarCreditoDoMes({
+      clienteSlug: "vanta-saude",
+      competencia: "2026-09",
+      consumidos: 150,
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.creditoUpsert).toHaveBeenCalled();
+  });
+
+  it("cliente que já saiu antes da competência pedida continua recusado", async () => {
+    mocks.assinaturaFindMany.mockResolvedValue([
+      assinaturaRaw({ encerradaEm: new Date("2026-08-05T00:00:00Z") }),
+    ]);
     const res = await salvarCreditoDoMes({
       clienteSlug: "vanta-saude",
       competencia: "2026-09",

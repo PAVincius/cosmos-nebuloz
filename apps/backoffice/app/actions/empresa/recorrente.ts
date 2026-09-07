@@ -14,7 +14,11 @@ import type {
   MudancaRow,
   TipoDeMudanca,
 } from "@/lib/empresa/recorrente";
-import { excedenteDoMes, valorNaCompetencia } from "@/lib/empresa/recorrente";
+import {
+  ativaNaCompetencia,
+  excedenteDoMes,
+  valorNaCompetencia,
+} from "@/lib/empresa/recorrente";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -220,6 +224,22 @@ export async function criarAssinatura(
     assertCanWrite(staff);
     const { motivo, ...dados } = CriarAssinaturaSchema.parse(input);
     const competencia = dados.iniciouEm.slice(0, 7);
+
+    // Erro legível antes de o banco reclamar: o índice parcial único
+    // (`AssinaturaDoTenant_ativa_por_cliente`, migration 20260911000000) já
+    // impede duas assinaturas ativas do mesmo cliente, mas a mensagem dele é
+    // um erro de constraint cru.
+    const ativaExistente = await database.assinaturaDoTenant.findFirst({
+      where: {
+        tenantId: SYSTEM_TENANT_ID,
+        clienteSlug: dados.clienteSlug,
+        encerradaEm: null,
+      },
+      select: { id: true },
+    });
+    if (ativaExistente) {
+      throw new StaffAuthError("FORBIDDEN", "Cliente já tem assinatura ativa.");
+    }
 
     const criada = await database.$transaction(async (tx) => {
       const nova = await tx.assinaturaDoTenant.create({
@@ -483,17 +503,28 @@ export async function salvarCreditoDoMes(
 
     // Franquia e taxa vêm daqui, nunca do cliente: são o que a assinatura tem
     // hoje, congeladas na linha do mês (mesma ideia de `precoCreditoExtraCentavos`
-    // no schema).
-    const assinatura = await database.assinaturaDoTenant.findFirst({
-      where: { tenantId: SYSTEM_TENANT_ID, clienteSlug, encerradaEm: null },
-      select: {
-        creditosMesIncluidos: true,
-        precoCreditoExtraCentavos: true,
-        tetoExcedenteCentavos: true,
-      },
+    // no schema) — franquia e taxa não têm histórico próprio, então mesmo
+    // fechando o mês de um cliente que já saiu, o valor congelado é o atual
+    // da assinatura, não o vigente naquela competência. Limitação conhecida,
+    // não descuido: dar histórico aos dois fica para quando houver
+    // telemetria de uso.
+    //
+    // A assinatura é a que estava ativa NAQUELA competência (mesma regra de
+    // `ativaNaCompetencia`), não a que está `encerradaEm: null` hoje — senão
+    // fechar o consumo de um mês anterior ao encerramento de um cliente que
+    // já saiu é recusado por falta de assinatura "ativa" no sentido de hoje.
+    const candidatas = await database.assinaturaDoTenant.findMany({
+      where: { tenantId: SYSTEM_TENANT_ID, clienteSlug },
+      select: SELECT_ASSINATURA,
     });
+    const assinatura = candidatas
+      .map(paraAssinatura)
+      .find((cand) => ativaNaCompetencia(cand, competencia));
     if (!assinatura) {
-      throw new StaffAuthError("FORBIDDEN", "Cliente sem assinatura ativa.");
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Cliente sem assinatura ativa naquela competência."
+      );
     }
 
     const { cobrado, reprimido } = excedenteDoMes(
