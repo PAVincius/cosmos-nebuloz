@@ -4,6 +4,7 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { type ContaView, contasDoPlano } from "@/lib/empresa/consultas";
 import {
   calcularCaixa,
   calcularDre,
@@ -60,25 +61,11 @@ function segundas(i: Intervalo): string[] {
 
 // ── Plano de contas ──────────────────────────────────────────────────────
 
-const SELECT_CONTA = {
-  conta: true,
-  nome: true,
-  grupo: true,
-  centroDeCusto: true,
-  ativa: true,
-  ordem: true,
-} as const;
-
-export type ContaView = Conta & { ordem: number };
-
-export async function contasDoPlano(): Promise<ContaView[]> {
-  const linhas = await database.contaDoPlano.findMany({
-    where: { tenantId: SYSTEM_TENANT_ID },
-    orderBy: [{ grupo: "asc" }, { ordem: "asc" }, { conta: "asc" }],
-    select: SELECT_CONTA,
-  });
-  return linhas as ContaView[];
-}
+// `ContaView` continua re-exportada daqui: os clients (lancamentos.tsx,
+// titulos.tsx, lancamento-dialog.tsx, plano.tsx) importam o tipo deste
+// caminho, e `import type` some na compilação — só o valor `contasDoPlano`
+// precisava sair do módulo "use server" (ver lib/empresa/consultas.ts).
+export type { ContaView } from "@/lib/empresa/consultas";
 
 export async function listarPlanoDeContas(): Promise<Result<ContaView[]>> {
   return await safeAction(async () => {

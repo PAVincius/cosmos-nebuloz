@@ -4,6 +4,11 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  assertContaAtiva,
+  type ContaView,
+  contasDoPlano,
+} from "@/lib/empresa/consultas";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import type { LinhaDoLivro } from "@/lib/empresa/livro";
 import {
@@ -20,7 +25,6 @@ import {
   semTeto,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
-import { type ContaView, contasDoPlano } from "./financeiro";
 
 /**
  * Livro-razão (spec 2026-09-06 §3): as linhas de fato, uma por lançamento.
@@ -67,20 +71,6 @@ function paraLinha(l: {
     nota: l.nota,
     tituloId: l.tituloId,
   };
-}
-
-/** A mesma checagem de `salvarLancamento` em financeiro.ts: conta desativada
- *  ou fora do plano não recebe lançamento novo. Exportada porque `titulos.ts`
- *  precisa da mesma garantia — na criação do título e, de novo, na baixa,
- *  já que a conta pode ser desativada entre as duas. */
-export async function assertContaAtiva(conta: string): Promise<void> {
-  const contaDoPlano = await database.contaDoPlano.findUnique({
-    where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
-    select: { ativa: true },
-  });
-  if (!contaDoPlano?.ativa) {
-    throw new StaffAuthError("FORBIDDEN", "Conta desativada ou fora do plano.");
-  }
 }
 
 const ListarLancamentosSchema = z

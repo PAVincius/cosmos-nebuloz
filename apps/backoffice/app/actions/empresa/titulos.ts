@@ -4,6 +4,11 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  assertContaAtiva,
+  type ContaView,
+  contasDoPlano,
+} from "@/lib/empresa/consultas";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import type { TituloRow } from "@/lib/empresa/livro";
 import { contaValida } from "@/lib/empresa/plano-de-contas";
@@ -14,8 +19,6 @@ import {
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
-import { type ContaView, contasDoPlano } from "./financeiro";
-import { assertContaAtiva } from "./livro";
 
 /**
  * Títulos a pagar/receber (spec 2026-09-06 §3): o título é a promessa, o
