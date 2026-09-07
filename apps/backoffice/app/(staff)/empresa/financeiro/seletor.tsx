@@ -18,21 +18,32 @@ import {
  * component para um client component quebra a serialização do RSC em runtime
  * ("Functions cannot be passed directly to Client Components"). O tipo não
  * denuncia isso — o teste presets-no-servidor.test.ts denuncia.
+ *
+ * `extra` (Task 5) entra na query ao aplicar o intervalo — a aba Lançamentos
+ * usa para preservar `conta` quando o usuário troca o período sem sair do
+ * filtro que a célula do DRE aplicou.
  */
 export function SeletorDaAba({
   aba,
   valor,
+  extra,
 }: {
-  aba: "dre" | "caixa";
+  aba: "dre" | "caixa" | "lancamentos";
   valor: Intervalo;
+  extra?: Record<string, string>;
 }) {
   const router = useRouter();
   const presets = aba === "caixa" ? PRESETS_CAIXA : PRESETS_COMPETENCIA;
   return (
     <SeletorDePeriodo
-      onAplicar={(i) =>
-        router.push(`/empresa/financeiro?aba=${aba}&de=${i.de}&ate=${i.ate}`)
-      }
+      onAplicar={(i) => {
+        const sufixo = Object.entries(extra ?? {})
+          .map(([chave, v]) => `&${chave}=${v}`)
+          .join("");
+        router.push(
+          `/empresa/financeiro?aba=${aba}&de=${i.de}&ate=${i.ate}${sufixo}`
+        );
+      }}
       presets={presets}
       valor={valor}
     />

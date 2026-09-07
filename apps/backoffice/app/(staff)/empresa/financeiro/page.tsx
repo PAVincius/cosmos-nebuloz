@@ -5,6 +5,7 @@ import {
   lerDre,
   listarPlanoDeContas,
 } from "@/app/actions/empresa/financeiro";
+import { listarLancamentos } from "@/app/actions/empresa/livro";
 import {
   formatarDataBr,
   type Intervalo,
@@ -15,15 +16,47 @@ import {
 import { requirePlatformStaff } from "@/lib/guard";
 import { Caixa } from "./caixa";
 import { Dre } from "./dre";
+import { Lancamentos } from "./lancamentos";
 import { Plano } from "./plano";
 import { SeletorDaAba } from "./seletor";
 
+type Dados = {
+  dre: Awaited<ReturnType<typeof lerDre>> | null;
+  caixa: Awaited<ReturnType<typeof lerCaixa>> | null;
+  plano: Awaited<ReturnType<typeof listarPlanoDeContas>> | null;
+  lancamentos: Awaited<ReturnType<typeof listarLancamentos>> | null;
+};
+
+/** Lê só o que a aba ativa precisa — as outras três leituras ficam `null` e
+ *  nem chegam a bater no banco (spec 2026-09-06 §6, mesma ideia das abas
+ *  anteriores). */
+async function carregarDados(
+  aba: Aba,
+  intervalo: Intervalo,
+  conta: string | undefined
+): Promise<Dados> {
+  const [dre, caixa, plano, lancamentos] = await Promise.all([
+    aba === "dre" ? lerDre(intervalo) : null,
+    aba === "caixa" ? lerCaixa(intervalo) : null,
+    aba === "plano" ? listarPlanoDeContas() : null,
+    aba === "lancamentos"
+      ? listarLancamentos({ ate: intervalo.ate, conta, de: intervalo.de })
+      : null,
+  ]);
+  return { caixa, dre, lancamentos, plano };
+}
+
 export const dynamic = "force-dynamic";
 
-type Aba = "dre" | "caixa" | "plano";
+type Aba = "dre" | "caixa" | "plano" | "lancamentos" | "titulos";
 
 function abaValida(aba: string | undefined): Aba {
-  if (aba === "caixa" || aba === "plano") {
+  if (
+    aba === "caixa" ||
+    aba === "plano" ||
+    aba === "lancamentos" ||
+    aba === "titulos"
+  ) {
     return aba;
   }
   return "dre";
@@ -69,6 +102,18 @@ function Abas({ aba }: { aba: Aba }) {
         DRE mensal
       </Link>
       <Link
+        href="/empresa/financeiro?aba=lancamentos"
+        style={abaStyle(aba === "lancamentos")}
+      >
+        Lançamentos
+      </Link>
+      <Link
+        href="/empresa/financeiro?aba=titulos"
+        style={abaStyle(aba === "titulos")}
+      >
+        Títulos
+      </Link>
+      <Link
         href="/empresa/financeiro?aba=caixa"
         style={abaStyle(aba === "caixa")}
       >
@@ -84,12 +129,81 @@ function Abas({ aba }: { aba: Aba }) {
   );
 }
 
+/** Corpo da aba ativa: erro + painel, um par por aba. Isolado de
+ *  `FinanceiroPage` só para manter a complexidade cognitiva da rota dentro do
+ *  teto do lint — a leitura continua a mesma, um bloco por aba. */
+function PainelDaAba({
+  aba,
+  dados,
+  intervalo,
+  conta,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  aba: Aba;
+  dados: Dados;
+  intervalo: Intervalo;
+  conta: string | undefined;
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  const { dre, caixa, plano, lancamentos } = dados;
+  return (
+    <>
+      <ErroDaAba erro={dre !== null && !dre.ok ? dre.error : null} />
+      {dre?.ok ? (
+        // key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
+        <Dre
+          inicial={dre.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+      <ErroDaAba erro={caixa !== null && !caixa.ok ? caixa.error : null} />
+      {caixa?.ok ? (
+        <Caixa
+          inicial={caixa.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+      <ErroDaAba erro={plano !== null && !plano.ok ? plano.error : null} />
+      {plano?.ok ? (
+        <Plano
+          inicial={plano.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+      <ErroDaAba
+        erro={
+          lancamentos !== null && !lancamentos.ok ? lancamentos.error : null
+        }
+      />
+      {lancamentos?.ok ? (
+        <Lancamentos
+          contaFiltro={aba === "lancamentos" ? (conta ?? null) : null}
+          inicial={lancamentos.data}
+          intervalo={intervalo}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
 export default async function FinanceiroPage({
   searchParams,
 }: {
-  searchParams: Promise<{ aba?: string; de?: string; ate?: string }>;
+  searchParams: Promise<{
+    aba?: string;
+    de?: string;
+    ate?: string;
+    conta?: string;
+  }>;
 }) {
-  const { aba: abaParam, de, ate } = await searchParams;
+  const { aba: abaParam, de, ate, conta } = await searchParams;
   const aba = abaValida(abaParam);
   const hoje = new Date();
   const padrao =
@@ -98,13 +212,20 @@ export default async function FinanceiroPage({
       : intervaloPadraoCompetencia(hoje);
   const intervalo = lerIntervaloDaUrl({ de, ate }, padrao);
 
-  const [staff, dre, caixa, plano] = await Promise.all([
+  const [staff, dados] = await Promise.all([
     requirePlatformStaff(),
-    aba === "dre" ? lerDre(intervalo) : null,
-    aba === "caixa" ? lerCaixa(intervalo) : null,
-    aba === "plano" ? listarPlanoDeContas() : null,
+    carregarDados(aba, intervalo, conta),
   ]);
-  const chaveDoPainel = `${aba}:${intervalo.de}:${intervalo.ate}`;
+  // `conta` entra na chave: duas células do DRE na mesma competência mas em
+  // contas diferentes têm o mesmo `de`/`ate` — sem `conta` aqui, trocar de
+  // conta não remontaria o painel e `useState(inicial)` ficaria com os dados
+  // da conta anterior.
+  const chaveDoPainel = `${aba}:${intervalo.de}:${intervalo.ate}:${conta ?? ""}`;
+  // `extra` só existe na aba Lançamentos com `conta` na URL — o `&&` mora
+  // fora do JSX para o noLeakedRender não confundir a condição com a marcação
+  // que ela protege.
+  const contaNaUrl = aba === "lancamentos" ? conta : undefined;
+  const extraDoSeletor = contaNaUrl ? { conta: contaNaUrl } : undefined;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -123,33 +244,18 @@ export default async function FinanceiroPage({
         }}
       >
         <Abas aba={aba} />
-        {aba === "plano" ? null : <SeletorDaAba aba={aba} valor={intervalo} />}
+        {aba === "plano" || aba === "titulos" ? null : (
+          <SeletorDaAba aba={aba} extra={extraDoSeletor} valor={intervalo} />
+        )}
       </div>
-      <ErroDaAba erro={dre !== null && !dre.ok ? dre.error : null} />
-      {dre?.ok ? (
-        // key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
-        <Dre
-          inicial={dre.data}
-          key={chaveDoPainel}
-          podeEscrever={staff.canWrite}
-        />
-      ) : null}
-      <ErroDaAba erro={caixa !== null && !caixa.ok ? caixa.error : null} />
-      {caixa?.ok ? (
-        <Caixa
-          inicial={caixa.data}
-          key={chaveDoPainel}
-          podeEscrever={staff.canWrite}
-        />
-      ) : null}
-      <ErroDaAba erro={plano !== null && !plano.ok ? plano.error : null} />
-      {plano?.ok ? (
-        <Plano
-          inicial={plano.data}
-          key={chaveDoPainel}
-          podeEscrever={staff.canWrite}
-        />
-      ) : null}
+      <PainelDaAba
+        aba={aba}
+        chaveDoPainel={chaveDoPainel}
+        conta={conta}
+        dados={dados}
+        intervalo={intervalo}
+        podeEscrever={staff.canWrite}
+      />
     </div>
   );
 }
