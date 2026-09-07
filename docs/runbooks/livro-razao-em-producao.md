@@ -127,3 +127,18 @@ cópia — rodar de novo duplicaria as linhas `abert_%` já copiadas).
 Nada. Assinatura, orçamento e o próprio livro-razão daqui para frente são
 dado que a Nebuloz digita pela tela — não há script de seed para este plano,
 ao contrário do funil ou do mapa de processos.
+
+---
+
+## 4. Nota — migration do D-b (orçado × realizado e receita recorrente)
+
+A mesma branch carrega, além desta, a migration
+`20260911000000_orcamento_e_recorrente`. Ao contrário da migration deste
+runbook, ela só cria quatro tabelas (`OrcamentoDaConta`,
+`AssinaturaDoTenant`, `MudancaDeAssinatura`, `CreditoDoMes`) — sem cópia de
+dado nenhuma. A verificação dela é mínima: conferir a linha `Applying
+migration 20260911000000_orcamento_e_recorrente` no log de build e abrir as
+duas abas novas (`/empresa/financeiro?aba=orcado` e
+`/empresa/financeiro?aba=recorrente`). A comparação do DRE acima (§1.4)
+continua sendo o check que importa, porque é a migration desta página
+(D-a) que copia dado de produção.
