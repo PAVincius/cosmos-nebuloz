@@ -1,0 +1,492 @@
+// empresa-recorrente-action.test.ts — receita recorrente (spec 2026-09-06
+// §1.4, §2–§3): MudancaDeAssinatura é append-only e sustenta o MRR histórico
+// — criarAssinatura/alterarValor/encerrarAssinatura sempre gravam a
+// assinatura e a linha de histórico na mesma `$transaction`.
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const mocks = vi.hoisted(() => ({
+  requirePlatformStaff: vi.fn(),
+  assertCanWrite: vi.fn(),
+  logPlatformAudit: vi.fn(),
+  revalidatePath: vi.fn(),
+  assinaturaFindMany: vi.fn(),
+  assinaturaFindFirst: vi.fn(),
+  assinaturaCreate: vi.fn(),
+  assinaturaUpdateMany: vi.fn(),
+  mudancaFindMany: vi.fn(),
+  mudancaCreate: vi.fn(),
+  creditoFindMany: vi.fn(),
+  creditoUpsert: vi.fn(),
+  lancFindMany: vi.fn(),
+  contaFindMany: vi.fn(),
+  transaction: vi.fn(),
+}));
+
+vi.mock("@/lib/guard", () => {
+  class StaffAuthError extends Error {
+    code: string;
+    constructor(code: string, message: string) {
+      super(message);
+      this.code = code;
+    }
+  }
+  return {
+    requirePlatformStaff: mocks.requirePlatformStaff,
+    assertCanWrite: mocks.assertCanWrite,
+    SYSTEM_TENANT_ID: "system",
+    StaffAuthError,
+    semTeto: (fn: () => unknown) => fn(),
+  };
+});
+vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
+vi.mock("@repo/provisioning", () => ({
+  logPlatformAudit: mocks.logPlatformAudit,
+  ProvisioningError: class extends Error {},
+}));
+vi.mock("@repo/database", () => ({
+  database: {
+    assinaturaDoTenant: {
+      findMany: mocks.assinaturaFindMany,
+      findFirst: mocks.assinaturaFindFirst,
+      create: mocks.assinaturaCreate,
+      updateMany: mocks.assinaturaUpdateMany,
+    },
+    mudancaDeAssinatura: {
+      findMany: mocks.mudancaFindMany,
+      create: mocks.mudancaCreate,
+    },
+    creditoDoMes: {
+      findMany: mocks.creditoFindMany,
+      upsert: mocks.creditoUpsert,
+    },
+    lancamento: { findMany: mocks.lancFindMany },
+    contaDoPlano: { findMany: mocks.contaFindMany },
+    $transaction: mocks.transaction,
+  },
+}));
+
+import {
+  alterarValor,
+  criarAssinatura,
+  encerrarAssinatura,
+  listarRecorrente,
+  salvarCreditoDoMes,
+} from "../app/actions/empresa/recorrente";
+
+const staff = {
+  userId: "u-1",
+  name: "V",
+  email: "v@nebuloz.com",
+  canWrite: true,
+};
+
+const CONTAS = [
+  {
+    conta: "1.1",
+    nome: "Assinatura — Kanban",
+    grupo: 1,
+    centroDeCusto: null,
+    ativa: true,
+    ordem: 0,
+  },
+  {
+    conta: "1.5",
+    nome: "Serviço — Diagnóstico",
+    grupo: 1,
+    centroDeCusto: null,
+    ativa: true,
+    ordem: 4,
+  },
+  {
+    conta: "5.1",
+    nome: "Engenharia",
+    grupo: 5,
+    centroDeCusto: "produto-engenharia",
+    ativa: true,
+    ordem: 0,
+  },
+];
+
+/** `$transaction` como em empresa-titulos-action.test.ts: callback recebe o
+ *  mesmo objeto de mocks, seja ele chamado `tx` (produção) ou aqui. */
+const tx = {
+  assinaturaDoTenant: {
+    create: mocks.assinaturaCreate,
+    updateMany: mocks.assinaturaUpdateMany,
+  },
+  mudancaDeAssinatura: { create: mocks.mudancaCreate },
+};
+
+const ASSINATURA_VALIDA = {
+  clienteSlug: "vanta-saude",
+  clienteNome: "Vanta Saúde",
+  planoSlug: "growth",
+  valorMensalCentavos: 500_000,
+  creditosMesIncluidos: 100,
+  precoCreditoExtraCentavos: 200,
+  tetoExcedenteCentavos: 5000,
+  iniciouEm: "2026-09-01",
+  propostaId: null,
+  motivo: "Fechamento do contrato inicial",
+};
+
+function resetar() {
+  for (const m of Object.values(mocks)) m.mockReset();
+  mocks.requirePlatformStaff.mockResolvedValue(staff);
+  mocks.assinaturaFindMany.mockResolvedValue([]);
+  mocks.mudancaFindMany.mockResolvedValue([]);
+  mocks.creditoFindMany.mockResolvedValue([]);
+  mocks.lancFindMany.mockResolvedValue([]);
+  mocks.contaFindMany.mockResolvedValue(CONTAS);
+  mocks.assinaturaCreate.mockResolvedValue({ id: "a-1" });
+  mocks.assinaturaUpdateMany.mockResolvedValue({ count: 1 });
+  mocks.mudancaCreate.mockResolvedValue({ id: "m-1" });
+  mocks.creditoUpsert.mockResolvedValue({});
+  mocks.assinaturaFindFirst.mockResolvedValue({
+    valorMensalCentavos: 500_000,
+    creditosMesIncluidos: 100,
+    precoCreditoExtraCentavos: 200,
+    tetoExcedenteCentavos: 5000,
+  });
+  mocks.transaction.mockImplementation(
+    async (fn: (t: unknown) => Promise<unknown>) => await fn(tx)
+  );
+}
+
+describe("listarRecorrente", () => {
+  beforeEach(resetar);
+
+  it("lê assinaturas, mudanças, créditos e lançamentos, todos com tenantId", async () => {
+    const res = await listarRecorrente({ competencia: "2026-09" });
+    expect(res.ok).toBe(true);
+    expect(mocks.assinaturaFindMany.mock.calls[0][0].where).toEqual({
+      tenantId: "system",
+    });
+    expect(mocks.mudancaFindMany.mock.calls[0][0].where).toEqual({
+      tenantId: "system",
+    });
+    expect(mocks.creditoFindMany.mock.calls[0][0].where).toEqual({
+      tenantId: "system",
+      competencia: "2026-09",
+    });
+    expect(mocks.lancFindMany.mock.calls[0][0].where).toEqual({
+      tenantId: "system",
+      competencia: "2026-09",
+      conta: { in: ["1.1", "1.5"] },
+    });
+  });
+
+  it("converte iniciouEm/encerradaEm para ISO e agrega os lançamentos da competência", async () => {
+    mocks.assinaturaFindMany.mockResolvedValue([
+      {
+        id: "a-1",
+        clienteSlug: "vanta-saude",
+        clienteNome: "Vanta Saúde",
+        planoSlug: "growth",
+        valorMensalCentavos: 500_000,
+        creditosMesIncluidos: 100,
+        precoCreditoExtraCentavos: 200,
+        tetoExcedenteCentavos: 5000,
+        iniciouEm: new Date("2026-09-01T00:00:00Z"),
+        encerradaEm: null,
+        motivoEncerramento: null,
+        propostaId: null,
+      },
+    ]);
+    mocks.lancFindMany.mockResolvedValue([
+      { competencia: "2026-09", conta: "1.1", valorCentavos: 500_000 },
+      { competencia: "2026-09", conta: "1.5", valorCentavos: 20_000 },
+    ]);
+    const res = await listarRecorrente({ competencia: "2026-09" });
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.assinaturas[0]?.iniciouEm).toBe("2026-09-01");
+    expect(res.data.assinaturas[0]?.encerradaEm).toBeNull();
+    expect(res.data.lancamentosDaCompetencia).toEqual({
+      "1.1": 500_000,
+      "1.5": 20_000,
+    });
+  });
+});
+
+describe("criarAssinatura", () => {
+  beforeEach(resetar);
+
+  it("grava a assinatura E a linha NOVO do histórico na mesma $transaction", async () => {
+    const res = await criarAssinatura(ASSINATURA_VALIDA);
+    expect(res.ok).toBe(true);
+    expect(mocks.transaction).toHaveBeenCalledTimes(1);
+    expect(mocks.assinaturaCreate.mock.calls[0][0].data).toMatchObject({
+      tenantId: "system",
+      clienteSlug: "vanta-saude",
+      valorMensalCentavos: 500_000,
+      iniciouEm: new Date("2026-09-01T00:00:00Z"),
+    });
+    expect(mocks.mudancaCreate.mock.calls[0][0].data).toEqual({
+      tenantId: "system",
+      assinaturaId: "a-1",
+      competencia: "2026-09",
+      tipo: "NOVO",
+      deCentavos: 0,
+      paraCentavos: 500_000,
+      motivo: "Fechamento do contrato inicial",
+      autorId: "u-1",
+      autorNome: "V",
+    });
+    expect(mocks.logPlatformAudit).toHaveBeenCalled();
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/empresa/financeiro");
+  });
+
+  it("recusa clienteSlug vazio, valorMensalCentavos <= 0, precoCreditoExtraCentavos < 0 e iniciouEm inválida", async () => {
+    expect(
+      (await criarAssinatura({ ...ASSINATURA_VALIDA, clienteSlug: "" })).ok
+    ).toBe(false);
+    expect(
+      (
+        await criarAssinatura({
+          ...ASSINATURA_VALIDA,
+          valorMensalCentavos: 0,
+        })
+      ).ok
+    ).toBe(false);
+    expect(
+      (
+        await criarAssinatura({
+          ...ASSINATURA_VALIDA,
+          precoCreditoExtraCentavos: -1,
+        })
+      ).ok
+    ).toBe(false);
+    expect(
+      (
+        await criarAssinatura({
+          ...ASSINATURA_VALIDA,
+          iniciouEm: "01-09-2026",
+        })
+      ).ok
+    ).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não cria, nada chega ao banco", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+    const res = await criarAssinatura(ASSINATURA_VALIDA);
+    expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("alterarValor", () => {
+  beforeEach(resetar);
+
+  it("valor maior grava EXPANSAO", async () => {
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 600_000,
+      motivo: "Upgrade de degrau",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.mudancaCreate.mock.calls[0][0].data).toMatchObject({
+      tipo: "EXPANSAO",
+      deCentavos: 500_000,
+      paraCentavos: 600_000,
+    });
+  });
+
+  it("valor menor grava CONTRACAO", async () => {
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 400_000,
+      motivo: "Downgrade de degrau",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.mudancaCreate.mock.calls[0][0].data).toMatchObject({
+      tipo: "CONTRACAO",
+      deCentavos: 500_000,
+      paraCentavos: 400_000,
+    });
+  });
+
+  it("valor igual devolve ok:false sem escrever", async () => {
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 500_000,
+      motivo: "Sem mudança nenhuma",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+    expect(mocks.assinaturaUpdateMany).not.toHaveBeenCalled();
+  });
+
+  it("usa updateMany guardado por {id, tenantId, valorMensalCentavos: <o lido>} e trata count === 0 como erro", async () => {
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 600_000,
+      motivo: "Upgrade de degrau",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.assinaturaUpdateMany.mock.calls[0][0]).toEqual({
+      where: { id: "a-1", tenantId: "system", valorMensalCentavos: 500_000 },
+      data: { valorMensalCentavos: 600_000 },
+    });
+
+    mocks.assinaturaUpdateMany.mockResolvedValue({ count: 0 });
+    const res2 = await alterarValor({
+      id: "a-1",
+      valorCentavos: 600_000,
+      motivo: "Upgrade de degrau",
+      competencia: "2026-10",
+    });
+    expect(res2.ok).toBe(false);
+    expect(mocks.mudancaCreate).toHaveBeenCalledTimes(1); // só a chamada da 1ª tentativa
+  });
+
+  it("exige motivo com 10+ caracteres", async () => {
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 600_000,
+      motivo: "curto",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.assinaturaFindFirst).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não altera, nada chega ao banco", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 600_000,
+      motivo: "Upgrade de degrau",
+      competencia: "2026-10",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("encerrarAssinatura", () => {
+  beforeEach(resetar);
+
+  it("grava encerradaEm, motivoEncerramento e a linha CHURN com paraCentavos: 0, na mesma transação", async () => {
+    const res = await encerrarAssinatura({
+      id: "a-1",
+      data: "2026-09-15",
+      motivo: "Cliente encerrou o contrato",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.assinaturaUpdateMany.mock.calls[0][0]).toEqual({
+      where: { id: "a-1", tenantId: "system", encerradaEm: null },
+      data: {
+        encerradaEm: new Date("2026-09-15T00:00:00Z"),
+        motivoEncerramento: "Cliente encerrou o contrato",
+      },
+    });
+    expect(mocks.mudancaCreate.mock.calls[0][0].data).toEqual({
+      tenantId: "system",
+      assinaturaId: "a-1",
+      competencia: "2026-09",
+      tipo: "CHURN",
+      deCentavos: 500_000,
+      paraCentavos: 0,
+      motivo: "Cliente encerrou o contrato",
+      autorId: "u-1",
+      autorNome: "V",
+    });
+  });
+
+  it("assinatura já encerrada é recusada", async () => {
+    mocks.assinaturaUpdateMany.mockResolvedValue({ count: 0 });
+    const res = await encerrarAssinatura({
+      id: "a-1",
+      data: "2026-09-15",
+      motivo: "Cliente encerrou o contrato",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.mudancaCreate).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não encerra, nada chega ao banco", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+    const res = await encerrarAssinatura({
+      id: "a-1",
+      data: "2026-09-15",
+      motivo: "Cliente encerrou o contrato",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+});
+
+describe("salvarCreditoDoMes", () => {
+  beforeEach(resetar);
+
+  it("calcula excedenteCentavos e excedenteReprimidoCentavos com excedenteDoMes, congelando franquia e precoCreditoExtraCentavos da assinatura", async () => {
+    mocks.assinaturaFindFirst.mockResolvedValue({
+      creditosMesIncluidos: 100,
+      precoCreditoExtraCentavos: 200,
+      tetoExcedenteCentavos: 5000,
+    });
+    const res = await salvarCreditoDoMes({
+      clienteSlug: "vanta-saude",
+      competencia: "2026-09",
+      consumidos: 150,
+    });
+    expect(res.ok).toBe(true);
+    // bruto = (150 - 100) * 200 = 10_000; cobrado = min(10_000, 5000) = 5000;
+    // reprimido = 10_000 - 5000 = 5000. O valor gravado é o calculado, não o
+    // enviado — a action nem aceita excedenteCentavos como entrada.
+    expect(mocks.creditoUpsert.mock.calls[0][0]).toMatchObject({
+      create: {
+        franquia: 100,
+        consumidos: 150,
+        precoCreditoExtraCentavos: 200,
+        excedenteCentavos: 5000,
+        excedenteReprimidoCentavos: 5000,
+      },
+      update: {
+        franquia: 100,
+        consumidos: 150,
+        precoCreditoExtraCentavos: 200,
+        excedenteCentavos: 5000,
+        excedenteReprimidoCentavos: 5000,
+      },
+    });
+  });
+
+  it("cliente sem assinatura ativa recusa, sem upsert", async () => {
+    mocks.assinaturaFindFirst.mockResolvedValue(null);
+    const res = await salvarCreditoDoMes({
+      clienteSlug: "vanta-saude",
+      competencia: "2026-09",
+      consumidos: 150,
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.creditoUpsert).not.toHaveBeenCalled();
+  });
+
+  it("MEMBER não salva, nada chega ao banco", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+    const res = await salvarCreditoDoMes({
+      clienteSlug: "vanta-saude",
+      competencia: "2026-09",
+      consumidos: 150,
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.creditoUpsert).not.toHaveBeenCalled();
+  });
+});

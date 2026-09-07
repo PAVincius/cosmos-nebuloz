@@ -50,13 +50,15 @@ describe("actions/empresa — só fornecedores.ts atravessa tenants", () => {
   const dir = path.resolve(__dirname, "../app/actions/empresa");
   const arquivos = readdirSync(dir).filter((f) => f.endsWith(".ts"));
 
-  it("os seis arquivos existem", () => {
+  it("os oito arquivos existem", () => {
     expect(arquivos.sort()).toEqual([
       "cac.ts",
       "consentimento.ts",
       "financeiro.ts",
       "fornecedores.ts",
       "livro.ts",
+      "orcamento.ts",
+      "recorrente.ts",
       "titulos.ts",
     ]);
   });
