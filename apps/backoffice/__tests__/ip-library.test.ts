@@ -16,8 +16,10 @@ const mocks = vi.hoisted(() => ({
   findFirst: vi.fn(),
   create: vi.fn(),
   update: vi.fn(),
+  findUniqueOrThrow: vi.fn(),
   versionCreate: vi.fn(),
   versionAggregate: vi.fn(),
+  serviceCreateMany: vi.fn(),
   transaction: vi.fn(),
   revalidatePath: vi.fn(),
 }));
@@ -46,10 +48,14 @@ vi.mock("@repo/database", () => ({
       findFirst: mocks.findFirst,
       create: mocks.create,
       update: mocks.update,
+      findUniqueOrThrow: mocks.findUniqueOrThrow,
     },
     ipAssetVersion: {
       create: mocks.versionCreate,
       aggregate: mocks.versionAggregate,
+    },
+    ipAssetService: {
+      createMany: mocks.serviceCreateMany,
     },
     $transaction: mocks.transaction,
   },
@@ -68,20 +74,68 @@ const staff = {
   canWrite: true,
 };
 
+// 77 caracteres — acima do mínimo de 40 que o schema e a régua (IP-R2) exigem.
+const DESCRICAO_VALIDA =
+  "Descrição do ativo, com detalhe suficiente para a régua aceitar sem reservas.";
+
+/** Entrada que passa no schema E nos seis critérios da régua, com valores
+ * default (procedência interna, licença nenhuma) — o caso comum de quem só
+ * quer cadastrar um ativo próprio. */
+function entradaValida(overrides: Record<string, unknown> = {}) {
+  return {
+    nome: "Playbook de intake",
+    descricao: DESCRICAO_VALIDA,
+    conteudo: "conteúdo inicial",
+    viveAqui: true,
+    servicoIds: ["srv-1"],
+    ...overrides,
+  };
+}
+
+/** Linha bruta que `tx.ipAsset.findUniqueOrThrow` devolveria ao final da
+ * transação — mesma forma de `CAMPOS_LINHA` em ip-library.ts. */
+function linhaBrutaPadrao(overrides: Record<string, unknown> = {}) {
+  return {
+    id: "i-1",
+    nome: "Playbook de intake",
+    slug: "playbook-de-intake",
+    tipo: "DOCUMENTO",
+    descricao: DESCRICAO_VALIDA,
+    link: null,
+    procedencia: "INTERNO",
+    licenca: "NENHUMA",
+    atualizadoEm: new Date("2026-09-01T00:00:00Z"),
+    origem: null,
+    dono: null,
+    servicos: [{ service: { id: "srv-1", codigo: "SRV1", nome: "Serviço 1" } }],
+    reusos: [],
+    _count: { versions: 1 },
+    ...overrides,
+  };
+}
+
 function resetar() {
   for (const m of Object.values(mocks)) {
     m.mockReset();
   }
   mocks.requirePlatformStaff.mockResolvedValue(staff);
   mocks.findMany.mockResolvedValue([]);
+  mocks.findFirst.mockResolvedValue(null);
+  mocks.create.mockResolvedValue({ id: "i-1" });
+  mocks.findUniqueOrThrow.mockResolvedValue(linhaBrutaPadrao());
   mocks.transaction.mockImplementation(
     async (fn: (tx: unknown) => Promise<unknown>) =>
       await fn({
-        ipAsset: { create: mocks.create, update: mocks.update },
+        ipAsset: {
+          create: mocks.create,
+          update: mocks.update,
+          findUniqueOrThrow: mocks.findUniqueOrThrow,
+        },
         ipAssetVersion: {
           create: mocks.versionCreate,
           aggregate: mocks.versionAggregate,
         },
+        ipAssetService: { createMany: mocks.serviceCreateMany },
       })
   );
 }
@@ -114,23 +168,14 @@ describe("createIpAssetAction", () => {
       throw new Error("Somente leitura");
     });
 
-    const res = await createIpAssetAction({
-      nome: "Playbook de intake",
-      conteudo: "x",
-    });
+    const res = await createIpAssetAction(entradaValida());
 
     expect(res.ok).toBe(false);
     expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("nasce na versão 1, com o mesmo texto nos dois lugares", async () => {
-    mocks.findFirst.mockResolvedValue(null);
-    mocks.create.mockResolvedValue({ id: "i-1", slug: "playbook-de-intake" });
-
-    await createIpAssetAction({
-      nome: "Playbook de intake",
-      conteudo: "conteúdo inicial",
-    });
+    await createIpAssetAction(entradaValida());
 
     const versao = mocks.versionCreate.mock.calls[0][0].data;
     expect(versao.versao).toBe(1);
@@ -143,23 +188,97 @@ describe("createIpAssetAction", () => {
   it("recusa slug repetido", async () => {
     mocks.findFirst.mockResolvedValue({ id: "ja-existe" });
 
-    const res = await createIpAssetAction({
-      nome: "Playbook de intake",
-      conteudo: "x",
-    });
+    const res = await createIpAssetAction(entradaValida());
 
     expect(res.ok).toBe(false);
     expect(mocks.create).not.toHaveBeenCalled();
   });
 
   it("recusa tipo fora da lista", async () => {
-    const res = await createIpAssetAction({
-      nome: "X",
-      conteudo: "x",
-      tipo: "PDF" as "DOCUMENTO",
-    });
+    const res = await createIpAssetAction(
+      entradaValida({ tipo: "PDF" as "DOCUMENTO" })
+    );
 
     expect(res.ok).toBe(false);
+  });
+
+  it("recusa descrição abaixo do mínimo de 40 caracteres", async () => {
+    const res = await createIpAssetAction(
+      entradaValida({ descricao: "Curta demais." })
+    );
+
+    expect(res.ok).toBe(false);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("recusa entrada sem nenhum serviço vinculado", async () => {
+    const res = await createIpAssetAction(entradaValida({ servicoIds: [] }));
+
+    expect(res.ok).toBe(false);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("a régua recusa procedência ENGAJAMENTO sem reuso confirmado (IP-R5)", async () => {
+    const res = await createIpAssetAction(
+      entradaValida({
+        procedencia: "ENGAJAMENTO",
+        origemEngagementId: "eng-1",
+        reusoConfirmado: false,
+      })
+    );
+
+    expect(res.ok).toBe(false);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("a régua recusa licença COPYLEFT sem referência (IP-R6)", async () => {
+    const res = await createIpAssetAction(
+      entradaValida({ licenca: "COPYLEFT", licencaRef: "" })
+    );
+
+    expect(res.ok).toBe(false);
+    expect(mocks.create).not.toHaveBeenCalled();
+  });
+
+  it("devolve a IpAssetRow completa, não só id e slug", async () => {
+    mocks.findUniqueOrThrow.mockResolvedValue(
+      linhaBrutaPadrao({
+        reusos: [{ horasPoupadas: 3 }, { horasPoupadas: 2 }],
+      })
+    );
+
+    const res = await createIpAssetAction(entradaValida());
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.id).toBe("i-1");
+    expect(res.data.slug).toBe("playbook-de-intake");
+    expect(res.data.procedencia).toBe("INTERNO");
+    expect(res.data.licenca).toBe("NENHUMA");
+    expect(res.data.servicos).toEqual([
+      { id: "srv-1", codigo: "SRV1", nome: "Serviço 1" },
+    ]);
+    // Soma dos eventos de reuso, não uma média armazenada em outro lugar.
+    expect(res.data.horasPoupadas).toBe(5);
+    expect(res.data.reusos).toBe(2);
+    expect(res.data.maturidade).toBe("COMPROVADO");
+  });
+
+  it("grava o vínculo de serviço na mesma transação que o ativo", async () => {
+    await createIpAssetAction(
+      entradaValida({ servicoIds: ["srv-1", "srv-2"] })
+    );
+
+    expect(mocks.serviceCreateMany).toHaveBeenCalledTimes(1);
+    expect(mocks.serviceCreateMany.mock.calls[0][0].data).toEqual([
+      { assetId: "i-1", serviceId: "srv-1" },
+      { assetId: "i-1", serviceId: "srv-2" },
+    ]);
+    // O vínculo só existe porque rodou dentro do callback que o
+    // `$transaction` mockado executa — fora dela, o mock nunca seria chamado.
+    expect(mocks.transaction).toHaveBeenCalledTimes(1);
   });
 });
 
