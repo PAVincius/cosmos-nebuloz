@@ -35,7 +35,7 @@ export const LICENCAS = [
 export type Licenca = (typeof LICENCAS)[number];
 
 /** Licenças que só valem com o componente e a versão escritos. */
-const EXIGEM_REFERENCIA: readonly Licenca[] = ["COPYLEFT", "COMERCIAL"];
+export const EXIGEM_REFERENCIA: readonly Licenca[] = ["COPYLEFT", "COMERCIAL"];
 
 const MIN_NOME = 3;
 /** O mínimo da IP-R2 — exportado para o contador da tela de cadastro. */

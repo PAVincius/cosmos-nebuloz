@@ -1,4 +1,5 @@
-import type { EntradaDeAtivo, Licenca, TipoDeAtivo } from "@/lib/ip/regua";
+import type { EntradaDeAtivo, TipoDeAtivo } from "@/lib/ip/regua";
+import { EXIGEM_REFERENCIA } from "@/lib/ip/regua";
 
 /**
  * O estado do formulário de cadastro é a entrada da régua mais o que a régua
@@ -8,12 +9,6 @@ export type Formulario = EntradaDeAtivo & {
   tipo: TipoDeAtivo;
   donoPersonId: string;
 };
-
-/** Licenças que só valem — e só devem ser enviadas — com referência escrita. */
-const LICENCAS_QUE_EXIGEM_REFERENCIA: readonly Licenca[] = [
-  "COPYLEFT",
-  "COMERCIAL",
-];
 
 /**
  * Monta o payload de criação a partir do estado visível do formulário.
@@ -28,9 +23,7 @@ const LICENCAS_QUE_EXIGEM_REFERENCIA: readonly Licenca[] = [
  * régua existe para impedir.
  */
 export function montarPayloadDeCriacao(form: Formulario) {
-  const licencaExigeReferencia = LICENCAS_QUE_EXIGEM_REFERENCIA.includes(
-    form.licenca
-  );
+  const licencaExigeReferencia = EXIGEM_REFERENCIA.includes(form.licenca);
   const nasceuDeEngajamento = form.procedencia === "ENGAJAMENTO";
 
   return {
