@@ -75,6 +75,19 @@ describe("valorNaCompetencia", () => {
     expect(valorNaCompetencia("a1", muds, "2025-12")).toBe(0);
   });
 
+  it("duas mudanças na mesma competência: vence a mais recente, venha na ordem que vier", () => {
+    const cedo = {
+      ...m("a9", "2026-04", "EXPANSAO", 100, 200),
+      criadoEm: "2026-04-05T10:00:00.000Z",
+    };
+    const tarde = {
+      ...m("a9", "2026-04", "CONTRACAO", 200, 150),
+      criadoEm: "2026-04-20T10:00:00.000Z",
+    };
+    expect(valorNaCompetencia("a9", [cedo, tarde], "2026-04")).toBe(150);
+    expect(valorNaCompetencia("a9", [tarde, cedo], "2026-04")).toBe(150);
+  });
+
   it("ignora mudança de outra assinatura", () => {
     expect(valorNaCompetencia("a2", muds, "2026-09")).toBe(0);
   });

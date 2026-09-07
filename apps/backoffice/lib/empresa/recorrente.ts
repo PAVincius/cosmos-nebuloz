@@ -109,7 +109,20 @@ export function valorNaCompetencia(
     .filter(
       (m) => m.assinaturaId === assinaturaId && m.competencia <= competencia
     )
-    .sort((a, b) => (a.competencia < b.competencia ? -1 : 1));
+    // Desempate por `criadoEm`: o schema não impede duas mudanças na mesma
+    // competência, e duas edições no mesmo mês são caso real. Sem o segundo
+    // critério, "a última vence" dependeria da ordem em que o banco devolveu
+    // as linhas. O comparador devolve 0 em empate total, como manda o
+    // contrato de `sort` — devolver 1 ali é comparador inválido.
+    .sort((a, b) => {
+      if (a.competencia !== b.competencia) {
+        return a.competencia < b.competencia ? -1 : 1;
+      }
+      if (a.criadoEm !== b.criadoEm) {
+        return a.criadoEm < b.criadoEm ? -1 : 1;
+      }
+      return 0;
+    });
   const ultima = daAssinatura.at(-1);
   return ultima ? ultima.paraCentavos : 0;
 }
