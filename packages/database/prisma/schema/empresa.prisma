@@ -246,6 +246,143 @@ model Titulo {
   @@index([tenantId, tipo])
 }
 
+/// Orçado por conta e competência. O realizado não mora aqui: sai da soma dos
+/// lançamentos, para não haver dois números para a mesma pergunta.
+model OrcamentoDaConta {
+  id       String @id @default(cuid())
+  tenantId String
+
+  competencia   String
+  conta         String
+  valorCentavos Int
+  nota          String?
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("OrcamentoDaContaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, competencia, conta])
+  @@index([tenantId, competencia])
+}
+
+/// O que o cliente paga hoje. Não duplica a proposta: o catálogo diz o preço
+/// de tabela, a proposta diz o que foi vendido uma vez, e a assinatura diz o
+/// que é cobrado agora, depois de desconto, upgrade e downgrade.
+model AssinaturaDoTenant {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// Slug do tenant cliente. Slug e não FK: a assinatura sobrevive ao tenant
+  /// ser removido, e a série histórica de MRR não pode ficar com buraco.
+  clienteSlug String
+  clienteNome String
+
+  /// Degrau vendido. Slug de `PlanoComercial`, congelado como a proposta faz.
+  planoSlug String
+  /// Preço realmente acordado. Preço de tabela ignora desconto, e desconto é
+  /// a regra e não a exceção nas primeiras vendas.
+  valorMensalCentavos Int
+
+  /// Franquia mensal de créditos de IA, agregada por conta: assentos vezes
+  /// créditos por assento do degrau, calculada na venda e congelada aqui.
+  /// Agregada e não por assento porque num portfólio poucos RTEs usam quase
+  /// toda a IA, e o uso pesado deve consumir a sobra dos leves. Reseta todo
+  /// mês e não acumula — é o que torna a receita da franquia recorrente.
+  creditosMesIncluidos Int @default(0)
+  /// Preço do crédito acima da franquia, por unidade. Cai conforme o degrau
+  /// sobe — é o desconto por volume que faz subir de tier valer a pena.
+  /// Acordado como o valor mensal, e não lido do catálogo, pelo mesmo motivo:
+  /// desconto é a regra nas primeiras vendas.
+  precoCreditoExtraCentavos Int
+  /// Orçamento mensal de excedente que o cliente aceitou. Nulo = excedente
+  /// não cobrado: o consumo acima da franquia é medido e aparece como sinal,
+  /// mas não vira fatura até o cliente definir um teto. É o padrão do GitHub
+  /// Copilot (orçamento zero) e é o que faz compras de empresa grande aceitar
+  /// um componente variável: a variação tem limite escrito.
+  tetoExcedenteCentavos Int?
+
+  iniciouEm  DateTime  @db.Date
+  /// Nulo = ativa. Preenchido = saiu, e sai da conta de MRR a partir daí.
+  encerradaEm DateTime? @db.Date
+  /// PRECO | ESCOPO | INSATISFACAO | FIM_DE_PROJETO | INADIMPLENCIA | OUTRO
+  motivoEncerramento String?
+
+  /// Proposta que originou. Sem FK por ser de outro domínio e poder sumir.
+  propostaId String?
+
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant   Tenant                @relation("AssinaturaDoTenantSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  mudancas MudancaDeAssinatura[]
+
+  @@index([tenantId, encerradaEm])
+  @@index([tenantId, clienteSlug])
+}
+
+/// Append-only, no padrão de `MudancaDeEstagio`. Sem isto, MRR é um número
+/// sem explicação: não dá para abrir o mês em novo, expansão, contração e
+/// churn olhando só o estado atual.
+model MudancaDeAssinatura {
+  id           String @id @default(cuid())
+  tenantId     String
+  assinaturaId String
+
+  /// "2026-09". Competência em que a mudança passa a valer.
+  competencia String
+  /// NOVO | EXPANSAO | CONTRACAO | CHURN | REATIVACAO
+  tipo        String
+
+  deCentavos   Int
+  paraCentavos Int
+  motivo       String
+
+  autorId   String
+  autorNome String?
+  criadoEm  DateTime @default(now())
+
+  tenant     Tenant              @relation("MudancaDeAssinaturaSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+  assinatura AssinaturaDoTenant @relation(fields: [assinaturaId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, competencia])
+}
+
+/// Consumo de crédito por cliente e mês. Uma linha por competência, digitada
+/// enquanto não há telemetria. Quando houver medição por chamada, ela
+/// preenche `consumidos` e o resto do modelo não muda.
+model CreditoDoMes {
+  id       String @id @default(cuid())
+  tenantId String
+
+  clienteSlug String
+  competencia String
+
+  /// Franquia vigente no mês, copiada da assinatura. Copiada e não lida por
+  /// join: o degrau muda, e o histórico tem que continuar dizendo qual era a
+  /// franquia daquele mês.
+  franquia   Int
+  consumidos Int @default(0)
+
+  /// Taxa por crédito vigente no mês, copiada da assinatura pelo mesmo motivo
+  /// que a franquia: o degrau muda e o histórico tem que continuar explicável.
+  precoCreditoExtraCentavos Int
+  /// Cobrado pelo que passou da franquia: min((consumidos - franquia) x taxa,
+  /// teto), nunca negativo, e zero quando a assinatura não tem teto definido.
+  /// Guardado e não derivado na leitura porque taxa e teto do mês podem ter
+  /// mudado depois.
+  excedenteCentavos Int @default(0)
+  /// O que teria sido cobrado sem o teto. É o sinal de upgrade: excedente
+  /// reprimido todo mês é cliente pedindo um degrau acima.
+  excedenteReprimidoCentavos Int @default(0)
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("CreditoDoMesSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, clienteSlug, competencia])
+  @@index([tenantId, competencia])
+}
+
 // ─────────────────────────── CAC ───────────────────────────
 
 /// Das oito parcelas do CAC, seis são contas 4.1–4.6 de LancamentoMensal da
