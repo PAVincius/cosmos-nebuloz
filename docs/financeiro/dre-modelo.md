@@ -1,5 +1,14 @@
 # DRE mensal — modelo
 
+> **Nota de origem (2026-09-06, plano D-a).** Este documento continua sendo o
+> modelo em prosa: colunas, contas e a definição de cada linha. O DRE que a
+> tela `/empresa/financeiro?aba=dre` mostra deixou de somar `LancamentoMensal`
+> (um valor por conta e mês) e passou a somar as linhas do livro-razão
+> (`Lancamento`) por competência — mesma regra de sinal, mesmo total, mas com
+> "o que formou a conta" auditável linha a linha. Ver
+> [`livro-razao-em-producao.md`](../runbooks/livro-razao-em-producao.md) para
+> a verificação em produção.
+
 Demonstrativo de resultado por competência (não por caixa — receita e custo
 contam no mês do fato gerador, mesmo que o dinheiro entre ou saia depois; o
 caixa mora em [`caixa-13-semanas.md`](caixa-13-semanas.md)). As contas usadas
