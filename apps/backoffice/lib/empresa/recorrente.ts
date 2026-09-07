@@ -15,7 +15,6 @@
 
 import type { Tone } from "@repo/design-system/cosmos/kit";
 import type { LancamentosDoMes } from "./financeiro";
-import type { Conta } from "./plano-de-contas";
 
 export type AssinaturaRow = {
   id: string;
@@ -84,14 +83,11 @@ export const TOM_TIPO_MUDANCA: Record<TipoDeMudanca, Tone> = {
 };
 
 /** As 27 contas do plano moram no banco (lib/empresa/plano-de-contas.ts); o
- * plano é a autoridade sobre nome e grupo. Estas duas listas fixam, dentro do
- * grupo 1 (receita), quais contas são assinatura e quais são serviço — a
- * distinção que o modelo de receita recorrente precisa e que o plano de
- * contas não marca sozinho. O seed nomeia cada uma como "Receita de
- * assinatura — …" (1.1–1.4) ou "Receita de serviço — …" (1.5–1.8); uma conta
- * nova no grupo 1 (ex.: 1.9) tem que entrar numa destas duas listas, senão
- * fica invisível tanto para MRR quanto para `receitaDeServico`. */
-export const CONTAS_DE_ASSINATURA = ["1.1", "1.2", "1.3", "1.4"] as const;
+ * plano é a autoridade sobre nome e grupo. Esta lista fixa, dentro do grupo 1
+ * (receita), quais contas são de serviço — a distinção que `receitaDeServico`
+ * precisa e que o plano de contas não marca sozinho. O seed nomeia cada uma
+ * como "Receita de serviço — …" (1.5–1.8); uma conta nova de serviço tem que
+ * entrar aqui, senão fica invisível para `receitaDeServico`. */
 export const CONTAS_DE_SERVICO = ["1.5", "1.6", "1.7", "1.8"] as const;
 
 /** Valor vigente de uma assinatura numa competência, lido do histórico
@@ -250,14 +246,11 @@ export function churnDeClientes(
  * financeiro.ts`), onde ausência é `null` porque a pergunta lá é "o mês está
  * completo". Aqui a pergunta é "quanto de serviço vendemos": não vender é
  * zero, não é "não sei". */
-export function receitaDeServico(
-  contas: Pick<Conta, "conta">[],
-  lancamentosDoMes: LancamentosDoMes
-): number {
-  const codigosDeServico = new Set<string>(CONTAS_DE_SERVICO);
-  return contas
-    .filter((c) => codigosDeServico.has(c.conta))
-    .reduce((soma, c) => soma + (lancamentosDoMes[c.conta] ?? 0), 0);
+export function receitaDeServico(lancamentosDoMes: LancamentosDoMes): number {
+  return CONTAS_DE_SERVICO.reduce(
+    (soma, conta) => soma + (lancamentosDoMes[conta] ?? 0),
+    0
+  );
 }
 
 export type UsoDaFranquia = {

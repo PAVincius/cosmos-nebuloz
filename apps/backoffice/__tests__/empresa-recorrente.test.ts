@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { Conta } from "@/lib/empresa/plano-de-contas";
 import {
   type AssinaturaRow,
   arr,
   ativaNaCompetencia,
-  CONTAS_DE_ASSINATURA,
   CONTAS_DE_SERVICO,
   type CreditoRow,
   churnDeClientes,
@@ -207,47 +205,20 @@ describe("churn", () => {
 });
 
 describe("receitaDeServico", () => {
-  const CONTAS: Conta[] = [
-    {
-      conta: "1.3",
-      nome: "Assinatura Cosmos",
-      grupo: 1,
-      centroDeCusto: null,
-      ativa: true,
-    },
-    {
-      conta: "1.5",
-      nome: "Serviço diagnóstico",
-      grupo: 1,
-      centroDeCusto: null,
-      ativa: true,
-    },
-    {
-      conta: "1.8",
-      nome: "Outros serviços",
-      grupo: 1,
-      centroDeCusto: null,
-      ativa: true,
-    },
-  ];
-
   it("soma só as contas de serviço, nunca as de assinatura", () => {
     const l: Record<string, number> = {
       "1.3": 500_000,
       "1.5": 80_000,
       "1.8": 20_000,
     };
-    expect(receitaDeServico(CONTAS, l)).toBe(100_000);
+    expect(receitaDeServico(l)).toBe(100_000);
   });
 
   it("mês sem serviço é zero, não nulo — ausência aqui é zero de venda", () => {
-    expect(receitaDeServico(CONTAS, { "1.3": 500_000 })).toBe(0);
+    expect(receitaDeServico({ "1.3": 500_000 })).toBe(0);
   });
 
-  it("as duas listas cobrem o grupo 1 inteiro e não se sobrepõem", () => {
-    const todas = [...CONTAS_DE_ASSINATURA, ...CONTAS_DE_SERVICO];
-    expect(new Set(todas).size).toBe(todas.length);
-    expect(CONTAS_DE_ASSINATURA).toEqual(["1.1", "1.2", "1.3", "1.4"]);
+  it("a lista de contas de serviço é a do seed", () => {
     expect(CONTAS_DE_SERVICO).toEqual(["1.5", "1.6", "1.7", "1.8"]);
   });
 });
@@ -342,9 +313,8 @@ describe("propriedade: mrr e movimento têm que fechar", () => {
     // 1000 tanto lendo a coluna quanto lendo o histórico); depois a correção
     // retroativa de fevereiro, gravada por último. `deCentavos` de fevereiro
     // vem de `valorNaCompetencia` no histórico existente até fevereiro (só
-    // janeiro, já que março é competência posterior) — 1000, não a coluna
-    // (1500, já movida por março) — por isso fevereiro classifica EXPANSAO
-    // (1200 > 1000), não CONTRACAO.
+    // janeiro, já que março é competência posterior) — 1000, não 1500 — e por
+    // isso fevereiro classifica EXPANSAO (1200 > 1000), não CONTRACAO.
     const muds = [
       m("a1", "2026-01", "NOVO", 0, 1000),
       {

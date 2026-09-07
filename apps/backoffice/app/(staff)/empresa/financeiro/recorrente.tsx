@@ -23,8 +23,8 @@ import { formatarBRL } from "@/lib/comercial/formato";
 import {
   type AssinaturaRow,
   arr,
-  CONTAS_DE_SERVICO,
   type CreditoRow,
+  churnDeClientes,
   churnDeReceita,
   excedenteDoMes,
   type Movimento,
@@ -565,12 +565,12 @@ export function Recorrente({
     [dados.assinaturas, dados.mudancas, competencia]
   );
   const churnPercent = churnDeReceita(dados.mudancas, competencia, mrrInicial);
+  const churnClientes = useMemo(
+    () => churnDeClientes(dados.assinaturas, competencia),
+    [dados.assinaturas, competencia]
+  );
   const servicoCentavos = useMemo(
-    () =>
-      receitaDeServico(
-        CONTAS_DE_SERVICO.map((conta) => ({ conta })),
-        dados.lancamentosDaCompetencia
-      ),
+    () => receitaDeServico(dados.lancamentosDaCompetencia),
     [dados.lancamentosDaCompetencia]
   );
 
@@ -604,6 +604,7 @@ export function Recorrente({
           value={formatarBRL(mov.liquido)}
         />
         <KpiCard
+          hint={`${churnClientes.sairam} de ${churnClientes.base} clientes`}
           icon="alert"
           label="Churn de receita"
           tone={tomChurn(churnPercent)}

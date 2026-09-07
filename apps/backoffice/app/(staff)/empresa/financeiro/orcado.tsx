@@ -134,9 +134,15 @@ function CampoOrcado({
       inputMode="decimal"
       key={`${conta}-${competencia}-${valor ?? ""}`}
       onBlur={(e) => {
-        if (podeEscrever) {
-          gravar(conta, competencia, e.target.value);
+        // Sair cedo quando nada mudou: sem isso, passar o Tab pela grade
+        // inteira grava (e audita) cada célula, mesmo vazia.
+        if (!podeEscrever) {
+          return;
         }
+        if (e.target.value === e.target.defaultValue) {
+          return;
+        }
+        gravar(conta, competencia, e.target.value);
       }}
       readOnly={!podeEscrever}
       style={{
@@ -153,10 +159,12 @@ function CampoOrcado({
 function CelulaDesvio({
   grupo,
   desvio,
+  desvioPercent,
   forte,
 }: {
   grupo: Grupo;
   desvio: number | null;
+  desvioPercent: number | null;
   forte?: boolean;
 }) {
   const ruim = desvio !== null && desvioRuim(grupo, desvio);
@@ -170,6 +178,11 @@ function CelulaDesvio({
       }}
     >
       <span className="mono">{dinheiro(desvio)}</span>
+      {desvioPercent === null ? null : (
+        <span className="mono" style={{ marginLeft: 6 }}>
+          ({desvioPercent}%)
+        </span>
+      )}
     </td>
   );
 }
@@ -209,46 +222,10 @@ function LinhaConta({
             <td style={{ ...CEL, textAlign: "right" }}>
               <span className="mono">{dinheiro(linha?.realizado ?? null)}</span>
             </td>
-            <CelulaDesvio desvio={linha?.desvio ?? null} grupo={c.grupo} />
-          </Fragment>
-        );
-      })}
-    </tr>
-  );
-}
-
-function LinhaSubtotal({
-  chave,
-  contas,
-  competencias,
-}: {
-  chave: ChaveGrupo;
-  contas: OrcadoContaView[];
-  competencias: string[];
-}) {
-  const grupo = GRUPO_REPRESENTATIVO[chave];
-  return (
-    <tr>
-      <td style={{ ...CEL, fontWeight: 700 }}>Total {ROTULO_GRUPO[chave]}</td>
-      {competencias.map((competencia) => {
-        const totalOrcado = somarCentavos(
-          contas.map((c) => c.porCompetencia[competencia]?.orcado ?? null)
-        );
-        const totalRealizado = somarCentavos(
-          contas.map((c) => c.porCompetencia[competencia]?.realizado ?? null)
-        );
-        return (
-          <Fragment key={competencia}>
-            <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
-              <span className="mono">{formatarBRL(totalOrcado)}</span>
-            </td>
-            <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
-              <span className="mono">{formatarBRL(totalRealizado)}</span>
-            </td>
             <CelulaDesvio
-              desvio={totalRealizado - totalOrcado}
-              forte
-              grupo={grupo}
+              desvio={linha?.desvio ?? null}
+              desvioPercent={linha?.desvioPercent ?? null}
+              grupo={c.grupo}
             />
           </Fragment>
         );
@@ -257,16 +234,26 @@ function LinhaSubtotal({
   );
 }
 
-function LinhaTotalGeral({
+/** `LinhaSubtotal` (`chave` presente) e o antigo `LinhaTotalGeral`
+ *  (`chave: null`) eram a mesma soma repetida duas vezes, só a cor mudando.
+ *  Unificadas com a flag: total geral não colore (mistura receita e custo, e
+ *  as duas direções de "ruim" não cabem num número só) nem mostra percentual;
+ *  por grupo, as duas coisas aparecem. */
+function LinhaTotal({
+  chave,
   contas,
   competencias,
 }: {
+  chave: ChaveGrupo | null;
   contas: OrcadoContaView[];
   competencias: string[];
 }) {
+  const grupo = chave === null ? null : GRUPO_REPRESENTATIVO[chave];
+  const rotulo =
+    chave === null ? "Total geral" : `Total ${ROTULO_GRUPO[chave]}`;
   return (
     <tr>
-      <td style={{ ...CEL, fontWeight: 700 }}>Total geral</td>
+      <td style={{ ...CEL, fontWeight: 700 }}>{rotulo}</td>
       {competencias.map((competencia) => {
         const totalOrcado = somarCentavos(
           contas.map((c) => c.porCompetencia[competencia]?.orcado ?? null)
@@ -274,6 +261,7 @@ function LinhaTotalGeral({
         const totalRealizado = somarCentavos(
           contas.map((c) => c.porCompetencia[competencia]?.realizado ?? null)
         );
+        const desvio = totalRealizado - totalOrcado;
         return (
           <Fragment key={competencia}>
             <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
@@ -282,13 +270,22 @@ function LinhaTotalGeral({
             <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
               <span className="mono">{formatarBRL(totalRealizado)}</span>
             </td>
-            {/* Sem cor: o total geral mistura receita e custo, e as duas
-                direções de "ruim" não cabem num número só. */}
-            <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
-              <span className="mono">
-                {formatarBRL(totalRealizado - totalOrcado)}
-              </span>
-            </td>
+            {grupo === null ? (
+              <td style={{ ...CEL, textAlign: "right", fontWeight: 700 }}>
+                <span className="mono">{formatarBRL(desvio)}</span>
+              </td>
+            ) : (
+              <CelulaDesvio
+                desvio={desvio}
+                desvioPercent={
+                  totalOrcado === 0
+                    ? null
+                    : Math.round((desvio / totalOrcado) * 100)
+                }
+                forte
+                grupo={grupo}
+              />
+            )}
           </Fragment>
         );
       })}
@@ -423,14 +420,15 @@ export function Orcado({
                     podeEscrever={podeEscrever}
                   />
                 ))}
-                <LinhaSubtotal
+                <LinhaTotal
                   chave={g.chave}
                   competencias={dados.competencias}
                   contas={g.contas}
                 />
               </Fragment>
             ))}
-            <LinhaTotalGeral
+            <LinhaTotal
+              chave={null}
               competencias={dados.competencias}
               contas={dados.contas}
             />

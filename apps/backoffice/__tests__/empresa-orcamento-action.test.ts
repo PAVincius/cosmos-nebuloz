@@ -126,16 +126,18 @@ describe("lerOrcado", () => {
       orcado: 10_000,
       realizado: 7000,
       desvio: -3000,
+      desvioPercent: -30,
     });
     const conta5 = res.data.contas.find((c) => c.conta === "5.1");
     expect(conta5?.porCompetencia["2026-09"]).toEqual({
       orcado: null,
       realizado: 500,
       desvio: null,
+      desvioPercent: null,
     });
   });
 
-  it("conta sem orçamento e sem lançamento fica com os três nulos", async () => {
+  it("conta sem orçamento e sem lançamento fica com os quatro nulos", async () => {
     const res = await lerOrcado({ de: "2026-09-01", ate: "2026-09-30" });
     expect(res.ok).toBe(true);
     if (!res.ok) {
@@ -145,7 +147,28 @@ describe("lerOrcado", () => {
       orcado: null,
       realizado: null,
       desvio: null,
+      desvioPercent: null,
     });
+  });
+
+  it("desvioPercent é nulo sem orçado e com orçado zero; senão é o desvio sobre o orçado", async () => {
+    mocks.orcFindMany.mockResolvedValue([
+      { competencia: "2026-09", conta: "1.1", valorCentavos: 0 },
+    ]);
+    mocks.lancFindMany.mockResolvedValue([
+      { competencia: "2026-09", conta: "1.1", valorCentavos: 500 },
+    ]);
+    const res = await lerOrcado({ de: "2026-09-01", ate: "2026-09-30" });
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    // Orçado zero: mesmo com desvio (500), sem denominador não há percentual.
+    const conta1 = res.data.contas.find((c) => c.conta === "1.1");
+    expect(conta1?.porCompetencia["2026-09"].desvioPercent).toBeNull();
+    // Sem orçado nenhum: mesmo caso, por outro caminho (orcado null).
+    const conta5 = res.data.contas.find((c) => c.conta === "5.1");
+    expect(conta5?.porCompetencia["2026-09"].desvioPercent).toBeNull();
   });
 });
 

@@ -4,7 +4,6 @@ import { database } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { contasDoPlano } from "@/lib/empresa/consultas";
 import type { LancamentosDoMes } from "@/lib/empresa/financeiro";
 import { competenciaValida } from "@/lib/empresa/financeiro";
 import { agregarPorMes } from "@/lib/empresa/livro";
@@ -16,6 +15,7 @@ import type {
 } from "@/lib/empresa/recorrente";
 import {
   ativaNaCompetencia,
+  CONTAS_DE_SERVICO,
   excedenteDoMes,
   valorNaCompetencia,
 } from "@/lib/empresa/recorrente";
@@ -133,12 +133,11 @@ const SELECT_CREDITO = {
 } as const;
 
 export type RecorrenteView = {
-  competencia: string;
   assinaturas: AssinaturaRow[];
   mudancas: MudancaRow[];
   creditos: CreditoRow[];
-  /** Só as contas do grupo 1 (receita) — assinatura e serviço juntas, como a
-   *  tela precisa para conferir `receitaDeServico` ao lado do MRR. */
+  /** Só as contas de serviço (1.5–1.8) — o único consumidor é
+   *  `receitaDeServico`, ao lado do MRR. */
   lancamentosDaCompetencia: LancamentosDoMes;
 };
 
@@ -154,11 +153,6 @@ export async function listarRecorrente(
   return await safeAction(async () => {
     await requirePlatformStaff();
     const { competencia } = ListarRecorrenteSchema.parse(input);
-
-    const contas = await contasDoPlano();
-    const contasGrupo1 = contas
-      .filter((c) => c.grupo === 1)
-      .map((c) => c.conta);
 
     // Assinaturas e mudanças vêm inteiras (sem filtro de competência): `mrr`,
     // `valorNaCompetencia` e `churnDeClientes` (lib/empresa/recorrente.ts)
@@ -181,14 +175,13 @@ export async function listarRecorrente(
         where: {
           tenantId: SYSTEM_TENANT_ID,
           competencia,
-          conta: { in: contasGrupo1 },
+          conta: { in: [...CONTAS_DE_SERVICO] },
         },
         select: { competencia: true, conta: true, valorCentavos: true },
       }),
     ]);
 
     return {
-      competencia,
       assinaturas: assinaturas.map(paraAssinatura),
       mudancas: mudancas.map(paraMudanca),
       creditos,

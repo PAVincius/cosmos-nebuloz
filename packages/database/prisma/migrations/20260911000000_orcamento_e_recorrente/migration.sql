@@ -5,7 +5,6 @@ CREATE TABLE "OrcamentoDaConta" (
     "competencia" TEXT NOT NULL,
     "conta" TEXT NOT NULL,
     "valorCentavos" INTEGER NOT NULL,
-    "nota" TEXT,
     "atualizadoEm" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "OrcamentoDaConta_pkey" PRIMARY KEY ("id")

@@ -194,7 +194,6 @@ const CREDITO_A4 = {
 
 const PAYLOAD: RecorrenteView = {
   assinaturas: ASSINATURAS,
-  competencia: COMPETENCIA,
   creditos: [CREDITO_A1, CREDITO_A4],
   lancamentosDaCompetencia: {
     "1.1": 450_000,

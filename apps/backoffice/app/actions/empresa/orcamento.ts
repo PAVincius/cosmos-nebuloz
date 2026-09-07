@@ -34,7 +34,20 @@ export type OrcadoPorCompetencia = {
   orcado: number | null;
   realizado: number | null;
   desvio: number | null;
+  /** `desvio / orcado`, arredondado. Nulo sem orçado ou com orçado zero — não
+   *  dá para expressar "estourou X%" de um orçamento que não existe. */
+  desvioPercent: number | null;
 };
+
+function calcularDesvioPercent(
+  orcado: number | null,
+  desvio: number | null
+): number | null {
+  if (orcado === null || orcado === 0 || desvio === null) {
+    return null;
+  }
+  return Math.round((desvio / orcado) * 100);
+}
 
 export type OrcadoContaView = {
   conta: string;
@@ -80,11 +93,13 @@ export async function lerOrcado(
       for (const competencia of comps) {
         const orcado = orcadoPorChave.get(`${competencia}:${c.conta}`) ?? null;
         const realizado = realizadoPorMes[competencia]?.[c.conta] ?? null;
+        const desvio =
+          orcado !== null && realizado !== null ? realizado - orcado : null;
         porCompetencia[competencia] = {
           orcado,
           realizado,
-          desvio:
-            orcado !== null && realizado !== null ? realizado - orcado : null,
+          desvio,
+          desvioPercent: calcularDesvioPercent(orcado, desvio),
         };
       }
       return {

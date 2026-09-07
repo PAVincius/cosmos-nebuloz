@@ -18,7 +18,6 @@ const mocks = vi.hoisted(() => ({
   creditoFindMany: vi.fn(),
   creditoUpsert: vi.fn(),
   lancFindMany: vi.fn(),
-  contaFindMany: vi.fn(),
   transaction: vi.fn(),
 }));
 
@@ -60,7 +59,6 @@ vi.mock("@repo/database", () => ({
       upsert: mocks.creditoUpsert,
     },
     lancamento: { findMany: mocks.lancFindMany },
-    contaDoPlano: { findMany: mocks.contaFindMany },
     $transaction: mocks.transaction,
   },
 }));
@@ -72,6 +70,7 @@ import {
   listarRecorrente,
   salvarCreditoDoMes,
 } from "../app/actions/empresa/recorrente";
+import { CONTAS_DE_SERVICO } from "../lib/empresa/recorrente";
 
 const staff = {
   userId: "u-1",
@@ -79,33 +78,6 @@ const staff = {
   email: "v@nebuloz.com",
   canWrite: true,
 };
-
-const CONTAS = [
-  {
-    conta: "1.1",
-    nome: "Assinatura — Kanban",
-    grupo: 1,
-    centroDeCusto: null,
-    ativa: true,
-    ordem: 0,
-  },
-  {
-    conta: "1.5",
-    nome: "Serviço — Diagnóstico",
-    grupo: 1,
-    centroDeCusto: null,
-    ativa: true,
-    ordem: 4,
-  },
-  {
-    conta: "5.1",
-    nome: "Engenharia",
-    grupo: 5,
-    centroDeCusto: "produto-engenharia",
-    ativa: true,
-    ordem: 0,
-  },
-];
 
 /** `$transaction` como em empresa-titulos-action.test.ts: callback recebe o
  *  mesmo objeto de mocks, seja ele chamado `tx` (produção) ou aqui. */
@@ -155,7 +127,6 @@ function resetar() {
   mocks.mudancaFindMany.mockResolvedValue(HISTORICO_A1);
   mocks.creditoFindMany.mockResolvedValue([]);
   mocks.lancFindMany.mockResolvedValue([]);
-  mocks.contaFindMany.mockResolvedValue(CONTAS);
   mocks.assinaturaCreate.mockResolvedValue({ id: "a-1" });
   mocks.assinaturaUpdateMany.mockResolvedValue({ count: 1 });
   mocks.mudancaCreate.mockResolvedValue({ id: "m-1" });
@@ -190,7 +161,7 @@ describe("listarRecorrente", () => {
     expect(mocks.lancFindMany.mock.calls[0][0].where).toEqual({
       tenantId: "system",
       competencia: "2026-09",
-      conta: { in: ["1.1", "1.5"] },
+      conta: { in: [...CONTAS_DE_SERVICO] },
     });
   });
 

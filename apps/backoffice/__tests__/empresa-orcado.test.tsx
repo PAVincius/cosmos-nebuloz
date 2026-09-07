@@ -48,7 +48,12 @@ const PAYLOAD: OrcadoView = {
       grupo: 4,
       nome: "Publicidade paga",
       porCompetencia: {
-        [COMPETENCIA]: { desvio: 50_000, orcado: 100_000, realizado: 150_000 },
+        [COMPETENCIA]: {
+          desvio: 50_000,
+          desvioPercent: 50,
+          orcado: 100_000,
+          realizado: 150_000,
+        },
       },
     },
     {
@@ -57,7 +62,12 @@ const PAYLOAD: OrcadoView = {
       grupo: 4,
       nome: "Eventos e patrocínio",
       porCompetencia: {
-        [COMPETENCIA]: { desvio: 20_000, orcado: 50_000, realizado: 70_000 },
+        [COMPETENCIA]: {
+          desvio: 20_000,
+          desvioPercent: 40,
+          orcado: 50_000,
+          realizado: 70_000,
+        },
       },
     },
     {
@@ -68,6 +78,7 @@ const PAYLOAD: OrcadoView = {
       porCompetencia: {
         [COMPETENCIA]: {
           desvio: -20_000,
+          desvioPercent: -10,
           orcado: 200_000,
           realizado: 180_000,
         },
@@ -81,6 +92,7 @@ const PAYLOAD: OrcadoView = {
       porCompetencia: {
         [COMPETENCIA]: {
           desvio: -50_000,
+          desvioPercent: -17,
           orcado: 300_000,
           realizado: 250_000,
         },
@@ -92,7 +104,12 @@ const PAYLOAD: OrcadoView = {
       grupo: 3,
       nome: "Consultoria terceirizada",
       porCompetencia: {
-        [COMPETENCIA]: { desvio: null, orcado: null, realizado: 40_000 },
+        [COMPETENCIA]: {
+          desvio: null,
+          desvioPercent: null,
+          orcado: null,
+          realizado: 40_000,
+        },
       },
     },
   ],
