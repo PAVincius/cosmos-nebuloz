@@ -2,31 +2,30 @@
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState } from "react";
+import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import {
-  createIpAssetAction,
   getIpAsset,
   type IpAssetDetail,
   type IpAssetRow,
   updateIpAssetAction,
 } from "@/app/actions/ip-library";
-import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import type { ServiceRow } from "@/app/actions/services";
+import { BotaoPrimario, Erro, INPUT } from "@/components/campo";
 import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
-
-const TIPOS = [
-  { valor: "PLAYBOOK", rotulo: "Playbook" },
-  { valor: "TEMPLATE", rotulo: "Template" },
-  { valor: "COMPONENTE", rotulo: "Componente" },
-  { valor: "DOCUMENTO", rotulo: "Documento" },
-];
+import { RegistrarAtivo } from "./registrar";
 
 export function Biblioteca({
   iniciais,
   engajamentos,
+  servicos,
+  pessoas,
   podeEscrever,
 }: {
   iniciais: IpAssetRow[];
   engajamentos: EngagementRow[];
+  servicos: ServiceRow[];
+  pessoas: PessoaCapacidade[];
   podeEscrever: boolean;
 }) {
   const [lista, setLista] = useState(iniciais);
@@ -35,12 +34,6 @@ export function Biblioteca({
   const [nota, setNota] = useState("");
   const [criando, setCriando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
-  const [form, setForm] = useState({
-    nome: "",
-    tipo: "PLAYBOOK",
-    descricao: "",
-    origem: "",
-  });
 
   const abrir = useCallback(async (id: string) => {
     setErro(null);
@@ -54,40 +47,13 @@ export function Biblioteca({
     }
   }, []);
 
-  const criar = useCallback(async () => {
+  // A linha nova vem inteira da action: montá-la aqui daria uma segunda fonte
+  // para `reusos` e `maturidade`, que são derivados e não campos.
+  const aoCriar = useCallback((novo: IpAssetRow) => {
     setErro(null);
-    const res = await createIpAssetAction({
-      nome: form.nome,
-      tipo: form.tipo as "PLAYBOOK",
-      descricao: form.descricao || undefined,
-      origemEngagementId: form.origem || undefined,
-      conteudo: `# ${form.nome}\n\n`,
-    });
-    if (!res.ok) {
-      setErro(res.error);
-      return;
-    }
+    setLista((atual) => [novo, ...atual]);
     setCriando(false);
-    setForm({ nome: "", tipo: "PLAYBOOK", descricao: "", origem: "" });
-    const det = await getIpAsset(res.data.id);
-    if (det.ok) {
-      setAberto(det.data);
-      setRascunho(det.data.conteudo);
-      setLista((atual) => [
-        {
-          id: det.data.id,
-          nome: det.data.nome,
-          slug: det.data.slug,
-          tipo: det.data.tipo,
-          descricao: det.data.descricao,
-          versoes: det.data.versoes,
-          origem: det.data.origem,
-          atualizadoEm: det.data.atualizadoEm,
-        },
-        ...atual,
-      ]);
-    }
-  }, [form]);
+  }, []);
 
   const salvar = useCallback(async () => {
     if (!aberto) {
@@ -131,62 +97,13 @@ export function Biblioteca({
         }
         formulario={
           criando ? (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-              <Campo htmlFor="ip-nome" label="Nome">
-                <input
-                  id="ip-nome"
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, nome: e.target.value }))
-                  }
-                  style={INPUT}
-                  value={form.nome}
-                />
-              </Campo>
-              <Campo htmlFor="ip-tipo" label="Tipo">
-                <select
-                  id="ip-tipo"
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, tipo: e.target.value }))
-                  }
-                  style={{ ...INPUT, cursor: "pointer" }}
-                  value={form.tipo}
-                >
-                  {TIPOS.map((t) => (
-                    <option key={t.valor} value={t.valor}>
-                      {t.rotulo}
-                    </option>
-                  ))}
-                </select>
-              </Campo>
-              <Campo
-                hint="de onde o ativo saiu — o ativo sobrevive ao engajamento"
-                htmlFor="ip-origem"
-                label="Origem"
-              >
-                <select
-                  id="ip-origem"
-                  onChange={(e) =>
-                    setForm((f) => ({ ...f, origem: e.target.value }))
-                  }
-                  style={{ ...INPUT, cursor: "pointer" }}
-                  value={form.origem}
-                >
-                  <option value="">Nenhuma</option>
-                  {engajamentos.map((e) => (
-                    <option key={e.id} value={e.id}>
-                      {e.codigo} · {e.nome}
-                    </option>
-                  ))}
-                </select>
-              </Campo>
-              <BotaoPrimario
-                disabled={form.nome.trim().length < 2}
-                onClick={criar}
-                type="button"
-              >
-                Criar
-              </BotaoPrimario>
-            </div>
+            <RegistrarAtivo
+              engajamentos={engajamentos}
+              onCriado={aoCriar}
+              onErro={setErro}
+              pessoas={pessoas}
+              servicos={servicos}
+            />
           ) : null
         }
         icone="book"
