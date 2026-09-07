@@ -67,6 +67,20 @@ INSERT INTO "Lancamento" ("id","tenantId","competencia","data","conta","descrica
 SELECT 'abert_' || "id", "tenantId", "competencia", ("competencia" || '-01')::date, "conta", 'Saldo de abertura (migrado)', "valorCentavos", "nota", now(), now()
 FROM "LancamentoMensal";
 
+-- A cópia é o ponto único de falha desta migration: se ela não rodar, o DRE
+-- fica em branco e o deploy passa. Prisma envolve a migration numa transação,
+-- então o RAISE derruba tudo e o build falha alto, em vez de publicar um
+-- demonstrativo vazio.
+DO $$
+DECLARE origem BIGINT; copiadas BIGINT;
+BEGIN
+  SELECT count(*) INTO origem FROM "LancamentoMensal";
+  SELECT count(*) INTO copiadas FROM "Lancamento" WHERE "id" LIKE 'abert_%';
+  IF origem <> copiadas THEN
+    RAISE EXCEPTION 'copia de abertura incompleta: % de %', copiadas, origem;
+  END IF;
+END $$;
+
 DO $$
 DECLARE t TEXT;
 BEGIN
