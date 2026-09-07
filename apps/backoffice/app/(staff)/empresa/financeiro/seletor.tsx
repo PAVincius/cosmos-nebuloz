@@ -38,10 +38,10 @@ export function SeletorDaAba({
     <SeletorDePeriodo
       onAplicar={(i) => {
         const sufixo = Object.entries(extra ?? {})
-          .map(([chave, v]) => `&${chave}=${v}`)
+          .map(([chave, v]) => `&${chave}=${encodeURIComponent(v)}`)
           .join("");
         router.push(
-          `/empresa/financeiro?aba=${aba}&de=${i.de}&ate=${i.ate}${sufixo}`
+          `/empresa/financeiro?aba=${encodeURIComponent(aba)}&de=${encodeURIComponent(i.de)}&ate=${encodeURIComponent(i.ate)}${sufixo}`
         );
       }}
       presets={presets}

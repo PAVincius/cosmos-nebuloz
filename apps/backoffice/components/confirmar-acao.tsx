@@ -27,6 +27,7 @@ export function ConfirmarAcao({
   consequencia,
   onConfirmar,
   executando = false,
+  desabilitado = false,
 }: {
   /** O que o botão faz, em imperativo: "Cancelar COSMOS". */
   rotulo: string;
@@ -35,9 +36,16 @@ export function ConfirmarAcao({
   /** O que acontece depois, em uma frase. */
   consequencia: string;
   onConfirmar: () => void;
+  /** Só verdadeiro enquanto a ação está de fato rodando — troca o rótulo do
+   *  botão para "Executando…". */
   executando?: boolean;
+  /** Desabilita o botão sem nada estar rodando — ex.: formulário incompleto.
+   *  Separado de `executando` porque as duas coisas viram estados visuais
+   *  diferentes: um botão cinza não é a mesma mensagem que "Executando…". */
+  desabilitado?: boolean;
 }) {
   const [perguntando, setPerguntando] = useState(false);
+  const bloqueado = executando || desabilitado;
 
   const BOTAO = {
     padding: "5px 11px",
@@ -53,13 +61,13 @@ export function ConfirmarAcao({
     return (
       <button
         className="btn"
-        disabled={executando}
+        disabled={bloqueado}
         onClick={() => setPerguntando(true)}
         style={{
           ...BOTAO,
           color: "var(--red-text)",
-          opacity: executando ? 0.5 : 1,
-          cursor: executando ? "not-allowed" : "pointer",
+          opacity: bloqueado ? 0.5 : 1,
+          cursor: bloqueado ? "not-allowed" : "pointer",
         }}
         type="button"
       >
@@ -99,12 +107,12 @@ export function ConfirmarAcao({
         </button>
         <button
           className="btn"
-          disabled={executando}
+          disabled={bloqueado}
           onClick={onConfirmar}
           style={{
             ...BOTAO,
             color: "var(--red-text)",
-            opacity: executando ? 0.5 : 1,
+            opacity: bloqueado ? 0.5 : 1,
           }}
           type="button"
         >

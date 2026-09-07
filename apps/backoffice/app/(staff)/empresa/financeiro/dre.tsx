@@ -31,7 +31,7 @@ const pct = (v: number | null | undefined) =>
  *  (Task 5): a célula do DRE deixou de aceitar valor digitado. */
 function linkDoLancamento(conta: string, competencia: string): string {
   const { de, ate } = intervaloDaCompetencia(competencia);
-  return `/empresa/financeiro?aba=lancamentos&de=${de}&ate=${ate}&conta=${conta}`;
+  return `/empresa/financeiro?aba=lancamentos&de=${encodeURIComponent(de)}&ate=${encodeURIComponent(ate)}&conta=${encodeURIComponent(conta)}`;
 }
 
 /** Uma linha de conta do plano: cada célula é um link para a aba Lançamentos
@@ -79,9 +79,7 @@ function LinhaConta({
   );
 }
 
-export function Dre({ inicial }: { inicial: DreView; podeEscrever: boolean }) {
-  const view = inicial;
-
+export function Dre({ inicial: view }: { inicial: DreView }) {
   const larguras = [
     { id: "l", largura: "34%" },
     ...view.competencias.map((c) => ({ id: c, largura: "16.5%" })),

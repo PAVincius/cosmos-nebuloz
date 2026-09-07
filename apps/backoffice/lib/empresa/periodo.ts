@@ -34,6 +34,19 @@ export function utc(isoData: string): Date {
 export function iso(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
+
+/** "Hoje" no relógio de quem chama, formato ISO — valor inicial de campo de
+ *  data em diálogo de criação (lançamento, título). Cópia única: morava
+ *  duplicada em `lancamento-dialog.tsx` e `titulo-dialogs.tsx`. */
+export function hojeIso(): string {
+  return iso(new Date());
+}
+
+/** Competência ("AAAA-MM") de hoje — os 7 primeiros caracteres de `hojeIso()`. */
+export function competenciaAtual(): string {
+  return hojeIso().slice(0, 7);
+}
+
 function dataValida(s: string): boolean {
   return ISO.test(s) && iso(utc(s)) === s;
 }

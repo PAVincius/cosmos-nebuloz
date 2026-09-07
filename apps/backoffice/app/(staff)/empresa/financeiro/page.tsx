@@ -82,11 +82,16 @@ function abaStyle(ativa: boolean) {
   } as const;
 }
 
-/** O subtítulo menciona o período escolhido (spec 2026-09-06 §6) — a aba
- *  Plano não tem intervalo, então o texto muda por aba. */
+/** O subtítulo menciona o período escolhido (spec 2026-09-06 §6) — as abas
+ *  Plano e Títulos não têm intervalo (a segunda lê `listarTitulos({})` sem
+ *  recorte nenhum, spec 2026-09-06 §4), então o texto muda por aba em vez de
+ *  anunciar um "Período: …" que a tela não usa. */
 function subtitleDaAba(aba: Aba, intervalo: Intervalo): string {
   if (aba === "plano") {
     return "As 27 contas semeadas de docs/financeiro/plano-de-contas.md — código, nome, centro de custo e situação.";
+  }
+  if (aba === "titulos") {
+    return "Compromissos a pagar e a receber — títulos em aberto, vencido, baixado ou cancelado. Lista viva, sem recorte de período.";
   }
   return `Uma frente de receita por produto, serviço separado de assinatura, e o caixa rolante. As linhas calculadas fecham sozinhas; as de entrada são suas. Período: ${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)}.`;
 }
@@ -138,16 +143,16 @@ function Abas({ aba }: { aba: Aba }) {
 
 /** Erro + painel de uma leitura, um componente por aba — cada um trivial
  *  (resultado `null` ou `{ok}`), para a complexidade cognitiva não se
- *  acumular numa `PainelDaAba` só (era o que estourava o teto do lint ao
- *  crescer uma leitura por task). */
+ *  acumular num `PainelDaAba` só (ponytail D1: o teto do lint estourava com
+ *  os cinco casos num corpo só; extraído de volta em funções pequenas, mas
+ *  agora `PainelDaAba` despacha para a única que a aba pede, em vez de
+ *  chamar as cinco sabendo que quatro devolvem null). */
 function PainelDre({
   resultado,
   chaveDoPainel,
-  podeEscrever,
 }: {
   resultado: Dados["dre"];
   chaveDoPainel: string;
-  podeEscrever: boolean;
 }) {
   if (resultado === null) {
     return null;
@@ -155,13 +160,9 @@ function PainelDre({
   return (
     <>
       <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {/* key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha. */}
       {resultado.ok ? (
-        // key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
-        <Dre
-          inicial={resultado.data}
-          key={chaveDoPainel}
-          podeEscrever={podeEscrever}
-        />
+        <Dre inicial={resultado.data} key={chaveDoPainel} />
       ) : null}
     </>
   );
@@ -277,8 +278,8 @@ function PainelTitulos({
   );
 }
 
-/** Corpo da aba ativa: só chama os cinco painéis, um por leitura — cada um
- *  decide sozinho se tem algo para mostrar (spec 2026-09-06 §6). */
+/** Corpo da aba ativa: um `switch` que devolve só o painel vivo, em vez de
+ *  chamar os cinco sabendo que quatro são nulos (spec 2026-09-06 §6). */
 function PainelDaAba({
   aba,
   dados,
@@ -294,37 +295,46 @@ function PainelDaAba({
   chaveDoPainel: string;
   podeEscrever: boolean;
 }) {
-  return (
-    <>
-      <PainelDre
-        chaveDoPainel={chaveDoPainel}
-        podeEscrever={podeEscrever}
-        resultado={dados.dre}
-      />
-      <PainelCaixa
-        chaveDoPainel={chaveDoPainel}
-        podeEscrever={podeEscrever}
-        resultado={dados.caixa}
-      />
-      <PainelPlano
-        chaveDoPainel={chaveDoPainel}
-        podeEscrever={podeEscrever}
-        resultado={dados.plano}
-      />
-      <PainelLancamentos
-        chaveDoPainel={chaveDoPainel}
-        contaFiltro={aba === "lancamentos" ? (conta ?? null) : null}
-        intervalo={intervalo}
-        podeEscrever={podeEscrever}
-        resultado={dados.lancamentos}
-      />
-      <PainelTitulos
-        chaveDoPainel={chaveDoPainel}
-        podeEscrever={podeEscrever}
-        resultado={dados.titulos}
-      />
-    </>
-  );
+  switch (aba) {
+    case "dre":
+      return <PainelDre chaveDoPainel={chaveDoPainel} resultado={dados.dre} />;
+    case "caixa":
+      return (
+        <PainelCaixa
+          chaveDoPainel={chaveDoPainel}
+          podeEscrever={podeEscrever}
+          resultado={dados.caixa}
+        />
+      );
+    case "plano":
+      return (
+        <PainelPlano
+          chaveDoPainel={chaveDoPainel}
+          podeEscrever={podeEscrever}
+          resultado={dados.plano}
+        />
+      );
+    case "lancamentos":
+      return (
+        <PainelLancamentos
+          chaveDoPainel={chaveDoPainel}
+          contaFiltro={conta ?? null}
+          intervalo={intervalo}
+          podeEscrever={podeEscrever}
+          resultado={dados.lancamentos}
+        />
+      );
+    case "titulos":
+      return (
+        <PainelTitulos
+          chaveDoPainel={chaveDoPainel}
+          podeEscrever={podeEscrever}
+          resultado={dados.titulos}
+        />
+      );
+    default:
+      return null;
+  }
 }
 
 export default async function FinanceiroPage({

@@ -17,6 +17,7 @@ import type {
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { ConfirmarAcao } from "@/components/confirmar-acao";
 import type { TituloRow } from "@/lib/empresa/livro";
+import { competenciaAtual, hojeIso } from "@/lib/empresa/periodo";
 import type { Result } from "@/lib/safe-action";
 
 /**
@@ -26,20 +27,13 @@ import type { Result } from "@/lib/safe-action";
  * título selecionado, mesma regra de `lancamento-dialog.tsx` — sem isso o
  * `useState` de rascunho vazaria de um título para o próximo.
  *
- * `Aviso`, `GRID_2` e `hojeIso` são exportados daqui porque os três diálogos
- * os usam.
+ * `Aviso` e `GRID_2` são exportados daqui porque os três diálogos os usam;
+ * `hojeIso`/`competenciaAtual` vêm de lib/empresa/periodo.ts (cópia única,
+ * fix-wave D2) e cada arquivo os importa de lá direto.
  */
 
 type BaixarInput = Parameters<typeof baixarTitulo>[0];
 type CancelarInput = Parameters<typeof cancelarTitulo>[0];
-
-export function hojeIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function competenciaAtual(): string {
-  return hojeIso().slice(0, 7);
-}
 
 export const GRID_2 = {
   display: "grid",
@@ -294,7 +288,8 @@ function FormularioCancelar({
       <ConfirmarAcao
         alvo={titulo.descricao}
         consequencia="O título sai da lista de abertos e não pode ser reaberto."
-        executando={pendente || !podeConfirmarCancelamento(motivo)}
+        desabilitado={!podeConfirmarCancelamento(motivo)}
+        executando={pendente}
         onConfirmar={cancelar}
         rotulo="Cancelar título"
       />

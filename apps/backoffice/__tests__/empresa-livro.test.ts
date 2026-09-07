@@ -6,7 +6,6 @@ import {
   type LinhaDoLivro,
   situacaoDoTitulo,
   type TituloRow,
-  totalPorConta,
 } from "@/lib/empresa/livro";
 import type { Conta } from "@/lib/empresa/plano-de-contas";
 
@@ -117,17 +116,6 @@ describe("DRE por linhas dá o mesmo número que o DRE por valor mensal", () => 
       linha({ conta: "6.1", valorCentavos: 5000 }),
     ])["2026-09"];
     expect(calcularDre(CONTAS, porLinhas)).toEqual(calcularDre(CONTAS, MENSAL));
-  });
-});
-
-describe("totalPorConta", () => {
-  it("ignora competência e soma tudo por conta", () => {
-    expect(
-      totalPorConta([
-        linha({ conta: "4.1", valorCentavos: 1, competencia: "2026-08" }),
-        linha({ conta: "4.1", valorCentavos: 2, competencia: "2026-09" }),
-      ])
-    ).toEqual({ "4.1": 3 });
   });
 });
 

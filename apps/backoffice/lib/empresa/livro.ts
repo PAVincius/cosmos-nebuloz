@@ -82,17 +82,6 @@ export function agregarPorMes(
   return porMes;
 }
 
-/** Soma por conta, ignorando competência. */
-export function totalPorConta(
-  linhas: Pick<LinhaDoLivro, "conta" | "valorCentavos">[]
-): Record<string, number> {
-  const porConta: Record<string, number> = {};
-  for (const l of linhas) {
-    porConta[l.conta] = (porConta[l.conta] ?? 0) + l.valorCentavos;
-  }
-  return porConta;
-}
-
 /** Trunca para meia-noite UTC — mesma ideia de lib/comercial/funil.ts:
  * a fronteira do dia é a mesma em qualquer horário, não uma divisão de
  * milissegundos que erra por fuso. */

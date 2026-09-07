@@ -171,6 +171,20 @@ export async function atualizarLancamento(
     const { id, ...dados } = AtualizarLancamentoSchema.parse(input);
     await assertContaAtiva(dados.conta);
 
+    // Mesma recusa de `excluirLancamento`: uma linha vinda de um título prova
+    // a baixa dele. Editá-la (trocar conta, competência ou valor) deixaria o
+    // título dizendo que quitou um valor que o livro-razão já não mostra mais.
+    const existente = await database.lancamento.findFirst({
+      where: { id, tenantId: SYSTEM_TENANT_ID },
+      select: { tituloId: true },
+    });
+    if (existente && existente.tituloId !== null) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        "Lançamento veio de um título; cancele o título."
+      );
+    }
+
     const atualizado = await database.lancamento.updateMany({
       where: { id, tenantId: SYSTEM_TENANT_ID },
       data: {

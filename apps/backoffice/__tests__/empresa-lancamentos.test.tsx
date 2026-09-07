@@ -112,6 +112,15 @@ const L4 = linhaFactory({
   valorCentavos: 20_000,
 });
 
+const L5 = linhaFactory({
+  conta: "4.1",
+  contraparte: null,
+  data: "2026-07-01",
+  descricao: "Saldo de abertura (migrado)",
+  id: "l5",
+  valorCentavos: -50_000,
+});
+
 const LINHAS = [L1, L2, L3, L4];
 const PAYLOAD = { contas: CONTAS, linhas: LINHAS };
 
@@ -253,9 +262,38 @@ describe("Lancamentos", () => {
     });
   });
 
-  it("excluir confirma em duas etapas e chama excluirLancamento({id}); linha via título não mostra excluir", () => {
+  it("linha migrada com valor <= 0 bloqueia o salvamento com aviso", () => {
+    render(
+      <Lancamentos
+        contaFiltro={null}
+        inicial={{ contas: CONTAS, linhas: [L5] }}
+        intervalo={INTERVALO}
+        podeEscrever
+      />
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Editar lançamento — Saldo de abertura (migrado)",
+      })
+    );
+
+    const salvar = screen.getByRole("button", { name: "Salvar" });
+    expect(salvar.hasAttribute("disabled")).toBe(true);
+    expect(screen.getByText(/veio do livro-razão antigo/)).toBeTruthy();
+
+    fireEvent.click(salvar);
+    expect(atualizarLancamentoMock).not.toHaveBeenCalled();
+  });
+
+  it("excluir confirma em duas etapas e chama excluirLancamento({id}); linha via título não mostra editar nem excluir", () => {
     montar();
 
+    expect(
+      screen.queryByRole("button", {
+        name: "Editar lançamento — Licença de ferramenta",
+      })
+    ).toBeNull();
     expect(
       screen.queryByRole("button", {
         name: "Excluir lançamento — Licença de ferramenta",

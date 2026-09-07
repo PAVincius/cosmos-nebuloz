@@ -242,6 +242,20 @@ describe("atualizarLancamento", () => {
     expect(res.ok).toBe(false);
     expect(mocks.lancUpdateMany).not.toHaveBeenCalled();
   });
+
+  it("recusa linha que veio de um título, mesma mensagem do excluir", async () => {
+    mocks.lancFindFirst.mockResolvedValue({
+      conta: "1.1",
+      competencia: "2026-09",
+      tituloId: "t-1",
+    });
+    const res = await atualizarLancamento({ ...LANCAMENTO_VALIDO, id: "l-1" });
+    expect(res.ok).toBe(false);
+    expect(!res.ok && res.error).toBe(
+      "Lançamento veio de um título; cancele o título."
+    );
+    expect(mocks.lancUpdateMany).not.toHaveBeenCalled();
+  });
 });
 
 describe("excluirLancamento", () => {

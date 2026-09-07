@@ -17,8 +17,13 @@ import type {
   criarLancamento,
 } from "@/app/actions/empresa/livro";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
-import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
+import {
+  centavosParaCampo,
+  formatarBRL,
+  paraCentavos,
+} from "@/lib/comercial/formato";
 import type { LinhaDoLivro } from "@/lib/empresa/livro";
+import { competenciaAtual, hojeIso } from "@/lib/empresa/periodo";
 import { ROTULO_CENTRO } from "@/lib/empresa/plano-de-contas";
 import type { Result } from "@/lib/safe-action";
 
@@ -46,24 +51,6 @@ type FormLancamento = {
   nota: string;
 };
 
-function hojeIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
-function competenciaAtual(): string {
-  return hojeIso().slice(0, 7);
-}
-
-/** Inverso informal de `formatarBRL`, sem o símbolo de moeda — o texto que
- *  entra de novo no campo editável. `paraCentavos` só olha dígitos, então o
- *  separador de milhar do `toLocaleString` não atrapalha o round-trip. */
-function centavosParaTexto(centavos: number): string {
-  return (centavos / 100).toLocaleString("pt-BR", {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2,
-  });
-}
-
 function formInicial(linha: LinhaDoLivro | null): FormLancamento {
   if (linha) {
     return {
@@ -74,7 +61,7 @@ function formInicial(linha: LinhaDoLivro | null): FormLancamento {
       descricao: linha.descricao,
       documento: linha.documento ?? "",
       nota: linha.nota ?? "",
-      valor: centavosParaTexto(linha.valorCentavos),
+      valor: centavosParaCampo(linha.valorCentavos),
     };
   }
   return {
@@ -97,6 +84,19 @@ function podeSalvar(f: FormLancamento): boolean {
     f.descricao.trim().length > 0 &&
     f.valor.trim().length > 0
   );
+}
+
+/** O `LancamentoSchema` atual exige `valorCentavos > 0`; o modelo antigo
+ *  (`LancamentoMensal`) não exigia, então a migração pode ter copiado linha
+ *  com valor zero ou negativo. Editar essa linha sem trocar o valor já seria
+ *  recusado pelo schema — aqui a recusa é explícita, antes de ir ao servidor,
+ *  porque "Valor tem que ser maior que zero" sozinho não explica por que uma
+ *  linha existente ficou assim nem o que fazer a respeito. */
+const VALOR_MIGRADO_INVALIDO =
+  "Esta linha veio do livro-razão antigo com valor zero ou negativo, que o modelo atual não aceita. Exclua-a (se não vier de título) e recrie o lançamento com o valor correto.";
+
+function linhaMigradaInvalida(linha: LinhaDoLivro | null): boolean {
+  return linha !== null && linha.valorCentavos <= 0;
 }
 
 function textoOuNulo(v: string): string | null {
@@ -188,6 +188,11 @@ function Formulario({
   const [pendente, setPendente] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const grupos = agruparPorCentro(contas.filter((c) => c.ativa));
+  const migradaInvalida = linhaMigradaInvalida(linha);
+  // Fora do JSX por causa do noLeakedRender: `migradaInvalida && !erro` como
+  // condição de `? :` direto no corpo do componente é lido como um `&&` de
+  // render pelo linter, mesmo os dois lados sendo booleanos.
+  const mostrarAvisoMigrada = migradaInvalida && !erro;
 
   function mudar<K extends keyof FormLancamento>(
     campo: K,
@@ -197,6 +202,10 @@ function Formulario({
   }
 
   async function salvar() {
+    if (migradaInvalida) {
+      setErro(VALOR_MIGRADO_INVALIDO);
+      return;
+    }
     setErro(null);
     setPendente(true);
     const dados = {
@@ -229,6 +238,7 @@ function Formulario({
       </DialogHeader>
 
       {erro ? <Erro>{erro}</Erro> : null}
+      {mostrarAvisoMigrada ? <Erro>{VALOR_MIGRADO_INVALIDO}</Erro> : null}
 
       <div style={{ display: "grid", gap: 10, gridTemplateColumns: "1fr 1fr" }}>
         <Campo htmlFor="lc-competencia" label="Competência">
@@ -326,7 +336,7 @@ function Formulario({
 
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <BotaoPrimario
-          disabled={pendente || !podeSalvar(form)}
+          disabled={pendente || !podeSalvar(form) || migradaInvalida}
           full={false}
           onClick={salvar}
           type="button"

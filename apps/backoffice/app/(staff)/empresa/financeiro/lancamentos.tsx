@@ -16,7 +16,7 @@ import { FiltroChips } from "@/components/filtro-chips";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
 import { WriteButton } from "@/components/write-button";
 import { formatarBRL } from "@/lib/comercial/formato";
-import { type LinhaDoLivro, totalPorConta } from "@/lib/empresa/livro";
+import type { LinhaDoLivro } from "@/lib/empresa/livro";
 import { formatarDataBr, type Intervalo } from "@/lib/empresa/periodo";
 import {
   type CentroDeCusto,
@@ -97,6 +97,9 @@ function LinhaTabela({
   onExcluir: (id: string) => void;
 }) {
   const viaTitulo = l.tituloId !== null;
+  // Editar e excluir concordam agora: linha vinda de título não se mexe por
+  // nenhum dos dois — só o cancelamento do título desfaz a baixa.
+  const podeEditar = podeEscrever && !viaTitulo;
   const podeExcluir = podeEscrever && !viaTitulo;
   return (
     <TableRow>
@@ -125,7 +128,7 @@ function LinhaTabela({
               via título
             </span>
           ) : null}
-          {podeEscrever ? (
+          {podeEditar ? (
             <BotaoSecundario
               onClick={() => onEditar(l)}
               rotulo={`Editar lançamento — ${l.descricao}`}
@@ -189,8 +192,11 @@ export function Lancamentos({
     (soma, l) => soma + l.valorCentavos,
     0
   );
+  // `dados.linhas` já vem filtrada por `contaFiltro` do servidor
+  // (`listarLancamentos({ conta, ... })`, page.tsx) — soma direta, sem
+  // agrupar por conta para descartar as outras chaves em seguida.
   const totalDaConta = contaFiltro
-    ? (totalPorConta(dados.linhas)[contaFiltro] ?? 0)
+    ? dados.linhas.reduce((soma, l) => soma + l.valorCentavos, 0)
     : null;
   const contaInfo = contaFiltro
     ? (dados.contas.find((c) => c.conta === contaFiltro) ?? null)
@@ -258,7 +264,7 @@ export function Lancamentos({
     setDialogoAberto(false);
   }, []);
 
-  const hrefSemConta = `/empresa/financeiro?aba=lancamentos&de=${intervalo.de}&ate=${intervalo.ate}`;
+  const hrefSemConta = `/empresa/financeiro?aba=lancamentos&de=${encodeURIComponent(intervalo.de)}&ate=${encodeURIComponent(intervalo.ate)}`;
 
   return (
     <SectionCard

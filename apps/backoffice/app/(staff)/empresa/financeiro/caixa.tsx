@@ -4,7 +4,11 @@ import { SectionCard } from "@repo/design-system/cosmos/kit";
 import { useCallback, useState } from "react";
 import { type CaixaView, salvarSemana } from "@/app/actions/empresa/financeiro";
 import { Erro, INPUT } from "@/components/campo";
-import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
+import {
+  centavosParaCampo,
+  formatarBRL,
+  paraCentavos,
+} from "@/lib/comercial/formato";
 import type { SemanaEntrada } from "@/lib/empresa/financeiro";
 import { formatarDataBr } from "@/lib/empresa/periodo";
 
@@ -58,9 +62,7 @@ function Input({
     <input
       aria-label={`${rotulo} ${s.semanaInicio}`}
       defaultValue={
-        s[chave] === null
-          ? ""
-          : ((s[chave] as number) / 100).toFixed(2).replace(".", ",")
+        s[chave] === null ? "" : centavosParaCampo(s[chave] as number)
       }
       inputMode="decimal"
       onBlur={(e) => {

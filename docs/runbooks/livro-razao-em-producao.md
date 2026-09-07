@@ -29,6 +29,27 @@ remoção é uma migration posterior.
 
 ---
 
+## 0.1 Antes do deploy: valor migrado zero ou negativo
+
+O `LancamentoMensal` antigo aceitava `valorCentavos` zero ou negativo (o
+schema não exigia positividade); a cópia de abertura preserva esse valor tal
+qual, então o DRE segue certo. O `LancamentoSchema` novo, porém, exige
+`valorCentavos > 0` — uma linha copiada assim não se edita sem primeiro
+excluí-la e recriá-la (fix-wave B2, `lancamento-dialog.tsx` recusa o
+salvamento com aviso).
+
+Rodar antes do push, Supabase SQL Editor, só leitura:
+
+```sql
+SELECT count(*) FROM "LancamentoMensal" WHERE "valorCentavos" <= 0;
+```
+
+`0` esperado. Se vier maior que zero, não bloqueia o deploy — a cópia sai
+correta e o DRE não muda —, mas vale saber de antemão quantas linhas do
+livro-razão vão nascer bloqueadas para edição direta na tela.
+
+---
+
 ## 1. Ordem de deploy
 
 1. Push do branch. A Vercel builda e, pelo pipeline padrão deste projeto, o

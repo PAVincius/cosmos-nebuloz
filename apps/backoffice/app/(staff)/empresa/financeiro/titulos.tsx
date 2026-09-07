@@ -200,9 +200,16 @@ export function Titulos({
   inicial: TitulosPayload;
   podeEscrever: boolean;
 }) {
-  // "hoje" é do cliente, no momento em que a aba monta — nunca do payload do
-  // servidor, para `situacaoDoTitulo`/`envelhecimento` responderem ao relógio
-  // de quem está olhando a tela, não ao instante em que a página renderizou.
+  // `useMemo(() => new Date(), [])` roda duas vezes num componente cliente:
+  // a primeira, no SSR, pega o relógio do servidor; a hidratação no navegador
+  // roda de novo e é esse segundo valor que fica, porque React não reaproveita
+  // o cálculo do SSR como cache de `useMemo` na primeira montagem do cliente.
+  // Então "hoje" nunca é o payload do servidor — é o relógio de quem está
+  // olhando a tela, com uma janela de milissegundos de defasagem entre as duas
+  // rodadas. Tolerável aqui: `situacaoDoTitulo`/`envelhecimento` só mudam de
+  // resposta na virada do dia, e a pior consequência de errar por um instante
+  // é uma faixa de vencimento reclassificada no recarregamento seguinte, não
+  // dado perdido.
   const hoje = useMemo(() => new Date(), []);
   const [dados, setDados] = useState(inicial);
   const [situacaoFiltro, setSituacaoFiltro] = useState("all");

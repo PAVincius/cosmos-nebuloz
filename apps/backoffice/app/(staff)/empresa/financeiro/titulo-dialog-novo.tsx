@@ -14,14 +14,16 @@ import type { criarTitulo } from "@/app/actions/empresa/titulos";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
 import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 import { ROTULO_TIPO, type TituloRow } from "@/lib/empresa/livro";
+import { hojeIso } from "@/lib/empresa/periodo";
 import type { Result } from "@/lib/safe-action";
-import { Aviso, GRID_2, hojeIso } from "./titulo-dialogs";
+import { Aviso, GRID_2 } from "./titulo-dialogs";
 
 /**
  * Diálogo "Novo título" (Task 6, spec 2026-09-06 §4). Separado dos outros
  * dois — Baixar e Cancelar, em titulo-dialogs.tsx — só pelo tamanho: sete
  * campos contra dois, e juntos os três passariam do teto de ~400 linhas do
- * lint num arquivo só. `Aviso`, `GRID_2` e `hojeIso` são de lá.
+ * lint num arquivo só. `Aviso` e `GRID_2` são de lá; `hojeIso` é a cópia
+ * única de lib/empresa/periodo.ts (fix-wave D2).
  */
 
 type CriarInput = Parameters<typeof criarTitulo>[0];

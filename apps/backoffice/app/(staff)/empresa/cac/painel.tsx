@@ -13,7 +13,11 @@ import {
 import { BotaoPrimario, Erro, INPUT, rotuloSalvar } from "@/components/campo";
 import { SeletorDePeriodo } from "@/components/seletor-de-periodo";
 import { Celula, Tabela, TableHead, TableRow } from "@/components/tabela";
-import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
+import {
+  centavosParaCampo,
+  formatarBRL,
+  paraCentavos,
+} from "@/lib/comercial/formato";
 import { PRESETS_COMPETENCIA } from "@/lib/empresa/periodo";
 import type { ContaDoCac } from "@/lib/empresa/plano-de-contas";
 
@@ -121,7 +125,7 @@ function valorInicial(v: number | null, dinheiro: boolean): string {
   if (v === null) {
     return "";
   }
-  return dinheiro ? (v / 100).toFixed(2).replace(".", ",") : String(v);
+  return dinheiro ? centavosParaCampo(v) : String(v);
 }
 
 export function Painel({
@@ -305,7 +309,7 @@ export function Painel({
                   {ehContabil(p.chave) ? (
                     <Link
                       aria-label={p.rotulo}
-                      href={`/empresa/financeiro?aba=lancamentos&de=${view.intervalo.de}&ate=${view.intervalo.ate}&conta=${p.chave}`}
+                      href={`/empresa/financeiro?aba=lancamentos&de=${encodeURIComponent(view.intervalo.de)}&ate=${encodeURIComponent(view.intervalo.ate)}&conta=${encodeURIComponent(p.chave)}`}
                       style={{
                         display: "block",
                         color: "var(--ink)",
