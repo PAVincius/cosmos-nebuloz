@@ -556,15 +556,20 @@ export function Recorrente({
   );
   const arrCentavos = arr(mrrCentavos);
   const mov = useMemo(
-    () => movimento(dados.mudancas, competencia),
-    [dados.mudancas, competencia]
+    () => movimento(dados.assinaturas, dados.mudancas, competencia),
+    [dados.assinaturas, dados.mudancas, competencia]
   );
   const mrrInicial = useMemo(
     () =>
       mrr(dados.assinaturas, dados.mudancas, competenciaAnterior(competencia)),
     [dados.assinaturas, dados.mudancas, competencia]
   );
-  const churnPercent = churnDeReceita(dados.mudancas, competencia, mrrInicial);
+  const churnPercent = churnDeReceita(
+    dados.assinaturas,
+    dados.mudancas,
+    competencia,
+    mrrInicial
+  );
   const churnClientes = useMemo(
     () => churnDeClientes(dados.assinaturas, competencia),
     [dados.assinaturas, competencia]

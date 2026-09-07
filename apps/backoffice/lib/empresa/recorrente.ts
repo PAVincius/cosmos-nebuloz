@@ -11,6 +11,14 @@
  * e que `mrr` recebe o histórico como parâmetro em vez de só a lista de
  * assinaturas. Editar `valorMensalCentavos` de uma assinatura hoje não move
  * uma barra do gráfico de MRR de março.
+ *
+ * `deCentavos`/`paraCentavos` gravados em cada `MudancaRow` são a auditoria
+ * de quanto valia antes e depois, junto com `motivo` — o que a pessoa
+ * digitou, não a fonte do gráfico. Uma correção retroativa gravada depois de
+ * uma mudança futura já existente deixa esse par desatualizado (append-only
+ * proíbe reescrever a linha futura), então `movimento` não lê essas colunas:
+ * deriva `antes`/`agora` de `valorNaCompetencia`, a mesma função que `mrr`
+ * usa, para que `mrr(c) - mrr(c-1) === movimento(c).liquido` valha sempre.
  */
 
 import type { Tone } from "@repo/design-system/cosmos/kit";
@@ -166,26 +174,40 @@ export type Movimento = {
   liquido: number;
 };
 
-/** Abre o MRR do mês nos cinco tipos de mudança da competência: `novo` e
- * `reativacao` somam o valor final; `expansao` e `contracao` somam a
- * diferença (sempre positiva, cada uma no seu sentido); `churn` soma o valor
- * perdido. `liquido` fecha a conta: entradas menos saídas. */
+/** Abre o MRR do mês nos cinco tipos de mudança da competência, comparando
+ * `valorNaCompetencia` da assinatura no mês anterior (`antes`) com o desta
+ * (`agora`) — nunca as colunas `deCentavos`/`paraCentavos` gravadas, que uma
+ * correção retroativa pode ter deixado desatualizadas. `novo`/`reativacao`
+ * somam o valor final; `expansao`/`contracao` somam a diferença (sempre
+ * positiva, cada uma no seu sentido); `churn` soma o valor perdido.
+ * `liquido` fecha a conta: entradas menos saídas — por construção, sempre
+ * igual a `mrr(c) - mrr(c-1)`. */
 export function movimento(
+  assinaturas: AssinaturaRow[],
   mudancas: MudancaRow[],
   competencia: string
 ): Movimento {
-  const doMes = mudancas.filter((m) => m.competencia === competencia);
+  const anterior = competenciaAnterior(competencia);
+  const contribuicoes = assinaturas
+    .map((a) => {
+      const valores = {
+        antes: valorNaCompetencia(a.id, mudancas, anterior),
+        agora: valorNaCompetencia(a.id, mudancas, competencia),
+      };
+      return contribuicaoDoMes(a.id, mudancas, competencia, valores);
+    })
+    .filter((c): c is ContribuicaoDoMes => c !== null);
 
-  const somaTipo = (tipo: TipoDeMudanca, valor: (m: MudancaRow) => number) =>
-    doMes
-      .filter((m) => m.tipo === tipo)
-      .reduce((soma, m) => soma + valor(m), 0);
+  const somaTipo = (tipo: TipoDeMudanca) =>
+    contribuicoes
+      .filter((c) => c.tipo === tipo)
+      .reduce((soma, c) => soma + c.valor, 0);
 
-  const novo = somaTipo("NOVO", (m) => m.paraCentavos);
-  const expansao = somaTipo("EXPANSAO", (m) => m.paraCentavos - m.deCentavos);
-  const contracao = somaTipo("CONTRACAO", (m) => m.deCentavos - m.paraCentavos);
-  const churn = somaTipo("CHURN", (m) => m.deCentavos);
-  const reativacao = somaTipo("REATIVACAO", (m) => m.paraCentavos);
+  const novo = somaTipo("NOVO");
+  const expansao = somaTipo("EXPANSAO");
+  const contracao = somaTipo("CONTRACAO");
+  const churn = somaTipo("CHURN");
+  const reativacao = somaTipo("REATIVACAO");
 
   return {
     novo,
@@ -197,9 +219,55 @@ export function movimento(
   };
 }
 
+/** "AAAA-MM" do mês anterior a `competencia` — a base de comparação de
+ * `movimento` contra `valorNaCompetencia`. */
+function competenciaAnterior(competencia: string): string {
+  const [ano, mes] = competencia.split("-").map(Number);
+  const d = new Date(Date.UTC(ano, mes - 2, 1));
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+type ContribuicaoDoMes = {
+  tipo: TipoDeMudanca;
+  valor: number;
+};
+
+/** Classifica a mudança de uma assinatura entre o mês anterior e este.
+ * `null` quando o valor não mudou — a maioria das assinaturas, na maioria
+ * dos meses. Sem valor antes: `NOVO`, a menos que a assinatura já tenha um
+ * `CHURN` registrado antes desta competência, aí é `REATIVACAO`. Some com
+ * valor antes e nenhum agora: `CHURN`. Os dois positivos: `EXPANSAO` quando
+ * sobe, `CONTRACAO` quando desce. */
+function contribuicaoDoMes(
+  assinaturaId: string,
+  mudancas: MudancaRow[],
+  competencia: string,
+  { antes, agora }: { antes: number; agora: number }
+): ContribuicaoDoMes | null {
+  if (antes === agora) {
+    return null;
+  }
+  if (antes === 0) {
+    const jaTeveChurn = mudancas.some(
+      (m) =>
+        m.assinaturaId === assinaturaId &&
+        m.tipo === "CHURN" &&
+        m.competencia < competencia
+    );
+    return { tipo: jaTeveChurn ? "REATIVACAO" : "NOVO", valor: agora };
+  }
+  if (agora === 0) {
+    return { tipo: "CHURN", valor: antes };
+  }
+  return agora > antes
+    ? { tipo: "EXPANSAO", valor: agora - antes }
+    : { tipo: "CONTRACAO", valor: antes - agora };
+}
+
 /** Percentual do MRR de entrada do mês perdido para churn. Sem MRR de
  * entrada não há denominador, então não há percentual — `null`, não zero. */
 export function churnDeReceita(
+  assinaturas: AssinaturaRow[],
   mudancas: MudancaRow[],
   competencia: string,
   mrrInicialCentavos: number
@@ -207,7 +275,7 @@ export function churnDeReceita(
   if (mrrInicialCentavos === 0) {
     return null;
   }
-  const { churn } = movimento(mudancas, competencia);
+  const { churn } = movimento(assinaturas, mudancas, competencia);
   return Math.round((churn / mrrInicialCentavos) * 100);
 }
 

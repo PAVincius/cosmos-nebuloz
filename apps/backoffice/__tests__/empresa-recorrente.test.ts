@@ -148,17 +148,34 @@ describe("mrr e arr", () => {
 });
 
 describe("movimento", () => {
+  // Cada assinatura chega a maio com o "antes" que o tipo esperado exige:
+  // a2/a3/a4 têm uma NOVO de janeiro estabelecendo o valor que a mudança de
+  // maio parte; a5 tem um CHURN de fevereiro (antes de maio) para que a
+  // REATIVACAO de maio seja reconhecida como volta, não estreia.
+  const ass = [
+    a({ id: "a1" }),
+    a({ id: "a2" }),
+    a({ id: "a3" }),
+    a({ id: "a4" }),
+    a({ id: "a5" }),
+    a({ id: "a6" }),
+  ];
   const muds = [
     m("a1", "2026-05", "NOVO", 0, 100_000),
+    m("a2", "2026-01", "NOVO", 0, 50_000),
     m("a2", "2026-05", "EXPANSAO", 50_000, 80_000),
+    m("a3", "2026-01", "NOVO", 0, 90_000),
     m("a3", "2026-05", "CONTRACAO", 90_000, 60_000),
+    m("a4", "2026-01", "NOVO", 0, 40_000),
     m("a4", "2026-05", "CHURN", 40_000, 0),
+    m("a5", "2026-01", "NOVO", 0, 10_000),
+    m("a5", "2026-02", "CHURN", 10_000, 0),
     m("a5", "2026-05", "REATIVACAO", 0, 20_000),
     m("a6", "2026-06", "NOVO", 0, 999),
   ];
 
   it("separa os cinco tipos e fecha o líquido", () => {
-    expect(movimento(muds, "2026-05")).toEqual({
+    expect(movimento(ass, muds, "2026-05")).toEqual({
       novo: 100_000,
       expansao: 30_000,
       contracao: 30_000,
@@ -169,7 +186,7 @@ describe("movimento", () => {
   });
 
   it("mês sem mudança devolve tudo zerado", () => {
-    expect(movimento(muds, "2026-07")).toEqual({
+    expect(movimento(ass, muds, "2026-07")).toEqual({
       novo: 0,
       expansao: 0,
       contracao: 0,
@@ -181,14 +198,21 @@ describe("movimento", () => {
 });
 
 describe("churn", () => {
-  const muds = [m("a4", "2026-05", "CHURN", 40_000, 0)];
+  // `churnDeReceita` chama `movimento` por dentro, que agora precisa do
+  // "antes" (aqui, uma NOVO de janeiro) para classificar a linha de maio
+  // como CHURN.
+  const assA4 = [a({ id: "a4" })];
+  const muds = [
+    m("a4", "2026-01", "NOVO", 0, 40_000),
+    m("a4", "2026-05", "CHURN", 40_000, 0),
+  ];
 
   it("churn de receita é o perdido sobre o MRR de entrada", () => {
-    expect(churnDeReceita(muds, "2026-05", 400_000)).toBe(10);
+    expect(churnDeReceita(assA4, muds, "2026-05", 400_000)).toBe(10);
   });
 
   it("sem MRR de entrada não há percentual", () => {
-    expect(churnDeReceita(muds, "2026-05", 0)).toBeNull();
+    expect(churnDeReceita(assA4, muds, "2026-05", 0)).toBeNull();
   });
 
   it("churn de clientes conta quem encerrou na competência", () => {
@@ -296,17 +320,19 @@ describe("excedenteDoMes", () => {
 describe("propriedade: mrr e movimento têm que fechar", () => {
   // A5: mrr(c) − mrr(anterior(c)) tem que ser igual a movimento(c).liquido —
   // a variação do MRR de um mês para o outro é, por definição, o líquido do
-  // que entrou e saiu naquele mês. Isso só vale se `deCentavos` de cada
-  // mudança for o valor que valia na competência dela (valorNaCompetencia),
-  // não a coluna corrente — que já pode ter sido movida por uma gravação
-  // posterior fora de ordem.
+  // que entrou e saiu naquele mês. `movimento` deriva `antes`/`agora` de
+  // `valorNaCompetencia` — a mesma leitura de histórico que `mrr` usa — em
+  // vez das colunas `deCentavos`/`paraCentavos` gravadas, que uma correção
+  // retroativa registrada depois de uma mudança futura já existente deixa
+  // desatualizadas. É por isso que a igualdade vale nas três competências,
+  // março incluída.
   function competenciaAnterior(c: string): string {
     const [ano, mes] = c.split("-").map(Number);
     const d = new Date(Date.UTC(ano, mes - 2, 1));
     return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
   }
 
-  it("cenário jan-1000 / mar-1500 gravado antes / fev-1200 gravado depois: MRR e movimento fecham em três competências seguidas", () => {
+  it("cenário jan-1000 / mar-1500 gravado antes / fev-1200 gravado depois: MRR e movimento fecham em janeiro, fevereiro E março", () => {
     const ass = [a({ id: "a1", iniciouEm: "2026-01-01" })];
     // Sequência de gravação (fora de ordem): NOVO em janeiro; depois EXPANSAO
     // em março (nada mudou entre a criação e março, então `deCentavos` é
@@ -327,17 +353,14 @@ describe("propriedade: mrr e movimento têm que fechar", () => {
       },
     ];
 
-    // Checado em dez/2025 (trivial, antes da assinatura existir), janeiro e
-    // fevereiro — março fica de fora de propósito: o histórico é append-only
-    // e a gravação de março já existia quando fevereiro foi corrigido depois
-    // dela, então o "de" de março continua sendo o que valia na hora em que
-    // março foi escrito (1000), não o valor de fevereiro corrigido (1200).
-    // Corrigir isso exigiria reescrever a linha de março, o que o desenho
-    // append-only proíbe — por isso a propriedade só é garantida quando não
-    // há uma gravação futura já registrada antes de uma correção retroativa.
-    for (const c of ["2025-12", "2026-01", "2026-02"]) {
+    // Checado em dez/2025 (trivial, antes da assinatura existir), janeiro,
+    // fevereiro e março: mesmo com a correção de fevereiro gravada depois da
+    // linha de março, `movimento` lê `valorNaCompetencia` — não a linha de
+    // março — então março fecha em +300 (1500 − 1200), o delta real do MRR,
+    // não os +500 (1500 − 1000) que a linha gravada de março ainda mostra.
+    for (const c of ["2025-12", "2026-01", "2026-02", "2026-03"]) {
       const delta = mrr(ass, muds, c) - mrr(ass, muds, competenciaAnterior(c));
-      expect(delta).toBe(movimento(muds, c).liquido);
+      expect(delta).toBe(movimento(ass, muds, c).liquido);
     }
   });
 });

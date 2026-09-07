@@ -153,7 +153,6 @@ model OrcamentoDaConta {
   competencia   String
   conta         String
   valorCentavos Int
-  nota          String?
 
   atualizadoEm DateTime @updatedAt
 
