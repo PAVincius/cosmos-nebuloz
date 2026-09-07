@@ -14,7 +14,7 @@ import type {
   MudancaRow,
   TipoDeMudanca,
 } from "@/lib/empresa/recorrente";
-import { excedenteDoMes } from "@/lib/empresa/recorrente";
+import { excedenteDoMes, valorNaCompetencia } from "@/lib/empresa/recorrente";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -293,7 +293,25 @@ export async function alterarValor(
     if (!assinatura) {
       throw new StaffAuthError("FORBIDDEN", "Assinatura não encontrada.");
     }
-    const valorAnterior = assinatura.valorMensalCentavos;
+    const valorColuna = assinatura.valorMensalCentavos;
+
+    // `deCentavos` vem do histórico na competência alvo, não da coluna: a
+    // coluna é só o valor corrente, e o diálogo deixa escolher uma
+    // competência diferente da que a aba está mostrando (é o uso esperado,
+    // não exceção) — gravar numa competência que não é a última tem que
+    // comparar com o que valia NAQUELE mês, senão o tipo (expansão/contração)
+    // e o `deCentavos` gravados discordam do MRR de verdade.
+    const mudancasExistentes = (
+      await database.mudancaDeAssinatura.findMany({
+        where: { assinaturaId: id, tenantId: SYSTEM_TENANT_ID },
+        select: SELECT_MUDANCA,
+      })
+    ).map(paraMudanca);
+    const valorAnterior = valorNaCompetencia(
+      id,
+      mudancasExistentes,
+      competencia
+    );
     if (valorCentavos === valorAnterior) {
       throw new StaffAuthError(
         "FORBIDDEN",
@@ -301,26 +319,40 @@ export async function alterarValor(
       );
     }
     // Ninguém digita o tipo: EXPANSAO quando o novo valor é maior, CONTRACAO
-    // quando é menor — a comparação decide sozinha.
+    // quando é menor — a comparação decide sozinha, contra o valor da
+    // competência, não contra a coluna.
     const tipo: Extract<TipoDeMudanca, "EXPANSAO" | "CONTRACAO"> =
       valorCentavos > valorAnterior ? "EXPANSAO" : "CONTRACAO";
 
+    // A coluna só avança quando a competência alvo é a mais recente já
+    // registrada: gravar uma correção retroativa (competência anterior à
+    // última) não pode mexer no que o cliente paga hoje.
+    const maiorCompetenciaRegistrada = mudancasExistentes.reduce(
+      (max, mud) => (mud.competencia > max ? mud.competencia : max),
+      ""
+    );
+    const avancaColuna = competencia >= maiorCompetenciaRegistrada;
+
     await database.$transaction(async (tx) => {
-      // Guardado pelo valor lido: fecha a corrida entre a leitura acima e
-      // esta escrita, igual a `baixarTitulo`/`cancelarTitulo`.
-      const atualizado = await tx.assinaturaDoTenant.updateMany({
-        where: {
-          id,
-          tenantId: SYSTEM_TENANT_ID,
-          valorMensalCentavos: valorAnterior,
-        },
-        data: { valorMensalCentavos: valorCentavos },
-      });
-      if (atualizado.count === 0) {
-        throw new StaffAuthError(
-          "FORBIDDEN",
-          "Assinatura foi alterada por outra operação; recarregue."
-        );
+      if (avancaColuna) {
+        // Guardado pelo valor lido: fecha a corrida entre a leitura acima e
+        // esta escrita, igual a `baixarTitulo`/`cancelarTitulo`. Quando não
+        // avança, não há nada para o `updateMany` fazer — a transação segue
+        // só com o `create` do histórico.
+        const atualizado = await tx.assinaturaDoTenant.updateMany({
+          where: {
+            id,
+            tenantId: SYSTEM_TENANT_ID,
+            valorMensalCentavos: valorColuna,
+          },
+          data: { valorMensalCentavos: valorCentavos },
+        });
+        if (atualizado.count === 0) {
+          throw new StaffAuthError(
+            "FORBIDDEN",
+            "Assinatura foi alterada por outra operação; recarregue."
+          );
+        }
       }
       await tx.mudancaDeAssinatura.create({
         data: {
@@ -370,12 +402,22 @@ export async function encerrarAssinatura(
 
     const assinatura = await database.assinaturaDoTenant.findFirst({
       where: { id, tenantId: SYSTEM_TENANT_ID },
-      select: { valorMensalCentavos: true },
+      select: { id: true },
     });
     if (!assinatura) {
       throw new StaffAuthError("FORBIDDEN", "Assinatura não encontrada.");
     }
     const competencia = data.slice(0, 7);
+
+    // Mesma regra de `alterarValor`: `deCentavos` vem do histórico na
+    // competência do encerramento, não da coluna corrente.
+    const mudancasExistentes = (
+      await database.mudancaDeAssinatura.findMany({
+        where: { assinaturaId: id, tenantId: SYSTEM_TENANT_ID },
+        select: SELECT_MUDANCA,
+      })
+    ).map(paraMudanca);
+    const deCentavos = valorNaCompetencia(id, mudancasExistentes, competencia);
 
     await database.$transaction(async (tx) => {
       // Guardado por `encerradaEm: null`: uma assinatura já encerrada não
@@ -396,7 +438,7 @@ export async function encerrarAssinatura(
           assinaturaId: id,
           competencia,
           tipo: "CHURN",
-          deCentavos: assinatura.valorMensalCentavos,
+          deCentavos,
           paraCentavos: 0,
           motivo,
           autorId: staff.userId,

@@ -130,11 +130,29 @@ const ASSINATURA_VALIDA = {
   motivo: "Fechamento do contrato inicial",
 };
 
+/** Histórico padrão de "a-1": uma única linha NOVO em janeiro chegando a
+ *  500_000 — o mesmo valor que `valorMensalCentavos` tinha antes do fix de
+ *  A1, para as asserções de `alterarValor`/`encerrarAssinatura` que dependiam
+ *  da coluna continuarem válidas lendo `valorNaCompetencia` no histórico. */
+const HISTORICO_A1 = [
+  {
+    id: "m-hist",
+    assinaturaId: "a-1",
+    competencia: "2026-01",
+    tipo: "NOVO",
+    deCentavos: 0,
+    paraCentavos: 500_000,
+    motivo: "Contrato inicial",
+    autorNome: "V",
+    criadoEm: new Date("2026-01-05T00:00:00Z"),
+  },
+];
+
 function resetar() {
   for (const m of Object.values(mocks)) m.mockReset();
   mocks.requirePlatformStaff.mockResolvedValue(staff);
   mocks.assinaturaFindMany.mockResolvedValue([]);
-  mocks.mudancaFindMany.mockResolvedValue([]);
+  mocks.mudancaFindMany.mockResolvedValue(HISTORICO_A1);
   mocks.creditoFindMany.mockResolvedValue([]);
   mocks.lancFindMany.mockResolvedValue([]);
   mocks.contaFindMany.mockResolvedValue(CONTAS);
@@ -347,6 +365,52 @@ describe("alterarValor", () => {
     });
     expect(res2.ok).toBe(false);
     expect(mocks.mudancaCreate).toHaveBeenCalledTimes(1); // só a chamada da 1ª tentativa
+  });
+
+  it("competência retroativa (anterior à última já registrada) não avança a coluna — só o create do histórico", async () => {
+    mocks.mudancaFindMany.mockResolvedValue([
+      {
+        id: "m-jan",
+        assinaturaId: "a-1",
+        competencia: "2026-01",
+        tipo: "NOVO",
+        deCentavos: 0,
+        paraCentavos: 400_000,
+        motivo: "Contrato inicial",
+        autorNome: "V",
+        criadoEm: new Date("2026-01-05T00:00:00Z"),
+      },
+      {
+        id: "m-mai",
+        assinaturaId: "a-1",
+        competencia: "2026-05",
+        tipo: "EXPANSAO",
+        deCentavos: 400_000,
+        paraCentavos: 700_000,
+        motivo: "Upgrade",
+        autorNome: "V",
+        criadoEm: new Date("2026-05-10T00:00:00Z"),
+      },
+    ]);
+    const res = await alterarValor({
+      id: "a-1",
+      valorCentavos: 450_000,
+      motivo: "Correção retroativa de março",
+      competencia: "2026-03",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.assinaturaUpdateMany).not.toHaveBeenCalled();
+    expect(mocks.mudancaCreate.mock.calls[0][0].data).toEqual({
+      tenantId: "system",
+      assinaturaId: "a-1",
+      competencia: "2026-03",
+      tipo: "EXPANSAO",
+      deCentavos: 400_000,
+      paraCentavos: 450_000,
+      motivo: "Correção retroativa de março",
+      autorId: "u-1",
+      autorNome: "V",
+    });
   });
 
   it("exige motivo com 10+ caracteres", async () => {

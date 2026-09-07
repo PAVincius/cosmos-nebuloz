@@ -297,7 +297,7 @@ function FormularioEncerrar({
 
       <ConfirmarAcao
         alvo={assinatura.clienteNome}
-        consequencia="A assinatura some do MRR a partir do mês seguinte."
+        consequencia="Sai do MRR já na competência do encerramento."
         desabilitado={!podeConfirmarEncerramento(motivo)}
         executando={pendente}
         onConfirmar={encerrar}

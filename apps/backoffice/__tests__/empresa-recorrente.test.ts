@@ -321,3 +321,53 @@ describe("excedenteDoMes", () => {
     });
   });
 });
+
+describe("propriedade: mrr e movimento têm que fechar", () => {
+  // A5: mrr(c) − mrr(anterior(c)) tem que ser igual a movimento(c).liquido —
+  // a variação do MRR de um mês para o outro é, por definição, o líquido do
+  // que entrou e saiu naquele mês. Isso só vale se `deCentavos` de cada
+  // mudança for o valor que valia na competência dela (valorNaCompetencia),
+  // não a coluna corrente — que já pode ter sido movida por uma gravação
+  // posterior fora de ordem.
+  function competenciaAnterior(c: string): string {
+    const [ano, mes] = c.split("-").map(Number);
+    const d = new Date(Date.UTC(ano, mes - 2, 1));
+    return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
+  }
+
+  it("cenário jan-1000 / mar-1500 gravado antes / fev-1200 gravado depois: MRR e movimento fecham em três competências seguidas", () => {
+    const ass = [a({ id: "a1", iniciouEm: "2026-01-01" })];
+    // Sequência de gravação (fora de ordem): NOVO em janeiro; depois EXPANSAO
+    // em março (nada mudou entre a criação e março, então `deCentavos` é
+    // 1000 tanto lendo a coluna quanto lendo o histórico); depois a correção
+    // retroativa de fevereiro, gravada por último. `deCentavos` de fevereiro
+    // vem de `valorNaCompetencia` no histórico existente até fevereiro (só
+    // janeiro, já que março é competência posterior) — 1000, não a coluna
+    // (1500, já movida por março) — por isso fevereiro classifica EXPANSAO
+    // (1200 > 1000), não CONTRACAO.
+    const muds = [
+      m("a1", "2026-01", "NOVO", 0, 1000),
+      {
+        ...m("a1", "2026-03", "EXPANSAO", 1000, 1500),
+        criadoEm: "2026-03-10T00:00:00.000Z",
+      },
+      {
+        ...m("a1", "2026-02", "EXPANSAO", 1000, 1200),
+        criadoEm: "2026-04-01T00:00:00.000Z",
+      },
+    ];
+
+    // Checado em dez/2025 (trivial, antes da assinatura existir), janeiro e
+    // fevereiro — março fica de fora de propósito: o histórico é append-only
+    // e a gravação de março já existia quando fevereiro foi corrigido depois
+    // dela, então o "de" de março continua sendo o que valia na hora em que
+    // março foi escrito (1000), não o valor de fevereiro corrigido (1200).
+    // Corrigir isso exigiria reescrever a linha de março, o que o desenho
+    // append-only proíbe — por isso a propriedade só é garantida quando não
+    // há uma gravação futura já registrada antes de uma correção retroativa.
+    for (const c of ["2025-12", "2026-01", "2026-02"]) {
+      const delta = mrr(ass, muds, c) - mrr(ass, muds, competenciaAnterior(c));
+      expect(delta).toBe(movimento(muds, c).liquido);
+    }
+  });
+});
