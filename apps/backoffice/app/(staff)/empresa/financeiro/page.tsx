@@ -7,8 +7,11 @@ import {
 } from "@/app/actions/empresa/financeiro";
 import { listarLancamentos } from "@/app/actions/empresa/livro";
 import { lerOrcado } from "@/app/actions/empresa/orcamento";
+import { listarRecorrente } from "@/app/actions/empresa/recorrente";
 import { listarTitulos } from "@/app/actions/empresa/titulos";
+import { competenciaValida } from "@/lib/empresa/financeiro";
 import {
+  competenciaAtual,
   formatarDataBr,
   type Intervalo,
   intervaloPadraoCaixa,
@@ -21,6 +24,7 @@ import { Dre } from "./dre";
 import { Lancamentos } from "./lancamentos";
 import { Orcado } from "./orcado";
 import { Plano } from "./plano";
+import { Recorrente, SeletorCompetenciaRecorrente } from "./recorrente";
 import { SeletorDaAba } from "./seletor";
 import { Titulos } from "./titulos";
 
@@ -31,6 +35,7 @@ type Dados = {
   lancamentos: Awaited<ReturnType<typeof listarLancamentos>> | null;
   titulos: Awaited<ReturnType<typeof listarTitulos>> | null;
   orcado: Awaited<ReturnType<typeof lerOrcado>> | null;
+  recorrente: Awaited<ReturnType<typeof listarRecorrente>> | null;
 };
 
 /** Lê só o que a aba ativa precisa — as outras três leituras ficam `null` e
@@ -39,29 +44,42 @@ type Dados = {
 async function carregarDados(
   aba: Aba,
   intervalo: Intervalo,
-  conta: string | undefined
+  conta: string | undefined,
+  competencia: string
 ): Promise<Dados> {
-  const [dre, caixa, plano, lancamentos, titulos, orcado] = await Promise.all([
-    aba === "dre" ? lerDre(intervalo) : null,
-    aba === "caixa" ? lerCaixa(intervalo) : null,
-    aba === "plano" ? listarPlanoDeContas() : null,
-    aba === "lancamentos"
-      ? listarLancamentos({ ate: intervalo.ate, conta, de: intervalo.de })
-      : null,
-    // Sem intervalo: título é lista viva, não recorte de período (spec
-    // 2026-09-06 §4) — é por isso que esta aba também não monta
-    // `SeletorDaAba` logo abaixo, em `FinanceiroPage`.
-    aba === "titulos" ? listarTitulos({}) : null,
-    aba === "orcado"
-      ? lerOrcado({ ate: intervalo.ate, de: intervalo.de })
-      : null,
-  ]);
-  return { caixa, dre, lancamentos, orcado, plano, titulos };
+  const [dre, caixa, plano, lancamentos, titulos, orcado, recorrente] =
+    await Promise.all([
+      aba === "dre" ? lerDre(intervalo) : null,
+      aba === "caixa" ? lerCaixa(intervalo) : null,
+      aba === "plano" ? listarPlanoDeContas() : null,
+      aba === "lancamentos"
+        ? listarLancamentos({ ate: intervalo.ate, conta, de: intervalo.de })
+        : null,
+      // Sem intervalo: título é lista viva, não recorte de período (spec
+      // 2026-09-06 §4) — é por isso que esta aba também não monta
+      // `SeletorDaAba` logo abaixo, em `FinanceiroPage`.
+      aba === "titulos" ? listarTitulos({}) : null,
+      aba === "orcado"
+        ? lerOrcado({ ate: intervalo.ate, de: intervalo.de })
+        : null,
+      // Também sem intervalo: esta aba olha um mês só (spec 2026-09-06 §4),
+      // por isso o seletor próprio (`SeletorCompetenciaRecorrente`) em vez do
+      // `SeletorDaAba` que move `de`/`ate`.
+      aba === "recorrente" ? listarRecorrente({ competencia }) : null,
+    ]);
+  return { caixa, dre, lancamentos, orcado, plano, recorrente, titulos };
 }
 
 export const dynamic = "force-dynamic";
 
-type Aba = "dre" | "caixa" | "plano" | "lancamentos" | "titulos" | "orcado";
+type Aba =
+  | "dre"
+  | "caixa"
+  | "plano"
+  | "lancamentos"
+  | "titulos"
+  | "orcado"
+  | "recorrente";
 
 function abaValida(aba: string | undefined): Aba {
   if (
@@ -69,7 +87,8 @@ function abaValida(aba: string | undefined): Aba {
     aba === "plano" ||
     aba === "lancamentos" ||
     aba === "titulos" ||
-    aba === "orcado"
+    aba === "orcado" ||
+    aba === "recorrente"
   ) {
     return aba;
   }
@@ -93,7 +112,11 @@ function abaStyle(ativa: boolean) {
  *  Plano e Títulos não têm intervalo (a segunda lê `listarTitulos({})` sem
  *  recorte nenhum, spec 2026-09-06 §4), então o texto muda por aba em vez de
  *  anunciar um "Período: …" que a tela não usa. */
-function subtitleDaAba(aba: Aba, intervalo: Intervalo): string {
+function subtitleDaAba(
+  aba: Aba,
+  intervalo: Intervalo,
+  competencia: string
+): string {
   if (aba === "plano") {
     return "As 27 contas semeadas de docs/financeiro/plano-de-contas.md — código, nome, centro de custo e situação.";
   }
@@ -102,6 +125,9 @@ function subtitleDaAba(aba: Aba, intervalo: Intervalo): string {
   }
   if (aba === "orcado") {
     return `Orçado por conta e competência, realizado somado do livro-razão, e o desvio entre os dois. Período: ${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)}.`;
+  }
+  if (aba === "recorrente") {
+    return `MRR, ARR, movimento do mês e franquia de créditos de IA — assinatura separada de serviço avulso. Competência: ${competencia}.`;
   }
   return `Uma frente de receita por produto, serviço separado de assinatura, e o caixa rolante. As linhas calculadas fecham sozinhas; as de entrada são suas. Período: ${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)}.`;
 }
@@ -140,6 +166,12 @@ function Abas({ aba }: { aba: Aba }) {
         style={abaStyle(aba === "orcado")}
       >
         Orçado × realizado
+      </Link>
+      <Link
+        href="/empresa/financeiro?aba=recorrente"
+        style={abaStyle(aba === "recorrente")}
+      >
+        Receita recorrente
       </Link>
       <Link
         href="/empresa/financeiro?aba=caixa"
@@ -323,6 +355,35 @@ function PainelOrcado({
   );
 }
 
+function PainelRecorrente({
+  resultado,
+  competencia,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["recorrente"];
+  competencia: string;
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Recorrente
+          competencia={competencia}
+          inicial={resultado.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
 /** Corpo da aba ativa: um `switch` que devolve só o painel vivo, em vez de
  *  chamar os cinco sabendo que quatro são nulos (spec 2026-09-06 §6). */
 function PainelDaAba({
@@ -330,6 +391,7 @@ function PainelDaAba({
   dados,
   intervalo,
   conta,
+  competencia,
   chaveDoPainel,
   podeEscrever,
 }: {
@@ -337,6 +399,7 @@ function PainelDaAba({
   dados: Dados;
   intervalo: Intervalo;
   conta: string | undefined;
+  competencia: string;
   chaveDoPainel: string;
   podeEscrever: boolean;
 }) {
@@ -386,9 +449,41 @@ function PainelDaAba({
           resultado={dados.orcado}
         />
       );
+    case "recorrente":
+      return (
+        <PainelRecorrente
+          chaveDoPainel={chaveDoPainel}
+          competencia={competencia}
+          podeEscrever={podeEscrever}
+          resultado={dados.recorrente}
+        />
+      );
     default:
       return null;
   }
+}
+
+/** O controle de período no cabeçalho: `SeletorDaAba` (intervalo) para as
+ *  abas que recortam por período, o seletor de competência única para
+ *  Receita recorrente, e nenhum para Plano/Títulos — que são listas vivas. */
+function SeletorDaPagina({
+  aba,
+  intervalo,
+  competencia,
+  extraDoSeletor,
+}: {
+  aba: Aba;
+  intervalo: Intervalo;
+  competencia: string;
+  extraDoSeletor: Record<string, string> | undefined;
+}) {
+  if (aba === "plano" || aba === "titulos") {
+    return null;
+  }
+  if (aba === "recorrente") {
+    return <SeletorCompetenciaRecorrente competencia={competencia} />;
+  }
+  return <SeletorDaAba aba={aba} extra={extraDoSeletor} valor={intervalo} />;
 }
 
 export default async function FinanceiroPage({
@@ -399,9 +494,16 @@ export default async function FinanceiroPage({
     de?: string;
     ate?: string;
     conta?: string;
+    competencia?: string;
   }>;
 }) {
-  const { aba: abaParam, de, ate, conta } = await searchParams;
+  const {
+    aba: abaParam,
+    de,
+    ate,
+    conta,
+    competencia: competenciaParam,
+  } = await searchParams;
   const aba = abaValida(abaParam);
   const hoje = new Date();
   const padrao =
@@ -409,16 +511,21 @@ export default async function FinanceiroPage({
       ? intervaloPadraoCaixa(hoje)
       : intervaloPadraoCompetencia(hoje);
   const intervalo = lerIntervaloDaUrl({ de, ate }, padrao);
+  const competencia =
+    typeof competenciaParam === "string" && competenciaValida(competenciaParam)
+      ? competenciaParam
+      : competenciaAtual();
 
   const [staff, dados] = await Promise.all([
     requirePlatformStaff(),
-    carregarDados(aba, intervalo, conta),
+    carregarDados(aba, intervalo, conta, competencia),
   ]);
   // `conta` entra na chave: duas células do DRE na mesma competência mas em
   // contas diferentes têm o mesmo `de`/`ate` — sem `conta` aqui, trocar de
   // conta não remontaria o painel e `useState(inicial)` ficaria com os dados
-  // da conta anterior.
-  const chaveDoPainel = `${aba}:${intervalo.de}:${intervalo.ate}:${conta ?? ""}`;
+  // da conta anterior. `competencia` entra do mesmo jeito, só para a aba
+  // Receita recorrente — nas outras abas ela não muda o que a página lê.
+  const chaveDoPainel = `${aba}:${intervalo.de}:${intervalo.ate}:${conta ?? ""}:${aba === "recorrente" ? competencia : ""}`;
   // `extra` só existe na aba Lançamentos com `conta` na URL — o `&&` mora
   // fora do JSX para o noLeakedRender não confundir a condição com a marcação
   // que ela protege.
@@ -429,7 +536,7 @@ export default async function FinanceiroPage({
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <PageHeader
         eyebrow="Empresa · Base financeira"
-        subtitle={subtitleDaAba(aba, intervalo)}
+        subtitle={subtitleDaAba(aba, intervalo, competencia)}
         title="DRE e caixa"
       />
       <div
@@ -442,13 +549,17 @@ export default async function FinanceiroPage({
         }}
       >
         <Abas aba={aba} />
-        {aba === "plano" || aba === "titulos" ? null : (
-          <SeletorDaAba aba={aba} extra={extraDoSeletor} valor={intervalo} />
-        )}
+        <SeletorDaPagina
+          aba={aba}
+          competencia={competencia}
+          extraDoSeletor={extraDoSeletor}
+          intervalo={intervalo}
+        />
       </div>
       <PainelDaAba
         aba={aba}
         chaveDoPainel={chaveDoPainel}
+        competencia={competencia}
         conta={conta}
         dados={dados}
         intervalo={intervalo}
