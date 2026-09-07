@@ -28,7 +28,7 @@ export function SeletorDaAba({
   valor,
   extra,
 }: {
-  aba: "dre" | "caixa" | "lancamentos";
+  aba: "dre" | "caixa" | "lancamentos" | "orcado";
   valor: Intervalo;
   extra?: Record<string, string>;
 }) {

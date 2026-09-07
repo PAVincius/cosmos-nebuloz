@@ -6,6 +6,7 @@ import {
   listarPlanoDeContas,
 } from "@/app/actions/empresa/financeiro";
 import { listarLancamentos } from "@/app/actions/empresa/livro";
+import { lerOrcado } from "@/app/actions/empresa/orcamento";
 import { listarTitulos } from "@/app/actions/empresa/titulos";
 import {
   formatarDataBr,
@@ -18,6 +19,7 @@ import { requirePlatformStaff } from "@/lib/guard";
 import { Caixa } from "./caixa";
 import { Dre } from "./dre";
 import { Lancamentos } from "./lancamentos";
+import { Orcado } from "./orcado";
 import { Plano } from "./plano";
 import { SeletorDaAba } from "./seletor";
 import { Titulos } from "./titulos";
@@ -28,6 +30,7 @@ type Dados = {
   plano: Awaited<ReturnType<typeof listarPlanoDeContas>> | null;
   lancamentos: Awaited<ReturnType<typeof listarLancamentos>> | null;
   titulos: Awaited<ReturnType<typeof listarTitulos>> | null;
+  orcado: Awaited<ReturnType<typeof lerOrcado>> | null;
 };
 
 /** Lê só o que a aba ativa precisa — as outras três leituras ficam `null` e
@@ -38,7 +41,7 @@ async function carregarDados(
   intervalo: Intervalo,
   conta: string | undefined
 ): Promise<Dados> {
-  const [dre, caixa, plano, lancamentos, titulos] = await Promise.all([
+  const [dre, caixa, plano, lancamentos, titulos, orcado] = await Promise.all([
     aba === "dre" ? lerDre(intervalo) : null,
     aba === "caixa" ? lerCaixa(intervalo) : null,
     aba === "plano" ? listarPlanoDeContas() : null,
@@ -46,23 +49,27 @@ async function carregarDados(
       ? listarLancamentos({ ate: intervalo.ate, conta, de: intervalo.de })
       : null,
     // Sem intervalo: título é lista viva, não recorte de período (spec
-    // 2026-09-06 §4) — é por isso que esta aba também não monta `SeletorDaAba`
-    // logo abaixo, em `FinanceiroPage`.
+    // 2026-09-06 §4) — é por isso que esta aba também não monta
+    // `SeletorDaAba` logo abaixo, em `FinanceiroPage`.
     aba === "titulos" ? listarTitulos({}) : null,
+    aba === "orcado"
+      ? lerOrcado({ ate: intervalo.ate, de: intervalo.de })
+      : null,
   ]);
-  return { caixa, dre, lancamentos, plano, titulos };
+  return { caixa, dre, lancamentos, orcado, plano, titulos };
 }
 
 export const dynamic = "force-dynamic";
 
-type Aba = "dre" | "caixa" | "plano" | "lancamentos" | "titulos";
+type Aba = "dre" | "caixa" | "plano" | "lancamentos" | "titulos" | "orcado";
 
 function abaValida(aba: string | undefined): Aba {
   if (
     aba === "caixa" ||
     aba === "plano" ||
     aba === "lancamentos" ||
-    aba === "titulos"
+    aba === "titulos" ||
+    aba === "orcado"
   ) {
     return aba;
   }
@@ -92,6 +99,9 @@ function subtitleDaAba(aba: Aba, intervalo: Intervalo): string {
   }
   if (aba === "titulos") {
     return "Compromissos a pagar e a receber — títulos em aberto, vencido, baixado ou cancelado. Lista viva, sem recorte de período.";
+  }
+  if (aba === "orcado") {
+    return `Orçado por conta e competência, realizado somado do livro-razão, e o desvio entre os dois. Período: ${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)}.`;
   }
   return `Uma frente de receita por produto, serviço separado de assinatura, e o caixa rolante. As linhas calculadas fecham sozinhas; as de entrada são suas. Período: ${formatarDataBr(intervalo.de)} – ${formatarDataBr(intervalo.ate)}.`;
 }
@@ -124,6 +134,12 @@ function Abas({ aba }: { aba: Aba }) {
         style={abaStyle(aba === "titulos")}
       >
         Títulos
+      </Link>
+      <Link
+        href="/empresa/financeiro?aba=orcado"
+        style={abaStyle(aba === "orcado")}
+      >
+        Orçado × realizado
       </Link>
       <Link
         href="/empresa/financeiro?aba=caixa"
@@ -278,6 +294,35 @@ function PainelTitulos({
   );
 }
 
+function PainelOrcado({
+  resultado,
+  intervalo,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["orcado"];
+  intervalo: Intervalo;
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Orcado
+          inicial={resultado.data}
+          intervalo={intervalo}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
 /** Corpo da aba ativa: um `switch` que devolve só o painel vivo, em vez de
  *  chamar os cinco sabendo que quatro são nulos (spec 2026-09-06 §6). */
 function PainelDaAba({
@@ -330,6 +375,15 @@ function PainelDaAba({
           chaveDoPainel={chaveDoPainel}
           podeEscrever={podeEscrever}
           resultado={dados.titulos}
+        />
+      );
+    case "orcado":
+      return (
+        <PainelOrcado
+          chaveDoPainel={chaveDoPainel}
+          intervalo={intervalo}
+          podeEscrever={podeEscrever}
+          resultado={dados.orcado}
         />
       );
     default:
