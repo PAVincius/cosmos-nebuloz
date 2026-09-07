@@ -6,6 +6,7 @@ import {
   listarPlanoDeContas,
 } from "@/app/actions/empresa/financeiro";
 import { listarLancamentos } from "@/app/actions/empresa/livro";
+import { listarTitulos } from "@/app/actions/empresa/titulos";
 import {
   formatarDataBr,
   type Intervalo,
@@ -19,12 +20,14 @@ import { Dre } from "./dre";
 import { Lancamentos } from "./lancamentos";
 import { Plano } from "./plano";
 import { SeletorDaAba } from "./seletor";
+import { Titulos } from "./titulos";
 
 type Dados = {
   dre: Awaited<ReturnType<typeof lerDre>> | null;
   caixa: Awaited<ReturnType<typeof lerCaixa>> | null;
   plano: Awaited<ReturnType<typeof listarPlanoDeContas>> | null;
   lancamentos: Awaited<ReturnType<typeof listarLancamentos>> | null;
+  titulos: Awaited<ReturnType<typeof listarTitulos>> | null;
 };
 
 /** Lê só o que a aba ativa precisa — as outras três leituras ficam `null` e
@@ -35,15 +38,19 @@ async function carregarDados(
   intervalo: Intervalo,
   conta: string | undefined
 ): Promise<Dados> {
-  const [dre, caixa, plano, lancamentos] = await Promise.all([
+  const [dre, caixa, plano, lancamentos, titulos] = await Promise.all([
     aba === "dre" ? lerDre(intervalo) : null,
     aba === "caixa" ? lerCaixa(intervalo) : null,
     aba === "plano" ? listarPlanoDeContas() : null,
     aba === "lancamentos"
       ? listarLancamentos({ ate: intervalo.ate, conta, de: intervalo.de })
       : null,
+    // Sem intervalo: título é lista viva, não recorte de período (spec
+    // 2026-09-06 §4) — é por isso que esta aba também não monta `SeletorDaAba`
+    // logo abaixo, em `FinanceiroPage`.
+    aba === "titulos" ? listarTitulos({}) : null,
   ]);
-  return { caixa, dre, lancamentos, plano };
+  return { caixa, dre, lancamentos, plano, titulos };
 }
 
 export const dynamic = "force-dynamic";
@@ -129,9 +136,149 @@ function Abas({ aba }: { aba: Aba }) {
   );
 }
 
-/** Corpo da aba ativa: erro + painel, um par por aba. Isolado de
- *  `FinanceiroPage` só para manter a complexidade cognitiva da rota dentro do
- *  teto do lint — a leitura continua a mesma, um bloco por aba. */
+/** Erro + painel de uma leitura, um componente por aba — cada um trivial
+ *  (resultado `null` ou `{ok}`), para a complexidade cognitiva não se
+ *  acumular numa `PainelDaAba` só (era o que estourava o teto do lint ao
+ *  crescer uma leitura por task). */
+function PainelDre({
+  resultado,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["dre"];
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        // key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
+        <Dre
+          inicial={resultado.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function PainelCaixa({
+  resultado,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["caixa"];
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Caixa
+          inicial={resultado.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function PainelPlano({
+  resultado,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["plano"];
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Plano
+          inicial={resultado.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function PainelLancamentos({
+  resultado,
+  intervalo,
+  contaFiltro,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["lancamentos"];
+  intervalo: Intervalo;
+  contaFiltro: string | null;
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Lancamentos
+          contaFiltro={contaFiltro}
+          inicial={resultado.data}
+          intervalo={intervalo}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
+function PainelTitulos({
+  resultado,
+  chaveDoPainel,
+  podeEscrever,
+}: {
+  resultado: Dados["titulos"];
+  chaveDoPainel: string;
+  podeEscrever: boolean;
+}) {
+  if (resultado === null) {
+    return null;
+  }
+  return (
+    <>
+      <ErroDaAba erro={resultado.ok ? null : resultado.error} />
+      {resultado.ok ? (
+        <Titulos
+          inicial={resultado.data}
+          key={chaveDoPainel}
+          podeEscrever={podeEscrever}
+        />
+      ) : null}
+    </>
+  );
+}
+
+/** Corpo da aba ativa: só chama os cinco painéis, um por leitura — cada um
+ *  decide sozinho se tem algo para mostrar (spec 2026-09-06 §6). */
 function PainelDaAba({
   aba,
   dados,
@@ -147,48 +294,35 @@ function PainelDaAba({
   chaveDoPainel: string;
   podeEscrever: boolean;
 }) {
-  const { dre, caixa, plano, lancamentos } = dados;
   return (
     <>
-      <ErroDaAba erro={dre !== null && !dre.ok ? dre.error : null} />
-      {dre?.ok ? (
-        // key no intervalo: o painel guarda estado em useState(inicial); sem remontar, trocar o período deixaria a tela velha.
-        <Dre
-          inicial={dre.data}
-          key={chaveDoPainel}
-          podeEscrever={podeEscrever}
-        />
-      ) : null}
-      <ErroDaAba erro={caixa !== null && !caixa.ok ? caixa.error : null} />
-      {caixa?.ok ? (
-        <Caixa
-          inicial={caixa.data}
-          key={chaveDoPainel}
-          podeEscrever={podeEscrever}
-        />
-      ) : null}
-      <ErroDaAba erro={plano !== null && !plano.ok ? plano.error : null} />
-      {plano?.ok ? (
-        <Plano
-          inicial={plano.data}
-          key={chaveDoPainel}
-          podeEscrever={podeEscrever}
-        />
-      ) : null}
-      <ErroDaAba
-        erro={
-          lancamentos !== null && !lancamentos.ok ? lancamentos.error : null
-        }
+      <PainelDre
+        chaveDoPainel={chaveDoPainel}
+        podeEscrever={podeEscrever}
+        resultado={dados.dre}
       />
-      {lancamentos?.ok ? (
-        <Lancamentos
-          contaFiltro={aba === "lancamentos" ? (conta ?? null) : null}
-          inicial={lancamentos.data}
-          intervalo={intervalo}
-          key={chaveDoPainel}
-          podeEscrever={podeEscrever}
-        />
-      ) : null}
+      <PainelCaixa
+        chaveDoPainel={chaveDoPainel}
+        podeEscrever={podeEscrever}
+        resultado={dados.caixa}
+      />
+      <PainelPlano
+        chaveDoPainel={chaveDoPainel}
+        podeEscrever={podeEscrever}
+        resultado={dados.plano}
+      />
+      <PainelLancamentos
+        chaveDoPainel={chaveDoPainel}
+        contaFiltro={aba === "lancamentos" ? (conta ?? null) : null}
+        intervalo={intervalo}
+        podeEscrever={podeEscrever}
+        resultado={dados.lancamentos}
+      />
+      <PainelTitulos
+        chaveDoPainel={chaveDoPainel}
+        podeEscrever={podeEscrever}
+        resultado={dados.titulos}
+      />
     </>
   );
 }
