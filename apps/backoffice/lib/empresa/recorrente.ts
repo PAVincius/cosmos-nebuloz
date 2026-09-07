@@ -181,7 +181,8 @@ export type Movimento = {
  * somam o valor final; `expansao`/`contracao` somam a diferença (sempre
  * positiva, cada uma no seu sentido); `churn` soma o valor perdido.
  * `liquido` fecha a conta: entradas menos saídas — por construção, sempre
- * igual a `mrr(c) - mrr(c-1)`. */
+ * igual a `mrr(c) - mrr(c-1)`, porque os dois leem o mesmo valor pelo mesmo
+ * portão de `ativaNaCompetencia`. */
 export function movimento(
   assinaturas: AssinaturaRow[],
   mudancas: MudancaRow[],
@@ -190,9 +191,18 @@ export function movimento(
   const anterior = competenciaAnterior(competencia);
   const contribuicoes = assinaturas
     .map((a) => {
+      // O mesmo portão que o `mrr` usa. Sem ele as duas contas divergem:
+      // `alterarValor` aceita competência futura e `encerrarAssinatura` aceita
+      // data anterior a ela, então o histórico pode ter valor num mês em que a
+      // assinatura já não está ativa. O `mrr` ignora esse valor; sem o portão,
+      // o movimento o veria como reativação de um cliente que saiu.
       const valores = {
-        antes: valorNaCompetencia(a.id, mudancas, anterior),
-        agora: valorNaCompetencia(a.id, mudancas, competencia),
+        antes: ativaNaCompetencia(a, anterior)
+          ? valorNaCompetencia(a.id, mudancas, anterior)
+          : 0,
+        agora: ativaNaCompetencia(a, competencia)
+          ? valorNaCompetencia(a.id, mudancas, competencia)
+          : 0,
       };
       return contribuicaoDoMes(a.id, mudancas, competencia, valores);
     })

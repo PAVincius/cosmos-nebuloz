@@ -197,6 +197,26 @@ describe("movimento", () => {
   });
 });
 
+describe("movimento fecha com o MRR mesmo com escrita fora de ordem", () => {
+  it("encerrar antes de uma mudança futura já gravada não vira reativação fantasma", () => {
+    // alterarValor aceita competência futura e encerrarAssinatura aceita data
+    // anterior a ela. O histórico fica com 9000 em agosto e a assinatura
+    // encerrada em maio. O MRR de agosto é zero; o movimento tem que ser zero
+    // também, e não uma reativação de 9000.
+    const ass = [
+      a({ id: "a1", iniciouEm: "2026-01-10", encerradaEm: "2026-05-20" }),
+    ];
+    const muds = [
+      m("a1", "2026-01", "NOVO", 0, 5000),
+      m("a1", "2026-08", "EXPANSAO", 5000, 9000),
+      m("a1", "2026-05", "CHURN", 5000, 0),
+    ];
+    expect(mrr(ass, muds, "2026-08")).toBe(0);
+    expect(movimento(ass, muds, "2026-08").liquido).toBe(0);
+    expect(movimento(ass, muds, "2026-08").reativacao).toBe(0);
+  });
+});
+
 describe("churn", () => {
   // `churnDeReceita` chama `movimento` por dentro, que agora precisa do
   // "antes" (aqui, uma NOVO de janeiro) para classificar a linha de maio
