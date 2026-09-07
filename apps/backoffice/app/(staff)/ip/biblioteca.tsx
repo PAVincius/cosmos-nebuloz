@@ -11,6 +11,7 @@ import {
   updateIpAssetAction,
 } from "@/app/actions/ip-library";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { SeletorDeAcervo } from "@/components/seletor-de-acervo";
 
 const TIPOS = [
   { valor: "PLAYBOOK", rotulo: "Playbook" },
@@ -116,273 +117,212 @@ export function Biblioteca({
     <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {erro ? <Erro>{erro}</Erro> : null}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "280px minmax(0,1fr)",
-          gap: 14,
-          alignItems: "start",
-        }}
-      >
-        <SectionCard
-          action={
-            podeEscrever ? (
+      <SeletorDeAcervo
+        acao={
+          podeEscrever ? (
+            <BotaoPrimario
+              full={false}
+              onClick={() => setCriando((v) => !v)}
+              type="button"
+            >
+              {criando ? "Cancelar" : "Novo"}
+            </BotaoPrimario>
+          ) : null
+        }
+        formulario={
+          criando ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <Campo htmlFor="ip-nome" label="Nome">
+                <input
+                  id="ip-nome"
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, nome: e.target.value }))
+                  }
+                  style={INPUT}
+                  value={form.nome}
+                />
+              </Campo>
+              <Campo htmlFor="ip-tipo" label="Tipo">
+                <select
+                  id="ip-tipo"
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, tipo: e.target.value }))
+                  }
+                  style={{ ...INPUT, cursor: "pointer" }}
+                  value={form.tipo}
+                >
+                  {TIPOS.map((t) => (
+                    <option key={t.valor} value={t.valor}>
+                      {t.rotulo}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
+              <Campo
+                hint="de onde o ativo saiu — o ativo sobrevive ao engajamento"
+                htmlFor="ip-origem"
+                label="Origem"
+              >
+                <select
+                  id="ip-origem"
+                  onChange={(e) =>
+                    setForm((f) => ({ ...f, origem: e.target.value }))
+                  }
+                  style={{ ...INPUT, cursor: "pointer" }}
+                  value={form.origem}
+                >
+                  <option value="">Nenhuma</option>
+                  {engajamentos.map((e) => (
+                    <option key={e.id} value={e.id}>
+                      {e.codigo} · {e.nome}
+                    </option>
+                  ))}
+                </select>
+              </Campo>
               <BotaoPrimario
-                full={false}
-                onClick={() => setCriando((v) => !v)}
+                disabled={form.nome.trim().length < 2}
+                onClick={criar}
                 type="button"
               >
-                {criando ? "Cancelar" : "Novo"}
+                Criar
               </BotaoPrimario>
-            ) : null
-          }
-          icon="book"
-          subtitle={`${lista.length} ativo(s)`}
-          title="Acervo"
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-            {criando ? (
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                <Campo htmlFor="ip-nome" label="Nome">
-                  <input
-                    id="ip-nome"
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, nome: e.target.value }))
-                    }
-                    style={INPUT}
-                    value={form.nome}
-                  />
-                </Campo>
-                <Campo htmlFor="ip-tipo" label="Tipo">
-                  <select
-                    id="ip-tipo"
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, tipo: e.target.value }))
-                    }
-                    style={{ ...INPUT, cursor: "pointer" }}
-                    value={form.tipo}
-                  >
-                    {TIPOS.map((t) => (
-                      <option key={t.valor} value={t.valor}>
-                        {t.rotulo}
-                      </option>
-                    ))}
-                  </select>
-                </Campo>
-                <Campo
-                  hint="de onde o ativo saiu — o ativo sobrevive ao engajamento"
-                  htmlFor="ip-origem"
-                  label="Origem"
-                >
-                  <select
-                    id="ip-origem"
-                    onChange={(e) =>
-                      setForm((f) => ({ ...f, origem: e.target.value }))
-                    }
-                    style={{ ...INPUT, cursor: "pointer" }}
-                    value={form.origem}
-                  >
-                    <option value="">Nenhuma</option>
-                    {engajamentos.map((e) => (
-                      <option key={e.id} value={e.id}>
-                        {e.codigo} · {e.nome}
-                      </option>
-                    ))}
-                  </select>
-                </Campo>
-                <BotaoPrimario
-                  disabled={form.nome.trim().length < 2}
-                  onClick={criar}
-                  type="button"
-                >
-                  Criar
-                </BotaoPrimario>
-              </div>
-            ) : null}
+            </div>
+          ) : null
+        }
+        icone="book"
+        itens={lista.map((a) => ({
+          id: a.id,
+          titulo: a.nome,
+          detalhe: `${a.tipo} · v${a.versoes}${a.origem ? ` · ${a.origem}` : ""}`,
+        }))}
+        onSelecionar={abrir}
+        selecionadoId={aberto?.id ?? null}
+        titulo="Acervo"
+        vazio="Acervo vazio. É aqui que fica o que dá para reusar no próximo cliente em vez de refazer."
+      />
 
-            {lista.length === 0 ? (
-              <p
-                style={{
-                  margin: 0,
-                  padding: "18px 4px",
-                  fontSize: "var(--fs-base)",
-                  lineHeight: 1.6,
-                  color: "var(--ink-muted)",
-                }}
+      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+        {aberto ? (
+          <>
+            <SectionCard
+              icon="book"
+              subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
+              title={aberto.nome}
+            >
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 10 }}
               >
-                Acervo vazio. É aqui que fica o que dá para reusar no próximo
-                cliente em vez de refazer.
-              </p>
-            ) : (
-              lista.map((a) => {
-                const on = aberto?.id === a.id;
-                return (
-                  <button
-                    className="btn navitem"
-                    key={a.id}
-                    onClick={() => abrir(a.id)}
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "flex-start",
-                      gap: 4,
-                      textAlign: "left",
-                      padding: "9px 11px",
-                      borderRadius: "var(--r-md)",
-                      border: `1px solid ${on ? "rgba(var(--accent-rgb),.45)" : "var(--hairline)"}`,
-                      background: on
-                        ? "var(--accent-soft)"
-                        : "var(--surface-2)",
-                      color: "var(--ink)",
-                    }}
+                <div
+                  style={{
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <input
+                    aria-label="O que mudou nesta revisão"
+                    disabled={!podeEscrever}
+                    onChange={(e) => setNota(e.target.value)}
+                    placeholder="O que mudou nesta revisão"
+                    style={{ ...INPUT, flex: 1, minWidth: 200 }}
+                    value={nota}
+                  />
+                  <BotaoPrimario
+                    disabled={!podeSalvar}
+                    full={false}
+                    onClick={salvar}
                     type="button"
                   >
+                    {sujo ? "Salvar revisão" : "Sem alterações"}
+                  </BotaoPrimario>
+                </div>
+
+                <textarea
+                  className="mono scroll"
+                  disabled={!podeEscrever}
+                  onChange={(e) => setRascunho(e.target.value)}
+                  spellCheck={false}
+                  style={{
+                    minHeight: 380,
+                    resize: "vertical",
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--hairline)",
+                    borderRadius: "var(--r-md)",
+                    padding: 13,
+                    fontSize: "var(--fs-base)",
+                    lineHeight: 1.65,
+                    color: "var(--ink)",
+                    outline: "none",
+                  }}
+                  value={rascunho}
+                />
+              </div>
+            </SectionCard>
+
+            <SectionCard
+              icon="history"
+              subtitle="append-only — editar cria revisão, nunca sobrescreve"
+              title="Histórico"
+            >
+              <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+                {aberto.historico.map((h, i) => (
+                  <li
+                    key={h.versao}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "9px 2px",
+                      borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
+                    }}
+                  >
+                    <Badge tone={i === 0 ? "green" : "neutral"}>
+                      v{h.versao}
+                    </Badge>
                     <span
-                      style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+                      style={{
+                        flex: 1,
+                        minWidth: 0,
+                        fontSize: "var(--fs-base)",
+                      }}
                     >
-                      {a.nome}
+                      {h.nota ?? (
+                        <span style={{ color: "var(--ink-faint)" }}>
+                          sem nota
+                        </span>
+                      )}
                     </span>
                     <span
                       className="mono"
                       style={{
-                        fontSize: "var(--fs-micro)",
+                        fontSize: "var(--fs-nota)",
                         color: "var(--ink-faint)",
                       }}
                     >
-                      {a.tipo} · v{a.versoes}
-                      {a.origem ? ` · ${a.origem}` : ""}
+                      {h.autorNome ?? "—"} ·{" "}
+                      {new Date(h.criadoEm).toLocaleString("pt-BR")}
                     </span>
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </SectionCard>
-
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {aberto ? (
-            <>
-              <SectionCard
-                icon="book"
-                subtitle={`${aberto.slug} · versão atual v${aberto.versoes}`}
-                title={aberto.nome}
-              >
-                <div
-                  style={{ display: "flex", flexDirection: "column", gap: 10 }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      gap: 10,
-                      alignItems: "center",
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <input
-                      aria-label="O que mudou nesta revisão"
-                      disabled={!podeEscrever}
-                      onChange={(e) => setNota(e.target.value)}
-                      placeholder="O que mudou nesta revisão"
-                      style={{ ...INPUT, flex: 1, minWidth: 200 }}
-                      value={nota}
-                    />
-                    <BotaoPrimario
-                      disabled={!podeSalvar}
-                      full={false}
-                      onClick={salvar}
-                      type="button"
-                    >
-                      {sujo ? "Salvar revisão" : "Sem alterações"}
-                    </BotaoPrimario>
-                  </div>
-
-                  <textarea
-                    className="mono scroll"
-                    disabled={!podeEscrever}
-                    onChange={(e) => setRascunho(e.target.value)}
-                    spellCheck={false}
-                    style={{
-                      minHeight: 380,
-                      resize: "vertical",
-                      background: "var(--surface-2)",
-                      border: "1px solid var(--hairline)",
-                      borderRadius: "var(--r-md)",
-                      padding: 13,
-                      fontSize: "var(--fs-base)",
-                      lineHeight: 1.65,
-                      color: "var(--ink)",
-                      outline: "none",
-                    }}
-                    value={rascunho}
-                  />
-                </div>
-              </SectionCard>
-
-              <SectionCard
-                icon="history"
-                subtitle="append-only — editar cria revisão, nunca sobrescreve"
-                title="Histórico"
-              >
-                <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-                  {aberto.historico.map((h, i) => (
-                    <li
-                      key={h.versao}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 10,
-                        padding: "9px 2px",
-                        borderTop:
-                          i === 0 ? "none" : "1px solid var(--hairline)",
-                      }}
-                    >
-                      <Badge tone={i === 0 ? "green" : "neutral"}>
-                        v{h.versao}
-                      </Badge>
-                      <span
-                        style={{
-                          flex: 1,
-                          minWidth: 0,
-                          fontSize: "var(--fs-base)",
-                        }}
-                      >
-                        {h.nota ?? (
-                          <span style={{ color: "var(--ink-faint)" }}>
-                            sem nota
-                          </span>
-                        )}
-                      </span>
-                      <span
-                        className="mono"
-                        style={{
-                          fontSize: "var(--fs-nota)",
-                          color: "var(--ink-faint)",
-                        }}
-                      >
-                        {h.autorNome ?? "—"} ·{" "}
-                        {new Date(h.criadoEm).toLocaleString("pt-BR")}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </SectionCard>
-            </>
-          ) : (
-            <SectionCard title="Nenhum ativo aberto">
-              <p
-                style={{
-                  margin: 0,
-                  padding: 24,
-                  textAlign: "center",
-                  fontSize: "var(--fs-base)",
-                  color: "var(--ink-muted)",
-                }}
-              >
-                Escolha um ativo na lista para ver e editar.
-              </p>
+                  </li>
+                ))}
+              </ul>
             </SectionCard>
-          )}
-        </div>
+          </>
+        ) : (
+          <SectionCard title="Nenhum ativo aberto">
+            <p
+              style={{
+                margin: 0,
+                padding: 24,
+                textAlign: "center",
+                fontSize: "var(--fs-base)",
+                color: "var(--ink-muted)",
+              }}
+            >
+              Escolha um ativo na lista para ver e editar.
+            </p>
+          </SectionCard>
+        )}
       </div>
     </div>
   );
