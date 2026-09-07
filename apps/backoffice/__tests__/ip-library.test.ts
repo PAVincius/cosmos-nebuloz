@@ -22,6 +22,10 @@ const mocks = vi.hoisted(() => ({
   serviceCreateMany: vi.fn(),
   transaction: vi.fn(),
   revalidatePath: vi.fn(),
+  engagementFindFirst: vi.fn(),
+  reuseFindUnique: vi.fn(),
+  reuseCreate: vi.fn(),
+  reuseCount: vi.fn(),
 }));
 
 vi.mock("@/lib/guard", () => ({
@@ -57,6 +61,14 @@ vi.mock("@repo/database", () => ({
     ipAssetService: {
       createMany: mocks.serviceCreateMany,
     },
+    engagement: {
+      findFirst: mocks.engagementFindFirst,
+    },
+    ipAssetReuse: {
+      findUnique: mocks.reuseFindUnique,
+      create: mocks.reuseCreate,
+      count: mocks.reuseCount,
+    },
     $transaction: mocks.transaction,
   },
 }));
@@ -64,6 +76,7 @@ vi.mock("@repo/database", () => ({
 import {
   createIpAssetAction,
   listIpAssets,
+  registrarReusoAction,
   updateIpAssetAction,
 } from "../app/actions/ip-library";
 
@@ -123,6 +136,10 @@ function resetar() {
   mocks.findFirst.mockResolvedValue(null);
   mocks.create.mockResolvedValue({ id: "i-1" });
   mocks.findUniqueOrThrow.mockResolvedValue(linhaBrutaPadrao());
+  mocks.engagementFindFirst.mockResolvedValue(null);
+  mocks.reuseFindUnique.mockResolvedValue(null);
+  mocks.reuseCreate.mockResolvedValue({ id: "reuso-1" });
+  mocks.reuseCount.mockResolvedValue(0);
   mocks.transaction.mockImplementation(
     async (fn: (tx: unknown) => Promise<unknown>) =>
       await fn({
@@ -325,5 +342,104 @@ describe("updateIpAssetAction", () => {
 
     expect(res.ok).toBe(false);
     expect(mocks.update).not.toHaveBeenCalled();
+  });
+});
+
+describe("registrarReusoAction", () => {
+  beforeEach(resetar);
+
+  const ativo = { id: "i-1", nome: "Playbook de intake" };
+  const engajamento = { id: "eng-1", codigo: "EN-041", nome: "Cliente X" };
+
+  function entradaDeReuso(overrides: Record<string, unknown> = {}) {
+    return {
+      assetId: "i-1",
+      engagementId: "eng-1",
+      horasPoupadas: 4,
+      ...overrides,
+    };
+  }
+
+  it("recusa ativo inexistente", async () => {
+    mocks.findFirst.mockResolvedValue(null);
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(false);
+    expect(mocks.reuseCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa engajamento inexistente", async () => {
+    mocks.findFirst.mockResolvedValue(ativo);
+    mocks.engagementFindFirst.mockResolvedValue(null);
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(false);
+    expect(mocks.reuseCreate).not.toHaveBeenCalled();
+  });
+
+  it("recusa o mesmo par (ativo, engajamento) duas vezes, com a mensagem inteira, sem deixar o erro do Prisma vazar", async () => {
+    mocks.findFirst.mockResolvedValue(ativo);
+    mocks.engagementFindFirst.mockResolvedValue(engajamento);
+    mocks.reuseFindUnique.mockResolvedValue({ id: "reuso-ja-existe" });
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(false);
+    if (res.ok) {
+      return;
+    }
+    expect(res.error).toBe(
+      "Playbook de intake já consta como reusado em EN-041. Registrar de novo contaria o mesmo reuso duas vezes."
+    );
+    // A recusa acontece ANTES do create — o `@@unique` do banco é rede, não
+    // caminho, e não deve ser a fonte deste erro.
+    expect(mocks.reuseCreate).not.toHaveBeenCalled();
+  });
+
+  it("primeiro reuso: contagem 1 e maturidade ainda RASCUNHO", async () => {
+    mocks.findFirst.mockResolvedValue(ativo);
+    mocks.engagementFindFirst.mockResolvedValue(engajamento);
+    mocks.reuseFindUnique.mockResolvedValue(null);
+    mocks.reuseCreate.mockResolvedValue({ id: "reuso-1" });
+    mocks.reuseCount.mockResolvedValue(1);
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.reusos).toBe(1);
+    expect(res.data.maturidade).toBe("RASCUNHO");
+  });
+
+  it("segundo reuso: contagem 2 e maturidade vira COMPROVADO", async () => {
+    mocks.findFirst.mockResolvedValue(ativo);
+    mocks.engagementFindFirst.mockResolvedValue(engajamento);
+    mocks.reuseFindUnique.mockResolvedValue(null);
+    mocks.reuseCreate.mockResolvedValue({ id: "reuso-2" });
+    mocks.reuseCount.mockResolvedValue(2);
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(true);
+    if (!res.ok) {
+      return;
+    }
+    expect(res.data.reusos).toBe(2);
+    expect(res.data.maturidade).toBe("COMPROVADO");
+  });
+
+  it("MEMBER não registra reuso", async () => {
+    mocks.assertCanWrite.mockImplementation(() => {
+      throw new Error("Somente leitura");
+    });
+
+    const res = await registrarReusoAction(entradaDeReuso());
+
+    expect(res.ok).toBe(false);
+    expect(mocks.reuseCreate).not.toHaveBeenCalled();
   });
 });
