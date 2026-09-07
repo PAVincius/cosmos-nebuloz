@@ -389,3 +389,93 @@ export async function updateIpAssetAction(
     return { id: atual.id, versao };
   });
 }
+
+const ReusoSchema = z.object({
+  assetId: z.string().min(1),
+  engagementId: z.string().min(1),
+  horasPoupadas: z.number().int().min(0).max(400),
+  nota: z.string().max(300).optional(),
+});
+
+/**
+ * Registra que o ativo foi reusado num engajamento.
+ *
+ * É o único caminho por onde reusos, horas poupadas e maturidade mudam — os
+ * três são derivados desta tabela e não existem como campo em lugar nenhum.
+ */
+export async function registrarReusoAction(
+  input: z.input<typeof ReusoSchema>
+): Promise<
+  Result<{ id: string; reusos: number; maturidade: "RASCUNHO" | "COMPROVADO" }>
+> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+
+    const dados = ReusoSchema.parse(input);
+
+    const ativo = await database.ipAsset.findFirst({
+      where: { id: dados.assetId, tenantId: SYSTEM_TENANT_ID },
+      select: { id: true, nome: true },
+    });
+    if (!ativo) {
+      throw new StaffAuthError("FORBIDDEN", "Ativo não encontrado.");
+    }
+
+    const engajamento = await database.engagement.findFirst({
+      where: { id: dados.engagementId, tenantId: SYSTEM_TENANT_ID },
+      select: { id: true, codigo: true, nome: true },
+    });
+    if (!engajamento) {
+      throw new StaffAuthError("FORBIDDEN", "Engajamento não encontrado.");
+    }
+
+    // "Foi reusado no EN-041" é um fato, não um contador. Recusar aqui, com a
+    // frase inteira, evita que o `@@unique` apareça como erro do Prisma.
+    const jaRegistrado = await database.ipAssetReuse.findUnique({
+      where: {
+        assetId_engagementId: {
+          assetId: ativo.id,
+          engagementId: engajamento.id,
+        },
+      },
+      select: { id: true },
+    });
+    if (jaRegistrado) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `${ativo.nome} já consta como reusado em ${engajamento.codigo}. Registrar de novo contaria o mesmo reuso duas vezes.`
+      );
+    }
+
+    const criado = await database.ipAssetReuse.create({
+      data: {
+        assetId: ativo.id,
+        engagementId: engajamento.id,
+        horasPoupadas: dados.horasPoupadas,
+        nota: dados.nota?.trim() || null,
+        registradoPorId: staff.userId,
+        registradoPorNome: staff.name,
+      },
+      select: { id: true },
+    });
+
+    const reusos = await database.ipAssetReuse.count({
+      where: { assetId: ativo.id },
+    });
+
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "created",
+      entityType: "ip_asset_reuse",
+      entityId: criado.id,
+      target: `${ativo.nome} → ${engajamento.codigo} (${dados.horasPoupadas}h)`,
+      note: dados.nota,
+    });
+
+    revalidatePath("/ip");
+    return { id: criado.id, reusos, maturidade: maturidadeDe(reusos) };
+  });
+}
