@@ -366,7 +366,7 @@ const SemanaSchema = z
     saidasFornecedoresCentavos: CentavosMagnitude,
     saidasComercialCentavos: CentavosMagnitude,
     saidasImpostosCentavos: CentavosMagnitude,
-    saidasOutrasCentavos: Centavos,
+    saidasOutrasCentavos: CentavosMagnitude,
     ...CAMPOS_INTERVALO,
   })
   .refine(...REFINE_INTERVALO);
