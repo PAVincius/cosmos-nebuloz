@@ -7,13 +7,15 @@ import type { EngagementRow } from "@/app/actions/engagements";
 import { createIpAssetAction, type IpAssetRow } from "@/app/actions/ip-library";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, INPUT } from "@/components/campo";
+import { type Formulario, montarPayloadDeCriacao } from "@/lib/ip/formulario";
 import {
   avaliarRegua,
   type Criterio,
   criteriosPendentes,
-  type EntradaDeAtivo,
   LICENCAS,
   type Licenca,
+  MIN_DESCRICAO,
+  maturidadeDe,
   PROCEDENCIAS,
   type Procedencia,
   TIPOS_DE_ATIVO,
@@ -29,8 +31,10 @@ import {
  * listas, e a divergente seria justamente a que ela leu antes de clicar.
  */
 
-/** O mínimo da IP-R2, para o contador sob a descrição. */
-const MINIMO_DESCRICAO = 40;
+const ROTULO_MATURIDADE: Record<"RASCUNHO" | "COMPROVADO", string> = {
+  RASCUNHO: "Rascunho",
+  COMPROVADO: "Comprovado",
+};
 
 const ROTULO_TIPO: Record<TipoDeAtivo, string> = {
   ACELERADOR: "Acelerador",
@@ -77,15 +81,6 @@ const NOTA_LICENCA: Record<Licenca, string> = {
 const PLACEHOLDER_REFERENCIA: Partial<Record<Licenca, string>> = {
   COPYLEFT: "bpmn-js AGPL-3.0",
   COMERCIAL: "Prosci ADKAR — LIC-2026-014",
-};
-
-/**
- * O estado do formulário é a entrada da régua mais o que a régua não julga:
- * tipo e dono não entram em critério nenhum, mas entram no ativo.
- */
-type Formulario = EntradaDeAtivo & {
-  tipo: TipoDeAtivo;
-  donoPersonId: string;
 };
 
 type Alterar = (patch: Partial<Formulario>) => void;
@@ -214,11 +209,9 @@ const LEGENDA: React.CSSProperties = {
  */
 function CampoDeGrupo({
   label,
-  hint,
   children,
 }: {
   label: string;
-  hint?: string;
   children: ReactNode;
 }) {
   return (
@@ -227,17 +220,6 @@ function CampoDeGrupo({
         {label}
       </legend>
       {children}
-      {hint ? (
-        <span
-          style={{
-            fontSize: "var(--fs-nota)",
-            color: "var(--ink-faint)",
-            fontWeight: 500,
-          }}
-        >
-          {hint}
-        </span>
-      ) : null}
     </fieldset>
   );
 }
@@ -365,10 +347,7 @@ function BlocoDeServicos({
     });
 
   return (
-    <CampoDeGrupo
-      hint="o que o ativo encurta na entrega — sem serviço, ninguém encontra o ativo quando precisa dele"
-      label="Serviços que ele encurta"
-    >
+    <CampoDeGrupo label="Serviços que ele encurta">
       {servicos.length === 0 ? (
         <p style={NOTA}>
           Nenhum serviço no catálogo. Sem um serviço para marcar, a IP-R4 nunca
@@ -444,7 +423,7 @@ function PainelDaRegua({
         </span>
         <div style={LINHA_CHIPS}>
           <Badge tone="neutral">{ROTULO_TIPO[form.tipo]}</Badge>
-          <Badge tone="amber">Rascunho</Badge>
+          <Badge tone="amber">{ROTULO_MATURIDADE[maturidadeDe(0)]}</Badge>
         </div>
         <span
           className="mono"
@@ -485,23 +464,7 @@ export function RegistrarAtivo({
 
   const criar = useCallback(async () => {
     setSalvando(true);
-    const res = await createIpAssetAction({
-      nome: form.nome,
-      tipo: form.tipo,
-      descricao: form.descricao,
-      // Derivado do nome, como o formulário anterior já fazia: o corpo do
-      // ativo nasce com o título e cresce no editor.
-      conteudo: `# ${form.nome}\n\n`,
-      link: form.viveAqui ? undefined : form.link,
-      viveAqui: form.viveAqui,
-      donoPersonId: form.donoPersonId || undefined,
-      servicoIds: form.servicos,
-      procedencia: form.procedencia,
-      origemEngagementId: form.origemEngagementId ?? undefined,
-      reusoConfirmado: form.reusoConfirmado,
-      licenca: form.licenca,
-      licencaRef: form.licencaRef || undefined,
-    });
+    const res = await createIpAssetAction(montarPayloadDeCriacao(form));
     setSalvando(false);
     if (res.ok) {
       setForm(VAZIO);
@@ -532,6 +495,7 @@ export function RegistrarAtivo({
 
         <Campo htmlFor="ip-descricao" label="Problema que ele resolve">
           <textarea
+            aria-describedby="ip-descricao-contador"
             id="ip-descricao"
             onChange={(e) => alterar({ descricao: e.target.value })}
             style={{ ...INPUT, minHeight: 76, resize: "vertical" }}
@@ -540,15 +504,16 @@ export function RegistrarAtivo({
         </Campo>
         <span
           className="mono"
+          id="ip-descricao-contador"
           style={{
             fontSize: "var(--fs-micro)",
             color:
-              tamanhoDescricao >= MINIMO_DESCRICAO
+              tamanhoDescricao >= MIN_DESCRICAO
                 ? "var(--green-text)"
                 : "var(--ink-faint)",
           }}
         >
-          {tamanhoDescricao}/{MINIMO_DESCRICAO}
+          {tamanhoDescricao}/{MIN_DESCRICAO}
         </span>
 
         <Campo htmlFor="ip-tipo" label="Tipo">
@@ -653,7 +618,7 @@ export function RegistrarAtivo({
           onClick={criar}
           type="button"
         >
-          {salvando ? "Registrando…" : "Registrar ativo"}
+          {salvando ? "Registrando…" : "Registrar como rascunho"}
         </BotaoPrimario>
       </div>
     </div>

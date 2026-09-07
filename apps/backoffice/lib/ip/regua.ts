@@ -38,7 +38,8 @@ export type Licenca = (typeof LICENCAS)[number];
 const EXIGEM_REFERENCIA: readonly Licenca[] = ["COPYLEFT", "COMERCIAL"];
 
 const MIN_NOME = 3;
-const MIN_DESCRICAO = 40;
+/** O mínimo da IP-R2 — exportado para o contador da tela de cadastro. */
+export const MIN_DESCRICAO = 40;
 const MIN_LINK = 4;
 const MIN_REFERENCIA = 3;
 
