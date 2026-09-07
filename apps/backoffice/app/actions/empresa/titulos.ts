@@ -15,6 +15,7 @@ import {
 } from "@/lib/guard";
 import { type Result, safeAction } from "@/lib/safe-action";
 import { type ContaView, contasDoPlano } from "./financeiro";
+import { assertContaAtiva } from "./livro";
 
 /**
  * Títulos a pagar/receber (spec 2026-09-06 §3): o título é a promessa, o
@@ -128,6 +129,7 @@ export async function criarTitulo(
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
     const dados = TituloSchema.parse(input);
+    await assertContaAtiva(dados.conta);
 
     const criado = await database.titulo.create({
       data: {
@@ -188,6 +190,7 @@ export async function baixarTitulo(
     if (!titulo) {
       throw new StaffAuthError("FORBIDDEN", "Título não encontrado.");
     }
+    await assertContaAtiva(titulo.conta);
 
     // `updateMany` guardado por `status: "ABERTO"` fecha a corrida entre a
     // leitura de `titulo` acima e esta escrita: duas baixas concorrentes do

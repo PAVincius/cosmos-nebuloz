@@ -70,8 +70,10 @@ function paraLinha(l: {
 }
 
 /** A mesma checagem de `salvarLancamento` em financeiro.ts: conta desativada
- *  ou fora do plano não recebe lançamento novo. */
-async function assertContaAtiva(conta: string): Promise<void> {
+ *  ou fora do plano não recebe lançamento novo. Exportada porque `titulos.ts`
+ *  precisa da mesma garantia — na criação do título e, de novo, na baixa,
+ *  já que a conta pode ser desativada entre as duas. */
+export async function assertContaAtiva(conta: string): Promise<void> {
   const contaDoPlano = await database.contaDoPlano.findUnique({
     where: { tenantId_conta: { tenantId: SYSTEM_TENANT_ID, conta } },
     select: { ativa: true },

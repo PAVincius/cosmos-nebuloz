@@ -16,6 +16,7 @@ const mocks = vi.hoisted(() => ({
   tituloUpdateMany: vi.fn(),
   lancamentoCreate: vi.fn(),
   contaFindMany: vi.fn(),
+  contaFindUnique: vi.fn(),
   transaction: vi.fn(),
 }));
 
@@ -49,7 +50,10 @@ vi.mock("@repo/database", () => ({
       updateMany: mocks.tituloUpdateMany,
     },
     lancamento: { create: mocks.lancamentoCreate },
-    contaDoPlano: { findMany: mocks.contaFindMany },
+    contaDoPlano: {
+      findMany: mocks.contaFindMany,
+      findUnique: mocks.contaFindUnique,
+    },
     $transaction: mocks.transaction,
   },
 }));
@@ -111,6 +115,7 @@ function resetar() {
   });
   mocks.tituloUpdateMany.mockResolvedValue({ count: 1 });
   mocks.lancamentoCreate.mockResolvedValue({ id: "l-1" });
+  mocks.contaFindUnique.mockResolvedValue({ ativa: true });
   mocks.transaction.mockImplementation(
     async (fn: (t: unknown) => Promise<unknown>) => await fn(tx)
   );
@@ -185,6 +190,20 @@ describe("criarTitulo", () => {
     expect(res.ok).toBe(false);
     expect(mocks.tituloCreate).not.toHaveBeenCalled();
   });
+
+  it("conta fora do plano de contas (findUnique devolve null) recusa e não cria", async () => {
+    mocks.contaFindUnique.mockResolvedValue(null);
+    const res = await criarTitulo(TITULO_VALIDO);
+    expect(res.ok).toBe(false);
+    expect(mocks.tituloCreate).not.toHaveBeenCalled();
+  });
+
+  it("conta desativada (ativa: false) recusa e não cria", async () => {
+    mocks.contaFindUnique.mockResolvedValue({ ativa: false });
+    const res = await criarTitulo(TITULO_VALIDO);
+    expect(res.ok).toBe(false);
+    expect(mocks.tituloCreate).not.toHaveBeenCalled();
+  });
 });
 
 describe("baixarTitulo", () => {
@@ -249,6 +268,18 @@ describe("baixarTitulo", () => {
     });
     expect(res.ok).toBe(false);
     expect(mocks.transaction).not.toHaveBeenCalled();
+  });
+
+  it("conta do título desativada entre a criação e a baixa: recusa antes da $transaction, sem lançamento", async () => {
+    mocks.contaFindUnique.mockResolvedValue({ ativa: false });
+    const res = await baixarTitulo({
+      id: "t-1",
+      data: "2026-09-12",
+      competencia: "2026-09",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.transaction).not.toHaveBeenCalled();
+    expect(mocks.lancamentoCreate).not.toHaveBeenCalled();
   });
 });
 
