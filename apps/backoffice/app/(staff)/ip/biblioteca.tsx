@@ -48,11 +48,21 @@ export function Biblioteca({
   }, []);
 
   // A linha nova vem inteira da action: montá-la aqui daria uma segunda fonte
-  // para `reusos` e `maturidade`, que são derivados e não campos.
-  const aoCriar = useCallback((novo: IpAssetRow) => {
+  // para `reusos` e `maturidade`, que são derivados e não campos. Criar leva
+  // direto ao editor, como antes — uma segunda ida ao servidor busca o
+  // `IpAssetDetail` que a lista sozinha não tem.
+  const aoCriar = useCallback(async (novo: IpAssetRow) => {
     setErro(null);
     setLista((atual) => [novo, ...atual]);
     setCriando(false);
+    const det = await getIpAsset(novo.id);
+    if (det.ok) {
+      setAberto(det.data);
+      setRascunho(det.data.conteudo);
+      setNota("");
+    } else {
+      setErro(det.error);
+    }
   }, []);
 
   const salvar = useCallback(async () => {

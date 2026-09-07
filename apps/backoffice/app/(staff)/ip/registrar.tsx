@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
-import { useCallback, useState } from "react";
+import { type ReactNode, useCallback, useState } from "react";
 import type { PessoaCapacidade } from "@/app/actions/capacity";
 import type { EngagementRow } from "@/app/actions/engagements";
 import { createIpAssetAction, type IpAssetRow } from "@/app/actions/ip-library";
@@ -187,6 +187,61 @@ function Marcador({
   );
 }
 
+const RESET_FIELDSET: React.CSSProperties = {
+  margin: 0,
+  padding: 0,
+  border: "none",
+  display: "flex",
+  flexDirection: "column",
+  gap: 6,
+};
+
+const LEGENDA: React.CSSProperties = {
+  padding: 0,
+  fontSize: "var(--fs-micro)",
+  fontWeight: 700,
+  letterSpacing: ".12em",
+  textTransform: "uppercase",
+  color: "var(--ink-faint)",
+};
+
+/**
+ * Mesma aparência de `Campo`, mas para um grupo de controles (os chips de
+ * procedência, licença e serviços) em vez de um único input. Um `<label
+ * htmlFor>` apontando para o `<div>` que envolve os chips não navega para
+ * lugar nenhum; `fieldset`/`legend` é a marcação correta para "rótulo de um
+ * grupo".
+ */
+function CampoDeGrupo({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) {
+  return (
+    <fieldset style={RESET_FIELDSET}>
+      <legend className="mono" style={LEGENDA}>
+        {label}
+      </legend>
+      {children}
+      {hint ? (
+        <span
+          style={{
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-faint)",
+            fontWeight: 500,
+          }}
+        >
+          {hint}
+        </span>
+      ) : null}
+    </fieldset>
+  );
+}
+
 function BlocoDeProcedencia({
   form,
   alterar,
@@ -201,8 +256,8 @@ function BlocoDeProcedencia({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <Campo htmlFor="ip-procedencia" label="Procedência">
-        <div id="ip-procedencia" style={LINHA_CHIPS}>
+      <CampoDeGrupo label="Procedência">
+        <div style={LINHA_CHIPS}>
           {PROCEDENCIAS.map((p) => (
             <Chip
               ativo={p === form.procedencia}
@@ -213,7 +268,7 @@ function BlocoDeProcedencia({
             </Chip>
           ))}
         </div>
-      </Campo>
+      </CampoDeGrupo>
       <p style={NOTA}>{NOTA_PROCEDENCIA[form.procedencia]}</p>
 
       {form.procedencia === "ENGAJAMENTO" ? (
@@ -263,8 +318,8 @@ function BlocoDeLicenca({
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-      <Campo htmlFor="ip-licenca" label="Licença de terceiro">
-        <div id="ip-licenca" style={LINHA_CHIPS}>
+      <CampoDeGrupo label="Licença de terceiro">
+        <div style={LINHA_CHIPS}>
           {LICENCAS.map((l) => (
             <Chip
               ativo={l === form.licenca}
@@ -275,7 +330,7 @@ function BlocoDeLicenca({
             </Chip>
           ))}
         </div>
-      </Campo>
+      </CampoDeGrupo>
       <p style={NOTA}>{NOTA_LICENCA[form.licenca]}</p>
 
       {placeholder ? (
@@ -310,23 +365,29 @@ function BlocoDeServicos({
     });
 
   return (
-    <Campo
+    <CampoDeGrupo
       hint="o que o ativo encurta na entrega — sem serviço, ninguém encontra o ativo quando precisa dele"
-      htmlFor="ip-servicos"
       label="Serviços que ele encurta"
     >
-      <div id="ip-servicos" style={LINHA_CHIPS}>
-        {servicos.map((s) => (
-          <Chip
-            ativo={form.servicos.includes(s.id)}
-            key={s.id}
-            onClick={() => alternar(s.id)}
-          >
-            {`${s.codigo} · ${s.nome}`}
-          </Chip>
-        ))}
-      </div>
-    </Campo>
+      {servicos.length === 0 ? (
+        <p style={NOTA}>
+          Nenhum serviço no catálogo. Sem um serviço para marcar, a IP-R4 nunca
+          fecha — cadastre um serviço antes de registrar este ativo.
+        </p>
+      ) : (
+        <div style={LINHA_CHIPS}>
+          {servicos.map((s) => (
+            <Chip
+              ativo={form.servicos.includes(s.id)}
+              key={s.id}
+              onClick={() => alternar(s.id)}
+            >
+              {`${s.codigo} · ${s.nome}`}
+            </Chip>
+          ))}
+        </div>
+      )}
+    </CampoDeGrupo>
   );
 }
 
@@ -584,7 +645,7 @@ export function RegistrarAtivo({
         >
           {pendentes.length === 0
             ? "Régua de aceitação atendida"
-            : `${pendentes.length} de 6 critérios pendentes`}
+            : `${pendentes.length} de ${criterios.length} critérios pendentes`}
         </span>
         <BotaoPrimario
           disabled={pendentes.length > 0 || salvando}
