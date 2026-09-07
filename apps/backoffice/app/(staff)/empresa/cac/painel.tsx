@@ -251,7 +251,11 @@ export function Painel({
         }}
       >
         <SeletorDePeriodo
-          onAplicar={(i) => router.push(`/empresa/cac?de=${i.de}&ate=${i.ate}`)}
+          onAplicar={(i) =>
+            router.push(
+              `/empresa/cac?de=${encodeURIComponent(i.de)}&ate=${encodeURIComponent(i.ate)}`
+            )
+          }
           presets={PRESETS_COMPETENCIA}
           valor={view.intervalo}
         />

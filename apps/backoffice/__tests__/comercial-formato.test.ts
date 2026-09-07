@@ -3,7 +3,11 @@
 // "-1.234,56" e salvar sem mexer grava "+123456" — o DRE anda o dobro do
 // valor sem aviso nenhum.
 import { describe, expect, it } from "vitest";
-import { formatarBRL, paraCentavos } from "../lib/comercial/formato";
+import {
+  centavosParaCampo,
+  formatarBRL,
+  paraCentavos,
+} from "../lib/comercial/formato";
 
 describe("paraCentavos", () => {
   it("lê positivo com separador de milhar e vírgula decimal", () => {
@@ -33,6 +37,12 @@ describe("paraCentavos", () => {
     });
     expect(texto.startsWith("-")).toBe(true);
     expect(paraCentavos(texto)).toBe(centavos);
+  });
+
+  it("round-trip com centavosParaCampo (o campo editável de verdade) preserva o valor", () => {
+    for (const centavos of [0, 50, 199_999, -123_456, 100_000_000]) {
+      expect(paraCentavos(centavosParaCampo(centavos))).toBe(centavos);
+    }
   });
 });
 

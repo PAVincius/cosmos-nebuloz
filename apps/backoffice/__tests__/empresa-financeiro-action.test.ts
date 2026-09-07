@@ -258,4 +258,30 @@ describe("salvarSemana", () => {
       recebiveisCentavos: 500,
     });
   });
+
+  it("recusa negativo num campo de Saídas — é magnitude, o sinal vem da coluna", async () => {
+    resetar();
+    const res = await salvarSemana({
+      semanaInicio: "2026-09-07",
+      saidasPessoalCentavos: -500,
+      de: "2026-09-06",
+      ate: "2026-10-04",
+    });
+    expect(res.ok).toBe(false);
+    expect(mocks.semanaUpsert).not.toHaveBeenCalled();
+  });
+
+  it("aceita saldoInicialCentavos negativo — cheque especial de verdade", async () => {
+    resetar();
+    const res = await salvarSemana({
+      semanaInicio: "2026-09-07",
+      saldoInicialCentavos: -500,
+      de: "2026-09-06",
+      ate: "2026-10-04",
+    });
+    expect(res.ok).toBe(true);
+    expect(mocks.semanaUpsert.mock.calls[0][0].update).toEqual({
+      saldoInicialCentavos: -500,
+    });
+  });
 });

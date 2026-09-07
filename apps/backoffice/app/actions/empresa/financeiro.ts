@@ -340,6 +340,16 @@ export async function lerCaixa(input: {
 
 const Centavos = z.number().int().nullable().optional();
 
+// `saldoInicialCentavos` é o único destes genuinely signed — um saldo inicial
+// negativo é um cheque especial de verdade. Os demais são magnitude: o sinal
+// (entrada ou saída) vem da coluna em `calcularCaixa`, não do valor digitado.
+const CentavosMagnitude = z
+  .number()
+  .int()
+  .nonnegative("Valor não pode ser negativo — o sinal vem da coluna.")
+  .nullable()
+  .optional();
+
 const SemanaSchema = z
   .object({
     semanaInicio: z.iso
@@ -349,13 +359,13 @@ const SemanaSchema = z
         "A semana começa numa segunda-feira."
       ),
     saldoInicialCentavos: Centavos,
-    recebiveisCentavos: Centavos,
-    contratosAssinadosCentavos: Centavos,
-    pipelinePonderadoCentavos: Centavos,
-    saidasPessoalCentavos: Centavos,
-    saidasFornecedoresCentavos: Centavos,
-    saidasComercialCentavos: Centavos,
-    saidasImpostosCentavos: Centavos,
+    recebiveisCentavos: CentavosMagnitude,
+    contratosAssinadosCentavos: CentavosMagnitude,
+    pipelinePonderadoCentavos: CentavosMagnitude,
+    saidasPessoalCentavos: CentavosMagnitude,
+    saidasFornecedoresCentavos: CentavosMagnitude,
+    saidasComercialCentavos: CentavosMagnitude,
+    saidasImpostosCentavos: CentavosMagnitude,
     saidasOutrasCentavos: Centavos,
     ...CAMPOS_INTERVALO,
   })
