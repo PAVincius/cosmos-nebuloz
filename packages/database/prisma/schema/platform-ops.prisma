@@ -442,6 +442,18 @@ model StaffPerson {
   /// ainda cabe.
   horasSemana Int @default(40)
 
+  /// Quando esta capacidade entra no plano. Nulo = conta desde sempre.
+  entraEm DateTime?
+
+  /// Fim da janela de contrato. Nulo = sem fim previsto. Ter data de saída é o
+  /// que distingue capacidade temporária (terceiro) da permanente — não existe
+  /// coluna separada dizendo "é terceiro", porque duas fontes para o mesmo
+  /// fato divergem na primeira edição.
+  saiEm DateTime?
+
+  /// Nota livre exibida na linha da pessoa. Ex.: "metade do tempo em gestão".
+  observacao String?
+
   ativo Boolean @default(true)
 
   criadoEm     DateTime @default(now())
