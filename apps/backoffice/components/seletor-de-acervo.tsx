@@ -15,6 +15,12 @@ import { type ComponentProps, type ReactNode, useState } from "react";
  * Colapsa ao selecionar porque lista longa em largura cheia empurraria o
  * conteúdo para fora da tela — que é o problema que a barra lateral resolvia
  * mal, mas resolvia.
+ *
+ * `renderExtra` (opcional) deixa a tela anexar conteúdo por item — badges,
+ * dono, ação de reuso — sem que a tela precise manter uma segunda lista só
+ * para isso. Aparece tanto na grade expandida quanto, para o item
+ * selecionado, na linha recolhida: é o item aberto no editor logo abaixo, e
+ * esconder a ação ali obrigaria a clicar em "Trocar" para alcançá-la de novo.
  */
 
 export type ItemDoAcervo = {
@@ -76,6 +82,31 @@ function ItemBotao({
   );
 }
 
+/** `extra` fica fora do `<button>` — não dá para aninhar controles
+ *  interativos (badges, botão de reuso) dentro de outro elemento clicável. */
+function LinhaDoItem({
+  item,
+  selecionado,
+  onSelecionar,
+  extra,
+}: {
+  item: ItemDoAcervo;
+  selecionado: boolean;
+  onSelecionar: () => void;
+  extra?: ReactNode;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <ItemBotao
+        item={item}
+        onSelecionar={onSelecionar}
+        selecionado={selecionado}
+      />
+      {extra}
+    </div>
+  );
+}
+
 export function SeletorDeAcervo({
   itens,
   selecionadoId,
@@ -86,6 +117,7 @@ export function SeletorDeAcervo({
   vazio,
   acao,
   formulario,
+  renderExtra,
 }: {
   itens: ItemDoAcervo[];
   selecionadoId: string | null;
@@ -101,6 +133,9 @@ export function SeletorDeAcervo({
   acao?: ReactNode;
   /** Formulário de criação, quando a tela o abre. */
   formulario?: ReactNode;
+  /** Conteúdo extra por item (badges, ações), pelo id do item. Opcional —
+   *  quem não passar mantém a lista como sempre foi (ex.: `estudio.tsx`). */
+  renderExtra?: (id: string) => ReactNode;
 }) {
   const [reabertoManual, setReabertoManual] = useState(false);
 
@@ -141,7 +176,8 @@ export function SeletorDeAcervo({
               }}
             >
               {itens.map((i) => (
-                <ItemBotao
+                <LinhaDoItem
+                  extra={renderExtra?.(i.id)}
                   item={i}
                   key={i.id}
                   onSelecionar={() => {
@@ -155,42 +191,45 @@ export function SeletorDeAcervo({
           )}
         </div>
       ) : (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            flexWrap: "wrap",
-          }}
-        >
-          <span style={{ flex: 1, minWidth: 0 }}>
-            <span
-              style={{
-                display: "block",
-                fontSize: "var(--fs-base)",
-                fontWeight: 700,
-              }}
-            >
-              {selecionado ? selecionado.titulo : ""}
-            </span>
-            <span
-              className="mono"
-              style={{
-                fontSize: "var(--fs-micro)",
-                color: "var(--ink-faint)",
-              }}
-            >
-              {selecionado ? selecionado.detalhe : ""}
-            </span>
-          </span>
-          <button
-            className="btn"
-            onClick={() => setReabertoManual(true)}
-            style={BOTAO_TROCAR}
-            type="button"
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              flexWrap: "wrap",
+            }}
           >
-            Trocar
-          </button>
+            <span style={{ flex: 1, minWidth: 0 }}>
+              <span
+                style={{
+                  display: "block",
+                  fontSize: "var(--fs-base)",
+                  fontWeight: 700,
+                }}
+              >
+                {selecionado ? selecionado.titulo : ""}
+              </span>
+              <span
+                className="mono"
+                style={{
+                  fontSize: "var(--fs-micro)",
+                  color: "var(--ink-faint)",
+                }}
+              >
+                {selecionado ? selecionado.detalhe : ""}
+              </span>
+            </span>
+            <button
+              className="btn"
+              onClick={() => setReabertoManual(true)}
+              style={BOTAO_TROCAR}
+              type="button"
+            >
+              Trocar
+            </button>
+          </div>
+          {selecionado ? renderExtra?.(selecionado.id) : null}
         </div>
       )}
     </SectionCard>

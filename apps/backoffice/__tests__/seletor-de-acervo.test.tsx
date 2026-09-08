@@ -99,4 +99,37 @@ describe("SeletorDeAcervo", () => {
       screen.getByText("Acervo vazio. É aqui que fica o que dá para reusar.")
     ).toBeTruthy();
   });
+
+  it("sem renderExtra, a lista fica exatamente como sempre foi", () => {
+    render(<Palco />);
+    expect(screen.queryByText(/extra de/)).toBeNull();
+  });
+
+  it("renderExtra anexa conteúdo por item, expandido e recolhido", () => {
+    function PalcoComExtra({ inicial = null as string | null }) {
+      const [sel, setSel] = useState<string | null>(inicial);
+      return (
+        <SeletorDeAcervo
+          icone="book"
+          itens={ITENS}
+          onSelecionar={setSel}
+          renderExtra={(id) => <span>extra de {id}</span>}
+          selecionadoId={sel}
+          titulo="Acervo"
+          vazio="Acervo vazio."
+        />
+      );
+    }
+
+    render(<PalcoComExtra />);
+    expect(screen.getByText("extra de a")).toBeTruthy();
+    expect(screen.getByText("extra de b")).toBeTruthy();
+
+    clicar(screen.getByText("Playbook de entrevista"));
+
+    // Recolhida, só o item selecionado aparece — e o extra dele continua
+    // visível, sem precisar clicar em "Trocar" para alcançá-lo de novo.
+    expect(screen.queryByText("extra de a")).toBeNull();
+    expect(screen.getByText("extra de b")).toBeTruthy();
+  });
 });

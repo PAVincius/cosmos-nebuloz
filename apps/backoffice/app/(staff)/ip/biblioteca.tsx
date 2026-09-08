@@ -180,10 +180,11 @@ function BadgesDoAtivo({ ativo }: { ativo: IpAssetRow }) {
   );
 }
 
-/** Bloco de registrar reuso, isolado num componente próprio: cada linha da
- *  lista monta o seu com `key={ativo.id}` (em `LinhaDeAtivo`), então trocar de
- *  ativo nunca reaproveita o estado do formulário de outro — o mesmo problema
- *  que o `Painel` do mapa de processos resolve com `key={processo.id}`. */
+/** Bloco de registrar reuso, isolado num componente próprio: cada `ExtraDoAtivo`
+ *  monta o seu, e o `SeletorDeAcervo` já isola essa subárvore por
+ *  `key={item.id}` no `.map` dos itens — então trocar de ativo nunca
+ *  reaproveita o estado do formulário de outro, o mesmo problema que o
+ *  `Painel` do mapa de processos resolve com `key={processo.id}`. */
 function BlocoDeReuso({
   ativoId,
   engajamentos,
@@ -304,7 +305,10 @@ function BlocoDeReuso({
   );
 }
 
-function LinhaDeAtivo({
+/** Conteúdo por item do `SeletorDeAcervo`: badges, dono, serviços, link e a
+ *  ação de registrar reuso — o nome do ativo já é o título do próprio botão
+ *  do seletor, então não se repete aqui. */
+function ExtraDoAtivo({
   ativo,
   engajamentos,
   podeEscrever,
@@ -339,35 +343,16 @@ function LinhaDeAtivo({
   }
 
   return (
-    <li
+    <div
       style={{
         borderTop: "1px solid var(--hairline)",
         display: "flex",
         flexDirection: "column",
         gap: 8,
-        padding: "12px 2px",
+        padding: "8px 2px 2px",
       }}
     >
-      <div
-        style={{
-          alignItems: "center",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 10,
-        }}
-      >
-        <span
-          style={{
-            flex: 1,
-            fontSize: "var(--fs-base)",
-            fontWeight: 700,
-            minWidth: 160,
-          }}
-        >
-          {ativo.nome}
-        </span>
-        <BadgesDoAtivo ativo={ativo} />
-      </div>
+      <BadgesDoAtivo ativo={ativo} />
       <div
         style={{
           color: "var(--ink-muted)",
@@ -388,52 +373,7 @@ function LinhaDeAtivo({
         )}
       </div>
       {acaoDeReuso}
-    </li>
-  );
-}
-
-function ListaDeAtivos({
-  lista,
-  engajamentos,
-  podeEscrever,
-  onReusoRegistrado,
-}: {
-  lista: IpAssetRow[];
-  engajamentos: EngagementRow[];
-  podeEscrever: boolean;
-  onReusoRegistrado: (assetId: string, patch: PatchDeReuso) => void;
-}) {
-  return (
-    <SectionCard
-      icon="layers"
-      subtitle={`${lista.length} item(ns)`}
-      title="O que o catálogo sabe"
-    >
-      {lista.length === 0 ? (
-        <p
-          style={{
-            color: "var(--ink-muted)",
-            fontSize: "var(--fs-base)",
-            margin: 0,
-            padding: "12px 2px",
-          }}
-        >
-          Acervo vazio.
-        </p>
-      ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
-          {lista.map((a) => (
-            <LinhaDeAtivo
-              ativo={a}
-              engajamentos={engajamentos}
-              key={a.id}
-              onReusoRegistrado={onReusoRegistrado}
-              podeEscrever={podeEscrever}
-            />
-          ))}
-        </ul>
-      )}
-    </SectionCard>
+    </div>
   );
 }
 
@@ -529,6 +469,26 @@ export function Biblioteca({
     []
   );
 
+  // Slot do `SeletorDeAcervo`: uma lista só na tela, com badges/reuso
+  // anexados a cada item em vez de uma segunda lista compacta ao lado.
+  const renderExtraDoAtivo = useCallback(
+    (id: string) => {
+      const ativo = lista.find((a) => a.id === id);
+      if (!ativo) {
+        return null;
+      }
+      return (
+        <ExtraDoAtivo
+          ativo={ativo}
+          engajamentos={engajamentos}
+          onReusoRegistrado={aoRegistrarReuso}
+          podeEscrever={podeEscrever}
+        />
+      );
+    },
+    [lista, engajamentos, podeEscrever, aoRegistrarReuso]
+  );
+
   const sujo = Boolean(aberto) && rascunho !== aberto?.conteudo;
   const podeSalvar = podeEscrever && sujo;
 
@@ -539,13 +499,6 @@ export function Biblioteca({
       <KpisDoAcervo lista={lista} />
 
       <LacunasDeIp lista={lista} servicos={servicos} />
-
-      <ListaDeAtivos
-        engajamentos={engajamentos}
-        lista={lista}
-        onReusoRegistrado={aoRegistrarReuso}
-        podeEscrever={podeEscrever}
-      />
 
       <SeletorDeAcervo
         acao={
@@ -577,6 +530,7 @@ export function Biblioteca({
           detalhe: `${a.tipo} · v${a.versoes}${a.origem ? ` · ${a.origem}` : ""}`,
         }))}
         onSelecionar={abrir}
+        renderExtra={renderExtraDoAtivo}
         selecionadoId={aberto?.id ?? null}
         titulo="Acervo"
         vazio="Acervo vazio. É aqui que fica o que dá para reusar no próximo cliente em vez de refazer."
