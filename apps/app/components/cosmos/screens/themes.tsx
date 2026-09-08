@@ -12,11 +12,10 @@ import {
 } from "@repo/design-system/cosmos/kit";
 // themes.tsx — Temas Estratégicos (portfolio investment themes), wired to
 // listThemes(). KPI row + card grid: health, target-vs-actual allocation
-// (BillingEntryAllocation-derived, see actions/themes.ts), epic count.
+// (BillingEntry.themeId + effectiveCost, see actions/themes.ts), epic count.
 import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import {
   archiveTheme,
-  createTheme,
   listThemes,
   rebalanceThemeTargets,
   type ThemeView,
@@ -27,6 +26,7 @@ import {
 } from "@/app/(cosmos)/actions/themes.constants";
 import { ModalCard, ModalProvider, useModal } from "../modal";
 import { useActionToast } from "../use-action-toast";
+import { NewThemeModal } from "./themes-new-modal";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
   on: "green",
@@ -229,117 +229,6 @@ const selectStyle: CSSProperties = {
   fontFamily: "inherit",
   outline: "none",
 };
-
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
-
-function NewThemeModal({ onCreated }: { onCreated?: () => void }) {
-  const { close } = useModal();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [budgetTotal, setBudgetTotal] = useState("");
-  const [saving, setSaving] = useState(false);
-
-  const create = async () => {
-    if (!title.trim() || saving) {
-      return;
-    }
-    setSaving(true);
-    // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
-    const res = await useActionToast(
-      () =>
-        createTheme({
-          title: title.trim(),
-          description: description.trim() || undefined,
-          budgetTotal: budgetTotal.trim() ? Number(budgetTotal) : undefined,
-        }),
-      {
-        loading: "Criando tema estratégico...",
-        success: "Tema estratégico criado.",
-        error: (err: string) => `Não foi possível criar o tema: ${err}`,
-      }
-    );
-    setSaving(false);
-    if (res.ok) {
-      close();
-      onCreated?.();
-    }
-  };
-
-  return (
-    <ModalCard
-      subtitle="Adicionar um tema estratégico ao portfólio"
-      title="Novo tema estratégico"
-      width={460}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="theme-title" style={fieldLabelStyle}>
-            Título
-          </label>
-          <input
-            autoFocus
-            id="theme-title"
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
-              }
-            }}
-            placeholder="Ex: Expansão LATAM…"
-            style={selectStyle}
-            value={title}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="theme-description" style={fieldLabelStyle}>
-            Descrição
-          </label>
-          <textarea
-            id="theme-description"
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Objetivo estratégico do tema…"
-            rows={3}
-            style={{ ...selectStyle, resize: "vertical" }}
-            value={description}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="theme-budget" style={fieldLabelStyle}>
-            Investimento (orçamento total)
-          </label>
-          <input
-            id="theme-budget"
-            min={0}
-            onChange={(e) => setBudgetTotal(e.target.value)}
-            placeholder="Ex: 250000"
-            style={selectStyle}
-            type="number"
-            value={budgetTotal}
-          />
-        </div>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar tema
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
-  );
-}
 
 function RebalanceTargetsModal({
   themes,

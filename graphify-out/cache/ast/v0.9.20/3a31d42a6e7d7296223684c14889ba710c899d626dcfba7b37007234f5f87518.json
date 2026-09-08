@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_md",
+      "label": "2026-07-28-seed-entrypoint-guard.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "label": "Guarda de entrypoint nos scripts de seed",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_corre\u00e7\u00e3o",
+      "label": "Corre\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_arquivos",
+      "label": "Arquivos",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_teste",
+      "label": "Teste",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_fora_de_escopo_n\u00e3o_corrigidos_apenas_registrados",
+      "label": "Fora de escopo (n\u00e3o corrigidos, apenas registrados)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L66"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_corre\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_arquivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_guarda_de_entrypoint_nos_scripts_de_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_07_28_seed_entrypoint_guard_fora_de_escopo_n\u00e3o_corrigidos_apenas_registrados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-07-28-seed-entrypoint-guard.md",
+      "source_location": "L66",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

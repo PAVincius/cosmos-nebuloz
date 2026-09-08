@@ -52,6 +52,7 @@ describe("getEpicDetailFull", () => {
       sizeEstimate: "M",
       descriptionVersions: [],
       leanBudgetAllocation: 50_000,
+      npv: 125_000.5,
       artId: "art-1",
       ownerName: "Alice",
       strategicTheme: { id: "theme-1", title: "Modernização", color: "#fff" },
@@ -123,6 +124,7 @@ describe("getEpicDetailFull", () => {
         color: "#fff",
       });
       expect(result.data.owner).toBe("Alice");
+      expect(result.data.npv).toBe(125_000.5);
       expect(result.data.investBreakdown).toEqual({
         I: 80,
         N: 70,
@@ -158,6 +160,7 @@ describe("getEpicDetailFull", () => {
     mvp: null,
     sizeEstimate: "M",
     leanBudgetAllocation: null,
+    npv: null,
     artId: null,
     ownerName: null,
     strategicTheme: null,
@@ -179,6 +182,32 @@ describe("getEpicDetailFull", () => {
       expect(result.data.theme).toBeNull();
       expect(result.data.owner).toBeNull();
       expect(result.data.investBreakdown).toBeNull();
+    }
+  });
+
+  it("returns npv as null (never 0) when the epic has no stored value", async () => {
+    h.findFirstMock.mockResolvedValue(baseEpic);
+    h.findManyMock.mockResolvedValue([]);
+    h.governedFindFirstMock.mockResolvedValue(null);
+
+    const result = await getEpicDetailFull("epic-1");
+
+    expect(result.ok).toBe(true);
+    if (result.ok && result.data) {
+      expect(result.data.npv).toBeNull();
+    }
+  });
+
+  it("returns a negative npv when the epic destroys value", async () => {
+    h.findFirstMock.mockResolvedValue({ ...baseEpic, npv: -50_000 });
+    h.findManyMock.mockResolvedValue([]);
+    h.governedFindFirstMock.mockResolvedValue(null);
+
+    const result = await getEpicDetailFull("epic-1");
+
+    expect(result.ok).toBe(true);
+    if (result.ok && result.data) {
+      expect(result.data.npv).toBe(-50_000);
     }
   });
 

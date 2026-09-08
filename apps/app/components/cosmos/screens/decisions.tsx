@@ -23,7 +23,22 @@ import {
 } from "@/app/(cosmos)/actions/decisions";
 import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
 import { EntityLinkField } from "../entity-link-field";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  Segmented,
+  Select,
+  TextArea,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const DECISAO_TONE: Record<string, "green" | "red" | "amber" | "blue"> = {
@@ -62,30 +77,6 @@ function fmt(iso: string) {
   });
 }
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const selectStyle: CSSProperties = inputStyle;
-
 // O artefato que o auditor leva embora. O payload inteiro vem do servidor —
 // inclusive o rodapé de metadados —, então o navegador só o serializa: nada é
 // montado aqui que não tenha sido registrado no export auditado.
@@ -101,6 +92,15 @@ function downloadDecisionLog(payload: DecisionLogExport) {
   URL.revokeObjectURL(url);
 }
 
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 10,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 4,
+  textTransform: "uppercase",
+};
+
 function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [tipo, setTipo] = useState(TIPO_OPTIONS[0].value);
@@ -111,9 +111,26 @@ function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
   const [justificativa, setJustificativa] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
-  const changeTargetType = (value: "epic" | "theme") => {
-    setTargetType(value);
+  // A cor do modal é o veredito: quem está registrando uma rejeição vê
+  // vermelho antes de terminar de escrever a justificativa.
+  const tone = DECISAO_TONE[decisao] ?? "blue";
+  const decisaoLabel =
+    DECISAO_OPTIONS.find((o) => o.value === decisao)?.label ?? decisao;
+  const tipoLabel = TIPO_OPTIONS.find((o) => o.value === tipo)?.label ?? tipo;
+  // O preview mostra as tags como vão ser gravadas, não o texto cru: a vírgula
+  // é o separador, e o que sobra em branco não vira tag.
+  const tags = tagsInput
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+
+  const changeTargetType = (value: string) => {
+    setTargetType(value as "epic" | "theme");
+    // Alvo escolhido no tipo anterior não sobrevive à troca: seria um id de
+    // épico gravado como decisão de tema.
     setTarget(null);
   };
 
@@ -122,10 +139,6 @@ function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
       return;
     }
     setSaving(true);
-    const tags = tagsInput
-      .split(",")
-      .map((tag) => tag.trim())
-      .filter(Boolean);
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(
       () =>
@@ -151,127 +164,202 @@ function NewDecisionModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
-      subtitle="Registrar uma nova decisão de portfólio com justificativa"
-      title="Nova decisão"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="decision-tipo" style={fieldLabelStyle}>
-            Tipo de decisão
-          </label>
-          <select
-            id="decision-tipo"
-            onChange={(e) => setTipo(e.target.value)}
-            style={selectStyle}
-            value={tipo}
-          >
-            {TIPO_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="registrar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Registrando..." : "Registrar decisão"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="book" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Registro auditável de uma decisão de portfólio, com o alvo e a justificativa que a sustentam"
+        title="Nova decisão"
+        tone={tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
+                }}
+              >
+                <span
+                  className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  {tipoLabel}
+                </span>
+                <Badge tone={tone}>{decisaoLabel}</Badge>
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 12,
+                }}
+              >
+                {titulo || "Título da decisão"}
+              </div>
 
-        <div>
-          <label htmlFor="decision-target-type" style={fieldLabelStyle}>
-            Tipo de alvo
-          </label>
-          <select
-            id="decision-target-type"
-            onChange={(e) =>
-              changeTargetType(e.target.value as "epic" | "theme")
-            }
-            style={selectStyle}
-            value={targetType}
-          >
-            {TARGET_TYPE_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+              <div style={previewLabelStyle}>
+                {targetType === "epic" ? "Epic decidido" : "Tema decidido"}
+              </div>
+              <div
+                style={{
+                  color: target ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12,
+                  marginBottom: 12,
+                }}
+              >
+                {target?.label ?? "Nenhum alvo vinculado ainda"}
+              </div>
 
-        <EntityLinkField
-          kind={targetType}
-          label={targetType === "epic" ? "Epic" : "Tema"}
-          onChange={setTarget}
-          value={target}
-        />
+              <div style={previewLabelStyle}>Justificativa</div>
+              <div
+                style={{
+                  color: justificativa
+                    ? "var(--ink-muted)"
+                    : "var(--ink-faint)",
+                  fontSize: 12,
+                  lineHeight: 1.55,
+                  marginBottom: 12,
+                }}
+              >
+                {justificativa ||
+                  "Sem justificativa a decisão vira registro sem racional"}
+              </div>
 
-        <div>
-          <label htmlFor="decision-decisao" style={fieldLabelStyle}>
-            Decisão
-          </label>
-          <select
-            id="decision-decisao"
-            onChange={(e) => setDecisao(e.target.value)}
-            style={selectStyle}
-            value={decisao}
-          >
-            {DECISAO_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </select>
-        </div>
+              {tags.length > 0 && (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {tags.map((tag) => (
+                    <Badge key={tag} tone="neutral">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          }
+        >
+          <FormField label="Tipo de decisão">
+            <Select onChange={setTipo} options={TIPO_OPTIONS} value={tipo} />
+          </FormField>
 
-        <div>
-          <label htmlFor="decision-titulo" style={fieldLabelStyle}>
-            Título (opcional)
-          </label>
-          <input
-            id="decision-titulo"
-            onChange={(e) => setTitulo(e.target.value)}
-            placeholder="Título curto da decisão…"
-            style={inputStyle}
-            value={titulo}
+          <FormField label="Decisão">
+            <Segmented
+              onChange={setDecisao}
+              options={DECISAO_OPTIONS}
+              tone={tone}
+              value={decisao}
+            />
+          </FormField>
+
+          <FormField label="Tipo de alvo">
+            <Segmented
+              onChange={changeTargetType}
+              options={TARGET_TYPE_OPTIONS}
+              tone={tone}
+              value={targetType}
+            />
+          </FormField>
+
+          <EntityLinkField
+            kind={targetType}
+            label={targetType === "epic" ? "Epic" : "Tema"}
+            onChange={setTarget}
+            value={target}
           />
-        </div>
 
-        <div>
-          <label htmlFor="decision-justificativa" style={fieldLabelStyle}>
-            Justificativa
-          </label>
-          <textarea
-            id="decision-justificativa"
-            onChange={(e) => setJustificativa(e.target.value)}
-            placeholder="Racional da decisão…"
-            rows={3}
-            style={{ ...inputStyle, resize: "vertical" }}
-            value={justificativa}
-          />
-        </div>
+          <FormField label="Título">
+            <TextInput
+              onChange={setTitulo}
+              placeholder="ex: Aprovar migração multi-tenant"
+              value={titulo}
+            />
+          </FormField>
 
-        <div>
-          <label htmlFor="decision-tags" style={fieldLabelStyle}>
-            Tags (separadas por vírgula, opcional)
-          </label>
-          <input
-            id="decision-tags"
-            onChange={(e) => setTagsInput(e.target.value)}
-            placeholder="tech-debt, budget…"
-            style={inputStyle}
-            value={tagsInput}
-          />
-        </div>
+          <FormField label="Justificativa" required>
+            <TextArea
+              onChange={setJustificativa}
+              placeholder="Racional que sustenta a decisão para quem auditar depois"
+              required
+              rows={3}
+              value={justificativa}
+            />
+          </FormField>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Registrar decisão
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <FormField hint="separadas por vírgula" label="Tags">
+            <TextInput
+              onChange={setTagsInput}
+              placeholder="tech-debt, budget"
+              value={tagsInput}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

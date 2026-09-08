@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "label": "lemon-squeezy.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_1_swap_out_the_required_dependencies",
+      "label": "1. Swap out the required dependencies",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_2_update_the_environment_variables",
+      "label": "2. Update the environment variables",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_3_update_the_payments_client",
+      "label": "3. Update the payments client",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_4_update_the_payments_webhook_handler",
+      "label": "4. Update the payments webhook handler",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_5_use_lemon_squeezy_in_your_app",
+      "label": "5. Use Lemon Squeezy in your app",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L65"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_1_swap_out_the_required_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_2_update_the_environment_variables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_3_update_the_payments_client",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_4_update_the_payments_webhook_handler",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_payments_lemon_squeezy_5_use_lemon_squeezy_in_your_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/payments/lemon-squeezy.mdx",
+      "source_location": "L65",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

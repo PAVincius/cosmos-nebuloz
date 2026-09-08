@@ -5,7 +5,10 @@ import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requestPlatformApproval } from "@/app/actions/approvals";
-import { LIMITE_DESCONTO_SEM_APROVACAO } from "@/lib/comercial";
+import {
+  gerarNumeroProposta,
+  LIMITE_DESCONTO_SEM_APROVACAO,
+} from "@/lib/comercial";
 import {
   assertCanWrite,
   requirePlatformStaff,
@@ -34,6 +37,9 @@ export type ProposalRow = {
   status: string;
   descontoPercent: number;
   totalCentavos: number;
+  /** Gravado no escopo — é o que o funil soma. Nulo nas propostas anteriores
+   *  ao gerador, que só tinham itens de serviço. */
+  acvCentavos: number;
   criadoEm: string;
 };
 
@@ -52,6 +58,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
         status: true,
         descontoPercent: true,
         totalCentavos: true,
+        acvCentavos: true,
         criadoEm: true,
       },
     });
@@ -66,6 +73,7 @@ export async function listProposals(): Promise<Result<ProposalRow[]>> {
       status: p.status,
       descontoPercent: p.descontoPercent,
       totalCentavos: p.totalCentavos,
+      acvCentavos: p.acvCentavos,
       criadoEm: p.criadoEm.toISOString(),
     }));
   });
@@ -142,7 +150,7 @@ export async function createProposalAction(
     });
 
     const total = calcularTotal(linhas, desconto);
-    const numero = `P-${Date.now().toString(36).toUpperCase()}`;
+    const numero = gerarNumeroProposta();
 
     const criada = await database.$transaction(async (tx) => {
       const p = await tx.proposal.create({
@@ -236,6 +244,10 @@ export async function submitProposalAction(
         alvoLabel: `${p.numero} · ${p.titulo}`,
         motivo: `Desconto de ${p.descontoPercent}% em ${p.numero}, acima do limite de ${LIMITE_DESCONTO_SEM_APROVACAO}% que dispensa aprovação.`,
         impacto: `${p.descontoPercent}% sobre a proposta — total já com desconto: ${(p.totalCentavos / 100).toFixed(2)}.`,
+        // O que a aprovação executa quando alguém liberar. Sem isto o pedido
+        // entrava na fila sem dizer o que fazer com ele, e a proposta ficava
+        // presa em AGUARDANDO_APROVACAO para sempre.
+        payload: { acao: "submitProposal", proposalId: p.id },
         targetTenantId: p.clienteTenantId ?? undefined,
       });
       if (!pedido.ok) {

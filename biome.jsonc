@@ -15,6 +15,13 @@
   },
   "overrides": [
     {
+      // `.jsonc` é JSON com comentário por definição, mas o biome só abre essa
+      // exceção para o próprio config — qualquer outro arquivo com a extensão
+      // é lido como JSON estrito e falha no primeiro `//`.
+      "includes": ["**/*.jsonc"],
+      "json": { "parser": { "allowComments": true } }
+    },
+    {
       "includes": [
         "**/__tests__/**",
         "**/*.test.ts",
@@ -75,6 +82,8 @@
         "apps/app/app/actions/**",
         "apps/app/app/(cosmos)/actions/**",
         "apps/app/app/(charter)/actions/**",
+        "apps/app/app/(meridian)/actions/**",
+        "apps/app/app/(scaffold)/actions/**",
         "apps/app/app/api/**",
         "apps/app/app/hooks/**"
       ],
@@ -232,7 +241,15 @@
       // do Charter (SRD-Charter.md NFR-2), não meta — então linha clicável é
       // <button> de verdade, grupo de filtro é <fieldset> com <legend>, e o
       // backdrop de modal tem controle de fechar anunciável.
-      "includes": ["apps/app/components/charter/**"],
+      "includes": [
+        "apps/app/components/charter/**",
+        // Meridian reusa as primitivas do Charter e a mesma folha reescopada —
+        // as mesmas exceções valem pelos mesmos motivos.
+        "apps/app/components/meridian/**",
+        // Scaffold: idem. E a a11y também continua ligada aqui — SN-10 exige
+        // WCAG 2.2 AA em toda superfície voltada ao cliente.
+        "apps/app/components/scaffold/**"
+      ],
       "linter": {
         "rules": {
           "nursery": { "noLeakedRender": "off", "noShadow": "off" },
@@ -313,6 +330,37 @@
       }
     },
     {
+      // Religa no caminho de acesso o que o bloco `packages/**` desliga para
+      // todo mundo. Override posterior vence, então isto vale só para estes
+      // quatro.
+      //
+      // São os pacotes que decidem quem entra e quem enxerga o quê, e agora os
+      // únicos com suíte de teste — `any` aqui não é atalho de tipagem, é
+      // buraco na checagem do papel. São pequenos (470, 295, 191 e 1300
+      // linhas), então religar custa pouco e o ganho é onde mais importa.
+      //
+      // O caminho para os outros 20 pacotes é este: um bloco por vez, com o
+      // pacote verde antes de entrar.
+      "includes": [
+        "packages/rbac/**",
+        "packages/security/**",
+        "packages/audit/**",
+        "packages/auth/**"
+      ],
+      "linter": {
+        "rules": {
+          "suspicious": {
+            "noExplicitAny": "error",
+            "noEvolvingTypes": "error"
+          },
+          "correctness": {
+            "noUnusedVariables": "error",
+            "noUnusedFunctionParameters": "error"
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "apps/app/app/(authenticated)/components/copilot/copilot-markdown.tsx"
       ],
@@ -378,6 +426,10 @@
       "!experiments/**/.venv",
       "!apps/app/playwright-report",
       "!apps/app/coverage",
+      // Scripts vendorizados pelo instalador do Impeccable (npx impeccable
+      // install), copiados como vieram do pacote. Lintar aqui só produz
+      // ruído contra um estilo que não é o nosso e trava o pre-commit.
+      "!.claude/skills/impeccable/scripts",
       // Protótipo de design: fonte de verdade visual do port, copiada como
       // veio do projeto de design. Lintar quebraria a fidelidade da referência.
       "!docs/design-handoff",
@@ -388,6 +440,10 @@
       // nó do grafo.
       "!docs/cosmos/grafo.json",
       "!docs/cosmos/GRAFO.md",
+      // Mesmo caso: gerado por `pnpm audit:runtime --update`, que expande os
+      // arrays. Sem isto, formatador e gerador brigam pelo arquivo a cada
+      // atualização da catraca.
+      "!scripts/audit-runtime-baseline.json",
       "!**/.next"
     ]
   }

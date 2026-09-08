@@ -1,0 +1,250 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "label": "research.md",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "label": "Research \u2014 Scaffold",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r1_escopo_produto_no_monorepo_ou_liga\u00e7\u00e3o_meridian_engagement",
+      "label": "R1 \u2014 Escopo: produto no monorepo ou liga\u00e7\u00e3o Meridian\u2192Engagement?",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r2_gating_de_m\u00f3dulo_productmodule_n\u00e3o_tem_scaffold",
+      "label": "R2 \u2014 Gating de m\u00f3dulo: `ProductModule` n\u00e3o tem `SCAFFOLD`",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r3_baseline_tabela_plana_srd_3_ou_artefato_versionado_design",
+      "label": "R3 \u2014 Baseline: tabela plana (SRD \u00a73) ou artefato versionado (design)?",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r4_fila_de_supervis\u00e3o_cross_tenant_vs_adr_0013",
+      "label": "R4 \u2014 Fila de supervis\u00e3o cross-tenant vs ADR-0013",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r5_armazenamento_de_artefato",
+      "label": "R5 \u2014 Armazenamento de artefato",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r6_sn_04_resid\u00eancia_de_dado_configur\u00e1vel",
+      "label": "R6 \u2014 SN-04, resid\u00eancia de dado configur\u00e1vel",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L144"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r7_padr\u00e3o_de_rota_e_shell",
+      "label": "R7 \u2014 Padr\u00e3o de rota e shell",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L156"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r8_detec\u00e7\u00e3o_de_estagna\u00e7\u00e3o_s_09_sn_07",
+      "label": "R8 \u2014 Detec\u00e7\u00e3o de estagna\u00e7\u00e3o (S-09 / SN-07)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L180"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r9_merge_de_overlay_de_template_st_02",
+      "label": "R9 \u2014 Merge de overlay de template (ST-02)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r10_o_signal_n\u00e3o_existe_no_reposit\u00f3rio",
+      "label": "R10 \u2014 O Signal n\u00e3o existe no reposit\u00f3rio",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L211"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r11_personas_do_prot\u00f3tipo",
+      "label": "R11 \u2014 Personas do prot\u00f3tipo",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L234"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_resumo_de_decis\u00f5es",
+      "label": "Resumo de decis\u00f5es",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L245"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r1_escopo_produto_no_monorepo_ou_liga\u00e7\u00e3o_meridian_engagement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_scaffold_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r2_gating_de_m\u00f3dulo_productmodule_n\u00e3o_tem_scaffold",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r3_baseline_tabela_plana_srd_3_ou_artefato_versionado_design",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r4_fila_de_supervis\u00e3o_cross_tenant_vs_adr_0013",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r5_armazenamento_de_artefato",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r6_sn_04_resid\u00eancia_de_dado_configur\u00e1vel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r7_padr\u00e3o_de_rota_e_shell",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r8_detec\u00e7\u00e3o_de_estagna\u00e7\u00e3o_s_09_sn_07",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r9_merge_de_overlay_de_template_st_02",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r10_o_signal_n\u00e3o_existe_no_reposit\u00f3rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_r11_personas_do_prot\u00f3tipo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_research_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_resumo_de_decis\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/research.md",
+      "source_location": "L245",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

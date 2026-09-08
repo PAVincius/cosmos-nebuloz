@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
 import {
   deleteIntegration,
   upsertIntegration,
@@ -262,10 +263,15 @@ export function IntegrationsBoard({
     router.refresh();
   }
 
-  function handleDisconnect(type: string) {
+  function handleDisconnect(id: string) {
     startTransition(async () => {
-      await deleteIntegration(type);
-      router.refresh();
+      const res = await deleteIntegration(id);
+      if (res.ok) {
+        toast.success("Integração desconectada.");
+        router.refresh();
+      } else {
+        toast.error(res.error);
+      }
     });
   }
 
@@ -344,7 +350,7 @@ export function IntegrationsBoard({
                   <Button
                     className="h-9 w-9 text-destructive hover:text-destructive"
                     disabled={isPending}
-                    onClick={() => handleDisconnect(def.type)}
+                    onClick={() => handleDisconnect(existing.id)}
                     size="icon"
                     variant="ghost"
                   >

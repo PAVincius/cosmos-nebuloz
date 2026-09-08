@@ -10,8 +10,8 @@ import {
 } from "@/app/actions/engagements";
 import type { ServiceRow } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { formatarBRL } from "@/lib/comercial/formato";
 import { ROTULO_STATUS, type StatusEngajamento } from "@/lib/delivery";
-import { formatarBRL } from "../servicos/catalogo";
 
 const TOM: Record<string, Tone> = {
   PROPOSTO: "accent",
@@ -64,24 +64,30 @@ function LinhaEngajamento({
     >
       <span
         className="mono"
-        style={{ fontSize: 11, fontWeight: 700, width: 72 }}
+        style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 72 }}
       >
         {e.codigo}
       </span>
       <span style={{ flex: 1, minWidth: 160 }}>
-        <span style={{ display: "block", fontSize: 13, fontWeight: 600 }}>
+        <span
+          style={{
+            display: "block",
+            fontSize: "var(--fs-base)",
+            fontWeight: 600,
+          }}
+        >
           {e.nome}
         </span>
         <span
           className="mono"
-          style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+          style={{ fontSize: "var(--fs-nota)", color: "var(--ink-faint)" }}
         >
           {e.clienteSlug} · {periodo(e.inicioEm, e.fimEm)}
         </span>
       </span>
       <span
         className="mono"
-        style={{ fontSize: 12, color: "var(--accent-text)" }}
+        style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
       >
         {formatarBRL(e.valorCentavos)}
       </span>
@@ -103,7 +109,7 @@ function LinhaEngajamento({
                 border: "1px solid var(--hairline)",
                 background: "none",
                 color: "var(--ink-muted)",
-                fontSize: 10.5,
+                fontSize: "var(--fs-nota)",
                 fontWeight: 600,
                 cursor: "pointer",
               }}
@@ -375,7 +381,7 @@ export function Engajamentos({
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}

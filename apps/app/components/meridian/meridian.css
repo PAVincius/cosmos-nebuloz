@@ -1,0 +1,575 @@
+/* meridian.css — tokens + primitivas do Meridian (diagnóstico de prontidão).
+   Escopado em `.meridian-root` para nunca vazar no resto do app: um tenant pode
+   ter Cosmos, Charter e Meridian, e as três raízes coexistem na mesma sessão.
+
+   Cópia reescopada de `components/charter/charter.css`, pelo mesmo motivo que
+   aquele arquivo é cópia reescopada do cosmos.css: `kit.tsx` é compartilhado e
+   depende destes nomes de classe (.btn, .lift, .navitem, .kpi, .skeleton,
+   .scroll). Sem raiz própria, tela do Meridian herda estilo nenhum.
+
+   A paleta é a mesma do Charter (sky #5CB4E4 → baby #89CFF0 → butter #F6F2C3
+   sobre canvas #07080c): identidade de suíte, escopo por módulo. Marcar a raiz
+   como `charter-root` resolveria o CSS e mentiria no DOM.
+
+   Fontes vêm de @repo/design-system/lib/fonts, já carregadas no <html>. */
+
+.meridian-root {
+  --accent: #1d6a97;
+  --accent-rgb: 29, 106, 151;
+  /* Tinta sobre fill sólido de accent ou de tom. No light é branco (4.62:1
+     sobre o accent escuro); no dark é o canvas (8.68:1 sobre o sky). Vale
+     também para qualquer glifo sobre fill colorido — um check branco sobre
+     âmbar fica invisível. */
+  --on-accent: #ffffff;
+  --on-solid: #ffffff;
+  --accent-fg: var(--on-accent);
+  /* intensidade global de efeito 0..1.6 */
+  --fx: 1;
+
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+  --r-pill: 999px;
+  --pad: 20px;
+  --gap: 16px;
+  --shell-shadow:
+    0 1px 2px rgba(9, 12, 20, 0.04), 0 1px 1px rgba(9, 12, 20, 0.03);
+
+  height: 100dvh;
+  font-family: var(--font-manrope), system-ui, -apple-system, sans-serif;
+  background: var(--canvas);
+  color: var(--ink);
+}
+
+.meridian-root,
+.meridian-root *,
+.meridian-root *::before,
+.meridian-root *::after {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.meridian-root .mono {
+  font-family: var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+.meridian-root .display {
+  font-family: var(--font-space-grotesk), var(--font-manrope), sans-serif;
+}
+.meridian-root ::selection {
+  background: rgba(var(--accent-rgb), 0.28);
+}
+
+/* ===================== LIGHT ===================== */
+/* Calibrado contra as seis superfícies claras reais (canvas, surface,
+   surface-2, surface-3, sidebar, chip-bg), não só contra #fff. `--ink-faint`
+   carrega labels de 10px — não clarear sem remedir. Menor razão: 4.60:1 sobre
+   --surface-3. */
+[data-theme="light"] .meridian-root {
+  --canvas: #f5f6f8;
+  --surface: #ffffff;
+  --surface-2: #f7f8fa;
+  --surface-3: #edeff3;
+  --sidebar: #fbfbfd;
+  --hairline: #e5e7ec;
+  --hairline-strong: #d4d8e0;
+  --ink: #0d1017;
+  --ink-muted: #565e6e;
+  --ink-subtle: #5f6878;
+  --ink-faint: #636c7b;
+  --chip-bg: #eff1f5;
+  --card-shadow:
+    0 1px 2px rgba(9, 12, 20, 0.05), 0 4px 14px -8px rgba(9, 12, 20, 0.1);
+  --hover-shadow:
+    0 2px 4px rgba(9, 12, 20, 0.06), 0 18px 36px -20px
+    rgba(var(--accent-rgb), 0.3);
+  --accent: #1d6a97;
+  --accent-rgb: 29, 106, 151;
+  --on-accent: #ffffff;
+  --on-solid: #ffffff;
+  --green: #12915a;
+  --green-rgb: 18, 145, 90;
+  --red: #d63a63;
+  --red-rgb: 214, 58, 99;
+  --amber: #9a7415;
+  --amber-rgb: 154, 116, 21;
+  --blue: #3f8fc4;
+  --blue-rgb: 63, 143, 196;
+  --purple: #7a68d8;
+  --purple-rgb: 122, 104, 216;
+  --green-soft: rgba(18, 145, 90, 0.1);
+  --green-text: #0d7548;
+  --red-soft: rgba(214, 58, 99, 0.1);
+  --red-text: #b32750;
+  --amber-soft: rgba(154, 116, 21, 0.13);
+  --amber-text: #805f0f;
+  --blue-soft: rgba(63, 143, 196, 0.11);
+  --blue-text: #2a6f9e;
+  --purple-soft: rgba(122, 104, 216, 0.1);
+  --purple-text: #5f4dbd;
+  --accent-soft: rgba(29, 106, 151, 0.1);
+  --accent-text: #145275;
+  --scrim: rgba(4, 6, 14, 0.6);
+}
+
+/* ===================== DARK — assinatura Nebuloz ===================== */
+[data-theme="dark"] .meridian-root {
+  --canvas: #07080c;
+  --surface: #0c0f17;
+  --surface-2: #10131e;
+  --surface-3: #181d2c;
+  --sidebar: #0a0c14;
+  --hairline: rgba(255, 255, 255, 0.07);
+  --hairline-strong: rgba(255, 255, 255, 0.14);
+  --ink: #f5f7fb;
+  --ink-muted: #b8c0d0;
+  --ink-subtle: #a2acc0;
+  --ink-faint: #8b95a9;
+  --chip-bg: rgba(255, 255, 255, 0.05);
+  --card-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 10px 30px -20px
+    rgba(0, 0, 0, 0.9);
+  --hover-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset, 0 24px 50px -26px
+    rgba(var(--accent-rgb), 0.5);
+  --accent: #5cb4e4;
+  --accent-rgb: 92, 180, 228;
+  /* Canvas sobre o sky: 8.68:1. Branco cairia para 2.2:1. */
+  --on-accent: var(--canvas);
+  --on-solid: var(--canvas);
+  --green: #29cc7a;
+  --green-rgb: 41, 204, 122;
+  --red: #ff5c8a;
+  --red-rgb: 255, 92, 138;
+  --amber: #ecd06a;
+  --amber-rgb: 236, 208, 106;
+  --blue: #89cff0;
+  --blue-rgb: 137, 207, 240;
+  --purple: #b2a5ff;
+  --purple-rgb: 178, 165, 255;
+  --green-soft: rgba(41, 204, 122, 0.13);
+  --green-text: #7ce8ad;
+  --red-soft: rgba(255, 92, 138, 0.14);
+  --red-text: #ffa3bd;
+  --amber-soft: rgba(236, 208, 106, 0.13);
+  --amber-text: #f6f2c3;
+  --blue-soft: rgba(137, 207, 240, 0.14);
+  --blue-text: #bde5f8;
+  --purple-soft: rgba(178, 165, 255, 0.14);
+  --purple-text: #d6cfff;
+  --accent-soft: rgba(92, 180, 228, 0.14);
+  --accent-text: #a8dbf4;
+  --scrim: rgba(4, 6, 14, 0.6);
+}
+
+/* Textura de marca — só no dark, por decisão: o tema claro é limpo.
+   Grão fractal fixo no viewport + grid de 64px na área de conteúdo. */
+[data-theme="dark"] .meridian-root .grain::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.5 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="dark"] .meridian-root .bg-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* scrollbars */
+.meridian-root .scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.meridian-root .scroll::-webkit-scrollbar-thumb {
+  background: var(--hairline-strong);
+  border-radius: 99px;
+  border: 3px solid transparent;
+  background-clip: padding-box;
+}
+.meridian-root .scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--ink-faint);
+  background-clip: padding-box;
+}
+
+/* ============ KPI CARD — the vibe ============ */
+@keyframes meridian-ecgsweep {
+  from {
+    stroke-dashoffset: 760;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.meridian-root .kpi {
+  position: relative;
+  overflow: visible;
+  transition:
+    transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1),
+    border-color 0.4s ease,
+    box-shadow 0.4s ease,
+    background 0.4s ease;
+}
+.meridian-root .kpi-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+}
+.meridian-root .kpi:hover {
+  transform: translateY(-3px);
+}
+
+/* dark-only decorative layers.
+   !important because the watermark svg (rendered via <Icon>) carries an inline
+   display:block that would otherwise defeat the light-mode hide. */
+.meridian-root .kpi .wm,
+.meridian-root .kpi .dots,
+.meridian-root .kpi .sig {
+  display: none !important;
+}
+[data-theme="dark"] .meridian-root .kpi .wm,
+[data-theme="dark"] .meridian-root .kpi .dots,
+[data-theme="dark"] .meridian-root .kpi .sig {
+  display: block !important;
+}
+
+[data-theme="dark"] .meridian-root .kpi:hover {
+  border-color: rgba(var(--tone-rgb), calc(0.55 * var(--fx)));
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 24px 50px -24px rgba(var(--tone-rgb), calc(0.55 * var(--fx)));
+}
+
+.meridian-root .wm {
+  position: absolute;
+  right: -34px;
+  bottom: -46px;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+.meridian-root .wm-engrave {
+  stroke: var(--tone-ink);
+  filter: drop-shadow(0 1.5px 0.5px rgba(255, 255, 255, 0.1))
+    drop-shadow(0 -1.4px 1px rgba(0, 0, 0, 0.8));
+  opacity: 1;
+}
+.meridian-root .wm-glow {
+  color: var(--tone);
+  filter: drop-shadow(0 0 9px rgba(var(--tone-rgb), calc(0.85 * var(--fx))));
+  opacity: 0;
+}
+[data-theme="dark"] .meridian-root .kpi:hover .wm-engrave {
+  opacity: 0.2;
+}
+[data-theme="dark"] .meridian-root .kpi:hover .wm-glow {
+  opacity: calc(0.9 * var(--fx));
+}
+
+.meridian-root .dots {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  color: var(--tone);
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  background-image: radial-gradient(currentColor 1.1px, transparent 1.5px);
+  background-size: 11px 11px;
+  -webkit-mask-image: radial-gradient(
+    150% 130% at 100% 100%,
+    #000 0%,
+    transparent 58%
+  );
+  mask-image: radial-gradient(150% 130% at 100% 100%, #000 0%, transparent 58%);
+}
+[data-theme="dark"] .meridian-root .kpi:hover .dots {
+  opacity: calc(0.45 * var(--fx));
+}
+
+.meridian-root .sig {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 6px;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.3;
+  transition:
+    opacity 0.5s ease,
+    filter 0.5s ease;
+}
+.meridian-root .sig path {
+  stroke-dasharray: 360 360;
+  animation: meridian-ecgsweep 3s linear infinite;
+}
+[data-theme="dark"] .meridian-root .kpi:hover .sig {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px rgba(var(--tone-rgb), calc(0.6 * var(--fx))));
+}
+.meridian-root .no-ecg .sig {
+  display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meridian-root .sig path {
+    animation: none;
+  }
+}
+
+/* generic interactive lift for kanban/list cards in dark */
+.meridian-root .lift {
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+.meridian-root .lift:hover {
+  transform: translateY(-2px);
+}
+[data-theme="dark"] .meridian-root .lift:hover {
+  border-color: var(--hairline-strong);
+  box-shadow: 0 18px 40px -28px rgba(0, 0, 0, 0.9);
+}
+[data-theme="light"] .meridian-root .lift:hover {
+  box-shadow: var(--hover-shadow);
+  border-color: var(--hairline-strong);
+}
+
+/* nav item */
+.meridian-root .navitem {
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.meridian-root .navitem:hover {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.meridian-root .btn {
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease;
+  cursor: pointer;
+}
+.meridian-root .btn:active {
+  transform: translateY(0.5px);
+}
+
+.meridian-root .fade-in {
+  animation: meridian-fadeIn 0.45s ease;
+}
+@keyframes meridian-fadeIn {
+  from {
+    transform: translateY(7px);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* staggered card entrance (compositor-only transform/opacity) */
+@keyframes meridian-cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.meridian-root .card-in {
+  animation: meridian-cardIn 0.38s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .meridian-root .card-in {
+    animation: none;
+  }
+}
+@keyframes meridian-emptyPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+@keyframes meridian-badgeFlash {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.18);
+    filter: brightness(1.3);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+@keyframes meridian-shimmer {
+  0% {
+    background-position: -600px 0;
+  }
+  100% {
+    background-position: 600px 0;
+  }
+}
+@keyframes meridian-toastIn {
+  from {
+    opacity: 0;
+    transform: translateX(18px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.meridian-root .skeleton {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    var(--surface-3) 25%,
+    var(--surface-2) 50%,
+    var(--surface-3) 75%
+  );
+  background-size: 600px 100%;
+  animation: meridian-shimmer 1.4s ease-in-out infinite;
+}
+
+/* ============ live / operational pulse ============ */
+@keyframes meridian-pulseRing {
+  0% {
+    box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, var(--green-rgb)), 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(var(--pulse-rgb, var(--green-rgb)), 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(var(--pulse-rgb, var(--green-rgb)), 0);
+  }
+}
+.meridian-root .pulse-dot {
+  animation: meridian-pulseRing 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ============ chart hover microinteractions ============ */
+.meridian-root .chart-hit {
+  cursor: pointer;
+  transition:
+    filter 0.15s ease,
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+.meridian-root .chart-tip {
+  position: absolute;
+  z-index: 40;
+  pointer-events: none;
+  white-space: nowrap;
+  background: var(--surface-3);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-md);
+  box-shadow: 0 12px 26px -10px rgba(0, 0, 0, 0.45);
+  padding: 8px 11px;
+  font-size: 11.5px;
+  color: var(--ink);
+  transform: translate(-50%, -100%);
+  animation: meridian-tipIn 0.12s ease;
+  line-height: 1.5;
+}
+@keyframes meridian-tipIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -94%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -100%);
+  }
+}
+
+/* ============ WCAG 2.4.7 — Focus rings ============ */
+.meridian-root :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.meridian-root .btn:focus:not(:focus-visible),
+.meridian-root button:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ============ Glossary tooltip ============ */
+.meridian-root .glossary-term {
+  border-bottom: 1.5px dashed var(--ink-subtle);
+  cursor: help;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+.meridian-root .glossary-term:hover {
+  border-color: var(--accent);
+  color: var(--accent-text, var(--accent));
+}
+
+/* ============ Command palette (⌘K / Ctrl+K) ============ */
+.meridian-root [cmdk-item][data-selected="true"] {
+  background: var(--accent-soft);
+  color: var(--accent-text);
+}
+
+/* Editor de blocos da nota nativa: o botão remover só aparece no hover ou
+   quando o próprio botão recebe foco por teclado. */
+.block-remove {
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+.block-hover:hover .block-remove,
+.block-remove:focus-visible {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .block-remove {
+    transition: none;
+  }
+}
+
+/* Chevron das linhas expansíveis da árvore do épico. */
+.tree-chevron {
+  transition: transform 0.15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tree-chevron {
+    transition: none;
+  }
+}
+
+/* Pulso radial disparado no hover de card de eixo — só o Meridian usa. */
+@keyframes meridian-merPulse {
+  from {
+    opacity: 0.4;
+    transform: scale(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1);
+  }
+}

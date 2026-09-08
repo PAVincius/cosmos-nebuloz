@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_md",
+      "label": "2026-06-16-demo-seed-pae.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_demo_seed_personal_access_exception_pae_implementation_plan",
+      "label": "Demo Seed + Personal Access Exception (PAE) Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "label": "Phase 1 \u2014 PAE Feature",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_1_db_schema_pae_prisma_migration",
+      "label": "Task 1: DB Schema \u2014 `pae.prisma` + Migration",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_2_pae_zod_schemas",
+      "label": "Task 2: PAE Zod Schemas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_3_pae_server_actions_create_list",
+      "label": "Task 3: PAE Server Actions \u2014 Create + List",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_4_pae_server_actions_approve_deny_revoke",
+      "label": "Task 4: PAE Server Actions \u2014 Approve + Deny + Revoke",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L540"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_5_notification_types_for_pae",
+      "label": "Task 5: Notification Types for PAE",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L808"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_6_enforcewithpae_rbac_pae_fallback",
+      "label": "Task 6: `enforceWithPAE()` \u2014 RBAC + PAE Fallback",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L858"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_7_ui_paerequestbutton_paerequestsheet",
+      "label": "Task 7: UI \u2014 `PAERequestButton` + `PAERequestSheet`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1004"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_8_access_exceptions_page",
+      "label": "Task 8: `/access-exceptions` Page",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1215"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_9_sidebar_nav_entry",
+      "label": "Task 9: Sidebar Nav Entry",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1484"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_2_demo_seed",
+      "label": "Phase 2 \u2014 Demo Seed",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1522"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_10_update_seed_personas_ts_entities_pae_demo_data",
+      "label": "Task 10: Update `seed-personas.ts` \u2014 Entities + PAE Demo Data",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1524"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_self_review_checklist",
+      "label": "Self-Review Checklist",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1865"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_demo_seed_personal_access_exception_pae_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_demo_seed_personal_access_exception_pae_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_1_db_schema_pae_prisma_migration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_2_pae_zod_schemas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_3_pae_server_actions_create_list",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_4_pae_server_actions_approve_deny_revoke",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L540",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_5_notification_types_for_pae",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L808",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_6_enforcewithpae_rbac_pae_fallback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L858",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_7_ui_paerequestbutton_paerequestsheet",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1004",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_8_access_exceptions_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1215",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_1_pae_feature",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_9_sidebar_nav_entry",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1484",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_demo_seed_personal_access_exception_pae_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_2_demo_seed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1522",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_phase_2_demo_seed",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_task_10_update_seed_personas_ts_entities_pae_demo_data",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1524",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_demo_seed_personal_access_exception_pae_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_16_demo_seed_pae_self_review_checklist",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-16-demo-seed-pae.md",
+      "source_location": "L1865",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

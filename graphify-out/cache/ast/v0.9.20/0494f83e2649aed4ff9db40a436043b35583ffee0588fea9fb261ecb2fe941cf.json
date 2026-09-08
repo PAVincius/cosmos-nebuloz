@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_md",
+      "label": "intent-template.md",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "label": "Intent: [NOME DA IDEIA]",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_contexto",
+      "label": "Contexto",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_restri\u00e7\u00f5es",
+      "label": "Restri\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_resultado_desejado",
+      "label": "Resultado desejado",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_fora_de_escopo",
+      "label": "Fora de escopo",
+      "file_type": "document",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L29"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_contexto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_restri\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_resultado_desejado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_intent_nome_da_ideia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specify_templates_intent_template_fora_de_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".specify/templates/intent-template.md",
+      "source_location": "L29",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -24,10 +24,20 @@ export type LinearWebhookPayload = {
   organizationId?: string;
 };
 
+export type HandleLinearWebhookOptions = {
+  // Projects do Linear que esta integração acompanha — times no plano free
+  // hospedam vários produtos como projects dentro de um único time, e sem
+  // este filtro uma issue de outro produto entraria como Story deste ART.
+  // Lista porque a credencial é da conta: uma integração cobre N projects
+  // (ver `linear-scopes.ts`). Ausente ou vazia = sem filtro.
+  linearProjectIds?: string[];
+};
+
 export async function handleLinearWebhook(
   tenantId: string,
   integrationId: string,
-  payload: LinearWebhookPayload
+  payload: LinearWebhookPayload,
+  opts?: HandleLinearWebhookOptions
 ): Promise<void> {
   if (payload.action === "remove") {
     return;
@@ -38,6 +48,49 @@ export async function handleLinearWebhook(
 
   const { data } = payload;
   if (!data.title) {
+    return;
+  }
+
+  // COS-85: com filtro configurado, só aceita a issue do project mapeado.
+  // LIMITAÇÃO CONHECIDA: um webhook real do Linear pode não trazer
+  // `data.project` (o formato observado varia; ver linear-full-pull.ts, que
+  // já pede `project { id }` na própria página buscada para nunca cair
+  // aqui sem essa informação). Quando o filtro está ativo e o payload não
+  // traz project, descartamos por segurança em vez de deixar passar sem
+  // checar — este código não faz uma segunda chamada de detalhe ao Linear
+  // para resolver o project, porque hoje não existe consumidor de webhook
+  // ao vivo que precise disso (app/api/webhooks/linear/route.ts só
+  // enfileira no Inngest; nenhuma function consome o evento ainda).
+  //
+  // O descarte não é silencioso: sem rastro, uma issue com project
+  // legítimo (não é payload malformado — o Linear simplesmente não
+  // mandou o campo, ou a issue está fora do project mapeado) some do
+  // sync para sempre sem deixar pista. Grava FILTERED reaproveitando o
+  // mecanismo de writeSyncEvent já usado para SKIPPED por conflito de
+  // merge, com o motivo distinguindo os dois casos operacionais.
+  // A lista vem dos escopos da integração: uma credencial cobre vários
+  // projects, e a issue precisa pertencer a um deles.
+  const aceitos = opts?.linearProjectIds;
+  if (
+    aceitos &&
+    aceitos.length > 0 &&
+    !aceitos.includes(data.project?.id ?? "")
+  ) {
+    await writeSyncEvent({
+      tenantId,
+      integrationId,
+      direction: "INBOUND",
+      source: "LINEAR",
+      action: "FILTERED",
+      entityType: "Story",
+      entityId: data.id,
+      externalId: data.id,
+      field: "linearProjectId",
+      linearValue: `filtro linearProjectId: issue ${data.id} pertence a ${
+        data.project?.id ?? "nenhum project"
+      }`,
+      cosmosValue: aceitos.join(","),
+    });
     return;
   }
 
@@ -82,17 +135,52 @@ export async function handleLinearWebhook(
   }
 
   // New issue — create Story and mapping (AC-005: unmapped lands in holding area)
-  const created = await database.story.create({
-    data: {
+  let created: { id: string };
+  try {
+    created = await database.story.create({
+      data: {
+        tenantId,
+        title: data.title,
+        description: data.description ?? null,
+        externalId: data.id,
+        externalSource: "linear",
+        status: mapLinearStatusToCosmos(data.state?.name ?? ""),
+      },
+      select: { id: true },
+    });
+  } catch (error) {
+    // Corrida create-vs-create (cron full pull × webhook ao vivo, limitação
+    // registrada no PR #91): outro executor commitou a Story entre o
+    // findFirst acima e este create, e o unique (tenantId, externalId,
+    // externalSource) derrubou o INSERT perdedor com P2002. A issue já
+    // existe no Cosmos — converge para o caminho de update, como se este
+    // webhook tivesse chegado um segundo depois.
+    if (!isUniqueViolation(error)) {
+      throw error;
+    }
+    const existing = await database.story.findFirst({
+      where: { tenantId, externalId: data.id, externalSource: "linear" },
+      select: { id: true },
+    });
+    if (!existing) {
+      throw error;
+    }
+    await syncInboundUpdate({
       tenantId,
-      title: data.title,
-      description: data.description ?? null,
-      externalId: data.id,
-      externalSource: "linear",
-      status: mapLinearStatusToCosmos(data.state?.name ?? ""),
-    },
-    select: { id: true },
-  });
+      integrationId,
+      cosmosStoryId: existing.id,
+      data,
+      linearUpdatedAt,
+    });
+    await upsertLinearMapping({
+      tenantId,
+      linearId: data.id,
+      linearType: "issue",
+      cosmosId: existing.id,
+      cosmosType: "Story",
+    });
+    return;
+  }
 
   await upsertLinearMapping({
     tenantId,
@@ -115,6 +203,19 @@ export async function handleLinearWebhook(
 }
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
+
+// P2002 = violação de unique constraint. Checagem estrutural de propósito, em
+// vez de instanceof PrismaClientKnownRequestError: não amarra este módulo à
+// classe de erro do runtime do client (que varia com driver adapter) e vale
+// igual sob mock nos testes.
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "P2002"
+  );
+}
 
 type InboundUpdateArgs = {
   tenantId: string;

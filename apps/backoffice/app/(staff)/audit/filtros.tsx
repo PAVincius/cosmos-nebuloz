@@ -53,7 +53,7 @@ export function Filtros({ tenants }: { tenants: TenantOpcao[] }) {
   const seletor = {
     ...INPUT,
     padding: "8px 10px",
-    fontSize: 12.5,
+    fontSize: "var(--fs-base)",
     cursor: "pointer",
   };
 
@@ -168,7 +168,7 @@ export function Paginacao({
         border: "1px solid var(--hairline)",
         background: "var(--surface-2)",
         color: ativo ? "var(--ink)" : "var(--ink-faint)",
-        fontSize: 12.5,
+        fontSize: "var(--fs-base)",
         fontWeight: 600,
         cursor: ativo ? "pointer" : "not-allowed",
         opacity: ativo ? 1 : 0.5,
@@ -192,7 +192,11 @@ export function Paginacao({
       {botao("← Anterior", pagina - 1, pagina > 1)}
       <span
         className="mono"
-        style={{ flex: 1, fontSize: 11, color: "var(--ink-faint)" }}
+        style={{
+          flex: 1,
+          fontSize: "var(--fs-nota)",
+          color: "var(--ink-faint)",
+        }}
       >
         página {pagina} de {ultima} · {total} evento(s)
       </span>

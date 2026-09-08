@@ -1,0 +1,351 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_md",
+      "label": "checklist-ia-generativa.md",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "label": "Checklist de seguran\u00e7a para aplica\u00e7\u00f5es com IA generativa",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_\u00e1reas",
+      "label": "\u00c1reas",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_1_arquitetura_e_threat_modeling",
+      "label": "\u00a71 Arquitetura e threat modeling",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_2_dados_privacidade_e_lgpd",
+      "label": "\u00a72 Dados, privacidade e LGPD",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_supply_chain_modelos_vetores_e_rag",
+      "label": "\u00a73 Supply chain, modelos, vetores e RAG",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_1_supply_chain_de_modelos",
+      "label": "\u00a73.1 Supply chain de modelos",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_2_seguran\u00e7a_de_rag_e_vetores",
+      "label": "\u00a73.2 Seguran\u00e7a de RAG e vetores",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L73"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_3_poisoning_e_backdoors",
+      "label": "\u00a73.3 Poisoning e backdoors",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_defesas_llm_aware_no_backend",
+      "label": "\u00a74 Defesas LLM-aware no backend",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_1_api_de_infer\u00eancia_e_orquestra\u00e7\u00e3o",
+      "label": "\u00a74.1 API de infer\u00eancia e orquestra\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_2_backend_seguro_e_devsecops",
+      "label": "\u00a74.2 Backend seguro e DevSecOps",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_5_seguran\u00e7a_no_frontend",
+      "label": "\u00a75 Seguran\u00e7a no frontend",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L101"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_6_prompt_injection_agentes_e_excessive_agency",
+      "label": "\u00a76 Prompt injection, agentes e excessive agency",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_7_custos_dos_e_consumo_ilimitado",
+      "label": "\u00a77 Custos, DoS e consumo ilimitado",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_8_monitoramento_logging_e_detec\u00e7\u00e3o_de_abuso",
+      "label": "\u00a78 Monitoramento, logging e detec\u00e7\u00e3o de abuso",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L124"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_9_governan\u00e7a_pol\u00edticas_e_compliance",
+      "label": "\u00a79 Governan\u00e7a, pol\u00edticas e compliance",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L131"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_por_ambiente",
+      "label": "\u00a710 Por ambiente",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_1_desenvolvimento",
+      "label": "\u00a710.1 Desenvolvimento",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_2_staging",
+      "label": "\u00a710.2 Staging",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L146"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_3_produ\u00e7\u00e3o",
+      "label": "\u00a710.3 Produ\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_11_como_usar",
+      "label": "\u00a711 Como usar",
+      "file_type": "document",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L157"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_\u00e1reas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_1_arquitetura_e_threat_modeling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_2_dados_privacidade_e_lgpd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_supply_chain_modelos_vetores_e_rag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_supply_chain_modelos_vetores_e_rag",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_1_supply_chain_de_modelos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_supply_chain_modelos_vetores_e_rag",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_2_seguran\u00e7a_de_rag_e_vetores",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L73",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_supply_chain_modelos_vetores_e_rag",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_3_3_poisoning_e_backdoors",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_defesas_llm_aware_no_backend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_defesas_llm_aware_no_backend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_1_api_de_infer\u00eancia_e_orquestra\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_defesas_llm_aware_no_backend",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_4_2_backend_seguro_e_devsecops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_5_seguran\u00e7a_no_frontend",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_6_prompt_injection_agentes_e_excessive_agency",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_7_custos_dos_e_consumo_ilimitado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_8_monitoramento_logging_e_detec\u00e7\u00e3o_de_abuso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_9_governan\u00e7a_pol\u00edticas_e_compliance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L131",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_por_ambiente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_por_ambiente",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_1_desenvolvimento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_por_ambiente",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_2_staging",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_por_ambiente",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_10_3_produ\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_checklist_de_seguran\u00e7a_para_aplica\u00e7\u00f5es_com_ia_generativa",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_security_checklist_ia_generativa_11_como_usar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/security/checklist-ia-generativa.md",
+      "source_location": "L157",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

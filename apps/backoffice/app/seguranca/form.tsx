@@ -6,9 +6,24 @@ import { QrCode } from "@repo/design-system/cosmos/qr-code";
 import type { FormEvent } from "react";
 import { useState } from "react";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { encerrarTodasAsSessoes } from "./actions";
 
 const TOTP_LENGTH = 6;
 const LADO_DO_QR = 168;
+
+/**
+ * Encerra as sessões antigas antes da saída — reforço, não pré-requisito.
+ *
+ * Falhar aqui não pode prender a pessoa numa tela cujo único botão não anda:
+ * sair com uma sessão a mais é melhor do que não sair.
+ */
+async function varrerSessoes(): Promise<void> {
+  try {
+    await encerrarTodasAsSessoes();
+  } catch {
+    // Silencioso de propósito: ver acima.
+  }
+}
 
 /**
  * Cadastro do autenticador, no painel.
@@ -52,19 +67,21 @@ export function CadastroDe2FA() {
   };
 
   /**
-   * Encerra a sessão antes de mandar para o login.
+   * Encerra as sessões antes de mandar para o login.
    *
-   * A sessão em curso nasceu no sign-in, **antes** de o 2FA existir, então ela
-   * não carrega `twoFactorVerified` — e o guard do painel exige esse carimbo.
-   * Sem encerrar, a pessoa acaba de cadastrar o autenticador e é recebida por
-   * "esta sessão não passou pela verificação em dois fatores", que soa como
-   * falha do cadastro que acabou de dar certo.
+   * `signOut` sozinho derruba só este navegador. As sessões abertas antes do
+   * cadastro — em outra máquina, em outro navegador — seguiriam valendo sem
+   * nunca ter passado pelo autenticador, que é exatamente o que o segundo
+   * fator existe para impedir. Por isso a varredura no servidor primeiro, e o
+   * `signOut` depois só para limpar o cookie daqui.
    *
-   * Só o login novo passa pelo desafio de TOTP, e é ele que carimba a sessão.
+   * Falha da varredura não impede a saída: melhor sair com sessões a mais do
+   * que prender a pessoa numa tela sem botão que funcione.
    */
   const sairEEntrar = async () => {
     setSaindo(true);
     try {
+      await varrerSessoes();
       await authClient.signOut();
     } finally {
       // Navegação dura: o cookie acabou de ser invalidado e quem precisa reler
@@ -77,7 +94,7 @@ export function CadastroDe2FA() {
   if (cadastro.backupCodes) {
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-        <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6 }}>
+        <p style={{ margin: 0, fontSize: "var(--fs-base)", lineHeight: 1.6 }}>
           Autenticador cadastrado. Guarde os códigos de recuperação — eles não
           aparecem de novo.
         </p>
@@ -90,7 +107,7 @@ export function CadastroDe2FA() {
             padding: 12,
             borderRadius: "var(--r-md)",
             border: "1px dashed var(--hairline-strong)",
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
           }}
         >
           {cadastro.backupCodes.map((c) => (
@@ -100,7 +117,7 @@ export function CadastroDe2FA() {
         <p
           style={{
             margin: 0,
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             lineHeight: 1.55,
             color: "var(--ink-faint)",
           }}
@@ -149,7 +166,7 @@ export function CadastroDe2FA() {
               margin: 0,
               maxWidth: 150,
               textAlign: "center",
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               lineHeight: 1.55,
               color: "var(--ink-faint)",
               fontWeight: 500,
@@ -168,7 +185,7 @@ export function CadastroDe2FA() {
               background: "none",
               border: "none",
               padding: 0,
-              fontSize: 11.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
               textDecoration: "underline",
               cursor: "pointer",
@@ -188,7 +205,7 @@ export function CadastroDe2FA() {
                 padding: "8px 10px",
                 borderRadius: "var(--r-sm)",
                 border: "1px solid var(--hairline)",
-                fontSize: 12.5,
+                fontSize: "var(--fs-base)",
                 letterSpacing: ".08em",
               }}
             >
@@ -205,7 +222,7 @@ export function CadastroDe2FA() {
         <p
           style={{
             margin: 0,
-            fontSize: 12,
+            fontSize: "var(--fs-base)",
             color: "var(--ink-faint)",
             fontWeight: 600,
           }}
@@ -217,8 +234,8 @@ export function CadastroDe2FA() {
           <input
             // biome-ignore lint/a11y/noAutofocus: primeiro campo acionável de
             // uma tela cujo propósito único é este formulário.
-            autoFocus
             autoComplete="current-password"
+            autoFocus
             id="senha"
             onChange={(e) => setSenha(e.target.value)}
             style={INPUT}

@@ -73,7 +73,9 @@ describe("ArtsScreen", () => {
     await screen.findByText("Nenhum ART ainda.");
 
     fireEvent.click(screen.getByRole("button", { name: "Novo ART" }));
-    fireEvent.change(screen.getByLabelText("Nome do ART"), {
+    // Regex e não string exata: FormField marca campo obrigatório com um " *"
+    // no fim do rótulo, que entra no texto do label.
+    fireEvent.change(screen.getByLabelText(/^Nome do ART/), {
       target: { value: "ART Novo" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar ART" }));
@@ -97,7 +99,7 @@ describe("ArtsScreen", () => {
     await screen.findByText("ART Pagamentos");
 
     fireEvent.click(screen.getByRole("button", { name: "Novo ART" }));
-    fireEvent.change(screen.getByLabelText("Nome do ART"), {
+    fireEvent.change(screen.getByLabelText(/^Nome do ART/), {
       target: { value: "art pagamentos" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar ART" }));
@@ -105,7 +107,7 @@ describe("ArtsScreen", () => {
     await waitFor(() => expect(createARTMock).toHaveBeenCalled());
     // O modal continua de pé com o texto digitado: o erro não pode custar o
     // que o usuário escreveu, e a lista não recarrega atrás de um fracasso.
-    expect(screen.getByLabelText("Nome do ART")).toBeTruthy();
+    expect(screen.getByLabelText(/^Nome do ART/)).toBeTruthy();
     expect(listArtsMock).toHaveBeenCalledTimes(1);
   });
 
@@ -152,10 +154,10 @@ describe("ArtsScreen", () => {
     fireEvent.click(
       screen.getByRole("button", { name: "Novo PI em ART Pagamentos" })
     );
-    fireEvent.change(screen.getByLabelText("Nome do PI"), {
+    fireEvent.change(screen.getByLabelText(/^Nome do PI/), {
       target: { value: "PI 2026.1" },
     });
-    fireEvent.change(screen.getByLabelText("Início"), {
+    fireEvent.change(screen.getByLabelText(/^Início/), {
       target: { value: "2026-09-01" },
     });
     fireEvent.click(

@@ -1,0 +1,95 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_py",
+      "label": "gerar-catalogo.py",
+      "file_type": "code",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_q",
+      "label": "q()",
+      "file_type": "code",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L18",
+      "_callable": true
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_arr",
+      "label": "arr()",
+      "file_type": "code",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L22",
+      "_callable": true
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_py",
+      "target": "json",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_py",
+      "target": "sys",
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_py",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_q",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_py",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_arr",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_arr",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_q",
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L24",
+      "weight": 1.0
+    }
+  ],
+  "raw_calls": [
+    {
+      "caller_nid": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_q",
+      "callee": "replace",
+      "is_member_call": true,
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L20",
+      "receiver": null
+    },
+    {
+      "caller_nid": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_packages_database_scripts_gerar_catalogo_arr",
+      "callee": "join",
+      "is_member_call": true,
+      "source_file": "packages/database/scripts/gerar-catalogo.py",
+      "source_location": "L24",
+      "receiver": null
+    }
+  ]
+}

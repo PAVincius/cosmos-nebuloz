@@ -1,0 +1,124 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["scripts/*.{ts,mts}", "tsup.config.ts"],
+      "project": ["scripts/**/*.{ts,mts}"]
+    },
+    "apps/app": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "app/**/{error,loading,not-found,global-error}.tsx",
+        "app/**/{opengraph-image,icon,apple-icon}.tsx",
+        "middleware.ts",
+        "instrumentation.ts",
+        "next.config.ts",
+        "scripts/**/*.ts",
+        "e2e/**/*.ts",
+        "__tests__/**/*.{test,spec}.{ts,tsx}",
+        "vitest-mocks/**/*.ts",
+        // Carregado por path.resolve em scripts/ux-swarm.ts, não por import —
+        // resolução estática não alcança.
+        "playwright.swarm.config.ts",
+        // Shim de augmentação de tipo: só faz `import "@repo/collaboration/config"`
+        // para o app enxergar Presence/Storage/UserMeta. Ninguém o importa; ele
+        // entra pelo `include` do tsconfig. Apagar degrada tipo, não quebra build.
+        "liveblocks.config.ts"
+      ]
+    },
+    "apps/api": {
+      "entry": [
+        "app/**/route.ts",
+        "app/**/{error,loading,not-found,global-error}.tsx",
+        "app/**/{opengraph-image,icon,apple-icon,sitemap,robots,manifest}.{ts,tsx}",
+        "middleware.ts",
+        "instrumentation.ts",
+        "next.config.ts",
+        "scripts/**/*.{ts,js}",
+        "__tests__/**/*.{test,spec}.ts"
+      ]
+    },
+    "apps/backoffice": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "app/**/{error,loading,not-found,global-error,template,default}.tsx",
+        "app/**/{opengraph-image,icon,apple-icon,sitemap,robots,manifest}.{ts,tsx}",
+        "middleware.ts",
+        "next.config.ts",
+        "__tests__/**/*.{test,spec}.{ts,tsx}"
+      ]
+    },
+    "apps/web": {
+      "entry": [
+        "app/**/page.tsx",
+        "app/**/layout.tsx",
+        "app/**/route.ts",
+        "app/**/{error,loading,not-found,global-error,template,default}.tsx",
+        "app/**/{opengraph-image,icon,apple-icon,sitemap,robots,manifest}.{ts,tsx}",
+        "middleware.ts",
+        "next.config.ts"
+      ]
+    },
+    "apps/storybook": {
+      "entry": [".storybook/{main,preview}.ts", "**/*.stories.tsx"]
+    },
+    "apps/docs": {
+      "entry": ["docusaurus.config.ts", "sidebars.ts", "src/**/*.{ts,tsx}"]
+    },
+    "apps/email": {
+      // `index.ts` é stub deliberado: existe só para o `tsc --noEmit` do app
+      // ter entrada — os templates moram em @repo/email. Sem ele o typecheck
+      // morre em TS18003 "No inputs were found".
+      "entry": ["emails/**/*.tsx", "index.ts"]
+    },
+    "apps/studio": {
+      "entry": ["*.{ts,tsx}"]
+    },
+    "packages/*": {
+      "entry": [
+        "index.ts",
+        "src/index.ts",
+        "keys.ts",
+        "**/__tests__/**/*.{test,spec}.ts"
+      ]
+    },
+    "packages/database": {
+      "entry": [
+        "index.ts",
+        "keys.ts",
+        "prisma.config.ts",
+        "scripts/**/*.{ts,mts}",
+        "seed-*.ts"
+      ]
+    },
+    "packages/design-system": {
+      "entry": [
+        "index.tsx",
+        "index.ts",
+        "components/**/*.tsx",
+        "lib/**/*.ts",
+        "hooks/**/*.ts"
+      ]
+    }
+  },
+  "ignore": [
+    // Stubs alvo de `resolve.alias` nos vitest.config: entram por caminho em
+    // string, não por import, então a resolução estática nunca os alcança.
+    // Apagá-los quebra as suítes que dependem do alias de `server-only`.
+    "**/vitest-mocks/**",
+    "**/__tests__/server-only.ts",
+    "**/generated/**",
+    "**/.design-ref/**",
+    "**/v0/**",
+    "**/graphify-out/**",
+    "**/playwright-report/**",
+    "**/test-results/**",
+    "**/*.d.ts"
+  ],
+  "ignoreDependencies": ["@repo/typescript-config", "server-only", "sharp"],
+  "ignoreWorkspaces": ["packages/typescript-config"]
+}

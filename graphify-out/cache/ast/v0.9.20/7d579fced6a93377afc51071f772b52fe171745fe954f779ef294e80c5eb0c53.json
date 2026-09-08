@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_md",
+      "label": "story-059-tela-riscos-roam.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "label": "Story 059 \u2014 Tela Riscos (registro ROAM do ART)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_001_transi\u00e7\u00e3o_roam_com_guard_por_desfecho",
+      "label": "AC-001: Transi\u00e7\u00e3o ROAM com guard por desfecho",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_002_a_trilha_\u00e9_o_que_torna_o_commitment_audit\u00e1vel",
+      "label": "AC-002: A trilha \u00e9 o que torna o commitment audit\u00e1vel",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_003_unclassified_n\u00e3o_\u00e9_destino",
+      "label": "AC-003: `UNCLASSIFIED` n\u00e3o \u00e9 destino",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_004_matriz_5_5_sobre_o_vocabul\u00e1rio_de_cinco_n\u00edveis",
+      "label": "AC-004: Matriz 5\u00d75 sobre o vocabul\u00e1rio de cinco n\u00edveis",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_005_estado_vazio_e_estado_de_erro_sem_risco_fabricado",
+      "label": "AC-005: Estado vazio e estado de erro sem risco fabricado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L140"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_001_transi\u00e7\u00e3o_roam_com_guard_por_desfecho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L46",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_002_a_trilha_\u00e9_o_que_torna_o_commitment_audit\u00e1vel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_003_unclassified_n\u00e3o_\u00e9_destino",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_004_matriz_5_5_sobre_o_vocabul\u00e1rio_de_cinco_n\u00edveis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_ac_005_estado_vazio_e_estado_de_erro_sem_risco_fabricado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_story_059_tela_riscos_registro_roam_do_art",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_riscos_roam_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-riscos-roam.md",
+      "source_location": "L140",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

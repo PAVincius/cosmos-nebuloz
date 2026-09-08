@@ -1,0 +1,271 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_md",
+      "label": "2026-08-06-owasp-llm-top10-cosmos.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "label": "OWASP LLM Top 10 (2025) aplicado ao Cosmos",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_ajuste_de_escopo_antes_de_tudo",
+      "label": "Ajuste de escopo antes de tudo",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_estado",
+      "label": "Estado",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "label": "Achados",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_cr\u00edtico_1_o_guard_de_viewer_do_copiloto_\u00e9_c\u00f3digo_morto",
+      "label": "CR\u00cdTICO-1 \u00b7 O guard de VIEWER do copiloto \u00e9 c\u00f3digo morto",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_1_o_cliente_escolhe_o_role_de_cada_mensagem",
+      "label": "ALTO-1 \u00b7 O cliente escolhe o `role` de cada mensagem",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_2_hierarquia_de_instru\u00e7\u00f5es_invertida",
+      "label": "ALTO-2 \u00b7 Hierarquia de instru\u00e7\u00f5es invertida",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L117"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_3_quota_conta_intera\u00e7\u00e3o_n\u00e3o_token_o_payload_\u00e9_ilimitado",
+      "label": "ALTO-3 \u00b7 Quota conta intera\u00e7\u00e3o, n\u00e3o token; o payload \u00e9 ilimitado",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_1_rate_limit_falha_aberto",
+      "label": "M\u00c9DIO-1 \u00b7 Rate limit falha aberto",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L163"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_2_prompt_e_resposta_completos_v\u00e3o_para_o_langfuse",
+      "label": "M\u00c9DIO-2 \u00b7 Prompt e resposta completos v\u00e3o para o Langfuse",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_3_packages_ai_n\u00e3o_\u00e9_server_only",
+      "label": "M\u00c9DIO-3 \u00b7 `packages/ai` n\u00e3o \u00e9 `server-only`",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_4_back_office_sem_rate_limiting",
+      "label": "M\u00c9DIO-4 \u00b7 Back-office sem rate limiting",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L204"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_o_que_passa_verificar_n\u00e3o_reinventar",
+      "label": "O que passa \u2014 verificar, n\u00e3o reinventar",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L212"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_d\u00edvidas_fora_do_escopo_de_ia_j\u00e1_conhecidas",
+      "label": "D\u00edvidas fora do escopo de IA, j\u00e1 conhecidas",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L231"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_olhando_para_frente",
+      "label": "Olhando para frente",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_ordem_sugerida",
+      "label": "Ordem sugerida",
+      "file_type": "document",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L245"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_ajuste_de_escopo_antes_de_tudo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_estado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_cr\u00edtico_1_o_guard_de_viewer_do_copiloto_\u00e9_c\u00f3digo_morto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_1_o_cliente_escolhe_o_role_de_cada_mensagem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_2_hierarquia_de_instru\u00e7\u00f5es_invertida",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_alto_3_quota_conta_intera\u00e7\u00e3o_n\u00e3o_token_o_payload_\u00e9_ilimitado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_1_rate_limit_falha_aberto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L163",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_2_prompt_e_resposta_completos_v\u00e3o_para_o_langfuse",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_3_packages_ai_n\u00e3o_\u00e9_server_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_achados",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_m\u00e9dio_4_back_office_sem_rate_limiting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L204",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_o_que_passa_verificar_n\u00e3o_reinventar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L212",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_d\u00edvidas_fora_do_escopo_de_ia_j\u00e1_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L231",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_olhando_para_frente",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_owasp_llm_top_10_2025_aplicado_ao_cosmos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_2026_08_06_owasp_llm_top10_cosmos_ordem_sugerida",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/2026-08-06-owasp-llm-top10-cosmos.md",
+      "source_location": "L245",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

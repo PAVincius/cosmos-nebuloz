@@ -1,0 +1,23 @@
+{
+  "apps/app/__tests__/actions/safe-copilot/pricing-tools.test.ts": 1064,
+  "apps/app/__tests__/charter/compliance-screen.test.tsx": 900,
+  "apps/app/__tests__/charter/compliance.test.ts": 989,
+  "apps/app/app/(charter)/actions/compliance.ts": 1025,
+  "apps/app/components/charter/base.tsx": 1112,
+  "apps/app/components/charter/modals.tsx": 2180,
+  "apps/app/components/charter/screens/compliance.tsx": 1026,
+  "apps/app/components/charter/screens/policy.tsx": 943,
+  "apps/app/components/cosmos/screens/epic-detail-client.tsx": 884,
+  "apps/app/components/cosmos/screens/executive.tsx": 820,
+  "apps/app/components/cosmos/screens/kanban.tsx": 1614,
+  "apps/app/components/cosmos/screens/measure.tsx": 975,
+  "apps/app/components/cosmos/screens/risks.tsx": 905,
+  "apps/app/components/cosmos/screens/wsjf-client.tsx": 1269,
+  "apps/app/lib/cosmos-data.ts": 1009,
+  "apps/app/scripts/seed-charter.ts": 1514,
+  "apps/app/scripts/seed-e2e.ts": 3799,
+  "apps/app/scripts/verify-seed.ts": 964,
+  "packages/database/scripts/regulacao-corpora.ts": 804,
+  "packages/database/seed-safe-full.ts": 1675,
+  "packages/design-system/cosmos/kit.tsx": 1631
+}

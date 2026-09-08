@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "label": "nextjs-app-router.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_core_expertise",
+      "label": "Core Expertise",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_when_invoked",
+      "label": "When Invoked",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_file_conventions_you_must_follow",
+      "label": "File Conventions You Must Follow",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_implementation_patterns",
+      "label": "Implementation Patterns",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_creating_a_new_page",
+      "label": "Creating a New Page",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_layout_with_children",
+      "label": "Layout with Children",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_error_boundary",
+      "label": "Error Boundary",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_best_practices",
+      "label": "Best Practices",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_common_issues_and_solutions",
+      "label": "Common Issues and Solutions",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_performance_considerations",
+      "label": "Performance Considerations",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L113"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_core_expertise",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_when_invoked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_file_conventions_you_must_follow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_implementation_patterns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_implementation_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_creating_a_new_page",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_implementation_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_layout_with_children",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_implementation_patterns",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_error_boundary",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_common_issues_and_solutions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_app_router_performance_considerations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-app-router.md",
+      "source_location": "L113",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

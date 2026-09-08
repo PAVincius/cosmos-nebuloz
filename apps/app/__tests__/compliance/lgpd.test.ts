@@ -10,6 +10,7 @@ const dbMocks = vi.hoisted(() => ({
   userFindUnique: vi.fn(),
   standupFindMany: vi.fn(),
   copilotFindMany: vi.fn(),
+  meetingParticipantFindMany: vi.fn().mockResolvedValue([]),
   auditCreate: vi.fn(),
   auditFindMany: vi.fn(),
 }));
@@ -24,6 +25,7 @@ vi.mock("@repo/database", () => ({
     },
     copilotMessage: { updateMany: dbMocks.copilotUpdateMany },
     copilotSession: { findMany: dbMocks.copilotFindMany },
+    meetingParticipant: { findMany: dbMocks.meetingParticipantFindMany },
     auditLog: { create: dbMocks.auditCreate, findMany: dbMocks.auditFindMany },
   },
 }));
@@ -131,6 +133,56 @@ describe("buildPortabilityExport (AC-004)", () => {
 
     expect(payload.subject).toBeNull();
     expect(payload.standupEntries).toHaveLength(1);
+  });
+
+  it("includes meeting participations, keyed by subject email (AC-004, passo 8)", async () => {
+    dbMocks.meetingParticipantFindMany.mockResolvedValue([
+      {
+        isOrganizer: true,
+        isExternal: false,
+        transcript: {
+          id: "tx-1",
+          meetingId: "m-1",
+          title: "PI Planning",
+          createdAt: new Date("2026-02-01"),
+        },
+      },
+    ]);
+
+    const payload = await buildPortabilityExport(
+      SUBJECT_ID,
+      TENANT_ID,
+      EXPORTED_AT
+    );
+
+    expect(dbMocks.meetingParticipantFindMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: TENANT_ID, email: "alice@example.com" },
+      })
+    );
+    expect(payload.meetingParticipations).toEqual([
+      {
+        transcriptId: "tx-1",
+        meetingId: "m-1",
+        title: "PI Planning",
+        isOrganizer: true,
+        isExternal: false,
+        createdAt: new Date("2026-02-01"),
+      },
+    ]);
+  });
+
+  it("meetingParticipations is empty when subject has no email (user not found)", async () => {
+    dbMocks.userFindUnique.mockResolvedValue(null);
+
+    const payload = await buildPortabilityExport(
+      SUBJECT_ID,
+      TENANT_ID,
+      EXPORTED_AT
+    );
+
+    expect(dbMocks.meetingParticipantFindMany).not.toHaveBeenCalled();
+    expect(payload.meetingParticipations).toEqual([]);
   });
 });
 

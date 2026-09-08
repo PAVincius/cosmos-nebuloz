@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_md",
+      "label": "2026-08-22-linear-pull-corrida-create.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "label": "Corrida create-vs-create no sync do Linear (limita\u00e7\u00e3o do PR #91)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corre\u00e7\u00e3o_op\u00e7\u00e3o_1_unique_constraint_converg\u00eancia_no_p2002",
+      "label": "Corre\u00e7\u00e3o (op\u00e7\u00e3o 1 \u2014 unique constraint + converg\u00eancia no P2002)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_alternativas_rejeitadas",
+      "label": "Alternativas rejeitadas",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_rela\u00e7\u00e3o_com_neb_122",
+      "label": "Rela\u00e7\u00e3o com NEB-122",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_tdd",
+      "label": "TDD",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_pend\u00eancias",
+      "label": "Pend\u00eancias",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L61"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corre\u00e7\u00e3o_op\u00e7\u00e3o_1_unique_constraint_converg\u00eancia_no_p2002",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_alternativas_rejeitadas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_rela\u00e7\u00e3o_com_neb_122",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_tdd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_corrida_create_vs_create_no_sync_do_linear_limita\u00e7\u00e3o_do_pr_91",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_08_22_linear_pull_corrida_create_pend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-08-22-linear-pull-corrida-create.md",
+      "source_location": "L61",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

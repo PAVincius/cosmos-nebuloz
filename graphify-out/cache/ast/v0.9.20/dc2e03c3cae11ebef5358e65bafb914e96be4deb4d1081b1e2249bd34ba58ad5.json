@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_md",
+      "label": "story-053-tela-temas-estrategicos.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "label": "Story 053 \u2014 Tela Temas Estrat\u00e9gicos (Strategy Map de investimento)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_001_strategy_map_lista_s\u00f3_tema_ativo_com_investimento_real_vs_alvo",
+      "label": "AC-001: Strategy Map lista s\u00f3 tema ativo, com investimento real vs. alvo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_002_m\u00e1ximo_de_7_temas_ativos",
+      "label": "AC-002: M\u00e1ximo de 7 temas ativos",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L53"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_003_arquivar_\u00e9_n\u00e3o_cascateante",
+      "label": "AC-003: Arquivar \u00e9 n\u00e3o-cascateante",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_004_alerta_de_concentra\u00e7\u00e3o_em_60",
+      "label": "AC-004: Alerta de concentra\u00e7\u00e3o em 60%",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_005_pesos_alvo_somam_100_e_s\u00f3_valem_para_tema_ativo",
+      "label": "AC-005: Pesos-alvo somam 100% e s\u00f3 valem para tema ativo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_006_estado_vazio_e_estado_de_erro_sem_dado_fabricado",
+      "label": "AC-006: Estado vazio e estado de erro sem dado fabricado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L115"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L130"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_001_strategy_map_lista_s\u00f3_tema_ativo_com_investimento_real_vs_alvo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_002_m\u00e1ximo_de_7_temas_ativos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_003_arquivar_\u00e9_n\u00e3o_cascateante",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_004_alerta_de_concentra\u00e7\u00e3o_em_60",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_005_pesos_alvo_somam_100_e_s\u00f3_valem_para_tema_ativo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_ac_006_estado_vazio_e_estado_de_erro_sem_dado_fabricado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_story_053_tela_temas_estrat\u00e9gicos_strategy_map_de_investimento",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_053_tela_temas_estrategicos_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-053-tela-temas-estrategicos.md",
+      "source_location": "L130",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

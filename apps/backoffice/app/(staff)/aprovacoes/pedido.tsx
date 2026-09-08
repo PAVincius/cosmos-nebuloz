@@ -85,21 +85,32 @@ export function Pedido({
               flexWrap: "wrap",
             }}
           >
-            <span className="mono" style={{ fontSize: 12.5, fontWeight: 700 }}>
+            <span
+              className="mono"
+              style={{ fontSize: "var(--fs-base)", fontWeight: 700 }}
+            >
               {pedido.acao}
             </span>
-            <span style={{ fontSize: 12, color: "var(--ink-faint)" }}>
+            <span
+              style={{ fontSize: "var(--fs-base)", color: "var(--ink-faint)" }}
+            >
               {pedido.alvoTipo} · {pedido.alvoLabel}
             </span>
           </div>
 
-          <p style={{ margin: "9px 0 0", fontSize: 13, lineHeight: 1.6 }}>
+          <p
+            style={{
+              margin: "9px 0 0",
+              fontSize: "var(--fs-base)",
+              lineHeight: 1.6,
+            }}
+          >
             {pedido.motivo}
           </p>
           <p
             style={{
               margin: "5px 0 0",
-              fontSize: 12.5,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-muted)",
             }}
           >
@@ -109,7 +120,7 @@ export function Pedido({
             className="mono"
             style={{
               margin: "9px 0 0",
-              fontSize: 10.5,
+              fontSize: "var(--fs-nota)",
               color: "var(--ink-faint)",
             }}
           >
@@ -132,7 +143,7 @@ export function Pedido({
             margin: "12px 0 0",
             paddingTop: 11,
             borderTop: "1px solid var(--hairline)",
-            fontSize: 11.5,
+            fontSize: "var(--fs-nota)",
             color: "var(--ink-faint)",
           }}
         >

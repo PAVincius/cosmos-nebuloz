@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_md",
+      "label": "CONTRIBUTING.md",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "label": "Contributing to This Project",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_getting_started",
+      "label": "Getting Started",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_pull_request_guidelines",
+      "label": "Pull Request Guidelines",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L15"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_code_style",
+      "label": "Code Style",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_reporting_issues",
+      "label": "Reporting Issues",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_questions_or_need_help",
+      "label": "Questions or Need Help?",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_code_of_conduct",
+      "label": "Code of Conduct",
+      "file_type": "document",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L44"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_getting_started",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_pull_request_guidelines",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L15",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_md",
+      "target": "docs_overview_mdx",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_code_style",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_reporting_issues",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_questions_or_need_help",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_contributing_to_this_project",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_github_contributing_code_of_conduct",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".github/CONTRIBUTING.md",
+      "source_location": "L44",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

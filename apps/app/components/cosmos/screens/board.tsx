@@ -19,7 +19,7 @@ import {
 //
 // Sem drag-and-drop de propósito: a transição é um <select> por story, o que
 // cumpre o AC-003, funciona no teclado e não esconde a regra atrás de um gesto.
-import { useCallback, useEffect, useState } from "react";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
 import type {
   BoardStoryView,
   TeamBoardView,
@@ -27,13 +27,29 @@ import type {
 import { getTeamBoard } from "@/app/(cosmos)/actions/board";
 import { COLUNAS } from "@/app/(cosmos)/actions/board.constants";
 import { createStory, updateStoryStatus } from "@/app/actions/stories";
+import type { InvestLevel } from "@/app/actions/stories/invest-utils";
+import { evaluateStoryInvest } from "@/app/actions/stories/invest-utils";
 import {
   createTask,
   listTasksByStory,
   updateTaskStatus,
 } from "@/app/actions/tasks";
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  Segmented,
+  TextArea,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const controlStyle = {
@@ -253,83 +269,316 @@ function StoryCard({
   );
 }
 
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
+
+// Escala Fibonacci: estimar em pontos livres devolve 4, 6, 7 — números que
+// fingem uma precisão que a estimativa não tem. Os saltos da escala são o
+// mecanismo, não decoração.
+const FIBONACCI = [1, 2, 3, 5, 8, 13, 21];
+
+const PRIORIDADES = [
+  { value: "critical", label: "Crítica" },
+  { value: "high", label: "Alta" },
+  { value: "medium", label: "Média" },
+  { value: "low", label: "Baixa" },
+];
+
+// O tom do modal segue a prioridade porque é assim que a story já é lida no
+// card: a cor é o primeiro sinal do que ela custa ao time.
+const PRIORITY_MODAL_TONE: Record<string, string> = {
+  critical: "red",
+  high: "amber",
+  medium: "accent",
+  low: "blue",
+};
+
+const INVEST_BADGE_TONE: Record<string, "green" | "amber" | "red"> = {
+  GREEN: "green",
+  AMBER: "amber",
+  RED: "red",
+};
+
+const INVEST_LEVEL_COLOR: Record<InvestLevel, string> = {
+  ERROR: "var(--red-text)",
+  WARN: "var(--amber-text)",
+  INFO: "var(--ink-faint)",
+};
+
 // AC-004 — a story nasce na sprint selecionada. Criar sem sprintId a deixaria
 // fora do próprio board que a criou.
 function NovaStoryModal({
   sprintId,
+  sprintName,
   onCreated,
 }: {
   sprintId: string;
+  sprintName?: string;
   onCreated: () => void;
 }) {
   const { close } = useModal();
   const [title, setTitle] = useState("");
-  const [storyPoints, setStoryPoints] = useState(1);
+  const [description, setDescription] = useState("");
+  const [acceptanceCriteria, setAcceptanceCriteria] = useState("");
+  const [storyPoints, setStoryPoints] = useState("1");
+  const [priority, setPriority] = useState("medium");
+  const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  const tone = PRIORITY_MODAL_TONE[priority] ?? "accent";
+  const pontos = Number(storyPoints);
+  // Mesma função que a action roda ao gravar: o veredito INVEST aparece
+  // enquanto ainda dá para consertar a story, não depois de criada.
+  const invest = evaluateStoryInvest({
+    title,
+    description: description.trim() || null,
+    acceptanceCriteria: acceptanceCriteria.trim() || null,
+    storyPoints: pontos,
+    status: "BACKLOG",
+  });
 
   const create = async () => {
-    if (!title.trim()) {
+    if (!title.trim() || saving) {
       return;
     }
+    setSaving(true);
     // biome-ignore lint/correctness/useHookAtTopLevel: not a React hook, plain async helper
     const res = await useActionToast(
-      () => createStory({ sprintId, title: title.trim(), storyPoints }),
+      () =>
+        createStory({
+          sprintId,
+          title: title.trim(),
+          storyPoints: pontos,
+          priority,
+          ...(description.trim() ? { description: description.trim() } : {}),
+          ...(acceptanceCriteria.trim()
+            ? { acceptanceCriteria: acceptanceCriteria.trim() }
+            : {}),
+        }),
       {
         loading: "Criando story...",
         success: "Story criada.",
         error: (err: string) => `Não foi possível criar a story: ${err}`,
       }
     );
+    setSaving(false);
     if (res.ok) {
       close();
       onCreated();
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="kanban" size={16} strokeWidth={2.4} />}
-      subtitle="A story entra na sprint selecionada"
-      title="Nova story"
-      width={440}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="story-title" style={labelStyle}>
-            Título da story
-          </label>
-          <input
-            autoFocus
-            id="story-title"
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Ex: Exportar relatório"
-            style={{ ...controlStyle, width: "100%" }}
-            value={title}
-          />
-        </div>
-        <div>
-          <label htmlFor="story-points" style={labelStyle}>
-            Story points
-          </label>
-          <input
-            id="story-points"
-            max={100}
-            min={0}
-            onChange={(e) => setStoryPoints(Number(e.target.value))}
-            style={{ ...controlStyle, width: "100%" }}
-            type="number"
-            value={storyPoints}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar story
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar story"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="kanban" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Item do Team Backlog — entra na sprint selecionada, com tasks dentro dela"
+        title="Nova story"
+        tone={tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                className="mono"
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 10.5,
+                  marginBottom: 10,
+                }}
+              >
+                {sprintName ?? "Sprint selecionada"}
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                  marginBottom: 10,
+                }}
+              >
+                {title || "Título da story"}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  marginBottom: 14,
+                }}
+              >
+                <Badge tone={PRIORITY_TONE[priority] ?? "neutral"}>
+                  {PRIORIDADES.find((p) => p.value === priority)?.label}
+                </Badge>
+                <Badge tone="neutral">{`${pontos} SP`}</Badge>
+              </div>
+
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 8,
+                }}
+              >
+                <span style={previewLabelStyle}>INVEST</span>
+                <Badge soft tone={INVEST_BADGE_TONE[invest.badge] ?? "neutral"}>
+                  {invest.badge}
+                </Badge>
+              </div>
+              <div
+                style={{ display: "flex", flexDirection: "column", gap: 4 }}
+                // O critério reprovado só é acionável se disser o que falta.
+                title={invest.criteria
+                  .filter((c) => !c.pass)
+                  .map((c) => c.hint)
+                  .join(" · ")}
+              >
+                {invest.criteria.map((c) => (
+                  <div
+                    key={c.key}
+                    style={{
+                      alignItems: "center",
+                      color: c.pass
+                        ? "var(--ink-muted)"
+                        : INVEST_LEVEL_COLOR[c.level],
+                      display: "flex",
+                      fontSize: 11.5,
+                      gap: 6,
+                    }}
+                  >
+                    <Icon
+                      name={c.pass ? "check" : "alert"}
+                      size={11}
+                      strokeWidth={2.4}
+                    />
+                    {c.label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Título da story" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Exportar relatório"
+              required
+              value={title}
+            />
+          </FormField>
+          <FormField
+            hint='O formato "Como... quero... para que..." é o que torna a story negociável'
+            label="Descrição"
+          >
+            <TextArea
+              onChange={setDescription}
+              placeholder="Como analista, quero exportar o relatório para que eu possa auditá-lo fora do sistema"
+              rows={3}
+              value={description}
+            />
+          </FormField>
+          <FormField
+            hint="Sem critério não há como testar a story — é o INVEST que trava"
+            label="Critérios de aceitação"
+          >
+            <TextArea
+              onChange={setAcceptanceCriteria}
+              placeholder="Dado que... quando... então..."
+              rows={3}
+              value={acceptanceCriteria}
+            />
+          </FormField>
+          <FormField hint="Escala Fibonacci" label="Story points">
+            <Segmented
+              onChange={setStoryPoints}
+              options={FIBONACCI.map((f) => ({
+                value: String(f),
+                label: String(f),
+              }))}
+              tone={tone}
+              value={storyPoints}
+            />
+          </FormField>
+          <FormField label="Prioridade">
+            <Segmented
+              onChange={setPriority}
+              options={PRIORIDADES}
+              tone={tone}
+              value={priority}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 
@@ -396,6 +645,10 @@ function BoardBody() {
                 <NovaStoryModal
                   onCreated={load}
                   sprintId={data.selectedSprintId as string}
+                  sprintName={
+                    data.sprints.find((s) => s.id === data.selectedSprintId)
+                      ?.name
+                  }
                 />
               )
             }

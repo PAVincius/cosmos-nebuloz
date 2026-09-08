@@ -1,0 +1,287 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_md",
+      "label": "2026-08-19-charter-bloqueios-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "label": "Charter \u2014 os dois bloqueios do mapa de conformidade",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_1_por_que_este_trabalho_existe",
+      "label": "1. Por que este trabalho existe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_o_enunciado_dos_bloqueios_corrigido",
+      "label": "2. O enunciado dos bloqueios, corrigido",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_1_n\u00e3o_\u00e9_o_seed_esqueceu_de_chamar_publishsetversion",
+      "label": "2.1 N\u00e3o \u00e9 \"o seed esqueceu de chamar `publishSetVersion`\"",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_2_vincular_pol\u00edtica_a_caso_de_uso_\u00e9_quase_tautologia",
+      "label": "2.2 \"Vincular pol\u00edtica a caso de uso\" \u00e9 quase tautologia",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_3_a_fronteira_que_decide_o_desenho",
+      "label": "3. A fronteira que decide o desenho",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_4_escopo",
+      "label": "4. Escopo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L87"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "label": "5. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_1_seed_tr\u00eas_caminhos_em_vez_de_dois",
+      "label": "5.1 Seed: tr\u00eas caminhos em vez de dois",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_2_app_adoptsetversion",
+      "label": "5.2 App: `adoptSetVersion`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_3_listrequirementsets_passa_a_saber_de_sucess\u00e3o",
+      "label": "5.3 `listRequirementSets` passa a saber de sucess\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L170"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_4_evidencia_ganha_denominador",
+      "label": "5.4 `Evidencia` ganha denominador",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L190"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_5_tela_de_alcance_da_pol\u00edtica",
+      "label": "5.5 Tela de alcance da pol\u00edtica",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L233"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_6_ui_para_publishsetversion",
+      "label": "5.6 UI para `publishSetVersion`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L280"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_6_erro",
+      "label": "6. Erro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L290"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_7_teste",
+      "label": "7. Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L302"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_8_lacunas_conhecidas",
+      "label": "8. Lacunas conhecidas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L335"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_1_por_que_este_trabalho_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_o_enunciado_dos_bloqueios_corrigido",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_o_enunciado_dos_bloqueios_corrigido",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_1_n\u00e3o_\u00e9_o_seed_esqueceu_de_chamar_publishsetversion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_o_enunciado_dos_bloqueios_corrigido",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_2_2_vincular_pol\u00edtica_a_caso_de_uso_\u00e9_quase_tautologia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_3_a_fronteira_que_decide_o_desenho",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_4_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L87",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_1_seed_tr\u00eas_caminhos_em_vez_de_dois",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_2_app_adoptsetversion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_3_listrequirementsets_passa_a_saber_de_sucess\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_4_evidencia_ganha_denominador",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_5_tela_de_alcance_da_pol\u00edtica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_arquitetura",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_5_6_ui_para_publishsetversion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L280",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_6_erro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L290",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_7_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L302",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_charter_os_dois_bloqueios_do_mapa_de_conformidade",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_19_charter_bloqueios_design_8_lacunas_conhecidas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-19-charter-bloqueios-design.md",
+      "source_location": "L335",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

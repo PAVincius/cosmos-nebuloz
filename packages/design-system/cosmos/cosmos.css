@@ -41,6 +41,30 @@
   --r-pill: 999px;
   --pad: 20px;
   --gap: 16px;
+
+  /* Escala tipográfica.
+   *
+   * Antes disto não havia nenhuma: os tamanhos eram literais nos componentes,
+   * e o back-office acumulou 15 valores distintos em 185 usos. Noventa e três
+   * por cento deles caíam entre 10px e 13px — sete valores numa faixa de três
+   * pixels. Meio pixel de diferença não carrega informação: não separa um
+   * rótulo de um título, só multiplica o vocabulário. O efeito medido era uma
+   * tela com doze tamanhos e a hierarquia sustentada por peso e cor, porque
+   * tamanho havia deixado de significar qualquer coisa.
+   *
+   * Seis degraus, com salto perceptível entre vizinhos. O piso é 10px e é
+   * deliberado: só o eyebrow e o carimbo mono chegam lá, sempre em maiúsculas
+   * e com entreletra aberta, que é o que mantém 10px legível. Texto corrido
+   * começa em --fs-base.
+   *
+   * Estes são os degraus, não uma sugestão de uso: um tamanho fora deles é um
+   * degrau novo, e degrau novo é como os quinze apareceram. */
+  --fs-micro: 10px;
+  --fs-nota: 11.5px;
+  --fs-base: 13px;
+  --fs-forte: 15px;
+  --fs-titulo: 19px;
+  --fs-display: 22px;
   --shell-shadow:
     0 1px 2px rgba(16, 22, 40, 0.04), 0 1px 1px rgba(16, 22, 40, 0.03);
 
@@ -319,6 +343,17 @@
   box-shadow: var(--hover-shadow);
   border-color: var(--hairline-strong);
 }
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-root .lift {
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      background 0.25s ease;
+  }
+  .cosmos-root .lift:hover {
+    transform: none;
+  }
+}
 
 /* nav item */
 .cosmos-root .navitem {
@@ -352,6 +387,11 @@
   }
   to {
     transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-root .fade-in {
+    animation: none;
   }
 }
 
@@ -532,4 +572,88 @@
   .tree-chevron {
     transition: none;
   }
+}
+
+/* ============ Responsivo do shell ============
+   O Cosmos nasceu do handoff desktop e não tinha nenhuma media query de
+   largura. Abaixo de 1024px a sidebar de 256px vira gaveta: os estilos
+   inline do shell continuam mandando no desktop, e só este bloco muda o
+   comportamento no estreito. Fechada, a gaveta é `visibility: hidden` —
+   assim ela sai da ordem de foco sem precisar de aria-hidden condicional,
+   que quebraria o desktop. */
+
+/* Base (desktop): gaveta e scrim não existem. Declarado antes da media
+   query — media query não soma especificidade, então a ordem no arquivo é
+   o que decide. */
+.cosmos-root .cosmos-scrim,
+.cosmos-root .cosmos-menu-btn {
+  display: none;
+}
+
+/* Padding do topbar e da área de conteúdo vive aqui, não em style inline:
+   inline vence stylesheet, e a media query abaixo precisa poder sobrepor. */
+.cosmos-root .cosmos-topbar {
+  padding: 0 22px;
+}
+.cosmos-root .cosmos-content {
+  padding: 24px 28px 40px;
+}
+
+@media (max-width: 1023px) {
+  .cosmos-root .cosmos-sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 60;
+    visibility: hidden;
+    transform: translateX(-100%);
+    transition:
+      transform 0.26s cubic-bezier(0.2, 0.8, 0.3, 1),
+      visibility 0.26s;
+    box-shadow: 0 0 60px -12px rgba(0, 0, 0, 0.5);
+  }
+  .cosmos-root .cosmos-sidebar[data-open="true"] {
+    visibility: visible;
+    transform: translateX(0);
+  }
+  .cosmos-root .cosmos-scrim {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    background: var(--scrim);
+    border: 0;
+    padding: 0;
+    animation: cosmos-fadeIn 0.2s ease;
+  }
+  .cosmos-root .cosmos-menu-btn {
+    display: inline-flex;
+  }
+  .cosmos-root .cosmos-topbar {
+    padding: 0 12px;
+  }
+  .cosmos-root .cosmos-content {
+    padding: 16px 16px 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cosmos-root .cosmos-sidebar {
+    transition: none;
+  }
+  .cosmos-root .cosmos-scrim {
+    animation: none;
+  }
+}
+
+/* Pontos e barras de gráfico agora recebem foco de teclado — sem anel
+   visível eles seriam alvos invisíveis para quem navega por Tab. */
+.cosmos-root .chart-hit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r-xs);
+}
+.cosmos-root g.chart-hit:focus-visible {
+  outline-offset: 0;
 }

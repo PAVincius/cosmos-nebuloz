@@ -31,7 +31,15 @@ import {
   DEGRADED_AFTER_CONSECUTIVE_FAILURES,
   FAILING_DELIVERY_STATUSES,
 } from "@/app/(cosmos)/actions/webhooks.constants";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, TextInput } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 function isFailing(status: string | null): boolean {
@@ -102,29 +110,58 @@ const fieldLabelStyle: CSSProperties = {
   marginBottom: 6,
 };
 
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
+const WEBHOOK_TONE = "accent";
+
+// Chip de evento. `Segmented` do modal-form é seleção única e a assinatura de
+// um endpoint é sempre múltipla — daí o grupo local, no formato do design.
+function EventChip({
+  label,
+  value,
+  on,
+  onToggle,
+}: {
+  label: string;
+  value: string;
+  on: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      aria-pressed={on}
+      onClick={onToggle}
+      style={{
+        background: on ? `var(--${WEBHOOK_TONE}-soft)` : "var(--surface)",
+        border: `1px solid ${on ? `rgba(var(--${WEBHOOK_TONE}-rgb),.4)` : "var(--hairline-strong)"}`,
+        borderRadius: "var(--r-sm)",
+        color: on ? `var(--${WEBHOOK_TONE}-text)` : "var(--ink-muted)",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        fontSize: 11.5,
+        fontWeight: 600,
+        padding: "6px 10px",
+      }}
+      title={value}
+      type="button"
+    >
+      {label}
+    </button>
+  );
+}
 
 function NewWebhookModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [url, setUrl] = useState("");
   const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
   const [created, setCreated] = useState<{
     id: string;
     secret: string;
   } | null>(null);
 
   const toggleEvent = (value: string) => {
+    setDirty(true);
     setEventTypes((prev) =>
       prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
@@ -152,13 +189,26 @@ function NewWebhookModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !(saving || created));
+
   if (created) {
     return (
       <ModalCard
-        icon={<Icon name="webhook" size={16} />}
+        footer={
+          <>
+            <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+              Guarde o segredo antes de fechar.
+            </span>
+            <Button onClick={close} size="sm" variant="primary">
+              Fechar
+            </Button>
+          </>
+        }
+        icon={<Icon name="webhook" size={19} strokeWidth={1.9} />}
         subtitle="Copie o segredo agora — ele não será exibido novamente"
         title="Webhook criado"
-        width={480}
+        tone="amber"
+        width={520}
       >
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
           <div
@@ -193,85 +243,169 @@ function NewWebhookModal({ onCreated }: { onCreated?: () => void }) {
               <CopyId value={created.secret}>{created.secret}</CopyId>
             </div>
           </div>
-          <div style={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button onClick={close} size="sm" variant="primary">
-              Fechar
-            </Button>
-          </div>
         </div>
       </ModalCard>
     );
   }
 
   return (
-    <ModalCard
-      icon={<Icon name="webhook" size={16} />}
-      subtitle="Endpoint HTTPS para eventos críticos do portfólio"
-      title="Novo webhook"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="webhook-url" style={fieldLabelStyle}>
-            URL
-          </label>
-          <input
-            id="webhook-url"
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="https://exemplo.com/hooks/cosmos"
-            style={inputStyle}
-            value={url}
-          />
-        </div>
-
-        <div>
-          <label style={fieldLabelStyle}>Eventos</label>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
-              maxHeight: 220,
-              overflowY: "auto",
-              padding: "8px 10px",
-              borderRadius: "var(--r-md)",
-              border: "1px solid var(--hairline-strong)",
-              background: "var(--surface)",
-            }}
-          >
-            {EVENT_TYPE_OPTIONS.map((opt) => (
-              <label
-                key={opt.value}
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar webhook"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="webhook" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Endpoint HTTPS que recebe os eventos do portfólio em tempo real"
+        title="Novo webhook"
+        tone={WEBHOOK_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div style={{ marginBottom: 12 }}>
+                <Badge dot tone="green">
+                  Ativo
+                </Badge>
+              </div>
+              <div
+                className="mono"
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 8,
-                  fontSize: 13,
-                  color: "var(--ink)",
-                  cursor: "pointer",
+                  color: url.trim() ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12,
+                  lineHeight: 1.5,
+                  marginBottom: 14,
+                  wordBreak: "break-all",
                 }}
               >
-                <input
-                  checked={eventTypes.includes(opt.value)}
-                  onChange={() => toggleEvent(opt.value)}
-                  type="checkbox"
-                />
-                {opt.label}
-              </label>
-            ))}
-          </div>
-        </div>
+                {url.trim() || "https://sua-url.com/webhook"}
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: ".06em",
+                  marginBottom: 8,
+                  textTransform: "uppercase",
+                }}
+              >
+                {`Eventos (${eventTypes.length})`}
+              </div>
+              {eventTypes.length === 0 ? (
+                <div style={{ color: "var(--ink-faint)", fontSize: 12 }}>
+                  Nenhum evento assinado — o endpoint não receberia nada
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {/* Nome cru do evento, o mesmo que chega no payload e o mesmo
+                      que a lista de endpoints mostra. */}
+                  {eventTypes.map((e) => (
+                    <Badge key={e} tone="blue">
+                      {e}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                  marginTop: 14,
+                  paddingTop: 12,
+                }}
+              >
+                O segredo HMAC é gerado no servidor e exibido uma única vez,
+                logo depois de criar.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="URL do endpoint" required>
+            <TextInput
+              onChange={setUrl}
+              placeholder="https://hooks.suaempresa.com/cosmos"
+              required
+              value={url}
+            />
+          </FormField>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar webhook
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <FormField
+            hint="Clique para selecionar múltiplos"
+            label="Eventos"
+            required
+          >
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+              {EVENT_TYPE_OPTIONS.map((opt) => (
+                <EventChip
+                  key={opt.value}
+                  label={opt.label}
+                  on={eventTypes.includes(opt.value)}
+                  onToggle={() => toggleEvent(opt.value)}
+                  value={opt.value}
+                />
+              ))}
+            </div>
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 
@@ -369,7 +503,7 @@ function WebhooksBody() {
           )}
           {hooks.map((h) => {
             const health = healthLabel(h);
-            const leftBorderColor = h.degraded
+            const healthBorderColor = h.degraded
               ? "var(--red)"
               : isFailing(h.lastDeliveryStatus)
                 ? "var(--amber)"
@@ -385,8 +519,7 @@ function WebhooksBody() {
                   gap: 12,
                   padding: "12px 16px",
                   borderRadius: 12,
-                  border: "1px solid var(--hairline)",
-                  borderLeft: `3px solid ${leftBorderColor}`,
+                  border: `1px solid ${healthBorderColor}`,
                   background: "var(--surface)",
                 }}
               >

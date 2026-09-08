@@ -150,6 +150,11 @@ export async function decidePlatformApprovalAction(
         acao: true,
         alvoLabel: true,
         solicitanteId: true,
+        // Os dois são o que o despacho lê para saber o que executar. Fora do
+        // select eles chegam `undefined`, e a aprovação voltaria a não fazer
+        // nada — só que silenciosamente, que é pior do que não despachar.
+        alvoTipo: true,
+        alvoId: true,
       },
     });
     if (!pedido) {
@@ -212,12 +217,69 @@ export async function decidePlatformApprovalAction(
       diff: [["status", pedido.status, dados.data.outcome]],
     });
 
-    // FR-8.4 diz que aprovar executa a ação original. Ainda não há o que
-    // executar: nenhuma das cinco operações sensíveis existe (deleção de
-    // tenant, MCP full, desconto >15%, export sensível, mudança de plano são
-    // ondas 3 a 5). O despacho entra junto com a primeira delas, lendo
-    // `payload` — que já é gravado aqui para não precisar de migration depois.
+    // FR-8.4 — aprovar executa a ação original.
+    //
+    // A primeira das cinco operações sensíveis chegou: o desconto acima do
+    // limite. Sem este despacho a fila era um beco — a proposta entrava em
+    // AGUARDANDO_APROVACAO, alguém aprovava, e nada acontecia com ela; nenhuma
+    // action escrevia ENVIADA a partir daquele estado.
+    //
+    // O despacho vem depois da auditoria, e falha dele não desfaz a decisão:
+    // decidir é o registro, executar é o efeito. Perder o efeito é um problema
+    // que se resolve reenviando; perder o registro de quem decidiu, não.
+    await despacharAcaoAprovada(pedido, dados.data.outcome);
+
     revalidatePath("/aprovacoes");
     return { status: dados.data.outcome };
   });
+}
+
+/**
+ * Executa o que foi aprovado.
+ *
+ * Um despachante por `alvoTipo`. Hoje só `proposal` tem executor — as outras
+ * quatro operações sensíveis do PRD §6.3 ainda não existem, e alvo sem
+ * despachante passa em silêncio de propósito: a decisão já foi registrada e
+ * auditada, e faltar efeito não pode impedir o registro.
+ *
+ * Não é exportado: chamar isto fora do fluxo de decisão executaria uma ação
+ * sensível sem passar pela alçada, que é justamente o que a fila existe para
+ * impedir.
+ */
+async function despacharAcaoAprovada(
+  pedido: { id: string; alvoTipo: string; alvoId: string },
+  outcome: "APPROVED" | "REJECTED"
+): Promise<void> {
+  if (pedido.alvoTipo !== "proposal") {
+    return;
+  }
+
+  const proposta = await database.proposal.findFirst({
+    where: { id: pedido.alvoId, tenantId: SYSTEM_TENANT_ID },
+    select: { id: true, numero: true, status: true },
+  });
+
+  // Só age sobre a proposta que ainda está esperando esta decisão. Se ela já
+  // andou — foi aceita, recusada, ou o pedido é antigo —, mexer agora
+  // reescreveria um estado mais novo com um mais velho.
+  if (!proposta || proposta.status !== "AGUARDANDO_APROVACAO") {
+    return;
+  }
+
+  // Rejeitado volta para rascunho, não morre: desconto recusado costuma virar
+  // desconto menor, e uma proposta presa obrigaria a redigitar tudo.
+  const novoStatus = outcome === "APPROVED" ? "ENVIADA" : "RASCUNHO";
+
+  await database.proposal.update({
+    where: { id: proposta.id },
+    data: {
+      status: novoStatus,
+      // Campo que existia no schema e nunca era escrito: sem ele a proposta
+      // não sabe dizer qual decisão destravou o desconto dela.
+      ...(outcome === "APPROVED" ? { aprovacaoId: pedido.id } : {}),
+    },
+  });
+
+  revalidatePath("/propostas");
+  revalidatePath(`/propostas/${proposta.id}`);
 }

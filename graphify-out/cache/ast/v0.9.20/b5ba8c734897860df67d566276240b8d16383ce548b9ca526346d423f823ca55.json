@@ -1,0 +1,303 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "label": "nextjs-data-fetching.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_core_expertise",
+      "label": "Core Expertise",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_when_invoked",
+      "label": "When Invoked",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_data_fetching_in_server_components",
+      "label": "Data Fetching in Server Components",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "label": "Caching Strategies",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_static_data_default",
+      "label": "Static Data (Default)",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_dynamic_data",
+      "label": "Dynamic Data",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L68"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_time_based_revalidation",
+      "label": "Time-based Revalidation",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L77"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_on_demand_revalidation",
+      "label": "On-demand Revalidation",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_parallel_data_fetching",
+      "label": "Parallel Data Fetching",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_sequential_data_fetching",
+      "label": "Sequential Data Fetching",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L133"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_streaming_with_suspense",
+      "label": "Streaming with Suspense",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L152"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_database_queries",
+      "label": "Database Queries",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L177"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_request_deduplication",
+      "label": "Request Deduplication",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L193"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_generatestaticparams_for_static_generation",
+      "label": "generateStaticParams for Static Generation",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_error_handling",
+      "label": "Error Handling",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L233"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_using_unstable_cache",
+      "label": "Using unstable_cache",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L260"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_best_practices",
+      "label": "Best Practices",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L278"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_performance_tips",
+      "label": "Performance Tips",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L289"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_core_expertise",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_when_invoked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_data_fetching_in_server_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_static_data_default",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_dynamic_data",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_time_based_revalidation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_caching_strategies",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_on_demand_revalidation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_parallel_data_fetching",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_sequential_data_fetching",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L133",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_streaming_with_suspense",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_database_queries",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L177",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_request_deduplication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L193",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_generatestaticparams_for_static_generation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_error_handling",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_using_unstable_cache",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L260",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L278",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_data_fetching_performance_tips",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-data-fetching.md",
+      "source_location": "L289",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

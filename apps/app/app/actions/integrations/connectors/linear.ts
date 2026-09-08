@@ -1,4 +1,9 @@
-const LINEAR_GQL = "https://api.linear.app/graphql";
+/** Endpoint GraphQL do Linear. `LINEAR_API_URL` existe para o E2E apontar o
+ *  fluxo inteiro (conectar → importar → sync) para um Linear falso — as
+ *  chamadas acontecem no servidor Next, fora do alcance de interceptação do
+ *  navegador de teste. Produção nunca define a variável. */
+export const LINEAR_GQL =
+  process.env.LINEAR_API_URL ?? "https://api.linear.app/graphql";
 
 async function linearQuery<T>(
   apiKey: string,
@@ -32,8 +37,6 @@ async function linearQuery<T>(
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-export type LinearTeam = { id: string; name: string; key: string };
-
 export type LinearIssue = {
   id: string;
   title: string;
@@ -44,6 +47,7 @@ export type LinearIssue = {
   estimate: number | null;
   assignee: { id: string; name: string; email: string } | null;
   team: { id: string; name: string };
+  project: { id: string } | null;
   labels: { nodes: { name: string }[] };
   parent: { id: string; title: string } | null;
   createdAt: string;
@@ -69,16 +73,61 @@ export async function linearTestConnection(
   }
 }
 
-// ─── discoverProjects (teams in Linear) ──────────────────────────────────────
+// ─── discoverTeams (teams + nested projects in Linear) ────────────────────────
+
+export type LinearProject = { id: string; name: string };
+
+/**
+ * Projects (COS-85/COS-91) vêm ANINHADOS dentro de cada time nesta mesma
+ * query, em vez de uma segunda chamada `linearDiscoverProjects(teamId)`
+ * disparada depois que o time é escolhido — duas versões independentes deste
+ * fix chegaram na mesma ideia por razões diferentes: manter a chave em
+ * trânsito pelo menor tempo possível (uma viagem, não duas), e matar uma
+ * corrida real no cliente — o hook de fetch (`useAction`) mantém os dados da
+ * resposta anterior visíveis durante o refetch, então trocar de time no meio
+ * de um fetch em andamento podia deixar as options de project do time ERRADO
+ * na tela no instante em que alguém clicava conectar. Trazer tudo numa query
+ * só elimina a classe inteira do bug: o cliente escolhe entre times já
+ * carregados, sem "enquanto isso" onde o project de outro time pode
+ * aparecer. `first: 50` é o mesmo teto de bom senso que outras listagens do
+ * conector usam para uma conta comum — não é paginado porque não há UI de
+ * paginação neste seletor.
+ *
+ * O campo `projects` na resposta bruta do GraphQL é opcional só na defesa:
+ * uma resposta que por algum motivo não o traga (cache antigo, por exemplo)
+ * vira lista vazia aqui mesmo, no limite do conector — quem chama
+ * `linearDiscoverTeams` recebe sempre um array, nunca `undefined` para
+ * propagar adiante.
+ */
+export type LinearTeam = {
+  id: string;
+  name: string;
+  key: string;
+  projects: LinearProject[];
+};
 
 export async function linearDiscoverTeams(
   apiKey: string
 ): Promise<LinearTeam[]> {
-  const data = await linearQuery<{ teams: { nodes: LinearTeam[] } }>(
+  const data = await linearQuery<{
+    teams: {
+      nodes: {
+        id: string;
+        name: string;
+        key: string;
+        projects?: { nodes: LinearProject[] };
+      }[];
+    };
+  }>(
     apiKey,
-    "{ teams { nodes { id name key } } }"
+    "{ teams { nodes { id name key projects(first: 50) { nodes { id name } } } } }"
   );
-  return data.teams.nodes;
+  return data.teams.nodes.map((t) => ({
+    id: t.id,
+    name: t.name,
+    key: t.key,
+    projects: t.projects?.nodes ?? [],
+  }));
 }
 
 // ─── importSnapshot ──────────────────────────────────────────────────────────
@@ -89,15 +138,24 @@ const ISSUE_FIELDS = `
   priority estimate
   assignee { id name email }
   team { id name }
+  project { id }
   labels { nodes { name } }
   parent { id title }
   createdAt updatedAt
 `;
 
+/**
+ * `linearProjectId` filtra pelo Project real do Linear (COS-85) — distinto
+ * do `teamId` recebido acima, que no vocabulário deste conector é chamado
+ * de "projectId" (ver schema.ts). A paginação continua varrendo o time
+ * inteiro: o cursor do Linear é por time, não por project, então o filtro
+ * é aplicado nos nós de cada página já buscada, não na query em si.
+ */
 export async function linearImportTeamIssues(
   apiKey: string,
   teamId: string,
-  after?: string
+  after?: string,
+  linearProjectId?: string
 ): Promise<{ issues: LinearIssue[]; nextCursor: string | null }> {
   const data = await linearQuery<{
     team: {
@@ -120,8 +178,11 @@ export async function linearImportTeamIssues(
   );
 
   const { nodes, pageInfo } = data.team.issues;
+  const issues = linearProjectId
+    ? nodes.filter((n) => n.project?.id === linearProjectId)
+    : nodes;
   return {
-    issues: nodes,
+    issues,
     nextCursor: pageInfo.hasNextPage ? pageInfo.endCursor : null,
   };
 }

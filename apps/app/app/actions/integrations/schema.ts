@@ -21,6 +21,13 @@ export const ImportMappingSchema = z.object({
   epicId: z.string().cuid().optional(),
   piPlanId: z.string().cuid().optional(),
   teamId: z.string().cuid().optional(),
+  // COS-85: filtro opcional pelo Project real do Linear — não confundir com
+  // `projectId` acima, que para a fonte "linear" é o teamId. No plano free
+  // do Linear os produtos (Charter, Signal, Meridian, Scaffold) vivem como
+  // projects dentro de um único time; sem este filtro, conectar um ART ao
+  // time traria as issues dos quatro produtos misturadas. Ausente → filtro
+  // desligado, comportamento igual ao anterior.
+  linearProjectId: z.string().min(1).optional(),
 });
 
 export type CreateIntegrationInput = z.infer<typeof CreateIntegrationSchema>;

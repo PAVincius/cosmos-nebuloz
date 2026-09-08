@@ -21,31 +21,26 @@ import { listOkrs, type OkrView } from "@/app/(cosmos)/actions/okrs";
 import { createKeyResultCheckIn } from "@/app/actions/okrs";
 import type { Tone } from "@/lib/cosmos-data";
 import { CardHeaderGlow, IconBadge } from "../card-header-glow";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, TextArea, TextInput } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 type KeyResultView = OkrView["keyResults"][number];
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
+const previewLabelStyle: CSSProperties = {
   color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
   marginBottom: 6,
-};
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
+  textTransform: "uppercase",
 };
 
 // UpdateProgressModal — manual KR check-in form. AI cross-referencing
@@ -62,9 +57,17 @@ function UpdateProgressModal({
   const [value, setValue] = useState(String(kr.current));
   const [note, setNote] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const parsed = Number(value);
   const valid = value.trim() !== "" && Number.isFinite(parsed) && parsed >= 0;
+  // O check-in grava `current`, e o progresso do KR é derivado dele — mostrar
+  // a porcentagem que vai resultar é o que separa "digitei 12" de "isso leva
+  // o KR a 60% do alvo".
+  const novoPct =
+    valid && kr.target !== 0 ? Math.round((parsed / kr.target) * 100) : null;
+  const st = krStatus(novoPct ?? 0);
 
   const submit = async () => {
     if (!(valid && !saving)) {
@@ -93,52 +96,185 @@ function UpdateProgressModal({
     }
   };
 
+  useModalSubmitShortcut(submit, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="gauge" size={16} strokeWidth={2.4} />}
-      subtitle={kr.title}
-      title="Atualizar progresso"
-      width={420}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="kr-checkin-value" style={fieldLabelStyle}>
-            Novo valor ({kr.unit}) — alvo {kr.target}
-            {kr.unit}
-          </label>
-          <input
-            id="kr-checkin-value"
-            min={0}
-            onChange={(e) => setValue(e.target.value)}
-            style={inputStyle}
-            type="number"
-            value={value}
-          />
-        </div>
-        <div>
-          <label htmlFor="kr-checkin-note" style={fieldLabelStyle}>
-            Nota (opcional)
-          </label>
-          <textarea
-            id="kr-checkin-note"
-            maxLength={500}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Contexto do check-in…"
-            rows={3}
-            style={{ ...inputStyle, resize: "vertical" }}
-            value={note}
-          />
-        </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={submit} size="sm" variant="primary">
-            Salvar check-in
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={submit}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Salvando..." : "Salvar check-in"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="gauge" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle={kr.title}
+        title="Atualizar progresso"
+        tone={st.tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${st.tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div style={previewLabelStyle}>Key Result</div>
+              <div
+                className="display"
+                style={{
+                  color: "var(--ink)",
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 14,
+                }}
+              >
+                {kr.title}
+              </div>
+
+              <div
+                style={{
+                  display: "grid",
+                  gap: 10,
+                  gridTemplateColumns: "1fr 1fr",
+                  marginBottom: 12,
+                }}
+              >
+                <div>
+                  <div style={previewLabelStyle}>Atual</div>
+                  <div
+                    className="mono"
+                    style={{ color: "var(--ink-muted)", fontSize: 18 }}
+                  >
+                    {kr.current}
+                    {kr.unit}
+                  </div>
+                </div>
+                <div>
+                  <div style={previewLabelStyle}>Novo valor</div>
+                  <div
+                    className="mono"
+                    style={{
+                      color: valid ? `var(--${st.tone}-text)` : "var(--ink)",
+                      fontSize: 18,
+                      fontWeight: 700,
+                    }}
+                  >
+                    {valid ? parsed : "—"}
+                    {kr.unit}
+                  </div>
+                </div>
+              </div>
+
+              {novoPct === null ? (
+                <div
+                  style={{
+                    color: "var(--ink-faint)",
+                    fontSize: 11.5,
+                    marginBottom: 12,
+                  }}
+                >
+                  Sem progresso calculável ainda
+                </div>
+              ) : (
+                <div style={{ marginBottom: 12 }}>
+                  <Progress
+                    height={7}
+                    tone={st.tone}
+                    value={Math.min(100, Math.max(0, novoPct))}
+                  />
+                  <div
+                    className="mono"
+                    style={{
+                      color: "var(--ink-faint)",
+                      fontSize: 10.5,
+                      marginTop: 4,
+                    }}
+                  >
+                    {`${novoPct}% do alvo de ${kr.target}${kr.unit}`}
+                  </div>
+                </div>
+              )}
+
+              <Badge dot tone={st.tone}>
+                {st.label}
+              </Badge>
+            </div>
+          }
+        >
+          <FormField
+            hint={`Alvo: ${kr.target}${kr.unit} · atual ${kr.current}${kr.unit}`}
+            label={`Novo valor (${kr.unit})`}
+            required
+          >
+            <TextInput
+              onChange={setValue}
+              required
+              type="number"
+              value={value}
+            />
+          </FormField>
+          <FormField label="Nota (opcional)">
+            <TextArea
+              maxLength={500}
+              onChange={setNote}
+              placeholder="Contexto do check-in"
+              rows={3}
+              value={note}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

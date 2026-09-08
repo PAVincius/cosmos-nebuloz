@@ -65,7 +65,7 @@ describe("requirePlatformStaff", () => {
         email: "vini@nebuloz.exemplo",
         name: "Vinícius",
       },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     findFirst.mockResolvedValue({ role: "ADMIN" });
 
@@ -82,7 +82,7 @@ describe("requirePlatformStaff", () => {
   it("membro não-ADMIN entra, mas só lê", async () => {
     getSession.mockResolvedValue({
       user: { id: "user-staff", email: "leitor@nebuloz.exemplo", name: null },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     findFirst.mockResolvedValue({ role: "MEMBER" });
 
@@ -93,7 +93,7 @@ describe("requirePlatformStaff", () => {
   it("aplica o teto de requisição, com a identidade como chave", async () => {
     getSession.mockResolvedValue({
       user: { id: "user-staff", email: "v@n.com", name: "V" },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     findFirst.mockResolvedValue({ role: "ADMIN" });
 
@@ -150,25 +150,15 @@ describe("requirePlatformStaff", () => {
     );
   });
 
-  it("nega quando a sessão não passou pelo segundo fator", async () => {
-    // Ter 2FA cadastrado não é o mesmo que ter usado nesta sessão. Aceitar o
-    // primeiro sem o segundo transformaria o controle em enfeite de cadastro.
+  // Não existe carimbo de segundo fator para ler: o `verifyTotp` do
+  // better-auth 1.6.26 devolve uma sessão comum. O que sustenta a garantia é
+  // que, com `twoFactorEnabled`, `signIn.email` não cria sessão alguma —
+  // existir sessão já quer dizer que o desafio foi vencido. Exigir um campo
+  // inventado fechava o painel para todo mundo.
+  it("passa com 2FA habilitado, com a sessão que a lib realmente entrega", async () => {
     getSession.mockResolvedValue({
       user: { id: "user-staff", email: "v@n.com", name: "V" },
-      session: { twoFactorVerified: false },
-    });
-    findFirst.mockResolvedValue({ role: "ADMIN" });
-    userFindUnique.mockResolvedValue({ twoFactorEnabled: true });
-
-    await expect(requirePlatformStaff()).rejects.toMatchObject({
-      code: "FORBIDDEN",
-    });
-  });
-
-  it("passa com 2FA habilitado e verificado na sessão", async () => {
-    getSession.mockResolvedValue({
-      user: { id: "user-staff", email: "v@n.com", name: "V" },
-      session: { twoFactorVerified: true },
+      session: { id: "sess-1" },
     });
     findFirst.mockResolvedValue({ role: "ADMIN" });
     userFindUnique.mockResolvedValue({ twoFactorEnabled: true });

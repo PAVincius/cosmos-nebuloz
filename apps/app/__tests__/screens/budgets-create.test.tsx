@@ -49,13 +49,13 @@ describe("BudgetsScreen — criação", () => {
     await screen.findByText("Lean Budgets");
 
     fireEvent.click(screen.getByRole("button", { name: "Novo orçamento" }));
-    fireEvent.change(screen.getByLabelText("Nome do orçamento"), {
+    fireEvent.change(screen.getByLabelText(/Nome do orçamento/), {
       target: { value: "Budget Checkout" },
     });
-    fireEvent.change(screen.getByLabelText("Valor alocado"), {
+    fireEvent.change(screen.getByLabelText(/Valor alocado/), {
       target: { value: "500000" },
     });
-    fireEvent.change(screen.getByLabelText("Período"), {
+    fireEvent.change(screen.getByLabelText(/Período/), {
       target: { value: "PI-2026-Q2" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar orçamento" }));
@@ -76,7 +76,7 @@ describe("BudgetsScreen — criação", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Novo orçamento" }));
     // Só o período preenchido: nome e valor vazios.
-    fireEvent.change(screen.getByLabelText("Período"), {
+    fireEvent.change(screen.getByLabelText(/Período/), {
       target: { value: "PI-2026-Q2" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar orçamento" }));
@@ -91,20 +91,20 @@ describe("BudgetsScreen — criação", () => {
     await screen.findByText("Lean Budgets");
 
     fireEvent.click(screen.getByRole("button", { name: "Novo orçamento" }));
-    fireEvent.change(screen.getByLabelText("Nome do orçamento"), {
+    fireEvent.change(screen.getByLabelText(/Nome do orçamento/), {
       target: { value: "Budget Checkout" },
     });
-    fireEvent.change(screen.getByLabelText("Valor alocado"), {
+    fireEvent.change(screen.getByLabelText(/Valor alocado/), {
       target: { value: "500000" },
     });
-    fireEvent.change(screen.getByLabelText("Período"), {
+    fireEvent.change(screen.getByLabelText(/Período/), {
       target: { value: "PI-2026-Q2" },
     });
     fireEvent.click(screen.getByRole("button", { name: "Criar orçamento" }));
 
     await waitFor(() => expect(createLeanBudgetMock).toHaveBeenCalled());
     // O erro não pode custar o que o usuário digitou.
-    expect(screen.getByLabelText("Nome do orçamento")).toBeTruthy();
+    expect(screen.getByLabelText(/Nome do orçamento/)).toBeTruthy();
     expect(listLeanBudgetsMock).toHaveBeenCalledTimes(1);
   });
 });

@@ -10,6 +10,7 @@ import {
   Progress,
   SectionCard,
   type Tone,
+  useAction,
 } from "@repo/design-system/cosmos/kit";
 // program.tsx — SAFe Program Board (grade time × sprint do PI ativo), wired to
 // getActiveProgramBoard(). A célula é PIPlanFeatureAssignment, o modelo que já
@@ -17,8 +18,9 @@ import {
 // nenhuma tela do Cosmos escrevia. Somente leitura quando o PI está COMMITTED
 // ou CLOSED (story-020 AC-004); carga acima da capacidade avisa e não bloqueia
 // (AC-002).
-import { useCallback, useEffect, useState } from "react";
-import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { type CSSProperties, useCallback, useEffect, useState } from "react";
+import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
+import { createEpic } from "@/app/(cosmos)/actions/kanban";
 import {
   assignFeatureToCell,
   createFeature,
@@ -27,8 +29,21 @@ import {
   type ProgramFeatureView,
 } from "@/app/(cosmos)/actions/program";
 import { EmptyState } from "../empty-state";
-import { EntityLinkField } from "../entity-link-field";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  FormField,
+  MiniSlider,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, { tone: Tone; label: string }> = {
@@ -341,58 +356,69 @@ function UnassignedSection({
   );
 }
 
-// ── WSJF 0-10 slider field ──
-function ScoreSlider({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: number;
-  onChange: (v: number) => void;
-}) {
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          fontSize: 11.5,
-          fontWeight: 700,
-          letterSpacing: ".04em",
-          textTransform: "uppercase",
-          color: "var(--ink-faint)",
-          marginBottom: 6,
-        }}
-      >
-        <span>{label}</span>
-        <span className="mono" style={{ color: "var(--accent-text)" }}>
-          {value}
-        </span>
-      </div>
-      <input
-        max={10}
-        min={0}
-        onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: "100%", accentColor: "var(--accent)" }}
-        type="range"
-        value={value}
-      />
-    </div>
-  );
-}
+// Feature não tem cor própria no modelo — o azul é o realce do Program Board,
+// o mesmo tom que a tela usa para "em progresso".
+const FEATURE_TONE = "blue";
+
+const previewLabelStyle: CSSProperties = {
+  color: "var(--ink-faint)",
+  fontSize: 11,
+  fontWeight: 700,
+  letterSpacing: ".06em",
+  marginBottom: 6,
+  textTransform: "uppercase",
+};
 
 function NewFeatureModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [title, setTitle] = useState("");
-  const [epic, setEpic] = useState<EntityOption | null>(null);
-  const [team, setTeam] = useState<EntityOption | null>(null);
+  const [epicId, setEpicId] = useState<string | null>(null);
+  const [teamId, setTeamId] = useState<string | null>(null);
   const [bv, setBv] = useState(0);
   const [tc, setTc] = useState(0);
   const [rr, setRr] = useState(0);
   const [js, setJs] = useState(1);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
+  const { data: epicOptions } = useAction(() => searchEntities("epic", ""), []);
+  const { data: teamOptions } = useAction(() => searchEntities("team", ""), []);
+  const epics = epicOptions ?? [];
+  const teams = teamOptions ?? [];
+  // A carga inicial só alimenta o rótulo do chip: searchEntities corta em 10,
+  // e filtrar essa fatia localmente faria o campo negar épico ou time que
+  // existe. Estáveis por useCallback — o efeito de busca tem onSearch nas
+  // dependências e recriá-las a cada render dispararia busca em loop.
+  const buscarEpicos = useCallback(async (q: string) => {
+    const r = await searchEntities("epic", q);
+    return r.ok ? r.data : [];
+  }, []);
+  const buscarTimes = useCallback(async (q: string) => {
+    const r = await searchEntities("team", q);
+    return r.ok ? r.data : [];
+  }, []);
+  // Toda feature decompõe um épico; quando o épico ainda não existe, criá-lo
+  // aqui evita descartar o formulário só para cadastrar o pai no Kanban.
+  const criarEpico = async (rascunho: Record<string, string>) => {
+    const titulo = (rascunho.title ?? "").trim();
+    if (!titulo) {
+      return null;
+    }
+    // "funnel" é onde épico novo nasce no fluxo SAFe; a coluna não é escolha
+    // do formulário compacto.
+    const res = await createEpic({ title: titulo, column: "funnel" });
+    // A action devolve só o id — o rótulo do chip vem do que foi digitado.
+    return res.ok ? { id: res.data.id, label: titulo } : null;
+  };
+
+  const epic = epics.find((e) => e.id === epicId);
+  const team = teams.find((t) => t.id === teamId);
+  // Mesma conta de calculateWSJF (packages/safe-engine), que é quem grava o
+  // wsjfScore: o preview não pode mostrar uma prioridade diferente da gravada.
+  const wsjf = Math.round(((bv + tc + rr) / js) * 100) / 100;
+
+  // O slider não avisa o DirtyProvider sozinho; sem isto sair depois de
   const create = async () => {
     if (!title.trim() || saving) {
       return;
@@ -403,8 +429,8 @@ function NewFeatureModal({ onCreated }: { onCreated?: () => void }) {
       () =>
         createFeature({
           title: title.trim(),
-          epicId: epic?.id,
-          assignedTeamId: team?.id,
+          epicId: epicId ?? undefined,
+          assignedTeamId: teamId ?? undefined,
           bv,
           tc,
           rr,
@@ -423,88 +449,258 @@ function NewFeatureModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
-      subtitle="Comitar uma feature ao Program Increment"
-      title="Nova Feature"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label
-            style={{
-              display: "block",
-              fontSize: 11.5,
-              fontWeight: 700,
-              letterSpacing: ".04em",
-              textTransform: "uppercase",
-              color: "var(--ink-faint)",
-              marginBottom: 6,
-            }}
-          >
-            Título da feature
-          </label>
-          <input
-            autoFocus
-            onChange={(e) => setTitle(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
-              }
-            }}
-            placeholder="Ex: Checkout via PIX…"
-            style={{
-              width: "100%",
-              padding: "10px 12px",
-              fontSize: 14,
-              borderRadius: "var(--r-md)",
-              border: "1px solid var(--hairline-strong)",
-              background: "var(--surface)",
-              color: "var(--ink)",
-              fontFamily: "inherit",
-              outline: "none",
-            }}
-            value={title}
-          />
-        </div>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar feature"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="kanban" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Item de entrega do Program Board, ligado a um épico e a um time"
+        title="Nova Feature"
+        tone={FEATURE_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${FEATURE_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <span
+                  style={{
+                    background: `var(--${FEATURE_TONE})`,
+                    borderRadius: 99,
+                    height: 8,
+                    width: 8,
+                  }}
+                />
+                <span
+                  className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  Program Board
+                </span>
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 15,
+                  fontWeight: 700,
+                  lineHeight: 1.3,
+                  marginBottom: 10,
+                }}
+              >
+                {title || "Título da feature"}
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  marginBottom: 14,
+                }}
+              >
+                <Badge tone={team ? FEATURE_TONE : "neutral"}>
+                  {team?.label ?? "Sem time"}
+                </Badge>
+                <Badge tone="neutral">Backlog</Badge>
+              </div>
 
-        <EntityLinkField
-          kind="epic"
-          label="Épico"
-          onChange={setEpic}
-          value={epic}
-        />
-        <EntityLinkField
-          kind="team"
-          label="Time"
-          onChange={setTeam}
-          value={team}
-        />
+              {epic && (
+                <div
+                  style={{
+                    alignItems: "center",
+                    color: "var(--ink-muted)",
+                    display: "flex",
+                    fontSize: 12,
+                    gap: 8,
+                    marginBottom: 14,
+                  }}
+                >
+                  <Icon
+                    name="flag"
+                    size={13}
+                    style={{ color: `var(--${FEATURE_TONE}-text)` }}
+                  />
+                  {epic.label}
+                </div>
+              )}
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: 12,
-          }}
+              <div style={previewLabelStyle}>WSJF</div>
+              <div
+                className="mono"
+                style={{
+                  color: `var(--${FEATURE_TONE}-text)`,
+                  fontSize: 30,
+                  fontWeight: 700,
+                  lineHeight: 1,
+                  marginBottom: 4,
+                }}
+              >
+                {wsjf.toFixed(2)}
+              </div>
+              <div style={{ color: "var(--ink-faint)", fontSize: 11 }}>
+                {`(${bv} + ${tc} + ${rr}) / ${js}`}
+              </div>
+            </div>
+          }
         >
-          <ScoreSlider label="Business Value" onChange={setBv} value={bv} />
-          <ScoreSlider label="Time Criticality" onChange={setTc} value={tc} />
-          <ScoreSlider label="Risk Reduction" onChange={setRr} value={rr} />
-          <ScoreSlider label="Job Size" onChange={setJs} value={js} />
-        </div>
+          <FormField label="Título da feature" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Limites dinâmicos por risco"
+              required
+              value={title}
+            />
+          </FormField>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar feature
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <EntityLinkField
+            hint="Toda feature deve decompor um épico do portfólio"
+            items={epics}
+            label="Épico pai"
+            onChange={(v) => setEpicId(v as string | null)}
+            onSearch={buscarEpicos}
+            placeholder="Buscar o épico que esta feature entrega..."
+            quickCreate={{
+              campos: [
+                {
+                  key: "title",
+                  label: "Título do épico",
+                  placeholder: "ex: Antifraude",
+                },
+              ],
+              inicial: { title: "" },
+              label: "+ Criar novo épico",
+              onCreate: criarEpico,
+            }}
+            tone={FEATURE_TONE}
+            value={epicId}
+          />
+
+          <EntityLinkField
+            hint="Time que leva a feature no PI — a célula do quadro é escolhida depois"
+            items={teams}
+            label="Time"
+            onChange={(v) => setTeamId(v as string | null)}
+            onSearch={buscarTimes}
+            placeholder="Buscar um time..."
+            tone={FEATURE_TONE}
+            value={teamId}
+          />
+
+          <div>
+            <div
+              style={{
+                color: "var(--ink-subtle)",
+                fontSize: 12.5,
+                fontWeight: 700,
+                marginBottom: 10,
+              }}
+            >
+              WSJF
+            </div>
+            <div
+              style={{
+                display: "grid",
+                gap: 14,
+                gridTemplateColumns: "1fr 1fr",
+              }}
+            >
+              <MiniSlider
+                label="Business Value"
+                max={10}
+                min={0}
+                onChange={setBv}
+                value={bv}
+              />
+              <MiniSlider
+                label="Time Criticality"
+                max={10}
+                min={0}
+                onChange={setTc}
+                value={tc}
+              />
+              <MiniSlider
+                label="Risk Reduction"
+                max={10}
+                min={0}
+                onChange={setRr}
+                value={rr}
+              />
+              <MiniSlider
+                label="Job Size"
+                max={10}
+                min={1}
+                onChange={setJs}
+                value={js}
+              />
+            </div>
+          </div>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

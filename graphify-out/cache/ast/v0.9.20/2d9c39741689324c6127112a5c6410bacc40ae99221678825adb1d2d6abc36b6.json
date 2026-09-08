@@ -1,0 +1,255 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_md",
+      "label": "04-change-management-policy.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "label": "Change Management Policy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_1_purpose",
+      "label": "1. Purpose",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_2_scope",
+      "label": "2. Scope",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_3_change_categories",
+      "label": "3. Change Categories",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "label": "4. Development Workflow",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L32"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_1_branching_strategy",
+      "label": "4.1 Branching Strategy",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_2_pull_request_requirements",
+      "label": "4.2 Pull Request Requirements",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_3_ci_cd_pipeline",
+      "label": "4.3 CI/CD Pipeline",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_4_database_migrations",
+      "label": "4.4 Database Migrations",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_deployment_process",
+      "label": "5. Deployment Process",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_1_standard_deployment_automated",
+      "label": "5.1 Standard Deployment (automated)",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_2_infrastructure_changes",
+      "label": "5.2 Infrastructure Changes",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L86"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_3_emergency_hotfix",
+      "label": "5.3 Emergency Hotfix",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L94"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_6_rollback",
+      "label": "6. Rollback",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_7_change_log",
+      "label": "7. Change Log",
+      "file_type": "document",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L110"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_1_purpose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_2_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_3_change_categories",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L32",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_1_branching_strategy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_2_pull_request_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_3_ci_cd_pipeline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_development_workflow",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_4_4_database_migrations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_deployment_process",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_deployment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_1_standard_deployment_automated",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_deployment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_2_infrastructure_changes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_deployment_process",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_5_3_emergency_hotfix",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_6_rollback",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_change_management_policy",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_soc2_policies_04_change_management_policy_7_change_log",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/soc2/policies/04-change-management-policy.md",
+      "source_location": "L110",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

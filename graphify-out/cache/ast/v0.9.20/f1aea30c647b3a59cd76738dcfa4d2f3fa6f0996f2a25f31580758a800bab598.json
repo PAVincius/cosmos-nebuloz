@@ -1,0 +1,128 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_json",
+      "label": "tsconfig.json",
+      "file_type": "code",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_extends",
+      "label": "extends",
+      "file_type": "code",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "ref_docusaurus_tsconfig",
+      "label": "@docusaurus/tsconfig",
+      "file_type": "concept",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L2"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_compileroptions",
+      "label": "compilerOptions",
+      "file_type": "code",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_compileroptions_baseurl",
+      "label": "baseUrl",
+      "file_type": "code",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L4"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_exclude",
+      "label": "exclude",
+      "file_type": "code",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "ref_docusaurus",
+      "label": ".docusaurus",
+      "file_type": "concept",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6"
+    },
+    {
+      "id": "ref_build",
+      "label": "build",
+      "file_type": "concept",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_extends",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_json",
+      "target": "ref_docusaurus_tsconfig",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L2",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_compileroptions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_compileroptions",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_compileroptions_baseurl",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_json",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_exclude",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_exclude",
+      "target": "ref_docusaurus",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "context": "import"
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_apps_docs_tsconfig_exclude",
+      "target": "ref_build",
+      "relation": "extends",
+      "confidence": "EXTRACTED",
+      "source_file": "apps/docs/tsconfig.json",
+      "source_location": "L6",
+      "weight": 1.0,
+      "context": "import"
+    }
+  ]
+}

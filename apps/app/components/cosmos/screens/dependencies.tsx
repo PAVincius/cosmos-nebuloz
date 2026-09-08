@@ -7,6 +7,7 @@ import {
   ErrorState,
   KpiCard,
   PageHeader,
+  useAction,
   useThemeName,
 } from "@repo/design-system/cosmos/kit";
 // dependencies.tsx — Dependências, wired to listDependencies(). Lists real
@@ -28,10 +29,22 @@ import {
   type DependencyBoardStatus,
   nextBoardStatus,
 } from "@/app/(cosmos)/actions/dependencies.constants";
-import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import { searchEntities } from "@/app/(cosmos)/actions/entity-search";
 import { EmptyState } from "../empty-state";
-import { EntityLinkField } from "../entity-link-field";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  FormField,
+  TextArea,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
@@ -42,15 +55,71 @@ const STATUS_TONE: Record<string, "green" | "amber" | "red" | "neutral"> = {
   completed: "green",
 };
 
+// Bloqueio é o assunto da tela inteira — o vermelho do cabeçalho e do preview
+// é o mesmo sinal que o card usa para caminho crítico.
+const DEPENDENCY_TONE = "red";
+
+// Toda dependência nasce IDENTIFIED (default do schema): o preview mostra o
+// estado real de criação, não o estado final desejado.
+const INITIAL_BOARD_STATUS: DependencyBoardStatus = "IDENTIFIED";
+
+function FeatureBox({ label, hint }: { label: string; hint: string }) {
+  return (
+    <div
+      style={{
+        background: "var(--surface-3)",
+        borderRadius: "var(--r-md)",
+        flex: 1,
+        fontSize: 12,
+        minWidth: 0,
+        padding: "8px 10px",
+      }}
+    >
+      <div style={{ fontWeight: 700 }}>{label}</div>
+      <div style={{ color: "var(--ink-faint)", fontSize: 10.5 }}>{hint}</div>
+    </div>
+  );
+}
+
 function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
-  const [blocking, setBlocking] = useState<EntityOption | null>(null);
-  const [blocked, setBlocked] = useState<EntityOption | null>(null);
+  const [blockingId, setBlockingId] = useState<string | null>(null);
+  const [blockedId, setBlockedId] = useState<string | null>(null);
   const [description, setDescription] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  const { data: featureOptions } = useAction(
+    () => searchEntities("feature", ""),
+    []
+  );
+  const features = featureOptions ?? [];
+  const blocking = features.find((f) => f.id === blockingId);
+  const blocked = features.find((f) => f.id === blockedId);
+  // A carga inicial só alimenta o rótulo do chip: searchEntities corta em 10,
+  // e filtrar essa fatia localmente faria o campo negar feature que existe.
+  // A exclusão do outro lado continua aqui — uma feature não bloqueia a si
+  // mesma, e o servidor não sabe o que o outro campo já escolheu. Cada busca
+  // é memoizada porque o efeito do campo tem onSearch nas dependências; a
+  // identidade só muda quando o id excluído muda, e aí rebuscar é o correto.
+  const buscarBloqueadoras = useCallback(
+    async (q: string) => {
+      const r = await searchEntities("feature", q);
+      return r.ok ? r.data.filter((f) => f.id !== blockedId) : [];
+    },
+    [blockedId]
+  );
+  const buscarBloqueadas = useCallback(
+    async (q: string) => {
+      const r = await searchEntities("feature", q);
+      return r.ok ? r.data.filter((f) => f.id !== blockingId) : [];
+    },
+    [blockingId]
+  );
 
   const create = async () => {
-    if (!(blocking && blocked) || saving) {
+    if (!(blockingId && blockedId) || saving) {
       return;
     }
     setSaving(true);
@@ -58,8 +127,8 @@ function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
     const res = await useActionToast(
       () =>
         createDependency({
-          blockingFeatureId: blocking.id,
-          blockedFeatureId: blocked.id,
+          blockingFeatureId: blockingId,
+          blockedFeatureId: blockedId,
           description: description.trim() || undefined,
         }),
       {
@@ -76,73 +145,159 @@ function NewDependencyModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
-      subtitle="Vincular uma feature bloqueadora a uma feature bloqueada"
-      title="Nova dependência"
-      width={480}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <EntityLinkField
-          kind="feature"
-          label="Feature bloqueadora"
-          onChange={setBlocking}
-          value={blocking}
-        />
-        <EntityLinkField
-          kind="feature"
-          label="Feature bloqueada"
-          onChange={setBlocked}
-          value={blocked}
-        />
-
-        <div>
-          <label
-            htmlFor="dependency-description"
-            style={{
-              display: "block",
-              fontSize: 11.5,
-              fontWeight: 700,
-              letterSpacing: ".04em",
-              textTransform: "uppercase",
-              color: "var(--ink-faint)",
-              marginBottom: 6,
-            }}
-          >
-            Descrição
-          </label>
-          <textarea
-            id="dependency-description"
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Contexto da dependência…"
-            rows={3}
-            style={{
-              width: "100%",
-              padding: "10px 12px",
-              fontSize: 14,
-              borderRadius: "var(--r-md)",
-              border: "1px solid var(--hairline-strong)",
-              background: "var(--surface)",
-              color: "var(--ink)",
-              fontFamily: "inherit",
-              outline: "none",
-              resize: "vertical",
-            }}
-            value={description}
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="registrar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Registrando..." : "Registrar dependência"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="gitBranch" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Vínculo bloqueante entre duas features — a bloqueadora precisa sair primeiro"
+        title="Nova dependência"
+        tone={DEPENDENCY_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${DEPENDENCY_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  lineHeight: 1.4,
+                  marginBottom: 14,
+                }}
+              >
+                {description ||
+                  (blocking && blocked
+                    ? `${blocking.label} → ${blocked.label}`
+                    : "Descrição da dependência")}
+              </div>
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 10,
+                  marginBottom: 12,
+                }}
+              >
+                <FeatureBox
+                  hint="bloqueadora"
+                  label={blocking?.label ?? "Feature bloqueadora"}
+                />
+                <Icon
+                  name="arrowRight"
+                  size={16}
+                  strokeWidth={2}
+                  style={{ color: "var(--ink-faint)", flexShrink: 0 }}
+                />
+                <FeatureBox
+                  hint="bloqueada"
+                  label={blocked?.label ?? "Feature bloqueada"}
+                />
+              </div>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                <Badge
+                  tone={DEPENDENCY_BOARD_STATUS_TONE[INITIAL_BOARD_STATUS]}
+                >
+                  {DEPENDENCY_BOARD_STATUS_LABEL[INITIAL_BOARD_STATUS]}
+                </Badge>
+              </div>
+            </div>
+          }
+        >
+          <EntityLinkField
+            hint="Precisa sair primeiro — é ela que trava a outra"
+            items={features.filter((f) => f.id !== blockedId)}
+            label="Feature bloqueadora"
+            onChange={(v) => setBlockingId(v as string | null)}
+            onSearch={buscarBloqueadoras}
+            placeholder="Buscar a feature bloqueadora..."
+            tone={DEPENDENCY_TONE}
+            value={blockingId}
           />
-        </div>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Registrar dependência
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+          <EntityLinkField
+            hint="Fica parada até a bloqueadora ser entregue"
+            items={features.filter((f) => f.id !== blockingId)}
+            label="Feature bloqueada"
+            onChange={(v) => setBlockedId(v as string | null)}
+            onSearch={buscarBloqueadas}
+            placeholder="Buscar a feature bloqueada..."
+            tone={DEPENDENCY_TONE}
+            value={blockedId}
+          />
+
+          <FormField
+            hint="Sem descrição a lista mostra apenas 'bloqueadora → bloqueada'"
+            label="Descrição"
+          >
+            <TextArea
+              onChange={setDescription}
+              placeholder="ex: Pix agendado depende do tenant isolation layer"
+              rows={3}
+              value={description}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

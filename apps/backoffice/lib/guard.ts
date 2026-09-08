@@ -3,6 +3,7 @@ import { auth } from "@repo/auth/server";
 import { database } from "@repo/database";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { IntervaloExcedido } from "./empresa/periodo";
 import { assertDentroDoLimite } from "./rate-limit";
 
 /** O tenant interno da Nebuloz, criado pela migration 20260728020000 e marcado
@@ -20,10 +21,7 @@ export type PlatformStaff = {
 /** Recusas que têm saída própria. Sem isto, "falta cadastrar 2FA" e "você não
  *  é da equipe" chegam à tela como o mesmo FORBIDDEN — e a única ação oferecida
  *  vira "entrar com outra conta", que não resolve a primeira. */
-export type MotivoDeRecusa =
-  | "SEM_SEGUNDO_FATOR"
-  /** Tem 2FA cadastrado; a sessão é que nasceu antes e não passou pelo desafio. */
-  | "SESSAO_SEM_SEGUNDO_FATOR";
+export type MotivoDeRecusa = "SEM_SEGUNDO_FATOR";
 
 export class StaffAuthError extends Error {
   readonly code: "UNAUTHORIZED" | "FORBIDDEN";
@@ -49,13 +47,12 @@ export class StaffAuthError extends Error {
  * do painel não tem esse contexto. A função existia e o app que mais precisa
  * dela não a chamava. Esta é a versão para o back-office.
  *
- * São **duas** condições, e omitir a segunda é o erro comum: ter 2FA cadastrado
- * não é o mesmo que ter usado nesta sessão. Aceitar só o cadastro transforma o
- * controle em enfeite de perfil.
+ * Ter 2FA cadastrado não é o mesmo que ter usado nesta sessão — e é por isso
+ * que a garantia não pode vir de um campo lido da sessão, mas de quem tem o
+ * poder de criá-la. Ver o corpo da função.
  */
 async function assertSegundoFator(session: {
   user: { id: string };
-  session?: unknown;
 }): Promise<void> {
   const usuario = await database.user.findUnique({
     where: { id: session.user.id },
@@ -72,17 +69,24 @@ async function assertSegundoFator(session: {
     );
   }
 
-  const dados = session.session as { twoFactorVerified?: boolean } | undefined;
-  if (!dados?.twoFactorVerified) {
-    // Motivo próprio: a saída daqui é encerrar a sessão, não trocar de conta.
-    // Acontece sempre logo depois do cadastro — a sessão em curso é anterior a
-    // ele e nunca viu o desafio de TOTP.
-    throw new StaffAuthError(
-      "FORBIDDEN",
-      "Seu autenticador está cadastrado, mas esta sessão é anterior a ele. Saia e entre de novo para completar a verificação.",
-      "SESSAO_SEM_SEGUNDO_FATOR"
-    );
-  }
+  // Aqui existia uma segunda condição: `session.session.twoFactorVerified`.
+  // Esse campo não existe. O plugin `twoFactor` do better-auth 1.6.26 fecha o
+  // desafio chamando `createSession(userId, false, ...)` — uma sessão comum,
+  // sem carimbo nenhum — e a string "twoFactorVerified" não aparece em lugar
+  // algum do pacote. A condição era, portanto, impossível de satisfazer: todo
+  // staff com 2FA ligado batia num "saia e entre de novo" que o novo login
+  // reproduzia, sem saída. Os testes passavam porque fabricavam o campo no
+  // mock — verde sobre uma ficção.
+  //
+  // O que sustenta a garantia agora é a construção da própria lib: com
+  // `twoFactorEnabled`, `signIn.email` **não cria sessão** — devolve
+  // `twoFactorRedirect` e espera o TOTP. Só `verifyTotp` cria. Existir sessão
+  // para um usuário com 2FA ligado já significa que o desafio foi vencido.
+  //
+  // Resta o caso que a condição tentava cobrir: a sessão aberta *antes* de o
+  // 2FA ser ligado, que sobreviveria ao cadastro. Isso não se resolve lendo a
+  // sessão — se resolve encerrando-a: ver `encerrarOutrasSessoes` em
+  // app/seguranca/actions.ts, chamada ao fim do cadastro.
 }
 
 /**
@@ -190,5 +194,20 @@ export function assertCanWrite(staff: PlatformStaff): void {
       "FORBIDDEN",
       "Seu papel no back-office permite apenas leitura."
     );
+  }
+}
+
+/** Traduz o teto de `periodo.ts` (`IntervaloExcedido`) para o erro que a tela
+ *  de financeiro/cac mostra — mesmo padrão nas duas actions, um só lugar.
+ *  Mora aqui, e não num módulo `"use server"`, pelo mesmo motivo de
+ *  `assertCanWrite`: um arquivo de action só pode exportar função async. */
+export function semTeto<T>(fn: () => T): T {
+  try {
+    return fn();
+  } catch (e) {
+    if (e instanceof IntervaloExcedido) {
+      throw new StaffAuthError("FORBIDDEN", e.message);
+    }
+    throw e;
   }
 }

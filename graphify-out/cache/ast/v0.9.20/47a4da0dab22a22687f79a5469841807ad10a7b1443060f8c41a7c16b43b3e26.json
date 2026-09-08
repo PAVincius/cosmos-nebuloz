@@ -1,0 +1,311 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "label": "tasks.md",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "label": "Tasks: Meridian V1 \u00b7 Diagnose",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_1_setup",
+      "label": "Phase 1 \u00b7 Setup",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_2_foundational_bloqueia_todas_as_hist\u00f3rias",
+      "label": "Phase 2 \u00b7 Foundational (bloqueia todas as hist\u00f3rias)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_3_us1_consultor_conduz_a_carteira_p1",
+      "label": "Phase 3 \u00b7 US1 \u00b7 Consultor conduz a carteira (P1)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L47"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_4_us2_coleta_multi_respondente_p1",
+      "label": "Phase 4 \u00b7 US2 \u00b7 Coleta multi-respondente (P1)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L64"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_5_us3_scoring_determin\u00edstico_e_revis\u00e3o_p1",
+      "label": "Phase 5 \u00b7 US3 \u00b7 Scoring determin\u00edstico e revis\u00e3o (P1)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_6_us4_gap_register_e_plano_p2",
+      "label": "Phase 6 \u00b7 US4 \u00b7 Gap register e plano (P2)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L104"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_7_us5_relat\u00f3rio_benchmark_e_diff_p2",
+      "label": "Phase 7 \u00b7 US5 \u00b7 Relat\u00f3rio, benchmark e diff (P2)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_8_us6_benchmark_pool_p3",
+      "label": "Phase 8 \u00b7 US6 \u00b7 Benchmark pool (P3)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_9_us7_escala_de_confian\u00e7a_p3",
+      "label": "Phase 9 \u00b7 US7 \u00b7 Escala de confian\u00e7a (P3)",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L151"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_10_polish_cross_cutting",
+      "label": "Phase 10 \u00b7 Polish & Cross-Cutting",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_depend\u00eancias",
+      "label": "Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L171"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_paralelismo",
+      "label": "Paralelismo",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L189"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_estrat\u00e9gia_de_entrega",
+      "label": "Estrat\u00e9gia de entrega",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L199"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_spec_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_research_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_quickstart_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_1_setup",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_2_foundational_bloqueia_todas_as_hist\u00f3rias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_3_us1_consultor_conduz_a_carteira_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L47",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_actions_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L53",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_4_us2_coleta_multi_respondente_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L64",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_5_us3_scoring_determin\u00edstico_e_revis\u00e3o_p1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_6_us4_gap_register_e_plano_p2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_contracts_plan_export_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_7_us5_relat\u00f3rio_benchmark_e_diff_p2",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_8_us6_benchmark_pool_p3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_9_us7_escala_de_confian\u00e7a_p3",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_phase_10_polish_cross_cutting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L171",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_paralelismo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L189",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_tasks_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_tasks_estrat\u00e9gia_de_entrega",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/tasks.md",
+      "source_location": "L199",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

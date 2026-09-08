@@ -2,6 +2,8 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   BoxIcon,
   CalendarClockIcon,
+  CompassIcon,
+  LayersIcon,
   ShieldCheckIcon,
   SignalIcon,
   UsersIcon,
@@ -29,6 +31,8 @@ const ICONES: Record<ProdutoNoPainel["modulo"], ElementType> = {
   COSMOS: BoxIcon,
   CHARTER: ShieldCheckIcon,
   SIGNAL: SignalIcon,
+  MERIDIAN: CompassIcon,
+  SCAFFOLD: LayersIcon,
 };
 
 /** Tom por estado. `SEM_ROTA` fica neutro de propósito: é promessa da
@@ -36,7 +40,10 @@ const ICONES: Record<ProdutoNoPainel["modulo"], ElementType> = {
  *  ação que não existe. */
 const BADGE: Record<
   EstadoDoProduto,
-  { rotulo: string; variante: "default" | "secondary" | "outline" | "destructive" }
+  {
+    rotulo: string;
+    variante: "default" | "secondary" | "outline" | "destructive";
+  }
 > = {
   DISPONIVEL: { rotulo: "Ativo", variante: "default" },
   SEM_CONTRATO: { rotulo: "Não contratado", variante: "outline" },
@@ -63,7 +70,7 @@ function CartaoDeProduto({ produto }: { produto: ProdutoNoPainel }) {
     <div
       className={`${appDesign.section} flex h-full flex-col gap-4 p-5 ${
         clicavel
-          ? "transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[var(--hover-shadow)]"
+          ? "hover:-translate-y-0.5 transition-all hover:border-primary/40 hover:shadow-[var(--hover-shadow)]"
           : "opacity-80"
       }`}
     >

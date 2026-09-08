@@ -1,0 +1,344 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_md",
+      "label": "data-model.md",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "label": "Data Model \u2014 Scaffold",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_diagrama",
+      "label": "Diagrama",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_enums",
+      "label": "Enums",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "label": "Trilha e progress\u00e3o",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L76"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldtrack",
+      "label": "ScaffoldTrack",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldphaseinstance",
+      "label": "ScaffoldPhaseInstance",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L107"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldstepinstance",
+      "label": "ScaffoldStepInstance",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldartefact",
+      "label": "ScaffoldArtefact",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L123"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_gate_engine_o_n\u00facleo",
+      "label": "Gate engine \u2014 o n\u00facleo",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L132"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldgateresult",
+      "label": "ScaffoldGateResult",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L134"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldgateoverride",
+      "label": "ScaffoldGateOverride",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L145"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_m\u00e1quina_de_estados_srd_4",
+      "label": "M\u00e1quina de estados (SRD \u00a74)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L154"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_biblioteca_de_templates",
+      "label": "Biblioteca de templates",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L178"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "label": "Caso de neg\u00f3cio / baseline",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L202"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscase",
+      "label": "ScaffoldBusinessCase",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L207"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscaseversion",
+      "label": "ScaffoldBusinessCaseVersion",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L221"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscasemetric",
+      "label": "ScaffoldBusinessCaseMetric",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L230"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscasecontest",
+      "label": "ScaffoldBusinessCaseContest",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_supervis\u00e3o_e_acesso",
+      "label": "Supervis\u00e3o e acesso",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L248"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_valida\u00e7\u00e3o_constitui\u00e7\u00e3o_iv",
+      "label": "Valida\u00e7\u00e3o (constitui\u00e7\u00e3o IV)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L261"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_research_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_diagrama",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_enums",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L76",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldtrack",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldphaseinstance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L107",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldstepinstance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_trilha_e_progress\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldartefact",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_gate_engine_o_n\u00facleo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L132",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_gate_engine_o_n\u00facleo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldgateresult",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L134",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_gate_engine_o_n\u00facleo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldgateoverride",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_gate_engine_o_n\u00facleo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_m\u00e1quina_de_estados_srd_4",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_biblioteca_de_templates",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscase",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L207",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscaseversion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L221",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscasemetric",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L230",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_caso_de_neg\u00f3cio_baseline",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_scaffoldbusinesscasecontest",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_supervis\u00e3o_e_acesso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L248",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_data_model_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_data_model_valida\u00e7\u00e3o_constitui\u00e7\u00e3o_iv",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/data-model.md",
+      "source_location": "L261",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

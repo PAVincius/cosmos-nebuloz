@@ -55,6 +55,26 @@ pnpm seed:portfolio
 pnpm seed:e2e
 ```
 
+Toda mudança de schema exige uma migration versionada (`prisma/migrations/`)
+— não editar o banco à mão e não editar uma migration já commitada (exceto
+correção de um handler que impediria a cadeia de rodar do zero, documentada
+no PR). `pnpm migrate` é para iteração local: formata, gera o client e roda
+`prisma migrate deploy` contra o banco de dev.
+
+Em produção, as migrations agora são aplicadas automaticamente no deploy —
+`packages/database` roda `prisma migrate deploy` como parte do próprio
+`build` (`packages/database/scripts/deploy-migrations.mts`), só quando
+`VERCEL_ENV === "production"`. Preview e desenvolvimento nunca migram.
+
+**Banco divergiu do que as migrations descrevem?** Não rode `migrate resolve`
+antes de confirmar, objeto por objeto, que o efeito da migration já está
+presente no banco (coluna, índice, constraint — o que ela declarava criar ou
+alterar). Só depois disso, marque como aplicada sem reexecutar:
+
+```bash
+cd packages/database && npx prisma migrate resolve --applied <nome-da-migration>
+```
+
 ## Build
 
 ```bash

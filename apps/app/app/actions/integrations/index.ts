@@ -22,6 +22,7 @@ import {
   githubTestConnection,
 } from "./connectors/github";
 import {
+  type LinearIssue,
   type LinearTeam,
   linearDiscoverTeams,
   linearImportTeamIssues,
@@ -229,6 +230,9 @@ export async function runImportSnapshot(raw: unknown): Promise<
     created: number;
     updated: number;
     skipped: number;
+    /** Features de import antigo convertidas em Story — o import anterior
+     *  criava Feature até para issue folha. */
+    reclassified: number;
   }>
 > {
   try {
@@ -252,59 +256,164 @@ export async function runImportSnapshot(raw: unknown): Promise<
     let created = 0;
     let updated = 0;
     let skipped = 0;
+    let reclassified = 0;
     const errors: unknown[] = [];
 
     if (source === "linear") {
+      // O lote inteiro vem antes de qualquer escrita: uma issue é "parent"
+      // quando outra issue do lote aponta para ela via parent.id, e isso só
+      // dá para saber com o conjunto completo em mãos. Parent vira Feature
+      // (o agregado do SAFe); todo o resto vira Story — sub-issue linkada na
+      // Feature do parent, issue solta como Story sem feature.
+      const lote: LinearIssue[] = [];
       let cursor: string | undefined;
       do {
         const { issues, nextCursor } = await linearImportTeamIssues(
           config.apiKey ?? "",
           input.projectId,
-          cursor
+          cursor,
+          input.linearProjectId
         );
+        lote.push(...issues);
         cursor = nextCursor ?? undefined;
-
-        for (const issue of issues) {
-          try {
-            const statusId = linearStateToStatus(
-              issue.state.type,
-              issue.state.name
-            );
-            const existing = await database.feature.findFirst({
-              where: {
-                tenantId: ctx.tenantId,
-                externalId: issue.id,
-                externalSource: "linear",
-              },
-            });
-
-            const data = {
-              tenantId: ctx.tenantId,
-              title: issue.title,
-              statusId,
-              externalId: issue.id,
-              externalSource: "linear" as const,
-              externalUrl: issue.url,
-              storyPoints: issue.estimate ?? 1,
-              ...(input.epicId && { epicId: input.epicId }),
-              ...(input.piPlanId && { piPlanId: input.piPlanId }),
-            };
-
-            if (existing) {
-              await database.feature.update({
-                where: { id: existing.id },
-                data,
-              });
-              updated += 1;
-            } else {
-              await database.feature.create({ data });
-              created += 1;
-            }
-          } catch {
-            skipped += 1;
-          }
-        }
       } while (cursor);
+
+      const parentIds = new Set(
+        lote.map((i) => i.parent?.id).filter((id): id is string => Boolean(id))
+      );
+
+      // Passada 1 — parents viram Feature.
+      const featureIdPorExternal = new Map<string, string>();
+      for (const issue of lote) {
+        if (!parentIds.has(issue.id)) {
+          continue;
+        }
+        try {
+          const statusId = linearStateToStatus(
+            issue.state.type,
+            issue.state.name
+          );
+          const existing = await database.feature.findFirst({
+            where: {
+              tenantId: ctx.tenantId,
+              externalId: issue.id,
+              externalSource: "linear",
+            },
+          });
+          const data = {
+            tenantId: ctx.tenantId,
+            title: issue.title,
+            statusId,
+            externalId: issue.id,
+            externalSource: "linear" as const,
+            externalUrl: issue.url,
+            storyPoints: issue.estimate ?? 1,
+            ...(input.epicId && { epicId: input.epicId }),
+            ...(input.piPlanId && { piPlanId: input.piPlanId }),
+          };
+          if (existing) {
+            await database.feature.update({ where: { id: existing.id }, data });
+            featureIdPorExternal.set(issue.id, existing.id);
+            updated += 1;
+          } else {
+            const criada = await database.feature.create({
+              data,
+              select: { id: true },
+            });
+            featureIdPorExternal.set(issue.id, criada.id);
+            created += 1;
+          }
+        } catch {
+          skipped += 1;
+        }
+      }
+
+      // Passada 2 — o resto vira Story.
+      for (const issue of lote) {
+        if (parentIds.has(issue.id)) {
+          continue;
+        }
+        try {
+          const status = linearStateToStatus(
+            issue.state.type,
+            issue.state.name
+          );
+          // Parent fora do lote (filtro de project, cancelada): Story fica
+          // sem feature em vez de sumir do import.
+          const featureId = issue.parent
+            ? (featureIdPorExternal.get(issue.parent.id) ?? null)
+            : null;
+          // O import antigo criava uma Feature por issue, folha inclusive.
+          // Aqui essa Feature vira Story — mas só quando ninguém no Cosmos
+          // passou a depender dela: story filha, dependência, alocação de PI
+          // ou entrega de fornecedor são trabalho humano em cima, e apagar
+          // isso para arrumar o nível é pior que o nível errado. Nesse caso
+          // a Feature fica e a issue entra em skipped, visível no contador.
+          const featureAntiga = await database.feature.findFirst({
+            where: {
+              tenantId: ctx.tenantId,
+              externalId: issue.id,
+              externalSource: "linear",
+            },
+            select: {
+              id: true,
+              _count: {
+                select: {
+                  stories: true,
+                  blocks: true,
+                  blockedBy: true,
+                  supplierDeliverables: true,
+                },
+              },
+            },
+          });
+          if (featureAntiga) {
+            const alocada = await database.pIPlanFeatureAssignment.count({
+              where: { tenantId: ctx.tenantId, featureId: featureAntiga.id },
+            });
+            const temVinculo =
+              alocada > 0 ||
+              featureAntiga._count.stories > 0 ||
+              featureAntiga._count.blocks > 0 ||
+              featureAntiga._count.blockedBy > 0 ||
+              featureAntiga._count.supplierDeliverables > 0;
+            if (temVinculo) {
+              skipped += 1;
+              continue;
+            }
+            await database.feature.delete({ where: { id: featureAntiga.id } });
+            reclassified += 1;
+          }
+
+          const existing = await database.story.findFirst({
+            where: {
+              tenantId: ctx.tenantId,
+              externalId: issue.id,
+              externalSource: "linear",
+            },
+          });
+          const data = {
+            tenantId: ctx.tenantId,
+            title: issue.title,
+            description: issue.description ?? null,
+            status,
+            featureId,
+            externalId: issue.id,
+            externalSource: "linear" as const,
+            externalUrl: issue.url,
+            storyPoints: issue.estimate ?? 1,
+          };
+          if (existing) {
+            await database.story.update({ where: { id: existing.id }, data });
+            updated += 1;
+          } else {
+            await database.story.create({ data });
+            created += 1;
+          }
+        } catch {
+          skipped += 1;
+        }
+      }
     } else if (source === "github") {
       let cursor: string | undefined;
       do {
@@ -386,7 +495,7 @@ export async function runImportSnapshot(raw: unknown): Promise<
 
     revalidatePath("/integrations");
     revalidatePath("/features");
-    return ok({ created, updated, skipped });
+    return ok({ created, updated, skipped, reclassified });
   } catch (e) {
     return err(e instanceof Error ? e.message : "Erro ao importar");
   }

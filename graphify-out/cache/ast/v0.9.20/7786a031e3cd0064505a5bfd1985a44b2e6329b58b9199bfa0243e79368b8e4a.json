@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "label": "nextjs-testing.md",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_core_expertise",
+      "label": "Core Expertise",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_when_invoked",
+      "label": "When Invoked",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_jest_configuration",
+      "label": "Jest Configuration",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_vitest_configuration",
+      "label": "Vitest Configuration",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_client_components",
+      "label": "Testing Client Components",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_server_components_limited",
+      "label": "Testing Server Components (Limited)",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L126"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_server_actions",
+      "label": "Testing Server Actions",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L158"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_playwright_e2e_testing",
+      "label": "Playwright E2E Testing",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L209"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_cypress_integration_testing",
+      "label": "Cypress Integration Testing",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L267"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_hooks",
+      "label": "Testing Hooks",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L304"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_api_routes",
+      "label": "Testing API Routes",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L324"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_test_commands",
+      "label": "Test Commands",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L343"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_ci_cd_integration",
+      "label": "CI/CD Integration",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L360"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_best_practices",
+      "label": "Best Practices",
+      "file_type": "document",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L381"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_core_expertise",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_when_invoked",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_jest_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_vitest_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_client_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_server_components_limited",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_server_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_playwright_e2e_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_cypress_integration_testing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_hooks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L304",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_testing_api_routes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L324",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_test_commands",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L343",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_ci_cd_integration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L360",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_agents_nextjs_testing_best_practices",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/agents/nextjs-testing.md",
+      "source_location": "L381",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

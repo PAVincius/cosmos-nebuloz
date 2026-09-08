@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_md",
+      "label": "2026-05-26-INDEX-cosmos-roadmap.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "label": "Cosmos \u2014 Roadmap Plans Index (2026-05-26)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_1_funda\u00e7\u00e3o_de_ado\u00e7\u00e3o_3_meses",
+      "label": "Fase 1 \u2014 Funda\u00e7\u00e3o de Ado\u00e7\u00e3o (3 meses)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_2_intelig\u00eancia_3_6_meses",
+      "label": "Fase 2 \u2014 Intelig\u00eancia (3\u20136 meses)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_3_diferencia\u00e7\u00e3o_ux_6_12_meses",
+      "label": "Fase 3 \u2014 Diferencia\u00e7\u00e3o UX (6\u201312 meses)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_reescopos_cr\u00edticos",
+      "label": "Reescopos cr\u00edticos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L34"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_depend\u00eancias_entre_planos",
+      "label": "Depend\u00eancias entre Planos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_sequ\u00eancia_recomendada_de_execu\u00e7\u00e3o",
+      "label": "Sequ\u00eancia recomendada de execu\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_como_executar_cada_plano",
+      "label": "Como executar cada plano",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L75"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_1_funda\u00e7\u00e3o_de_ado\u00e7\u00e3o_3_meses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_2_intelig\u00eancia_3_6_meses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_fase_3_diferencia\u00e7\u00e3o_ux_6_12_meses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_reescopos_cr\u00edticos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L34",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_depend\u00eancias_entre_planos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_sequ\u00eancia_recomendada_de_execu\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_cosmos_roadmap_plans_index_2026_05_26",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_index_cosmos_roadmap_como_executar_cada_plano",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-INDEX-cosmos-roadmap.md",
+      "source_location": "L75",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

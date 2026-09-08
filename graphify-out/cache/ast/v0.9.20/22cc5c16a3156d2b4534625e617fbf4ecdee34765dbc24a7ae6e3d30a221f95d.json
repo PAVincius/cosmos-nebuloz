@@ -1,0 +1,655 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_md",
+      "label": "srd-epic-007.md",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "label": "SRD \u2014 Epic 007: Solution Train & Advanced Features",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_overview",
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "label": "Functional Requirements",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_001_anomaly_detection_engine",
+      "label": "FR-001: Anomaly Detection Engine",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_002_anomaly_rule_set_thresholds_classification",
+      "label": "FR-002: Anomaly Rule Set, Thresholds & Classification",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_003_staleness_detection",
+      "label": "FR-003: Staleness Detection",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_004_flow_metric_snapshots_trend_analysis",
+      "label": "FR-004: Flow Metric Snapshots & Trend Analysis",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_005_capability_planning_skill_gap_analysis",
+      "label": "FR-005: Capability Planning & Skill Gap Analysis",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_006_pair_synergy_analysis",
+      "label": "FR-006: Pair Synergy Analysis",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L79"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_007_narrative_generation",
+      "label": "FR-007: Narrative Generation",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_008_state_transition_history",
+      "label": "FR-008: State-Transition History",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L99"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_009_flow_intelligence_copilot_integration_plan_gating",
+      "label": "FR-009: Flow Intelligence Copilot Integration & Plan Gating",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_010_flow_metrics_dashboard",
+      "label": "FR-010: Flow Metrics Dashboard",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_011_velocity_capacity_analytics",
+      "label": "FR-011: Velocity & Capacity Analytics",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_012_roi_budget_intelligence",
+      "label": "FR-012: ROI & Budget Intelligence",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L139"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_013_member_level_metrics_measure_grow",
+      "label": "FR-013: Member-Level Metrics & Measure & Grow",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L149"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_014_executive_dashboard_scheduled_reports_analytics_api",
+      "label": "FR-014: Executive Dashboard, Scheduled Reports & Analytics API",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_015_aws_cost_explorer_ingestion_pipeline_focus_1_1",
+      "label": "FR-015: AWS Cost Explorer Ingestion Pipeline (FOCUS 1.1)",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L170"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_016_tag_rules_engine_cost_snapshots_commitment_discounts",
+      "label": "FR-016: Tag Rules Engine, Cost Snapshots & Commitment Discounts",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L180"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_017_epic_cost_attribution_cost_anomaly_budget_plans_personnel_cost_currency",
+      "label": "FR-017: Epic Cost Attribution, Cost Anomaly, Budget Plans, Personnel Cost & Currency",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L190"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_018_integration_lifecycle_linear_safe_aware_two_way_sync",
+      "label": "FR-018: Integration Lifecycle & Linear SAFe-Aware Two-Way Sync",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L201"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_019_github_safe_aware_sync_dora",
+      "label": "FR-019: GitHub SAFe-Aware Sync & DORA",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L212"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_020_webhook_ingestion_pipeline_sync_logs_configuration",
+      "label": "FR-020: Webhook Ingestion Pipeline, Sync Logs & Configuration",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L222"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_021_copilot_sessions_knowledge_indexer_rag",
+      "label": "FR-021: Copilot Sessions & Knowledge Indexer (RAG)",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L233"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_022_role_aware_context_assembly",
+      "label": "FR-022: Role-Aware Context Assembly",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L244"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_023_copilot_tool_calling_agentic_actions",
+      "label": "FR-023: Copilot Tool-Calling & Agentic Actions",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L254"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_024_prompt_library_document_upload_copilot_security",
+      "label": "FR-024: Prompt Library, Document Upload & Copilot Security",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L264"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_025_okr_management_snapshots",
+      "label": "FR-025: OKR Management & Snapshots",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L275"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_026_strategic_themes_alignment",
+      "label": "FR-026: Strategic Themes & Alignment",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L286"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_027_strategy_map_strategy_to_execution_traceability",
+      "label": "FR-027: Strategy Map & Strategy-to-Execution Traceability",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_028_roadmap_items_scenario_planning",
+      "label": "FR-028: Roadmap Items & Scenario Planning",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L306"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_029_alignment_gap_detection_alerts",
+      "label": "FR-029: Alignment Gap Detection & Alerts",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L316"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_030_bpmndefinition_persistence_bpmn_js_canvas_editor",
+      "label": "FR-030: BpmnDefinition Persistence & BPMN-js Canvas Editor",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L326"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_031_bpmn_xstate_compilation_runtime_context",
+      "label": "FR-031: BPMN\u2192XState Compilation, Runtime & Context",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L337"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_032_bpmn_versioning_in_flight_migration_process_analytics",
+      "label": "FR-032: BPMN Versioning, In-Flight Migration & Process Analytics",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L348"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_non_functional_requirements",
+      "label": "Non-Functional Requirements",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L360"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_data_entities",
+      "label": "Data Entities",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L390"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_api_surface_under_apps_app_app_api",
+      "label": "API Surface (under `apps/app/app/api/`)",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L418"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_server_actions_under_apps_app_app_actions",
+      "label": "Server Actions (under `apps/app/app/actions/`)",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L430"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_market_research_acs_integration",
+      "label": "Market Research ACs Integration",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L448"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_001_anomaly_detection_engine",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_002_anomaly_rule_set_thresholds_classification",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_003_staleness_detection",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_004_flow_metric_snapshots_trend_analysis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_005_capability_planning_skill_gap_analysis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_006_pair_synergy_analysis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_007_narrative_generation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_008_state_transition_history",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_009_flow_intelligence_copilot_integration_plan_gating",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_010_flow_metrics_dashboard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_011_velocity_capacity_analytics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_012_roi_budget_intelligence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L139",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_013_member_level_metrics_measure_grow",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_014_executive_dashboard_scheduled_reports_analytics_api",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_015_aws_cost_explorer_ingestion_pipeline_focus_1_1",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_016_tag_rules_engine_cost_snapshots_commitment_discounts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L180",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_017_epic_cost_attribution_cost_anomaly_budget_plans_personnel_cost_currency",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L190",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_018_integration_lifecycle_linear_safe_aware_two_way_sync",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L201",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_019_github_safe_aware_sync_dora",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L212",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_020_webhook_ingestion_pipeline_sync_logs_configuration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_021_copilot_sessions_knowledge_indexer_rag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_022_role_aware_context_assembly",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L244",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_023_copilot_tool_calling_agentic_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L254",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_024_prompt_library_document_upload_copilot_security",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L264",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_025_okr_management_snapshots",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L275",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_026_strategic_themes_alignment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L286",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_027_strategy_map_strategy_to_execution_traceability",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_028_roadmap_items_scenario_planning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L306",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_029_alignment_gap_detection_alerts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L316",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_030_bpmndefinition_persistence_bpmn_js_canvas_editor",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L326",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_031_bpmn_xstate_compilation_runtime_context",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L337",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_fr_032_bpmn_versioning_in_flight_migration_process_analytics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L348",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_non_functional_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L360",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_data_entities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L390",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_api_surface_under_apps_app_app_api",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L418",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_server_actions_under_apps_app_app_actions",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L430",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_srd_epic_007_solution_train_advanced_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_market_research_acs_integration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-007.md",
+      "source_location": "L448",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -42,6 +42,8 @@ export function clientDetailArgs(slug: string) {
       },
       charterMemberships: { select: { role: true } },
       charterPolicies: { select: { id: true }, take: 1 },
+      meridianMemberships: { select: { role: true } },
+      meridianTemplates: { select: { id: true }, take: 1 },
     },
   };
 }

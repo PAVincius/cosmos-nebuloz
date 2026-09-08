@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_md",
+      "label": "2026-06-09-INDEX-mrr-roadmap.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "label": "INDEX \u2014 MRR Roadmap (4 Fases)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_norte",
+      "label": "Norte",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_0_meeting_integration_blocker",
+      "label": "Phase 0 \u2014 Meeting Integration  \ud83d\udd34 BLOCKER",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_1_totvs_trial_readiness_4_8_semanas",
+      "label": "Phase 1 \u2014 TOTVS Trial Readiness  (~4-8 semanas)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_2_scale_br_latam_3_6_meses",
+      "label": "Phase 2 \u2014 Scale BR/LATAM  (~3-6 meses)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L58"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_3_mrr_engine_6_12_meses",
+      "label": "Phase 3 \u2014 MRR Engine  (~6-12 meses)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L71"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_open_risks",
+      "label": "Open Risks",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L83"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_norte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_0_meeting_integration_blocker",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_1_totvs_trial_readiness_4_8_semanas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_2_scale_br_latam_3_6_meses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_phase_3_mrr_engine_6_12_meses",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L71",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_index_mrr_roadmap_4_fases",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_06_09_index_mrr_roadmap_open_risks",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-06-09-INDEX-mrr-roadmap.md",
+      "source_location": "L83",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

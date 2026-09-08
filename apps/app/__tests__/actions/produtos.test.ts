@@ -42,10 +42,16 @@ beforeEach(() => {
 });
 
 describe("listarProdutos", () => {
-  it("devolve os três produtos, sempre, em ordem", async () => {
+  it("devolve todos os produtos do catálogo, sempre, em ordem", async () => {
     const p = await produtos();
 
-    expect([...p.keys()]).toEqual(["COSMOS", "CHARTER", "SIGNAL"]);
+    expect([...p.keys()]).toEqual([
+      "COSMOS",
+      "CHARTER",
+      "MERIDIAN",
+      "SCAFFOLD",
+      "SIGNAL",
+    ]);
   });
 
   it("quem decide o acesso é o rbac, não esta action", async () => {

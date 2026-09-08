@@ -7,13 +7,27 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const listThemesMock = vi.fn();
+const createThemeMock = vi.fn();
+const listThemeLinkOptionsMock = vi.fn();
 const archiveThemeMock = vi.fn();
 const rebalanceThemeTargetsMock = vi.fn();
+const createEpicMock = vi.fn();
+
+// O quick-create dos campos de vínculo chama server action de outro módulo.
+vi.mock("@/app/(cosmos)/actions/kanban", () => ({
+  createEpic: (...args: unknown[]) => createEpicMock(...args),
+}));
+
+vi.mock("@/app/actions/lean-budget", () => ({
+  createLeanBudget: vi.fn(),
+}));
 
 vi.mock("@/app/(cosmos)/actions/themes", () => ({
   listThemes: (...args: unknown[]) => listThemesMock(...args),
   archiveTheme: (...args: unknown[]) => archiveThemeMock(...args),
-  createTheme: vi.fn(),
+  createTheme: (...args: unknown[]) => createThemeMock(...args),
+  listThemeLinkOptions: (...args: unknown[]) =>
+    listThemeLinkOptionsMock(...args),
   rebalanceThemeTargets: (...args: unknown[]) =>
     rebalanceThemeTargetsMock(...args),
 }));
@@ -44,6 +58,13 @@ describe("ThemesScreen", () => {
     listThemesMock.mockReset();
     archiveThemeMock.mockReset();
     rebalanceThemeTargetsMock.mockReset();
+    createThemeMock.mockReset();
+    createEpicMock.mockReset();
+    listThemeLinkOptionsMock.mockReset();
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: { budgets: [], epics: [], budgetTotalPortfolio: 0 },
+    });
   });
 
   it("arquiva o tema pela tela e recarrega a lista (AC-003)", async () => {
@@ -196,5 +217,183 @@ describe("ThemesScreen", () => {
         targets: [{ themeId: "th1", targetAllocationPct: 100 }],
       })
     );
+  });
+
+  it("cria o tema com budget e épicos vinculados numa chamada só", async () => {
+    // O ponto do modal: um tema sem budget real e sem épicos reais é uma
+    // caixa de texto com nome bonito.
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        budgets: [
+          {
+            id: "clb00000000000000000000a",
+            label: "Plataforma",
+            sub: "R$ 2M · PI-2026-Q3",
+            amount: 2_000_000,
+          },
+        ],
+        epics: [
+          {
+            id: "cle00000000000000000000a",
+            label: "Carteira digital",
+            sub: "FUNNEL",
+          },
+          {
+            id: "cle00000000000000000000b",
+            label: "Antifraude",
+            sub: "ANALYZING",
+          },
+        ],
+        budgetTotalPortfolio: 8_000_000,
+      },
+    });
+    createThemeMock.mockResolvedValue({ ok: true, data: { id: "th-novo" } });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    fireEvent.change(await screen.findByPlaceholderText(/Modernização/), {
+      target: { value: "Expansão LATAM" },
+    });
+
+    // Vincula o budget aprovado.
+    fireEvent.focus(screen.getByPlaceholderText(/budget já aprovado/));
+    fireEvent.click(await screen.findByText("Plataforma"));
+
+    // Vincula dois épicos — multi.
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Carteira digital"));
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Antifraude"));
+
+    fireEvent.click(screen.getByText("Criar tema"));
+
+    await waitFor(() =>
+      expect(createThemeMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Expansão LATAM",
+          leanBudgetId: "clb00000000000000000000a",
+          epicIds: ["cle00000000000000000000a", "cle00000000000000000000b"],
+        })
+      )
+    );
+  });
+
+  it("o preview mostra o desvio do alvo assim que o budget é vinculado", async () => {
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        // 2M de 8M = 25% alocado, contra alvo padrão de 15% → +10pp.
+        budgets: [
+          {
+            id: "clb00000000000000000000a",
+            label: "Plataforma",
+            sub: "R$ 2M",
+            amount: 2_000_000,
+          },
+        ],
+        epics: [],
+        budgetTotalPortfolio: 8_000_000,
+      },
+    });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    // Antes de vincular, o preview diz o que falta em vez de fingir um número.
+    expect(
+      screen.getByText(/Vincule um budget para calcular o desvio/)
+    ).toBeTruthy();
+
+    fireEvent.focus(screen.getByPlaceholderText(/budget já aprovado/));
+    fireEvent.click(await screen.findByText("Plataforma"));
+
+    expect(await screen.findByText(/desvio de \+10pp do alvo/)).toBeTruthy();
+    expect(screen.getByText("Alocado ~25%")).toBeTruthy();
+  });
+
+  it("cria o épico pelo dropdown e já o leva vinculado no payload do tema", async () => {
+    // O vínculo do SAFe não pode exigir abandonar o formulário no meio para
+    // cadastrar o épico noutra tela — o que já foi preenchido aqui se perde.
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: { budgets: [], epics: [], budgetTotalPortfolio: 0 },
+    });
+    createEpicMock.mockResolvedValue({
+      ok: true,
+      data: { id: "cle00000000000000000009z" },
+    });
+    createThemeMock.mockResolvedValue({ ok: true, data: { id: "th-novo" } });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    fireEvent.change(await screen.findByPlaceholderText(/Modernização/), {
+      target: { value: "Expansão LATAM" },
+    });
+
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("+ Criar novo épico"));
+    fireEvent.change(screen.getByLabelText("Título do épico"), {
+      target: { value: "Antifraude" },
+    });
+    fireEvent.click(screen.getByText("Criar e vincular"));
+
+    // "funnel" é onde épico novo nasce — a coluna não é escolha do formulário.
+    await waitFor(() =>
+      expect(createEpicMock).toHaveBeenCalledWith({
+        title: "Antifraude",
+        column: "funnel",
+      })
+    );
+
+    // O chip mostra o rótulo digitado, não o id cru devolvido pela action.
+    expect(await screen.findByText("Antifraude")).toBeTruthy();
+
+    fireEvent.click(screen.getByText("Criar tema"));
+
+    await waitFor(() =>
+      expect(createThemeMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          title: "Expansão LATAM",
+          epicIds: ["cle00000000000000000009z"],
+        })
+      )
+    );
+  });
+
+  it("não oferece o épico que já foi escolhido", async () => {
+    listThemesMock.mockResolvedValue({ ok: true, data: [] });
+    listThemeLinkOptionsMock.mockResolvedValue({
+      ok: true,
+      data: {
+        budgets: [],
+        epics: [
+          {
+            id: "cle00000000000000000000a",
+            label: "Carteira digital",
+            sub: "FUNNEL",
+          },
+        ],
+        budgetTotalPortfolio: 0,
+      },
+    });
+
+    render(<ThemesScreen />);
+    fireEvent.click(await screen.findByText("Novo tema"));
+
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    fireEvent.click(await screen.findByText("Carteira digital"));
+
+    // Continua visível como chip escolhido, mas some da lista de opções. Com
+    // quick-create ligado o vazio não é mais "Nenhum resultado": o dropdown
+    // oferece criar, que é o que resta a fazer quando não há o que escolher.
+    fireEvent.focus(screen.getByPlaceholderText(/épicos existentes/));
+    expect(await screen.findByText("+ Criar novo épico")).toBeTruthy();
+    expect(screen.queryAllByRole("option")).toHaveLength(0);
   });
 });

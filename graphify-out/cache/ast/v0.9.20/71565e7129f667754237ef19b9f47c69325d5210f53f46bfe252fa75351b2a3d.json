@@ -1,0 +1,344 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "label": "supabase.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_1_replace_the_auth_package_dependencies",
+      "label": "1. Replace the `auth` package dependencies",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L14"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_2_update_environment_variables",
+      "label": "2. Update environment variables",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_3_set_up_the_database_schema_for_organizations",
+      "label": "3. Set up the database schema for organizations",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L43"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_4_create_supabase_client_utilities",
+      "label": "4. Create Supabase client utilities",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L81"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_server_client",
+      "label": "Server Client",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_client_component_client",
+      "label": "Client Component Client",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L144"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_5_update_the_middleware",
+      "label": "5. Update the middleware",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L158"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_6_update_the_auth_components",
+      "label": "6. Update the auth components",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L209"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_in",
+      "label": "Sign In",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L213"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_up",
+      "label": "Sign Up",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L274"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_7_update_the_provider_file",
+      "label": "7. Update the Provider file",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L349"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_8_implement_organization_management",
+      "label": "8. Implement organization management",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L363"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_9_set_up_auth_callback_route",
+      "label": "9. Set up auth callback route",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L426"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_10_update_your_apps",
+      "label": "10. Update your apps",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L453"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_server_components",
+      "label": "Server Components",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L457"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_client_components",
+      "label": "Client Components",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L471"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_out",
+      "label": "Sign Out",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L497"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_additional_features",
+      "label": "Additional features",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L518"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_social_authentication",
+      "label": "Social Authentication",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L520"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_magic_link_authentication",
+      "label": "Magic Link Authentication",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L533"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "migrations_database_supabase_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_1_replace_the_auth_package_dependencies",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L14",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_2_update_environment_variables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_3_set_up_the_database_schema_for_organizations",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_4_create_supabase_client_utilities",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L81",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_4_create_supabase_client_utilities",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_server_client",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_4_create_supabase_client_utilities",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_client_component_client",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_5_update_the_middleware",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L158",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_6_update_the_auth_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L209",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_6_update_the_auth_components",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_in",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_6_update_the_auth_components",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_up",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L274",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_7_update_the_provider_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L349",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_8_implement_organization_management",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L363",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_9_set_up_auth_callback_route",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L426",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_10_update_your_apps",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L453",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_10_update_your_apps",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_server_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L457",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_10_update_your_apps",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_client_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L471",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_10_update_your_apps",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_sign_out",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L497",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_additional_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L518",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_additional_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_social_authentication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L520",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_additional_features",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_authentication_supabase_magic_link_authentication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/authentication/supabase.mdx",
+      "source_location": "L533",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

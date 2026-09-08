@@ -1,0 +1,239 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_md",
+      "label": "2026-05-26-slm-finetuning-pipeline.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "label": "SLM Fine-tuning Pipeline \u2014 Ponta a Ponta Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_scope_note",
+      "label": "Scope Note",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_1_project_scaffolding",
+      "label": "Task 1: Project Scaffolding",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_2_etl_formatter_jsonl_instruction_format",
+      "label": "Task 2: ETL \u2014 Formatter (JSONL Instruction Format)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L242"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_3_etl_validator_schema_jsonl",
+      "label": "Task 3: ETL \u2014 Validator (Schema JSONL)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L421"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_4_lancedb_store_lance_2_2_multimodal_lakehouse",
+      "label": "Task 4: LanceDB Store \u2014 Lance 2.2 Multimodal Lakehouse",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L603"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_5_recupera\u00e7\u00e3o_h\u00edbrida_vector_search_2_0_vs_graphrag",
+      "label": "Task 5: Recupera\u00e7\u00e3o H\u00edbrida \u2014 Vector Search 2.0 vs GraphRAG",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L838"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_6_lora_config_rank_4_sweet_spot",
+      "label": "Task 6: LoRA Config \u2014 Rank 4 Sweet Spot",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_7_trainer_mlx_fine_tuning_wrapper",
+      "label": "Task 7: Trainer \u2014 MLX Fine-tuning Wrapper",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1387"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_8_vertex_ai_deploy",
+      "label": "Task 8: Vertex AI Deploy",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1649"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_9_suite_completa_coverage_check",
+      "label": "Task 9: Suite Completa + Coverage Check",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1903"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_10_executar_treinamento_real_apple_silicon",
+      "label": "Task 10: Executar Treinamento Real (Apple Silicon)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1944"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_self_review_spec_coverage",
+      "label": "Self-Review \u2014 Spec Coverage",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L2010"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_scope_note",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_1_project_scaffolding",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_2_etl_formatter_jsonl_instruction_format",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L242",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_3_etl_validator_schema_jsonl",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L421",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_4_lancedb_store_lance_2_2_multimodal_lakehouse",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L603",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_5_recupera\u00e7\u00e3o_h\u00edbrida_vector_search_2_0_vs_graphrag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L838",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_6_lora_config_rank_4_sweet_spot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_7_trainer_mlx_fine_tuning_wrapper",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1387",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_8_vertex_ai_deploy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1649",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_9_suite_completa_coverage_check",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1903",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_task_10_executar_treinamento_real_apple_silicon",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L1944",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_slm_fine_tuning_pipeline_ponta_a_ponta_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_slm_finetuning_pipeline_self_review_spec_coverage",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-slm-finetuning-pipeline.md",
+      "source_location": "L2010",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

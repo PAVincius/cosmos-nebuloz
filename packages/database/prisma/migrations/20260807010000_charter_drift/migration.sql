@@ -14,7 +14,13 @@
 
 ALTER TABLE "CharterCoverage" ALTER COLUMN "atualizadoEm" DROP DEFAULT;
 
+-- ALTER INDEX resolve o índice como relation internamente: se ele não
+-- existir, o erro é undefined_table (42P01), não undefined_object (42704).
+-- O handler original só cobria undefined_object e nunca casava — a migration
+-- abortava com "relation ... does not exist" em qualquer banco onde o índice
+-- antigo não existisse (confirmado na prática). Cobre os dois para manter a
+-- intenção original: ignorar a ausência do índice.
 DO $$ BEGIN
     ALTER INDEX "CharterPolicyLink_tenantId_alvo_idx"
         RENAME TO "CharterPolicyLink_tenantId_alvoTipo_alvoId_idx";
-EXCEPTION WHEN undefined_object THEN NULL; END $$;
+EXCEPTION WHEN undefined_table OR undefined_object THEN NULL; END $$;

@@ -30,7 +30,15 @@ import { listTeams } from "@/app/(cosmos)/actions/teams";
 // medir sem registrar ação é termômetro, não Measure & Grow. Métricas DORA
 // vivem em /cosmos/flow, não aqui.
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, Select, TextInput } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 function scoreTone(
@@ -394,6 +402,22 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
   const [title, setTitle] = useState("");
   const [scopeId, setScopeId] = useState("");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  // A lista vem para dentro do modal — e não por prop — pela mesma razão
+  // descrita em TeamSelect: o elemento é criado no clique, com props congeladas.
+  // Aqui ela também alimenta o preview, que mostra o time pelo nome.
+  const { data, loading } = useAction(listTeams);
+  const teams: TeamOption[] = (data ?? []).map((t) => ({
+    id: t.id,
+    name: t.name,
+  }));
+  const teamOptions = [
+    { label: loading ? "Carregando times..." : "Selecione um time", value: "" },
+    ...teams.map((t) => ({ label: t.name, value: t.id })),
+  ];
+  const team = teams.find((t) => t.id === scopeId);
 
   const save = async () => {
     if (!(title.trim() && scopeId) || saving) {
@@ -421,42 +445,144 @@ function NewImprovementActionModal({ onSaved }: { onSaved: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(save, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="target" size={16} />}
-      subtitle="O que muda a partir da avaliação"
-      title="Nova ação de melhoria"
-      width={440}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="action-title" style={fieldLabelStyle}>
-            Título
-          </label>
-          <input
-            id="action-title"
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="Rodar dojo de testes de contrato"
-            style={inputStyle}
-            value={title}
-          />
-        </div>
-        <TeamSelect
-          id="action-scope"
-          label="Time responsável"
-          onChange={setScopeId}
-          value={scopeId}
-        />
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={save} size="sm" variant="primary">
-            Criar ação
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button icon="check" onClick={save} size="sm" variant="primary">
+                  {saving ? "Criando..." : "Criar ação"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="target" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="O que muda a partir da avaliação — sem dono e sem ação, Measure & Grow vira termômetro"
+        title="Nova ação de melhoria"
+        tone="green"
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: "1px solid rgba(var(--green-rgb),.25)",
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: 10,
+                }}
+              >
+                <span
+                  className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  AÇÃO DE MELHORIA
+                </span>
+                {/* Toda ação nasce OPEN no servidor: mostrar isso evita a
+                    pergunta "em que status ela entra?" depois de criar. */}
+                <Badge tone="neutral">aberta</Badge>
+              </div>
+              <div
+                className="display"
+                style={{
+                  fontSize: 14.5,
+                  fontWeight: 700,
+                  lineHeight: 1.35,
+                  marginBottom: 14,
+                }}
+              >
+                {title || "O que o time vai fazer diferente"}
+              </div>
+              <div
+                style={{
+                  color: "var(--ink-faint)",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  letterSpacing: ".06em",
+                  marginBottom: 4,
+                  textTransform: "uppercase",
+                }}
+              >
+                Time responsável
+              </div>
+              <div
+                style={{
+                  color: team ? "var(--ink)" : "var(--ink-faint)",
+                  fontSize: 12,
+                }}
+              >
+                {team?.name ?? "Nenhum time escolhido ainda"}
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Título" required>
+            <TextInput
+              onChange={setTitle}
+              placeholder="ex: Rodar dojo de testes de contrato"
+              required
+              value={title}
+            />
+          </FormField>
+          {/* O escopo é obrigatório no modelo: uma ação sem time não tem quem
+              a execute nem em qual avaliação ela aparece. */}
+          <FormField label="Time responsável" required>
+            <Select
+              onChange={setScopeId}
+              options={teamOptions}
+              value={scopeId}
+            />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

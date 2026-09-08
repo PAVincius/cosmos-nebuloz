@@ -1,0 +1,421 @@
+import { Icon } from "@repo/design-system/cosmos/icons";
+import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
+import type { ServiceDetail } from "@/app/actions/services";
+import { MetaCell } from "@/components/meta-cell";
+import { formatarBRL } from "@/lib/comercial/formato";
+
+/**
+ * Detalhe de um serviço do catálogo, no layout do `backoffice-services.jsx`.
+ *
+ * Duas colunas, 1.5fr / 1fr: à esquerda o que o cliente recebe e o que precisa
+ * vir antes; à direita as três leituras curtas — comercial, time e vínculo com
+ * a plataforma. A divisão não é estética: a coluna larga é o que entra na
+ * proposta como anexo, a estreita é o que decide se dá para vender.
+ */
+
+/** Como a unidade entra no total da proposta. Só RETAINER é recorrente —
+ *  a mesma regra de `lib/comercial/precificar`, e é por isso que o handoff
+ *  marca essa unidade com ponto no badge. */
+const RECORRENTE = new Set(["RETAINER"]);
+
+const ROTULO_UNIDADE: Record<string, string> = {
+  PROJETO: "Projeto fechado",
+  SPRINT: "Por sprint",
+  HORA: "Hora técnica",
+  RETAINER: "Retainer mensal",
+};
+
+const TRILHA: Record<
+  string,
+  { label: string; tone: "accent" | "green" | "purple" | "blue" }
+> = {
+  readiness: { label: "AI Readiness", tone: "accent" },
+  adoption: { label: "AI Adoption", tone: "green" },
+  enablement: { label: "Enablement", tone: "purple" },
+  custom: { label: "Modelo próprio", tone: "blue" },
+};
+
+const TOM_STATUS: Record<string, "green" | "amber" | "neutral"> = {
+  ACEITA: "green",
+  ENVIADA: "amber",
+  RASCUNHO: "neutral",
+  RECUSADA: "neutral",
+  EM_ANDAMENTO: "green",
+  PROPOSTO: "amber",
+  CONCLUIDO: "neutral",
+};
+
+/** O código do pré-requisito. Vira link só quando o serviço existe — apontar
+ *  para uma rota que devolve erro é pior que não apontar. */
+function CodigoDoAntecedente({
+  codigo,
+  existe,
+}: {
+  codigo: string;
+  existe: boolean;
+}) {
+  const estilo = {
+    marginLeft: "auto",
+    fontSize: "var(--fs-nota)",
+    color: "var(--ink-faint)",
+    textDecoration: "none",
+  } as const;
+
+  if (!existe) {
+    return (
+      <span className="mono" style={estilo}>
+        {codigo}
+      </span>
+    );
+  }
+  return (
+    <Link
+      className="mono"
+      href={`/servicos/${encodeURIComponent(codigo)}`}
+      style={estilo}
+    >
+      {codigo}
+    </Link>
+  );
+}
+
+/** Linha de lista do handoff: ícone à esquerda, texto, fundo de superfície. */
+function LinhaDeItem({
+  icone,
+  cor,
+  tom,
+  children,
+}: {
+  icone: "check" | "alert" | "userCheck";
+  cor: string;
+  /** Fundo e borda tonais — usado só onde o handoff pinta (pré-requisito). */
+  tom?: "amber";
+  children: React.ReactNode;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        padding: "9px 12px",
+        borderRadius: 9,
+        background: tom ? `var(--${tom}-soft)` : "var(--surface-2)",
+        border: `1px solid ${tom ? `rgba(var(--${tom}-rgb),.3)` : "var(--hairline)"}`,
+      }}
+    >
+      <Icon name={icone} size={14} style={{ color: cor, flexShrink: 0 }} />
+      {children}
+    </div>
+  );
+}
+
+export function DetalheDoServico({ servico }: { servico: ServiceDetail }) {
+  const { uso } = servico;
+  const recorrente = RECORRENTE.has(servico.unidadeDeCobranca);
+  const trilha = TRILHA[servico.trilha];
+  // Fora do JSX: o lint lê ternário inline como valor vazando para o render.
+  const tomDoTotal: "amber" | undefined = recorrente ? "amber" : undefined;
+  const comoEntraNoTotal = recorrente
+    ? "recorrente mensal"
+    : "one-time do projeto";
+
+  return (
+    <div className="bo-detalhe">
+      <div
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <SectionCard
+          icon="layers"
+          subtitle="O que o cliente recebe — vira anexo da proposta"
+          title="Entregáveis"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {servico.entregaveis.length === 0 ? (
+              <span
+                style={{
+                  fontSize: "var(--fs-base)",
+                  color: "var(--ink-subtle)",
+                  fontWeight: 500,
+                }}
+              >
+                Sem entregáveis cadastrados — uma proposta com este item não diz
+                ao cliente o que ele recebe.
+              </span>
+            ) : (
+              servico.entregaveis.map((d) => (
+                <LinhaDeItem cor="var(--green-text)" icone="check" key={d}>
+                  <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+                    {d}
+                  </span>
+                </LinhaDeItem>
+              ))
+            )}
+          </div>
+        </SectionCard>
+
+        <SectionCard
+          icon="layers"
+          subtitle="Serviços que precisam vir antes"
+          title="Pré-requisitos"
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {servico.preRequisitos.length === 0 ? (
+              <span
+                style={{
+                  fontSize: "var(--fs-base)",
+                  color: "var(--ink-subtle)",
+                  fontWeight: 500,
+                }}
+              >
+                Nenhum — pode ser o primeiro engajamento com o cliente.
+              </span>
+            ) : (
+              servico.preRequisitos.map((r) => (
+                <LinhaDeItem
+                  cor="var(--amber-text)"
+                  icone="alert"
+                  key={r.codigo}
+                  tom="amber"
+                >
+                  {/* O nome, não o código: `SV-02` sozinho não diz a ninguém o
+                      que precisa vir antes. Quando o código não resolve, a tela
+                      diz isso em vez de mostrar um vazio. */}
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      fontWeight: 600,
+                      color: "var(--amber-text)",
+                    }}
+                  >
+                    {r.nome ?? "Código sem serviço correspondente"}
+                  </span>
+                  <CodigoDoAntecedente codigo={r.codigo} existe={r.existe} />
+                </LinhaDeItem>
+              ))
+            )}
+            <p
+              style={{
+                margin: "2px 0 0",
+                fontSize: "var(--fs-nota)",
+                color: "var(--ink-faint)",
+                fontWeight: 500,
+                lineHeight: 1.5,
+              }}
+            >
+              O gerador de proposta avisa quando um pré-requisito não está no
+              escopo — mas não bloqueia: às vezes o cliente já tem o equivalente
+              feito.
+            </p>
+          </div>
+        </SectionCard>
+
+        {/* Só aparece quando há proposta. O handoff omite o cartão vazio, e com
+            razão: um cartão "nenhuma" ocupa a mesma altura de um cheio sem
+            dizer nada que a contagem do cabeçalho já não diga. */}
+        {uso.propostas.length > 0 ? (
+          <SectionCard icon="tag" title="Em propostas">
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              {uso.propostas.map((p) => (
+                <Link
+                  href={`/propostas/${p.id}`}
+                  key={`${p.id}-${p.numero}`}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "9px 12px",
+                    borderRadius: 9,
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--hairline)",
+                    color: "var(--ink)",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: "var(--fs-nota)",
+                      color: "var(--ink-faint)",
+                    }}
+                  >
+                    {p.numero}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      fontWeight: 700,
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    {p.cliente}
+                  </span>
+                  <span
+                    className="mono"
+                    style={{
+                      fontSize: "var(--fs-nota)",
+                      color: "var(--ink-faint)",
+                    }}
+                  >
+                    {p.quantidade}× {formatarBRL(p.precoUnitCentavos)}
+                  </span>
+                  <Badge dot tone={TOM_STATUS[p.status] ?? "neutral"}>
+                    {p.status}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          </SectionCard>
+        ) : null}
+
+        {uso.engajamentos.length > 0 ? (
+          <SectionCard icon="briefcase" title="Em engajamentos">
+            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+              {uso.engajamentos.map((e) => (
+                <div
+                  key={e.id}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    padding: "9px 12px",
+                    borderRadius: 9,
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--hairline)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: "var(--fs-base)",
+                      fontWeight: 700,
+                      flex: 1,
+                      minWidth: 0,
+                    }}
+                  >
+                    {e.nome}
+                  </span>
+                  <Badge dot tone={TOM_STATUS[e.status] ?? "neutral"}>
+                    {e.status}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </SectionCard>
+        ) : null}
+      </div>
+
+      <div
+        style={{ display: "flex", flexDirection: "column", gap: "var(--gap)" }}
+      >
+        <SectionCard icon="tag" title="Comercial" tone="amber">
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <MetaCell label="Preço" mono tone="amber">
+              {formatarBRL(servico.precoBaseCentavos)}
+              <span
+                style={{
+                  color: "var(--ink-faint)",
+                  fontWeight: 500,
+                }}
+              >
+                /{servico.unidade}
+              </span>
+            </MetaCell>
+            <MetaCell label="Modelo de cobrança">
+              {ROTULO_UNIDADE[servico.unidadeDeCobranca] ??
+                servico.unidadeDeCobranca}
+            </MetaCell>
+            <MetaCell label="Duração">
+              {servico.duracao ?? "não definida"}
+            </MetaCell>
+            {/* A leitura que decide a fórmula da proposta: recorrente entra na
+                mensalidade, o resto entra uma vez. Ver lib/comercial/precificar. */}
+            <MetaCell label="Entra no total como" tone={tomDoTotal}>
+              {comoEntraNoTotal}
+            </MetaCell>
+            <MetaCell label="Trilha" tone={trilha?.tone}>
+              {trilha?.label ?? servico.trilha}
+            </MetaCell>
+          </div>
+        </SectionCard>
+
+        <SectionCard icon="users" title="Time necessário">
+          <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+            {servico.papeis.length === 0 ? (
+              <span
+                style={{
+                  fontSize: "var(--fs-nota)",
+                  color: "var(--ink-subtle)",
+                  fontWeight: 500,
+                  lineHeight: 1.55,
+                }}
+              >
+                Sem papéis cadastrados — a alocação fica por conta de quem
+                montar o engajamento.
+              </span>
+            ) : (
+              servico.papeis.map((r) => (
+                <LinhaDeItem cor="var(--ink-faint)" icone="userCheck" key={r}>
+                  <span style={{ fontSize: "var(--fs-base)", fontWeight: 600 }}>
+                    {r}
+                  </span>
+                </LinhaDeItem>
+              ))
+            )}
+          </div>
+        </SectionCard>
+
+        <SectionCard icon="layers" title="Vínculo com plataforma">
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            {servico.moduloVinculado ? (
+              <MetaCell label="Módulo que este serviço deixa configurado">
+                {servico.moduloVinculado}
+              </MetaCell>
+            ) : (
+              <span
+                style={{
+                  fontSize: "var(--fs-nota)",
+                  color: "var(--ink-subtle)",
+                  fontWeight: 500,
+                  lineHeight: 1.55,
+                }}
+              >
+                Serviço independente de módulo — pode ser vendido sem licença.
+              </span>
+            )}
+            {servico.exigeLab ? (
+              <div
+                style={{
+                  display: "flex",
+                  gap: 9,
+                  alignItems: "center",
+                  padding: "9px 12px",
+                  borderRadius: 9,
+                  border: "1px solid rgba(var(--blue-rgb),.35)",
+                  background: "var(--blue-soft)",
+                }}
+              >
+                <Icon
+                  name="flask"
+                  size={14}
+                  style={{ color: "var(--blue-text)", flexShrink: 0 }}
+                />
+                <span
+                  style={{
+                    fontSize: "var(--fs-nota)",
+                    color: "var(--blue-text)",
+                    fontWeight: 600,
+                  }}
+                >
+                  Execução depende de capacidade no LAB — checar fila de treino
+                  antes de prometer prazo.
+                </span>
+              </div>
+            ) : null}
+          </div>
+        </SectionCard>
+      </div>
+    </div>
+  );
+}

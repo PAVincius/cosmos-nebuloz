@@ -11,7 +11,8 @@ const h = vi.hoisted(() => ({
   strategicThemeCreate: vi.fn(),
   strategicThemeUpdate: vi.fn(),
   strategicThemeCount: vi.fn(),
-  billingEntryAllocationFindMany: vi.fn(),
+  billingEntryGroupBy: vi.fn(),
+  billingEntryAggregate: vi.fn(),
   epicUpdateMany: vi.fn(),
   transaction: vi.fn(),
   logAudit: vi.fn(),
@@ -33,8 +34,9 @@ vi.mock("@repo/database", () => ({
       update: h.strategicThemeUpdate,
       count: h.strategicThemeCount,
     },
-    billingEntryAllocation: {
-      findMany: h.billingEntryAllocationFindMany,
+    billingEntry: {
+      groupBy: h.billingEntryGroupBy,
+      aggregate: h.billingEntryAggregate,
     },
     epic: {
       updateMany: h.epicUpdateMany,
@@ -70,7 +72,7 @@ beforeEach(() => {
 
 describe("listThemes", () => {
   beforeEach(() => {
-    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+    h.billingEntryGroupBy.mockResolvedValue([]);
   });
 
   it("returns tenant-scoped themes with computed epic count and avg progress", async () => {
@@ -103,19 +105,21 @@ describe("listThemes", () => {
     }
   });
 
-  it("queries BillingEntryAllocation tenant-scoped, restricted to themed rows", async () => {
+  it("queries BillingEntry.groupBy tenant-scoped, restricted to themed rows", async () => {
     h.strategicThemeFindMany.mockResolvedValue([]);
 
     await listThemes();
 
-    expect(h.billingEntryAllocationFindMany).toHaveBeenCalledWith(
+    expect(h.billingEntryGroupBy).toHaveBeenCalledWith(
       expect.objectContaining({
+        by: ["themeId"],
         where: { tenantId: tenantCtx.tenantId, themeId: { not: null } },
+        _sum: { effectiveCost: true },
       })
     );
   });
 
-  it("computes actualAllocationPct per theme, normalized against all themed allocations tenant-wide", async () => {
+  it("computes actualAllocationPct per theme, normalized against all themed BillingEntry cost tenant-wide", async () => {
     h.strategicThemeFindMany.mockResolvedValue([
       {
         id: "th1",
@@ -138,17 +142,9 @@ describe("listThemes", () => {
         epics: [],
       },
     ]);
-    h.billingEntryAllocationFindMany.mockResolvedValue([
-      {
-        themeId: "th1",
-        percentage: 100,
-        billingEntry: { effectiveCost: 300 },
-      },
-      {
-        themeId: "th2",
-        percentage: 100,
-        billingEntry: { effectiveCost: 700 },
-      },
+    h.billingEntryGroupBy.mockResolvedValue([
+      { themeId: "th1", _sum: { effectiveCost: 300 } },
+      { themeId: "th2", _sum: { effectiveCost: 700 } },
     ]);
 
     const r = await listThemes();
@@ -183,12 +179,8 @@ describe("listThemes", () => {
         epics: [],
       },
     ]);
-    h.billingEntryAllocationFindMany.mockResolvedValue([
-      {
-        themeId: "th2",
-        percentage: 100,
-        billingEntry: { effectiveCost: 500 },
-      },
+    h.billingEntryGroupBy.mockResolvedValue([
+      { themeId: "th2", _sum: { effectiveCost: 500 } },
     ]);
 
     const r = await listThemes();
@@ -199,7 +191,7 @@ describe("listThemes", () => {
     }
   });
 
-  it("returns null actualAllocationPct for every theme when the tenant has no allocation data (never fabricates)", async () => {
+  it("returns null actualAllocationPct for every theme when the tenant has no BillingEntry cost data (never fabricates)", async () => {
     h.strategicThemeFindMany.mockResolvedValue([
       {
         id: "th1",
@@ -212,7 +204,7 @@ describe("listThemes", () => {
         epics: [],
       },
     ]);
-    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+    h.billingEntryGroupBy.mockResolvedValue([]);
 
     const r = await listThemes();
 
@@ -248,7 +240,7 @@ describe("getTheme", () => {
 
   it("scopes the lookup by id + tenantId (IDOR guard) — must fail if tenantId were dropped from the where clause", async () => {
     h.strategicThemeFindFirst.mockResolvedValue(themeRow);
-    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+    h.billingEntryAggregate.mockResolvedValue({ _sum: { effectiveCost: 0 } });
 
     await getTheme("th1");
 
@@ -257,9 +249,16 @@ describe("getTheme", () => {
         where: { id: "th1", tenantId: tenantCtx.tenantId },
       })
     );
-    expect(h.billingEntryAllocationFindMany).toHaveBeenCalledWith(
+    expect(h.billingEntryAggregate).toHaveBeenCalledWith(
       expect.objectContaining({
         where: { tenantId: tenantCtx.tenantId, themeId: "th1" },
+        _sum: { effectiveCost: true },
+      })
+    );
+    expect(h.billingEntryAggregate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: { tenantId: tenantCtx.tenantId, themeId: { not: null } },
+        _sum: { effectiveCost: true },
       })
     );
   });
@@ -270,19 +269,14 @@ describe("getTheme", () => {
     const res = await getTheme("other-tenant-theme");
 
     expect(res.ok).toBe(false);
-    expect(h.billingEntryAllocationFindMany).not.toHaveBeenCalled();
+    expect(h.billingEntryAggregate).not.toHaveBeenCalled();
   });
 
-  it("computes actualAllocationPct from BillingEntryAllocation, normalized against all themed allocations", async () => {
+  it("computes actualAllocationPct from BillingEntry.effectiveCost, normalized against all themed entries tenant-wide", async () => {
     h.strategicThemeFindFirst.mockResolvedValue(themeRow);
-    h.billingEntryAllocationFindMany
-      .mockResolvedValueOnce([
-        { percentage: 100, billingEntry: { effectiveCost: 300 } },
-      ]) // this theme's allocations
-      .mockResolvedValueOnce([
-        { percentage: 100, billingEntry: { effectiveCost: 300 } },
-        { percentage: 100, billingEntry: { effectiveCost: 700 } },
-      ]); // all themed allocations tenant-wide
+    h.billingEntryAggregate
+      .mockResolvedValueOnce({ _sum: { effectiveCost: 300 } }) // this theme's cost
+      .mockResolvedValueOnce({ _sum: { effectiveCost: 1000 } }); // all themed cost tenant-wide
 
     const res = await getTheme("th1");
 
@@ -294,9 +288,11 @@ describe("getTheme", () => {
     }
   });
 
-  it("returns null actualAllocationPct (never fabricates a number) when there is no allocation data", async () => {
+  it("returns null actualAllocationPct (never fabricates a number) when there is no BillingEntry cost data", async () => {
     h.strategicThemeFindFirst.mockResolvedValue(themeRow);
-    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+    h.billingEntryAggregate.mockResolvedValue({
+      _sum: { effectiveCost: null },
+    });
 
     const res = await getTheme("th1");
 
@@ -544,7 +540,7 @@ describe("listThemes — concentração de portfólio", () => {
   });
 
   beforeEach(() => {
-    h.billingEntryAllocationFindMany.mockResolvedValue([]);
+    h.billingEntryGroupBy.mockResolvedValue([]);
   });
 
   it("sinaliza apenas o tema acima da diretriz de 60% dos épicos (8/2/2)", async () => {

@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_md",
+      "label": "story-059-tela-workflows.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "label": "Story 059 \u2014 Tela Workflows (console de ativa\u00e7\u00e3o de automa\u00e7\u00e3o)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_001_uma_ativa_por_escopo_owner_entitytype",
+      "label": "AC-001: Uma ativa por escopo (owner + entityType)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_002_desativar_n\u00e3o_cascateia",
+      "label": "AC-002: Desativar n\u00e3o cascateia",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_003_ativa\u00e7\u00e3o_\u00e9_escrita_privilegiada_guardada_por_tenant_e_auditada",
+      "label": "AC-003: Ativa\u00e7\u00e3o \u00e9 escrita privilegiada, guardada por tenant e auditada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L67"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_004_a_tela_mostra_o_escopo_e_avisa_a_substitui\u00e7\u00e3o_antes_do_clique",
+      "label": "AC-004: A tela mostra o escopo e avisa a substitui\u00e7\u00e3o antes do clique",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L83"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_005_estado_vazio_e_estado_de_erro_sem_automa\u00e7\u00e3o_fabricada",
+      "label": "AC-005: Estado vazio e estado de erro sem automa\u00e7\u00e3o fabricada",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L109"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L126"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_001_uma_ativa_por_escopo_owner_entitytype",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_002_desativar_n\u00e3o_cascateia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_003_ativa\u00e7\u00e3o_\u00e9_escrita_privilegiada_guardada_por_tenant_e_auditada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L67",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_004_a_tela_mostra_o_escopo_e_avisa_a_substitui\u00e7\u00e3o_antes_do_clique",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L83",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_ac_005_estado_vazio_e_estado_de_erro_sem_automa\u00e7\u00e3o_fabricada",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L109",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_story_059_tela_workflows_console_de_ativa\u00e7\u00e3o_de_automa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_059_tela_workflows_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-007/story-059-tela-workflows.md",
+      "source_location": "L126",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

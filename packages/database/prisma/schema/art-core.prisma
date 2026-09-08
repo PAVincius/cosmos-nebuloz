@@ -24,6 +24,7 @@ model ART {
   sequenceCounters ArtSequenceCounter[]
   artMemberships   ARTMembership[]
   solutionTrain    SolutionTrain?       @relation(fields: [solutionTrainId], references: [id], onDelete: SetNull)
+  billingEntries   BillingEntry[]
 
   @@index([tenantId])
   @@index([solutionTrainId])
@@ -133,6 +134,9 @@ model PIObjective {
 
   @@index([tenantId])
   @@index([tenantId, piPlanId])
+  // Só o composto não serve para a FK: apagar um PIPlan faz o Postgres varrer
+  // esta tabela atrás dos filhos, e `tenantId` na frente impede o uso do índice.
+  @@index([piPlanId])
 }
 
 // ROAM Risk tracking (Resolved/Owned/Accepted/Mitigated)
@@ -172,6 +176,7 @@ model Risk {
 
   @@index([tenantId])
   @@index([tenantId, piPlanId])
+  @@index([piPlanId])
 }
 
 // M:N junction Risk <-> OKR (ROAM impact on OKRs)
@@ -231,8 +236,13 @@ model Epic {
   // Lean Business Case fields (Story-013)
   businessOutcomes    Json? // array max 5 items: [{id, text}]
   leadingIndicators   Json? // array max 5 items: [{id, text}]
-  nfrs                String? @db.Text
-  mvp                 String? @db.Text
+  nfrs                String?  @db.Text
+  // NEB-182: Net Present Value do Business Case. Decimal (não Float, ao
+  // contrário de leanBudgetAllocation acima) — dinheiro nasce Decimal aqui;
+  // NEB-138 registra o Float do vizinho como dívida a corrigir depois, não
+  // como modelo a seguir.
+  npv                 Decimal? @db.Decimal(18, 6)
+  mvp                 String?  @db.Text
   sizeEstimate        String? // XS|S|M|L|XL
   descriptionVersions Json? // ring buffer last 50: [{field, prev, next, savedAt, savedBy}]
 
@@ -268,6 +278,7 @@ model Epic {
   strategicTheme StrategicTheme? @relation(fields: [strategicThemeId], references: [id], onDelete: SetNull)
   governedEpic   GovernedEpic?
   solutionEpic   SolutionEpic?   @relation(fields: [solutionEpicId], references: [id], onDelete: SetNull)
+  billingEntries BillingEntry[]
 
   @@index([tenantId])
   @@index([strategicThemeId])

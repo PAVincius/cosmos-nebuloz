@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic";
 const ATALHO = {
   display: "inline-block",
   marginTop: 10,
-  fontSize: 12.5,
+  fontSize: "var(--fs-base)",
   fontWeight: 700,
   color: "var(--accent-text)",
 };
@@ -85,7 +85,7 @@ function Conteudo({
               margin: 0,
               padding: 20,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}
@@ -157,7 +157,7 @@ function Conteudo({
               margin: 0,
               padding: 20,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               color: "var(--ink-muted)",
             }}
           >
@@ -174,12 +174,12 @@ function Conteudo({
                   gap: 10,
                   padding: "8px 2px",
                   borderTop: i === 0 ? "none" : "1px solid var(--hairline)",
-                  fontSize: 12.5,
+                  fontSize: "var(--fs-base)",
                 }}
               >
                 <span
                   className="mono"
-                  style={{ fontSize: 11.5, fontWeight: 700 }}
+                  style={{ fontSize: "var(--fs-nota)", fontWeight: 700 }}
                 >
                   {e.action}
                 </span>
@@ -190,7 +190,10 @@ function Conteudo({
                 </span>
                 <span
                   className="mono"
-                  style={{ fontSize: 10.5, color: "var(--ink-faint)" }}
+                  style={{
+                    fontSize: "var(--fs-nota)",
+                    color: "var(--ink-faint)",
+                  }}
                 >
                   {new Date(e.quando).toLocaleString("pt-BR")}
                 </span>
@@ -226,7 +229,9 @@ export default async function HomePage() {
       {saude.ok ? (
         <Conteudo pendentes={pendentes} saude={saude.data} />
       ) : (
-        <p style={{ color: "var(--red-text)", fontSize: 13 }}>{saude.error}</p>
+        <p style={{ color: "var(--red-text)", fontSize: "var(--fs-base)" }}>
+          {saude.error}
+        </p>
       )}
     </div>
   );

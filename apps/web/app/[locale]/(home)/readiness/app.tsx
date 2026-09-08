@@ -2,6 +2,7 @@
 
 import { MotionConfig } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { ContactDialog } from "./contact-dialog";
 import { ReadinessCta } from "./cta";
 import { ReadinessFooter } from "./footer";
 import { TheGap } from "./gap";
@@ -113,30 +114,32 @@ export function ReadinessApp({ copy, logoLabel }: ReadinessAppProps) {
     // invisible the way a blanket disable would.
     <MotionConfig reducedMotion="user">
       <SceneSignalsProvider>
-        <div
-          className="relative bg-canvas"
-          data-screen-label="Nebuloz Readiness Home"
-          ref={rootRef}
-        >
-          <ReadinessNav copy={copy.nav} logoLabel={logoLabel} />
-          <ReadinessHero copy={copy.hero} />
-          <main
-            className="relative z-10"
-            id="main-content"
-            ref={mainRef}
-            style={{ background: scrim }}
+        <ContactDialog copy={copy.contact}>
+          <div
+            className="relative bg-canvas"
+            data-screen-label="Nebuloz Readiness Home"
+            ref={rootRef}
           >
-            <TheGap copy={copy.gap} />
-            <Ladder copy={copy.ladder} />
-            <ReadinessShape copy={copy.shape} />
-            <Method copy={copy.method} />
-            <Products copy={copy.products} />
-            <Proof copy={copy.proof} />
-            <Position copy={copy.position} />
-            <ReadinessCta copy={copy.cta} />
-          </main>
-          <ReadinessFooter copy={copy.footer} logoLabel={logoLabel} />
-        </div>
+            <ReadinessNav copy={copy.nav} logoLabel={logoLabel} />
+            <ReadinessHero copy={copy.hero} />
+            <main
+              className="relative z-10"
+              id="main-content"
+              ref={mainRef}
+              style={{ background: scrim }}
+            >
+              <TheGap copy={copy.gap} />
+              <Ladder copy={copy.ladder} />
+              <ReadinessShape copy={copy.shape} />
+              <Method copy={copy.method} />
+              <Products copy={copy.products} />
+              <Proof copy={copy.proof} />
+              <Position copy={copy.position} />
+              <ReadinessCta copy={copy.cta} />
+            </main>
+            <ReadinessFooter copy={copy.footer} logoLabel={logoLabel} />
+          </div>
+        </ContactDialog>
       </SceneSignalsProvider>
     </MotionConfig>
   );

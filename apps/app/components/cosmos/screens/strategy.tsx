@@ -25,7 +25,15 @@ import {
   type PillarView,
   type UnlinkedThemeView,
 } from "@/app/(cosmos)/actions/strategy";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import { DirtyProvider, FormField, TextInput, TonePicker } from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 const HEALTH_TONE: Record<string, "green" | "amber" | "red"> = {
@@ -48,16 +56,6 @@ const VALID_TONES = new Set<Tone>([
 function toTone(value: string): Tone {
   return VALID_TONES.has(value as Tone) ? (value as Tone) : "accent";
 }
-
-const TONE_LABEL: Record<Tone, string> = {
-  green: "Verde",
-  red: "Vermelho",
-  amber: "Âmbar",
-  blue: "Azul",
-  purple: "Roxo",
-  accent: "Destaque",
-  neutral: "Neutro",
-};
 
 // Static reference copy — explains what the Strategy Map represents
 // (SAFe 6.0 pillar -> theme -> epic rollup). Not a per-tenant vision value:
@@ -212,16 +210,6 @@ const selectStyle: CSSProperties = {
   outline: "none",
 };
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
-
 // story-031 AC-001: nó órfão aparece numa faixa de desalinhados em vez de
 // sumir do mapa. Cada linha traz o caminho de saída — o select que vincula.
 function UnalignedThemes({
@@ -302,8 +290,10 @@ function UnalignedThemes({
 function NewPillarModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [name, setName] = useState("");
-  const [tone, setTone] = useState<Tone>("accent");
+  const [tone, setTone] = useState("accent");
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const create = async () => {
     if (!name.trim() || saving) {
@@ -326,60 +316,135 @@ function NewPillarModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      subtitle="Adicionar um pilar estratégico ao portfólio"
-      title="Novo pilar estratégico"
-      width={460}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="pillar-name" style={fieldLabelStyle}>
-            Nome
-          </label>
-          <input
-            autoFocus
-            id="pillar-name"
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
-              }
-            }}
-            placeholder="Ex: Crescimento…"
-            style={selectStyle}
-            value={name}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="pillar-tone" style={fieldLabelStyle}>
-            Cor
-          </label>
-          <select
-            id="pillar-tone"
-            onChange={(e) => setTone(e.target.value as Tone)}
-            style={selectStyle}
-            value={tone}
-          >
-            {Array.from(VALID_TONES).map((t) => (
-              <option key={t} value={t}>
-                {TONE_LABEL[t]}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar pilar
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar pilar"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="trend" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Grande aposta de longo prazo do Strategy Map, guarda-chuva de temas e épicos"
+        title="Novo pilar estratégico"
+        tone={tone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${tone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
+                <span
+                  style={{
+                    background: `var(--${tone})`,
+                    borderRadius: 99,
+                    height: 10,
+                    width: 10,
+                  }}
+                />
+                <span
+                  className="mono"
+                  style={{ color: "var(--ink-faint)", fontSize: 10.5 }}
+                >
+                  Strategy Map
+                </span>
+              </div>
+              <div
+                className="display"
+                style={{ fontSize: 15.5, fontWeight: 700, marginBottom: 10 }}
+              >
+                {name || "Nome do pilar"}
+              </div>
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                  paddingTop: 12,
+                }}
+              >
+                0 temas vinculados — o pilar nasce vazio e recebe temas pela
+                faixa "Fora de qualquer pilar".
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Nome do pilar" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: Confiabilidade e escala"
+              required
+              value={name}
+            />
+          </FormField>
+          <FormField label="Cor / tone">
+            <TonePicker onChange={setTone} value={tone} />
+          </FormField>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

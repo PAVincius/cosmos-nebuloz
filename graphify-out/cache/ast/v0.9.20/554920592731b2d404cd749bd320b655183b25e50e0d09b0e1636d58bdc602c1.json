@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_md",
+      "label": "2026-09-02-scaffold-us6-supervisao.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "label": "Scaffold \u2014 US6: supervis\u00e3o e estagna\u00e7\u00e3o (T098\u2013T111)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_o_que_entrou",
+      "label": "O que entrou",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_verifica\u00e7\u00e3o",
+      "label": "Verifica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_a_decis\u00e3o_que_a_fatia_executa",
+      "label": "A decis\u00e3o que a fatia executa",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_detalhes_que_n\u00e3o_s\u00e3o_\u00f3bvios",
+      "label": "Detalhes que n\u00e3o s\u00e3o \u00f3bvios",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_erro_meu_no_fim",
+      "label": "Erro meu, no fim",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "label": "O que fica para a pr\u00f3xima fatia",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L77"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_o_que_entrou",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_verifica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_a_decis\u00e3o_que_a_fatia_executa",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_detalhes_que_n\u00e3o_s\u00e3o_\u00f3bvios",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_erro_meu_no_fim",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_scaffold_us6_supervis\u00e3o_e_estagna\u00e7\u00e3o_t098_t111",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_09_02_scaffold_us6_supervisao_o_que_fica_para_a_pr\u00f3xima_fatia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-09-02-scaffold-us6-supervisao.md",
+      "source_location": "L77",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

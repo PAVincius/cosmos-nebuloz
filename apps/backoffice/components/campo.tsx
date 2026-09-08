@@ -15,7 +15,7 @@ export const INPUT: CSSProperties = {
   borderRadius: "var(--r-md)",
   padding: "10px 12px",
   fontFamily: "inherit",
-  fontSize: 13,
+  fontSize: "var(--fs-base)",
   fontWeight: 600,
   color: "var(--ink)",
   outline: "none",
@@ -39,7 +39,7 @@ export function Campo({
         className="mono"
         htmlFor={htmlFor}
         style={{
-          fontSize: 10,
+          fontSize: "var(--fs-micro)",
           fontWeight: 700,
           letterSpacing: ".12em",
           textTransform: "uppercase",
@@ -51,7 +51,11 @@ export function Campo({
       {children}
       {hint ? (
         <span
-          style={{ fontSize: 11, color: "var(--ink-faint)", fontWeight: 500 }}
+          style={{
+            fontSize: "var(--fs-nota)",
+            color: "var(--ink-faint)",
+            fontWeight: 500,
+          }}
         >
           {hint}
         </span>
@@ -96,7 +100,7 @@ export function Erro({ children }: { children: string }) {
         background: "var(--red-soft)",
         border: "1px solid rgba(var(--red-rgb),.3)",
         color: "var(--red-text)",
-        fontSize: 12.5,
+        fontSize: "var(--fs-base)",
         fontWeight: 600,
       }}
     >
@@ -140,7 +144,7 @@ export function BotaoPrimario({
         justifyContent: "center",
         gap: 8,
         padding: "9px 15px",
-        fontSize: 14,
+        fontSize: "var(--fs-forte)",
         fontWeight: 600,
         fontFamily: "inherit",
         borderRadius: "var(--r-md)",
@@ -154,6 +158,54 @@ export function BotaoPrimario({
         cursor: disabled ? "not-allowed" : "pointer",
       }}
       type={type === "submit" ? "submit" : "button"}
+    >
+      {children}
+    </button>
+  );
+}
+
+/**
+ * Ação secundária, em linha — o par do `BotaoPrimario` para escolhas que não
+ * são a principal da tela.
+ *
+ * Aceita `rotulo` pelo mesmo motivo que o primário: quando o texto visível é um
+ * enum curto ("ACTIVE", "TRIAL"), ele se repete em cada linha da tabela e
+ * sozinho não diz qual módulo será alterado. `title` não resolveria — com texto
+ * dentro do botão, o conteúdo vence o title no nome acessível.
+ */
+export function BotaoSecundario({
+  children,
+  disabled,
+  onClick,
+  rotulo,
+}: {
+  children: ReactNode;
+  disabled?: boolean;
+  onClick?: () => void;
+  rotulo?: string;
+}) {
+  return (
+    <button
+      aria-label={rotulo}
+      className="btn"
+      disabled={disabled}
+      onClick={onClick}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "6px 11px",
+        fontSize: "var(--fs-nota)",
+        fontWeight: 700,
+        fontFamily: "inherit",
+        borderRadius: "var(--r-sm)",
+        border: "1px solid var(--hairline-strong)",
+        background: "var(--surface-2)",
+        color: "var(--ink-muted)",
+        opacity: disabled ? 0.45 : 1,
+        cursor: disabled ? "not-allowed" : "pointer",
+      }}
+      type="button"
     >
       {children}
     </button>

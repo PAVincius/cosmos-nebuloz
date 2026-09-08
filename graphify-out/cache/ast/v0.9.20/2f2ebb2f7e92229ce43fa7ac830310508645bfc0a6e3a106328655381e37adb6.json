@@ -1,0 +1,143 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_md",
+      "label": "2026-05-12-swarm-report.md",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_cosmos_ux_swarm_report_2026_05_12",
+      "label": "COSMOS UX Swarm Report \u2014 2026-05-12",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "label": "Findings by Persona",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_lean_portfolio_manager_lpm",
+      "label": "Lean Portfolio Manager (`lpm`)",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_release_train_engineer_rte",
+      "label": "Release Train Engineer (`rte`)",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_product_owner_po",
+      "label": "Product Owner (`po`)",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_scrum_master_sm",
+      "label": "Scrum Master (`sm`)",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L57"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_devops_engineer_devops",
+      "label": "DevOps Engineer (`devops`)",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L72"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_compliant_flows",
+      "label": "\u2705 Compliant Flows",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L88"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_cosmos_ux_swarm_report_2026_05_12",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_cosmos_ux_swarm_report_2026_05_12",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_lean_portfolio_manager_lpm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_release_train_engineer_rte",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_product_owner_po",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_scrum_master_sm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L57",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_findings_by_persona",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_devops_engineer_devops",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L72",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_cosmos_ux_swarm_report_2026_05_12",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_2026_05_12_swarm_report_compliant_flows",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/2026-05-12-swarm-report.md",
+      "source_location": "L88",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

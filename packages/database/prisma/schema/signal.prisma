@@ -1,0 +1,651 @@
+// Signal — medição de adoção e valor de iniciativas de IA.
+//
+// Mapeamento de `specs/003-signal-measure/data-model.md` para Prisma.
+// Convenções desta camada:
+//   • Fórmula não vira coluna. `invested`, `returned`, o múltiplo de ROI, o
+//     score de confiança, a % de adoção e o veredito são calculados na leitura
+//     (`apps/app/lib/signal/*`). A tentação de guardá-los é grande e foi
+//     rejeitada de propósito: o protótipo do handoff guardava total e partes
+//     lado a lado e, em 2 de 8 iniciativas, os dois discordavam. Um número que
+//     não bate com o que o produz é exatamente o que este módulo existe para
+//     impedir.
+//   • As exceções congeladas são contrato firmado num momento:
+//     `SignalBaseline` depois de assinado, `SignalRoiFormula` como versão, e
+//     `SignalReportSnapshot.payload` depois do congelamento. Mudar a regra
+//     depois não pode reescrever um relatório já levado ao comitê.
+//   • `SignalConnection.health` é a única desnormalização: cache com
+//     invalidação explícita (`recomputeHealth`), materializado para permitir
+//     índice e disparo de alerta. A regra de derivação vive em
+//     `apps/app/lib/signal/health.ts`.
+//   • Auditoria reusa o `AuditLog` existente (system.prisma), append-only.
+//     entityType = "signal.<entidade>", diff = Array<[campo, antes, depois]>.
+//   • Toda tabela tem `tenantId`. Não há tabela global neste produto.
+
+// ── Enums ─────────────────────────────────────────────────────────────────────
+
+/// draft → active → paused → closed | cancelled. `closed` e `cancelled` são
+/// terminais: reabrir é uma iniciativa nova. Sair de `draft` exige baseline
+/// assinado — medir melhora sem linha de base é opinião, não medição.
+enum SignalInitiativeStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  CLOSED
+  CANCELLED
+}
+
+enum SignalCategory {
+  PRODUCTIVITY
+  QUALITY
+  RISK
+  REVENUE
+}
+
+/// healthy → stale (sem sync além do limiar) → down (erro de conexão).
+enum SignalConnHealth {
+  HEALTHY
+  STALE
+  DOWN
+}
+
+/// Deriva da saúde da fonte + revisão humana. `REVIEW` é o único que vem de
+/// gente: alguém contestou a atribuição e o mapeamento está sub judice.
+enum SignalMappingState {
+  ACTIVE
+  REVIEW
+  BROKEN
+  STALE
+}
+
+enum SignalAlertKind {
+  LOW
+  WEAK
+  STALE
+}
+
+enum SignalAlertState {
+  OPEN
+  ACKNOWLEDGED
+  RESOLVED
+}
+
+enum SignalReportState {
+  DRAFT
+  FINAL
+}
+
+enum SignalReportKind {
+  EXECUTIVE
+  PORTFOLIO
+}
+
+/// De onde veio a observação. `MANUAL` não é cidadão de segunda classe — o V1
+/// inteiro pode operar assim, desde que a transformação esteja declarada.
+enum SignalObservationSource {
+  SYNC
+  MANUAL
+  IMPORT
+}
+
+enum SignalRoiEntryKind {
+  RETURN
+  COST
+}
+
+/// Direção de melhora da métrica de resultado. Sem isto, "de 12 min para 11
+/// min" e "de 18% para 21%" não podem ser lidos pelo mesmo código.
+enum SignalOutcomeDirection {
+  LOWER_IS_BETTER
+  HIGHER_IS_BETTER
+}
+
+enum SignalRoiFormulaState {
+  ACTIVE
+  SUPERSEDED
+}
+
+/// Papéis do Signal. Ortogonais ao MemberRole (SAFe), ao CharterRole e ao
+/// MeridianRole: a mesma pessoa pode ser DEV no Cosmos e VIEWER no Signal.
+/// Ausência de SignalMember = sem acesso, mesmo com o módulo contratado.
+///
+/// A escada é cumulativa em leitura e escalonada em escrita: OWNER escreve nas
+/// próprias iniciativas, ANALYST em qualquer uma, ADMIN também no que é do
+/// tenant (fontes, limiares, congelamento, encerramento).
+enum SignalRole {
+  VIEWER
+  OWNER
+  ANALYST
+  ADMIN
+}
+
+// ── Iniciativa ────────────────────────────────────────────────────────────────
+
+/// A unidade de investimento medida. Tudo no módulo pendura aqui.
+model SignalInitiative {
+  id            String                 @id @default(cuid())
+  tenantId      String
+  /// Código legível do tenant (IN-014). Emitido por SignalSequence.
+  code          String
+  name          String
+  businessUnit  String
+  category      SignalCategory
+  status        SignalInitiativeStatus @default(DRAFT)
+  ownerId       String
+  /// A frase falseável. Sem ela não há como dizer se a iniciativa deu certo.
+  hypothesis    String                 @db.Text
+  expectedValue Decimal?               @db.Decimal(14, 2)
+  startedAt     DateTime?
+  /// Encerramento exige motivo. Uma iniciativa que morre sem explicação vira
+  /// folclore organizacional na próxima rodada de orçamento.
+  closedAt      DateTime?
+  closedById    String?
+  closureReason String?                @db.Text
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  updatedBy     String?
+
+  tenant   Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  owner    User   @relation("SignalInitiativeOwner", fields: [ownerId], references: [id])
+  closedBy User?  @relation("SignalInitiativeCloser", fields: [closedById], references: [id])
+
+  baselines        SignalBaseline[]
+  roiFormulas      SignalRoiFormula[]
+  adoption         SignalAdoptionSnapshot[]
+  outcomes         SignalOutcomeSnapshot[]
+  confidenceScores SignalConfidenceScore[]
+  observations     SignalMetricObservation[]
+  mappings         SignalMetricMapping[]
+  alerts           SignalAlert[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, status])
+  @@index([tenantId, category])
+  @@index([tenantId, ownerId])
+}
+
+// ── Baseline ──────────────────────────────────────────────────────────────────
+
+/// Linha de base versionada. Depois de `signedAt`, imutável: editar cria versão
+/// nova. A versão anterior nunca some — é ela que sustenta o número já
+/// reportado no trimestre passado.
+model SignalBaseline {
+  id           String    @id @default(cuid())
+  tenantId     String
+  initiativeId String
+  version      Int
+  /// Rótulo humano da janela ("4 semanas · mai/2026"), como foi assinado.
+  windowLabel  String
+  windowStart  DateTime
+  windowEnd    DateTime
+  /// Nulo = rascunho. Preenchido = congelado.
+  signedById   String?
+  signedAt     DateTime?
+  createdAt    DateTime  @default(now())
+
+  tenant     Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative          @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  signedBy   User?                     @relation(fields: [signedById], references: [id])
+  dimensions SignalBaselineDimension[]
+
+  @@unique([tenantId, initiativeId, version])
+  @@index([tenantId])
+  @@index([initiativeId])
+}
+
+/// Uma dimensão medida do baseline, com a fonte declarada.
+///
+/// `value` é texto e `numericValue` é o par numérico opcional, de propósito: o
+/// baseline precisa aparecer na tela exatamente como foi assinado ("8,2% de
+/// retrabalho", "R$ 64", "340/semana") e ainda assim ser comparável quando a
+/// unidade é limpa. Forçar tudo em Decimal perderia a primeira metade; só texto
+/// perderia a segunda.
+model SignalBaselineDimension {
+  id           String   @id @default(cuid())
+  tenantId     String
+  baselineId   String
+  /// TIME | COST | THROUGHPUT | QUALITY | USER_BASE, ou uma chave livre do
+  /// tenant. Não é enum porque a sexta dimensão de um cliente não deveria
+  /// exigir migration.
+  key          String
+  label        String
+  value        String
+  numericValue Decimal? @db.Decimal(18, 4)
+  unit         String?
+  /// De onde o número veio. Obrigatório: dimensão sem fonte não é baseline.
+  sourceLabel  String
+  connectionId String?
+  order        Int      @default(0)
+
+  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  baseline   SignalBaseline    @relation(fields: [baselineId], references: [id], onDelete: Cascade)
+  connection SignalConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([baselineId])
+}
+
+// ── Fontes de dado ────────────────────────────────────────────────────────────
+
+/// Fonte conectada. `config` guarda o que não é segredo (projeto, board, aba);
+/// credencial vive no integrations-vault e nunca aqui.
+model SignalConnection {
+  id                  String           @id @default(cuid())
+  tenantId            String
+  /// CN-01. Emitido por SignalSequence.
+  code                String
+  name                String
+  /// "Rastreador de tarefas", "Data warehouse", "Google Sheets". Texto e não
+  /// enum porque TR-1 exige múltiplos tipos de entrada sem hardcode.
+  kind                String
+  icon                String?
+  config              Json?
+  health              SignalConnHealth @default(HEALTHY)
+  lastSyncAt          DateTime?
+  /// Nulo = fonte manual. Fonte manual nunca fica STALE por tempo — só uma
+  /// planilha que alguém prometeu atualizar pode "atrasar", e isso é regra de
+  /// negócio, não de relógio.
+  expectedFreqMinutes Int?
+  rowsLabel           String?
+  ownerId             String?
+  /// O conserto, não o sintoma: "Reautorizar o app no Zendesk Admin → Apps".
+  errorMessage        String?          @db.Text
+  /// O estrago: quais métricas de quais iniciativas congelaram.
+  impactNote          String?          @db.Text
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  updatedBy           String?
+
+  tenant     Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  owner      User?                     @relation(fields: [ownerId], references: [id])
+  mappings   SignalMetricMapping[]
+  dimensions SignalBaselineDimension[]
+  roiEntries SignalRoiEntry[]
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, health])
+}
+
+/// Evento de origem → métrica de negócio. Versionado: mudar a transformação
+/// depois de um relatório sair muda a história, e a trilha precisa mostrar as
+/// duas versões.
+model SignalMetricMapping {
+  id           String             @id @default(cuid())
+  tenantId     String
+  /// MP-01. Estável entre versões — o par (code, version) é que é único.
+  code         String
+  connectionId String
+  /// Nulo = vale para todas as iniciativas (o "todas" do handoff: custo de
+  /// licença, base de usuários).
+  initiativeId String?
+  eventKey     String
+  metricLabel  String
+  /// A expressão como o analista a escreveu ("sum(time_in_status) ÷ 60").
+  /// Texto, não DSL executável: no V1 quem executa é a fonte, e o que o
+  /// produto precisa é que a conta esteja visível e contestável.
+  transform    String             @db.Text
+  unit         String
+  version      Int                @default(1)
+  state        SignalMappingState @default(ACTIVE)
+  changedById  String?
+  changedAt    DateTime           @default(now())
+
+  tenant       Tenant                    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  connection   SignalConnection          @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  initiative   SignalInitiative?         @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  changedBy    User?                     @relation(fields: [changedById], references: [id])
+  observations SignalMetricObservation[]
+
+  @@unique([tenantId, code, version])
+  @@index([tenantId])
+  @@index([tenantId, connectionId])
+  @@index([tenantId, initiativeId])
+  @@index([tenantId, state])
+}
+
+// ── Evidência ─────────────────────────────────────────────────────────────────
+
+/// Observação de métrica = a EvidenceItem do PRD. Uma tabela, dois nomes.
+///
+/// Invariante de domínio, checada na action: nenhuma linha existe sem
+/// referência de origem — `mappingId` (veio de fonte) ou `recordedById` +
+/// `transform` (alguém entrou à mão e disse como calculou). Sem isso a
+/// evidência é opinião com aparência de dado.
+model SignalMetricObservation {
+  id              String                  @id @default(cuid())
+  tenantId        String
+  /// EV-8841. Emitido por SignalSequence.
+  code            String
+  initiativeId    String
+  mappingId       String?
+  /// Denormalizado de propósito: a evidência precisa continuar legível depois
+  /// que a conexão for renomeada ou removida. É rótulo histórico, não FK.
+  connectionLabel String?
+  metricLabel     String
+  value           String
+  numericValue    Decimal?                @db.Decimal(18, 4)
+  unit            String?
+  windowStart     DateTime
+  windowEnd       DateTime
+  rowCount        Int?
+  transform       String                  @db.Text
+  source          SignalObservationSource
+  observedAt      DateTime
+  /// Nulo quando veio de sync. Preenchido quando foi gente.
+  recordedById    String?
+  /// Ressalva visível: "Congelada — fonte desconectada em 05 jul".
+  flag            String?                 @db.Text
+  frozenAt        DateTime?
+  createdAt       DateTime                @default(now())
+
+  tenant     Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  mapping    SignalMetricMapping? @relation(fields: [mappingId], references: [id], onDelete: SetNull)
+  recordedBy User?                @relation(fields: [recordedById], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, initiativeId])
+  @@index([tenantId, mappingId])
+  @@index([tenantId, frozenAt])
+}
+
+// ── ROI ───────────────────────────────────────────────────────────────────────
+
+/// Versão da fórmula de ROI. Nunca sobrescrita.
+///
+/// Não há coluna `invested`, `returned` nem `multiple`: os dois primeiros são
+/// `sum(SignalRoiEntry.total)` por `kind` e o terceiro é a razão. Ver o
+/// cabeçalho deste arquivo.
+model SignalRoiFormula {
+  id            String                @id @default(cuid())
+  tenantId      String
+  initiativeId  String
+  version       Int
+  horizonMonths Int                   @default(12)
+  state         SignalRoiFormulaState @default(ACTIVE)
+  changedById   String?
+  changedAt     DateTime              @default(now())
+  note          String?               @db.Text
+
+  tenant      Tenant                @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative  SignalInitiative      @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  changedBy   User?                 @relation(fields: [changedById], references: [id])
+  entries     SignalRoiEntry[]
+  assumptions SignalRoiAssumption[]
+
+  @@unique([tenantId, initiativeId, version])
+  @@index([tenantId])
+  @@index([tenantId, initiativeId, state])
+}
+
+/// Um componente de retorno ou de custo, com a fonte de onde saiu.
+model SignalRoiEntry {
+  id            String             @id @default(cuid())
+  tenantId      String
+  formulaId     String
+  kind          SignalRoiEntryKind
+  label         String
+  /// "1.870 h" — a quantidade como o analista a apresenta.
+  quantityLabel String?
+  /// "R$ 84/h" — o unitário, idem.
+  unitLabel     String?
+  total         Decimal            @db.Decimal(14, 2)
+  sourceLabel   String
+  connectionId  String?
+  order         Int                @default(0)
+
+  tenant     Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  formula    SignalRoiFormula  @relation(fields: [formulaId], references: [id], onDelete: Cascade)
+  connection SignalConnection? @relation(fields: [connectionId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId])
+  @@index([formulaId])
+}
+
+/// Premissa visível. `note` é obrigatória porque é onde mora a defesa do
+/// número: "folha + encargos ÷ 1.760 h" é auditável, "R$ 84" sozinho não é.
+model SignalRoiAssumption {
+  id        String @id @default(cuid())
+  tenantId  String
+  formulaId String
+  label     String
+  value     String
+  note      String @db.Text
+  order     Int    @default(0)
+
+  tenant  Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  formula SignalRoiFormula @relation(fields: [formulaId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId])
+  @@index([formulaId])
+}
+
+// ── Séries de adoção e resultado ──────────────────────────────────────────────
+
+/// Uma linha por período medido. A série do gráfico é a coleção; a % de adoção
+/// é derivada (`activeUsers / licensedUsers`), não coluna.
+model SignalAdoptionSnapshot {
+  id             String   @id @default(cuid())
+  tenantId       String
+  initiativeId   String
+  periodStart    DateTime
+  periodEnd      DateTime
+  activeUsers    Int
+  licensedUsers  Int
+  frequencyLabel String?
+  /// Profundidade de uso, em prosa: "usa em 3 dos 4 passos do fluxo". É
+  /// qualitativo por natureza e vale mais que um número inventado.
+  depthNote      String?  @db.Text
+  createdAt      DateTime @default(now())
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, initiativeId, periodStart])
+  @@index([tenantId])
+  @@index([initiativeId])
+}
+
+/// Métrica de resultado num período. `isSecondary` distingue a métrica da
+/// hipótese da métrica de guarda (o CSAT que não pode cair enquanto o tempo
+/// melhora).
+model SignalOutcomeSnapshot {
+  id              String                 @id @default(cuid())
+  tenantId        String
+  initiativeId    String
+  periodStart     DateTime
+  periodEnd       DateTime
+  metricLabel     String
+  baselineValue   String
+  currentValue    String
+  numericBaseline Decimal?               @db.Decimal(18, 4)
+  numericCurrent  Decimal?               @db.Decimal(18, 4)
+  isSecondary     Boolean                @default(false)
+  direction       SignalOutcomeDirection @default(LOWER_IS_BETTER)
+  createdAt       DateTime               @default(now())
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, initiativeId, periodStart, metricLabel])
+  @@index([tenantId])
+  @@index([initiativeId])
+}
+
+// ── Confiança ─────────────────────────────────────────────────────────────────
+
+/// Catálogo de fatores do tenant. Duas tabelas em vez de uma para não repetir o
+/// catálogo dentro de cada iniciativa: mudar o peso de um fator é decisão de
+/// método, e tem de valer para todas de uma vez.
+///
+/// Invariante: sum(weight) por tenant = 100, validada na escrita.
+model SignalConfidenceRule {
+  id        String   @id @default(cuid())
+  tenantId  String
+  key       String
+  label     String
+  weight    Int
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  scores SignalConfidenceScore[]
+
+  @@unique([tenantId, key])
+  @@index([tenantId])
+}
+
+/// O obtido de um fator numa iniciativa. O score total é `sum(got)`, derivado —
+/// pelo mesmo motivo que o ROI: guardar o total ao lado das partes foi o que
+/// deixou o protótipo dizer 86 quando os fatores somavam 93.
+model SignalConfidenceScore {
+  id           String   @id @default(cuid())
+  tenantId     String
+  initiativeId String
+  ruleId       String
+  got          Int
+  /// Por que o fator perdeu ponto. Sem isto o score é um número sem apelação.
+  note         String?  @db.Text
+  evaluatedAt  DateTime @default(now())
+
+  tenant     Tenant               @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative     @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  rule       SignalConfidenceRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, initiativeId, ruleId])
+  @@index([tenantId])
+  @@index([initiativeId])
+}
+
+// ── Alertas ───────────────────────────────────────────────────────────────────
+
+/// Alerta sempre carrega próximo passo e dono. Diagnóstico sem encaminhamento
+/// vira ruído e treina a organização a ignorar a fila.
+model SignalAlert {
+  id           String           @id @default(cuid())
+  tenantId     String
+  /// AL-31. Emitido por SignalSequence.
+  code         String
+  kind         SignalAlertKind
+  state        SignalAlertState @default(OPEN)
+  initiativeId String
+  what         String           @db.Text
+  nextStep     String           @db.Text
+  ownerId      String?
+  raisedAt     DateTime         @default(now())
+  resolvedAt   DateTime?
+  resolvedById String?
+  note         String?          @db.Text
+
+  tenant     Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  initiative SignalInitiative @relation(fields: [initiativeId], references: [id], onDelete: Cascade)
+  owner      User?            @relation("SignalAlertOwner", fields: [ownerId], references: [id])
+  resolvedBy User?            @relation("SignalAlertResolver", fields: [resolvedById], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, state])
+  @@index([tenantId, initiativeId])
+}
+
+// ── Relatórios ────────────────────────────────────────────────────────────────
+
+/// Snapshot estruturado. `state = FINAL` ⇒ `payload` imutável: mudar a fonte ou
+/// a fórmula depois não pode alterar o número que já foi ao board. A exportação
+/// lê `payload`, nunca a tela.
+model SignalReportSnapshot {
+  id            String            @id @default(cuid())
+  tenantId      String
+  /// RP-118. Emitido por SignalSequence.
+  code          String
+  name          String
+  kind          SignalReportKind
+  periodLabel   String
+  periodStart   DateTime
+  periodEnd     DateTime
+  state         SignalReportState @default(DRAFT)
+  payload       Json?
+  pageCount     Int?
+  note          String?           @db.Text
+  /// Por que não dá para congelar ainda: "2 fontes fora do ar deixariam 3
+  /// números sem lastro".
+  blockedReason String?           @db.Text
+  generatedById String?
+  generatedAt   DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  tenant      Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  generatedBy User?  @relation(fields: [generatedById], references: [id])
+
+  @@unique([tenantId, code])
+  @@index([tenantId])
+  @@index([tenantId, state])
+}
+
+// ── Acesso e configuração ─────────────────────────────────────────────────────
+
+model SignalMember {
+  id        String     @id @default(cuid())
+  tenantId  String
+  userId    String
+  role      SignalRole @default(VIEWER)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  updatedBy String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@index([tenantId])
+}
+
+/// Limiares do tenant. Mudança aqui entra na trilha de auditoria: mexer em
+/// `valueBar` muda o veredito de todas as iniciativas de uma vez, e isso é
+/// decisão de negócio, não preferência de tela.
+///
+/// Preferência visual (tema, contraste, movimento, idioma) NÃO mora aqui — é
+/// por pessoa e por dispositivo, e vive no localStorage.
+model SignalSettings {
+  id               String   @id @default(cuid())
+  tenantId         String   @unique
+  /// % de adoção a partir da qual "o time usa".
+  adoptionBar      Int      @default(60)
+  /// Múltiplo de ROI a partir do qual "vale escalar".
+  valueBar         Decimal  @default(1.5) @db.Decimal(6, 2)
+  /// Regra do alerta LOW.
+  lowAdoptionPct   Int      @default(40)
+  lowAdoptionWeeks Int      @default(8)
+  /// Regra do alerta WEAK: ROI abaixo do break-even.
+  weakRoi          Decimal  @default(1.0) @db.Decimal(6, 2)
+  /// Regra do alerta STALE, em horas.
+  staleHours       Int      @default(48)
+  currency         String   @default("BRL")
+  fiscalYearLabel  String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  updatedBy        String?
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+/// Sequência de códigos legíveis por tenant. `upsert` + `increment` é atômico
+/// no Postgres, então duas criações concorrentes não pegam o mesmo número.
+/// Precisa rodar dentro da transação da escrita para não consumir número quando
+/// a escrita falha.
+model SignalSequence {
+  id       String @id @default(cuid())
+  tenantId String
+  /// initiative | evidence | alert | report | mapping | connection
+  kind     String
+  next     Int    @default(1)
+
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, kind])
+  @@index([tenantId])
+}

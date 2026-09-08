@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge, SectionCard } from "@repo/design-system/cosmos/kit";
+import Link from "next/link";
 import { useCallback, useState } from "react";
 import {
   createServiceAction,
@@ -8,12 +9,14 @@ import {
   setServiceAtivoAction,
 } from "@/app/actions/services";
 import { BotaoPrimario, Campo, Erro, INPUT } from "@/components/campo";
+import { formatarBRL, paraCentavos } from "@/lib/comercial/formato";
 
 /**
  * Catálogo de serviços.
  *
  * O preço vive em centavos inteiros no banco e é digitado em reais na tela. A
- * conversão fica num lugar só, aqui — espalhá-la é como se erra a unidade, e o
+ * conversão fica num lugar só, em lib/comercial/formato — espalhá-la é como se
+ * erra a unidade, e o
  * sintoma aparece longe da causa, na soma de uma proposta.
  */
 
@@ -22,22 +25,6 @@ const MODALIDADES = [
   { valor: "RETAINER", rotulo: "Retainer" },
   { valor: "LICENCA", rotulo: "Licença" },
 ];
-
-const NAO_DIGITO = /[^\d]/g;
-
-export function formatarBRL(centavos: number): string {
-  return (centavos / 100).toLocaleString("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  });
-}
-
-/** "1.250,00" ou "1250" → 125000. Tudo que não é dígito sai; os dois últimos
- *  são os centavos. Evita depender do separador que a pessoa usou. */
-function paraCentavos(texto: string): number {
-  const so = texto.replace(NAO_DIGITO, "");
-  return so ? Number.parseInt(so, 10) : 0;
-}
 
 /** Uma linha do catálogo. Extraída porque a linha carrega toda a decisão
  *  visual — inativo esmaecido, preço com unidade, ação conforme o papel — e
@@ -59,31 +46,54 @@ function LinhaServico({
         display: "flex",
         alignItems: "center",
         gap: 12,
-        padding: "11px 2px",
         borderTop: primeira ? "none" : "1px solid var(--hairline)",
         // Fora de catálogo continua visível, só apagado: sumir faria o
         // operador cadastrar um duplicado com o mesmo código.
         opacity: s.ativo ? 1 : 0.55,
       }}
     >
-      <span
-        className="mono"
-        style={{ fontSize: 11.5, fontWeight: 700, width: 60 }}
+      {/* A linha inteira leva ao detalhe. O código é a chave da rota porque é
+          o que aparece em proposta e contrato — a URL fica legível e a pessoa
+          consegue digitá-la a partir do documento que tem na mão. */}
+      <Link
+        className="navitem"
+        href={`/servicos/${encodeURIComponent(s.codigo)}`}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          flex: 1,
+          minWidth: 0,
+          padding: "11px 8px",
+          margin: "0 -6px",
+          borderRadius: "var(--r-sm)",
+          color: "var(--ink)",
+          textDecoration: "none",
+        }}
       >
-        {s.codigo}
-      </span>
-      <span style={{ flex: 1, minWidth: 0, fontSize: 13 }}>{s.nome}</span>
-      <Badge tone="neutral">{s.modalidade}</Badge>
-      <span
-        className="mono"
-        style={{ fontSize: 12, color: "var(--accent-text)" }}
-      >
-        {formatarBRL(s.precoBaseCentavos)}
-        <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
-      </span>
+        <span
+          className="mono"
+          style={{ fontSize: "var(--fs-nota)", fontWeight: 700, width: 60 }}
+        >
+          {s.codigo}
+        </span>
+        <span style={{ flex: 1, minWidth: 0, fontSize: "var(--fs-base)" }}>
+          {s.nome}
+        </span>
+        <Badge tone="neutral">{s.modalidade}</Badge>
+        <span
+          className="mono"
+          style={{ fontSize: "var(--fs-base)", color: "var(--accent-text)" }}
+        >
+          {formatarBRL(s.precoBaseCentavos)}
+          <span style={{ color: "var(--ink-faint)" }}>/{s.unidade}</span>
+        </span>
+      </Link>
       {podeEscrever ? (
         <button
           className="btn"
+          // `stopPropagation` não basta aqui: o alvo é irmão do <Link>, não
+          // filho. O que o mantém fora da navegação é estar fora dele.
           onClick={() => onAlternar(s.id, !s.ativo)}
           style={{
             padding: "4px 10px",
@@ -91,7 +101,7 @@ function LinhaServico({
             border: "1px solid var(--hairline)",
             background: "none",
             color: "var(--ink-muted)",
-            fontSize: 11,
+            fontSize: "var(--fs-nota)",
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -149,6 +159,18 @@ export function Catalogo({
         precoBaseCentavos: paraCentavos(form.preco),
         unidade: form.unidade,
         ativo: true,
+        // Espelha os defaults que a action grava. Divergir aqui faria a linha
+        // recém-criada aparecer diferente do que ficou no banco até o próximo
+        // carregamento.
+        trilha: "readiness",
+        unidadeDeCobranca:
+          form.modalidade === "RETAINER" ? "RETAINER" : "PROJETO",
+        duracao: null,
+        entregaveis: [],
+        papeis: [],
+        preRequisitos: [],
+        moduloVinculado: null,
+        exigeLab: false,
       },
       ...atual,
     ]);
@@ -289,7 +311,7 @@ export function Catalogo({
               margin: 0,
               padding: 28,
               textAlign: "center",
-              fontSize: 13,
+              fontSize: "var(--fs-base)",
               lineHeight: 1.6,
               color: "var(--ink-muted)",
             }}

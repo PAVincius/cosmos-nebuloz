@@ -1,0 +1,655 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "label": "prd.md",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "label": "COSMOS Platform \u2014 Product Requirements Document (PRD)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_vision",
+      "label": "Vision",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L3"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_problem_statement",
+      "label": "Problem Statement",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L6"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_target_users",
+      "label": "Target Users",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_strategic_goals_okrs",
+      "label": "Strategic Goals & OKRs",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_epics_scope",
+      "label": "Epics & Scope",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_success_metrics",
+      "label": "Success Metrics",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_nfr_summary_epics_6_8",
+      "label": "NFR Summary (Epics 6\u20138)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_key_technical_decisions_epics_6_8",
+      "label": "Key Technical Decisions (Epics 6\u20138)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L68"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_006_enhanced_portfolio_art",
+      "label": "Story Index \u2014 Epic 006 (Enhanced Portfolio & ART)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_007_solution_train_advanced_features",
+      "label": "Story Index \u2014 Epic 007 (Solution Train & Advanced Features)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L110"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_008_enterprise_scale",
+      "label": "Story Index \u2014 Epic 008 (Enterprise & Scale)",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L136"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_document_index",
+      "label": "Document Index",
+      "file_type": "document",
+      "source_file": "docs/prd.md",
+      "source_location": "L162"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_vision",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_problem_statement",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L6",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_target_users",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_strategic_goals_okrs",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_epics_scope",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_success_metrics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_nfr_summary_epics_6_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_key_technical_decisions_epics_6_8",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L68",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_006_enhanced_portfolio_art",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_006_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L86",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_011_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_012_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_013_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_014_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_015_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L94",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_016_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_017_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_018_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_019_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_020_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_021_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L100",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_022_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L101",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_023_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_024_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_025_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L104",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_007_solution_train_advanced_features",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L110",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_007_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L112",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_021_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L116",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_022_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L117",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_023_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L118",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_024_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_025_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_026_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L121",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_027_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_028_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L123",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_029_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L124",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_030_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_031_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L126",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_032_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_033_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_034_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_007_story_035_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L130",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_story_index_epic_008_enterprise_scale",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L136",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_008_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_031_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_032_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L143",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_033_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L144",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_034_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L145",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_035_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_036_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L147",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_037_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L148",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_038_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L149",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_039_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L150",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_040_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L151",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_041_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L152",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_042_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_043_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_044_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L155",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_008_story_045_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_cosmos_platform_product_requirements_document_prd",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_prd_document_index",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/prd.md",
+      "source_location": "L162",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

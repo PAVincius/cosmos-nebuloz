@@ -20,7 +20,7 @@ model LinearSyncEvent {
   integrationId String
   direction     String // INBOUND | OUTBOUND
   source        String // LINEAR | COSMOS
-  action        String // CREATED | UPDATED | SKIPPED | FAILED
+  action        String // CREATED | UPDATED | SKIPPED | FAILED | FILTERED
   entityType    String
   entityId      String
   externalId    String?

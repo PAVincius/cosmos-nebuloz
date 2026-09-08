@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_md",
+      "label": "CONSTITUTION.md",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "label": "Cosmos/Nebuloz \u2014 Constitui\u00e7\u00e3o de Engenharia",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_1_multi_tenant_safety_cr\u00edtico",
+      "label": "Artigo 1 \u2014 Multi-Tenant Safety (CR\u00cdTICO)",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L10"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_2_result_t_n\u00e3o_throw",
+      "label": "Artigo 2 \u2014 Result<T>, n\u00e3o throw",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_3_zod_de_base_ts",
+      "label": "Artigo 3 \u2014 Zod de `_base.ts`",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_4_tdd_obrigat\u00f3rio",
+      "label": "Artigo 4 \u2014 TDD obrigat\u00f3rio",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L30"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_5_quality_gates_ci_blocking",
+      "label": "Artigo 5 \u2014 Quality Gates CI (blocking)",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_6_pnpm_only",
+      "label": "Artigo 6 \u2014 pnpm only",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_7_webhook_receiver_pattern",
+      "label": "Artigo 7 \u2014 Webhook Receiver Pattern",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_8_safe_alignment",
+      "label": "Artigo 8 \u2014 SAFe Alignment",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_9_idioma",
+      "label": "Artigo 9 \u2014 Idioma",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_10_completion_doc",
+      "label": "Artigo 10 \u2014 Completion Doc",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_gate_de_teste_risk_based_inspirado_em_bmad_tea",
+      "label": "Gate de Teste Risk-Based (inspirado em BMAD-TEA)",
+      "file_type": "document",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L72"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_1_multi_tenant_safety_cr\u00edtico",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L10",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_2_result_t_n\u00e3o_throw",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_3_zod_de_base_ts",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_4_tdd_obrigat\u00f3rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L30",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_5_quality_gates_ci_blocking",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_6_pnpm_only",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_7_webhook_receiver_pattern",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_8_safe_alignment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_9_idioma",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_artigo_10_completion_doc",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_cosmos_nebuloz_constitui\u00e7\u00e3o_de_engenharia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_constitution_gate_de_teste_risk_based_inspirado_em_bmad_tea",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/CONSTITUTION.md",
+      "source_location": "L72",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

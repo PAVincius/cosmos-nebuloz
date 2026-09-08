@@ -20,6 +20,7 @@ import HorizonDetailScreen from "./horizon-detail";
 import IntegrationsScreen from "./integrations";
 import KanbanScreen from "./kanban";
 import MeasureScreen from "./measure";
+import MeetingsScreen from "./meetings";
 import ObjectiveDetailScreen from "./objective-detail";
 import OkrsScreen from "./okrs";
 import PillarDetailScreen from "./pillar-detail";
@@ -59,6 +60,7 @@ export const SCREENS: Record<string, ComponentType<ScreenProps>> = {
   feature: FeatureDetailScreen,
   kanban: KanbanScreen,
   measure: MeasureScreen,
+  meetings: MeetingsScreen,
   wsjf: WsjfScreen,
   teams: TeamsScreen,
   team: TeamDetailScreen,

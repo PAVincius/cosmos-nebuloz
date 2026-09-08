@@ -1,0 +1,111 @@
+// Catálogo comercial da Nebuloz: o que se cobra, e quanto.
+//
+// Em tabela e não em constante de código porque preço muda por reajuste e por
+// negociação, e mudar preço não pode exigir deploy. O risco óbvio disso —
+// mexer no catálogo reescrever o passado — não existe aqui: a proposta congela
+// valor e escopo no envio (`Proposal.totalCentavos`, `acvCentavos`), então o
+// catálogo governa o que ainda vai ser vendido, nunca o que já foi prometido.
+//
+// Tudo em centavos inteiros. Ponto flutuante em dinheiro acumula erro na soma
+// das linhas, e o total da proposta é somado de linhas.
+
+/// Plano de assinatura vendável. `slug` é o que aparece em contrato, então é
+/// estável mesmo que o rótulo comercial mude.
+model PlanoComercial {
+  id       String @id @default(cuid())
+  tenantId String
+
+  slug  String
+  nome  String
+  ordem Int    @default(0)
+
+  precoAssentoCentavos Int
+
+  /// Mínimo faturável do plano. Abaixo disto cobra-se o mínimo — e a tela diz
+  /// que aplicou, em vez de deixar o cliente descobrir na fatura.
+  minimoAssentos Int @default(1)
+
+  /// Teto de usuários. Nulo = ilimitado (Enterprise). Passar do teto avisa
+  /// para subir de plano; não bloqueia a proposta.
+  limiteUsuarios Int?
+
+  /// Gate do add-on de SSO dedicado com grupos próprios (FR-13.6).
+  permiteRolesCustom Boolean @default(false)
+
+  ativo        Boolean  @default(true)
+  criadoEm     DateTime @default(now())
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("PlanoComercialSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, ativo])
+}
+
+/// Preço mensal adicional por módulo contratado.
+///
+/// Uma linha por módulo em vez de uma coluna por módulo: assim um módulo novo
+/// é um INSERT, e não uma migration em cima de uma tabela de preço.
+model PrecoDeModulo {
+  id       String @id @default(cuid())
+  tenantId String
+
+  modulo              ProductModule
+  precoMensalCentavos Int           @default(0)
+
+  atualizadoEm DateTime @updatedAt
+
+  tenant Tenant @relation("PrecoDeModuloSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, modulo])
+}
+
+/// Prazo de contrato e o desconto que ele carrega.
+model TermoDeContrato {
+  id       String @id @default(cuid())
+  tenantId String
+
+  /// MENSAL | ANUAL | BIENAL
+  slug  String
+  nome  String
+  meses Int
+
+  /// Percentual inteiro: 12 significa 12%. Inteiro para o cálculo não herdar
+  /// erro de ponto flutuante antes mesmo de encostar em dinheiro.
+  descontoPercent Int @default(0)
+
+  ordem Int @default(0)
+
+  tenant Tenant @relation("TermoDeContratoSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+}
+
+/// Add-on comercial.
+///
+/// `recorrente` decide de que lado da conta o add-on cai — mensalidade ou setup
+/// de uma vez. É campo e não convenção de nome porque a fórmula lê isso: o
+/// onboarding é o único one-time do catálogo inicial, e nada garante que
+/// continue sendo.
+model AddOnComercial {
+  id       String @id @default(cuid())
+  tenantId String
+
+  slug          String
+  nome          String
+  nota          String?
+  precoCentavos Int
+
+  recorrente Boolean @default(true)
+
+  /// Exige plano com roles custom — hoje, só o SSO dedicado.
+  exigeRolesCustom Boolean @default(false)
+
+  ativo Boolean @default(true)
+  ordem Int     @default(0)
+
+  tenant Tenant @relation("AddOnComercialSystemTenant", fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, ativo])
+}

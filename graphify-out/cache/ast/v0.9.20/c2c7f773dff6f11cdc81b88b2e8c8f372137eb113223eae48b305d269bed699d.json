@@ -1,0 +1,47 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "docs/archive/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_documentation_archive",
+      "label": "Documentation Archive",
+      "file_type": "document",
+      "source_file": "docs/archive/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_archived_files",
+      "label": "Archived Files",
+      "file_type": "document",
+      "source_file": "docs/archive/README.md",
+      "source_location": "L5"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_documentation_archive",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/archive/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_documentation_archive",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_archive_readme_archived_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/archive/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

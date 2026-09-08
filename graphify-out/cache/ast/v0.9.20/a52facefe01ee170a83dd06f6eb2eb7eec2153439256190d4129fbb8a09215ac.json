@@ -1,0 +1,216 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_md",
+      "label": "lab-srd.md",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "label": "LAB \u2014 Software Requirements Document",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_1_escopo",
+      "label": "1. Escopo",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_defini\u00e7\u00f5es",
+      "label": "Defini\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_2_arquitetura",
+      "label": "2. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L38"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_3_modelo_de_dados",
+      "label": "3. Modelo de dados",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_4_o_port\u00e3o",
+      "label": "4. O port\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L128"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_5_linhagem_e_model_card",
+      "label": "5. Linhagem e model card",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L168"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_6_interfaces",
+      "label": "6. Interfaces",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_7_requisitos_n\u00e3o_funcionais",
+      "label": "7. Requisitos n\u00e3o-funcionais",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L213"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_8_restri\u00e7\u00f5es_e_premissas",
+      "label": "8. Restri\u00e7\u00f5es e premissas",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L234"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_9_mapeamento_normativo",
+      "label": "9. Mapeamento normativo",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L250"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_10_crit\u00e9rios_de_aceite",
+      "label": "10. Crit\u00e9rios de aceite",
+      "file_type": "document",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L273"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_1_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_1_escopo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_defini\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_2_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L38",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_3_modelo_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_4_o_port\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_5_linhagem_e_model_card",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L168",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_6_interfaces",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_7_requisitos_n\u00e3o_funcionais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L213",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_8_restri\u00e7\u00f5es_e_premissas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L234",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_9_mapeamento_normativo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_lab_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_10_crit\u00e9rios_de_aceite",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/lab-srd.md",
+      "source_location": "L273",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

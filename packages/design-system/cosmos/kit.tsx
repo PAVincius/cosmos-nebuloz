@@ -148,6 +148,10 @@ type ButtonProps = {
   onClick?: () => void;
   style?: CSSProperties;
   title?: string;
+  /** Atributo real, não só opacidade: o CSS já cobre `.btn:disabled`, e sem o
+   *  atributo o teclado continua alcançando um controle inerte. */
+  disabled?: boolean;
+  type?: "button" | "submit";
 };
 export function Button({
   children,
@@ -159,6 +163,8 @@ export function Button({
   onClick,
   style,
   title,
+  disabled,
+  type = "button",
 }: ButtonProps) {
   const pad =
     size === "sm" ? "7px 12px" : size === "lg" ? "11px 18px" : "9px 15px";
@@ -204,9 +210,11 @@ export function Button({
   return (
     <button
       className="btn"
+      disabled={disabled}
       onClick={onClick}
       style={{ ...base, ...variants[variant], ...style }}
       title={title}
+      type={type}
     >
       {icon && <Icon name={icon} size={isz} strokeWidth={2.1} />}
       {children}
@@ -707,12 +715,14 @@ export function Progress({
     >
       <div
         style={{
-          width: `${Math.max(0, Math.min(100, displayed))}%`,
+          width: "100%",
           height: "100%",
           borderRadius: 99,
           background: `var(--${tone})`,
           boxShadow: `0 0 10px rgba(var(--${tone}-rgb),.5)`,
-          transition: "width .75s cubic-bezier(.2,.8,.3,1)",
+          transform: `scaleX(${Math.max(0, Math.min(100, displayed)) / 100})`,
+          transformOrigin: "left",
+          transition: "transform .75s cubic-bezier(.2,.8,.3,1)",
         }}
       />
     </div>
@@ -842,15 +852,18 @@ export function KpiCard({
   big?: boolean;
 }) {
   const dark = useThemeName() === "dark";
+  // Mesmo hook e mesmo contrato que SectionCard.handleHeadEnter usa logo
+  // acima neste arquivo para o próprio pulso de mouse-enter — este era o
+  // único disparo de animação por gesto no kit sem essa guarda.
+  const reduceMotion = useReducedMotion();
 
   // Light-mode-only echo: wave snapped to the edge/corner matching the
   // direction the cursor entered from (vertical / horizontal / diagonal
   // only), not the raw cursor point. Dark theme already has its own "sinal
   // vivo" via the dots/watermark/ECG sig below, so this stays scoped to
-  // light (CSS handles the reduced-motion opt-out — see cosmos.css
-  // .kpi-echo-*).
+  // light.
   function handleKpiEnter(e: React.MouseEvent<HTMLDivElement>) {
-    if (dark) {
+    if (dark || reduceMotion) {
       return;
     }
     const el = e.currentTarget;
@@ -888,6 +901,13 @@ export function KpiCard({
     if (!isNum) {
       return;
     }
+    // A contagem de 0 até o valor é decoração de entrada, não a informação
+    // em si — o valor final já é conhecido no primeiro render. Sob reduced
+    // motion o número aparece direto, sem perder nenhum estado.
+    if (reduceMotion) {
+      setCountVal(rawNum);
+      return;
+    }
     let start: number | null = null;
     const dur = 900;
     let raf = 0;
@@ -909,7 +929,7 @@ export function KpiCard({
       clearTimeout(fallback);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isNum, rawNum]);
+  }, [isNum, rawNum, reduceMotion]);
 
   function formatCount(n: number, orig: string | number) {
     const origStr = String(orig);

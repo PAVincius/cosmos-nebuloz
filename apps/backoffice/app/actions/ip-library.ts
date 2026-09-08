@@ -10,6 +10,16 @@ import {
   StaffAuthError,
   SYSTEM_TENANT_ID,
 } from "@/lib/guard";
+import {
+  avaliarRegua,
+  criteriosPendentes,
+  LICENCAS,
+  MIN_DESCRICAO,
+  MIN_NOME,
+  maturidadeDe,
+  PROCEDENCIAS,
+  TIPOS_DE_ATIVO,
+} from "@/lib/ip/regua";
 import { type Result, safeAction } from "@/lib/safe-action";
 import { slugificar } from "@/lib/slug";
 
@@ -23,19 +33,89 @@ import { slugificar } from "@/lib/slug";
  * vida e donos diferentes.
  */
 
-const TIPOS = ["TEMPLATE", "PLAYBOOK", "COMPONENTE", "DOCUMENTO"] as const;
-export type TipoDeAtivo = (typeof TIPOS)[number];
-
 export type IpAssetRow = {
   id: string;
   nome: string;
   slug: string;
   tipo: string;
   descricao: string | null;
+  /** Nulo quer dizer que o ativo vive aqui, no editor. */
+  link: string | null;
+  dono: string | null;
+  procedencia: string;
+  licenca: string;
+  servicos: { id: string; codigo: string; nome: string }[];
+  reusos: number;
+  horasPoupadas: number;
+  maturidade: "RASCUNHO" | "COMPROVADO";
   versoes: number;
   origem: string | null;
   atualizadoEm: string;
 };
+
+/**
+ * Forma comum a toda leitura de ativo — lista, detalhe e o retorno da
+ * criação usam o mesmo `select` e o mesmo mapeamento, porque uma segunda
+ * cópia dessa montagem divergiria da primeira no primeiro ajuste.
+ */
+const CAMPOS_LINHA = {
+  id: true,
+  nome: true,
+  slug: true,
+  tipo: true,
+  descricao: true,
+  link: true,
+  procedencia: true,
+  licenca: true,
+  atualizadoEm: true,
+  origem: { select: { codigo: true, nome: true } },
+  dono: { select: { nome: true } },
+  servicos: {
+    select: { service: { select: { id: true, codigo: true, nome: true } } },
+  },
+  reusos: { select: { horasPoupadas: true } },
+  _count: { select: { versions: true } },
+} as const;
+
+type LinhaBruta = {
+  id: string;
+  nome: string;
+  slug: string;
+  tipo: string;
+  descricao: string | null;
+  link: string | null;
+  procedencia: string;
+  licenca: string;
+  atualizadoEm: Date;
+  origem: { codigo: string; nome: string } | null;
+  dono: { nome: string } | null;
+  servicos: { service: { id: string; codigo: string; nome: string } }[];
+  reusos: { horasPoupadas: number }[];
+  _count: { versions: number };
+};
+
+function paraLinha(a: LinhaBruta): IpAssetRow {
+  return {
+    id: a.id,
+    nome: a.nome,
+    slug: a.slug,
+    tipo: a.tipo,
+    descricao: a.descricao,
+    link: a.link,
+    dono: a.dono ? a.dono.nome : null,
+    procedencia: a.procedencia,
+    licenca: a.licenca,
+    servicos: a.servicos.map((s) => s.service),
+    reusos: a.reusos.length,
+    // Soma dos eventos, nunca uma média digitada multiplicada por uma
+    // contagem — duas fontes para o mesmo número divergem.
+    horasPoupadas: a.reusos.reduce((soma, r) => soma + r.horasPoupadas, 0),
+    maturidade: maturidadeDe(a.reusos.length),
+    versoes: a._count.versions,
+    origem: a.origem ? `${a.origem.codigo} · ${a.origem.nome}` : null,
+    atualizadoEm: a.atualizadoEm.toISOString(),
+  };
+}
 
 export async function listIpAssets(): Promise<Result<IpAssetRow[]>> {
   return await safeAction(async () => {
@@ -46,28 +126,10 @@ export async function listIpAssets(): Promise<Result<IpAssetRow[]>> {
       orderBy: { atualizadoEm: "desc" },
       // `conteudo` fora do select: um playbook tem dezenas de KB e a lista não
       // renderiza nenhum deles.
-      select: {
-        id: true,
-        nome: true,
-        slug: true,
-        tipo: true,
-        descricao: true,
-        atualizadoEm: true,
-        origem: { select: { codigo: true, nome: true } },
-        _count: { select: { versions: true } },
-      },
+      select: CAMPOS_LINHA,
     });
 
-    return linhas.map((a) => ({
-      id: a.id,
-      nome: a.nome,
-      slug: a.slug,
-      tipo: a.tipo,
-      descricao: a.descricao,
-      versoes: a._count.versions,
-      origem: a.origem ? `${a.origem.codigo} · ${a.origem.nome}` : null,
-      atualizadoEm: a.atualizadoEm.toISOString(),
-    }));
+    return linhas.map(paraLinha);
   });
 }
 
@@ -90,6 +152,13 @@ export async function getIpAsset(id: string): Promise<Result<IpAssetDetail>> {
       include: {
         versions: { orderBy: { versao: "desc" } },
         origem: { select: { codigo: true, nome: true } },
+        dono: { select: { nome: true } },
+        servicos: {
+          select: {
+            service: { select: { id: true, codigo: true, nome: true } },
+          },
+        },
+        reusos: { select: { horasPoupadas: true } },
         _count: { select: { versions: true } },
       },
     });
@@ -98,15 +167,8 @@ export async function getIpAsset(id: string): Promise<Result<IpAssetDetail>> {
     }
 
     return {
-      id: a.id,
-      nome: a.nome,
-      slug: a.slug,
-      tipo: a.tipo,
-      descricao: a.descricao,
+      ...paraLinha(a),
       conteudo: a.conteudo,
-      versoes: a._count.versions,
-      origem: a.origem ? `${a.origem.codigo} · ${a.origem.nome}` : null,
-      atualizadoEm: a.atualizadoEm.toISOString(),
       historico: a.versions.map((v) => ({
         versao: v.versao,
         nota: v.nota,
@@ -118,21 +180,62 @@ export async function getIpAsset(id: string): Promise<Result<IpAssetDetail>> {
 }
 
 const CriarSchema = z.object({
-  nome: z.string().min(2).max(140),
-  tipo: z.enum(TIPOS).optional(),
-  descricao: z.string().max(500).optional(),
+  nome: z.string().min(MIN_NOME).max(140),
+  tipo: z.enum(TIPOS_DE_ATIVO).optional(),
+  descricao: z.string().min(MIN_DESCRICAO).max(500),
   conteudo: z.string().min(1),
+  link: z.string().max(300).optional(),
+  viveAqui: z.boolean().optional(),
+  donoPersonId: z.string().optional(),
+  // A IP-R4 já exige pelo menos um serviço — o mínimo mora só na régua.
+  servicoIds: z.array(z.string().min(1)).max(20),
+  procedencia: z.enum(PROCEDENCIAS).optional(),
   origemEngagementId: z.string().optional(),
+  reusoConfirmado: z.boolean().optional(),
+  licenca: z.enum(LICENCAS).optional(),
+  licencaRef: z.string().max(200).optional(),
 });
+
+/**
+ * Monta a entrada da régua a partir do input já validado pelo zod.
+ *
+ * Extraído porque `createIpAssetAction` já soma validação, régua, slug e
+ * transação — mais um bloco inline estouraria a complexidade cognitiva.
+ */
+function entradaDaRegua(dados: z.infer<typeof CriarSchema>) {
+  return {
+    nome: dados.nome,
+    descricao: dados.descricao,
+    link: dados.link ?? "",
+    viveAqui: dados.viveAqui ?? false,
+    servicos: dados.servicoIds,
+    procedencia: dados.procedencia ?? "INTERNO",
+    origemEngagementId: dados.origemEngagementId ?? null,
+    reusoConfirmado: dados.reusoConfirmado ?? false,
+    licenca: dados.licenca ?? "NENHUMA",
+    licencaRef: dados.licencaRef ?? "",
+  };
+}
 
 export async function createIpAssetAction(
   input: z.input<typeof CriarSchema>
-): Promise<Result<{ id: string; slug: string }>> {
+): Promise<Result<IpAssetRow>> {
   return await safeAction(async () => {
     const staff = await requirePlatformStaff();
     assertCanWrite(staff);
 
     const dados = CriarSchema.parse(input);
+
+    // A régua roda aqui porque a lista lateral do formulário é espelho, não
+    // autoridade: um POST direto nesta action não passa por tela nenhuma.
+    const pendentes = criteriosPendentes(avaliarRegua(entradaDaRegua(dados)));
+    if (pendentes.length > 0) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `Faltam ${pendentes.length} critério(s) da régua: ${pendentes.map((c) => c.texto).join("; ")}.`
+      );
+    }
+
     const slug = slugificar(dados.nome);
     if (!slug) {
       throw new StaffAuthError(
@@ -152,20 +255,26 @@ export async function createIpAssetAction(
       );
     }
 
-    const criado = await database.$transaction(async (tx) => {
+    const linhaBruta = await database.$transaction(async (tx) => {
       const a = await tx.ipAsset.create({
         data: {
           tenantId: SYSTEM_TENANT_ID,
           nome: dados.nome,
           slug,
           tipo: dados.tipo ?? "DOCUMENTO",
-          descricao: dados.descricao ?? null,
+          descricao: dados.descricao,
           conteudo: dados.conteudo,
+          link: dados.viveAqui ? null : (dados.link?.trim() ?? null),
+          donoPersonId: dados.donoPersonId ?? null,
+          procedencia: dados.procedencia ?? "INTERNO",
+          reusoConfirmado: dados.reusoConfirmado ?? false,
+          licenca: dados.licenca ?? "NENHUMA",
+          licencaRef: dados.licencaRef?.trim() || null,
           origemEngagementId: dados.origemEngagementId ?? null,
           criadoPorId: staff.userId,
           criadoPorNome: staff.name,
         },
-        select: { id: true, slug: true },
+        select: { id: true },
       });
 
       // Versão 1 na mesma transação: um ativo sem revisão nenhuma seria um
@@ -181,8 +290,23 @@ export async function createIpAssetAction(
         },
       });
 
-      return a;
+      // Vínculo de serviço na mesma transação que o ativo: um ativo sem
+      // serviço nenhum é exatamente o que a IP-R4 recusa, e um estado que a
+      // régua proíbe não pode existir nem por um instante entre dois writes.
+      await tx.ipAssetService.createMany({
+        data: dados.servicoIds.map((serviceId) => ({
+          assetId: a.id,
+          serviceId,
+        })),
+      });
+
+      return await tx.ipAsset.findUniqueOrThrow({
+        where: { id: a.id },
+        select: CAMPOS_LINHA,
+      });
     });
+
+    const linha = paraLinha(linhaBruta);
 
     await logPlatformAudit(database, {
       tenantId: SYSTEM_TENANT_ID,
@@ -190,12 +314,12 @@ export async function createIpAssetAction(
       actorName: staff.name,
       action: "created",
       entityType: "ip_asset",
-      entityId: criado.id,
-      target: `${dados.tipo ?? "DOCUMENTO"} · ${dados.nome}`,
+      entityId: linha.id,
+      target: `${linha.tipo} · ${linha.nome}`,
     });
 
     revalidatePath("/ip");
-    return criado;
+    return linha;
   });
 }
 
@@ -266,5 +390,112 @@ export async function updateIpAssetAction(
 
     revalidatePath("/ip");
     return { id: atual.id, versao };
+  });
+}
+
+const ReusoSchema = z.object({
+  assetId: z.string().min(1),
+  engagementId: z.string().min(1),
+  horasPoupadas: z.number().int().min(0).max(400),
+  nota: z.string().max(300).optional(),
+});
+
+/**
+ * Registra que o ativo foi reusado num engajamento.
+ *
+ * É o único caminho por onde reusos, horas poupadas e maturidade mudam — os
+ * três são derivados desta tabela e não existem como campo em lugar nenhum.
+ * O agregado de horas volta aqui, e não só o evento recém-criado, porque o
+ * cliente não tem de onde somar: duas pessoas com a tela aberta ao mesmo
+ * tempo divergiriam se cada uma somasse a própria cópia local.
+ */
+export async function registrarReusoAction(
+  input: z.input<typeof ReusoSchema>
+): Promise<
+  Result<{
+    id: string;
+    reusos: number;
+    horasPoupadas: number;
+    maturidade: "RASCUNHO" | "COMPROVADO";
+  }>
+> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+
+    const dados = ReusoSchema.parse(input);
+
+    const ativo = await database.ipAsset.findFirst({
+      where: { id: dados.assetId, tenantId: SYSTEM_TENANT_ID },
+      select: { id: true, nome: true },
+    });
+    if (!ativo) {
+      throw new StaffAuthError("FORBIDDEN", "Ativo não encontrado.");
+    }
+
+    const engajamento = await database.engagement.findFirst({
+      where: { id: dados.engagementId, tenantId: SYSTEM_TENANT_ID },
+      select: { id: true, codigo: true, nome: true },
+    });
+    if (!engajamento) {
+      throw new StaffAuthError("FORBIDDEN", "Engajamento não encontrado.");
+    }
+
+    // "Foi reusado no EN-041" é um fato, não um contador. Recusar aqui, com a
+    // frase inteira, evita que o `@@unique` apareça como erro do Prisma.
+    const jaRegistrado = await database.ipAssetReuse.findUnique({
+      where: {
+        assetId_engagementId: {
+          assetId: ativo.id,
+          engagementId: engajamento.id,
+        },
+      },
+      select: { id: true },
+    });
+    if (jaRegistrado) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `${ativo.nome} já consta como reusado em ${engajamento.codigo}. Registrar de novo contaria o mesmo reuso duas vezes.`
+      );
+    }
+
+    const criado = await database.ipAssetReuse.create({
+      data: {
+        assetId: ativo.id,
+        engagementId: engajamento.id,
+        horasPoupadas: dados.horasPoupadas,
+        nota: dados.nota?.trim() || null,
+        registradoPorId: staff.userId,
+        registradoPorNome: staff.name,
+      },
+      select: { id: true },
+    });
+
+    const reusos = await database.ipAssetReuse.count({
+      where: { assetId: ativo.id },
+    });
+    const agregado = await database.ipAssetReuse.aggregate({
+      _sum: { horasPoupadas: true },
+      where: { assetId: ativo.id },
+    });
+
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "created",
+      entityType: "ip_asset_reuse",
+      entityId: criado.id,
+      target: `${ativo.nome} → ${engajamento.codigo} (${dados.horasPoupadas}h)`,
+      note: dados.nota,
+    });
+
+    revalidatePath("/ip");
+    return {
+      id: criado.id,
+      reusos,
+      horasPoupadas: agregado._sum.horasPoupadas ?? 0,
+      maturidade: maturidadeDe(reusos),
+    };
   });
 }

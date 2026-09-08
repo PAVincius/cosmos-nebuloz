@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import type { RefObject } from "react";
 import { useEffect, useRef } from "react";
+import { useContactDialog } from "./contact-dialog";
 import { EASE_OUT } from "./magic";
 import { useSceneSignals } from "./nebula-store";
 import { ReadinessScene } from "./scene-client";
@@ -173,6 +174,7 @@ type ReadinessHeroProps = {
 };
 
 export function ReadinessHero({ copy }: ReadinessHeroProps) {
+  const { open: openContact } = useContactDialog();
   const ref = useRef<HTMLElement>(null);
   const sceneRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
@@ -274,7 +276,11 @@ export function ReadinessHero({ copy }: ReadinessHeroProps) {
               initial={{ opacity: 0, y: 10 }}
               transition={{ delay: 1.3, duration: 0.7, ease: EASE_OUT }}
             >
-              <a className="btn-primary group" href="#start">
+              <button
+                className="btn-primary group"
+                onClick={openContact}
+                type="button"
+              >
                 <span>{copy.primaryCta}</span>
                 <svg
                   aria-hidden="true"
@@ -293,7 +299,7 @@ export function ReadinessHero({ copy }: ReadinessHeroProps) {
                     strokeWidth="1.4"
                   />
                 </svg>
-              </a>
+              </button>
               <a className="btn-ghost" href="#ladder">
                 <span>{copy.secondaryCta}</span>
               </a>

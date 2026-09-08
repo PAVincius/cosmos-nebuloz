@@ -13,6 +13,52 @@ export {
 export { getCharterRole, invalidateCharterRoleCache } from "./charter-resolve";
 export type { Permission, SaFeRole } from "./matrix";
 export { hasPermission, hasPermissions, PERMISSION_MATRIX } from "./matrix";
-// Contratação modular — Cosmos / Charter / Signal
+// Meridian — diagnóstico de prontidão para IA
+export type { MeridianPermission } from "./meridian-matrix";
+export {
+  hasMeridianPermission,
+  MERIDIAN_MATRIX,
+  MERIDIAN_PERMISSION_LABEL,
+  MERIDIAN_PERMISSIONS,
+  MERIDIAN_ROLE_LABEL,
+  MERIDIAN_ROLE_TONE,
+  meridianDenialReason,
+  meridianRolesGranting,
+} from "./meridian-matrix";
+export {
+  getMeridianRole,
+  invalidateMeridianRoleCache,
+} from "./meridian-resolve";
+// Contratação modular — Cosmos / Charter / Signal / Meridian / Scaffold
 export { hasModule, invalidateModuleCache, listModules } from "./modules";
 export { getEffectiveRole, invalidatePermissionCache } from "./resolve";
+// Scaffold — framework de adoção em trilhas guiadas
+export type { ScaffoldPermission } from "./scaffold-matrix";
+export {
+  hasScaffoldPermission,
+  SCAFFOLD_MATRIX,
+  SCAFFOLD_PERMISSION_LABEL,
+  SCAFFOLD_PERMISSIONS,
+  SCAFFOLD_ROLE_LABEL,
+  SCAFFOLD_ROLE_TONE,
+  scaffoldDenialReason,
+  scaffoldRolesGranting,
+} from "./scaffold-matrix";
+export {
+  getScaffoldRole,
+  invalidateScaffoldRoleCache,
+} from "./scaffold-resolve";
+// Signal — medição de adoção e valor de iniciativas de IA
+export type { SignalPermission } from "./signal-matrix";
+export {
+  hasSignalPermission,
+  ownsOrOutranksInitiative,
+  SIGNAL_MATRIX,
+  SIGNAL_PERMISSION_LABEL,
+  SIGNAL_PERMISSIONS,
+  SIGNAL_ROLE_LABEL,
+  SIGNAL_ROLE_TONE,
+  signalDenialReason,
+  signalRolesGranting,
+} from "./signal-matrix";
+export { getSignalRole, invalidateSignalRoleCache } from "./signal-resolve";

@@ -1,0 +1,243 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "label": "quickstart.md",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "label": "Quickstart \u2014 validar o Scaffold",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_pr\u00e9_requisitos",
+      "label": "Pr\u00e9-requisitos",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_1_migration",
+      "label": "1 \u00b7 Migration",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_2_seed_dos_templates",
+      "label": "2 \u00b7 Seed dos templates",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_3_subir_o_app",
+      "label": "3 \u00b7 Subir o app",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L51"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_4_su\u00edte_de_testes",
+      "label": "4 \u00b7 Su\u00edte de testes",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_a_su\u00edte_que_prova_o_produto",
+      "label": "A su\u00edte que prova o produto",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_5_cen\u00e1rios_end_to_end",
+      "label": "5 \u00b7 Cen\u00e1rios end-to-end",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L97"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_6_estagna\u00e7\u00e3o_s_09",
+      "label": "6 \u00b7 Estagna\u00e7\u00e3o (S-09)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L125"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_7_gates_de_qualidade_antes_do_pr",
+      "label": "7 \u00b7 Gates de qualidade antes do PR",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L140"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_8_acessibilidade_sn_10",
+      "label": "8 \u00b7 Acessibilidade (SN-10)",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L159"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_checklist_de_aceite",
+      "label": "Checklist de aceite",
+      "file_type": "document",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L170"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_spec_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_plan_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L4",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_pr\u00e9_requisitos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_1_migration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_2_seed_dos_templates",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_3_subir_o_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L51",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_4_su\u00edte_de_testes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_4_su\u00edte_de_testes",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_a_su\u00edte_que_prova_o_produto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_server_actions_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L77",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_5_cen\u00e1rios_end_to_end",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L97",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_contracts_signal_baseline_export_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L115",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_6_estagna\u00e7\u00e3o_s_09",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L125",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_7_gates_de_qualidade_antes_do_pr",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L140",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_8_acessibilidade_sn_10",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L159",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_quickstart_validar_o_scaffold",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_002_scaffold_adoption_quickstart_checklist_de_aceite",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/002-scaffold-adoption/quickstart.md",
+      "source_location": "L170",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

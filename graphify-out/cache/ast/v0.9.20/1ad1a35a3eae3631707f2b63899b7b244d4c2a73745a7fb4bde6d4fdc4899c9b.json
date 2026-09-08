@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_md",
+      "label": "srd-epic-009.md",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "label": "SRD \u2014 Epic 009: Meeting Intelligence",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_overview",
+      "label": "Overview",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "label": "Functional Requirements",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_901_conectar_provider_de_meeting",
+      "label": "FR-901: Conectar provider de meeting",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_902_receber_webhook_de_transcri\u00e7\u00e3o",
+      "label": "FR-902: Receber webhook de transcri\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_903_buscar_transcript_summary_via_graphql",
+      "label": "FR-903: Buscar transcript + summary via GraphQL",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_904_mapear_insights_entidades_safe_ai",
+      "label": "FR-904: Mapear insights \u2192 entidades SAFe (AI)",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L49"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_905_revis\u00e3o_humana_antes_de_persistir",
+      "label": "FR-905: Revis\u00e3o humana antes de persistir",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L60"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_906_timeline_de_cerim\u00f4nias",
+      "label": "FR-906: Timeline de cerim\u00f4nias",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_cross_cutting_concerns",
+      "label": "Cross-Cutting Concerns",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L79"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_integration_touchpoints",
+      "label": "Integration Touchpoints",
+      "file_type": "document",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L86"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_overview",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_901_conectar_provider_de_meeting",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_902_receber_webhook_de_transcri\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_903_buscar_transcript_summary_via_graphql",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_904_mapear_insights_entidades_safe_ai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L49",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_905_revis\u00e3o_humana_antes_de_persistir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L60",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_functional_requirements",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_fr_906_timeline_de_cerim\u00f4nias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_cross_cutting_concerns",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_srd_epic_009_meeting_intelligence",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_srd_epic_009_integration_touchpoints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/srd-epic-009.md",
+      "source_location": "L86",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

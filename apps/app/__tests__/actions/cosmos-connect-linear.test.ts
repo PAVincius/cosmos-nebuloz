@@ -75,10 +75,21 @@ beforeEach(() => {
 });
 
 describe("discoverLinearTeams", () => {
-  it("valida a credencial antes de listar e devolve a conta do Linear", async () => {
+  it("valida a credencial antes de listar e devolve times com seus projects", async () => {
     h.linearTestConnection.mockResolvedValue({ ok: true, name: "Nebuloz" });
     h.linearDiscoverTeams.mockResolvedValue([
-      { id: "lt_1", name: "Meridian", key: "MER" },
+      {
+        id: "lt_1",
+        name: "Nebuloz",
+        key: "NEB",
+        projects: [
+          { id: "prj_mer", name: "Meridian" },
+          { id: "prj_cha", name: "Charter" },
+        ],
+      },
+      // Time sem project algum: o conector já garante array, nunca
+      // undefined — esta action só remapeia id/name, sem fallback próprio.
+      { id: "lt_2", name: "Cosmos", key: "COS", projects: [] },
     ]);
 
     const r = await discoverLinearTeams({ apiKey: API_KEY });
@@ -89,7 +100,16 @@ describe("discoverLinearTeams", () => {
     }
     expect(r.data.account).toBe("Nebuloz");
     expect(r.data.teams).toEqual([
-      { id: "lt_1", name: "Meridian", key: "MER" },
+      {
+        id: "lt_1",
+        name: "Nebuloz",
+        key: "NEB",
+        projects: [
+          { id: "prj_mer", name: "Meridian" },
+          { id: "prj_cha", name: "Charter" },
+        ],
+      },
+      { id: "lt_2", name: "Cosmos", key: "COS", projects: [] },
     ]);
     expect(h.linearTestConnection).toHaveBeenCalledWith(API_KEY);
   });
@@ -135,7 +155,7 @@ describe("connectLinearIntegration", () => {
     h.createIntegration.mockResolvedValue({ ok: true, data: { id: ID } });
     h.runImportSnapshot.mockResolvedValue({
       ok: true,
-      data: { created: 12, updated: 0, skipped: 1 },
+      data: { created: 12, updated: 0, skipped: 1, reclassified: 0 },
     });
   });
 
@@ -143,7 +163,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(r.ok).toBe(true);
@@ -159,7 +179,7 @@ describe("connectLinearIntegration", () => {
     await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(h.logAudit).toHaveBeenCalled();
@@ -170,7 +190,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
       importNow: true,
     });
 
@@ -183,6 +203,7 @@ describe("connectLinearIntegration", () => {
       created: 12,
       updated: 0,
       skipped: 1,
+      reclassified: 0,
     });
   });
 
@@ -190,7 +211,7 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(h.runImportSnapshot).not.toHaveBeenCalled();
@@ -201,9 +222,8 @@ describe("connectLinearIntegration", () => {
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1", epicId: "clyyyyyyyyyyyyyyyyyyyyyyy" }],
       importNow: true,
-      epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
     });
 
     expect(r.ok).toBe(true);
@@ -215,13 +235,30 @@ describe("connectLinearIntegration", () => {
     });
   });
 
+  it("repassa o filtro de project do Linear para o import (COS-85)", async () => {
+    const r = await connectLinearIntegration({
+      name: "Linear Nebuloz",
+      apiKey: API_KEY,
+      scopes: [{ linearTeamId: "lt_1", linearProjectId: "proj-charter" }],
+      importNow: true,
+    });
+
+    expect(r.ok).toBe(true);
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      linearProjectId: "proj-charter",
+    });
+  });
+
   it("recusa credencial inválida antes de criar a integração", async () => {
     h.linearTestConnection.mockResolvedValue({ ok: false, error: "401" });
 
     const r = await connectLinearIntegration({
       name: "Linear Nebuloz",
       apiKey: API_KEY,
-      linearTeamId: "lt_1",
+      scopes: [{ linearTeamId: "lt_1" }],
     });
 
     expect(r.ok).toBe(false);
@@ -239,7 +276,7 @@ describe("resyncIntegration", () => {
     });
     h.runImportSnapshot.mockResolvedValue({
       ok: true,
-      data: { created: 3, updated: 4, skipped: 0 },
+      data: { created: 3, updated: 4, skipped: 0, reclassified: 2 },
     });
 
     const r = await resyncIntegration({ id: ID });
@@ -249,7 +286,12 @@ describe("resyncIntegration", () => {
       projectId: "lt_1",
       targetType: "feature",
     });
-    expect(r.ok && r.data).toEqual({ created: 3, updated: 4, skipped: 0 });
+    expect(r.ok && r.data).toEqual({
+      created: 3,
+      updated: 4,
+      skipped: 0,
+      reclassified: 2,
+    });
   });
 
   it("carrega o épico do mapping no re-sync — senão o sync seguinte apagaria a adoção", async () => {
@@ -275,6 +317,32 @@ describe("resyncIntegration", () => {
       projectId: "lt_1",
       targetType: "feature",
       epicId: "clyyyyyyyyyyyyyyyyyyyyyyy",
+    });
+  });
+
+  it("carrega o filtro de project do mapping no re-sync (COS-85)", async () => {
+    h.integrationFindFirst.mockResolvedValue({
+      id: ID,
+      source: "linear",
+      status: "ACTIVE",
+      mapping: {
+        projectId: "lt_1",
+        targetType: "feature",
+        linearProjectId: "proj-charter",
+      },
+    });
+    h.runImportSnapshot.mockResolvedValue({
+      ok: true,
+      data: { created: 1, updated: 0, skipped: 0 },
+    });
+
+    await resyncIntegration({ id: ID });
+
+    expect(h.runImportSnapshot).toHaveBeenCalledWith({
+      integrationId: ID,
+      projectId: "lt_1",
+      targetType: "feature",
+      linearProjectId: "proj-charter",
     });
   });
 

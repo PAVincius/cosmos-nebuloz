@@ -1,0 +1,159 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_md",
+      "label": "2026-06-16-enterprise-positioning-roadmap.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "label": "Cosmos \u2014 Enterprise Positioning Roadmap",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_1_strategic_thesis",
+      "label": "1. Strategic Thesis",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_2_pillar_inventory_exists_vs_missing",
+      "label": "2. Pillar Inventory: Exists vs. Missing",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_1_invisible_governance",
+      "label": "Pillar 1 \u2014 Invisible Governance",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L25"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_2_multi_vendor_hub",
+      "label": "Pillar 2 \u2014 Multi-Vendor Hub",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L45"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_3_executive_translation",
+      "label": "Pillar 3 \u2014 Executive Translation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_3_sequencing_recommendation",
+      "label": "3. Sequencing Recommendation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L91"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_4_differentiator_framing_for_sales_prd_copy_per_pillar",
+      "label": "4. Differentiator Framing (for sales / PRD copy per pillar)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L105"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_5_next_step",
+      "label": "5. Next Step",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L113"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_1_strategic_thesis",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_2_pillar_inventory_exists_vs_missing",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_2_pillar_inventory_exists_vs_missing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_1_invisible_governance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L25",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_2_pillar_inventory_exists_vs_missing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_2_multi_vendor_hub",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L45",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_2_pillar_inventory_exists_vs_missing",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_pillar_3_executive_translation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_3_sequencing_recommendation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L91",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_4_differentiator_framing_for_sales_prd_copy_per_pillar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_cosmos_enterprise_positioning_roadmap",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_06_16_enterprise_positioning_roadmap_5_next_step",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-06-16-enterprise-positioning-roadmap.md",
+      "source_location": "L113",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

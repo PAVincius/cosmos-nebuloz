@@ -17,7 +17,6 @@ import {
   Switch,
   type Tone,
 } from "@repo/design-system/cosmos/kit";
-import type { CSSProperties } from "react";
 import { useCallback, useEffect, useState } from "react";
 import {
   createTagRule,
@@ -25,9 +24,23 @@ import {
   type TagRuleCondition,
   updateTagRule,
 } from "@/app/actions/billing/tag-rules";
-import { TAG_RULE_OUTPUT_TONES } from "@/app/actions/billing/tag-rules.constants";
+import type { TAG_RULE_OUTPUT_TONES } from "@/app/actions/billing/tag-rules.constants";
 import { EmptyState } from "../empty-state";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  FormField,
+  Select,
+  TextInput,
+  TonePicker,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
 type OutputTone = (typeof TAG_RULE_OUTPUT_TONES)[number];
@@ -70,29 +83,91 @@ function conditionsToText(conditions: TagRuleCondition[]): string {
     .join(" E ");
 }
 
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
-
-const inputStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const selectStyle: CSSProperties = inputStyle;
+/**
+ * Uma condição da regra: "campo operador valor".
+ *
+ * Fica fora do modal porque é a única parte do formulário com estado próprio
+ * de posição — a linha precisa saber se é a primeira (sem o "E" que a liga à
+ * anterior) e se pode ser removida (a última que sobra, não).
+ */
+function RuleConditionRow({
+  cond,
+  onChange,
+  onRemove,
+  showConnector,
+}: {
+  cond: TagRuleCondition;
+  onChange: (next: TagRuleCondition) => void;
+  onRemove?: () => void;
+  showConnector: boolean;
+}) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      {showConnector && (
+        <span
+          style={{
+            color: "var(--ink-faint)",
+            fontSize: 10.5,
+            fontWeight: 700,
+            letterSpacing: ".06em",
+            paddingLeft: 4,
+          }}
+        >
+          E
+        </span>
+      )}
+      <div
+        style={{
+          alignItems: "center",
+          display: "grid",
+          gap: 6,
+          gridTemplateColumns: "minmax(0,1fr) 92px minmax(0,1fr) 26px",
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <TextInput
+            onChange={(v) => onChange({ ...cond, field: v })}
+            placeholder="campo (ex: wsjf)"
+            value={cond.field}
+          />
+        </div>
+        <Select
+          onChange={(v) =>
+            onChange({ ...cond, operator: v as TagRuleCondition["operator"] })
+          }
+          options={OPERATOR_OPTIONS}
+          value={cond.operator}
+        />
+        <div style={{ minWidth: 0 }}>
+          <TextInput
+            onChange={(v) => onChange({ ...cond, value: v })}
+            placeholder="valor"
+            value={cond.value}
+          />
+        </div>
+        <button
+          disabled={!onRemove}
+          onClick={onRemove}
+          style={{
+            background: "transparent",
+            border: "none",
+            color: "var(--ink-faint)",
+            cursor: onRemove ? "pointer" : "default",
+            display: "grid",
+            height: 26,
+            opacity: onRemove ? 1 : 0.35,
+            placeItems: "center",
+            width: 26,
+          }}
+          title="Remover condição"
+          type="button"
+        >
+          <Icon name="x" size={14} strokeWidth={2.2} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function NewTagRuleModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
@@ -104,6 +179,8 @@ function NewTagRuleModal({ onCreated }: { onCreated?: () => void }) {
     { field: "", operator: "eq", value: "" },
   ]);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const updateCondition = (i: number, next: TagRuleCondition) => {
     setConditions((cs) => cs.map((c, ci) => (ci === i ? next : c)));
@@ -120,6 +197,9 @@ function NewTagRuleModal({ onCreated }: { onCreated?: () => void }) {
   );
   const canSave =
     name.trim() && outputTag.trim() && validConditions.length > 0 && !saving;
+  // O preview lê só as condições completas: uma linha pela metade descreveria
+  // uma regra que não existe.
+  const condText = conditionsToText(validConditions);
 
   const create = async () => {
     if (!canSave) {
@@ -152,188 +232,213 @@ function NewTagRuleModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="tag" size={16} strokeWidth={2.4} />}
-      subtitle="Automação condicional que rotula itens do portfólio continuamente"
-      title="Nova regra"
-      width={520}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="tagrule-name" style={fieldLabelStyle}>
-            Nome da regra
-          </label>
-          <input
-            id="tagrule-name"
-            onChange={(e) => setName(e.target.value)}
-            placeholder="ex: Marcar épicos de alto valor"
-            style={inputStyle}
-            value={name}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="tagrule-scope" style={fieldLabelStyle}>
-            Escopo (opcional)
-          </label>
-          <input
-            id="tagrule-scope"
-            onChange={(e) => setScope(e.target.value)}
-            placeholder="ex: Épicos e Features"
-            style={inputStyle}
-            value={scope}
-          />
-        </div>
-
-        <div>
-          <label style={fieldLabelStyle}>Condições</label>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: 8,
-              padding: "10px 10px",
-              borderRadius: "var(--r-md)",
-              border: "1px solid var(--hairline-strong)",
-              background: "var(--surface-2)",
-            }}
-          >
-            {conditions.map((c, i) => (
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  style={
+                    canSave ? undefined : { opacity: 0.5, cursor: "default" }
+                  }
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar regra"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="tag" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Automação condicional que rotula itens do portfólio continuamente"
+        title="Nova regra"
+        tone={outputTagTone}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${outputTagTone}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
               <div
-                key={`cond-${i}`}
+                className="display"
+                style={{ fontSize: 14, fontWeight: 700, marginBottom: 10 }}
+              >
+                {name || "Nome da regra"}
+              </div>
+              <div
+                className="mono"
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 96px 1fr 28px",
-                  gap: 6,
-                  alignItems: "center",
+                  background: "var(--surface-3)",
+                  borderRadius: "var(--r-md)",
+                  color: "var(--ink-muted)",
+                  fontSize: 11.5,
+                  lineHeight: 1.5,
+                  marginBottom: 10,
+                  padding: "8px 10px",
                 }}
               >
-                <input
-                  onChange={(e) =>
-                    updateCondition(i, { ...c, field: e.target.value })
-                  }
-                  placeholder="campo (ex: wsjf)"
-                  style={inputStyle}
-                  value={c.field}
-                />
-                <select
-                  onChange={(e) =>
-                    updateCondition(i, {
-                      ...c,
-                      operator: e.target.value as TagRuleCondition["operator"],
-                    })
-                  }
-                  style={selectStyle}
-                  value={c.operator}
-                >
-                  {OPERATOR_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  onChange={(e) =>
-                    updateCondition(i, { ...c, value: e.target.value })
-                  }
-                  placeholder="valor"
-                  style={inputStyle}
-                  value={c.value}
-                />
-                <button
-                  disabled={conditions.length <= 1}
-                  onClick={() => removeCondition(i)}
-                  style={{
-                    display: "grid",
-                    placeItems: "center",
-                    width: 28,
-                    height: 28,
-                    border: "none",
-                    background: "transparent",
-                    color: "var(--ink-faint)",
-                    cursor: conditions.length > 1 ? "pointer" : "default",
-                    opacity: conditions.length > 1 ? 1 : 0.35,
-                  }}
-                  title="Remover condição"
-                  type="button"
-                >
-                  <Icon name="x" size={14} strokeWidth={2.2} />
-                </button>
+                <span style={{ color: "var(--ink-faint)" }}>SE </span>
+                {condText || "condição"}
+                {scope.trim() && (
+                  <>
+                    <span style={{ color: "var(--ink-faint)" }}> em </span>
+                    {scope}
+                  </>
+                )}
               </div>
-            ))}
-            <button
-              onClick={addCondition}
-              style={{
-                alignSelf: "flex-start",
-                fontSize: 11.5,
-                fontWeight: 700,
-                color: "var(--accent)",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                padding: "2px 0",
-                display: "flex",
-                alignItems: "center",
-                gap: 5,
-              }}
-              type="button"
-            >
-              <Icon name="plus" size={11} strokeWidth={2.4} /> Adicionar
-              condição (E)
-            </button>
-          </div>
-        </div>
-
-        <div
-          style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+              <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
+                <span style={{ color: "var(--ink-faint)", fontSize: 11.5 }}>
+                  aplicar tag
+                </span>
+                <Badge icon="tag" tone={outputTagTone}>
+                  {outputTag || "nome-da-tag"}
+                </Badge>
+              </div>
+            </div>
+          }
         >
-          <div>
-            <label htmlFor="tagrule-tag" style={fieldLabelStyle}>
-              Tag aplicada
-            </label>
-            <input
-              id="tagrule-tag"
-              onChange={(e) => setOutputTag(e.target.value)}
-              placeholder="prioridade-máxima"
-              style={inputStyle}
-              value={outputTag}
+          <FormField label="Nome da regra" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: Marcar épicos de alto valor"
+              required
+              value={name}
             />
-          </div>
-          <div>
-            <label htmlFor="tagrule-tone" style={fieldLabelStyle}>
-              Cor da tag
-            </label>
-            <select
-              id="tagrule-tone"
-              onChange={(e) => setOutputTagTone(e.target.value as OutputTone)}
-              style={selectStyle}
-              value={outputTagTone}
-            >
-              {TAG_RULE_OUTPUT_TONES.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
+          </FormField>
 
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button
-            onClick={create}
-            size="sm"
-            style={canSave ? undefined : { opacity: 0.5, cursor: "default" }}
-            variant="primary"
+          <FormField
+            hint="Texto livre que descreve onde a regra roda"
+            label="Escopo"
           >
-            Criar regra
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+            <TextInput
+              onChange={setScope}
+              placeholder="ex: Épicos e Features"
+              value={scope}
+            />
+          </FormField>
+
+          <FormField
+            hint="Todas as condições precisam bater (E) para a tag ser aplicada"
+            label="Condições"
+            required
+          >
+            <div
+              style={{
+                background: "var(--surface-2)",
+                border: "1px solid var(--hairline)",
+                borderRadius: "var(--r-md)",
+                display: "flex",
+                flexDirection: "column",
+                gap: 10,
+                padding: 12,
+              }}
+            >
+              {conditions.map((c, i) => (
+                <RuleConditionRow
+                  cond={c}
+                  key={`cond-${i}`}
+                  onChange={(next) => updateCondition(i, next)}
+                  onRemove={
+                    // A última condição não sai: uma regra sem condição
+                    // marcaria o portfólio inteiro.
+                    conditions.length > 1 ? () => removeCondition(i) : undefined
+                  }
+                  showConnector={i > 0}
+                />
+              ))}
+              <button
+                onClick={addCondition}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "flex-start",
+                  background: "none",
+                  border: "none",
+                  color: "var(--accent)",
+                  cursor: "pointer",
+                  display: "flex",
+                  fontSize: 11.5,
+                  fontWeight: 700,
+                  gap: 5,
+                  padding: "2px 0",
+                }}
+                type="button"
+              >
+                <Icon name="plus" size={11} strokeWidth={2.4} /> Adicionar
+                condição (E)
+              </button>
+            </div>
+          </FormField>
+
+          <div
+            style={{ display: "grid", gap: 14, gridTemplateColumns: "1fr 1fr" }}
+          >
+            <FormField label="Tag aplicada" required>
+              <TextInput
+                onChange={setOutputTag}
+                placeholder="prioridade-máxima"
+                required
+                value={outputTag}
+              />
+            </FormField>
+            <FormField label="Cor da tag">
+              {/* Os seis tones do TonePicker são exatamente os aceitos por
+                  TAG_RULE_OUTPUT_TONES, então a asserção não amplia o domínio. */}
+              <TonePicker
+                onChange={(v) => setOutputTagTone(v as OutputTone)}
+                value={outputTagTone}
+              />
+            </FormField>
+          </div>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 

@@ -6,6 +6,7 @@
 
 import { Icon } from "@repo/design-system/cosmos/icons";
 import {
+  Avatar,
   Badge,
   Button,
   ErrorState,
@@ -13,50 +14,66 @@ import {
   PageHeader,
   Progress,
   SectionCard,
+  useAction,
   useNav,
   useThemeName,
 } from "@repo/design-system/cosmos/kit";
 import type { CSSProperties } from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import type { EntityOption } from "@/app/(cosmos)/actions/entity-search";
+import {
+  type EntityOption,
+  searchEntities,
+} from "@/app/(cosmos)/actions/entity-search";
 import {
   assignTeamToArt,
   createTeam,
   listTeams,
   type TeamListView,
 } from "@/app/(cosmos)/actions/teams";
-import { EntityLinkField } from "../entity-link-field";
-import { ModalCard, ModalProvider, useModal } from "../modal";
+import { EntityLinkField as EntitySearchField } from "../entity-link-field";
+import {
+  ModalCard,
+  ModalProvider,
+  ModalShortcutHint,
+  ModalSplit,
+  useModal,
+  useModalSubmitShortcut,
+} from "../modal";
+import {
+  DirtyProvider,
+  EntityLinkField,
+  FormField,
+  TextInput,
+} from "../modal-form";
 import { useActionToast } from "../use-action-toast";
 
-const selectStyle: CSSProperties = {
-  width: "100%",
-  padding: "10px 12px",
-  fontSize: 14,
-  borderRadius: "var(--r-md)",
-  border: "1px solid var(--hairline-strong)",
-  background: "var(--surface)",
-  color: "var(--ink)",
-  fontFamily: "inherit",
-  outline: "none",
-};
-
-const fieldLabelStyle: CSSProperties = {
-  display: "block",
-  fontSize: 11.5,
-  fontWeight: 700,
-  letterSpacing: ".04em",
-  textTransform: "uppercase",
-  color: "var(--ink-faint)",
-  marginBottom: 6,
-};
+// Squad nasce sem cor e sem tone próprio — `createTeam` só aceita nome e ART.
+// O realce do modal é o do portfólio.
+const TEAM_TONE = "accent";
 
 function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
   const { close } = useModal();
   const [name, setName] = useState("");
-  const [art, setArt] = useState<EntityOption | null>(null);
+  const [artId, setArtId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
+
+  // ARTs vinculáveis, carregados uma vez ao abrir. Esta primeira leva só
+  // alimenta o rótulo do chip escolhido: searchEntities corta em 10, e um
+  // portfólio com mais ARTs faria o campo negar ART que existe.
+  const { data: arts } = useAction<EntityOption[]>(
+    () => searchEntities("art", ""),
+    []
+  );
+  const art = (arts ?? []).find((a) => a.id === artId);
+  // Estável por useCallback — o efeito de busca do campo tem onSearch nas
+  // dependências e uma função nova a cada render viraria busca em loop.
+  const buscarArts = useCallback(async (q: string) => {
+    const r = await searchEntities("art", q);
+    return r.ok ? r.data : [];
+  }, []);
 
   const create = async () => {
     if (!name.trim() || saving) {
@@ -68,7 +85,7 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
       () =>
         createTeam({
           name: name.trim(),
-          artId: art?.id,
+          artId: artId ?? undefined,
         }),
       {
         loading: "Criando time...",
@@ -83,50 +100,158 @@ function NewTeamModal({ onCreated }: { onCreated?: () => void }) {
     }
   };
 
+  useModalSubmitShortcut(create, !saving);
+
   return (
-    <ModalCard
-      icon={<Icon name="plus" size={16} strokeWidth={2.4} />}
-      subtitle="Adicionar um novo squad ao portfólio COSMOS"
-      title="Novo time"
-      width={440}
-    >
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <div>
-          <label htmlFor="team-name" style={fieldLabelStyle}>
-            Nome do time
-          </label>
-          <input
-            autoFocus
-            id="team-name"
-            onChange={(e) => setName(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                create();
-              }
-            }}
-            placeholder="Ex: Squad Pagamentos"
-            style={selectStyle}
-            value={name}
+    <DirtyProvider value={{ markDirty: () => setDirty(true) }}>
+      <ModalCard
+        footer={
+          confirmandoSaida ? (
+            <>
+              <span style={{ color: "var(--ink-subtle)", fontSize: 12.5 }}>
+                Descartar o que você preencheu?
+              </span>
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => setConfirmandoSaida(false)}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Continuar editando
+                </Button>
+                <Button onClick={close} size="sm" variant="secondary">
+                  Descartar
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <ModalShortcutHint salvar="criar" />
+              <div style={{ display: "flex", gap: 10 }}>
+                <Button
+                  onClick={() => {
+                    // Confirma só quando há o que perder.
+                    if (dirty) {
+                      setConfirmandoSaida(true);
+                      return;
+                    }
+                    close();
+                  }}
+                  size="sm"
+                  variant="secondary"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  icon="check"
+                  onClick={create}
+                  size="sm"
+                  variant="primary"
+                >
+                  {saving ? "Criando..." : "Criar time"}
+                </Button>
+              </div>
+            </>
+          )
+        }
+        icon={<Icon name="users" size={19} strokeWidth={1.9} />}
+        padded={false}
+        subtitle="Squad do portfólio, alocado a um Agile Release Train"
+        title="Novo time"
+        tone={TEAM_TONE}
+        width={880}
+      >
+        <ModalSplit
+          preview={
+            <div
+              style={{
+                background: "var(--surface)",
+                border: `1px solid rgba(var(--${TEAM_TONE}-rgb),.25)`,
+                borderRadius: "var(--r-lg)",
+                padding: 16,
+              }}
+            >
+              <div
+                style={{
+                  alignItems: "center",
+                  display: "flex",
+                  gap: 10,
+                  marginBottom: 14,
+                }}
+              >
+                <Avatar name={name || "Novo time"} size={36} tone="accent" />
+                <div style={{ minWidth: 0 }}>
+                  <div
+                    className="display"
+                    style={{ fontSize: 14.5, fontWeight: 700 }}
+                  >
+                    {name || "Nome do time"}
+                  </div>
+                  <div style={{ color: "var(--ink-faint)", fontSize: 11.5 }}>
+                    {art?.label ?? "Sem ART"}
+                  </div>
+                </div>
+              </div>
+              {/* O mesmo alerta que a tela dá para os times já criados sem ART:
+                  vale mais antes de criar do que depois. */}
+              {art ? (
+                <Badge icon="grid" tone="accent">
+                  {art.label}
+                </Badge>
+              ) : (
+                <div
+                  style={{
+                    background: "var(--amber-soft)",
+                    border: "1px solid rgba(var(--amber-rgb),.3)",
+                    borderRadius: "var(--r-md)",
+                    color: "var(--amber-text)",
+                    fontSize: 11.5,
+                    lineHeight: 1.5,
+                    padding: "9px 11px",
+                  }}
+                >
+                  Sem ART, o time não entra em PI Planning: não recebe sprint
+                  nem aparece no Program Board.
+                </div>
+              )}
+              <div
+                style={{
+                  borderTop: "1px solid var(--hairline)",
+                  color: "var(--ink-faint)",
+                  fontSize: 11,
+                  lineHeight: 1.6,
+                  marginTop: 14,
+                  paddingTop: 12,
+                }}
+              >
+                Membros, capacidade e velocity aparecem depois das primeiras
+                sprints — o time nasce vazio.
+              </div>
+            </div>
+          }
+        >
+          <FormField label="Nome do time" required>
+            <TextInput
+              onChange={setName}
+              placeholder="ex: Squad Pagamentos"
+              required
+              value={name}
+            />
+          </FormField>
+
+          <EntityLinkField
+            hint="Um Agile Team pertence a um, e somente um, ART — pode ser vinculado depois"
+            items={arts ?? []}
+            label="ART"
+            onChange={(v) => setArtId(v as string | null)}
+            onSearch={buscarArts}
+            placeholder="Buscar um ART..."
+            tone={TEAM_TONE}
+            value={artId}
           />
-        </div>
-
-        <EntityLinkField
-          kind="art"
-          label="ART (opcional)"
-          onChange={setArt}
-          value={art}
-        />
-
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
-          <Button onClick={close} size="sm" variant="secondary">
-            Cancelar
-          </Button>
-          <Button onClick={create} size="sm" variant="primary">
-            Criar time
-          </Button>
-        </div>
-      </div>
-    </ModalCard>
+        </ModalSplit>
+      </ModalCard>
+    </DirtyProvider>
   );
 }
 
@@ -172,7 +297,12 @@ function LinkArtModal({
       width={440}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        <EntityLinkField kind="art" label="ART" onChange={setArt} value={art} />
+        <EntitySearchField
+          kind="art"
+          label="ART"
+          onChange={setArt}
+          value={art}
+        />
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
           <Button onClick={close} size="sm" variant="secondary">
             Cancelar

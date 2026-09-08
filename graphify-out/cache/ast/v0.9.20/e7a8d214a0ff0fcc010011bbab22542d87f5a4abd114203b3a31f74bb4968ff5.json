@@ -1,0 +1,415 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_mdx",
+      "label": "fumadocs.mdx",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_1_create_a_fumadocs_app",
+      "label": "1. Create a Fumadocs App",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L8"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_what_is_a_content_source",
+      "label": "What is a Content Source?",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L20"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_update_your_tailwind_css",
+      "label": "Update your Tailwind CSS",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L28"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "label": "2. Migrate MDX Files",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "label": "Code Block",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L58"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before",
+      "label": "Before",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L62"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after",
+      "label": "After",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L70"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_80",
+      "label": "Before",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L80"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_88",
+      "label": "After",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_groups",
+      "label": "Code Groups",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L102"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_106",
+      "label": "Before",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L106"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_122",
+      "label": "After",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L122"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_callout",
+      "label": "Callout",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_146",
+      "label": "Before",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L146"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_156",
+      "label": "After",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L156"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_adding_components",
+      "label": "Adding Components",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L164"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "label": "3. Migrate `mint.json` File",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_sidebar_items",
+      "label": "Sidebar Items",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L178"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_appearance",
+      "label": "Appearance",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_css_variables",
+      "label": "CSS variables",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L207"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_tailwind_presets",
+      "label": "Tailwind Presets",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L226"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_layout_styles",
+      "label": "Layout Styles",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L245"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_search",
+      "label": "Search",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L252"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_navigation_links",
+      "label": "Navigation Links",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L256"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_done",
+      "label": "Done",
+      "file_type": "document",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L277"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_1_create_a_fumadocs_app",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L8",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_1_create_a_fumadocs_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_what_is_a_content_source",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L20",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_1_create_a_fumadocs_app",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_update_your_tailwind_css",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L28",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L58",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L62",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L70",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_80",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L80",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_block",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_88",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_groups",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L102",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_groups",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_106",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L106",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_code_groups",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_122",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_callout",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_callout",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_before_146",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L146",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_callout",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_after_156",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L156",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_2_migrate_mdx_files",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_adding_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L164",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_sidebar_items",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L178",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_appearance",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_appearance",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_css_variables",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L207",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_appearance",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_tailwind_presets",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_layout_styles",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L245",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_search",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L252",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_3_migrate_mint_json_file",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_navigation_links",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L256",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_mdx",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_content_docs_migrations_documentation_fumadocs_done",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/content/docs/migrations/documentation/fumadocs.mdx",
+      "source_location": "L277",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

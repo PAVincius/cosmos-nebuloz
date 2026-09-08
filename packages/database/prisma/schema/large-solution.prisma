@@ -154,6 +154,7 @@ model SupplierDeliverable {
 
   @@index([supplierId, status])
   @@index([tenantId])
+  @@index([featureId])
 }
 
 model SolutionRisk {

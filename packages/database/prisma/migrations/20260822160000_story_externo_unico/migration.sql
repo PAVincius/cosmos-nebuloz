@@ -1,0 +1,22 @@
+-- Unique em Story (tenantId, externalId, externalSource).
+--
+-- Corrida cron full pull × webhook ao vivo (PR #91 / COS-90, limitação
+-- registrada lá): consumer e cron são functions Inngest independentes, cada
+-- uma com o próprio escopo de concurrency — nada serializa as duas para a
+-- mesma integração. Se ambas processam a MESMA issue nova do Linear na mesma
+-- janela, as duas passam pelo find-then-create de handleLinearWebhook sem
+-- enxergar uma à outra e criam duas Stories para a mesma issue.
+--
+-- O unique fecha a corrida no banco, independente de quantos escritores
+-- existirem: o INSERT perdedor falha com P2002 e handleLinearWebhook trata a
+-- violação como "Story já existe", convergindo para o caminho de update
+-- (linear-pull.ts). NULLs são distintos no Postgres (NULLS DISTINCT, padrão)
+-- — Stories manuais, com externalId/externalSource nulos, seguem ilimitadas.
+--
+-- Pressuposto: não existem duplicatas pré-existentes — o loop Linear→Cosmos
+-- só ganhou chamadores no PR #91 (antes disso o create-path era inalcançável
+-- em produção). Se algum ambiente tiver duplicata, este CREATE falha
+-- ruidosamente e a limpeza é manual, de propósito: escolher qual Story
+-- sobrevive exige olhar as Tasks e o mapping (LinearSync) que apontam para
+-- cada uma, e isso não dá para automatizar às cegas numa migration.
+CREATE UNIQUE INDEX "Story_tenantId_externalId_externalSource_key" ON "Story"("tenantId", "externalId", "externalSource");

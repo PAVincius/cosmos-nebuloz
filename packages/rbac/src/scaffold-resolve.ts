@@ -1,0 +1,60 @@
+import "server-only";
+import { database, type ScaffoldRole } from "@repo/database";
+
+// Resolução do papel de adoção do Scaffold.
+//
+// Ortogonal ao papel SAFe, ao do Charter e ao do Meridian: a mesma pessoa pode
+// ser DEV no Cosmos, AUDITOR no Charter, CONSULTANT no Meridian e
+// PROCESS_OWNER aqui.
+//
+// Ausência de ScaffoldMembership retorna null — sem acesso ao Scaffold, mesmo
+// com o módulo contratado e mesmo sendo ADMIN do tenant. Default deny nos dois
+// eixos.
+
+const CACHE_TTL_SECONDS = 300;
+
+function cacheKey(tenantId: string, userId: string): string {
+  return `scaffold-role:${tenantId}:${userId}`;
+}
+
+async function fetchRole(
+  userId: string,
+  tenantId: string
+): Promise<ScaffoldRole | null> {
+  const membership = await database.scaffoldMembership.findUnique({
+    where: { tenantId_userId: { tenantId, userId } },
+    select: { role: true },
+  });
+  return membership?.role ?? null;
+}
+
+export async function getScaffoldRole(
+  userId: string,
+  tenantId: string
+): Promise<ScaffoldRole | null> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return fetchRole(userId, tenantId);
+  }
+  const { redis } = await import("@repo/rate-limit");
+  const key = cacheKey(tenantId, userId);
+  // "none" distingue "sem papel, já consultado" de "cache vazio" — sem isso,
+  // todo request de quem não tem acesso volta ao banco.
+  const cached = await redis.get<string>(key);
+  if (cached) {
+    return cached === "none" ? null : (cached as ScaffoldRole);
+  }
+  const role = await fetchRole(userId, tenantId);
+  await redis.set(key, role ?? "none", { ex: CACHE_TTL_SECONDS });
+  return role;
+}
+
+export async function invalidateScaffoldRoleCache(
+  tenantId: string,
+  userId: string
+): Promise<void> {
+  if (!process.env.UPSTASH_REDIS_REST_URL) {
+    return;
+  }
+  const { redis } = await import("@repo/rate-limit");
+  await redis.del(cacheKey(tenantId, userId));
+}

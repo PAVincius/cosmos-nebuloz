@@ -1,6 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MockAuthError, tenantCtx } from "../helpers/action-mocks";
 
+// `encryptConfigSecrets` deriva a chave de ENCRYPTION_KEY e lança se ela
+// faltar. Em runtime a variável é obrigatória (apps/app/env.ts a valida com
+// min(32) e sem .optional(), então o app não sobe sem ela); aqui basta um valor
+// determinístico. Mesmo padrão de __tests__/actions/webhooks.test.ts.
+process.env.ENCRYPTION_KEY = "0".repeat(32);
+
 const mocks = vi.hoisted(() => ({
   headers: vi.fn(),
   requireTenantSession: vi.fn(),
@@ -169,6 +175,30 @@ describe("upsertIntegration", () => {
   it("returns ok:false on invalid schema", async () => {
     const result = await upsertIntegration({ type: "jira" }); // missing name
     expect(result.ok).toBe(false);
+  });
+
+  it("never persists the token in clear text", async () => {
+    mocks.integrationFindFirst.mockResolvedValue(null);
+    mocks.integrationCreate.mockResolvedValue(ROW);
+
+    await upsertIntegration({
+      type: "jira",
+      name: "Jira",
+      config: {
+        baseUrl: "https://acme.atlassian.net",
+        apiToken: "s3gr3d0-do-jira",
+        projectKey: "COSMOS",
+      },
+    });
+
+    const written = mocks.integrationCreate.mock.calls[0][0].data.config;
+
+    // O segredo sai cifrado; o resto do config atravessa em claro porque não é
+    // segredo e é usado para montar URL de request.
+    expect(written.apiToken).not.toBe("s3gr3d0-do-jira");
+    expect(JSON.stringify(written)).not.toContain("s3gr3d0-do-jira");
+    expect(written.baseUrl).toBe("https://acme.atlassian.net");
+    expect(written.projectKey).toBe("COSMOS");
   });
 });
 

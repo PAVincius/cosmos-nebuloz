@@ -1,0 +1,319 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_md",
+      "label": "data-model.md",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "label": "Data Model: Meridian V1 \u00b7 Diagnose",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_enums",
+      "label": "Enums",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "label": "Modelos",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianmembership",
+      "label": "MeridianMembership",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiantemplate",
+      "label": "MeridianTemplate",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianquestion",
+      "label": "MeridianQuestion",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianassessment",
+      "label": "MeridianAssessment",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L88"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianrespondent",
+      "label": "MeridianRespondent",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L105"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianresponse",
+      "label": "MeridianResponse",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L120"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianevidence",
+      "label": "MeridianEvidence",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L129"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianaxisscore",
+      "label": "MeridianAxisScore",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianoverride",
+      "label": "MeridianOverride",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L160"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangap",
+      "label": "MeridianGap",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L174"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangapdependency",
+      "label": "MeridianGapDependency",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L192"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianplanitem",
+      "label": "MeridianPlanItem",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangappromotion",
+      "label": "MeridianGapPromotion",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L211"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianbenchmarkcohort",
+      "label": "MeridianBenchmarkCohort",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L223"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_rela\u00e7\u00f5es_no_tenant",
+      "label": "Rela\u00e7\u00f5es no `Tenant`",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L238"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_m\u00e1quina_de_estados_do_gap",
+      "label": "M\u00e1quina de estados do gap",
+      "file_type": "document",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L246"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_enums",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianmembership",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiantemplate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianquestion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianassessment",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L88",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianrespondent",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L105",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianresponse",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L120",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianevidence",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L129",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianaxisscore",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianoverride",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L160",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L174",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangapdependency",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L192",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianplanitem",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridiangappromotion",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L211",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_modelos",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_meridianbenchmarkcohort",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L223",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_rela\u00e7\u00f5es_no_tenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L238",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_data_model_meridian_v1_diagnose",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_specs_001_meridian_diagnose_data_model_m\u00e1quina_de_estados_do_gap",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "specs/001-meridian-diagnose/data-model.md",
+      "source_location": "L246",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -1,6 +1,6 @@
 "use server";
 
-import { database } from "@repo/database";
+import { $Enums, database, type ProductModule } from "@repo/database";
 import { logPlatformAudit } from "@repo/provisioning";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -22,6 +22,24 @@ import { type Result, safeAction } from "@/lib/safe-action";
 
 const MODALIDADES = ["PROJETO", "RETAINER", "LICENCA"] as const;
 
+/** Como o serviço é cobrado. Só RETAINER entra na mensalidade da proposta —
+ *  ver lib/comercial/precificar. */
+const UNIDADES = ["PROJETO", "SPRINT", "HORA", "RETAINER"] as const;
+
+/** Trilhas do catálogo de consultoria (backoffice-services do handoff). */
+const TRILHAS = ["readiness", "adoption", "enablement", "custom"] as const;
+
+/** Módulo a que o serviço se vincula.
+ *
+ *  String livre validada contra o enum do Prisma no momento da escrita, e não
+ *  uma lista repetida aqui: repetir o enum em código quebrou o build de
+ *  produção duas vezes — a cópia local ficou com cinco valores porque o schema
+ *  no disco tinha cinco, enquanto o enum do repositório tem três. */
+const moduloSchema = z.custom<ProductModule>(
+  (v) => typeof v === "string" && Object.hasOwn($Enums.ProductModule, v),
+  { message: "Módulo fora do catálogo da plataforma." }
+);
+
 export type ServiceRow = {
   id: string;
   codigo: string;
@@ -31,6 +49,14 @@ export type ServiceRow = {
   precoBaseCentavos: number;
   unidade: string;
   ativo: boolean;
+  trilha: string;
+  unidadeDeCobranca: string;
+  duracao: string | null;
+  entregaveis: string[];
+  papeis: string[];
+  preRequisitos: string[];
+  moduloVinculado: string | null;
+  exigeLab: boolean;
 };
 
 export async function listServices(): Promise<Result<ServiceRow[]>> {
@@ -52,6 +78,14 @@ export async function listServices(): Promise<Result<ServiceRow[]>> {
         precoBaseCentavos: true,
         unidade: true,
         ativo: true,
+        trilha: true,
+        unidadeDeCobranca: true,
+        duracao: true,
+        entregaveis: true,
+        papeis: true,
+        preRequisitos: true,
+        moduloVinculado: true,
+        exigeLab: true,
       },
     });
   });
@@ -66,6 +100,16 @@ const CriarSchema = z.object({
    *  negativo é erro de digitação que vira desconto silencioso na proposta. */
   precoBaseCentavos: z.number().int().min(0),
   unidade: z.string().max(30).optional(),
+  trilha: z.enum(TRILHAS).optional(),
+  unidadeDeCobranca: z.enum(UNIDADES).optional(),
+  duracao: z.string().max(60).optional(),
+  entregaveis: z.array(z.string().min(1).max(200)).max(20).optional(),
+  papeis: z.array(z.string().min(1).max(80)).max(12).optional(),
+  /** Códigos de outros serviços. Não valida existência: um pré-requisito pode
+   *  ser cadastrado depois, e travar a ordem de cadastro não protege nada. */
+  preRequisitos: z.array(z.string().min(2).max(20)).max(10).optional(),
+  moduloVinculado: moduloSchema.optional(),
+  exigeLab: z.boolean().optional(),
 });
 
 export async function createServiceAction(
@@ -100,6 +144,14 @@ export async function createServiceAction(
         modalidade: dados.modalidade ?? "PROJETO",
         precoBaseCentavos: dados.precoBaseCentavos,
         unidade: dados.unidade ?? "projeto",
+        trilha: dados.trilha ?? "readiness",
+        unidadeDeCobranca: dados.unidadeDeCobranca ?? "PROJETO",
+        duracao: dados.duracao ?? null,
+        entregaveis: dados.entregaveis ?? [],
+        papeis: dados.papeis ?? [],
+        preRequisitos: dados.preRequisitos ?? [],
+        moduloVinculado: dados.moduloVinculado ?? null,
+        exigeLab: dados.exigeLab ?? false,
       },
       select: { id: true, codigo: true },
     });
@@ -167,5 +219,263 @@ export async function setServiceAtivoAction(
 
     revalidatePath("/servicos");
     return { id: atual.id };
+  });
+}
+
+/** Campos que a edição alcança. `codigo` fica de fora de propósito: ele é o
+ *  que aparece em proposta e contrato já assinados, e renomear a chave de um
+ *  documento emitido é reescrever o passado. Serviço com código errado se
+ *  desativa e se cadastra de novo. */
+const EditarSchema = z.object({
+  id: z.string().min(1),
+  nome: z.string().min(2).max(120),
+  descricao: z.string().max(500).nullable().optional(),
+  precoBaseCentavos: z.number().int().min(0),
+  unidade: z.string().max(30).optional(),
+  trilha: z.enum(TRILHAS),
+  unidadeDeCobranca: z.enum(UNIDADES),
+  duracao: z.string().max(60).nullable().optional(),
+  entregaveis: z.array(z.string().min(1).max(200)).max(20),
+  papeis: z.array(z.string().min(1).max(80)).max(12),
+  preRequisitos: z.array(z.string().min(2).max(20)).max(10),
+  moduloVinculado: moduloSchema.nullable().optional(),
+  exigeLab: z.boolean(),
+});
+
+/**
+ * Edita um serviço do catálogo.
+ *
+ * Não existia: o catálogo só sabia criar e (des)ativar, então corrigir um
+ * preço digitado errado exigia SQL. Mudar preço aqui não mexe em proposta
+ * nenhuma — `ProposalItem` guarda cópia de nome e valor desde a criação.
+ */
+export async function updateServiceAction(
+  input: z.input<typeof EditarSchema>
+): Promise<Result<{ id: string }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+
+    const dados = EditarSchema.parse(input);
+
+    const atual = await database.service.findFirst({
+      where: { id: dados.id, tenantId: SYSTEM_TENANT_ID },
+    });
+    if (!atual) {
+      throw new StaffAuthError("FORBIDDEN", "Serviço não encontrado.");
+    }
+
+    await database.service.update({
+      where: { id: atual.id },
+      data: {
+        nome: dados.nome,
+        descricao: dados.descricao ?? null,
+        precoBaseCentavos: dados.precoBaseCentavos,
+        unidade: dados.unidade ?? atual.unidade,
+        trilha: dados.trilha,
+        unidadeDeCobranca: dados.unidadeDeCobranca,
+        duracao: dados.duracao ?? null,
+        entregaveis: dados.entregaveis,
+        papeis: dados.papeis,
+        preRequisitos: dados.preRequisitos,
+        moduloVinculado: dados.moduloVinculado ?? null,
+        exigeLab: dados.exigeLab,
+      },
+    });
+
+    // Diff campo a campo, não "serviço atualizado": quando o preço de um
+    // serviço muda, a pergunta que a auditoria precisa responder é de quanto
+    // para quanto.
+    const diff: [string, string, string][] = [];
+    const anota = (campo: string, antes: unknown, depois: unknown) => {
+      const a = Array.isArray(antes) ? antes.join(", ") : String(antes ?? "");
+      const d = Array.isArray(depois)
+        ? depois.join(", ")
+        : String(depois ?? "");
+      if (a !== d) {
+        diff.push([campo, a, d]);
+      }
+    };
+    anota("nome", atual.nome, dados.nome);
+    anota("descricao", atual.descricao, dados.descricao ?? null);
+    anota(
+      "precoBaseCentavos",
+      atual.precoBaseCentavos,
+      dados.precoBaseCentavos
+    );
+    anota("trilha", atual.trilha, dados.trilha);
+    anota(
+      "unidadeDeCobranca",
+      atual.unidadeDeCobranca,
+      dados.unidadeDeCobranca
+    );
+    anota("duracao", atual.duracao, dados.duracao ?? null);
+    anota("entregaveis", atual.entregaveis, dados.entregaveis);
+    anota("papeis", atual.papeis, dados.papeis);
+    anota("preRequisitos", atual.preRequisitos, dados.preRequisitos);
+    anota(
+      "moduloVinculado",
+      atual.moduloVinculado,
+      dados.moduloVinculado ?? null
+    );
+    anota("exigeLab", atual.exigeLab, dados.exigeLab);
+
+    await logPlatformAudit(database, {
+      tenantId: SYSTEM_TENANT_ID,
+      actorUserId: staff.userId,
+      actorName: staff.name,
+      action: "updated",
+      entityType: "service",
+      entityId: atual.id,
+      target: `${atual.codigo} · ${dados.nome}`,
+      diff,
+    });
+
+    revalidatePath("/servicos");
+    revalidatePath(`/servicos/${atual.id}`);
+    return { id: atual.id };
+  });
+}
+
+/** Onde um serviço aparece vendido ou sendo entregue. */
+export type UsoDoServico = {
+  propostas: {
+    id: string;
+    numero: string;
+    cliente: string;
+    status: string;
+    quantidade: number;
+    precoUnitCentavos: number;
+  }[];
+  engajamentos: { id: string; nome: string; status: string }[];
+};
+
+/** Pré-requisito com o nome resolvido. `existe: false` quando o código aponta
+ *  para um serviço que não está no catálogo — o cadastro não valida a
+ *  existência de propósito (um pré-requisito pode ser cadastrado depois), então
+ *  a tela precisa saber a diferença entre "vem antes" e "código órfão". */
+export type PreRequisito = {
+  codigo: string;
+  nome: string | null;
+  existe: boolean;
+};
+
+export type ServiceDetail = Omit<ServiceRow, "preRequisitos"> & {
+  preRequisitos: PreRequisito[];
+  uso: UsoDoServico;
+};
+
+/**
+ * Um serviço, com o que a lista não cabe mostrar.
+ *
+ * Os três arrays (entregáveis, papéis, pré-requisitos) já vinham no `ServiceRow`
+ * e não tinham onde aparecer. O que é novo aqui é o **uso**: quais propostas
+ * vendem este serviço e quais engajamentos o executam.
+ *
+ * Isso não é enfeite de tela. A ação que o catálogo oferece é "tirar do
+ * catálogo", e ela é tomada às cegas: sem saber que há proposta aberta com o
+ * item dentro, o operador tira e descobre depois. `ProposalItem` copia preço e
+ * descrição, então a proposta antiga sobrevive — mas a nova, que alguém estava
+ * montando, perde a opção no meio do caminho.
+ *
+ * Busca por `codigo` e não por `id`: é o que aparece em proposta e contrato, o
+ * que a pessoa tem na mão quando vai procurar, e é único por tenant.
+ */
+export async function getServiceDetail(
+  codigo: string
+): Promise<Result<ServiceDetail>> {
+  return await safeAction(async () => {
+    await requirePlatformStaff();
+
+    const servico = await database.service.findUnique({
+      where: { tenantId_codigo: { tenantId: SYSTEM_TENANT_ID, codigo } },
+      select: {
+        id: true,
+        codigo: true,
+        nome: true,
+        descricao: true,
+        modalidade: true,
+        precoBaseCentavos: true,
+        unidade: true,
+        ativo: true,
+        trilha: true,
+        unidadeDeCobranca: true,
+        duracao: true,
+        entregaveis: true,
+        papeis: true,
+        preRequisitos: true,
+        moduloVinculado: true,
+        exigeLab: true,
+      },
+    });
+
+    if (!servico) {
+      throw new StaffAuthError(
+        "FORBIDDEN",
+        `Nenhum serviço com o código ${codigo} neste catálogo.`
+      );
+    }
+
+    const [itens, engajamentos, antecedentes] = await Promise.all([
+      database.proposalItem.findMany({
+        where: { serviceId: servico.id },
+        orderBy: { proposal: { criadoEm: "desc" } },
+        take: 50,
+        select: {
+          id: true,
+          quantidade: true,
+          precoUnitCentavos: true,
+          proposal: {
+            select: {
+              id: true,
+              numero: true,
+              titulo: true,
+              clienteNome: true,
+              status: true,
+            },
+          },
+        },
+      }),
+      database.engagement.findMany({
+        where: { serviceId: servico.id, tenantId: SYSTEM_TENANT_ID },
+        orderBy: { criadoEm: "desc" },
+        take: 50,
+        select: { id: true, nome: true, status: true },
+      }),
+      // Um SELECT só para todos os pré-requisitos, em vez de um por código: a
+      // lista tem no máximo dez, mas dez idas ao banco por render de tela é o
+      // tipo de coisa que ninguém percebe até a tela ficar lenta.
+      servico.preRequisitos.length > 0
+        ? database.service.findMany({
+            where: {
+              tenantId: SYSTEM_TENANT_ID,
+              codigo: { in: servico.preRequisitos },
+            },
+            select: { codigo: true, nome: true },
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const nomePorCodigo = new Map(antecedentes.map((a) => [a.codigo, a.nome]));
+
+    return {
+      ...servico,
+      preRequisitos: servico.preRequisitos.map((codigoAntecedente) => ({
+        codigo: codigoAntecedente,
+        nome: nomePorCodigo.get(codigoAntecedente) ?? null,
+        existe: nomePorCodigo.has(codigoAntecedente),
+      })),
+      uso: {
+        propostas: itens.map((i) => ({
+          id: i.proposal.id,
+          numero: i.proposal.numero,
+          cliente: i.proposal.clienteNome ?? i.proposal.titulo,
+          status: i.proposal.status,
+          quantidade: i.quantidade,
+          precoUnitCentavos: i.precoUnitCentavos,
+        })),
+        engajamentos,
+      },
+    };
   });
 }

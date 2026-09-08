@@ -1,0 +1,175 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_md",
+      "label": "story-059-tela-arts.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "label": "Story 059 \u2014 Tela ARTs (setup do trem e ciclo de vida do PI Plan)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L19"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_001_criar_art_com_nome_\u00fanico",
+      "label": "AC-001: Criar ART com nome \u00fanico",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L44"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_002_art_sem_time_n\u00e3o_oferece_cria\u00e7\u00e3o_de_pi",
+      "label": "AC-002: ART sem time n\u00e3o oferece cria\u00e7\u00e3o de PI",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L55"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_003_criar_pi_plan_gera_os_sprints_e_informa_quantos",
+      "label": "AC-003: Criar PI Plan gera os sprints e informa quantos",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L66"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_004_pi_em_draft_\u00e9_sinalizado_como_invis\u00edvel_e_a_tela_o_abre",
+      "label": "AC-004: PI em DRAFT \u00e9 sinalizado como invis\u00edvel, e a tela o abre",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L78"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_005_vazio_e_erro_sem_art_fabricado",
+      "label": "AC-005: Vazio e erro sem ART fabricado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L92"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_fora_do_escopo",
+      "label": "Fora do escopo",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_plano_de_teste",
+      "label": "Plano de teste",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L114"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_001_criar_art_com_nome_\u00fanico",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L44",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_002_art_sem_time_n\u00e3o_oferece_cria\u00e7\u00e3o_de_pi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L55",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_003_criar_pi_plan_gera_os_sprints_e_informa_quantos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L66",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_004_pi_em_draft_\u00e9_sinalizado_como_invis\u00edvel_e_a_tela_o_abre",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L78",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_ac_005_vazio_e_erro_sem_art_fabricado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L92",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_fora_do_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_story_059_tela_arts_setup_do_trem_e_ciclo_de_vida_do_pi_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_059_tela_arts_plano_de_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-059-tela-arts.md",
+      "source_location": "L114",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

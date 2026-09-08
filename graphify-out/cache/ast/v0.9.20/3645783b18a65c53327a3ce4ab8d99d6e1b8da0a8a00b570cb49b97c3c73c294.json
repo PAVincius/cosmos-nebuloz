@@ -1,0 +1,1487 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_md",
+      "label": "2026-05-25-cosmos-product-prd.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "label": "Cosmos \u2014 Product Requirements Document (Estado Atual)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_vis\u00e3o_geral_do_produto",
+      "label": "1. Vis\u00e3o Geral do Produto",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_1_tenant_e_planos",
+      "label": "1.1 Tenant e Planos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L17"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_2_roles_de_usu\u00e1rio",
+      "label": "1.2 Roles de Usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L26"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_arquitetura_t\u00e9cnica",
+      "label": "2. Arquitetura T\u00e9cnica",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L35"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_1_stack",
+      "label": "2.1 Stack",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_2_pacotes_internos",
+      "label": "2.2 Pacotes Internos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_3_schema_prisma_arquivos",
+      "label": "2.3 Schema Prisma \u2014 Arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "label": "3. Dom\u00ednios e Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L93"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_1_dom\u00ednio_multi_tenant_foundation",
+      "label": "3.1 Dom\u00ednio: Multi-Tenant Foundation",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L95"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L99"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_2_dom\u00ednio_portfolio_estrat\u00e9gia",
+      "label": "3.2 Dom\u00ednio: Portfolio / Estrat\u00e9gia",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L122"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_127",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L127"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_138",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L138"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_kanban_de_portf\u00f3lio_ui",
+      "label": "Kanban de Portf\u00f3lio (UI)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L154"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_3_dom\u00ednio_art_core",
+      "label": "3.3 Dom\u00ednio: ART Core",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L166"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_170",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L170"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_183",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L183"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ai_invest_scoring_epic",
+      "label": "AI INVEST Scoring (Epic)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L208"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_4_dom\u00ednio_pi_planning",
+      "label": "3.4 Dom\u00ednio: PI Planning",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L222"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_226",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L226"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_236",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L236"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rag_vector_store",
+      "label": "RAG Vector Store",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L246"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_5_dom\u00ednio_team_delivery",
+      "label": "3.5 Dom\u00ednio: Team Delivery",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L263"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_267",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L267"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_281",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L281"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_workflow_customiz\u00e1vel_lace_bpmn",
+      "label": "Workflow Customiz\u00e1vel (Lace / BPMN)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L296"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_6_dom\u00ednio_portfolio_governance_lpm",
+      "label": "3.6 Dom\u00ednio: Portfolio Governance (LPM)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L303"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_307",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L307"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_317",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L317"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_status_de_governan\u00e7a_de_epic",
+      "label": "Status de Governan\u00e7a de Epic",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L327"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_7_dom\u00ednio_flow_analytics",
+      "label": "3.7 Dom\u00ednio: Flow Analytics",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L335"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_339",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L339"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_6_flow_metrics",
+      "label": "6 Flow Metrics",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L349"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_compet\u00eancias_safe",
+      "label": "7 Compet\u00eancias SAFe",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L360"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_8_dom\u00ednio_flow_intelligence_ai",
+      "label": "3.8 Dom\u00ednio: Flow Intelligence (AI)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L374"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_378",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L378"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_regras_de_anomalia",
+      "label": "Regras de Anomalia",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L392"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_pipeline",
+      "label": "Pipeline",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L405"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "label": "3.9 Dom\u00ednio: AI Copilot (Cosmos Copilot)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L417"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_421",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L421"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_modos_de_copilot",
+      "label": "Modos de Copilot",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L428"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ferramentas_do_copilot_server_actions_safe_copilot_tools",
+      "label": "Ferramentas do Copilot (Server Actions `/safe-copilot/tools/`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L435"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rag_no_copilot",
+      "label": "RAG no Copilot",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L443"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ui_components",
+      "label": "UI Components",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L453"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_10_dom\u00ednio_finops_cloud_cost",
+      "label": "3.10 Dom\u00ednio: FinOps (Cloud Cost)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L469"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_474",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L474"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_485",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L485"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_fontes_de_integra\u00e7\u00e3o",
+      "label": "Fontes de Integra\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L501"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_11_dom\u00ednio_large_solution",
+      "label": "3.11 Dom\u00ednio: Large Solution",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L510"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_514",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L514"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_522",
+      "label": "Rela\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L522"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_12_dom\u00ednio_integrations_linearsync",
+      "label": "3.12 Dom\u00ednio: Integrations / LinearSync",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L531"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_535",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L535"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_mapeamento",
+      "label": "Mapeamento",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L541"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_feature_story_external_fields",
+      "label": "Feature/Story External Fields",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L551"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_13_dom\u00ednio_system_infrastructure",
+      "label": "3.13 Dom\u00ednio: System / Infrastructure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L561"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_563",
+      "label": "Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L563"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "label": "4. Mapa de Rela\u00e7\u00f5es Cross-Domain",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L574"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_1_decomposi\u00e7\u00e3o_top_down_strategy_execution",
+      "label": "4.1 Decomposi\u00e7\u00e3o Top-Down (Strategy \u2192 Execution)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L576"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_2_planejamento_de_pi",
+      "label": "4.2 Planejamento de PI",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L587"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_3_entrega_de_time",
+      "label": "4.3 Entrega de Time",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L603"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_4_governan\u00e7a_de_portf\u00f3lio",
+      "label": "4.4 Governan\u00e7a de Portf\u00f3lio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L618"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_5_or\u00e7amento_e_custo_real",
+      "label": "4.5 Or\u00e7amento e Custo Real",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L628"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_6_flow_intelligence_pipeline",
+      "label": "4.6 Flow Intelligence Pipeline",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L638"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_7_ai_copilot_rag",
+      "label": "4.7 AI Copilot RAG",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L649"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_5_rotas_da_aplica\u00e7\u00e3o",
+      "label": "5. Rotas da Aplica\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L667"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_6_server_actions_por_dom\u00ednio",
+      "label": "6. Server Actions por Dom\u00ednio",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L699"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_points_of_attention",
+      "label": "7. Points of Attention",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L747"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "label": "\ud83d\udd34 Cr\u00edticos (risco direto de dados ou UX)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L749"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p01_team_members_json_deprecated_mas_n\u00e3o_removido",
+      "label": "P01 \u2014 `Team.members` JSON deprecated mas n\u00e3o removido",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L751"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p02_billingentry_synclogid_sem_fk_formal",
+      "label": "P02 \u2014 `BillingEntry.syncLogId` sem FK formal",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L767"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p03_feature_story_externalid_sem_fk_para_integration",
+      "label": "P03 \u2014 `Feature/Story.externalId` sem FK para `Integration`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L781"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p04_epic_sem_fk_direto_para_art_ou_piplan",
+      "label": "P04 \u2014 `Epic` sem FK direto para ART ou PIPlan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L793"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p05_okr_links_polim\u00f3rficos_sem_constraint_de_exatamente_um",
+      "label": "P05 \u2014 `OKR` links polim\u00f3rficos sem constraint de \"exatamente um\"",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L807"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "label": "\ud83d\udfe1 Importantes (risco de consist\u00eancia ou d\u00e9bito t\u00e9cnico)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L828"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p06_governedepic_\u00e9_opcional_nem_todo_epic_\u00e9_governado",
+      "label": "P06 \u2014 `GovernedEpic` \u00e9 opcional: nem todo Epic \u00e9 governado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L830"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p07_tr\u00eas_representa\u00e7\u00f5es_de_spent_em_leanbudget",
+      "label": "P07 \u2014 Tr\u00eas representa\u00e7\u00f5es de `spent` em `LeanBudget`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L841"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p08_copilotmessage_tenantid_denormalizado",
+      "label": "P08 \u2014 `CopilotMessage.tenantId` denormalizado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L858"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p09_piknowledgevector_embedding_\u00e9_unsupported_vector_1536",
+      "label": "P09 \u2014 `PIKnowledgeVector.embedding` \u00e9 `Unsupported(\"vector(1536)\")`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L869"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p10_confidencevotesession_votes_\u00e9_json_number_sem_audit_por_votante",
+      "label": "P10 \u2014 `ConfidenceVoteSession.votes` \u00e9 `Json number[]` \u2014 sem audit por votante",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L884"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p11_personskillprofile_sem_fk_para_team",
+      "label": "P11 \u2014 `PersonSkillProfile` sem FK para `Team`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L899"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p12_strategictheme_budgettotal_vs_leanbudget_dupla_representa\u00e7\u00e3o",
+      "label": "P12 \u2014 `StrategicTheme.budgetTotal` vs `LeanBudget` \u2014 dupla representa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L918"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p13_retrospective_wentwell_toimprove_actions_s\u00e3o_json_sem_schema",
+      "label": "P13 \u2014 `Retrospective.wentWell/toImprove/actions` s\u00e3o JSON sem schema",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L939"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "label": "\ud83d\udfe2 Observa\u00e7\u00f5es Arquiteturais",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L955"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o01_flowmetricsnapshot_com_staleness_tracking_sofisticado",
+      "label": "O01 \u2014 `FlowMetricSnapshot` com staleness tracking sofisticado",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L957"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o02_linearsync_como_tabela_de_mapeamento_bidirecional",
+      "label": "O02 \u2014 `LinearSync` como tabela de mapeamento bidirecional",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L965"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o03_crdt_em_epic_via_yjs_yjsdocumentstate",
+      "label": "O03 \u2014 CRDT em Epic via Yjs (`yjsDocumentState`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L972"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o04_piknowledgevector_suporta_uploads_de_documentos_sourceid_null",
+      "label": "O04 \u2014 `PIKnowledgeVector` suporta uploads de documentos (`sourceId = null`)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L982"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o05_synergy_detection_via_taskassignee_pairsynergy_groupsynergy",
+      "label": "O05 \u2014 Synergy Detection via `TaskAssignee` + `PairSynergy`/`GroupSynergy`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L988"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_8_resumo_executivo_de_entidades",
+      "label": "8. Resumo Executivo de Entidades",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L997"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_vis\u00e3o_geral_do_produto",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_vis\u00e3o_geral_do_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_1_tenant_e_planos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L17",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_vis\u00e3o_geral_do_produto",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_1_2_roles_de_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L26",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_arquitetura_t\u00e9cnica",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L35",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_arquitetura_t\u00e9cnica",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_1_stack",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_arquitetura_t\u00e9cnica",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_2_pacotes_internos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_arquitetura_t\u00e9cnica",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_2_3_schema_prisma_arquivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L93",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_1_dom\u00ednio_multi_tenant_foundation",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L95",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_1_dom\u00ednio_multi_tenant_foundation",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L99",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_1_dom\u00ednio_multi_tenant_foundation",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_2_dom\u00ednio_portfolio_estrat\u00e9gia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L122",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_2_dom\u00ednio_portfolio_estrat\u00e9gia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_127",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L127",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_2_dom\u00ednio_portfolio_estrat\u00e9gia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_138",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L138",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_2_dom\u00ednio_portfolio_estrat\u00e9gia",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_kanban_de_portf\u00f3lio_ui",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L154",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_3_dom\u00ednio_art_core",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L166",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_3_dom\u00ednio_art_core",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_170",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L170",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_3_dom\u00ednio_art_core",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_183",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L183",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_3_dom\u00ednio_art_core",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ai_invest_scoring_epic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L208",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_4_dom\u00ednio_pi_planning",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L222",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_4_dom\u00ednio_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_226",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L226",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_4_dom\u00ednio_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_236",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L236",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_4_dom\u00ednio_pi_planning",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rag_vector_store",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L246",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_5_dom\u00ednio_team_delivery",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L263",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_5_dom\u00ednio_team_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_267",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L267",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_5_dom\u00ednio_team_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_281",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L281",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_5_dom\u00ednio_team_delivery",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_workflow_customiz\u00e1vel_lace_bpmn",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L296",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_6_dom\u00ednio_portfolio_governance_lpm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L303",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_6_dom\u00ednio_portfolio_governance_lpm",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_307",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L307",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_6_dom\u00ednio_portfolio_governance_lpm",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_317",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L317",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_6_dom\u00ednio_portfolio_governance_lpm",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_status_de_governan\u00e7a_de_epic",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L327",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_7_dom\u00ednio_flow_analytics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L335",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_7_dom\u00ednio_flow_analytics",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_339",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L339",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_7_dom\u00ednio_flow_analytics",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_6_flow_metrics",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L349",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_7_dom\u00ednio_flow_analytics",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_compet\u00eancias_safe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L360",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_8_dom\u00ednio_flow_intelligence_ai",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_8_dom\u00ednio_flow_intelligence_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_378",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L378",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_8_dom\u00ednio_flow_intelligence_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_regras_de_anomalia",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L392",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_8_dom\u00ednio_flow_intelligence_ai",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_pipeline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L405",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L417",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_421",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L421",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_modos_de_copilot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L428",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ferramentas_do_copilot_server_actions_safe_copilot_tools",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L435",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rag_no_copilot",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L443",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_9_dom\u00ednio_ai_copilot_cosmos_copilot",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_ui_components",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L453",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_10_dom\u00ednio_finops_cloud_cost",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L469",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_10_dom\u00ednio_finops_cloud_cost",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_474",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L474",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_10_dom\u00ednio_finops_cloud_cost",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_485",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L485",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_10_dom\u00ednio_finops_cloud_cost",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_fontes_de_integra\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L501",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_11_dom\u00ednio_large_solution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L510",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_11_dom\u00ednio_large_solution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_514",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L514",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_11_dom\u00ednio_large_solution",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_rela\u00e7\u00f5es_522",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L522",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_12_dom\u00ednio_integrations_linearsync",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L531",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_12_dom\u00ednio_integrations_linearsync",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_535",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L535",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_12_dom\u00ednio_integrations_linearsync",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_mapeamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L541",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_12_dom\u00ednio_integrations_linearsync",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_feature_story_external_fields",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L551",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_dom\u00ednios_e_entidades",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_13_dom\u00ednio_system_infrastructure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L561",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_3_13_dom\u00ednio_system_infrastructure",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_entidades_563",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L563",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L574",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_1_decomposi\u00e7\u00e3o_top_down_strategy_execution",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L576",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_2_planejamento_de_pi",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L587",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_3_entrega_de_time",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L603",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_4_governan\u00e7a_de_portf\u00f3lio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L618",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_5_or\u00e7amento_e_custo_real",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L628",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_6_flow_intelligence_pipeline",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L638",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_mapa_de_rela\u00e7\u00f5es_cross_domain",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_4_7_ai_copilot_rag",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L649",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_5_rotas_da_aplica\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L667",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_6_server_actions_por_dom\u00ednio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L699",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_points_of_attention",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L747",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_points_of_attention",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L749",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p01_team_members_json_deprecated_mas_n\u00e3o_removido",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L751",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p02_billingentry_synclogid_sem_fk_formal",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L767",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p03_feature_story_externalid_sem_fk_para_integration",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L781",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p04_epic_sem_fk_direto_para_art_ou_piplan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L793",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cr\u00edticos_risco_direto_de_dados_ou_ux",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p05_okr_links_polim\u00f3rficos_sem_constraint_de_exatamente_um",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L807",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_points_of_attention",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L828",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p06_governedepic_\u00e9_opcional_nem_todo_epic_\u00e9_governado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L830",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p07_tr\u00eas_representa\u00e7\u00f5es_de_spent_em_leanbudget",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L841",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p08_copilotmessage_tenantid_denormalizado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L858",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p09_piknowledgevector_embedding_\u00e9_unsupported_vector_1536",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L869",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p10_confidencevotesession_votes_\u00e9_json_number_sem_audit_por_votante",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L884",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p11_personskillprofile_sem_fk_para_team",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L899",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p12_strategictheme_budgettotal_vs_leanbudget_dupla_representa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L918",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_importantes_risco_de_consist\u00eancia_ou_d\u00e9bito_t\u00e9cnico",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_p13_retrospective_wentwell_toimprove_actions_s\u00e3o_json_sem_schema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L939",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_7_points_of_attention",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L955",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o01_flowmetricsnapshot_com_staleness_tracking_sofisticado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L957",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o02_linearsync_como_tabela_de_mapeamento_bidirecional",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L965",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o03_crdt_em_epic_via_yjs_yjsdocumentstate",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L972",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o04_piknowledgevector_suporta_uploads_de_documentos_sourceid_null",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L982",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_observa\u00e7\u00f5es_arquiteturais",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_o05_synergy_detection_via_taskassignee_pairsynergy_groupsynergy",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L988",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_cosmos_product_requirements_document_estado_atual",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_25_cosmos_product_prd_8_resumo_executivo_de_entidades",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-25-cosmos-product-prd.md",
+      "source_location": "L997",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

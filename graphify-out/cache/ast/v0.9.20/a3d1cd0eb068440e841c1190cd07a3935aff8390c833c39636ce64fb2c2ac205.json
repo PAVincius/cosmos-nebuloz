@@ -1,0 +1,207 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_md",
+      "label": "2026-05-26-t12-linear-github-safe-sync.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "label": "T12 \u2014 Sync Bidirecional Linear / GitHub (SAFe-aware) \u2014 Implementation Plan",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_file_structure",
+      "label": "File Structure",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_1_schema_githubsync_model",
+      "label": "Task 1: Schema \u2014 GitHubSync model",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_2_sync_mapping_helpers",
+      "label": "Task 2: Sync mapping helpers",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L98"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_3_hierarchy_mapping_rules",
+      "label": "Task 3: Hierarchy mapping rules",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L162"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_4_webhook_receiver_linear",
+      "label": "Task 4: Webhook receiver Linear",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L202"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_5_linear_pull_incremental_sync_via_webhook_payload",
+      "label": "Task 5: Linear pull (incremental sync via webhook payload)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L250"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_6_linear_push_cosmos_linear",
+      "label": "Task 6: Linear push (Cosmos \u2192 Linear)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L324"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_7_github_sync_espelhar_linear",
+      "label": "Task 7: GitHub sync (espelhar Linear)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L374"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_8_conflict_resolver",
+      "label": "Task 8: Conflict resolver",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L392"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_9_polling_fallback_vercel_cron",
+      "label": "Task 9: Polling fallback (Vercel Cron)",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L419"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_done_when",
+      "label": "Done When",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L434"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_file_structure",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_1_schema_githubsync_model",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_2_sync_mapping_helpers",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L98",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_3_hierarchy_mapping_rules",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L162",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_4_webhook_receiver_linear",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L202",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_5_linear_pull_incremental_sync_via_webhook_payload",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L250",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_6_linear_push_cosmos_linear",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L324",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_7_github_sync_espelhar_linear",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L374",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_8_conflict_resolver",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L392",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_task_9_polling_fallback_vercel_cron",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L419",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_t12_sync_bidirecional_linear_github_safe_aware_implementation_plan",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_05_26_t12_linear_github_safe_sync_done_when",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-05-26-t12-linear-github-safe-sync.md",
+      "source_location": "L434",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -291,3 +291,9 @@ experiments/**/data/graph/
 .playwright-mcp/
 .superpowers/brainstorm/
 .claude/worktrees/
+
+# Saída do Playwright: relatório e screenshot de falha são artefato de execução,
+# não fonte. Versionados, poluem o diff e fazem screenshot de falha antiga
+# aparecer para quem investiga falha nova.
+playwright-report/
+test-results/

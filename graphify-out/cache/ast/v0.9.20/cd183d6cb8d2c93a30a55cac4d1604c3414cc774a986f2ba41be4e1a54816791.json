@@ -1,0 +1,209 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_md",
+      "label": "backoffice-srd.md",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "label": "Back-office \u2014 Software Requirements Document",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_1_escopo",
+      "label": "1. Escopo",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L11"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_defini\u00e7\u00f5es",
+      "label": "Defini\u00e7\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L23"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_2_arquitetura",
+      "label": "2. Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_3_modelo_de_dados",
+      "label": "3. Modelo de dados",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L85"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_4_o_guard",
+      "label": "4. O guard",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L119"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_5_fila_de_aprova\u00e7\u00e3o",
+      "label": "5. Fila de aprova\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L165"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_6_interfaces",
+      "label": "6. Interfaces",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_7_requisitos_n\u00e3o_funcionais",
+      "label": "7. Requisitos n\u00e3o-funcionais",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L195"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_8_restri\u00e7\u00f5es_e_premissas",
+      "label": "8. Restri\u00e7\u00f5es e premissas",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L217"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_9_crit\u00e9rios_de_aceite",
+      "label": "9. Crit\u00e9rios de aceite",
+      "file_type": "document",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L234"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L3",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_1_escopo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_lab_srd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L19",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_1_escopo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_defini\u00e7\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L23",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_2_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_3_modelo_de_dados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L85",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_4_o_guard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L119",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_5_fila_de_aprova\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L165",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_6_interfaces",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_7_requisitos_n\u00e3o_funcionais",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L195",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_8_restri\u00e7\u00f5es_e_premissas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L217",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_back_office_software_requirements_document",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_srd_9_crit\u00e9rios_de_aceite",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/produto/backoffice-srd.md",
+      "source_location": "L234",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

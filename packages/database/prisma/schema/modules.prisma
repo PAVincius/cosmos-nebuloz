@@ -1,14 +1,23 @@
 // Contratação modular da plataforma Nebuloz.
 //
-// Um tenant contrata Cosmos, Charter, Signal ou qualquer combinação. Isto não é
+// Um tenant contrata Cosmos, Charter, Signal, Meridian ou qualquer combinação. Isto não é
 // feature flag: `contractedAt`/`expiresAt` são rastro comercial, não toggle de
 // rollout. Ausência de linha = módulo não contratado (default deny) — a
 // migration inicial semeia COSMOS para os tenants existentes.
 
+/// `ProductModule` governa ACESSO; `PrecoDeModulo` (comercial.prisma) governa
+/// PREÇO RECORRENTE. Entrar num sem entrar no outro é coerente e deliberado:
+/// o Scaffold é vendido por projeto, não por assinatura, então ele existe aqui
+/// — senão não haveria como negar acesso a quem não comprou — e fica fora do
+/// preço de módulo. Ver `docs/produto/scaffold-prd.md` §6 e
+/// `specs/002-scaffold-adoption/research.md` §R2 antes de "consertar" a
+/// ausência do outro lado.
 enum ProductModule {
   COSMOS
   CHARTER
   SIGNAL
+  MERIDIAN
+  SCAFFOLD
 }
 
 enum ModuleStatus {

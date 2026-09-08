@@ -1,0 +1,63 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_md",
+      "label": "LEARNINGS_INDEX.md",
+      "file_type": "document",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learnings_index",
+      "label": "Learnings Index",
+      "file_type": "document",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_quick_references_always_available_800_tokens",
+      "label": "Quick References (Always Available - ~800 tokens)",
+      "file_type": "document",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L7"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learning_topics_load_as_needed",
+      "label": "Learning Topics (Load As Needed)",
+      "file_type": "document",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L14"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learnings_index",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learnings_index",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_quick_references_always_available_800_tokens",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L7",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learnings_index",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_learnings_index_learning_topics_load_as_needed",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/LEARNINGS_INDEX.md",
+      "source_location": "L14",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

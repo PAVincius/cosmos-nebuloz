@@ -234,6 +234,7 @@ model CharterPolicySection {
   @@unique([policyId, ordinal])
   @@index([tenantId])
   @@index([policyId, status])
+  @@index([groundedRequirementId])
 }
 
 model CharterPolicyVersion {
@@ -328,6 +329,9 @@ model CharterVendorClause {
 
   @@unique([vendorId, clauseId])
   @@index([tenantId])
+  // `clauseId` é o segundo campo do unique acima, então não serve de prefixo
+  // para a varredura que o Cascade dispara ao apagar uma CharterClause.
+  @@index([clauseId])
 }
 
 // ── Caso de uso ───────────────────────────────────────────────────────────────
@@ -476,6 +480,8 @@ model CharterTrack {
 
   @@unique([tenantId, code])
   @@index([tenantId])
+  @@index([policyId])
+  @@index([policyVersionId])
 }
 
 model CharterAcknowledgment {
@@ -500,6 +506,7 @@ model CharterAcknowledgment {
 
   @@index([tenantId])
   @@index([trackId, status])
+  @@index([policyVersionId])
 }
 
 /// Vínculo de política a caso de uso ou fornecedor.
@@ -574,6 +581,7 @@ model CharterRequirementSet {
   @@index([tenantId])
   @@index([origem])
   @@index([normaStatus])
+  @@index([supersedesId])
 }
 
 /// Uma exigência. `citacao` e `resumo` sempre; `texto` só quando a licença do
@@ -634,6 +642,7 @@ model CharterCoverage {
   @@unique([tenantId, requirementId])
   @@index([tenantId])
   @@index([tenantId, status])
+  @@index([requirementId])
 }
 
 enum CharterReqOrigem {

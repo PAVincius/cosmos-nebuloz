@@ -1,8 +1,9 @@
 "use server";
 
-import { withTenantDb } from "@repo/database";
+import { type ProductModule, withTenantDb } from "@repo/database";
 import {
   bootstrapCharter,
+  bootstrapMeridian,
   contractModule,
   ProvisioningError,
   platformDb,
@@ -31,7 +32,7 @@ async function tenantIdBySlug(slug: string): Promise<string> {
 
 export async function contractModuleAction(input: {
   slug: string;
-  module: "COSMOS" | "CHARTER" | "SIGNAL";
+  module: ProductModule;
   status: "ACTIVE" | "TRIAL" | "SUSPENDED" | "CANCELED";
 }): Promise<Result<null>> {
   return await safeAction(async () => {
@@ -59,7 +60,7 @@ export async function contractModuleAction(input: {
 
 export async function setModuleStatusAction(input: {
   slug: string;
-  module: "COSMOS" | "CHARTER" | "SIGNAL";
+  module: ProductModule;
   status: "ACTIVE" | "TRIAL" | "SUSPENDED" | "CANCELED";
 }): Promise<Result<null>> {
   return await safeAction(async () => {
@@ -113,11 +114,39 @@ export async function bootstrapCharterAction(input: {
   });
 }
 
+export async function bootstrapMeridianAction(input: {
+  slug: string;
+  consultantEmail: string;
+}): Promise<Result<{ created: boolean }>> {
+  return await safeAction(async () => {
+    const staff = await requirePlatformStaff();
+    assertCanWrite(staff);
+    // Mesma cota do bootstrap do Charter: escreve papel e template, e o teto de
+    // navegação seria teto nenhum para ela.
+    await assertDentroDoLimite("provisionamento", staff.userId);
+
+    const tenantId = await tenantIdBySlug(input.slug);
+
+    const result = await bootstrapMeridian(
+      { withTenantDb },
+      {
+        tenantId,
+        consultantEmail: input.consultantEmail,
+        actorUserId: staff.userId,
+        actorName: staff.name,
+      }
+    );
+
+    revalidatePath(`/clientes/${input.slug}`);
+    return { created: result.created };
+  });
+}
+
 export async function provisionTenantAction(input: {
   name: string;
   ownerEmail: string;
   modules: {
-    module: "COSMOS" | "CHARTER" | "SIGNAL";
+    module: ProductModule;
     status: "ACTIVE" | "TRIAL";
   }[];
 }): Promise<Result<{ slug: string; ownerLinked: boolean }>> {

@@ -1,0 +1,280 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_md",
+      "label": "2026-08-13-cadastro-2fa-totp-design.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "label": "Cadastro de 2FA por aplicativo autenticador \u2014 design",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_problema",
+      "label": "Problema",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_1_o_segredo_do_2fa_vai_para_um_servidor_de_terceiro",
+      "label": "1. O segredo do 2FA vai para um servidor de terceiro",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L18"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_2_quem_n\u00e3o_passou_pelo_onboarding_n\u00e3o_tem_como_cadastrar",
+      "label": "2. Quem n\u00e3o passou pelo onboarding n\u00e3o tem como cadastrar",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L41"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_3_o_tratamento_de_erro_do_wizard_n\u00e3o_distingue_causas",
+      "label": "3. O tratamento de erro do wizard n\u00e3o distingue causas",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L56"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_objetivo",
+      "label": "Objetivo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L69"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_n\u00e3o_objetivos",
+      "label": "N\u00e3o-objetivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L75"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_decis\u00f5es",
+      "label": "Decis\u00f5es",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L84"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_arquitetura",
+      "label": "Arquitetura",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L96"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_o_fluxo",
+      "label": "O fluxo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L141"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_erros",
+      "label": "Erros",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L169"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_o_campo_de_c\u00f3digo",
+      "label": "O campo de c\u00f3digo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L182"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_teste",
+      "label": "Teste",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L200"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_crit\u00e9rios_de_aceite",
+      "label": "Crit\u00e9rios de aceite",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L220"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_riscos",
+      "label": "Riscos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L233"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_depend\u00eancias",
+      "label": "Depend\u00eancias",
+      "file_type": "document",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L245"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_problema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_problema",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_1_o_segredo_do_2fa_vai_para_um_servidor_de_terceiro",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L18",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_problema",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_2_quem_n\u00e3o_passou_pelo_onboarding_n\u00e3o_tem_como_cadastrar",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L41",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_produto_backoffice_prd_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L43",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_problema",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_3_o_tratamento_de_erro_do_wizard_n\u00e3o_distingue_causas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L56",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_objetivo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L69",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_objetivo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_n\u00e3o_objetivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L75",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_decis\u00f5es",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L84",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_arquitetura",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L96",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_o_fluxo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L141",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_erros",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L169",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_o_campo_de_c\u00f3digo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L182",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_teste",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L200",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_crit\u00e9rios_de_aceite",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L220",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_riscos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L233",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_cadastro_de_2fa_por_aplicativo_autenticador_design",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_08_13_cadastro_2fa_totp_design_depend\u00eancias",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/specs/2026-08-13-cadastro-2fa-totp-design.md",
+      "source_location": "L245",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

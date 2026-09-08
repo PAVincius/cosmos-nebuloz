@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_md",
+      "label": "README.md",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "label": "COSMOS UX Swarm \u2014 DCU Reports",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_running_the_swarm",
+      "label": "Running the Swarm",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L5"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_architecture",
+      "label": "Architecture",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L22"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_inter_agent_communication",
+      "label": "Inter-Agent Communication",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L42"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_dcu_score",
+      "label": "DCU Score",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L48"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_finding_categories",
+      "label": "Finding Categories",
+      "file_type": "document",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L54"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_running_the_swarm",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_architecture",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L22",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_inter_agent_communication",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L42",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_dcu_score",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L48",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_cosmos_ux_swarm_dcu_reports",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_ux_reports_readme_finding_categories",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/ux-reports/README.md",
+      "source_location": "L54",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

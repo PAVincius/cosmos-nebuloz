@@ -1,0 +1,127 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_md",
+      "label": "2026-06-10-story-038-rbac-enforcement.md",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "label": "Story-038 \u2014 RBAC Enforcement (Complete)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_entregues",
+      "label": "Entregues",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L9"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_arquivos_criados",
+      "label": "Arquivos criados",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L24"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_arquivos_modificados",
+      "label": "Arquivos modificados",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L31"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_withsecureaction_fluxo",
+      "label": "`withSecureAction` \u2014 fluxo",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L37"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_decis\u00f5es_chave",
+      "label": "Decis\u00f5es-chave",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L50"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_testes_29_total_todos_passando",
+      "label": "Testes (29 total \u2014 todos passando)",
+      "file_type": "document",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L59"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_entregues",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L9",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_arquivos_criados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L24",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_arquivos_modificados",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_withsecureaction_fluxo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L37",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_decis\u00f5es_chave",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L50",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_story_038_rbac_enforcement_complete",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_claude_completions_2026_06_10_story_038_rbac_enforcement_testes_29_total_todos_passando",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": ".claude/completions/2026-06-10-story-038-rbac-enforcement.md",
+      "source_location": "L59",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

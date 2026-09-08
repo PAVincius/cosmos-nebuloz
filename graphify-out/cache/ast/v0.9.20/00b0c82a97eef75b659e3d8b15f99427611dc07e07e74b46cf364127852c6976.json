@@ -1,0 +1,241 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_md",
+      "label": "lgpd-ropa-e-lacunas.md",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "label": "LGPD \u2014 registro de tratamento e lacunas",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_1_o_que_j\u00e1_existe",
+      "label": "1. O que j\u00e1 existe",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L16"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "label": "2. As quatro contradi\u00e7\u00f5es entre a policy e o c\u00f3digo",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L36"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_1_a_lista_de_subprocessadores_n\u00e3o_descreve_o_sistema",
+      "label": "2.1 A lista de subprocessadores n\u00e3o descreve o sistema",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L40"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_2_o_dpa_n\u00e3o_est\u00e1_confirmado",
+      "label": "2.2 O \"DPA \u2705\" n\u00e3o est\u00e1 confirmado",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L54"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_3_audit_logs_cont\u00eam_no_personal_data_except_user_ids_falso",
+      "label": "2.3 \"Audit logs cont\u00eam no personal data except user IDs\" \u2014 falso",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L65"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_4_o_job_de_elimina\u00e7\u00e3o_em_d_30_n\u00e3o_existe",
+      "label": "2.4 O job de elimina\u00e7\u00e3o em D+30 n\u00e3o existe",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L74"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_3_ropa_registro_de_opera\u00e7\u00f5es_de_tratamento",
+      "label": "3. RoPA \u2014 registro de opera\u00e7\u00f5es de tratamento",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L89"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_4_titulares_que_n\u00e3o_t\u00eam_por_onde_pedir",
+      "label": "4. Titulares que n\u00e3o t\u00eam por onde pedir",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L111"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_5_cobertura_da_elimina\u00e7\u00e3o",
+      "label": "5. Cobertura da elimina\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L142"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_6_o_que_falta_escrever",
+      "label": "6. O que falta escrever",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L188"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_7_controles_da_finalidade_7_intelig\u00eancia_de_reuni\u00e3o",
+      "label": "7. Controles da finalidade 7 \u2014 intelig\u00eancia de reuni\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L203"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_8_ordem_sugerida",
+      "label": "8. Ordem sugerida",
+      "file_type": "document",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L228"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_1_o_que_j\u00e1_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L16",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L36",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_1_a_lista_de_subprocessadores_n\u00e3o_descreve_o_sistema",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L40",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_runbooks_charter_nebuloz_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L52",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_2_o_dpa_n\u00e3o_est\u00e1_confirmado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L54",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_3_audit_logs_cont\u00eam_no_personal_data_except_user_ids_falso",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L65",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_as_quatro_contradi\u00e7\u00f5es_entre_a_policy_e_o_c\u00f3digo",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_2_4_o_job_de_elimina\u00e7\u00e3o_em_d_30_n\u00e3o_existe",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L74",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_3_ropa_registro_de_opera\u00e7\u00f5es_de_tratamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L89",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_4_titulares_que_n\u00e3o_t\u00eam_por_onde_pedir",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L111",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_5_cobertura_da_elimina\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L142",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_6_o_que_falta_escrever",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L188",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_7_controles_da_finalidade_7_intelig\u00eancia_de_reuni\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L203",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_consentimento_de_gravacao_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L210",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_lgpd_registro_de_tratamento_e_lacunas",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_compliance_lgpd_ropa_e_lacunas_8_ordem_sugerida",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/compliance/lgpd-ropa-e-lacunas.md",
+      "source_location": "L228",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

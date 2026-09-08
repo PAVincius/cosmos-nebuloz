@@ -31,9 +31,6 @@ function chunkText(text: string): string[] {
 }
 
 async function checkUploadRateLimit(tenantId: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return false;
-  }
   const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
     limiter: fixedWindow(10, "1 h"),

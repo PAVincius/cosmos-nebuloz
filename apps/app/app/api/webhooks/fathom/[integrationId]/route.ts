@@ -11,9 +11,6 @@ type FathomPayload = {
 };
 
 async function checkWebhookRateLimit(ip: string): Promise<boolean> {
-  if (!process.env.UPSTASH_REDIS_REST_URL) {
-    return true;
-  }
   const { createRateLimiter, fixedWindow } = await import("@repo/rate-limit");
   const limiter = createRateLimiter({
     limiter: fixedWindow(100, "1 m"),

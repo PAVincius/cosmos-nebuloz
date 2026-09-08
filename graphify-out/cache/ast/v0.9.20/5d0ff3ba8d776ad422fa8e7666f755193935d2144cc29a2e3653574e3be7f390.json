@@ -1,0 +1,191 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_md",
+      "label": "story-062-tela-lean-budgets.md",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "label": "Story 062 \u2014 Tela Lean Budgets (guardrails do value stream)",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_decis\u00e3o_de_modelagem_o_art_\u00e9_o_value_stream",
+      "label": "Decis\u00e3o de modelagem: o ART **\u00e9** o value stream",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L21"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_jornada_do_usu\u00e1rio",
+      "label": "Jornada do usu\u00e1rio",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L39"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "label": "Acceptance Criteria",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L59"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_001_or\u00e7amento_de_pi_fechado_\u00e9_imut\u00e1vel",
+      "label": "AC-001: Or\u00e7amento de PI fechado \u00e9 imut\u00e1vel",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L61"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_002_capex_opex_somam_100",
+      "label": "AC-002: CapEx % + OpEx % somam 100",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L79"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_003_utiliza\u00e7\u00e3o_sem_or\u00e7amento_alocado_\u00e9_nunca_0",
+      "label": "AC-003: Utiliza\u00e7\u00e3o sem or\u00e7amento alocado \u00e9 \"\u2014\", nunca 0%",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L90"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_004_o_id_vindo_do_cliente_\u00e9_reconferido_no_tenant",
+      "label": "AC-004: O id vindo do cliente \u00e9 reconferido no tenant",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L103"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_005_estado_vazio_e_estado_de_erro_sem_or\u00e7amento_fabricado",
+      "label": "AC-005: Estado vazio e estado de erro sem or\u00e7amento fabricado",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L114"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_technical_notes",
+      "label": "Technical Notes",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L128"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_test_plan",
+      "label": "Test Plan",
+      "file_type": "document",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L145"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_decis\u00e3o_de_modelagem_o_art_\u00e9_o_value_stream",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L21",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_jornada_do_usu\u00e1rio",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L39",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L59",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_001_or\u00e7amento_de_pi_fechado_\u00e9_imut\u00e1vel",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L61",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_002_capex_opex_somam_100",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L79",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_003_utiliza\u00e7\u00e3o_sem_or\u00e7amento_alocado_\u00e9_nunca_0",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L90",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_004_o_id_vindo_do_cliente_\u00e9_reconferido_no_tenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L103",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_acceptance_criteria",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_ac_005_estado_vazio_e_estado_de_erro_sem_or\u00e7amento_fabricado",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L114",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_technical_notes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L128",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_story_062_tela_lean_budgets_guardrails_do_value_stream",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_stories_epic_006_story_062_tela_lean_budgets_test_plan",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/stories/epic-006/story-062-tela-lean-budgets.md",
+      "source_location": "L145",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

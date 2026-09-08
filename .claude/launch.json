@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "cosmos-app",
+      "name": "app",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "app", "dev"],
       "port": 3012
@@ -14,10 +14,10 @@
       "port": 3013
     },
     {
-      "name": "docs",
+      "name": "web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "docs", "dev"],
-      "port": 3004
+      "runtimeArgs": ["--filter", "web", "dev"],
+      "port": 3001
     }
   ]
 }

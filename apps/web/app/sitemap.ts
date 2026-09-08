@@ -53,6 +53,7 @@ const sitemap = async (): Promise<MetadataRoute.Sitemap> => {
     entry("/"),
     ...pages.map((page) => entry(`/${page}`)),
     entry("/legal/privacy"),
+    entry("/legal/cookies"),
     entry("/legal/terms"),
     ...blogs.map((slug) => entry(`/blog/${slug}`)),
   ];

@@ -1,0 +1,312 @@
+{
+  "nodes": [
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_md",
+      "label": "2026-07-31-backoffice-clientes-contratacao.md",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "label": "Back-office de clientes e contrata\u00e7\u00e3o \u2014 plano de implementa\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_global_constraints",
+      "label": "Global Constraints",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L13"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_estrutura_de_arquivos",
+      "label": "Estrutura de arquivos",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L27"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_1_scaffold_do_package_e_a_porta_platformdb",
+      "label": "Task 1: Scaffold do package e a porta `platformDb`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L63"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_2_slug_de_tenant",
+      "label": "Task 2: Slug de tenant",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L301"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_3_trilha_de_auditoria_do_staff",
+      "label": "Task 3: Trilha de auditoria do staff",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L462"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_4_contractmodule_e_setmodulestatus",
+      "label": "Task 4: `contractModule` e `setModuleStatus`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L619"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_5_provisiontenant",
+      "label": "Task 5: `provisionTenant`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L938"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_6_bootstrapcharter",
+      "label": "Task 6: `bootstrapCharter`",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1266"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_7_onboarding_self_service_passa_a_provisionar_m\u00f3dulo",
+      "label": "Task 7: Onboarding self-service passa a provisionar m\u00f3dulo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1618"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_8_scaffold_do_apps_backoffice_e_o_guard",
+      "label": "Task 8: Scaffold do `apps/backoffice` e o guard",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1782"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_9_lista_de_clientes",
+      "label": "Task 9: Lista de clientes",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2153"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_10_detalhe_do_cliente_e_as_a\u00e7\u00f5es_de_contrata\u00e7\u00e3o",
+      "label": "Task 10: Detalhe do cliente e as a\u00e7\u00f5es de contrata\u00e7\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2375"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_11_provisionar_cliente_novo_e_bootstrap_do_charter_pela_tela",
+      "label": "Task 11: Provisionar cliente novo e bootstrap do Charter pela tela",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2819"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_12_trilha_do_staff_e_teste_de_vazamento",
+      "label": "Task 12: Trilha do staff e teste de vazamento",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3085"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_13_e2e_do_caminho_completo",
+      "label": "Task 13: E2E do caminho completo",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3248"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_14_deploy_do_back_office",
+      "label": "Task 14: Deploy do back-office",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3350"
+    },
+    {
+      "id": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_auto_revis\u00e3o",
+      "label": "Auto-revis\u00e3o",
+      "file_type": "document",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3409"
+    }
+  ],
+  "edges": [
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_md",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_specs_2026_07_31_backoffice_clientes_contratacao_design_md",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L11",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_global_constraints",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L13",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_estrutura_de_arquivos",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L27",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_1_scaffold_do_package_e_a_porta_platformdb",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L63",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_2_slug_de_tenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L301",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_3_trilha_de_auditoria_do_staff",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L462",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_4_contractmodule_e_setmodulestatus",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L619",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_5_provisiontenant",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L938",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_6_bootstrapcharter",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1266",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_7_onboarding_self_service_passa_a_provisionar_m\u00f3dulo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1618",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_8_scaffold_do_apps_backoffice_e_o_guard",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L1782",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_9_lista_de_clientes",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2153",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_10_detalhe_do_cliente_e_as_a\u00e7\u00f5es_de_contrata\u00e7\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2375",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_11_provisionar_cliente_novo_e_bootstrap_do_charter_pela_tela",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L2819",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_12_trilha_do_staff_e_teste_de_vazamento",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3085",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_13_e2e_do_caminho_completo",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3248",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_task_14_deploy_do_back_office",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3350",
+      "weight": 1.0
+    },
+    {
+      "source": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_back_office_de_clientes_e_contrata\u00e7\u00e3o_plano_de_implementa\u00e7\u00e3o",
+      "target": "users_azos_documents_github_web_backoffice_my_cosmos_nebuloz_claude_worktrees_mapa_pendencias_criticas_803c5f_docs_superpowers_plans_2026_07_31_backoffice_clientes_contratacao_auto_revis\u00e3o",
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "docs/superpowers/plans/2026-07-31-backoffice-clientes-contratacao.md",
+      "source_location": "L3409",
+      "weight": 1.0
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

@@ -17,11 +17,19 @@
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",
+    "knip": "DATABASE_URL=postgresql://placeholder:placeholder@localhost:5432/placeholder BETTER_AUTH_SECRET=knip-placeholder-nao-e-segredo-0123456789 knip --no-progress",
     "prepare": "simple-git-hooks",
     "generate:tests": "tsx scripts/generate-tests.ts",
     "fix:ci": "tsx scripts/fix-ci.ts",
     "risk:score": "tsx scripts/risk-score.ts",
+    "audit:runtime": "tsx scripts/audit-runtime.mts",
+    "size:guard": "tsx scripts/file-size-guard.mts",
+    "legal:guard": "tsx scripts/legal-placeholders-guard.mts",
+    "coverage:gaps": "tsx scripts/coverage-gaps.mts",
     "cosmos:graph": "tsx scripts/cosmos-graph.mts",
+    "knowledge:refresh": "tsx scripts/knowledge/exportar.mts",
+    "test:knowledge": "vitest run scripts/knowledge",
+    "dark-matter": "tsx scripts/dark-matter.mts",
     "bump-deps": "npx npm-check-updates --deep -u -x recharts && pnpm install",
     "bump-ui": "npx shadcn@latest add --all --overwrite -c packages/design-system",
     "migrate": "cd packages/database && npx prisma format && npx prisma generate && npx prisma migrate deploy",
@@ -34,7 +42,7 @@
     "pre-push": "pnpm turbo test"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
+    "*.{ts,mts,tsx,js,jsx}": [
       "biome check --write --no-errors-on-unmatched"
     ],
     "*.{json,jsonc}": [
@@ -75,7 +83,17 @@
       "lodash": "^4.17.21",
       "basic-ftp": "^5.2.0",
       "handlebars": "^4.7.9",
-      "webpack": "5.109.2"
+      "webpack": "5.109.2",
+      "react": "19.2.1",
+      "react-dom": "19.2.1",
+      "@types/react": "19.2.7",
+      "@types/node": "^24.10.1",
+      "typescript": "^5.9.3",
+      "postcss": "^8.5.6",
+      "vitest": "^4.1.10",
+      "ai": "^5.0.202",
+      "pg": "^8.20.0",
+      "@types/pg": "^8.15.6"
     }
   },
   "type": "module"

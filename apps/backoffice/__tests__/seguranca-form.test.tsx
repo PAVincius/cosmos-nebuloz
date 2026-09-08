@@ -2,10 +2,19 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
-const h = vi.hoisted(() => ({ cadastro: vi.fn() }));
+const h = vi.hoisted(() => ({
+  cadastro: vi.fn(),
+  encerrarTodasAsSessoes: vi.fn(),
+}));
 
 vi.mock("@repo/auth/two-factor-enrollment", () => ({
   useTwoFactorEnrollment: () => h.cadastro(),
+}));
+// A saída da tela varre as sessões no servidor, e o módulo dela puxa
+// `@repo/database` → env de servidor. Sem o mock, o teste morre no import
+// antes de renderizar qualquer coisa.
+vi.mock("../app/seguranca/actions", () => ({
+  encerrarTodasAsSessoes: h.encerrarTodasAsSessoes,
 }));
 
 import { CadastroDe2FA } from "../app/seguranca/form";
