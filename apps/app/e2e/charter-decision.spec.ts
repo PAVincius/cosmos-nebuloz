@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { charterStorageState } from "./setup/auth.setup";
 
 /**
  * E2E — Charter decision with restrictions (FR-6.3).
@@ -13,7 +14,7 @@ import { expect, test } from "@playwright/test";
  * Case: UC-109, seeded as SUBMITTED (decidable, never mutated by other specs).
  */
 test.describe("Charter decision gate @auth", () => {
-  test.use({ storageState: "./e2e/fixtures/charter/compliance.json" });
+  test.use({ storageState: charterStorageState("compliance") });
 
   test("restricted approval with zero conditions stays blocked until one is added", async ({
     page,
